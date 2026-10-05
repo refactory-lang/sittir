@@ -6257,13 +6257,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FutureImportStatementContentTr
     }
 }
 
-fn future_import_statement_content_transport_slot_to_any(t: FutureImportStatementContentTransportSlot) -> AnyTransport {
-    match t {
-        FutureImportStatementContentTransportSlot::ImportList(inner) => AnyTransport::ImportList(inner),
-        FutureImportStatementContentTransportSlot::ParenthesizedImportList(inner) => AnyTransport::ParenthesizedImportList(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for FutureImportStatementContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -6378,13 +6371,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportFromStatementModuleNameT
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ImportFromStatementModuleNameTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn import_from_statement_module_name_transport_slot_to_any(t: ImportFromStatementModuleNameTransportSlot) -> AnyTransport {
-    match t {
-        ImportFromStatementModuleNameTransportSlot::RelativeImport(inner) => AnyTransport::RelativeImport(inner),
-        ImportFromStatementModuleNameTransportSlot::DottedName(inner) => AnyTransport::DottedName(inner),
     }
 }
 
@@ -6512,14 +6498,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportFromStatementContentTran
     }
 }
 
-fn import_from_statement_content_transport_slot_to_any(t: ImportFromStatementContentTransportSlot) -> AnyTransport {
-    match t {
-        ImportFromStatementContentTransportSlot::ImportList(inner) => AnyTransport::ImportList(inner),
-        ImportFromStatementContentTransportSlot::ParenthesizedImportList(inner) => AnyTransport::ParenthesizedImportList(inner),
-        ImportFromStatementContentTransportSlot::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => AnyTransport::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74,
-    }
-}
-
 impl ::sittir_core::render::Render for ImportFromStatementContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -6643,13 +6621,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportListNameTransportSlot> {
     }
 }
 
-fn import_list_name_transport_slot_to_any(t: ImportListNameTransportSlot) -> AnyTransport {
-    match t {
-        ImportListNameTransportSlot::DottedName(inner) => AnyTransport::DottedName(inner),
-        ImportListNameTransportSlot::AliasedImport(inner) => AnyTransport::AliasedImport(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for ImportListNameTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -6764,13 +6735,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PrintStatementContentTransport
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         PrintStatementContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn print_statement_content_transport_slot_to_any(t: PrintStatementContentTransportSlot) -> AnyTransport {
-    match t {
-        PrintStatementContentTransportSlot::PrintStatementChevron(inner) => AnyTransport::PrintStatementChevron(inner),
-        PrintStatementContentTransportSlot::PrintStatementPlain(inner) => AnyTransport::PrintStatementPlain(inner),
     }
 }
 
@@ -7439,63 +7403,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExpressionStatementContentTran
     }
 }
 
-fn expression_statement_content_transport_slot_to_any(t: ExpressionStatementContentTransportSlot) -> AnyTransport {
-    match t {
-        ExpressionStatementContentTransportSlot::ComparisonOperator(inner) => AnyTransport::ComparisonOperator(inner),
-        ExpressionStatementContentTransportSlot::NotOperator(inner) => AnyTransport::NotOperator(inner),
-        ExpressionStatementContentTransportSlot::BooleanOperator(inner) => AnyTransport::BooleanOperator(inner),
-        ExpressionStatementContentTransportSlot::Lambda(inner) => AnyTransport::Lambda(inner),
-        ExpressionStatementContentTransportSlot::Await(inner) => AnyTransport::Await(inner),
-        ExpressionStatementContentTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
-        ExpressionStatementContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ExpressionStatementContentTransportSlot::PrintKeyword(inner) => AnyTransport::PrintKeyword(inner),
-        ExpressionStatementContentTransportSlot::ExecKeyword(inner) => AnyTransport::ExecKeyword(inner),
-        ExpressionStatementContentTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        ExpressionStatementContentTransportSlot::AwaitKeyword(inner) => AnyTransport::AwaitKeyword(inner),
-        ExpressionStatementContentTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        ExpressionStatementContentTransportSlot::MatchKeyword(inner) => AnyTransport::MatchKeyword(inner),
-        ExpressionStatementContentTransportSlot::String(inner) => AnyTransport::String(inner),
-        ExpressionStatementContentTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
-        ExpressionStatementContentTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
-        ExpressionStatementContentTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
-        ExpressionStatementContentTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
-        ExpressionStatementContentTransportSlot::IntegerDecimalLong(inner) => AnyTransport::IntegerDecimalLong(inner),
-        ExpressionStatementContentTransportSlot::IntegerDecimalImaginary(inner) => AnyTransport::IntegerDecimalImaginary(inner),
-        ExpressionStatementContentTransportSlot::IntegerDecimalPlain(inner) => AnyTransport::IntegerDecimalPlain(inner),
-        ExpressionStatementContentTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
-        ExpressionStatementContentTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        ExpressionStatementContentTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
-        ExpressionStatementContentTransportSlot::True(inner) => AnyTransport::True(inner),
-        ExpressionStatementContentTransportSlot::False(inner) => AnyTransport::False(inner),
-        ExpressionStatementContentTransportSlot::None(inner) => AnyTransport::None(inner),
-        ExpressionStatementContentTransportSlot::UnaryOperator(inner) => AnyTransport::UnaryOperator(inner),
-        ExpressionStatementContentTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        ExpressionStatementContentTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        ExpressionStatementContentTransportSlot::Call(inner) => AnyTransport::Call(inner),
-        ExpressionStatementContentTransportSlot::List(inner) => AnyTransport::List(inner),
-        ExpressionStatementContentTransportSlot::ListComprehension(inner) => AnyTransport::ListComprehension(inner),
-        ExpressionStatementContentTransportSlot::Dictionary(inner) => AnyTransport::Dictionary(inner),
-        ExpressionStatementContentTransportSlot::DictionaryComprehension(inner) => AnyTransport::DictionaryComprehension(inner),
-        ExpressionStatementContentTransportSlot::Set(inner) => AnyTransport::Set(inner),
-        ExpressionStatementContentTransportSlot::SetComprehension(inner) => AnyTransport::SetComprehension(inner),
-        ExpressionStatementContentTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
-        ExpressionStatementContentTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
-        ExpressionStatementContentTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        ExpressionStatementContentTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
-        ExpressionStatementContentTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        ExpressionStatementContentTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
-        ExpressionStatementContentTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
-        ExpressionStatementContentTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
-        ExpressionStatementContentTransportSlot::ExpressionStatementTuple(inner) => AnyTransport::ExpressionStatementTuple(inner),
-        ExpressionStatementContentTransportSlot::AssignmentEq(inner) => AnyTransport::AssignmentEq(inner),
-        ExpressionStatementContentTransportSlot::AssignmentType(inner) => AnyTransport::AssignmentType(inner),
-        ExpressionStatementContentTransportSlot::AssignmentTyped(inner) => AnyTransport::AssignmentTyped(inner),
-        ExpressionStatementContentTransportSlot::AugmentedAssignment(inner) => AnyTransport::AugmentedAssignment(inner),
-        ExpressionStatementContentTransportSlot::Yield(inner) => AnyTransport::Yield(inner),
-        ExpressionStatementContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for ExpressionStatementContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -7700,19 +7607,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedExpressionNameTransportSl
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         NamedExpressionNameTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn named_expression_name_transport_slot_to_any(t: NamedExpressionNameTransportSlot) -> AnyTransport {
-    match t {
-        NamedExpressionNameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        NamedExpressionNameTransportSlot::Literal1_70_72_69_6e_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal1_70_72_69_6e_74_5f_6b_65_79_77_6f_72_64,
-        NamedExpressionNameTransportSlot::Literal2_65_78_65_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal2_65_78_65_63_5f_6b_65_79_77_6f_72_64,
-        NamedExpressionNameTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
-        NamedExpressionNameTransportSlot::Literal4_61_77_61_69_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal4_61_77_61_69_74_5f_6b_65_79_77_6f_72_64,
-        NamedExpressionNameTransportSlot::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64,
-        NamedExpressionNameTransportSlot::Literal6_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal6_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64,
-        NamedExpressionNameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -8329,58 +8223,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ReturnStatementExpressionsTran
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ReturnStatementExpressionsTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn return_statement_expressions_transport_slot_to_any(t: ReturnStatementExpressionsTransportSlot) -> AnyTransport {
-    match t {
-        ReturnStatementExpressionsTransportSlot::ComparisonOperator(inner) => AnyTransport::ComparisonOperator(inner),
-        ReturnStatementExpressionsTransportSlot::NotOperator(inner) => AnyTransport::NotOperator(inner),
-        ReturnStatementExpressionsTransportSlot::BooleanOperator(inner) => AnyTransport::BooleanOperator(inner),
-        ReturnStatementExpressionsTransportSlot::Lambda(inner) => AnyTransport::Lambda(inner),
-        ReturnStatementExpressionsTransportSlot::Await(inner) => AnyTransport::Await(inner),
-        ReturnStatementExpressionsTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
-        ReturnStatementExpressionsTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ReturnStatementExpressionsTransportSlot::PrintKeyword(inner) => AnyTransport::PrintKeyword(inner),
-        ReturnStatementExpressionsTransportSlot::ExecKeyword(inner) => AnyTransport::ExecKeyword(inner),
-        ReturnStatementExpressionsTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        ReturnStatementExpressionsTransportSlot::AwaitKeyword(inner) => AnyTransport::AwaitKeyword(inner),
-        ReturnStatementExpressionsTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        ReturnStatementExpressionsTransportSlot::MatchKeyword(inner) => AnyTransport::MatchKeyword(inner),
-        ReturnStatementExpressionsTransportSlot::String(inner) => AnyTransport::String(inner),
-        ReturnStatementExpressionsTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
-        ReturnStatementExpressionsTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
-        ReturnStatementExpressionsTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
-        ReturnStatementExpressionsTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
-        ReturnStatementExpressionsTransportSlot::IntegerDecimalLong(inner) => AnyTransport::IntegerDecimalLong(inner),
-        ReturnStatementExpressionsTransportSlot::IntegerDecimalImaginary(inner) => AnyTransport::IntegerDecimalImaginary(inner),
-        ReturnStatementExpressionsTransportSlot::IntegerDecimalPlain(inner) => AnyTransport::IntegerDecimalPlain(inner),
-        ReturnStatementExpressionsTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
-        ReturnStatementExpressionsTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        ReturnStatementExpressionsTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
-        ReturnStatementExpressionsTransportSlot::True(inner) => AnyTransport::True(inner),
-        ReturnStatementExpressionsTransportSlot::False(inner) => AnyTransport::False(inner),
-        ReturnStatementExpressionsTransportSlot::None(inner) => AnyTransport::None(inner),
-        ReturnStatementExpressionsTransportSlot::UnaryOperator(inner) => AnyTransport::UnaryOperator(inner),
-        ReturnStatementExpressionsTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        ReturnStatementExpressionsTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        ReturnStatementExpressionsTransportSlot::Call(inner) => AnyTransport::Call(inner),
-        ReturnStatementExpressionsTransportSlot::List(inner) => AnyTransport::List(inner),
-        ReturnStatementExpressionsTransportSlot::ListComprehension(inner) => AnyTransport::ListComprehension(inner),
-        ReturnStatementExpressionsTransportSlot::Dictionary(inner) => AnyTransport::Dictionary(inner),
-        ReturnStatementExpressionsTransportSlot::DictionaryComprehension(inner) => AnyTransport::DictionaryComprehension(inner),
-        ReturnStatementExpressionsTransportSlot::Set(inner) => AnyTransport::Set(inner),
-        ReturnStatementExpressionsTransportSlot::SetComprehension(inner) => AnyTransport::SetComprehension(inner),
-        ReturnStatementExpressionsTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
-        ReturnStatementExpressionsTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
-        ReturnStatementExpressionsTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        ReturnStatementExpressionsTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
-        ReturnStatementExpressionsTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        ReturnStatementExpressionsTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
-        ReturnStatementExpressionsTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
-        ReturnStatementExpressionsTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
-        ReturnStatementExpressionsTransportSlot::ExpressionList(inner) => AnyTransport::ExpressionList(inner),
-        ReturnStatementExpressionsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -9039,58 +8881,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DeleteStatementExpressionsTran
     }
 }
 
-fn delete_statement_expressions_transport_slot_to_any(t: DeleteStatementExpressionsTransportSlot) -> AnyTransport {
-    match t {
-        DeleteStatementExpressionsTransportSlot::ComparisonOperator(inner) => AnyTransport::ComparisonOperator(inner),
-        DeleteStatementExpressionsTransportSlot::NotOperator(inner) => AnyTransport::NotOperator(inner),
-        DeleteStatementExpressionsTransportSlot::BooleanOperator(inner) => AnyTransport::BooleanOperator(inner),
-        DeleteStatementExpressionsTransportSlot::Lambda(inner) => AnyTransport::Lambda(inner),
-        DeleteStatementExpressionsTransportSlot::Await(inner) => AnyTransport::Await(inner),
-        DeleteStatementExpressionsTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
-        DeleteStatementExpressionsTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        DeleteStatementExpressionsTransportSlot::PrintKeyword(inner) => AnyTransport::PrintKeyword(inner),
-        DeleteStatementExpressionsTransportSlot::ExecKeyword(inner) => AnyTransport::ExecKeyword(inner),
-        DeleteStatementExpressionsTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        DeleteStatementExpressionsTransportSlot::AwaitKeyword(inner) => AnyTransport::AwaitKeyword(inner),
-        DeleteStatementExpressionsTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        DeleteStatementExpressionsTransportSlot::MatchKeyword(inner) => AnyTransport::MatchKeyword(inner),
-        DeleteStatementExpressionsTransportSlot::String(inner) => AnyTransport::String(inner),
-        DeleteStatementExpressionsTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
-        DeleteStatementExpressionsTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
-        DeleteStatementExpressionsTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
-        DeleteStatementExpressionsTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
-        DeleteStatementExpressionsTransportSlot::IntegerDecimalLong(inner) => AnyTransport::IntegerDecimalLong(inner),
-        DeleteStatementExpressionsTransportSlot::IntegerDecimalImaginary(inner) => AnyTransport::IntegerDecimalImaginary(inner),
-        DeleteStatementExpressionsTransportSlot::IntegerDecimalPlain(inner) => AnyTransport::IntegerDecimalPlain(inner),
-        DeleteStatementExpressionsTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
-        DeleteStatementExpressionsTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        DeleteStatementExpressionsTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
-        DeleteStatementExpressionsTransportSlot::True(inner) => AnyTransport::True(inner),
-        DeleteStatementExpressionsTransportSlot::False(inner) => AnyTransport::False(inner),
-        DeleteStatementExpressionsTransportSlot::None(inner) => AnyTransport::None(inner),
-        DeleteStatementExpressionsTransportSlot::UnaryOperator(inner) => AnyTransport::UnaryOperator(inner),
-        DeleteStatementExpressionsTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        DeleteStatementExpressionsTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        DeleteStatementExpressionsTransportSlot::Call(inner) => AnyTransport::Call(inner),
-        DeleteStatementExpressionsTransportSlot::List(inner) => AnyTransport::List(inner),
-        DeleteStatementExpressionsTransportSlot::ListComprehension(inner) => AnyTransport::ListComprehension(inner),
-        DeleteStatementExpressionsTransportSlot::Dictionary(inner) => AnyTransport::Dictionary(inner),
-        DeleteStatementExpressionsTransportSlot::DictionaryComprehension(inner) => AnyTransport::DictionaryComprehension(inner),
-        DeleteStatementExpressionsTransportSlot::Set(inner) => AnyTransport::Set(inner),
-        DeleteStatementExpressionsTransportSlot::SetComprehension(inner) => AnyTransport::SetComprehension(inner),
-        DeleteStatementExpressionsTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
-        DeleteStatementExpressionsTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
-        DeleteStatementExpressionsTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        DeleteStatementExpressionsTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
-        DeleteStatementExpressionsTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        DeleteStatementExpressionsTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
-        DeleteStatementExpressionsTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
-        DeleteStatementExpressionsTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
-        DeleteStatementExpressionsTransportSlot::ExpressionList(inner) => AnyTransport::ExpressionList(inner),
-        DeleteStatementExpressionsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for DeleteStatementExpressionsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -9746,58 +9536,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RaiseStatementExpressionsTrans
     }
 }
 
-fn raise_statement_expressions_transport_slot_to_any(t: RaiseStatementExpressionsTransportSlot) -> AnyTransport {
-    match t {
-        RaiseStatementExpressionsTransportSlot::ComparisonOperator(inner) => AnyTransport::ComparisonOperator(inner),
-        RaiseStatementExpressionsTransportSlot::NotOperator(inner) => AnyTransport::NotOperator(inner),
-        RaiseStatementExpressionsTransportSlot::BooleanOperator(inner) => AnyTransport::BooleanOperator(inner),
-        RaiseStatementExpressionsTransportSlot::Lambda(inner) => AnyTransport::Lambda(inner),
-        RaiseStatementExpressionsTransportSlot::Await(inner) => AnyTransport::Await(inner),
-        RaiseStatementExpressionsTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
-        RaiseStatementExpressionsTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        RaiseStatementExpressionsTransportSlot::PrintKeyword(inner) => AnyTransport::PrintKeyword(inner),
-        RaiseStatementExpressionsTransportSlot::ExecKeyword(inner) => AnyTransport::ExecKeyword(inner),
-        RaiseStatementExpressionsTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        RaiseStatementExpressionsTransportSlot::AwaitKeyword(inner) => AnyTransport::AwaitKeyword(inner),
-        RaiseStatementExpressionsTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        RaiseStatementExpressionsTransportSlot::MatchKeyword(inner) => AnyTransport::MatchKeyword(inner),
-        RaiseStatementExpressionsTransportSlot::String(inner) => AnyTransport::String(inner),
-        RaiseStatementExpressionsTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
-        RaiseStatementExpressionsTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
-        RaiseStatementExpressionsTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
-        RaiseStatementExpressionsTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
-        RaiseStatementExpressionsTransportSlot::IntegerDecimalLong(inner) => AnyTransport::IntegerDecimalLong(inner),
-        RaiseStatementExpressionsTransportSlot::IntegerDecimalImaginary(inner) => AnyTransport::IntegerDecimalImaginary(inner),
-        RaiseStatementExpressionsTransportSlot::IntegerDecimalPlain(inner) => AnyTransport::IntegerDecimalPlain(inner),
-        RaiseStatementExpressionsTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
-        RaiseStatementExpressionsTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        RaiseStatementExpressionsTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
-        RaiseStatementExpressionsTransportSlot::True(inner) => AnyTransport::True(inner),
-        RaiseStatementExpressionsTransportSlot::False(inner) => AnyTransport::False(inner),
-        RaiseStatementExpressionsTransportSlot::None(inner) => AnyTransport::None(inner),
-        RaiseStatementExpressionsTransportSlot::UnaryOperator(inner) => AnyTransport::UnaryOperator(inner),
-        RaiseStatementExpressionsTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        RaiseStatementExpressionsTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        RaiseStatementExpressionsTransportSlot::Call(inner) => AnyTransport::Call(inner),
-        RaiseStatementExpressionsTransportSlot::List(inner) => AnyTransport::List(inner),
-        RaiseStatementExpressionsTransportSlot::ListComprehension(inner) => AnyTransport::ListComprehension(inner),
-        RaiseStatementExpressionsTransportSlot::Dictionary(inner) => AnyTransport::Dictionary(inner),
-        RaiseStatementExpressionsTransportSlot::DictionaryComprehension(inner) => AnyTransport::DictionaryComprehension(inner),
-        RaiseStatementExpressionsTransportSlot::Set(inner) => AnyTransport::Set(inner),
-        RaiseStatementExpressionsTransportSlot::SetComprehension(inner) => AnyTransport::SetComprehension(inner),
-        RaiseStatementExpressionsTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
-        RaiseStatementExpressionsTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
-        RaiseStatementExpressionsTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        RaiseStatementExpressionsTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
-        RaiseStatementExpressionsTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        RaiseStatementExpressionsTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
-        RaiseStatementExpressionsTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
-        RaiseStatementExpressionsTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
-        RaiseStatementExpressionsTransportSlot::ExpressionList(inner) => AnyTransport::ExpressionList(inner),
-        RaiseStatementExpressionsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for RaiseStatementExpressionsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -9960,13 +9698,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IfStatementAlternativeTranspor
     }
 }
 
-fn if_statement_alternative_transport_slot_to_any(t: IfStatementAlternativeTransportSlot) -> AnyTransport {
-    match t {
-        IfStatementAlternativeTransportSlot::ElifClause(inner) => AnyTransport::ElifClause(inner),
-        IfStatementAlternativeTransportSlot::ElseClause(inner) => AnyTransport::ElseClause(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for IfStatementAlternativeTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -10084,13 +9815,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MatchBlockContentTransportSlot
     }
 }
 
-fn match_block_content_transport_slot_to_any(t: MatchBlockContentTransportSlot) -> AnyTransport {
-    match t {
-        MatchBlockContentTransportSlot::MatchBlockBlock(inner) => AnyTransport::MatchBlockBlock(inner),
-        MatchBlockContentTransportSlot::MatchBlockEmpty(inner) => AnyTransport::MatchBlockEmpty(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for MatchBlockContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -10180,12 +9904,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ForStatementAsyncTransportSlot
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ForStatementAsyncTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn for_statement_async_transport_slot_to_any(t: ForStatementAsyncTransportSlot) -> AnyTransport {
-    match t {
-        ForStatementAsyncTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
     }
 }
 
@@ -10432,25 +10150,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ForStatementLeftTransportSlot>
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ForStatementLeftTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn for_statement_left_transport_slot_to_any(t: ForStatementLeftTransportSlot) -> AnyTransport {
-    match t {
-        ForStatementLeftTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ForStatementLeftTransportSlot::PrintKeyword(inner) => AnyTransport::PrintKeyword(inner),
-        ForStatementLeftTransportSlot::ExecKeyword(inner) => AnyTransport::ExecKeyword(inner),
-        ForStatementLeftTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        ForStatementLeftTransportSlot::AwaitKeyword(inner) => AnyTransport::AwaitKeyword(inner),
-        ForStatementLeftTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        ForStatementLeftTransportSlot::MatchKeyword(inner) => AnyTransport::MatchKeyword(inner),
-        ForStatementLeftTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        ForStatementLeftTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        ForStatementLeftTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        ForStatementLeftTransportSlot::TuplePattern(inner) => AnyTransport::TuplePattern(inner),
-        ForStatementLeftTransportSlot::ListPattern(inner) => AnyTransport::ListPattern(inner),
-        ForStatementLeftTransportSlot::PatternList(inner) => AnyTransport::PatternList(inner),
-        ForStatementLeftTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -11076,58 +10775,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ForStatementRightTransportSlot
     }
 }
 
-fn for_statement_right_transport_slot_to_any(t: ForStatementRightTransportSlot) -> AnyTransport {
-    match t {
-        ForStatementRightTransportSlot::ComparisonOperator(inner) => AnyTransport::ComparisonOperator(inner),
-        ForStatementRightTransportSlot::NotOperator(inner) => AnyTransport::NotOperator(inner),
-        ForStatementRightTransportSlot::BooleanOperator(inner) => AnyTransport::BooleanOperator(inner),
-        ForStatementRightTransportSlot::Lambda(inner) => AnyTransport::Lambda(inner),
-        ForStatementRightTransportSlot::Await(inner) => AnyTransport::Await(inner),
-        ForStatementRightTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
-        ForStatementRightTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ForStatementRightTransportSlot::PrintKeyword(inner) => AnyTransport::PrintKeyword(inner),
-        ForStatementRightTransportSlot::ExecKeyword(inner) => AnyTransport::ExecKeyword(inner),
-        ForStatementRightTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        ForStatementRightTransportSlot::AwaitKeyword(inner) => AnyTransport::AwaitKeyword(inner),
-        ForStatementRightTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        ForStatementRightTransportSlot::MatchKeyword(inner) => AnyTransport::MatchKeyword(inner),
-        ForStatementRightTransportSlot::String(inner) => AnyTransport::String(inner),
-        ForStatementRightTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
-        ForStatementRightTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
-        ForStatementRightTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
-        ForStatementRightTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
-        ForStatementRightTransportSlot::IntegerDecimalLong(inner) => AnyTransport::IntegerDecimalLong(inner),
-        ForStatementRightTransportSlot::IntegerDecimalImaginary(inner) => AnyTransport::IntegerDecimalImaginary(inner),
-        ForStatementRightTransportSlot::IntegerDecimalPlain(inner) => AnyTransport::IntegerDecimalPlain(inner),
-        ForStatementRightTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
-        ForStatementRightTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        ForStatementRightTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
-        ForStatementRightTransportSlot::True(inner) => AnyTransport::True(inner),
-        ForStatementRightTransportSlot::False(inner) => AnyTransport::False(inner),
-        ForStatementRightTransportSlot::None(inner) => AnyTransport::None(inner),
-        ForStatementRightTransportSlot::UnaryOperator(inner) => AnyTransport::UnaryOperator(inner),
-        ForStatementRightTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        ForStatementRightTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        ForStatementRightTransportSlot::Call(inner) => AnyTransport::Call(inner),
-        ForStatementRightTransportSlot::List(inner) => AnyTransport::List(inner),
-        ForStatementRightTransportSlot::ListComprehension(inner) => AnyTransport::ListComprehension(inner),
-        ForStatementRightTransportSlot::Dictionary(inner) => AnyTransport::Dictionary(inner),
-        ForStatementRightTransportSlot::DictionaryComprehension(inner) => AnyTransport::DictionaryComprehension(inner),
-        ForStatementRightTransportSlot::Set(inner) => AnyTransport::Set(inner),
-        ForStatementRightTransportSlot::SetComprehension(inner) => AnyTransport::SetComprehension(inner),
-        ForStatementRightTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
-        ForStatementRightTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
-        ForStatementRightTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        ForStatementRightTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
-        ForStatementRightTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        ForStatementRightTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
-        ForStatementRightTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
-        ForStatementRightTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
-        ForStatementRightTransportSlot::ExpressionList(inner) => AnyTransport::ExpressionList(inner),
-        ForStatementRightTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for ForStatementRightTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -11265,12 +10912,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseGroupTransportSlot
     }
 }
 
-fn except_clause_group_transport_slot_to_any(t: ExceptClauseGroupTransportSlot) -> AnyTransport {
-    match t {
-        ExceptClauseGroupTransportSlot::Literal7_73_74_61_72 => AnyTransport::Literal7_73_74_61_72,
-    }
-}
-
 impl ::sittir_core::render::Render for ExceptClauseGroupTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -11362,12 +11003,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<WithStatementAsyncTransportSlo
     }
 }
 
-fn with_statement_async_transport_slot_to_any(t: WithStatementAsyncTransportSlot) -> AnyTransport {
-    match t {
-        WithStatementAsyncTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
-    }
-}
-
 impl ::sittir_core::render::Render for WithStatementAsyncTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -11456,12 +11091,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionDefinitionAsyncTranspo
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         FunctionDefinitionAsyncTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn function_definition_async_transport_slot_to_any(t: FunctionDefinitionAsyncTransportSlot) -> AnyTransport {
-    match t {
-        FunctionDefinitionAsyncTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
     }
 }
 
@@ -11626,14 +11255,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExecStatementCodeTransportSlot
     }
 }
 
-fn exec_statement_code_transport_slot_to_any(t: ExecStatementCodeTransportSlot) -> AnyTransport {
-    match t {
-        ExecStatementCodeTransportSlot::String(inner) => AnyTransport::String(inner),
-        ExecStatementCodeTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ExecStatementCodeTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for ExecStatementCodeTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -11752,13 +11373,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ParenthesizedListSplatContentT
     }
 }
 
-fn parenthesized_list_splat_content_transport_slot_to_any(t: ParenthesizedListSplatContentTransportSlot) -> AnyTransport {
-    match t {
-        ParenthesizedListSplatContentTransportSlot::ParenthesizedListSplat(inner) => AnyTransport::ParenthesizedListSplat(inner),
-        ParenthesizedListSplatContentTransportSlot::ListSplat(inner) => AnyTransport::ListSplat(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for ParenthesizedListSplatContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -11873,13 +11487,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DecoratedDefinitionDefinitionT
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         DecoratedDefinitionDefinitionTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn decorated_definition_definition_transport_slot_to_any(t: DecoratedDefinitionDefinitionTransportSlot) -> AnyTransport {
-    match t {
-        DecoratedDefinitionDefinitionTransportSlot::ClassDefinition(inner) => AnyTransport::ClassDefinition(inner),
-        DecoratedDefinitionDefinitionTransportSlot::FunctionDefinition(inner) => AnyTransport::FunctionDefinition(inner),
     }
 }
 
@@ -12014,14 +11621,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CasePatternContentTransportSlo
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         CasePatternContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn case_pattern_content_transport_slot_to_any(t: CasePatternContentTransportSlot) -> AnyTransport {
-    match t {
-        CasePatternContentTransportSlot::CaseAsPattern(inner) => AnyTransport::CaseAsPattern(inner),
-        CasePatternContentTransportSlot::KeywordPattern(inner) => AnyTransport::KeywordPattern(inner),
-        CasePatternContentTransportSlot::SimplePattern(inner) => AnyTransport::SimplePattern(inner),
     }
 }
 
@@ -12267,26 +11866,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SimplePatternContentTransportS
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         SimplePatternContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn simple_pattern_content_transport_slot_to_any(t: SimplePatternContentTransportSlot) -> AnyTransport {
-    match t {
-        SimplePatternContentTransportSlot::ClassPattern(inner) => AnyTransport::ClassPattern(inner),
-        SimplePatternContentTransportSlot::SplatPattern(inner) => AnyTransport::SplatPattern(inner),
-        SimplePatternContentTransportSlot::UnionPattern(inner) => AnyTransport::UnionPattern(inner),
-        SimplePatternContentTransportSlot::CaseListPattern(inner) => AnyTransport::CaseListPattern(inner),
-        SimplePatternContentTransportSlot::CaseTuplePattern(inner) => AnyTransport::CaseTuplePattern(inner),
-        SimplePatternContentTransportSlot::DictPattern(inner) => AnyTransport::DictPattern(inner),
-        SimplePatternContentTransportSlot::String(inner) => AnyTransport::String(inner),
-        SimplePatternContentTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
-        SimplePatternContentTransportSlot::SimplePatternNegative(inner) => AnyTransport::SimplePatternNegative(inner),
-        SimplePatternContentTransportSlot::ComplexPattern(inner) => AnyTransport::ComplexPattern(inner),
-        SimplePatternContentTransportSlot::DottedName(inner) => AnyTransport::DottedName(inner),
-        SimplePatternContentTransportSlot::Literal8_74_72_75_65 => AnyTransport::Literal8_74_72_75_65,
-        SimplePatternContentTransportSlot::Literal9_66_61_6c_73_65 => AnyTransport::Literal9_66_61_6c_73_65,
-        SimplePatternContentTransportSlot::Literal10_6e_6f_6e_65 => AnyTransport::Literal10_6e_6f_6e_65,
-        SimplePatternContentTransportSlot::Literal11_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => AnyTransport::Literal11_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e,
     }
 }
 
@@ -12547,26 +12126,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<UnionPatternPatternsTransportS
     }
 }
 
-fn union_pattern_patterns_transport_slot_to_any(t: UnionPatternPatternsTransportSlot) -> AnyTransport {
-    match t {
-        UnionPatternPatternsTransportSlot::ClassPattern(inner) => AnyTransport::ClassPattern(inner),
-        UnionPatternPatternsTransportSlot::SplatPattern(inner) => AnyTransport::SplatPattern(inner),
-        UnionPatternPatternsTransportSlot::UnionPattern(inner) => AnyTransport::UnionPattern(inner),
-        UnionPatternPatternsTransportSlot::CaseListPattern(inner) => AnyTransport::CaseListPattern(inner),
-        UnionPatternPatternsTransportSlot::CaseTuplePattern(inner) => AnyTransport::CaseTuplePattern(inner),
-        UnionPatternPatternsTransportSlot::DictPattern(inner) => AnyTransport::DictPattern(inner),
-        UnionPatternPatternsTransportSlot::String(inner) => AnyTransport::String(inner),
-        UnionPatternPatternsTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
-        UnionPatternPatternsTransportSlot::SimplePatternNegative(inner) => AnyTransport::SimplePatternNegative(inner),
-        UnionPatternPatternsTransportSlot::ComplexPattern(inner) => AnyTransport::ComplexPattern(inner),
-        UnionPatternPatternsTransportSlot::DottedName(inner) => AnyTransport::DottedName(inner),
-        UnionPatternPatternsTransportSlot::Literal8_74_72_75_65 => AnyTransport::Literal8_74_72_75_65,
-        UnionPatternPatternsTransportSlot::Literal9_66_61_6c_73_65 => AnyTransport::Literal9_66_61_6c_73_65,
-        UnionPatternPatternsTransportSlot::Literal10_6e_6f_6e_65 => AnyTransport::Literal10_6e_6f_6e_65,
-        UnionPatternPatternsTransportSlot::Literal11_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => AnyTransport::Literal11_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e,
-    }
-}
-
 impl ::sittir_core::render::Render for UnionPatternPatternsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -12821,26 +12380,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<KeyValuePatternKeyTransportSlo
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         KeyValuePatternKeyTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn key_value_pattern_key_transport_slot_to_any(t: KeyValuePatternKeyTransportSlot) -> AnyTransport {
-    match t {
-        KeyValuePatternKeyTransportSlot::ClassPattern(inner) => AnyTransport::ClassPattern(inner),
-        KeyValuePatternKeyTransportSlot::SplatPattern(inner) => AnyTransport::SplatPattern(inner),
-        KeyValuePatternKeyTransportSlot::UnionPattern(inner) => AnyTransport::UnionPattern(inner),
-        KeyValuePatternKeyTransportSlot::CaseListPattern(inner) => AnyTransport::CaseListPattern(inner),
-        KeyValuePatternKeyTransportSlot::CaseTuplePattern(inner) => AnyTransport::CaseTuplePattern(inner),
-        KeyValuePatternKeyTransportSlot::DictPattern(inner) => AnyTransport::DictPattern(inner),
-        KeyValuePatternKeyTransportSlot::String(inner) => AnyTransport::String(inner),
-        KeyValuePatternKeyTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
-        KeyValuePatternKeyTransportSlot::SimplePatternNegative(inner) => AnyTransport::SimplePatternNegative(inner),
-        KeyValuePatternKeyTransportSlot::ComplexPattern(inner) => AnyTransport::ComplexPattern(inner),
-        KeyValuePatternKeyTransportSlot::DottedName(inner) => AnyTransport::DottedName(inner),
-        KeyValuePatternKeyTransportSlot::Literal8_74_72_75_65 => AnyTransport::Literal8_74_72_75_65,
-        KeyValuePatternKeyTransportSlot::Literal9_66_61_6c_73_65 => AnyTransport::Literal9_66_61_6c_73_65,
-        KeyValuePatternKeyTransportSlot::Literal10_6e_6f_6e_65 => AnyTransport::Literal10_6e_6f_6e_65,
-        KeyValuePatternKeyTransportSlot::Literal11_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => AnyTransport::Literal11_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e,
     }
 }
 
@@ -13101,26 +12640,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<KeywordPatternValueTransportSl
     }
 }
 
-fn keyword_pattern_value_transport_slot_to_any(t: KeywordPatternValueTransportSlot) -> AnyTransport {
-    match t {
-        KeywordPatternValueTransportSlot::ClassPattern(inner) => AnyTransport::ClassPattern(inner),
-        KeywordPatternValueTransportSlot::SplatPattern(inner) => AnyTransport::SplatPattern(inner),
-        KeywordPatternValueTransportSlot::UnionPattern(inner) => AnyTransport::UnionPattern(inner),
-        KeywordPatternValueTransportSlot::CaseListPattern(inner) => AnyTransport::CaseListPattern(inner),
-        KeywordPatternValueTransportSlot::CaseTuplePattern(inner) => AnyTransport::CaseTuplePattern(inner),
-        KeywordPatternValueTransportSlot::DictPattern(inner) => AnyTransport::DictPattern(inner),
-        KeywordPatternValueTransportSlot::String(inner) => AnyTransport::String(inner),
-        KeywordPatternValueTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
-        KeywordPatternValueTransportSlot::SimplePatternNegative(inner) => AnyTransport::SimplePatternNegative(inner),
-        KeywordPatternValueTransportSlot::ComplexPattern(inner) => AnyTransport::ComplexPattern(inner),
-        KeywordPatternValueTransportSlot::DottedName(inner) => AnyTransport::DottedName(inner),
-        KeywordPatternValueTransportSlot::Literal8_74_72_75_65 => AnyTransport::Literal8_74_72_75_65,
-        KeywordPatternValueTransportSlot::Literal9_66_61_6c_73_65 => AnyTransport::Literal9_66_61_6c_73_65,
-        KeywordPatternValueTransportSlot::Literal10_6e_6f_6e_65 => AnyTransport::Literal10_6e_6f_6e_65,
-        KeywordPatternValueTransportSlot::Literal11_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => AnyTransport::Literal11_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e,
-    }
-}
-
 impl ::sittir_core::render::Render for KeywordPatternValueTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -13228,13 +12747,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SplatPatternOperatorTransportS
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         SplatPatternOperatorTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn splat_pattern_operator_transport_slot_to_any(t: SplatPatternOperatorTransportSlot) -> AnyTransport {
-    match t {
-        SplatPatternOperatorTransportSlot::Literal7_73_74_61_72 => AnyTransport::Literal7_73_74_61_72,
-        SplatPatternOperatorTransportSlot::Literal12_73_74_61_72_5f_73_74_61_72 => AnyTransport::Literal12_73_74_61_72_5f_73_74_61_72,
     }
 }
 
@@ -13396,14 +12908,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SplatPatternNameTransportSlot>
     }
 }
 
-fn splat_pattern_name_transport_slot_to_any(t: SplatPatternNameTransportSlot) -> AnyTransport {
-    match t {
-        SplatPatternNameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        SplatPatternNameTransportSlot::Literal13_75_6e_64_65_72_73_63_6f_72_65 => AnyTransport::Literal13_75_6e_64_65_72_73_63_6f_72_65,
-        SplatPatternNameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for SplatPatternNameTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -13499,12 +13003,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ComplexPatternSignTransportSlo
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ComplexPatternSignTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn complex_pattern_sign_transport_slot_to_any(t: ComplexPatternSignTransportSlot) -> AnyTransport {
-    match t {
-        ComplexPatternSignTransportSlot::Literal14_64_61_73_68 => AnyTransport::Literal14_64_61_73_68,
     }
 }
 
@@ -13710,21 +13208,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ComplexPatternRealTransportSlo
     }
 }
 
-fn complex_pattern_real_transport_slot_to_any(t: ComplexPatternRealTransportSlot) -> AnyTransport {
-    match t {
-        ComplexPatternRealTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
-        ComplexPatternRealTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
-        ComplexPatternRealTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
-        ComplexPatternRealTransportSlot::IntegerDecimalLong(inner) => AnyTransport::IntegerDecimalLong(inner),
-        ComplexPatternRealTransportSlot::IntegerDecimalImaginary(inner) => AnyTransport::IntegerDecimalImaginary(inner),
-        ComplexPatternRealTransportSlot::IntegerDecimalPlain(inner) => AnyTransport::IntegerDecimalPlain(inner),
-        ComplexPatternRealTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
-        ComplexPatternRealTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        ComplexPatternRealTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
-        ComplexPatternRealTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for ComplexPatternRealTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -13827,13 +13310,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ComplexPatternOperatorTranspor
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ComplexPatternOperatorTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn complex_pattern_operator_transport_slot_to_any(t: ComplexPatternOperatorTransportSlot) -> AnyTransport {
-    match t {
-        ComplexPatternOperatorTransportSlot::Literal15_70_6c_75_73 => AnyTransport::Literal15_70_6c_75_73,
-        ComplexPatternOperatorTransportSlot::Literal14_64_61_73_68 => AnyTransport::Literal14_64_61_73_68,
     }
 }
 
@@ -14040,21 +13516,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ComplexPatternImaginaryTranspo
     }
 }
 
-fn complex_pattern_imaginary_transport_slot_to_any(t: ComplexPatternImaginaryTransportSlot) -> AnyTransport {
-    match t {
-        ComplexPatternImaginaryTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
-        ComplexPatternImaginaryTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
-        ComplexPatternImaginaryTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
-        ComplexPatternImaginaryTransportSlot::IntegerDecimalLong(inner) => AnyTransport::IntegerDecimalLong(inner),
-        ComplexPatternImaginaryTransportSlot::IntegerDecimalImaginary(inner) => AnyTransport::IntegerDecimalImaginary(inner),
-        ComplexPatternImaginaryTransportSlot::IntegerDecimalPlain(inner) => AnyTransport::IntegerDecimalPlain(inner),
-        ComplexPatternImaginaryTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
-        ComplexPatternImaginaryTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        ComplexPatternImaginaryTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
-        ComplexPatternImaginaryTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for ComplexPatternImaginaryTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -14222,14 +13683,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DefaultParameterNameTransportS
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         DefaultParameterNameTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn default_parameter_name_transport_slot_to_any(t: DefaultParameterNameTransportSlot) -> AnyTransport {
-    match t {
-        DefaultParameterNameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        DefaultParameterNameTransportSlot::TuplePattern(inner) => AnyTransport::TuplePattern(inner),
-        DefaultParameterNameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -14410,21 +13863,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ListSplatPatternTargetTranspor
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ListSplatPatternTargetTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn list_splat_pattern_target_transport_slot_to_any(t: ListSplatPatternTargetTransportSlot) -> AnyTransport {
-    match t {
-        ListSplatPatternTargetTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ListSplatPatternTargetTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        ListSplatPatternTargetTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        ListSplatPatternTargetTransportSlot::Literal1_70_72_69_6e_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal1_70_72_69_6e_74_5f_6b_65_79_77_6f_72_64,
-        ListSplatPatternTargetTransportSlot::Literal2_65_78_65_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal2_65_78_65_63_5f_6b_65_79_77_6f_72_64,
-        ListSplatPatternTargetTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
-        ListSplatPatternTargetTransportSlot::Literal4_61_77_61_69_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal4_61_77_61_69_74_5f_6b_65_79_77_6f_72_64,
-        ListSplatPatternTargetTransportSlot::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64,
-        ListSplatPatternTargetTransportSlot::Literal6_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal6_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64,
-        ListSplatPatternTargetTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -14615,21 +14053,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DictionarySplatPatternTargetTr
     }
 }
 
-fn dictionary_splat_pattern_target_transport_slot_to_any(t: DictionarySplatPatternTargetTransportSlot) -> AnyTransport {
-    match t {
-        DictionarySplatPatternTargetTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        DictionarySplatPatternTargetTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        DictionarySplatPatternTargetTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        DictionarySplatPatternTargetTransportSlot::Literal1_70_72_69_6e_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal1_70_72_69_6e_74_5f_6b_65_79_77_6f_72_64,
-        DictionarySplatPatternTargetTransportSlot::Literal2_65_78_65_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal2_65_78_65_63_5f_6b_65_79_77_6f_72_64,
-        DictionarySplatPatternTargetTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
-        DictionarySplatPatternTargetTransportSlot::Literal4_61_77_61_69_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal4_61_77_61_69_74_5f_6b_65_79_77_6f_72_64,
-        DictionarySplatPatternTargetTransportSlot::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64,
-        DictionarySplatPatternTargetTransportSlot::Literal6_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal6_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64,
-        DictionarySplatPatternTargetTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for DictionarySplatPatternTargetTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -14732,13 +14155,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BooleanOperatorOperatorTranspo
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         BooleanOperatorOperatorTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn boolean_operator_operator_transport_slot_to_any(t: BooleanOperatorOperatorTransportSlot) -> AnyTransport {
-    match t {
-        BooleanOperatorOperatorTransportSlot::Literal16_61_6e_64_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal16_61_6e_64_5f_6b_65_79_77_6f_72_64,
-        BooleanOperatorOperatorTransportSlot::Literal17_6f_72_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal17_6f_72_5f_6b_65_79_77_6f_72_64,
     }
 }
 
@@ -14894,24 +14310,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BinaryOperatorOperatorTranspor
     }
 }
 
-fn binary_operator_operator_transport_slot_to_any(t: BinaryOperatorOperatorTransportSlot) -> AnyTransport {
-    match t {
-        BinaryOperatorOperatorTransportSlot::Literal15_70_6c_75_73 => AnyTransport::Literal15_70_6c_75_73,
-        BinaryOperatorOperatorTransportSlot::Literal14_64_61_73_68 => AnyTransport::Literal14_64_61_73_68,
-        BinaryOperatorOperatorTransportSlot::Literal7_73_74_61_72 => AnyTransport::Literal7_73_74_61_72,
-        BinaryOperatorOperatorTransportSlot::Literal18_61_74 => AnyTransport::Literal18_61_74,
-        BinaryOperatorOperatorTransportSlot::Literal19_73_6c_61_73_68 => AnyTransport::Literal19_73_6c_61_73_68,
-        BinaryOperatorOperatorTransportSlot::Literal20_70_65_72_63_65_6e_74 => AnyTransport::Literal20_70_65_72_63_65_6e_74,
-        BinaryOperatorOperatorTransportSlot::Literal21_73_6c_61_73_68_5f_73_6c_61_73_68 => AnyTransport::Literal21_73_6c_61_73_68_5f_73_6c_61_73_68,
-        BinaryOperatorOperatorTransportSlot::Literal12_73_74_61_72_5f_73_74_61_72 => AnyTransport::Literal12_73_74_61_72_5f_73_74_61_72,
-        BinaryOperatorOperatorTransportSlot::Literal22_70_69_70_65 => AnyTransport::Literal22_70_69_70_65,
-        BinaryOperatorOperatorTransportSlot::Literal23_61_6d_70 => AnyTransport::Literal23_61_6d_70,
-        BinaryOperatorOperatorTransportSlot::Literal24_63_61_72_65_74 => AnyTransport::Literal24_63_61_72_65_74,
-        BinaryOperatorOperatorTransportSlot::Literal25_6c_74_5f_6c_74 => AnyTransport::Literal25_6c_74_5f_6c_74,
-        BinaryOperatorOperatorTransportSlot::Literal26_67_74_5f_67_74 => AnyTransport::Literal26_67_74_5f_67_74,
-    }
-}
-
 impl ::sittir_core::render::Render for BinaryOperatorOperatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -15022,14 +14420,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<UnaryOperatorOperatorTransport
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         UnaryOperatorOperatorTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn unary_operator_operator_transport_slot_to_any(t: UnaryOperatorOperatorTransportSlot) -> AnyTransport {
-    match t {
-        UnaryOperatorOperatorTransportSlot::Literal15_70_6c_75_73 => AnyTransport::Literal15_70_6c_75_73,
-        UnaryOperatorOperatorTransportSlot::Literal14_64_61_73_68 => AnyTransport::Literal14_64_61_73_68,
-        UnaryOperatorOperatorTransportSlot::Literal27_74_69_6c_64_65 => AnyTransport::Literal27_74_69_6c_64_65,
     }
 }
 
@@ -15644,58 +15034,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LambdaWithinForInClauseBodyTra
     }
 }
 
-fn lambda_within_for_in_clause_body_transport_slot_to_any(t: LambdaWithinForInClauseBodyTransportSlot) -> AnyTransport {
-    match t {
-        LambdaWithinForInClauseBodyTransportSlot::ComparisonOperator(inner) => AnyTransport::ComparisonOperator(inner),
-        LambdaWithinForInClauseBodyTransportSlot::NotOperator(inner) => AnyTransport::NotOperator(inner),
-        LambdaWithinForInClauseBodyTransportSlot::BooleanOperator(inner) => AnyTransport::BooleanOperator(inner),
-        LambdaWithinForInClauseBodyTransportSlot::Lambda(inner) => AnyTransport::Lambda(inner),
-        LambdaWithinForInClauseBodyTransportSlot::Await(inner) => AnyTransport::Await(inner),
-        LambdaWithinForInClauseBodyTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
-        LambdaWithinForInClauseBodyTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        LambdaWithinForInClauseBodyTransportSlot::PrintKeyword(inner) => AnyTransport::PrintKeyword(inner),
-        LambdaWithinForInClauseBodyTransportSlot::ExecKeyword(inner) => AnyTransport::ExecKeyword(inner),
-        LambdaWithinForInClauseBodyTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        LambdaWithinForInClauseBodyTransportSlot::AwaitKeyword(inner) => AnyTransport::AwaitKeyword(inner),
-        LambdaWithinForInClauseBodyTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        LambdaWithinForInClauseBodyTransportSlot::MatchKeyword(inner) => AnyTransport::MatchKeyword(inner),
-        LambdaWithinForInClauseBodyTransportSlot::String(inner) => AnyTransport::String(inner),
-        LambdaWithinForInClauseBodyTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
-        LambdaWithinForInClauseBodyTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
-        LambdaWithinForInClauseBodyTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
-        LambdaWithinForInClauseBodyTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
-        LambdaWithinForInClauseBodyTransportSlot::IntegerDecimalLong(inner) => AnyTransport::IntegerDecimalLong(inner),
-        LambdaWithinForInClauseBodyTransportSlot::IntegerDecimalImaginary(inner) => AnyTransport::IntegerDecimalImaginary(inner),
-        LambdaWithinForInClauseBodyTransportSlot::IntegerDecimalPlain(inner) => AnyTransport::IntegerDecimalPlain(inner),
-        LambdaWithinForInClauseBodyTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
-        LambdaWithinForInClauseBodyTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        LambdaWithinForInClauseBodyTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
-        LambdaWithinForInClauseBodyTransportSlot::True(inner) => AnyTransport::True(inner),
-        LambdaWithinForInClauseBodyTransportSlot::False(inner) => AnyTransport::False(inner),
-        LambdaWithinForInClauseBodyTransportSlot::None(inner) => AnyTransport::None(inner),
-        LambdaWithinForInClauseBodyTransportSlot::UnaryOperator(inner) => AnyTransport::UnaryOperator(inner),
-        LambdaWithinForInClauseBodyTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        LambdaWithinForInClauseBodyTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        LambdaWithinForInClauseBodyTransportSlot::Call(inner) => AnyTransport::Call(inner),
-        LambdaWithinForInClauseBodyTransportSlot::List(inner) => AnyTransport::List(inner),
-        LambdaWithinForInClauseBodyTransportSlot::ListComprehension(inner) => AnyTransport::ListComprehension(inner),
-        LambdaWithinForInClauseBodyTransportSlot::Dictionary(inner) => AnyTransport::Dictionary(inner),
-        LambdaWithinForInClauseBodyTransportSlot::DictionaryComprehension(inner) => AnyTransport::DictionaryComprehension(inner),
-        LambdaWithinForInClauseBodyTransportSlot::Set(inner) => AnyTransport::Set(inner),
-        LambdaWithinForInClauseBodyTransportSlot::SetComprehension(inner) => AnyTransport::SetComprehension(inner),
-        LambdaWithinForInClauseBodyTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
-        LambdaWithinForInClauseBodyTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
-        LambdaWithinForInClauseBodyTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        LambdaWithinForInClauseBodyTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
-        LambdaWithinForInClauseBodyTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        LambdaWithinForInClauseBodyTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
-        LambdaWithinForInClauseBodyTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
-        LambdaWithinForInClauseBodyTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
-        LambdaWithinForInClauseBodyTransportSlot::LambdaWithinForInClause(inner) => AnyTransport::LambdaWithinForInClause(inner),
-        LambdaWithinForInClauseBodyTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for LambdaWithinForInClauseBodyTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -15988,25 +15326,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AugmentedAssignmentLeftTranspo
     }
 }
 
-fn augmented_assignment_left_transport_slot_to_any(t: AugmentedAssignmentLeftTransportSlot) -> AnyTransport {
-    match t {
-        AugmentedAssignmentLeftTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        AugmentedAssignmentLeftTransportSlot::PrintKeyword(inner) => AnyTransport::PrintKeyword(inner),
-        AugmentedAssignmentLeftTransportSlot::ExecKeyword(inner) => AnyTransport::ExecKeyword(inner),
-        AugmentedAssignmentLeftTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        AugmentedAssignmentLeftTransportSlot::AwaitKeyword(inner) => AnyTransport::AwaitKeyword(inner),
-        AugmentedAssignmentLeftTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        AugmentedAssignmentLeftTransportSlot::MatchKeyword(inner) => AnyTransport::MatchKeyword(inner),
-        AugmentedAssignmentLeftTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        AugmentedAssignmentLeftTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        AugmentedAssignmentLeftTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        AugmentedAssignmentLeftTransportSlot::TuplePattern(inner) => AnyTransport::TuplePattern(inner),
-        AugmentedAssignmentLeftTransportSlot::ListPattern(inner) => AnyTransport::ListPattern(inner),
-        AugmentedAssignmentLeftTransportSlot::PatternList(inner) => AnyTransport::PatternList(inner),
-        AugmentedAssignmentLeftTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for AugmentedAssignmentLeftTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -16168,24 +15487,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AugmentedAssignmentOperatorTra
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         AugmentedAssignmentOperatorTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn augmented_assignment_operator_transport_slot_to_any(t: AugmentedAssignmentOperatorTransportSlot) -> AnyTransport {
-    match t {
-        AugmentedAssignmentOperatorTransportSlot::Literal28_70_6c_75_73_5f_65_71 => AnyTransport::Literal28_70_6c_75_73_5f_65_71,
-        AugmentedAssignmentOperatorTransportSlot::Literal29_64_61_73_68_5f_65_71 => AnyTransport::Literal29_64_61_73_68_5f_65_71,
-        AugmentedAssignmentOperatorTransportSlot::Literal30_73_74_61_72_5f_65_71 => AnyTransport::Literal30_73_74_61_72_5f_65_71,
-        AugmentedAssignmentOperatorTransportSlot::Literal31_73_6c_61_73_68_5f_65_71 => AnyTransport::Literal31_73_6c_61_73_68_5f_65_71,
-        AugmentedAssignmentOperatorTransportSlot::Literal32_61_74_5f_65_71 => AnyTransport::Literal32_61_74_5f_65_71,
-        AugmentedAssignmentOperatorTransportSlot::Literal33_73_6c_61_73_68_5f_73_6c_61_73_68_5f_65_71 => AnyTransport::Literal33_73_6c_61_73_68_5f_73_6c_61_73_68_5f_65_71,
-        AugmentedAssignmentOperatorTransportSlot::Literal34_70_65_72_63_65_6e_74_5f_65_71 => AnyTransport::Literal34_70_65_72_63_65_6e_74_5f_65_71,
-        AugmentedAssignmentOperatorTransportSlot::Literal35_73_74_61_72_5f_73_74_61_72_5f_65_71 => AnyTransport::Literal35_73_74_61_72_5f_73_74_61_72_5f_65_71,
-        AugmentedAssignmentOperatorTransportSlot::Literal36_67_74_5f_67_74_5f_65_71 => AnyTransport::Literal36_67_74_5f_67_74_5f_65_71,
-        AugmentedAssignmentOperatorTransportSlot::Literal37_6c_74_5f_6c_74_5f_65_71 => AnyTransport::Literal37_6c_74_5f_6c_74_5f_65_71,
-        AugmentedAssignmentOperatorTransportSlot::Literal38_61_6d_70_5f_65_71 => AnyTransport::Literal38_61_6d_70_5f_65_71,
-        AugmentedAssignmentOperatorTransportSlot::Literal39_63_61_72_65_74_5f_65_71 => AnyTransport::Literal39_63_61_72_65_74_5f_65_71,
-        AugmentedAssignmentOperatorTransportSlot::Literal40_70_69_70_65_5f_65_71 => AnyTransport::Literal40_70_69_70_65_5f_65_71,
     }
 }
 
@@ -16876,64 +16177,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AugmentedAssignmentRightTransp
     }
 }
 
-fn augmented_assignment_right_transport_slot_to_any(t: AugmentedAssignmentRightTransportSlot) -> AnyTransport {
-    match t {
-        AugmentedAssignmentRightTransportSlot::ComparisonOperator(inner) => AnyTransport::ComparisonOperator(inner),
-        AugmentedAssignmentRightTransportSlot::NotOperator(inner) => AnyTransport::NotOperator(inner),
-        AugmentedAssignmentRightTransportSlot::BooleanOperator(inner) => AnyTransport::BooleanOperator(inner),
-        AugmentedAssignmentRightTransportSlot::Lambda(inner) => AnyTransport::Lambda(inner),
-        AugmentedAssignmentRightTransportSlot::Await(inner) => AnyTransport::Await(inner),
-        AugmentedAssignmentRightTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
-        AugmentedAssignmentRightTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        AugmentedAssignmentRightTransportSlot::PrintKeyword(inner) => AnyTransport::PrintKeyword(inner),
-        AugmentedAssignmentRightTransportSlot::ExecKeyword(inner) => AnyTransport::ExecKeyword(inner),
-        AugmentedAssignmentRightTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        AugmentedAssignmentRightTransportSlot::AwaitKeyword(inner) => AnyTransport::AwaitKeyword(inner),
-        AugmentedAssignmentRightTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        AugmentedAssignmentRightTransportSlot::MatchKeyword(inner) => AnyTransport::MatchKeyword(inner),
-        AugmentedAssignmentRightTransportSlot::String(inner) => AnyTransport::String(inner),
-        AugmentedAssignmentRightTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
-        AugmentedAssignmentRightTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
-        AugmentedAssignmentRightTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
-        AugmentedAssignmentRightTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
-        AugmentedAssignmentRightTransportSlot::IntegerDecimalLong(inner) => AnyTransport::IntegerDecimalLong(inner),
-        AugmentedAssignmentRightTransportSlot::IntegerDecimalImaginary(inner) => AnyTransport::IntegerDecimalImaginary(inner),
-        AugmentedAssignmentRightTransportSlot::IntegerDecimalPlain(inner) => AnyTransport::IntegerDecimalPlain(inner),
-        AugmentedAssignmentRightTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
-        AugmentedAssignmentRightTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        AugmentedAssignmentRightTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
-        AugmentedAssignmentRightTransportSlot::True(inner) => AnyTransport::True(inner),
-        AugmentedAssignmentRightTransportSlot::False(inner) => AnyTransport::False(inner),
-        AugmentedAssignmentRightTransportSlot::None(inner) => AnyTransport::None(inner),
-        AugmentedAssignmentRightTransportSlot::UnaryOperator(inner) => AnyTransport::UnaryOperator(inner),
-        AugmentedAssignmentRightTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        AugmentedAssignmentRightTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        AugmentedAssignmentRightTransportSlot::Call(inner) => AnyTransport::Call(inner),
-        AugmentedAssignmentRightTransportSlot::List(inner) => AnyTransport::List(inner),
-        AugmentedAssignmentRightTransportSlot::ListComprehension(inner) => AnyTransport::ListComprehension(inner),
-        AugmentedAssignmentRightTransportSlot::Dictionary(inner) => AnyTransport::Dictionary(inner),
-        AugmentedAssignmentRightTransportSlot::DictionaryComprehension(inner) => AnyTransport::DictionaryComprehension(inner),
-        AugmentedAssignmentRightTransportSlot::Set(inner) => AnyTransport::Set(inner),
-        AugmentedAssignmentRightTransportSlot::SetComprehension(inner) => AnyTransport::SetComprehension(inner),
-        AugmentedAssignmentRightTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
-        AugmentedAssignmentRightTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
-        AugmentedAssignmentRightTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        AugmentedAssignmentRightTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
-        AugmentedAssignmentRightTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        AugmentedAssignmentRightTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
-        AugmentedAssignmentRightTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
-        AugmentedAssignmentRightTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
-        AugmentedAssignmentRightTransportSlot::ExpressionList(inner) => AnyTransport::ExpressionList(inner),
-        AugmentedAssignmentRightTransportSlot::AssignmentEq(inner) => AnyTransport::AssignmentEq(inner),
-        AugmentedAssignmentRightTransportSlot::AssignmentType(inner) => AnyTransport::AssignmentType(inner),
-        AugmentedAssignmentRightTransportSlot::AssignmentTyped(inner) => AnyTransport::AssignmentTyped(inner),
-        AugmentedAssignmentRightTransportSlot::AugmentedAssignment(inner) => AnyTransport::AugmentedAssignment(inner),
-        AugmentedAssignmentRightTransportSlot::PatternList(inner) => AnyTransport::PatternList(inner),
-        AugmentedAssignmentRightTransportSlot::Yield(inner) => AnyTransport::Yield(inner),
-        AugmentedAssignmentRightTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for AugmentedAssignmentRightTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -17606,59 +16849,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<YieldContentTransportSlot> {
     }
 }
 
-fn yield_content_transport_slot_to_any(t: YieldContentTransportSlot) -> AnyTransport {
-    match t {
-        YieldContentTransportSlot::YieldFromClause(inner) => AnyTransport::YieldFromClause(inner),
-        YieldContentTransportSlot::ComparisonOperator(inner) => AnyTransport::ComparisonOperator(inner),
-        YieldContentTransportSlot::NotOperator(inner) => AnyTransport::NotOperator(inner),
-        YieldContentTransportSlot::BooleanOperator(inner) => AnyTransport::BooleanOperator(inner),
-        YieldContentTransportSlot::Lambda(inner) => AnyTransport::Lambda(inner),
-        YieldContentTransportSlot::Await(inner) => AnyTransport::Await(inner),
-        YieldContentTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
-        YieldContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        YieldContentTransportSlot::PrintKeyword(inner) => AnyTransport::PrintKeyword(inner),
-        YieldContentTransportSlot::ExecKeyword(inner) => AnyTransport::ExecKeyword(inner),
-        YieldContentTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        YieldContentTransportSlot::AwaitKeyword(inner) => AnyTransport::AwaitKeyword(inner),
-        YieldContentTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        YieldContentTransportSlot::MatchKeyword(inner) => AnyTransport::MatchKeyword(inner),
-        YieldContentTransportSlot::String(inner) => AnyTransport::String(inner),
-        YieldContentTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
-        YieldContentTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
-        YieldContentTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
-        YieldContentTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
-        YieldContentTransportSlot::IntegerDecimalLong(inner) => AnyTransport::IntegerDecimalLong(inner),
-        YieldContentTransportSlot::IntegerDecimalImaginary(inner) => AnyTransport::IntegerDecimalImaginary(inner),
-        YieldContentTransportSlot::IntegerDecimalPlain(inner) => AnyTransport::IntegerDecimalPlain(inner),
-        YieldContentTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
-        YieldContentTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        YieldContentTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
-        YieldContentTransportSlot::True(inner) => AnyTransport::True(inner),
-        YieldContentTransportSlot::False(inner) => AnyTransport::False(inner),
-        YieldContentTransportSlot::None(inner) => AnyTransport::None(inner),
-        YieldContentTransportSlot::UnaryOperator(inner) => AnyTransport::UnaryOperator(inner),
-        YieldContentTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        YieldContentTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        YieldContentTransportSlot::Call(inner) => AnyTransport::Call(inner),
-        YieldContentTransportSlot::List(inner) => AnyTransport::List(inner),
-        YieldContentTransportSlot::ListComprehension(inner) => AnyTransport::ListComprehension(inner),
-        YieldContentTransportSlot::Dictionary(inner) => AnyTransport::Dictionary(inner),
-        YieldContentTransportSlot::DictionaryComprehension(inner) => AnyTransport::DictionaryComprehension(inner),
-        YieldContentTransportSlot::Set(inner) => AnyTransport::Set(inner),
-        YieldContentTransportSlot::SetComprehension(inner) => AnyTransport::SetComprehension(inner),
-        YieldContentTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
-        YieldContentTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
-        YieldContentTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        YieldContentTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
-        YieldContentTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        YieldContentTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
-        YieldContentTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
-        YieldContentTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
-        YieldContentTransportSlot::ExpressionList(inner) => AnyTransport::ExpressionList(inner),
-        YieldContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for YieldContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -17819,13 +17009,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CallArgumentsTransportSlot> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         CallArgumentsTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn call_arguments_transport_slot_to_any(t: CallArgumentsTransportSlot) -> AnyTransport {
-    match t {
-        CallArgumentsTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        CallArgumentsTransportSlot::ArgumentList(inner) => AnyTransport::ArgumentList(inner),
     }
 }
 
@@ -17999,15 +17182,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypedParameterNameTransportSlo
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         TypedParameterNameTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn typed_parameter_name_transport_slot_to_any(t: TypedParameterNameTransportSlot) -> AnyTransport {
-    match t {
-        TypedParameterNameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        TypedParameterNameTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        TypedParameterNameTransportSlot::DictionarySplatPattern(inner) => AnyTransport::DictionarySplatPattern(inner),
-        TypedParameterNameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -18667,62 +17841,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeContentTransportSlot> {
     }
 }
 
-fn type_content_transport_slot_to_any(t: TypeContentTransportSlot) -> AnyTransport {
-    match t {
-        TypeContentTransportSlot::ComparisonOperator(inner) => AnyTransport::ComparisonOperator(inner),
-        TypeContentTransportSlot::NotOperator(inner) => AnyTransport::NotOperator(inner),
-        TypeContentTransportSlot::BooleanOperator(inner) => AnyTransport::BooleanOperator(inner),
-        TypeContentTransportSlot::Lambda(inner) => AnyTransport::Lambda(inner),
-        TypeContentTransportSlot::Await(inner) => AnyTransport::Await(inner),
-        TypeContentTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
-        TypeContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        TypeContentTransportSlot::PrintKeyword(inner) => AnyTransport::PrintKeyword(inner),
-        TypeContentTransportSlot::ExecKeyword(inner) => AnyTransport::ExecKeyword(inner),
-        TypeContentTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        TypeContentTransportSlot::AwaitKeyword(inner) => AnyTransport::AwaitKeyword(inner),
-        TypeContentTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        TypeContentTransportSlot::MatchKeyword(inner) => AnyTransport::MatchKeyword(inner),
-        TypeContentTransportSlot::String(inner) => AnyTransport::String(inner),
-        TypeContentTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
-        TypeContentTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
-        TypeContentTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
-        TypeContentTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
-        TypeContentTransportSlot::IntegerDecimalLong(inner) => AnyTransport::IntegerDecimalLong(inner),
-        TypeContentTransportSlot::IntegerDecimalImaginary(inner) => AnyTransport::IntegerDecimalImaginary(inner),
-        TypeContentTransportSlot::IntegerDecimalPlain(inner) => AnyTransport::IntegerDecimalPlain(inner),
-        TypeContentTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
-        TypeContentTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        TypeContentTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
-        TypeContentTransportSlot::True(inner) => AnyTransport::True(inner),
-        TypeContentTransportSlot::False(inner) => AnyTransport::False(inner),
-        TypeContentTransportSlot::None(inner) => AnyTransport::None(inner),
-        TypeContentTransportSlot::UnaryOperator(inner) => AnyTransport::UnaryOperator(inner),
-        TypeContentTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        TypeContentTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        TypeContentTransportSlot::Call(inner) => AnyTransport::Call(inner),
-        TypeContentTransportSlot::List(inner) => AnyTransport::List(inner),
-        TypeContentTransportSlot::ListComprehension(inner) => AnyTransport::ListComprehension(inner),
-        TypeContentTransportSlot::Dictionary(inner) => AnyTransport::Dictionary(inner),
-        TypeContentTransportSlot::DictionaryComprehension(inner) => AnyTransport::DictionaryComprehension(inner),
-        TypeContentTransportSlot::Set(inner) => AnyTransport::Set(inner),
-        TypeContentTransportSlot::SetComprehension(inner) => AnyTransport::SetComprehension(inner),
-        TypeContentTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
-        TypeContentTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
-        TypeContentTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        TypeContentTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
-        TypeContentTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        TypeContentTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
-        TypeContentTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
-        TypeContentTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
-        TypeContentTransportSlot::SplatType(inner) => AnyTransport::SplatType(inner),
-        TypeContentTransportSlot::GenericType(inner) => AnyTransport::GenericType(inner),
-        TypeContentTransportSlot::UnionType(inner) => AnyTransport::UnionType(inner),
-        TypeContentTransportSlot::ConstrainedType(inner) => AnyTransport::ConstrainedType(inner),
-        TypeContentTransportSlot::MemberType(inner) => AnyTransport::MemberType(inner),
-        TypeContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for TypeContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -18866,13 +17984,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SplatTypeOperatorTransportSlot
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         SplatTypeOperatorTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn splat_type_operator_transport_slot_to_any(t: SplatTypeOperatorTransportSlot) -> AnyTransport {
-    match t {
-        SplatTypeOperatorTransportSlot::Literal7_73_74_61_72 => AnyTransport::Literal7_73_74_61_72,
-        SplatTypeOperatorTransportSlot::Literal12_73_74_61_72_5f_73_74_61_72 => AnyTransport::Literal12_73_74_61_72_5f_73_74_61_72,
     }
 }
 
@@ -19025,14 +18136,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GenericTypeNameTransportSlot> 
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         GenericTypeNameTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn generic_type_name_transport_slot_to_any(t: GenericTypeNameTransportSlot) -> AnyTransport {
-    match t {
-        GenericTypeNameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        GenericTypeNameTransportSlot::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64,
-        GenericTypeNameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -19191,19 +18294,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<KeywordArgumentNameTransportSl
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         KeywordArgumentNameTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn keyword_argument_name_transport_slot_to_any(t: KeywordArgumentNameTransportSlot) -> AnyTransport {
-    match t {
-        KeywordArgumentNameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        KeywordArgumentNameTransportSlot::Literal1_70_72_69_6e_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal1_70_72_69_6e_74_5f_6b_65_79_77_6f_72_64,
-        KeywordArgumentNameTransportSlot::Literal2_65_78_65_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal2_65_78_65_63_5f_6b_65_79_77_6f_72_64,
-        KeywordArgumentNameTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
-        KeywordArgumentNameTransportSlot::Literal4_61_77_61_69_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal4_61_77_61_69_74_5f_6b_65_79_77_6f_72_64,
-        KeywordArgumentNameTransportSlot::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64,
-        KeywordArgumentNameTransportSlot::Literal6_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal6_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64,
-        KeywordArgumentNameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -19820,58 +18910,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ParenthesizedExpressionExpress
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ParenthesizedExpressionExpressionTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn parenthesized_expression_expression_transport_slot_to_any(t: ParenthesizedExpressionExpressionTransportSlot) -> AnyTransport {
-    match t {
-        ParenthesizedExpressionExpressionTransportSlot::ComparisonOperator(inner) => AnyTransport::ComparisonOperator(inner),
-        ParenthesizedExpressionExpressionTransportSlot::NotOperator(inner) => AnyTransport::NotOperator(inner),
-        ParenthesizedExpressionExpressionTransportSlot::BooleanOperator(inner) => AnyTransport::BooleanOperator(inner),
-        ParenthesizedExpressionExpressionTransportSlot::Lambda(inner) => AnyTransport::Lambda(inner),
-        ParenthesizedExpressionExpressionTransportSlot::Await(inner) => AnyTransport::Await(inner),
-        ParenthesizedExpressionExpressionTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
-        ParenthesizedExpressionExpressionTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ParenthesizedExpressionExpressionTransportSlot::PrintKeyword(inner) => AnyTransport::PrintKeyword(inner),
-        ParenthesizedExpressionExpressionTransportSlot::ExecKeyword(inner) => AnyTransport::ExecKeyword(inner),
-        ParenthesizedExpressionExpressionTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        ParenthesizedExpressionExpressionTransportSlot::AwaitKeyword(inner) => AnyTransport::AwaitKeyword(inner),
-        ParenthesizedExpressionExpressionTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        ParenthesizedExpressionExpressionTransportSlot::MatchKeyword(inner) => AnyTransport::MatchKeyword(inner),
-        ParenthesizedExpressionExpressionTransportSlot::String(inner) => AnyTransport::String(inner),
-        ParenthesizedExpressionExpressionTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
-        ParenthesizedExpressionExpressionTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
-        ParenthesizedExpressionExpressionTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
-        ParenthesizedExpressionExpressionTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
-        ParenthesizedExpressionExpressionTransportSlot::IntegerDecimalLong(inner) => AnyTransport::IntegerDecimalLong(inner),
-        ParenthesizedExpressionExpressionTransportSlot::IntegerDecimalImaginary(inner) => AnyTransport::IntegerDecimalImaginary(inner),
-        ParenthesizedExpressionExpressionTransportSlot::IntegerDecimalPlain(inner) => AnyTransport::IntegerDecimalPlain(inner),
-        ParenthesizedExpressionExpressionTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
-        ParenthesizedExpressionExpressionTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        ParenthesizedExpressionExpressionTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
-        ParenthesizedExpressionExpressionTransportSlot::True(inner) => AnyTransport::True(inner),
-        ParenthesizedExpressionExpressionTransportSlot::False(inner) => AnyTransport::False(inner),
-        ParenthesizedExpressionExpressionTransportSlot::None(inner) => AnyTransport::None(inner),
-        ParenthesizedExpressionExpressionTransportSlot::UnaryOperator(inner) => AnyTransport::UnaryOperator(inner),
-        ParenthesizedExpressionExpressionTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        ParenthesizedExpressionExpressionTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        ParenthesizedExpressionExpressionTransportSlot::Call(inner) => AnyTransport::Call(inner),
-        ParenthesizedExpressionExpressionTransportSlot::List(inner) => AnyTransport::List(inner),
-        ParenthesizedExpressionExpressionTransportSlot::ListComprehension(inner) => AnyTransport::ListComprehension(inner),
-        ParenthesizedExpressionExpressionTransportSlot::Dictionary(inner) => AnyTransport::Dictionary(inner),
-        ParenthesizedExpressionExpressionTransportSlot::DictionaryComprehension(inner) => AnyTransport::DictionaryComprehension(inner),
-        ParenthesizedExpressionExpressionTransportSlot::Set(inner) => AnyTransport::Set(inner),
-        ParenthesizedExpressionExpressionTransportSlot::SetComprehension(inner) => AnyTransport::SetComprehension(inner),
-        ParenthesizedExpressionExpressionTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
-        ParenthesizedExpressionExpressionTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
-        ParenthesizedExpressionExpressionTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        ParenthesizedExpressionExpressionTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
-        ParenthesizedExpressionExpressionTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        ParenthesizedExpressionExpressionTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
-        ParenthesizedExpressionExpressionTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
-        ParenthesizedExpressionExpressionTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
-        ParenthesizedExpressionExpressionTransportSlot::Yield(inner) => AnyTransport::Yield(inner),
-        ParenthesizedExpressionExpressionTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -20552,60 +19590,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CollectionElementsItemTranspor
     }
 }
 
-fn collection_elements_item_transport_slot_to_any(t: CollectionElementsItemTransportSlot) -> AnyTransport {
-    match t {
-        CollectionElementsItemTransportSlot::ComparisonOperator(inner) => AnyTransport::ComparisonOperator(inner),
-        CollectionElementsItemTransportSlot::NotOperator(inner) => AnyTransport::NotOperator(inner),
-        CollectionElementsItemTransportSlot::BooleanOperator(inner) => AnyTransport::BooleanOperator(inner),
-        CollectionElementsItemTransportSlot::Lambda(inner) => AnyTransport::Lambda(inner),
-        CollectionElementsItemTransportSlot::Await(inner) => AnyTransport::Await(inner),
-        CollectionElementsItemTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
-        CollectionElementsItemTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        CollectionElementsItemTransportSlot::PrintKeyword(inner) => AnyTransport::PrintKeyword(inner),
-        CollectionElementsItemTransportSlot::ExecKeyword(inner) => AnyTransport::ExecKeyword(inner),
-        CollectionElementsItemTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        CollectionElementsItemTransportSlot::AwaitKeyword(inner) => AnyTransport::AwaitKeyword(inner),
-        CollectionElementsItemTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        CollectionElementsItemTransportSlot::MatchKeyword(inner) => AnyTransport::MatchKeyword(inner),
-        CollectionElementsItemTransportSlot::String(inner) => AnyTransport::String(inner),
-        CollectionElementsItemTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
-        CollectionElementsItemTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
-        CollectionElementsItemTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
-        CollectionElementsItemTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
-        CollectionElementsItemTransportSlot::IntegerDecimalLong(inner) => AnyTransport::IntegerDecimalLong(inner),
-        CollectionElementsItemTransportSlot::IntegerDecimalImaginary(inner) => AnyTransport::IntegerDecimalImaginary(inner),
-        CollectionElementsItemTransportSlot::IntegerDecimalPlain(inner) => AnyTransport::IntegerDecimalPlain(inner),
-        CollectionElementsItemTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
-        CollectionElementsItemTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        CollectionElementsItemTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
-        CollectionElementsItemTransportSlot::True(inner) => AnyTransport::True(inner),
-        CollectionElementsItemTransportSlot::False(inner) => AnyTransport::False(inner),
-        CollectionElementsItemTransportSlot::None(inner) => AnyTransport::None(inner),
-        CollectionElementsItemTransportSlot::UnaryOperator(inner) => AnyTransport::UnaryOperator(inner),
-        CollectionElementsItemTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        CollectionElementsItemTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        CollectionElementsItemTransportSlot::Call(inner) => AnyTransport::Call(inner),
-        CollectionElementsItemTransportSlot::List(inner) => AnyTransport::List(inner),
-        CollectionElementsItemTransportSlot::ListComprehension(inner) => AnyTransport::ListComprehension(inner),
-        CollectionElementsItemTransportSlot::Dictionary(inner) => AnyTransport::Dictionary(inner),
-        CollectionElementsItemTransportSlot::DictionaryComprehension(inner) => AnyTransport::DictionaryComprehension(inner),
-        CollectionElementsItemTransportSlot::Set(inner) => AnyTransport::Set(inner),
-        CollectionElementsItemTransportSlot::SetComprehension(inner) => AnyTransport::SetComprehension(inner),
-        CollectionElementsItemTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
-        CollectionElementsItemTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
-        CollectionElementsItemTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        CollectionElementsItemTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
-        CollectionElementsItemTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        CollectionElementsItemTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
-        CollectionElementsItemTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
-        CollectionElementsItemTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
-        CollectionElementsItemTransportSlot::Yield(inner) => AnyTransport::Yield(inner),
-        CollectionElementsItemTransportSlot::ListSplat(inner) => AnyTransport::ListSplat(inner),
-        CollectionElementsItemTransportSlot::ParenthesizedListSplat(inner) => AnyTransport::ParenthesizedListSplat(inner),
-        CollectionElementsItemTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for CollectionElementsItemTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -20742,12 +19726,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ForInClauseAsyncTransportSlot>
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ForInClauseAsyncTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn for_in_clause_async_transport_slot_to_any(t: ForInClauseAsyncTransportSlot) -> AnyTransport {
-    match t {
-        ForInClauseAsyncTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
     }
 }
 
@@ -20994,25 +19972,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ForInClauseLeftTransportSlot> 
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ForInClauseLeftTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn for_in_clause_left_transport_slot_to_any(t: ForInClauseLeftTransportSlot) -> AnyTransport {
-    match t {
-        ForInClauseLeftTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ForInClauseLeftTransportSlot::PrintKeyword(inner) => AnyTransport::PrintKeyword(inner),
-        ForInClauseLeftTransportSlot::ExecKeyword(inner) => AnyTransport::ExecKeyword(inner),
-        ForInClauseLeftTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        ForInClauseLeftTransportSlot::AwaitKeyword(inner) => AnyTransport::AwaitKeyword(inner),
-        ForInClauseLeftTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        ForInClauseLeftTransportSlot::MatchKeyword(inner) => AnyTransport::MatchKeyword(inner),
-        ForInClauseLeftTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        ForInClauseLeftTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        ForInClauseLeftTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        ForInClauseLeftTransportSlot::TuplePattern(inner) => AnyTransport::TuplePattern(inner),
-        ForInClauseLeftTransportSlot::ListPattern(inner) => AnyTransport::ListPattern(inner),
-        ForInClauseLeftTransportSlot::PatternList(inner) => AnyTransport::PatternList(inner),
-        ForInClauseLeftTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -21638,58 +20597,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ForInClauseRightTransportSlot>
     }
 }
 
-fn for_in_clause_right_transport_slot_to_any(t: ForInClauseRightTransportSlot) -> AnyTransport {
-    match t {
-        ForInClauseRightTransportSlot::ComparisonOperator(inner) => AnyTransport::ComparisonOperator(inner),
-        ForInClauseRightTransportSlot::NotOperator(inner) => AnyTransport::NotOperator(inner),
-        ForInClauseRightTransportSlot::BooleanOperator(inner) => AnyTransport::BooleanOperator(inner),
-        ForInClauseRightTransportSlot::Lambda(inner) => AnyTransport::Lambda(inner),
-        ForInClauseRightTransportSlot::Await(inner) => AnyTransport::Await(inner),
-        ForInClauseRightTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
-        ForInClauseRightTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ForInClauseRightTransportSlot::PrintKeyword(inner) => AnyTransport::PrintKeyword(inner),
-        ForInClauseRightTransportSlot::ExecKeyword(inner) => AnyTransport::ExecKeyword(inner),
-        ForInClauseRightTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        ForInClauseRightTransportSlot::AwaitKeyword(inner) => AnyTransport::AwaitKeyword(inner),
-        ForInClauseRightTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        ForInClauseRightTransportSlot::MatchKeyword(inner) => AnyTransport::MatchKeyword(inner),
-        ForInClauseRightTransportSlot::String(inner) => AnyTransport::String(inner),
-        ForInClauseRightTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
-        ForInClauseRightTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
-        ForInClauseRightTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
-        ForInClauseRightTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
-        ForInClauseRightTransportSlot::IntegerDecimalLong(inner) => AnyTransport::IntegerDecimalLong(inner),
-        ForInClauseRightTransportSlot::IntegerDecimalImaginary(inner) => AnyTransport::IntegerDecimalImaginary(inner),
-        ForInClauseRightTransportSlot::IntegerDecimalPlain(inner) => AnyTransport::IntegerDecimalPlain(inner),
-        ForInClauseRightTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
-        ForInClauseRightTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        ForInClauseRightTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
-        ForInClauseRightTransportSlot::True(inner) => AnyTransport::True(inner),
-        ForInClauseRightTransportSlot::False(inner) => AnyTransport::False(inner),
-        ForInClauseRightTransportSlot::None(inner) => AnyTransport::None(inner),
-        ForInClauseRightTransportSlot::UnaryOperator(inner) => AnyTransport::UnaryOperator(inner),
-        ForInClauseRightTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        ForInClauseRightTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        ForInClauseRightTransportSlot::Call(inner) => AnyTransport::Call(inner),
-        ForInClauseRightTransportSlot::List(inner) => AnyTransport::List(inner),
-        ForInClauseRightTransportSlot::ListComprehension(inner) => AnyTransport::ListComprehension(inner),
-        ForInClauseRightTransportSlot::Dictionary(inner) => AnyTransport::Dictionary(inner),
-        ForInClauseRightTransportSlot::DictionaryComprehension(inner) => AnyTransport::DictionaryComprehension(inner),
-        ForInClauseRightTransportSlot::Set(inner) => AnyTransport::Set(inner),
-        ForInClauseRightTransportSlot::SetComprehension(inner) => AnyTransport::SetComprehension(inner),
-        ForInClauseRightTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
-        ForInClauseRightTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
-        ForInClauseRightTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        ForInClauseRightTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
-        ForInClauseRightTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        ForInClauseRightTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
-        ForInClauseRightTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
-        ForInClauseRightTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
-        ForInClauseRightTransportSlot::LambdaWithinForInClause(inner) => AnyTransport::LambdaWithinForInClause(inner),
-        ForInClauseRightTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for ForInClauseRightTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -21827,12 +20734,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ForInClauseCommaTransportSlot>
     }
 }
 
-fn for_in_clause_comma_transport_slot_to_any(t: ForInClauseCommaTransportSlot) -> AnyTransport {
-    match t {
-        ForInClauseCommaTransportSlot::Literal41_63_6f_6d_6d_61 => AnyTransport::Literal41_63_6f_6d_6d_61,
-    }
-}
-
 impl ::sittir_core::render::Render for ForInClauseCommaTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -21951,13 +20852,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StringContentTransportSlot> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         StringContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn string_content_transport_slot_to_any(t: StringContentTransportSlot) -> AnyTransport {
-    match t {
-        StringContentTransportSlot::Interpolation(inner) => AnyTransport::Interpolation(inner),
-        StringContentTransportSlot::StringContent(inner) => AnyTransport::StringContent(inner),
     }
 }
 
@@ -22168,22 +21062,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StringContentContentTransportS
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         StringContentContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn string_content_content_transport_slot_to_any(t: StringContentContentTransportSlot) -> AnyTransport {
-    match t {
-        StringContentContentTransportSlot::EscapeInterpolation(inner) => AnyTransport::EscapeInterpolation(inner),
-        StringContentContentTransportSlot::EscapeSequenceUnicodeFixed(inner) => AnyTransport::EscapeSequenceUnicodeFixed(inner),
-        StringContentContentTransportSlot::EscapeSequenceUnicodeWide(inner) => AnyTransport::EscapeSequenceUnicodeWide(inner),
-        StringContentContentTransportSlot::EscapeSequenceHex(inner) => AnyTransport::EscapeSequenceHex(inner),
-        StringContentContentTransportSlot::EscapeSequenceOctal(inner) => AnyTransport::EscapeSequenceOctal(inner),
-        StringContentContentTransportSlot::EscapeSequenceLineBreak(inner) => AnyTransport::EscapeSequenceLineBreak(inner),
-        StringContentContentTransportSlot::EscapeSequenceSimple(inner) => AnyTransport::EscapeSequenceSimple(inner),
-        StringContentContentTransportSlot::EscapeSequenceNamed(inner) => AnyTransport::EscapeSequenceNamed(inner),
-        StringContentContentTransportSlot::StringFragment(inner) => AnyTransport::StringFragment(inner),
-        StringContentContentTransportSlot::Literal42_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65 => AnyTransport::Literal42_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65,
-        StringContentContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -22828,60 +21706,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<InterpolationExpressionTranspo
     }
 }
 
-fn interpolation_expression_transport_slot_to_any(t: InterpolationExpressionTransportSlot) -> AnyTransport {
-    match t {
-        InterpolationExpressionTransportSlot::ComparisonOperator(inner) => AnyTransport::ComparisonOperator(inner),
-        InterpolationExpressionTransportSlot::NotOperator(inner) => AnyTransport::NotOperator(inner),
-        InterpolationExpressionTransportSlot::BooleanOperator(inner) => AnyTransport::BooleanOperator(inner),
-        InterpolationExpressionTransportSlot::Lambda(inner) => AnyTransport::Lambda(inner),
-        InterpolationExpressionTransportSlot::Await(inner) => AnyTransport::Await(inner),
-        InterpolationExpressionTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
-        InterpolationExpressionTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        InterpolationExpressionTransportSlot::PrintKeyword(inner) => AnyTransport::PrintKeyword(inner),
-        InterpolationExpressionTransportSlot::ExecKeyword(inner) => AnyTransport::ExecKeyword(inner),
-        InterpolationExpressionTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        InterpolationExpressionTransportSlot::AwaitKeyword(inner) => AnyTransport::AwaitKeyword(inner),
-        InterpolationExpressionTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        InterpolationExpressionTransportSlot::MatchKeyword(inner) => AnyTransport::MatchKeyword(inner),
-        InterpolationExpressionTransportSlot::String(inner) => AnyTransport::String(inner),
-        InterpolationExpressionTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
-        InterpolationExpressionTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
-        InterpolationExpressionTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
-        InterpolationExpressionTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
-        InterpolationExpressionTransportSlot::IntegerDecimalLong(inner) => AnyTransport::IntegerDecimalLong(inner),
-        InterpolationExpressionTransportSlot::IntegerDecimalImaginary(inner) => AnyTransport::IntegerDecimalImaginary(inner),
-        InterpolationExpressionTransportSlot::IntegerDecimalPlain(inner) => AnyTransport::IntegerDecimalPlain(inner),
-        InterpolationExpressionTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
-        InterpolationExpressionTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        InterpolationExpressionTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
-        InterpolationExpressionTransportSlot::True(inner) => AnyTransport::True(inner),
-        InterpolationExpressionTransportSlot::False(inner) => AnyTransport::False(inner),
-        InterpolationExpressionTransportSlot::None(inner) => AnyTransport::None(inner),
-        InterpolationExpressionTransportSlot::UnaryOperator(inner) => AnyTransport::UnaryOperator(inner),
-        InterpolationExpressionTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        InterpolationExpressionTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        InterpolationExpressionTransportSlot::Call(inner) => AnyTransport::Call(inner),
-        InterpolationExpressionTransportSlot::List(inner) => AnyTransport::List(inner),
-        InterpolationExpressionTransportSlot::ListComprehension(inner) => AnyTransport::ListComprehension(inner),
-        InterpolationExpressionTransportSlot::Dictionary(inner) => AnyTransport::Dictionary(inner),
-        InterpolationExpressionTransportSlot::DictionaryComprehension(inner) => AnyTransport::DictionaryComprehension(inner),
-        InterpolationExpressionTransportSlot::Set(inner) => AnyTransport::Set(inner),
-        InterpolationExpressionTransportSlot::SetComprehension(inner) => AnyTransport::SetComprehension(inner),
-        InterpolationExpressionTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
-        InterpolationExpressionTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
-        InterpolationExpressionTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        InterpolationExpressionTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
-        InterpolationExpressionTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        InterpolationExpressionTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
-        InterpolationExpressionTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
-        InterpolationExpressionTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
-        InterpolationExpressionTransportSlot::ExpressionList(inner) => AnyTransport::ExpressionList(inner),
-        InterpolationExpressionTransportSlot::PatternList(inner) => AnyTransport::PatternList(inner),
-        InterpolationExpressionTransportSlot::Yield(inner) => AnyTransport::Yield(inner),
-        InterpolationExpressionTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for InterpolationExpressionTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -23021,12 +21845,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<InterpolationDebugTransportSlo
     }
 }
 
-fn interpolation_debug_transport_slot_to_any(t: InterpolationDebugTransportSlot) -> AnyTransport {
-    match t {
-        InterpolationDebugTransportSlot::Literal43_65_71 => AnyTransport::Literal43_65_71,
-    }
-}
-
 impl ::sittir_core::render::Render for InterpolationDebugTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -23149,14 +21967,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FormatSpecifierElementsTranspo
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         FormatSpecifierElementsTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn format_specifier_elements_transport_slot_to_any(t: FormatSpecifierElementsTransportSlot) -> AnyTransport {
-    match t {
-        FormatSpecifierElementsTransportSlot::FormatSpecifierText(inner) => AnyTransport::FormatSpecifierText(inner),
-        FormatSpecifierElementsTransportSlot::FormatExpression(inner) => AnyTransport::FormatExpression(inner),
-        FormatSpecifierElementsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -23804,61 +22614,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ArgumentListElementsItemTransp
     }
 }
 
-fn argument_list_elements_item_transport_slot_to_any(t: ArgumentListElementsItemTransportSlot) -> AnyTransport {
-    match t {
-        ArgumentListElementsItemTransportSlot::ComparisonOperator(inner) => AnyTransport::ComparisonOperator(inner),
-        ArgumentListElementsItemTransportSlot::NotOperator(inner) => AnyTransport::NotOperator(inner),
-        ArgumentListElementsItemTransportSlot::BooleanOperator(inner) => AnyTransport::BooleanOperator(inner),
-        ArgumentListElementsItemTransportSlot::Lambda(inner) => AnyTransport::Lambda(inner),
-        ArgumentListElementsItemTransportSlot::Await(inner) => AnyTransport::Await(inner),
-        ArgumentListElementsItemTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
-        ArgumentListElementsItemTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ArgumentListElementsItemTransportSlot::PrintKeyword(inner) => AnyTransport::PrintKeyword(inner),
-        ArgumentListElementsItemTransportSlot::ExecKeyword(inner) => AnyTransport::ExecKeyword(inner),
-        ArgumentListElementsItemTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        ArgumentListElementsItemTransportSlot::AwaitKeyword(inner) => AnyTransport::AwaitKeyword(inner),
-        ArgumentListElementsItemTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        ArgumentListElementsItemTransportSlot::MatchKeyword(inner) => AnyTransport::MatchKeyword(inner),
-        ArgumentListElementsItemTransportSlot::String(inner) => AnyTransport::String(inner),
-        ArgumentListElementsItemTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
-        ArgumentListElementsItemTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
-        ArgumentListElementsItemTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
-        ArgumentListElementsItemTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
-        ArgumentListElementsItemTransportSlot::IntegerDecimalLong(inner) => AnyTransport::IntegerDecimalLong(inner),
-        ArgumentListElementsItemTransportSlot::IntegerDecimalImaginary(inner) => AnyTransport::IntegerDecimalImaginary(inner),
-        ArgumentListElementsItemTransportSlot::IntegerDecimalPlain(inner) => AnyTransport::IntegerDecimalPlain(inner),
-        ArgumentListElementsItemTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
-        ArgumentListElementsItemTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        ArgumentListElementsItemTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
-        ArgumentListElementsItemTransportSlot::True(inner) => AnyTransport::True(inner),
-        ArgumentListElementsItemTransportSlot::False(inner) => AnyTransport::False(inner),
-        ArgumentListElementsItemTransportSlot::None(inner) => AnyTransport::None(inner),
-        ArgumentListElementsItemTransportSlot::UnaryOperator(inner) => AnyTransport::UnaryOperator(inner),
-        ArgumentListElementsItemTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        ArgumentListElementsItemTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        ArgumentListElementsItemTransportSlot::Call(inner) => AnyTransport::Call(inner),
-        ArgumentListElementsItemTransportSlot::List(inner) => AnyTransport::List(inner),
-        ArgumentListElementsItemTransportSlot::ListComprehension(inner) => AnyTransport::ListComprehension(inner),
-        ArgumentListElementsItemTransportSlot::Dictionary(inner) => AnyTransport::Dictionary(inner),
-        ArgumentListElementsItemTransportSlot::DictionaryComprehension(inner) => AnyTransport::DictionaryComprehension(inner),
-        ArgumentListElementsItemTransportSlot::Set(inner) => AnyTransport::Set(inner),
-        ArgumentListElementsItemTransportSlot::SetComprehension(inner) => AnyTransport::SetComprehension(inner),
-        ArgumentListElementsItemTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
-        ArgumentListElementsItemTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
-        ArgumentListElementsItemTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        ArgumentListElementsItemTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
-        ArgumentListElementsItemTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        ArgumentListElementsItemTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
-        ArgumentListElementsItemTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
-        ArgumentListElementsItemTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
-        ArgumentListElementsItemTransportSlot::ListSplat(inner) => AnyTransport::ListSplat(inner),
-        ArgumentListElementsItemTransportSlot::DictionarySplat(inner) => AnyTransport::DictionarySplat(inner),
-        ArgumentListElementsItemTransportSlot::ParenthesizedListSplat(inner) => AnyTransport::ParenthesizedListSplat(inner),
-        ArgumentListElementsItemTransportSlot::KeywordArgument(inner) => AnyTransport::KeywordArgument(inner),
-        ArgumentListElementsItemTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for ArgumentListElementsItemTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -24021,13 +22776,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DictPatternElementsItemTranspo
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         DictPatternElementsItemTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn dict_pattern_elements_item_transport_slot_to_any(t: DictPatternElementsItemTransportSlot) -> AnyTransport {
-    match t {
-        DictPatternElementsItemTransportSlot::KeyValuePattern(inner) => AnyTransport::KeyValuePattern(inner),
-        DictPatternElementsItemTransportSlot::SplatPattern(inner) => AnyTransport::SplatPattern(inner),
     }
 }
 
@@ -24641,58 +23389,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SubscriptsSubscriptTransportSl
     }
 }
 
-fn subscripts_subscript_transport_slot_to_any(t: SubscriptsSubscriptTransportSlot) -> AnyTransport {
-    match t {
-        SubscriptsSubscriptTransportSlot::ComparisonOperator(inner) => AnyTransport::ComparisonOperator(inner),
-        SubscriptsSubscriptTransportSlot::NotOperator(inner) => AnyTransport::NotOperator(inner),
-        SubscriptsSubscriptTransportSlot::BooleanOperator(inner) => AnyTransport::BooleanOperator(inner),
-        SubscriptsSubscriptTransportSlot::Lambda(inner) => AnyTransport::Lambda(inner),
-        SubscriptsSubscriptTransportSlot::Await(inner) => AnyTransport::Await(inner),
-        SubscriptsSubscriptTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
-        SubscriptsSubscriptTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        SubscriptsSubscriptTransportSlot::PrintKeyword(inner) => AnyTransport::PrintKeyword(inner),
-        SubscriptsSubscriptTransportSlot::ExecKeyword(inner) => AnyTransport::ExecKeyword(inner),
-        SubscriptsSubscriptTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        SubscriptsSubscriptTransportSlot::AwaitKeyword(inner) => AnyTransport::AwaitKeyword(inner),
-        SubscriptsSubscriptTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        SubscriptsSubscriptTransportSlot::MatchKeyword(inner) => AnyTransport::MatchKeyword(inner),
-        SubscriptsSubscriptTransportSlot::String(inner) => AnyTransport::String(inner),
-        SubscriptsSubscriptTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
-        SubscriptsSubscriptTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
-        SubscriptsSubscriptTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
-        SubscriptsSubscriptTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
-        SubscriptsSubscriptTransportSlot::IntegerDecimalLong(inner) => AnyTransport::IntegerDecimalLong(inner),
-        SubscriptsSubscriptTransportSlot::IntegerDecimalImaginary(inner) => AnyTransport::IntegerDecimalImaginary(inner),
-        SubscriptsSubscriptTransportSlot::IntegerDecimalPlain(inner) => AnyTransport::IntegerDecimalPlain(inner),
-        SubscriptsSubscriptTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
-        SubscriptsSubscriptTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        SubscriptsSubscriptTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
-        SubscriptsSubscriptTransportSlot::True(inner) => AnyTransport::True(inner),
-        SubscriptsSubscriptTransportSlot::False(inner) => AnyTransport::False(inner),
-        SubscriptsSubscriptTransportSlot::None(inner) => AnyTransport::None(inner),
-        SubscriptsSubscriptTransportSlot::UnaryOperator(inner) => AnyTransport::UnaryOperator(inner),
-        SubscriptsSubscriptTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        SubscriptsSubscriptTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        SubscriptsSubscriptTransportSlot::Call(inner) => AnyTransport::Call(inner),
-        SubscriptsSubscriptTransportSlot::List(inner) => AnyTransport::List(inner),
-        SubscriptsSubscriptTransportSlot::ListComprehension(inner) => AnyTransport::ListComprehension(inner),
-        SubscriptsSubscriptTransportSlot::Dictionary(inner) => AnyTransport::Dictionary(inner),
-        SubscriptsSubscriptTransportSlot::DictionaryComprehension(inner) => AnyTransport::DictionaryComprehension(inner),
-        SubscriptsSubscriptTransportSlot::Set(inner) => AnyTransport::Set(inner),
-        SubscriptsSubscriptTransportSlot::SetComprehension(inner) => AnyTransport::SetComprehension(inner),
-        SubscriptsSubscriptTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
-        SubscriptsSubscriptTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
-        SubscriptsSubscriptTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        SubscriptsSubscriptTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
-        SubscriptsSubscriptTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        SubscriptsSubscriptTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
-        SubscriptsSubscriptTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
-        SubscriptsSubscriptTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
-        SubscriptsSubscriptTransportSlot::Slice(inner) => AnyTransport::Slice(inner),
-        SubscriptsSubscriptTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for SubscriptsSubscriptTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -24852,13 +23548,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DictionaryElementsItemTranspor
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         DictionaryElementsItemTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn dictionary_elements_item_transport_slot_to_any(t: DictionaryElementsItemTransportSlot) -> AnyTransport {
-    match t {
-        DictionaryElementsItemTransportSlot::Pair(inner) => AnyTransport::Pair(inner),
-        DictionaryElementsItemTransportSlot::DictionarySplat(inner) => AnyTransport::DictionarySplat(inner),
     }
 }
 
@@ -25494,60 +24183,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TupleElementsItemTransportSlot
     }
 }
 
-fn tuple_elements_item_transport_slot_to_any(t: TupleElementsItemTransportSlot) -> AnyTransport {
-    match t {
-        TupleElementsItemTransportSlot::ComparisonOperator(inner) => AnyTransport::ComparisonOperator(inner),
-        TupleElementsItemTransportSlot::NotOperator(inner) => AnyTransport::NotOperator(inner),
-        TupleElementsItemTransportSlot::BooleanOperator(inner) => AnyTransport::BooleanOperator(inner),
-        TupleElementsItemTransportSlot::Lambda(inner) => AnyTransport::Lambda(inner),
-        TupleElementsItemTransportSlot::Await(inner) => AnyTransport::Await(inner),
-        TupleElementsItemTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
-        TupleElementsItemTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        TupleElementsItemTransportSlot::PrintKeyword(inner) => AnyTransport::PrintKeyword(inner),
-        TupleElementsItemTransportSlot::ExecKeyword(inner) => AnyTransport::ExecKeyword(inner),
-        TupleElementsItemTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        TupleElementsItemTransportSlot::AwaitKeyword(inner) => AnyTransport::AwaitKeyword(inner),
-        TupleElementsItemTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        TupleElementsItemTransportSlot::MatchKeyword(inner) => AnyTransport::MatchKeyword(inner),
-        TupleElementsItemTransportSlot::String(inner) => AnyTransport::String(inner),
-        TupleElementsItemTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
-        TupleElementsItemTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
-        TupleElementsItemTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
-        TupleElementsItemTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
-        TupleElementsItemTransportSlot::IntegerDecimalLong(inner) => AnyTransport::IntegerDecimalLong(inner),
-        TupleElementsItemTransportSlot::IntegerDecimalImaginary(inner) => AnyTransport::IntegerDecimalImaginary(inner),
-        TupleElementsItemTransportSlot::IntegerDecimalPlain(inner) => AnyTransport::IntegerDecimalPlain(inner),
-        TupleElementsItemTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
-        TupleElementsItemTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        TupleElementsItemTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
-        TupleElementsItemTransportSlot::True(inner) => AnyTransport::True(inner),
-        TupleElementsItemTransportSlot::False(inner) => AnyTransport::False(inner),
-        TupleElementsItemTransportSlot::None(inner) => AnyTransport::None(inner),
-        TupleElementsItemTransportSlot::UnaryOperator(inner) => AnyTransport::UnaryOperator(inner),
-        TupleElementsItemTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        TupleElementsItemTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        TupleElementsItemTransportSlot::Call(inner) => AnyTransport::Call(inner),
-        TupleElementsItemTransportSlot::List(inner) => AnyTransport::List(inner),
-        TupleElementsItemTransportSlot::ListComprehension(inner) => AnyTransport::ListComprehension(inner),
-        TupleElementsItemTransportSlot::Dictionary(inner) => AnyTransport::Dictionary(inner),
-        TupleElementsItemTransportSlot::DictionaryComprehension(inner) => AnyTransport::DictionaryComprehension(inner),
-        TupleElementsItemTransportSlot::Set(inner) => AnyTransport::Set(inner),
-        TupleElementsItemTransportSlot::SetComprehension(inner) => AnyTransport::SetComprehension(inner),
-        TupleElementsItemTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
-        TupleElementsItemTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
-        TupleElementsItemTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        TupleElementsItemTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
-        TupleElementsItemTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        TupleElementsItemTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
-        TupleElementsItemTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
-        TupleElementsItemTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
-        TupleElementsItemTransportSlot::Yield(inner) => AnyTransport::Yield(inner),
-        TupleElementsItemTransportSlot::ListSplat(inner) => AnyTransport::ListSplat(inner),
-        TupleElementsItemTransportSlot::ParenthesizedListSplat(inner) => AnyTransport::ParenthesizedListSplat(inner),
-        TupleElementsItemTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for TupleElementsItemTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -25708,13 +24343,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PrintStatementChevronPrintChev
     }
 }
 
-fn print_statement_chevron_print_chevron_arguments_transport_slot_to_any(t: PrintStatementChevronPrintChevronArgumentsTransportSlot) -> AnyTransport {
-    match t {
-        PrintStatementChevronPrintChevronArgumentsTransportSlot::PrintChevronArguments(inner) => AnyTransport::PrintChevronArguments(inner),
-        PrintStatementChevronPrintChevronArgumentsTransportSlot::Literal41_63_6f_6d_6d_61 => AnyTransport::Literal41_63_6f_6d_6d_61,
-    }
-}
-
 impl ::sittir_core::render::Render for PrintStatementChevronPrintChevronArgumentsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -25837,13 +24465,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ComprehensionClausesContentTra
     }
 }
 
-fn comprehension_clauses_content_transport_slot_to_any(t: ComprehensionClausesContentTransportSlot) -> AnyTransport {
-    match t {
-        ComprehensionClausesContentTransportSlot::ForInClause(inner) => AnyTransport::ForInClause(inner),
-        ComprehensionClausesContentTransportSlot::IfClause(inner) => AnyTransport::IfClause(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for ComprehensionClausesContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -25934,13 +24555,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IntegerHexPrefixTransportSlot>
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         IntegerHexPrefixTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn integer_hex_prefix_transport_slot_to_any(t: IntegerHexPrefixTransportSlot) -> AnyTransport {
-    match t {
-        IntegerHexPrefixTransportSlot::Literal44_30_78 => AnyTransport::Literal44_30_78,
-        IntegerHexPrefixTransportSlot::Literal45_30_58 => AnyTransport::Literal45_30_58,
     }
 }
 
@@ -26037,13 +24651,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IntegerOctalPrefixTransportSlo
     }
 }
 
-fn integer_octal_prefix_transport_slot_to_any(t: IntegerOctalPrefixTransportSlot) -> AnyTransport {
-    match t {
-        IntegerOctalPrefixTransportSlot::Literal46_30_6f => AnyTransport::Literal46_30_6f,
-        IntegerOctalPrefixTransportSlot::Literal47_30_4f => AnyTransport::Literal47_30_4f,
-    }
-}
-
 impl ::sittir_core::render::Render for IntegerOctalPrefixTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -26137,13 +24744,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IntegerBinaryPrefixTransportSl
     }
 }
 
-fn integer_binary_prefix_transport_slot_to_any(t: IntegerBinaryPrefixTransportSlot) -> AnyTransport {
-    match t {
-        IntegerBinaryPrefixTransportSlot::Literal48_30_62 => AnyTransport::Literal48_30_62,
-        IntegerBinaryPrefixTransportSlot::Literal49_30_42 => AnyTransport::Literal49_30_42,
-    }
-}
-
 impl ::sittir_core::render::Render for IntegerBinaryPrefixTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -26233,12 +24833,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SimplePatternNegativeSignTrans
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         SimplePatternNegativeSignTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn simple_pattern_negative_sign_transport_slot_to_any(t: SimplePatternNegativeSignTransportSlot) -> AnyTransport {
-    match t {
-        SimplePatternNegativeSignTransportSlot::Literal14_64_61_73_68 => AnyTransport::Literal14_64_61_73_68,
     }
 }
 
@@ -26444,21 +25038,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SimplePatternNegativeValueTran
     }
 }
 
-fn simple_pattern_negative_value_transport_slot_to_any(t: SimplePatternNegativeValueTransportSlot) -> AnyTransport {
-    match t {
-        SimplePatternNegativeValueTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
-        SimplePatternNegativeValueTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
-        SimplePatternNegativeValueTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
-        SimplePatternNegativeValueTransportSlot::IntegerDecimalLong(inner) => AnyTransport::IntegerDecimalLong(inner),
-        SimplePatternNegativeValueTransportSlot::IntegerDecimalImaginary(inner) => AnyTransport::IntegerDecimalImaginary(inner),
-        SimplePatternNegativeValueTransportSlot::IntegerDecimalPlain(inner) => AnyTransport::IntegerDecimalPlain(inner),
-        SimplePatternNegativeValueTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
-        SimplePatternNegativeValueTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        SimplePatternNegativeValueTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
-        SimplePatternNegativeValueTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for SimplePatternNegativeValueTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -26581,13 +25160,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseExceptionContentTr
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ExceptClauseExceptionContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn except_clause_exception_content_transport_slot_to_any(t: ExceptClauseExceptionContentTransportSlot) -> AnyTransport {
-    match t {
-        ExceptClauseExceptionContentTransportSlot::ExceptClauseExceptionAs(inner) => AnyTransport::ExceptClauseExceptionAs(inner),
-        ExceptClauseExceptionContentTransportSlot::ExceptClauseExceptionList(inner) => AnyTransport::ExceptClauseExceptionList(inner),
     }
 }
 
@@ -26835,25 +25407,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AssignmentEqLeftTransportSlot>
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         AssignmentEqLeftTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn assignment_eq_left_transport_slot_to_any(t: AssignmentEqLeftTransportSlot) -> AnyTransport {
-    match t {
-        AssignmentEqLeftTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        AssignmentEqLeftTransportSlot::PrintKeyword(inner) => AnyTransport::PrintKeyword(inner),
-        AssignmentEqLeftTransportSlot::ExecKeyword(inner) => AnyTransport::ExecKeyword(inner),
-        AssignmentEqLeftTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        AssignmentEqLeftTransportSlot::AwaitKeyword(inner) => AnyTransport::AwaitKeyword(inner),
-        AssignmentEqLeftTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        AssignmentEqLeftTransportSlot::MatchKeyword(inner) => AnyTransport::MatchKeyword(inner),
-        AssignmentEqLeftTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        AssignmentEqLeftTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        AssignmentEqLeftTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        AssignmentEqLeftTransportSlot::TuplePattern(inner) => AnyTransport::TuplePattern(inner),
-        AssignmentEqLeftTransportSlot::ListPattern(inner) => AnyTransport::ListPattern(inner),
-        AssignmentEqLeftTransportSlot::PatternList(inner) => AnyTransport::PatternList(inner),
-        AssignmentEqLeftTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -27545,64 +26098,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AssignmentEqRightTransportSlot
     }
 }
 
-fn assignment_eq_right_transport_slot_to_any(t: AssignmentEqRightTransportSlot) -> AnyTransport {
-    match t {
-        AssignmentEqRightTransportSlot::ComparisonOperator(inner) => AnyTransport::ComparisonOperator(inner),
-        AssignmentEqRightTransportSlot::NotOperator(inner) => AnyTransport::NotOperator(inner),
-        AssignmentEqRightTransportSlot::BooleanOperator(inner) => AnyTransport::BooleanOperator(inner),
-        AssignmentEqRightTransportSlot::Lambda(inner) => AnyTransport::Lambda(inner),
-        AssignmentEqRightTransportSlot::Await(inner) => AnyTransport::Await(inner),
-        AssignmentEqRightTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
-        AssignmentEqRightTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        AssignmentEqRightTransportSlot::PrintKeyword(inner) => AnyTransport::PrintKeyword(inner),
-        AssignmentEqRightTransportSlot::ExecKeyword(inner) => AnyTransport::ExecKeyword(inner),
-        AssignmentEqRightTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        AssignmentEqRightTransportSlot::AwaitKeyword(inner) => AnyTransport::AwaitKeyword(inner),
-        AssignmentEqRightTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        AssignmentEqRightTransportSlot::MatchKeyword(inner) => AnyTransport::MatchKeyword(inner),
-        AssignmentEqRightTransportSlot::String(inner) => AnyTransport::String(inner),
-        AssignmentEqRightTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
-        AssignmentEqRightTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
-        AssignmentEqRightTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
-        AssignmentEqRightTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
-        AssignmentEqRightTransportSlot::IntegerDecimalLong(inner) => AnyTransport::IntegerDecimalLong(inner),
-        AssignmentEqRightTransportSlot::IntegerDecimalImaginary(inner) => AnyTransport::IntegerDecimalImaginary(inner),
-        AssignmentEqRightTransportSlot::IntegerDecimalPlain(inner) => AnyTransport::IntegerDecimalPlain(inner),
-        AssignmentEqRightTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
-        AssignmentEqRightTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        AssignmentEqRightTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
-        AssignmentEqRightTransportSlot::True(inner) => AnyTransport::True(inner),
-        AssignmentEqRightTransportSlot::False(inner) => AnyTransport::False(inner),
-        AssignmentEqRightTransportSlot::None(inner) => AnyTransport::None(inner),
-        AssignmentEqRightTransportSlot::UnaryOperator(inner) => AnyTransport::UnaryOperator(inner),
-        AssignmentEqRightTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        AssignmentEqRightTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        AssignmentEqRightTransportSlot::Call(inner) => AnyTransport::Call(inner),
-        AssignmentEqRightTransportSlot::List(inner) => AnyTransport::List(inner),
-        AssignmentEqRightTransportSlot::ListComprehension(inner) => AnyTransport::ListComprehension(inner),
-        AssignmentEqRightTransportSlot::Dictionary(inner) => AnyTransport::Dictionary(inner),
-        AssignmentEqRightTransportSlot::DictionaryComprehension(inner) => AnyTransport::DictionaryComprehension(inner),
-        AssignmentEqRightTransportSlot::Set(inner) => AnyTransport::Set(inner),
-        AssignmentEqRightTransportSlot::SetComprehension(inner) => AnyTransport::SetComprehension(inner),
-        AssignmentEqRightTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
-        AssignmentEqRightTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
-        AssignmentEqRightTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        AssignmentEqRightTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
-        AssignmentEqRightTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        AssignmentEqRightTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
-        AssignmentEqRightTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
-        AssignmentEqRightTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
-        AssignmentEqRightTransportSlot::ExpressionList(inner) => AnyTransport::ExpressionList(inner),
-        AssignmentEqRightTransportSlot::AssignmentEq(inner) => AnyTransport::AssignmentEq(inner),
-        AssignmentEqRightTransportSlot::AssignmentType(inner) => AnyTransport::AssignmentType(inner),
-        AssignmentEqRightTransportSlot::AssignmentTyped(inner) => AnyTransport::AssignmentTyped(inner),
-        AssignmentEqRightTransportSlot::AugmentedAssignment(inner) => AnyTransport::AugmentedAssignment(inner),
-        AssignmentEqRightTransportSlot::PatternList(inner) => AnyTransport::PatternList(inner),
-        AssignmentEqRightTransportSlot::Yield(inner) => AnyTransport::Yield(inner),
-        AssignmentEqRightTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for AssignmentEqRightTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -27901,25 +26396,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AssignmentTypeLeftTransportSlo
     }
 }
 
-fn assignment_type_left_transport_slot_to_any(t: AssignmentTypeLeftTransportSlot) -> AnyTransport {
-    match t {
-        AssignmentTypeLeftTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        AssignmentTypeLeftTransportSlot::PrintKeyword(inner) => AnyTransport::PrintKeyword(inner),
-        AssignmentTypeLeftTransportSlot::ExecKeyword(inner) => AnyTransport::ExecKeyword(inner),
-        AssignmentTypeLeftTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        AssignmentTypeLeftTransportSlot::AwaitKeyword(inner) => AnyTransport::AwaitKeyword(inner),
-        AssignmentTypeLeftTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        AssignmentTypeLeftTransportSlot::MatchKeyword(inner) => AnyTransport::MatchKeyword(inner),
-        AssignmentTypeLeftTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        AssignmentTypeLeftTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        AssignmentTypeLeftTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        AssignmentTypeLeftTransportSlot::TuplePattern(inner) => AnyTransport::TuplePattern(inner),
-        AssignmentTypeLeftTransportSlot::ListPattern(inner) => AnyTransport::ListPattern(inner),
-        AssignmentTypeLeftTransportSlot::PatternList(inner) => AnyTransport::PatternList(inner),
-        AssignmentTypeLeftTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for AssignmentTypeLeftTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -28176,25 +26652,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AssignmentTypedLeftTransportSl
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         AssignmentTypedLeftTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn assignment_typed_left_transport_slot_to_any(t: AssignmentTypedLeftTransportSlot) -> AnyTransport {
-    match t {
-        AssignmentTypedLeftTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        AssignmentTypedLeftTransportSlot::PrintKeyword(inner) => AnyTransport::PrintKeyword(inner),
-        AssignmentTypedLeftTransportSlot::ExecKeyword(inner) => AnyTransport::ExecKeyword(inner),
-        AssignmentTypedLeftTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        AssignmentTypedLeftTransportSlot::AwaitKeyword(inner) => AnyTransport::AwaitKeyword(inner),
-        AssignmentTypedLeftTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        AssignmentTypedLeftTransportSlot::MatchKeyword(inner) => AnyTransport::MatchKeyword(inner),
-        AssignmentTypedLeftTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        AssignmentTypedLeftTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        AssignmentTypedLeftTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        AssignmentTypedLeftTransportSlot::TuplePattern(inner) => AnyTransport::TuplePattern(inner),
-        AssignmentTypedLeftTransportSlot::ListPattern(inner) => AnyTransport::ListPattern(inner),
-        AssignmentTypedLeftTransportSlot::PatternList(inner) => AnyTransport::PatternList(inner),
-        AssignmentTypedLeftTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -28886,64 +27343,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AssignmentTypedRightTransportS
     }
 }
 
-fn assignment_typed_right_transport_slot_to_any(t: AssignmentTypedRightTransportSlot) -> AnyTransport {
-    match t {
-        AssignmentTypedRightTransportSlot::ComparisonOperator(inner) => AnyTransport::ComparisonOperator(inner),
-        AssignmentTypedRightTransportSlot::NotOperator(inner) => AnyTransport::NotOperator(inner),
-        AssignmentTypedRightTransportSlot::BooleanOperator(inner) => AnyTransport::BooleanOperator(inner),
-        AssignmentTypedRightTransportSlot::Lambda(inner) => AnyTransport::Lambda(inner),
-        AssignmentTypedRightTransportSlot::Await(inner) => AnyTransport::Await(inner),
-        AssignmentTypedRightTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
-        AssignmentTypedRightTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        AssignmentTypedRightTransportSlot::PrintKeyword(inner) => AnyTransport::PrintKeyword(inner),
-        AssignmentTypedRightTransportSlot::ExecKeyword(inner) => AnyTransport::ExecKeyword(inner),
-        AssignmentTypedRightTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        AssignmentTypedRightTransportSlot::AwaitKeyword(inner) => AnyTransport::AwaitKeyword(inner),
-        AssignmentTypedRightTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        AssignmentTypedRightTransportSlot::MatchKeyword(inner) => AnyTransport::MatchKeyword(inner),
-        AssignmentTypedRightTransportSlot::String(inner) => AnyTransport::String(inner),
-        AssignmentTypedRightTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
-        AssignmentTypedRightTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
-        AssignmentTypedRightTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
-        AssignmentTypedRightTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
-        AssignmentTypedRightTransportSlot::IntegerDecimalLong(inner) => AnyTransport::IntegerDecimalLong(inner),
-        AssignmentTypedRightTransportSlot::IntegerDecimalImaginary(inner) => AnyTransport::IntegerDecimalImaginary(inner),
-        AssignmentTypedRightTransportSlot::IntegerDecimalPlain(inner) => AnyTransport::IntegerDecimalPlain(inner),
-        AssignmentTypedRightTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
-        AssignmentTypedRightTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        AssignmentTypedRightTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
-        AssignmentTypedRightTransportSlot::True(inner) => AnyTransport::True(inner),
-        AssignmentTypedRightTransportSlot::False(inner) => AnyTransport::False(inner),
-        AssignmentTypedRightTransportSlot::None(inner) => AnyTransport::None(inner),
-        AssignmentTypedRightTransportSlot::UnaryOperator(inner) => AnyTransport::UnaryOperator(inner),
-        AssignmentTypedRightTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        AssignmentTypedRightTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        AssignmentTypedRightTransportSlot::Call(inner) => AnyTransport::Call(inner),
-        AssignmentTypedRightTransportSlot::List(inner) => AnyTransport::List(inner),
-        AssignmentTypedRightTransportSlot::ListComprehension(inner) => AnyTransport::ListComprehension(inner),
-        AssignmentTypedRightTransportSlot::Dictionary(inner) => AnyTransport::Dictionary(inner),
-        AssignmentTypedRightTransportSlot::DictionaryComprehension(inner) => AnyTransport::DictionaryComprehension(inner),
-        AssignmentTypedRightTransportSlot::Set(inner) => AnyTransport::Set(inner),
-        AssignmentTypedRightTransportSlot::SetComprehension(inner) => AnyTransport::SetComprehension(inner),
-        AssignmentTypedRightTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
-        AssignmentTypedRightTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
-        AssignmentTypedRightTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        AssignmentTypedRightTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
-        AssignmentTypedRightTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        AssignmentTypedRightTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
-        AssignmentTypedRightTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
-        AssignmentTypedRightTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
-        AssignmentTypedRightTransportSlot::ExpressionList(inner) => AnyTransport::ExpressionList(inner),
-        AssignmentTypedRightTransportSlot::AssignmentEq(inner) => AnyTransport::AssignmentEq(inner),
-        AssignmentTypedRightTransportSlot::AssignmentType(inner) => AnyTransport::AssignmentType(inner),
-        AssignmentTypedRightTransportSlot::AssignmentTyped(inner) => AnyTransport::AssignmentTyped(inner),
-        AssignmentTypedRightTransportSlot::AugmentedAssignment(inner) => AnyTransport::AugmentedAssignment(inner),
-        AssignmentTypedRightTransportSlot::PatternList(inner) => AnyTransport::PatternList(inner),
-        AssignmentTypedRightTransportSlot::Yield(inner) => AnyTransport::Yield(inner),
-        AssignmentTypedRightTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for AssignmentTypedRightTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -29087,12 +27486,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MatchBlockEmptyNewlineTranspor
     }
 }
 
-fn match_block_empty_newline_transport_slot_to_any(t: MatchBlockEmptyNewlineTransportSlot) -> AnyTransport {
-    match t {
-        MatchBlockEmptyNewlineTransportSlot::Literal50_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal50_5f_6e_65_77_6c_69_6e_65,
-    }
-}
-
 impl ::sittir_core::render::Render for MatchBlockEmptyNewlineTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -29181,12 +27574,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SuiteEmptyNewlineTransportSlot
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         SuiteEmptyNewlineTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn suite_empty_newline_transport_slot_to_any(t: SuiteEmptyNewlineTransportSlot) -> AnyTransport {
-    match t {
-        SuiteEmptyNewlineTransportSlot::Literal50_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal50_5f_6e_65_77_6c_69_6e_65,
     }
 }
 
@@ -29328,22 +27715,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ComparisonOperatorComparatorOp
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ComparisonOperatorComparatorOperatorsTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn comparison_operator_comparator_operators_transport_slot_to_any(t: ComparisonOperatorComparatorOperatorsTransportSlot) -> AnyTransport {
-    match t {
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal51_6c_74 => AnyTransport::Literal51_6c_74,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal52_6c_74_5f_65_71 => AnyTransport::Literal52_6c_74_5f_65_71,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal53_65_71_5f_65_71 => AnyTransport::Literal53_65_71_5f_65_71,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal54_62_61_6e_67_5f_65_71 => AnyTransport::Literal54_62_61_6e_67_5f_65_71,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal55_67_74_5f_65_71 => AnyTransport::Literal55_67_74_5f_65_71,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal56_67_74 => AnyTransport::Literal56_67_74,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal57_6c_74_5f_67_74 => AnyTransport::Literal57_6c_74_5f_67_74,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal58_69_6e_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal58_69_6e_5f_6b_65_79_77_6f_72_64,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal59_5f_6e_6f_74_5f_69_6e => AnyTransport::Literal59_5f_6e_6f_74_5f_69_6e,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal60_69_73_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal60_69_73_5f_6b_65_79_77_6f_72_64,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal61_5f_69_73_5f_6e_6f_74 => AnyTransport::Literal61_5f_69_73_5f_6e_6f_74,
     }
 }
 

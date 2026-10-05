@@ -243,7 +243,12 @@ pub trait OptionObject: Sized {
     fn object(&self, key: &str) -> Result<Option<Self>, String>;
     fn number(&self, key: &str) -> Result<Option<u32>, String>;
     fn string(&self, key: &str) -> Result<Option<String>, String>;
+    /// Whether `key` is present and set to `null`, which names a site's blank arm.
+    fn is_null(&self, key: &str) -> Result<bool, String>;
 }
+
+/// The arm id of an optional choice site's blank: the slot holds no token.
+pub const BLANK_ARM: u16 = 0;
 
 /// The settings an options object names, read through a grammar's address
 /// trie and applied over a base table by `resolve`.
@@ -286,7 +291,8 @@ impl<S: OptionSites> Options<S> {
                     }
                 }
                 AddressNode::Spacing { sites, .. } => {
-                    if let Some(value) = obj.number(&key)? {
+                    let value = if obj.is_null(&key)? { Some(u32::from(BLANK_ARM)) } else { obj.number(&key)? };
+                    if let Some(value) = value {
                         self.spacing.extend(sites.iter().map(|site| (*site, value)));
                     }
                 }
@@ -380,6 +386,10 @@ impl OptionObject for ::serde_json::Map<String, ::serde_json::Value> {
             Some(other) => Err(format!("options: {key} must be a string, not {other}")),
         }
     }
+
+    fn is_null(&self, key: &str) -> Result<bool, String> {
+        Ok(matches!(self.get(key), Some(::serde_json::Value::Null)))
+    }
 }
 
 /// Whether a JSON-shaped number is a kind id or bitflag: a whole number that fits a `u32`.
@@ -408,6 +418,14 @@ impl OptionObject for ::napi::bindgen_prelude::Object<'_> {
 
     fn string(&self, key: &str) -> Result<Option<String>, String> {
         self.get::<Option<String>>(key).map(Option::flatten).map_err(|e| e.reason.clone())
+    }
+
+    fn is_null(&self, key: &str) -> Result<bool, String> {
+        let value = self.get::<::napi::Unknown>(key).map_err(|e| e.reason.clone())?;
+        match value {
+            None => Ok(false),
+            Some(value) => value.get_type().map(|t| t == ::napi::ValueType::Null).map_err(|e| e.reason.clone()),
+        }
     }
 }
 

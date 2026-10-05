@@ -1,0 +1,127 @@
+Sort by top of stack, same collapsed (when >= 5):
+        __psynch_cvwait  (in libsystem_kernel.dylib)        17168
+        kevent  (in libsystem_kernel.dylib)        4292
+        semaphore_wait_trap  (in libsystem_kernel.dylib)        4292
+        v8::internal::LookupIterator::LookupInRegularHolder<false>(v8::internal::Tagged<v8::internal::Map>, v8::internal::Tagged<v8::internal::JSReceiver>)  (in libnode.147.dylib)        407
+        _platform_memmove  (in libsystem_platform.dylib)        232
+        v8::internal::Utf8DecoderBase<v8::internal::Utf8Decoder>::Utf8DecoderBase(v8::base::Vector<unsigned char const>)  (in libnode.147.dylib)        139
+        napi_typeof  (in libnode.147.dylib)        102
+        v8::internal::PropertyKey::PropertyKey<v8::internal::Object, v8::internal::DirectHandle>(v8::internal::Isolate*, v8::internal::DirectHandle<v8::internal::Object>, bool*)  (in libnode.147.dylib)        90
+        v8::internal::String::SlowAsIntegerIndex(unsigned long*)  (in libnode.147.dylib)        76
+        _RNvMs4_NtNtNtCsfIcczmKNPgH_4napi15bindgen_runtime9js_values6objectNtB5_6Object9get_inner  (in sittir-rust.darwin-arm64.node)        72
+        v8::internal::Factory::NewStringFromUtf8(v8::base::Vector<unsigned char const>, unibrow::Utf8Variant, v8::internal::AllocationType)  (in libnode.147.dylib)        72
+        v8::internal::StringTable::OffHeapStringHashSet::KeyIsMatch<v8::internal::Isolate, v8::internal::SequentialStringKey<unsigned char>>(v8::internal::Isolate*, v8::internal::SequentialStringKey<unsigned char>*, v8::internal::Tagged<v8::internal::Object>)  (in libnode.147.dylib)        71
+        v8::internal::StringHasher::HashSequentialString<unsigned char>(unsigned char const*, unsigned int, v8::internal::HashSeed)  (in libnode.147.dylib)        65
+        v8::internal::Factory::AllocateRaw(int, v8::internal::AllocationType, v8::internal::AllocationAlignment, v8::internal::AllocationHint)  (in libnode.147.dylib)        64
+        v8::internal::Object::GetProperty(v8::internal::LookupIterator*, bool)  (in libnode.147.dylib)        62
+        v8::internal::LookupIterator::LookupIterator(v8::internal::Isolate*, v8::internal::DirectHandle<v8::internal::Union<v8::internal::Smi, v8::internal::HeapNumber, v8::internal::BigInt, v8::internal::String, v8::internal::Symbol, v8::internal::Boolean, v8::internal::Null, v8::internal::Undefined, v8::internal::JSReceiver>>, v8::internal::DirectHandle<v8::internal::Name>, unsigned long, v8::internal::DirectHandle<v8::internal::Union<v8::internal::Smi, v8::internal::HeapNumber, v8::internal::BigInt, v8::internal::String, v8::internal::Symbol, v8::internal::Boolean, v8::internal::Null, v8::internal::Undefined, v8::internal::JSReceiver>>, v8::internal::LookupIterator::Configuration)  (in libnode.147.dylib)        60
+        v8::internal::String::SlowEqualsNonThinSameLength(unsigned int, v8::internal::Tagged<v8::internal::String>, v8::internal::SharedStringAccessGuardIfNeeded const&) const  (in libnode.147.dylib)        59
+        v8::internal::String::IsEqualTo<(v8::internal::String::EqualityType)2, unsigned char>(v8::base::Vector<unsigned char const>, v8::internal::Isolate*) const  (in libnode.147.dylib)        54
+        v8::internal::StringTable::LookupString(v8::internal::Isolate*, v8::internal::DirectHandle<v8::internal::String>)  (in libnode.147.dylib)        54
+        node_napi_env__::can_call_into_js() const  (in libnode.147.dylib)        51
+        v8::Object::Get(v8::Local<v8::Context>, v8::Local<v8::Value>)  (in libnode.147.dylib)        51
+        v8::EscapableHandleScopeBase::EscapableHandleScopeBase(v8::Isolate*)  (in libnode.147.dylib)        50
+        v8::internal::LookupIterator::NextInternal<false>(v8::internal::Tagged<v8::internal::Map>, v8::internal::Tagged<v8::internal::JSReceiver>)  (in libnode.147.dylib)        50
+        simdutf::arm64::implementation::utf8_length_from_latin1(char const*, unsigned long) const  (in libsimdutf.36.0.0.dylib)        49
+        v8::CallDepthScope<false>::CallDepthScope(v8::internal::Isolate*, v8::Local<v8::Context>)  (in libnode.147.dylib)        49
+        v8::internal::Runtime::GetObjectProperty(v8::internal::Isolate*, v8::internal::DirectHandle<v8::internal::Union<v8::internal::Smi, v8::internal::HeapNumber, v8::internal::BigInt, v8::internal::String, v8::internal::Symbol, v8::internal::Boolean, v8::internal::Null, v8::internal::Undefined, v8::internal::JSReceiver>>, v8::internal::DirectHandle<v8::internal::Object>, v8::internal::DirectHandle<v8::internal::Union<v8::internal::Smi, v8::internal::HeapNumber, v8::internal::BigInt, v8::internal::String, v8::internal::Symbol, v8::internal::Boolean, v8::internal::Null, v8::internal::Undefined, v8::internal::JSReceiver>>, bool*)  (in libnode.147.dylib)        48
+        _xzm_free_tc  (in libsystem_malloc.dylib)        47
+        v8::String::NewFromUtf8(v8::Isolate*, char const*, v8::NewStringType, int)  (in libnode.147.dylib)        47
+        v8::internal::FactoryBase<v8::internal::Factory>::InternalizeStringWithKey<v8::internal::SequentialStringKey<unsigned char>>(v8::internal::SequentialStringKey<unsigned char>*)  (in libnode.147.dylib)        47
+        napi_get_named_property  (in libnode.147.dylib)        44
+        v8::internal::HeapObject::SizeFromMap(v8::internal::Tagged<v8::internal::Map>) const  (in libnode.147.dylib)        44
+        _RNvMs_NtCsdeqEbBOoDS5_11sittir_core7spacingINtB4_13SpacingWriterNtNtCs26gtQGs340n_5alloc6string6StringE10write_textCs2QEcL8JiiaO_11sittir_rust  (in sittir-rust.darwin-arm64.node)        43
+        v8::internal::String::ComputeAndSetRawHash(v8::internal::SharedStringAccessGuardIfNeeded const&)  (in libnode.147.dylib)        40
+        v8::TryCatch::~TryCatch()  (in libnode.147.dylib)        39
+        _RNvMs_NtCsdeqEbBOoDS5_11sittir_core7spacingINtB4_13SpacingWriterNtNtCs26gtQGs340n_5alloc6string6StringE10merge_markCs2QEcL8JiiaO_11sittir_rust  (in sittir-rust.darwin-arm64.node)        38
+        _xzm_malloc_tc  (in libsystem_malloc.dylib)        38
+        v8::internal::Isolate::TryGetCurrent()  (in libnode.147.dylib)        38
+        v8::internal::LookupIterator::FetchValue(v8::internal::AllocationPolicy) const  (in libnode.147.dylib)        38
+        napi_get_property  (in libnode.147.dylib)        35
+        v8::internal::FactoryBase<v8::internal::Factory>::NewRawStringWithMap<v8::internal::SeqOneByteString>(int, v8::internal::Tagged<v8::internal::Map>, v8::internal::AllocationType, v8::internal::AllocationHint)  (in libnode.147.dylib)        33
+        _platform_strlen  (in libsystem_platform.dylib)        31
+        v8::internal::LookupIterator::Start<false>()  (in libnode.147.dylib)        30
+        _RNvNtNtNtCsfIcczmKNPgH_4napi15bindgen_runtime9js_values6object22get_named_property_raw  (in sittir-rust.darwin-arm64.node)        29
+        DYLD-STUB$$napi_typeof  (in sittir-rust.darwin-arm64.node)        27
+        v8::PrepareForExecutionScope::PrepareForExecutionScope(v8::Local<v8::Context>, v8::internal::RuntimeCallCounterId)  (in libnode.147.dylib)        27
+        <deduplicated_symbol>  (in sittir-rust.darwin-arm64.node)        26
+        v8::CallDepthScope<false>::~CallDepthScope()  (in libnode.147.dylib)        26
+        v8impl::TryCatch::~TryCatch()  (in libnode.147.dylib)        26
+        _RNvMs1_NtCsdeqEbBOoDS5_11sittir_core7optionsNtB5_15ResolvedOptions8edge_arm  (in sittir-rust.darwin-arm64.node)        25
+        v8::internal::StringTable::OffHeapStringHashSet::KeyIsMatch<v8::internal::Isolate, v8::internal::InternalizedStringKey>(v8::internal::Isolate*, v8::internal::InternalizedStringKey*, v8::internal::Tagged<v8::internal::Object>)  (in libnode.147.dylib)        25
+        _RNvNtCsdeqEbBOoDS5_11sittir_core7spacing9seam_rank  (in sittir-rust.darwin-arm64.node)        24
+        _RNvXs_NtNtCs2QEcL8JiiaO_11sittir_rust6render9transportNtB4_12AnyTransportNtNtNtCsfIcczmKNPgH_4napi15bindgen_runtime9js_values13FromNapiValue15from_napi_value  (in sittir-rust.darwin-arm64.node)        24
+        v8::internal::Factory::InternalizeUtf8String(v8::base::Vector<char const>)  (in libnode.147.dylib)        24
+        v8::internal::String::MakeThin<v8::internal::Isolate>(v8::internal::Isolate*, v8::internal::Tagged<v8::internal::String>)  (in libnode.147.dylib)        24
+        v8::internal::String::VisitFlat<v8::internal::StringCharacterStream>(v8::internal::StringCharacterStream*, v8::internal::Tagged<v8::internal::String>, int, v8::internal::SharedStringAccessGuardIfNeeded const&)  (in libnode.147.dylib)        24
+        v8::internal::LookupIterator::NotFound(v8::internal::Tagged<v8::internal::JSReceiver>) const  (in libnode.147.dylib)        21
+        _RNvNtCsdeqEbBOoDS5_11sittir_core4slot20transport_value_type  (in sittir-rust.darwin-arm64.node)        20
+        napi_create_string_utf8  (in libnode.147.dylib)        20
+        v8::Value::ToObject(v8::Local<v8::Context>) const  (in libnode.147.dylib)        20
+        v8::internal::JSObject::FastPropertyAt(v8::internal::Isolate*, v8::internal::DirectHandle<v8::internal::JSObject>, v8::internal::Representation, v8::internal::FieldIndex)  (in libnode.147.dylib)        20
+        _tlv_get_addr  (in libdyld.dylib)        19
+        v8::Context::GetNumberOfEmbedderDataFields()  (in libnode.147.dylib)        19
+        _RNvMs_NtCsdeqEbBOoDS5_11sittir_core7spacingINtB4_13SpacingWriterNtNtCs26gtQGs340n_5alloc6string6StringE14write_deferredCs2QEcL8JiiaO_11sittir_rust.llvm.10281453581646522007  (in sittir-rust.darwin-arm64.node)        18
+        _RNvMs_NtCsdeqEbBOoDS5_11sittir_core7spacingINtB4_13SpacingWriterNtNtCs26gtQGs340n_5alloc6string6StringE9site_markCs2QEcL8JiiaO_11sittir_rust  (in sittir-rust.darwin-arm64.node)        18
+        v8::internal::Heap::NotifyObjectLayoutChangeDone(v8::internal::Tagged<v8::internal::HeapObject>)  (in libnode.147.dylib)        18
+        <deduplicated_symbol>  (in libnode.147.dylib)        15
+        _RNvNtCsdeqEbBOoDS5_11sittir_core4view14split_template  (in sittir-rust.darwin-arm64.node)        15
+        napi_get_value_uint32  (in libnode.147.dylib)        15
+        _malloc_zone_malloc  (in libsystem_malloc.dylib)        14
+        _RNvMs_NtCsdeqEbBOoDS5_11sittir_core7spacingINtB4_13SpacingWriterNtNtCs26gtQGs340n_5alloc6string6StringE10flush_seamCs2QEcL8JiiaO_11sittir_rust.llvm.10281453581646522007  (in sittir-rust.darwin-arm64.node)        13
+        _RNvMs_NtCsdeqEbBOoDS5_11sittir_core7spacingINtB4_13SpacingWriterNtNtCs26gtQGs340n_5alloc6string6StringE11write_chunkCs2QEcL8JiiaO_11sittir_rust  (in sittir-rust.darwin-arm64.node)        13
+        _xzm_xzone_malloc_tiny  (in libsystem_malloc.dylib)        13
+        _RNvXs0_NtCsdeqEbBOoDS5_11sittir_core7spacingINtB5_13SpacingWriterNtNtCs26gtQGs340n_5alloc6string6StringENtNtB7_6render10RenderSink4edgeCs2QEcL8JiiaO_11sittir_rust  (in sittir-rust.darwin-arm64.node)        12
+        _RNvXs3_NtNtCsedRpiqSkYaQ_4core4hash3sipINtB5_6HasherNtB5_11Sip13RoundsENtB7_6Hasher5writeCs2QEcL8JiiaO_11sittir_rust.llvm.9389147060715331111  (in sittir-rust.darwin-arm64.node)        12
+        v8::internal::SharedStringAccessGuardIfNeeded::SharedStringAccessGuardIfNeeded(v8::internal::Tagged<v8::internal::String>)  (in libnode.147.dylib)        12
+        DYLD-STUB$$napi_get_named_property  (in sittir-rust.darwin-arm64.node)        11
+        _RNvNtCsdeqEbBOoDS5_11sittir_core4view13write_literal  (in sittir-rust.darwin-arm64.node)        11
+        _free  (in libsystem_malloc.dylib)        11
+        mach_absolute_time  (in libsystem_kernel.dylib)        11
+        v8::Object::Get(v8::Local<v8::Context>, unsigned int)  (in libnode.147.dylib)        11
+        v8::internal::FieldIndex::FieldIndex(bool, int, v8::internal::FieldIndex::Encoding, int, int)  (in libnode.147.dylib)        11
+        napi_get_value_string_utf8  (in libnode.147.dylib)        10
+        v8::internal::GetCurrentStackPosition()  (in libnode.147.dylib)        10
+        DYLD-STUB$$napi_get_property  (in sittir-rust.darwin-arm64.node)        9
+        _RNvNtCs2QEcL8JiiaO_11sittir_rust33___napi_impl_helper_SittirEngine_017render_c_callback  (in sittir-rust.darwin-arm64.node)        9
+        _RNvNtNtCs2QEcL8JiiaO_11sittir_rust6render7options12spacing_text  (in sittir-rust.darwin-arm64.node)        9
+        _RNvXsuU_NtNtCs2QEcL8JiiaO_11sittir_rust6render9transportNtB6_19IdentifierTransportNtNtNtCsfIcczmKNPgH_4napi15bindgen_runtime9js_values13FromNapiValue15from_napi_value  (in sittir-rust.darwin-arm64.node)        9
+        v8::internal::Utf8DecoderBase<v8::internal::Utf8Decoder>::Decode<unsigned char>(unsigned char*, v8::base::Vector<unsigned char const>)  (in libnode.147.dylib)        9
+        xzm_malloc_zone_malloc_type_realloc  (in libsystem_malloc.dylib)        9
+        _RNvXNtNtCs2QEcL8JiiaO_11sittir_rust6render9transportNtB2_12AnyTransportNtNtCsdeqEbBOoDS5_11sittir_core7prepare7Prepare7prepare  (in sittir-rust.darwin-arm64.node)        8
+        _RNvXs0_NtCsdeqEbBOoDS5_11sittir_core7spacingINtB5_13SpacingWriterNtNtCs26gtQGs340n_5alloc6string6StringENtNtB7_6render10RenderSink13seat_trailingCs2QEcL8JiiaO_11sittir_rust  (in sittir-rust.darwin-arm64.node)        8
+        _RNvXsg_NtNtNtCsfIcczmKNPgH_4napi15bindgen_runtime9js_values6numbertNtB7_13FromNapiValue15from_napi_value  (in sittir-rust.darwin-arm64.node)        8
+        unibrow::Utf8::Encode<unsigned char>(v8::base::Vector<unsigned char const>, char*, unsigned long, bool, bool)  (in libnode.147.dylib)        8
+        v8::internal::LookupIterator::LookupInRegularHolder<true>(v8::internal::Tagged<v8::internal::Map>, v8::internal::Tagged<v8::internal::JSReceiver>)  (in libnode.147.dylib)        8
+        DYLD-STUB$$free  (in sittir-rust.darwin-arm64.node)        7
+        _RINvNtCsdeqEbBOoDS5_11sittir_core8classify8majorityINtNtCs26gtQGs340n_5alloc3vec3VectEEB4_  (in sittir-rust.darwin-arm64.node)        7
+        _RNvMNtNtCsfIcczmKNPgH_4napi15bindgen_runtime13callback_infoINtB2_12CallbackInfoKj3_E3newCs2QEcL8JiiaO_11sittir_rust  (in sittir-rust.darwin-arm64.node)        7
+        _RNvXs0_NtCsdeqEbBOoDS5_11sittir_core7spacingINtB5_13SpacingWriterNtNtCs26gtQGs340n_5alloc6string6StringENtNtB7_6render10RenderSink4textCs2QEcL8JiiaO_11sittir_rust  (in sittir-rust.darwin-arm64.node)        7
+        _RNvXs13d_NtNtCs2QEcL8JiiaO_11sittir_rust6render9transportNtB7_12AnyTransportNtNtCsdeqEbBOoDS5_11sittir_core6render6Render6render  (in sittir-rust.darwin-arm64.node)        7
+        _RNvXs2_NtCsdeqEbBOoDS5_11sittir_core7prepareINtNtB7_4slot9SlotValueNtNtNtCs2QEcL8JiiaO_11sittir_rust6render9transport16PatternTransportENtB5_7Prepare7prepareB19_  (in sittir-rust.darwin-arm64.node)        7
+        _RNvXsZ_NtCs26gtQGs340n_5alloc6stringNtB5_6StringNtNtCsedRpiqSkYaQ_4core3fmt5Write9write_str  (in sittir-rust.darwin-arm64.node)        7
+        _RNvYINtNtCsdeqEbBOoDS5_11sittir_core7spacing13SpacingWriterNtNtCs26gtQGs340n_5alloc6string6StringENtNtB7_6render10RenderSink14end_line_afterCs2QEcL8JiiaO_11sittir_rust  (in sittir-rust.darwin-arm64.node)        7
+        _xzm_free  (in libsystem_malloc.dylib)        7
+        v8::internal::FieldIndex::FieldEncoding(v8::internal::Representation)  (in libnode.147.dylib)        7
+        v8::internal::Heap::CreateFillerObjectAtRaw(v8::internal::WritableFreeSpace const&, v8::internal::ClearFreedMemoryMode, v8::internal::ClearRecordedSlots, v8::internal::Heap::VerifyNoSlotsRecorded)  (in libnode.147.dylib)        7
+        xzm_malloc_zone_size  (in libsystem_malloc.dylib)        7
+        DYLD-STUB$$strlen  (in libnode.147.dylib)        6
+        _RNvMs5_NtCs26gtQGs340n_5alloc7raw_vecNtB5_11RawVecInner11finish_growCs2QEcL8JiiaO_11sittir_rust.llvm.1623635412101658498  (in sittir-rust.darwin-arm64.node)        6
+        _RNvMsj_Cs2QEcL8JiiaO_11sittir_rustNtB5_12SittirEngine6render  (in sittir-rust.darwin-arm64.node)        6
+        _RNvXs1q_NtNtCs2QEcL8JiiaO_11sittir_rust6render9transportNtB6_19ExpressionTransportNtNtNtCsfIcczmKNPgH_4napi15bindgen_runtime9js_values13FromNapiValue15from_napi_value  (in sittir-rust.darwin-arm64.node)        6
+        _RNvXsi_NtNtCs2QEcL8JiiaO_11sittir_rust6render9transportNtB5_29DeclarationStatementTransportNtNtNtCsfIcczmKNPgH_4napi15bindgen_runtime9js_values13FromNapiValue15from_napi_value  (in sittir-rust.darwin-arm64.node)        6
+        malloc  (in libsystem_malloc.dylib)        6
+        v8::Value::IsUint32() const  (in libnode.147.dylib)        6
+        v8::internal::LocalHeap::TryGetCurrent()  (in libnode.147.dylib)        6
+        v8::internal::LookupIterator::Start<true>()  (in libnode.147.dylib)        6
+        v8::internal::String::Utf8Length(v8::internal::Isolate*, v8::internal::DirectHandle<v8::internal::String>)  (in libnode.147.dylib)        6
+        v8::internal::String::WriteUtf8(v8::internal::Isolate*, v8::internal::DirectHandle<v8::internal::String>, char*, unsigned long, v8::base::Flags<v8::internal::String::Utf8EncodingFlag, int, int>, unsigned long*)  (in libnode.147.dylib)        6
+        DYLD-STUB$$napi_create_string_utf8  (in sittir-rust.darwin-arm64.node)        5
+        DYLD-STUB$$napi_get_value_uint32  (in sittir-rust.darwin-arm64.node)        5
+        _RNvCsgGzfl3MsF7H_7___rustc35___rust_no_alloc_shim_is_unstable_v2  (in sittir-rust.darwin-arm64.node)        5
+        _RNvXs1_NtCsdeqEbBOoDS5_11sittir_core4slotINtB5_9SlotValueNtNtNtCs2QEcL8JiiaO_11sittir_rust6render9transport12AnyTransportENtNtNtCsfIcczmKNPgH_4napi15bindgen_runtime9js_values13FromNapiValue15from_napi_valueBZ_  (in sittir-rust.darwin-arm64.node)        5
+        _RNvXs1p_NtNtCs2QEcL8JiiaO_11sittir_rust6render9transportNtB6_19ExpressionTransportNtNtCsdeqEbBOoDS5_11sittir_core7prepare7Prepare7prepare  (in sittir-rust.darwin-arm64.node)        5
+        _RNvXs1v_NtNtCs2QEcL8JiiaO_11sittir_rust6render9transportNtB6_19ExpressionTransportNtNtCsdeqEbBOoDS5_11sittir_core6render6Render6render  (in sittir-rust.darwin-arm64.node)        5
+        _RNvXsb_NtNtNtCsfIcczmKNPgH_4napi15bindgen_runtime9js_values5arrayINtNtCs26gtQGs340n_5alloc3vec3VecINtNtCsdeqEbBOoDS5_11sittir_core4slot9SlotValueNtNtNtCs2QEcL8JiiaO_11sittir_rust6render9transport18StatementTransportEENtB7_13FromNapiValue15from_napi_valueB2p_  (in sittir-rust.darwin-arm64.node)        5
+        napi_get_array_length  (in libnode.147.dylib)        5
+

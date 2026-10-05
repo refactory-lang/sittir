@@ -1465,14 +1465,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StringContentContentTransportS
     }
 }
 
-fn string_content_content_transport_slot_to_any(t: StringContentContentTransportSlot) -> AnyTransport {
-    match t {
-        StringContentContentTransportSlot::StringContentText(inner) => AnyTransport::StringContentText(inner),
-        StringContentContentTransportSlot::EscapeSequence(inner) => AnyTransport::EscapeSequence(inner),
-        StringContentContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for StringContentContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -1611,15 +1603,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ParametersElementsTransportSlo
     }
 }
 
-fn parameters_elements_transport_slot_to_any(t: ParametersElementsTransportSlot) -> AnyTransport {
-    match t {
-        ParametersElementsTransportSlot::Capture(inner) => AnyTransport::Capture(inner),
-        ParametersElementsTransportSlot::String(inner) => AnyTransport::String(inner),
-        ParametersElementsTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ParametersElementsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for ParametersElementsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -1748,14 +1731,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MissingNodeNameTransportSlot> 
     }
 }
 
-fn missing_node_name_transport_slot_to_any(t: MissingNodeNameTransportSlot) -> AnyTransport {
-    match t {
-        MissingNodeNameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        MissingNodeNameTransportSlot::String(inner) => AnyTransport::String(inner),
-        MissingNodeNameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for MissingNodeNameTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -1870,13 +1845,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AnonymousNodeNameTransportSlot
     }
 }
 
-fn anonymous_node_name_transport_slot_to_any(t: AnonymousNodeNameTransportSlot) -> AnyTransport {
-    match t {
-        AnonymousNodeNameTransportSlot::String(inner) => AnyTransport::String(inner),
-        AnonymousNodeNameTransportSlot::Literal0_75_6e_64_65_72_73_63_6f_72_65 => AnyTransport::Literal0_75_6e_64_65_72_73_63_6f_72_65,
-    }
-}
-
 impl ::sittir_core::render::Render for AnonymousNodeNameTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -1979,13 +1947,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PredicatePrefixTransportSlot> 
     }
 }
 
-fn predicate_prefix_transport_slot_to_any(t: PredicatePrefixTransportSlot) -> AnyTransport {
-    match t {
-        PredicatePrefixTransportSlot::Literal1_70_6f_75_6e_64 => AnyTransport::Literal1_70_6f_75_6e_64,
-        PredicatePrefixTransportSlot::Literal2_64_6f_74 => AnyTransport::Literal2_64_6f_74,
-    }
-}
-
 impl ::sittir_core::render::Render for PredicatePrefixTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -2080,13 +2041,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PredicateTypeTransportSlot> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         PredicateTypeTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn predicate_type_transport_slot_to_any(t: PredicateTypeTransportSlot) -> AnyTransport {
-    match t {
-        PredicateTypeTransportSlot::Literal3_71_6d_61_72_6b => AnyTransport::Literal3_71_6d_61_72_6b,
-        PredicateTypeTransportSlot::Literal4_62_61_6e_67 => AnyTransport::Literal4_62_61_6e_67,
     }
 }
 
@@ -2199,14 +2153,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ListElementQuantifierQuantifie
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ListElementQuantifierQuantifierTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn list_element_quantifier_quantifier_transport_slot_to_any(t: ListElementQuantifierQuantifierTransportSlot) -> AnyTransport {
-    match t {
-        ListElementQuantifierQuantifierTransportSlot::Literal5_73_74_61_72 => AnyTransport::Literal5_73_74_61_72,
-        ListElementQuantifierQuantifierTransportSlot::Literal6_70_6c_75_73 => AnyTransport::Literal6_70_6c_75_73,
-        ListElementQuantifierQuantifierTransportSlot::Literal3_71_6d_61_72_6b => AnyTransport::Literal3_71_6d_61_72_6b,
     }
 }
 
@@ -2423,20 +2369,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GroupExpressionArmLeftTranspor
     }
 }
 
-fn group_expression_arm_left_transport_slot_to_any(t: GroupExpressionArmLeftTransportSlot) -> AnyTransport {
-    match t {
-        GroupExpressionArmLeftTransportSlot::NamedNodePlain(inner) => AnyTransport::NamedNodePlain(inner),
-        GroupExpressionArmLeftTransportSlot::NamedNodeSupertyped(inner) => AnyTransport::NamedNodeSupertyped(inner),
-        GroupExpressionArmLeftTransportSlot::AnonymousNode(inner) => AnyTransport::AnonymousNode(inner),
-        GroupExpressionArmLeftTransportSlot::MissingNode(inner) => AnyTransport::MissingNode(inner),
-        GroupExpressionArmLeftTransportSlot::Grouping(inner) => AnyTransport::Grouping(inner),
-        GroupExpressionArmLeftTransportSlot::Predicate(inner) => AnyTransport::Predicate(inner),
-        GroupExpressionArmLeftTransportSlot::List(inner) => AnyTransport::List(inner),
-        GroupExpressionArmLeftTransportSlot::FieldDefinition(inner) => AnyTransport::FieldDefinition(inner),
-        GroupExpressionArmLeftTransportSlot::GroupExpressionArm(inner) => AnyTransport::GroupExpressionArm(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for GroupExpressionArmLeftTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -2635,20 +2567,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GroupExpressionArmRightTranspo
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         GroupExpressionArmRightTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn group_expression_arm_right_transport_slot_to_any(t: GroupExpressionArmRightTransportSlot) -> AnyTransport {
-    match t {
-        GroupExpressionArmRightTransportSlot::NamedNodePlain(inner) => AnyTransport::NamedNodePlain(inner),
-        GroupExpressionArmRightTransportSlot::NamedNodeSupertyped(inner) => AnyTransport::NamedNodeSupertyped(inner),
-        GroupExpressionArmRightTransportSlot::AnonymousNode(inner) => AnyTransport::AnonymousNode(inner),
-        GroupExpressionArmRightTransportSlot::MissingNode(inner) => AnyTransport::MissingNode(inner),
-        GroupExpressionArmRightTransportSlot::Grouping(inner) => AnyTransport::Grouping(inner),
-        GroupExpressionArmRightTransportSlot::Predicate(inner) => AnyTransport::Predicate(inner),
-        GroupExpressionArmRightTransportSlot::List(inner) => AnyTransport::List(inner),
-        GroupExpressionArmRightTransportSlot::FieldDefinition(inner) => AnyTransport::FieldDefinition(inner),
-        GroupExpressionArmRightTransportSlot::GroupExpressionArm(inner) => AnyTransport::GroupExpressionArm(inner),
     }
 }
 
@@ -2861,21 +2779,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodeExpressionArmLeftTran
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         NamedNodeExpressionArmLeftTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn named_node_expression_arm_left_transport_slot_to_any(t: NamedNodeExpressionArmLeftTransportSlot) -> AnyTransport {
-    match t {
-        NamedNodeExpressionArmLeftTransportSlot::NamedNodePlain(inner) => AnyTransport::NamedNodePlain(inner),
-        NamedNodeExpressionArmLeftTransportSlot::NamedNodeSupertyped(inner) => AnyTransport::NamedNodeSupertyped(inner),
-        NamedNodeExpressionArmLeftTransportSlot::AnonymousNode(inner) => AnyTransport::AnonymousNode(inner),
-        NamedNodeExpressionArmLeftTransportSlot::MissingNode(inner) => AnyTransport::MissingNode(inner),
-        NamedNodeExpressionArmLeftTransportSlot::Grouping(inner) => AnyTransport::Grouping(inner),
-        NamedNodeExpressionArmLeftTransportSlot::Predicate(inner) => AnyTransport::Predicate(inner),
-        NamedNodeExpressionArmLeftTransportSlot::List(inner) => AnyTransport::List(inner),
-        NamedNodeExpressionArmLeftTransportSlot::FieldDefinition(inner) => AnyTransport::FieldDefinition(inner),
-        NamedNodeExpressionArmLeftTransportSlot::NegatedField(inner) => AnyTransport::NegatedField(inner),
-        NamedNodeExpressionArmLeftTransportSlot::NamedNodeExpressionArm(inner) => AnyTransport::NamedNodeExpressionArm(inner),
     }
 }
 
@@ -3092,21 +2995,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodeExpressionArmRightTra
     }
 }
 
-fn named_node_expression_arm_right_transport_slot_to_any(t: NamedNodeExpressionArmRightTransportSlot) -> AnyTransport {
-    match t {
-        NamedNodeExpressionArmRightTransportSlot::NamedNodePlain(inner) => AnyTransport::NamedNodePlain(inner),
-        NamedNodeExpressionArmRightTransportSlot::NamedNodeSupertyped(inner) => AnyTransport::NamedNodeSupertyped(inner),
-        NamedNodeExpressionArmRightTransportSlot::AnonymousNode(inner) => AnyTransport::AnonymousNode(inner),
-        NamedNodeExpressionArmRightTransportSlot::MissingNode(inner) => AnyTransport::MissingNode(inner),
-        NamedNodeExpressionArmRightTransportSlot::Grouping(inner) => AnyTransport::Grouping(inner),
-        NamedNodeExpressionArmRightTransportSlot::Predicate(inner) => AnyTransport::Predicate(inner),
-        NamedNodeExpressionArmRightTransportSlot::List(inner) => AnyTransport::List(inner),
-        NamedNodeExpressionArmRightTransportSlot::FieldDefinition(inner) => AnyTransport::FieldDefinition(inner),
-        NamedNodeExpressionArmRightTransportSlot::NegatedField(inner) => AnyTransport::NegatedField(inner),
-        NamedNodeExpressionArmRightTransportSlot::NamedNodeExpressionArm(inner) => AnyTransport::NamedNodeExpressionArm(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for NamedNodeExpressionArmRightTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -3309,20 +3197,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GroupingGroupGroupExpressionTr
     }
 }
 
-fn grouping_group_group_expression_transport_slot_to_any(t: GroupingGroupGroupExpressionTransportSlot) -> AnyTransport {
-    match t {
-        GroupingGroupGroupExpressionTransportSlot::NamedNodePlain(inner) => AnyTransport::NamedNodePlain(inner),
-        GroupingGroupGroupExpressionTransportSlot::NamedNodeSupertyped(inner) => AnyTransport::NamedNodeSupertyped(inner),
-        GroupingGroupGroupExpressionTransportSlot::AnonymousNode(inner) => AnyTransport::AnonymousNode(inner),
-        GroupingGroupGroupExpressionTransportSlot::MissingNode(inner) => AnyTransport::MissingNode(inner),
-        GroupingGroupGroupExpressionTransportSlot::Grouping(inner) => AnyTransport::Grouping(inner),
-        GroupingGroupGroupExpressionTransportSlot::Predicate(inner) => AnyTransport::Predicate(inner),
-        GroupingGroupGroupExpressionTransportSlot::List(inner) => AnyTransport::List(inner),
-        GroupingGroupGroupExpressionTransportSlot::FieldDefinition(inner) => AnyTransport::FieldDefinition(inner),
-        GroupingGroupGroupExpressionTransportSlot::GroupExpressionArm(inner) => AnyTransport::GroupExpressionArm(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for GroupingGroupGroupExpressionTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -3419,12 +3293,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GroupingGroupAnchorTransportSl
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         GroupingGroupAnchorTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn grouping_group_anchor_transport_slot_to_any(t: GroupingGroupAnchorTransportSlot) -> AnyTransport {
-    match t {
-        GroupingGroupAnchorTransportSlot::Literal7_61_6e_63_68_6f_72 => AnyTransport::Literal7_61_6e_63_68_6f_72,
     }
 }
 
@@ -3551,14 +3419,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodePlainNameTransportSlo
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         NamedNodePlainNameTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn named_node_plain_name_transport_slot_to_any(t: NamedNodePlainNameTransportSlot) -> AnyTransport {
-    match t {
-        NamedNodePlainNameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        NamedNodePlainNameTransportSlot::Literal0_75_6e_64_65_72_73_63_6f_72_65 => AnyTransport::Literal0_75_6e_64_65_72_73_63_6f_72_65,
-        NamedNodePlainNameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -3698,14 +3558,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodeSupertypedNameTranspo
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         NamedNodeSupertypedNameTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn named_node_supertyped_name_transport_slot_to_any(t: NamedNodeSupertypedNameTransportSlot) -> AnyTransport {
-    match t {
-        NamedNodeSupertypedNameTransportSlot::ImmediateIdentifier(inner) => AnyTransport::ImmediateIdentifier(inner),
-        NamedNodeSupertypedNameTransportSlot::ImmediateString(inner) => AnyTransport::ImmediateString(inner),
-        NamedNodeSupertypedNameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -3915,21 +3767,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodeGroupChildrenNamedNod
     }
 }
 
-fn named_node_group_children_named_node_expressions_transport_slot_to_any(t: NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot) -> AnyTransport {
-    match t {
-        NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::NamedNodePlain(inner) => AnyTransport::NamedNodePlain(inner),
-        NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::NamedNodeSupertyped(inner) => AnyTransport::NamedNodeSupertyped(inner),
-        NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::AnonymousNode(inner) => AnyTransport::AnonymousNode(inner),
-        NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::MissingNode(inner) => AnyTransport::MissingNode(inner),
-        NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::Grouping(inner) => AnyTransport::Grouping(inner),
-        NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::Predicate(inner) => AnyTransport::Predicate(inner),
-        NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::List(inner) => AnyTransport::List(inner),
-        NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::FieldDefinition(inner) => AnyTransport::FieldDefinition(inner),
-        NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::NegatedField(inner) => AnyTransport::NegatedField(inner),
-        NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::NamedNodeExpressionArm(inner) => AnyTransport::NamedNodeExpressionArm(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -4027,12 +3864,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodeGroupChildrenAnchorTr
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         NamedNodeGroupChildrenAnchorTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn named_node_group_children_anchor_transport_slot_to_any(t: NamedNodeGroupChildrenAnchorTransportSlot) -> AnyTransport {
-    match t {
-        NamedNodeGroupChildrenAnchorTransportSlot::Literal7_61_6e_63_68_6f_72 => AnyTransport::Literal7_61_6e_63_68_6f_72,
     }
 }
 
@@ -4242,21 +4073,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodeGroupAnchoredLastName
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn named_node_group_anchored_last_named_node_expressions_transport_slot_to_any(t: NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot) -> AnyTransport {
-    match t {
-        NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::NamedNodePlain(inner) => AnyTransport::NamedNodePlain(inner),
-        NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::NamedNodeSupertyped(inner) => AnyTransport::NamedNodeSupertyped(inner),
-        NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::AnonymousNode(inner) => AnyTransport::AnonymousNode(inner),
-        NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::MissingNode(inner) => AnyTransport::MissingNode(inner),
-        NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::Grouping(inner) => AnyTransport::Grouping(inner),
-        NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::Predicate(inner) => AnyTransport::Predicate(inner),
-        NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::List(inner) => AnyTransport::List(inner),
-        NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::FieldDefinition(inner) => AnyTransport::FieldDefinition(inner),
-        NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::NegatedField(inner) => AnyTransport::NegatedField(inner),
-        NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::NamedNodeExpressionArm(inner) => AnyTransport::NamedNodeExpressionArm(inner),
     }
 }
 
@@ -4473,21 +4289,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodeGroupAnchoredLastLast
     }
 }
 
-fn named_node_group_anchored_last_last_transport_slot_to_any(t: NamedNodeGroupAnchoredLastLastTransportSlot) -> AnyTransport {
-    match t {
-        NamedNodeGroupAnchoredLastLastTransportSlot::NamedNodePlain(inner) => AnyTransport::NamedNodePlain(inner),
-        NamedNodeGroupAnchoredLastLastTransportSlot::NamedNodeSupertyped(inner) => AnyTransport::NamedNodeSupertyped(inner),
-        NamedNodeGroupAnchoredLastLastTransportSlot::AnonymousNode(inner) => AnyTransport::AnonymousNode(inner),
-        NamedNodeGroupAnchoredLastLastTransportSlot::MissingNode(inner) => AnyTransport::MissingNode(inner),
-        NamedNodeGroupAnchoredLastLastTransportSlot::Grouping(inner) => AnyTransport::Grouping(inner),
-        NamedNodeGroupAnchoredLastLastTransportSlot::Predicate(inner) => AnyTransport::Predicate(inner),
-        NamedNodeGroupAnchoredLastLastTransportSlot::List(inner) => AnyTransport::List(inner),
-        NamedNodeGroupAnchoredLastLastTransportSlot::FieldDefinition(inner) => AnyTransport::FieldDefinition(inner),
-        NamedNodeGroupAnchoredLastLastTransportSlot::NegatedField(inner) => AnyTransport::NegatedField(inner),
-        NamedNodeGroupAnchoredLastLastTransportSlot::NamedNodeExpressionArm(inner) => AnyTransport::NamedNodeExpressionArm(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for NamedNodeGroupAnchoredLastLastTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -4585,12 +4386,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodeGroupAnchoredLastAnch
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         NamedNodeGroupAnchoredLastAnchorTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn named_node_group_anchored_last_anchor_transport_slot_to_any(t: NamedNodeGroupAnchoredLastAnchorTransportSlot) -> AnyTransport {
-    match t {
-        NamedNodeGroupAnchoredLastAnchorTransportSlot::Literal7_61_6e_63_68_6f_72 => AnyTransport::Literal7_61_6e_63_68_6f_72,
     }
 }
 

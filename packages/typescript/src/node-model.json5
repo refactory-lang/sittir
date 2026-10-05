@@ -426,7 +426,8 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": 20
       }
     },
     "import_clause": {
@@ -486,7 +487,8 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": 20
       }
     },
     "variable_declaration": {
@@ -503,7 +505,8 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": 20
       }
     },
     "lexical_declaration": {
@@ -527,7 +530,8 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": 20
       }
     },
     "statement_block": {
@@ -538,12 +542,14 @@
         "multiple": true,
         "nonEmpty": false
       },
-      "automatic_semicolon": {
+      "terminator": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "registered": true,
+        "optionDefault": 0
       }
     },
     "else_clause": {
@@ -684,7 +690,8 @@
         "required": false,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": 20
       }
     },
     "try_statement": {
@@ -740,7 +747,8 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": 20
       }
     },
     "continue_statement": {
@@ -757,7 +765,8 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": 20
       }
     },
     "debugger_statement": {
@@ -783,7 +792,8 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": 20
       }
     },
     "throw_statement": {
@@ -800,7 +810,8 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": 20
       }
     },
     "labeled_statement": {
@@ -1044,12 +1055,14 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "automatic_semicolon": {
+      "terminator": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "registered": true,
+        "optionDefault": 0
       }
     },
     "class_heritage": {
@@ -1148,12 +1161,14 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "automatic_semicolon": {
+      "terminator": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "registered": true,
+        "optionDefault": 0
       }
     },
     "generator_function": {
@@ -1243,12 +1258,14 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "automatic_semicolon": {
+      "terminator": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "registered": true,
+        "optionDefault": 0
       }
     },
     "arrow_function": {
@@ -1622,12 +1639,14 @@
       }
     },
     "class_static_block": {
-      "automatic_semicolon": {
+      "terminator": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "registered": true,
+        "optionDefault": 0
       },
       "body": {
         "unnamed": false,
@@ -2047,7 +2066,8 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": 20
       }
     },
     "decorator_parenthesized_expression": {
@@ -2272,7 +2292,8 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": 20
       }
     },
     "nested_type_identifier": {
@@ -2406,7 +2427,8 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": 20
       }
     },
     "required_parameter": {
@@ -3353,7 +3375,8 @@
         "required": false,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": 20
       }
     },
     "object_type_content": {
@@ -3379,7 +3402,8 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": 20
       }
     },
     "export_statement_type_export": {
@@ -3403,7 +3427,8 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": 20
       }
     },
     "export_statement_equals_export": {
@@ -3420,7 +3445,8 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": 20
       }
     },
     "comment_line": {
@@ -3464,7 +3490,8 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": "0x"
       },
       "content": {
         "unnamed": false,
@@ -3495,7 +3522,8 @@
         "required": false,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": "e"
       },
       "sign": {
         "unnamed": false,
@@ -3526,7 +3554,8 @@
         "required": false,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": "e"
       },
       "sign": {
         "unnamed": false,
@@ -3557,7 +3586,8 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": "e"
       },
       "sign": {
         "unnamed": false,
@@ -3581,7 +3611,8 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": "0b"
       },
       "content": {
         "unnamed": false,
@@ -3598,7 +3629,8 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": "0o"
       },
       "content": {
         "unnamed": false,
@@ -3681,7 +3713,8 @@
         "required": false,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": 0
       }
     },
     "class_body_member_method_sig": {
@@ -3714,7 +3747,8 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": 20
       }
     },
     "index_signature_colon": {
@@ -4040,7 +4074,8 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": 20
       }
     },
     "export_statement_default_declaration": {
@@ -4123,7 +4158,8 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": 20
       }
     },
     "variable_declarator_plain": {
@@ -4233,12 +4269,14 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "automatic_semicolon": {
+      "terminator": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "registered": true,
+        "optionDefault": 0
       },
       "operator": {
         "unnamed": false,
@@ -8564,13 +8602,13 @@
           ]
         },
         {
-          "name": "automatic_semicolon",
-          "propertyName": "automaticSemicolon",
-          "paramName": "automaticSemicolon",
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "boolean",
+          "storage": "kindEnum",
           "kinds": [
             "_automatic_semicolon"
           ],
@@ -8590,8 +8628,7 @@
         "name",
         "type_parameters",
         "heritage",
-        "body",
-        "automatic_semicolon"
+        "body"
       ]
     },
     {
@@ -8723,13 +8760,13 @@
       "hidden": false,
       "slots": [
         {
-          "name": "automatic_semicolon",
-          "propertyName": "automaticSemicolon",
-          "paramName": "automaticSemicolon",
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "boolean",
+          "storage": "kindEnum",
           "kinds": [
             "_automatic_semicolon"
           ],
@@ -8763,10 +8800,13 @@
           ]
         }
       ],
-      "factoryShape": "config",
+      "factoryShape": "forwarded",
+      "forwardsTo": "statement_block",
       "factoryFields": [
-        "automatic_semicolon",
         "body"
+      ],
+      "bareAccepts": [
+        "statement_block"
       ]
     },
     {
@@ -12910,13 +12950,13 @@
           ]
         },
         {
-          "name": "automatic_semicolon",
-          "propertyName": "automaticSemicolon",
-          "paramName": "automaticSemicolon",
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "boolean",
+          "storage": "kindEnum",
           "kinds": [
             "_automatic_semicolon"
           ],
@@ -12986,7 +13026,6 @@
       "factoryFields": [
         "kind",
         "left",
-        "automatic_semicolon",
         "operator",
         "right"
       ]
@@ -13666,13 +13705,13 @@
           ]
         },
         {
-          "name": "automatic_semicolon",
-          "propertyName": "automaticSemicolon",
-          "paramName": "automaticSemicolon",
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "boolean",
+          "storage": "kindEnum",
           "kinds": [
             "_automatic_semicolon"
           ],
@@ -13693,8 +13732,7 @@
         "type_parameters",
         "parameters",
         "return_type",
-        "body",
-        "automatic_semicolon"
+        "body"
       ]
     },
     {
@@ -14404,13 +14442,13 @@
           ]
         },
         {
-          "name": "automatic_semicolon",
-          "propertyName": "automaticSemicolon",
-          "paramName": "automaticSemicolon",
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "boolean",
+          "storage": "kindEnum",
           "kinds": [
             "_automatic_semicolon"
           ],
@@ -14431,8 +14469,7 @@
         "type_parameters",
         "parameters",
         "return_type",
-        "body",
-        "automatic_semicolon"
+        "body"
       ]
     },
     {
@@ -24873,13 +24910,13 @@
           ]
         },
         {
-          "name": "automatic_semicolon",
-          "propertyName": "automaticSemicolon",
-          "paramName": "automaticSemicolon",
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "boolean",
+          "storage": "kindEnum",
           "kinds": [
             "_automatic_semicolon"
           ],
@@ -24893,10 +24930,9 @@
           ]
         }
       ],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
-        "statements",
-        "automatic_semicolon"
+        "statements"
       ]
     },
     {
@@ -28254,7 +28290,7 @@
           ]
         }
       ],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "declarators"
       ]

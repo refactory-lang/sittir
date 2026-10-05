@@ -1,3 +1,4 @@
+import { hasBlankArm } from '../compiler/model/site-preferences.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { AbstractAssembledCompound, AssembledAlias, isBuilderTextLeaf, storageKindOfRef } from '../compiler/model/node-map.ts';
@@ -40,7 +41,9 @@ import {
 	fieldTypeComponents,
 	slotSeparatorTexts,
 	slotRoutesOf,
-	pruneUnusedImports
+	pruneUnusedImports,
+	blankFromInput,
+	blankFromRead
 } from './shared.ts';
 import {
 	builtTypeSurfaceOf,
@@ -190,6 +193,7 @@ interface ResolveSlotHydrateConfig {
 	readonly forceUnknownElement?: boolean;
 	readonly separatorIdsExpr?: string;
 	readonly elided?: boolean;
+	readonly blank?: boolean;
 }
 
 function resolveSlotHydrateExprs(
@@ -254,7 +258,7 @@ function resolveSlotHydrateExprs(
 			: '';
 	if (storageInfo?.kind === 'kindEnum') {
 		return {
-			storeExpr: `projectKindEnumStorage(${normalizedStoreExpr}${projectionArgs})`,
+			storeExpr: blankFromRead(config.blank === true, `projectKindEnumStorage(${normalizedStoreExpr}${projectionArgs})`),
 			accessorBody: `return this.${slot.storageKey}`
 		};
 	}
@@ -570,7 +574,8 @@ function emitFieldStorageLines(
 					: undefined,
 			kindEnumOwnSymbolIds: storageInfo.kind === 'mixedEnum' ? kindEnumOwnSymbolIds(f, nodeMap) : undefined,
 			separatorIdsExpr: separatorIdsExprOf(f, nodeMap.nodes.get(ownerKind), kindEntries, elided),
-			elided
+			elided,
+			blank: hasBlankArm(f)
 		});
 		if (hoist?.keys.has(f.storageKey)) {
 			hoist.prelude.push(`  const ${f.storageKey} = ${storeExpr};`);
@@ -661,7 +666,8 @@ function fieldAccessorBodies(
 			nonEmpty: isNonEmpty(f),
 			storageInfo,
 			separatorIdsExpr: separatorIdsExprOf(f, nodeMap.nodes.get(ownerKind), kindEntries, elided),
-			elided
+			elided,
+			blank: hasBlankArm(f)
 		});
 		return { propName: f.propertyName, body: accessorBody };
 	});
@@ -848,8 +854,8 @@ function inlineSetters(
 				body: `${wrapFn}({ ${spreadData}, ${f.storageKey}: restItems(${JSON.stringify(method)}, v) }, tree)`
 			});
 		} else {
-			const setterValueType = `NonNullable<T.${node.typeName}['${f.storageKey}']>`;
-			setters.push({ name: method, params: `v: ${setterValueType}`, body: `${wrapFn}({ ${spreadData}, ${f.storageKey}: v }, tree)` });
+			const setterValueType = `NonNullable<T.${node.typeName}['${f.storageKey}']>${hasBlankArm(f) ? ' | null' : ''}`;
+			setters.push({ name: method, params: `v: ${setterValueType}`, body: `${wrapFn}({ ${spreadData}, ${f.storageKey}: ${blankFromInput(hasBlankArm(f), 'v')} }, tree)` });
 		}
 	}
 	if (children.length > 0) {

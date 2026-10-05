@@ -3,7 +3,7 @@ import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
 import type { KindEntryLike } from '../dsl/symbol-table.ts';
 import { findEntryForKindName } from '../dsl/symbol-table.ts';
 import { Delimiter } from '@sittir/common/utils';
-import type { SitePreference, SpacingSide } from '../compiler/model/site-preferences.ts';
+import { BLANK_ARM, BLANK_KIND_ID, type PreferenceArm, type SitePreference, type SpacingSide } from '../compiler/model/site-preferences.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { displayNameOf } from '../compiler/model/display-name.ts';
 import { admitsDepth } from '../compiler/model/render-rules.ts';
@@ -114,6 +114,10 @@ function idOf(kindEntries: readonly IdEntry[], kind: string, at: string): number
 	return entry.id;
 }
 
+export function armIdOf(kindEntries: readonly IdEntry[], arm: PreferenceArm, at: string): number {
+	return arm.kind === undefined && arm.value === BLANK_ARM ? BLANK_KIND_ID : idOf(kindEntries, arm.kind ?? arm.value, at);
+}
+
 function screaming(s: string): string {
 	return toScreamingSnakeCase(s, s);
 }
@@ -178,7 +182,7 @@ export function planRenderOptions(
 			}, site);
 			continue;
 		}
-		const allowedIds = site.arms.map((arm) => idOf(kindEntries, arm.kind ?? arm.value, at));
+		const allowedIds = site.arms.map((arm) => armIdOf(kindEntries, arm, at));
 		const defaultArm = site.arms.find((arm) => arm.value === site.defaultArm);
 		if (defaultArm === undefined) throw new Error(`options.rs: ${at} default '${site.defaultArm}' is not one of its arms`);
 		const isFlank = site.side === 'start' || site.side === 'end';
@@ -191,7 +195,7 @@ export function planRenderOptions(
 			constName: `SITE_${screaming(kind)}_${screaming(field)}`,
 			fieldIdent: field,
 			wireKey: `_${field}`,
-			defaultId: idOf(kindEntries, defaultArm.kind ?? defaultArm.value, at),
+			defaultId: armIdOf(kindEntries, defaultArm, at),
 			allowedIds,
 			strength: seamStrength(site.origin),
 			...(site.side === undefined ? {} : { side: site.side }),

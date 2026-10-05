@@ -5,7 +5,8 @@
  * the kind itself, where the node is that slot's value and the call wraps
  * it. `parenthesizedExpressionSequence` is here through its sequence: its
  * strict builder takes the sequence's elements, and the kind is an
- * expression, so its own node is one element.
+ * expression, so its own node is one element. `statementBlock` takes its
+ * statements positionally, and a statement block is a statement.
  *
  * Compile-time only: `pnpm --filter @sittir/typescript type-check`.
  */
@@ -26,6 +27,7 @@ export type StrictRowsThatTakeTheirOwnNode = Expect<
 		| 'parenthesizedExpressionSequence'
 		| 'parenthesizedType'
 		| 'readonlyType'
+		| 'statementBlock'
 		| 'tupleType'
 		| 'yieldExpression'
 	>

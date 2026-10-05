@@ -33,3 +33,32 @@ describe('buildFactoryMap — FactorySlotMeta.registered', () => {
 		expect(factorySlots.hex!.content!.registered).toBeUndefined();
 	});
 });
+
+describe('buildFactoryMap — FactorySlotMeta.optionDefault', () => {
+	const choiceSlot = (defaultArm: string, defaultKind: string | undefined): AssembledNonterminal => {
+		const s = slot('terminator', [text(';')], true);
+		s.optionDefaultArm = defaultArm;
+		s.optionDefaultKind = defaultKind;
+		return s;
+	};
+	const spellingSlot = slot('prefix', [text('0x'), text('0X')], true);
+	spellingSlot.registeredOption = 'spelling';
+	spellingSlot.optionDefaultArm = '0x';
+	const nodes = new Map<string, AssembledNode>([
+		['hex', new AssembledBranch('hex', rule, rule, { slots: [spellingSlot, slot('content', [text('1')], false)] })],
+		['semi_stmt', new AssembledBranch('semi_stmt', rule, rule, { slots: [choiceSlot(';', 'semi'), slot('content', [text('1')], false)] })],
+		['blank_stmt', new AssembledBranch('blank_stmt', rule, rule, { slots: [choiceSlot('blank', undefined), slot('content', [text('1')], false)] })]
+	]);
+	const kindEntries = [{ kind: 'semi', member: 'Semi', id: 42 }];
+	const { factorySlots } = buildFactoryMap(makeNodeMapWith(nodes), kindEntries);
+
+	it('a spelling default is its text, a choice default its arm kind id, the blank arm id 0', () => {
+		expect(factorySlots.hex!.prefix!.optionDefault).toBe('0x');
+		expect(factorySlots.semi_stmt!.terminator!.optionDefault).toBe(42);
+		expect(factorySlots.blank_stmt!.terminator!.optionDefault).toBe(0);
+	});
+
+	it('without kind entries a choice default is left out', () => {
+		expect(buildFactoryMap(makeNodeMapWith(nodes)).factorySlots.semi_stmt!.terminator!.optionDefault).toBeUndefined();
+	});
+});

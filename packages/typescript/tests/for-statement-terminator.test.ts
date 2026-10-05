@@ -44,7 +44,7 @@ describe('for_statement.condition', () => {
 					),
 					condition: ts.build.binaryExpression.strict({ left: ts.build.identifier('i'), operator: ts.kinds.Lt, right: ts.build.number('3') }),
 					increment: ts.build.updateExpression.postfix.strict({ argument: ts.build.identifier('i'), operator: ts.kinds.PlusPlus }),
-					body: ts.build.statementBlock.strict({ automaticSemicolon: true })
+					body: ts.build.statementBlock.strict({ terminator: ts.kinds.AutomaticSemicolon })
 				})
 			]
 		});
@@ -57,7 +57,7 @@ describe('for_statement.condition', () => {
 				ts.build.forStatement.strict({
 					initializer: ts.kinds.EmptyStatement,
 					condition: ts.kinds.EmptyStatement,
-					body: ts.build.statementBlock.strict({ automaticSemicolon: true })
+					body: ts.build.statementBlock.strict({ terminator: ts.kinds.AutomaticSemicolon })
 				})
 			]
 		});

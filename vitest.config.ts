@@ -25,7 +25,7 @@ export default defineConfig({
 
 	},
 	test: {
-		exclude: ['**/node_modules/**', '**/dist/**', '**/.worktrees/**', '**/.claude/worktrees/**', 'scratchpad/**', '.specify/**', '.agents/**'],
+		exclude: ['**/node_modules/**', '**/dist/**', '**/.worktrees/**', '**/.claude/worktrees/**', 'scratchpad/**', 'docs/superpowers/probes/**', '.specify/**', '.agents/**'],
 		// Build any grammar's missing `.sittir/parser.wasm` before tests run;
 		// a present (committed) wasm is left as is.
 		globalSetup: ['./vitest.setup.ts'],

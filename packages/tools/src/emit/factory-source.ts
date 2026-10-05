@@ -27,6 +27,7 @@ export interface PrintContext {
 	readonly facts: ModelFacts;
 	readonly kindNameFromId: (id: number) => string | undefined;
 	readonly memberNameOfId: (id: number) => string | undefined;
+	readonly blankKindId?: number;
 	readonly irPathOfKind: (kind: string) => string;
 	readonly delimiterArmOfId: (id: number) => string | undefined;
 	readonly seats?: SeatTable;
@@ -169,6 +170,7 @@ export function printValue(value: unknown, ctx: PrintContext, depth: number): st
 	if (typeof value === 'string') return JSON.stringify(value);
 	if (typeof value === 'boolean') return String(value);
 	if (typeof value === 'number') {
+		if (value === ctx.blankKindId) return 'null';
 		const member = ctx.memberNameOfId(value);
 		if (member === undefined) throw new Error(`emit-factory-source: kind id ${value} has no kinds member`);
 		return `${kindsPath(ctx.engine)}.${member}`;
@@ -473,7 +475,7 @@ function loosenValue(
 			printValue(looseListElement(listKind, hoistSeatElement(item, ctx), ctx), ctx, 0)
 		);
 		const bare = printed.length === 1 && !/^[{[]/.test(printed[0]!) ? printed[0]! : undefined;
-		return new Printed(value.$type, bare ?? `[${printed.join(', ')}]`, value.kind);
+		return new Printed(value.$type, bare ?? `[${printed.join(', ')}]`, value.kind, printed.join(', '), { elements: { items } });
 	}
 	const inner = value.facts?.inner;
 	const innerText = inner instanceof Printed ? inner.facts?.text : undefined;
@@ -647,9 +649,12 @@ export function printingFactoryMap(
 					return new Printed(id, `${call}(${argSource})`, kind, argSource, { inner: placed.strict, ownsList: ownedList !== undefined });
 				}
 				case 'spread': {
-					const items = args.map((a) => wrapDirectArg(kind, a, ctx));
-					const argSource = items.map((a) => printValue(a, ctx, 0)).join(', ');
-					return new Printed(id, `${call}(${argSource})`, kind, argSource, { elements: { items } });
+					const [first, ...rest] = args;
+					const options = isPlainObject(first) && !('$type' in first) ? first : undefined;
+					const items = (options === undefined ? args : rest).map((a) => wrapDirectArg(kind, a, ctx));
+					const head = options === undefined ? [] : [printValue(options, ctx, 0)];
+					const argSource = [...head, ...items.map((a) => printValue(a, ctx, 0))].join(', ');
+					return new Printed(id, `${call}(${argSource})`, kind, argSource, { elements: { options, items } });
 				}
 				case 'elements': {
 					const [first, ...rest] = args;
@@ -1075,6 +1080,7 @@ export async function emitFactorySourceText(
 		nested,
 		kindNameFromId,
 		memberNameOfId: (id) => memberOf(types.TSKindId, id),
+		blankKindId: (await load('sitePreferences')).BLANK_KIND_ID,
 		irPathOfKind: irPathResolver(
 			withPublicNames(model.irKeys),
 			variantFormsOf(model.polymorphVariants, model.modelTypes),
@@ -1127,7 +1133,8 @@ export async function emitFactorySourceText(
 		factoryShapes,
 		fieldAliasMap: withPublicNames(model.fieldAliasMap),
 		factoryFields: withPublicNames(model.factoryFields),
-		factorySlots: withPublicNames(model.factorySlots)
+		factorySlots: withPublicNames(model.factorySlots),
+		omitOptionDefaults: true
 	};
 	const shownRoot = nativeShownKindId(root);
 	const rootKind = typeof shownRoot === 'number' ? kindNameFromId(shownRoot) : shownRoot;

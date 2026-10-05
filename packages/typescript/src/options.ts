@@ -18,6 +18,7 @@ export interface LabelOptions {
 		readonly terminator?:
 			| TSKindId.AutomaticSemicolon
 			| TSKindId.Semi
+			| null
 			| TSKindId.Comma
 			| TSKindId.FunctionSignatureAutomaticSemicolon;
 	};

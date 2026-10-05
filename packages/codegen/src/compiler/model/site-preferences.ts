@@ -10,6 +10,7 @@ import {
 	AssembledNonterminal,
 	delimiterMembersFor,
 	isNodeRef,
+	isRequired,
 	isTerminalValue,
 	storageKindOfRef,
 	type NodeOrTerminal
@@ -24,6 +25,16 @@ export { type SpacingSide } from './render-rules.ts';
 import { displayNameOf, displayNameOfEntry, displayOfParserName, displayedKinds } from './display-name.ts';
 
 const UNDECLARED_ARM = '';
+export const BLANK_ARM = 'blank';
+export const BLANK_KIND_ID = 0;
+
+export function admitsArm(site: { readonly arms: readonly PreferenceArm[] }, arm: string): boolean {
+	return site.arms.some((candidate) => candidate.value === arm);
+}
+
+export function hasBlankArm(slot: AssembledNonterminal): boolean {
+	return slot.registeredOption === 'choice' && !isRequired(slot);
+}
 
 export type PreferenceSource = 'declared' | 'spacing' | 'delimiter' | 'separator' | 'choice';
 
@@ -170,8 +181,6 @@ function withDeclaredArms(
 		config.nodeMap
 	);
 	const membersOf = supertypeMembersByDisplayName(config.nodeMap);
-	const admits = (site: { readonly arms: readonly PreferenceArm[] }, arm: string): boolean =>
-		site.arms.some((candidate) => candidate.value === arm);
 
 	const armOfLabel = new Map(declarations.map((declaration) => [declaration.path, declaration.arm]));
 	for (const { address, arm } of [
@@ -179,7 +188,7 @@ function withDeclaredArms(
 		...bindings.map((binding) => ({ address: binding.address, arm: armOfLabel.get(binding.label)! }))
 	]) {
 		const hits = matchAddress(addressSegments(address), addressed, membersOf);
-		if (hits.length > 0 && !hits.some((site) => admits(site, arm))) {
+		if (hits.length > 0 && !hits.some((site) => admitsArm(site, arm))) {
 			throw new Error(
 				`options: '${address}' is '${arm}', which no site it names admits (${[...new Set(hits.flatMap((site) => site.arms.map((a) => a.value)))].join(', ')})`
 			);
@@ -189,7 +198,7 @@ function withDeclaredArms(
 	const out = [...sites];
 	for (const [index, { arm, origin }] of resolveBindings(declarations, bindings, addressed, membersOf, requireHit)) {
 		const site = addressed[index]!;
-		if (!admits(site, arm)) continue;
+		if (!admitsArm(site, arm)) continue;
 		if (site.siteIndex === undefined) {
 			const isSpelling = site.arms.every((candidate) => candidate.kind === undefined);
 			registerSlot(config.nodeMap, site, arm, isSpelling ? 'spelling' : 'choice');
@@ -212,7 +221,9 @@ function registerSlot(nodeMap: NodeMap, site: SiteCandidate, arm: string, mode: 
 	const slot = node instanceof AbstractAssembledCompound ? node.slots.find((candidate) => candidate.name === site.slot) : undefined;
 	if (slot === undefined) return;
 	slot.optionDefaultArm = arm;
+	slot.optionDefaultKind = site.arms.find((candidate) => candidate.value === arm)?.kind;
 	slot.registeredOption = mode;
+	if (mode === 'choice') slot.storageInfo = undefined;
 }
 
 function separatorArmKinds(node: AssembledList, config: SitePreferencesConfig): string[] {
@@ -282,9 +293,11 @@ function choiceCandidate(
 	slot: AssembledNonterminal,
 	config: SitePreferencesConfig
 ): SiteCandidate | undefined {
-	if (slot.values.length < 2) return undefined;
-	const arms = armsOf(slot.values, config);
-	if (arms === undefined) return undefined;
+	const valued = armsOf(slot.values, config);
+	if (valued === undefined) return undefined;
+	const blank = !isRequired(slot) && valued.every((arm) => arm.kind !== undefined);
+	const arms = blank ? [...valued, { value: BLANK_ARM }] : valued;
+	if (arms.length < 2) return undefined;
 	const name = slot.name!;
 	return {
 		kind,

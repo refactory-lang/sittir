@@ -1129,6 +1129,14 @@ A kind with an empty form gets the zero-argument overload returning `T.Empty<Typ
 (`declaredSeparatorDefault`), so a built node always carries its token,
 as it always carries its delimiter.
 
+### `packages/codegen/src/emitters/factories.ts::withLeadingOptions`
+
+A parameter list with the options parameter put first, typed `ListOptions<options>` so a node is never taken as the options. List builders and spread builders with registered slots share it.
+
+### `packages/codegen/src/emitters/factories.ts::leadingOptionsSplit`
+
+The lines that split a leading options object off a rest argument list: the first argument is the options when it is a plain object with no `$type` and only the permitted keys, and the rest are the items. A list builder, a spread builder with registered slots and the `from()` coercer of the latter emit it, each over its own argument list.
+
 ### `packages/codegen/src/emitters/shared.ts::pruneUnusedImports`
 
 The one mechanism for "import only what the body uses" in every generated TypeScript module. An emitter writes its preamble naming every candidate import, then passes its finished lines and the candidate local names here. The body is every line that is not an `import`; a named import specifier (`X`, or `X as Y` tested by its local name `Y`) whose name has no `\b` use in the body is removed, and an import line left with no specifiers is dropped whole. A namespace import (`import * as X`) is dropped whole when `X` is unused. Keying on the imported name, not on the import's path or line text, keeps it correct wherever the import sits: the `Delimiter` import in the raw factories, the coerce module and wrap; the `@sittir/types` names in the factories, the coerce module and the types module; wrap's `projectInterior` / `TokenInterior` / `TOKEN_INTERIORS`, keyword-storage coercers and `FR` namespace. An emitter keeps a usage flag only where the flag gates a helper it writes, never to choose imports. A grammar that never uses a name (scm and regex have no separated lists and no keyword-presence slots) gets no import of it, so its generated package lints clean.
@@ -1654,6 +1662,8 @@ A separated list's rest parameter is its `LooseArgs` row, which `listBuiltTypeSu
 
 A kind with an empty form gets the zero-argument overload returning `T.Empty<TypeName>` ahead of the rest-parameter signature (`withEmptyOverload`).
 
+With leading options (`leadingOptionsOf`), the coercer first splits a leading options object off `input` (`leadingOptionsSplit`) and resolves the rest. Rebuilding from a node of its own kind, it starts from the registered values that node holds (its storage keys) and lets a passed options object override them, so a coerced node keeps its spelling.
+
 ### `packages/codegen/src/emitters/from.ts::emitRepeatedChildrenFrom`
 
 ```text
@@ -1691,6 +1701,8 @@ A kind with an empty form gets the zero-argument overload returning `T.Empty<Typ
 // literals (e.g. ",") the factory doesn't accept directly as a spread
 // element. Route through unknown.
 ```
+
+A builder with leading options is called through an untyped view with the options first; `Parameters<typeof build>` names only the last overload, which there is the options-led one.
 
 ### `packages/codegen/src/emitters/from.ts::emitSingularChildrenFrom`
 
@@ -3762,6 +3774,8 @@ is bounded by the supertype's subtype count, not the grammar.
 // Symmetric — named and unnamed slots both flow through `consider`.
 ```
 
+A slot with a blank arm always gets a per-slot enum, to hold its `Blank` variant.
+
 ### `packages/codegen/src/emitters/render-module.ts::literalArmSeamSites`
 
 The seam sites of the owner kind that a per-slot enum's literal arm carries,
@@ -3937,6 +3951,8 @@ The literal arms' kind ids are computed once (`literalKindIdsOf`) and feed
 both the napi decode's literal arms and, for an enum that backs a
 prepare-filled slot, its `from_kind_id` (`fromKindIdImpl`).
 
+A slot with a blank arm (`hasBlankArm`) gets a `Blank` variant: it decodes from the blank id, renders nothing, and is no kind.
+
 ### `packages/codegen/src/emitters/render-module.ts::literalKindIdsOf`
 
 A per-slot enum's literal arms as kind id → unit variant pairs, first
@@ -3958,6 +3974,8 @@ enum that backs a prepare-filled slot: one arm per literal kind id
 be a literal a kind id can build; an enum with a node arm, or a literal
 that did not resolve (`allResolved`), fails codegen, since `prepare` could not build
 that arm from the option's resolved kind id.
+
+A slot with a blank arm maps the blank id to the enum's `Blank` variant, so an option that resolves to the blank fills the slot with a value that renders nothing.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderAnyTransportWithNapiFromValue`
 
@@ -4295,6 +4313,8 @@ property names with the `$`-prefixed keys explicitly.
 // (all are supertypes/polymorphs/multi), per-slot enum collection skips
 // this slot. Fall back to AnyTransport.
 ```
+
+A slot with a blank arm is always typed by its per-slot enum, even when its one token would otherwise give it that token's transport type, because the field must hold the blank.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderBoxedEnumNapiImpls`
 
@@ -4854,6 +4874,16 @@ the literal component, for `literalArmSeamSites`.
 // degenerate repeat(single-literal)
 ```
 
+A slot registered as a choice preference is never a presence flag: its token and its blank are two arms of one choice, stored as kind ids.
+
+### `packages/codegen/src/emitters/shared.ts::blankFromRead`
+
+The stored value of a read slot with a blank arm: the token's kind id, or the blank id when the read found no token. A parsed node keeps its blank, so the options never fill it.
+
+### `packages/codegen/src/emitters/shared.ts::blankFromInput`
+
+The stored value of a caller's input to a slot with a blank arm: `null` is the blank id, `undefined` stays unset (the options fill it at render), and a kind id is stored as given.
+
 ### `packages/codegen/src/emitters/shared.ts::keywordPresenceValue`
 
 ```text
@@ -5150,6 +5180,8 @@ Wraps a configuration type so it omits the registered slots' keys.
 
 The object type of a node's registered slots, each key optional and typed by the slot's literal arms; the type of the trailing options parameter and of the namespace's `Spelling`. Nothing when the node has no registered slot.
 
+A slot with a blank arm also takes `null`, the blank.
+
 ### `packages/codegen/src/emitters/interior.ts::optionalGroupPeers`
 
 The other named parts of the optional group a slot sits in, or nothing when the slot is not in a group. A registered spelling in a group is written only when one of these is present.
@@ -5170,6 +5202,8 @@ The expression a builder binds a registered slot to: the option, else the regist
 // spelling-mode slot (no kind ids, no render-time resolution) gets the
 // eager default.
 ```
+
+A choice slot with a blank arm stores its input through `blankFromInput`.
 
 ### `packages/codegen/src/emitters/interior.ts::bareInteriorText`
 
@@ -5553,7 +5587,7 @@ slot, the escaped suffix; `"{}"` when the slot has no flanks.
 
 ### `packages/codegen/src/emitters/shared.ts::registeredSlots`
 
-The slots of a node that take their value from the trailing options argument instead of the config: the node's slots minus its `configSlots`. It inherits the model's inert-registration rule, so a compound whose every slot is registered keeps them all as config slots and has no registered slots here. Every consumer that asks whether a slot is registered (the factory surface, `from()`, the test emitter, `classifyFactoryShape`'s spread check and the exported `FactorySlotMeta.registered`) reads it from this one function, never from the raw `registeredOption` stamp. A node with no `configSlots` falls back to the stamp.
+The slots of a node that take their value from the options argument instead of the config: the node's slots minus its `configSlots`. The options argument trails a direct value or a config and leads spread children (`leadingOptionsOf`). It inherits the model's inert-registration rule, so a compound whose every slot is registered keeps them all as config slots and has no registered slots here. Every consumer that asks whether a slot is registered (the factory surface, `from()`, the test emitter, `leadingOptionsOf` and the exported `FactorySlotMeta.registered`) reads it from this one function, never from the raw `registeredOption` stamp. A node with no `configSlots` falls back to the stamp.
 
 ### `packages/codegen/src/emitters/shared.ts::classifyFactoryShape`
 
@@ -5575,6 +5609,27 @@ slot is `spread` like any other (rust's token trees, typescript's string
 forms, python's `_except_clause_list` and `_match_block_block`). The seat the
 overlay derives from that shape is the kind's own builder passed through
 the parent's.
+
+Registered slots do not enter the shape either: a sole repeated slot is
+`spread` whether or not the node has registered slots. Since a rest
+parameter must come last, those slots' options argument leads the children
+(`leadingOptionsOf`), as a list's options do, so there is one rule for where
+options go: after a direct value or a config, before spread items.
+
+### `packages/codegen/src/emitters/shared.ts::LeadingOptions`
+
+The options argument a spread builder takes before its children: the
+emitted options type, the config keys a leading object may carry (the
+`_optsFirst` test admits an object only when every key is one of them), and
+the storage keys those slots are held under on a built node, in the same
+order.
+
+### `packages/codegen/src/emitters/shared.ts::leadingOptionsOf`
+
+The leading options of a `spread` builder whose node has registered slots;
+undefined for any other node. The factory surface, the `from()` coercer, the
+test emitter and the argument rows all read it here, so whether a builder
+takes leading options is one fact.
 
 ### `packages/codegen/src/emitters/bundle-hash.ts::computeBundleHash`
 
@@ -7001,17 +7056,21 @@ The bare slot of a coercer row is the direct slot, or the content slot of a lexe
 
 The row ends with the kind's `.Parsed` and its empty form (`never` when the kind cannot be empty), which is what lets the namespace-map lookup admit an empty form where a kind is asked for.
 
+A kind with a construction surface narrows `BuildArgs` and `LooseArgs` (typed `readonly unknown[]` on the base) as members of its namespace interface's body. A type argument is resolved together with the base type, and a row whose elements reach back to the kind (a statement block's statements include statement blocks; a wrapper forwards to the block's rows) would need that base while it is still being resolved. A member is resolved only when it is read.
+
 ```text
 /**
- * Emit one `export interface <TypeName>Ns extends NodeNs<…> {}` row.
+ * Emit one `export interface <TypeName>Ns extends NodeNs<…>` row: an empty
+ * body for a kind with no factory, else a body declaring the kind's
+ * `BuildArgs` and `LooseArgs` members.
  *
  * @remarks
  * Threads `NamespaceMap` through `NodeNs` so that `Loose` can short-circuit
  * multi-branch union recursions to `NamespaceMap[K]['Loose']` lookups
  * instead of re-projecting per arm. When the kind has a factory, the row
- * also carries the kind's {@link BuiltTypeSurface} — the built type, the
- * build-args tuple and the loose-args tuple — inline as the trailing
- * `NodeNs` arguments: this file is where `<Kind>.Bound` is DEFINED, and
+ * also carries the kind's {@link BuiltTypeSurface}: the built type, its
+ * parsed form and its empty form as trailing `NodeNs` arguments, and the
+ * build-args and loose-args tuples as members: this file is where `<Kind>.Bound` is DEFINED, and
  * `raw.ts` only annotates its builders with that name. The surface text is
  * written against `T.`, which is why `types.ts` imports itself as `T`
  * (type-only): the same text serves both files without a rewrite.
@@ -7020,7 +7079,7 @@ The row ends with the kind's `.Parsed` and its empty form (`never` when the kind
  * @param typeName - The `TypeName` portion of the interface name.
  * @param surface - The construction surface, or `undefined` for a kind with
  *   no factory (the row then has no `Built` / args members beyond the
- *   `NodeNs` defaults).
+ *   `NodeNs` base's `readonly unknown[]`).
  * @param coercer - The row's trailing `Bare` / `Kind` arguments from
  *   {@link coercerRowArgs}, or `undefined` when the kind has no from()
  *   coercer (the row then ends at `LooseArgs`). A coercer with no surface is
@@ -9672,7 +9731,8 @@ The types module of `emitTypesModules`, for callers that need only the public su
 // NamespaceMap — single source of truth for the per-kind type family.
 //
 // For every structural kind with a data interface, emit:
-//   1. interface <TypeName>Ns extends NodeNs<<TypeName>, LeafScalarMap, LeafStringMap> {}
+//   1. interface <TypeName>Ns extends NodeNs<<TypeName>, LeafScalarMap, LeafStringMap, NamespaceMap, …>,
+//      with a body declaring `BuildArgs` / `LooseArgs` when the kind has a builder
 //   2. an entry in NamespaceMap keyed by the kind string
 //   3. namespace sugar: `export namespace <TypeName> { Config; Fluent; Loose; Kind; }`
 //      — declaration-merges with the data interface so consumers can
@@ -11559,6 +11619,8 @@ It also answers the parameter's arity: 1, or none (unbounded) for a rest paramet
 
 The direct-value parameter is optional when its slot is optional or holds fixed text (`holdsFixedText`). A fixed-text slot then stores `defaultedValueExpr(value)`, so `buildLazy()` fills `?` itself.
 
+A node with registered slots takes an options argument. It trails a direct value or a config (`options?: T.<Kind>.Options`). On a spread surface it leads instead (`leadingOptions`): the builder is emitted as two overloads, `(...children)` and `(options, ...children)`, over an implementation that splits the arguments with `leadingOptionsSplit`, and its setters pass the options on.
+
 #### body
 
 ```text
@@ -11653,6 +11715,12 @@ A chain that ends in a pattern leaf forwards nothing, because that leaf's constr
 
 The overload list of a forwarding strict builder, as a value: the kind's own parameters, then each parameter list the target's constructor declares (`constructorSurface`; a target with no constructor surface forwards the target builder's own arguments), with an empty list first. It carries the list twice, in the two spellings the two readers need: `overloads` for the builder's declarations in `raw.ts`, and `rows` as tuples for `types.ts`, where a target with no constructor surface is named by its row (`T.<Target>.BuildArgs`) because the types module does not see the factories. `emitFieldCarryingFactory` writes the declarations from it and `fieldCarryingBuiltTypeSurface` writes `BuildArgs` as the union of its rows, so a strict row cannot omit an overload the builder declares. `null` when the kind forwards nothing.
 
+A node with registered slots does not offer a spread target's own forms (`restForwardTarget`): its options argument trails its value, so it cannot also take the target's items, and its loose builder takes no spread either (`listSpreadTarget`). It still forwards, so it still builds from no argument when its target can be empty.
+
+### `packages/codegen/src/emitters/factories.ts::restForwardTarget`
+
+The forward target of a kind whose constructor chain ends in a kind built from its elements (factory shape `elements` or `spread`), whatever the kind's own registered slots.
+
 ### `packages/codegen/src/emitters/factories.ts::listSpreadTarget`
 
 The forward target of a kind whose strict builder accepts the spread of the child it wraps (`parameters(a, b)` for `parameters` → `parameters_elements`, `string(a, b)` for `string` → `string_content`): `forwardedConstructorTarget` names a target whose constructor chain ends in a kind built from its elements, a list or a compound with one multiple slot (factory shape `elements` or `spread`), and the kind registers no spelling slot (a spelling wrapper forwards only its first argument). The strict wrapper, the loose coercer's spread overload (`emitBranchFrom`), and the `BuildArgs` / `LooseArgs` tuples (`fieldCarryingBuiltTypeSurface`) all read this one answer, so the loose surface accepts at least what the strict one does.
@@ -11668,6 +11736,8 @@ Reads a `RowParam` off a kind's factory surface: the row types as `paramsToTuple
 ### `packages/codegen/src/emitters/factories.ts::fieldCarryingBuiltTypeSurface`
 
 The construction surface of a field-carrying kind, from its factory surface: the `$with` setters, and the `BuildArgs` / `LooseArgs` tuples from the surface's row parameters. The `BuildArgs` of a kind whose strict builder forwards to its child's constructor is the union of that builder's overloads (`forwardedConstruction`): the child itself, the child's config, the child's content, or the child's elements, each typed by the child's strict types. An own-text leaf (`ownTextLeaf`) has one row for both, `ownTextArgs`, and takes at most two arguments. A kind with a `listSpreadTarget` unions its tuples with the target's own (`… | T.<Target>.BuildArgs`), by name, so the spread form is the list's derivation rather than a copy; its `maxArgs` is then unbounded.
+
+A spread kind with leading options has two rows, the children alone and the options followed by the children.
 
 ### `packages/codegen/src/emitters/factories.ts::constructorSurface`
 
@@ -11731,6 +11801,8 @@ resolves to the last declared overload, so the elements-only form is declared
 last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
 `SITTIR_DEBUG`, and a `repeat1` list takes no spread of a possibly-empty array
 (`T[]` is not `NonEmptyArray<T>`).
+
+A compound target whose builder takes leading options declares both forms as `paramsOverloads`, the options-led one first, so a forwarding builder offers the same pair.
 
 ### `packages/codegen/src/emitters/factories.ts::BuiltTypeSurface`
 
@@ -12228,6 +12300,8 @@ The owner's own kind is the path handed to `resolveConcreteKind`, so a slot that
 // so a minimal-config render call would throw. Thread a dummy through
 // the trailing options argument the direct-shaped factory now takes.
 ```
+
+Required registered slots get an options object, placed where the builder takes it: before the children on a builder with leading options, after the value otherwise.
 
 ### `packages/codegen/src/emitters/test.ts::pushRenderTest`
 
@@ -13264,6 +13338,8 @@ A mixed slot whose arms include an enum with its own parser symbol passes those 
 transport sees the one identity the slot's enum carries. A pure enum slot needs none: `projectKindEnumStorage`
 folds by text unconditionally.
 ```
+
+A slot with a blank arm (`blank`) stores the blank id when the read holds no token (`blankFromRead`), and its setter takes `null` as the blank (`blankFromInput`).
 
 ### `packages/codegen/src/emitters/wrap.ts::SAFE_IDENT_KEY`
 
@@ -14475,9 +14551,10 @@ Every struct passes its own kind id to `render_with_trivia!` (`None` only when n
 ### `packages/codegen/src/emitters/render-module.ts::isPrepareFilled`
 
 Whether a slot's value is filled by `prepare` when the caller leaves it out:
-a required, single registered choice option (`registeredOption === 'choice'`,
-e.g. typescript's `terminator`). An optional registered option is not: its
-absence is the grammar's own blank arm.
+a single registered choice option (`registeredOption === 'choice'`, e.g.
+typescript's `terminator`). An optional one is filled too: its blank is a
+stored arm (`BLANK_KIND_ID`), so a slot left unset is one the options choose,
+and the option may choose the blank.
 
 ### `packages/codegen/src/emitters/render-module.ts::isTransportRequired`
 
@@ -15454,6 +15531,8 @@ The return carries, beside the module text, `entryRows`: every `ir` path whose e
  */
 ```
 
+The blank arm is typed `null`.
+
 ### `packages/codegen/src/emitters/options.ts::renderOptionsModule`
 
 Source text for `options.ts`: a re-export of `SpacingArm` and `WhitespaceArm`
@@ -15488,6 +15567,8 @@ which become `IndentChar`.
  *  never derived from two independent builds of the same inputs. A caller with no `AddressTables` in hand yet (a test)
  *  may call this directly; production has exactly one call site. */
 ```
+
+A label's entry reaches only the bound sites that admit the label's declared arm (`admitsArm`), the same test that decides which sites the declaration registers.
 
 ### `packages/codegen/src/emitters/options.ts::emitOptions`
 
@@ -15621,6 +15702,13 @@ delimiter site.
 mark meeting it at the same gap. `seamStrength` maps the site's origin —
 declared (`preference`, `literal-default`, `word-default`) is 2, `cascade` is 1, the fallback
 is 0; separator sites are declared.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::armIdOf`
+
+The kind id one preference arm stands for: `BLANK_KIND_ID` for the blank arm,
+else the id of the arm's kind (or of its value, for an arm with no kind). The
+native options table's allowed and default ids, and the factory map's
+`optionDefault`, both come from it.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::SeamStrength`
 
@@ -15773,6 +15861,8 @@ list leaves the gap to the face alone (`{}`). A value set explicitly to the defa
 indistinguishable from the default and takes the cascade tier; the
 read-side inference that will set such values records explicitness when it
 lands.
+
+A site's blank arm is the blank id (`armIdOf`) in its allowed ids and as its default.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::renderOptionsRs`
 
@@ -16540,6 +16630,25 @@ Wraps a config type in `WidenNumeric` for the numeric text slots of a node, each
 /** A registered (spelling/choice) slot has no home in the factory's
 	 * config object — it moves to the trailing options argument. */
 ```
+
+### `packages/codegen/src/emitters/factory-map.ts::FactorySlotMeta.optionDefault`
+
+The grammar default of a registered slot, in the value domain the builder takes:
+the spelling text for a spelling slot, the arm's kind id for a choice slot
+(`BLANK_KIND_ID` for the blank arm). Absent when the map was built without kind
+entries. The validator's argument builder and the example printer omit a value
+equal to it.
+
+### `packages/codegen/src/emitters/factory-map.ts::optionDefaultOf`
+
+Resolves a registered slot's `optionDefault`: the stamped `optionDefaultArm`
+as text for a spelling slot, else `armIdOf` over the arm's stamped kind, so
+the id matches the native options table's default for the same site.
+
+### `packages/codegen/src/emitters/factory-map.ts::createFactorySlotMeta`
+
+One slot's factory metadata: its arity facts plus, for a registered slot,
+`registered` and `optionDefault`.
 
 ### `packages/codegen/src/emitters/test.ts::subFactoryCallArgs`
 

@@ -61,7 +61,9 @@ import {
 	pruneUnusedImports,
 	classifyKindsForResolver,
 	resolvesLooseInput,
-	looseElementType
+	looseElementType,
+	leadingOptionsOf,
+	type LeadingOptions
 } from './shared.ts';
 import {
 	fieldElementType,
@@ -74,7 +76,8 @@ import {
 	separatedListSurface,
 	spellingTypeOf,
 	listOptionKeys,
-	listSpreadTarget
+	listSpreadTarget,
+	leadingOptionsSplit
 } from './factories.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
 import {
@@ -341,7 +344,8 @@ function emitBranchFrom(
 				rawFactoryName: node.rawFactoryName,
 				fromFunctionName: node.fromFunctionName,
 				slots: node.slots,
-				childSlotFacts: soleSlotFacts(node, nodeMap)
+				childSlotFacts: soleSlotFacts(node, nodeMap),
+				leadingOptions: leadingOptionsOf(node, nodeMap)
 			},
 			kindEntries,
 			nodeMap,
@@ -564,6 +568,7 @@ interface ChildrenFromNode {
 	readonly fromFunctionName?: string;
 	readonly slots?: readonly AssembledNonterminal[];
 	readonly childSlotFacts: SoleSlotFacts | null;
+	readonly leadingOptions?: LeadingOptions;
 }
 
 function kindDiscriminantCheck(
@@ -587,30 +592,34 @@ function emitRestParamFromResolver(
 	storageKey: string,
 	unwrapConfigKey: string | undefined,
 	buildCallExpr: (varExpr: string, isSelfUnwrap: boolean) => string,
-	childrenTypeAnnotation = ''
+	childrenTypeAnnotation = '',
+	leadingOptions?: LeadingOptions
 ): string {
 	const typeCheck = kindDiscriminantCheck(kind, kindEntries, nodeMap);
+	const source = leadingOptions === undefined ? 'input' : '_rest';
+	const split = leadingOptions === undefined ? [] : leadingOptionsSplit(leadingOptions, source, 'readonly unknown[]', 'input');
 	const hasNumericDiscriminant = (kindEntries !== undefined && findOwnKindEntry(kindEntries, kind) !== undefined);
 	const unwrap =
 		unwrapConfigKey === undefined
 			? []
 			: [
 					`  const _elems: readonly unknown[] = (() => {`,
-					`    if (input.length !== 1) return input;`,
-					`    const head: unknown = input[0];`,
-					`    if (typeof head !== 'object' || head === null || isNode(head) || !(${JSON.stringify(unwrapConfigKey)} in head)) return input;`,
+					`    if (${source}.length !== 1) return ${source};`,
+					`    const head: unknown = ${source}[0];`,
+					`    if (typeof head !== 'object' || head === null || isNode(head) || !(${JSON.stringify(unwrapConfigKey)} in head)) return ${source};`,
 					`    const v = (head as Record<string, unknown>)[${JSON.stringify(unwrapConfigKey)}];`,
 					`    return Array.isArray(v) ? v : [v];`,
 					`  })();`
 				];
 	const returnType = factoryReturnTypeExpr(factory);
 	const inputType = `${tName}.LooseArgs`;
-	const freshVar = unwrapConfigKey === undefined ? 'input' : '_elems';
+	const freshVar = unwrapConfigKey === undefined ? source : '_elems';
 	const signature = `export function ${fn}(...input: ${inputType}): ${returnType} {`;
 	const head = withEmptyOverload(nodeMap, kind, `export function ${fn}`, [signature], signature.replace(/ \{$/, ';'));
 	if (!hasNumericDiscriminant || holdsOwnKind(nodeMap.nodes.get(kind), nodeMap)) {
 		return [
 			...head,
+			...split,
 			...unwrap,
 			`  return ${buildCallExpr(freshVar, false)};`,
 			'}'
@@ -621,10 +630,12 @@ function emitRestParamFromResolver(
 		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
 	return [
 		...head,
-		`  if (input.length === 1 && isNodeOfKind(input[0], ${typeCheck})) {`,
-		`    const data = input[0];`,
+		...split,
+		`  if (${source}.length === 1 && isNodeOfKind(${source}[0], ${typeCheck})) {`,
+		`    const data = ${source}[0];`,
 		`    const stored = ${storageAccess};`,
 		`    const children${childrenTypeAnnotation} = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];`,
+		...(leadingOptions === undefined ? [] : [`    const held = data as unknown as Record<string, unknown>;`, `    const kept = { ${leadingOptions.keys.map((key, i) => `${JSON.stringify(key)}: held[${JSON.stringify(leadingOptions.storageKeys[i])}]`).join(', ')}, ...options };`]),
 		`    return ${buildCallExpr('children', true)};`,
 		`  }`,
 		...unwrap,
@@ -643,9 +654,14 @@ function emitRepeatedChildrenFrom(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap,
 	intern: KindInterner,
-	storageKey: string
+	storageKey: string,
+	leadingOptions?: LeadingOptions
 ): string {
 	const resolvable = resolvesLooseInput(slot, nodeMap);
+	const call = (spread: string, held: boolean): string =>
+		leadingOptions === undefined
+			? `${factory}(...(${spread} as unknown as Parameters<typeof ${factory}>))`
+			: `(${factory} as (...args: unknown[]) => ${factoryReturnTypeExpr(factory)})(${held ? 'kept' : 'options'}, ...(${spread} as readonly unknown[]))`;
 	return emitRestParamFromResolver(
 		fn,
 		factory,
@@ -656,10 +672,10 @@ function emitRepeatedChildrenFrom(
 		nodeMap,
 		storageKey,
 		slot.configKey,
-		(varExpr) =>
-			resolvable
-				? `${factory}(...(${resolveFieldCall(varExpr, slot, true, nodeMap, intern, false, elementType, kindEntries)} as unknown as Parameters<typeof ${factory}>))`
-				: `${factory}(...(${varExpr} as unknown as Parameters<typeof ${factory}>))`
+		(varExpr, isSelfUnwrap) =>
+			call(resolvable ? resolveFieldCall(varExpr, slot, true, nodeMap, intern, false, elementType, kindEntries) : varExpr, isSelfUnwrap),
+		'',
+		leadingOptions
 	);
 }
 
@@ -748,7 +764,8 @@ function emitChildrenFrom(
 			kindEntries,
 			nodeMap,
 			intern,
-			storageKey
+			storageKey,
+			node.leadingOptions
 		);
 	}
 	return emitSingularChildrenFrom(

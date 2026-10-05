@@ -393,7 +393,7 @@ const forInStatement$letConstKind =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'kind' || key === 'left' || key === 'automaticSemicolon' || key === 'operator' || key === 'right')
+			if (key === 'kind' || key === 'left' || key === 'terminator' || key === 'operator' || key === 'right')
 				inner[key] = value;
 			else rest[key] = value;
 		}
@@ -880,24 +880,21 @@ export const ambientDeclaration = Object.freeze({
 	...B.ambientDeclaration,
 	function: bundle(ambientDeclaration$function$strict, ambientDeclaration$function$coerce, {
 		key: 'ambientDeclaration.function',
-		max: 1
+		max: 2
 	}),
 	generatorFunction: bundle(ambientDeclaration$generatorFunction$strict, ambientDeclaration$generatorFunction$coerce, {
 		key: 'ambientDeclaration.generatorFunction',
-		max: 1
+		max: 2
 	}),
 	class: bundle(ambientDeclaration$class$strict, ambientDeclaration$class$coerce, {
 		key: 'ambientDeclaration.class',
-		max: 1
+		max: 2
 	}),
 	lexical: bundle(ambientDeclaration$lexical$strict, ambientDeclaration$lexical$coerce, {
 		key: 'ambientDeclaration.lexical',
 		max: 2
 	}),
-	variable: bundle(ambientDeclaration$variable$strict, ambientDeclaration$variable$coerce, {
-		key: 'ambientDeclaration.variable',
-		max: 2
-	}),
+	variable: bundle(ambientDeclaration$variable$strict, ambientDeclaration$variable$coerce),
 	functionSignature: bundle(ambientDeclaration$functionSignature$strict, ambientDeclaration$functionSignature$coerce, {
 		key: 'ambientDeclaration.functionSignature',
 		max: 2
@@ -930,10 +927,7 @@ export const ambientDeclaration = Object.freeze({
 		key: 'ambientDeclaration.ambient',
 		max: 1
 	}),
-	global: bundle(ambientDeclaration$global$strict, ambientDeclaration$global$coerce, {
-		key: 'ambientDeclaration.global',
-		max: 1
-	}),
+	global: bundle(ambientDeclaration$global$strict, ambientDeclaration$global$coerce),
 	module: B.ambientDeclarationModule
 }) as unknown as typeof B.ambientDeclaration & {
 	function: {
@@ -2323,17 +2317,17 @@ const exportStatementDefaultDeclarationDefaultKw: {
 	function: bundle(
 		exportStatementDefaultDeclarationDefaultKw$function$strict,
 		exportStatementDefaultDeclarationDefaultKw$function$coerce,
-		{ key: 'exportStatementDefaultDeclarationDefaultKw.function', max: 1 }
+		{ key: 'exportStatementDefaultDeclarationDefaultKw.function', max: 2 }
 	),
 	generatorFunction: bundle(
 		exportStatementDefaultDeclarationDefaultKw$generatorFunction$strict,
 		exportStatementDefaultDeclarationDefaultKw$generatorFunction$coerce,
-		{ key: 'exportStatementDefaultDeclarationDefaultKw.generatorFunction', max: 1 }
+		{ key: 'exportStatementDefaultDeclarationDefaultKw.generatorFunction', max: 2 }
 	),
 	class: bundle(
 		exportStatementDefaultDeclarationDefaultKw$class$strict,
 		exportStatementDefaultDeclarationDefaultKw$class$coerce,
-		{ key: 'exportStatementDefaultDeclarationDefaultKw.class', max: 1 }
+		{ key: 'exportStatementDefaultDeclarationDefaultKw.class', max: 2 }
 	),
 	lexical: bundle(
 		exportStatementDefaultDeclarationDefaultKw$lexical$strict,
@@ -2342,8 +2336,7 @@ const exportStatementDefaultDeclarationDefaultKw: {
 	),
 	variable: bundle(
 		exportStatementDefaultDeclarationDefaultKw$variable$strict,
-		exportStatementDefaultDeclarationDefaultKw$variable$coerce,
-		{ key: 'exportStatementDefaultDeclarationDefaultKw.variable', max: 2 }
+		exportStatementDefaultDeclarationDefaultKw$variable$coerce
 	),
 	functionSignature: bundle(
 		exportStatementDefaultDeclarationDefaultKw$functionSignature$strict,
@@ -2394,17 +2387,17 @@ const exportStatementDefaultDeclarationDefaultKw: {
 		function: bundle(
 			exportStatementDefaultDeclarationDefaultKw$ambient$function$strict,
 			exportStatementDefaultDeclarationDefaultKw$ambient$function$coerce,
-			{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.function', max: 1 }
+			{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.function', max: 2 }
 		),
 		generatorFunction: bundle(
 			exportStatementDefaultDeclarationDefaultKw$ambient$generatorFunction$strict,
 			exportStatementDefaultDeclarationDefaultKw$ambient$generatorFunction$coerce,
-			{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.generatorFunction', max: 1 }
+			{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.generatorFunction', max: 2 }
 		),
 		class: bundle(
 			exportStatementDefaultDeclarationDefaultKw$ambient$class$strict,
 			exportStatementDefaultDeclarationDefaultKw$ambient$class$coerce,
-			{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.class', max: 1 }
+			{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.class', max: 2 }
 		),
 		lexical: bundle(
 			exportStatementDefaultDeclarationDefaultKw$ambient$lexical$strict,
@@ -2413,8 +2406,7 @@ const exportStatementDefaultDeclarationDefaultKw: {
 		),
 		variable: bundle(
 			exportStatementDefaultDeclarationDefaultKw$ambient$variable$strict,
-			exportStatementDefaultDeclarationDefaultKw$ambient$variable$coerce,
-			{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.variable', max: 2 }
+			exportStatementDefaultDeclarationDefaultKw$ambient$variable$coerce
 		),
 		functionSignature: bundle(
 			exportStatementDefaultDeclarationDefaultKw$ambient$functionSignature$strict,
@@ -2458,8 +2450,7 @@ const exportStatementDefaultDeclarationDefaultKw: {
 		),
 		global: bundle(
 			exportStatementDefaultDeclarationDefaultKw$ambient$global$strict,
-			exportStatementDefaultDeclarationDefaultKw$ambient$global$coerce,
-			{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.global', max: 1 }
+			exportStatementDefaultDeclarationDefaultKw$ambient$global$coerce
 		)
 	},
 	value: {
@@ -2494,7 +2485,7 @@ const exportStatementDefaultDeclaration$function =
 				key === 'parameters' ||
 				key === 'returnType' ||
 				key === 'body' ||
-				key === 'automaticSemicolon'
+				key === 'terminator'
 			)
 				inner[key] = value;
 			else rest[key] = value;
@@ -2522,7 +2513,7 @@ const exportStatementDefaultDeclaration$generatorFunction =
 				key === 'parameters' ||
 				key === 'returnType' ||
 				key === 'body' ||
-				key === 'automaticSemicolon'
+				key === 'terminator'
 			)
 				inner[key] = value;
 			else rest[key] = value;
@@ -2575,14 +2566,9 @@ const exportStatementDefaultDeclaration$lexical$coerce = exportStatementDefaultD
 );
 const exportStatementDefaultDeclaration$variable =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'declarators' || key === 'terminator') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
 const exportStatementDefaultDeclaration$variable$strict = exportStatementDefaultDeclaration$variable(
 	F.buildExportStatementDefaultDeclaration,
@@ -3528,13 +3514,15 @@ const exportStatementDefaultDeclaration: {
 	};
 	variable: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildVariableDeclaration>[0],
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				content: ArgsOf<typeof F.buildVariableDeclaration>;
+			},
 			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToVariableDeclaration>[0],
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				content: ArgsOf<typeof C.coerceToVariableDeclaration>;
+			},
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 	};
@@ -4668,7 +4656,7 @@ export const forHeader: {
 	varKind: bundle(F.buildForHeaderVarKind, C.coerceToForHeaderVarKind, { key: 'forHeader.varKind', max: 1 }),
 	letConstKind: bundle(F.buildForHeaderLetConstKind, C.coerceToForHeaderLetConstKind, {
 		key: 'forHeader.letConstKind',
-		max: 1
+		max: 2
 	})
 });
 

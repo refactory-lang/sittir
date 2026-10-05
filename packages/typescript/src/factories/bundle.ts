@@ -33,18 +33,12 @@ export const expressionStatement = bundle(F.buildExpressionStatement, C.coerceTo
 	key: 'expressionStatement',
 	max: 2
 });
-export const variableDeclaration = bundle(F.buildVariableDeclaration, C.coerceToVariableDeclaration, {
-	key: 'variableDeclaration',
-	max: 2
-});
+export const variableDeclaration = bundle(F.buildVariableDeclaration, C.coerceToVariableDeclaration);
 export const lexicalDeclaration = bundle(F.buildLexicalDeclaration, C.coerceToLexicalDeclaration, {
 	key: 'lexicalDeclaration',
 	max: 2
 });
-export const statementBlock = bundle(F.buildStatementBlock, C.coerceToStatementBlock, {
-	key: 'statementBlock',
-	max: 1
-});
+export const statementBlock = bundle(F.buildStatementBlock, C.coerceToStatementBlock);
 export const elseClause = bundle(F.buildElseClause, C.coerceToElseClause, { key: 'elseClause', max: 1 });
 export const ifStatement = bundle(F.buildIfStatement, C.coerceToIfStatement, { key: 'ifStatement', max: 1 });
 export const switchStatement = bundle(F.buildSwitchStatement, C.coerceToSwitchStatement, {
@@ -91,7 +85,7 @@ export const switchBody = bundle(F.buildSwitchBody, C.coerceToSwitchBody);
 export const switchCase = bundle(F.buildSwitchCase, C.coerceToSwitchCase, { key: 'switchCase', max: 1 });
 export const switchDefault = bundle(F.buildSwitchDefault, C.coerceToSwitchDefault);
 export const catchClause = bundle(F.buildCatchClause, C.coerceToCatchClause, { key: 'catchClause', max: 1 });
-export const finallyClause = bundle(F.buildFinallyClause, C.coerceToFinallyClause, { key: 'finallyClause', max: 1 });
+export const finallyClause = bundle(F.buildFinallyClause, C.coerceToFinallyClause);
 export const yieldExpression = bundle(F.buildYieldExpression, C.coerceToYieldExpression, {
 	key: 'yieldExpression',
 	max: 1
@@ -115,7 +109,7 @@ export const nestedIdentifier = bundle(F.buildNestedIdentifier, C.coerceToNested
 export const class_ = bundle(F.buildClass, C.coerceToClass, { key: 'class_', max: 1 });
 export const classDeclaration = bundle(F.buildClassDeclaration, C.coerceToClassDeclaration, {
 	key: 'classDeclaration',
-	max: 1
+	max: 2
 });
 export const classHeritage = bundle(F.buildClassHeritage, C.coerceToClassHeritage, { key: 'classHeritage', max: 1 });
 export const functionExpression = bundle(F.buildFunctionExpression, C.coerceToFunctionExpression, {
@@ -124,7 +118,7 @@ export const functionExpression = bundle(F.buildFunctionExpression, C.coerceToFu
 });
 export const functionDeclaration = bundle(F.buildFunctionDeclaration, C.coerceToFunctionDeclaration, {
 	key: 'functionDeclaration',
-	max: 1
+	max: 2
 });
 export const generatorFunction = bundle(F.buildGeneratorFunction, C.coerceToGeneratorFunction, {
 	key: 'generatorFunction',
@@ -133,7 +127,7 @@ export const generatorFunction = bundle(F.buildGeneratorFunction, C.coerceToGene
 export const generatorFunctionDeclaration = bundle(
 	F.buildGeneratorFunctionDeclaration,
 	C.coerceToGeneratorFunctionDeclaration,
-	{ key: 'generatorFunctionDeclaration', max: 1 }
+	{ key: 'generatorFunctionDeclaration', max: 2 }
 );
 export const arrowFunction = bundle(F.buildArrowFunction, C.coerceToArrowFunction, { key: 'arrowFunction', max: 1 });
 export const newExpression = bundle(F.buildNewExpression, C.coerceToNewExpression, { key: 'newExpression', max: 1 });
@@ -193,7 +187,7 @@ export const classBody = bundle(F.buildClassBody, C.coerceToClassBody);
 export const formalParameters = bundle(F.buildFormalParameters, C.coerceToFormalParameters);
 export const classStaticBlock = bundle(F.buildClassStaticBlock, C.coerceToClassStaticBlock, {
 	key: 'classStaticBlock',
-	max: 1
+	max: 2
 });
 export const restPattern = bundle(F.buildRestPattern, C.coerceToRestPattern, { key: 'restPattern', max: 1 });
 export const methodDefinition = bundle(F.buildMethodDefinition, C.coerceToMethodDefinition, {
@@ -418,10 +412,7 @@ export const enumBodyElements = bundle(F.buildEnumBodyElements, C.coerceToEnumBo
 export const types = bundle(F.buildTypes, C.coerceToTypes);
 export const typeParametersElements = bundle(F.buildTypeParametersElements, C.coerceToTypeParametersElements);
 export const tupleTypeMembers = bundle(F.buildTupleTypeMembers, C.coerceToTupleTypeMembers);
-export const ambientDeclarationGlobal = bundle(F.buildAmbientDeclarationGlobal, C.coerceToAmbientDeclarationGlobal, {
-	key: 'ambientDeclarationGlobal',
-	max: 1
-});
+export const ambientDeclarationGlobal = bundle(F.buildAmbientDeclarationGlobal, C.coerceToAmbientDeclarationGlobal);
 export const ambientDeclarationModule = bundle(F.buildAmbientDeclarationModule, C.coerceToAmbientDeclarationModule, {
 	key: 'ambientDeclarationModule',
 	max: 2

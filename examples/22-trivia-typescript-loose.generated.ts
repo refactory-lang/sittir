@@ -8,16 +8,12 @@ export function rebuildTriviaTypescriptLoose() {
 		statements: [ts.build.expressionStatement(ts.build.callExpression.call({
 			function: "f",
 			arguments: ts.build.arguments().$trivia.inner(ts.build.comment.block(" b ")),
-		}), {
-			terminator: ts.kinds.Semi,
-		}).$trivia.leading(ts.build.comment.block(" a ")), ts.build.lexicalDeclaration({
+		})).$trivia.leading(ts.build.comment.block(" a ")), ts.build.lexicalDeclaration({
 			kind: ts.kinds.LetKeyword,
 			declarators: [ts.build.variableDeclarator.plain({
 				name: "x",
 				value: "1",
 			})],
-		}, {
-			terminator: ts.kinds.Semi,
 		}).$trivia.trailing(ts.build.comment.line(" c"))],
 	});
 }

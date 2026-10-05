@@ -1392,11 +1392,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "automatic_semicolon",
+					"test": "terminator",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "automatic_semicolon"
+							"name": "terminator"
 						}
 					]
 				}
@@ -1458,11 +1458,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "automatic_semicolon",
+					"test": "terminator",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "automatic_semicolon"
+							"name": "terminator"
 						}
 					]
 				}
@@ -2834,11 +2834,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "automatic_semicolon",
+					"test": "terminator",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "automatic_semicolon"
+							"name": "terminator"
 						}
 					]
 				}
@@ -3314,11 +3314,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "automatic_semicolon",
+					"test": "terminator",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "automatic_semicolon"
+							"name": "terminator"
 						}
 					]
 				}
@@ -3736,11 +3736,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "automatic_semicolon",
+					"test": "terminator",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "automatic_semicolon"
+							"name": "terminator"
 						}
 					]
 				}
@@ -7166,11 +7166,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "automatic_semicolon",
+					"test": "terminator",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "automatic_semicolon"
+							"name": "terminator"
 						}
 					]
 				}

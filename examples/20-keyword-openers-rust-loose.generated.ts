@@ -26,7 +26,7 @@ export function rebuildKeywordOpenersRustLoose() {
 			})],
 			returnType: rs.build.genericType({
 				type: "Option",
-				typeArguments: rs.build.tupleType(["Foo", "Foo"]),
+				typeArguments: rs.build.tupleType("Foo", "Foo"),
 			}),
 			body: rs.build.block({
 				statements: [rs.build.letDeclaration({
@@ -79,7 +79,7 @@ export function rebuildKeywordOpenersRustLoose() {
 						})))],
 					}),
 				}), rs.build.forExpression({
-					pattern: rs.build.tuplePattern(["i", "v"]),
+					pattern: rs.build.tuplePattern("i", "v"),
 					value: rs.build.parenthesizedExpression(rs.build.rangeExpression.binary({
 						start: rs.build.integerLiteral.decimal({
 							content: "0",
@@ -129,7 +129,7 @@ export function rebuildKeywordOpenersRustLoose() {
 					}),
 				}), rs.build.letDeclaration({
 					pattern: "t",
-					type: rs.build.tupleType(["Foo", "Foo"]),
+					type: rs.build.tupleType("Foo", "Foo"),
 					value: rs.build.tupleExpression({
 						expressions: [rs.build.integerLiteral.decimal({
 							content: "1",
