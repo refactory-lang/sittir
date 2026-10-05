@@ -29,7 +29,8 @@ def family(name):
 
 
 def census(path):
-    text = open(path).read()
+    with open(path) as f:
+        text = f.read()
     lines = text.split('\n')
     owner = []
     current = None

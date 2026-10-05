@@ -98,13 +98,24 @@ struct Route {
 }
 
 /// A kind's routes resolved against the parser: a child tagged with a field goes by its field;
-/// a child with no field goes by its kind. In production the attributes carry the ids.
+/// a child with no field goes by its kind. A layout token is the kind's own and no slot takes it.
+/// In production the attributes carry the ids.
 pub struct Routes {
     routes: Vec<Route>,
+    layout: Vec<u16>,
+}
+
+/// A child no route takes and that is not a layout token: the model has no slot for it, so the
+/// read of its parent fails.
+#[derive(Debug, Clone, Copy)]
+pub struct Refusal {
+    pub parent: u16,
+    pub child: u16,
+    pub row: u32,
 }
 
 impl Routes {
-    pub fn new(lang: &tree_sitter::Language, specs: &[RouteSpec]) -> Self {
+    pub fn new(lang: &tree_sitter::Language, specs: &[RouteSpec], layout: &[&str]) -> Self {
         let routes = specs
             .iter()
             .map(|sp| Route {
@@ -118,19 +129,22 @@ impl Routes {
                     .collect(),
             })
             .collect();
-        Routes { routes }
+        let layout = layout.iter().map(|t| lang.id_for_node_kind(t, false)).filter(|&id| id != 0).collect();
+        Routes { routes, layout }
     }
 
     #[inline]
-    pub fn slot_of(&self, field: Option<u16>, kind: u16, _named: bool) -> usize {
-        for (i, r) in self.routes.iter().enumerate() {
-            match (field, r.field) {
-                (Some(f), Some(rf)) if f == rf => return i,
-                (None, _) if r.kinds.contains(&kind) => return i,
-                _ => {}
-            }
-        }
-        usize::MAX
+    pub fn slot_of(&self, field: Option<u16>, kind: u16) -> Option<usize> {
+        self.routes.iter().position(|r| match (field, r.field) {
+            (Some(f), Some(rf)) => f == rf,
+            (None, _) => r.kinds.contains(&kind),
+            _ => false,
+        })
+    }
+
+    #[inline]
+    pub fn is_layout(&self, kind: u16) -> bool {
+        self.layout.contains(&kind)
     }
 }
 
@@ -161,9 +175,10 @@ pub fn slot_at(cur: &tree_sitter::TreeCursor<'_>, src: &[u8]) -> Slot {
 
 pub trait ReadNode: Sized {
     const KIND: &'static str;
+    const LAYOUT: &'static [&'static str];
     const KEYS: &'static [&'static str];
     fn route_specs() -> &'static [RouteSpec];
-    fn read(cur: &mut tree_sitter::TreeCursor<'_>, src: &[u8], routes: &Routes) -> Self;
+    fn read(cur: &mut tree_sitter::TreeCursor<'_>, src: &[u8], routes: &Routes) -> Result<Self, Refusal>;
 }
 
 /// The arena: fixed-width records of `u32` words, and the UTF-8 text of inline leaves.
