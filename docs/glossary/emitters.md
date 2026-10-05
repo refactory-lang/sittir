@@ -3904,7 +3904,7 @@ and between the owner's seam sites when it has any (`literalSeamedArm`).
 ```text
 // Render impl — match on variant and delegate to the payload's own Render
 // (not the per-kind render fn directly) so the concrete variant's own
-// render_with_trivia!-wrapped impl fires. A unit arm calls its kind's
+// impl, which renders through its layout, fires. A unit arm calls its kind's
 // render function (`choiceUnitArm`).
 ```
 
@@ -4088,12 +4088,12 @@ its own template.
 
 `TriviaTransport` implements `TriviaSeam` for the whitespace trivia kinds (`whitespaceTriviaKinds`): such an entry is merged into the gap it sits in and replaces that gap's spacing, instead of rendering as a line of its own. Its seam text is the kind's fixed text: JS names a whitespace entry by its exact spelling, so the kind determines the text.
 
-`TransportTrivia` is an alias for `sittir_core::trivia::TransportTrivia<TriviaTransport>`.
+`TransportLayout` is an alias for `sittir_core::layout::TransportLayout<TriviaTransport>`, the layout every struct transport carries; its trivia is a `sittir_core::trivia::TransportTrivia<TriviaTransport>`.
 The carrier's shape (leading, trailing and inner entries, each with its
 same-line facts) and where each entry renders are the core module's, the
 same for every grammar.
 
-It also emits a `Text` variant (`sittir_core::trivia::TriviaText`): a detached read entry that carries its stamped kind and captured text. It writes that kind's edges around the text, like a rendered node of the kind. It is decoded from an object with `$text` whose kind is a compound trivia kind; a leaf trivia kind stores `$text` itself and keeps its own transport. A trivia entry needs no line-end handling of its own: each variant's render tells the sink its kind (`render_with_trivia!` for a typed variant, the kind's render function for a unit, `TriviaText`'s own render for `Text`), and the sink holds the line end from the grammar's `KIND_FLAGS` table (`renderOptionsRs`), as it does for any node.
+It also emits a `Text` variant (`sittir_core::trivia::TriviaText`): a detached read entry that carries its stamped kind and captured text. It writes that kind's edges around the text, like a rendered node of the kind. It is decoded from an object with `$text` whose kind is a compound trivia kind; a leaf trivia kind stores `$text` itself and keeps its own transport. A trivia entry needs no line-end handling of its own: each variant's render tells the sink its kind (`TransportLayout::render` for a typed variant, the kind's render function for a unit, `TriviaText`'s own render for `Text`), and the sink holds the line end from the grammar's `KIND_FLAGS` table (`renderOptionsRs`), as it does for any node.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderVerbatimTransport`
 
@@ -4127,14 +4127,6 @@ accepts a bare string, because the root of a render is never free text.
  */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::leafCaptureLocal`
-
-The release-mode leaf decoder's local for one metadata field, named after the field.
-
-### `packages/codegen/src/emitters/render-module.ts::declareLeafMetadataCapture`
-
-Declares the release-mode leaf decoder's capture locals, one per metadata field the wire carries (`onWire`): trivia and the source gap. Edges are filled natively and never arrive on the wire, so they start empty. A leaf sent as a bare string, number or boolean carries no metadata object to read them from, so the locals are populated only in the object fallback branch. A factory-attached comment on a leaf, or a list gap kept from the source, always arrives as an object, since a `$trivia` or `$_gap` write forces the owner off the bare-primitive fast path.
-
 ### `packages/codegen/src/emitters/render-module.ts::renderLeafTransportNapiImpls`
 
 Manual napi `FromNapiValue` + `ToNapiValue` impls for a leaf transport
@@ -4151,10 +4143,9 @@ Two cfg-gated `FromNapiValue` variants are emitted:
   naming the id it was sent and that id's kind (`kind_name_from_id`) — a
   content-bearing leaf never renders a kind id as empty text; anything else
   is read as an object carrying `$text`
-  and `$_trivia`. The struct is built from `text` and the trivia capture.
+  and the node's `$_layout`. The struct is built from `text` and the layout.
 - `#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]`
-  reads the full object: `$text` plus every `TRANSPORT_METADATA_FIELDS`
-  entry by its `jsName`.
+  reads the full object: `$text` and `$_layout`.
 
 A coordinate never reaches these impls: the slot's `SlotValue` carrier
 takes an object carrying `$treeHandle` before the leaf type is asked.
@@ -4204,13 +4195,31 @@ it.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderFixedLiteralFn`
 
-`render_<kind>(w)`: the render protocol a fixed literal's kind gives it,
-with no data; the steps `render_with_trivia!` runs for a node of the kind
-that carries no trivia or edges. A named kind (an owner) seats pending
-trailing trivia before and after itself; an immediate kind marks
-`w.adjacent()`; `literalWrite` writes the text (an indent or dedent marker,
-a whitespace token as a token seam); `end_line_after` lets a line-terminated
-kind end its line. Every arm that holds the kind calls this function.
+`render_<kind>(w)`: a fixed literal's kind rendered through the layout's
+render protocol with no layout (`layoutRenderCall`), exactly as a node of
+the kind that carries no trivia or edges renders. A named kind (an owner,
+`ownsTrivia`) seats pending trailing trivia before and after itself, and a
+line-terminated kind ends its line (`end_line_after`). The body marks
+`w.adjacent()` for an immediate kind and writes the text with
+`literalWrite` (an indent or dedent marker, a whitespace token as a token
+seam). Every arm that holds the kind calls this function.
+
+### `packages/codegen/src/emitters/render-module.ts::layoutRenderCall`
+
+The render call every node goes through:
+`TransportLayout::render(layout, kind, role, w, |w| body)`, one protocol
+for a struct transport, which passes its own layout, and a fixed literal's
+unit, which has none. `owner` picks the trivia role.
+
+### `packages/codegen/src/emitters/render-module.ts::ownsTrivia`
+
+Whether a kind owns trivia: every kind but an anonymous token (its kind
+entry's `anon`, the parser's fact). The reader counts an anonymous token
+among the tokens between an owner and its same-line trailing entries
+(`$tokensBetween`), never as an owner, so its render seats no held entries:
+`a + /* x */ b` keeps the comment after `+`. A fixed literal's registry
+entry (`collectFixedLiterals`) and a leaf struct's render read the fact
+here.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderFixedLiteralTransport`
 
@@ -4228,23 +4237,22 @@ as its kind id, the least it can be stored as, so nothing about it is
 decoded at run time: no text, no presence flag (a presence slot is a
 boolean of its own) and no object. `ToNapiValue` is receive-only.
 
-### `packages/codegen/src/emitters/render-module.ts::renderTransportMetadataFields`
+### `packages/codegen/src/emitters/render-module.ts::renderLayoutField`
 
-The `#[napi(js_name = …)]`-attributed field declarations a compound
-transport struct (`#[napi(object)]`) carries besides its slots: one line
-pair per `TRANSPORT_METADATA_FIELDS` entry. A compound declares no text
-field — its content is its slots, and a node that arrives with storage
-renders from that storage.
+The `#[napi(js_name = "$_layout")]`-attributed `layout` field
+(`LAYOUT_FIELD`) a compound transport struct (`#[napi(object)]`) carries
+besides its slots. A compound declares no text field — its content is its
+slots, and a node that arrives with storage renders from that storage.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderLeafTransportPlainFields`
 
-Plain struct fields for leaf/keyword/token transport structs: the metadata
-fields, then `text: String` — the leaf's own content, not metadata. Unlike
+Plain struct fields for a pattern leaf's transport struct: the `layout`
+field (`LAYOUT_FIELD`), then `text: String`, the leaf's own content. Unlike
 branch structs, these do not carry `#[napi(object)]` on the struct itself,
 so individual field `cfg_attr(napi(...))` attributes would have no
 proc-macro to consume them; `FromNapiValue` is emitted manually below the
-struct definition (`renderLeafTransportNapiImpls`), reading the JS
-property names with the `$`-prefixed keys explicitly.
+struct definition (`renderLeafTransportNapiImpls`), reading the
+`$`-prefixed JS property names explicitly.
 
 ### `packages/codegen/src/emitters/render-module.ts::TransportSlotShape`
 
@@ -5544,7 +5552,7 @@ whitespace becomes that call's argument. A residual gate chain is an
 
 A `seam` node that is the kind's own edge (the printer's `edge(name)`
 answers its kind id and side) prints as `w.edge(KindId(N), Side::…,
-node.edges.and_then(|e| e.<side>))`: the sink takes the node's stamp when it
+node.layout.edges().<side>)`: the sink takes the node's stamp when it
 carries one (arm and strength, from the site that set it: the kind's own
 edge site or a list's seat), else the kind's edge row. Every
 other seam prints as `w.site_at(<SITE const>)`: the transport carries no
@@ -5570,7 +5578,7 @@ had text written — false cancels an empty body's payload along with its
 own, so `{}` stays bare rather than gaining a stray blank line.
 
 Inner trivia prints at its gap: before a `slot` the printer's `innerGap`
-names, `trivia::render_inner(&node.transport_trivia_data, "<slot>", w)`. A
+names, `trivia::render_inner(node.layout.trivia(), "<slot>", w)`. A
 slot under a presence gate gets it before the `if` instead, since a node
 holding inner trivia has no named child, so the gated slot is empty and its
 arm never runs. `seatedGaps` carries the gaps already printed into nested
@@ -8169,11 +8177,6 @@ restates the default from one that must be spelled.
 	 */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::TransportMetadataField`
-
-One transport metadata field: `jsName` is the `$`-prefixed JS property
-name on the wire, `rustName` the Rust struct field, `rustType` its type.
-
 ### `packages/codegen/src/emitters/render-module.ts::enumTypeName`
 
 ```text
@@ -8585,28 +8588,27 @@ seat the child into a config or tuple take the value arguments only.
 	 *  unnamed flow through one path (cleanup-rules §E1). */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::TRANSPORT_METADATA_FIELDS`
+### `packages/codegen/src/emitters/render-module.ts::LAYOUT_FIELD`
 
-The metadata fields every transport struct carries besides its content:
-`$_trivia` → `transport_trivia_data: Option<TransportTrivia>`, and `$_edges`
-→ `edges: Option<Edges>`, the kind's two edges in the transport's base.
+The one field every struct transport carries besides its content:
+`$_layout` → `layout: Option<TransportLayout>`, the node's layout
+(`sittir_core::layout::TransportLayout`): the trivia it owns, its base
+edges, and the source evidence a rebuilt node keeps, its gap toward the list
+item before it and, for a list, its flanks. It is an `Option` because a
+compound transport derives `napi(object)`, which reads a non-`Option` field
+as required, and a node with no layout sends no `$_layout`. The generated
+code reads it through `sittir_core::layout::Layout`, so an absent layout
+reads as an empty one.
 
-`edges` is an `Option` for the wire, not for the model. Compound transports
-derive `napi(object)`, napi-derive has no way to skip a field, and napi maps
-an absent key to `None`, so a bare `Edges` would make every JS object that
-omits `$_edges` fail with "missing field" — and no JS code sends it. `None`
-means "not yet prepared": `prepare_edges` is the only code that branches on
-it, filling each unset side from the kind's edge row, and a body passes
-`node.edges.and_then(|e| e.<side>)` to `w.edge`, which falls back to the row
-itself. No render path reads `None` as "this node has no edges". Each side is
-an `EdgeArm` (arm plus an optional strength): the render side stamps both, so
-a seated gap writes at its seat's strength, and a stamp that arrives without
-a strength writes at the strength the kind's edge site gives that arm.
-Every emission helper that produces the field declarations, the `None`
-initialisers or the `obj.get(...)` reads derives from this array. A
-transport carries no coordinate fields: a coordinate is the `Coord` arm of
-the slot's `SlotValue` carrier, never a field on the transport it would
-otherwise have been.
+The edges never arrive on the wire. An unset side means "not yet prepared":
+`prepare_edges` fills it from the kind's edge row, a seat or a list gap's
+source class sets it first, and a body passes `node.layout.edges().<side>`
+to `w.edge`, which falls back to the row itself. Each side is an `EdgeArm`
+(arm plus an optional strength): the render side stamps both, so a seated
+gap writes at its seat's strength, and a stamp without a strength writes at
+the strength the kind's edge site gives that arm. A transport carries no
+coordinate fields: a coordinate is the `Coord` arm of the slot's `SlotValue`
+carrier, never a field on the transport.
 
 ### `packages/codegen/src/emitters/render-module.ts::LITERAL_TO_VARIANT_NAME`
 
@@ -14525,9 +14527,9 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
 // views over it, interpolate it without routing through the top-level
 // render_transport_dispatch match.
 //
-// All struct impls wrap the render call with render_with_trivia! to stream
-// leading/trailing trivia text around the node content. Bool/enum variants
-// don't have transport_trivia_data and are handled separately (no macro).
+// All struct impls render through their layout (TransportLayout::render),
+// which streams leading/trailing trivia text around the node content.
+// Enums carry no layout and are handled separately.
 ```
 
 #### body
@@ -14558,15 +14560,7 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
 // never actually boxed get DCE'd by the compiler.
 ```
 
-Every struct passes its own kind id to `render_with_trivia!` (`None` only when no kind table is given), so the sink holds a line end after a line-terminated kind (`RenderSink::end_line_after`). A leaf whose kind entry is anonymous (`anon`, the parser's fact) renders with `render_with_trivia!(token …)`. The reader counts such a token among the tokens between an owner and its same-line trailing entries (`$tokensBetween`), never as an owner. So its transport leaves those entries held and doesn't seat them ahead of itself: `a + /* x */ b` keeps the comment after `+`.
-
-### `packages/codegen/src/emitters/render-module.ts::TRANSPORT_METADATA_FIELDS.jsName`
-
-```text
-// $triviaData carries leading/trailing comment nodes. TransportTrivia's
-// manual FromNapiValue decodes each entry through TriviaTransport, which
-// tries the entry's own typed struct before falling back to verbatim text.
-```
+Every struct passes its own kind id to `TransportLayout::render` (`None` when the kind has no parser id), so the sink holds a line end after a line-terminated kind (`RenderSink::end_line_after`). A leaf whose kind entry is anonymous renders in the token role (`ownsTrivia`), so its transport leaves held trailing entries held and doesn't seat them ahead of itself.
 
 ### `packages/codegen/src/emitters/render-module.ts::isPrepareFilled`
 
@@ -16115,7 +16109,8 @@ The grammar root's prepare lines that give an edited root its source flanks, ahe
 ### `packages/codegen/src/emitters/render-module.ts::prepareStructImpl`
 
 A transport struct's `Prepare` impl. Every struct answers `source_gap` from
-its `$_gap` metadata field and `gap_edges` with its own base edges. A compound kind first fills its own
+its layout's gap (`$_layout.gap`) and `gap_edges` with its own base edges,
+made when the layout holds none. A compound kind first fills its own
 base edges (for the grammar root, from its source flanks, `rootEdgeStamp`;
 then, for a kind that owns kind-edge sites, from the source flanks the
 wire carries for a list node, `fill_source_flanks`, and from its edge row,
@@ -16141,7 +16136,7 @@ the transport's own value still wins. One exception: a list whose trailing
 separator is optional takes its trailing flag from the source while its
 source flank after is kept (`sourceTrailingSeparator`).
 
-Every struct transport prepares its `transport_trivia_data` first, leaves included. A trivia entry that is a source coordinate takes its kind's edges there, as a coordinate in a slot does.
+Every struct transport prepares its layout's trivia first, leaves included. A trivia entry that is a source coordinate takes its kind's edges there, as a coordinate in a slot does.
 
 ### `packages/codegen/src/emitters/render-module.ts::sourceTrailingSeparator`
 
@@ -16199,7 +16194,7 @@ Every gap in a rebuilt list follows one of two rules:
 
 1. A gap between two items that were adjacent in the source keeps its source
    spelling. The transport decides adjacency with the neighbour rule's own
-   test and sends the gap's source range on the later item (`$_gap`), for an
+   test and sends the gap's source range on the later item (`$_layout.gap`), for an
    edited item as much as an untouched one. `fill_list_gaps` classifies that
    range, split at the one separator, onto the earlier item's `after` edge
    and, past the token, the later item's `before` edge, at trivia strength.
@@ -16209,7 +16204,7 @@ Every gap in a rebuilt list follows one of two rules:
 
 One source per gap. Where the later item's derived line-gap run spells the
 gap (the leading run its read gave it, already split around its comments),
-that run is the gap and the transport sends no `$_gap`; the native
+that run is the gap and the transport sends no gap; the native
 classification fills only gaps that have no derived run. A same-line gap
 renders as the whitespace member its run classifies to, so a run no member
 spells exactly (two spaces where the grammar declares only a single space)

@@ -236,7 +236,7 @@ impl<T: Render + TriviaSeam> TransportTrivia<T> {
 
 /// The inner entries at gap `key` of a transport's trivia, if it has any.
 pub fn render_inner<T: Render + TriviaSeam>(
-    trivia: &Option<TransportTrivia<T>>,
+    trivia: Option<&TransportTrivia<T>>,
     key: &str,
     w: &mut dyn RenderSink,
 ) -> RenderResult {

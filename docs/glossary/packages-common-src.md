@@ -397,7 +397,7 @@ Whether a list item still follows the sibling it followed in its source: the ite
 
 ### `packages/common/src/transport-data.ts::sourceGapOf`
 
-The source range a list item sends as `$_gap`: from its source predecessor's end to its own source start, in the tree both were read from, when the item is still source-adjacent and no derived line-gap run already spells that gap. A run the item's leading trivia opens with is the gap itself, so the native fill never classifies the same gap twice. Nothing is sent unless the node holding the items carries source identity (`owner`): a list built afresh, or a copy that dropped its identity, keeps none of its source layout, so its gaps and its flanks (`sourceFlankOf`) go canonical together. The first item of a list sends nothing; its gap faces the parent's opener, which is the list's flank, not a list neighbour. It sends the range, `{ $treeHandle, $span }`, as evidence only: the gap is classified, never sliced.
+The source range a list item sends as its layout's gap (`$_layout.gap`): from its source predecessor's end to its own source start, in the tree both were read from, when the item is still source-adjacent and no derived line-gap run already spells that gap. A run the item's leading trivia opens with is the gap itself, so the native fill never classifies the same gap twice. Nothing is sent unless the node holding the items carries source identity (`owner`): a list built afresh, or a copy that dropped its identity, keeps none of its source layout, so its gaps and its flanks (`sourceFlankOf`) go canonical together. The first item of a list sends nothing; its gap faces the parent's opener, which is the list's flank, not a list neighbour. It sends the range, `{ $treeHandle, $span }`, as evidence only: the gap is classified, never sliced.
 
 ### `packages/common/src/transport-data.ts::listItemsOf`
 
@@ -405,11 +405,11 @@ The items of a list node: the one array a list kind holds in its slots. Whether 
 
 ### `packages/common/src/transport-data.ts::sourceFlankOf`
 
-A list node's flanks as the transport sends them (`$_flank`): the tree handle and span of its source identity, and which flanks it keeps. The flank before is kept while the list's first item is still the source's first item of this list (its evidence lies inside the list's source span and has no source predecessor, `previous === null`); the flank after while its last item is still the source's last (`next === null`). Nothing for anything that is not a list node with source identity. The native fill classifies the kept flanks from the source, depth included (`fill_source_flanks`).
+A list node's flanks as the transport sends them (`$_layout.flank`): the tree handle and span of its source identity, and which flanks it keeps. The flank before is kept while the list's first item is still the source's first item of this list (its evidence lies inside the list's source span and has no source predecessor, `previous === null`); the flank after while its last item is still the source's last (`next === null`). Nothing for anything that is not a list node with source identity. The native fill classifies the kept flanks from the source, depth included (`fill_source_flanks`).
 
 ### `packages/common/src/transport-data.ts::SourceFlankEvidence`
 
-The `$_flank` wire shape: `$treeHandle`, `$span`, `$before`, `$after`.
+The flank's wire shape (`$_layout.flank`): `$treeHandle`, `$span`, `$before`, `$after`.
 
 ### `packages/common/src/transport-data.ts::toDetachedTransportData`
 

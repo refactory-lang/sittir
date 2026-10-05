@@ -29,7 +29,7 @@ pub struct NodeCoordinate {
     /// takes evidence from it (`is_layout_evidence`).
     pub text_only: bool,
     /// The gap toward the item before this one in a list, when the two are
-    /// still adjacent in the source both were read from (`$_gap`).
+    /// still adjacent in the source both were read from (`$_layout.gap`).
     pub gap: Option<SourceGap>,
 }
 
@@ -345,7 +345,10 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue, const ADJACENT: bool>
                 })?;
                 let kind = obj.get::<u32>("$type")?.map(|id| crate::types::KindId(id as u16));
                 let text_only = obj.get::<bool>("$textOnly")?.unwrap_or(false);
-                let gap = obj.get::<SourceGap>("$_gap")?;
+                let gap = match obj.get::<::napi::bindgen_prelude::Object>("$_layout")? {
+                    Some(layout) => layout.get::<SourceGap>("gap")?,
+                    None => None,
+                };
                 return Ok(Self::Coord(NodeCoordinate { kind, text_only, gap, ..NodeCoordinate::new(handle, span) }));
             }
         }

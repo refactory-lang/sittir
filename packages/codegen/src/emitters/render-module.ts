@@ -1087,7 +1087,7 @@ export function emitRenderModule(
 			transportRsHeader(lang),
 			'',
 			commonRustUseImports(),
-			'use ::sittir_core::render_with_trivia;',
+			'use ::sittir_core::layout::Layout as _;',
 			'use ::sittir_core::options::Edged as _;',
 			'use super::options;',
 			'',
@@ -2693,7 +2693,7 @@ function renderTriviaTransportSupport(
 	lines.push('}');
 	lines.push('');
 
-	lines.push('pub type TransportTrivia = ::sittir_core::trivia::TransportTrivia<TriviaTransport>;');
+	lines.push('pub type TransportLayout = ::sittir_core::layout::TransportLayout<TriviaTransport>;');
 	lines.push('');
 
 	return lines;
@@ -2980,7 +2980,7 @@ function seatTargetStructImpl(
 		if (id === undefined) throw new Error(`kind '${kind}' is seated in a list but has no kind id to find its seat by`);
 		body.push(
 			`        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(${id})) {`,
-			'            return Some((self.edges.get_or_insert_with(Default::default), site));',
+			'            return Some((self.layout.edges_mut(), site));',
 			'        }'
 		);
 	}
@@ -3127,13 +3127,13 @@ function prepareStructImpl(
 	choices: ChoiceNames,
 	kindEntries: readonly KindEnumEntry[]
 ): string[] {
-	const body: string[] = ['        self.transport_trivia_data.prepare(ctx)?;'];
+	const body: string[] = ['        self.layout.prepare(ctx)?;'];
 	if (isCompound) {
 		body.push(...rootEdgeStamp(plan, node, fillFields));
 		const delim = node instanceof AssembledList ? delimiterSiteOf(plan, node) : undefined;
 		const trailing = delim !== undefined && node instanceof AssembledList ? sourceTrailingSeparator(node, kindEntries) : undefined;
 		const edged = kindEdgeSidesOf(plan, node).size > 0;
-		if (edged || trailing !== undefined) body.push('        let flank = self.source_flank.take();');
+		if (edged || trailing !== undefined) body.push('        let flank = self.layout.take_flank();');
 		if (edged) {
 			body.push(
 				'        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);',
@@ -3169,10 +3169,10 @@ function prepareStructImpl(
 		`        Ok(())`,
 		`    }`,
 		`    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {`,
-		`        self.source_gap.as_ref()`,
+		`        self.layout.gap()`,
 		`    }`,
 		`    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {`,
-		`        Some(self.edges.get_or_insert_with(Default::default))`,
+		`        Some(self.layout.edges_mut())`,
 		`    }`,
 		`}`,
 		''
@@ -3183,8 +3183,8 @@ function edgedImplLines(typeName: string, kindId: number): string[] {
 	return [
 		`impl ::sittir_core::options::Edged for ${typeName} {`,
 		`    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(${kindId}) }`,
-		`    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }`,
-		`    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }`,
+		`    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }`,
+		`    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }`,
 		`}`,
 		''
 	];
@@ -3267,7 +3267,7 @@ function renderTransportDataStruct(
 		node.modelType === 'alias' ||
 		(node.modelType === 'polymorph' && !(node instanceof AssembledSupertype));
 	if (isCompoundNode) {
-		lines.push(...renderTransportMetadataFields());
+		lines.push(...renderLayoutField());
 		for (const field of [...slotModel.named, ...slotModel.unnamed]) {
 			lines.push(...renderTransportField(field, node.kind, node.typeName, nodeMap, choices));
 			fillFields.push(rustFieldIdent(field.storageName));
@@ -3331,13 +3331,9 @@ function renderTransportDataStruct(
 	lines.push(
 		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
 	);
-	if (isLeafNode) {
-		const token = findKindEntry(kindEntries, node.kind)?.anon === true ? 'token ' : '';
-		lines.push(`        render_with_trivia!(${token}self, w, ${ownKind}, ${leafRenderExpr(node, 'self')})`);
-	} else {
-		const renderFn = rustTypedRenderFnName(node.typeName);
-		lines.push(`        render_with_trivia!(self, w, ${ownKind}, ${renderFn}(self, w))`);
-	}
+	const body = isLeafNode ? leafRenderExpr(node, 'self') : `${rustTypedRenderFnName(node.typeName)}(self, w)`;
+	const owner = !isLeafNode || ownsTrivia(kindEntries, node.kind);
+	lines.push(`        ${layoutRenderCall('self.layout.as_ref()', ownKind, owner, body)}`);
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
@@ -3386,7 +3382,7 @@ function collectFixedLiterals(
 					...(projection.wireIds.get(node.kind) ?? [])
 				])
 			],
-			owner: entryOf(node.kind)?.anon !== true,
+			owner: ownsTrivia(kindEntries, node.kind),
 			immediate: isImmediateLeaf(node)
 		});
 	}
@@ -3405,7 +3401,7 @@ function collectFixedLiterals(
 			text: literal.text,
 			ownId: id,
 			acceptedIds: [...new Set([id, ...(projection.wireIds.get(literal.kind) ?? [])])],
-			owner: entryOf(literal.kind)?.anon !== true,
+			owner: ownsTrivia(kindEntries, literal.kind),
 			immediate: isImmediateLeafKind(literal.kind, nodeMap)
 		});
 	}
@@ -3438,18 +3434,23 @@ function fixedLiteralOf(fixed: FixedLiterals, kind: string, text?: string): Fixe
 }
 
 function renderFixedLiteralFn(fixed: FixedLiteral): string[] {
-	const seat = fixed.owner ? ['    w.seat_trailing()?;'] : [];
+	const write = literalWrite(rustStringLiteral(fixed.text), fixed.text);
+	const body = fixed.immediate ? `{ w.adjacent(); ${write} }` : write;
+	const ownKind = fixed.ownId === undefined ? 'None' : `Some(::sittir_core::types::KindId(${fixed.ownId}))`;
 	return [
 		`fn ${fixed.renderFn}(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,
-		...seat,
-		...(fixed.immediate ? ['    w.adjacent();'] : []),
-		`    ${literalWrite(rustStringLiteral(fixed.text), fixed.text)}?;`,
-		...(fixed.ownId === undefined ? [] : [`    w.end_line_after(::sittir_core::types::KindId(${fixed.ownId}));`]),
-		...seat,
-		'    Ok(())',
+		`    ${layoutRenderCall('None', ownKind, fixed.owner, body)}`,
 		'}',
 		''
 	];
+}
+
+function layoutRenderCall(layout: string, ownKind: string, owner: boolean, body: string): string {
+	return `TransportLayout::render(${layout}, ${ownKind}, ::sittir_core::layout::TriviaRole::${owner ? 'Owner' : 'Token'}, w, |w| ${body})`;
+}
+
+function ownsTrivia(kindEntries: readonly KindEnumEntry[], kind: string): boolean {
+	return findKindEntry(kindEntries, kind)?.anon !== true;
 }
 
 function renderFixedLiteralTransport(typeName: string, fixed: FixedLiteral): string[] {
@@ -3503,16 +3504,6 @@ function fixedLiteralNapiImpls(typeName: string, fixed: FixedLiteral): string[] 
 	];
 }
 
-function leafCaptureLocal(f: TransportMetadataField): string {
-	return `__${f.rustName}`;
-}
-
-function declareLeafMetadataCapture(): string[] {
-	return TRANSPORT_METADATA_FIELDS.filter((f) => f.onWire).map(
-		(f) => `        let mut ${leafCaptureLocal(f)}: ${f.rustType} = None;`
-	);
-}
-
 function renderLeafTransportNapiImpls(structName: string, defaultTextLiteral?: string): string[] {
 	const lines: string[] = [];
 
@@ -3522,7 +3513,7 @@ function renderLeafTransportNapiImpls(structName: string, defaultTextLiteral?: s
 	lines.push(`        env: ::napi::sys::napi_env,`);
 	lines.push(`        napi_val: ::napi::sys::napi_value,`);
 	lines.push(`    ) -> ::napi::Result<Self> {`);
-	lines.push(...declareLeafMetadataCapture());
+	lines.push(`        let mut layout: ${LAYOUT_FIELD.rustType} = None;`);
 	lines.push(`        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {`);
 	lines.push(`            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,`);
 	if (defaultTextLiteral !== undefined) {
@@ -3543,9 +3534,7 @@ function renderLeafTransportNapiImpls(structName: string, defaultTextLiteral?: s
 	}
 	lines.push(`            _ => {`);
 	lines.push(`                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
-	for (const f of TRANSPORT_METADATA_FIELDS.filter((f) => f.onWire)) {
-		lines.push(`                ${leafCaptureLocal(f)} = obj.get(${JSON.stringify(f.jsName)})?;`);
-	}
+	lines.push(`                layout = obj.get(${JSON.stringify(LAYOUT_FIELD.jsName)})?;`);
 	lines.push(
 		defaultTextLiteral !== undefined
 			? `                obj.get("$text")?.unwrap_or_else(|| ${rustStringLiteral(defaultTextLiteral)}.to_string())`
@@ -3554,9 +3543,7 @@ function renderLeafTransportNapiImpls(structName: string, defaultTextLiteral?: s
 	lines.push(`            }`);
 	lines.push(`        };`);
 	lines.push(`        Ok(Self {`);
-	for (const f of TRANSPORT_METADATA_FIELDS) {
-		lines.push(`            ${f.rustName}: ${f.onWire ? leafCaptureLocal(f) : 'None'},`);
-	}
+	lines.push(`            layout,`);
 	lines.push(`            text,`);
 	lines.push(`        })`);
 	lines.push(`    }`);
@@ -3575,12 +3562,9 @@ function renderLeafTransportNapiImpls(structName: string, defaultTextLiteral?: s
 			? `        let text: String = obj.get("$text")?.unwrap_or_else(|| ${rustStringLiteral(defaultTextLiteral)}.to_string());`
 			: '        let text: String = obj.get("$text")?.unwrap_or_default();'
 	);
-	for (const f of TRANSPORT_METADATA_FIELDS)
-		lines.push(`        let ${f.rustName} = obj.get(${JSON.stringify(f.jsName)})?;`);
+	lines.push(`        let layout = obj.get(${JSON.stringify(LAYOUT_FIELD.jsName)})?;`);
 	lines.push(`        Ok(Self {`);
-	for (const f of TRANSPORT_METADATA_FIELDS) {
-		lines.push(`            ${f.rustName},`);
-	}
+	lines.push(`            layout,`);
 	lines.push(`            text,`);
 	lines.push(`        })`);
 	lines.push(`    }`);
@@ -3601,29 +3585,17 @@ function renderLeafTransportNapiImpls(structName: string, defaultTextLiteral?: s
 	return lines;
 }
 
-interface TransportMetadataField {
-	jsName: string;
-	rustName: string;
-	rustType: string;
-	onWire: boolean;
-}
+const LAYOUT_FIELD = { jsName: '$_layout', rustName: 'layout', rustType: 'Option<TransportLayout>' } as const;
 
-const TRANSPORT_METADATA_FIELDS: readonly TransportMetadataField[] = [
-	{ jsName: '$_trivia', rustName: 'transport_trivia_data', rustType: 'Option<TransportTrivia>', onWire: true },
-	{ jsName: '$_edges', rustName: 'edges', rustType: 'Option<::sittir_core::options::Edges>', onWire: false },
-	{ jsName: '$_gap', rustName: 'source_gap', rustType: 'Option<::sittir_core::slot::SourceGap>', onWire: true },
-	{ jsName: '$_flank', rustName: 'source_flank', rustType: 'Option<::sittir_core::slot::SourceFlank>', onWire: true }
-];
-
-function renderTransportMetadataFields(): string[] {
-	return TRANSPORT_METADATA_FIELDS.flatMap((f) => [
-		`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(f.jsName)}))]`,
-		`    pub ${f.rustName}: ${f.rustType},`
-	]);
+function renderLayoutField(): string[] {
+	return [
+		`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(LAYOUT_FIELD.jsName)}))]`,
+		`    pub ${LAYOUT_FIELD.rustName}: ${LAYOUT_FIELD.rustType},`
+	];
 }
 
 function renderLeafTransportPlainFields(): string[] {
-	return [...TRANSPORT_METADATA_FIELDS.map((f) => `    pub ${f.rustName}: ${f.rustType},`), '    pub text: String,'];
+	return [`    pub ${LAYOUT_FIELD.rustName}: ${LAYOUT_FIELD.rustType},`, '    pub text: String,'];
 }
 
 function renderTransportField(

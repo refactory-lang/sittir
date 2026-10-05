@@ -16,7 +16,7 @@ use ::sittir_core::types::{
 #[cfg(feature = "napi-bindings")]
 use ::napi_derive::napi;
 
-use ::sittir_core::render_with_trivia;
+use ::sittir_core::layout::Layout as _;
 use ::sittir_core::options::Edged as _;
 use super::options;
 
@@ -2300,7 +2300,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for TriviaTransport {
     }
 }
 
-pub type TransportTrivia = ::sittir_core::trivia::TransportTrivia<TriviaTransport>;
+pub type TransportLayout = ::sittir_core::layout::TransportLayout<TriviaTransport>;
 
 
 /// Text that is a slot's content with no kind of its own: a bare string in
@@ -17649,14 +17649,8 @@ impl ::sittir_core::render::Render for ComparisonOperatorComparatorOperatorsTran
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ModuleTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements"))]
     pub statements: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_separator_space"))]
@@ -17671,24 +17665,24 @@ impl ::sittir_core::view::KindOf for ModuleTransport {
 
 impl ::sittir_core::options::Edged for ModuleTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(127) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ModuleTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(127)), render_module(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(127)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_module(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ModuleTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         let first = [::sittir_core::prepare::EdgeItems::first_item(&self.statements)].into_iter().flatten().next();
         let last = [::sittir_core::prepare::EdgeItems::last_item(&self.statements)].into_iter().flatten().next();
         let flanks = ::sittir_core::prepare::root_flanks(first, last, options::allowed(options::SITE_MODULE_MODULE_BEFORE), options::allowed(options::SITE_MODULE_MODULE_AFTER), &options::WHITESPACE, ctx);
         ::sittir_core::prepare::fill_edges(self, flanks);
-        let flank = self.source_flank.take();
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         if let Some(gap_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_MODULE_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
@@ -17698,10 +17692,10 @@ impl ::sittir_core::prepare::Prepare for ModuleTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -17728,14 +17722,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ModuleTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct SimpleStatementsTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: ::sittir_core::SlotValue<SimpleStatementsElementsTransport>,
 }
@@ -17748,30 +17736,30 @@ impl ::sittir_core::view::KindOf for SimpleStatementsTransport {
 
 impl ::sittir_core::options::Edged for SimpleStatementsTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(129) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for SimpleStatementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(129)), render_simple_statements(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(129)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_simple_statements(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for SimpleStatementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -17798,14 +17786,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SimpleStatementsTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ImportStatementTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names"))]
     pub names: ::sittir_core::SlotValue<NamesTransport>,
 }
@@ -17818,30 +17800,30 @@ impl ::sittir_core::view::KindOf for ImportStatementTransport {
 
 impl ::sittir_core::options::Edged for ImportStatementTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(130) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ImportStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(130)), render_import_statement(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(130)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_import_statement(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ImportStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.names.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -17867,10 +17849,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportStatementTransport> {
 
 #[derive(Debug, Clone)]
 pub struct ImportPrefixTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    pub layout: Option<TransportLayout>,
     pub text: String,
 }
 
@@ -17882,26 +17861,26 @@ impl ::sittir_core::view::KindOf for ImportPrefixTransport {
 
 impl ::sittir_core::options::Edged for ImportPrefixTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(131) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ImportPrefixTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(131)), w.text(&self.text))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(131)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ImportPrefixTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -17911,9 +17890,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportPrefixTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
+        let mut layout: Option<TransportLayout> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -17926,17 +17903,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportPrefixTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
+                layout = obj.get("$_layout")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
+            layout,
             text,
         })
     }
@@ -17950,15 +17922,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportPrefixTransport {
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
+        let layout = obj.get("$_layout")?;
         Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
+            layout,
             text,
         })
     }
@@ -17997,14 +17963,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportPrefixTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct RelativeImportTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_prefix"))]
     pub prefix: ::sittir_core::SlotValue<ImportPrefixTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
@@ -18019,20 +17979,20 @@ impl ::sittir_core::view::KindOf for RelativeImportTransport {
 
 impl ::sittir_core::options::Edged for RelativeImportTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(132) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for RelativeImportTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(132)), render_relative_import(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(132)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_relative_import(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for RelativeImportTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.prefix.prepare(ctx)?;
@@ -18040,10 +18000,10 @@ impl ::sittir_core::prepare::Prepare for RelativeImportTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -18070,14 +18030,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RelativeImportTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct FutureImportStatementTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<FutureImportStatementContentTransportSlot>,
 }
@@ -18090,30 +18044,30 @@ impl ::sittir_core::view::KindOf for FutureImportStatementTransport {
 
 impl ::sittir_core::options::Edged for FutureImportStatementTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(133) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for FutureImportStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(133)), render_future_import_statement(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(133)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_future_import_statement(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for FutureImportStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.content.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -18140,14 +18094,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FutureImportStatementTransport
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ImportFromStatementTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_module_name"))]
     pub module_name: ::sittir_core::SlotValue<ImportFromStatementModuleNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
@@ -18162,20 +18110,20 @@ impl ::sittir_core::view::KindOf for ImportFromStatementTransport {
 
 impl ::sittir_core::options::Edged for ImportFromStatementTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(134) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ImportFromStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(134)), render_import_from_statement(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(134)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_import_from_statement(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ImportFromStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.module_name.prepare(ctx)?;
@@ -18183,10 +18131,10 @@ impl ::sittir_core::prepare::Prepare for ImportFromStatementTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -18213,14 +18161,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportFromStatementTransport> 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ImportListTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: Vec<::sittir_core::SlotValue<ImportListNameTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -18239,20 +18181,20 @@ impl ::sittir_core::view::KindOf for ImportListTransport {
 
 impl ::sittir_core::options::Edged for ImportListTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(135) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ImportListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(135)), render_import_list(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(135)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_import_list(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ImportListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_list_gaps(self.name.iter_mut().map(Some), ",", options::allowed(options::SITE_IMPORT_LIST_NAME_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_IMPORT_LIST_NAME_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.name_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_IMPORT_LIST_NAME_SEPARATOR_SPACE_BEFORE].arm);
         self.name_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_IMPORT_LIST_NAME_SEPARATOR_SPACE_AFTER].arm);
@@ -18262,10 +18204,10 @@ impl ::sittir_core::prepare::Prepare for ImportListTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -18292,14 +18234,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportListTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct AliasedImportTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<DottedNameTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
@@ -18314,20 +18250,20 @@ impl ::sittir_core::view::KindOf for AliasedImportTransport {
 
 impl ::sittir_core::options::Edged for AliasedImportTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(136) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for AliasedImportTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(136)), render_aliased_import(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(136)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_aliased_import(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for AliasedImportTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
@@ -18335,10 +18271,10 @@ impl ::sittir_core::prepare::Prepare for AliasedImportTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -18433,14 +18369,8 @@ impl ::sittir_core::render::Render for WildcardImportTransport {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct PrintStatementTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<PrintStatementContentTransportSlot>,
 }
@@ -18453,27 +18383,27 @@ impl ::sittir_core::view::KindOf for PrintStatementTransport {
 
 impl ::sittir_core::options::Edged for PrintStatementTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(138) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for PrintStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(138)), render_print_statement(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(138)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_print_statement(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for PrintStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -18500,14 +18430,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PrintStatementTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ChevronTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
 }
@@ -18520,30 +18444,30 @@ impl ::sittir_core::view::KindOf for ChevronTransport {
 
 impl ::sittir_core::options::Edged for ChevronTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(139) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ChevronTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(139)), render_chevron(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(139)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_chevron(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ChevronTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -18570,14 +18494,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ChevronTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct AssertStatementTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_separator_space_before"))]
@@ -18594,20 +18512,20 @@ impl ::sittir_core::view::KindOf for AssertStatementTransport {
 
 impl ::sittir_core::options::Edged for AssertStatementTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(140) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for AssertStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(140)), render_assert_statement(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(140)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_assert_statement(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for AssertStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         ::sittir_core::prepare::fill_list_gaps(self.expression.iter_mut().map(Some), ",", options::allowed(options::SITE_ASSERT_STATEMENT_EXPRESSION_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ASSERT_STATEMENT_EXPRESSION_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
@@ -18618,10 +18536,10 @@ impl ::sittir_core::prepare::Prepare for AssertStatementTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -18648,14 +18566,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AssertStatementTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ExpressionStatementTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ExpressionStatementContentTransportSlot>,
 }
@@ -18668,27 +18580,27 @@ impl ::sittir_core::view::KindOf for ExpressionStatementTransport {
 
 impl ::sittir_core::options::Edged for ExpressionStatementTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(141) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ExpressionStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(141)), render_expression_statement(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(141)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_expression_statement(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ExpressionStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -18715,14 +18627,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExpressionStatementTransport> 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct NamedExpressionTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<NamedExpressionNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
@@ -18737,20 +18643,20 @@ impl ::sittir_core::view::KindOf for NamedExpressionTransport {
 
 impl ::sittir_core::options::Edged for NamedExpressionTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(142) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for NamedExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(142)), render_named_expression(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(142)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_named_expression(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for NamedExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
@@ -18758,10 +18664,10 @@ impl ::sittir_core::prepare::Prepare for NamedExpressionTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -18788,14 +18694,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedExpressionTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ReturnStatementTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
     pub expressions: Option<::sittir_core::SlotValue<ReturnStatementExpressionsTransportSlot>>,
 }
@@ -18808,30 +18708,30 @@ impl ::sittir_core::view::KindOf for ReturnStatementTransport {
 
 impl ::sittir_core::options::Edged for ReturnStatementTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(144) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ReturnStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(144)), render_return_statement(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(144)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_return_statement(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ReturnStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expressions.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -18858,14 +18758,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ReturnStatementTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct DeleteStatementTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
     pub expressions: ::sittir_core::SlotValue<ReturnStatementExpressionsTransportSlot>,
 }
@@ -18878,30 +18772,30 @@ impl ::sittir_core::view::KindOf for DeleteStatementTransport {
 
 impl ::sittir_core::options::Edged for DeleteStatementTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(145) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for DeleteStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(145)), render_delete_statement(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(145)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_delete_statement(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for DeleteStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expressions.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -18928,14 +18822,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DeleteStatementTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct RaiseStatementTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_cause"))]
     pub cause: Option<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
@@ -18950,20 +18838,20 @@ impl ::sittir_core::view::KindOf for RaiseStatementTransport {
 
 impl ::sittir_core::options::Edged for RaiseStatementTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(146) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for RaiseStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(146)), render_raise_statement(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(146)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_raise_statement(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for RaiseStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.cause.prepare(ctx)?;
@@ -18971,10 +18859,10 @@ impl ::sittir_core::prepare::Prepare for RaiseStatementTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -19205,14 +19093,8 @@ impl ::sittir_core::render::Render for ContinueStatementTransport {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct IfStatementTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
     pub condition: ::sittir_core::SlotValue<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_consequence"))]
@@ -19231,20 +19113,20 @@ impl ::sittir_core::view::KindOf for IfStatementTransport {
 
 impl ::sittir_core::options::Edged for IfStatementTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(150) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for IfStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(150)), render_if_statement(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(150)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_if_statement(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for IfStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         if let Some(gap_items) = self.alternative.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_IF_STATEMENT_ALTERNATIVE_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
@@ -19256,10 +19138,10 @@ impl ::sittir_core::prepare::Prepare for IfStatementTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -19286,14 +19168,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IfStatementTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ElifClauseTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
     pub condition: ::sittir_core::SlotValue<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_consequence"))]
@@ -19308,20 +19184,20 @@ impl ::sittir_core::view::KindOf for ElifClauseTransport {
 
 impl ::sittir_core::options::Edged for ElifClauseTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(151) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ElifClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(151)), render_elif_clause(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(151)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_elif_clause(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ElifClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.condition.prepare(ctx)?;
@@ -19329,10 +19205,10 @@ impl ::sittir_core::prepare::Prepare for ElifClauseTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -19359,14 +19235,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ElifClauseTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ElseClauseTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<SuiteTransport>,
 }
@@ -19379,30 +19249,30 @@ impl ::sittir_core::view::KindOf for ElseClauseTransport {
 
 impl ::sittir_core::options::Edged for ElseClauseTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(152) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ElseClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(152)), render_else_clause(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(152)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_else_clause(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ElseClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -19429,14 +19299,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ElseClauseTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct MatchStatementTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<MatchBlockTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subjects"))]
@@ -19451,20 +19315,20 @@ impl ::sittir_core::view::KindOf for MatchStatementTransport {
 
 impl ::sittir_core::options::Edged for MatchStatementTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(153) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for MatchStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(153)), render_match_statement(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(153)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_statement(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for MatchStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
@@ -19472,10 +19336,10 @@ impl ::sittir_core::prepare::Prepare for MatchStatementTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -19502,14 +19366,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MatchStatementTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct MatchBlockTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<MatchBlockContentTransportSlot>,
 }
@@ -19522,27 +19380,27 @@ impl ::sittir_core::view::KindOf for MatchBlockTransport {
 
 impl ::sittir_core::options::Edged for MatchBlockTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(154) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for MatchBlockTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(154)), render_match_block(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(154)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_block(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for MatchBlockTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -19569,14 +19427,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MatchBlockTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct CaseClauseTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_guard"))]
     pub guard: Option<::sittir_core::SlotValue<IfClauseTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_consequence"))]
@@ -19593,20 +19445,20 @@ impl ::sittir_core::view::KindOf for CaseClauseTransport {
 
 impl ::sittir_core::options::Edged for CaseClauseTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(155) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for CaseClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(155)), render_case_clause(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(155)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_case_clause(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for CaseClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.guard.prepare(ctx)?;
@@ -19615,10 +19467,10 @@ impl ::sittir_core::prepare::Prepare for CaseClauseTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -19645,14 +19497,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CaseClauseTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ForStatementTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async"))]
     pub async_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
@@ -19673,20 +19519,20 @@ impl ::sittir_core::view::KindOf for ForStatementTransport {
 
 impl ::sittir_core::options::Edged for ForStatementTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(156) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ForStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(156)), render_for_statement(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(156)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_for_statement(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ForStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.async_.prepare(ctx)?;
@@ -19697,10 +19543,10 @@ impl ::sittir_core::prepare::Prepare for ForStatementTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -19727,14 +19573,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ForStatementTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct WhileStatementTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
     pub condition: ::sittir_core::SlotValue<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
@@ -19751,20 +19591,20 @@ impl ::sittir_core::view::KindOf for WhileStatementTransport {
 
 impl ::sittir_core::options::Edged for WhileStatementTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(157) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for WhileStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(157)), render_while_statement(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(157)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_while_statement(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for WhileStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.condition.prepare(ctx)?;
@@ -19773,10 +19613,10 @@ impl ::sittir_core::prepare::Prepare for WhileStatementTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -19803,14 +19643,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<WhileStatementTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TryStatementTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<SuiteTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_clauses"))]
@@ -19831,20 +19665,20 @@ impl ::sittir_core::view::KindOf for TryStatementTransport {
 
 impl ::sittir_core::options::Edged for TryStatementTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(158) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for TryStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(158)), render_try_statement(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(158)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_try_statement(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for TryStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         if let Some(gap_items) = self.except_clauses.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
@@ -19857,10 +19691,10 @@ impl ::sittir_core::prepare::Prepare for TryStatementTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -19887,14 +19721,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TryStatementTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ExceptClauseTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_group"))]
     pub group: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_exception"))]
@@ -19911,20 +19739,20 @@ impl ::sittir_core::view::KindOf for ExceptClauseTransport {
 
 impl ::sittir_core::options::Edged for ExceptClauseTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(159) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ExceptClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(159)), render_except_clause(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(159)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_except_clause(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ExceptClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.group.prepare(ctx)?;
@@ -19933,10 +19761,10 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -19963,14 +19791,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct FinallyClauseTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_block"))]
     pub block: ::sittir_core::SlotValue<SuiteTransport>,
 }
@@ -19983,30 +19805,30 @@ impl ::sittir_core::view::KindOf for FinallyClauseTransport {
 
 impl ::sittir_core::options::Edged for FinallyClauseTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(160) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for FinallyClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(160)), render_finally_clause(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(160)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_finally_clause(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for FinallyClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.block.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -20033,14 +19855,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FinallyClauseTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct WithStatementTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async"))]
     pub async_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_clause"))]
@@ -20057,20 +19873,20 @@ impl ::sittir_core::view::KindOf for WithStatementTransport {
 
 impl ::sittir_core::options::Edged for WithStatementTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(161) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for WithStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(161)), render_with_statement(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(161)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_with_statement(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for WithStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.async_.prepare(ctx)?;
@@ -20079,10 +19895,10 @@ impl ::sittir_core::prepare::Prepare for WithStatementTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -20109,14 +19925,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<WithStatementTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct WithItemTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
 }
@@ -20129,27 +19939,27 @@ impl ::sittir_core::view::KindOf for WithItemTransport {
 
 impl ::sittir_core::options::Edged for WithItemTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(163) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for WithItemTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(163)), render_with_item(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(163)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_with_item(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for WithItemTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.value.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -20176,14 +19986,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<WithItemTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct FunctionDefinitionTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async"))]
     pub async_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
@@ -20206,20 +20010,20 @@ impl ::sittir_core::view::KindOf for FunctionDefinitionTransport {
 
 impl ::sittir_core::options::Edged for FunctionDefinitionTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(164) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for FunctionDefinitionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(164)), render_function_definition(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(164)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_function_definition(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for FunctionDefinitionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.async_.prepare(ctx)?;
@@ -20231,10 +20035,10 @@ impl ::sittir_core::prepare::Prepare for FunctionDefinitionTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -20261,14 +20065,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionDefinitionTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ParametersTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Option<::sittir_core::SlotValue<ParametersElementsTransport>>,
 }
@@ -20281,30 +20079,30 @@ impl ::sittir_core::view::KindOf for ParametersTransport {
 
 impl ::sittir_core::options::Edged for ParametersTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(165) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ParametersTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(165)), render_parameters(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(165)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parameters(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ParametersTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -20331,14 +20129,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ParametersTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct LambdaParametersTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters_elements"))]
     pub parameters_elements: ::sittir_core::SlotValue<ParametersElementsTransport>,
 }
@@ -20351,27 +20143,27 @@ impl ::sittir_core::view::KindOf for LambdaParametersTransport {
 
 impl ::sittir_core::options::Edged for LambdaParametersTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(166) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for LambdaParametersTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(166)), render_lambda_parameters(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(166)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lambda_parameters(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for LambdaParametersTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.parameters_elements.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -20398,14 +20190,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LambdaParametersTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ListSplatTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
 }
@@ -20418,30 +20204,30 @@ impl ::sittir_core::view::KindOf for ListSplatTransport {
 
 impl ::sittir_core::options::Edged for ListSplatTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(167) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ListSplatTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(167)), render_list_splat(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(167)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_list_splat(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ListSplatTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -20468,14 +20254,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ListSplatTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct DictionarySplatTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
 }
@@ -20488,30 +20268,30 @@ impl ::sittir_core::view::KindOf for DictionarySplatTransport {
 
 impl ::sittir_core::options::Edged for DictionarySplatTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(168) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for DictionarySplatTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(168)), render_dictionary_splat(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(168)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_dictionary_splat(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for DictionarySplatTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -20538,14 +20318,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DictionarySplatTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct GlobalStatementTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names"))]
     pub names: Vec<::sittir_core::SlotValue<IdentifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names_separator_space_before"))]
@@ -20562,20 +20336,20 @@ impl ::sittir_core::view::KindOf for GlobalStatementTransport {
 
 impl ::sittir_core::options::Edged for GlobalStatementTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(169) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for GlobalStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(169)), render_global_statement(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(169)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_global_statement(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for GlobalStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         ::sittir_core::prepare::fill_list_gaps(self.names.iter_mut().map(Some), ",", options::allowed(options::SITE_GLOBAL_STATEMENT_NAMES_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_GLOBAL_STATEMENT_NAMES_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
@@ -20585,10 +20359,10 @@ impl ::sittir_core::prepare::Prepare for GlobalStatementTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -20615,14 +20389,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GlobalStatementTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct NonlocalStatementTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names"))]
     pub names: Vec<::sittir_core::SlotValue<IdentifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names_separator_space_before"))]
@@ -20639,20 +20407,20 @@ impl ::sittir_core::view::KindOf for NonlocalStatementTransport {
 
 impl ::sittir_core::options::Edged for NonlocalStatementTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(170) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for NonlocalStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(170)), render_nonlocal_statement(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(170)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_nonlocal_statement(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for NonlocalStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         ::sittir_core::prepare::fill_list_gaps(self.names.iter_mut().map(Some), ",", options::allowed(options::SITE_NONLOCAL_STATEMENT_NAMES_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_NONLOCAL_STATEMENT_NAMES_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
@@ -20662,10 +20430,10 @@ impl ::sittir_core::prepare::Prepare for NonlocalStatementTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -20692,14 +20460,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NonlocalStatementTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ExecStatementTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_code"))]
     pub code: ::sittir_core::SlotValue<ExecStatementCodeTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_clause"))]
@@ -20718,20 +20480,20 @@ impl ::sittir_core::view::KindOf for ExecStatementTransport {
 
 impl ::sittir_core::options::Edged for ExecStatementTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(171) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ExecStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(171)), render_exec_statement(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(171)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_exec_statement(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ExecStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         if let Some(gap_items) = self.in_clause.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), ",", options::allowed(options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx); }
@@ -20743,10 +20505,10 @@ impl ::sittir_core::prepare::Prepare for ExecStatementTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -20773,14 +20535,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExecStatementTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TypeAliasStatementTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
@@ -20795,20 +20551,20 @@ impl ::sittir_core::view::KindOf for TypeAliasStatementTransport {
 
 impl ::sittir_core::options::Edged for TypeAliasStatementTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(172) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for TypeAliasStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(172)), render_type_alias_statement(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(172)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_alias_statement(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for TypeAliasStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
@@ -20816,10 +20572,10 @@ impl ::sittir_core::prepare::Prepare for TypeAliasStatementTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -20846,14 +20602,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeAliasStatementTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ClassDefinitionTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
@@ -20872,20 +20622,20 @@ impl ::sittir_core::view::KindOf for ClassDefinitionTransport {
 
 impl ::sittir_core::options::Edged for ClassDefinitionTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(173) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ClassDefinitionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(173)), render_class_definition(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(173)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_class_definition(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ClassDefinitionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
@@ -20895,10 +20645,10 @@ impl ::sittir_core::prepare::Prepare for ClassDefinitionTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -20925,14 +20675,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassDefinitionTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TypeParameterTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_types"))]
     pub types: ::sittir_core::SlotValue<TypesTransport>,
 }
@@ -20945,30 +20689,30 @@ impl ::sittir_core::view::KindOf for TypeParameterTransport {
 
 impl ::sittir_core::options::Edged for TypeParameterTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(174) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for TypeParameterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(174)), render_type_parameter(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(174)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_parameter(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for TypeParameterTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.types.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -20995,14 +20739,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeParameterTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ParenthesizedListSplatTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<ParenthesizedListSplatContentTransportSlot>>,
 }
@@ -21015,30 +20753,30 @@ impl ::sittir_core::view::KindOf for ParenthesizedListSplatTransport {
 
 impl ::sittir_core::options::Edged for ParenthesizedListSplatTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(175) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ParenthesizedListSplatTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(175)), render_parenthesized_list_splat(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(175)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parenthesized_list_splat(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ParenthesizedListSplatTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.content.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -21065,14 +20803,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ParenthesizedListSplatTranspor
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ArgumentListTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
     pub arguments: Option<::sittir_core::SlotValue<ArgumentListElementsTransport>>,
 }
@@ -21085,30 +20817,30 @@ impl ::sittir_core::view::KindOf for ArgumentListTransport {
 
 impl ::sittir_core::options::Edged for ArgumentListTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(176) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ArgumentListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(176)), render_argument_list(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(176)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_argument_list(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ArgumentListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.arguments.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -21135,14 +20867,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ArgumentListTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct DecoratedDefinitionTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_definition"))]
     pub definition: ::sittir_core::SlotValue<DecoratedDefinitionDefinitionTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
@@ -21159,20 +20885,20 @@ impl ::sittir_core::view::KindOf for DecoratedDefinitionTransport {
 
 impl ::sittir_core::options::Edged for DecoratedDefinitionTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(177) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for DecoratedDefinitionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(177)), render_decorated_definition(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(177)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_decorated_definition(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for DecoratedDefinitionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         ::sittir_core::prepare::fill_list_gaps(self.decorator.iter_mut().map(Some), "", options::allowed(options::SITE_DECORATED_DEFINITION_DECORATOR_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
@@ -21183,10 +20909,10 @@ impl ::sittir_core::prepare::Prepare for DecoratedDefinitionTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -21213,14 +20939,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DecoratedDefinitionTransport> 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct DecoratorTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
 }
@@ -21233,30 +20953,30 @@ impl ::sittir_core::view::KindOf for DecoratorTransport {
 
 impl ::sittir_core::options::Edged for DecoratorTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(178) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for DecoratorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(178)), render_decorator(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(178)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_decorator(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for DecoratorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -21283,14 +21003,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DecoratorTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct BlockTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements"))]
     pub statements: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_separator_space"))]
@@ -21305,20 +21019,20 @@ impl ::sittir_core::view::KindOf for BlockTransport {
 
 impl ::sittir_core::options::Edged for BlockTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(179) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for BlockTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(179)), render_block(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(179)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_block(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for BlockTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         if let Some(gap_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
@@ -21328,10 +21042,10 @@ impl ::sittir_core::prepare::Prepare for BlockTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -21358,14 +21072,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BlockTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ExpressionListTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -21384,20 +21092,20 @@ impl ::sittir_core::view::KindOf for ExpressionListTransport {
 
 impl ::sittir_core::options::Edged for ExpressionListTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(180) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ExpressionListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(180)), render_expression_list(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(180)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_expression_list(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ExpressionListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_EXPRESSION_LIST_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXPRESSION_LIST_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_EXPRESSION_LIST_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_EXPRESSION_LIST_ITEM_SEPARATOR_SPACE_AFTER].arm);
@@ -21407,10 +21115,10 @@ impl ::sittir_core::prepare::Prepare for ExpressionListTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -21437,14 +21145,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExpressionListTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct DottedNameTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names"))]
     pub names: Vec<::sittir_core::SlotValue<IdentifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names_separator_space_before"))]
@@ -21461,19 +21163,19 @@ impl ::sittir_core::view::KindOf for DottedNameTransport {
 
 impl ::sittir_core::options::Edged for DottedNameTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(181) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for DottedNameTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(181)), render_dotted_name(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(181)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_dotted_name(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for DottedNameTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         ::sittir_core::prepare::fill_list_gaps(self.names.iter_mut().map(Some), ".", options::allowed(options::SITE_DOTTED_NAME_NAMES_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_DOTTED_NAME_NAMES_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.names_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_DOTTED_NAME_NAMES_SEPARATOR_SPACE_BEFORE].arm);
         self.names_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_DOTTED_NAME_NAMES_SEPARATOR_SPACE_AFTER].arm);
@@ -21481,10 +21183,10 @@ impl ::sittir_core::prepare::Prepare for DottedNameTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -21511,14 +21213,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DottedNameTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct CasePatternTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<CasePatternContentTransportSlot>>,
 }
@@ -21531,27 +21227,27 @@ impl ::sittir_core::view::KindOf for CasePatternTransport {
 
 impl ::sittir_core::options::Edged for CasePatternTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(182) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for CasePatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(182)), render_case_pattern(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(182)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_case_pattern(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for CasePatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -21578,14 +21274,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CasePatternTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct SimplePatternTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<SimplePatternContentTransportSlot>,
 }
@@ -21598,27 +21288,27 @@ impl ::sittir_core::view::KindOf for SimplePatternTransport {
 
 impl ::sittir_core::options::Edged for SimplePatternTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(183) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for SimplePatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(183)), render_simple_pattern(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(183)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_simple_pattern(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for SimplePatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -21645,14 +21335,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SimplePatternTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct CaseAsPatternTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_pattern"))]
     pub case_pattern: ::sittir_core::SlotValue<Box<CasePatternTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]
@@ -21667,20 +21351,20 @@ impl ::sittir_core::view::KindOf for CaseAsPatternTransport {
 
 impl ::sittir_core::options::Edged for CaseAsPatternTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(184) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for CaseAsPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(184)), render_case_as_pattern(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(184)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_case_as_pattern(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for CaseAsPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.case_pattern.prepare(ctx)?;
@@ -21688,10 +21372,10 @@ impl ::sittir_core::prepare::Prepare for CaseAsPatternTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -21718,14 +21402,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CaseAsPatternTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct UnionPatternTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_patterns"))]
     pub patterns: Vec<::sittir_core::SlotValue<SimplePatternContentTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_patterns_separator_space_before"))]
@@ -21742,19 +21420,19 @@ impl ::sittir_core::view::KindOf for UnionPatternTransport {
 
 impl ::sittir_core::options::Edged for UnionPatternTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(185) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for UnionPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(185)), render_union_pattern(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(185)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_union_pattern(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for UnionPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         ::sittir_core::prepare::fill_list_gaps(self.patterns.iter_mut().map(Some), "|", options::allowed(options::SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.patterns_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_BEFORE].arm);
         self.patterns_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_AFTER].arm);
@@ -21763,10 +21441,10 @@ impl ::sittir_core::prepare::Prepare for UnionPatternTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -21793,14 +21471,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<UnionPatternTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct DictPatternTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Option<::sittir_core::SlotValue<DictPatternElementsTransport>>,
 }
@@ -21813,30 +21485,30 @@ impl ::sittir_core::view::KindOf for DictPatternTransport {
 
 impl ::sittir_core::options::Edged for DictPatternTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(186) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for DictPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(186)), render_dict_pattern(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(186)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_dict_pattern(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for DictPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -21863,14 +21535,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DictPatternTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct KeyValuePatternTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_key"))]
     pub key: ::sittir_core::SlotValue<SimplePatternContentTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
@@ -21885,20 +21551,20 @@ impl ::sittir_core::view::KindOf for KeyValuePatternTransport {
 
 impl ::sittir_core::options::Edged for KeyValuePatternTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(187) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for KeyValuePatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(187)), render_key_value_pattern(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(187)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_key_value_pattern(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for KeyValuePatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.key.prepare(ctx)?;
@@ -21906,10 +21572,10 @@ impl ::sittir_core::prepare::Prepare for KeyValuePatternTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -21936,14 +21602,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<KeyValuePatternTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct KeywordPatternTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
@@ -21958,20 +21618,20 @@ impl ::sittir_core::view::KindOf for KeywordPatternTransport {
 
 impl ::sittir_core::options::Edged for KeywordPatternTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(188) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for KeywordPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(188)), render_keyword_pattern(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(188)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_keyword_pattern(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for KeywordPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
@@ -21979,10 +21639,10 @@ impl ::sittir_core::prepare::Prepare for KeywordPatternTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -22009,14 +21669,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<KeywordPatternTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct SplatPatternTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
     pub operator: ::sittir_core::SlotValue<SplatPatternOperatorTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
@@ -22031,20 +21685,20 @@ impl ::sittir_core::view::KindOf for SplatPatternTransport {
 
 impl ::sittir_core::options::Edged for SplatPatternTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(189) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for SplatPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(189)), render_splat_pattern(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(189)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_splat_pattern(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for SplatPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.operator.prepare(ctx)?;
@@ -22052,10 +21706,10 @@ impl ::sittir_core::prepare::Prepare for SplatPatternTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -22082,14 +21736,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SplatPatternTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ClassPatternTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<DottedNameTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
@@ -22104,20 +21752,20 @@ impl ::sittir_core::view::KindOf for ClassPatternTransport {
 
 impl ::sittir_core::options::Edged for ClassPatternTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(190) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ClassPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(190)), render_class_pattern(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(190)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_class_pattern(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ClassPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
@@ -22125,10 +21773,10 @@ impl ::sittir_core::prepare::Prepare for ClassPatternTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -22155,14 +21803,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassPatternTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ComplexPatternTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_sign"))]
     pub sign: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_real"))]
@@ -22181,20 +21823,20 @@ impl ::sittir_core::view::KindOf for ComplexPatternTransport {
 
 impl ::sittir_core::options::Edged for ComplexPatternTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(191) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ComplexPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(191)), render_complex_pattern(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(191)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_complex_pattern(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ComplexPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.sign.prepare(ctx)?;
@@ -22204,10 +21846,10 @@ impl ::sittir_core::prepare::Prepare for ComplexPatternTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -22234,14 +21876,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ComplexPatternTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ParametersElementsTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<ParameterTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -22260,20 +21896,20 @@ impl ::sittir_core::view::KindOf for ParametersElementsTransport {
 
 impl ::sittir_core::options::Edged for ParametersElementsTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(192) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ParametersElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(192)), render_parameters_elements(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(192)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parameters_elements(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ParametersElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
@@ -22283,10 +21919,10 @@ impl ::sittir_core::prepare::Prepare for ParametersElementsTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -22313,14 +21949,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ParametersElementsTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct PatternsTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<PatternTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -22339,20 +21969,20 @@ impl ::sittir_core::view::KindOf for PatternsTransport {
 
 impl ::sittir_core::options::Edged for PatternsTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(193) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for PatternsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(193)), render_patterns(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(193)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_patterns(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for PatternsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_PATTERNS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PATTERNS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PATTERNS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PATTERNS_ITEM_SEPARATOR_SPACE_AFTER].arm);
@@ -22362,10 +21992,10 @@ impl ::sittir_core::prepare::Prepare for PatternsTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -22392,14 +22022,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PatternsTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TuplePatternTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_patterns"))]
     pub patterns: Option<::sittir_core::SlotValue<PatternsTransport>>,
 }
@@ -22412,30 +22036,30 @@ impl ::sittir_core::view::KindOf for TuplePatternTransport {
 
 impl ::sittir_core::options::Edged for TuplePatternTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(196) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for TuplePatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(196)), render_tuple_pattern(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(196)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_pattern(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for TuplePatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.patterns.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -22462,14 +22086,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TuplePatternTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ListPatternTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_patterns"))]
     pub patterns: Option<::sittir_core::SlotValue<PatternsTransport>>,
 }
@@ -22482,30 +22100,30 @@ impl ::sittir_core::view::KindOf for ListPatternTransport {
 
 impl ::sittir_core::options::Edged for ListPatternTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(197) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ListPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(197)), render_list_pattern(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(197)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_list_pattern(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ListPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.patterns.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -22532,14 +22150,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ListPatternTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct DefaultParameterTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<DefaultParameterNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
@@ -22554,20 +22166,20 @@ impl ::sittir_core::view::KindOf for DefaultParameterTransport {
 
 impl ::sittir_core::options::Edged for DefaultParameterTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(198) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for DefaultParameterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(198)), render_default_parameter(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(198)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_default_parameter(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for DefaultParameterTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
@@ -22575,10 +22187,10 @@ impl ::sittir_core::prepare::Prepare for DefaultParameterTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -22605,14 +22217,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DefaultParameterTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TypedDefaultParameterTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
@@ -22629,20 +22235,20 @@ impl ::sittir_core::view::KindOf for TypedDefaultParameterTransport {
 
 impl ::sittir_core::options::Edged for TypedDefaultParameterTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(199) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for TypedDefaultParameterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(199)), render_typed_default_parameter(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(199)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_typed_default_parameter(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for TypedDefaultParameterTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
@@ -22651,10 +22257,10 @@ impl ::sittir_core::prepare::Prepare for TypedDefaultParameterTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -22681,14 +22287,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypedDefaultParameterTransport
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ListSplatPatternTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_target"))]
     pub target: ::sittir_core::SlotValue<Box<ListSplatPatternTargetTransportSlot>>,
 }
@@ -22701,30 +22301,30 @@ impl ::sittir_core::view::KindOf for ListSplatPatternTransport {
 
 impl ::sittir_core::options::Edged for ListSplatPatternTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(200) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ListSplatPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(200)), render_list_splat_pattern(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(200)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_list_splat_pattern(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ListSplatPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.target.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -22751,14 +22351,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ListSplatPatternTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct DictionarySplatPatternTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_target"))]
     pub target: ::sittir_core::SlotValue<ListSplatPatternTargetTransportSlot>,
 }
@@ -22771,30 +22365,30 @@ impl ::sittir_core::view::KindOf for DictionarySplatPatternTransport {
 
 impl ::sittir_core::options::Edged for DictionarySplatPatternTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(201) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for DictionarySplatPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(201)), render_dictionary_splat_pattern(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(201)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_dictionary_splat_pattern(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for DictionarySplatPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.target.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -22821,14 +22415,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DictionarySplatPatternTranspor
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct AsPatternTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
@@ -22843,20 +22431,20 @@ impl ::sittir_core::view::KindOf for AsPatternTransport {
 
 impl ::sittir_core::options::Edged for AsPatternTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(202) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for AsPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(202)), render_as_pattern(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(202)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_as_pattern(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for AsPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
@@ -22864,10 +22452,10 @@ impl ::sittir_core::prepare::Prepare for AsPatternTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -22894,14 +22482,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AsPatternTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct NotOperatorTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
     pub argument: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
@@ -22914,30 +22496,30 @@ impl ::sittir_core::view::KindOf for NotOperatorTransport {
 
 impl ::sittir_core::options::Edged for NotOperatorTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(206) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for NotOperatorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(206)), render_not_operator(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(206)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_not_operator(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for NotOperatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.argument.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -22964,14 +22546,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NotOperatorTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct BooleanOperatorTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
@@ -22988,20 +22564,20 @@ impl ::sittir_core::view::KindOf for BooleanOperatorTransport {
 
 impl ::sittir_core::options::Edged for BooleanOperatorTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(207) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for BooleanOperatorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(207)), render_boolean_operator(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(207)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_boolean_operator(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for BooleanOperatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
@@ -23010,10 +22586,10 @@ impl ::sittir_core::prepare::Prepare for BooleanOperatorTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -23040,14 +22616,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BooleanOperatorTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct BinaryOperatorTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
@@ -23064,20 +22634,20 @@ impl ::sittir_core::view::KindOf for BinaryOperatorTransport {
 
 impl ::sittir_core::options::Edged for BinaryOperatorTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(208) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for BinaryOperatorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(208)), render_binary_operator(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(208)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_binary_operator(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for BinaryOperatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
@@ -23086,10 +22656,10 @@ impl ::sittir_core::prepare::Prepare for BinaryOperatorTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -23116,14 +22686,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BinaryOperatorTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct UnaryOperatorTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
     pub operator: ::sittir_core::SlotValue<UnaryOperatorOperatorTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
@@ -23138,20 +22702,20 @@ impl ::sittir_core::view::KindOf for UnaryOperatorTransport {
 
 impl ::sittir_core::options::Edged for UnaryOperatorTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(209) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for UnaryOperatorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(209)), render_unary_operator(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(209)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_unary_operator(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for UnaryOperatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.operator.prepare(ctx)?;
@@ -23159,10 +22723,10 @@ impl ::sittir_core::prepare::Prepare for UnaryOperatorTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -23189,14 +22753,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<UnaryOperatorTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ComparisonOperatorTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comparators"))]
@@ -23213,20 +22771,20 @@ impl ::sittir_core::view::KindOf for ComparisonOperatorTransport {
 
 impl ::sittir_core::options::Edged for ComparisonOperatorTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(212) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ComparisonOperatorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(212)), render_comparison_operator(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(212)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_comparison_operator(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ComparisonOperatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         ::sittir_core::prepare::fill_list_gaps(self.comparators.iter_mut().map(Some), "", options::allowed(options::SITE_COMPARISON_OPERATOR_COMPARATORS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
@@ -23237,10 +22795,10 @@ impl ::sittir_core::prepare::Prepare for ComparisonOperatorTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -23267,14 +22825,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ComparisonOperatorTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct LambdaTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
     pub parameters: Option<::sittir_core::SlotValue<LambdaParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
@@ -23289,20 +22841,20 @@ impl ::sittir_core::view::KindOf for LambdaTransport {
 
 impl ::sittir_core::options::Edged for LambdaTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(213) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for LambdaTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(213)), render_lambda(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(213)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lambda(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for LambdaTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.parameters.prepare(ctx)?;
@@ -23310,10 +22862,10 @@ impl ::sittir_core::prepare::Prepare for LambdaTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -23340,14 +22892,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LambdaTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct LambdaWithinForInClauseTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
     pub parameters: Option<::sittir_core::SlotValue<LambdaParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
@@ -23362,20 +22908,20 @@ impl ::sittir_core::view::KindOf for LambdaWithinForInClauseTransport {
 
 impl ::sittir_core::options::Edged for LambdaWithinForInClauseTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(214) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for LambdaWithinForInClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(214)), render_lambda_within_for_in_clause(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(214)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lambda_within_for_in_clause(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for LambdaWithinForInClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.parameters.prepare(ctx)?;
@@ -23383,10 +22929,10 @@ impl ::sittir_core::prepare::Prepare for LambdaWithinForInClauseTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -23413,14 +22959,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LambdaWithinForInClauseTranspo
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct AugmentedAssignmentTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<ForStatementLeftTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
@@ -23437,20 +22977,20 @@ impl ::sittir_core::view::KindOf for AugmentedAssignmentTransport {
 
 impl ::sittir_core::options::Edged for AugmentedAssignmentTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(216) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for AugmentedAssignmentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(216)), render_augmented_assignment(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(216)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_augmented_assignment(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for AugmentedAssignmentTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
@@ -23459,10 +22999,10 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -23489,14 +23029,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AugmentedAssignmentTransport> 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct PatternListTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<PatternTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -23515,20 +23049,20 @@ impl ::sittir_core::view::KindOf for PatternListTransport {
 
 impl ::sittir_core::options::Edged for PatternListTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(217) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for PatternListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(217)), render_pattern_list(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(217)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_pattern_list(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for PatternListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_AFTER].arm);
@@ -23538,10 +23072,10 @@ impl ::sittir_core::prepare::Prepare for PatternListTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -23568,14 +23102,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PatternListTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct YieldTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<::sittir_core::SlotValue<Box<YieldContentTransportSlot>>>,
 }
@@ -23588,30 +23116,30 @@ impl ::sittir_core::view::KindOf for YieldTransport {
 
 impl ::sittir_core::options::Edged for YieldTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(219) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for YieldTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(219)), render_yield(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(219)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_yield(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for YieldTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.content.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -23638,14 +23166,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<YieldTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct AttributeTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
     pub object: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute"))]
@@ -23660,20 +23182,20 @@ impl ::sittir_core::view::KindOf for AttributeTransport {
 
 impl ::sittir_core::options::Edged for AttributeTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(220) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for AttributeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(220)), render_attribute(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(220)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attribute(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for AttributeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.object.prepare(ctx)?;
@@ -23681,10 +23203,10 @@ impl ::sittir_core::prepare::Prepare for AttributeTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -23711,14 +23233,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AttributeTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct SubscriptTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subscripts"))]
@@ -23733,20 +23249,20 @@ impl ::sittir_core::view::KindOf for SubscriptTransport {
 
 impl ::sittir_core::options::Edged for SubscriptTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(221) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for SubscriptTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(221)), render_subscript(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(221)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_subscript(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for SubscriptTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.value.prepare(ctx)?;
@@ -23754,10 +23270,10 @@ impl ::sittir_core::prepare::Prepare for SubscriptTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -23784,14 +23300,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SubscriptTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct SliceTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_start"))]
     pub start: Option<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_stop"))]
@@ -23808,20 +23318,20 @@ impl ::sittir_core::view::KindOf for SliceTransport {
 
 impl ::sittir_core::options::Edged for SliceTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(222) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for SliceTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(222)), render_slice(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(222)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_slice(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for SliceTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.start.prepare(ctx)?;
@@ -23830,10 +23340,10 @@ impl ::sittir_core::prepare::Prepare for SliceTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -23928,14 +23438,8 @@ impl ::sittir_core::render::Render for EllipsisTransport {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct CallTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function"))]
     pub function: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
@@ -23950,20 +23454,20 @@ impl ::sittir_core::view::KindOf for CallTransport {
 
 impl ::sittir_core::options::Edged for CallTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(223) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for CallTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(223)), render_call(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(223)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_call(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for CallTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.function.prepare(ctx)?;
@@ -23971,10 +23475,10 @@ impl ::sittir_core::prepare::Prepare for CallTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -24001,14 +23505,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CallTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TypedParameterTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<TypedParameterNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
@@ -24023,20 +23521,20 @@ impl ::sittir_core::view::KindOf for TypedParameterTransport {
 
 impl ::sittir_core::options::Edged for TypedParameterTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(224) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for TypedParameterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(224)), render_typed_parameter(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(224)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_typed_parameter(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for TypedParameterTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
@@ -24044,10 +23542,10 @@ impl ::sittir_core::prepare::Prepare for TypedParameterTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -24074,14 +23572,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypedParameterTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TypeTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<TypeContentTransportSlot>>,
 }
@@ -24094,27 +23586,27 @@ impl ::sittir_core::view::KindOf for TypeTransport {
 
 impl ::sittir_core::options::Edged for TypeTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(225) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for TypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(225)), render_type(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(225)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for TypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -24141,14 +23633,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct SplatTypeTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
     pub operator: ::sittir_core::SlotValue<SplatPatternOperatorTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
@@ -24163,20 +23649,20 @@ impl ::sittir_core::view::KindOf for SplatTypeTransport {
 
 impl ::sittir_core::options::Edged for SplatTypeTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(226) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for SplatTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(226)), render_splat_type(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(226)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_splat_type(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for SplatTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.operator.prepare(ctx)?;
@@ -24184,10 +23670,10 @@ impl ::sittir_core::prepare::Prepare for SplatTypeTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -24214,14 +23700,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SplatTypeTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct GenericTypeTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<GenericTypeNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameter"))]
@@ -24236,20 +23716,20 @@ impl ::sittir_core::view::KindOf for GenericTypeTransport {
 
 impl ::sittir_core::options::Edged for GenericTypeTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(227) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for GenericTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(227)), render_generic_type(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(227)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_generic_type(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for GenericTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
@@ -24257,10 +23737,10 @@ impl ::sittir_core::prepare::Prepare for GenericTypeTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -24287,14 +23767,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GenericTypeTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct UnionTypeTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<Box<TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
@@ -24309,20 +23783,20 @@ impl ::sittir_core::view::KindOf for UnionTypeTransport {
 
 impl ::sittir_core::options::Edged for UnionTypeTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(228) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for UnionTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(228)), render_union_type(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(228)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_union_type(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for UnionTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
@@ -24330,10 +23804,10 @@ impl ::sittir_core::prepare::Prepare for UnionTypeTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -24360,14 +23834,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<UnionTypeTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ConstrainedTypeTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_base_type"))]
     pub base_type: ::sittir_core::SlotValue<Box<TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_constraint"))]
@@ -24382,20 +23850,20 @@ impl ::sittir_core::view::KindOf for ConstrainedTypeTransport {
 
 impl ::sittir_core::options::Edged for ConstrainedTypeTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(229) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ConstrainedTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(229)), render_constrained_type(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(229)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_constrained_type(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ConstrainedTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.base_type.prepare(ctx)?;
@@ -24403,10 +23871,10 @@ impl ::sittir_core::prepare::Prepare for ConstrainedTypeTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -24433,14 +23901,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ConstrainedTypeTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct MemberTypeTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_base_type"))]
     pub base_type: ::sittir_core::SlotValue<Box<TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
@@ -24455,20 +23917,20 @@ impl ::sittir_core::view::KindOf for MemberTypeTransport {
 
 impl ::sittir_core::options::Edged for MemberTypeTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(230) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for MemberTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(230)), render_member_type(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(230)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_member_type(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for MemberTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.base_type.prepare(ctx)?;
@@ -24476,10 +23938,10 @@ impl ::sittir_core::prepare::Prepare for MemberTypeTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -24506,14 +23968,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MemberTypeTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct KeywordArgumentTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<NamedExpressionNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
@@ -24528,20 +23984,20 @@ impl ::sittir_core::view::KindOf for KeywordArgumentTransport {
 
 impl ::sittir_core::options::Edged for KeywordArgumentTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(231) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for KeywordArgumentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(231)), render_keyword_argument(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(231)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_keyword_argument(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for KeywordArgumentTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
@@ -24549,10 +24005,10 @@ impl ::sittir_core::prepare::Prepare for KeywordArgumentTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -24579,14 +24035,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<KeywordArgumentTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ListTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_collection_elements"))]
     pub collection_elements: Option<::sittir_core::SlotValue<CollectionElementsTransport>>,
 }
@@ -24599,30 +24049,30 @@ impl ::sittir_core::view::KindOf for ListTransport {
 
 impl ::sittir_core::options::Edged for ListTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(232) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(232)), render_list(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(232)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_list(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.collection_elements.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -24649,14 +24099,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ListTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct SetTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_collection_elements"))]
     pub collection_elements: ::sittir_core::SlotValue<CollectionElementsTransport>,
 }
@@ -24669,30 +24113,30 @@ impl ::sittir_core::view::KindOf for SetTransport {
 
 impl ::sittir_core::options::Edged for SetTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(233) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for SetTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(233)), render_set(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(233)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_set(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for SetTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.collection_elements.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -24719,14 +24163,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SetTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TupleTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Option<::sittir_core::SlotValue<TupleElementsTransport>>,
 }
@@ -24739,30 +24177,30 @@ impl ::sittir_core::view::KindOf for TupleTransport {
 
 impl ::sittir_core::options::Edged for TupleTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(234) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for TupleTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(234)), render_tuple(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(234)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for TupleTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -24789,14 +24227,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TupleTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct DictionaryTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Option<::sittir_core::SlotValue<DictionaryElementsTransport>>,
 }
@@ -24809,30 +24241,30 @@ impl ::sittir_core::view::KindOf for DictionaryTransport {
 
 impl ::sittir_core::options::Edged for DictionaryTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(235) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for DictionaryTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(235)), render_dictionary(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(235)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_dictionary(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for DictionaryTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -24859,14 +24291,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DictionaryTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct PairTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_key"))]
     pub key: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
@@ -24881,20 +24307,20 @@ impl ::sittir_core::view::KindOf for PairTransport {
 
 impl ::sittir_core::options::Edged for PairTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(236) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for PairTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(236)), render_pair(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(236)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_pair(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for PairTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.key.prepare(ctx)?;
@@ -24902,10 +24328,10 @@ impl ::sittir_core::prepare::Prepare for PairTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -24932,14 +24358,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PairTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ListComprehensionTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comprehension_clauses"))]
@@ -24954,20 +24374,20 @@ impl ::sittir_core::view::KindOf for ListComprehensionTransport {
 
 impl ::sittir_core::options::Edged for ListComprehensionTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(237) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ListComprehensionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(237)), render_list_comprehension(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(237)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_list_comprehension(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ListComprehensionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
@@ -24975,10 +24395,10 @@ impl ::sittir_core::prepare::Prepare for ListComprehensionTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -25005,14 +24425,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ListComprehensionTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct DictionaryComprehensionTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<Box<PairTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comprehension_clauses"))]
@@ -25027,20 +24441,20 @@ impl ::sittir_core::view::KindOf for DictionaryComprehensionTransport {
 
 impl ::sittir_core::options::Edged for DictionaryComprehensionTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(238) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for DictionaryComprehensionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(238)), render_dictionary_comprehension(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(238)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_dictionary_comprehension(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for DictionaryComprehensionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
@@ -25048,10 +24462,10 @@ impl ::sittir_core::prepare::Prepare for DictionaryComprehensionTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -25078,14 +24492,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DictionaryComprehensionTranspo
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct SetComprehensionTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comprehension_clauses"))]
@@ -25100,20 +24508,20 @@ impl ::sittir_core::view::KindOf for SetComprehensionTransport {
 
 impl ::sittir_core::options::Edged for SetComprehensionTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(239) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for SetComprehensionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(239)), render_set_comprehension(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(239)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_set_comprehension(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for SetComprehensionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
@@ -25121,10 +24529,10 @@ impl ::sittir_core::prepare::Prepare for SetComprehensionTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -25151,14 +24559,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SetComprehensionTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct GeneratorExpressionTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comprehension_clauses"))]
@@ -25173,20 +24575,20 @@ impl ::sittir_core::view::KindOf for GeneratorExpressionTransport {
 
 impl ::sittir_core::options::Edged for GeneratorExpressionTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(240) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for GeneratorExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(240)), render_generator_expression(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(240)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_generator_expression(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for GeneratorExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
@@ -25194,10 +24596,10 @@ impl ::sittir_core::prepare::Prepare for GeneratorExpressionTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -25224,14 +24626,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GeneratorExpressionTransport> 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ParenthesizedExpressionTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<Box<ParenthesizedExpressionExpressionTransportSlot>>,
 }
@@ -25244,30 +24640,30 @@ impl ::sittir_core::view::KindOf for ParenthesizedExpressionTransport {
 
 impl ::sittir_core::options::Edged for ParenthesizedExpressionTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(241) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ParenthesizedExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(241)), render_parenthesized_expression(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(241)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parenthesized_expression(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -25294,14 +24690,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ParenthesizedExpressionTranspo
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct CollectionElementsTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<CollectionElementsItemTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -25320,20 +24710,20 @@ impl ::sittir_core::view::KindOf for CollectionElementsTransport {
 
 impl ::sittir_core::options::Edged for CollectionElementsTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(242) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for CollectionElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(242)), render_collection_elements(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(242)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_collection_elements(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for CollectionElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_COLLECTION_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_COLLECTION_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_COLLECTION_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_COLLECTION_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
@@ -25343,10 +24733,10 @@ impl ::sittir_core::prepare::Prepare for CollectionElementsTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -25373,14 +24763,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CollectionElementsTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ForInClauseTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async"))]
     pub async_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
@@ -25403,20 +24787,20 @@ impl ::sittir_core::view::KindOf for ForInClauseTransport {
 
 impl ::sittir_core::options::Edged for ForInClauseTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(243) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ForInClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(243)), render_for_in_clause(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(243)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_for_in_clause(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ForInClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         ::sittir_core::prepare::fill_list_gaps(self.right.iter_mut().map(Some), ",", options::allowed(options::SITE_FOR_IN_CLAUSE_RIGHT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_FOR_IN_CLAUSE_RIGHT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
@@ -25430,10 +24814,10 @@ impl ::sittir_core::prepare::Prepare for ForInClauseTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -25460,14 +24844,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ForInClauseTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct IfClauseTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
     pub condition: ::sittir_core::SlotValue<ExpressionTransport>,
 }
@@ -25480,30 +24858,30 @@ impl ::sittir_core::view::KindOf for IfClauseTransport {
 
 impl ::sittir_core::options::Edged for IfClauseTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(244) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for IfClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(244)), render_if_clause(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(244)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_if_clause(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for IfClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.condition.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -25530,14 +24908,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IfClauseTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ConditionalExpressionTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
@@ -25554,20 +24926,20 @@ impl ::sittir_core::view::KindOf for ConditionalExpressionTransport {
 
 impl ::sittir_core::options::Edged for ConditionalExpressionTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(245) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ConditionalExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(245)), render_conditional_expression(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(245)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_conditional_expression(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ConditionalExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
@@ -25576,10 +24948,10 @@ impl ::sittir_core::prepare::Prepare for ConditionalExpressionTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -25606,14 +24978,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ConditionalExpressionTransport
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ConcatenatedStringTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_string"))]
     pub string: Vec<::sittir_core::SlotValue<StringTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_string_separator_space"))]
@@ -25628,20 +24994,20 @@ impl ::sittir_core::view::KindOf for ConcatenatedStringTransport {
 
 impl ::sittir_core::options::Edged for ConcatenatedStringTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(246) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ConcatenatedStringTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(246)), render_concatenated_string(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(246)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_concatenated_string(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ConcatenatedStringTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         ::sittir_core::prepare::fill_list_gaps(self.string.iter_mut().map(Some), "", options::allowed(options::SITE_CONCATENATED_STRING_STRING_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
@@ -25651,10 +25017,10 @@ impl ::sittir_core::prepare::Prepare for ConcatenatedStringTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -25681,14 +25047,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ConcatenatedStringTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct StringTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_string_start"))]
     pub string_start: ::sittir_core::SlotValue<StringStartTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
@@ -25705,20 +25065,20 @@ impl ::sittir_core::view::KindOf for StringTransport {
 
 impl ::sittir_core::options::Edged for StringTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(247) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for StringTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(247)), render_string(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(247)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_string(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for StringTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.string_start.prepare(ctx)?;
@@ -25727,10 +25087,10 @@ impl ::sittir_core::prepare::Prepare for StringTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -25757,14 +25117,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StringTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct StringContentTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<::sittir_core::SlotValue<StringContentContentTransportSlot, true>>>,
 }
@@ -25777,27 +25131,27 @@ impl ::sittir_core::view::KindOf for StringContentTransport {
 
 impl ::sittir_core::options::Edged for StringContentTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(248) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for StringContentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(248)), render_string_content(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(248)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_string_content(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for StringContentTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -25824,14 +25178,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StringContentTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct InterpolationTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<InterpolationExpressionTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_debug"))]
@@ -25850,20 +25198,20 @@ impl ::sittir_core::view::KindOf for InterpolationTransport {
 
 impl ::sittir_core::options::Edged for InterpolationTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(249) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for InterpolationTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(249)), render_interpolation(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(249)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_interpolation(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for InterpolationTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
@@ -25873,10 +25221,10 @@ impl ::sittir_core::prepare::Prepare for InterpolationTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -25971,14 +25319,8 @@ impl ::sittir_core::render::Render for NotEscapeSequenceTransport {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct FormatSpecifierTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Option<Vec<::sittir_core::SlotValue<FormatSpecifierElementsTransportSlot, true>>>,
 }
@@ -25991,30 +25333,30 @@ impl ::sittir_core::view::KindOf for FormatSpecifierTransport {
 
 impl ::sittir_core::options::Edged for FormatSpecifierTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(253) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for FormatSpecifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(253)), render_format_specifier(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(253)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_format_specifier(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for FormatSpecifierTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -26040,10 +25382,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FormatSpecifierTransport> {
 
 #[derive(Debug, Clone)]
 pub struct TypeConversionTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    pub layout: Option<TransportLayout>,
     pub text: String,
 }
 
@@ -26055,26 +25394,26 @@ impl ::sittir_core::view::KindOf for TypeConversionTransport {
 
 impl ::sittir_core::options::Edged for TypeConversionTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(66) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for TypeConversionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(66)), w.text(&self.text))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(66)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for TypeConversionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -26084,9 +25423,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeConversionTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
+        let mut layout: Option<TransportLayout> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -26099,17 +25436,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeConversionTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
+                layout = obj.get("$_layout")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
+            layout,
             text,
         })
     }
@@ -26123,15 +25455,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeConversionTransport {
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
+        let layout = obj.get("$_layout")?;
         Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
+            layout,
             text,
         })
     }
@@ -26169,10 +25495,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeConversionTransport> {
 
 #[derive(Debug, Clone)]
 pub struct IdentifierTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    pub layout: Option<TransportLayout>,
     pub text: String,
 }
 
@@ -26184,26 +25507,26 @@ impl ::sittir_core::view::KindOf for IdentifierTransport {
 
 impl ::sittir_core::options::Edged for IdentifierTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(1) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for IdentifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(1)), w.text(&self.text))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(1)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for IdentifierTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -26213,9 +25536,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IdentifierTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
+        let mut layout: Option<TransportLayout> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -26228,17 +25549,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for IdentifierTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
+                layout = obj.get("$_layout")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
+            layout,
             text,
         })
     }
@@ -26252,15 +25568,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for IdentifierTransport {
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
+        let layout = obj.get("$_layout")?;
         Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
+            layout,
             text,
         })
     }
@@ -26503,14 +25813,8 @@ impl ::sittir_core::render::Render for NoneTransport {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct AwaitTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
 }
@@ -26523,30 +25827,30 @@ impl ::sittir_core::view::KindOf for AwaitTransport {
 
 impl ::sittir_core::options::Edged for AwaitTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(256) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for AwaitTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(256)), render_await(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(256)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_await(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for AwaitTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -26573,14 +25877,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AwaitTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct CommentTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: String,
 }
@@ -26593,27 +25891,27 @@ impl ::sittir_core::view::KindOf for CommentTransport {
 
 impl ::sittir_core::options::Edged for CommentTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(73) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for CommentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(73)), render_comment(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(73)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_comment(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for CommentTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -26776,14 +26074,8 @@ impl ::sittir_core::render::Render for KeywordSeparatorTransport {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct SimpleStatementsElementsTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<SimpleStatementTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -26802,20 +26094,20 @@ impl ::sittir_core::view::KindOf for SimpleStatementsElementsTransport {
 
 impl ::sittir_core::options::Edged for SimpleStatementsElementsTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(259) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for SimpleStatementsElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(259)), render_simple_statements_elements(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(259)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_simple_statements_elements(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for SimpleStatementsElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ";", options::allowed(options::SITE_SIMPLE_STATEMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_SIMPLE_STATEMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
@@ -26825,10 +26117,10 @@ impl ::sittir_core::prepare::Prepare for SimpleStatementsElementsTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -26855,14 +26147,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SimpleStatementsElementsTransp
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct SubjectsTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subject"))]
     pub subject: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -26881,20 +26167,20 @@ impl ::sittir_core::view::KindOf for SubjectsTransport {
 
 impl ::sittir_core::options::Edged for SubjectsTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(260) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for SubjectsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(260)), render_subjects(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(260)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_subjects(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for SubjectsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_list_gaps(self.subject.iter_mut().map(Some), ",", options::allowed(options::SITE_SUBJECTS_SUBJECT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_SUBJECTS_SUBJECT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.subject_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_SUBJECTS_SUBJECT_SEPARATOR_SPACE_BEFORE].arm);
         self.subject_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_SUBJECTS_SUBJECT_SEPARATOR_SPACE_AFTER].arm);
@@ -26904,10 +26190,10 @@ impl ::sittir_core::prepare::Prepare for SubjectsTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -26934,14 +26220,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SubjectsTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct CasePatternsTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<CasePatternTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -26960,20 +26240,20 @@ impl ::sittir_core::view::KindOf for CasePatternsTransport {
 
 impl ::sittir_core::options::Edged for CasePatternsTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(261) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for CasePatternsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(261)), render_case_patterns(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(261)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_case_patterns(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for CasePatternsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_CASE_PATTERNS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_CASE_PATTERNS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_CASE_PATTERNS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_CASE_PATTERNS_ITEM_SEPARATOR_SPACE_AFTER].arm);
@@ -26983,10 +26263,10 @@ impl ::sittir_core::prepare::Prepare for CasePatternsTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -27013,14 +26293,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CasePatternsTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct WithClauseWithItemsTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<WithItemTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -27039,20 +26313,20 @@ impl ::sittir_core::view::KindOf for WithClauseWithItemsTransport {
 
 impl ::sittir_core::options::Edged for WithClauseWithItemsTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(262) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for WithClauseWithItemsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(262)), render_with_clause_with_items(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(262)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_with_clause_with_items(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for WithClauseWithItemsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_WITH_CLAUSE_WITH_ITEMS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_WITH_CLAUSE_WITH_ITEMS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_WITH_CLAUSE_WITH_ITEMS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_WITH_CLAUSE_WITH_ITEMS_ITEM_SEPARATOR_SPACE_AFTER].arm);
@@ -27061,10 +26335,10 @@ impl ::sittir_core::prepare::Prepare for WithClauseWithItemsTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -27091,14 +26365,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<WithClauseWithItemsTransport> 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TypesTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -27117,20 +26385,20 @@ impl ::sittir_core::view::KindOf for TypesTransport {
 
 impl ::sittir_core::options::Edged for TypesTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(263) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for TypesTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(263)), render_types(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(263)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_types(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for TypesTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_TYPES_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TYPES_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TYPES_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_TYPES_ITEM_SEPARATOR_SPACE_AFTER].arm);
@@ -27140,10 +26408,10 @@ impl ::sittir_core::prepare::Prepare for TypesTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -27170,14 +26438,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypesTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ArgumentListElementsTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<ArgumentListElementsItemTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -27196,20 +26458,20 @@ impl ::sittir_core::view::KindOf for ArgumentListElementsTransport {
 
 impl ::sittir_core::options::Edged for ArgumentListElementsTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(264) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ArgumentListElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(264)), render_argument_list_elements(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(264)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_argument_list_elements(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ArgumentListElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_ARGUMENT_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ARGUMENT_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
@@ -27219,10 +26481,10 @@ impl ::sittir_core::prepare::Prepare for ArgumentListElementsTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -27249,14 +26511,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ArgumentListElementsTransport>
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ListPatternCasePatternsTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<CasePatternTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -27275,20 +26531,20 @@ impl ::sittir_core::view::KindOf for ListPatternCasePatternsTransport {
 
 impl ::sittir_core::options::Edged for ListPatternCasePatternsTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(265) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ListPatternCasePatternsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(265)), render_list_pattern_case_patterns(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(265)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_list_pattern_case_patterns(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ListPatternCasePatternsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_LIST_PATTERN_CASE_PATTERNS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_LIST_PATTERN_CASE_PATTERNS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_LIST_PATTERN_CASE_PATTERNS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_LIST_PATTERN_CASE_PATTERNS_ITEM_SEPARATOR_SPACE_AFTER].arm);
@@ -27298,10 +26554,10 @@ impl ::sittir_core::prepare::Prepare for ListPatternCasePatternsTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -27328,14 +26584,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ListPatternCasePatternsTranspo
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct DictPatternElementsTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<DictPatternElementsItemTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -27354,20 +26604,20 @@ impl ::sittir_core::view::KindOf for DictPatternElementsTransport {
 
 impl ::sittir_core::options::Edged for DictPatternElementsTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(266) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for DictPatternElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(266)), render_dict_pattern_elements(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(266)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_dict_pattern_elements(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for DictPatternElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_DICT_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_DICT_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_DICT_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_DICT_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
@@ -27377,10 +26627,10 @@ impl ::sittir_core::prepare::Prepare for DictPatternElementsTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -27407,14 +26657,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DictPatternElementsTransport> 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct SubscriptsTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subscript"))]
     pub subscript: Vec<::sittir_core::SlotValue<SubscriptsSubscriptTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -27433,20 +26677,20 @@ impl ::sittir_core::view::KindOf for SubscriptsTransport {
 
 impl ::sittir_core::options::Edged for SubscriptsTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(267) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for SubscriptsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(267)), render_subscripts(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(267)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_subscripts(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for SubscriptsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_list_gaps(self.subscript.iter_mut().map(Some), ",", options::allowed(options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.subscript_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_BEFORE].arm);
         self.subscript_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_AFTER].arm);
@@ -27456,10 +26700,10 @@ impl ::sittir_core::prepare::Prepare for SubscriptsTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -27486,14 +26730,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SubscriptsTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct DictionaryElementsTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<DictionaryElementsItemTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -27512,20 +26750,20 @@ impl ::sittir_core::view::KindOf for DictionaryElementsTransport {
 
 impl ::sittir_core::options::Edged for DictionaryElementsTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(268) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for DictionaryElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(268)), render_dictionary_elements(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(268)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_dictionary_elements(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for DictionaryElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_DICTIONARY_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_DICTIONARY_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_DICTIONARY_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_DICTIONARY_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
@@ -27535,10 +26773,10 @@ impl ::sittir_core::prepare::Prepare for DictionaryElementsTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -27565,14 +26803,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DictionaryElementsTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct SliceGroupTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Option<::sittir_core::SlotValue<ExpressionTransport>>,
 }
@@ -27585,30 +26817,30 @@ impl ::sittir_core::view::KindOf for SliceGroupTransport {
 
 impl ::sittir_core::options::Edged for SliceGroupTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(269) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for SliceGroupTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(269)), render_slice_group(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(269)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_slice_group(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for SliceGroupTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -27634,10 +26866,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SliceGroupTransport> {
 
 #[derive(Debug, Clone)]
 pub struct FormatSpecifierTextTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    pub layout: Option<TransportLayout>,
     pub text: String,
 }
 
@@ -27649,26 +26878,26 @@ impl ::sittir_core::view::KindOf for FormatSpecifierTextTransport {
 
 impl ::sittir_core::options::Edged for FormatSpecifierTextTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(89) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for FormatSpecifierTextTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(89)), { w.adjacent(); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(89)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
     }
 }
 
 impl ::sittir_core::prepare::Prepare for FormatSpecifierTextTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -27678,9 +26907,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FormatSpecifierTextTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
+        let mut layout: Option<TransportLayout> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -27693,17 +26920,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for FormatSpecifierTextTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
+                layout = obj.get("$_layout")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
+            layout,
             text,
         })
     }
@@ -27717,15 +26939,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for FormatSpecifierTextTransport {
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
+        let layout = obj.get("$_layout")?;
         Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
+            layout,
             text,
         })
     }
@@ -27764,14 +26980,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FormatSpecifierTextTransport> 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TupleElementsTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<CollectionElementsItemTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -27790,20 +27000,20 @@ impl ::sittir_core::view::KindOf for TupleElementsTransport {
 
 impl ::sittir_core::options::Edged for TupleElementsTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(270) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for TupleElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(270)), render_tuple_elements(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(270)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_elements(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for TupleElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_TUPLE_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TUPLE_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
@@ -27813,10 +27023,10 @@ impl ::sittir_core::prepare::Prepare for TupleElementsTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -27843,14 +27053,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TupleElementsTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ExceptClauseExceptionAsTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
@@ -27865,20 +27069,20 @@ impl ::sittir_core::view::KindOf for ExceptClauseExceptionAsTransport {
 
 impl ::sittir_core::options::Edged for ExceptClauseExceptionAsTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(271) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ExceptClauseExceptionAsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(271)), render_except_clause_exception_as(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(271)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_except_clause_exception_as(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionAsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.value.prepare(ctx)?;
@@ -27886,10 +27090,10 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionAsTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -27916,14 +27120,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseExceptionAsTranspo
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct CaseTuplePatternTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_list_pattern_case_patterns"))]
     pub list_pattern_case_patterns: Option<::sittir_core::SlotValue<ListPatternCasePatternsTransport>>,
 }
@@ -27936,30 +27134,30 @@ impl ::sittir_core::view::KindOf for CaseTuplePatternTransport {
 
 impl ::sittir_core::options::Edged for CaseTuplePatternTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(272) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for CaseTuplePatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(272)), render_case_tuple_pattern(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(272)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_case_tuple_pattern(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for CaseTuplePatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.list_pattern_case_patterns.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -27986,14 +27184,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CaseTuplePatternTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct CaseListPatternTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_list_pattern_case_patterns"))]
     pub list_pattern_case_patterns: Option<::sittir_core::SlotValue<ListPatternCasePatternsTransport>>,
 }
@@ -28006,30 +27198,30 @@ impl ::sittir_core::view::KindOf for CaseListPatternTransport {
 
 impl ::sittir_core::options::Edged for CaseListPatternTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(273) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for CaseListPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(273)), render_case_list_pattern(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(273)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_case_list_pattern(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for CaseListPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.list_pattern_case_patterns.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -28056,14 +27248,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CaseListPatternTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct PrintArgumentsTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
     pub argument: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -28082,20 +27268,20 @@ impl ::sittir_core::view::KindOf for PrintArgumentsTransport {
 
 impl ::sittir_core::options::Edged for PrintArgumentsTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(274) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for PrintArgumentsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(274)), render_print_arguments(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(274)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_print_arguments(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for PrintArgumentsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_list_gaps(self.argument.iter_mut().map(Some), ",", options::allowed(options::SITE_PRINT_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PRINT_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.argument_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PRINT_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_BEFORE].arm);
         self.argument_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PRINT_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_AFTER].arm);
@@ -28105,10 +27291,10 @@ impl ::sittir_core::prepare::Prepare for PrintArgumentsTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -28135,14 +27321,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PrintArgumentsTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct PrintChevronArgumentsTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
     pub argument: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -28161,20 +27341,20 @@ impl ::sittir_core::view::KindOf for PrintChevronArgumentsTransport {
 
 impl ::sittir_core::options::Edged for PrintChevronArgumentsTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(275) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for PrintChevronArgumentsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(275)), render_print_chevron_arguments(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(275)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_print_chevron_arguments(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for PrintChevronArgumentsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_list_gaps(self.argument.iter_mut().map(Some), ",", options::allowed(options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.argument_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_BEFORE].arm);
         self.argument_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_AFTER].arm);
@@ -28184,10 +27364,10 @@ impl ::sittir_core::prepare::Prepare for PrintChevronArgumentsTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -28214,14 +27394,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PrintChevronArgumentsTransport
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct PrintStatementChevronTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_chevron"))]
     pub chevron: ::sittir_core::SlotValue<ChevronTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_chevron_arguments"))]
@@ -28236,20 +27410,20 @@ impl ::sittir_core::view::KindOf for PrintStatementChevronTransport {
 
 impl ::sittir_core::options::Edged for PrintStatementChevronTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(276) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for PrintStatementChevronTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(276)), render_print_statement_chevron(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(276)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_print_statement_chevron(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for PrintStatementChevronTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.chevron.prepare(ctx)?;
@@ -28257,10 +27431,10 @@ impl ::sittir_core::prepare::Prepare for PrintStatementChevronTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -28287,14 +27461,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PrintStatementChevronTransport
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct PrintStatementPlainTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_arguments"))]
     pub print_arguments: ::sittir_core::SlotValue<PrintArgumentsTransport>,
 }
@@ -28307,30 +27475,30 @@ impl ::sittir_core::view::KindOf for PrintStatementPlainTransport {
 
 impl ::sittir_core::options::Edged for PrintStatementPlainTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(277) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for PrintStatementPlainTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(277)), render_print_statement_plain(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(277)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_print_statement_plain(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for PrintStatementPlainTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.print_arguments.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -28425,14 +27593,8 @@ impl ::sittir_core::render::Render for WildcardPatternTransport {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ParenthesizedImportListTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_list"))]
     pub import_list: ::sittir_core::SlotValue<ImportListTransport>,
 }
@@ -28445,30 +27607,30 @@ impl ::sittir_core::view::KindOf for ParenthesizedImportListTransport {
 
 impl ::sittir_core::options::Edged for ParenthesizedImportListTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(279) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ParenthesizedImportListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(279)), render_parenthesized_import_list(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(279)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parenthesized_import_list(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ParenthesizedImportListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.import_list.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -28495,14 +27657,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ParenthesizedImportListTranspo
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ComprehensionClausesTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<::sittir_core::SlotValue<ComprehensionClausesContentTransportSlot>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_separator_space"))]
@@ -28517,19 +27673,19 @@ impl ::sittir_core::view::KindOf for ComprehensionClausesTransport {
 
 impl ::sittir_core::options::Edged for ComprehensionClausesTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(280) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ComprehensionClausesTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(280)), render_comprehension_clauses(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(280)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_comprehension_clauses(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ComprehensionClausesTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         if let Some(gap_items) = self.content.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_COMPREHENSION_CLAUSES_CONTENT_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
         self.content_separator_space.get_or_insert(ctx.options.spacing[options::SITE_COMPREHENSION_CLAUSES_CONTENT_SEPARATOR_SPACE].arm);
         if let Some(seated_items) = self.content.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_COMPREHENSION_CLAUSES_CONTENT, ctx); }
@@ -28537,10 +27693,10 @@ impl ::sittir_core::prepare::Prepare for ComprehensionClausesTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -28567,14 +27723,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ComprehensionClausesTransport>
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct IntegerHexTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_prefix"))]
     pub prefix: String,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
@@ -28589,28 +27739,28 @@ impl ::sittir_core::view::KindOf for IntegerHexTransport {
 
 impl ::sittir_core::options::Edged for IntegerHexTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(90) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for IntegerHexTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(90)), render_integer_hex(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(90)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_integer_hex(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for IntegerHexTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.prefix.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -28637,14 +27787,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IntegerHexTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct IntegerOctalTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_prefix"))]
     pub prefix: String,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
@@ -28659,28 +27803,28 @@ impl ::sittir_core::view::KindOf for IntegerOctalTransport {
 
 impl ::sittir_core::options::Edged for IntegerOctalTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(91) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for IntegerOctalTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(91)), render_integer_octal(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(91)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_integer_octal(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for IntegerOctalTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.prefix.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -28707,14 +27851,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IntegerOctalTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct IntegerBinaryTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_prefix"))]
     pub prefix: String,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
@@ -28729,28 +27867,28 @@ impl ::sittir_core::view::KindOf for IntegerBinaryTransport {
 
 impl ::sittir_core::options::Edged for IntegerBinaryTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(92) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for IntegerBinaryTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(92)), render_integer_binary(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(92)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_integer_binary(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for IntegerBinaryTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.prefix.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -28776,10 +27914,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IntegerBinaryTransport> {
 
 #[derive(Debug, Clone)]
 pub struct IntegerDecimalLongTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    pub layout: Option<TransportLayout>,
     pub text: String,
 }
 
@@ -28791,26 +27926,26 @@ impl ::sittir_core::view::KindOf for IntegerDecimalLongTransport {
 
 impl ::sittir_core::options::Edged for IntegerDecimalLongTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(93) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for IntegerDecimalLongTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(93)), w.text(&self.text))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(93)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for IntegerDecimalLongTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -28820,9 +27955,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerDecimalLongTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
+        let mut layout: Option<TransportLayout> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -28835,17 +27968,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerDecimalLongTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
+                layout = obj.get("$_layout")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
+            layout,
             text,
         })
     }
@@ -28859,15 +27987,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerDecimalLongTransport {
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
+        let layout = obj.get("$_layout")?;
         Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
+            layout,
             text,
         })
     }
@@ -28905,10 +28027,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IntegerDecimalLongTransport> {
 
 #[derive(Debug, Clone)]
 pub struct IntegerDecimalImaginaryTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    pub layout: Option<TransportLayout>,
     pub text: String,
 }
 
@@ -28920,26 +28039,26 @@ impl ::sittir_core::view::KindOf for IntegerDecimalImaginaryTransport {
 
 impl ::sittir_core::options::Edged for IntegerDecimalImaginaryTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(94) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for IntegerDecimalImaginaryTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(94)), w.text(&self.text))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(94)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for IntegerDecimalImaginaryTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -28949,9 +28068,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerDecimalImaginaryTransport
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
+        let mut layout: Option<TransportLayout> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -28964,17 +28081,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerDecimalImaginaryTransport
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
+                layout = obj.get("$_layout")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
+            layout,
             text,
         })
     }
@@ -28988,15 +28100,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerDecimalImaginaryTransport
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
+        let layout = obj.get("$_layout")?;
         Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
+            layout,
             text,
         })
     }
@@ -29034,10 +28140,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IntegerDecimalImaginaryTranspo
 
 #[derive(Debug, Clone)]
 pub struct IntegerDecimalPlainTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    pub layout: Option<TransportLayout>,
     pub text: String,
 }
 
@@ -29049,26 +28152,26 @@ impl ::sittir_core::view::KindOf for IntegerDecimalPlainTransport {
 
 impl ::sittir_core::options::Edged for IntegerDecimalPlainTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(95) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for IntegerDecimalPlainTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(95)), w.text(&self.text))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(95)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for IntegerDecimalPlainTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -29078,9 +28181,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerDecimalPlainTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
+        let mut layout: Option<TransportLayout> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -29093,17 +28194,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerDecimalPlainTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
+                layout = obj.get("$_layout")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
+            layout,
             text,
         })
     }
@@ -29117,15 +28213,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerDecimalPlainTransport {
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
+        let layout = obj.get("$_layout")?;
         Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
+            layout,
             text,
         })
     }
@@ -29164,14 +28254,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IntegerDecimalPlainTransport> 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct FloatPointTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_integer"))]
     pub integer: String,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_fraction"))]
@@ -29192,19 +28276,19 @@ impl ::sittir_core::view::KindOf for FloatPointTransport {
 
 impl ::sittir_core::options::Edged for FloatPointTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(96) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for FloatPointTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(96)), render_float_point(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(96)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_float_point(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for FloatPointTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.integer.prepare(ctx)?;
         self.fraction.prepare(ctx)?;
         self.marker.prepare(ctx)?;
@@ -29213,10 +28297,10 @@ impl ::sittir_core::prepare::Prepare for FloatPointTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -29243,14 +28327,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FloatPointTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct FloatLeadingPointTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_integer"))]
     pub integer: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_fraction"))]
@@ -29271,19 +28349,19 @@ impl ::sittir_core::view::KindOf for FloatLeadingPointTransport {
 
 impl ::sittir_core::options::Edged for FloatLeadingPointTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(97) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for FloatLeadingPointTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(97)), render_float_leading_point(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(97)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_float_leading_point(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for FloatLeadingPointTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.integer.prepare(ctx)?;
         self.fraction.prepare(ctx)?;
         self.marker.prepare(ctx)?;
@@ -29292,10 +28370,10 @@ impl ::sittir_core::prepare::Prepare for FloatLeadingPointTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -29322,14 +28400,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FloatLeadingPointTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct FloatScientificTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_integer"))]
     pub integer: String,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_marker"))]
@@ -29348,19 +28420,19 @@ impl ::sittir_core::view::KindOf for FloatScientificTransport {
 
 impl ::sittir_core::options::Edged for FloatScientificTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(98) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for FloatScientificTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(98)), render_float_scientific(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(98)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_float_scientific(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for FloatScientificTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.integer.prepare(ctx)?;
         self.marker.prepare(ctx)?;
         self.exponent.prepare(ctx)?;
@@ -29368,10 +28440,10 @@ impl ::sittir_core::prepare::Prepare for FloatScientificTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -29398,14 +28470,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FloatScientificTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct EscapeSequenceUnicodeFixedTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: String,
 }
@@ -29418,27 +28484,27 @@ impl ::sittir_core::view::KindOf for EscapeSequenceUnicodeFixedTransport {
 
 impl ::sittir_core::options::Edged for EscapeSequenceUnicodeFixedTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(99) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for EscapeSequenceUnicodeFixedTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(99)), render_escape_sequence_unicode_fixed(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(99)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_unicode_fixed(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for EscapeSequenceUnicodeFixedTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -29465,14 +28531,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<EscapeSequenceUnicodeFixedTran
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct EscapeSequenceUnicodeWideTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: String,
 }
@@ -29485,27 +28545,27 @@ impl ::sittir_core::view::KindOf for EscapeSequenceUnicodeWideTransport {
 
 impl ::sittir_core::options::Edged for EscapeSequenceUnicodeWideTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(100) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for EscapeSequenceUnicodeWideTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(100)), render_escape_sequence_unicode_wide(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(100)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_unicode_wide(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for EscapeSequenceUnicodeWideTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -29532,14 +28592,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<EscapeSequenceUnicodeWideTrans
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct EscapeSequenceHexTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: String,
 }
@@ -29552,27 +28606,27 @@ impl ::sittir_core::view::KindOf for EscapeSequenceHexTransport {
 
 impl ::sittir_core::options::Edged for EscapeSequenceHexTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(101) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for EscapeSequenceHexTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(101)), render_escape_sequence_hex(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(101)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_hex(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for EscapeSequenceHexTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -29599,14 +28653,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<EscapeSequenceHexTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct EscapeSequenceOctalTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: String,
 }
@@ -29619,27 +28667,27 @@ impl ::sittir_core::view::KindOf for EscapeSequenceOctalTransport {
 
 impl ::sittir_core::options::Edged for EscapeSequenceOctalTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(102) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for EscapeSequenceOctalTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(102)), render_escape_sequence_octal(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(102)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_octal(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for EscapeSequenceOctalTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -29666,14 +28714,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<EscapeSequenceOctalTransport> 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct EscapeSequenceLineBreakTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: String,
 }
@@ -29686,27 +28728,27 @@ impl ::sittir_core::view::KindOf for EscapeSequenceLineBreakTransport {
 
 impl ::sittir_core::options::Edged for EscapeSequenceLineBreakTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(103) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for EscapeSequenceLineBreakTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(103)), render_escape_sequence_line_break(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(103)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_line_break(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for EscapeSequenceLineBreakTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -29733,14 +28775,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<EscapeSequenceLineBreakTranspo
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct EscapeSequenceSimpleTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: String,
 }
@@ -29753,27 +28789,27 @@ impl ::sittir_core::view::KindOf for EscapeSequenceSimpleTransport {
 
 impl ::sittir_core::options::Edged for EscapeSequenceSimpleTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(104) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for EscapeSequenceSimpleTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(104)), render_escape_sequence_simple(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(104)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_simple(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for EscapeSequenceSimpleTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -29800,14 +28836,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<EscapeSequenceSimpleTransport>
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct EscapeSequenceNamedTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: String,
 }
@@ -29820,27 +28850,27 @@ impl ::sittir_core::view::KindOf for EscapeSequenceNamedTransport {
 
 impl ::sittir_core::options::Edged for EscapeSequenceNamedTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(105) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for EscapeSequenceNamedTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(105)), render_escape_sequence_named(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(105)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_named(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for EscapeSequenceNamedTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -29866,10 +28896,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<EscapeSequenceNamedTransport> 
 
 #[derive(Debug, Clone)]
 pub struct LineContinuationNewlineTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    pub layout: Option<TransportLayout>,
     pub text: String,
 }
 
@@ -29881,26 +28908,26 @@ impl ::sittir_core::view::KindOf for LineContinuationNewlineTransport {
 
 impl ::sittir_core::options::Edged for LineContinuationNewlineTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(106) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for LineContinuationNewlineTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(106)), w.text(&self.text))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(106)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for LineContinuationNewlineTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -29910,9 +28937,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineContinuationNewlineTransport
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
+        let mut layout: Option<TransportLayout> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -29925,17 +28950,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineContinuationNewlineTransport
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
+                layout = obj.get("$_layout")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
+            layout,
             text,
         })
     }
@@ -29949,15 +28969,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineContinuationNewlineTransport
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
+        let layout = obj.get("$_layout")?;
         Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
+            layout,
             text,
         })
     }
@@ -30064,14 +29078,8 @@ impl ::sittir_core::render::Render for LineContinuationNulTransport {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct SimplePatternNegativeTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_sign"))]
     pub sign: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
@@ -30086,20 +29094,20 @@ impl ::sittir_core::view::KindOf for SimplePatternNegativeTransport {
 
 impl ::sittir_core::options::Edged for SimplePatternNegativeTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(282) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for SimplePatternNegativeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(282)), render_simple_pattern_negative(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(282)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_simple_pattern_negative(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for SimplePatternNegativeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.sign.prepare(ctx)?;
@@ -30107,10 +29115,10 @@ impl ::sittir_core::prepare::Prepare for SimplePatternNegativeTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -30137,14 +29145,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SimplePatternNegativeTransport
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ExceptClauseExceptionListTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value_separator_space_before"))]
@@ -30161,19 +29163,19 @@ impl ::sittir_core::view::KindOf for ExceptClauseExceptionListTransport {
 
 impl ::sittir_core::options::Edged for ExceptClauseExceptionListTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(283) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ExceptClauseExceptionListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(283)), render_except_clause_exception_list(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(283)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_except_clause_exception_list(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         ::sittir_core::prepare::fill_list_gaps(self.value.iter_mut().map(Some), ",", options::allowed(options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.value_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_SEPARATOR_SPACE_BEFORE].arm);
         self.value_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_SEPARATOR_SPACE_AFTER].arm);
@@ -30182,10 +29184,10 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionListTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -30212,14 +29214,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseExceptionListTrans
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ExceptClauseExceptionTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ExceptClauseExceptionContentTransportSlot>,
 }
@@ -30232,27 +29228,27 @@ impl ::sittir_core::view::KindOf for ExceptClauseExceptionTransport {
 
 impl ::sittir_core::options::Edged for ExceptClauseExceptionTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(284) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ExceptClauseExceptionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(284)), render_except_clause_exception(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(284)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_except_clause_exception(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -30279,14 +29275,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseExceptionTransport
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct AssignmentEqTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<ForStatementLeftTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
@@ -30301,20 +29291,20 @@ impl ::sittir_core::view::KindOf for AssignmentEqTransport {
 
 impl ::sittir_core::options::Edged for AssignmentEqTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(285) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for AssignmentEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(285)), render_assignment_eq(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(285)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_assignment_eq(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for AssignmentEqTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
@@ -30322,10 +29312,10 @@ impl ::sittir_core::prepare::Prepare for AssignmentEqTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -30352,14 +29342,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AssignmentEqTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct AssignmentTypeTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<ForStatementLeftTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
@@ -30374,20 +29358,20 @@ impl ::sittir_core::view::KindOf for AssignmentTypeTransport {
 
 impl ::sittir_core::options::Edged for AssignmentTypeTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(286) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for AssignmentTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(286)), render_assignment_type(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(286)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_assignment_type(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for AssignmentTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
@@ -30395,10 +29379,10 @@ impl ::sittir_core::prepare::Prepare for AssignmentTypeTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -30425,14 +29409,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AssignmentTypeTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct AssignmentTypedTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<ForStatementLeftTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
@@ -30449,20 +29427,20 @@ impl ::sittir_core::view::KindOf for AssignmentTypedTransport {
 
 impl ::sittir_core::options::Edged for AssignmentTypedTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(287) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for AssignmentTypedTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(287)), render_assignment_typed(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(287)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_assignment_typed(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for AssignmentTypedTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
@@ -30471,10 +29449,10 @@ impl ::sittir_core::prepare::Prepare for AssignmentTypedTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -30501,14 +29479,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AssignmentTypedTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ExpressionStatementTupleTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -30527,20 +29499,20 @@ impl ::sittir_core::view::KindOf for ExpressionStatementTupleTransport {
 
 impl ::sittir_core::options::Edged for ExpressionStatementTupleTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(288) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ExpressionStatementTupleTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(288)), render_expression_statement_tuple(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(288)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_expression_statement_tuple(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ExpressionStatementTupleTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_EXPRESSION_STATEMENT_TUPLE_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXPRESSION_STATEMENT_TUPLE_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_EXPRESSION_STATEMENT_TUPLE_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_EXPRESSION_STATEMENT_TUPLE_ITEM_SEPARATOR_SPACE_AFTER].arm);
@@ -30550,10 +29522,10 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementTupleTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -30580,14 +29552,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExpressionStatementTupleTransp
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct WithClauseBareTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<WithItemTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -30606,20 +29572,20 @@ impl ::sittir_core::view::KindOf for WithClauseBareTransport {
 
 impl ::sittir_core::options::Edged for WithClauseBareTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(289) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for WithClauseBareTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(289)), render_with_clause_bare(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(289)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_with_clause_bare(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for WithClauseBareTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_WITH_CLAUSE_BARE_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_WITH_CLAUSE_BARE_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_WITH_CLAUSE_BARE_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_WITH_CLAUSE_BARE_ITEM_SEPARATOR_SPACE_AFTER].arm);
@@ -30628,10 +29594,10 @@ impl ::sittir_core::prepare::Prepare for WithClauseBareTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -30658,14 +29624,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<WithClauseBareTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct WithClauseParenTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_items"))]
     pub with_items: ::sittir_core::SlotValue<WithClauseWithItemsTransport>,
 }
@@ -30678,30 +29638,30 @@ impl ::sittir_core::view::KindOf for WithClauseParenTransport {
 
 impl ::sittir_core::options::Edged for WithClauseParenTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(290) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for WithClauseParenTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(290)), render_with_clause_paren(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(290)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_with_clause_paren(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for WithClauseParenTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.with_items.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -30728,14 +29688,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<WithClauseParenTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct MatchBlockBlockTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
     pub alternative: Option<Vec<::sittir_core::SlotValue<CaseClauseTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative_separator_space"))]
@@ -30750,20 +29704,20 @@ impl ::sittir_core::view::KindOf for MatchBlockBlockTransport {
 
 impl ::sittir_core::options::Edged for MatchBlockBlockTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(291) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for MatchBlockBlockTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(291)), render_match_block_block(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(291)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_block_block(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for MatchBlockBlockTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         if let Some(gap_items) = self.alternative.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
@@ -30773,10 +29727,10 @@ impl ::sittir_core::prepare::Prepare for MatchBlockBlockTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -30803,14 +29757,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MatchBlockBlockTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct MatchBlockEmptyTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_newline"))]
     pub newline: ::sittir_core::SlotValue<NewlineTransport>,
 }
@@ -30823,27 +29771,27 @@ impl ::sittir_core::view::KindOf for MatchBlockEmptyTransport {
 
 impl ::sittir_core::options::Edged for MatchBlockEmptyTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(292) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for MatchBlockEmptyTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(292)), render_match_block_empty(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(292)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_block_empty(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for MatchBlockEmptyTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.newline.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -30870,14 +29818,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MatchBlockEmptyTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct SuiteInlineTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: ::sittir_core::SlotValue<SimpleStatementsElementsTransport>,
 }
@@ -30890,30 +29832,30 @@ impl ::sittir_core::view::KindOf for SuiteInlineTransport {
 
 impl ::sittir_core::options::Edged for SuiteInlineTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(293) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for SuiteInlineTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(293)), render_suite_inline(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(293)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_suite_inline(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for SuiteInlineTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -30940,14 +29882,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SuiteInlineTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct SuiteBlockTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_block"))]
     pub block: ::sittir_core::SlotValue<BlockTransport>,
 }
@@ -30960,30 +29896,30 @@ impl ::sittir_core::view::KindOf for SuiteBlockTransport {
 
 impl ::sittir_core::options::Edged for SuiteBlockTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(294) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for SuiteBlockTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(294)), render_suite_block(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(294)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_suite_block(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for SuiteBlockTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.block.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -31010,14 +29946,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SuiteBlockTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct SuiteEmptyTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_newline"))]
     pub newline: ::sittir_core::SlotValue<NewlineTransport>,
 }
@@ -31030,27 +29960,27 @@ impl ::sittir_core::view::KindOf for SuiteEmptyTransport {
 
 impl ::sittir_core::options::Edged for SuiteEmptyTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(295) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for SuiteEmptyTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(295)), render_suite_empty(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(295)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_suite_empty(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for SuiteEmptyTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.newline.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -31077,14 +30007,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SuiteEmptyTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ComparisonOperatorComparatorTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operators"))]
     pub operators: ::sittir_core::SlotValue<ComparisonOperatorComparatorOperatorsTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_primary_expression"))]
@@ -31099,20 +30023,20 @@ impl ::sittir_core::view::KindOf for ComparisonOperatorComparatorTransport {
 
 impl ::sittir_core::options::Edged for ComparisonOperatorComparatorTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(296) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ComparisonOperatorComparatorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(296)), render_comparison_operator_comparator(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(296)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_comparison_operator_comparator(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ComparisonOperatorComparatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.operators.prepare(ctx)?;
@@ -31120,10 +30044,10 @@ impl ::sittir_core::prepare::Prepare for ComparisonOperatorComparatorTransport {
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -31150,14 +30074,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ComparisonOperatorComparatorTr
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct YieldFromClauseTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
@@ -31170,30 +30088,30 @@ impl ::sittir_core::view::KindOf for YieldFromClauseTransport {
 
 impl ::sittir_core::options::Edged for YieldFromClauseTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(297) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for YieldFromClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(297)), render_yield_from_clause(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(297)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_yield_from_clause(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for YieldFromClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        let flank = self.source_flank.take();
+        self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -31219,10 +30137,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<YieldFromClauseTransport> {
 
 #[derive(Debug, Clone)]
 pub struct StringStartTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    pub layout: Option<TransportLayout>,
     pub text: String,
 }
 
@@ -31234,26 +30149,26 @@ impl ::sittir_core::view::KindOf for StringStartTransport {
 
 impl ::sittir_core::options::Edged for StringStartTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(118) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for StringStartTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(118)), w.text(&self.text))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(118)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for StringStartTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -31263,9 +30178,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringStartTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
+        let mut layout: Option<TransportLayout> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -31278,17 +30191,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringStartTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
+                layout = obj.get("$_layout")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
+            layout,
             text,
         })
     }
@@ -31302,15 +30210,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringStartTransport {
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
+        let layout = obj.get("$_layout")?;
         Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
+            layout,
             text,
         })
     }
@@ -31348,10 +30250,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StringStartTransport> {
 
 #[derive(Debug, Clone)]
 pub struct StringFragmentTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    pub layout: Option<TransportLayout>,
     pub text: String,
 }
 
@@ -31363,26 +30262,26 @@ impl ::sittir_core::view::KindOf for StringFragmentTransport {
 
 impl ::sittir_core::options::Edged for StringFragmentTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(119) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for StringFragmentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(119)), { w.adjacent(); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(119)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
     }
 }
 
 impl ::sittir_core::prepare::Prepare for StringFragmentTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -31392,9 +30291,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringFragmentTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
+        let mut layout: Option<TransportLayout> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -31407,17 +30304,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringFragmentTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
+                layout = obj.get("$_layout")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
+            layout,
             text,
         })
     }
@@ -31431,15 +30323,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringFragmentTransport {
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
+        let layout = obj.get("$_layout")?;
         Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
+            layout,
             text,
         })
     }
@@ -31477,10 +30363,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StringFragmentTransport> {
 
 #[derive(Debug, Clone)]
 pub struct EscapeInterpolationTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    pub layout: Option<TransportLayout>,
     pub text: String,
 }
 
@@ -31492,26 +30375,26 @@ impl ::sittir_core::view::KindOf for EscapeInterpolationTransport {
 
 impl ::sittir_core::options::Edged for EscapeInterpolationTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(120) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for EscapeInterpolationTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(120)), { w.adjacent(); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(120)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
     }
 }
 
 impl ::sittir_core::prepare::Prepare for EscapeInterpolationTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -31521,9 +30404,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EscapeInterpolationTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
+        let mut layout: Option<TransportLayout> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -31536,17 +30417,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for EscapeInterpolationTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
+                layout = obj.get("$_layout")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
+            layout,
             text,
         })
     }
@@ -31560,15 +30436,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for EscapeInterpolationTransport {
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
+        let layout = obj.get("$_layout")?;
         Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
+            layout,
             text,
         })
     }
@@ -31606,10 +30476,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<EscapeInterpolationTransport> 
 
 #[derive(Debug, Clone)]
 pub struct StringEndTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    pub layout: Option<TransportLayout>,
     pub text: String,
 }
 
@@ -31621,26 +30488,26 @@ impl ::sittir_core::view::KindOf for StringEndTransport {
 
 impl ::sittir_core::options::Edged for StringEndTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(121) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for StringEndTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(121)), { w.adjacent(); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(121)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
     }
 }
 
 impl ::sittir_core::prepare::Prepare for StringEndTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -31650,9 +30517,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringEndTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
+        let mut layout: Option<TransportLayout> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -31665,17 +30530,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringEndTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
+                layout = obj.get("$_layout")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
+            layout,
             text,
         })
     }
@@ -31689,15 +30549,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringEndTransport {
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
+        let layout = obj.get("$_layout")?;
         Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
+            layout,
             text,
         })
     }
@@ -32143,10 +30997,7 @@ impl ::sittir_core::render::Render for DoubleBlanklineTransport {
 
 #[derive(Debug, Clone)]
 pub struct IndentTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    pub layout: Option<TransportLayout>,
     pub text: String,
 }
 
@@ -32158,26 +31009,26 @@ impl ::sittir_core::view::KindOf for IndentTransport {
 
 impl ::sittir_core::options::Edged for IndentTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(116) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for IndentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(116)), w.text(&self.text))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(116)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for IndentTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -32187,9 +31038,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
+        let mut layout: Option<TransportLayout> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -32202,17 +31051,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
+                layout = obj.get("$_layout")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
+            layout,
             text,
         })
     }
@@ -32226,15 +31070,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
+        let layout = obj.get("$_layout")?;
         Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
+            layout,
             text,
         })
     }
@@ -32272,10 +31110,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IndentTransport> {
 
 #[derive(Debug, Clone)]
 pub struct DedentTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    pub layout: Option<TransportLayout>,
     pub text: String,
 }
 
@@ -32287,26 +31122,26 @@ impl ::sittir_core::view::KindOf for DedentTransport {
 
 impl ::sittir_core::options::Edged for DedentTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(117) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for DedentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(117)), w.text(&self.text))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(117)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for DedentTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -32316,9 +31151,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
+        let mut layout: Option<TransportLayout> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -32331,17 +31164,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
+                layout = obj.get("$_layout")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
+            layout,
             text,
         })
     }
@@ -32355,15 +31183,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
+        let layout = obj.get("$_layout")?;
         Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
+            layout,
             text,
         })
     }
@@ -32402,14 +31224,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DedentTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct NamesTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ImportListTransport>,
 }
@@ -32422,27 +31238,27 @@ impl ::sittir_core::view::KindOf for NamesTransport {
 
 impl ::sittir_core::options::Edged for NamesTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(335) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for NamesTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(335)), render_names(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(335)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_names(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for NamesTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -32469,14 +31285,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NamesTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct AsPatternTargetTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
@@ -32489,27 +31299,27 @@ impl ::sittir_core::view::KindOf for AsPatternTargetTransport {
 
 impl ::sittir_core::options::Edged for AsPatternTargetTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(333) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for AsPatternTargetTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(333)), render_as_pattern_target(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(333)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_as_pattern_target(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for AsPatternTargetTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -32536,14 +31346,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AsPatternTargetTransport> {
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct FormatExpressionTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<InterpolationTransport>,
 }
@@ -32556,27 +31360,27 @@ impl ::sittir_core::view::KindOf for FormatExpressionTransport {
 
 impl ::sittir_core::options::Edged for FormatExpressionTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(334) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for FormatExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(334)), render_format_expression(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(334)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_format_expression(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for FormatExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+        self.layout.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
+        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
+        Some(self.layout.edges_mut())
     }
 }
 
@@ -38587,7 +37391,7 @@ impl ::sittir_core::render::Render for IsNotTransport {
 impl ::sittir_core::prepare::SeatTarget for SimpleStatementsTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(129)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38596,7 +37400,7 @@ impl ::sittir_core::prepare::SeatTarget for SimpleStatementsTransport {
 impl ::sittir_core::prepare::SeatTarget for ImportStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(130)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38605,7 +37409,7 @@ impl ::sittir_core::prepare::SeatTarget for ImportStatementTransport {
 impl ::sittir_core::prepare::SeatTarget for FutureImportStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(133)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38614,7 +37418,7 @@ impl ::sittir_core::prepare::SeatTarget for FutureImportStatementTransport {
 impl ::sittir_core::prepare::SeatTarget for ImportFromStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(134)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38623,7 +37427,7 @@ impl ::sittir_core::prepare::SeatTarget for ImportFromStatementTransport {
 impl ::sittir_core::prepare::SeatTarget for AliasedImportTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(136)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38641,7 +37445,7 @@ impl ::sittir_core::prepare::SeatTarget for PrintStatementTransport {
 impl ::sittir_core::prepare::SeatTarget for AssertStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(140)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38659,7 +37463,7 @@ impl ::sittir_core::prepare::SeatTarget for ExpressionStatementTransport {
 impl ::sittir_core::prepare::SeatTarget for NamedExpressionTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(142)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38668,7 +37472,7 @@ impl ::sittir_core::prepare::SeatTarget for NamedExpressionTransport {
 impl ::sittir_core::prepare::SeatTarget for ReturnStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(144)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         if let Some(::sittir_core::SlotValue::Transport(inner)) = &mut self.expressions {
             return inner.seat_target(table);
@@ -38680,7 +37484,7 @@ impl ::sittir_core::prepare::SeatTarget for ReturnStatementTransport {
 impl ::sittir_core::prepare::SeatTarget for DeleteStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(145)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         if let ::sittir_core::SlotValue::Transport(inner) = &mut self.expressions {
             return inner.seat_target(table);
@@ -38692,7 +37496,7 @@ impl ::sittir_core::prepare::SeatTarget for DeleteStatementTransport {
 impl ::sittir_core::prepare::SeatTarget for RaiseStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(146)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38701,7 +37505,7 @@ impl ::sittir_core::prepare::SeatTarget for RaiseStatementTransport {
 impl ::sittir_core::prepare::SeatTarget for IfStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(150)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38710,7 +37514,7 @@ impl ::sittir_core::prepare::SeatTarget for IfStatementTransport {
 impl ::sittir_core::prepare::SeatTarget for ElifClauseTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(151)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38719,7 +37523,7 @@ impl ::sittir_core::prepare::SeatTarget for ElifClauseTransport {
 impl ::sittir_core::prepare::SeatTarget for ElseClauseTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(152)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38728,7 +37532,7 @@ impl ::sittir_core::prepare::SeatTarget for ElseClauseTransport {
 impl ::sittir_core::prepare::SeatTarget for MatchStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(153)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38737,7 +37541,7 @@ impl ::sittir_core::prepare::SeatTarget for MatchStatementTransport {
 impl ::sittir_core::prepare::SeatTarget for CaseClauseTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(155)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38746,7 +37550,7 @@ impl ::sittir_core::prepare::SeatTarget for CaseClauseTransport {
 impl ::sittir_core::prepare::SeatTarget for ForStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(156)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38755,7 +37559,7 @@ impl ::sittir_core::prepare::SeatTarget for ForStatementTransport {
 impl ::sittir_core::prepare::SeatTarget for WhileStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(157)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38764,7 +37568,7 @@ impl ::sittir_core::prepare::SeatTarget for WhileStatementTransport {
 impl ::sittir_core::prepare::SeatTarget for TryStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(158)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38773,7 +37577,7 @@ impl ::sittir_core::prepare::SeatTarget for TryStatementTransport {
 impl ::sittir_core::prepare::SeatTarget for ExceptClauseTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(159)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38782,7 +37586,7 @@ impl ::sittir_core::prepare::SeatTarget for ExceptClauseTransport {
 impl ::sittir_core::prepare::SeatTarget for WithStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(161)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38791,7 +37595,7 @@ impl ::sittir_core::prepare::SeatTarget for WithStatementTransport {
 impl ::sittir_core::prepare::SeatTarget for FunctionDefinitionTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(164)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38800,7 +37604,7 @@ impl ::sittir_core::prepare::SeatTarget for FunctionDefinitionTransport {
 impl ::sittir_core::prepare::SeatTarget for ListSplatTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(167)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38809,7 +37613,7 @@ impl ::sittir_core::prepare::SeatTarget for ListSplatTransport {
 impl ::sittir_core::prepare::SeatTarget for DictionarySplatTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(168)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38818,7 +37622,7 @@ impl ::sittir_core::prepare::SeatTarget for DictionarySplatTransport {
 impl ::sittir_core::prepare::SeatTarget for GlobalStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(169)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38827,7 +37631,7 @@ impl ::sittir_core::prepare::SeatTarget for GlobalStatementTransport {
 impl ::sittir_core::prepare::SeatTarget for NonlocalStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(170)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38836,7 +37640,7 @@ impl ::sittir_core::prepare::SeatTarget for NonlocalStatementTransport {
 impl ::sittir_core::prepare::SeatTarget for ExecStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(171)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38845,7 +37649,7 @@ impl ::sittir_core::prepare::SeatTarget for ExecStatementTransport {
 impl ::sittir_core::prepare::SeatTarget for TypeAliasStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(172)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38854,7 +37658,7 @@ impl ::sittir_core::prepare::SeatTarget for TypeAliasStatementTransport {
 impl ::sittir_core::prepare::SeatTarget for ClassDefinitionTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(173)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38863,7 +37667,7 @@ impl ::sittir_core::prepare::SeatTarget for ClassDefinitionTransport {
 impl ::sittir_core::prepare::SeatTarget for ParenthesizedListSplatTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(175)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38872,7 +37676,7 @@ impl ::sittir_core::prepare::SeatTarget for ParenthesizedListSplatTransport {
 impl ::sittir_core::prepare::SeatTarget for DecoratedDefinitionTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(177)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38881,7 +37685,7 @@ impl ::sittir_core::prepare::SeatTarget for DecoratedDefinitionTransport {
 impl ::sittir_core::prepare::SeatTarget for DecoratorTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(178)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38899,7 +37703,7 @@ impl ::sittir_core::prepare::SeatTarget for CasePatternTransport {
 impl ::sittir_core::prepare::SeatTarget for CaseAsPatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(184)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38908,7 +37712,7 @@ impl ::sittir_core::prepare::SeatTarget for CaseAsPatternTransport {
 impl ::sittir_core::prepare::SeatTarget for DictPatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(186)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38917,7 +37721,7 @@ impl ::sittir_core::prepare::SeatTarget for DictPatternTransport {
 impl ::sittir_core::prepare::SeatTarget for KeyValuePatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(187)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38926,7 +37730,7 @@ impl ::sittir_core::prepare::SeatTarget for KeyValuePatternTransport {
 impl ::sittir_core::prepare::SeatTarget for KeywordPatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(188)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38935,7 +37739,7 @@ impl ::sittir_core::prepare::SeatTarget for KeywordPatternTransport {
 impl ::sittir_core::prepare::SeatTarget for SplatPatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(189)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38944,7 +37748,7 @@ impl ::sittir_core::prepare::SeatTarget for SplatPatternTransport {
 impl ::sittir_core::prepare::SeatTarget for ClassPatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(190)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38953,7 +37757,7 @@ impl ::sittir_core::prepare::SeatTarget for ClassPatternTransport {
 impl ::sittir_core::prepare::SeatTarget for ComplexPatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(191)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38962,7 +37766,7 @@ impl ::sittir_core::prepare::SeatTarget for ComplexPatternTransport {
 impl ::sittir_core::prepare::SeatTarget for TuplePatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(196)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38971,7 +37775,7 @@ impl ::sittir_core::prepare::SeatTarget for TuplePatternTransport {
 impl ::sittir_core::prepare::SeatTarget for ListPatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(197)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38980,7 +37784,7 @@ impl ::sittir_core::prepare::SeatTarget for ListPatternTransport {
 impl ::sittir_core::prepare::SeatTarget for DefaultParameterTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(198)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38989,7 +37793,7 @@ impl ::sittir_core::prepare::SeatTarget for DefaultParameterTransport {
 impl ::sittir_core::prepare::SeatTarget for TypedDefaultParameterTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(199)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -38998,7 +37802,7 @@ impl ::sittir_core::prepare::SeatTarget for TypedDefaultParameterTransport {
 impl ::sittir_core::prepare::SeatTarget for ListSplatPatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(200)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39007,7 +37811,7 @@ impl ::sittir_core::prepare::SeatTarget for ListSplatPatternTransport {
 impl ::sittir_core::prepare::SeatTarget for DictionarySplatPatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(201)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39016,7 +37820,7 @@ impl ::sittir_core::prepare::SeatTarget for DictionarySplatPatternTransport {
 impl ::sittir_core::prepare::SeatTarget for AsPatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(202)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39025,7 +37829,7 @@ impl ::sittir_core::prepare::SeatTarget for AsPatternTransport {
 impl ::sittir_core::prepare::SeatTarget for NotOperatorTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(206)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39034,7 +37838,7 @@ impl ::sittir_core::prepare::SeatTarget for NotOperatorTransport {
 impl ::sittir_core::prepare::SeatTarget for BooleanOperatorTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(207)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39043,7 +37847,7 @@ impl ::sittir_core::prepare::SeatTarget for BooleanOperatorTransport {
 impl ::sittir_core::prepare::SeatTarget for BinaryOperatorTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(208)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39052,7 +37856,7 @@ impl ::sittir_core::prepare::SeatTarget for BinaryOperatorTransport {
 impl ::sittir_core::prepare::SeatTarget for UnaryOperatorTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(209)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39061,7 +37865,7 @@ impl ::sittir_core::prepare::SeatTarget for UnaryOperatorTransport {
 impl ::sittir_core::prepare::SeatTarget for ComparisonOperatorTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(212)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39070,7 +37874,7 @@ impl ::sittir_core::prepare::SeatTarget for ComparisonOperatorTransport {
 impl ::sittir_core::prepare::SeatTarget for LambdaTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(213)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39079,7 +37883,7 @@ impl ::sittir_core::prepare::SeatTarget for LambdaTransport {
 impl ::sittir_core::prepare::SeatTarget for LambdaWithinForInClauseTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(214)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39088,7 +37892,7 @@ impl ::sittir_core::prepare::SeatTarget for LambdaWithinForInClauseTransport {
 impl ::sittir_core::prepare::SeatTarget for AugmentedAssignmentTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(216)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39097,7 +37901,7 @@ impl ::sittir_core::prepare::SeatTarget for AugmentedAssignmentTransport {
 impl ::sittir_core::prepare::SeatTarget for YieldTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(219)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         if let Some(::sittir_core::SlotValue::Transport(inner)) = &mut self.content {
             return inner.seat_target(table);
@@ -39109,7 +37913,7 @@ impl ::sittir_core::prepare::SeatTarget for YieldTransport {
 impl ::sittir_core::prepare::SeatTarget for AttributeTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(220)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39118,7 +37922,7 @@ impl ::sittir_core::prepare::SeatTarget for AttributeTransport {
 impl ::sittir_core::prepare::SeatTarget for SubscriptTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(221)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39127,7 +37931,7 @@ impl ::sittir_core::prepare::SeatTarget for SubscriptTransport {
 impl ::sittir_core::prepare::SeatTarget for SliceTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(222)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39136,7 +37940,7 @@ impl ::sittir_core::prepare::SeatTarget for SliceTransport {
 impl ::sittir_core::prepare::SeatTarget for CallTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(223)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39145,7 +37949,7 @@ impl ::sittir_core::prepare::SeatTarget for CallTransport {
 impl ::sittir_core::prepare::SeatTarget for TypedParameterTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(224)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39163,7 +37967,7 @@ impl ::sittir_core::prepare::SeatTarget for TypeTransport {
 impl ::sittir_core::prepare::SeatTarget for SplatTypeTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(226)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39172,7 +37976,7 @@ impl ::sittir_core::prepare::SeatTarget for SplatTypeTransport {
 impl ::sittir_core::prepare::SeatTarget for GenericTypeTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(227)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39181,7 +37985,7 @@ impl ::sittir_core::prepare::SeatTarget for GenericTypeTransport {
 impl ::sittir_core::prepare::SeatTarget for UnionTypeTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(228)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39190,7 +37994,7 @@ impl ::sittir_core::prepare::SeatTarget for UnionTypeTransport {
 impl ::sittir_core::prepare::SeatTarget for ConstrainedTypeTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(229)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39199,7 +38003,7 @@ impl ::sittir_core::prepare::SeatTarget for ConstrainedTypeTransport {
 impl ::sittir_core::prepare::SeatTarget for MemberTypeTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(230)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39208,7 +38012,7 @@ impl ::sittir_core::prepare::SeatTarget for MemberTypeTransport {
 impl ::sittir_core::prepare::SeatTarget for KeywordArgumentTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(231)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39217,7 +38021,7 @@ impl ::sittir_core::prepare::SeatTarget for KeywordArgumentTransport {
 impl ::sittir_core::prepare::SeatTarget for ListTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(232)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39226,7 +38030,7 @@ impl ::sittir_core::prepare::SeatTarget for ListTransport {
 impl ::sittir_core::prepare::SeatTarget for SetTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(233)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39235,7 +38039,7 @@ impl ::sittir_core::prepare::SeatTarget for SetTransport {
 impl ::sittir_core::prepare::SeatTarget for TupleTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(234)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39244,7 +38048,7 @@ impl ::sittir_core::prepare::SeatTarget for TupleTransport {
 impl ::sittir_core::prepare::SeatTarget for DictionaryTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(235)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39253,7 +38057,7 @@ impl ::sittir_core::prepare::SeatTarget for DictionaryTransport {
 impl ::sittir_core::prepare::SeatTarget for PairTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(236)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39262,7 +38066,7 @@ impl ::sittir_core::prepare::SeatTarget for PairTransport {
 impl ::sittir_core::prepare::SeatTarget for ListComprehensionTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(237)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39271,7 +38075,7 @@ impl ::sittir_core::prepare::SeatTarget for ListComprehensionTransport {
 impl ::sittir_core::prepare::SeatTarget for DictionaryComprehensionTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(238)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39280,7 +38084,7 @@ impl ::sittir_core::prepare::SeatTarget for DictionaryComprehensionTransport {
 impl ::sittir_core::prepare::SeatTarget for SetComprehensionTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(239)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39289,7 +38093,7 @@ impl ::sittir_core::prepare::SeatTarget for SetComprehensionTransport {
 impl ::sittir_core::prepare::SeatTarget for GeneratorExpressionTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(240)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39298,7 +38102,7 @@ impl ::sittir_core::prepare::SeatTarget for GeneratorExpressionTransport {
 impl ::sittir_core::prepare::SeatTarget for ParenthesizedExpressionTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(241)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39307,7 +38111,7 @@ impl ::sittir_core::prepare::SeatTarget for ParenthesizedExpressionTransport {
 impl ::sittir_core::prepare::SeatTarget for ForInClauseTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(243)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39316,7 +38120,7 @@ impl ::sittir_core::prepare::SeatTarget for ForInClauseTransport {
 impl ::sittir_core::prepare::SeatTarget for IfClauseTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(244)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39325,7 +38129,7 @@ impl ::sittir_core::prepare::SeatTarget for IfClauseTransport {
 impl ::sittir_core::prepare::SeatTarget for ConditionalExpressionTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(245)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39334,7 +38138,7 @@ impl ::sittir_core::prepare::SeatTarget for ConditionalExpressionTransport {
 impl ::sittir_core::prepare::SeatTarget for ConcatenatedStringTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(246)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39343,7 +38147,7 @@ impl ::sittir_core::prepare::SeatTarget for ConcatenatedStringTransport {
 impl ::sittir_core::prepare::SeatTarget for StringTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(247)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39352,7 +38156,7 @@ impl ::sittir_core::prepare::SeatTarget for StringTransport {
 impl ::sittir_core::prepare::SeatTarget for AwaitTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(256)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39361,7 +38165,7 @@ impl ::sittir_core::prepare::SeatTarget for AwaitTransport {
 impl ::sittir_core::prepare::SeatTarget for CaseTuplePatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(272)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39370,7 +38174,7 @@ impl ::sittir_core::prepare::SeatTarget for CaseTuplePatternTransport {
 impl ::sittir_core::prepare::SeatTarget for CaseListPatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(273)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39379,7 +38183,7 @@ impl ::sittir_core::prepare::SeatTarget for CaseListPatternTransport {
 impl ::sittir_core::prepare::SeatTarget for PrintStatementChevronTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(276)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39388,7 +38192,7 @@ impl ::sittir_core::prepare::SeatTarget for PrintStatementChevronTransport {
 impl ::sittir_core::prepare::SeatTarget for PrintStatementPlainTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(277)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39397,7 +38201,7 @@ impl ::sittir_core::prepare::SeatTarget for PrintStatementPlainTransport {
 impl ::sittir_core::prepare::SeatTarget for SimplePatternNegativeTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(282)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39406,7 +38210,7 @@ impl ::sittir_core::prepare::SeatTarget for SimplePatternNegativeTransport {
 impl ::sittir_core::prepare::SeatTarget for AssignmentEqTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(285)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39415,7 +38219,7 @@ impl ::sittir_core::prepare::SeatTarget for AssignmentEqTransport {
 impl ::sittir_core::prepare::SeatTarget for AssignmentTypeTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(286)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39424,7 +38228,7 @@ impl ::sittir_core::prepare::SeatTarget for AssignmentTypeTransport {
 impl ::sittir_core::prepare::SeatTarget for AssignmentTypedTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(287)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -39433,7 +38237,7 @@ impl ::sittir_core::prepare::SeatTarget for AssignmentTypedTransport {
 impl ::sittir_core::prepare::SeatTarget for ComparisonOperatorComparatorTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(296)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
+            return Some((self.layout.edges_mut(), site));
         }
         None
     }
@@ -40271,30 +39075,30 @@ fn render_module(node: &ModuleTransport, w: &mut dyn ::sittir_core::render::Rend
         head: None,
         tail: None,
     };
-    w.edge(::sittir_core::types::KindId(127), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "statements", w)?;
+    w.edge(::sittir_core::types::KindId(127), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), "statements", w)?;
     statements.render(w)?;
-    w.edge(::sittir_core::types::KindId(127), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(127), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_simple_statements(node: &SimpleStatementsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let elements = &node.elements;
-    w.edge(::sittir_core::types::KindId(129), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(129), ::sittir_core::options::Side::Before, node.layout.edges().before);
     elements.render(w)?;
     w.adjacent();
     w.token_seam("\n");
-    w.edge(::sittir_core::types::KindId(129), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(129), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_import_statement(node: &ImportStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let names = &node.names;
-    w.edge(::sittir_core::types::KindId(130), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(130), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("import")?;
     w.site_at(options::SITE_IMPORT_STATEMENT_IMPORT_KEYWORD_AFTER);
     names.render(w)?;
-    w.edge(::sittir_core::types::KindId(130), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(130), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -40305,16 +39109,16 @@ fn render_import_prefix(t: &ImportPrefixTransport, w: &mut dyn ::sittir_core::re
 fn render_relative_import(node: &RelativeImportTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = View::new(&node.name, "{}");
     let prefix = &node.prefix;
-    w.edge(::sittir_core::types::KindId(132), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(132), ::sittir_core::options::Side::Before, node.layout.edges().before);
     prefix.render(w)?;
     name.render(w)?;
-    w.edge(::sittir_core::types::KindId(132), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(132), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_future_import_statement(node: &FutureImportStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
-    w.edge(::sittir_core::types::KindId(133), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(133), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("from")?;
     w.site_at(options::SITE_FUTURE_IMPORT_STATEMENT_FROM_KEYWORD_AFTER);
     w.site_at(options::SITE_FUTURE_IMPORT_STATEMENT_FUTURE___KEYWORD_BEFORE);
@@ -40324,14 +39128,14 @@ fn render_future_import_statement(node: &FutureImportStatementTransport, w: &mut
     w.text("import")?;
     w.site_at(options::SITE_FUTURE_IMPORT_STATEMENT_IMPORT_KEYWORD_AFTER);
     content.render(w)?;
-    w.edge(::sittir_core::types::KindId(133), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(133), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_import_from_statement(node: &ImportFromStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     let module_name = &node.module_name;
-    w.edge(::sittir_core::types::KindId(134), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(134), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("from")?;
     w.site_at(options::SITE_IMPORT_FROM_STATEMENT_FROM_KEYWORD_AFTER);
     module_name.render(w)?;
@@ -40339,7 +39143,7 @@ fn render_import_from_statement(node: &ImportFromStatementTransport, w: &mut dyn
     w.text("import")?;
     w.site_at(options::SITE_IMPORT_FROM_STATEMENT_IMPORT_KEYWORD_AFTER);
     content.render(w)?;
-    w.edge(::sittir_core::types::KindId(134), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(134), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -40362,13 +39166,13 @@ fn render_import_list(node: &ImportListTransport, w: &mut dyn ::sittir_core::ren
 fn render_aliased_import(node: &AliasedImportTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alias = &node.alias;
     let name = &node.name;
-    w.edge(::sittir_core::types::KindId(136), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(136), ::sittir_core::options::Side::Before, node.layout.edges().before);
     name.render(w)?;
     w.site_at(options::SITE_ALIASED_IMPORT_AS_KEYWORD_BEFORE);
     w.text("as")?;
     w.site_at(options::SITE_ALIASED_IMPORT_AS_KEYWORD_AFTER);
     alias.render(w)?;
-    w.edge(::sittir_core::types::KindId(136), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(136), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -40380,11 +39184,11 @@ fn render_print_statement(node: &PrintStatementTransport, w: &mut dyn ::sittir_c
 
 fn render_chevron(node: &ChevronTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
-    w.edge(::sittir_core::types::KindId(139), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(139), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text(">>")?;
     w.site_at(options::SITE_CHEVRON_GT_GT_AFTER);
     expression.render(w)?;
-    w.edge(::sittir_core::types::KindId(139), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(139), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -40400,11 +39204,11 @@ fn render_assert_statement(node: &AssertStatementTransport, w: &mut dyn ::sittir
         head: None,
         tail: None,
     };
-    w.edge(::sittir_core::types::KindId(140), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(140), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("assert")?;
     w.site_at(options::SITE_ASSERT_STATEMENT_ASSERT_KEYWORD_AFTER);
     expression.render(w)?;
-    w.edge(::sittir_core::types::KindId(140), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(140), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -40417,40 +39221,40 @@ fn render_expression_statement(node: &ExpressionStatementTransport, w: &mut dyn 
 fn render_named_expression(node: &NamedExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
     let value = &node.value;
-    w.edge(::sittir_core::types::KindId(142), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(142), ::sittir_core::options::Side::Before, node.layout.edges().before);
     name.render(w)?;
     w.site_at(options::SITE_NAMED_EXPRESSION_COLON_EQ_BEFORE);
     w.text(":=")?;
     w.site_at(options::SITE_NAMED_EXPRESSION_COLON_EQ_AFTER);
     value.render(w)?;
-    w.edge(::sittir_core::types::KindId(142), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(142), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_return_statement(node: &ReturnStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expressions = View::new(&node.expressions, "{}");
-    w.edge(::sittir_core::types::KindId(144), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(144), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("return")?;
     w.site_at(options::SITE_RETURN_STATEMENT_RETURN_KEYWORD_AFTER);
     expressions.render(w)?;
-    w.edge(::sittir_core::types::KindId(144), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(144), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_delete_statement(node: &DeleteStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expressions = &node.expressions;
-    w.edge(::sittir_core::types::KindId(145), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(145), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("del")?;
     w.site_at(options::SITE_DELETE_STATEMENT_DEL_KEYWORD_AFTER);
     expressions.render(w)?;
-    w.edge(::sittir_core::types::KindId(145), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(145), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_raise_statement(node: &RaiseStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let cause = View::new(&node.cause, "{}");
     let expressions = View::new(&node.expressions, "{}");
-    w.edge(::sittir_core::types::KindId(146), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(146), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("raise")?;
     w.site_at(options::SITE_RAISE_STATEMENT_RAISE_KEYWORD_AFTER);
     expressions.render(w)?;
@@ -40460,7 +39264,7 @@ fn render_raise_statement(node: &RaiseStatementTransport, w: &mut dyn ::sittir_c
         w.site_at(options::SITE_RAISE_STATEMENT_FROM_KEYWORD_AFTER);
         cause.render(w)?;
     }
-    w.edge(::sittir_core::types::KindId(146), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(146), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -40478,7 +39282,7 @@ fn render_if_statement(node: &IfStatementTransport, w: &mut dyn ::sittir_core::r
     };
     let condition = &node.condition;
     let consequence = &node.consequence;
-    w.edge(::sittir_core::types::KindId(150), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(150), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("if")?;
     w.site_at(options::SITE_IF_STATEMENT_IF_KEYWORD_AFTER);
     condition.render(w)?;
@@ -40487,14 +39291,14 @@ fn render_if_statement(node: &IfStatementTransport, w: &mut dyn ::sittir_core::r
     w.site_at(options::SITE_IF_STATEMENT_COLON_AFTER);
     consequence.render(w)?;
     alternative.render(w)?;
-    w.edge(::sittir_core::types::KindId(150), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(150), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_elif_clause(node: &ElifClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let condition = &node.condition;
     let consequence = &node.consequence;
-    w.edge(::sittir_core::types::KindId(151), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(151), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("elif")?;
     w.site_at(options::SITE_ELIF_CLAUSE_ELIF_KEYWORD_AFTER);
     condition.render(w)?;
@@ -40502,27 +39306,27 @@ fn render_elif_clause(node: &ElifClauseTransport, w: &mut dyn ::sittir_core::ren
     w.text(":")?;
     w.site_at(options::SITE_ELIF_CLAUSE_COLON_AFTER);
     consequence.render(w)?;
-    w.edge(::sittir_core::types::KindId(151), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(151), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_else_clause(node: &ElseClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
-    w.edge(::sittir_core::types::KindId(152), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(152), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("else")?;
     w.site_at(options::SITE_ELSE_CLAUSE_ELSE_KEYWORD_AFTER);
     w.site_at(options::SITE_ELSE_CLAUSE_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_ELSE_CLAUSE_COLON_AFTER);
     body.render(w)?;
-    w.edge(::sittir_core::types::KindId(152), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(152), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_match_statement(node: &MatchStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     let subjects = &node.subjects;
-    w.edge(::sittir_core::types::KindId(153), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(153), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("match")?;
     w.site_at(options::SITE_MATCH_STATEMENT_MATCH_KEYWORD_AFTER);
     subjects.render(w)?;
@@ -40531,7 +39335,7 @@ fn render_match_statement(node: &MatchStatementTransport, w: &mut dyn ::sittir_c
     w.adjacent();
     w.site_at(options::SITE_MATCH_STATEMENT_COLON_AFTER);
     body.render(w)?;
-    w.edge(::sittir_core::types::KindId(153), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(153), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -40545,7 +39349,7 @@ fn render_case_clause(node: &CaseClauseTransport, w: &mut dyn ::sittir_core::ren
     let case_patterns = &node.case_patterns;
     let consequence = &node.consequence;
     let guard = View::new(&node.guard, "{}");
-    w.edge(::sittir_core::types::KindId(155), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(155), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("case")?;
     w.site_at(options::SITE_CASE_CLAUSE_CASE_KEYWORD_AFTER);
     case_patterns.render(w)?;
@@ -40554,7 +39358,7 @@ fn render_case_clause(node: &CaseClauseTransport, w: &mut dyn ::sittir_core::ren
     w.text(":")?;
     w.site_at(options::SITE_CASE_CLAUSE_COLON_AFTER);
     consequence.render(w)?;
-    w.edge(::sittir_core::types::KindId(155), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(155), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -40564,7 +39368,7 @@ fn render_for_statement(node: &ForStatementTransport, w: &mut dyn ::sittir_core:
     let body = &node.body;
     let left = &node.left;
     let right = &node.right;
-    w.edge(::sittir_core::types::KindId(156), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(156), ::sittir_core::options::Side::Before, node.layout.edges().before);
     if async_.is_present() {
         async_.render(w)?;
         w.site_at(options::SITE_FOR_STATEMENT_ASYNC_AFTER);
@@ -40582,7 +39386,7 @@ fn render_for_statement(node: &ForStatementTransport, w: &mut dyn ::sittir_core:
     w.site_at(options::SITE_FOR_STATEMENT_COLON_AFTER);
     body.render(w)?;
     alternative.render(w)?;
-    w.edge(::sittir_core::types::KindId(156), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(156), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -40590,7 +39394,7 @@ fn render_while_statement(node: &WhileStatementTransport, w: &mut dyn ::sittir_c
     let alternative = View::new(&node.alternative, "{}");
     let body = &node.body;
     let condition = &node.condition;
-    w.edge(::sittir_core::types::KindId(157), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(157), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("while")?;
     w.site_at(options::SITE_WHILE_STATEMENT_WHILE_KEYWORD_AFTER);
     condition.render(w)?;
@@ -40599,7 +39403,7 @@ fn render_while_statement(node: &WhileStatementTransport, w: &mut dyn ::sittir_c
     w.site_at(options::SITE_WHILE_STATEMENT_COLON_AFTER);
     body.render(w)?;
     alternative.render(w)?;
-    w.edge(::sittir_core::types::KindId(157), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(157), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -40618,7 +39422,7 @@ fn render_try_statement(node: &TryStatementTransport, w: &mut dyn ::sittir_core:
         tail: None,
     };
     let finally_clause = View::new(&node.finally_clause, "{}");
-    w.edge(::sittir_core::types::KindId(158), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(158), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("try")?;
     w.site_at(options::SITE_TRY_STATEMENT_TRY_KEYWORD_AFTER);
     w.site_at(options::SITE_TRY_STATEMENT_COLON_BEFORE);
@@ -40628,7 +39432,7 @@ fn render_try_statement(node: &TryStatementTransport, w: &mut dyn ::sittir_core:
     except_clauses.render(w)?;
     else_clause.render(w)?;
     finally_clause.render(w)?;
-    w.edge(::sittir_core::types::KindId(158), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(158), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -40636,7 +39440,7 @@ fn render_except_clause(node: &ExceptClauseTransport, w: &mut dyn ::sittir_core:
     let exception = View::new(&node.exception, "{}");
     let group = View::new(&node.group, "*");
     let suite = &node.suite;
-    w.edge(::sittir_core::types::KindId(159), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(159), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("except")?;
     w.site_at(options::SITE_EXCEPT_CLAUSE_EXCEPT_KEYWORD_AFTER);
     if group.is_present() {
@@ -40649,20 +39453,20 @@ fn render_except_clause(node: &ExceptClauseTransport, w: &mut dyn ::sittir_core:
     w.text(":")?;
     w.site_at(options::SITE_EXCEPT_CLAUSE_COLON_AFTER);
     suite.render(w)?;
-    w.edge(::sittir_core::types::KindId(159), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(159), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_finally_clause(node: &FinallyClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let block = &node.block;
-    w.edge(::sittir_core::types::KindId(160), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(160), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("finally")?;
     w.site_at(options::SITE_FINALLY_CLAUSE_FINALLY_KEYWORD_AFTER);
     w.site_at(options::SITE_FINALLY_CLAUSE_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_FINALLY_CLAUSE_COLON_AFTER);
     block.render(w)?;
-    w.edge(::sittir_core::types::KindId(160), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(160), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -40670,7 +39474,7 @@ fn render_with_statement(node: &WithStatementTransport, w: &mut dyn ::sittir_cor
     let async_ = View::new(&node.async_, "async");
     let body = &node.body;
     let with_clause = &node.with_clause;
-    w.edge(::sittir_core::types::KindId(161), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(161), ::sittir_core::options::Side::Before, node.layout.edges().before);
     if async_.is_present() {
         async_.render(w)?;
         w.site_at(options::SITE_WITH_STATEMENT_ASYNC_AFTER);
@@ -40683,7 +39487,7 @@ fn render_with_statement(node: &WithStatementTransport, w: &mut dyn ::sittir_cor
     w.text(":")?;
     w.site_at(options::SITE_WITH_STATEMENT_COLON_AFTER);
     body.render(w)?;
-    w.edge(::sittir_core::types::KindId(161), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(161), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -40700,7 +39504,7 @@ fn render_function_definition(node: &FunctionDefinitionTransport, w: &mut dyn ::
     let parameters = &node.parameters;
     let return_type = View::new(&node.return_type, "{}");
     let type_parameters = View::new(&node.type_parameters, "{}");
-    w.edge(::sittir_core::types::KindId(164), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(164), ::sittir_core::options::Side::Before, node.layout.edges().before);
     if async_.is_present() {
         async_.render(w)?;
         w.site_at(options::SITE_FUNCTION_DEFINITION_ASYNC_AFTER);
@@ -40721,20 +39525,20 @@ fn render_function_definition(node: &FunctionDefinitionTransport, w: &mut dyn ::
     w.text(":")?;
     w.site_at(options::SITE_FUNCTION_DEFINITION_COLON_AFTER);
     body.render(w)?;
-    w.edge(::sittir_core::types::KindId(164), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(164), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_parameters(node: &ParametersTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let elements = View::new(&node.elements, "{}");
-    w.edge(::sittir_core::types::KindId(165), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(165), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_PARAMETERS_LPAREN_AFTER);
-    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "elements", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), "elements", w)?;
     elements.render(w)?;
     w.site_at(options::SITE_PARAMETERS_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(165), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(165), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -40746,21 +39550,21 @@ fn render_lambda_parameters(node: &LambdaParametersTransport, w: &mut dyn ::sitt
 
 fn render_list_splat(node: &ListSplatTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
-    w.edge(::sittir_core::types::KindId(167), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(167), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("*")?;
     w.site_at(options::SITE_LIST_SPLAT_STAR_AFTER);
     expression.render(w)?;
-    w.edge(::sittir_core::types::KindId(167), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(167), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_dictionary_splat(node: &DictionarySplatTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
-    w.edge(::sittir_core::types::KindId(168), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(168), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("**")?;
     w.site_at(options::SITE_DICTIONARY_SPLAT_STAR_STAR_AFTER);
     expression.render(w)?;
-    w.edge(::sittir_core::types::KindId(168), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(168), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -40776,11 +39580,11 @@ fn render_global_statement(node: &GlobalStatementTransport, w: &mut dyn ::sittir
         head: None,
         tail: None,
     };
-    w.edge(::sittir_core::types::KindId(169), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(169), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("global")?;
     w.site_at(options::SITE_GLOBAL_STATEMENT_GLOBAL_KEYWORD_AFTER);
     names.render(w)?;
-    w.edge(::sittir_core::types::KindId(169), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(169), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -40796,11 +39600,11 @@ fn render_nonlocal_statement(node: &NonlocalStatementTransport, w: &mut dyn ::si
         head: None,
         tail: None,
     };
-    w.edge(::sittir_core::types::KindId(170), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(170), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("nonlocal")?;
     w.site_at(options::SITE_NONLOCAL_STATEMENT_NONLOCAL_KEYWORD_AFTER);
     names.render(w)?;
-    w.edge(::sittir_core::types::KindId(170), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(170), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -40817,7 +39621,7 @@ fn render_exec_statement(node: &ExecStatementTransport, w: &mut dyn ::sittir_cor
         head: None,
         tail: None,
     };
-    w.edge(::sittir_core::types::KindId(171), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(171), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("exec")?;
     w.site_at(options::SITE_EXEC_STATEMENT_EXEC_KEYWORD_AFTER);
     code.render(w)?;
@@ -40827,14 +39631,14 @@ fn render_exec_statement(node: &ExecStatementTransport, w: &mut dyn ::sittir_cor
         w.site_at(options::SITE_EXEC_STATEMENT_IN_KEYWORD_AFTER);
         in_clause.render(w)?;
     }
-    w.edge(::sittir_core::types::KindId(171), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(171), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_type_alias_statement(node: &TypeAliasStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let left = &node.left;
     let right = &node.right;
-    w.edge(::sittir_core::types::KindId(172), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(172), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("type")?;
     w.site_at(options::SITE_TYPE_ALIAS_STATEMENT_TYPE_KEYWORD_AFTER);
     left.render(w)?;
@@ -40842,7 +39646,7 @@ fn render_type_alias_statement(node: &TypeAliasStatementTransport, w: &mut dyn :
     w.text("=")?;
     w.site_at(options::SITE_TYPE_ALIAS_STATEMENT_EQ_AFTER);
     right.render(w)?;
-    w.edge(::sittir_core::types::KindId(172), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(172), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -40851,7 +39655,7 @@ fn render_class_definition(node: &ClassDefinitionTransport, w: &mut dyn ::sittir
     let name = &node.name;
     let superclasses = View::new(&node.superclasses, "{}");
     let type_parameters = View::new(&node.type_parameters, "{}");
-    w.edge(::sittir_core::types::KindId(173), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(173), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("class")?;
     w.site_at(options::SITE_CLASS_DEFINITION_CLASS_KEYWORD_AFTER);
     name.render(w)?;
@@ -40861,45 +39665,45 @@ fn render_class_definition(node: &ClassDefinitionTransport, w: &mut dyn ::sittir
     w.text(":")?;
     w.site_at(options::SITE_CLASS_DEFINITION_COLON_AFTER);
     body.render(w)?;
-    w.edge(::sittir_core::types::KindId(173), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(173), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_type_parameter(node: &TypeParameterTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let types = &node.types;
-    w.edge(::sittir_core::types::KindId(174), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(174), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[")?;
     w.site_at(options::SITE_TYPE_PARAMETER_LBRACK_AFTER);
     types.render(w)?;
     w.site_at(options::SITE_TYPE_PARAMETER_RBRACK_BEFORE);
     w.text("]")?;
-    w.edge(::sittir_core::types::KindId(174), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(174), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_parenthesized_list_splat(node: &ParenthesizedListSplatTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
-    w.edge(::sittir_core::types::KindId(175), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(175), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.adjacent();
     w.site_at(options::SITE_PARENTHESIZED_LIST_SPLAT_LPAREN_AFTER);
     content.render(w)?;
     w.site_at(options::SITE_PARENTHESIZED_LIST_SPLAT_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(175), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(175), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_argument_list(node: &ArgumentListTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let arguments = View::new(&node.arguments, "{}");
-    w.edge(::sittir_core::types::KindId(176), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(176), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_ARGUMENT_LIST_LPAREN_AFTER);
-    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "arguments", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), "arguments", w)?;
     arguments.render(w)?;
     w.site_at(options::SITE_ARGUMENT_LIST_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(176), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(176), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -40916,22 +39720,22 @@ fn render_decorated_definition(node: &DecoratedDefinitionTransport, w: &mut dyn 
         tail: None,
     };
     let definition = &node.definition;
-    w.edge(::sittir_core::types::KindId(177), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(177), ::sittir_core::options::Side::Before, node.layout.edges().before);
     decorator.render(w)?;
     definition.render(w)?;
-    w.edge(::sittir_core::types::KindId(177), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(177), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_decorator(node: &DecoratorTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
-    w.edge(::sittir_core::types::KindId(178), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(178), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("@")?;
     w.site_at(options::SITE_DECORATOR_AT_AFTER);
     expression.render(w)?;
     w.adjacent();
     w.token_seam("\n");
-    w.edge(::sittir_core::types::KindId(178), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(178), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -40947,11 +39751,11 @@ fn render_block(node: &BlockTransport, w: &mut dyn ::sittir_core::render::Render
         head: None,
         tail: None,
     };
-    w.edge(::sittir_core::types::KindId(179), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(179), ::sittir_core::options::Side::Before, node.layout.edges().before);
     statements.render(w)?;
     w.adjacent();
     w.dedent("");
-    w.edge(::sittir_core::types::KindId(179), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(179), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -41002,13 +39806,13 @@ fn render_simple_pattern(node: &SimplePatternTransport, w: &mut dyn ::sittir_cor
 fn render_case_as_pattern(node: &CaseAsPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let case_pattern = &node.case_pattern;
     let identifier = &node.identifier;
-    w.edge(::sittir_core::types::KindId(184), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(184), ::sittir_core::options::Side::Before, node.layout.edges().before);
     case_pattern.render(w)?;
     w.site_at(options::SITE_CASE_AS_PATTERN_AS_KEYWORD_BEFORE);
     w.text("as")?;
     w.site_at(options::SITE_CASE_AS_PATTERN_AS_KEYWORD_AFTER);
     identifier.render(w)?;
-    w.edge(::sittir_core::types::KindId(184), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(184), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -41030,58 +39834,58 @@ fn render_union_pattern(node: &UnionPatternTransport, w: &mut dyn ::sittir_core:
 
 fn render_dict_pattern(node: &DictPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let elements = View::new(&node.elements, "{}");
-    w.edge(::sittir_core::types::KindId(186), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(186), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("{")?;
     w.site_at(options::SITE_DICT_PATTERN_LBRACE_AFTER);
-    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "elements", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), "elements", w)?;
     elements.render(w)?;
     w.site_at(options::SITE_DICT_PATTERN_RBRACE_BEFORE);
     w.text("}")?;
-    w.edge(::sittir_core::types::KindId(186), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(186), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_key_value_pattern(node: &KeyValuePatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let key = &node.key;
     let value = &node.value;
-    w.edge(::sittir_core::types::KindId(187), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(187), ::sittir_core::options::Side::Before, node.layout.edges().before);
     key.render(w)?;
     w.site_at(options::SITE_KEY_VALUE_PATTERN_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_KEY_VALUE_PATTERN_COLON_AFTER);
     value.render(w)?;
-    w.edge(::sittir_core::types::KindId(187), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(187), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_keyword_pattern(node: &KeywordPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
     let value = &node.value;
-    w.edge(::sittir_core::types::KindId(188), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(188), ::sittir_core::options::Side::Before, node.layout.edges().before);
     name.render(w)?;
     w.site_at(options::SITE_KEYWORD_PATTERN_EQ_BEFORE);
     w.text("=")?;
     w.site_at(options::SITE_KEYWORD_PATTERN_EQ_AFTER);
     value.render(w)?;
-    w.edge(::sittir_core::types::KindId(188), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(188), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_splat_pattern(node: &SplatPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
     let operator = &node.operator;
-    w.edge(::sittir_core::types::KindId(189), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(189), ::sittir_core::options::Side::Before, node.layout.edges().before);
     operator.render(w)?;
     w.site_at(options::SITE_SPLAT_PATTERN_OPERATOR_AFTER);
     name.render(w)?;
-    w.edge(::sittir_core::types::KindId(189), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(189), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_class_pattern(node: &ClassPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let arguments = View::new(&node.arguments, "{}");
     let name = &node.name;
-    w.edge(::sittir_core::types::KindId(190), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(190), ::sittir_core::options::Side::Before, node.layout.edges().before);
     name.render(w)?;
     w.site_at(options::SITE_CLASS_PATTERN_LPAREN_BEFORE);
     w.text("(")?;
@@ -41089,7 +39893,7 @@ fn render_class_pattern(node: &ClassPatternTransport, w: &mut dyn ::sittir_core:
     arguments.render(w)?;
     w.site_at(options::SITE_CLASS_PATTERN_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(190), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(190), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -41098,7 +39902,7 @@ fn render_complex_pattern(node: &ComplexPatternTransport, w: &mut dyn ::sittir_c
     let operator = &node.operator;
     let real = &node.real;
     let sign = View::new(&node.sign, "-");
-    w.edge(::sittir_core::types::KindId(191), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(191), ::sittir_core::options::Side::Before, node.layout.edges().before);
     if sign.is_present() {
         sign.render(w)?;
         w.site_at(options::SITE_COMPLEX_PATTERN_SIGN_AFTER);
@@ -41108,7 +39912,7 @@ fn render_complex_pattern(node: &ComplexPatternTransport, w: &mut dyn ::sittir_c
     operator.render(w)?;
     w.site_at(options::SITE_COMPLEX_PATTERN_OPERATOR_AFTER);
     imaginary.render(w)?;
-    w.edge(::sittir_core::types::KindId(191), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(191), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -41146,40 +39950,40 @@ fn render_patterns(node: &PatternsTransport, w: &mut dyn ::sittir_core::render::
 
 fn render_tuple_pattern(node: &TuplePatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let patterns = View::new(&node.patterns, "{}");
-    w.edge(::sittir_core::types::KindId(196), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(196), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_TUPLE_PATTERN_LPAREN_AFTER);
-    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "patterns", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), "patterns", w)?;
     patterns.render(w)?;
     w.site_at(options::SITE_TUPLE_PATTERN_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(196), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(196), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_list_pattern(node: &ListPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let patterns = View::new(&node.patterns, "{}");
-    w.edge(::sittir_core::types::KindId(197), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(197), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[")?;
     w.site_at(options::SITE_LIST_PATTERN_LBRACK_AFTER);
-    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "patterns", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), "patterns", w)?;
     patterns.render(w)?;
     w.site_at(options::SITE_LIST_PATTERN_RBRACK_BEFORE);
     w.text("]")?;
-    w.edge(::sittir_core::types::KindId(197), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(197), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_default_parameter(node: &DefaultParameterTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
     let value = &node.value;
-    w.edge(::sittir_core::types::KindId(198), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(198), ::sittir_core::options::Side::Before, node.layout.edges().before);
     name.render(w)?;
     w.site_at(options::SITE_DEFAULT_PARAMETER_EQ_BEFORE);
     w.text("=")?;
     w.site_at(options::SITE_DEFAULT_PARAMETER_EQ_AFTER);
     value.render(w)?;
-    w.edge(::sittir_core::types::KindId(198), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(198), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -41187,7 +39991,7 @@ fn render_typed_default_parameter(node: &TypedDefaultParameterTransport, w: &mut
     let name = &node.name;
     let type_ = &node.type_;
     let value = &node.value;
-    w.edge(::sittir_core::types::KindId(199), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(199), ::sittir_core::options::Side::Before, node.layout.edges().before);
     name.render(w)?;
     w.site_at(options::SITE_TYPED_DEFAULT_PARAMETER_COLON_BEFORE);
     w.text(":")?;
@@ -41197,50 +40001,50 @@ fn render_typed_default_parameter(node: &TypedDefaultParameterTransport, w: &mut
     w.text("=")?;
     w.site_at(options::SITE_TYPED_DEFAULT_PARAMETER_EQ_AFTER);
     value.render(w)?;
-    w.edge(::sittir_core::types::KindId(199), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(199), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_list_splat_pattern(node: &ListSplatPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let target = &node.target;
-    w.edge(::sittir_core::types::KindId(200), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(200), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("*")?;
     w.site_at(options::SITE_LIST_SPLAT_PATTERN_STAR_AFTER);
     target.render(w)?;
-    w.edge(::sittir_core::types::KindId(200), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(200), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_dictionary_splat_pattern(node: &DictionarySplatPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let target = &node.target;
-    w.edge(::sittir_core::types::KindId(201), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(201), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("**")?;
     w.site_at(options::SITE_DICTIONARY_SPLAT_PATTERN_STAR_STAR_AFTER);
     target.render(w)?;
-    w.edge(::sittir_core::types::KindId(201), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(201), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_as_pattern(node: &AsPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alias = &node.alias;
     let expression = &node.expression;
-    w.edge(::sittir_core::types::KindId(202), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(202), ::sittir_core::options::Side::Before, node.layout.edges().before);
     expression.render(w)?;
     w.site_at(options::SITE_AS_PATTERN_AS_KEYWORD_BEFORE);
     w.text("as")?;
     w.site_at(options::SITE_AS_PATTERN_AS_KEYWORD_AFTER);
     alias.render(w)?;
-    w.edge(::sittir_core::types::KindId(202), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(202), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_not_operator(node: &NotOperatorTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let argument = &node.argument;
-    w.edge(::sittir_core::types::KindId(206), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(206), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("not")?;
     w.site_at(options::SITE_NOT_OPERATOR_NOT_KEYWORD_AFTER);
     argument.render(w)?;
-    w.edge(::sittir_core::types::KindId(206), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(206), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -41248,13 +40052,13 @@ fn render_boolean_operator(node: &BooleanOperatorTransport, w: &mut dyn ::sittir
     let left = &node.left;
     let operator = &node.operator;
     let right = &node.right;
-    w.edge(::sittir_core::types::KindId(207), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(207), ::sittir_core::options::Side::Before, node.layout.edges().before);
     left.render(w)?;
     w.site_at(options::SITE_BOOLEAN_OPERATOR_OPERATOR_BEFORE);
     operator.render(w)?;
     w.site_at(options::SITE_BOOLEAN_OPERATOR_OPERATOR_AFTER);
     right.render(w)?;
-    w.edge(::sittir_core::types::KindId(207), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(207), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -41262,24 +40066,24 @@ fn render_binary_operator(node: &BinaryOperatorTransport, w: &mut dyn ::sittir_c
     let left = &node.left;
     let operator = &node.operator;
     let right = &node.right;
-    w.edge(::sittir_core::types::KindId(208), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(208), ::sittir_core::options::Side::Before, node.layout.edges().before);
     left.render(w)?;
     w.site_at(options::SITE_BINARY_OPERATOR_OPERATOR_BEFORE);
     operator.render(w)?;
     w.site_at(options::SITE_BINARY_OPERATOR_OPERATOR_AFTER);
     right.render(w)?;
-    w.edge(::sittir_core::types::KindId(208), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(208), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_unary_operator(node: &UnaryOperatorTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let argument = &node.argument;
     let operator = &node.operator;
-    w.edge(::sittir_core::types::KindId(209), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(209), ::sittir_core::options::Side::Before, node.layout.edges().before);
     operator.render(w)?;
     w.site_at(options::SITE_UNARY_OPERATOR_OPERATOR_AFTER);
     argument.render(w)?;
-    w.edge(::sittir_core::types::KindId(209), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(209), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -41296,17 +40100,17 @@ fn render_comparison_operator(node: &ComparisonOperatorTransport, w: &mut dyn ::
         tail: None,
     };
     let left = &node.left;
-    w.edge(::sittir_core::types::KindId(212), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(212), ::sittir_core::options::Side::Before, node.layout.edges().before);
     left.render(w)?;
     comparators.render(w)?;
-    w.edge(::sittir_core::types::KindId(212), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(212), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_lambda(node: &LambdaTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     let parameters = View::new(&node.parameters, "{}");
-    w.edge(::sittir_core::types::KindId(213), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(213), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("lambda")?;
     w.site_at(options::SITE_LAMBDA_LAMBDA_KEYWORD_AFTER);
     parameters.render(w)?;
@@ -41314,14 +40118,14 @@ fn render_lambda(node: &LambdaTransport, w: &mut dyn ::sittir_core::render::Rend
     w.text(":")?;
     w.site_at(options::SITE_LAMBDA_COLON_AFTER);
     body.render(w)?;
-    w.edge(::sittir_core::types::KindId(213), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(213), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_lambda_within_for_in_clause(node: &LambdaWithinForInClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     let parameters = View::new(&node.parameters, "{}");
-    w.edge(::sittir_core::types::KindId(214), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(214), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("lambda")?;
     w.site_at(options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_KEYWORD_AFTER);
     parameters.render(w)?;
@@ -41329,7 +40133,7 @@ fn render_lambda_within_for_in_clause(node: &LambdaWithinForInClauseTransport, w
     w.text(":")?;
     w.site_at(options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_COLON_AFTER);
     body.render(w)?;
-    w.edge(::sittir_core::types::KindId(214), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(214), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -41337,13 +40141,13 @@ fn render_augmented_assignment(node: &AugmentedAssignmentTransport, w: &mut dyn 
     let left = &node.left;
     let operator = &node.operator;
     let right = &node.right;
-    w.edge(::sittir_core::types::KindId(216), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(216), ::sittir_core::options::Side::Before, node.layout.edges().before);
     left.render(w)?;
     w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_BEFORE);
     operator.render(w)?;
     w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_AFTER);
     right.render(w)?;
-    w.edge(::sittir_core::types::KindId(216), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(216), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -41365,31 +40169,31 @@ fn render_pattern_list(node: &PatternListTransport, w: &mut dyn ::sittir_core::r
 
 fn render_yield(node: &YieldTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = View::new(&node.content, "{}");
-    w.edge(::sittir_core::types::KindId(219), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(219), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("yield")?;
     w.site_at(options::SITE_YIELD_YIELD_KEYWORD_AFTER);
     content.render(w)?;
-    w.edge(::sittir_core::types::KindId(219), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(219), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_attribute(node: &AttributeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attribute = &node.attribute;
     let object = &node.object;
-    w.edge(::sittir_core::types::KindId(220), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(220), ::sittir_core::options::Side::Before, node.layout.edges().before);
     object.render(w)?;
     w.site_at(options::SITE_ATTRIBUTE_DOT_BEFORE);
     w.text(".")?;
     w.site_at(options::SITE_ATTRIBUTE_DOT_AFTER);
     attribute.render(w)?;
-    w.edge(::sittir_core::types::KindId(220), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(220), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_subscript(node: &SubscriptTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let subscripts = &node.subscripts;
     let value = &node.value;
-    w.edge(::sittir_core::types::KindId(221), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(221), ::sittir_core::options::Side::Before, node.layout.edges().before);
     value.render(w)?;
     w.site_at(options::SITE_SUBSCRIPT_LBRACK_BEFORE);
     w.text("[")?;
@@ -41397,7 +40201,7 @@ fn render_subscript(node: &SubscriptTransport, w: &mut dyn ::sittir_core::render
     subscripts.render(w)?;
     w.site_at(options::SITE_SUBSCRIPT_RBRACK_BEFORE);
     w.text("]")?;
-    w.edge(::sittir_core::types::KindId(221), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(221), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -41405,37 +40209,37 @@ fn render_slice(node: &SliceTransport, w: &mut dyn ::sittir_core::render::Render
     let start = View::new(&node.start, "{}");
     let step = View::new(&node.step, "{}");
     let stop = View::new(&node.stop, "{}");
-    w.edge(::sittir_core::types::KindId(222), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(222), ::sittir_core::options::Side::Before, node.layout.edges().before);
     start.render(w)?;
     w.site_at(options::SITE_SLICE_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_SLICE_COLON_AFTER);
     stop.render(w)?;
     step.render(w)?;
-    w.edge(::sittir_core::types::KindId(222), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(222), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_call(node: &CallTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let arguments = &node.arguments;
     let function = &node.function;
-    w.edge(::sittir_core::types::KindId(223), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(223), ::sittir_core::options::Side::Before, node.layout.edges().before);
     function.render(w)?;
     arguments.render(w)?;
-    w.edge(::sittir_core::types::KindId(223), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(223), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_typed_parameter(node: &TypedParameterTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
     let type_ = &node.type_;
-    w.edge(::sittir_core::types::KindId(224), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(224), ::sittir_core::options::Side::Before, node.layout.edges().before);
     name.render(w)?;
     w.site_at(options::SITE_TYPED_PARAMETER_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_TYPED_PARAMETER_COLON_AFTER);
     type_.render(w)?;
-    w.edge(::sittir_core::types::KindId(224), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(224), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -41448,205 +40252,205 @@ fn render_type(node: &TypeTransport, w: &mut dyn ::sittir_core::render::RenderSi
 fn render_splat_type(node: &SplatTypeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
     let operator = &node.operator;
-    w.edge(::sittir_core::types::KindId(226), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(226), ::sittir_core::options::Side::Before, node.layout.edges().before);
     operator.render(w)?;
     w.site_at(options::SITE_SPLAT_TYPE_OPERATOR_AFTER);
     name.render(w)?;
-    w.edge(::sittir_core::types::KindId(226), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(226), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_generic_type(node: &GenericTypeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
     let type_parameter = &node.type_parameter;
-    w.edge(::sittir_core::types::KindId(227), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(227), ::sittir_core::options::Side::Before, node.layout.edges().before);
     name.render(w)?;
     type_parameter.render(w)?;
-    w.edge(::sittir_core::types::KindId(227), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(227), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_union_type(node: &UnionTypeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let left = &node.left;
     let right = &node.right;
-    w.edge(::sittir_core::types::KindId(228), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(228), ::sittir_core::options::Side::Before, node.layout.edges().before);
     left.render(w)?;
     w.site_at(options::SITE_UNION_TYPE_PIPE_BEFORE);
     w.text("|")?;
     w.site_at(options::SITE_UNION_TYPE_PIPE_AFTER);
     right.render(w)?;
-    w.edge(::sittir_core::types::KindId(228), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(228), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_constrained_type(node: &ConstrainedTypeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let base_type = &node.base_type;
     let constraint = &node.constraint;
-    w.edge(::sittir_core::types::KindId(229), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(229), ::sittir_core::options::Side::Before, node.layout.edges().before);
     base_type.render(w)?;
     w.site_at(options::SITE_CONSTRAINED_TYPE_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_CONSTRAINED_TYPE_COLON_AFTER);
     constraint.render(w)?;
-    w.edge(::sittir_core::types::KindId(229), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(229), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_member_type(node: &MemberTypeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let base_type = &node.base_type;
     let name = &node.name;
-    w.edge(::sittir_core::types::KindId(230), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(230), ::sittir_core::options::Side::Before, node.layout.edges().before);
     base_type.render(w)?;
     w.site_at(options::SITE_MEMBER_TYPE_DOT_BEFORE);
     w.text(".")?;
     w.site_at(options::SITE_MEMBER_TYPE_DOT_AFTER);
     name.render(w)?;
-    w.edge(::sittir_core::types::KindId(230), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(230), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_keyword_argument(node: &KeywordArgumentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
     let value = &node.value;
-    w.edge(::sittir_core::types::KindId(231), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(231), ::sittir_core::options::Side::Before, node.layout.edges().before);
     name.render(w)?;
     w.site_at(options::SITE_KEYWORD_ARGUMENT_EQ_BEFORE);
     w.text("=")?;
     w.site_at(options::SITE_KEYWORD_ARGUMENT_EQ_AFTER);
     value.render(w)?;
-    w.edge(::sittir_core::types::KindId(231), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(231), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_list(node: &ListTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let collection_elements = View::new(&node.collection_elements, "{}");
-    w.edge(::sittir_core::types::KindId(232), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(232), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[")?;
     w.site_at(options::SITE_LIST_LBRACK_AFTER);
-    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "collection_elements", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), "collection_elements", w)?;
     collection_elements.render(w)?;
     w.site_at(options::SITE_LIST_RBRACK_BEFORE);
     w.text("]")?;
-    w.edge(::sittir_core::types::KindId(232), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(232), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_set(node: &SetTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let collection_elements = &node.collection_elements;
-    w.edge(::sittir_core::types::KindId(233), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(233), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("{")?;
     w.site_at(options::SITE_SET_LBRACE_AFTER);
     collection_elements.render(w)?;
     w.site_at(options::SITE_SET_RBRACE_BEFORE);
     w.text("}")?;
-    w.edge(::sittir_core::types::KindId(233), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(233), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_tuple(node: &TupleTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let elements = View::new(&node.elements, "{}");
-    w.edge(::sittir_core::types::KindId(234), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(234), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_TUPLE_LPAREN_AFTER);
-    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "elements", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), "elements", w)?;
     elements.render(w)?;
     w.site_at(options::SITE_TUPLE_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(234), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(234), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_dictionary(node: &DictionaryTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let elements = View::new(&node.elements, "{}");
-    w.edge(::sittir_core::types::KindId(235), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(235), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("{")?;
     w.site_at(options::SITE_DICTIONARY_LBRACE_AFTER);
-    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "elements", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), "elements", w)?;
     elements.render(w)?;
     w.site_at(options::SITE_DICTIONARY_RBRACE_BEFORE);
     w.text("}")?;
-    w.edge(::sittir_core::types::KindId(235), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(235), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_pair(node: &PairTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let key = &node.key;
     let value = &node.value;
-    w.edge(::sittir_core::types::KindId(236), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(236), ::sittir_core::options::Side::Before, node.layout.edges().before);
     key.render(w)?;
     w.site_at(options::SITE_PAIR_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_PAIR_COLON_AFTER);
     value.render(w)?;
-    w.edge(::sittir_core::types::KindId(236), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(236), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_list_comprehension(node: &ListComprehensionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     let comprehension_clauses = &node.comprehension_clauses;
-    w.edge(::sittir_core::types::KindId(237), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(237), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[")?;
     w.site_at(options::SITE_LIST_COMPREHENSION_LBRACK_AFTER);
     body.render(w)?;
     comprehension_clauses.render(w)?;
     w.site_at(options::SITE_LIST_COMPREHENSION_RBRACK_BEFORE);
     w.text("]")?;
-    w.edge(::sittir_core::types::KindId(237), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(237), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_dictionary_comprehension(node: &DictionaryComprehensionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     let comprehension_clauses = &node.comprehension_clauses;
-    w.edge(::sittir_core::types::KindId(238), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(238), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("{")?;
     w.site_at(options::SITE_DICTIONARY_COMPREHENSION_LBRACE_AFTER);
     body.render(w)?;
     comprehension_clauses.render(w)?;
     w.site_at(options::SITE_DICTIONARY_COMPREHENSION_RBRACE_BEFORE);
     w.text("}")?;
-    w.edge(::sittir_core::types::KindId(238), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(238), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_set_comprehension(node: &SetComprehensionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     let comprehension_clauses = &node.comprehension_clauses;
-    w.edge(::sittir_core::types::KindId(239), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(239), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("{")?;
     w.site_at(options::SITE_SET_COMPREHENSION_LBRACE_AFTER);
     body.render(w)?;
     comprehension_clauses.render(w)?;
     w.site_at(options::SITE_SET_COMPREHENSION_RBRACE_BEFORE);
     w.text("}")?;
-    w.edge(::sittir_core::types::KindId(239), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(239), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_generator_expression(node: &GeneratorExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     let comprehension_clauses = &node.comprehension_clauses;
-    w.edge(::sittir_core::types::KindId(240), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(240), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_GENERATOR_EXPRESSION_LPAREN_AFTER);
     body.render(w)?;
     comprehension_clauses.render(w)?;
     w.site_at(options::SITE_GENERATOR_EXPRESSION_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(240), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(240), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_parenthesized_expression(node: &ParenthesizedExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
-    w.edge(::sittir_core::types::KindId(241), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(241), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_PARENTHESIZED_EXPRESSION_LPAREN_AFTER);
     expression.render(w)?;
     w.site_at(options::SITE_PARENTHESIZED_EXPRESSION_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(241), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(241), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -41681,7 +40485,7 @@ fn render_for_in_clause(node: &ForInClauseTransport, w: &mut dyn ::sittir_core::
         head: None,
         tail: None,
     };
-    w.edge(::sittir_core::types::KindId(243), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(243), ::sittir_core::options::Side::Before, node.layout.edges().before);
     if async_.is_present() {
         async_.render(w)?;
         w.site_at(options::SITE_FOR_IN_CLAUSE_ASYNC_AFTER);
@@ -41698,17 +40502,17 @@ fn render_for_in_clause(node: &ForInClauseTransport, w: &mut dyn ::sittir_core::
         w.site_at(options::SITE_FOR_IN_CLAUSE_COMMA_BEFORE);
         comma.render(w)?;
     }
-    w.edge(::sittir_core::types::KindId(243), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(243), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_if_clause(node: &IfClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let condition = &node.condition;
-    w.edge(::sittir_core::types::KindId(244), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(244), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("if")?;
     w.site_at(options::SITE_IF_CLAUSE_IF_KEYWORD_AFTER);
     condition.render(w)?;
-    w.edge(::sittir_core::types::KindId(244), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(244), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -41716,7 +40520,7 @@ fn render_conditional_expression(node: &ConditionalExpressionTransport, w: &mut 
     let alternative = &node.alternative;
     let body = &node.body;
     let condition = &node.condition;
-    w.edge(::sittir_core::types::KindId(245), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(245), ::sittir_core::options::Side::Before, node.layout.edges().before);
     body.render(w)?;
     w.site_at(options::SITE_CONDITIONAL_EXPRESSION_IF_KEYWORD_BEFORE);
     w.text("if")?;
@@ -41726,7 +40530,7 @@ fn render_conditional_expression(node: &ConditionalExpressionTransport, w: &mut 
     w.text("else")?;
     w.site_at(options::SITE_CONDITIONAL_EXPRESSION_ELSE_KEYWORD_AFTER);
     alternative.render(w)?;
-    w.edge(::sittir_core::types::KindId(245), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(245), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -41742,9 +40546,9 @@ fn render_concatenated_string(node: &ConcatenatedStringTransport, w: &mut dyn ::
         head: None,
         tail: None,
     };
-    w.edge(::sittir_core::types::KindId(246), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(246), ::sittir_core::options::Side::Before, node.layout.edges().before);
     string.render(w)?;
-    w.edge(::sittir_core::types::KindId(246), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(246), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -41762,11 +40566,11 @@ fn render_string(node: &StringTransport, w: &mut dyn ::sittir_core::render::Rend
     };
     let string_end = &node.string_end;
     let string_start = &node.string_start;
-    w.edge(::sittir_core::types::KindId(247), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(247), ::sittir_core::options::Side::Before, node.layout.edges().before);
     string_start.render(w)?;
     content.render(w)?;
     string_end.render(w)?;
-    w.edge(::sittir_core::types::KindId(247), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(247), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -41791,7 +40595,7 @@ fn render_interpolation(node: &InterpolationTransport, w: &mut dyn ::sittir_core
     let expression = &node.expression;
     let format_specifier = View::new(&node.format_specifier, "{}");
     let type_conversion = View::new(&node.type_conversion, "{}");
-    w.edge(::sittir_core::types::KindId(249), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(249), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("{")?;
     w.site_at(options::SITE_INTERPOLATION_LBRACE_AFTER);
     expression.render(w)?;
@@ -41804,7 +40608,7 @@ fn render_interpolation(node: &InterpolationTransport, w: &mut dyn ::sittir_core
     format_specifier.render(w)?;
     w.site_at(options::SITE_INTERPOLATION_RBRACE_BEFORE);
     w.text("}")?;
-    w.edge(::sittir_core::types::KindId(249), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(249), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -41820,11 +40624,11 @@ fn render_format_specifier(node: &FormatSpecifierTransport, w: &mut dyn ::sittir
         head: None,
         tail: None,
     };
-    w.edge(::sittir_core::types::KindId(253), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(253), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text(":")?;
     w.site_at(options::SITE_FORMAT_SPECIFIER_COLON_AFTER);
     elements.render(w)?;
-    w.edge(::sittir_core::types::KindId(253), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(253), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -41838,11 +40642,11 @@ fn render_identifier(t: &IdentifierTransport, w: &mut dyn ::sittir_core::render:
 
 fn render_await(node: &AwaitTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
-    w.edge(::sittir_core::types::KindId(256), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(256), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("await")?;
     w.site_at(options::SITE_AWAIT_AWAIT_KEYWORD_AFTER);
     expression.render(w)?;
-    w.edge(::sittir_core::types::KindId(256), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(256), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -42016,11 +40820,11 @@ fn render_dictionary_elements(node: &DictionaryElementsTransport, w: &mut dyn ::
 
 fn render_slice_group(node: &SliceGroupTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = View::new(&node.expression, "{}");
-    w.edge(::sittir_core::types::KindId(269), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(269), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text(":")?;
     w.site_at(options::SITE_SLICE_GROUP_COLON_AFTER);
     expression.render(w)?;
-    w.edge(::sittir_core::types::KindId(269), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(269), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -42048,7 +40852,7 @@ fn render_tuple_elements(node: &TupleElementsTransport, w: &mut dyn ::sittir_cor
 fn render_except_clause_exception_as(node: &ExceptClauseExceptionAsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alias = View::new(&node.alias, "{}");
     let value = &node.value;
-    w.edge(::sittir_core::types::KindId(271), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(271), ::sittir_core::options::Side::Before, node.layout.edges().before);
     value.render(w)?;
     if alias.is_present() {
         w.site_at(options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_AS_KEYWORD_BEFORE);
@@ -42056,33 +40860,33 @@ fn render_except_clause_exception_as(node: &ExceptClauseExceptionAsTransport, w:
         w.site_at(options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_AS_KEYWORD_AFTER);
         alias.render(w)?;
     }
-    w.edge(::sittir_core::types::KindId(271), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(271), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_case_tuple_pattern(node: &CaseTuplePatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let list_pattern_case_patterns = View::new(&node.list_pattern_case_patterns, "{}");
-    w.edge(::sittir_core::types::KindId(272), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(272), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_CASE_TUPLE_PATTERN_LPAREN_AFTER);
-    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "list_pattern_case_patterns", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), "list_pattern_case_patterns", w)?;
     list_pattern_case_patterns.render(w)?;
     w.site_at(options::SITE_CASE_TUPLE_PATTERN_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(272), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(272), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_case_list_pattern(node: &CaseListPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let list_pattern_case_patterns = View::new(&node.list_pattern_case_patterns, "{}");
-    w.edge(::sittir_core::types::KindId(273), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(273), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[")?;
     w.site_at(options::SITE_CASE_LIST_PATTERN_LBRACK_AFTER);
-    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "list_pattern_case_patterns", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), "list_pattern_case_patterns", w)?;
     list_pattern_case_patterns.render(w)?;
     w.site_at(options::SITE_CASE_LIST_PATTERN_RBRACK_BEFORE);
     w.text("]")?;
-    w.edge(::sittir_core::types::KindId(273), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(273), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -42121,35 +40925,35 @@ fn render_print_chevron_arguments(node: &PrintChevronArgumentsTransport, w: &mut
 fn render_print_statement_chevron(node: &PrintStatementChevronTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let chevron = &node.chevron;
     let print_chevron_arguments = View::new(&node.print_chevron_arguments, "{}");
-    w.edge(::sittir_core::types::KindId(276), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(276), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("print")?;
     w.adjacent();
     w.site_at(options::SITE_PRINT_STATEMENT_CHEVRON_PRINT_KEYWORD_AFTER);
     chevron.render(w)?;
     print_chevron_arguments.render(w)?;
-    w.edge(::sittir_core::types::KindId(276), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(276), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_print_statement_plain(node: &PrintStatementPlainTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let print_arguments = &node.print_arguments;
-    w.edge(::sittir_core::types::KindId(277), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(277), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("print")?;
     w.site_at(options::SITE_PRINT_STATEMENT_PLAIN_PRINT_KEYWORD_AFTER);
     print_arguments.render(w)?;
-    w.edge(::sittir_core::types::KindId(277), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(277), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_parenthesized_import_list(node: &ParenthesizedImportListTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let import_list = &node.import_list;
-    w.edge(::sittir_core::types::KindId(279), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(279), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_PARENTHESIZED_IMPORT_LIST_LPAREN_AFTER);
     import_list.render(w)?;
     w.site_at(options::SITE_PARENTHESIZED_IMPORT_LIST_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(279), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(279), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -42346,13 +41150,13 @@ fn render_line_continuation_newline(t: &LineContinuationNewlineTransport, w: &mu
 fn render_simple_pattern_negative(node: &SimplePatternNegativeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let sign = View::new(&node.sign, "-");
     let value = &node.value;
-    w.edge(::sittir_core::types::KindId(282), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(282), ::sittir_core::options::Side::Before, node.layout.edges().before);
     if sign.is_present() {
         sign.render(w)?;
         w.site_at(options::SITE_SIMPLE_PATTERN_NEGATIVE_SIGN_AFTER);
     }
     value.render(w)?;
-    w.edge(::sittir_core::types::KindId(282), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(282), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -42381,26 +41185,26 @@ fn render_except_clause_exception(node: &ExceptClauseExceptionTransport, w: &mut
 fn render_assignment_eq(node: &AssignmentEqTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let left = &node.left;
     let right = &node.right;
-    w.edge(::sittir_core::types::KindId(285), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(285), ::sittir_core::options::Side::Before, node.layout.edges().before);
     left.render(w)?;
     w.site_at(options::SITE_ASSIGNMENT_EQ_EQ_BEFORE);
     w.text("=")?;
     w.site_at(options::SITE_ASSIGNMENT_EQ_EQ_AFTER);
     right.render(w)?;
-    w.edge(::sittir_core::types::KindId(285), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(285), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_assignment_type(node: &AssignmentTypeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let left = &node.left;
     let type_ = &node.type_;
-    w.edge(::sittir_core::types::KindId(286), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(286), ::sittir_core::options::Side::Before, node.layout.edges().before);
     left.render(w)?;
     w.site_at(options::SITE_ASSIGNMENT_TYPE_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_ASSIGNMENT_TYPE_COLON_AFTER);
     type_.render(w)?;
-    w.edge(::sittir_core::types::KindId(286), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(286), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -42408,7 +41212,7 @@ fn render_assignment_typed(node: &AssignmentTypedTransport, w: &mut dyn ::sittir
     let left = &node.left;
     let right = &node.right;
     let type_ = &node.type_;
-    w.edge(::sittir_core::types::KindId(287), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(287), ::sittir_core::options::Side::Before, node.layout.edges().before);
     left.render(w)?;
     w.site_at(options::SITE_ASSIGNMENT_TYPED_COLON_BEFORE);
     w.text(":")?;
@@ -42418,7 +41222,7 @@ fn render_assignment_typed(node: &AssignmentTypedTransport, w: &mut dyn ::sittir
     w.text("=")?;
     w.site_at(options::SITE_ASSIGNMENT_TYPED_EQ_AFTER);
     right.render(w)?;
-    w.edge(::sittir_core::types::KindId(287), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(287), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -42456,13 +41260,13 @@ fn render_with_clause_bare(node: &WithClauseBareTransport, w: &mut dyn ::sittir_
 
 fn render_with_clause_paren(node: &WithClauseParenTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let with_items = &node.with_items;
-    w.edge(::sittir_core::types::KindId(290), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(290), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_WITH_CLAUSE_PAREN_LPAREN_AFTER);
     with_items.render(w)?;
     w.site_at(options::SITE_WITH_CLAUSE_PAREN_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(290), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(290), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -42478,15 +41282,15 @@ fn render_match_block_block(node: &MatchBlockBlockTransport, w: &mut dyn ::sitti
         head: None,
         tail: None,
     };
-    w.edge(::sittir_core::types::KindId(291), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(291), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.indent();
     w.seam("\n");
     w.adjacent();
-    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "alternative", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), "alternative", w)?;
     alternative.render(w)?;
     w.adjacent();
     w.dedent("");
-    w.edge(::sittir_core::types::KindId(291), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(291), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -42497,22 +41301,22 @@ fn render_match_block_empty(node: &MatchBlockEmptyTransport, w: &mut dyn ::sitti
 
 fn render_suite_inline(node: &SuiteInlineTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let elements = &node.elements;
-    w.edge(::sittir_core::types::KindId(293), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(293), ::sittir_core::options::Side::Before, node.layout.edges().before);
     elements.render(w)?;
     w.adjacent();
     w.token_seam("\n");
-    w.edge(::sittir_core::types::KindId(293), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(293), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_suite_block(node: &SuiteBlockTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let block = &node.block;
-    w.edge(::sittir_core::types::KindId(294), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(294), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.indent();
     w.seam("\n");
     w.adjacent();
     block.render(w)?;
-    w.edge(::sittir_core::types::KindId(294), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(294), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -42524,7 +41328,7 @@ fn render_suite_empty(node: &SuiteEmptyTransport, w: &mut dyn ::sittir_core::ren
 fn render_comparison_operator_comparator(node: &ComparisonOperatorComparatorTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let operators = &node.operators;
     let primary_expression = &node.primary_expression;
-    w.edge(::sittir_core::types::KindId(296), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(296), ::sittir_core::options::Side::Before, node.layout.edges().before);
     operators.render(w)?;
     if operators.kind_in(&*w, &[::sittir_core::types::KindId(25), ::sittir_core::types::KindId(61)]) {
         w.seam(" ");
@@ -42532,17 +41336,17 @@ fn render_comparison_operator_comparator(node: &ComparisonOperatorComparatorTran
         w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_OPERATORS_AFTER);
     }
     primary_expression.render(w)?;
-    w.edge(::sittir_core::types::KindId(296), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(296), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_yield_from_clause(node: &YieldFromClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
-    w.edge(::sittir_core::types::KindId(297), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(297), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("from")?;
     w.site_at(options::SITE_YIELD_FROM_CLAUSE_FROM_KEYWORD_AFTER);
     expression.render(w)?;
-    w.edge(::sittir_core::types::KindId(297), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(297), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -42592,684 +41396,431 @@ fn render_format_expression(node: &FormatExpressionTransport, w: &mut dyn ::sitt
 }
 
 fn render_wildcard_import(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.seat_trailing()?;
-    w.text("*")?;
-    w.end_line_after(::sittir_core::types::KindId(137));
-    w.seat_trailing()?;
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(137)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("*"))
 }
 
 fn render_pass_statement(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.seat_trailing()?;
-    w.text("pass")?;
-    w.end_line_after(::sittir_core::types::KindId(147));
-    w.seat_trailing()?;
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(147)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("pass"))
 }
 
 fn render_break_statement(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.seat_trailing()?;
-    w.text("break")?;
-    w.end_line_after(::sittir_core::types::KindId(148));
-    w.seat_trailing()?;
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(148)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("break"))
 }
 
 fn render_continue_statement(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.seat_trailing()?;
-    w.text("continue")?;
-    w.end_line_after(::sittir_core::types::KindId(149));
-    w.seat_trailing()?;
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(149)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("continue"))
 }
 
 fn render_ellipsis(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.seat_trailing()?;
-    w.text("...")?;
-    w.end_line_after(::sittir_core::types::KindId(64));
-    w.seat_trailing()?;
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(64)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("..."))
 }
 
 fn render_not_escape_sequence(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.seat_trailing()?;
-    w.adjacent();
-    w.text("\\")?;
-    w.end_line_after(::sittir_core::types::KindId(252));
-    w.seat_trailing()?;
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(252)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text("\\") })
 }
 
 fn render_true(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.seat_trailing()?;
-    w.text("True")?;
-    w.end_line_after(::sittir_core::types::KindId(70));
-    w.seat_trailing()?;
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(70)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("True"))
 }
 
 fn render_false(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.seat_trailing()?;
-    w.text("False")?;
-    w.end_line_after(::sittir_core::types::KindId(71));
-    w.seat_trailing()?;
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(71)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("False"))
 }
 
 fn render_none(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.seat_trailing()?;
-    w.text("None")?;
-    w.end_line_after(::sittir_core::types::KindId(72));
-    w.seat_trailing()?;
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(72)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("None"))
 }
 
 fn render_positional_separator(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.seat_trailing()?;
-    w.text("/")?;
-    w.end_line_after(::sittir_core::types::KindId(257));
-    w.seat_trailing()?;
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(257)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("/"))
 }
 
 fn render_keyword_separator(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.seat_trailing()?;
-    w.text("*")?;
-    w.end_line_after(::sittir_core::types::KindId(258));
-    w.seat_trailing()?;
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(258)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("*"))
 }
 
 fn render_wildcard_pattern(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.seat_trailing()?;
-    w.text("_")?;
-    w.end_line_after(::sittir_core::types::KindId(278));
-    w.seat_trailing()?;
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(278)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("_"))
 }
 
 fn render_line_continuation_nul(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.seat_trailing()?;
-    w.text("\\\u{0}")?;
-    w.end_line_after(::sittir_core::types::KindId(107));
-    w.seat_trailing()?;
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(107)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("\\\u{0}"))
 }
 
 fn render_tight(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.seat_trailing()?;
-    { w.token_seam(""); Ok::<(), ::sittir_core::render::RenderError>(()) }?;
-    w.end_line_after(::sittir_core::types::KindId(122));
-    w.seat_trailing()?;
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(122)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.token_seam(""); Ok::<(), ::sittir_core::render::RenderError>(()) })
 }
 
 fn render_space(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.seat_trailing()?;
-    { w.token_seam(" "); Ok::<(), ::sittir_core::render::RenderError>(()) }?;
-    w.end_line_after(::sittir_core::types::KindId(123));
-    w.seat_trailing()?;
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(123)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.token_seam(" "); Ok::<(), ::sittir_core::render::RenderError>(()) })
 }
 
 fn render_tab(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.seat_trailing()?;
-    { w.token_seam("\t"); Ok::<(), ::sittir_core::render::RenderError>(()) }?;
-    w.end_line_after(::sittir_core::types::KindId(124));
-    w.seat_trailing()?;
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(124)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.token_seam("\t"); Ok::<(), ::sittir_core::render::RenderError>(()) })
 }
 
 fn render_newline(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.seat_trailing()?;
-    { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) }?;
-    w.end_line_after(::sittir_core::types::KindId(115));
-    w.seat_trailing()?;
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(115)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) })
 }
 
 fn render_blankline(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.seat_trailing()?;
-    { w.token_seam("\n\n"); Ok::<(), ::sittir_core::render::RenderError>(()) }?;
-    w.end_line_after(::sittir_core::types::KindId(125));
-    w.seat_trailing()?;
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(125)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.token_seam("\n\n"); Ok::<(), ::sittir_core::render::RenderError>(()) })
 }
 
 fn render_double_blankline(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.seat_trailing()?;
-    { w.token_seam("\n\n\n"); Ok::<(), ::sittir_core::render::RenderError>(()) }?;
-    w.end_line_after(::sittir_core::types::KindId(126));
-    w.seat_trailing()?;
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(126)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.token_seam("\n\n\n"); Ok::<(), ::sittir_core::render::RenderError>(()) })
 }
 
 fn render_import_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("import")?;
-    w.end_line_after(::sittir_core::types::KindId(2));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(2)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("import"))
 }
 
 fn render_dot(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(".")?;
-    w.end_line_after(::sittir_core::types::KindId(3));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(3)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("."))
 }
 
 fn render_from_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("from")?;
-    w.end_line_after(::sittir_core::types::KindId(4));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(4)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("from"))
 }
 
 fn render_future_ukeyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("__future__")?;
-    w.end_line_after(::sittir_core::types::KindId(5));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(5)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("__future__"))
 }
 
 fn render_as_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("as")?;
-    w.end_line_after(::sittir_core::types::KindId(7));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(7)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("as"))
 }
 
 fn render_star(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("*")?;
-    w.end_line_after(::sittir_core::types::KindId(8));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(8)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("*"))
 }
 
 fn render_gt_gt(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(">>")?;
-    w.end_line_after(::sittir_core::types::KindId(9));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(9)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(">>"))
 }
 
 fn render_assert_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("assert")?;
-    w.end_line_after(::sittir_core::types::KindId(10));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(10)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("assert"))
 }
 
 fn render_print_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("print")?;
-    w.end_line_after(::sittir_core::types::KindId(67));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(67)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("print"))
 }
 
 fn render_exec_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("exec")?;
-    w.end_line_after(::sittir_core::types::KindId(38));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(38)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("exec"))
 }
 
 fn render_async_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("async")?;
-    w.end_line_after(::sittir_core::types::KindId(68));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(68)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("async"))
 }
 
 fn render_await_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("await")?;
-    w.end_line_after(::sittir_core::types::KindId(69));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(69)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("await"))
 }
 
 fn render_type_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("type")?;
-    w.end_line_after(::sittir_core::types::KindId(39));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(39)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("type"))
 }
 
 fn render_match_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("match")?;
-    w.end_line_after(::sittir_core::types::KindId(22));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(22)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("match"))
 }
 
 fn render_colon_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(":=")?;
-    w.end_line_after(::sittir_core::types::KindId(11));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(11)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(":="))
 }
 
 fn render_return_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("return")?;
-    w.end_line_after(::sittir_core::types::KindId(12));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(12)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("return"))
 }
 
 fn render_del_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("del")?;
-    w.end_line_after(::sittir_core::types::KindId(13));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(13)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("del"))
 }
 
 fn render_raise_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("raise")?;
-    w.end_line_after(::sittir_core::types::KindId(14));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(14)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("raise"))
 }
 
 fn render_pass_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("pass")?;
-    w.end_line_after(::sittir_core::types::KindId(15));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(15)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("pass"))
 }
 
 fn render_break_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("break")?;
-    w.end_line_after(::sittir_core::types::KindId(16));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(16)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("break"))
 }
 
 fn render_continue_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("continue")?;
-    w.end_line_after(::sittir_core::types::KindId(17));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(17)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("continue"))
 }
 
 fn render_if_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("if")?;
-    w.end_line_after(::sittir_core::types::KindId(18));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(18)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("if"))
 }
 
 fn render_colon(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(":")?;
-    w.end_line_after(::sittir_core::types::KindId(19));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(19)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(":"))
 }
 
 fn render_elif_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("elif")?;
-    w.end_line_after(::sittir_core::types::KindId(20));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(20)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("elif"))
 }
 
 fn render_else_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("else")?;
-    w.end_line_after(::sittir_core::types::KindId(21));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(21)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("else"))
 }
 
 fn render_case_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("case")?;
-    w.end_line_after(::sittir_core::types::KindId(23));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(23)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("case"))
 }
 
 fn render_for_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("for")?;
-    w.end_line_after(::sittir_core::types::KindId(24));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(24)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("for"))
 }
 
 fn render_in_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("in")?;
-    w.end_line_after(::sittir_core::types::KindId(25));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(25)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("in"))
 }
 
 fn render_while_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("while")?;
-    w.end_line_after(::sittir_core::types::KindId(26));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(26)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("while"))
 }
 
 fn render_try_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("try")?;
-    w.end_line_after(::sittir_core::types::KindId(27));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(27)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("try"))
 }
 
 fn render_except_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("except")?;
-    w.end_line_after(::sittir_core::types::KindId(28));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(28)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("except"))
 }
 
 fn render_finally_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("finally")?;
-    w.end_line_after(::sittir_core::types::KindId(30));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(30)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("finally"))
 }
 
 fn render_with_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("with")?;
-    w.end_line_after(::sittir_core::types::KindId(31));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(31)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("with"))
 }
 
 fn render_def_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("def")?;
-    w.end_line_after(::sittir_core::types::KindId(32));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(32)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("def"))
 }
 
 fn render_dash_gt(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("->")?;
-    w.end_line_after(::sittir_core::types::KindId(75));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(75)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("->"))
 }
 
 fn render_lparen(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("(")?;
-    w.end_line_after(::sittir_core::types::KindId(33));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(33)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("("))
 }
 
 fn render_rparen(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(")")?;
-    w.end_line_after(::sittir_core::types::KindId(34));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(34)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(")"))
 }
 
 fn render_star_star(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("**")?;
-    w.end_line_after(::sittir_core::types::KindId(35));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(35)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("**"))
 }
 
 fn render_global_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("global")?;
-    w.end_line_after(::sittir_core::types::KindId(36));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(36)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("global"))
 }
 
 fn render_nonlocal_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("nonlocal")?;
-    w.end_line_after(::sittir_core::types::KindId(37));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(37)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("nonlocal"))
 }
 
 fn render_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("=")?;
-    w.end_line_after(::sittir_core::types::KindId(40));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(40)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("="))
 }
 
 fn render_class_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("class")?;
-    w.end_line_after(::sittir_core::types::KindId(41));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(41)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("class"))
 }
 
 fn render_lbrack(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("[")?;
-    w.end_line_after(::sittir_core::types::KindId(42));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(42)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("["))
 }
 
 fn render_rbrack(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("]")?;
-    w.end_line_after(::sittir_core::types::KindId(43));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(43)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("]"))
 }
 
 fn render_at(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("@")?;
-    w.end_line_after(::sittir_core::types::KindId(44));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(44)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("@"))
 }
 
 fn render_lbrace(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("{")?;
-    w.end_line_after(::sittir_core::types::KindId(46));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(46)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("{"))
 }
 
 fn render_rbrace(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("}")?;
-    w.end_line_after(::sittir_core::types::KindId(47));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(47)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("}"))
 }
 
 fn render_underscore(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("_")?;
-    w.end_line_after(::sittir_core::types::KindId(48));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(48)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("_"))
 }
 
 fn render_dash(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("-")?;
-    w.end_line_after(::sittir_core::types::KindId(50));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(50)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("-"))
 }
 
 fn render_plus(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("+")?;
-    w.end_line_after(::sittir_core::types::KindId(49));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(49)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("+"))
 }
 
 fn render_not_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("not")?;
-    w.end_line_after(::sittir_core::types::KindId(51));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(51)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("not"))
 }
 
 fn render_and_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("and")?;
-    w.end_line_after(::sittir_core::types::KindId(52));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(52)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("and"))
 }
 
 fn render_or_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("or")?;
-    w.end_line_after(::sittir_core::types::KindId(53));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(53)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("or"))
 }
 
 fn render_slash(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("/")?;
-    w.end_line_after(::sittir_core::types::KindId(54));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(54)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("/"))
 }
 
 fn render_percent(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("%")?;
-    w.end_line_after(::sittir_core::types::KindId(55));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(55)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("%"))
 }
 
 fn render_slash_slash(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("//")?;
-    w.end_line_after(::sittir_core::types::KindId(56));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(56)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("//"))
 }
 
 fn render_pipe(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("|")?;
-    w.end_line_after(::sittir_core::types::KindId(45));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(45)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("|"))
 }
 
 fn render_amp(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("&")?;
-    w.end_line_after(::sittir_core::types::KindId(57));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(57)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("&"))
 }
 
 fn render_caret(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("^")?;
-    w.end_line_after(::sittir_core::types::KindId(58));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(58)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("^"))
 }
 
 fn render_lt_lt(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("<<")?;
-    w.end_line_after(::sittir_core::types::KindId(59));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(59)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("<<"))
 }
 
 fn render_tilde(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("~")?;
-    w.end_line_after(::sittir_core::types::KindId(60));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(60)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("~"))
 }
 
 fn render_lambda_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("lambda")?;
-    w.end_line_after(::sittir_core::types::KindId(62));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(62)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("lambda"))
 }
 
 fn render_plus_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("+=")?;
-    w.end_line_after(::sittir_core::types::KindId(76));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(76)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("+="))
 }
 
 fn render_dash_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("-=")?;
-    w.end_line_after(::sittir_core::types::KindId(77));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(77)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("-="))
 }
 
 fn render_star_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("*=")?;
-    w.end_line_after(::sittir_core::types::KindId(78));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(78)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("*="))
 }
 
 fn render_slash_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("/=")?;
-    w.end_line_after(::sittir_core::types::KindId(79));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(79)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("/="))
 }
 
 fn render_at_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("@=")?;
-    w.end_line_after(::sittir_core::types::KindId(80));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(80)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("@="))
 }
 
 fn render_slash_slash_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("//=")?;
-    w.end_line_after(::sittir_core::types::KindId(81));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(81)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("//="))
 }
 
 fn render_percent_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("%=")?;
-    w.end_line_after(::sittir_core::types::KindId(82));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(82)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("%="))
 }
 
 fn render_star_star_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("**=")?;
-    w.end_line_after(::sittir_core::types::KindId(83));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(83)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("**="))
 }
 
 fn render_gt_gt_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(">>=")?;
-    w.end_line_after(::sittir_core::types::KindId(84));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(84)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(">>="))
 }
 
 fn render_lt_lt_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("<<=")?;
-    w.end_line_after(::sittir_core::types::KindId(85));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(85)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("<<="))
 }
 
 fn render_amp_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("&=")?;
-    w.end_line_after(::sittir_core::types::KindId(86));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(86)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("&="))
 }
 
 fn render_caret_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("^=")?;
-    w.end_line_after(::sittir_core::types::KindId(87));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(87)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("^="))
 }
 
 fn render_pipe_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("|=")?;
-    w.end_line_after(::sittir_core::types::KindId(88));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(88)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("|="))
 }
 
 fn render_yield_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("yield")?;
-    w.end_line_after(::sittir_core::types::KindId(63));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(63)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("yield"))
 }
 
 fn render_comma(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(",")?;
-    w.end_line_after(::sittir_core::types::KindId(6));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(6)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(","))
 }
 
 fn render_bslash(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("\\")?;
-    w.end_line_after(::sittir_core::types::KindId(65));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(65)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("\\"))
 }
 
 fn render_lt(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("<")?;
-    w.end_line_after(::sittir_core::types::KindId(108));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(108)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("<"))
 }
 
 fn render_lt_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("<=")?;
-    w.end_line_after(::sittir_core::types::KindId(109));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(109)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("<="))
 }
 
 fn render_eq_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("==")?;
-    w.end_line_after(::sittir_core::types::KindId(110));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(110)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("=="))
 }
 
 fn render_bang_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("!=")?;
-    w.end_line_after(::sittir_core::types::KindId(111));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(111)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("!="))
 }
 
 fn render_gt_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(">=")?;
-    w.end_line_after(::sittir_core::types::KindId(112));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(112)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(">="))
 }
 
 fn render_gt(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(">")?;
-    w.end_line_after(::sittir_core::types::KindId(113));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(113)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(">"))
 }
 
 fn render_lt_gt(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("<>")?;
-    w.end_line_after(::sittir_core::types::KindId(114));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(114)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("<>"))
 }
 
 fn render_not_in(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("not in")?;
-    w.end_line_after(::sittir_core::types::KindId(210));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(210)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("not in"))
 }
 
 fn render_is_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("is")?;
-    w.end_line_after(::sittir_core::types::KindId(61));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(61)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("is"))
 }
 
 fn render_is_not(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("is not")?;
-    w.end_line_after(::sittir_core::types::KindId(211));
-    Ok(())
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(211)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("is not"))
 }
 
 fn render_statement(t: &StatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {

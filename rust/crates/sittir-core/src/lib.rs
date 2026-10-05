@@ -13,7 +13,7 @@ pub mod boundary;
 pub mod classify;
 pub mod engine;
 pub mod format;
-pub mod macros;
+pub mod layout;
 #[cfg(feature = "napi-bindings")]
 pub mod napi_engine;
 pub mod options;
