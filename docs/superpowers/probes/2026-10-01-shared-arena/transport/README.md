@@ -19,6 +19,7 @@ the same input bytes and adds the probe. Release native build, Apple M4 Pro, Nod
 | `top-of-stack.py` | Summarizes a `sample` file's "Sort by top of stack" section by library, idle waits left out. |
 | `symbolize.py` | Attributes busy samples inside the stripped `.node` to functions, through the unstripped cargo dylib's `nm -n` table (same code layout). |
 | `transport-census.py` | Counts a `transport.rs`'s transport structs, slot fields and enums, and the share of lines in napi `FromNapiValue`/`ToNapiValue` impls and in render functions. |
+| `generated-tables-census.py` | Counts every generated table the spec's Appendix B classifies, per grammar, in the checkout it is given (or the current directory): wrap projection against member lines, the route and set tables, `consts.ts` and `utils.ts` tables, `kind_ids.rs`'s constants and read tables, option sites, the node model, fixtures and the JS-only surface. Uses `transport-census.py` for `transport.rs`. |
 | `proto/slot-derive/` | The probe's proc macro: `#[transport(kind = "…", wire = "words\|napi\|json\|all")]` on a struct whose fields carry `#[slot(field = "…")]`, `#[slot(kinds = […], tokens = […])]` or `#[trivia]`. Expands mechanically into the struct with a `kind_id` (`$type`) and storage keys `_<field>`, a one-level `TreeCursor` reader (tree → transport, children with structure as coordinates, leaves inline, anonymous tokens as kind ids), the arena record writer and reader, and the napi object and serde forms the `wire` names. |
 | `proto/probe/` | A napi addon declaring rust `function_item` (eight slots, as `FunctionItemTransport` holds them) and `function_modifiers` through the macro. It compiles sittir's generated rust parser directly from the checkout. `Probe` reads them in batch and one node per call, in each wire form, decodes each form back (the render direction), and times the native read alone. `rt.rs` is the runtime the expansion calls: `Slot`, `Coord`, `Leaf`, route resolution, the child reader, the arena encoding. |
 | `measure-proto.mts` | Runs the probe against today's engine on the same nodes: native read alone, each wire form (with the members a wrap would still attach), today's `$query().$descendants.ofType` read split into walk / read / wrap, retained heap (today's from one root parsed outside the measured window), and decode per form. |
@@ -41,6 +42,7 @@ pnpm exec tsx $T/loop-native.mts rust $T/inputs/engine.rs render-fixtures 14 &  
 sample <node pid> 6 1 -file out.txt && python3 $T/top-of-stack.py out.txt sittir-rust
 nm -n target/aarch64-apple-darwin/release/libsittir_rust.dylib > syms.txt && python3 $T/symbolize.py out.txt syms.txt sittir-rust | c++filt
 python3 $T/transport-census.py rust/crates/sittir-{rust,typescript,python,scm,regex}/src/render/transport.rs
+python3 $T/generated-tables-census.py                                              # spec Appendix B
 
 cp Cargo.lock $T/proto/                                                           # the checkout's lock; not committed here
 (cd $T/proto && CARGO_TARGET_DIR=$PWD/target cargo build --release --offline -p transport-probe)

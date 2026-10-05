@@ -1,9 +1,11 @@
 """Census of a generated transport.rs: transport structs and their slot fields, slot enums, and the
 share of lines in napi FromNapiValue / ToNapiValue impls and in render functions.
-Usage: python3 transport-census.py <transport.rs>..."""
+Usage: python3 transport-census.py <transport.rs>...
+generated-tables-census.py imports census() from here."""
 import re, sys
 
-for path in sys.argv[1:]:
+
+def census(path):
     lines = open(path).read().split('\n')
     structs = slots = enums = 0
     napi_lines = render_lines = 0
@@ -34,7 +36,15 @@ for path in sys.argv[1:]:
                 render_lines += n
             i = j
         i += 1
-    total = len(lines)
-    name = path.split('/')[-4]
-    print(f'{name}: {total} lines, {structs} transport structs, {slots} slot fields, {enums} enums; '
-          f'napi From/To impls {napi_lines} lines ({100*napi_lines/total:.1f}%), render fns {render_lines} lines ({100*render_lines/total:.1f}%)')
+    return {'lines': len(lines), 'structs': structs, 'slots': slots, 'enums': enums,
+            'napi_lines': napi_lines, 'render_lines': render_lines}
+
+
+if __name__ == '__main__':
+    for path in sys.argv[1:]:
+        c = census(path)
+        total = c['lines']
+        name = path.split('/')[-4]
+        print(f"{name}: {total} lines, {c['structs']} transport structs, {c['slots']} slot fields, {c['enums']} enums; "
+              f"napi From/To impls {c['napi_lines']} lines ({100*c['napi_lines']/total:.1f}%), "
+              f"render fns {c['render_lines']} lines ({100*c['render_lines']/total:.1f}%)")

@@ -128,8 +128,8 @@ pub struct FunctionItemTransport {
 
 #[transport(kind = kind::FUNCTION_MODIFIERS, words = 3)]
 pub struct FunctionModifiersTransport {
-    #[slot(kinds = [kind::EXTERN_MODIFIER], tokens = [kind::ASYNC, kind::DEFAULT, kind::CONST, kind::UNSAFE],
-           store = kind, word = 1)]
+    #[slot(field = field::MODIFIER, store = mixed, word = 1,
+           members = [kind::ASYNC_KEYWORD, kind::DEFAULT_KEYWORD, kind::CONST_KEYWORD, kind::UNSAFE_KEYWORD])]
     pub modifier: Vec<SlotValue<FunctionModifiersModifierTransportSlot>>,
 }
 ```
@@ -207,7 +207,7 @@ codegen column is where the attribute is derived; nothing is derived twice.
 | **Arity and requiredness** | the wrap's `normalizeSingularWrapSlot` and `normalizeRepeatedWrapSlot` | the field's type; `min` |
 | **Keyword presence** | the wrap's `coerceBooleanKeywordStorage` | `store = presence` with the token's kind |
 | **Flag sets** | the wrap's `coerceBitflagStorage` | `store = flags` with each flag's kind |
-| **Kind-enum storage** | the wrap's `projectKindEnumStorage` and `projectMixedEnumStorage`, with text-to-id and alternate-id tables | `store = kind`, with `fold = [(alt, member), …]` |
+| **Kind-enum storage** | the wrap's `projectKindEnumStorage` and `projectMixedEnumStorage`, with text-to-id and alternate-id tables and the kinds read by their spelled text | `store = kind`, or `store = mixed` where the slot also holds nodes; `members = […]` (the kinds stored as ids), `fold = [(alt, member), …]`, and `spelled_by = […]` for a node read as the member its text spells |
 | **Scalar storage for trivia** | `ReadModel::stores_scalar`, emitted per grammar in `kind_ids.rs` (`emitters/kind-id-rust.ts`) | none of its own: a child is scalar exactly when its slot's `store` is presence, flags or kind. The table and the trait method go |
 | **`$other`** | the reader puts anonymous unfielded children there; the wrap reclaims terminals with `readTerminalFromOther` and spellings with `_spellingTokens` | routed by `tokens`; a layout token is skipped; any other child is refused (ruling 7) |
 | **Text leaves** | the reader's `read_leaf` captures `$text`; the wrap's `_isReadTextLeaf` and the `_spelled…` helpers tile anonymous tokens into a leaf's text | `#[transport(text)]`, or `#[transport(spelled)]` for a leaf spelled by its tokens |
@@ -416,7 +416,11 @@ members in the builder's literal — changed all three, and the maintainer ruled
 13. **Type-check time** does not regress beyond noise.
 14. **Measurements, recorded and not asserted:** the tables in this document, re-taken at each step
     with the same files, commands and populations; the stage breakdown becomes a `sittir tool`.
-15. Full unit suite.
+15. **The first step is render-neutral.** With the typed reader on today's object wire, render input
+    still crosses as napi objects, so rebuilt render's cost per slot value is unchanged within noise,
+    measured back to back with `measure-rebuilt.mts` before and after. The macro's napi codec replaces
+    the napi derive's, so this is measured, not assumed.
+16. Full unit suite.
 
 ## Feasibility probe
 
@@ -509,3 +513,177 @@ raised (11).
 11. **A child read within the depth gets its members on first access,** not with its parent. A deep
     read holds data until an accessor reaches a child, which wraps it then, and the parent keeps that
     wrapper (§ Laziness).
+
+## Appendix A. Attributed declarations
+
+Three rust kinds as codegen would emit them from master's model (`ccb370d67`), with every fact the
+read needs as an attribute: `function_item`; the list owner `parameters` with its list kind
+`parameters_elements`; and `binary_expression`, whose slots store kind enums. Ids are generated
+constants: `kind::` from `parser.c`'s symbol table as today, and `field::` from its field table the
+same way. Word offsets follow the record layout the probe measured: one header word, five words a
+singular slot, two a list. Each declaration is followed by what its attributes replace today.
+
+### A.1 `function_item`
+
+```rust
+#[transport(kind = kind::FUNCTION_ITEM, words = 41, layout = [kind::FN_KEYWORD, kind::DASH_GT])]
+pub struct FunctionItemTransport {
+    #[slot(field = field::VISIBILITY_MODIFIER, store = node, word = 1)]
+    pub visibility_modifier: Option<SlotValue<VisibilityModifierTransport>>,
+    #[slot(field = field::FUNCTION_MODIFIERS, store = node, word = 6)]
+    pub function_modifiers: Option<SlotValue<FunctionModifiersTransport>>,
+    #[slot(field = field::NAME, store = node, word = 11)]
+    pub name: SlotValue<FunctionItemNameTransportSlot>,
+    #[slot(field = field::TYPE_PARAMETERS, store = node, word = 16)]
+    pub type_parameters: Option<SlotValue<TypeParametersTransport>>,
+    #[slot(field = field::PARAMETERS, store = node, word = 21)]
+    pub parameters: SlotValue<ParametersTransport>,
+    #[slot(field = field::RETURN_TYPE, store = mixed, word = 26,
+           members = [kind::NEVER_TYPE, kind::U8_KEYWORD, kind::I8_KEYWORD, /* … */ kind::CHAR_KEYWORD],
+           spelled_by = [kind::_PRIMITIVE_TYPE])]
+    pub return_type: Option<SlotValue<TypeTransport>>,
+    #[slot(field = field::WHERE_CLAUSE, store = node, word = 31)]
+    pub where_clause: Option<SlotValue<WhereClauseTransport>>,
+    #[slot(field = field::BODY, store = node, word = 36)]
+    pub body: SlotValue<BlockTransport>,
+    #[trivia]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    // edges, source_gap, source_flank: stamped by the render side, as today
+}
+```
+
+- **Routing:** every slot routes by its field (the `querySlots` row for kind 208, and
+  `wrapFunctionItem`'s `modelSlots` list). No child needs re-keying, so there is no
+  `_ROUTES_FunctionItem` table today either.
+- **Arity:** `name`, `parameters` and `body` are required (`normalizeSingularWrapSlot(…, true, …)`)
+  and the rest optional; the field types carry it.
+- **Scalar storage:** `return_type` stores `!` (`never_type`) and the 17 primitive keywords as kind
+  ids and any other type as a node. Today that is `projectMixedEnumStorage` with an 18-entry
+  text table and `[341]` as the kinds read by their spelled text, plus `stores_scalar`'s arm
+  `(208, "return_type")`. `members` lists the ids, and `spelled_by` names `primitive_type`
+  (kind 341), which the reader reads as the keyword its text spells.
+- **Layout:** `fn` and `->` are the template's own tokens (`render-bodies.json`). The reader skips
+  them and refuses any other anonymous child.
+- **Depth and trivia:** no minimum depth. `#[trivia]` holds the extras the placement rule gives the
+  node, such as the doc comments that lead it; the kind has no inner gaps.
+- `FunctionItemNameTransportSlot` (identifier or metavariable) and `TypeTransport` (the `_type`
+  supertype) are the kinds each slot admits, as codegen types them today. A supertype's members
+  reach the slot through its field, so these slots need no `kinds` list.
+
+### A.2 `parameters` and `parameters_elements`
+
+```rust
+#[transport(kind = kind::PARAMETERS, words = 6, min_depth = 2,
+            layout = [kind::LPAREN, kind::RPAREN], gap(1) = elements)]
+pub struct ParametersTransport {
+    #[slot(field = field::ELEMENTS, store = node, word = 1)]
+    pub elements: Option<SlotValue<ParametersElementsTransport>>,
+    #[trivia]
+    pub transport_trivia_data: Option<TransportTrivia>,
+}
+
+#[transport(kind = kind::PARAMETERS_ELEMENTS, list, item = item, words = 3)]
+pub struct ParametersElementsTransport {
+    #[slot(field = field::ITEM, store = node, separator = kind::COMMA, word = 1)]
+    pub item: Vec<SlotValue<AttributedParameterTransport>>,
+    #[trivia]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    // delimiter, item_separator_space_before, item_separator_space_after: render-option fields the
+    // render side stamps from their site, as today
+}
+```
+
+- **`min_depth = 2`:** today `_LIST_OWNER_KINDS` holds `Parameters`, and `hydrateSelf` reads it two
+  levels deep, so the list and its items arrive with the owner.
+- **`gap(1) = elements`:** an extra after the first token, `(`, that no named child owns (a comment
+  inside `()`) sits in `elements`' gap. Today that is `inner_gap_key`'s arm `(230, 1)` natively and
+  `INNER_GAPS.parameters` in JavaScript.
+- **`list, item = item`:** `parameters_elements` is the list kind enrich mints (kind 349, so the
+  parser issues it). Its items route by the field `item` (the `querySlots` row for kind 349), and
+  `separator` names the `,` between them, which the reader skips and the render writes.
+- **Layout:** `(` and `)`.
+
+### A.3 `binary_expression`
+
+```rust
+#[transport(kind = kind::BINARY_EXPRESSION, words = 16)]
+pub struct BinaryExpressionTransport {
+    #[slot(field = field::LEFT, store = mixed, word = 1,
+           members = [kind::TRUE_KEYWORD, kind::FALSE_KEYWORD, kind::SELF],
+           spelled_by = [kind::BOOLEAN_LITERAL])]
+    pub left: SlotValue<Box<ExpressionTransport>>,
+    #[slot(field = field::OPERATOR, store = kind, word = 6,
+           members = [kind::AMP_AMP, kind::PIPE_PIPE, kind::AMP, kind::PIPE, kind::CARET,
+                      kind::EQ_EQ, kind::BANG_EQ, kind::LT, kind::LT_EQ, kind::GT, kind::GT_EQ,
+                      kind::LT_LT, kind::GT_GT, kind::PLUS, kind::DASH, kind::STAR,
+                      kind::SLASH, kind::PERCENT])]
+    pub operator: SlotValue<Box<AnyTransport>>,
+    #[slot(field = field::RIGHT, store = mixed, word = 11,
+           members = [kind::TRUE_KEYWORD, kind::FALSE_KEYWORD, kind::SELF],
+           spelled_by = [kind::BOOLEAN_LITERAL])]
+    pub right: SlotValue<Box<ExpressionTransport>>,
+    #[trivia]
+    pub transport_trivia_data: Option<TransportTrivia>,
+}
+```
+
+- **`operator`:** today `projectKindEnumStorage` with an 18-entry text table, plus `stores_scalar`'s arm
+  `(270, "operator")`. The slot holds the operator token's kind id.
+- **`left` and `right`:** today `projectMixedEnumStorage` with `{ true, false, self }` and `[336]`. A
+  `boolean_literal` node is read as the keyword its text spells, and any other expression is a node;
+  `stores_scalar`'s arms `(270, "left")` and `(270, "right")` list the same members.
+- No layout tokens: every token of the template is a slot.
+
+### A.4 The other attributes, each on a rust kind
+
+| attribute | kind and slot | today |
+| --- | --- | --- |
+| `kinds` (no field) | `where_clause.where_predicates` | the `querySlots` row for kind 211: kind `where_predicates`, no field |
+| `store = presence` | `let_declaration.mutable`, the `mut` token (`kind::MUTABLE_SPECIFIER`) | `coerceBooleanKeywordStorage` (22 sites in rust) |
+| `store = flags` | none: no grammar has a bitflag field today | `coerceBitflagStorage`, no call sites |
+| `interior = …` | `integer_literal_decimal`: `content` and `suffix` | `TOKEN_INTERIORS` (40 kinds), read by `_projectLexed` (15 sites) |
+| `text` | `identifier` | `read_leaf`'s `$text`, and `_isReadTextLeaf` |
+| `envelope, content = …` | `field_identifier`, `shorthand_field_identifier` and `type_identifier` over `identifier` | `_ALIAS_ENVELOPES` = {465, 467, 468}, and `_aliasEnvelope` |
+| `separator`, `flank` | `closure_parameters` | `dropWireDelimiters` (3 sites in rust) |
+| `group` | `match_arm_with_comma.pattern`, a pattern and its guard | `seatWith`, called from `$with`, which stays a member; the read needs only the slot's `group` |
+
+## Appendix B. Generated tables under the typed transport
+
+Each generated table, counted per grammar at `ccb370d67` (whose generated output is `106475358`'s), and
+what the typed transport does with it: **retired**, **folded** into an attribute, **still needed**,
+or **JS by nature**. `transport/generated-tables-census.py` in this design's probes prints the
+counts.
+
+| table | rust | typescript | python | scm | regex | under the typed transport |
+| --- | --- | --- | --- | --- | --- | --- |
+| `transport.rs` structs (slot fields) | 395 (696) | 400 (740) | 284 (478) | 52 (83) | 81 (101) | **folded**: they become the declarations, with the attributes added |
+| `transport.rs` napi `FromNapiValue`/`ToNapiValue` impls, lines | 40 592 | 53 338 | 26 075 | 4 902 | 5 976 | **retired** at the record step (the macro emits the object codec until then) |
+| `transport.rs` render functions, lines | 4 158 | 4 094 | 2 658 | 530 | 532 | **still needed**: they stay codegen-emitted (ruling 9) |
+| `kind_ids.rs` kind constants | 468 | 467 | 336 | 69 | 91 | **still needed**: the attributes name them (ruling 10) |
+| `kind_ids.rs` `kind_name_from_id`, arms | 469 | 685 | 338 | 69 | 100 | **still needed**: refusals and diagnostics name kinds (ruling 7) |
+| `kind_ids.rs` `inner_gap_key`, arms | 25 | 14 | 12 | 2 | 1 | **folded** into `gap(n) = slot` |
+| `kind_ids.rs` `stores_scalar`, arms | 143 | 203 | 94 | 5 | 8 | **retired**: a slot's `store` says it |
+| `lib.rs` `ReadModel` impl, lines | 14 | 14 | 14 | 14 | 14 | **retired** |
+| `wrap.ts` projection, lines before each wrap's members | 10 936 | 11 018 | 5 824 | 928 | 812 | **folded**: the reader projects |
+| `wrap.ts` member literals, lines | 6 703 | 6 358 | 3 875 | 497 | 1 785 | **JS by nature**: the wrap keeps them |
+| `_ROUTES_<Kind>`: tables, rows | 17, 305 | 19, 295 | 19, 456 | 4, 15 | 8, 31 | **folded** into `field`, `kinds` and `tokens` |
+| `SUPERTYPE_MEMBERS`, lines | 677 | 530 | 457 | 62 | 24 | **folded** into a slot's `kinds` |
+| `_LIST_OWNER_KINDS`, lines | 17 | 9 | 20 | 0 | 0 | **folded** into `min_depth` |
+| `_ALIAS_ENVELOPES`, `_HIDDEN_KINDS`, `_RECLAIMS_ANONYMOUS`, lines | 1, 6, 3 | 1, 5, 3 | 1, 5, 3 | 1, 0, 1 | 1, 1, 1 | **folded** into `envelope` and `tokens` |
+| `consts.ts` `TOKEN_INTERIORS`, kinds | 40 | 15 | 4 | 2 | 1 | **folded** into `interior` for the read; **still needed** by the builders' coercion (`factories/coerce.ts`) |
+| `consts.ts` `INNER_GAPS`, kinds | 25 | 14 | 12 | 2 | 1 | **still needed**: `$trivia.inner` and `innerAt` check gap keys in JavaScript; it and `gap(n)` come from the node map's same rows |
+| `utils.ts` `querySlots`, kinds | 226 | 222 | 162 | 23 | 28 | **still needed**: query plans compile in JavaScript (ruling 8) |
+| `utils.ts` `triviaFacts`, lines | 28 | 25 | 26 | 11 | 11 | **JS by nature**: the `$trivia` API's facts |
+| `options.rs` `SITE_*` constants | 1 510 | 1 361 | 973 | 153 | 118 | **still needed**: render-option sites, which the read does not touch |
+| `node-model.json5`, lines | 26 753 | 28 826 | 16 679 | 2 326 | 2 880 | **still needed**, off the read path: tools, censuses and validators read it |
+| `factory-map.json5` | — | — | — | — | — | **already retired**: `node-model.json5` replaced it |
+| `test-fixtures.json`, fixtures | 4 078 | 4 158 | 2 790 | 38 | 108 | **still needed** for render parity and the rebuilt-render bench; its encoding follows the wire at the record step |
+| `.sittir/render-bodies.json`, `resolutions.json`, lines | 8 319, 223 | 8 557, 1 909 | 4 443, 346 | 706, 4 | 953, 63 | **still needed**, off the read path: the validators' renderable catalog, and conflict resolutions for codegen |
+| `STORED_SLOT_READERS` (`@sittir/common`, hand-written) | — | — | — | — | — | **JS by nature**: the key a node keeps its seated slots' readers under |
+| types, `is`, `ir`, factories and glue, lines | 55 521 | 59 419 | 34 275 | 5 399 | 7 943 | **JS by nature** |
+
+The typed reader retires or folds the read's projection: 29 518 lines of wrap projection across the
+five grammars, the route, supertype, list-owner, envelope and reclaim tables, `stores_scalar` and
+`ReadModel`, and `inner_gap_key`. The record step retires the napi impls, 130 883 lines across the
+five grammars. Render functions, kind constants, option sites, query slots, trivia facts, the node
+model and the fixtures stay.
