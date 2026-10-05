@@ -17,6 +17,7 @@ import type {
 	WithoutGroup,
 	GrammarTypeMap,
 	NodeMethods,
+	HoldsTree,
 	TriviaSetter,
 	GrammarInnerTrivia,
 	SlotHint,
@@ -25658,7 +25659,12 @@ export namespace Identifier {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.Identifier;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = IdentifierNs['Loose'];
 	export type LooseConfig = IdentifierNs['LooseConfig'];
 	export type BuildArgs = IdentifierNs['BuildArgs'];
@@ -25673,7 +25679,12 @@ export namespace TokenRepetitionPatternText {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.TokenRepetitionPatternText;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = TokenRepetitionPatternTextNs['Loose'];
 	export type LooseConfig = TokenRepetitionPatternTextNs['LooseConfig'];
 	export type BuildArgs = TokenRepetitionPatternTextNs['BuildArgs'];
@@ -25688,7 +25699,12 @@ export namespace StringOpen {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.StringOpen;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = StringOpenNs['Loose'];
 	export type LooseConfig = StringOpenNs['LooseConfig'];
 	export type BuildArgs = StringOpenNs['BuildArgs'];
@@ -25703,7 +25719,12 @@ export namespace CharLiteralEmpty {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.CharLiteralEmpty;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = CharLiteralEmptyNs['Loose'];
 	export type LooseConfig = CharLiteralEmptyNs['LooseConfig'];
 	export type BuildArgs = CharLiteralEmptyNs['BuildArgs'];
@@ -25718,7 +25739,12 @@ export namespace LineCommentExtraSlashes {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.LineCommentExtraSlashes;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = LineCommentExtraSlashesNs['Loose'];
 	export type LooseConfig = LineCommentExtraSlashesNs['LooseConfig'];
 	export type BuildArgs = LineCommentExtraSlashesNs['BuildArgs'];
@@ -25733,7 +25759,12 @@ export namespace LineCommentRegular {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.LineCommentRegular;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = LineCommentRegularNs['Loose'];
 	export type LooseConfig = LineCommentRegularNs['LooseConfig'];
 	export type BuildArgs = LineCommentRegularNs['BuildArgs'];
@@ -25748,7 +25779,12 @@ export namespace BlockCommentRegular {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.BlockCommentRegular;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = BlockCommentRegularNs['Loose'];
 	export type LooseConfig = BlockCommentRegularNs['LooseConfig'];
 	export type BuildArgs = BlockCommentRegularNs['BuildArgs'];
@@ -25763,7 +25799,12 @@ export namespace FloatLiteral {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.FloatLiteral;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = FloatLiteralNs['Loose'];
 	export type LooseConfig = FloatLiteralNs['LooseConfig'];
 	export type BuildArgs = FloatLiteralNs['BuildArgs'];
@@ -25778,7 +25819,12 @@ export namespace StringContent {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.StringContent;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = StringContentNs['Loose'];
 	export type LooseConfig = StringContentNs['LooseConfig'];
 	export type BuildArgs = StringContentNs['BuildArgs'];
@@ -25793,7 +25839,12 @@ export namespace RawStringLiteralContent {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.RawStringLiteralContent;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = RawStringLiteralContentNs['Loose'];
 	export type LooseConfig = RawStringLiteralContentNs['LooseConfig'];
 	export type BuildArgs = RawStringLiteralContentNs['BuildArgs'];
@@ -25808,7 +25859,12 @@ export namespace RawStringLiteralStart {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.RawStringLiteralStart;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = RawStringLiteralStartNs['Loose'];
 	export type LooseConfig = RawStringLiteralStartNs['LooseConfig'];
 	export type BuildArgs = RawStringLiteralStartNs['BuildArgs'];
@@ -25823,7 +25879,12 @@ export namespace RawStringLiteralEnd {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.RawStringLiteralEnd;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = RawStringLiteralEndNs['Loose'];
 	export type LooseConfig = RawStringLiteralEndNs['LooseConfig'];
 	export type BuildArgs = RawStringLiteralEndNs['BuildArgs'];
@@ -25838,7 +25899,12 @@ export namespace DocComment {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.DocComment;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = DocCommentNs['Loose'];
 	export type LooseConfig = DocCommentNs['LooseConfig'];
 	export type BuildArgs = DocCommentNs['BuildArgs'];
@@ -25853,7 +25919,12 @@ export namespace BlockCommentContent {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.BlockCommentContent;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = BlockCommentContentNs['Loose'];
 	export type LooseConfig = BlockCommentContentNs['LooseConfig'];
 	export type BuildArgs = BlockCommentContentNs['BuildArgs'];
@@ -25868,7 +25939,12 @@ export namespace ErrorSentinel {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.ErrorSentinel;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = ErrorSentinelNs['Loose'];
 	export type LooseConfig = ErrorSentinelNs['LooseConfig'];
 	export type BuildArgs = ErrorSentinelNs['BuildArgs'];

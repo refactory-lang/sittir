@@ -13,6 +13,7 @@ import type {
 	NodeOfNamespaces,
 	GrammarTypeMap,
 	NodeMethods,
+	HoldsTree,
 	TriviaSetter,
 	GrammarInnerTrivia,
 	SlotHint,
@@ -2729,7 +2730,12 @@ export namespace PatternCharacter {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.PatternCharacter;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = PatternCharacterNs['Loose'];
 	export type LooseConfig = PatternCharacterNs['LooseConfig'];
 	export type BuildArgs = PatternCharacterNs['BuildArgs'];
@@ -2744,7 +2750,12 @@ export namespace PosixClassName {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.PosixClassName;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = PosixClassNameNs['Loose'];
 	export type LooseConfig = PosixClassNameNs['LooseConfig'];
 	export type BuildArgs = PosixClassNameNs['BuildArgs'];
@@ -2759,7 +2770,12 @@ export namespace ClassCharacter {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.ClassCharacter;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = ClassCharacterNs['Loose'];
 	export type LooseConfig = ClassCharacterNs['LooseConfig'];
 	export type BuildArgs = ClassCharacterNs['BuildArgs'];
@@ -2774,7 +2790,12 @@ export namespace Flags {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.Flags;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = FlagsNs['Loose'];
 	export type LooseConfig = FlagsNs['LooseConfig'];
 	export type BuildArgs = FlagsNs['BuildArgs'];
@@ -2789,7 +2810,12 @@ export namespace ZeroOrMore {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.ZeroOrMore;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = ZeroOrMoreNs['Loose'];
 	export type LooseConfig = ZeroOrMoreNs['LooseConfig'];
 	export type BuildArgs = ZeroOrMoreNs['BuildArgs'];
@@ -2804,7 +2830,12 @@ export namespace OneOrMore {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.OneOrMore;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = OneOrMoreNs['Loose'];
 	export type LooseConfig = OneOrMoreNs['LooseConfig'];
 	export type BuildArgs = OneOrMoreNs['BuildArgs'];
@@ -2819,7 +2850,12 @@ export namespace Optional {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.Optional;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = OptionalNs['Loose'];
 	export type LooseConfig = OptionalNs['LooseConfig'];
 	export type BuildArgs = OptionalNs['BuildArgs'];
@@ -2834,7 +2870,12 @@ export namespace DecimalEscape {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.DecimalEscape;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = DecimalEscapeNs['Loose'];
 	export type LooseConfig = DecimalEscapeNs['LooseConfig'];
 	export type BuildArgs = DecimalEscapeNs['BuildArgs'];
@@ -2849,7 +2890,12 @@ export namespace UnicodeCharacterEscape {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.UnicodeCharacterEscape;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = UnicodeCharacterEscapeNs['Loose'];
 	export type LooseConfig = UnicodeCharacterEscapeNs['LooseConfig'];
 	export type BuildArgs = UnicodeCharacterEscapeNs['BuildArgs'];
@@ -2864,7 +2910,12 @@ export namespace UnicodePropertyValue {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.UnicodePropertyValue;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = UnicodePropertyValueNs['Loose'];
 	export type LooseConfig = UnicodePropertyValueNs['LooseConfig'];
 	export type BuildArgs = UnicodePropertyValueNs['BuildArgs'];
@@ -2879,7 +2930,12 @@ export namespace ControlEscape {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.ControlEscape;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = ControlEscapeNs['Loose'];
 	export type LooseConfig = ControlEscapeNs['LooseConfig'];
 	export type BuildArgs = ControlEscapeNs['BuildArgs'];
@@ -2894,7 +2950,12 @@ export namespace ControlLetterEscape {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.ControlLetterEscape;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = ControlLetterEscapeNs['Loose'];
 	export type LooseConfig = ControlLetterEscapeNs['LooseConfig'];
 	export type BuildArgs = ControlLetterEscapeNs['BuildArgs'];
@@ -2909,7 +2970,12 @@ export namespace GroupName {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.GroupName;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = GroupNameNs['Loose'];
 	export type LooseConfig = GroupNameNs['LooseConfig'];
 	export type BuildArgs = GroupNameNs['BuildArgs'];
@@ -2924,7 +2990,12 @@ export namespace DecimalDigits {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.DecimalDigits;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = DecimalDigitsNs['Loose'];
 	export type LooseConfig = DecimalDigitsNs['LooseConfig'];
 	export type BuildArgs = DecimalDigitsNs['BuildArgs'];
@@ -2939,7 +3010,12 @@ export namespace CharacterClassEscapeText1 {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.CharacterClassEscapeText1;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = CharacterClassEscapeText1Ns['Loose'];
 	export type LooseConfig = CharacterClassEscapeText1Ns['LooseConfig'];
 	export type BuildArgs = CharacterClassEscapeText1Ns['BuildArgs'];
@@ -2954,7 +3030,12 @@ export namespace CharacterClassEscapeText2 {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.CharacterClassEscapeText2;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = CharacterClassEscapeText2Ns['Loose'];
 	export type LooseConfig = CharacterClassEscapeText2Ns['LooseConfig'];
 	export type BuildArgs = CharacterClassEscapeText2Ns['BuildArgs'];

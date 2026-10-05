@@ -13,6 +13,7 @@ import type {
 	NodeOfNamespaces,
 	GrammarTypeMap,
 	NodeMethods,
+	HoldsTree,
 	TriviaSetter,
 	GrammarInnerTrivia,
 	SlotHint,
@@ -2210,7 +2211,12 @@ export namespace Identifier {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.Identifier;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = IdentifierNs['Loose'];
 	export type LooseConfig = IdentifierNs['LooseConfig'];
 	export type BuildArgs = IdentifierNs['BuildArgs'];
@@ -2225,7 +2231,12 @@ export namespace ImmediateIdentifier {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.ImmediateIdentifier;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = ImmediateIdentifierNs['Loose'];
 	export type LooseConfig = ImmediateIdentifierNs['LooseConfig'];
 	export type BuildArgs = ImmediateIdentifierNs['BuildArgs'];
@@ -2240,7 +2251,12 @@ export namespace StringContentText {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.StringContentText;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = StringContentTextNs['Loose'];
 	export type LooseConfig = StringContentTextNs['LooseConfig'];
 	export type BuildArgs = StringContentTextNs['BuildArgs'];
