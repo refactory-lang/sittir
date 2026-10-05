@@ -1197,6 +1197,7 @@ export interface NodeToConfigOpts {
 	readonly fieldAliasMap?: Record<string, Record<string, string>>;
 	readonly factoryFields?: Record<string, readonly string[]>;
 	readonly factorySlots?: Record<string, Record<string, FactorySlotMeta>>;
+	readonly omitOptionDefaults?: boolean;
 	readonly cstNodeKindHint?: string;
 	readonly firstNamedChildKindHint?: string;
 	readonly namedChildKindHints?: readonly string[];
@@ -1509,19 +1510,19 @@ function projectSeatedSlot(
 function splitRegisteredSlots(
 	kind: string,
 	config: Record<string, unknown>,
-	factorySlots: NodeToConfigOpts['factorySlots']
+	opts: Pick<NodeToConfigOpts, 'factorySlots' | 'omitOptionDefaults'>
 ): { readonly base: Record<string, unknown>; readonly registered: Record<string, unknown> | undefined } {
-	const slotMeta = factorySlots?.[kind];
+	const slotMeta = opts.factorySlots?.[kind];
 	if (slotMeta === undefined) return { base: config, registered: undefined };
 	const registeredKeys = Object.keys(config).filter((key) => slotMeta[key]?.registered === true);
 	if (registeredKeys.length === 0) return { base: config, registered: undefined };
 	const base: Record<string, unknown> = { ...config };
 	const registered: Record<string, unknown> = {};
 	for (const key of registeredKeys) {
-		registered[key] = base[key];
+		if (opts.omitOptionDefaults !== true || base[key] !== slotMeta[key]!.optionDefault) registered[key] = base[key];
 		delete base[key];
 	}
-	return { base, registered };
+	return { base, registered: Object.keys(registered).length > 0 ? registered : undefined };
 }
 
 function factoryArgs(
@@ -1533,7 +1534,7 @@ function factoryArgs(
 ): readonly unknown[] {
 	const route = armRouteOf(config);
 	if (shape === 'config') {
-		const { base, registered } = splitRegisteredSlots(kind, config, opts.factorySlots);
+		const { base, registered } = splitRegisteredSlots(kind, config, opts);
 		const listOptions = separatedListFactoryOptions(referenceData);
 		const options = {
 			...(listOptions?.separator !== undefined && !('separator' in base) ? { separator: listOptions.separator } : {}),
@@ -1546,16 +1547,14 @@ function factoryArgs(
 	const positional = positionalOf(config);
 	if (positional !== undefined) return positional;
 	if (shape === 'direct' || shape === 'forwarded') {
-		const { base, registered } = splitRegisteredSlots(kind, config, opts.factorySlots);
+		const { base, registered } = splitRegisteredSlots(kind, config, opts);
 		const value = isFlattened(base) ? base : directFactoryValue(kind, base, opts.factorySlots, opts.factoryFields);
 		return registered === undefined ? [value] : [value, registered];
 	}
-	const elements = getChildFactoryArgs(kind, config, opts.factorySlots, opts.factoryFields);
-	if (shape === 'elements') {
-		const options = separatedListFactoryOptions(referenceData);
-		return options !== undefined ? [options, ...elements] : elements;
-	}
-	return elements;
+	const { base, registered } = splitRegisteredSlots(kind, config, opts);
+	const elements = getChildFactoryArgs(kind, base, opts.factorySlots, opts.factoryFields);
+	const options = shape === 'elements' ? separatedListFactoryOptions(referenceData) : registered;
+	return options !== undefined ? [options, ...elements] : elements;
 }
 
 function walkMount(entry: IrEntry, mount: string): IrEntry | undefined {
@@ -2082,6 +2081,7 @@ export interface FactoryDispatchArtifacts {
 	readonly factoryFields: Record<string, readonly string[]>;
 	readonly factorySlots: Record<string, Record<string, FactorySlotMeta>>;
 	readonly surface?: IrSurface;
+	readonly omitOptionDefaults?: boolean;
 }
 
 export interface FactoryDispatchOpts {
@@ -2099,7 +2099,7 @@ export function buildFactoryNodeFromReference(
 	artifacts: FactoryDispatchArtifacts,
 	opts: FactoryDispatchOpts = {}
 ): unknown | null {
-	const { factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, surface } = artifacts;
+	const { factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, surface, omitOptionDefaults } = artifacts;
 	const factory = factoryMap[kind];
 	if (!factory) return null;
 	const configOpts = {
@@ -2109,6 +2109,7 @@ export function buildFactoryNodeFromReference(
 		factoryFields,
 		factorySlots,
 		surface,
+		omitOptionDefaults,
 		cstNodeKindHint: opts.cstNodeKindHint,
 		firstNamedChildKindHint: opts.firstNamedChildKindHint,
 		namedChildKindHints: opts.namedChildKindHints,

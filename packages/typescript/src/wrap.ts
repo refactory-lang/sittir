@@ -2236,7 +2236,7 @@ export function wrapVariableDeclarator(
 }
 
 export function wrapStatementBlock(data: T.StatementBlock, tree: TreeHandle): T.StatementBlock.Parsed {
-	data = modelSlots(data, ['_statements', '_automatic_semicolon']);
+	data = modelSlots(data, ['_statements', '_terminator']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -2268,28 +2268,30 @@ export function wrapStatementBlock(data: T.StatementBlock, tree: TreeHandle): T.
 			),
 			tree
 		),
-		_automatic_semicolon: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._automatic_semicolon, 'automatic_semicolon', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'automatic_semicolon',
-				span: (data as _UntypedNode).$span
-			})
-		),
+		_terminator:
+			projectKindEnumStorage(
+				normalizeSingularWrapSlot(data._terminator, 'terminator', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _UntypedNode).$span
+				}),
+				{ '\n': 173 }
+			) ?? 0,
 
 		statements() {
 			return hydrateChildren<T.Statement>(this._statements as readonly T.Statement[] | undefined, tree);
 		},
-		automaticSemicolon() {
-			return this._automatic_semicolon;
+		terminator() {
+			return this._terminator;
 		},
 		$with: {
 			statements: (...v: NonNullable<T.StatementBlock['_statements']>[number][]) =>
 				rebuilt(node, handle, () =>
 					wrapStatementBlock({ ...$edited(data), _statements: restItems('statements', v) }, tree)
 				),
-			automaticSemicolon: (v: NonNullable<T.StatementBlock['_automatic_semicolon']>) =>
-				rebuilt(node, handle, () => wrapStatementBlock({ ...$edited(data), _automatic_semicolon: v }, tree))
+			terminator: (v: NonNullable<T.StatementBlock['_terminator']> | null) =>
+				rebuilt(node, handle, () => wrapStatementBlock({ ...$edited(data), _terminator: v === null ? 0 : v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -2768,15 +2770,16 @@ export function wrapDoStatement(data: T.DoStatement, tree: TreeHandle): T.DoStat
 			}),
 			tree
 		),
-		_terminator: projectKindEnumStorage(
-			normalizeSingularWrapSlot(data._terminator, 'terminator', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'terminator',
-				span: (data as _UntypedNode).$span
-			}),
-			{ '\n': 173, ';': 20 }
-		),
+		_terminator:
+			projectKindEnumStorage(
+				normalizeSingularWrapSlot(data._terminator, 'terminator', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _UntypedNode).$span
+				}),
+				{ '\n': 173, ';': 20 }
+			) ?? 0,
 
 		body() {
 			return hydrateChild<T.Statement>(this._body, tree);
@@ -2792,8 +2795,8 @@ export function wrapDoStatement(data: T.DoStatement, tree: TreeHandle): T.DoStat
 				rebuilt(node, handle, () => wrapDoStatement({ ...$edited(data), _body: v }, tree)),
 			condition: (v: NonNullable<T.DoStatement['_condition']>) =>
 				rebuilt(node, handle, () => wrapDoStatement({ ...$edited(data), _condition: v }, tree)),
-			terminator: (v: NonNullable<T.DoStatement['_terminator']>) =>
-				rebuilt(node, handle, () => wrapDoStatement({ ...$edited(data), _terminator: v }, tree))
+			terminator: (v: NonNullable<T.DoStatement['_terminator']> | null) =>
+				rebuilt(node, handle, () => wrapDoStatement({ ...$edited(data), _terminator: v === null ? 0 : v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -4755,7 +4758,7 @@ export function wrapClass(data: T.Class, tree: TreeHandle): T.Class.Parsed {
 }
 
 export function wrapClassDeclaration(data: T.ClassDeclaration, tree: TreeHandle): T.ClassDeclaration.Parsed {
-	data = modelSlots(data, ['_decorator', '_name', '_type_parameters', '_heritage', '_body', '_automatic_semicolon']);
+	data = modelSlots(data, ['_decorator', '_name', '_type_parameters', '_heritage', '_body', '_terminator']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -4819,14 +4822,16 @@ export function wrapClassDeclaration(data: T.ClassDeclaration, tree: TreeHandle)
 			}),
 			tree
 		),
-		_automatic_semicolon: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._automatic_semicolon, 'automatic_semicolon', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'automatic_semicolon',
-				span: (data as _UntypedNode).$span
-			})
-		),
+		_terminator:
+			projectKindEnumStorage(
+				normalizeSingularWrapSlot(data._terminator, 'terminator', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _UntypedNode).$span
+				}),
+				{ '\n': 173 }
+			) ?? 0,
 
 		decorators() {
 			return hydrateChildren<T.Decorator>(this._decorator as readonly T.Decorator[] | undefined, tree);
@@ -4843,8 +4848,8 @@ export function wrapClassDeclaration(data: T.ClassDeclaration, tree: TreeHandle)
 		body() {
 			return hydrateChild<T.ClassBody>(this._body, tree);
 		},
-		automaticSemicolon() {
-			return this._automatic_semicolon;
+		terminator() {
+			return this._terminator;
 		},
 		$with: {
 			decorators: (...v: NonNullable<T.ClassDeclaration['_decorator']>[number][]) =>
@@ -4866,8 +4871,8 @@ export function wrapClassDeclaration(data: T.ClassDeclaration, tree: TreeHandle)
 				rebuilt(node, handle, () => wrapClassDeclaration({ ...$edited(data), _heritage: v }, tree)),
 			body: (v: NonNullable<T.ClassDeclaration['_body']>) =>
 				rebuilt(node, handle, () => wrapClassDeclaration({ ...$edited(data), _body: v }, tree)),
-			automaticSemicolon: (v: NonNullable<T.ClassDeclaration['_automatic_semicolon']>) =>
-				rebuilt(node, handle, () => wrapClassDeclaration({ ...$edited(data), _automatic_semicolon: v }, tree))
+			terminator: (v: NonNullable<T.ClassDeclaration['_terminator']> | null) =>
+				rebuilt(node, handle, () => wrapClassDeclaration({ ...$edited(data), _terminator: v === null ? 0 : v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -5060,7 +5065,7 @@ export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeH
 		'_parameters',
 		'_return_type',
 		'_body',
-		'_automatic_semicolon'
+		'_terminator'
 	]);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
@@ -5133,14 +5138,16 @@ export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeH
 			}),
 			tree
 		),
-		_automatic_semicolon: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._automatic_semicolon, 'automatic_semicolon', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'automatic_semicolon',
-				span: (data as _UntypedNode).$span
-			})
-		),
+		_terminator:
+			projectKindEnumStorage(
+				normalizeSingularWrapSlot(data._terminator, 'terminator', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _UntypedNode).$span
+				}),
+				{ '\n': 173 }
+			) ?? 0,
 
 		async() {
 			return this._async;
@@ -5163,8 +5170,8 @@ export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeH
 		body() {
 			return hydrateChild<T.StatementBlock>(this._body, tree);
 		},
-		automaticSemicolon() {
-			return this._automatic_semicolon;
+		terminator() {
+			return this._terminator;
 		},
 		$with: {
 			async: (v: NonNullable<T.FunctionDeclaration['_async']>) =>
@@ -5193,8 +5200,10 @@ export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeH
 				rebuilt(node, handle, () => wrapFunctionDeclaration({ ...$edited(data), _return_type: v }, tree)),
 			body: (v: NonNullable<T.FunctionDeclaration['_body']>) =>
 				rebuilt(node, handle, () => wrapFunctionDeclaration({ ...$edited(data), _body: v }, tree)),
-			automaticSemicolon: (v: NonNullable<T.FunctionDeclaration['_automatic_semicolon']>) =>
-				rebuilt(node, handle, () => wrapFunctionDeclaration({ ...$edited(data), _automatic_semicolon: v }, tree))
+			terminator: (v: NonNullable<T.FunctionDeclaration['_terminator']> | null) =>
+				rebuilt(node, handle, () =>
+					wrapFunctionDeclaration({ ...$edited(data), _terminator: v === null ? 0 : v }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -5352,7 +5361,7 @@ export function wrapGeneratorFunctionDeclaration(
 		'_parameters',
 		'_return_type',
 		'_body',
-		'_automatic_semicolon'
+		'_terminator'
 	]);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
@@ -5425,14 +5434,16 @@ export function wrapGeneratorFunctionDeclaration(
 			}),
 			tree
 		),
-		_automatic_semicolon: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._automatic_semicolon, 'automatic_semicolon', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'automatic_semicolon',
-				span: (data as _UntypedNode).$span
-			})
-		),
+		_terminator:
+			projectKindEnumStorage(
+				normalizeSingularWrapSlot(data._terminator, 'terminator', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _UntypedNode).$span
+				}),
+				{ '\n': 173 }
+			) ?? 0,
 
 		async() {
 			return this._async;
@@ -5455,8 +5466,8 @@ export function wrapGeneratorFunctionDeclaration(
 		body() {
 			return hydrateChild<T.StatementBlock>(this._body, tree);
 		},
-		automaticSemicolon() {
-			return this._automatic_semicolon;
+		terminator() {
+			return this._terminator;
 		},
 		$with: {
 			async: (v: NonNullable<T.GeneratorFunctionDeclaration['_async']>) =>
@@ -5485,9 +5496,9 @@ export function wrapGeneratorFunctionDeclaration(
 				rebuilt(node, handle, () => wrapGeneratorFunctionDeclaration({ ...$edited(data), _return_type: v }, tree)),
 			body: (v: NonNullable<T.GeneratorFunctionDeclaration['_body']>) =>
 				rebuilt(node, handle, () => wrapGeneratorFunctionDeclaration({ ...$edited(data), _body: v }, tree)),
-			automaticSemicolon: (v: NonNullable<T.GeneratorFunctionDeclaration['_automatic_semicolon']>) =>
+			terminator: (v: NonNullable<T.GeneratorFunctionDeclaration['_terminator']> | null) =>
 				rebuilt(node, handle, () =>
-					wrapGeneratorFunctionDeclaration({ ...$edited(data), _automatic_semicolon: v }, tree)
+					wrapGeneratorFunctionDeclaration({ ...$edited(data), _terminator: v === null ? 0 : v }, tree)
 				)
 		},
 		$render: () => renderText(handle, node),
@@ -7449,7 +7460,7 @@ export function wrapFormalParameters(data: T.FormalParameters, tree: TreeHandle)
 }
 
 export function wrapClassStaticBlock(data: T.ClassStaticBlock, tree: TreeHandle): T.ClassStaticBlock.Parsed {
-	data = modelSlots(data, ['_automatic_semicolon', '_body']);
+	data = modelSlots(data, ['_terminator', '_body']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -7468,14 +7479,16 @@ export function wrapClassStaticBlock(data: T.ClassStaticBlock, tree: TreeHandle)
 	const node = {
 		...data,
 		$type: TSKindId.ClassStaticBlock as const,
-		_automatic_semicolon: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._automatic_semicolon, 'automatic_semicolon', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'automatic_semicolon',
-				span: (data as _UntypedNode).$span
-			})
-		),
+		_terminator:
+			projectKindEnumStorage(
+				normalizeSingularWrapSlot(data._terminator, 'terminator', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _UntypedNode).$span
+				}),
+				{ '\n': 173 }
+			) ?? 0,
 		_body: storeExpanded(
 			normalizeSingularWrapSlot(data._body, 'body', true, data.$type, {
 				tree,
@@ -7486,15 +7499,15 @@ export function wrapClassStaticBlock(data: T.ClassStaticBlock, tree: TreeHandle)
 			tree
 		),
 
-		automaticSemicolon() {
-			return this._automatic_semicolon;
+		terminator() {
+			return this._terminator;
 		},
 		body() {
 			return hydrateChild<T.StatementBlock>(this._body, tree);
 		},
 		$with: {
-			automaticSemicolon: (v: NonNullable<T.ClassStaticBlock['_automatic_semicolon']>) =>
-				rebuilt(node, handle, () => wrapClassStaticBlock({ ...$edited(data), _automatic_semicolon: v }, tree)),
+			terminator: (v: NonNullable<T.ClassStaticBlock['_terminator']> | null) =>
+				rebuilt(node, handle, () => wrapClassStaticBlock({ ...$edited(data), _terminator: v === null ? 0 : v }, tree)),
 			body: (v: NonNullable<T.ClassStaticBlock['_body']>) =>
 				rebuilt(node, handle, () => wrapClassStaticBlock({ ...$edited(data), _body: v }, tree))
 		},
@@ -15413,15 +15426,16 @@ export function wrapAmbientDeclarationModule(
 			),
 			tree
 		),
-		_terminator: projectKindEnumStorage(
-			normalizeSingularWrapSlot(data._terminator, 'terminator', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'terminator',
-				span: (data as _UntypedNode).$span
-			}),
-			{ '\n': 173, ';': 20 }
-		),
+		_terminator:
+			projectKindEnumStorage(
+				normalizeSingularWrapSlot(data._terminator, 'terminator', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _UntypedNode).$span
+				}),
+				{ '\n': 173, ';': 20 }
+			) ?? 0,
 
 		name() {
 			return hydrateChild<T.PropertyIdentifier>(this._name, tree);
@@ -15437,8 +15451,10 @@ export function wrapAmbientDeclarationModule(
 				rebuilt(node, handle, () => wrapAmbientDeclarationModule({ ...$edited(data), _name: v }, tree)),
 			type: (v: NonNullable<T.AmbientDeclarationModule['_type']>) =>
 				rebuilt(node, handle, () => wrapAmbientDeclarationModule({ ...$edited(data), _type: v }, tree)),
-			terminator: (v: NonNullable<T.AmbientDeclarationModule['_terminator']>) =>
-				rebuilt(node, handle, () => wrapAmbientDeclarationModule({ ...$edited(data), _terminator: v }, tree))
+			terminator: (v: NonNullable<T.AmbientDeclarationModule['_terminator']> | null) =>
+				rebuilt(node, handle, () =>
+					wrapAmbientDeclarationModule({ ...$edited(data), _terminator: v === null ? 0 : v }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -16671,15 +16687,16 @@ export function wrapClassBodyMemberMethod(
 			}),
 			tree
 		),
-		_terminator: projectKindEnumStorage(
-			normalizeSingularWrapSlot(data._terminator, 'terminator', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'terminator',
-				span: (data as _UntypedNode).$span
-			}),
-			{ '\n': 173, ';': 20 }
-		),
+		_terminator:
+			projectKindEnumStorage(
+				normalizeSingularWrapSlot(data._terminator, 'terminator', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _UntypedNode).$span
+				}),
+				{ '\n': 173, ';': 20 }
+			) ?? 0,
 
 		decorators() {
 			return hydrateChildren<T.Decorator>(this._decorator as readonly T.Decorator[] | undefined, tree);
@@ -16697,8 +16714,10 @@ export function wrapClassBodyMemberMethod(
 				),
 			methodDefinition: (v: NonNullable<T.ClassBodyMemberMethod['_method_definition']>) =>
 				rebuilt(node, handle, () => wrapClassBodyMemberMethod({ ...$edited(data), _method_definition: v }, tree)),
-			terminator: (v: NonNullable<T.ClassBodyMemberMethod['_terminator']>) =>
-				rebuilt(node, handle, () => wrapClassBodyMemberMethod({ ...$edited(data), _terminator: v }, tree))
+			terminator: (v: NonNullable<T.ClassBodyMemberMethod['_terminator']> | null) =>
+				rebuilt(node, handle, () =>
+					wrapClassBodyMemberMethod({ ...$edited(data), _terminator: v === null ? 0 : v }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -18997,7 +19016,7 @@ export function wrapForHeaderLetConstKind(
 	data: T.ForHeaderLetConstKind,
 	tree: TreeHandle
 ): T.ForHeaderLetConstKind.Parsed {
-	data = modelSlots(data, ['_kind', '_left', '_automatic_semicolon', '_operator', '_right']);
+	data = modelSlots(data, ['_kind', '_left', '_terminator', '_operator', '_right']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -19034,14 +19053,16 @@ export function wrapForHeaderLetConstKind(
 			}),
 			tree
 		),
-		_automatic_semicolon: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._automatic_semicolon, 'automatic_semicolon', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'automatic_semicolon',
-				span: (data as _UntypedNode).$span
-			})
-		),
+		_terminator:
+			projectKindEnumStorage(
+				normalizeSingularWrapSlot(data._terminator, 'terminator', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _UntypedNode).$span
+				}),
+				{ '\n': 173 }
+			) ?? 0,
 		_operator: projectKindEnumStorage(
 			normalizeSingularWrapSlot(data._operator, 'operator', true, data.$type, {
 				tree,
@@ -19070,8 +19091,8 @@ export function wrapForHeaderLetConstKind(
 		left() {
 			return hydrateChild<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this._left, tree);
 		},
-		automaticSemicolon() {
-			return this._automatic_semicolon;
+		terminator() {
+			return this._terminator;
 		},
 		operator() {
 			return this._operator;
@@ -19084,8 +19105,10 @@ export function wrapForHeaderLetConstKind(
 				rebuilt(node, handle, () => wrapForHeaderLetConstKind({ ...$edited(data), _kind: v }, tree)),
 			left: (v: NonNullable<T.ForHeaderLetConstKind['_left']>) =>
 				rebuilt(node, handle, () => wrapForHeaderLetConstKind({ ...$edited(data), _left: v }, tree)),
-			automaticSemicolon: (v: NonNullable<T.ForHeaderLetConstKind['_automatic_semicolon']>) =>
-				rebuilt(node, handle, () => wrapForHeaderLetConstKind({ ...$edited(data), _automatic_semicolon: v }, tree)),
+			terminator: (v: NonNullable<T.ForHeaderLetConstKind['_terminator']> | null) =>
+				rebuilt(node, handle, () =>
+					wrapForHeaderLetConstKind({ ...$edited(data), _terminator: v === null ? 0 : v }, tree)
+				),
 			operator: (v: NonNullable<T.ForHeaderLetConstKind['_operator']>) =>
 				rebuilt(node, handle, () => wrapForHeaderLetConstKind({ ...$edited(data), _operator: v }, tree)),
 			right: (v: NonNullable<T.ForHeaderLetConstKind['_right']>) =>

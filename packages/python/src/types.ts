@@ -7543,2106 +7543,2268 @@ export interface ModuleNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	Module.Bound,
-	Module.BuildArgs,
-	Module.LooseArgs,
 	never,
 	TSKindId.Module,
 	Module.Parsed,
 	EmptyModule
-> {}
+> {
+	readonly BuildArgs: Module.BuildArgs;
+	readonly LooseArgs: Module.LooseArgs;
+}
 export interface SimpleStatementsNs extends NodeNs<
 	SimpleStatements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	SimpleStatements.Bound,
-	SimpleStatements.BuildArgs,
-	SimpleStatements.LooseArgs,
 	'elements',
 	TSKindId.SimpleStatements,
 	SimpleStatements.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: SimpleStatements.BuildArgs;
+	readonly LooseArgs: SimpleStatements.LooseArgs;
+}
 export interface ImportStatementNs extends NodeNs<
 	ImportStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ImportStatement.Bound,
-	ImportStatement.BuildArgs,
-	ImportStatement.LooseArgs,
 	'names',
 	TSKindId.ImportStatement,
 	ImportStatement.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ImportStatement.BuildArgs;
+	readonly LooseArgs: ImportStatement.LooseArgs;
+}
 export interface RelativeImportNs extends NodeNs<
 	RelativeImport,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	RelativeImport.Bound,
-	RelativeImport.BuildArgs,
-	RelativeImport.LooseArgs,
 	never,
 	TSKindId.RelativeImport,
 	RelativeImport.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: RelativeImport.BuildArgs;
+	readonly LooseArgs: RelativeImport.LooseArgs;
+}
 export interface FutureImportStatementNs extends NodeNs<
 	FutureImportStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	FutureImportStatement.Bound,
-	FutureImportStatement.BuildArgs,
-	FutureImportStatement.LooseArgs,
 	'content',
 	TSKindId.FutureImportStatement,
 	FutureImportStatement.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: FutureImportStatement.BuildArgs;
+	readonly LooseArgs: FutureImportStatement.LooseArgs;
+}
 export interface ImportFromStatementNs extends NodeNs<
 	ImportFromStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ImportFromStatement.Bound,
-	ImportFromStatement.BuildArgs,
-	ImportFromStatement.LooseArgs,
 	never,
 	TSKindId.ImportFromStatement,
 	ImportFromStatement.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ImportFromStatement.BuildArgs;
+	readonly LooseArgs: ImportFromStatement.LooseArgs;
+}
 export interface ImportListNs extends NodeNs<
 	ImportList,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ImportList.Bound,
-	ImportList.BuildArgs,
-	ImportList.LooseArgs,
 	'name',
 	TSKindId.ImportList,
 	ImportList.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ImportList.BuildArgs;
+	readonly LooseArgs: ImportList.LooseArgs;
+}
 export interface AliasedImportNs extends NodeNs<
 	AliasedImport,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	AliasedImport.Bound,
-	AliasedImport.BuildArgs,
-	AliasedImport.LooseArgs,
 	never,
 	TSKindId.AliasedImport,
 	AliasedImport.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: AliasedImport.BuildArgs;
+	readonly LooseArgs: AliasedImport.LooseArgs;
+}
 export interface PrintStatementNs extends NodeNs<
 	PrintStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	PrintStatement.Bound,
-	PrintStatement.BuildArgs,
-	PrintStatement.LooseArgs,
 	'content',
 	TSKindId.PrintStatement,
 	PrintStatement.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: PrintStatement.BuildArgs;
+	readonly LooseArgs: PrintStatement.LooseArgs;
+}
 export interface ChevronNs extends NodeNs<
 	Chevron,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Chevron.Bound,
-	Chevron.BuildArgs,
-	Chevron.LooseArgs,
 	'expression',
 	TSKindId.Chevron,
 	Chevron.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Chevron.BuildArgs;
+	readonly LooseArgs: Chevron.LooseArgs;
+}
 export interface AssertStatementNs extends NodeNs<
 	AssertStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	AssertStatement.Bound,
-	AssertStatement.BuildArgs,
-	AssertStatement.LooseArgs,
 	never,
 	TSKindId.AssertStatement,
 	AssertStatement.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: AssertStatement.BuildArgs;
+	readonly LooseArgs: AssertStatement.LooseArgs;
+}
 export interface ExpressionStatementNs extends NodeNs<
 	ExpressionStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ExpressionStatement.Bound,
-	ExpressionStatement.BuildArgs,
-	ExpressionStatement.LooseArgs,
 	'content',
 	TSKindId.ExpressionStatement,
 	ExpressionStatement.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ExpressionStatement.BuildArgs;
+	readonly LooseArgs: ExpressionStatement.LooseArgs;
+}
 export interface NamedExpressionNs extends NodeNs<
 	NamedExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	NamedExpression.Bound,
-	NamedExpression.BuildArgs,
-	NamedExpression.LooseArgs,
 	never,
 	TSKindId.NamedExpression,
 	NamedExpression.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: NamedExpression.BuildArgs;
+	readonly LooseArgs: NamedExpression.LooseArgs;
+}
 export interface ReturnStatementNs extends NodeNs<
 	ReturnStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ReturnStatement.Bound,
-	ReturnStatement.BuildArgs,
-	ReturnStatement.LooseArgs,
 	'expressions',
 	TSKindId.ReturnStatement,
 	ReturnStatement.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ReturnStatement.BuildArgs;
+	readonly LooseArgs: ReturnStatement.LooseArgs;
+}
 export interface DeleteStatementNs extends NodeNs<
 	DeleteStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	DeleteStatement.Bound,
-	DeleteStatement.BuildArgs,
-	DeleteStatement.LooseArgs,
 	'expressions',
 	TSKindId.DeleteStatement,
 	DeleteStatement.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: DeleteStatement.BuildArgs;
+	readonly LooseArgs: DeleteStatement.LooseArgs;
+}
 export interface RaiseStatementNs extends NodeNs<
 	RaiseStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	RaiseStatement.Bound,
-	RaiseStatement.BuildArgs,
-	RaiseStatement.LooseArgs,
 	never,
 	TSKindId.RaiseStatement,
 	RaiseStatement.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: RaiseStatement.BuildArgs;
+	readonly LooseArgs: RaiseStatement.LooseArgs;
+}
 export interface IfStatementNs extends NodeNs<
 	IfStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	IfStatement.Bound,
-	IfStatement.BuildArgs,
-	IfStatement.LooseArgs,
 	never,
 	TSKindId.IfStatement,
 	IfStatement.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: IfStatement.BuildArgs;
+	readonly LooseArgs: IfStatement.LooseArgs;
+}
 export interface ElifClauseNs extends NodeNs<
 	ElifClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ElifClause.Bound,
-	ElifClause.BuildArgs,
-	ElifClause.LooseArgs,
 	never,
 	TSKindId.ElifClause,
 	ElifClause.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ElifClause.BuildArgs;
+	readonly LooseArgs: ElifClause.LooseArgs;
+}
 export interface ElseClauseNs extends NodeNs<
 	ElseClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ElseClause.Bound,
-	ElseClause.BuildArgs,
-	ElseClause.LooseArgs,
 	'body',
 	TSKindId.ElseClause,
 	ElseClause.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ElseClause.BuildArgs;
+	readonly LooseArgs: ElseClause.LooseArgs;
+}
 export interface MatchStatementNs extends NodeNs<
 	MatchStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	MatchStatement.Bound,
-	MatchStatement.BuildArgs,
-	MatchStatement.LooseArgs,
 	never,
 	TSKindId.MatchStatement,
 	MatchStatement.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: MatchStatement.BuildArgs;
+	readonly LooseArgs: MatchStatement.LooseArgs;
+}
 export interface MatchBlockNs extends NodeNs<
 	MatchBlock,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	MatchBlock.Bound,
-	MatchBlock.BuildArgs,
-	MatchBlock.LooseArgs,
 	'content',
 	TSKindId.MatchBlock,
 	MatchBlock.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: MatchBlock.BuildArgs;
+	readonly LooseArgs: MatchBlock.LooseArgs;
+}
 export interface CaseClauseNs extends NodeNs<
 	CaseClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	CaseClause.Bound,
-	CaseClause.BuildArgs,
-	CaseClause.LooseArgs,
 	never,
 	TSKindId.CaseClause,
 	CaseClause.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: CaseClause.BuildArgs;
+	readonly LooseArgs: CaseClause.LooseArgs;
+}
 export interface ForStatementNs extends NodeNs<
 	ForStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ForStatement.Bound,
-	ForStatement.BuildArgs,
-	ForStatement.LooseArgs,
 	never,
 	TSKindId.ForStatement,
 	ForStatement.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ForStatement.BuildArgs;
+	readonly LooseArgs: ForStatement.LooseArgs;
+}
 export interface WhileStatementNs extends NodeNs<
 	WhileStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	WhileStatement.Bound,
-	WhileStatement.BuildArgs,
-	WhileStatement.LooseArgs,
 	never,
 	TSKindId.WhileStatement,
 	WhileStatement.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: WhileStatement.BuildArgs;
+	readonly LooseArgs: WhileStatement.LooseArgs;
+}
 export interface TryStatementNs extends NodeNs<
 	TryStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	TryStatement.Bound,
-	TryStatement.BuildArgs,
-	TryStatement.LooseArgs,
 	never,
 	TSKindId.TryStatement,
 	TryStatement.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: TryStatement.BuildArgs;
+	readonly LooseArgs: TryStatement.LooseArgs;
+}
 export interface ExceptClauseNs extends NodeNs<
 	ExceptClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ExceptClause.Bound,
-	ExceptClause.BuildArgs,
-	ExceptClause.LooseArgs,
 	never,
 	TSKindId.ExceptClause,
 	ExceptClause.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ExceptClause.BuildArgs;
+	readonly LooseArgs: ExceptClause.LooseArgs;
+}
 export interface FinallyClauseNs extends NodeNs<
 	FinallyClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	FinallyClause.Bound,
-	FinallyClause.BuildArgs,
-	FinallyClause.LooseArgs,
 	'block',
 	TSKindId.FinallyClause,
 	FinallyClause.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: FinallyClause.BuildArgs;
+	readonly LooseArgs: FinallyClause.LooseArgs;
+}
 export interface WithStatementNs extends NodeNs<
 	WithStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	WithStatement.Bound,
-	WithStatement.BuildArgs,
-	WithStatement.LooseArgs,
 	never,
 	TSKindId.WithStatement,
 	WithStatement.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: WithStatement.BuildArgs;
+	readonly LooseArgs: WithStatement.LooseArgs;
+}
 export interface WithItemNs extends NodeNs<
 	WithItem,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	WithItem.Bound,
-	WithItem.BuildArgs,
-	WithItem.LooseArgs,
 	'value',
 	TSKindId.WithItem,
 	WithItem.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: WithItem.BuildArgs;
+	readonly LooseArgs: WithItem.LooseArgs;
+}
 export interface FunctionDefinitionNs extends NodeNs<
 	FunctionDefinition,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	FunctionDefinition.Bound,
-	FunctionDefinition.BuildArgs,
-	FunctionDefinition.LooseArgs,
 	never,
 	TSKindId.FunctionDefinition,
 	FunctionDefinition.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: FunctionDefinition.BuildArgs;
+	readonly LooseArgs: FunctionDefinition.LooseArgs;
+}
 export interface ParametersNs extends NodeNs<
 	Parameters,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Parameters.Bound,
-	Parameters.BuildArgs,
-	Parameters.LooseArgs,
 	'elements',
 	TSKindId.Parameters,
 	Parameters.Parsed,
 	EmptyParameters
-> {}
+> {
+	readonly BuildArgs: Parameters.BuildArgs;
+	readonly LooseArgs: Parameters.LooseArgs;
+}
 export interface LambdaParametersNs extends NodeNs<
 	LambdaParameters,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	LambdaParameters.Bound,
-	LambdaParameters.BuildArgs,
-	LambdaParameters.LooseArgs,
 	'parameters_elements',
 	TSKindId.LambdaParameters,
 	LambdaParameters.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: LambdaParameters.BuildArgs;
+	readonly LooseArgs: LambdaParameters.LooseArgs;
+}
 export interface ListSplatNs extends NodeNs<
 	ListSplat,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ListSplat.Bound,
-	ListSplat.BuildArgs,
-	ListSplat.LooseArgs,
 	'expression',
 	TSKindId.ListSplat,
 	ListSplat.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ListSplat.BuildArgs;
+	readonly LooseArgs: ListSplat.LooseArgs;
+}
 export interface DictionarySplatNs extends NodeNs<
 	DictionarySplat,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	DictionarySplat.Bound,
-	DictionarySplat.BuildArgs,
-	DictionarySplat.LooseArgs,
 	'expression',
 	TSKindId.DictionarySplat,
 	DictionarySplat.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: DictionarySplat.BuildArgs;
+	readonly LooseArgs: DictionarySplat.LooseArgs;
+}
 export interface GlobalStatementNs extends NodeNs<
 	GlobalStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	GlobalStatement.Bound,
-	GlobalStatement.BuildArgs,
-	GlobalStatement.LooseArgs,
 	never,
 	TSKindId.GlobalStatement,
 	GlobalStatement.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: GlobalStatement.BuildArgs;
+	readonly LooseArgs: GlobalStatement.LooseArgs;
+}
 export interface NonlocalStatementNs extends NodeNs<
 	NonlocalStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	NonlocalStatement.Bound,
-	NonlocalStatement.BuildArgs,
-	NonlocalStatement.LooseArgs,
 	never,
 	TSKindId.NonlocalStatement,
 	NonlocalStatement.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: NonlocalStatement.BuildArgs;
+	readonly LooseArgs: NonlocalStatement.LooseArgs;
+}
 export interface ExecStatementNs extends NodeNs<
 	ExecStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ExecStatement.Bound,
-	ExecStatement.BuildArgs,
-	ExecStatement.LooseArgs,
 	never,
 	TSKindId.ExecStatement,
 	ExecStatement.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ExecStatement.BuildArgs;
+	readonly LooseArgs: ExecStatement.LooseArgs;
+}
 export interface TypeAliasStatementNs extends NodeNs<
 	TypeAliasStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	TypeAliasStatement.Bound,
-	TypeAliasStatement.BuildArgs,
-	TypeAliasStatement.LooseArgs,
 	never,
 	TSKindId.TypeAliasStatement,
 	TypeAliasStatement.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: TypeAliasStatement.BuildArgs;
+	readonly LooseArgs: TypeAliasStatement.LooseArgs;
+}
 export interface ClassDefinitionNs extends NodeNs<
 	ClassDefinition,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ClassDefinition.Bound,
-	ClassDefinition.BuildArgs,
-	ClassDefinition.LooseArgs,
 	never,
 	TSKindId.ClassDefinition,
 	ClassDefinition.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ClassDefinition.BuildArgs;
+	readonly LooseArgs: ClassDefinition.LooseArgs;
+}
 export interface TypeParameterNs extends NodeNs<
 	TypeParameter,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	TypeParameter.Bound,
-	TypeParameter.BuildArgs,
-	TypeParameter.LooseArgs,
 	'types',
 	TSKindId.TypeParameter,
 	TypeParameter.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: TypeParameter.BuildArgs;
+	readonly LooseArgs: TypeParameter.LooseArgs;
+}
 export interface ParenthesizedListSplatNs extends NodeNs<
 	ParenthesizedListSplat,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ParenthesizedListSplat.Bound,
-	ParenthesizedListSplat.BuildArgs,
-	ParenthesizedListSplat.LooseArgs,
 	'content',
 	TSKindId.ParenthesizedListSplat,
 	ParenthesizedListSplat.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ParenthesizedListSplat.BuildArgs;
+	readonly LooseArgs: ParenthesizedListSplat.LooseArgs;
+}
 export interface ArgumentListNs extends NodeNs<
 	ArgumentList,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ArgumentList.Bound,
-	ArgumentList.BuildArgs,
-	ArgumentList.LooseArgs,
 	'arguments',
 	TSKindId.ArgumentList,
 	ArgumentList.Parsed,
 	EmptyArgumentList
-> {}
+> {
+	readonly BuildArgs: ArgumentList.BuildArgs;
+	readonly LooseArgs: ArgumentList.LooseArgs;
+}
 export interface DecoratedDefinitionNs extends NodeNs<
 	DecoratedDefinition,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	DecoratedDefinition.Bound,
-	DecoratedDefinition.BuildArgs,
-	DecoratedDefinition.LooseArgs,
 	never,
 	TSKindId.DecoratedDefinition,
 	DecoratedDefinition.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: DecoratedDefinition.BuildArgs;
+	readonly LooseArgs: DecoratedDefinition.LooseArgs;
+}
 export interface DecoratorNs extends NodeNs<
 	Decorator,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Decorator.Bound,
-	Decorator.BuildArgs,
-	Decorator.LooseArgs,
 	'expression',
 	TSKindId.Decorator,
 	Decorator.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Decorator.BuildArgs;
+	readonly LooseArgs: Decorator.LooseArgs;
+}
 export interface BlockNs extends NodeNs<
 	Block,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Block.Bound,
-	Block.BuildArgs,
-	Block.LooseArgs,
 	never,
 	TSKindId.Block,
 	Block.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Block.BuildArgs;
+	readonly LooseArgs: Block.LooseArgs;
+}
 export interface ExpressionListNs extends NodeNs<
 	ExpressionList,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ExpressionList.Bound,
-	ExpressionList.BuildArgs,
-	ExpressionList.LooseArgs,
 	'item',
 	TSKindId.ExpressionList,
 	ExpressionList.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ExpressionList.BuildArgs;
+	readonly LooseArgs: ExpressionList.LooseArgs;
+}
 export interface DottedNameNs extends NodeNs<
 	DottedName,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	DottedName.Bound,
-	DottedName.BuildArgs,
-	DottedName.LooseArgs,
 	never,
 	TSKindId.DottedName,
 	DottedName.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: DottedName.BuildArgs;
+	readonly LooseArgs: DottedName.LooseArgs;
+}
 export interface CasePatternNs extends NodeNs<
 	CasePattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	CasePattern.Bound,
-	CasePattern.BuildArgs,
-	CasePattern.LooseArgs,
 	'content',
 	TSKindId.CasePattern,
 	CasePattern.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: CasePattern.BuildArgs;
+	readonly LooseArgs: CasePattern.LooseArgs;
+}
 export interface SimplePatternNs extends NodeNs<
 	SimplePattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	SimplePattern.Bound,
-	SimplePattern.BuildArgs,
-	SimplePattern.LooseArgs,
 	'content',
 	TSKindId.SimplePattern,
 	SimplePattern.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: SimplePattern.BuildArgs;
+	readonly LooseArgs: SimplePattern.LooseArgs;
+}
 export interface CaseAsPatternNs extends NodeNs<
 	CaseAsPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	CaseAsPattern.Bound,
-	CaseAsPattern.BuildArgs,
-	CaseAsPattern.LooseArgs,
 	never,
 	TSKindId.CaseAsPattern,
 	CaseAsPattern.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: CaseAsPattern.BuildArgs;
+	readonly LooseArgs: CaseAsPattern.LooseArgs;
+}
 export interface UnionPatternNs extends NodeNs<
 	UnionPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	UnionPattern.Bound,
-	UnionPattern.BuildArgs,
-	UnionPattern.LooseArgs,
 	never,
 	TSKindId.UnionPattern,
 	UnionPattern.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: UnionPattern.BuildArgs;
+	readonly LooseArgs: UnionPattern.LooseArgs;
+}
 export interface DictPatternNs extends NodeNs<
 	DictPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	DictPattern.Bound,
-	DictPattern.BuildArgs,
-	DictPattern.LooseArgs,
 	'elements',
 	TSKindId.DictPattern,
 	DictPattern.Parsed,
 	EmptyDictPattern
-> {}
+> {
+	readonly BuildArgs: DictPattern.BuildArgs;
+	readonly LooseArgs: DictPattern.LooseArgs;
+}
 export interface KeyValuePatternNs extends NodeNs<
 	KeyValuePattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	KeyValuePattern.Bound,
-	KeyValuePattern.BuildArgs,
-	KeyValuePattern.LooseArgs,
 	never,
 	TSKindId.KeyValuePattern,
 	KeyValuePattern.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: KeyValuePattern.BuildArgs;
+	readonly LooseArgs: KeyValuePattern.LooseArgs;
+}
 export interface KeywordPatternNs extends NodeNs<
 	KeywordPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	KeywordPattern.Bound,
-	KeywordPattern.BuildArgs,
-	KeywordPattern.LooseArgs,
 	never,
 	TSKindId.KeywordPattern,
 	KeywordPattern.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: KeywordPattern.BuildArgs;
+	readonly LooseArgs: KeywordPattern.LooseArgs;
+}
 export interface SplatPatternNs extends NodeNs<
 	SplatPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	SplatPattern.Bound,
-	SplatPattern.BuildArgs,
-	SplatPattern.LooseArgs,
 	never,
 	TSKindId.SplatPattern,
 	SplatPattern.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: SplatPattern.BuildArgs;
+	readonly LooseArgs: SplatPattern.LooseArgs;
+}
 export interface ClassPatternNs extends NodeNs<
 	ClassPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ClassPattern.Bound,
-	ClassPattern.BuildArgs,
-	ClassPattern.LooseArgs,
 	never,
 	TSKindId.ClassPattern,
 	ClassPattern.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ClassPattern.BuildArgs;
+	readonly LooseArgs: ClassPattern.LooseArgs;
+}
 export interface ComplexPatternNs extends NodeNs<
 	ComplexPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ComplexPattern.Bound,
-	ComplexPattern.BuildArgs,
-	ComplexPattern.LooseArgs,
 	never,
 	TSKindId.ComplexPattern,
 	ComplexPattern.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ComplexPattern.BuildArgs;
+	readonly LooseArgs: ComplexPattern.LooseArgs;
+}
 export interface ParametersElementsNs extends NodeNs<
 	ParametersElements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ParametersElements.Bound,
-	ParametersElements.BuildArgs,
-	ParametersElements.LooseArgs,
 	'item',
 	TSKindId.ParametersElements,
 	ParametersElements.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ParametersElements.BuildArgs;
+	readonly LooseArgs: ParametersElements.LooseArgs;
+}
 export interface PatternsNs extends NodeNs<
 	Patterns,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Patterns.Bound,
-	Patterns.BuildArgs,
-	Patterns.LooseArgs,
 	'item',
 	TSKindId.Patterns,
 	Patterns.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Patterns.BuildArgs;
+	readonly LooseArgs: Patterns.LooseArgs;
+}
 export interface TuplePatternNs extends NodeNs<
 	TuplePattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	TuplePattern.Bound,
-	TuplePattern.BuildArgs,
-	TuplePattern.LooseArgs,
 	'patterns',
 	TSKindId.TuplePattern,
 	TuplePattern.Parsed,
 	EmptyTuplePattern
-> {}
+> {
+	readonly BuildArgs: TuplePattern.BuildArgs;
+	readonly LooseArgs: TuplePattern.LooseArgs;
+}
 export interface ListPatternNs extends NodeNs<
 	ListPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ListPattern.Bound,
-	ListPattern.BuildArgs,
-	ListPattern.LooseArgs,
 	'patterns',
 	TSKindId.ListPattern,
 	ListPattern.Parsed,
 	EmptyListPattern
-> {}
+> {
+	readonly BuildArgs: ListPattern.BuildArgs;
+	readonly LooseArgs: ListPattern.LooseArgs;
+}
 export interface DefaultParameterNs extends NodeNs<
 	DefaultParameter,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	DefaultParameter.Bound,
-	DefaultParameter.BuildArgs,
-	DefaultParameter.LooseArgs,
 	never,
 	TSKindId.DefaultParameter,
 	DefaultParameter.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: DefaultParameter.BuildArgs;
+	readonly LooseArgs: DefaultParameter.LooseArgs;
+}
 export interface TypedDefaultParameterNs extends NodeNs<
 	TypedDefaultParameter,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	TypedDefaultParameter.Bound,
-	TypedDefaultParameter.BuildArgs,
-	TypedDefaultParameter.LooseArgs,
 	never,
 	TSKindId.TypedDefaultParameter,
 	TypedDefaultParameter.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: TypedDefaultParameter.BuildArgs;
+	readonly LooseArgs: TypedDefaultParameter.LooseArgs;
+}
 export interface ListSplatPatternNs extends NodeNs<
 	ListSplatPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ListSplatPattern.Bound,
-	ListSplatPattern.BuildArgs,
-	ListSplatPattern.LooseArgs,
 	'target',
 	TSKindId.ListSplatPattern,
 	ListSplatPattern.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ListSplatPattern.BuildArgs;
+	readonly LooseArgs: ListSplatPattern.LooseArgs;
+}
 export interface DictionarySplatPatternNs extends NodeNs<
 	DictionarySplatPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	DictionarySplatPattern.Bound,
-	DictionarySplatPattern.BuildArgs,
-	DictionarySplatPattern.LooseArgs,
 	'target',
 	TSKindId.DictionarySplatPattern,
 	DictionarySplatPattern.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: DictionarySplatPattern.BuildArgs;
+	readonly LooseArgs: DictionarySplatPattern.LooseArgs;
+}
 export interface AsPatternNs extends NodeNs<
 	AsPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	AsPattern.Bound,
-	AsPattern.BuildArgs,
-	AsPattern.LooseArgs,
 	never,
 	TSKindId.AsPattern,
 	AsPattern.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: AsPattern.BuildArgs;
+	readonly LooseArgs: AsPattern.LooseArgs;
+}
 export interface NotOperatorNs extends NodeNs<
 	NotOperator,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	NotOperator.Bound,
-	NotOperator.BuildArgs,
-	NotOperator.LooseArgs,
 	'argument',
 	TSKindId.NotOperator,
 	NotOperator.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: NotOperator.BuildArgs;
+	readonly LooseArgs: NotOperator.LooseArgs;
+}
 export interface BooleanOperatorNs extends NodeNs<
 	BooleanOperator,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	BooleanOperator.Bound,
-	BooleanOperator.BuildArgs,
-	BooleanOperator.LooseArgs,
 	never,
 	TSKindId.BooleanOperator,
 	BooleanOperator.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: BooleanOperator.BuildArgs;
+	readonly LooseArgs: BooleanOperator.LooseArgs;
+}
 export interface BinaryOperatorNs extends NodeNs<
 	BinaryOperator,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	BinaryOperator.Bound,
-	BinaryOperator.BuildArgs,
-	BinaryOperator.LooseArgs,
 	never,
 	TSKindId.BinaryOperator,
 	BinaryOperator.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: BinaryOperator.BuildArgs;
+	readonly LooseArgs: BinaryOperator.LooseArgs;
+}
 export interface UnaryOperatorNs extends NodeNs<
 	UnaryOperator,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	UnaryOperator.Bound,
-	UnaryOperator.BuildArgs,
-	UnaryOperator.LooseArgs,
 	never,
 	TSKindId.UnaryOperator,
 	UnaryOperator.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: UnaryOperator.BuildArgs;
+	readonly LooseArgs: UnaryOperator.LooseArgs;
+}
 export interface ComparisonOperatorNs extends NodeNs<
 	ComparisonOperator,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ComparisonOperator.Bound,
-	ComparisonOperator.BuildArgs,
-	ComparisonOperator.LooseArgs,
 	never,
 	TSKindId.ComparisonOperator,
 	ComparisonOperator.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ComparisonOperator.BuildArgs;
+	readonly LooseArgs: ComparisonOperator.LooseArgs;
+}
 export interface LambdaNs extends NodeNs<
 	Lambda,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Lambda.Bound,
-	Lambda.BuildArgs,
-	Lambda.LooseArgs,
 	never,
 	TSKindId.Lambda,
 	Lambda.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Lambda.BuildArgs;
+	readonly LooseArgs: Lambda.LooseArgs;
+}
 export interface LambdaWithinForInClauseNs extends NodeNs<
 	LambdaWithinForInClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	LambdaWithinForInClause.Bound,
-	LambdaWithinForInClause.BuildArgs,
-	LambdaWithinForInClause.LooseArgs,
 	never,
 	TSKindId.LambdaWithinForInClause,
 	LambdaWithinForInClause.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: LambdaWithinForInClause.BuildArgs;
+	readonly LooseArgs: LambdaWithinForInClause.LooseArgs;
+}
 export interface AugmentedAssignmentNs extends NodeNs<
 	AugmentedAssignment,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	AugmentedAssignment.Bound,
-	AugmentedAssignment.BuildArgs,
-	AugmentedAssignment.LooseArgs,
 	never,
 	TSKindId.AugmentedAssignment,
 	AugmentedAssignment.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: AugmentedAssignment.BuildArgs;
+	readonly LooseArgs: AugmentedAssignment.LooseArgs;
+}
 export interface PatternListNs extends NodeNs<
 	PatternList,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	PatternList.Bound,
-	PatternList.BuildArgs,
-	PatternList.LooseArgs,
 	'item',
 	TSKindId.PatternList,
 	PatternList.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: PatternList.BuildArgs;
+	readonly LooseArgs: PatternList.LooseArgs;
+}
 export interface YieldNs extends NodeNs<
 	Yield,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Yield.Bound,
-	Yield.BuildArgs,
-	Yield.LooseArgs,
 	'content',
 	TSKindId.Yield,
 	Yield.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Yield.BuildArgs;
+	readonly LooseArgs: Yield.LooseArgs;
+}
 export interface AttributeNs extends NodeNs<
 	Attribute,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Attribute.Bound,
-	Attribute.BuildArgs,
-	Attribute.LooseArgs,
 	never,
 	TSKindId.Attribute,
 	Attribute.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Attribute.BuildArgs;
+	readonly LooseArgs: Attribute.LooseArgs;
+}
 export interface SubscriptNs extends NodeNs<
 	Subscript,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Subscript.Bound,
-	Subscript.BuildArgs,
-	Subscript.LooseArgs,
 	never,
 	TSKindId.Subscript,
 	Subscript.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Subscript.BuildArgs;
+	readonly LooseArgs: Subscript.LooseArgs;
+}
 export interface SliceNs extends NodeNs<
 	Slice,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Slice.Bound,
-	Slice.BuildArgs,
-	Slice.LooseArgs,
 	never,
 	TSKindId.Slice,
 	Slice.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Slice.BuildArgs;
+	readonly LooseArgs: Slice.LooseArgs;
+}
 export interface CallNs extends NodeNs<
 	Call,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Call.Bound,
-	Call.BuildArgs,
-	Call.LooseArgs,
 	never,
 	TSKindId.Call,
 	Call.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Call.BuildArgs;
+	readonly LooseArgs: Call.LooseArgs;
+}
 export interface TypedParameterNs extends NodeNs<
 	TypedParameter,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	TypedParameter.Bound,
-	TypedParameter.BuildArgs,
-	TypedParameter.LooseArgs,
 	never,
 	TSKindId.TypedParameter,
 	TypedParameter.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: TypedParameter.BuildArgs;
+	readonly LooseArgs: TypedParameter.LooseArgs;
+}
 export interface TypeNs extends NodeNs<
 	Type,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Type.Bound,
-	Type.BuildArgs,
-	Type.LooseArgs,
 	'content',
 	TSKindId.Type,
 	Type.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Type.BuildArgs;
+	readonly LooseArgs: Type.LooseArgs;
+}
 export interface SplatTypeNs extends NodeNs<
 	SplatType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	SplatType.Bound,
-	SplatType.BuildArgs,
-	SplatType.LooseArgs,
 	never,
 	TSKindId.SplatType,
 	SplatType.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: SplatType.BuildArgs;
+	readonly LooseArgs: SplatType.LooseArgs;
+}
 export interface GenericTypeNs extends NodeNs<
 	GenericType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	GenericType.Bound,
-	GenericType.BuildArgs,
-	GenericType.LooseArgs,
 	never,
 	TSKindId.GenericType,
 	GenericType.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: GenericType.BuildArgs;
+	readonly LooseArgs: GenericType.LooseArgs;
+}
 export interface UnionTypeNs extends NodeNs<
 	UnionType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	UnionType.Bound,
-	UnionType.BuildArgs,
-	UnionType.LooseArgs,
 	never,
 	TSKindId.UnionType,
 	UnionType.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: UnionType.BuildArgs;
+	readonly LooseArgs: UnionType.LooseArgs;
+}
 export interface ConstrainedTypeNs extends NodeNs<
 	ConstrainedType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ConstrainedType.Bound,
-	ConstrainedType.BuildArgs,
-	ConstrainedType.LooseArgs,
 	never,
 	TSKindId.ConstrainedType,
 	ConstrainedType.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ConstrainedType.BuildArgs;
+	readonly LooseArgs: ConstrainedType.LooseArgs;
+}
 export interface MemberTypeNs extends NodeNs<
 	MemberType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	MemberType.Bound,
-	MemberType.BuildArgs,
-	MemberType.LooseArgs,
 	never,
 	TSKindId.MemberType,
 	MemberType.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: MemberType.BuildArgs;
+	readonly LooseArgs: MemberType.LooseArgs;
+}
 export interface KeywordArgumentNs extends NodeNs<
 	KeywordArgument,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	KeywordArgument.Bound,
-	KeywordArgument.BuildArgs,
-	KeywordArgument.LooseArgs,
 	never,
 	TSKindId.KeywordArgument,
 	KeywordArgument.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: KeywordArgument.BuildArgs;
+	readonly LooseArgs: KeywordArgument.LooseArgs;
+}
 export interface ListNs extends NodeNs<
 	List,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	List.Bound,
-	List.BuildArgs,
-	List.LooseArgs,
 	'collection_elements',
 	TSKindId.List,
 	List.Parsed,
 	EmptyList
-> {}
+> {
+	readonly BuildArgs: List.BuildArgs;
+	readonly LooseArgs: List.LooseArgs;
+}
 export interface SetNs extends NodeNs<
 	Set,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Set.Bound,
-	Set.BuildArgs,
-	Set.LooseArgs,
 	'collection_elements',
 	TSKindId.Set,
 	Set.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Set.BuildArgs;
+	readonly LooseArgs: Set.LooseArgs;
+}
 export interface TupleNs extends NodeNs<
 	Tuple,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Tuple.Bound,
-	Tuple.BuildArgs,
-	Tuple.LooseArgs,
 	'elements',
 	TSKindId.Tuple,
 	Tuple.Parsed,
 	EmptyTuple
-> {}
+> {
+	readonly BuildArgs: Tuple.BuildArgs;
+	readonly LooseArgs: Tuple.LooseArgs;
+}
 export interface DictionaryNs extends NodeNs<
 	Dictionary,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Dictionary.Bound,
-	Dictionary.BuildArgs,
-	Dictionary.LooseArgs,
 	'elements',
 	TSKindId.Dictionary,
 	Dictionary.Parsed,
 	EmptyDictionary
-> {}
+> {
+	readonly BuildArgs: Dictionary.BuildArgs;
+	readonly LooseArgs: Dictionary.LooseArgs;
+}
 export interface PairNs extends NodeNs<
 	Pair,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Pair.Bound,
-	Pair.BuildArgs,
-	Pair.LooseArgs,
 	never,
 	TSKindId.Pair,
 	Pair.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Pair.BuildArgs;
+	readonly LooseArgs: Pair.LooseArgs;
+}
 export interface ListComprehensionNs extends NodeNs<
 	ListComprehension,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ListComprehension.Bound,
-	ListComprehension.BuildArgs,
-	ListComprehension.LooseArgs,
 	never,
 	TSKindId.ListComprehension,
 	ListComprehension.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ListComprehension.BuildArgs;
+	readonly LooseArgs: ListComprehension.LooseArgs;
+}
 export interface DictionaryComprehensionNs extends NodeNs<
 	DictionaryComprehension,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	DictionaryComprehension.Bound,
-	DictionaryComprehension.BuildArgs,
-	DictionaryComprehension.LooseArgs,
 	never,
 	TSKindId.DictionaryComprehension,
 	DictionaryComprehension.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: DictionaryComprehension.BuildArgs;
+	readonly LooseArgs: DictionaryComprehension.LooseArgs;
+}
 export interface SetComprehensionNs extends NodeNs<
 	SetComprehension,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	SetComprehension.Bound,
-	SetComprehension.BuildArgs,
-	SetComprehension.LooseArgs,
 	never,
 	TSKindId.SetComprehension,
 	SetComprehension.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: SetComprehension.BuildArgs;
+	readonly LooseArgs: SetComprehension.LooseArgs;
+}
 export interface GeneratorExpressionNs extends NodeNs<
 	GeneratorExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	GeneratorExpression.Bound,
-	GeneratorExpression.BuildArgs,
-	GeneratorExpression.LooseArgs,
 	never,
 	TSKindId.GeneratorExpression,
 	GeneratorExpression.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: GeneratorExpression.BuildArgs;
+	readonly LooseArgs: GeneratorExpression.LooseArgs;
+}
 export interface ParenthesizedExpressionNs extends NodeNs<
 	ParenthesizedExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ParenthesizedExpression.Bound,
-	ParenthesizedExpression.BuildArgs,
-	ParenthesizedExpression.LooseArgs,
 	'expression',
 	TSKindId.ParenthesizedExpression,
 	ParenthesizedExpression.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ParenthesizedExpression.BuildArgs;
+	readonly LooseArgs: ParenthesizedExpression.LooseArgs;
+}
 export interface CollectionElementsNs extends NodeNs<
 	CollectionElements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	CollectionElements.Bound,
-	CollectionElements.BuildArgs,
-	CollectionElements.LooseArgs,
 	'item',
 	TSKindId.CollectionElements,
 	CollectionElements.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: CollectionElements.BuildArgs;
+	readonly LooseArgs: CollectionElements.LooseArgs;
+}
 export interface ForInClauseNs extends NodeNs<
 	ForInClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ForInClause.Bound,
-	ForInClause.BuildArgs,
-	ForInClause.LooseArgs,
 	never,
 	TSKindId.ForInClause,
 	ForInClause.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ForInClause.BuildArgs;
+	readonly LooseArgs: ForInClause.LooseArgs;
+}
 export interface IfClauseNs extends NodeNs<
 	IfClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	IfClause.Bound,
-	IfClause.BuildArgs,
-	IfClause.LooseArgs,
 	'condition',
 	TSKindId.IfClause,
 	IfClause.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: IfClause.BuildArgs;
+	readonly LooseArgs: IfClause.LooseArgs;
+}
 export interface ConditionalExpressionNs extends NodeNs<
 	ConditionalExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ConditionalExpression.Bound,
-	ConditionalExpression.BuildArgs,
-	ConditionalExpression.LooseArgs,
 	never,
 	TSKindId.ConditionalExpression,
 	ConditionalExpression.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ConditionalExpression.BuildArgs;
+	readonly LooseArgs: ConditionalExpression.LooseArgs;
+}
 export interface ConcatenatedStringNs extends NodeNs<
 	ConcatenatedString,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ConcatenatedString.Bound,
-	ConcatenatedString.BuildArgs,
-	ConcatenatedString.LooseArgs,
 	never,
 	TSKindId.ConcatenatedString,
 	ConcatenatedString.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ConcatenatedString.BuildArgs;
+	readonly LooseArgs: ConcatenatedString.LooseArgs;
+}
 export interface StringNs extends NodeNs<
 	String,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	String.Bound,
-	String.BuildArgs,
-	String.LooseArgs,
 	never,
 	TSKindId.String,
 	String.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: String.BuildArgs;
+	readonly LooseArgs: String.LooseArgs;
+}
 export interface StringContentNs extends NodeNs<
 	StringContent,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	StringContent.Bound,
-	StringContent.BuildArgs,
-	StringContent.LooseArgs,
 	never,
 	TSKindId.StringContent,
 	StringContent.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: StringContent.BuildArgs;
+	readonly LooseArgs: StringContent.LooseArgs;
+}
 export interface InterpolationNs extends NodeNs<
 	Interpolation,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Interpolation.Bound,
-	Interpolation.BuildArgs,
-	Interpolation.LooseArgs,
 	never,
 	TSKindId.Interpolation,
 	Interpolation.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Interpolation.BuildArgs;
+	readonly LooseArgs: Interpolation.LooseArgs;
+}
 export interface FormatSpecifierNs extends NodeNs<
 	FormatSpecifier,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	FormatSpecifier.Bound,
-	FormatSpecifier.BuildArgs,
-	FormatSpecifier.LooseArgs,
 	never,
 	TSKindId.FormatSpecifier,
 	FormatSpecifier.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: FormatSpecifier.BuildArgs;
+	readonly LooseArgs: FormatSpecifier.LooseArgs;
+}
 export interface AwaitNs extends NodeNs<
 	Await,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Await.Bound,
-	Await.BuildArgs,
-	Await.LooseArgs,
 	'expression',
 	TSKindId.Await,
 	Await.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Await.BuildArgs;
+	readonly LooseArgs: Await.LooseArgs;
+}
 export interface CommentNs extends NodeNs<
 	Comment,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Comment.Bound,
-	Comment.BuildArgs,
-	Comment.LooseArgs,
 	'content',
 	TSKindId.Comment,
 	Comment.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Comment.BuildArgs;
+	readonly LooseArgs: Comment.LooseArgs;
+}
 export interface SimpleStatementsElementsNs extends NodeNs<
 	SimpleStatementsElements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	SimpleStatementsElements.Bound,
-	SimpleStatementsElements.BuildArgs,
-	SimpleStatementsElements.LooseArgs,
 	'item',
 	TSKindId.SimpleStatementsElements,
 	SimpleStatementsElements.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: SimpleStatementsElements.BuildArgs;
+	readonly LooseArgs: SimpleStatementsElements.LooseArgs;
+}
 export interface SubjectsNs extends NodeNs<
 	Subjects,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Subjects.Bound,
-	Subjects.BuildArgs,
-	Subjects.LooseArgs,
 	'subject',
 	TSKindId.Subjects,
 	Subjects.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Subjects.BuildArgs;
+	readonly LooseArgs: Subjects.LooseArgs;
+}
 export interface CasePatternsNs extends NodeNs<
 	CasePatterns,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	CasePatterns.Bound,
-	CasePatterns.BuildArgs,
-	CasePatterns.LooseArgs,
 	'item',
 	TSKindId.CasePatterns,
 	CasePatterns.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: CasePatterns.BuildArgs;
+	readonly LooseArgs: CasePatterns.LooseArgs;
+}
 export interface WithClauseWithItemsNs extends NodeNs<
 	WithClauseWithItems,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	WithClauseWithItems.Bound,
-	WithClauseWithItems.BuildArgs,
-	WithClauseWithItems.LooseArgs,
 	'item',
 	TSKindId.WithClauseWithItems,
 	WithClauseWithItems.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: WithClauseWithItems.BuildArgs;
+	readonly LooseArgs: WithClauseWithItems.LooseArgs;
+}
 export interface TypesNs extends NodeNs<
 	Types,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Types.Bound,
-	Types.BuildArgs,
-	Types.LooseArgs,
 	'item',
 	TSKindId.Types,
 	Types.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Types.BuildArgs;
+	readonly LooseArgs: Types.LooseArgs;
+}
 export interface ArgumentListElementsNs extends NodeNs<
 	ArgumentListElements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ArgumentListElements.Bound,
-	ArgumentListElements.BuildArgs,
-	ArgumentListElements.LooseArgs,
 	'item',
 	TSKindId.ArgumentListElements,
 	ArgumentListElements.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ArgumentListElements.BuildArgs;
+	readonly LooseArgs: ArgumentListElements.LooseArgs;
+}
 export interface ListPatternCasePatternsNs extends NodeNs<
 	ListPatternCasePatterns,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ListPatternCasePatterns.Bound,
-	ListPatternCasePatterns.BuildArgs,
-	ListPatternCasePatterns.LooseArgs,
 	'item',
 	TSKindId.ListPatternCasePatterns,
 	ListPatternCasePatterns.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ListPatternCasePatterns.BuildArgs;
+	readonly LooseArgs: ListPatternCasePatterns.LooseArgs;
+}
 export interface DictPatternElementsNs extends NodeNs<
 	DictPatternElements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	DictPatternElements.Bound,
-	DictPatternElements.BuildArgs,
-	DictPatternElements.LooseArgs,
 	'item',
 	TSKindId.DictPatternElements,
 	DictPatternElements.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: DictPatternElements.BuildArgs;
+	readonly LooseArgs: DictPatternElements.LooseArgs;
+}
 export interface SubscriptsNs extends NodeNs<
 	Subscripts,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Subscripts.Bound,
-	Subscripts.BuildArgs,
-	Subscripts.LooseArgs,
 	'subscript',
 	TSKindId.Subscripts,
 	Subscripts.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Subscripts.BuildArgs;
+	readonly LooseArgs: Subscripts.LooseArgs;
+}
 export interface DictionaryElementsNs extends NodeNs<
 	DictionaryElements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	DictionaryElements.Bound,
-	DictionaryElements.BuildArgs,
-	DictionaryElements.LooseArgs,
 	'item',
 	TSKindId.DictionaryElements,
 	DictionaryElements.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: DictionaryElements.BuildArgs;
+	readonly LooseArgs: DictionaryElements.LooseArgs;
+}
 export interface SliceGroupNs extends NodeNs<
 	SliceGroup,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	SliceGroup.Bound,
-	SliceGroup.BuildArgs,
-	SliceGroup.LooseArgs,
 	'expression',
 	TSKindId.SliceGroup,
 	SliceGroup.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: SliceGroup.BuildArgs;
+	readonly LooseArgs: SliceGroup.LooseArgs;
+}
 export interface TupleElementsNs extends NodeNs<
 	TupleElements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	TupleElements.Bound,
-	TupleElements.BuildArgs,
-	TupleElements.LooseArgs,
 	'item',
 	TSKindId.TupleElements,
 	TupleElements.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: TupleElements.BuildArgs;
+	readonly LooseArgs: TupleElements.LooseArgs;
+}
 export interface ExceptClauseExceptionAsNs extends NodeNs<
 	ExceptClauseExceptionAs,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ExceptClauseExceptionAs.Bound,
-	ExceptClauseExceptionAs.BuildArgs,
-	ExceptClauseExceptionAs.LooseArgs,
 	never,
 	TSKindId.ExceptClauseExceptionAs,
 	ExceptClauseExceptionAs.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ExceptClauseExceptionAs.BuildArgs;
+	readonly LooseArgs: ExceptClauseExceptionAs.LooseArgs;
+}
 export interface CaseTuplePatternNs extends NodeNs<
 	CaseTuplePattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	CaseTuplePattern.Bound,
-	CaseTuplePattern.BuildArgs,
-	CaseTuplePattern.LooseArgs,
 	'list_pattern_case_patterns',
 	TSKindId.CaseTuplePattern,
 	CaseTuplePattern.Parsed,
 	EmptyCaseTuplePattern
-> {}
+> {
+	readonly BuildArgs: CaseTuplePattern.BuildArgs;
+	readonly LooseArgs: CaseTuplePattern.LooseArgs;
+}
 export interface CaseListPatternNs extends NodeNs<
 	CaseListPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	CaseListPattern.Bound,
-	CaseListPattern.BuildArgs,
-	CaseListPattern.LooseArgs,
 	'list_pattern_case_patterns',
 	TSKindId.CaseListPattern,
 	CaseListPattern.Parsed,
 	EmptyCaseListPattern
-> {}
+> {
+	readonly BuildArgs: CaseListPattern.BuildArgs;
+	readonly LooseArgs: CaseListPattern.LooseArgs;
+}
 export interface PrintArgumentsNs extends NodeNs<
 	PrintArguments,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	PrintArguments.Bound,
-	PrintArguments.BuildArgs,
-	PrintArguments.LooseArgs,
 	'argument',
 	TSKindId.PrintArguments,
 	PrintArguments.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: PrintArguments.BuildArgs;
+	readonly LooseArgs: PrintArguments.LooseArgs;
+}
 export interface PrintChevronArgumentsNs extends NodeNs<
 	PrintChevronArguments,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	PrintChevronArguments.Bound,
-	PrintChevronArguments.BuildArgs,
-	PrintChevronArguments.LooseArgs,
 	'argument',
 	TSKindId.PrintChevronArguments,
 	PrintChevronArguments.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: PrintChevronArguments.BuildArgs;
+	readonly LooseArgs: PrintChevronArguments.LooseArgs;
+}
 export interface PrintStatementChevronNs extends NodeNs<
 	PrintStatementChevron,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	PrintStatementChevron.Bound,
-	PrintStatementChevron.BuildArgs,
-	PrintStatementChevron.LooseArgs,
 	never,
 	TSKindId.PrintStatementChevron,
 	PrintStatementChevron.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: PrintStatementChevron.BuildArgs;
+	readonly LooseArgs: PrintStatementChevron.LooseArgs;
+}
 export interface PrintStatementPlainNs extends NodeNs<
 	PrintStatementPlain,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	PrintStatementPlain.Bound,
-	PrintStatementPlain.BuildArgs,
-	PrintStatementPlain.LooseArgs,
 	'print_arguments',
 	TSKindId.PrintStatementPlain,
 	PrintStatementPlain.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: PrintStatementPlain.BuildArgs;
+	readonly LooseArgs: PrintStatementPlain.LooseArgs;
+}
 export interface ParenthesizedImportListNs extends NodeNs<
 	ParenthesizedImportList,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ParenthesizedImportList.Bound,
-	ParenthesizedImportList.BuildArgs,
-	ParenthesizedImportList.LooseArgs,
 	'import_list',
 	TSKindId.ParenthesizedImportList,
 	ParenthesizedImportList.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ParenthesizedImportList.BuildArgs;
+	readonly LooseArgs: ParenthesizedImportList.LooseArgs;
+}
 export interface ComprehensionClausesNs extends NodeNs<
 	ComprehensionClauses,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ComprehensionClauses.Bound,
-	ComprehensionClauses.BuildArgs,
-	ComprehensionClauses.LooseArgs,
 	never,
 	TSKindId.ComprehensionClauses,
 	ComprehensionClauses.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ComprehensionClauses.BuildArgs;
+	readonly LooseArgs: ComprehensionClauses.LooseArgs;
+}
 export interface IntegerHexNs extends NodeNs<
 	IntegerHex,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	IntegerHex.Bound,
-	IntegerHex.BuildArgs,
-	IntegerHex.LooseArgs,
 	'content',
 	TSKindId.IntegerHex,
 	IntegerHex.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: IntegerHex.BuildArgs;
+	readonly LooseArgs: IntegerHex.LooseArgs;
+}
 export interface IntegerOctalNs extends NodeNs<
 	IntegerOctal,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	IntegerOctal.Bound,
-	IntegerOctal.BuildArgs,
-	IntegerOctal.LooseArgs,
 	'content',
 	TSKindId.IntegerOctal,
 	IntegerOctal.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: IntegerOctal.BuildArgs;
+	readonly LooseArgs: IntegerOctal.LooseArgs;
+}
 export interface IntegerBinaryNs extends NodeNs<
 	IntegerBinary,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	IntegerBinary.Bound,
-	IntegerBinary.BuildArgs,
-	IntegerBinary.LooseArgs,
 	'content',
 	TSKindId.IntegerBinary,
 	IntegerBinary.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: IntegerBinary.BuildArgs;
+	readonly LooseArgs: IntegerBinary.LooseArgs;
+}
 export interface FloatPointNs extends NodeNs<
 	FloatPoint,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	FloatPoint.Bound,
-	FloatPoint.BuildArgs,
-	FloatPoint.LooseArgs,
 	never,
 	TSKindId.FloatPoint,
 	FloatPoint.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: FloatPoint.BuildArgs;
+	readonly LooseArgs: FloatPoint.LooseArgs;
+}
 export interface FloatLeadingPointNs extends NodeNs<
 	FloatLeadingPoint,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	FloatLeadingPoint.Bound,
-	FloatLeadingPoint.BuildArgs,
-	FloatLeadingPoint.LooseArgs,
 	never,
 	TSKindId.FloatLeadingPoint,
 	FloatLeadingPoint.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: FloatLeadingPoint.BuildArgs;
+	readonly LooseArgs: FloatLeadingPoint.LooseArgs;
+}
 export interface FloatScientificNs extends NodeNs<
 	FloatScientific,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	FloatScientific.Bound,
-	FloatScientific.BuildArgs,
-	FloatScientific.LooseArgs,
 	never,
 	TSKindId.FloatScientific,
 	FloatScientific.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: FloatScientific.BuildArgs;
+	readonly LooseArgs: FloatScientific.LooseArgs;
+}
 export interface EscapeSequenceUnicodeFixedNs extends NodeNs<
 	EscapeSequenceUnicodeFixed,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	EscapeSequenceUnicodeFixed.Bound,
-	EscapeSequenceUnicodeFixed.BuildArgs,
-	EscapeSequenceUnicodeFixed.LooseArgs,
 	'content',
 	TSKindId.EscapeSequenceUnicodeFixed,
 	EscapeSequenceUnicodeFixed.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: EscapeSequenceUnicodeFixed.BuildArgs;
+	readonly LooseArgs: EscapeSequenceUnicodeFixed.LooseArgs;
+}
 export interface EscapeSequenceUnicodeWideNs extends NodeNs<
 	EscapeSequenceUnicodeWide,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	EscapeSequenceUnicodeWide.Bound,
-	EscapeSequenceUnicodeWide.BuildArgs,
-	EscapeSequenceUnicodeWide.LooseArgs,
 	'content',
 	TSKindId.EscapeSequenceUnicodeWide,
 	EscapeSequenceUnicodeWide.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: EscapeSequenceUnicodeWide.BuildArgs;
+	readonly LooseArgs: EscapeSequenceUnicodeWide.LooseArgs;
+}
 export interface EscapeSequenceHexNs extends NodeNs<
 	EscapeSequenceHex,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	EscapeSequenceHex.Bound,
-	EscapeSequenceHex.BuildArgs,
-	EscapeSequenceHex.LooseArgs,
 	'content',
 	TSKindId.EscapeSequenceHex,
 	EscapeSequenceHex.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: EscapeSequenceHex.BuildArgs;
+	readonly LooseArgs: EscapeSequenceHex.LooseArgs;
+}
 export interface EscapeSequenceOctalNs extends NodeNs<
 	EscapeSequenceOctal,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	EscapeSequenceOctal.Bound,
-	EscapeSequenceOctal.BuildArgs,
-	EscapeSequenceOctal.LooseArgs,
 	'content',
 	TSKindId.EscapeSequenceOctal,
 	EscapeSequenceOctal.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: EscapeSequenceOctal.BuildArgs;
+	readonly LooseArgs: EscapeSequenceOctal.LooseArgs;
+}
 export interface EscapeSequenceLineBreakNs extends NodeNs<
 	EscapeSequenceLineBreak,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	EscapeSequenceLineBreak.Bound,
-	EscapeSequenceLineBreak.BuildArgs,
-	EscapeSequenceLineBreak.LooseArgs,
 	'content',
 	TSKindId.EscapeSequenceLineBreak,
 	EscapeSequenceLineBreak.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: EscapeSequenceLineBreak.BuildArgs;
+	readonly LooseArgs: EscapeSequenceLineBreak.LooseArgs;
+}
 export interface EscapeSequenceSimpleNs extends NodeNs<
 	EscapeSequenceSimple,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	EscapeSequenceSimple.Bound,
-	EscapeSequenceSimple.BuildArgs,
-	EscapeSequenceSimple.LooseArgs,
 	'content',
 	TSKindId.EscapeSequenceSimple,
 	EscapeSequenceSimple.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: EscapeSequenceSimple.BuildArgs;
+	readonly LooseArgs: EscapeSequenceSimple.LooseArgs;
+}
 export interface EscapeSequenceNamedNs extends NodeNs<
 	EscapeSequenceNamed,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	EscapeSequenceNamed.Bound,
-	EscapeSequenceNamed.BuildArgs,
-	EscapeSequenceNamed.LooseArgs,
 	'content',
 	TSKindId.EscapeSequenceNamed,
 	EscapeSequenceNamed.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: EscapeSequenceNamed.BuildArgs;
+	readonly LooseArgs: EscapeSequenceNamed.LooseArgs;
+}
 export interface SimplePatternNegativeNs extends NodeNs<
 	SimplePatternNegative,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	SimplePatternNegative.Bound,
-	SimplePatternNegative.BuildArgs,
-	SimplePatternNegative.LooseArgs,
 	never,
 	TSKindId.SimplePatternNegative,
 	SimplePatternNegative.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: SimplePatternNegative.BuildArgs;
+	readonly LooseArgs: SimplePatternNegative.LooseArgs;
+}
 export interface ExceptClauseExceptionListNs extends NodeNs<
 	ExceptClauseExceptionList,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ExceptClauseExceptionList.Bound,
-	ExceptClauseExceptionList.BuildArgs,
-	ExceptClauseExceptionList.LooseArgs,
 	never,
 	TSKindId.ExceptClauseExceptionList,
 	ExceptClauseExceptionList.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ExceptClauseExceptionList.BuildArgs;
+	readonly LooseArgs: ExceptClauseExceptionList.LooseArgs;
+}
 export interface ExceptClauseExceptionNs extends NodeNs<
 	ExceptClauseException,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ExceptClauseException.Bound,
-	ExceptClauseException.BuildArgs,
-	ExceptClauseException.LooseArgs,
 	'content',
 	TSKindId.ExceptClauseException,
 	ExceptClauseException.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ExceptClauseException.BuildArgs;
+	readonly LooseArgs: ExceptClauseException.LooseArgs;
+}
 export interface AssignmentEqNs extends NodeNs<
 	AssignmentEq,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	AssignmentEq.Bound,
-	AssignmentEq.BuildArgs,
-	AssignmentEq.LooseArgs,
 	never,
 	TSKindId.AssignmentEq,
 	AssignmentEq.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: AssignmentEq.BuildArgs;
+	readonly LooseArgs: AssignmentEq.LooseArgs;
+}
 export interface AssignmentTypeNs extends NodeNs<
 	AssignmentType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	AssignmentType.Bound,
-	AssignmentType.BuildArgs,
-	AssignmentType.LooseArgs,
 	never,
 	TSKindId.AssignmentType,
 	AssignmentType.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: AssignmentType.BuildArgs;
+	readonly LooseArgs: AssignmentType.LooseArgs;
+}
 export interface AssignmentTypedNs extends NodeNs<
 	AssignmentTyped,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	AssignmentTyped.Bound,
-	AssignmentTyped.BuildArgs,
-	AssignmentTyped.LooseArgs,
 	never,
 	TSKindId.AssignmentTyped,
 	AssignmentTyped.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: AssignmentTyped.BuildArgs;
+	readonly LooseArgs: AssignmentTyped.LooseArgs;
+}
 export interface ExpressionStatementTupleNs extends NodeNs<
 	ExpressionStatementTuple,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ExpressionStatementTuple.Bound,
-	ExpressionStatementTuple.BuildArgs,
-	ExpressionStatementTuple.LooseArgs,
 	'item',
 	TSKindId.ExpressionStatementTuple,
 	ExpressionStatementTuple.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ExpressionStatementTuple.BuildArgs;
+	readonly LooseArgs: ExpressionStatementTuple.LooseArgs;
+}
 export interface WithClauseBareNs extends NodeNs<
 	WithClauseBare,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	WithClauseBare.Bound,
-	WithClauseBare.BuildArgs,
-	WithClauseBare.LooseArgs,
 	'item',
 	TSKindId.WithClauseBare,
 	WithClauseBare.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: WithClauseBare.BuildArgs;
+	readonly LooseArgs: WithClauseBare.LooseArgs;
+}
 export interface WithClauseParenNs extends NodeNs<
 	WithClauseParen,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	WithClauseParen.Bound,
-	WithClauseParen.BuildArgs,
-	WithClauseParen.LooseArgs,
 	'with_items',
 	TSKindId.WithClauseParen,
 	WithClauseParen.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: WithClauseParen.BuildArgs;
+	readonly LooseArgs: WithClauseParen.LooseArgs;
+}
 export interface MatchBlockBlockNs extends NodeNs<
 	MatchBlockBlock,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	MatchBlockBlock.Bound,
-	MatchBlockBlock.BuildArgs,
-	MatchBlockBlock.LooseArgs,
 	never,
 	TSKindId.MatchBlockBlock,
 	MatchBlockBlock.Parsed,
 	EmptyMatchBlockBlock
-> {}
+> {
+	readonly BuildArgs: MatchBlockBlock.BuildArgs;
+	readonly LooseArgs: MatchBlockBlock.LooseArgs;
+}
 export interface MatchBlockEmptyNs extends NodeNs<
 	MatchBlockEmpty,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	MatchBlockEmpty.Bound,
-	MatchBlockEmpty.BuildArgs,
-	MatchBlockEmpty.LooseArgs,
 	'newline',
 	TSKindId.MatchBlockEmpty,
 	MatchBlockEmpty.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: MatchBlockEmpty.BuildArgs;
+	readonly LooseArgs: MatchBlockEmpty.LooseArgs;
+}
 export interface SuiteInlineNs extends NodeNs<
 	SuiteInline,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	SuiteInline.Bound,
-	SuiteInline.BuildArgs,
-	SuiteInline.LooseArgs,
 	'elements',
 	TSKindId.SuiteInline,
 	SuiteInline.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: SuiteInline.BuildArgs;
+	readonly LooseArgs: SuiteInline.LooseArgs;
+}
 export interface SuiteBlockNs extends NodeNs<
 	SuiteBlock,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	SuiteBlock.Bound,
-	SuiteBlock.BuildArgs,
-	SuiteBlock.LooseArgs,
 	'block',
 	TSKindId.SuiteBlock,
 	SuiteBlock.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: SuiteBlock.BuildArgs;
+	readonly LooseArgs: SuiteBlock.LooseArgs;
+}
 export interface SuiteEmptyNs extends NodeNs<
 	SuiteEmpty,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	SuiteEmpty.Bound,
-	SuiteEmpty.BuildArgs,
-	SuiteEmpty.LooseArgs,
 	'newline',
 	TSKindId.SuiteEmpty,
 	SuiteEmpty.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: SuiteEmpty.BuildArgs;
+	readonly LooseArgs: SuiteEmpty.LooseArgs;
+}
 export interface ComparisonOperatorComparatorNs extends NodeNs<
 	ComparisonOperatorComparator,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ComparisonOperatorComparator.Bound,
-	ComparisonOperatorComparator.BuildArgs,
-	ComparisonOperatorComparator.LooseArgs,
 	never,
 	TSKindId.ComparisonOperatorComparator,
 	ComparisonOperatorComparator.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ComparisonOperatorComparator.BuildArgs;
+	readonly LooseArgs: ComparisonOperatorComparator.LooseArgs;
+}
 export interface YieldFromClauseNs extends NodeNs<
 	YieldFromClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	YieldFromClause.Bound,
-	YieldFromClause.BuildArgs,
-	YieldFromClause.LooseArgs,
 	'expression',
 	TSKindId.YieldFromClause,
 	YieldFromClause.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: YieldFromClause.BuildArgs;
+	readonly LooseArgs: YieldFromClause.LooseArgs;
+}
 export interface NamesNs extends NodeNs<
 	Names,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Names.Bound,
-	Names.BuildArgs,
-	Names.LooseArgs,
 	'content',
 	TSKindId.Names,
 	Names.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Names.BuildArgs;
+	readonly LooseArgs: Names.LooseArgs;
+}
 export interface AsPatternTargetNs extends NodeNs<
 	AsPatternTarget,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	AsPatternTarget.Bound,
-	AsPatternTarget.BuildArgs,
-	AsPatternTarget.LooseArgs,
 	'content',
 	TSKindId.AsPatternTarget,
 	AsPatternTarget.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: AsPatternTarget.BuildArgs;
+	readonly LooseArgs: AsPatternTarget.LooseArgs;
+}
 export interface FormatExpressionNs extends NodeNs<
 	FormatExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	FormatExpression.Bound,
-	FormatExpression.BuildArgs,
-	FormatExpression.LooseArgs,
 	'content',
 	TSKindId.FormatExpression,
 	FormatExpression.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: FormatExpression.BuildArgs;
+	readonly LooseArgs: FormatExpression.LooseArgs;
+}
 export interface WildcardImportNs extends KeywordNs<TSKindId.WildcardImport, '*', TSKindId.WildcardImport> {}
 export interface PassStatementNs extends KeywordNs<TSKindId.PassStatement, 'pass', TSKindId.PassStatement> {}
 export interface BreakStatementNs extends KeywordNs<TSKindId.BreakStatement, 'break', TSKindId.BreakStatement> {}

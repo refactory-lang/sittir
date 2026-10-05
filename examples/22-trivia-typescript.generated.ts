@@ -8,16 +8,12 @@ export function rebuildTriviaTypescriptGenerated() {
 		statements: [ts.build.expressionStatement.strict(ts.build.callExpression.call.strict({
 			function: ts.build.identifier("f"),
 			arguments: ts.build.arguments.strict().$trivia.inner(ts.build.comment.block(" b ")),
-		}), {
-			terminator: ts.kinds.Semi,
-		}).$trivia.leading(ts.build.comment.block(" a ")), ts.build.lexicalDeclaration.strict({
+		})).$trivia.leading(ts.build.comment.block(" a ")), ts.build.lexicalDeclaration.strict({
 			kind: ts.kinds.LetKeyword,
 			declarators: [ts.build.variableDeclarator.plain.strict({
 				name: ts.build.identifier("x"),
 				value: ts.build.number.decimal("1"),
 			})],
-		}, {
-			terminator: ts.kinds.Semi,
 		}).$trivia.trailing(ts.build.comment.line(" c"))],
 	});
 }

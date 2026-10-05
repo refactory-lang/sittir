@@ -1454,6 +1454,14 @@ The config of a group element carries its seat kind as a mark that is not a key 
  */
 ```
 
+With `omitOptionDefaults` (the example printer sets it), a registered value
+equal to the slot's `optionDefault` (the grammar default, as a kind id or
+spelling text) is dropped rather than passed, so the printed call reads in its
+condensed form and the default reaches the node the way it reaches an unset
+slot. The validators leave it off: an unset slot takes an engine option where a
+passed value does not, so their storage comparison keeps the explicit value.
+The options are `undefined` when nothing is left to pass.
+
 #### body
 
 ```text
@@ -1482,6 +1490,8 @@ The config of a group element carries its seat kind as a mark that is not a key 
 // member_expression's `.`/`?.` separator). Real list-options slots
 // never coexist with a same-named config key, so that's the signal.
 ```
+
+A spread or list builder takes its options first: a list's come from the read node's separator and delimiter, a spread builder's from its registered slots, split off the config before the elements are read.
 
 ### `packages/tools/src/validate/common.ts::walkMount`
 

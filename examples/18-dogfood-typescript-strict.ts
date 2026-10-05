@@ -77,9 +77,7 @@ export function applyFormatStrict() {
 		name: id('applyFormat'),
 		parameters: engine.build.formalParameters.strict(param('canonicalRender', 'string'), param('format', 'FormatRecord')),
 		returnType: ann('string'),
-		body: engine.build.statementBlock.strict({
-			statements: [letStrict('result', 'canonicalRender'), returnResultStrict()],
-		}),
+		body: engine.build.statementBlock.strict(letStrict('result', 'canonicalRender'), returnResultStrict()),
 	});
 }
 
@@ -89,9 +87,7 @@ export function applyBoundaryStrict() {
 		name: id('applyBoundary'),
 		parameters: engine.build.formalParameters.strict(param('s', 'string'), param('format', 'FormatRecord')),
 		returnType: ann('string'),
-		body: engine.build.statementBlock.strict({
-			statements: [letStrict('result', 's'), returnResultStrict()],
-		}),
+		body: engine.build.statementBlock.strict(letStrict('result', 's'), returnResultStrict()),
 	});
 }
 

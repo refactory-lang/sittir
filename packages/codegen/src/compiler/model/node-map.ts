@@ -1140,6 +1140,7 @@ export class AssembledNonterminal {
 	readonly ruleMetadata?: RuleMetadata;
 	storageInfo?: FieldStorageInfo;
 	optionDefaultArm?: string;
+	optionDefaultKind?: string;
 	registeredOption?: 'spelling' | 'choice';
 
 	get storageName(): string {

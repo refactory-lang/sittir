@@ -3455,6 +3455,8 @@ lacks the spacing sites, so an address naming none of its sites is skipped
 rather than refused, since it may name a spacing site. Every other caller
 refuses an address that names no site.
 
+Registering a site as a choice drops the slot's cached storage class (`storageInfo`): a registered choice is stored as a kind id, never as a presence flag (`keywordPresenceKind`), and the class may have been computed before registration.
+
 ### `packages/codegen/src/compiler/model/supertype-members.ts::buildSupertypeMembersMap`
 
 ```text
@@ -4432,6 +4434,24 @@ The candidate a slot offers when it holds more than one value and every value
 names an arm. Arms come from the slot's own members, the way a separated
 list's arms come from its separator rule.
 
+An optional slot whose arms are all tokens (each names a kind) also offers a `blank` arm (`BLANK_ARM`): leaving the token out is one of the choices, so a slot with a single token and a blank is a two-arm choice. A spelling slot gets no blank arm, since leaving its token out changes the content, not its spelling.
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::BLANK_ARM`
+
+The name of the arm a registered optional choice slot takes when it holds no token, as a declaration spells it (`preference('blank')`). It is `blank`, not `none`, because a grammar may have a kind named `none` (python's `None`).
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::BLANK_KIND_ID`
+
+The id the blank arm stores and crosses as: 0, which no parser kind holds. The builder, the wrap, the options table and the native slot enum all use it, and the render core's `BLANK_ARM` is the same number.
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::hasBlankArm`
+
+Whether a slot has a blank arm: it is registered as a choice preference and optional. Builders, the wrap, the options types and the render module all ask here.
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::admitsArm`
+
+Whether a site has an arm of the given value. A declaration registers only the sites that admit its arm, and a label's options entry reaches only those sites, so setting a label never names an arm a site lacks.
+
 ### `packages/codegen/src/compiler/model/site-preferences.ts::variantChoiceCandidate`
 
 ```text
@@ -4481,6 +4501,13 @@ The arm an option declared for this slot, stamped once resolution has run.
 The factory consults it to pick among arms a bare input fits, so the value it
 bakes in is the one the options block chose rather than a second declaration
 beside it. Undefined on a slot no option addressed.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.optionDefaultKind`
+
+The kind of the arm `optionDefaultArm` names, stamped beside it from the site's
+own arm list. Undefined for a spelling arm (text, no kind) and for the blank
+arm. The factory map resolves it to the default's kind id with the same
+`armIdOf` the native options table uses.
 
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.resolvedDelimiterArm`

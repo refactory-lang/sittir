@@ -123,8 +123,14 @@ export default sittirGrammar(base, {
 			'item:/delimiter': preference('Delimiter.Trailing')
 		},
 
-		statement_block: { before: preference('space') },
-		class_body: { before: preference('space') },
+		statement_block: { before: preference('space'), 'terminator:': preference('blank') },
+		class_static_block: { 'terminator:': preference('blank') },
+		class_declaration: { 'terminator:': preference('blank') },
+		function_declaration: { 'terminator:': preference('blank') },
+		generator_function_declaration: { 'terminator:': preference('blank') },
+		for_header_let_const_kind: { 'terminator:': preference('blank') },
+		class_body_member_method: { 'terminator:': preference('blank') },
+		class_body:{ before: preference('space') },
 		switch_body: { before: preference('space') },
 		named_imports: { before: preference('space'), after: preference('space') },
 		import_specifiers: { 'item:/start': preference('space'), 'item:/end': preference('space') },
@@ -270,7 +276,15 @@ export default sittirGrammar(base, {
 
 		class_declaration: {
 			'4/0': field('heritage'),
-			6: field('automatic_semicolon')
+			6: field('terminator')
+		},
+
+		function_declaration: {
+			5: field('terminator')
+		},
+
+		generator_function_declaration: {
+			6: field('terminator')
 		},
 
 		import_alias: {
@@ -355,7 +369,11 @@ export default sittirGrammar(base, {
 		},
 
 		statement_block: {
-			3: field('automatic_semicolon')
+			3: field('terminator')
+		},
+
+		class_static_block: {
+			1: field('terminator')
 		},
 
 		union_type: {
@@ -530,7 +548,8 @@ export default sittirGrammar(base, {
 		_for_header: {
 			'1/0': variant('lhs'),
 			'1/1': variant('var_kind'),
-			'1/2': variant('let_const_kind')
+			'1/2': variant('let_const_kind'),
+			'1/2/2': field('terminator')
 		}
 	},
 	extras: ($, previous) => [...(previous ?? [])],

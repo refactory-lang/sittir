@@ -441,7 +441,7 @@ export interface ClassDeclarationTransport {
   _type_parameters?: SlotValue<TypeParametersTransport>
   _heritage?: SlotValue<ClassHeritageTransport>
   _body: SlotValue<ClassBodyTransport>
-  _automatic_semicolon?: SlotValue<AutomaticSemicolonTransport>
+  _terminator?: SlotValue<ClassDeclarationTerminatorTransportSlot>
   _decorator_separator_space?: number
 }
 
@@ -467,8 +467,8 @@ export interface ClassStaticBlockTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
+  _terminator?: SlotValue<ClassStaticBlockTerminatorTransportSlot>
   _body: SlotValue<StatementBlockTransport>
-  _automatic_semicolon?: SlotValue<AutomaticSemicolonTransport>
 }
 
 export interface ClassTransport {
@@ -881,9 +881,9 @@ export interface ForHeaderLetConstKindTransport {
   '$_flank'?: SourceFlank
   _kind: SlotValue<Box<AnyTransport>>
   _left: SlotValue<ForHeaderLetConstKindLeftTransportSlot>
+  _terminator?: SlotValue<ForHeaderLetConstKindTerminatorTransportSlot>
   _operator: SlotValue<Box<AnyTransport>>
   _right: SlotValue<ForHeaderLetConstKindRightTransportSlot>
-  _automatic_semicolon?: SlotValue<AutomaticSemicolonTransport>
 }
 
 export interface ForHeaderLhsTransport {
@@ -958,7 +958,7 @@ export interface FunctionDeclarationTransport {
   _parameters: SlotValue<FormalParametersTransport>
   _return_type?: SlotValue<FunctionDeclarationReturnTypeTransportSlot>
   _body: SlotValue<StatementBlockTransport>
-  _automatic_semicolon?: SlotValue<AutomaticSemicolonTransport>
+  _terminator?: SlotValue<FunctionDeclarationTerminatorTransportSlot>
 }
 
 export interface FunctionExpressionTransport {
@@ -1008,7 +1008,7 @@ export interface GeneratorFunctionDeclarationTransport {
   _parameters: SlotValue<FormalParametersTransport>
   _return_type?: SlotValue<GeneratorFunctionDeclarationReturnTypeTransportSlot>
   _body: SlotValue<StatementBlockTransport>
-  _automatic_semicolon?: SlotValue<AutomaticSemicolonTransport>
+  _terminator?: SlotValue<GeneratorFunctionDeclarationTerminatorTransportSlot>
 }
 
 export interface GeneratorFunctionTransport {
@@ -1839,7 +1839,7 @@ export interface StatementBlockTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _statements?: Array<SlotValue<StatementTransport>>
-  _automatic_semicolon?: SlotValue<AutomaticSemicolonTransport>
+  _terminator?: SlotValue<StatementBlockTerminatorTransportSlot>
   _statements_separator_space?: number
 }
 

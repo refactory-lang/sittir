@@ -5,6 +5,8 @@ import { findEntryForKindName, findEntryForLiteralText, type KindEntryLike } fro
 import { supertypeMembersByDisplayName, type SupertypeMembers } from '../compiler/model/supertype-members.ts';
 import { displayedKinds } from '../compiler/model/display-name.ts';
 import {
+	admitsArm,
+	BLANK_ARM,
 	collectSitePreferences,
 	type PreferenceArm,
 	type SitePreference
@@ -20,7 +22,7 @@ export type ArmTypeResolver = (arm: PreferenceArm) => string;
 
 export function kindIdArmType(kindEntries: readonly KindEnumEntry[]): ArmTypeResolver {
 	return (arm) => {
-		if (arm.kind === undefined) return arm.value;
+		if (arm.kind === undefined) return arm.value === BLANK_ARM ? 'null' : arm.value;
 		const entry = findEntryForKindName(kindEntries, arm.kind);
 		if (entry === undefined) throw new Error(`options: arm '${arm.value}' names kind '${arm.kind}', which has no kind id`);
 		return `TSKindId.${entry.member}`;
@@ -190,7 +192,7 @@ export function deriveAddressTables(
 		}
 		for (const declaration of declared.declarations) {
 			if (matchAddress(addressSegments(declaration.path), addressed, membersOf).length > 0) continue;
-			const bound = reached.get(declaration.path) ?? [];
+			const bound = (reached.get(declaration.path) ?? []).filter((site) => admitsArm(site, declaration.arm));
 			if (bound.length === 0) continue;
 			const declaredSegments = parsePreferencePath(declaration.path);
 			const keys = declaredSegments.map((segment) => nestedKey(segment, kindEntries));

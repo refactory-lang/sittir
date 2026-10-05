@@ -1419,364 +1419,392 @@ export interface PatternNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	Pattern.Bound,
-	Pattern.BuildArgs,
-	Pattern.LooseArgs,
 	'content',
 	TSKindId.Pattern,
 	Pattern.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Pattern.BuildArgs;
+	readonly LooseArgs: Pattern.LooseArgs;
+}
 export interface AlternationNs extends NodeNs<
 	Alternation,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Alternation.Bound,
-	Alternation.BuildArgs,
-	Alternation.LooseArgs,
 	never,
 	TSKindId.Alternation,
 	Alternation.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Alternation.BuildArgs;
+	readonly LooseArgs: Alternation.LooseArgs;
+}
 export interface TermNs extends NodeNs<
 	Term,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Term.Bound,
-	Term.BuildArgs,
-	Term.LooseArgs,
 	never,
 	TSKindId.Term,
 	Term.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Term.BuildArgs;
+	readonly LooseArgs: Term.LooseArgs;
+}
 export interface LookaroundAssertionNs extends NodeNs<
 	LookaroundAssertion,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	LookaroundAssertion.Bound,
-	LookaroundAssertion.BuildArgs,
-	LookaroundAssertion.LooseArgs,
 	'content',
 	TSKindId.LookaroundAssertion,
 	LookaroundAssertion.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: LookaroundAssertion.BuildArgs;
+	readonly LooseArgs: LookaroundAssertion.LooseArgs;
+}
 export interface LookaheadAssertionNs extends NodeNs<
 	LookaheadAssertion,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	LookaheadAssertion.Bound,
-	LookaheadAssertion.BuildArgs,
-	LookaheadAssertion.LooseArgs,
 	never,
 	TSKindId.LookaheadAssertion,
 	LookaheadAssertion.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: LookaheadAssertion.BuildArgs;
+	readonly LooseArgs: LookaheadAssertion.LooseArgs;
+}
 export interface LookbehindAssertionNs extends NodeNs<
 	LookbehindAssertion,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	LookbehindAssertion.Bound,
-	LookbehindAssertion.BuildArgs,
-	LookbehindAssertion.LooseArgs,
 	never,
 	TSKindId.LookbehindAssertion,
 	LookbehindAssertion.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: LookbehindAssertion.BuildArgs;
+	readonly LooseArgs: LookbehindAssertion.LooseArgs;
+}
 export interface CharacterClassNs extends NodeNs<
 	CharacterClass,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	CharacterClass.Bound,
-	CharacterClass.BuildArgs,
-	CharacterClass.LooseArgs,
 	never,
 	TSKindId.CharacterClass,
 	CharacterClass.Parsed,
 	EmptyCharacterClass
-> {}
+> {
+	readonly BuildArgs: CharacterClass.BuildArgs;
+	readonly LooseArgs: CharacterClass.LooseArgs;
+}
 export interface PosixCharacterClassNs extends NodeNs<
 	PosixCharacterClass,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	PosixCharacterClass.Bound,
-	PosixCharacterClass.BuildArgs,
-	PosixCharacterClass.LooseArgs,
 	'posix_class_name',
 	TSKindId.PosixCharacterClass,
 	PosixCharacterClass.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: PosixCharacterClass.BuildArgs;
+	readonly LooseArgs: PosixCharacterClass.LooseArgs;
+}
 export interface ClassRangeNs extends NodeNs<
 	ClassRange,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ClassRange.Bound,
-	ClassRange.BuildArgs,
-	ClassRange.LooseArgs,
 	never,
 	TSKindId.ClassRange,
 	ClassRange.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ClassRange.BuildArgs;
+	readonly LooseArgs: ClassRange.LooseArgs;
+}
 export interface AnonymousCapturingGroupNs extends NodeNs<
 	AnonymousCapturingGroup,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	AnonymousCapturingGroup.Bound,
-	AnonymousCapturingGroup.BuildArgs,
-	AnonymousCapturingGroup.LooseArgs,
 	'pattern',
 	TSKindId.AnonymousCapturingGroup,
 	AnonymousCapturingGroup.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: AnonymousCapturingGroup.BuildArgs;
+	readonly LooseArgs: AnonymousCapturingGroup.LooseArgs;
+}
 export interface NamedCapturingGroupNs extends NodeNs<
 	NamedCapturingGroup,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	NamedCapturingGroup.Bound,
-	NamedCapturingGroup.BuildArgs,
-	NamedCapturingGroup.LooseArgs,
 	never,
 	TSKindId.NamedCapturingGroup,
 	NamedCapturingGroup.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: NamedCapturingGroup.BuildArgs;
+	readonly LooseArgs: NamedCapturingGroup.LooseArgs;
+}
 export interface NonCapturingGroupNs extends NodeNs<
 	NonCapturingGroup,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	NonCapturingGroup.Bound,
-	NonCapturingGroup.BuildArgs,
-	NonCapturingGroup.LooseArgs,
 	'pattern',
 	TSKindId.NonCapturingGroup,
 	NonCapturingGroup.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: NonCapturingGroup.BuildArgs;
+	readonly LooseArgs: NonCapturingGroup.LooseArgs;
+}
 export interface CountQuantifierNs extends NodeNs<
 	CountQuantifier,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	CountQuantifier.Bound,
-	CountQuantifier.BuildArgs,
-	CountQuantifier.LooseArgs,
 	never,
 	TSKindId.CountQuantifier,
 	CountQuantifier.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: CountQuantifier.BuildArgs;
+	readonly LooseArgs: CountQuantifier.LooseArgs;
+}
 export interface BackreferenceEscapeNs extends NodeNs<
 	BackreferenceEscape,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	BackreferenceEscape.Bound,
-	BackreferenceEscape.BuildArgs,
-	BackreferenceEscape.LooseArgs,
 	'group_name',
 	TSKindId.BackreferenceEscape,
 	BackreferenceEscape.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: BackreferenceEscape.BuildArgs;
+	readonly LooseArgs: BackreferenceEscape.LooseArgs;
+}
 export interface NamedGroupBackreferenceNs extends NodeNs<
 	NamedGroupBackreference,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	NamedGroupBackreference.Bound,
-	NamedGroupBackreference.BuildArgs,
-	NamedGroupBackreference.LooseArgs,
 	'group_name',
 	TSKindId.NamedGroupBackreference,
 	NamedGroupBackreference.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: NamedGroupBackreference.BuildArgs;
+	readonly LooseArgs: NamedGroupBackreference.LooseArgs;
+}
 export interface CharacterClassEscapeNs extends NodeNs<
 	CharacterClassEscape,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	CharacterClassEscape.Bound,
-	CharacterClassEscape.BuildArgs,
-	CharacterClassEscape.LooseArgs,
 	'content',
 	TSKindId.CharacterClassEscape,
 	CharacterClassEscape.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: CharacterClassEscape.BuildArgs;
+	readonly LooseArgs: CharacterClassEscape.LooseArgs;
+}
 export interface UnicodePropertyValueExpressionNs extends NodeNs<
 	UnicodePropertyValueExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	UnicodePropertyValueExpression.Bound,
-	UnicodePropertyValueExpression.BuildArgs,
-	UnicodePropertyValueExpression.LooseArgs,
 	never,
 	TSKindId.UnicodePropertyValueExpression,
 	UnicodePropertyValueExpression.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: UnicodePropertyValueExpression.BuildArgs;
+	readonly LooseArgs: UnicodePropertyValueExpression.LooseArgs;
+}
 export interface IdentityEscapeNs extends NodeNs<
 	IdentityEscape,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	IdentityEscape.Bound,
-	IdentityEscape.BuildArgs,
-	IdentityEscape.LooseArgs,
 	'content',
 	TSKindId.IdentityEscape,
 	IdentityEscape.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: IdentityEscape.BuildArgs;
+	readonly LooseArgs: IdentityEscape.LooseArgs;
+}
 export interface TermGroupNs extends NodeNs<
 	TermGroup,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	TermGroup.Bound,
-	TermGroup.BuildArgs,
-	TermGroup.LooseArgs,
 	never,
 	TSKindId.TermGroup,
 	TermGroup.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: TermGroup.BuildArgs;
+	readonly LooseArgs: TermGroup.LooseArgs;
+}
 export interface CountQuantifierGroupNs extends NodeNs<
 	CountQuantifierGroup,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	CountQuantifierGroup.Bound,
-	CountQuantifierGroup.BuildArgs,
-	CountQuantifierGroup.LooseArgs,
 	'decimal_digits',
 	TSKindId.CountQuantifierGroup,
 	CountQuantifierGroup.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: CountQuantifierGroup.BuildArgs;
+	readonly LooseArgs: CountQuantifierGroup.LooseArgs;
+}
 export interface CountQuantifierArmNs extends NodeNs<
 	CountQuantifierArm,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	CountQuantifierArm.Bound,
-	CountQuantifierArm.BuildArgs,
-	CountQuantifierArm.LooseArgs,
 	never,
 	TSKindId.CountQuantifierArm,
 	CountQuantifierArm.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: CountQuantifierArm.BuildArgs;
+	readonly LooseArgs: CountQuantifierArm.LooseArgs;
+}
 export interface CharacterClassEscapeArmNs extends NodeNs<
 	CharacterClassEscapeArm,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	CharacterClassEscapeArm.Bound,
-	CharacterClassEscapeArm.BuildArgs,
-	CharacterClassEscapeArm.LooseArgs,
 	never,
 	TSKindId.CharacterClassEscapeArm,
 	CharacterClassEscapeArm.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: CharacterClassEscapeArm.BuildArgs;
+	readonly LooseArgs: CharacterClassEscapeArm.LooseArgs;
+}
 export interface UnicodePropertyValueExpressionGroupNs extends NodeNs<
 	UnicodePropertyValueExpressionGroup,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	UnicodePropertyValueExpressionGroup.Bound,
-	UnicodePropertyValueExpressionGroup.BuildArgs,
-	UnicodePropertyValueExpressionGroup.LooseArgs,
 	'unicode_property_name',
 	TSKindId.UnicodePropertyValueExpressionGroup,
 	UnicodePropertyValueExpressionGroup.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: UnicodePropertyValueExpressionGroup.BuildArgs;
+	readonly LooseArgs: UnicodePropertyValueExpressionGroup.LooseArgs;
+}
 export interface InlineFlagsGroupEnableNs extends NodeNs<
 	InlineFlagsGroupEnable,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	InlineFlagsGroupEnable.Bound,
-	InlineFlagsGroupEnable.BuildArgs,
-	InlineFlagsGroupEnable.LooseArgs,
 	never,
 	TSKindId.InlineFlagsGroupEnable,
 	InlineFlagsGroupEnable.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: InlineFlagsGroupEnable.BuildArgs;
+	readonly LooseArgs: InlineFlagsGroupEnable.LooseArgs;
+}
 export interface InlineFlagsGroupToggleNs extends NodeNs<
 	InlineFlagsGroupToggle,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	InlineFlagsGroupToggle.Bound,
-	InlineFlagsGroupToggle.BuildArgs,
-	InlineFlagsGroupToggle.LooseArgs,
 	never,
 	TSKindId.InlineFlagsGroupToggle,
 	InlineFlagsGroupToggle.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: InlineFlagsGroupToggle.BuildArgs;
+	readonly LooseArgs: InlineFlagsGroupToggle.LooseArgs;
+}
 export interface InlineFlagsGroupDisableNs extends NodeNs<
 	InlineFlagsGroupDisable,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	InlineFlagsGroupDisable.Bound,
-	InlineFlagsGroupDisable.BuildArgs,
-	InlineFlagsGroupDisable.LooseArgs,
 	never,
 	TSKindId.InlineFlagsGroupDisable,
 	InlineFlagsGroupDisable.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: InlineFlagsGroupDisable.BuildArgs;
+	readonly LooseArgs: InlineFlagsGroupDisable.LooseArgs;
+}
 export interface LazyNs extends NodeNs<
 	Lazy,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Lazy.Bound,
-	Lazy.BuildArgs,
-	Lazy.LooseArgs,
 	'content',
 	TSKindId.Lazy,
 	Lazy.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Lazy.BuildArgs;
+	readonly LooseArgs: Lazy.LooseArgs;
+}
 export interface UnicodePropertyNameNs extends NodeNs<
 	UnicodePropertyName,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	UnicodePropertyName.Bound,
-	UnicodePropertyName.BuildArgs,
-	UnicodePropertyName.LooseArgs,
 	'content',
 	TSKindId.UnicodePropertyName,
 	UnicodePropertyName.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: UnicodePropertyName.BuildArgs;
+	readonly LooseArgs: UnicodePropertyName.LooseArgs;
+}
 export interface AnyCharacterNs extends KeywordNs<TSKindId.AnyCharacter, '.', TSKindId.AnyCharacter> {}
 export interface StartAssertionNs extends KeywordNs<TSKindId.StartAssertion, '^', TSKindId.StartAssertion> {}
 export interface EndAssertionNs extends KeywordNs<TSKindId.EndAssertion, '$', TSKindId.EndAssertion> {}

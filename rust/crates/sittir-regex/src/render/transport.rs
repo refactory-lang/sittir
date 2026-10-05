@@ -1038,13 +1038,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PatternContentTransportSlot> {
     }
 }
 
-fn pattern_content_transport_slot_to_any(t: PatternContentTransportSlot) -> AnyTransport {
-    match t {
-        PatternContentTransportSlot::Alternation(inner) => AnyTransport::Alternation(inner),
-        PatternContentTransportSlot::Term(inner) => AnyTransport::Term(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for PatternContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -1162,13 +1155,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LookaroundAssertionContentTran
     }
 }
 
-fn lookaround_assertion_content_transport_slot_to_any(t: LookaroundAssertionContentTransportSlot) -> AnyTransport {
-    match t {
-        LookaroundAssertionContentTransportSlot::LookaheadAssertion(inner) => AnyTransport::LookaheadAssertion(inner),
-        LookaroundAssertionContentTransportSlot::LookbehindAssertion(inner) => AnyTransport::LookbehindAssertion(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for LookaroundAssertionContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -1263,13 +1249,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LookaheadAssertionContentTrans
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         LookaheadAssertionContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn lookahead_assertion_content_transport_slot_to_any(t: LookaheadAssertionContentTransportSlot) -> AnyTransport {
-    match t {
-        LookaheadAssertionContentTransportSlot::Literal0_65_71 => AnyTransport::Literal0_65_71,
-        LookaheadAssertionContentTransportSlot::Literal1_62_61_6e_67 => AnyTransport::Literal1_62_61_6e_67,
     }
 }
 
@@ -1382,13 +1361,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LookbehindAssertionContentTran
     }
 }
 
-fn lookbehind_assertion_content_transport_slot_to_any(t: LookbehindAssertionContentTransportSlot) -> AnyTransport {
-    match t {
-        LookbehindAssertionContentTransportSlot::Literal0_65_71 => AnyTransport::Literal0_65_71,
-        LookbehindAssertionContentTransportSlot::Literal1_62_61_6e_67 => AnyTransport::Literal1_62_61_6e_67,
-    }
-}
-
 impl ::sittir_core::render::Render for LookbehindAssertionContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -1490,12 +1462,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CharacterClassLeadingTransport
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         CharacterClassLeadingTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn character_class_leading_transport_slot_to_any(t: CharacterClassLeadingTransportSlot) -> AnyTransport {
-    match t {
-        CharacterClassLeadingTransportSlot::Literal3_64_61_73_68 => AnyTransport::Literal3_64_61_73_68,
     }
 }
 
@@ -1692,20 +1658,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CharacterClassClassAtomsTransp
     }
 }
 
-fn character_class_class_atoms_transport_slot_to_any(t: CharacterClassClassAtomsTransportSlot) -> AnyTransport {
-    match t {
-        CharacterClassClassAtomsTransportSlot::ClassCharacter(inner) => AnyTransport::ClassCharacter(inner),
-        CharacterClassClassAtomsTransportSlot::CharacterClassEscape(inner) => AnyTransport::CharacterClassEscape(inner),
-        CharacterClassClassAtomsTransportSlot::ControlEscape(inner) => AnyTransport::ControlEscape(inner),
-        CharacterClassClassAtomsTransportSlot::ControlLetterEscape(inner) => AnyTransport::ControlLetterEscape(inner),
-        CharacterClassClassAtomsTransportSlot::IdentityEscape(inner) => AnyTransport::IdentityEscape(inner),
-        CharacterClassClassAtomsTransportSlot::PosixCharacterClass(inner) => AnyTransport::PosixCharacterClass(inner),
-        CharacterClassClassAtomsTransportSlot::ClassRange(inner) => AnyTransport::ClassRange(inner),
-        CharacterClassClassAtomsTransportSlot::Literal4_62_73_6c_61_73_68_5f_64_61_73_68 => AnyTransport::Literal4_62_73_6c_61_73_68_5f_64_61_73_68,
-        CharacterClassClassAtomsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for CharacterClassClassAtomsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -1805,12 +1757,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CharacterClassTrailingTranspor
     }
 }
 
-fn character_class_trailing_transport_slot_to_any(t: CharacterClassTrailingTransportSlot) -> AnyTransport {
-    match t {
-        CharacterClassTrailingTransportSlot::Literal3_64_61_73_68 => AnyTransport::Literal3_64_61_73_68,
-    }
-}
-
 impl ::sittir_core::render::Render for CharacterClassTrailingTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -1899,12 +1845,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CharacterClassNegationTranspor
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         CharacterClassNegationTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn character_class_negation_transport_slot_to_any(t: CharacterClassNegationTransportSlot) -> AnyTransport {
-    match t {
-        CharacterClassNegationTransportSlot::Literal2_6e_65_67_61_74_69_6f_6e => AnyTransport::Literal2_6e_65_67_61_74_69_6f_6e,
     }
 }
 
@@ -2054,16 +1994,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassRangeStartTransportSlot> 
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ClassRangeStartTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn class_range_start_transport_slot_to_any(t: ClassRangeStartTransportSlot) -> AnyTransport {
-    match t {
-        ClassRangeStartTransportSlot::ClassCharacter(inner) => AnyTransport::ClassCharacter(inner),
-        ClassRangeStartTransportSlot::CharacterClassEscape(inner) => AnyTransport::CharacterClassEscape(inner),
-        ClassRangeStartTransportSlot::ControlEscape(inner) => AnyTransport::ControlEscape(inner),
-        ClassRangeStartTransportSlot::Literal3_64_61_73_68 => AnyTransport::Literal3_64_61_73_68,
-        ClassRangeStartTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -2220,16 +2150,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassRangeEndTransportSlot> {
     }
 }
 
-fn class_range_end_transport_slot_to_any(t: ClassRangeEndTransportSlot) -> AnyTransport {
-    match t {
-        ClassRangeEndTransportSlot::ClassCharacter(inner) => AnyTransport::ClassCharacter(inner),
-        ClassRangeEndTransportSlot::CharacterClassEscape(inner) => AnyTransport::CharacterClassEscape(inner),
-        ClassRangeEndTransportSlot::ControlEscape(inner) => AnyTransport::ControlEscape(inner),
-        ClassRangeEndTransportSlot::Literal3_64_61_73_68 => AnyTransport::Literal3_64_61_73_68,
-        ClassRangeEndTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for ClassRangeEndTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -2333,13 +2253,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedCapturingGroupContentTran
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         NamedCapturingGroupContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn named_capturing_group_content_transport_slot_to_any(t: NamedCapturingGroupContentTransportSlot) -> AnyTransport {
-    match t {
-        NamedCapturingGroupContentTransportSlot::Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_5f_6c_74 => AnyTransport::Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_5f_6c_74,
-        NamedCapturingGroupContentTransportSlot::Literal6_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_50_5f_6c_74 => AnyTransport::Literal6_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_50_5f_6c_74,
     }
 }
 
@@ -2479,14 +2392,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CountQuantifierContentTranspor
     }
 }
 
-fn count_quantifier_content_transport_slot_to_any(t: CountQuantifierContentTransportSlot) -> AnyTransport {
-    match t {
-        CountQuantifierContentTransportSlot::CountQuantifierArm(inner) => AnyTransport::CountQuantifierArm(inner),
-        CountQuantifierContentTransportSlot::DecimalDigits(inner) => AnyTransport::DecimalDigits(inner),
-        CountQuantifierContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for CountQuantifierContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -2577,12 +2482,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CountQuantifierLazyTransportSl
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         CountQuantifierLazyTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn count_quantifier_lazy_transport_slot_to_any(t: CountQuantifierLazyTransportSlot) -> AnyTransport {
-    match t {
-        CountQuantifierLazyTransportSlot::Literal7_6c_61_7a_79 => AnyTransport::Literal7_6c_61_7a_79,
     }
 }
 
@@ -2719,15 +2618,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CharacterClassEscapeContentTra
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         CharacterClassEscapeContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn character_class_escape_content_transport_slot_to_any(t: CharacterClassEscapeContentTransportSlot) -> AnyTransport {
-    match t {
-        CharacterClassEscapeContentTransportSlot::CharacterClassEscapeText1(inner) => AnyTransport::CharacterClassEscapeText1(inner),
-        CharacterClassEscapeContentTransportSlot::CharacterClassEscapeArm(inner) => AnyTransport::CharacterClassEscapeArm(inner),
-        CharacterClassEscapeContentTransportSlot::UnicodeCharacterEscape(inner) => AnyTransport::UnicodeCharacterEscape(inner),
-        CharacterClassEscapeContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -2878,16 +2768,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TermGroupQuantifierTransportSl
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         TermGroupQuantifierTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn term_group_quantifier_transport_slot_to_any(t: TermGroupQuantifierTransportSlot) -> AnyTransport {
-    match t {
-        TermGroupQuantifierTransportSlot::ZeroOrMore(inner) => AnyTransport::ZeroOrMore(inner),
-        TermGroupQuantifierTransportSlot::OneOrMore(inner) => AnyTransport::OneOrMore(inner),
-        TermGroupQuantifierTransportSlot::Optional(inner) => AnyTransport::Optional(inner),
-        TermGroupQuantifierTransportSlot::CountQuantifier(inner) => AnyTransport::CountQuantifier(inner),
-        TermGroupQuantifierTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -3226,34 +3106,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TermGroupContentTransportSlot>
     }
 }
 
-fn term_group_content_transport_slot_to_any(t: TermGroupContentTransportSlot) -> AnyTransport {
-    match t {
-        TermGroupContentTransportSlot::LookaroundAssertion(inner) => AnyTransport::LookaroundAssertion(inner),
-        TermGroupContentTransportSlot::PatternCharacter(inner) => AnyTransport::PatternCharacter(inner),
-        TermGroupContentTransportSlot::CharacterClass(inner) => AnyTransport::CharacterClass(inner),
-        TermGroupContentTransportSlot::PosixCharacterClass(inner) => AnyTransport::PosixCharacterClass(inner),
-        TermGroupContentTransportSlot::DecimalEscape(inner) => AnyTransport::DecimalEscape(inner),
-        TermGroupContentTransportSlot::CharacterClassEscape(inner) => AnyTransport::CharacterClassEscape(inner),
-        TermGroupContentTransportSlot::ControlEscape(inner) => AnyTransport::ControlEscape(inner),
-        TermGroupContentTransportSlot::ControlLetterEscape(inner) => AnyTransport::ControlLetterEscape(inner),
-        TermGroupContentTransportSlot::IdentityEscape(inner) => AnyTransport::IdentityEscape(inner),
-        TermGroupContentTransportSlot::BackreferenceEscape(inner) => AnyTransport::BackreferenceEscape(inner),
-        TermGroupContentTransportSlot::NamedGroupBackreference(inner) => AnyTransport::NamedGroupBackreference(inner),
-        TermGroupContentTransportSlot::AnonymousCapturingGroup(inner) => AnyTransport::AnonymousCapturingGroup(inner),
-        TermGroupContentTransportSlot::NamedCapturingGroup(inner) => AnyTransport::NamedCapturingGroup(inner),
-        TermGroupContentTransportSlot::NonCapturingGroup(inner) => AnyTransport::NonCapturingGroup(inner),
-        TermGroupContentTransportSlot::InlineFlagsGroupEnable(inner) => AnyTransport::InlineFlagsGroupEnable(inner),
-        TermGroupContentTransportSlot::InlineFlagsGroupToggle(inner) => AnyTransport::InlineFlagsGroupToggle(inner),
-        TermGroupContentTransportSlot::InlineFlagsGroupDisable(inner) => AnyTransport::InlineFlagsGroupDisable(inner),
-        TermGroupContentTransportSlot::Literal8_73_74_61_72_74_5f_61_73_73_65_72_74_69_6f_6e => AnyTransport::Literal8_73_74_61_72_74_5f_61_73_73_65_72_74_69_6f_6e,
-        TermGroupContentTransportSlot::Literal9_65_6e_64_5f_61_73_73_65_72_74_69_6f_6e => AnyTransport::Literal9_65_6e_64_5f_61_73_73_65_72_74_69_6f_6e,
-        TermGroupContentTransportSlot::Literal10_62_6f_75_6e_64_61_72_79_5f_61_73_73_65_72_74_69_6f_6e => AnyTransport::Literal10_62_6f_75_6e_64_61_72_79_5f_61_73_73_65_72_74_69_6f_6e,
-        TermGroupContentTransportSlot::Literal11_6e_6f_6e_5f_62_6f_75_6e_64_61_72_79_5f_61_73_73_65_72_74_69_6f_6e => AnyTransport::Literal11_6e_6f_6e_5f_62_6f_75_6e_64_61_72_79_5f_61_73_73_65_72_74_69_6f_6e,
-        TermGroupContentTransportSlot::Literal12_61_6e_79_5f_63_68_61_72_61_63_74_65_72 => AnyTransport::Literal12_61_6e_79_5f_63_68_61_72_61_63_74_65_72,
-        TermGroupContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
 impl ::sittir_core::render::Render for TermGroupContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -3389,12 +3241,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LazyContentTransportSlot> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         LazyContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn lazy_content_transport_slot_to_any(t: LazyContentTransportSlot) -> AnyTransport {
-    match t {
-        LazyContentTransportSlot::Literal13_71_6d_61_72_6b => AnyTransport::Literal13_71_6d_61_72_6b,
     }
 }
 

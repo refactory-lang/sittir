@@ -156,11 +156,11 @@ export function emitNodeModel(config: EmitNodeModelConfig): string {
 }
 
 export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): SerializedNodeModel {
-	const factoryData = buildFactoryMap(nodeMap);
-	const wires = collectPolymorphWires(nodeMap, generatedIdTables, { silent: true });
 	const kindEntries = generatedIdTables
 		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
 		: undefined;
+	const factoryData = buildFactoryMap(nodeMap, kindEntries);
+	const wires = collectPolymorphWires(nodeMap, generatedIdTables, { silent: true });
 	const bareAccepts = bareAcceptClosure(nodeMap, kindEntries);
 
 	const nodes: SerializedNode[] = [];

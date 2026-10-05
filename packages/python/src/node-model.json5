@@ -2007,7 +2007,8 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": "0x"
       },
       "content": {
         "unnamed": false,
@@ -2024,7 +2025,8 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": "0o"
       },
       "content": {
         "unnamed": false,
@@ -2041,7 +2043,8 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true
+        "registered": true,
+        "optionDefault": "0b"
       },
       "content": {
         "unnamed": false,

@@ -630,12 +630,7 @@ describe('native transport emission', () => {
 		expect(emitted).toContain('pub enum FieldExpressionFieldTransportSlot {');
 		expect(emitted).toContain('FieldIdentifier(FieldIdentifierTransport),');
 		expect(emitted).toContain('IntegerLiteral(IntegerLiteralTransport),');
-		// Bridge fn naming follows `<typeSnake>_<fieldSnake>_transport_slot_to_any` for named slots —
-		// part of the live transport→AnyTransport per-slot-enum bridge that
-		// converts a per-slot enum back to `AnyTransport`.
-		expect(emitted).toContain(
-			'fn field_expression_field_transport_slot_to_any(t: FieldExpressionFieldTransportSlot) -> AnyTransport {'
-		);
+		expect(emitted).not.toContain('_transport_slot_to_any');
 		// Per-slot enum is now load-bearing — struct field type IS the enum.
 		expect(emitted).toContain('pub field: ::sittir_core::SlotValue<FieldExpressionFieldTransportSlot>');
 		expect(emitted).not.toContain('Box<AnyTransport>>');
