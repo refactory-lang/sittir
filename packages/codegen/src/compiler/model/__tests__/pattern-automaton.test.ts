@@ -148,6 +148,8 @@ describe('endsWithLineBreak and requiresNonSpace', () => {
 		expect(endsWithLineBreak(dfa('#.*'))).toBe(false);
 		expect(endsWithLineBreak(dfa('\\n'))).toBe(true);
 		expect(endsWithLineBreak(dfa('a\\nb'))).toBe(false);
+		expect(endsWithLineBreak(dfa('(?:x\\n)+'))).toBe(true);
+		expect(endsWithLineBreak(dfa('(?:x\\n)+x?'))).toBe(false);
 	});
 
 	it('tells a pattern that needs a visible character from one that can be all space', () => {

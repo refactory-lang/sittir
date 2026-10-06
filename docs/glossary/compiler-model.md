@@ -5254,7 +5254,7 @@ The trivia kinds that are a line continuation. A kind is one when its default ar
 
 ### `packages/codegen/src/compiler/model/pattern-automaton.ts::endsWithLineBreak`
 
-Whether every text the pattern accepts ends with a line terminator and nothing follows it: the start state does not accept, every edge into an accepting state is a line terminator, and no accepting state has an edge out.
+Whether every text the pattern accepts ends with a line terminator: the start state does not accept and every edge into an accepting state is a line terminator. An accepting state may have edges out (`(?:x\n)+`): it is only entered by a line terminator, so every accepted text still ends in one.
 
 ### `packages/codegen/src/compiler/model/pattern-automaton.ts::requiresNonSpace`
 
