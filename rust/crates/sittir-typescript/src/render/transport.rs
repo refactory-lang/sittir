@@ -702,7 +702,7 @@ pub enum AnyTransport {
     QmarkQmarkEq,
     #[kind(kind::DOT_DOT_DOT)]
     DotDotDot,
-    #[kind(kind::QMARK)]
+    #[kind(display(kind::QMARK))]
     Qmark,
     #[kind(kind::AMP_AMP)]
     AmpAmp,
@@ -724,7 +724,7 @@ pub enum AnyTransport {
     Plus,
     #[kind(kind::DASH)]
     Dash,
-    #[kind(kind::SLASH)]
+    #[kind(display(kind::SLASH))]
     Slash,
     #[kind(kind::PERCENT)]
     Percent,
@@ -758,7 +758,7 @@ pub enum AnyTransport {
     VoidKeyword,
     #[kind(kind::DELETE_KEYWORD)]
     DeleteKeyword,
-    #[kind(kind::BQUOTE)]
+    #[kind(display(kind::BQUOTE))]
     Bquote,
     #[kind(kind::DOLLAR_LBRACE)]
     DollarLbrace,
@@ -812,9 +812,9 @@ pub enum AnyTransport {
     GlobalKeyword,
     #[kind(kind::FROM_KEYWORD)]
     FromKeyword,
-    #[kind(kind::DQUOTE)]
+    #[kind(display(kind::DQUOTE))]
     Dquote,
-    #[kind(kind::SQUOTE)]
+    #[kind(display(kind::SQUOTE))]
     Squote,
     #[kind(kind::PLUS_PLUS)]
     PlusPlus,
@@ -7815,7 +7815,7 @@ impl ::sittir_core::render::Render for PatternTransport {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum TypeTransport {
-    #[kind(kind::PARENTHESIZED_TYPE, kind::PREDEFINED_TYPE, kind::_TYPE_IDENTIFIER, kind::NESTED_TYPE_IDENTIFIER, kind::GENERIC_TYPE, kind::OBJECT_TYPE, kind::ARRAY_TYPE, kind::TUPLE_TYPE, kind::FLOW_MAYBE_TYPE, kind::TYPE_QUERY, kind::INDEX_TYPE_QUERY, kind::THIS, kind::EXISTENTIAL_TYPE, kind::LITERAL_TYPE, kind::LOOKUP_TYPE, kind::CONDITIONAL_TYPE, kind::TEMPLATE_LITERAL_TYPE, kind::INTERSECTION_TYPE, kind::UNION_TYPE, kind::PRIMARY_TYPE, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::UNIQUE, kind::VOID_KEYWORD, kind::UNKNOWN_KEYWORD, kind::NEVER_KEYWORD, kind::OBJECT_KEYWORD)]
+    #[kind(kind::PARENTHESIZED_TYPE, kind::PREDEFINED_TYPE, kind::NESTED_TYPE_IDENTIFIER, kind::GENERIC_TYPE, kind::OBJECT_TYPE, kind::ARRAY_TYPE, kind::TUPLE_TYPE, kind::FLOW_MAYBE_TYPE, kind::TYPE_QUERY, kind::INDEX_TYPE_QUERY, kind::THIS, kind::EXISTENTIAL_TYPE, kind::LITERAL_TYPE, kind::LOOKUP_TYPE, kind::CONDITIONAL_TYPE, kind::TEMPLATE_LITERAL_TYPE, kind::INTERSECTION_TYPE, kind::UNION_TYPE, kind::PRIMARY_TYPE, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::UNIQUE, kind::VOID_KEYWORD, kind::UNKNOWN_KEYWORD, kind::NEVER_KEYWORD, kind::OBJECT_KEYWORD, display(kind::_TYPE_IDENTIFIER))]
     PrimaryType(PrimaryTypeTransport),
     #[kind(kind::FUNCTION_TYPE)]
     FunctionType(FunctionTypeTransport),
@@ -23066,7 +23066,7 @@ pub enum BinaryExpressionOperatorTransportSlot {
     Dash,
     #[kind(kind::STAR)]
     Star,
-    #[kind(kind::SLASH)]
+    #[kind(display(kind::SLASH))]
     Slash,
     #[kind(kind::PERCENT)]
     Percent,
@@ -24742,7 +24742,7 @@ impl ::sittir_core::render::Render for MethodDefinitionNameTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum PublicFieldDefinitionOptionalityTransportSlot {
-    #[kind(kind::QMARK)]
+    #[kind(display(kind::QMARK))]
     Qmark,
     #[kind(kind::BANG)]
     Bang,
@@ -28227,28 +28227,10 @@ impl ::sittir_core::render::Render for GenericTypeNameTransportSlot {
 pub enum TypePredicateNameTransportSlot {
     #[kind(kind::IDENTIFIER, kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::TYPE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::EXPORT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD)]
     Identifier(IdentifierTransport),
+    #[kind(kind::PREDEFINED_TYPE, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::UNIQUE, kind::VOID_KEYWORD, kind::UNKNOWN_KEYWORD, kind::NEVER_KEYWORD, kind::OBJECT_KEYWORD)]
+    PredefinedType(PredefinedTypeEnum),
     #[kind(kind::THIS)]
     This,
-    #[kind(kind::ANY_KEYWORD)]
-    AnyKeyword,
-    #[kind(kind::NUMBER_KEYWORD)]
-    NumberKeyword,
-    #[kind(kind::BOOLEAN_KEYWORD)]
-    BooleanKeyword,
-    #[kind(kind::STRING_KEYWORD)]
-    StringKeyword,
-    #[kind(kind::SYMBOL_KEYWORD)]
-    SymbolKeyword,
-    #[kind(kind::UNIQUE)]
-    Unique,
-    #[kind(kind::VOID_KEYWORD)]
-    VoidKeyword,
-    #[kind(kind::UNKNOWN_KEYWORD)]
-    UnknownKeyword,
-    #[kind(kind::NEVER_KEYWORD)]
-    NeverKeyword,
-    #[kind(kind::OBJECT_KEYWORD)]
-    ObjectKeyword,
     Verbatim(VerbatimTransport),
 }
 
@@ -28256,51 +28238,24 @@ impl ::sittir_core::prepare::Prepare for TypePredicateNameTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
             TypePredicateNameTransportSlot::Identifier(t) => t.prepare(ctx),
+            TypePredicateNameTransportSlot::PredefinedType(t) => t.prepare(ctx),
             TypePredicateNameTransportSlot::This => Ok(()),
-            TypePredicateNameTransportSlot::AnyKeyword => Ok(()),
-            TypePredicateNameTransportSlot::NumberKeyword => Ok(()),
-            TypePredicateNameTransportSlot::BooleanKeyword => Ok(()),
-            TypePredicateNameTransportSlot::StringKeyword => Ok(()),
-            TypePredicateNameTransportSlot::SymbolKeyword => Ok(()),
-            TypePredicateNameTransportSlot::Unique => Ok(()),
-            TypePredicateNameTransportSlot::VoidKeyword => Ok(()),
-            TypePredicateNameTransportSlot::UnknownKeyword => Ok(()),
-            TypePredicateNameTransportSlot::NeverKeyword => Ok(()),
-            TypePredicateNameTransportSlot::ObjectKeyword => Ok(()),
             TypePredicateNameTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
             TypePredicateNameTransportSlot::Identifier(t) => t.source_gap(),
+            TypePredicateNameTransportSlot::PredefinedType(t) => t.source_gap(),
             TypePredicateNameTransportSlot::This => None,
-            TypePredicateNameTransportSlot::AnyKeyword => None,
-            TypePredicateNameTransportSlot::NumberKeyword => None,
-            TypePredicateNameTransportSlot::BooleanKeyword => None,
-            TypePredicateNameTransportSlot::StringKeyword => None,
-            TypePredicateNameTransportSlot::SymbolKeyword => None,
-            TypePredicateNameTransportSlot::Unique => None,
-            TypePredicateNameTransportSlot::VoidKeyword => None,
-            TypePredicateNameTransportSlot::UnknownKeyword => None,
-            TypePredicateNameTransportSlot::NeverKeyword => None,
-            TypePredicateNameTransportSlot::ObjectKeyword => None,
             TypePredicateNameTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             TypePredicateNameTransportSlot::Identifier(t) => t.gap_edges(),
+            TypePredicateNameTransportSlot::PredefinedType(t) => t.gap_edges(),
             TypePredicateNameTransportSlot::This => None,
-            TypePredicateNameTransportSlot::AnyKeyword => None,
-            TypePredicateNameTransportSlot::NumberKeyword => None,
-            TypePredicateNameTransportSlot::BooleanKeyword => None,
-            TypePredicateNameTransportSlot::StringKeyword => None,
-            TypePredicateNameTransportSlot::SymbolKeyword => None,
-            TypePredicateNameTransportSlot::Unique => None,
-            TypePredicateNameTransportSlot::VoidKeyword => None,
-            TypePredicateNameTransportSlot::UnknownKeyword => None,
-            TypePredicateNameTransportSlot::NeverKeyword => None,
-            TypePredicateNameTransportSlot::ObjectKeyword => None,
             TypePredicateNameTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -28310,17 +28265,8 @@ impl ::sittir_core::view::KindOf for TypePredicateNameTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::PredefinedType(inner) => inner.kind_in(kinds),
             Self::This => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
-            Self::AnyKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::NumberKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::BooleanKeyword => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
-            Self::StringKeyword => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
-            Self::SymbolKeyword => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
-            Self::Unique => [::sittir_core::types::KindId(143)].iter().any(|k| kinds.contains(k)),
-            Self::VoidKeyword => [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k)),
-            Self::UnknownKeyword => [::sittir_core::types::KindId(144)].iter().any(|k| kinds.contains(k)),
-            Self::NeverKeyword => [::sittir_core::types::KindId(145)].iter().any(|k| kinds.contains(k)),
-            Self::ObjectKeyword => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -28336,16 +28282,39 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypePredicateNameTransportSlot {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     119 => Ok(Self::This),
-                    38 => Ok(Self::AnyKeyword),
-                    39 => Ok(Self::NumberKeyword),
-                    40 => Ok(Self::BooleanKeyword),
-                    41 => Ok(Self::StringKeyword),
-                    42 => Ok(Self::SymbolKeyword),
-                    143 => Ok(Self::Unique),
-                    107 => Ok(Self::VoidKeyword),
-                    144 => Ok(Self::UnknownKeyword),
-                    145 => Ok(Self::NeverKeyword),
-                    44 => Ok(Self::ObjectKeyword),
+                    359 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    38 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    39 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    40 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    41 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    42 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    143 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    144 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    145 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    44 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -28411,16 +28380,39 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypePredicateNameTransportSlot {
                         text: ::sittir_core::boundary::property(env, napi_val, c"$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in TypePredicateNameTransportSlot"))?,
                     })),
                     119 => Ok(Self::This),
-                    38 => Ok(Self::AnyKeyword),
-                    39 => Ok(Self::NumberKeyword),
-                    40 => Ok(Self::BooleanKeyword),
-                    41 => Ok(Self::StringKeyword),
-                    42 => Ok(Self::SymbolKeyword),
-                    143 => Ok(Self::Unique),
-                    107 => Ok(Self::VoidKeyword),
-                    144 => Ok(Self::UnknownKeyword),
-                    145 => Ok(Self::NeverKeyword),
-                    44 => Ok(Self::ObjectKeyword),
+                    359 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    38 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    39 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    40 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    41 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    42 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    143 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    144 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    145 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    44 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -28517,77 +28509,8 @@ impl ::sittir_core::render::Render for TypePredicateNameTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             TypePredicateNameTransportSlot::Identifier(inner) => inner.render(w),
+            TypePredicateNameTransportSlot::PredefinedType(inner) => inner.render(w),
             TypePredicateNameTransportSlot::This => render_this(w),
-            TypePredicateNameTransportSlot::AnyKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_ANY_KEYWORD_BEFORE);
-                let written = render_any_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_ANY_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypePredicateNameTransportSlot::NumberKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_NUMBER_KEYWORD_BEFORE);
-                let written = render_number_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_NUMBER_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypePredicateNameTransportSlot::BooleanKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_BOOLEAN_KEYWORD_BEFORE);
-                let written = render_boolean_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_BOOLEAN_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypePredicateNameTransportSlot::StringKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_STRING_KEYWORD_BEFORE);
-                let written = render_string_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_STRING_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypePredicateNameTransportSlot::SymbolKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_SYMBOL_KEYWORD_BEFORE);
-                let written = render_symbol_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_SYMBOL_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypePredicateNameTransportSlot::Unique => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_UNIQUE_BEFORE);
-                let written = render_unique(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_UNIQUE_AFTER);
-                Ok(())
-            }
-            TypePredicateNameTransportSlot::VoidKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_VOID_KEYWORD_BEFORE);
-                let written = render_void_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_VOID_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypePredicateNameTransportSlot::UnknownKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_UNKNOWN_KEYWORD_BEFORE);
-                let written = render_unknown_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_UNKNOWN_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypePredicateNameTransportSlot::NeverKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_NEVER_KEYWORD_BEFORE);
-                let written = render_never_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_NEVER_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypePredicateNameTransportSlot::ObjectKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_OBJECT_KEYWORD_BEFORE);
-                let written = render_object_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_OBJECT_KEYWORD_AFTER);
-                Ok(())
-            }
             TypePredicateNameTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -29003,6 +28926,8 @@ impl ::sittir_core::render::Render for TypeQueryMemberExpressionContentTransport
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum TypeQuerySubscriptExpressionIndexTransportSlot {
+    #[kind(kind::PREDEFINED_TYPE, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::UNIQUE, kind::VOID_KEYWORD, kind::UNKNOWN_KEYWORD, kind::NEVER_KEYWORD, kind::OBJECT_KEYWORD)]
+    PredefinedType(PredefinedTypeEnum),
     #[kind(kind::STRING_DOUBLE)]
     StringDouble(StringDoubleTransport),
     #[kind(kind::STRING_SINGLE)]
@@ -29029,32 +28954,13 @@ pub enum TypeQuerySubscriptExpressionIndexTransportSlot {
     NumberBigintOctal(NumberBigintOctalTransport),
     #[kind(kind::NUMBER_BIGINT_DECIMAL)]
     NumberBigintDecimal(NumberBigintDecimalTransport),
-    #[kind(kind::ANY_KEYWORD)]
-    AnyKeyword,
-    #[kind(kind::NUMBER_KEYWORD)]
-    NumberKeyword,
-    #[kind(kind::BOOLEAN_KEYWORD)]
-    BooleanKeyword,
-    #[kind(kind::STRING_KEYWORD)]
-    StringKeyword,
-    #[kind(kind::SYMBOL_KEYWORD)]
-    SymbolKeyword,
-    #[kind(kind::UNIQUE)]
-    Unique,
-    #[kind(kind::VOID_KEYWORD)]
-    VoidKeyword,
-    #[kind(kind::UNKNOWN_KEYWORD)]
-    UnknownKeyword,
-    #[kind(kind::NEVER_KEYWORD)]
-    NeverKeyword,
-    #[kind(kind::OBJECT_KEYWORD)]
-    ObjectKeyword,
     Verbatim(VerbatimTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for TypeQuerySubscriptExpressionIndexTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
+            TypeQuerySubscriptExpressionIndexTransportSlot::PredefinedType(t) => t.prepare(ctx),
             TypeQuerySubscriptExpressionIndexTransportSlot::StringDouble(t) => t.prepare(ctx),
             TypeQuerySubscriptExpressionIndexTransportSlot::StringSingle(t) => t.prepare(ctx),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberHex(t) => t.prepare(ctx),
@@ -29068,21 +28974,12 @@ impl ::sittir_core::prepare::Prepare for TypeQuerySubscriptExpressionIndexTransp
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBigintBinary(t) => t.prepare(ctx),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBigintOctal(t) => t.prepare(ctx),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBigintDecimal(t) => t.prepare(ctx),
-            TypeQuerySubscriptExpressionIndexTransportSlot::AnyKeyword => Ok(()),
-            TypeQuerySubscriptExpressionIndexTransportSlot::NumberKeyword => Ok(()),
-            TypeQuerySubscriptExpressionIndexTransportSlot::BooleanKeyword => Ok(()),
-            TypeQuerySubscriptExpressionIndexTransportSlot::StringKeyword => Ok(()),
-            TypeQuerySubscriptExpressionIndexTransportSlot::SymbolKeyword => Ok(()),
-            TypeQuerySubscriptExpressionIndexTransportSlot::Unique => Ok(()),
-            TypeQuerySubscriptExpressionIndexTransportSlot::VoidKeyword => Ok(()),
-            TypeQuerySubscriptExpressionIndexTransportSlot::UnknownKeyword => Ok(()),
-            TypeQuerySubscriptExpressionIndexTransportSlot::NeverKeyword => Ok(()),
-            TypeQuerySubscriptExpressionIndexTransportSlot::ObjectKeyword => Ok(()),
             TypeQuerySubscriptExpressionIndexTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
+            TypeQuerySubscriptExpressionIndexTransportSlot::PredefinedType(t) => t.source_gap(),
             TypeQuerySubscriptExpressionIndexTransportSlot::StringDouble(t) => t.source_gap(),
             TypeQuerySubscriptExpressionIndexTransportSlot::StringSingle(t) => t.source_gap(),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberHex(t) => t.source_gap(),
@@ -29096,21 +28993,12 @@ impl ::sittir_core::prepare::Prepare for TypeQuerySubscriptExpressionIndexTransp
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBigintBinary(t) => t.source_gap(),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBigintOctal(t) => t.source_gap(),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBigintDecimal(t) => t.source_gap(),
-            TypeQuerySubscriptExpressionIndexTransportSlot::AnyKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::NumberKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::BooleanKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::StringKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::SymbolKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::Unique => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::VoidKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::UnknownKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::NeverKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::ObjectKeyword => None,
             TypeQuerySubscriptExpressionIndexTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
+            TypeQuerySubscriptExpressionIndexTransportSlot::PredefinedType(t) => t.gap_edges(),
             TypeQuerySubscriptExpressionIndexTransportSlot::StringDouble(t) => t.gap_edges(),
             TypeQuerySubscriptExpressionIndexTransportSlot::StringSingle(t) => t.gap_edges(),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberHex(t) => t.gap_edges(),
@@ -29124,16 +29012,6 @@ impl ::sittir_core::prepare::Prepare for TypeQuerySubscriptExpressionIndexTransp
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBigintBinary(t) => t.gap_edges(),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBigintOctal(t) => t.gap_edges(),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBigintDecimal(t) => t.gap_edges(),
-            TypeQuerySubscriptExpressionIndexTransportSlot::AnyKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::NumberKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::BooleanKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::StringKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::SymbolKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::Unique => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::VoidKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::UnknownKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::NeverKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::ObjectKeyword => None,
             TypeQuerySubscriptExpressionIndexTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -29142,6 +29020,7 @@ impl ::sittir_core::prepare::Prepare for TypeQuerySubscriptExpressionIndexTransp
 impl ::sittir_core::view::KindOf for TypeQuerySubscriptExpressionIndexTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
+            Self::PredefinedType(inner) => inner.kind_in(kinds),
             Self::StringDouble(inner) => inner.kind_in(kinds),
             Self::StringSingle(inner) => inner.kind_in(kinds),
             Self::NumberHex(inner) => inner.kind_in(kinds),
@@ -29155,16 +29034,6 @@ impl ::sittir_core::view::KindOf for TypeQuerySubscriptExpressionIndexTransportS
             Self::NumberBigintBinary(inner) => inner.kind_in(kinds),
             Self::NumberBigintOctal(inner) => inner.kind_in(kinds),
             Self::NumberBigintDecimal(inner) => inner.kind_in(kinds),
-            Self::AnyKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::NumberKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::BooleanKeyword => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
-            Self::StringKeyword => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
-            Self::SymbolKeyword => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
-            Self::Unique => [::sittir_core::types::KindId(143)].iter().any(|k| kinds.contains(k)),
-            Self::VoidKeyword => [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k)),
-            Self::UnknownKeyword => [::sittir_core::types::KindId(144)].iter().any(|k| kinds.contains(k)),
-            Self::NeverKeyword => [::sittir_core::types::KindId(145)].iter().any(|k| kinds.contains(k)),
-            Self::ObjectKeyword => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(158)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -29179,16 +29048,39 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQuerySubscriptExpressionInde
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    38 => Ok(Self::AnyKeyword),
-                    39 => Ok(Self::NumberKeyword),
-                    40 => Ok(Self::BooleanKeyword),
-                    41 => Ok(Self::StringKeyword),
-                    42 => Ok(Self::SymbolKeyword),
-                    143 => Ok(Self::Unique),
-                    107 => Ok(Self::VoidKeyword),
-                    144 => Ok(Self::UnknownKeyword),
-                    145 => Ok(Self::NeverKeyword),
-                    44 => Ok(Self::ObjectKeyword),
+                    359 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    38 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    39 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    40 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    41 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    42 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    143 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    144 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    145 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    44 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
                     414 => Ok(Self::StringDouble(
                         StringDoubleTransport::from_napi_value(env, napi_val)?
                     )),
@@ -29241,16 +29133,39 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQuerySubscriptExpressionInde
                     id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
                         text: ::sittir_core::boundary::property(env, napi_val, c"$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in TypeQuerySubscriptExpressionIndexTransportSlot"))?,
                     })),
-                    38 => Ok(Self::AnyKeyword),
-                    39 => Ok(Self::NumberKeyword),
-                    40 => Ok(Self::BooleanKeyword),
-                    41 => Ok(Self::StringKeyword),
-                    42 => Ok(Self::SymbolKeyword),
-                    143 => Ok(Self::Unique),
-                    107 => Ok(Self::VoidKeyword),
-                    144 => Ok(Self::UnknownKeyword),
-                    145 => Ok(Self::NeverKeyword),
-                    44 => Ok(Self::ObjectKeyword),
+                    359 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    38 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    39 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    40 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    41 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    42 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    143 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    144 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    145 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    44 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
                     414 => Ok(Self::StringDouble(
                         StringDoubleTransport::from_napi_value(env, napi_val)?
                     )),
@@ -29334,6 +29249,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeQuerySubscriptExpressionIn
 impl ::sittir_core::render::Render for TypeQuerySubscriptExpressionIndexTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
+            TypeQuerySubscriptExpressionIndexTransportSlot::PredefinedType(inner) => inner.render(w),
             TypeQuerySubscriptExpressionIndexTransportSlot::StringDouble(inner) => inner.render(w),
             TypeQuerySubscriptExpressionIndexTransportSlot::StringSingle(inner) => inner.render(w),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberHex(inner) => inner.render(w),
@@ -29347,76 +29263,6 @@ impl ::sittir_core::render::Render for TypeQuerySubscriptExpressionIndexTranspor
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBigintBinary(inner) => inner.render(w),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBigintOctal(inner) => inner.render(w),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBigintDecimal(inner) => inner.render(w),
-            TypeQuerySubscriptExpressionIndexTransportSlot::AnyKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_ANY_KEYWORD_BEFORE);
-                let written = render_any_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_ANY_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypeQuerySubscriptExpressionIndexTransportSlot::NumberKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_NUMBER_KEYWORD_BEFORE);
-                let written = render_number_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_NUMBER_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypeQuerySubscriptExpressionIndexTransportSlot::BooleanKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_BOOLEAN_KEYWORD_BEFORE);
-                let written = render_boolean_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_BOOLEAN_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypeQuerySubscriptExpressionIndexTransportSlot::StringKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_STRING_KEYWORD_BEFORE);
-                let written = render_string_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_STRING_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypeQuerySubscriptExpressionIndexTransportSlot::SymbolKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_SYMBOL_KEYWORD_BEFORE);
-                let written = render_symbol_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_SYMBOL_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypeQuerySubscriptExpressionIndexTransportSlot::Unique => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_UNIQUE_BEFORE);
-                let written = render_unique(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_UNIQUE_AFTER);
-                Ok(())
-            }
-            TypeQuerySubscriptExpressionIndexTransportSlot::VoidKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_VOID_KEYWORD_BEFORE);
-                let written = render_void_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_VOID_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypeQuerySubscriptExpressionIndexTransportSlot::UnknownKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_UNKNOWN_KEYWORD_BEFORE);
-                let written = render_unknown_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_UNKNOWN_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypeQuerySubscriptExpressionIndexTransportSlot::NeverKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_NEVER_KEYWORD_BEFORE);
-                let written = render_never_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_NEVER_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypeQuerySubscriptExpressionIndexTransportSlot::ObjectKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_OBJECT_KEYWORD_BEFORE);
-                let written = render_object_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_OBJECT_KEYWORD_AFTER);
-                Ok(())
-            }
             TypeQuerySubscriptExpressionIndexTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -42664,7 +42510,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SubscriptExpressionTransport> 
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_LHS_EXPRESSION)]
+#[transport(kind = kind::_LHS_EXPRESSION, layout = [kind::IDENTIFIER])]
 pub struct LhsExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -45034,7 +44880,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassStaticBlockTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::REST_PATTERN, layout = [kind::DOT_DOT_DOT])]
+#[transport(kind = kind::REST_PATTERN, layout = [kind::DOT_DOT_DOT, kind::IDENTIFIER])]
 pub struct RestPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -49093,7 +48939,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypePredicateAnnotationTranspo
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_TYPE_QUERY_MEMBER_EXPRESSION)]
+#[transport(kind = kind::_TYPE_QUERY_MEMBER_EXPRESSION, layout = [kind::DOT, kind::QMARK_DOT])]
 pub struct TypeQueryMemberExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -50535,7 +50381,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DefaultTypeTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CONSTRAINT)]
+#[transport(kind = kind::CONSTRAINT, layout = [kind::EXTENDS_KEYWORD, kind::COLON])]
 pub struct ConstraintTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -51986,7 +51832,7 @@ pub struct ObjectTypeContentTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
-    #[slot(field = field::ITEM)]
+    #[slot(field = field::ITEM, separator = [kind::COMMA, kind::SEMI])]
     pub item: Vec<::sittir_core::SlotValue<ObjectTypeContentItemTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     #[flank(leading = 0, trailing = 0)]
@@ -54899,7 +54745,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassHeritageExtendsClauseTran
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::IMPORT_CLAUSE_DEFAULT_IMPORT)]
+#[transport(kind = kind::IMPORT_CLAUSE_DEFAULT_IMPORT, layout = [kind::IDENTIFIER])]
 pub struct ImportClauseDefaultImportTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -54969,7 +54815,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportClauseDefaultImportTrans
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::EXPORT_STATEMENT_DEFAULT_FROM, layout = [kind::EXPORT_KEYWORD])]
+#[transport(kind = kind::EXPORT_STATEMENT_DEFAULT_FROM, layout = [kind::EXPORT_KEYWORD, kind::_AUTOMATIC_SEMICOLON, kind::SEMI])]
 pub struct ExportStatementDefaultFromTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -55386,7 +55232,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultDeclarat
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE)]
+#[transport(kind = kind::EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE, layout = [kind::_AUTOMATIC_SEMICOLON, kind::SEMI])]
 pub struct ExportStatementDefaultDeclarationDefaultKwValueTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -63132,7 +62978,7 @@ impl ::sittir_core::render::Render for DotDotDotTransport {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum QmarkTransport {
-    #[kind(kind::QMARK)]
+    #[kind(display(kind::QMARK))]
     Qmark,
 }
 
@@ -63902,7 +63748,7 @@ impl ::sittir_core::render::Render for DashTransport {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum SlashTransport {
-    #[kind(kind::SLASH)]
+    #[kind(display(kind::SLASH))]
     Slash,
 }
 
@@ -65092,7 +64938,7 @@ impl ::sittir_core::render::Render for DeleteKeywordTransport {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum BquoteTransport {
-    #[kind(kind::BQUOTE)]
+    #[kind(display(kind::BQUOTE))]
     Bquote,
 }
 
@@ -66982,7 +66828,7 @@ impl ::sittir_core::render::Render for FromKeywordTransport {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum DquoteTransport {
-    #[kind(kind::DQUOTE)]
+    #[kind(display(kind::DQUOTE))]
     Dquote,
 }
 
@@ -67052,7 +66898,7 @@ impl ::sittir_core::render::Render for DquoteTransport {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum SquoteTransport {
-    #[kind(kind::SQUOTE)]
+    #[kind(display(kind::SQUOTE))]
     Squote,
 }
 

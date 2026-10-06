@@ -722,9 +722,9 @@ pub fn separator_kind(children: &[Child], routes: &[Route], candidates: &[KindId
         .iter()
         .zip(routes)
         .find(|(child, route)| {
-            !child.named && child.field.is_none() && !matches!(route, Route::Slot { .. }) && candidates.contains(&child.grammar)
+            !child.named && child.field.is_none() && !matches!(route, Route::Slot { .. }) && candidates.contains(&child.display)
         })
-        .map(|(child, _)| child.grammar.0)
+        .map(|(child, _)| child.display.0)
 }
 
 /// Read the node at `row` into `T`, with the sides its parent's placement

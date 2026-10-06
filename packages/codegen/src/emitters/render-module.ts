@@ -56,7 +56,7 @@ import {
 } from './transport-projection.ts';
 import { listViewOwners } from './factories.ts';
 import { interiorOf } from './interior.ts';
-import { assertEnvelopeExtrasPinned } from './envelope-claims.ts';
+import { assertEnvelopeExtrasPinned, type EnvelopeClaims } from './envelope-claims.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
 import {
 	RESERVED_SUPERTYPE_ENUM_NAMES,
@@ -77,7 +77,9 @@ import {
 	fieldTypeComponents,
 	kindEnumAltIdPairs,
 	slotSeparatorTexts,
-	compareOrdinal
+	compareOrdinal,
+	aliasEnvelopeIds,
+	aliasEnvelopesOf
 } from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
 import {
@@ -1142,8 +1144,8 @@ export function emitRenderModule(
 interface ReadPrint {
 	readonly grammar: GrammarName;
 	readonly ctx: ReadFactsCtx;
-	readonly envelopeExtras: Map<string, number[]>;
-	readonly bodies: ReadonlyMap<string, Body>;
+	readonly envelopeExtras: Map<string, EnvelopeClaims>;
+	readonly printedEnums: Set<string>;
 	readonly admitted: Map<string, number[]>;
 	readonly blankChoices: Set<string>;
 }
@@ -1158,13 +1160,15 @@ function readPrintOf(
 	return {
 		grammar,
 		envelopeExtras: new Map(),
+		printedEnums: new Set(),
 		ctx: {
 			nodeMap,
 			kindEntries,
 			names: readNames(kindEntries, generatedFieldIds(generatedIdTables)),
-			listOwners: new Set(listViewOwners(nodeMap).map((node) => node.kind))
+			listOwners: new Set(listViewOwners(nodeMap).map((node) => node.kind)),
+			envelopeIds: new Set(aliasEnvelopeIds(aliasEnvelopesOf(nodeMap))),
+			folds: generatedIdTables.folds ?? new Map()
 		},
-		bodies: new Map(structs.map((struct) => [struct.kind, struct.body])),
 		admitted: new Map(),
 		blankChoices: new Set()
 	};
@@ -1187,8 +1191,12 @@ function variantKindLines(
 	ids: readonly number[],
 	read: ReadPrint
 ): string[] {
+	read.printedEnums.add(enumName);
 	if (variant instanceof AssembledAlias) {
-		read.envelopeExtras.set(`${enumName}.${variantName}`, ids.filter((id) => id !== variant.aliasTypeId));
+		read.envelopeExtras.set(`${enumName}.${variantName}`, {
+			display: variant.aliasTypeId,
+			extras: ids.filter((id) => id !== variant.aliasTypeId)
+		});
 		return [`    #[kind(${variantKindArgs([variant.aliasTypeId], true, read.ctx)})]`];
 	}
 	return ids.length === 0 ? [] : [`    #[kind(${variantKindArgs(ids, false, read.ctx)})]`];
@@ -1249,7 +1257,7 @@ function renderTransportSupport(
 			: renderTransportStruct(node, nodeMap, choices.names, kindEntries, plan, read)
 	);
 	assertReadableTransports(nodes, nodeMap, choices.names, read);
-	assertEnvelopeExtrasPinned(read.grammar, read.envelopeExtras);
+	assertEnvelopeExtrasPinned(read.grammar, read.envelopeExtras, read.printedEnums);
 	const seatTargetLines = renderSeatTargets(
 		nodes,
 		nodeMap,
@@ -2103,6 +2111,10 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 				continue;
 			}
 			if (component.kind !== 'literal') continue;
+			if (component.enumKind !== undefined && nodeMap.nodes.get(component.enumKind)?.hidden === false) {
+				if (!slotKinds.includes(component.enumKind)) slotKinds.push(component.enumKind);
+				continue;
+			}
 			const literalKind = component.rawKind ?? component.value;
 			const key = `${literalKind}\0${component.value}`;
 			if (literalSet.has(key)) continue;
@@ -3366,6 +3378,16 @@ function renderTransportStruct(
 	return renderTransportDataStruct(rustTransportStructName(node), node, slotModel, nodeMap, choices, plan, kindEntries, read);
 }
 
+function isCompoundOf(node: AssembledNode): boolean {
+	return (
+		node.modelType === 'branch' ||
+		node.modelType === 'envelope' ||
+		node.modelType === 'list' ||
+		node.modelType === 'alias' ||
+		(node.modelType === 'polymorph' && !(node instanceof AssembledSupertype))
+	);
+}
+
 function renderTransportDataStruct(
 	structName: string,
 	node: AssembledNode,
@@ -3384,18 +3406,13 @@ function renderTransportDataStruct(
 		lines.push('#[cfg_attr(feature = "napi-bindings", napi(object))]');
 	}
 	lines.push(TRANSPORT_DERIVE);
-	lines.push(`#[transport(${transportArgs(node, ownId, read.bodies.get(node.kind), read.ctx)})]`);
+	const printedSlots = isCompoundOf(node) ? structSlotsOf(node, slotModel, nodeMap) : [];
+	lines.push(`#[transport(${transportArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot))})]`);
 	admit(read, structName, node instanceof AssembledAlias ? [node.aliasTypeId] : ownId === undefined ? [] : [ownId]);
 	lines.push(`pub struct ${structName} {`);
-	const isCompoundNode =
-		node.modelType === 'branch' ||
-		node.modelType === 'envelope' ||
-		node.modelType === 'list' ||
-		node.modelType === 'alias' ||
-		(node.modelType === 'polymorph' && !(node instanceof AssembledSupertype));
-	if (isCompoundNode) {
+	if (isCompoundOf(node)) {
 		lines.push(...renderLayoutField());
-		for (const { slot, owner, forceOptional } of structSlotsOf(node, slotModel, nodeMap)) {
+		for (const { slot, owner, forceOptional } of printedSlots) {
 			lines.push(
 				...renderTransportField(
 					slot,
@@ -3453,7 +3470,7 @@ function renderTransportDataStruct(
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
-	lines.push(...prepareStructImpl(structName, node, fillFields, plan, isCompoundNode, nodeMap, choices, kindEntries));
+	lines.push(...prepareStructImpl(structName, node, fillFields, plan, isCompoundOf(node), nodeMap, choices, kindEntries));
 	if (isLeafNode) {
 		lines.push(
 			...renderLeafTransportNapiImpls(structName, kindIdText(node))

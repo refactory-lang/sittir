@@ -16922,7 +16922,7 @@ The kind ids of literal texts, as separators and keywords are declared by id. A 
 
 ### `packages/codegen/src/emitters/transport-projection.ts::layoutTokenIds`
 
-The tokens a kind's own template writes: the text nodes of its body, through conditional arms, that have a parser symbol. The reader skips them where it routes children.
+The tokens a kind's own rule writes and no slot takes, as the ids the parser shows for them: an unfielded string (its aliased id when the site aliases it), an unfielded literal symbol, an external, and a fixed-text leaf that no printed slot holds, fielded or not. Tokens inside a printed slot's field belong to the slot. The reader skips these tokens where it routes children. A string written inside a `token(…)` has no stamped id at link, so its id is the parser's symbol for that text.
 
 ### `packages/codegen/src/emitters/transport-projection.ts::listItemSlot`
 
@@ -16938,7 +16938,7 @@ Whether a slot takes children that carry no field: when it has no field route or
 
 ### `packages/codegen/src/emitters/transport-projection.ts::slotArgs`
 
-The `#[slot(…)]` arguments of one slot: its field routes, `untagged` when it also takes untagged kinds, the keyword a presence slot reads, its separators, and `scalar` for a text slot stored as a unit. Empty means a bare `#[slot]`.
+The `#[slot(…)]` arguments of one slot: its field routes, `untagged` when it also takes untagged kinds, the keyword a presence slot reads, its separators (a list's item slot also takes the list's separator candidates), and `scalar` for a text slot stored as a unit. Empty means a bare `#[slot]`.
 
 ### `packages/codegen/src/emitters/transport-projection.ts::captureArgs`
 
@@ -16950,7 +16950,7 @@ The flanks a list leaves optional, each with the number of mandatory flank token
 
 ### `packages/codegen/src/emitters/transport-projection.ts::separatorKindArgs`
 
-The kinds a list's separator can be and the one its declaration falls back to: the arguments `_separatorKindOf` reads. `undefined` for a list with no separator.
+The kinds a list's separator can be and the one its declaration falls back to: the arguments `_separatorKindOf` reads. `undefined` for a list with no separator. The candidate ids come from one derivation shared with the item slot's `separator =`.
 
 ### `packages/codegen/src/emitters/transport-projection.ts::enumKindArgs`
 
@@ -16958,7 +16958,7 @@ The `#[transport(…)]` arguments of an enum kind: its own id, and `spelled` so 
 
 ### `packages/codegen/src/emitters/transport-projection.ts::variantKindArgs`
 
-The `#[kind(…)]` arguments of a variant: the ids it claims, and `display` when they are display ids. An enum's members take their ids from the arms its decoder holds, so the reader and the decoder read one list.
+The `#[kind(…)]` arguments of a variant: the ids it claims, and `display` when they are display ids. An alias envelope's id, and an anonymous token the parser folds into another symbol, are printed `display(kind)` because the parser shows them only by their public symbol. The raw symbols the parser folds into a named target are printed `folded(kind)`: the choice matches them after every exact claim, so a sibling variant that claims the raw symbol itself keeps it. An enum's members take their ids from the arms its decoder holds, so the reader and the decoder read one list.
 
 ### `packages/codegen/src/emitters/transport-projection.ts::assertOneUntaggedSlot`
 
@@ -16966,7 +16966,7 @@ Refuses a kind with two slots that take an untagged child of the same kind, nami
 
 ### `packages/codegen/src/emitters/transport-projection.ts::presenceKeywordId`
 
-The kind id of the keyword a presence slot reads: the fixed-literal kind the slot references, else the parser symbol of its text. `slotArgs` names it as `presence`, and the diagnostic that checks untagged slots takes the slot's admitted id from it, so one lookup answers both.
+The kind id of the keyword a presence slot reads: the id the parser shows for the slot's value (its aliased id when the site aliases the keyword), else a hidden marker keyword's own literal id, else the fixed-literal kind the slot references, else the parser symbol of its text. `slotArgs` names it as `presence`, and the diagnostic that checks untagged slots takes the slot's admitted id from it, so one lookup answers both.
 
 ### `packages/codegen/src/emitters/render-module.ts::ReadPrint`
 
@@ -16986,11 +16986,11 @@ The `#[kind(…)]` line of one choice variant. An alias envelope reads by its di
 
 ### `packages/codegen/src/emitters/envelope-claims.ts::ENVELOPE_EXTRA_IDS`
 
-The kind ids, per grammar and envelope variant, that the decode claims for the variant beyond its display id. The reader does not accept them. The pin is a ceiling: it lists the ids that exist today so none is added unnoticed.
+The display id and the kind ids, per grammar and envelope variant, that the decode claims for the variant beyond its display id. The reader does not accept them. The pin is a ceiling: it lists the ids that exist today so none is added unnoticed.
 
 ### `packages/codegen/src/emitters/envelope-claims.ts::assertEnvelopeExtrasPinned`
 
-Fails the build when a variant claims an id outside its pin (a new claimed id is a decision, never a raised pin) or a variant the grammar emits no longer claims a pinned id (the pin is lowered to match).
+Fails the build when a variant claims an id outside its pin (a new claimed id is a decision, never a raised pin) or a pinned variant of an enum the grammar emits is no longer an envelope variant, or no longer claims a pinned id (the pin is lowered or removed to match). A pin for an enum the model does not print at all is not checked.
 
 ### `packages/codegen/src/emitters/render-module.ts::alternatesOf`
 
@@ -17019,3 +17019,7 @@ The type a slot's carrier wraps: the kind's transport, the supertype's enum, the
 ### `packages/codegen/src/emitters/render-module.ts::assertReadableTransports`
 
 The checks that need every type printed. Two slots of a kind that take an untagged child of one kind are refused, naming the kind and both slots. A slot's registration as a blank option must agree with its choice having a blank arm, since a choice is shared by every slot with the same variants.
+
+### `packages/codegen/src/emitters/render-module.ts::isCompoundOf`
+
+Whether a kind prints a layout field and its slots: a branch, an envelope, a list, an alias, or a polymorph that is not a supertype.

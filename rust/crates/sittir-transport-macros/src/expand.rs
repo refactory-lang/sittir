@@ -19,7 +19,7 @@ pub fn derive(input: &DeriveInput) -> syn::Result<TokenStream> {
 fn choice(ident: &Ident, data: &DataEnum) -> syn::Result<TokenStream> {
     let mut by_display = Vec::new();
     let mut by_grammar = Vec::new();
-    let mut by_alias = Vec::new();
+    let mut by_folded = Vec::new();
     let mut scalars = Vec::new();
     let mut reads = Vec::new();
     let mut sides = Vec::new();
@@ -41,11 +41,18 @@ fn choice(ident: &Ident, data: &DataEnum) -> syn::Result<TokenStream> {
         let Some(kinds) = attrs::variant_kinds(&variant.attrs)? else { continue };
         let i = i as u16;
         let ids = &kinds.kinds;
-        if kinds.display {
+        let shown = &kinds.shown;
+        if !shown.is_empty() {
+            by_display.push(quote!(if [#(#shown),*].contains(&display) { return ::core::option::Option::Some(#i); }));
+        }
+        if !ids.is_empty() && kinds.display {
             by_display.push(quote!(if [#(#ids),*].contains(&display) { return ::core::option::Option::Some(#i); }));
-        } else {
+        } else if !ids.is_empty() {
             by_grammar.push(quote!(if [#(#ids),*].contains(&grammar) { return ::core::option::Option::Some(#i); }));
-            by_alias.push(quote!(if [#(#ids),*].contains(&display) { return ::core::option::Option::Some(#i); }));
+        }
+        let folded = &kinds.folded;
+        if !folded.is_empty() {
+            by_folded.push(quote!(if [#(#folded),*].contains(&grammar) { return ::core::option::Option::Some(#i); }));
         }
         match &variant.fields {
             Fields::Unit => {
@@ -99,7 +106,7 @@ fn choice(ident: &Ident, data: &DataEnum) -> syn::Result<TokenStream> {
             fn __variant(grammar: __Kind, display: __Kind) -> ::core::option::Option<u16> {
                 #(#by_display)*
                 #(#by_grammar)*
-                #(#by_alias)*
+                #(#by_folded)*
                 ::core::option::Option::None
             }
             impl __rt::ReadTransport for #ident {
@@ -160,12 +167,12 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
         }
         let kinds = attrs::variant_kinds(&variant.attrs)?
             .ok_or_else(|| syn::Error::new_spanned(variant, "an enum kind's member names its token: `#[kind(…)]`"))?;
-        let (name, ids) = (&variant.ident, &kinds.kinds);
-        by_kind.push(quote!(if [#(#ids),*].contains(&grammar) { return ::core::option::Option::Some(#ident::#name); }));
+        let (name, ids, shown, folded) = (&variant.ident, &kinds.kinds, &kinds.shown, &kinds.folded);
+        by_kind.push(quote!(if [#(#ids),*].contains(&grammar) || [#(#folded),*].contains(&grammar) || [#(#shown),*].contains(&display) { return ::core::option::Option::Some(#ident::#name); }));
     }
     let spelled = attrs.spelled.then(|| {
         quote! {
-            if let ::core::option::Option::Some(member) = __rt::spelled_id(&__rt::survey(cursor)).and_then(__member) {
+            if let ::core::option::Option::Some(member) = __rt::spelled_id(&__rt::survey(cursor)).and_then(|id| __member(id, id)) {
                 return ::core::result::Result::Ok(member);
             }
         }
@@ -174,19 +181,19 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
         const _: () = {
             use ::sittir_core::read as __rt;
             use ::sittir_core::types::KindId as __Kind;
-            fn __member(grammar: __Kind) -> ::core::option::Option<#ident> {
+            fn __member(grammar: __Kind, display: __Kind) -> ::core::option::Option<#ident> {
                 #(#by_kind)*
                 ::core::option::Option::None
             }
             impl __rt::ReadTransport for #ident {
                 fn admits(grammar: __Kind, display: __Kind) -> bool {
-                    grammar == #kind || display == #kind || __member(grammar).is_some()
+                    grammar == #kind || __member(grammar, display).is_some()
                 }
                 fn takes_tagged(grammar: __Kind, display: __Kind, _named: bool) -> bool {
                     <Self as __rt::ReadTransport>::admits(grammar, display)
                 }
-                fn scalar(grammar: __Kind, _display: __Kind) -> bool {
-                    __member(grammar).is_some()
+                fn scalar(grammar: __Kind, display: __Kind) -> bool {
+                    __member(grammar, display).is_some()
                 }
                 fn read(
                     cursor: &mut ::tree_sitter::TreeCursor<'_>,
@@ -195,7 +202,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
                     _sides: __rt::Sides,
                 ) -> ::core::result::Result<Self, __rt::ReadError> {
                     let node = cursor.node();
-                    if let ::core::option::Option::Some(member) = __member(__Kind(node.grammar_id())) {
+                    if let ::core::option::Option::Some(member) = __member(__Kind(node.grammar_id()), __Kind(node.kind_id())) {
                         return ::core::result::Result::Ok(member);
                     }
                     #spelled
@@ -299,7 +306,8 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
         .as_ref()
         .ok_or_else(|| syn::Error::new_spanned(ident, "`#[transport(kind = …)]` names the struct's kind"))?;
     let fields = fields_of(ident, data)?;
-    let admits = if attrs.display { quote!(display == #kind) } else { quote!(grammar == #kind || display == #kind) };
+    let folded = &attrs.folded;
+    let admits = if attrs.display { quote!(display == #kind) } else { quote!(grammar == #kind #(|| grammar == #folded)*) };
     let layout = &attrs.layout;
     let gap_arms = attrs.gaps.iter().map(|(preceding, slot)| quote!(#preceding => ::core::option::Option::Some(#slot),));
     let Body { items, read, sides_of } = if let Some(fixed) = &attrs.text {
@@ -504,10 +512,27 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             _ => quote!(#name: ::core::default::Default::default(),),
         }
     });
+    let (hidden, restore) = if attrs.wraps_hidden {
+        (
+            quote! {
+                let own = __rt::row_of(cursor);
+                let wrapped = __rt::survey(cursor).into_iter().find(|child| !child.trivia).ok_or(
+                    __rt::ReadError::Unadmitted { kind: __Kind(cursor.node().grammar_id()), row: own },
+                )?;
+                cursor.goto_descendant(wrapped.row as usize);
+            },
+            quote!(cursor.goto_descendant(own as usize);),
+        )
+    } else {
+        (quote!(), quote!())
+    };
     Ok(Body {
         items: quote!(),
         read: quote! {
-            let mut content = <#inner as __rt::ReadTransport>::read(cursor, ctx, depth, sides.clone())?;
+            #hidden
+            let mut content = <#inner as __rt::ReadTransport>::read(cursor, ctx, depth, sides.clone());
+            #restore
+            let mut content = content?;
             let layout: #layout_ty = <#inner as __rt::HasLayout<#layout_ty>>::take_layout(&mut content)
                 .or_else(|| sides.into_layout());
             ::core::result::Result::Ok(Self { #(#inits)* })
@@ -541,6 +566,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
         .map(|(i, (field, slot))| (i as u16, field, slot))
         .collect();
 
+    let mut tagged_separators = Vec::new();
     let mut tagged = Vec::new();
     let mut untagged = Vec::new();
     let mut separators = Vec::new();
@@ -559,8 +585,8 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
         let field_paths = &slot.fields;
         if !field_paths.is_empty() {
             let takes = match kind {
-                SlotKind::Presence(keyword) => quote!(child.grammar == #keyword),
-                SlotKind::Text => quote!(!__LAYOUT.contains(&child.grammar) && ![#(#own_separators),*].contains(&child.grammar)),
+                SlotKind::Presence(keyword) => quote!(child.display == #keyword),
+                SlotKind::Text => quote!(!__LAYOUT.contains(&child.display) && ![#(#own_separators),*].contains(&child.display)),
                 SlotKind::Node => quote!(<#ty as __rt::ReadSlot>::takes_tagged(child.grammar, child.display, child.named)),
             };
             tagged.push(quote! {
@@ -573,13 +599,20 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
         }
         if field_paths.is_empty() || slot.untagged {
             let admits = match kind {
-                SlotKind::Presence(keyword) => quote!(child.grammar == #keyword),
+                SlotKind::Presence(keyword) => quote!(child.display == #keyword),
                 SlotKind::Text => return Err(syn::Error::new_spanned(field.ident, "a text slot routes by its field")),
                 SlotKind::Node => quote!(<#ty as __rt::ReadSlot>::admits(child.grammar, child.display)),
             };
             untagged.push(quote! {
                 if #admits {
                     return ::core::result::Result::Ok(__rt::Route::Slot { slot: #i, scalar: #scalar });
+                }
+            });
+        }
+        if !own_separators.is_empty() && !field_paths.is_empty() && !attrs.list {
+            tagged_separators.push(quote! {
+                ::core::option::Option::Some(__field) if (#(__field == #field_paths)||*) && [#(#own_separators),*].contains(&child.display) => {
+                    return ::core::result::Result::Ok(__rt::Route::Separator { slot: #i, tagged: true });
                 }
             });
         }
@@ -590,7 +623,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                 quote!(child.field.is_some_and(|__field| #(__field == #field_paths)||*))
             };
             separators.push(quote! {
-                if [#(#own_separators),*].contains(&child.grammar) {
+                if [#(#own_separators),*].contains(&child.display) {
                     return ::core::result::Result::Ok(__rt::Route::Separator { slot: #i, tagged: #own_field });
                 }
             });
@@ -616,12 +649,13 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                     return ::core::result::Result::Ok(__rt::Route::Trivia);
                 }
                 match child.field {
+                    #(#tagged_separators)*
                     #(#tagged)*
                     ::core::option::Option::None => { #(#untagged)* }
                     _ => {}
                 }
                 #(#separators)*
-                if __LAYOUT.contains(&child.grammar) {
+                if __LAYOUT.contains(&child.display) {
                     return ::core::result::Result::Ok(__rt::Route::Layout);
                 }
                 ::core::result::Result::Err(__rt::ReadError::Unrouted { kind: __KIND, child: child.grammar, row: child.row })

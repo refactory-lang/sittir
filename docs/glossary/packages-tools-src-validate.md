@@ -1824,3 +1824,27 @@ A read leaf whose stored kind differs from the kind the corpus shows (an in-plac
 #### interior projection
 
 A read leaf that carries `$text`, whose shown kind has a token interior and whose stored slots do not yet hold it, is projected through `projectInterior`, the one projection the wrap and the coercer share, and read under the shown kind. A leaf already wrapped as its own kind has its slots and takes the unchanged path.
+
+### `packages/tools/src/validate/typed-read-parity.ts::module`
+
+The gate behind `sittir tool typed-read-parity`. For every corpus entry of a grammar, parse errors included, the typed reader's read of the whole tree is compared with the detached data today's read and wrap give the render side, decoded into the same transport types by the engine's `typedReadParity`. It reports, never changes behaviour. An entry the typed reader refuses is `refused`; one whose two reads differ is `differs`, with both reads' debug text from their first difference; one whose detached data does not decode as today's render root is `today-failed`, which is today's pipeline failing and still fails the gate. The command exits 1 on any of the three. It also reports the envelope pin, per pinned id of each variant: how many corpus nodes show that grammar id under the variant's display id.
+
+### `packages/tools/src/validate/typed-read-parity.ts::withoutLayoutEvidence`
+
+Today's detached data minus what the typed reader leaves to the render side: a layout's `gap` and `flank` (layout evidence), and a layout left empty. The trivia entries stay: they arrive as coordinates and decode as the coordinates the typed reader gives.
+
+### `packages/tools/src/validate/typed-read-parity.ts::pinCounts`
+
+One zeroed counter per pinned id of each envelope variant of the grammar, keyed by variant, display id and id.
+
+### `packages/tools/src/validate/typed-read-parity.ts::countShownPins`
+
+Counts the nodes of one tree whose display id and grammar id are a pinned pair: the corpus evidence that a pinned id is reached.
+
+### `packages/tools/src/validate/typed-read-parity.ts::computeTypedReadParity`
+
+The census for one grammar: the agreed count, each refusal, difference and undecodable entry with its report, and the pin counts. A refusal is checked before the comparison, so an entry today's pipeline cannot decode is still read by the typed reader.
+
+### `packages/tools/src/validate/typed-read-parity.ts::run`
+
+Runs the census for one grammar or every stable grammar and prints the rows, the pin counts and a summary per grammar, or JSON. Returns 1 when any grammar has a refusal, a difference or an undecodable entry.

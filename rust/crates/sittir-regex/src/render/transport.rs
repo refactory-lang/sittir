@@ -82,7 +82,7 @@ pub enum AnyTransport {
     ControlEscape(ControlEscapeTransport),
     #[kind(kind::CONTROL_LETTER_ESCAPE)]
     ControlLetterEscape(ControlLetterEscapeTransport),
-    #[kind(kind::IDENTITY_ESCAPE)]
+    #[kind(kind::IDENTITY_ESCAPE, folded(kind::BSLASH_DASH))]
     IdentityEscape(IdentityEscapeTransport),
     #[kind(kind::GROUP_NAME)]
     GroupName(GroupNameTransport),
@@ -1352,7 +1352,7 @@ pub enum CharacterClassClassAtomsTransportSlot {
     ControlEscape(ControlEscapeTransport),
     #[kind(kind::CONTROL_LETTER_ESCAPE)]
     ControlLetterEscape(ControlLetterEscapeTransport),
-    #[kind(kind::IDENTITY_ESCAPE)]
+    #[kind(kind::IDENTITY_ESCAPE, folded(kind::BSLASH_DASH))]
     IdentityEscape(IdentityEscapeTransport),
     #[kind(kind::POSIX_CHARACTER_CLASS)]
     PosixCharacterClass(PosixCharacterClassTransport),
@@ -2261,7 +2261,7 @@ pub enum TermGroupContentTransportSlot {
     ControlEscape(ControlEscapeTransport),
     #[kind(kind::CONTROL_LETTER_ESCAPE)]
     ControlLetterEscape(ControlLetterEscapeTransport),
-    #[kind(kind::IDENTITY_ESCAPE, kind::BSLASH_DASH)]
+    #[kind(kind::IDENTITY_ESCAPE, kind::BSLASH_DASH, folded(kind::BSLASH_DASH))]
     IdentityEscape(IdentityEscapeTransport),
     #[kind(kind::BACKREFERENCE_ESCAPE)]
     BackreferenceEscape(BackreferenceEscapeTransport),
@@ -3358,7 +3358,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LookaroundAssertionTransport> 
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_LOOKAHEAD_ASSERTION, layout = [kind::LPAREN_QMARK, kind::RPAREN])]
+#[transport(kind = kind::_LOOKAHEAD_ASSERTION, layout = [kind::LPAREN_QMARK, kind::EQ, kind::BANG, kind::RPAREN])]
 pub struct LookaheadAssertionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -3428,7 +3428,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LookaheadAssertionTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_LOOKBEHIND_ASSERTION, layout = [kind::LPAREN_QMARK_LT, kind::RPAREN])]
+#[transport(kind = kind::_LOOKBEHIND_ASSERTION, layout = [kind::LPAREN_QMARK_LT, kind::EQ, kind::BANG, kind::RPAREN])]
 pub struct LookbehindAssertionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -3615,13 +3615,13 @@ pub struct CharacterClassTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_leading"))]
-    #[slot(field = field::LEADING, presence = kind::DASH)]
+    #[slot(field = field::LEADING, presence = kind::CLASS_CHARACTER)]
     pub leading: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_atoms"))]
     #[slot(field = field::CLASS_ATOMS)]
     pub class_atoms: Option<Vec<::sittir_core::SlotValue<CharacterClassClassAtomsTransportSlot>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing"))]
-    #[slot(field = field::TRAILING, presence = kind::DASH)]
+    #[slot(field = field::TRAILING, presence = kind::CLASS_CHARACTER)]
     pub trailing: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_negation"))]
     #[slot(presence = kind::_NEGATION)]
@@ -4114,7 +4114,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AnonymousCapturingGroupTranspo
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::NAMED_CAPTURING_GROUP, layout = [kind::GT, kind::RPAREN])]
+#[transport(kind = kind::NAMED_CAPTURING_GROUP, layout = [kind::LPAREN_QMARK_LT, kind::LPAREN_QMARK_P_LT, kind::GT, kind::RPAREN])]
 pub struct NamedCapturingGroupTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -4702,7 +4702,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<OptionalTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::COUNT_QUANTIFIER, layout = [kind::LBRACE, kind::RBRACE])]
+#[transport(kind = kind::COUNT_QUANTIFIER, layout = [kind::LBRACE, kind::RBRACE, kind::_LAZY])]
 pub struct CountQuantifierTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -4710,7 +4710,7 @@ pub struct CountQuantifierTransport {
     #[slot]
     pub content: ::sittir_core::SlotValue<CountQuantifierContentTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lazy"))]
-    #[slot(presence = kind::QMARK)]
+    #[slot(presence = kind::_LAZY)]
     pub lazy: Option<bool>,
 }
 
@@ -5597,7 +5597,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ControlLetterEscapeTransport> 
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::IDENTITY_ESCAPE, interior = "^\\\\(?<content>(?:[^kdDsSpPwWbfnrtv0-9]))$")]
+#[transport(kind = kind::IDENTITY_ESCAPE, folded = [kind::BSLASH_DASH], interior = "^\\\\(?<content>(?:[^kdDsSpPwWbfnrtv0-9]))$")]
 pub struct IdentityEscapeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,

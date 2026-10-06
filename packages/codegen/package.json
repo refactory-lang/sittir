@@ -42,6 +42,12 @@
 			"source": "./src/grammars.ts",
 			"import": "./dist/grammars.js",
 			"default": "./dist/grammars.js"
+		},
+		"./envelope-claims": {
+			"types": "./src/emitters/envelope-claims.ts",
+			"source": "./src/emitters/envelope-claims.ts",
+			"import": "./dist/emitters/envelope-claims.js",
+			"default": "./dist/emitters/envelope-claims.js"
 		}
 	},
 	"scripts": {

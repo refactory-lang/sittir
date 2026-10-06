@@ -394,6 +394,34 @@ macro_rules! napi_engine {
                 })
             }
 
+            /// Transitional, while today's read and the typed read both exist:
+            /// the refusal the typed reader meets reading tree `treeId` whole,
+            /// or `null` when it reads it.
+            #[::napi_derive::napi]
+            pub fn typed_read_refusal(&self, tree_id: f64) -> ::napi::Result<Option<String>> {
+                self.with_typed_read(tree_id, |typed: ::std::result::Result<$render_root, $crate::read::ReadError>, name| {
+                    Ok(typed.err().map(|refusal| refusal.describe(name)))
+                })
+            }
+
+            /// Transitional, while today's read and the typed read both exist:
+            /// compare the typed read of tree `treeId` with `today`, the detached
+            /// root today's read and wrap give it. `null` when they agree;
+            /// otherwise the refusal, a `normalized: <Kind>.<slot>` line for
+            /// each slot the typed read fills with its empty value where today's
+            /// read leaves it absent, and the first
+            /// other place the two differ.
+            #[::napi_derive::napi(ts_args_type = "treeId: number, today: object")]
+            pub fn typed_read_parity(&self, tree_id: f64, today: $render_root) -> ::napi::Result<Option<String>> {
+                self.with_typed_read(tree_id, |typed: ::std::result::Result<$render_root, $crate::read::ReadError>, name| {
+                    Ok(match typed {
+                        Err(refusal) => Some(format!("refused: {}", refusal.describe(name))),
+                        Ok(typed) if typed == today => None,
+                        Ok(typed) => $crate::napi_engine::parity_report(&format!("{typed:#?}"), &format!("{today:#?}")),
+                    })
+                })
+            }
+
             /// Render a typed transport object (napi-native, numeric `$type`).
             ///
             /// `treeId` names the parse whose detected format applies. It is
@@ -473,6 +501,29 @@ macro_rules! napi_engine {
         }
 
         impl SittirEngine {
+            fn with_typed_read<T>(
+                &self,
+                tree_id: f64,
+                then: impl FnOnce(
+                    ::std::result::Result<$render_root, $crate::read::ReadError>,
+                    &dyn Fn($crate::types::KindId) -> &'static str,
+                ) -> ::napi::Result<T>,
+            ) -> ::napi::Result<T> {
+                let tree_id = $crate::napi_engine::checked_index(tree_id, "treeId")?;
+                let tree_id = u32::try_from(tree_id)
+                    .map_err(|_| ::napi::Error::from_reason(format!("treeId {tree_id} names no tree")))?;
+                LIVE_TREES.with(|trees| {
+                    let trees = trees.borrow();
+                    let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                    let typed = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| {
+                        parsed.typed_read::<$render_root>($crate::read::Depth::All)
+                    }))
+                    .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(payload, "typed_read panicked")))?;
+                    let grammar = <$grammar as ::std::default::Default>::default();
+                    then(typed, &|kind| $crate::engine::EngineGrammar::kind_name(grammar, kind))
+                })
+            }
+
             /// Take the next tree id from the JavaScript process, refusing to wrap.
             ///
             /// Every grammar's addon is its own linked image, so a counter in
@@ -546,6 +597,86 @@ pub fn address_from_json(json: &str) -> napi::Result<crate::query::Address> {
     serde_json::from_str(json).map_err(|e| napi::Error::from_reason(format!("not a node address: {e}")))
 }
 
+/// The prefix of a report line naming a slot the typed read fills with its
+/// empty value (an empty list, or the blank arm) where today's read leaves it
+/// absent.
+pub const NORMALIZED_PREFIX: &str = "normalized: ";
+
+/// How the typed read differs from today's, from their debug text.
+///
+/// Today's read gives a node with no named children its text and no slot
+/// keys, so a slot that holds nothing is absent there and holds its empty
+/// value in the typed read: `Some([])` for a list, `Some(Transport(Blank))`
+/// for an optional slot with a blank arm. Each such slot is reported as a
+/// `normalized: <Kind>.<slot>` line and does not count as a difference. Any other difference is reported as twelve
+/// lines of each read around the first one. A coordinate's handle and
+/// text-only flag differ between the two readers by construction, and
+/// `SlotValue`'s equality leaves them out, so the report does too. `None`
+/// when nothing differs.
+pub fn parity_report(typed: &str, today: &str) -> Option<String> {
+    let kept = |dump: &str| -> Vec<String> {
+        dump.lines()
+            .filter(|line| {
+                let line = line.trim_start();
+                !(line.starts_with("handle: ") || line.starts_with("text_only: "))
+            })
+            .map(str::to_owned)
+            .collect()
+    };
+    let (typed, today) = (kept(typed), kept(today));
+    let (mut i, mut j) = (0, 0);
+    let mut report = Vec::new();
+    while i < typed.len() && j < today.len() {
+        if typed[i] == today[j] {
+            i += 1;
+            j += 1;
+        } else if let Some((slot, lines)) = empty_slot(&typed, i, &today[j]) {
+            report.push(format!("{NORMALIZED_PREFIX}{}.{slot}", enclosing_kind(&typed, i)));
+            i += lines;
+            j += 1;
+        } else {
+            break;
+        }
+    }
+    if i < typed.len() || j < today.len() {
+        let window = |lines: &[String], at: usize| lines[at.saturating_sub(12)..(at + 12).min(lines.len())].join("\n");
+        report.push(format!(
+            "first difference at line {i}\n--- typed read\n{}\n--- today's read\n{}",
+            window(&typed, i),
+            window(&today, j)
+        ));
+    }
+    (!report.is_empty()).then(|| report.join("\n"))
+}
+
+/// The lines after a `slot: Some(` line that spell an empty slot value.
+const EMPTY_VALUES: [&[&str]; 2] = [&["[],", "),"], &["Transport(", "Blank,", "),", "),"]];
+
+/// The slot name and the number of typed lines it spans when `typed[at..]` is
+/// a slot holding its empty value and `today_line` is the same slot absent.
+fn empty_slot<'a>(typed: &'a [String], at: usize, today_line: &str) -> Option<(&'a str, usize)> {
+    let head = typed[at].strip_suffix("Some(")?;
+    if today_line != format!("{head}None,") {
+        return None;
+    }
+    let value = EMPTY_VALUES
+        .iter()
+        .find(|value| value.iter().enumerate().all(|(n, line)| typed.get(at + 1 + n).is_some_and(|t| t.trim() == *line)))?;
+    Some((head.trim().trim_end_matches(':'), value.len() + 1))
+}
+
+/// The struct whose body holds line `at` of a pretty debug dump: the nearest
+/// earlier line one indent level out that opens a block.
+fn enclosing_kind(dump: &[String], at: usize) -> &str {
+    let indent = |line: &str| line.len() - line.trim_start().len();
+    let want = indent(&dump[at]).saturating_sub(4);
+    dump[..at]
+        .iter()
+        .rev()
+        .find(|line| indent(line) == want && line.ends_with(" {"))
+        .map_or("?", |line| line.trim().trim_end_matches(" {"))
+}
+
 /// The refusal for an address into a tree this thread does not hold.
 pub fn tree_not_live(tree_id: u32) -> napi::Error {
     napi::Error::from_reason(format!(
@@ -571,4 +702,44 @@ pub fn depth_from_wire(depth: Option<f64>) -> napi::Result<crate::ReadDepth> {
     Ok(crate::ReadDepth::Levels(
         std::num::NonZeroU32::new(levels as u32).expect("levels >= 1"),
     ))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::parity_report;
+
+    const EMPTY: &str = "Block {\n    statements: Some(\n        [],\n    ),\n    layout: None,\n}";
+    const ABSENT: &str = "Block {\n    statements: None,\n    layout: None,\n}";
+
+    #[test]
+    fn an_empty_list_slot_today_leaves_absent_is_named_not_counted() {
+        assert_eq!(parity_report(EMPTY, ABSENT).as_deref(), Some("normalized: Block.statements"));
+    }
+
+    #[test]
+    fn a_difference_after_a_normalized_slot_is_still_reported() {
+        let typed = EMPTY.replace("layout: None", "layout: Some(1)");
+        let report = parity_report(&typed, ABSENT).unwrap();
+        assert!(report.starts_with("normalized: Block.statements\nfirst difference at line 4"), "{report}");
+    }
+
+    #[test]
+    fn a_populated_slot_against_an_absent_one_is_a_difference() {
+        let typed = "Block {\n    statements: Some(\n        [\n            1,\n        ],\n    ),\n}";
+        let report = parity_report(typed, "Block {\n    statements: None,\n}").unwrap();
+        assert!(report.starts_with("first difference at line 1"), "{report}");
+    }
+
+    #[test]
+    fn a_blank_arm_today_leaves_absent_is_named_not_counted() {
+        let typed = "Block {\n    terminator: Some(\n        Transport(\n            Blank,\n        ),\n    ),\n    layout: None,\n}";
+        let today = "Block {\n    terminator: None,\n    layout: None,\n}";
+        assert_eq!(parity_report(typed, today).as_deref(), Some("normalized: Block.terminator"));
+    }
+
+    #[test]
+    fn identical_dumps_and_handle_only_differences_agree() {
+        assert_eq!(parity_report(ABSENT, ABSENT), None);
+        assert_eq!(parity_report("A {\n    handle: 1,\n}", "A {\n    handle: 2,\n}"), None);
+    }
 }

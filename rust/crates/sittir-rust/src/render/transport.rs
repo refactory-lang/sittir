@@ -620,7 +620,7 @@ pub enum AnyTransport {
     Lbrack,
     #[kind(kind::RBRACK)]
     Rbrack,
-    #[kind(kind::BANG)]
+    #[kind(display(kind::BANG))]
     Bang,
     #[kind(kind::U8_KEYWORD)]
     U8Keyword,
@@ -696,7 +696,7 @@ pub enum AnyTransport {
     TraitKeyword,
     #[kind(kind::FOR_KEYWORD)]
     ForKeyword,
-    #[kind(kind::LT)]
+    #[kind(display(kind::LT))]
     Lt,
     #[kind(kind::GT)]
     Gt,
@@ -740,7 +740,7 @@ pub enum AnyTransport {
     LtLt,
     #[kind(kind::GT_GT)]
     GtGt,
-    #[kind(kind::SLASH)]
+    #[kind(display(kind::SLASH))]
     Slash,
     #[kind(kind::PERCENT)]
     Percent,
@@ -11231,6 +11231,12 @@ pub enum NonSpecialTokenContentTransportSlot {
     FloatLiteral(FloatLiteralTransport),
     #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
+    #[kind(kind::_PRIMITIVE_TYPE, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD)]
+    PrimitiveType(PrimitiveTypeEnum),
+    #[kind(kind::_TOKEN_TREE_PUNCTUATION, kind::PLUS, kind::DASH, kind::STAR, kind::PERCENT, kind::CARET, kind::AMP, kind::PIPE, kind::AMP_AMP, kind::PIPE_PIPE, kind::LT_LT, kind::GT_GT, kind::PLUS_EQ, kind::DASH_EQ, kind::STAR_EQ, kind::SLASH_EQ, kind::PERCENT_EQ, kind::CARET_EQ, kind::AMP_EQ, kind::PIPE_EQ, kind::LT_LT_EQ, kind::GT_GT_EQ, kind::EQ, kind::EQ_EQ, kind::BANG_EQ, kind::GT, kind::GT_EQ, kind::LT_EQ, kind::AT, kind::UNDERSCORE, kind::DOT, kind::DOT_DOT, kind::DOT_DOT_DOT, kind::DOT_DOT_EQ, kind::COMMA, kind::SEMI, kind::COLON, kind::COLON_COLON, kind::DASH_GT, kind::EQ_GT, kind::POUND, kind::QMARK, display(kind::SLASH), display(kind::BANG), display(kind::LT))]
+    TokenTreePunctuation(TokenTreePunctuationEnum),
+    #[kind(kind::_TOKEN_KEYWORDS, kind::SQUOTE, kind::AS_KEYWORD, kind::ASYNC_KEYWORD, kind::AWAIT_KEYWORD, kind::BREAK_KEYWORD, kind::CONST_KEYWORD, kind::CONTINUE_KEYWORD, kind::DEFAULT_KEYWORD, kind::ENUM_KEYWORD, kind::FN_KEYWORD, kind::FOR_KEYWORD, kind::GEN_KEYWORD, kind::IF_KEYWORD, kind::IMPL_KEYWORD, kind::LET_KEYWORD, kind::LOOP_KEYWORD, kind::MATCH_KEYWORD, kind::MOD_KEYWORD, kind::PUB_KEYWORD, kind::RETURN_KEYWORD, kind::STATIC_KEYWORD, kind::STRUCT_KEYWORD, kind::TRAIT_KEYWORD, kind::TYPE_KEYWORD, kind::UNION_KEYWORD, kind::UNSAFE_KEYWORD, kind::USE_KEYWORD, kind::WHERE_KEYWORD, kind::WHILE_KEYWORD)]
+    TokenKeywords(TokenKeywordsEnum),
     #[kind(kind::MUTABLE_SPECIFIER)]
     MutableSpecifier,
     #[kind(kind::SELF)]
@@ -11239,186 +11245,6 @@ pub enum NonSpecialTokenContentTransportSlot {
     Super,
     #[kind(kind::CRATE)]
     Crate,
-    #[kind(kind::U8_KEYWORD)]
-    U8Keyword,
-    #[kind(kind::I8_KEYWORD)]
-    I8Keyword,
-    #[kind(kind::U16_KEYWORD)]
-    U16Keyword,
-    #[kind(kind::I16_KEYWORD)]
-    I16Keyword,
-    #[kind(kind::U32_KEYWORD)]
-    U32Keyword,
-    #[kind(kind::I32_KEYWORD)]
-    I32Keyword,
-    #[kind(kind::U64_KEYWORD)]
-    U64Keyword,
-    #[kind(kind::I64_KEYWORD)]
-    I64Keyword,
-    #[kind(kind::U128_KEYWORD)]
-    U128Keyword,
-    #[kind(kind::I128_KEYWORD)]
-    I128Keyword,
-    #[kind(kind::ISIZE_KEYWORD)]
-    IsizeKeyword,
-    #[kind(kind::USIZE_KEYWORD)]
-    UsizeKeyword,
-    #[kind(kind::F32_KEYWORD)]
-    F32Keyword,
-    #[kind(kind::F64_KEYWORD)]
-    F64Keyword,
-    #[kind(kind::BOOL_KEYWORD)]
-    BoolKeyword,
-    #[kind(kind::STR_KEYWORD)]
-    StrKeyword,
-    #[kind(kind::CHAR_KEYWORD)]
-    CharKeyword,
-    #[kind(kind::PLUS)]
-    Plus,
-    #[kind(kind::DASH)]
-    Dash,
-    #[kind(kind::STAR)]
-    Star,
-    #[kind(kind::SLASH)]
-    Slash,
-    #[kind(kind::PERCENT)]
-    Percent,
-    #[kind(kind::CARET)]
-    Caret,
-    #[kind(kind::BANG)]
-    Bang,
-    #[kind(kind::AMP)]
-    Amp,
-    #[kind(kind::PIPE)]
-    Pipe,
-    #[kind(kind::AMP_AMP)]
-    AmpAmp,
-    #[kind(kind::PIPE_PIPE)]
-    PipePipe,
-    #[kind(kind::LT_LT)]
-    LtLt,
-    #[kind(kind::GT_GT)]
-    GtGt,
-    #[kind(kind::PLUS_EQ)]
-    PlusEq,
-    #[kind(kind::DASH_EQ)]
-    DashEq,
-    #[kind(kind::STAR_EQ)]
-    StarEq,
-    #[kind(kind::SLASH_EQ)]
-    SlashEq,
-    #[kind(kind::PERCENT_EQ)]
-    PercentEq,
-    #[kind(kind::CARET_EQ)]
-    CaretEq,
-    #[kind(kind::AMP_EQ)]
-    AmpEq,
-    #[kind(kind::PIPE_EQ)]
-    PipeEq,
-    #[kind(kind::LT_LT_EQ)]
-    LtLtEq,
-    #[kind(kind::GT_GT_EQ)]
-    GtGtEq,
-    #[kind(kind::EQ)]
-    Eq,
-    #[kind(kind::EQ_EQ)]
-    EqEq,
-    #[kind(kind::BANG_EQ)]
-    BangEq,
-    #[kind(kind::GT)]
-    Gt,
-    #[kind(kind::LT)]
-    Lt,
-    #[kind(kind::GT_EQ)]
-    GtEq,
-    #[kind(kind::LT_EQ)]
-    LtEq,
-    #[kind(kind::AT)]
-    At,
-    #[kind(kind::UNDERSCORE)]
-    Underscore,
-    #[kind(kind::DOT)]
-    Dot,
-    #[kind(kind::DOT_DOT)]
-    DotDot,
-    #[kind(kind::DOT_DOT_DOT)]
-    DotDotDot,
-    #[kind(kind::DOT_DOT_EQ)]
-    DotDotEq,
-    #[kind(kind::COMMA)]
-    Comma,
-    #[kind(kind::SEMI)]
-    Semi,
-    #[kind(kind::COLON)]
-    Colon,
-    #[kind(kind::COLON_COLON)]
-    ColonColon,
-    #[kind(kind::DASH_GT)]
-    DashGt,
-    #[kind(kind::EQ_GT)]
-    EqGt,
-    #[kind(kind::POUND)]
-    Pound,
-    #[kind(kind::QMARK)]
-    Qmark,
-    #[kind(kind::SQUOTE)]
-    Squote,
-    #[kind(kind::AS_KEYWORD)]
-    AsKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::BREAK_KEYWORD)]
-    BreakKeyword,
-    #[kind(kind::CONST_KEYWORD)]
-    ConstKeyword,
-    #[kind(kind::CONTINUE_KEYWORD)]
-    ContinueKeyword,
-    #[kind(kind::DEFAULT_KEYWORD)]
-    DefaultKeyword,
-    #[kind(kind::ENUM_KEYWORD)]
-    EnumKeyword,
-    #[kind(kind::FN_KEYWORD)]
-    FnKeyword,
-    #[kind(kind::FOR_KEYWORD)]
-    ForKeyword,
-    #[kind(kind::GEN_KEYWORD)]
-    GenKeyword,
-    #[kind(kind::IF_KEYWORD)]
-    IfKeyword,
-    #[kind(kind::IMPL_KEYWORD)]
-    ImplKeyword,
-    #[kind(kind::LET_KEYWORD)]
-    LetKeyword,
-    #[kind(kind::LOOP_KEYWORD)]
-    LoopKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
-    #[kind(kind::MOD_KEYWORD)]
-    ModKeyword,
-    #[kind(kind::PUB_KEYWORD)]
-    PubKeyword,
-    #[kind(kind::RETURN_KEYWORD)]
-    ReturnKeyword,
-    #[kind(kind::STATIC_KEYWORD)]
-    StaticKeyword,
-    #[kind(kind::STRUCT_KEYWORD)]
-    StructKeyword,
-    #[kind(kind::TRAIT_KEYWORD)]
-    TraitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::UNION_KEYWORD)]
-    UnionKeyword,
-    #[kind(kind::UNSAFE_KEYWORD)]
-    UnsafeKeyword,
-    #[kind(kind::USE_KEYWORD)]
-    UseKeyword,
-    #[kind(kind::WHERE_KEYWORD)]
-    WhereKeyword,
-    #[kind(kind::WHILE_KEYWORD)]
-    WhileKeyword,
     Verbatim(VerbatimTransport),
 }
 
@@ -11440,100 +11266,13 @@ impl ::sittir_core::prepare::Prepare for NonSpecialTokenContentTransportSlot {
             NonSpecialTokenContentTransportSlot::IntegerLiteralOctal(t) => t.prepare(ctx),
             NonSpecialTokenContentTransportSlot::FloatLiteral(t) => t.prepare(ctx),
             NonSpecialTokenContentTransportSlot::Identifier(t) => t.prepare(ctx),
+            NonSpecialTokenContentTransportSlot::PrimitiveType(t) => t.prepare(ctx),
+            NonSpecialTokenContentTransportSlot::TokenTreePunctuation(t) => t.prepare(ctx),
+            NonSpecialTokenContentTransportSlot::TokenKeywords(t) => t.prepare(ctx),
             NonSpecialTokenContentTransportSlot::MutableSpecifier => Ok(()),
             NonSpecialTokenContentTransportSlot::Self_ => Ok(()),
             NonSpecialTokenContentTransportSlot::Super => Ok(()),
             NonSpecialTokenContentTransportSlot::Crate => Ok(()),
-            NonSpecialTokenContentTransportSlot::U8Keyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::I8Keyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::U16Keyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::I16Keyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::U32Keyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::I32Keyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::U64Keyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::I64Keyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::U128Keyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::I128Keyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::IsizeKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::UsizeKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::F32Keyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::F64Keyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::BoolKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::StrKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::CharKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::Plus => Ok(()),
-            NonSpecialTokenContentTransportSlot::Dash => Ok(()),
-            NonSpecialTokenContentTransportSlot::Star => Ok(()),
-            NonSpecialTokenContentTransportSlot::Slash => Ok(()),
-            NonSpecialTokenContentTransportSlot::Percent => Ok(()),
-            NonSpecialTokenContentTransportSlot::Caret => Ok(()),
-            NonSpecialTokenContentTransportSlot::Bang => Ok(()),
-            NonSpecialTokenContentTransportSlot::Amp => Ok(()),
-            NonSpecialTokenContentTransportSlot::Pipe => Ok(()),
-            NonSpecialTokenContentTransportSlot::AmpAmp => Ok(()),
-            NonSpecialTokenContentTransportSlot::PipePipe => Ok(()),
-            NonSpecialTokenContentTransportSlot::LtLt => Ok(()),
-            NonSpecialTokenContentTransportSlot::GtGt => Ok(()),
-            NonSpecialTokenContentTransportSlot::PlusEq => Ok(()),
-            NonSpecialTokenContentTransportSlot::DashEq => Ok(()),
-            NonSpecialTokenContentTransportSlot::StarEq => Ok(()),
-            NonSpecialTokenContentTransportSlot::SlashEq => Ok(()),
-            NonSpecialTokenContentTransportSlot::PercentEq => Ok(()),
-            NonSpecialTokenContentTransportSlot::CaretEq => Ok(()),
-            NonSpecialTokenContentTransportSlot::AmpEq => Ok(()),
-            NonSpecialTokenContentTransportSlot::PipeEq => Ok(()),
-            NonSpecialTokenContentTransportSlot::LtLtEq => Ok(()),
-            NonSpecialTokenContentTransportSlot::GtGtEq => Ok(()),
-            NonSpecialTokenContentTransportSlot::Eq => Ok(()),
-            NonSpecialTokenContentTransportSlot::EqEq => Ok(()),
-            NonSpecialTokenContentTransportSlot::BangEq => Ok(()),
-            NonSpecialTokenContentTransportSlot::Gt => Ok(()),
-            NonSpecialTokenContentTransportSlot::Lt => Ok(()),
-            NonSpecialTokenContentTransportSlot::GtEq => Ok(()),
-            NonSpecialTokenContentTransportSlot::LtEq => Ok(()),
-            NonSpecialTokenContentTransportSlot::At => Ok(()),
-            NonSpecialTokenContentTransportSlot::Underscore => Ok(()),
-            NonSpecialTokenContentTransportSlot::Dot => Ok(()),
-            NonSpecialTokenContentTransportSlot::DotDot => Ok(()),
-            NonSpecialTokenContentTransportSlot::DotDotDot => Ok(()),
-            NonSpecialTokenContentTransportSlot::DotDotEq => Ok(()),
-            NonSpecialTokenContentTransportSlot::Comma => Ok(()),
-            NonSpecialTokenContentTransportSlot::Semi => Ok(()),
-            NonSpecialTokenContentTransportSlot::Colon => Ok(()),
-            NonSpecialTokenContentTransportSlot::ColonColon => Ok(()),
-            NonSpecialTokenContentTransportSlot::DashGt => Ok(()),
-            NonSpecialTokenContentTransportSlot::EqGt => Ok(()),
-            NonSpecialTokenContentTransportSlot::Pound => Ok(()),
-            NonSpecialTokenContentTransportSlot::Qmark => Ok(()),
-            NonSpecialTokenContentTransportSlot::Squote => Ok(()),
-            NonSpecialTokenContentTransportSlot::AsKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::AsyncKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::AwaitKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::BreakKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::ConstKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::ContinueKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::DefaultKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::EnumKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::FnKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::ForKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::GenKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::IfKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::ImplKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::LetKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::LoopKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::MatchKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::ModKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::PubKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::ReturnKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::StaticKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::StructKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::TraitKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::TypeKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::UnionKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::UnsafeKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::UseKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::WhereKeyword => Ok(()),
-            NonSpecialTokenContentTransportSlot::WhileKeyword => Ok(()),
             NonSpecialTokenContentTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -11554,100 +11293,13 @@ impl ::sittir_core::prepare::Prepare for NonSpecialTokenContentTransportSlot {
             NonSpecialTokenContentTransportSlot::IntegerLiteralOctal(t) => t.source_gap(),
             NonSpecialTokenContentTransportSlot::FloatLiteral(t) => t.source_gap(),
             NonSpecialTokenContentTransportSlot::Identifier(t) => t.source_gap(),
+            NonSpecialTokenContentTransportSlot::PrimitiveType(t) => t.source_gap(),
+            NonSpecialTokenContentTransportSlot::TokenTreePunctuation(t) => t.source_gap(),
+            NonSpecialTokenContentTransportSlot::TokenKeywords(t) => t.source_gap(),
             NonSpecialTokenContentTransportSlot::MutableSpecifier => None,
             NonSpecialTokenContentTransportSlot::Self_ => None,
             NonSpecialTokenContentTransportSlot::Super => None,
             NonSpecialTokenContentTransportSlot::Crate => None,
-            NonSpecialTokenContentTransportSlot::U8Keyword => None,
-            NonSpecialTokenContentTransportSlot::I8Keyword => None,
-            NonSpecialTokenContentTransportSlot::U16Keyword => None,
-            NonSpecialTokenContentTransportSlot::I16Keyword => None,
-            NonSpecialTokenContentTransportSlot::U32Keyword => None,
-            NonSpecialTokenContentTransportSlot::I32Keyword => None,
-            NonSpecialTokenContentTransportSlot::U64Keyword => None,
-            NonSpecialTokenContentTransportSlot::I64Keyword => None,
-            NonSpecialTokenContentTransportSlot::U128Keyword => None,
-            NonSpecialTokenContentTransportSlot::I128Keyword => None,
-            NonSpecialTokenContentTransportSlot::IsizeKeyword => None,
-            NonSpecialTokenContentTransportSlot::UsizeKeyword => None,
-            NonSpecialTokenContentTransportSlot::F32Keyword => None,
-            NonSpecialTokenContentTransportSlot::F64Keyword => None,
-            NonSpecialTokenContentTransportSlot::BoolKeyword => None,
-            NonSpecialTokenContentTransportSlot::StrKeyword => None,
-            NonSpecialTokenContentTransportSlot::CharKeyword => None,
-            NonSpecialTokenContentTransportSlot::Plus => None,
-            NonSpecialTokenContentTransportSlot::Dash => None,
-            NonSpecialTokenContentTransportSlot::Star => None,
-            NonSpecialTokenContentTransportSlot::Slash => None,
-            NonSpecialTokenContentTransportSlot::Percent => None,
-            NonSpecialTokenContentTransportSlot::Caret => None,
-            NonSpecialTokenContentTransportSlot::Bang => None,
-            NonSpecialTokenContentTransportSlot::Amp => None,
-            NonSpecialTokenContentTransportSlot::Pipe => None,
-            NonSpecialTokenContentTransportSlot::AmpAmp => None,
-            NonSpecialTokenContentTransportSlot::PipePipe => None,
-            NonSpecialTokenContentTransportSlot::LtLt => None,
-            NonSpecialTokenContentTransportSlot::GtGt => None,
-            NonSpecialTokenContentTransportSlot::PlusEq => None,
-            NonSpecialTokenContentTransportSlot::DashEq => None,
-            NonSpecialTokenContentTransportSlot::StarEq => None,
-            NonSpecialTokenContentTransportSlot::SlashEq => None,
-            NonSpecialTokenContentTransportSlot::PercentEq => None,
-            NonSpecialTokenContentTransportSlot::CaretEq => None,
-            NonSpecialTokenContentTransportSlot::AmpEq => None,
-            NonSpecialTokenContentTransportSlot::PipeEq => None,
-            NonSpecialTokenContentTransportSlot::LtLtEq => None,
-            NonSpecialTokenContentTransportSlot::GtGtEq => None,
-            NonSpecialTokenContentTransportSlot::Eq => None,
-            NonSpecialTokenContentTransportSlot::EqEq => None,
-            NonSpecialTokenContentTransportSlot::BangEq => None,
-            NonSpecialTokenContentTransportSlot::Gt => None,
-            NonSpecialTokenContentTransportSlot::Lt => None,
-            NonSpecialTokenContentTransportSlot::GtEq => None,
-            NonSpecialTokenContentTransportSlot::LtEq => None,
-            NonSpecialTokenContentTransportSlot::At => None,
-            NonSpecialTokenContentTransportSlot::Underscore => None,
-            NonSpecialTokenContentTransportSlot::Dot => None,
-            NonSpecialTokenContentTransportSlot::DotDot => None,
-            NonSpecialTokenContentTransportSlot::DotDotDot => None,
-            NonSpecialTokenContentTransportSlot::DotDotEq => None,
-            NonSpecialTokenContentTransportSlot::Comma => None,
-            NonSpecialTokenContentTransportSlot::Semi => None,
-            NonSpecialTokenContentTransportSlot::Colon => None,
-            NonSpecialTokenContentTransportSlot::ColonColon => None,
-            NonSpecialTokenContentTransportSlot::DashGt => None,
-            NonSpecialTokenContentTransportSlot::EqGt => None,
-            NonSpecialTokenContentTransportSlot::Pound => None,
-            NonSpecialTokenContentTransportSlot::Qmark => None,
-            NonSpecialTokenContentTransportSlot::Squote => None,
-            NonSpecialTokenContentTransportSlot::AsKeyword => None,
-            NonSpecialTokenContentTransportSlot::AsyncKeyword => None,
-            NonSpecialTokenContentTransportSlot::AwaitKeyword => None,
-            NonSpecialTokenContentTransportSlot::BreakKeyword => None,
-            NonSpecialTokenContentTransportSlot::ConstKeyword => None,
-            NonSpecialTokenContentTransportSlot::ContinueKeyword => None,
-            NonSpecialTokenContentTransportSlot::DefaultKeyword => None,
-            NonSpecialTokenContentTransportSlot::EnumKeyword => None,
-            NonSpecialTokenContentTransportSlot::FnKeyword => None,
-            NonSpecialTokenContentTransportSlot::ForKeyword => None,
-            NonSpecialTokenContentTransportSlot::GenKeyword => None,
-            NonSpecialTokenContentTransportSlot::IfKeyword => None,
-            NonSpecialTokenContentTransportSlot::ImplKeyword => None,
-            NonSpecialTokenContentTransportSlot::LetKeyword => None,
-            NonSpecialTokenContentTransportSlot::LoopKeyword => None,
-            NonSpecialTokenContentTransportSlot::MatchKeyword => None,
-            NonSpecialTokenContentTransportSlot::ModKeyword => None,
-            NonSpecialTokenContentTransportSlot::PubKeyword => None,
-            NonSpecialTokenContentTransportSlot::ReturnKeyword => None,
-            NonSpecialTokenContentTransportSlot::StaticKeyword => None,
-            NonSpecialTokenContentTransportSlot::StructKeyword => None,
-            NonSpecialTokenContentTransportSlot::TraitKeyword => None,
-            NonSpecialTokenContentTransportSlot::TypeKeyword => None,
-            NonSpecialTokenContentTransportSlot::UnionKeyword => None,
-            NonSpecialTokenContentTransportSlot::UnsafeKeyword => None,
-            NonSpecialTokenContentTransportSlot::UseKeyword => None,
-            NonSpecialTokenContentTransportSlot::WhereKeyword => None,
-            NonSpecialTokenContentTransportSlot::WhileKeyword => None,
             NonSpecialTokenContentTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
@@ -11668,100 +11320,13 @@ impl ::sittir_core::prepare::Prepare for NonSpecialTokenContentTransportSlot {
             NonSpecialTokenContentTransportSlot::IntegerLiteralOctal(t) => t.gap_edges(),
             NonSpecialTokenContentTransportSlot::FloatLiteral(t) => t.gap_edges(),
             NonSpecialTokenContentTransportSlot::Identifier(t) => t.gap_edges(),
+            NonSpecialTokenContentTransportSlot::PrimitiveType(t) => t.gap_edges(),
+            NonSpecialTokenContentTransportSlot::TokenTreePunctuation(t) => t.gap_edges(),
+            NonSpecialTokenContentTransportSlot::TokenKeywords(t) => t.gap_edges(),
             NonSpecialTokenContentTransportSlot::MutableSpecifier => None,
             NonSpecialTokenContentTransportSlot::Self_ => None,
             NonSpecialTokenContentTransportSlot::Super => None,
             NonSpecialTokenContentTransportSlot::Crate => None,
-            NonSpecialTokenContentTransportSlot::U8Keyword => None,
-            NonSpecialTokenContentTransportSlot::I8Keyword => None,
-            NonSpecialTokenContentTransportSlot::U16Keyword => None,
-            NonSpecialTokenContentTransportSlot::I16Keyword => None,
-            NonSpecialTokenContentTransportSlot::U32Keyword => None,
-            NonSpecialTokenContentTransportSlot::I32Keyword => None,
-            NonSpecialTokenContentTransportSlot::U64Keyword => None,
-            NonSpecialTokenContentTransportSlot::I64Keyword => None,
-            NonSpecialTokenContentTransportSlot::U128Keyword => None,
-            NonSpecialTokenContentTransportSlot::I128Keyword => None,
-            NonSpecialTokenContentTransportSlot::IsizeKeyword => None,
-            NonSpecialTokenContentTransportSlot::UsizeKeyword => None,
-            NonSpecialTokenContentTransportSlot::F32Keyword => None,
-            NonSpecialTokenContentTransportSlot::F64Keyword => None,
-            NonSpecialTokenContentTransportSlot::BoolKeyword => None,
-            NonSpecialTokenContentTransportSlot::StrKeyword => None,
-            NonSpecialTokenContentTransportSlot::CharKeyword => None,
-            NonSpecialTokenContentTransportSlot::Plus => None,
-            NonSpecialTokenContentTransportSlot::Dash => None,
-            NonSpecialTokenContentTransportSlot::Star => None,
-            NonSpecialTokenContentTransportSlot::Slash => None,
-            NonSpecialTokenContentTransportSlot::Percent => None,
-            NonSpecialTokenContentTransportSlot::Caret => None,
-            NonSpecialTokenContentTransportSlot::Bang => None,
-            NonSpecialTokenContentTransportSlot::Amp => None,
-            NonSpecialTokenContentTransportSlot::Pipe => None,
-            NonSpecialTokenContentTransportSlot::AmpAmp => None,
-            NonSpecialTokenContentTransportSlot::PipePipe => None,
-            NonSpecialTokenContentTransportSlot::LtLt => None,
-            NonSpecialTokenContentTransportSlot::GtGt => None,
-            NonSpecialTokenContentTransportSlot::PlusEq => None,
-            NonSpecialTokenContentTransportSlot::DashEq => None,
-            NonSpecialTokenContentTransportSlot::StarEq => None,
-            NonSpecialTokenContentTransportSlot::SlashEq => None,
-            NonSpecialTokenContentTransportSlot::PercentEq => None,
-            NonSpecialTokenContentTransportSlot::CaretEq => None,
-            NonSpecialTokenContentTransportSlot::AmpEq => None,
-            NonSpecialTokenContentTransportSlot::PipeEq => None,
-            NonSpecialTokenContentTransportSlot::LtLtEq => None,
-            NonSpecialTokenContentTransportSlot::GtGtEq => None,
-            NonSpecialTokenContentTransportSlot::Eq => None,
-            NonSpecialTokenContentTransportSlot::EqEq => None,
-            NonSpecialTokenContentTransportSlot::BangEq => None,
-            NonSpecialTokenContentTransportSlot::Gt => None,
-            NonSpecialTokenContentTransportSlot::Lt => None,
-            NonSpecialTokenContentTransportSlot::GtEq => None,
-            NonSpecialTokenContentTransportSlot::LtEq => None,
-            NonSpecialTokenContentTransportSlot::At => None,
-            NonSpecialTokenContentTransportSlot::Underscore => None,
-            NonSpecialTokenContentTransportSlot::Dot => None,
-            NonSpecialTokenContentTransportSlot::DotDot => None,
-            NonSpecialTokenContentTransportSlot::DotDotDot => None,
-            NonSpecialTokenContentTransportSlot::DotDotEq => None,
-            NonSpecialTokenContentTransportSlot::Comma => None,
-            NonSpecialTokenContentTransportSlot::Semi => None,
-            NonSpecialTokenContentTransportSlot::Colon => None,
-            NonSpecialTokenContentTransportSlot::ColonColon => None,
-            NonSpecialTokenContentTransportSlot::DashGt => None,
-            NonSpecialTokenContentTransportSlot::EqGt => None,
-            NonSpecialTokenContentTransportSlot::Pound => None,
-            NonSpecialTokenContentTransportSlot::Qmark => None,
-            NonSpecialTokenContentTransportSlot::Squote => None,
-            NonSpecialTokenContentTransportSlot::AsKeyword => None,
-            NonSpecialTokenContentTransportSlot::AsyncKeyword => None,
-            NonSpecialTokenContentTransportSlot::AwaitKeyword => None,
-            NonSpecialTokenContentTransportSlot::BreakKeyword => None,
-            NonSpecialTokenContentTransportSlot::ConstKeyword => None,
-            NonSpecialTokenContentTransportSlot::ContinueKeyword => None,
-            NonSpecialTokenContentTransportSlot::DefaultKeyword => None,
-            NonSpecialTokenContentTransportSlot::EnumKeyword => None,
-            NonSpecialTokenContentTransportSlot::FnKeyword => None,
-            NonSpecialTokenContentTransportSlot::ForKeyword => None,
-            NonSpecialTokenContentTransportSlot::GenKeyword => None,
-            NonSpecialTokenContentTransportSlot::IfKeyword => None,
-            NonSpecialTokenContentTransportSlot::ImplKeyword => None,
-            NonSpecialTokenContentTransportSlot::LetKeyword => None,
-            NonSpecialTokenContentTransportSlot::LoopKeyword => None,
-            NonSpecialTokenContentTransportSlot::MatchKeyword => None,
-            NonSpecialTokenContentTransportSlot::ModKeyword => None,
-            NonSpecialTokenContentTransportSlot::PubKeyword => None,
-            NonSpecialTokenContentTransportSlot::ReturnKeyword => None,
-            NonSpecialTokenContentTransportSlot::StaticKeyword => None,
-            NonSpecialTokenContentTransportSlot::StructKeyword => None,
-            NonSpecialTokenContentTransportSlot::TraitKeyword => None,
-            NonSpecialTokenContentTransportSlot::TypeKeyword => None,
-            NonSpecialTokenContentTransportSlot::UnionKeyword => None,
-            NonSpecialTokenContentTransportSlot::UnsafeKeyword => None,
-            NonSpecialTokenContentTransportSlot::UseKeyword => None,
-            NonSpecialTokenContentTransportSlot::WhereKeyword => None,
-            NonSpecialTokenContentTransportSlot::WhileKeyword => None,
             NonSpecialTokenContentTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -11785,100 +11350,13 @@ impl ::sittir_core::view::KindOf for NonSpecialTokenContentTransportSlot {
             Self::IntegerLiteralOctal(inner) => inner.kind_in(kinds),
             Self::FloatLiteral(inner) => inner.kind_in(kinds),
             Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+            Self::TokenTreePunctuation(inner) => inner.kind_in(kinds),
+            Self::TokenKeywords(inner) => inner.kind_in(kinds),
             Self::MutableSpecifier => [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k)),
             Self::Self_ => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
             Self::Super => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
             Self::Crate => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
-            Self::U8Keyword => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
-            Self::I8Keyword => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
-            Self::U16Keyword => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
-            Self::I16Keyword => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
-            Self::U32Keyword => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
-            Self::I32Keyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::U64Keyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
-            Self::I64Keyword => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
-            Self::U128Keyword => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
-            Self::I128Keyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::IsizeKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::UsizeKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::F32Keyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::F64Keyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::BoolKeyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::StrKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::CharKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
-            Self::Plus => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
-            Self::Dash => [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
-            Self::Star => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
-            Self::Slash => [::sittir_core::types::KindId(86)].iter().any(|k| kinds.contains(k)),
-            Self::Percent => [::sittir_core::types::KindId(87)].iter().any(|k| kinds.contains(k)),
-            Self::Caret => [::sittir_core::types::KindId(79)].iter().any(|k| kinds.contains(k)),
-            Self::Bang => [::sittir_core::types::KindId(29)].iter().any(|k| kinds.contains(k)),
-            Self::Amp => [::sittir_core::types::KindId(54)].iter().any(|k| kinds.contains(k)),
-            Self::Pipe => [::sittir_core::types::KindId(78)].iter().any(|k| kinds.contains(k)),
-            Self::AmpAmp => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
-            Self::PipePipe => [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k)),
-            Self::LtLt => [::sittir_core::types::KindId(84)].iter().any(|k| kinds.contains(k)),
-            Self::GtGt => [::sittir_core::types::KindId(85)].iter().any(|k| kinds.contains(k)),
-            Self::PlusEq => [::sittir_core::types::KindId(88)].iter().any(|k| kinds.contains(k)),
-            Self::DashEq => [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k)),
-            Self::StarEq => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
-            Self::SlashEq => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
-            Self::PercentEq => [::sittir_core::types::KindId(92)].iter().any(|k| kinds.contains(k)),
-            Self::CaretEq => [::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k)),
-            Self::AmpEq => [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
-            Self::PipeEq => [::sittir_core::types::KindId(94)].iter().any(|k| kinds.contains(k)),
-            Self::LtLtEq => [::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
-            Self::GtGtEq => [::sittir_core::types::KindId(97)].iter().any(|k| kinds.contains(k)),
-            Self::Eq => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::EqEq => [::sittir_core::types::KindId(80)].iter().any(|k| kinds.contains(k)),
-            Self::BangEq => [::sittir_core::types::KindId(81)].iter().any(|k| kinds.contains(k)),
-            Self::Gt => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
-            Self::Lt => [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k)),
-            Self::GtEq => [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k)),
-            Self::LtEq => [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k)),
-            Self::At => [::sittir_core::types::KindId(115)].iter().any(|k| kinds.contains(k)),
-            Self::Underscore => [::sittir_core::types::KindId(136)].iter().any(|k| kinds.contains(k)),
-            Self::Dot => [::sittir_core::types::KindId(109)].iter().any(|k| kinds.contains(k)),
-            Self::DotDot => [::sittir_core::types::KindId(100)].iter().any(|k| kinds.contains(k)),
-            Self::DotDotDot => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
-            Self::DotDotEq => [::sittir_core::types::KindId(137)].iter().any(|k| kinds.contains(k)),
-            Self::Comma => [::sittir_core::types::KindId(130)].iter().any(|k| kinds.contains(k)),
-            Self::Semi => [::sittir_core::types::KindId(2)].iter().any(|k| kinds.contains(k)),
-            Self::Colon => [::sittir_core::types::KindId(4)].iter().any(|k| kinds.contains(k)),
-            Self::ColonColon => [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k)),
-            Self::DashGt => [::sittir_core::types::KindId(131)].iter().any(|k| kinds.contains(k)),
-            Self::EqGt => [::sittir_core::types::KindId(3)].iter().any(|k| kinds.contains(k)),
-            Self::Pound => [::sittir_core::types::KindId(26)].iter().any(|k| kinds.contains(k)),
-            Self::Qmark => [::sittir_core::types::KindId(10)].iter().any(|k| kinds.contains(k)),
-            Self::Squote => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
-            Self::AsKeyword => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(112)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(110)].iter().any(|k| kinds.contains(k)),
-            Self::BreakKeyword => [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k)),
-            Self::ConstKeyword => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
-            Self::ContinueKeyword => [::sittir_core::types::KindId(108)].iter().any(|k| kinds.contains(k)),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::EnumKeyword => [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k)),
-            Self::FnKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::ForKeyword => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
-            Self::GenKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
-            Self::IfKeyword => [::sittir_core::types::KindId(101)].iter().any(|k| kinds.contains(k)),
-            Self::ImplKeyword => [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k)),
-            Self::LetKeyword => [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k)),
-            Self::LoopKeyword => [::sittir_core::types::KindId(105)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(103)].iter().any(|k| kinds.contains(k)),
-            Self::ModKeyword => [::sittir_core::types::KindId(138)].iter().any(|k| kinds.contains(k)),
-            Self::PubKeyword => [::sittir_core::types::KindId(139)].iter().any(|k| kinds.contains(k)),
-            Self::ReturnKeyword => [::sittir_core::types::KindId(98)].iter().any(|k| kinds.contains(k)),
-            Self::StaticKeyword => [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k)),
-            Self::StructKeyword => [::sittir_core::types::KindId(140)].iter().any(|k| kinds.contains(k)),
-            Self::TraitKeyword => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k)),
-            Self::UnionKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::UnsafeKeyword => [::sittir_core::types::KindId(111)].iter().any(|k| kinds.contains(k)),
-            Self::UseKeyword => [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k)),
-            Self::WhereKeyword => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
-            Self::WhileKeyword => [::sittir_core::types::KindId(104)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -11897,96 +11375,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonSpecialTokenContentTransportS
                     125 => Ok(Self::Self_),
                     126 => Ok(Self::Super),
                     127 => Ok(Self::Crate),
-                    58 => Ok(Self::U8Keyword),
-                    59 => Ok(Self::I8Keyword),
-                    60 => Ok(Self::U16Keyword),
-                    61 => Ok(Self::I16Keyword),
-                    62 => Ok(Self::U32Keyword),
-                    63 => Ok(Self::I32Keyword),
-                    64 => Ok(Self::U64Keyword),
-                    65 => Ok(Self::I64Keyword),
-                    66 => Ok(Self::U128Keyword),
-                    67 => Ok(Self::I128Keyword),
-                    68 => Ok(Self::IsizeKeyword),
-                    69 => Ok(Self::UsizeKeyword),
-                    70 => Ok(Self::F32Keyword),
-                    71 => Ok(Self::F64Keyword),
-                    72 => Ok(Self::BoolKeyword),
-                    73 => Ok(Self::StrKeyword),
-                    74 => Ok(Self::CharKeyword),
-                    8 => Ok(Self::Plus),
-                    75 => Ok(Self::Dash),
-                    9 => Ok(Self::Star),
-                    86 => Ok(Self::Slash),
-                    87 => Ok(Self::Percent),
-                    79 => Ok(Self::Caret),
-                    29 => Ok(Self::Bang),
-                    54 => Ok(Self::Amp),
-                    78 => Ok(Self::Pipe),
-                    76 => Ok(Self::AmpAmp),
-                    77 => Ok(Self::PipePipe),
-                    84 => Ok(Self::LtLt),
-                    85 => Ok(Self::GtGt),
-                    88 => Ok(Self::PlusEq),
-                    89 => Ok(Self::DashEq),
-                    90 => Ok(Self::StarEq),
-                    91 => Ok(Self::SlashEq),
-                    92 => Ok(Self::PercentEq),
-                    95 => Ok(Self::CaretEq),
-                    93 => Ok(Self::AmpEq),
-                    94 => Ok(Self::PipeEq),
-                    96 => Ok(Self::LtLtEq),
-                    97 => Ok(Self::GtGtEq),
-                    38 => Ok(Self::Eq),
-                    80 => Ok(Self::EqEq),
-                    81 => Ok(Self::BangEq),
-                    44 => Ok(Self::Gt),
-                    43 => Ok(Self::Lt),
-                    83 => Ok(Self::GtEq),
-                    82 => Ok(Self::LtEq),
-                    115 => Ok(Self::At),
-                    136 => Ok(Self::Underscore),
-                    109 => Ok(Self::Dot),
-                    100 => Ok(Self::DotDot),
-                    49 => Ok(Self::DotDotDot),
-                    137 => Ok(Self::DotDotEq),
-                    130 => Ok(Self::Comma),
-                    2 => Ok(Self::Semi),
-                    4 => Ok(Self::Colon),
-                    47 => Ok(Self::ColonColon),
-                    131 => Ok(Self::DashGt),
-                    3 => Ok(Self::EqGt),
-                    26 => Ok(Self::Pound),
-                    10 => Ok(Self::Qmark),
-                    50 => Ok(Self::Squote),
-                    48 => Ok(Self::AsKeyword),
-                    112 => Ok(Self::AsyncKeyword),
-                    110 => Ok(Self::AwaitKeyword),
-                    107 => Ok(Self::BreakKeyword),
-                    35 => Ok(Self::ConstKeyword),
-                    108 => Ok(Self::ContinueKeyword),
-                    51 => Ok(Self::DefaultKeyword),
-                    33 => Ok(Self::EnumKeyword),
-                    39 => Ok(Self::FnKeyword),
-                    42 => Ok(Self::ForKeyword),
-                    52 => Ok(Self::GenKeyword),
-                    101 => Ok(Self::IfKeyword),
-                    55 => Ok(Self::ImplKeyword),
-                    45 => Ok(Self::LetKeyword),
-                    105 => Ok(Self::LoopKeyword),
-                    103 => Ok(Self::MatchKeyword),
-                    138 => Ok(Self::ModKeyword),
-                    139 => Ok(Self::PubKeyword),
-                    98 => Ok(Self::ReturnKeyword),
-                    36 => Ok(Self::StaticKeyword),
-                    140 => Ok(Self::StructKeyword),
-                    41 => Ok(Self::TraitKeyword),
-                    37 => Ok(Self::TypeKeyword),
-                    32 => Ok(Self::UnionKeyword),
-                    111 => Ok(Self::UnsafeKeyword),
-                    46 => Ok(Self::UseKeyword),
-                    40 => Ok(Self::WhereKeyword),
-                    104 => Ok(Self::WhileKeyword),
                     336 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
                     )),
@@ -11995,6 +11383,285 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonSpecialTokenContentTransportS
                     )),
                     118 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    341 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    58 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    59 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    60 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    61 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    62 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    63 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    64 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    65 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    66 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    67 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    68 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    69 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    70 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    71 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    72 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    73 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    74 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    361 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    8 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    75 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    9 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    86 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    87 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    79 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    29 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    54 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    78 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    76 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    77 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    84 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    85 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    88 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    89 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    90 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    91 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    92 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    95 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    93 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    94 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    96 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    97 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    38 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    80 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    81 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    44 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    43 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    83 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    82 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    115 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    136 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    109 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    100 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    49 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    137 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    130 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    2 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    4 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    47 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    131 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    3 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    26 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    10 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    362 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    50 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    48 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    112 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    110 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    35 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    108 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    51 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    33 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    39 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    42 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    52 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    101 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    55 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    45 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    105 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    103 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    138 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    139 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    98 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    36 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    140 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    41 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    37 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    32 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    111 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    46 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    40 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    104 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     332 => Ok(Self::StringLiteral(
                         StringLiteralTransport::from_napi_value(env, napi_val)?
@@ -12055,96 +11722,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonSpecialTokenContentTransportS
                     125 => Ok(Self::Self_),
                     126 => Ok(Self::Super),
                     127 => Ok(Self::Crate),
-                    58 => Ok(Self::U8Keyword),
-                    59 => Ok(Self::I8Keyword),
-                    60 => Ok(Self::U16Keyword),
-                    61 => Ok(Self::I16Keyword),
-                    62 => Ok(Self::U32Keyword),
-                    63 => Ok(Self::I32Keyword),
-                    64 => Ok(Self::U64Keyword),
-                    65 => Ok(Self::I64Keyword),
-                    66 => Ok(Self::U128Keyword),
-                    67 => Ok(Self::I128Keyword),
-                    68 => Ok(Self::IsizeKeyword),
-                    69 => Ok(Self::UsizeKeyword),
-                    70 => Ok(Self::F32Keyword),
-                    71 => Ok(Self::F64Keyword),
-                    72 => Ok(Self::BoolKeyword),
-                    73 => Ok(Self::StrKeyword),
-                    74 => Ok(Self::CharKeyword),
-                    8 => Ok(Self::Plus),
-                    75 => Ok(Self::Dash),
-                    9 => Ok(Self::Star),
-                    86 => Ok(Self::Slash),
-                    87 => Ok(Self::Percent),
-                    79 => Ok(Self::Caret),
-                    29 => Ok(Self::Bang),
-                    54 => Ok(Self::Amp),
-                    78 => Ok(Self::Pipe),
-                    76 => Ok(Self::AmpAmp),
-                    77 => Ok(Self::PipePipe),
-                    84 => Ok(Self::LtLt),
-                    85 => Ok(Self::GtGt),
-                    88 => Ok(Self::PlusEq),
-                    89 => Ok(Self::DashEq),
-                    90 => Ok(Self::StarEq),
-                    91 => Ok(Self::SlashEq),
-                    92 => Ok(Self::PercentEq),
-                    95 => Ok(Self::CaretEq),
-                    93 => Ok(Self::AmpEq),
-                    94 => Ok(Self::PipeEq),
-                    96 => Ok(Self::LtLtEq),
-                    97 => Ok(Self::GtGtEq),
-                    38 => Ok(Self::Eq),
-                    80 => Ok(Self::EqEq),
-                    81 => Ok(Self::BangEq),
-                    44 => Ok(Self::Gt),
-                    43 => Ok(Self::Lt),
-                    83 => Ok(Self::GtEq),
-                    82 => Ok(Self::LtEq),
-                    115 => Ok(Self::At),
-                    136 => Ok(Self::Underscore),
-                    109 => Ok(Self::Dot),
-                    100 => Ok(Self::DotDot),
-                    49 => Ok(Self::DotDotDot),
-                    137 => Ok(Self::DotDotEq),
-                    130 => Ok(Self::Comma),
-                    2 => Ok(Self::Semi),
-                    4 => Ok(Self::Colon),
-                    47 => Ok(Self::ColonColon),
-                    131 => Ok(Self::DashGt),
-                    3 => Ok(Self::EqGt),
-                    26 => Ok(Self::Pound),
-                    10 => Ok(Self::Qmark),
-                    50 => Ok(Self::Squote),
-                    48 => Ok(Self::AsKeyword),
-                    112 => Ok(Self::AsyncKeyword),
-                    110 => Ok(Self::AwaitKeyword),
-                    107 => Ok(Self::BreakKeyword),
-                    35 => Ok(Self::ConstKeyword),
-                    108 => Ok(Self::ContinueKeyword),
-                    51 => Ok(Self::DefaultKeyword),
-                    33 => Ok(Self::EnumKeyword),
-                    39 => Ok(Self::FnKeyword),
-                    42 => Ok(Self::ForKeyword),
-                    52 => Ok(Self::GenKeyword),
-                    101 => Ok(Self::IfKeyword),
-                    55 => Ok(Self::ImplKeyword),
-                    45 => Ok(Self::LetKeyword),
-                    105 => Ok(Self::LoopKeyword),
-                    103 => Ok(Self::MatchKeyword),
-                    138 => Ok(Self::ModKeyword),
-                    139 => Ok(Self::PubKeyword),
-                    98 => Ok(Self::ReturnKeyword),
-                    36 => Ok(Self::StaticKeyword),
-                    140 => Ok(Self::StructKeyword),
-                    41 => Ok(Self::TraitKeyword),
-                    37 => Ok(Self::TypeKeyword),
-                    32 => Ok(Self::UnionKeyword),
-                    111 => Ok(Self::UnsafeKeyword),
-                    46 => Ok(Self::UseKeyword),
-                    40 => Ok(Self::WhereKeyword),
-                    104 => Ok(Self::WhileKeyword),
                     336 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
                     )),
@@ -12153,6 +11730,285 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonSpecialTokenContentTransportS
                     )),
                     118 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    341 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    58 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    59 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    60 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    61 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    62 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    63 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    64 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    65 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    66 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    67 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    68 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    69 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    70 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    71 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    72 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    73 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    74 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    361 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    8 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    75 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    9 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    86 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    87 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    79 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    29 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    54 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    78 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    76 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    77 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    84 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    85 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    88 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    89 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    90 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    91 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    92 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    95 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    93 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    94 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    96 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    97 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    38 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    80 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    81 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    44 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    43 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    83 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    82 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    115 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    136 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    109 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    100 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    49 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    137 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    130 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    2 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    4 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    47 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    131 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    3 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    26 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    10 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    362 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    50 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    48 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    112 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    110 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    35 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    108 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    51 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    33 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    39 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    42 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    52 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    101 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    55 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    45 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    105 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    103 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    138 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    139 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    98 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    36 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    140 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    41 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    37 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    32 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    111 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    46 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    40 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
+                    )),
+                    104 => Ok(Self::TokenKeywords(
+                        TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     332 => Ok(Self::StringLiteral(
                         StringLiteralTransport::from_napi_value(env, napi_val)?
@@ -12255,538 +12111,13 @@ impl ::sittir_core::render::Render for NonSpecialTokenContentTransportSlot {
             NonSpecialTokenContentTransportSlot::IntegerLiteralOctal(inner) => inner.render(w),
             NonSpecialTokenContentTransportSlot::FloatLiteral(inner) => inner.render(w),
             NonSpecialTokenContentTransportSlot::Identifier(inner) => inner.render(w),
+            NonSpecialTokenContentTransportSlot::PrimitiveType(inner) => inner.render(w),
+            NonSpecialTokenContentTransportSlot::TokenTreePunctuation(inner) => inner.render(w),
+            NonSpecialTokenContentTransportSlot::TokenKeywords(inner) => inner.render(w),
             NonSpecialTokenContentTransportSlot::MutableSpecifier => render_mutable_specifier(w),
             NonSpecialTokenContentTransportSlot::Self_ => render_self(w),
             NonSpecialTokenContentTransportSlot::Super => render_super(w),
             NonSpecialTokenContentTransportSlot::Crate => render_crate(w),
-            NonSpecialTokenContentTransportSlot::U8Keyword => render_u8_keyword(w),
-            NonSpecialTokenContentTransportSlot::I8Keyword => render_i8_keyword(w),
-            NonSpecialTokenContentTransportSlot::U16Keyword => render_u16_keyword(w),
-            NonSpecialTokenContentTransportSlot::I16Keyword => render_i16_keyword(w),
-            NonSpecialTokenContentTransportSlot::U32Keyword => render_u32_keyword(w),
-            NonSpecialTokenContentTransportSlot::I32Keyword => render_i32_keyword(w),
-            NonSpecialTokenContentTransportSlot::U64Keyword => render_u64_keyword(w),
-            NonSpecialTokenContentTransportSlot::I64Keyword => render_i64_keyword(w),
-            NonSpecialTokenContentTransportSlot::U128Keyword => render_u128_keyword(w),
-            NonSpecialTokenContentTransportSlot::I128Keyword => render_i128_keyword(w),
-            NonSpecialTokenContentTransportSlot::IsizeKeyword => render_isize_keyword(w),
-            NonSpecialTokenContentTransportSlot::UsizeKeyword => render_usize_keyword(w),
-            NonSpecialTokenContentTransportSlot::F32Keyword => render_f32_keyword(w),
-            NonSpecialTokenContentTransportSlot::F64Keyword => render_f64_keyword(w),
-            NonSpecialTokenContentTransportSlot::BoolKeyword => render_bool_keyword(w),
-            NonSpecialTokenContentTransportSlot::StrKeyword => render_str_keyword(w),
-            NonSpecialTokenContentTransportSlot::CharKeyword => render_char_keyword(w),
-            NonSpecialTokenContentTransportSlot::Plus => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_PLUS_BEFORE);
-                let written = render_plus(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_PLUS_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::Dash => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_DASH_BEFORE);
-                let written = render_dash(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_DASH_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::Star => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_STAR_BEFORE);
-                let written = render_star(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_STAR_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::Slash => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_SLASH_BEFORE);
-                let written = render_slash(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_SLASH_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::Percent => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_PERCENT_BEFORE);
-                let written = render_percent(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_PERCENT_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::Caret => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_CARET_BEFORE);
-                let written = render_caret(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_CARET_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::Bang => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_BANG_BEFORE);
-                let written = render_bang(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_BANG_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::Amp => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_AMP_BEFORE);
-                let written = render_amp(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_AMP_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::Pipe => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_PIPE_BEFORE);
-                let written = render_pipe(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_PIPE_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::AmpAmp => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_AMP_AMP_BEFORE);
-                let written = render_amp_amp(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_AMP_AMP_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::PipePipe => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_PIPE_PIPE_BEFORE);
-                let written = render_pipe_pipe(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_PIPE_PIPE_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::LtLt => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_LT_LT_BEFORE);
-                let written = render_lt_lt(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_LT_LT_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::GtGt => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_GT_GT_BEFORE);
-                let written = render_gt_gt(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_GT_GT_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::PlusEq => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_PLUS_EQ_BEFORE);
-                let written = render_plus_eq(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_PLUS_EQ_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::DashEq => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_DASH_EQ_BEFORE);
-                let written = render_dash_eq(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_DASH_EQ_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::StarEq => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_STAR_EQ_BEFORE);
-                let written = render_star_eq(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_STAR_EQ_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::SlashEq => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_SLASH_EQ_BEFORE);
-                let written = render_slash_eq(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_SLASH_EQ_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::PercentEq => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_PERCENT_EQ_BEFORE);
-                let written = render_percent_eq(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_PERCENT_EQ_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::CaretEq => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_CARET_EQ_BEFORE);
-                let written = render_caret_eq(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_CARET_EQ_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::AmpEq => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_AMP_EQ_BEFORE);
-                let written = render_amp_eq(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_AMP_EQ_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::PipeEq => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_PIPE_EQ_BEFORE);
-                let written = render_pipe_eq(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_PIPE_EQ_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::LtLtEq => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_LT_LT_EQ_BEFORE);
-                let written = render_lt_lt_eq(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_LT_LT_EQ_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::GtGtEq => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_GT_GT_EQ_BEFORE);
-                let written = render_gt_gt_eq(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_GT_GT_EQ_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::Eq => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_EQ_BEFORE);
-                let written = render_eq(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_EQ_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::EqEq => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_EQ_EQ_BEFORE);
-                let written = render_eq_eq(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_EQ_EQ_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::BangEq => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_BANG_EQ_BEFORE);
-                let written = render_bang_eq(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_BANG_EQ_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::Gt => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_GT_BEFORE);
-                let written = render_gt(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_GT_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::Lt => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_LT_BEFORE);
-                let written = render_lt(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_LT_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::GtEq => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_GT_EQ_BEFORE);
-                let written = render_gt_eq(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_GT_EQ_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::LtEq => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_LT_EQ_BEFORE);
-                let written = render_lt_eq(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_LT_EQ_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::At => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_AT_BEFORE);
-                let written = render_at(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_AT_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::Underscore => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_UNDERSCORE_BEFORE);
-                let written = render_underscore(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_UNDERSCORE_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::Dot => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_DOT_BEFORE);
-                let written = render_dot(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_DOT_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::DotDot => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_DOT_DOT_BEFORE);
-                let written = render_dot_dot(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_DOT_DOT_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::DotDotDot => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_DOT_DOT_DOT_BEFORE);
-                let written = render_dot_dot_dot(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_DOT_DOT_DOT_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::DotDotEq => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_DOT_DOT_EQ_BEFORE);
-                let written = render_dot_dot_eq(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_DOT_DOT_EQ_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::Comma => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_COMMA_BEFORE);
-                let written = render_comma(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_COMMA_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::Semi => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_SEMI_BEFORE);
-                let written = render_semi(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_SEMI_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::Colon => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_COLON_BEFORE);
-                let written = render_colon(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_COLON_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::ColonColon => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_COLON_COLON_BEFORE);
-                let written = render_colon_colon(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_COLON_COLON_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::DashGt => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_DASH_GT_BEFORE);
-                let written = render_dash_gt(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_DASH_GT_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::EqGt => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_EQ_GT_BEFORE);
-                let written = render_eq_gt(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_EQ_GT_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::Pound => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_POUND_BEFORE);
-                let written = render_pound(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_POUND_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::Qmark => {
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_QMARK_BEFORE);
-                let written = render_qmark(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_TREE_PUNCTUATION_QMARK_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::Squote => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_SQUOTE_BEFORE);
-                let written = render_squote(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_SQUOTE_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::AsKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_AS_KEYWORD_BEFORE);
-                let written = render_as_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_AS_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::AsyncKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_ASYNC_KEYWORD_BEFORE);
-                let written = render_async_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_ASYNC_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::AwaitKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_AWAIT_KEYWORD_BEFORE);
-                let written = render_await_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_AWAIT_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::BreakKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_BREAK_KEYWORD_BEFORE);
-                let written = render_break_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_BREAK_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::ConstKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_CONST_KEYWORD_BEFORE);
-                let written = render_const_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_CONST_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::ContinueKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_CONTINUE_KEYWORD_BEFORE);
-                let written = render_continue_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_CONTINUE_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::DefaultKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_DEFAULT_KEYWORD_BEFORE);
-                let written = render_default_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_DEFAULT_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::EnumKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_ENUM_KEYWORD_BEFORE);
-                let written = render_enum_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_ENUM_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::FnKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_FN_KEYWORD_BEFORE);
-                let written = render_fn_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_FN_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::ForKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_FOR_KEYWORD_BEFORE);
-                let written = render_for_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_FOR_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::GenKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_GEN_KEYWORD_BEFORE);
-                let written = render_gen_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_GEN_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::IfKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_IF_KEYWORD_BEFORE);
-                let written = render_if_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_IF_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::ImplKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_IMPL_KEYWORD_BEFORE);
-                let written = render_impl_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_IMPL_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::LetKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_LET_KEYWORD_BEFORE);
-                let written = render_let_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_LET_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::LoopKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_LOOP_KEYWORD_BEFORE);
-                let written = render_loop_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_LOOP_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::MatchKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_MATCH_KEYWORD_BEFORE);
-                let written = render_match_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_MATCH_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::ModKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_MOD_KEYWORD_BEFORE);
-                let written = render_mod_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_MOD_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::PubKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_PUB_KEYWORD_BEFORE);
-                let written = render_pub_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_PUB_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::ReturnKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_RETURN_KEYWORD_BEFORE);
-                let written = render_return_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_RETURN_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::StaticKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_STATIC_KEYWORD_BEFORE);
-                let written = render_static_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_STATIC_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::StructKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_STRUCT_KEYWORD_BEFORE);
-                let written = render_struct_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_STRUCT_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::TraitKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_TRAIT_KEYWORD_BEFORE);
-                let written = render_trait_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_TRAIT_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::TypeKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_TYPE_KEYWORD_BEFORE);
-                let written = render_type_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_TYPE_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::UnionKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_UNION_KEYWORD_BEFORE);
-                let written = render_union_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_UNION_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::UnsafeKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_UNSAFE_KEYWORD_BEFORE);
-                let written = render_unsafe_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_UNSAFE_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::UseKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_USE_KEYWORD_BEFORE);
-                let written = render_use_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_USE_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::WhereKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_WHERE_KEYWORD_BEFORE);
-                let written = render_where_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_WHERE_KEYWORD_AFTER);
-                Ok(())
-            }
-            NonSpecialTokenContentTransportSlot::WhileKeyword => {
-                w.site_at(options::SITE_TOKEN_KEYWORDS_WHILE_KEYWORD_BEFORE);
-                let written = render_while_keyword(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_KEYWORDS_WHILE_KEYWORD_AFTER);
-                Ok(())
-            }
             NonSpecialTokenContentTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -13674,40 +13005,8 @@ pub enum WherePredicateLeftTransportSlot {
     ArrayType(ArrayTypeTransport),
     #[kind(kind::HIGHER_RANKED_TRAIT_BOUND)]
     HigherRankedTraitBound(HigherRankedTraitBoundTransport),
-    #[kind(kind::U8_KEYWORD)]
-    U8Keyword,
-    #[kind(kind::I8_KEYWORD)]
-    I8Keyword,
-    #[kind(kind::U16_KEYWORD)]
-    U16Keyword,
-    #[kind(kind::I16_KEYWORD)]
-    I16Keyword,
-    #[kind(kind::U32_KEYWORD)]
-    U32Keyword,
-    #[kind(kind::I32_KEYWORD)]
-    I32Keyword,
-    #[kind(kind::U64_KEYWORD)]
-    U64Keyword,
-    #[kind(kind::I64_KEYWORD)]
-    I64Keyword,
-    #[kind(kind::U128_KEYWORD)]
-    U128Keyword,
-    #[kind(kind::I128_KEYWORD)]
-    I128Keyword,
-    #[kind(kind::ISIZE_KEYWORD)]
-    IsizeKeyword,
-    #[kind(kind::USIZE_KEYWORD)]
-    UsizeKeyword,
-    #[kind(kind::F32_KEYWORD)]
-    F32Keyword,
-    #[kind(kind::F64_KEYWORD)]
-    F64Keyword,
-    #[kind(kind::BOOL_KEYWORD)]
-    BoolKeyword,
-    #[kind(kind::STR_KEYWORD)]
-    StrKeyword,
-    #[kind(kind::CHAR_KEYWORD)]
-    CharKeyword,
+    #[kind(kind::_PRIMITIVE_TYPE, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD)]
+    PrimitiveType(PrimitiveTypeEnum),
 }
 
 impl ::sittir_core::prepare::Prepare for WherePredicateLeftTransportSlot {
@@ -13723,23 +13022,7 @@ impl ::sittir_core::prepare::Prepare for WherePredicateLeftTransportSlot {
             WherePredicateLeftTransportSlot::TupleType(t) => t.prepare(ctx),
             WherePredicateLeftTransportSlot::ArrayType(t) => t.prepare(ctx),
             WherePredicateLeftTransportSlot::HigherRankedTraitBound(t) => t.prepare(ctx),
-            WherePredicateLeftTransportSlot::U8Keyword => Ok(()),
-            WherePredicateLeftTransportSlot::I8Keyword => Ok(()),
-            WherePredicateLeftTransportSlot::U16Keyword => Ok(()),
-            WherePredicateLeftTransportSlot::I16Keyword => Ok(()),
-            WherePredicateLeftTransportSlot::U32Keyword => Ok(()),
-            WherePredicateLeftTransportSlot::I32Keyword => Ok(()),
-            WherePredicateLeftTransportSlot::U64Keyword => Ok(()),
-            WherePredicateLeftTransportSlot::I64Keyword => Ok(()),
-            WherePredicateLeftTransportSlot::U128Keyword => Ok(()),
-            WherePredicateLeftTransportSlot::I128Keyword => Ok(()),
-            WherePredicateLeftTransportSlot::IsizeKeyword => Ok(()),
-            WherePredicateLeftTransportSlot::UsizeKeyword => Ok(()),
-            WherePredicateLeftTransportSlot::F32Keyword => Ok(()),
-            WherePredicateLeftTransportSlot::F64Keyword => Ok(()),
-            WherePredicateLeftTransportSlot::BoolKeyword => Ok(()),
-            WherePredicateLeftTransportSlot::StrKeyword => Ok(()),
-            WherePredicateLeftTransportSlot::CharKeyword => Ok(()),
+            WherePredicateLeftTransportSlot::PrimitiveType(t) => t.prepare(ctx),
         }
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -13754,23 +13037,7 @@ impl ::sittir_core::prepare::Prepare for WherePredicateLeftTransportSlot {
             WherePredicateLeftTransportSlot::TupleType(t) => t.source_gap(),
             WherePredicateLeftTransportSlot::ArrayType(t) => t.source_gap(),
             WherePredicateLeftTransportSlot::HigherRankedTraitBound(t) => t.source_gap(),
-            WherePredicateLeftTransportSlot::U8Keyword => None,
-            WherePredicateLeftTransportSlot::I8Keyword => None,
-            WherePredicateLeftTransportSlot::U16Keyword => None,
-            WherePredicateLeftTransportSlot::I16Keyword => None,
-            WherePredicateLeftTransportSlot::U32Keyword => None,
-            WherePredicateLeftTransportSlot::I32Keyword => None,
-            WherePredicateLeftTransportSlot::U64Keyword => None,
-            WherePredicateLeftTransportSlot::I64Keyword => None,
-            WherePredicateLeftTransportSlot::U128Keyword => None,
-            WherePredicateLeftTransportSlot::I128Keyword => None,
-            WherePredicateLeftTransportSlot::IsizeKeyword => None,
-            WherePredicateLeftTransportSlot::UsizeKeyword => None,
-            WherePredicateLeftTransportSlot::F32Keyword => None,
-            WherePredicateLeftTransportSlot::F64Keyword => None,
-            WherePredicateLeftTransportSlot::BoolKeyword => None,
-            WherePredicateLeftTransportSlot::StrKeyword => None,
-            WherePredicateLeftTransportSlot::CharKeyword => None,
+            WherePredicateLeftTransportSlot::PrimitiveType(t) => t.source_gap(),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -13785,23 +13052,7 @@ impl ::sittir_core::prepare::Prepare for WherePredicateLeftTransportSlot {
             WherePredicateLeftTransportSlot::TupleType(t) => t.gap_edges(),
             WherePredicateLeftTransportSlot::ArrayType(t) => t.gap_edges(),
             WherePredicateLeftTransportSlot::HigherRankedTraitBound(t) => t.gap_edges(),
-            WherePredicateLeftTransportSlot::U8Keyword => None,
-            WherePredicateLeftTransportSlot::I8Keyword => None,
-            WherePredicateLeftTransportSlot::U16Keyword => None,
-            WherePredicateLeftTransportSlot::I16Keyword => None,
-            WherePredicateLeftTransportSlot::U32Keyword => None,
-            WherePredicateLeftTransportSlot::I32Keyword => None,
-            WherePredicateLeftTransportSlot::U64Keyword => None,
-            WherePredicateLeftTransportSlot::I64Keyword => None,
-            WherePredicateLeftTransportSlot::U128Keyword => None,
-            WherePredicateLeftTransportSlot::I128Keyword => None,
-            WherePredicateLeftTransportSlot::IsizeKeyword => None,
-            WherePredicateLeftTransportSlot::UsizeKeyword => None,
-            WherePredicateLeftTransportSlot::F32Keyword => None,
-            WherePredicateLeftTransportSlot::F64Keyword => None,
-            WherePredicateLeftTransportSlot::BoolKeyword => None,
-            WherePredicateLeftTransportSlot::StrKeyword => None,
-            WherePredicateLeftTransportSlot::CharKeyword => None,
+            WherePredicateLeftTransportSlot::PrimitiveType(t) => t.gap_edges(),
         }
     }
 }
@@ -13819,23 +13070,7 @@ impl ::sittir_core::view::KindOf for WherePredicateLeftTransportSlot {
             Self::TupleType(inner) => inner.kind_in(kinds),
             Self::ArrayType(inner) => inner.kind_in(kinds),
             Self::HigherRankedTraitBound(inner) => inner.kind_in(kinds),
-            Self::U8Keyword => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
-            Self::I8Keyword => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
-            Self::U16Keyword => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
-            Self::I16Keyword => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
-            Self::U32Keyword => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
-            Self::I32Keyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::U64Keyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
-            Self::I64Keyword => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
-            Self::U128Keyword => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
-            Self::I128Keyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::IsizeKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::UsizeKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::F32Keyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::F64Keyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::BoolKeyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::StrKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::CharKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
+            Self::PrimitiveType(inner) => inner.kind_in(kinds),
         }
     }
 }
@@ -13849,23 +13084,60 @@ impl ::napi::bindgen_prelude::FromNapiValue for WherePredicateLeftTransportSlot 
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    58 => Ok(Self::U8Keyword),
-                    59 => Ok(Self::I8Keyword),
-                    60 => Ok(Self::U16Keyword),
-                    61 => Ok(Self::I16Keyword),
-                    62 => Ok(Self::U32Keyword),
-                    63 => Ok(Self::I32Keyword),
-                    64 => Ok(Self::U64Keyword),
-                    65 => Ok(Self::I64Keyword),
-                    66 => Ok(Self::U128Keyword),
-                    67 => Ok(Self::I128Keyword),
-                    68 => Ok(Self::IsizeKeyword),
-                    69 => Ok(Self::UsizeKeyword),
-                    70 => Ok(Self::F32Keyword),
-                    71 => Ok(Self::F64Keyword),
-                    72 => Ok(Self::BoolKeyword),
-                    73 => Ok(Self::StrKeyword),
-                    74 => Ok(Self::CharKeyword),
+                    341 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    58 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    59 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    60 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    61 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    62 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    63 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    64 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    65 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    66 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    67 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    68 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    69 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    70 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    71 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    72 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    73 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    74 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
                     239 => Ok(Self::Lifetime(
                         LifetimeTransport::from_napi_value(env, napi_val)?
                     )),
@@ -13906,23 +13178,60 @@ impl ::napi::bindgen_prelude::FromNapiValue for WherePredicateLeftTransportSlot 
                     ::napi::Error::from_reason("$type property missing in WherePredicateLeftTransportSlot")
                 )?;
                 match kind_id {
-                    58 => Ok(Self::U8Keyword),
-                    59 => Ok(Self::I8Keyword),
-                    60 => Ok(Self::U16Keyword),
-                    61 => Ok(Self::I16Keyword),
-                    62 => Ok(Self::U32Keyword),
-                    63 => Ok(Self::I32Keyword),
-                    64 => Ok(Self::U64Keyword),
-                    65 => Ok(Self::I64Keyword),
-                    66 => Ok(Self::U128Keyword),
-                    67 => Ok(Self::I128Keyword),
-                    68 => Ok(Self::IsizeKeyword),
-                    69 => Ok(Self::UsizeKeyword),
-                    70 => Ok(Self::F32Keyword),
-                    71 => Ok(Self::F64Keyword),
-                    72 => Ok(Self::BoolKeyword),
-                    73 => Ok(Self::StrKeyword),
-                    74 => Ok(Self::CharKeyword),
+                    341 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    58 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    59 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    60 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    61 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    62 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    63 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    64 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    65 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    66 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    67 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    68 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    69 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    70 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    71 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    72 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    73 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    74 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
                     239 => Ok(Self::Lifetime(
                         LifetimeTransport::from_napi_value(env, napi_val)?
                     )),
@@ -14006,23 +13315,7 @@ impl ::sittir_core::render::Render for WherePredicateLeftTransportSlot {
             WherePredicateLeftTransportSlot::TupleType(inner) => inner.render(w),
             WherePredicateLeftTransportSlot::ArrayType(inner) => inner.render(w),
             WherePredicateLeftTransportSlot::HigherRankedTraitBound(inner) => inner.render(w),
-            WherePredicateLeftTransportSlot::U8Keyword => render_u8_keyword(w),
-            WherePredicateLeftTransportSlot::I8Keyword => render_i8_keyword(w),
-            WherePredicateLeftTransportSlot::U16Keyword => render_u16_keyword(w),
-            WherePredicateLeftTransportSlot::I16Keyword => render_i16_keyword(w),
-            WherePredicateLeftTransportSlot::U32Keyword => render_u32_keyword(w),
-            WherePredicateLeftTransportSlot::I32Keyword => render_i32_keyword(w),
-            WherePredicateLeftTransportSlot::U64Keyword => render_u64_keyword(w),
-            WherePredicateLeftTransportSlot::I64Keyword => render_i64_keyword(w),
-            WherePredicateLeftTransportSlot::U128Keyword => render_u128_keyword(w),
-            WherePredicateLeftTransportSlot::I128Keyword => render_i128_keyword(w),
-            WherePredicateLeftTransportSlot::IsizeKeyword => render_isize_keyword(w),
-            WherePredicateLeftTransportSlot::UsizeKeyword => render_usize_keyword(w),
-            WherePredicateLeftTransportSlot::F32Keyword => render_f32_keyword(w),
-            WherePredicateLeftTransportSlot::F64Keyword => render_f64_keyword(w),
-            WherePredicateLeftTransportSlot::BoolKeyword => render_bool_keyword(w),
-            WherePredicateLeftTransportSlot::StrKeyword => render_str_keyword(w),
-            WherePredicateLeftTransportSlot::CharKeyword => render_char_keyword(w),
+            WherePredicateLeftTransportSlot::PrimitiveType(inner) => inner.render(w),
         }
     }
 }
@@ -19701,7 +18994,7 @@ pub enum UnaryExpressionOperatorTransportSlot {
     Dash,
     #[kind(kind::STAR)]
     Star,
-    #[kind(kind::BANG)]
+    #[kind(display(kind::BANG))]
     Bang,
 }
 
@@ -19817,7 +19110,7 @@ pub enum BinaryExpressionOperatorTransportSlot {
     EqEq,
     #[kind(kind::BANG_EQ)]
     BangEq,
-    #[kind(kind::LT)]
+    #[kind(display(kind::LT))]
     Lt,
     #[kind(kind::LT_EQ)]
     LtEq,
@@ -19835,7 +19128,7 @@ pub enum BinaryExpressionOperatorTransportSlot {
     Dash,
     #[kind(kind::STAR)]
     Star,
-    #[kind(kind::SLASH)]
+    #[kind(display(kind::SLASH))]
     Slash,
     #[kind(kind::PERCENT)]
     Percent,
@@ -44411,13 +43704,13 @@ pub enum TokenTreePunctuationEnum {
     Minus,
     #[kind(kind::STAR)]
     Star,
-    #[kind(kind::SLASH)]
+    #[kind(display(kind::SLASH))]
     Slash,
     #[kind(kind::PERCENT)]
     Percent,
     #[kind(kind::CARET)]
     Caret,
-    #[kind(kind::BANG)]
+    #[kind(display(kind::BANG))]
     Bang,
     #[kind(kind::AMP)]
     Amp,
@@ -44459,7 +43752,7 @@ pub enum TokenTreePunctuationEnum {
     BangEq,
     #[kind(kind::GT)]
     Gt,
-    #[kind(kind::LT)]
+    #[kind(display(kind::LT))]
     Lt,
     #[kind(kind::GT_EQ)]
     GtEq,
@@ -46764,7 +46057,7 @@ pub struct ImplItemBodyTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_unsafe"))]
-    #[slot(field = field::UNSAFE, presence = kind::_IMPL_ITEM_UNSAFE_MARKER)]
+    #[slot(field = field::UNSAFE, presence = kind::UNSAFE_KEYWORD)]
     pub unsafe_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
     #[slot(field = field::TYPE_PARAMETERS)]
@@ -46850,7 +46143,7 @@ pub struct ImplItemSemiTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_unsafe"))]
-    #[slot(field = field::UNSAFE, presence = kind::_IMPL_ITEM_UNSAFE_MARKER)]
+    #[slot(field = field::UNSAFE, presence = kind::UNSAFE_KEYWORD)]
     pub unsafe_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
     #[slot(field = field::TYPE_PARAMETERS)]
@@ -46927,7 +46220,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImplItemSemiTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::VISIBILITY_MODIFIER_PUB_SCOPE_IN_PATH, layout = [kind::IN_KEYWORD])]
+#[transport(kind = kind::VISIBILITY_MODIFIER_PUB_SCOPE_IN_PATH, layout = [kind::IN_KEYWORD, kind::IDENTIFIER])]
 pub struct VisibilityModifierPubScopeInPathTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -47872,7 +47165,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RangeExpressionPrefixTransport
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::RANGE_EXPRESSION_BARE, layout = [kind::DOT_DOT])]
+#[transport(kind = kind::RANGE_EXPRESSION_BARE)]
 pub struct RangeExpressionBareTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -48415,7 +47708,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LineCommentExtraSlashesTranspo
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::LINE_COMMENT_DOC_OUTER, layout = [kind::SLASH])]
+#[transport(kind = kind::LINE_COMMENT_DOC_OUTER, layout = [kind::_OUTER_LINE_DOC_COMMENT_MARKER])]
 pub struct LineCommentDocOuterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -48478,7 +47771,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LineCommentDocOuterTransport> 
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::LINE_COMMENT_DOC_INNER, layout = [kind::BANG])]
+#[transport(kind = kind::LINE_COMMENT_DOC_INNER, layout = [kind::_INNER_LINE_DOC_COMMENT_MARKER])]
 pub struct LineCommentDocInnerTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -49892,7 +49185,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MacroDefinitionBraceTransport>
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::RANGE_PATTERN_PREFIX)]
+#[transport(kind = kind::RANGE_PATTERN_PREFIX, layout = [kind::DOT_DOT_EQ, kind::DOT_DOT])]
 pub struct RangePatternPrefixTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -49962,7 +49255,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RangePatternPrefixTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::RANGE_PATTERN_WITH_LEFT_WITH_RIGHT)]
+#[transport(kind = kind::RANGE_PATTERN_WITH_LEFT_WITH_RIGHT, layout = [kind::DOT_DOT_DOT, kind::DOT_DOT_EQ, kind::DOT_DOT])]
 pub struct RangePatternWithLeftWithRightTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -50630,7 +49923,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AttributedEnumVariantTransport
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_ATTRIBUTED_PARAMETER)]
+#[transport(kind = kind::_ATTRIBUTED_PARAMETER, layout = [kind::UNDERSCORE])]
 pub struct AttributedParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -54747,7 +54040,7 @@ impl ::sittir_core::render::Render for RbrackTransport {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum BangTransport {
-    #[kind(kind::BANG)]
+    #[kind(display(kind::BANG))]
     Bang,
 }
 
@@ -57407,7 +56700,7 @@ impl ::sittir_core::render::Render for ForKeywordTransport {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum LtTransport {
-    #[kind(kind::LT)]
+    #[kind(display(kind::LT))]
     Lt,
 }
 
@@ -58947,7 +58240,7 @@ impl ::sittir_core::render::Render for GtGtTransport {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum SlashTransport {
-    #[kind(kind::SLASH)]
+    #[kind(display(kind::SLASH))]
     Slash,
 }
 

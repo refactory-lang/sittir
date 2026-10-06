@@ -22,6 +22,16 @@ export async function loadPackageIdTables(pkg: GrammarPackage): Promise<Generate
 	return deriveGeneratedIdTablesFromParserCSource(readFileSync(parserCPath, 'utf8'), relative(REPO_ROOT, parserCPath), grammarJson);
 }
 
+export function foldedSymbols(parserC: string): ReadonlyMap<string, string> {
+	const start = parserC.indexOf('ts_symbol_map[]');
+	const block = start < 0 ? '' : parserC.slice(start, parserC.indexOf('};', start));
+	const folds = new Map<string, string>();
+	for (const [, raw, publicSymbol] of block.matchAll(/\[(\w+)\] = (\w+),/g)) {
+		if (raw !== publicSymbol) folds.set(raw!, publicSymbol!);
+	}
+	return folds;
+}
+
 export async function loadGeneratedIdTables(grammar: string): Promise<GeneratedIdTables | undefined> {
 	return loadPackageIdTables(grammarPackage(grammar));
 }
@@ -46,9 +56,16 @@ export async function deriveGeneratedIdTablesFromParserCSource(
 		}
 	};
 
+	const folds = new Map<number, number[]>();
+	for (const [raw, publicSymbol] of foldedSymbols(source)) {
+		const rawId = symbolIds.get(raw)?.id;
+		const publicId = symbolIds.get(publicSymbol)?.id;
+		if (rawId !== undefined && publicId !== undefined) folds.set(publicId, [...(folds.get(publicId) ?? []), rawId]);
+	}
 	return {
 		kindIds: collisionFreeIds(kindTableOfSymbolTable(table, grammarJson), sourceArtifact),
 		fieldIds: collisionFreeIds(joinIdNames(fieldIds, fieldNames, deriveFieldRuntimeName), sourceArtifact),
+		folds,
 		sourceArtifact
 	};
 }

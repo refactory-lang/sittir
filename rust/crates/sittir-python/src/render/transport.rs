@@ -424,7 +424,7 @@ pub enum AnyTransport {
     FutureUKeyword,
     #[kind(kind::AS_KEYWORD)]
     AsKeyword,
-    #[kind(kind::STAR)]
+    #[kind(display(kind::STAR))]
     Star,
     #[kind(kind::GT_GT)]
     GtGt,
@@ -6124,7 +6124,7 @@ pub enum ImportFromStatementContentTransportSlot {
     ImportList(ImportListTransport),
     #[kind(kind::_PARENTHESIZED_IMPORT_LIST)]
     ParenthesizedImportList(ParenthesizedImportListTransport),
-    #[kind(kind::WILDCARD_IMPORT, kind::STAR)]
+    #[kind(kind::WILDCARD_IMPORT, display(kind::STAR))]
     WildcardImport,
 }
 
@@ -9347,7 +9347,7 @@ impl ::sittir_core::render::Render for SimplePatternContentTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum SplatPatternOperatorTransportSlot {
-    #[kind(kind::STAR)]
+    #[kind(display(kind::STAR))]
     Star,
     #[kind(kind::STAR_STAR)]
     StarStar,
@@ -10395,7 +10395,7 @@ pub enum BinaryOperatorOperatorTransportSlot {
     Plus,
     #[kind(kind::DASH)]
     Dash,
-    #[kind(kind::STAR)]
+    #[kind(display(kind::STAR))]
     Star,
     #[kind(kind::AT)]
     At,
@@ -18794,7 +18794,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ModuleTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_SIMPLE_STATEMENTS, min_depth = 2)]
+#[transport(kind = kind::_SIMPLE_STATEMENTS, min_depth = 2, layout = [kind::_NEWLINE])]
 pub struct SimpleStatementsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -22138,7 +22138,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DecoratedDefinitionTransport> 
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::DECORATOR, layout = [kind::AT])]
+#[transport(kind = kind::DECORATOR, layout = [kind::AT, kind::_NEWLINE])]
 pub struct DecoratorTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -28838,7 +28838,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PrintChevronArgumentsTransport
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::PRINT_STATEMENT_CHEVRON, layout = [kind::PRINT_KEYWORD])]
+#[transport(kind = kind::PRINT_STATEMENT_CHEVRON, layout = [kind::PRINT_KEYWORD, kind::COMMA])]
 pub struct PrintStatementChevronTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -31277,7 +31277,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MatchBlockBlockTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::MATCH_BLOCK_EMPTY)]
+#[transport(kind = kind::MATCH_BLOCK_EMPTY, layout = [kind::_NEWLINE])]
 pub struct MatchBlockEmptyTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -31340,7 +31340,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MatchBlockEmptyTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::SUITE_INLINE, min_depth = 2)]
+#[transport(kind = kind::SUITE_INLINE, min_depth = 2, layout = [kind::_NEWLINE])]
 pub struct SuiteInlineTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -31472,7 +31472,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SuiteBlockTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::SUITE_EMPTY)]
+#[transport(kind = kind::SUITE_EMPTY, layout = [kind::_NEWLINE])]
 pub struct SuiteEmptyTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -32825,7 +32825,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NamesTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_AS_PATTERN_TARGET, display, envelope, content = content)]
+#[transport(kind = kind::_AS_PATTERN_TARGET, display, envelope, content = content, wraps_hidden)]
 pub struct AsPatternTargetTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -33300,7 +33300,7 @@ impl ::sittir_core::render::Render for AsKeywordTransport {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum StarTransport {
-    #[kind(kind::STAR)]
+    #[kind(display(kind::STAR))]
     Star,
 }
 

@@ -3,7 +3,7 @@
 use syn::ext::IdentExt;
 use syn::parse::ParseStream;
 use syn::punctuated::Punctuated;
-use syn::{Attribute, Ident, LitInt, LitStr, Path, Token};
+use syn::{Attribute, Ident, LitInt, LitStr, Meta, Path, Token};
 
 /// `#[transport(…)]` on a struct, an enum or a variant.
 #[derive(Default)]
@@ -15,6 +15,8 @@ pub struct KindAttrs {
     pub blank: bool,
     pub min_depth: Option<u32>,
     pub layout: Vec<Path>,
+    pub folded: Vec<Path>,
+    pub wraps_hidden: bool,
     pub gaps: Vec<(u16, String)>,
     /// `text`, or `text = "…"`: a leaf read as its text, with the fixed text
     /// it reads as when its span is empty or its tokens do not tile it.
@@ -40,6 +42,11 @@ pub struct SlotAttrs {
 /// `#[kind(…)]` on a variant: the ids it claims, display ids when marked.
 pub struct VariantKinds {
     pub kinds: Vec<Path>,
+    /// Kinds this variant matches by display id alone, written `display(PATH)`.
+    pub shown: Vec<Path>,
+    /// Raw symbols the grammar folds into a claimed kind, written
+    /// `folded(PATH)`; matched by grammar id after every exact claim.
+    pub folded: Vec<Path>,
     pub display: bool,
 }
 
@@ -84,6 +91,8 @@ pub fn kind_attrs(attrs: &[Attribute]) -> syn::Result<KindAttrs> {
                 "blank" => out.blank = true,
                 "min_depth" => out.min_depth = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
                 "layout" => out.layout = paths(meta.value()?)?,
+                "folded" => out.folded = paths(meta.value()?)?,
+                "wraps_hidden" => out.wraps_hidden = true,
                 "gap" => {
                     let content;
                     syn::parenthesized!(content in meta.input);
@@ -128,15 +137,17 @@ pub fn slot_attrs(attrs: &[Attribute]) -> syn::Result<Option<SlotAttrs>> {
 
 pub fn variant_kinds(attrs: &[Attribute]) -> syn::Result<Option<VariantKinds>> {
     let Some(attr) = attrs.iter().find(|a| a.path().is_ident("kind")) else { return Ok(None) };
-    let mut out = VariantKinds { kinds: Vec::new(), display: false };
-    for path in attr.parse_args_with(Punctuated::<Path, Token![,]>::parse_terminated)? {
-        if path.is_ident("display") {
-            out.display = true;
-        } else {
-            out.kinds.push(path);
+    let mut out = VariantKinds { kinds: Vec::new(), shown: Vec::new(), folded: Vec::new(), display: false };
+    for meta in attr.parse_args_with(Punctuated::<Meta, Token![,]>::parse_terminated)? {
+        match meta {
+            Meta::Path(path) if path.is_ident("display") => out.display = true,
+            Meta::Path(path) => out.kinds.push(path),
+            Meta::List(list) if list.path.is_ident("display") => out.shown.push(list.parse_args()?),
+            Meta::List(list) if list.path.is_ident("folded") => out.folded.push(list.parse_args()?),
+            other => return Err(syn::Error::new_spanned(other, "`kind` takes kinds, `display`, `display(kind)`, or `folded(kind)`")),
         }
     }
-    if out.kinds.is_empty() {
+    if out.kinds.is_empty() && out.shown.is_empty() {
         return Err(syn::Error::new_spanned(attr, "`kind` names at least one kind"));
     }
     Ok(Some(out))

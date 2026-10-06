@@ -41,6 +41,16 @@ export {
 	type TriviaPlacementCensus
 } from './validate/trivia-placement.ts';
 export {
+	run as typedReadParity,
+	computeTypedReadParity,
+	type TypedReadParityOptions,
+	type TypedReadParityOutcome,
+	type TypedReadParityRow,
+	type EnvelopePinRow,
+	type TypedReadParitySummary,
+	type TypedReadParityCensus
+} from './validate/typed-read-parity.ts';
+export {
 	run as uncoveredContent,
 	computeUncoveredContentCensus,
 	type UncoveredContentOptions,

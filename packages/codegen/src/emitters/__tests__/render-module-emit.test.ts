@@ -25,7 +25,7 @@ import { evaluatePackage } from '../../compiler/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { generatedFieldIds } from '../../dsl/symbol-table.ts';
 import { listViewOwners } from '../factories.ts';
-import { isTextLeaf } from '../shared.ts';
+import { aliasEnvelopeIds, aliasEnvelopesOf, isTextLeaf } from '../shared.ts';
 import { AbstractAssembledCompound, AssembledList, type AssembledNode, type AssembledNonterminal } from '../../compiler/model/node-map.ts';
 import { hasBlankArm } from '../../compiler/model/site-preferences.ts';
 import {
@@ -620,7 +620,9 @@ describe('transport read facts', () => {
 			nodeMap: model.nodeMap,
 			kindEntries: model.kindEntries,
 			names: readNames(model.kindEntries, generatedFieldIds(model.generatedIdTables)),
-			listOwners: new Set(listViewOwners(model.nodeMap).map((node) => node.kind))
+			listOwners: new Set(listViewOwners(model.nodeMap).map((node) => node.kind)),
+			envelopeIds: new Set(aliasEnvelopeIds(aliasEnvelopesOf(model.nodeMap))),
+			folds: model.generatedIdTables.folds ?? new Map()
 		};
 	}, 120_000);
 
@@ -632,7 +634,7 @@ describe('transport read facts', () => {
 	const ownId = (n: AssembledNode): number => findKindEntry(model.kindEntries, n.kind)!.id;
 	const args = (struct: string): string => {
 		const n = node(struct);
-		return transportArgs(n, ownId(n), model.templates.bodies.get(n.kind), ctx);
+		return transportArgs(n, ownId(n), ctx, n.slots);
 	};
 	const slot = (struct: string, storageName: string) => node(struct).slots.find((s) => s.storageName === storageName)!;
 	const shape = (s: AssembledNonterminal) => transportSlotShapeOf(s, model.nodeMap);
@@ -675,7 +677,7 @@ describe('transport read facts', () => {
 			const holds = holdsText.get(rustTransportStructName(n));
 			if (holds === undefined) continue;
 			structs++;
-			const reads = /^kind = [\w:]+, text\b/.test(transportArgs(n, ownId(n), model.templates.bodies.get(n.kind), ctx));
+			const reads = /^kind = [\w:]+, text\b/.test(transportArgs(n, ownId(n), ctx, n.slots));
 			expect(reads, n.kind).toBe(holds);
 		}
 		expect(structs).toBeGreaterThan(0);

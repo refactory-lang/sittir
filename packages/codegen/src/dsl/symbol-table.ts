@@ -458,6 +458,7 @@ export type GeneratedIdTable =
 export interface GeneratedIdTables {
 	readonly kindIds?: GeneratedIdTable;
 	readonly fieldIds?: GeneratedIdTable;
+	readonly folds?: ReadonlyMap<number, readonly number[]>;
 	readonly sourceArtifact: string;
 }
 

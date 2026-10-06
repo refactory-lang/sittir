@@ -1,5 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { assertNever } from '../polymorph-variant.ts';
+import { isParserHiddenKind } from '../dsl/symbol-table.ts';
 import type { AssembledNonterminal, AssembledNode } from '../compiler/model/node-map.ts';
 import {
 	AbstractAssembledCompound,
@@ -14,9 +15,11 @@ import { findKindEntry, findKindEntryForLiteral, type KindEnumEntry } from './ki
 import { isScalarStorage, kindConstants } from './kind-id-rust.ts';
 import { fieldConstName } from './field-id-rust.ts';
 import { queryRoutesOf } from './client-utils.ts';
-import { canonicalSeparatedListField, fieldTypeComponents, isTextLeaf, slotDropTexts } from './shared.ts';
+import { canonicalSeparatedListField, fieldTypeComponents, isTextLeaf, slotDropTexts, slotKindNames } from './shared.ts';
 import { interiorOf } from './interior.ts';
-import { rustStringLiteral, type Body } from './render-body.ts';
+import { rustStringLiteral } from './render-body.ts';
+import { STRING, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
+import type { RenderRule } from '../types/rule.ts';
 import { rustFieldIdent } from './transport-common.ts';
 import type { TransportSlotShape } from './render-module.ts';
 
@@ -170,6 +173,8 @@ export interface ReadFactsCtx {
 	readonly kindEntries: readonly KindEnumEntry[];
 	readonly names: ReadNames;
 	readonly listOwners: ReadonlySet<string>;
+	readonly envelopeIds: ReadonlySet<number>;
+	readonly folds: ReadonlyMap<number, readonly number[]>;
 }
 
 function oneOrList(paths: readonly string[]): string {
@@ -184,20 +189,37 @@ function literalIds(texts: readonly string[], ctx: ReadFactsCtx, what: string): 
 	});
 }
 
-export function layoutTokenIds(body: Body, ctx: ReadFactsCtx): number[] {
+export function layoutTokenIds(node: AbstractAssembledCompound, ctx: ReadFactsCtx, slots: readonly AssembledNonterminal[]): number[] {
+	const slotFields = new Set(slots.map((slot) => slot.fieldName));
+	const slotKinds = new Set(slots.flatMap(slotKindNames));
 	const ids: number[] = [];
-	const walk = (nodes: Body): void => {
-		for (const node of nodes) {
-			if (node.kind === 'text') {
-				const id = findKindEntryForLiteral(ctx.kindEntries, node.text)?.id;
-				if (id !== undefined && !ids.includes(id)) ids.push(id);
-			} else if (node.kind === 'if') {
-				for (const arm of node.arms) walk(arm.body);
-				if (node.fallback !== undefined) walk(node.fallback);
+	const add = (id: number | undefined): void => {
+		if (id !== undefined && !ids.includes(id)) ids.push(id);
+	};
+	const externals = new Set((ctx.nodeMap.externals ?? []).flatMap((entry) => (entry.type === SYMBOL ? [entry.name] : [])));
+	const walk = (rule: RenderRule): void => {
+		const field = (rule as { fieldName?: string }).fieldName;
+		if (field !== undefined && slotFields.has(field)) return;
+		switch (rule.type) {
+			case STRING:
+				add(rule.aliasedToId ?? rule.resolvedKindId ?? findKindEntryForLiteral(ctx.kindEntries, rule.value)?.id);
+				return;
+			case SYMBOL: {
+				if (rule.nonterminal !== false) return;
+				const referenced = ctx.nodeMap.nodes.get(rule.name);
+				const fixedLeaf = referenced !== undefined && isFixedTextLeaf(referenced);
+				const fixed = field === undefined ? rule.literal !== undefined || externals.has(rule.name) || (fixedLeaf && !slotKinds.has(rule.name)) : fixedLeaf;
+				if (fixed) add(rule.aliasedToId ?? rule.kindId);
+				return;
+			}
+			default: {
+				const inner = rule as { members?: readonly RenderRule[]; content?: RenderRule };
+				for (const member of inner.members ?? []) walk(member);
+				if (inner.content !== undefined) walk(inner.content);
 			}
 		}
 	};
-	walk(body);
+	if (!node.lexedInterior) walk(node.renderRule);
 	return ids;
 }
 
@@ -207,10 +229,19 @@ export function listItemSlot(node: AssembledNode): AssembledNonterminal | undefi
 	return flagged ? canonicalSeparatedListField(node) : undefined;
 }
 
-export function transportArgs(node: AssembledNode, ownId: number | undefined, body: Body | undefined, ctx: ReadFactsCtx): string {
-	if (node instanceof AssembledAlias) return `kind = ${ctx.names.kind(node.aliasTypeId)}, display, envelope, content = content`;
+export function transportArgs(
+	node: AssembledNode,
+	ownId: number | undefined,
+	ctx: ReadFactsCtx,
+	slots: readonly AssembledNonterminal[]
+): string {
+	if (node instanceof AssembledAlias) {
+		const wraps = node.slots.some((slot) => slotKindNames(slot).some((name) => ctx.nodeMap.nodes.get(name) instanceof AssembledSupertype));
+		return `kind = ${ctx.names.kind(node.aliasTypeId)}, display, envelope, content = content${wraps ? ', wraps_hidden' : ''}`;
+	}
 	if (ownId === undefined) throw new Error(`transport read facts: ${node.kind} has no parser symbol, so no reader can claim it`);
-	const kind = `kind = ${ctx.names.kind(ownId)}`;
+	const folded = foldedTokens(ownId, ctx);
+	const kind = `kind = ${ctx.names.kind(ownId)}${folded.length === 0 ? '' : `, folded = [${folded.map((id) => ctx.names.kind(id)).join(', ')}]`}`;
 	if (isTextLeaf(node)) {
 		const fixed = kindIdText(node);
 		return fixed === undefined ? `${kind}, text` : `${kind}, text = ${rustStringLiteral(fixed)}`;
@@ -219,7 +250,7 @@ export function transportArgs(node: AssembledNode, ownId: number | undefined, bo
 	if (interior !== undefined) return `${kind}, interior = ${rustStringLiteral(interior.regex)}`;
 	const args = [kind];
 	if (ctx.listOwners.has(node.kind)) args.push('min_depth = 2');
-	const layout = body === undefined ? [] : layoutTokenIds(body, ctx);
+	const layout = node instanceof AbstractAssembledCompound ? layoutTokenIds(node, ctx, slots) : [];
 	if (layout.length > 0) args.push(`layout = [${layout.map((id) => ctx.names.kind(id)).join(', ')}]`);
 	if (node instanceof AbstractAssembledCompound) {
 		for (const gap of node.innerGaps) args.push(`gap(${gap.precedingTokens}) = ${gap.key}`);
@@ -240,6 +271,12 @@ export function presenceKeywordId(
 	slot: AssembledNonterminal,
 	ctx: ReadFactsCtx
 ): number {
+	const shown = shape.kind === undefined ? slot.values.find((value) => 'value' in value && value.value === shape.text)?.parseKindId : undefined;
+	if (shown !== undefined) return shown;
+	const marker = shape.kind === undefined ? undefined : ctx.nodeMap.nodes.get(shape.kind.kind);
+	if (marker !== undefined && isFixedTextLeaf(marker) && marker.resolvedKindId !== undefined && isParserHiddenKind(marker.kind, ctx.kindEntries)) {
+		return marker.resolvedKindId;
+	}
 	const keyword = shape.kind === undefined ? findKindEntryForLiteral(ctx.kindEntries, shape.text) : findKindEntry(ctx.kindEntries, shape.kind.kind);
 	if (keyword === undefined) throw new Error(`transport read facts: ${owner.kind}.${slot.name}'s keyword has no parser symbol`);
 	return keyword.id;
@@ -254,6 +291,9 @@ export function slotArgs(slot: AssembledNonterminal, owner: AssembledNode, shape
 	}
 	if (shape.tag === 'presence') args.push(`presence = ${ctx.names.kind(presenceKeywordId(shape, owner, slot, ctx))}`);
 	const separators = literalIds(slotDropTexts(slot, owner, false), ctx, `${owner.kind}.${slot.name}'s separator`);
+	if (owner instanceof AssembledList && slot === listItemSlot(owner)) {
+		for (const id of separatorCandidateIds(owner, ctx)) if (!separators.includes(id)) separators.push(id);
+	}
 	if (separators.length > 0) args.push(`separator = ${oneOrList(separators.map((id) => ctx.names.kind(id)))}`);
 	if (shape.tag === 'text' && isScalarStorage(slot)) args.push('scalar');
 	return args.join(', ');
@@ -270,12 +310,16 @@ export function flankArgs(list: AssembledList): string | undefined {
 	return args.length === 0 ? undefined : args.join(', ');
 }
 
+function separatorCandidateIds(list: AssembledList, ctx: ReadFactsCtx): number[] {
+	return list.separatorCandidateKindNames.flatMap((name) => {
+		const entry = findKindEntry(ctx.kindEntries, name);
+		return entry === undefined ? [] : [entry.id];
+	});
+}
+
 export function separatorKindArgs(list: AssembledList, ctx: ReadFactsCtx): string | undefined {
 	if (list.separatorRule === undefined) return undefined;
-	const candidates = list.separatorCandidateKindNames.flatMap((name) => {
-		const entry = findKindEntry(ctx.kindEntries, name);
-		return entry === undefined ? [] : [ctx.names.kind(entry.id)];
-	});
+	const candidates = separatorCandidateIds(list, ctx).map((id) => ctx.names.kind(id));
 	const declared = list.resolvedSeparatorArm === undefined ? undefined : findKindEntry(ctx.kindEntries, list.resolvedSeparatorArm);
 	return `candidates = [${candidates.join(', ')}]${declared === undefined ? '' : `, default = ${ctx.names.kind(declared.id)}`}`;
 }
@@ -284,8 +328,23 @@ export function enumKindArgs(ownId: number, ctx: ReadFactsCtx): string {
 	return `kind = ${ctx.names.kind(ownId)}, spelled`;
 }
 
+function isAnonymousToken(id: number, ctx: ReadFactsCtx): boolean {
+	return ctx.kindEntries.find((entry) => entry.id === id)?.anon === true;
+}
+
+function foldedTokens(id: number, ctx: ReadFactsCtx): number[] {
+	return (ctx.folds.get(id) ?? []).filter((raw) => ctx.kindEntries.find((entry) => entry.id === raw)?.literalText !== undefined);
+}
+
 export function variantKindArgs(ids: readonly number[], display: boolean, ctx: ReadFactsCtx): string {
-	return [...ids.map((id) => ctx.names.kind(id)), ...(display ? ['display'] : [])].join(', ');
+	const shown = display ? [] : ids.filter((id) => ctx.envelopeIds.has(id) || (foldedTokens(id, ctx).length > 0 && isAnonymousToken(id, ctx)));
+	const plain = ids.filter((id) => !shown.includes(id));
+	return [
+		...plain.map((id) => ctx.names.kind(id)),
+		...shown.map((id) => `display(${ctx.names.kind(id)})`),
+		...plain.flatMap((id) => foldedTokens(id, ctx)).map((id) => `folded(${ctx.names.kind(id)})`),
+		...(display ? ['display'] : [])
+	].join(', ');
 }
 
 export function assertOneUntaggedSlot(

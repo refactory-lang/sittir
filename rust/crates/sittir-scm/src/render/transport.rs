@@ -102,11 +102,11 @@ pub enum AnyTransport {
     Star,
     #[kind(kind::PLUS)]
     Plus,
-    #[kind(kind::QMARK)]
+    #[kind(display(kind::QMARK))]
     Qmark,
     #[kind(kind::AT)]
     At,
-    #[kind(kind::DQUOTE)]
+    #[kind(display(kind::DQUOTE))]
     Dquote,
     #[kind(kind::LBRACK)]
     Lbrack,
@@ -122,7 +122,7 @@ pub enum AnyTransport {
     Underscore,
     #[kind(kind::COLON)]
     Colon,
-    #[kind(kind::BANG)]
+    #[kind(display(kind::BANG))]
     Bang,
     #[kind(kind::POUND)]
     Pound,
@@ -2795,7 +2795,7 @@ pub enum QuantifierEnum {
     Star,
     #[kind(kind::PLUS)]
     Plus,
-    #[kind(kind::QMARK)]
+    #[kind(display(kind::QMARK))]
     Question,
 }
 
@@ -3783,7 +3783,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AnonymousNodeTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::FIELD_DEFINITION, layout = [kind::COLON])]
+#[transport(kind = kind::FIELD_DEFINITION)]
 pub struct FieldDefinitionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -3998,9 +3998,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PredicateTransport> {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ::sittir_core::Transport)]
 #[transport(kind = kind::PREDICATE_TYPE, spelled)]
 pub enum PredicateTypeEnum {
-    #[kind(kind::QMARK)]
+    #[kind(display(kind::QMARK))]
     Question,
-    #[kind(kind::BANG)]
+    #[kind(display(kind::BANG))]
     Bang,
 }
 
@@ -5528,7 +5528,7 @@ impl ::sittir_core::render::Render for PlusTransport {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum QmarkTransport {
-    #[kind(kind::QMARK)]
+    #[kind(display(kind::QMARK))]
     Qmark,
 }
 
@@ -5668,7 +5668,7 @@ impl ::sittir_core::render::Render for AtTransport {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum DquoteTransport {
-    #[kind(kind::DQUOTE)]
+    #[kind(display(kind::DQUOTE))]
     Dquote,
 }
 
@@ -6228,7 +6228,7 @@ impl ::sittir_core::render::Render for ColonTransport {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum BangTransport {
-    #[kind(kind::BANG)]
+    #[kind(display(kind::BANG))]
     Bang,
 }
 

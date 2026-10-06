@@ -189,6 +189,13 @@ impl<G: EngineGrammar> ParsedTree<G> {
         self.tree_id
     }
 
+    /// The whole tree read into the grammar's typed transports, `depth`
+    /// levels down, or the refusal that stopped the read.
+    pub fn typed_read<R: crate::read::ReadRoot>(&self, depth: crate::read::Depth) -> Result<R, crate::read::ReadError> {
+        let ctx = crate::read::ReadCtx::new(&self.source, self.tree_id);
+        R::read_root(&mut self.tree.walk(), &ctx, depth)
+    }
+
     /// Push a node coordinate into the node table, returning its tagged handle.
     ///
     /// `NodeCoord` is `Copy`, so this is O(1) with zero allocation — no
