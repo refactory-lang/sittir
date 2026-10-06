@@ -397,18 +397,14 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	for (const [kind, empty] of emptyForms(nodeMap)) {
 		const node = nodeMap.nodes.get(kind)!;
 		const gaps = keyed ? `, ${empty.gaps.map((gap) => JSON.stringify(gap)).join(' | ')}` : '';
+		const innerTrivia = (self: string): string => `readonly $trivia: TriviaSetterOf<${self}> & InnerTrivia<${self}${gaps}>;`;
 		lines.push(
 			...(groupSeatHints(node, nodeMap, kindEntries).length > 0
-				? [
-						`export type ${empty.typeName} = ${node.typeName}.Bound & {`,
-						`  readonly $trivia: TriviaSetterOf<${empty.typeName}> & InnerTrivia<${empty.typeName}${gaps}>;`,
-						'};'
-					]
-				: [
-						`export interface ${empty.typeName} extends ${node.typeName}.Bound {`,
-						`  readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this${gaps}>;`,
-						'}'
-					])
+				? [`export type ${empty.typeName} = ${node.typeName}.Bound & {`, `  ${innerTrivia(empty.typeName)}`, '};']
+				: [`export interface ${empty.typeName} extends ${node.typeName}.Bound {`, `  ${innerTrivia('this')}`, '}']),
+			`export namespace ${empty.typeName} {`,
+			`  export type Parsed = ${node.typeName}.Parsed & { ${innerTrivia(`${empty.typeName}.Parsed`)} };`,
+			'}'
 		);
 	}
 	lines.push('');
@@ -506,9 +502,14 @@ const VOCABULARY_IMPORTS = [
 function emitGrammarTypeMap(grammar: string, nodeMap: NodeMap, triviaKinds: readonly string[], keyed: boolean): string[] {
 	const map = grammarTypeMapName(grammar);
 	const trivia = `${map}['trivia']`;
-	const empties = [...emptyForms(nodeMap)].map(
-		([kind, empty]) => `{ readonly node: ${nodeMap.nodes.get(kind)!.typeName}; readonly empty: ${empty.typeName} }`
-	);
+	const empties = [...emptyForms(nodeMap)].flatMap(([kind, empty]) => {
+		const typeName = nodeMap.nodes.get(kind)!.typeName;
+		return [
+			`{ readonly node: ${typeName}; readonly empty: ${empty.typeName} }`,
+			`{ readonly node: ${typeName}.Bound; readonly empty: ${empty.typeName} }`,
+			`{ readonly node: ${typeName}.Parsed; readonly empty: ${empty.typeName}.Parsed }`
+		];
+	});
 	return [
 		`export interface ${map} extends GrammarTypeMap {`,
 		'  readonly namespaces: NamespaceMap;',

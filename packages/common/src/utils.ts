@@ -6,6 +6,7 @@ import { ERROR_KIND_ID } from './error-kind.ts';
 import { currentHandle, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
 import { Delimiter } from './delimiter.ts';
 import { isStub } from './readUntypedNode.ts';
+import { holdsParse } from './tree-token.ts';
 import { spelledForm } from './interior.ts';
 
 export { Delimiter } from './delimiter.ts';
@@ -101,6 +102,12 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 	const facts: TriviaFacts = handle.current.trivia;
 	const scoped = scopedBy(handle);
 	const kind = (): string => facts.kindName(node.$type) ?? String(node.$type);
+	const refuseUnheld = (): void => {
+		if (!holdsParse(node) || sourceOf(node) === undefined || parents.has(node) || '$errors' in node) return;
+		throw new Error(
+			`trivia: this ${kind()} was reached outside its parent's accessors (through a query), so no parent holds it and a comment written on it would not render; reach it through the accessors from the root instead`
+		);
+	};
 	const entriesOf = (items: readonly unknown[]): readonly TriviaEntry[] =>
 		scoped(() => items.map((item) => triviaEntryOf(item, facts)));
 	const gapsOf = (): readonly string[] => {
@@ -120,18 +127,20 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 	const store = (trivia: NodeTrivia, side: TriviaSideName): AnyUntypedNode => {
 		markWritten(node, side);
 		setTriviaData(node, trivia);
+		detachAncestors(node);
 		return node;
 	};
 	const innerAt = (gap: string, items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] => {
 		if (!gapsOf().includes(gap)) throw new Error(`trivia: ${kind()} has no gap '${gap}'`);
 		if (items.length === 0) return node.$_trivia?.inner?.[gap] ?? [];
+		refuseUnheld();
 		return store({ ...node.$_trivia, inner: writeInner({ ...node.$_trivia?.inner, [gap]: entriesOf(items) }) }, 'inner');
 	};
 	return {
 		side: (position: 'leading' | 'trailing', items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] =>
 			items.length === 0
 				? (readTrivia(node, handle.lineGapsOf)?.[position] ?? [])
-				: store({ ...node.$_trivia, [position]: entriesOf(items) }, position),
+				: (refuseUnheld(), store({ ...node.$_trivia, [position]: entriesOf(items) }, position)),
 		inner: (items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] => innerAt(gapsOf()[0]!, items),
 		innerAt
 	};
@@ -168,6 +177,20 @@ function carryEdit(from: object, to: object): void {
 	carrySource(from, to);
 	const written = writtenSides.get(from);
 	if (written !== undefined) writtenSides.set(to, new Set(written));
+}
+
+const parents = new WeakMap<object, object>();
+
+/** Record that a wrapped node's accessor handed out `child` from one of its slots. */
+export function adoptChild(parent: object, child: unknown): void {
+	if (typeof child === 'object' && child !== null) parents.set(child, parent);
+}
+
+function detachAncestors(node: object): void {
+	for (let parent = parents.get(node); parent !== undefined; parent = parents.get(parent)) {
+		carrySource(parent, parent);
+		detachCoordinate(parent);
+	}
 }
 
 function markWritten(node: object, side: TriviaSideName): void {

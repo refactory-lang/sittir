@@ -1,6 +1,5 @@
 import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
-import { nodeText } from './helpers.ts';
 
 const engine = await createEngine(rust);
 
@@ -13,7 +12,7 @@ export function renameProcess(source: string) {
 	const processFn = engine
 		.parse(source)
 		.statements()
-		.find((statement) => engine.is.functionItem(statement) && nodeText(statement.name()) === 'process');
+		.find((statement) => engine.is.functionItem(statement) && engine.render(statement.name()).toString() === 'process');
 	if (processFn === undefined || !engine.is.functionItem(processFn)) return undefined;
 
 	return processFn.$with.name(engine.build.identifier('handle'));

@@ -103,9 +103,15 @@ function scopedBuild<B>(build: B, handle: EngineHandle): B {
 function languageGuards<G extends object>(guards: G, inLanguage: (value: unknown) => boolean): Readonly<G> {
 	const entries = Object.entries(guards).map(([name, guard]): [string, unknown] => [
 		name,
-		(value: unknown, ...rest: unknown[]) => inLanguage(value) && (guard as (...args: unknown[]) => boolean)(value, ...rest)
+		languageGuard(guard as (...args: unknown[]) => boolean, inLanguage)
 	]);
 	return Object.freeze(Object.fromEntries(entries) as G);
+}
+
+function languageGuard(guard: (...args: unknown[]) => boolean, inLanguage: (value: unknown) => boolean): (...args: unknown[]) => boolean {
+	const checked = (value: unknown, ...rest: unknown[]): boolean => inLanguage(value) && guard(value, ...rest);
+	if (Object.keys(guard).length === 0) return checked;
+	return Object.freeze(Object.defineProperties(checked, Object.getOwnPropertyDescriptors(languageGuards(guard, inLanguage))));
 }
 
 function assembleEngine<API extends LanguageAPI>(

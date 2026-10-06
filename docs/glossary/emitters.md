@@ -1160,7 +1160,7 @@ The `@sittir/types` vocabulary a generated types module may import, in the order
 
 ### `packages/codegen/src/emitters/types.ts::emitGrammarTypeMap`
 
-The grammar's `GrammarTypeMap`: `namespaces` is its `NamespaceMap`, `empty` pairs each kind that realizes empty (`emptyForms`) with its `Empty<TypeName>` form (`never` when none does), and `trivia` is the union of its trivia kind types (`buildTriviaNodeType`). The three per-grammar aliases the node types use read the map's `trivia` member, so it is their one source: `NodeMethodsOf`, `TriviaSetterOf<Self>`, and `InnerTrivia<N>`, which takes a `Gap` parameter and becomes `GrammarInnerTriviaAt` when some kind has more than one gap (`innerGapsKeyed`).
+The grammar's `GrammarTypeMap`: `namespaces` is its `NamespaceMap`, `empty` pairs each kind that realizes empty (`emptyForms`) with its `Empty<TypeName>` form (`never` when none does), once per form of the node: the main interface and `.Bound` with `Empty<TypeName>`, and `.Parsed` with `Empty<TypeName>.Parsed`. `engine.isEmptyNode` looks its argument up by exact form, so the node an accessor returns narrows without the checker comparing a parsed surface to a built one; `Empty<TypeName>.Parsed` adds only the inner-trivia `$trivia` to `.Parsed`, because the built empty form extends `.Bound` and intersecting the two surfaces in full exceeds the checker's depth. and `trivia` is the union of its trivia kind types (`buildTriviaNodeType`). The three per-grammar aliases the node types use read the map's `trivia` member, so it is their one source: `NodeMethodsOf`, `TriviaSetterOf<Self>`, and `InnerTrivia<N>`, which takes a `Gap` parameter and becomes `GrammarInnerTriviaAt` when some kind has more than one gap (`innerGapsKeyed`).
 
 ### `packages/codegen/src/emitters/from.ts::buildSupertypeByKey`
 
@@ -9129,6 +9129,14 @@ route those literals by kind ids the parser never issues there.
 
 Per-package `vitest.config.ts`: test include/env plus `resolve.alias` from `sourceAliases()`, which maps every workspace package's `exports` entry to its `src/` file — package-scoped test runs resolve to source, never to a stale `dist/` build. `passWithNoTests` is emitted only for a grammar that is not stable (`isStableGrammar`), so a freshly bootstrapped grammar with no tests yet runs clean while a stable package fails if its tests go missing.
 
+### `packages/codegen/src/emitters/is.ts::kindPredicate`
+
+The signature of a guard that narrows to one kind: it takes a node or a bare kind id, and narrows the node arms to the kind. Per-kind guards and node variant guards share it.
+
+### `packages/codegen/src/emitters/is.ts::supertypePredicate`
+
+The signature of a guard that narrows to a set of kinds by id, bare ids included. Supertype guards and leaf variant guards share it.
+
 ### `packages/codegen/src/emitters/is.ts::module`
 
 ```text
@@ -9152,6 +9160,10 @@ Per-package `vitest.config.ts`: test include/env plus `resolve.alias` from `sour
 ```
 
 `is` is frozen and is a check on the kind id alone, with no language check: the package-level table has no engine. `engine.is` is the same table composed with the engine's language check.
+
+A supertype whose arms are all variants (the parents `flattenedVariantParents` lists, the same ones that give `ir.<parent>.<variant>`) has a guard per variant on its own guard: `is.suite(v)` tests every form, `is.suite.block(v)` one. A variant guard narrows like a per-kind guard; a leaf variant is tested by id like a supertype guard, and a variant that is itself a variant parent is that parent's guard. Variant ids resolve through the whole catalog, as the build surface's do, so a leaf alias with no node of its own still has its id.
+
+A supertype guard tests every kind the supertype reaches, through nested supertypes too (`expandToConcreteParseKinds`, the parse kinds of the stamped closure), so `is.integer` accepts a plain decimal although the decimal forms sit under a nested `integer_decimal`. Each parse kind resolves to its entry the way a kind discriminant does (`findKindEntry`), so an arm that aliases a hidden rule to a visible name keeps the hidden rule's id.
 
 ### `packages/codegen/src/emitters/shared.ts::module`
 
@@ -13607,6 +13619,10 @@ The reader omits a token's text exactly when it equals the parser's name for the
 
 Kinds with a `reclaimsAnonymousChild` slot keep `$other`, because their wrap reads the token into that slot. Without the drop, a node that keeps `$other` counts as storage-bearing in the transport projection and loses its `$text`.
 
+### `packages/codegen/src/emitters/wrap.ts::resolveSlotAccessorBody`
+
+The body of a slot accessor: `hydrateSlot` for a single slot, `hydrateSlots` for a list, both keyed by the slot's storage key, so each child is hydrated once and returned as the same node after.
+
 ### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.finalize`
 
 Assembles the wrap module. `wrapNode`, the one function every wrapped node passes through (the parsed root, each child hydrated on demand, trivia entries), runs its per-kind wrap function inside `inTreeEngine`, so a node is built under the engine that read its tree however long after the parse it is first reached. It carries read provenance (`carryRead`) from the read data to the wrapped node, so the wrapped node derives its line-gap trivia the way the read data would.
@@ -13617,7 +13633,9 @@ guards (`isErrorNode`) recognise it wherever it surfaces.
 
 `readUntypedNode` and `readNode` take an optional level count, which reaches the native read. `hydrateSelf` reads a stub of a list owner's kind (`listViewOwners`, emitted as `_LIST_OWNER_KINDS`) two levels at once, and every other stub one level.
 
-Every per-kind wrap function stores its node-valued slots through `storeExpanded` (the store expression `resolveSlotHydrateExprs` builds): a child the read already expanded is typed there, with its parent; a stub stays a stub until an accessor hydrates it, and a node with no slots (a text leaf, a token) is stored as read, since that already is its model shape. Stored data therefore has one shape, the model's, at every level a node can be reached from, whatever depth it was read at: a lone repeated child is a one-element array and an untagged child sits under its model slot all the way down, so a node that crosses to the render as its slots needs no reshaping on the way. `hydrateChild` and its `ParsedOfData` type are exported, so a tool that hydrates read data takes the same path as the accessors. `hydrateChild` returns a stored typed child as it is (`isTypedNode`, from `@sittir/common/utils`: it carries the methods `withMethods` attaches) and types only a child that reached it untyped. Which nodes hold slots is `holdsSlots`, the same predicate the transport walk uses. Its return type, `StoredOf<T>`, says exactly that: each node position is the value as read or its typed node (`T | ParsedOfData<T>`), mapped over arrays, so the stored shape is visible to the checker and the hydrate helpers take it as their input; the single generic signature sits over an `unknown` implementation, which is why its body needs no cast.
+Every per-kind wrap function stores its node-valued slots through `storeExpanded` (the store expression `resolveSlotHydrateExprs` builds): a child the read already expanded is typed there, with its parent; a stub stays a stub until an accessor hydrates it, and a node `_needsWrap` passes over is stored as read, since that already is its model shape. `_needsWrap` is the one test of whether data still needs a wrap: it holds slots (`holdsSlots`), carries a read-layer field the wrap consumes (a `$displayType`, which `_withoutDisplay` drops, or spelling tokens, which `_dropSpelling` folds into `$text`), or is of a kind with a token interior (`_INTERIOR_KINDS`, the kinds whose wrap function projects one) whose interior slots are not projected yet (`_isReadTextLeaf`). A grammar without a kind table has only `holdsSlots`. Stored data therefore has one shape, the model's, at every level a node can be reached from, whatever depth it was read at: a lone repeated child is a one-element array and an untagged child sits under its model slot all the way down, so a node that crosses to the render as its slots needs no reshaping on the way. `hydrateChild` and its `ParsedOfData` type are exported, so a tool that hydrates read data takes the same path as the accessors. `hydrateChild` returns a stored child as it is when it is typed (`isTypedNode`, from `@sittir/common/utils`: it carries the methods `withMethods` attaches) or `_needsWrap` passes over it, the same test `storeExpanded` applies, so a plain leaf is the object the read produced on every access and an interior leaf, wrapped once and written back, holds its interior slots and is recognized the same way after. It reads a stub, and wraps only data that still needs it.
+
+A slot accessor reads through `hydrateSlot` (one child) or `hydrateSlots` (a list): the child it hydrates is written back into the slot, so the next read returns the same node instead of reading the stub from the tree again, and a list is stored once as a frozen array, handed out as is, so it can't be changed through. `hydrateSlots` recognizes a list it already hydrated by `Object.isFrozen`. That holds only because a parsed node's slot storage is written by the read and by hydration alone: a read never stores a frozen array, and nothing else writes a parsed node's slots (an edit rebuilds the node through `$with` rather than writing into it). An absent slot stays absent (`hydrateSlots` answers a shared empty list without writing), and a slot holding a lone child is not reshaped. Each child handed out is adopted by its parent (`adoptChild`), so a comment later written on it in place detaches the parent's coordinate. A group seat's reader goes through the node's slot the same way, so the seat and the accessor give the same node. Writing a typed child into a slot keeps storage in model shape (`StoredOf<T>` already admits it), and a render of an untouched parent still comes out verbatim. Which nodes hold slots is `holdsSlots`, the same predicate the transport walk uses. Its return type, `StoredOf<T>`, says exactly that: each node position is the value as read or its typed node (`T | ParsedOfData<T>`), mapped over arrays, so the stored shape is visible to the checker and the hydrate helpers take it as their input; the single generic signature sits over an `unknown` implementation, which is why its body needs no cast.
 
 #### body
 

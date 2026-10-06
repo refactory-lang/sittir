@@ -411,9 +411,9 @@ import rust from '@sittir/rust';
 
 const engine = await createEngine(rust);
 const fn = engine.parse(source).statements()[0];
-fn.name(); // hydrateChild: lazy hydrate if needed
-fn.body(); // hydrateChild: returns Block
-fn.body().statements(); // statements array
+fn.name(); // read from the tree on first access
+fn.body(); // returns the Block; the same node on every later call
+fn.body().statements(); // the statements list, also the same list each time
 ```
 
 ### Query a parsed tree

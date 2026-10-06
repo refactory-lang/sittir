@@ -25880,30 +25880,80 @@ export interface RustTypeMap extends GrammarTypeMap {
 	readonly namespaces: NamespaceMap;
 	readonly empty:
 		| { readonly node: SourceFile; readonly empty: EmptySourceFile }
+		| { readonly node: SourceFile.Bound; readonly empty: EmptySourceFile }
+		| { readonly node: SourceFile.Parsed; readonly empty: EmptySourceFile.Parsed }
 		| { readonly node: DeclarationList; readonly empty: EmptyDeclarationList }
+		| { readonly node: DeclarationList.Bound; readonly empty: EmptyDeclarationList }
+		| { readonly node: DeclarationList.Parsed; readonly empty: EmptyDeclarationList.Parsed }
 		| { readonly node: EnumVariantList; readonly empty: EmptyEnumVariantList }
+		| { readonly node: EnumVariantList.Bound; readonly empty: EmptyEnumVariantList }
+		| { readonly node: EnumVariantList.Parsed; readonly empty: EmptyEnumVariantList.Parsed }
 		| { readonly node: FieldDeclarationList; readonly empty: EmptyFieldDeclarationList }
+		| { readonly node: FieldDeclarationList.Bound; readonly empty: EmptyFieldDeclarationList }
+		| { readonly node: FieldDeclarationList.Parsed; readonly empty: EmptyFieldDeclarationList.Parsed }
 		| { readonly node: OrderedFieldDeclarationList; readonly empty: EmptyOrderedFieldDeclarationList }
+		| { readonly node: OrderedFieldDeclarationList.Bound; readonly empty: EmptyOrderedFieldDeclarationList }
+		| { readonly node: OrderedFieldDeclarationList.Parsed; readonly empty: EmptyOrderedFieldDeclarationList.Parsed }
 		| { readonly node: UseList; readonly empty: EmptyUseList }
+		| { readonly node: UseList.Bound; readonly empty: EmptyUseList }
+		| { readonly node: UseList.Parsed; readonly empty: EmptyUseList.Parsed }
 		| { readonly node: Parameters; readonly empty: EmptyParameters }
+		| { readonly node: Parameters.Bound; readonly empty: EmptyParameters }
+		| { readonly node: Parameters.Parsed; readonly empty: EmptyParameters.Parsed }
 		| { readonly node: UseBounds; readonly empty: EmptyUseBounds }
+		| { readonly node: UseBounds.Bound; readonly empty: EmptyUseBounds }
+		| { readonly node: UseBounds.Parsed; readonly empty: EmptyUseBounds.Parsed }
 		| { readonly node: Arguments; readonly empty: EmptyArguments }
+		| { readonly node: Arguments.Bound; readonly empty: EmptyArguments }
+		| { readonly node: Arguments.Parsed; readonly empty: EmptyArguments.Parsed }
 		| { readonly node: FieldInitializerList; readonly empty: EmptyFieldInitializerList }
+		| { readonly node: FieldInitializerList.Bound; readonly empty: EmptyFieldInitializerList }
+		| { readonly node: FieldInitializerList.Parsed; readonly empty: EmptyFieldInitializerList.Parsed }
 		| { readonly node: MatchBlock; readonly empty: EmptyMatchBlock }
+		| { readonly node: MatchBlock.Bound; readonly empty: EmptyMatchBlock }
+		| { readonly node: MatchBlock.Parsed; readonly empty: EmptyMatchBlock.Parsed }
 		| { readonly node: ClosureParameters; readonly empty: EmptyClosureParameters }
+		| { readonly node: ClosureParameters.Bound; readonly empty: EmptyClosureParameters }
+		| { readonly node: ClosureParameters.Parsed; readonly empty: EmptyClosureParameters.Parsed }
 		| { readonly node: Block; readonly empty: EmptyBlock }
+		| { readonly node: Block.Bound; readonly empty: EmptyBlock }
+		| { readonly node: Block.Parsed; readonly empty: EmptyBlock.Parsed }
 		| { readonly node: TuplePattern; readonly empty: EmptyTuplePattern }
+		| { readonly node: TuplePattern.Bound; readonly empty: EmptyTuplePattern }
+		| { readonly node: TuplePattern.Parsed; readonly empty: EmptyTuplePattern.Parsed }
 		| { readonly node: SlicePattern; readonly empty: EmptySlicePattern }
+		| { readonly node: SlicePattern.Bound; readonly empty: EmptySlicePattern }
+		| { readonly node: SlicePattern.Parsed; readonly empty: EmptySlicePattern.Parsed }
 		| { readonly node: ArrayExpressionList; readonly empty: EmptyArrayExpressionList }
+		| { readonly node: ArrayExpressionList.Bound; readonly empty: EmptyArrayExpressionList }
+		| { readonly node: ArrayExpressionList.Parsed; readonly empty: EmptyArrayExpressionList.Parsed }
 		| { readonly node: TokenTreePatternParen; readonly empty: EmptyTokenTreePatternParen }
+		| { readonly node: TokenTreePatternParen.Bound; readonly empty: EmptyTokenTreePatternParen }
+		| { readonly node: TokenTreePatternParen.Parsed; readonly empty: EmptyTokenTreePatternParen.Parsed }
 		| { readonly node: TokenTreePatternBracket; readonly empty: EmptyTokenTreePatternBracket }
+		| { readonly node: TokenTreePatternBracket.Bound; readonly empty: EmptyTokenTreePatternBracket }
+		| { readonly node: TokenTreePatternBracket.Parsed; readonly empty: EmptyTokenTreePatternBracket.Parsed }
 		| { readonly node: TokenTreePatternBrace; readonly empty: EmptyTokenTreePatternBrace }
+		| { readonly node: TokenTreePatternBrace.Bound; readonly empty: EmptyTokenTreePatternBrace }
+		| { readonly node: TokenTreePatternBrace.Parsed; readonly empty: EmptyTokenTreePatternBrace.Parsed }
 		| { readonly node: TokenTreeParen; readonly empty: EmptyTokenTreeParen }
+		| { readonly node: TokenTreeParen.Bound; readonly empty: EmptyTokenTreeParen }
+		| { readonly node: TokenTreeParen.Parsed; readonly empty: EmptyTokenTreeParen.Parsed }
 		| { readonly node: TokenTreeBracket; readonly empty: EmptyTokenTreeBracket }
+		| { readonly node: TokenTreeBracket.Bound; readonly empty: EmptyTokenTreeBracket }
+		| { readonly node: TokenTreeBracket.Parsed; readonly empty: EmptyTokenTreeBracket.Parsed }
 		| { readonly node: TokenTreeBrace; readonly empty: EmptyTokenTreeBrace }
+		| { readonly node: TokenTreeBrace.Bound; readonly empty: EmptyTokenTreeBrace }
+		| { readonly node: TokenTreeBrace.Parsed; readonly empty: EmptyTokenTreeBrace.Parsed }
 		| { readonly node: DelimTokenTreeParen; readonly empty: EmptyDelimTokenTreeParen }
+		| { readonly node: DelimTokenTreeParen.Bound; readonly empty: EmptyDelimTokenTreeParen }
+		| { readonly node: DelimTokenTreeParen.Parsed; readonly empty: EmptyDelimTokenTreeParen.Parsed }
 		| { readonly node: DelimTokenTreeBracket; readonly empty: EmptyDelimTokenTreeBracket }
-		| { readonly node: DelimTokenTreeBrace; readonly empty: EmptyDelimTokenTreeBrace };
+		| { readonly node: DelimTokenTreeBracket.Bound; readonly empty: EmptyDelimTokenTreeBracket }
+		| { readonly node: DelimTokenTreeBracket.Parsed; readonly empty: EmptyDelimTokenTreeBracket.Parsed }
+		| { readonly node: DelimTokenTreeBrace; readonly empty: EmptyDelimTokenTreeBrace }
+		| { readonly node: DelimTokenTreeBrace.Bound; readonly empty: EmptyDelimTokenTreeBrace }
+		| { readonly node: DelimTokenTreeBrace.Parsed; readonly empty: EmptyDelimTokenTreeBrace.Parsed };
 	readonly trivia: Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | Tab;
 }
 
@@ -25914,75 +25964,205 @@ export type InnerTrivia<N> = GrammarInnerTrivia<N, RustTypeMap['trivia']>;
 export interface EmptySourceFile extends SourceFile.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
+export namespace EmptySourceFile {
+	export type Parsed = SourceFile.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptySourceFile.Parsed> & InnerTrivia<EmptySourceFile.Parsed>;
+	};
+}
 export interface EmptyDeclarationList extends DeclarationList.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyDeclarationList {
+	export type Parsed = DeclarationList.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyDeclarationList.Parsed> & InnerTrivia<EmptyDeclarationList.Parsed>;
+	};
 }
 export interface EmptyEnumVariantList extends EnumVariantList.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
+export namespace EmptyEnumVariantList {
+	export type Parsed = EnumVariantList.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyEnumVariantList.Parsed> & InnerTrivia<EmptyEnumVariantList.Parsed>;
+	};
+}
 export interface EmptyFieldDeclarationList extends FieldDeclarationList.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyFieldDeclarationList {
+	export type Parsed = FieldDeclarationList.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyFieldDeclarationList.Parsed> & InnerTrivia<EmptyFieldDeclarationList.Parsed>;
+	};
 }
 export interface EmptyOrderedFieldDeclarationList extends OrderedFieldDeclarationList.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
+export namespace EmptyOrderedFieldDeclarationList {
+	export type Parsed = OrderedFieldDeclarationList.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyOrderedFieldDeclarationList.Parsed> &
+			InnerTrivia<EmptyOrderedFieldDeclarationList.Parsed>;
+	};
+}
 export interface EmptyUseList extends UseList.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyUseList {
+	export type Parsed = UseList.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyUseList.Parsed> & InnerTrivia<EmptyUseList.Parsed>;
+	};
 }
 export interface EmptyParameters extends Parameters.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
+export namespace EmptyParameters {
+	export type Parsed = Parameters.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyParameters.Parsed> & InnerTrivia<EmptyParameters.Parsed>;
+	};
+}
 export interface EmptyUseBounds extends UseBounds.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyUseBounds {
+	export type Parsed = UseBounds.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyUseBounds.Parsed> & InnerTrivia<EmptyUseBounds.Parsed>;
+	};
 }
 export interface EmptyArguments extends Arguments.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
+export namespace EmptyArguments {
+	export type Parsed = Arguments.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyArguments.Parsed> & InnerTrivia<EmptyArguments.Parsed>;
+	};
+}
 export interface EmptyFieldInitializerList extends FieldInitializerList.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyFieldInitializerList {
+	export type Parsed = FieldInitializerList.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyFieldInitializerList.Parsed> & InnerTrivia<EmptyFieldInitializerList.Parsed>;
+	};
 }
 export type EmptyMatchBlock = MatchBlock.Bound & {
 	readonly $trivia: TriviaSetterOf<EmptyMatchBlock> & InnerTrivia<EmptyMatchBlock>;
 };
+export namespace EmptyMatchBlock {
+	export type Parsed = MatchBlock.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyMatchBlock.Parsed> & InnerTrivia<EmptyMatchBlock.Parsed>;
+	};
+}
 export interface EmptyClosureParameters extends ClosureParameters.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyClosureParameters {
+	export type Parsed = ClosureParameters.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyClosureParameters.Parsed> & InnerTrivia<EmptyClosureParameters.Parsed>;
+	};
 }
 export interface EmptyBlock extends Block.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
+export namespace EmptyBlock {
+	export type Parsed = Block.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyBlock.Parsed> & InnerTrivia<EmptyBlock.Parsed>;
+	};
+}
 export interface EmptyTuplePattern extends TuplePattern.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyTuplePattern {
+	export type Parsed = TuplePattern.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyTuplePattern.Parsed> & InnerTrivia<EmptyTuplePattern.Parsed>;
+	};
 }
 export interface EmptySlicePattern extends SlicePattern.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
+export namespace EmptySlicePattern {
+	export type Parsed = SlicePattern.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptySlicePattern.Parsed> & InnerTrivia<EmptySlicePattern.Parsed>;
+	};
+}
 export interface EmptyArrayExpressionList extends ArrayExpressionList.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyArrayExpressionList {
+	export type Parsed = ArrayExpressionList.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyArrayExpressionList.Parsed> & InnerTrivia<EmptyArrayExpressionList.Parsed>;
+	};
 }
 export interface EmptyTokenTreePatternParen extends TokenTreePatternParen.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
+export namespace EmptyTokenTreePatternParen {
+	export type Parsed = TokenTreePatternParen.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyTokenTreePatternParen.Parsed> &
+			InnerTrivia<EmptyTokenTreePatternParen.Parsed>;
+	};
+}
 export interface EmptyTokenTreePatternBracket extends TokenTreePatternBracket.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyTokenTreePatternBracket {
+	export type Parsed = TokenTreePatternBracket.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyTokenTreePatternBracket.Parsed> &
+			InnerTrivia<EmptyTokenTreePatternBracket.Parsed>;
+	};
 }
 export interface EmptyTokenTreePatternBrace extends TokenTreePatternBrace.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
+export namespace EmptyTokenTreePatternBrace {
+	export type Parsed = TokenTreePatternBrace.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyTokenTreePatternBrace.Parsed> &
+			InnerTrivia<EmptyTokenTreePatternBrace.Parsed>;
+	};
+}
 export interface EmptyTokenTreeParen extends TokenTreeParen.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyTokenTreeParen {
+	export type Parsed = TokenTreeParen.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyTokenTreeParen.Parsed> & InnerTrivia<EmptyTokenTreeParen.Parsed>;
+	};
 }
 export interface EmptyTokenTreeBracket extends TokenTreeBracket.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
+export namespace EmptyTokenTreeBracket {
+	export type Parsed = TokenTreeBracket.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyTokenTreeBracket.Parsed> & InnerTrivia<EmptyTokenTreeBracket.Parsed>;
+	};
+}
 export interface EmptyTokenTreeBrace extends TokenTreeBrace.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyTokenTreeBrace {
+	export type Parsed = TokenTreeBrace.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyTokenTreeBrace.Parsed> & InnerTrivia<EmptyTokenTreeBrace.Parsed>;
+	};
 }
 export interface EmptyDelimTokenTreeParen extends DelimTokenTreeParen.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
+export namespace EmptyDelimTokenTreeParen {
+	export type Parsed = DelimTokenTreeParen.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyDelimTokenTreeParen.Parsed> & InnerTrivia<EmptyDelimTokenTreeParen.Parsed>;
+	};
+}
 export interface EmptyDelimTokenTreeBracket extends DelimTokenTreeBracket.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
+export namespace EmptyDelimTokenTreeBracket {
+	export type Parsed = DelimTokenTreeBracket.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyDelimTokenTreeBracket.Parsed> &
+			InnerTrivia<EmptyDelimTokenTreeBracket.Parsed>;
+	};
+}
 export interface EmptyDelimTokenTreeBrace extends DelimTokenTreeBrace.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyDelimTokenTreeBrace {
+	export type Parsed = DelimTokenTreeBrace.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyDelimTokenTreeBrace.Parsed> & InnerTrivia<EmptyDelimTokenTreeBrace.Parsed>;
+	};
 }

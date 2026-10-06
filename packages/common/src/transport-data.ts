@@ -1,5 +1,5 @@
 import type { AnyUntypedNode } from '@sittir/types';
-import { assertHoldsTree, holdTreeOn, releaseTreeOn, treeTokenOf, type TreeToken } from './tree-token.ts';
+import { assertHoldsTree, holdsParse, holdTreeOn, releaseTreeOn, treeTokenOf, type TreeToken } from './tree-token.ts';
 import { forEachTriviaList, type TriviaSides } from './trivia.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -141,12 +141,13 @@ function isUntouchedBelow(value: unknown): boolean {
  * read hands back names its tree (its own handle, its parent's, or the
  * tree's tag on a child the read expanded), because an edit detaches the
  * coordinate of the node it rebuilds and each untouched child below then
- * folds on its own.
+ * folds on its own. On a tree a parse registered, holding the coordinate is
+ * the proof, so nothing below is walked; any other data is walked.
  */
 function canFold(record: Record<string, unknown>, trivia: unknown): boolean {
 	if (treeHandleOf(record) === undefined || !isRecord(record.$span)) return false;
 	if (hasOutsideTrivia(trivia)) return false;
-	return isUntouchedBelow(record);
+	return holdsParse(record) || isUntouchedBelow(record);
 }
 
 /**

@@ -20,6 +20,9 @@ export interface IsGuards {
 	string<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.String };
+	immediateString<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImmediateString };
 	stringContent<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringContent };
@@ -60,26 +63,73 @@ export interface IsGuards {
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.GroupingGroup };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
-	definition<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<
-		T,
-		| TSKindId.AnonymousNode
-		| TSKindId.MissingNode
-		| TSKindId.Grouping
-		| TSKindId.Predicate
-		| TSKindId.List
-		| TSKindId.FieldDefinition
-	>;
-	namedNode<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.NamedNodePlain | TSKindId.NamedNodeSupertyped>;
-	listElement<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.Capture | TSKindId.ListElementQuantifier>;
-	namedNodeGroup<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.NamedNodeGroupChildren | TSKindId.NamedNodeGroupAnchoredLast>;
+	readonly definition: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<
+			T,
+			| TSKindId.NamedNodePlain
+			| TSKindId.NamedNodeSupertyped
+			| TSKindId.AnonymousNode
+			| TSKindId.MissingNode
+			| TSKindId.Grouping
+			| TSKindId.Predicate
+			| TSKindId.List
+			| TSKindId.FieldDefinition
+		>;
+		namedNode: IsGuards['namedNode'];
+		anonymousNode<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AnonymousNode };
+		missingNode<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MissingNode };
+		grouping<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Grouping };
+		predicate<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Predicate };
+		list<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.List };
+		field<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FieldDefinition };
+	};
+	readonly namedNode: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<T, TSKindId.NamedNodePlain | TSKindId.NamedNodeSupertyped>;
+		plain<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodePlain };
+		supertyped<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodeSupertyped };
+	};
+	readonly listElement: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<T, TSKindId.Capture | TSKindId.ListElementQuantifier>;
+		capture<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Capture };
+		quantifier<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ListElementQuantifier };
+	};
+	readonly namedNodeGroup: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<T, TSKindId.NamedNodeGroupChildren | TSKindId.NamedNodeGroupAnchoredLast>;
+		children<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodeGroupChildren };
+		anchoredLast<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodeGroupAnchoredLast };
+	};
 	whitespace<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is NarrowTo<
@@ -102,18 +152,44 @@ function _g(id: number): (v: { readonly $type: number } | number) => boolean {
 function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number) => boolean {
 	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
 }
+function _vg<G extends object>(guard: G, variants: object): G {
+	return Object.freeze(Object.defineProperties(guard, Object.getOwnPropertyDescriptors(variants)));
+}
 
-const _supertype_definition_ids = new Set<number>([46, 45, 44, 51, 43, 49]);
+const _supertype_definition_ids = new Set<number>([59, 60, 46, 45, 44, 51, 43, 49]);
 const _supertype_namedNode_ids = new Set<number>([59, 60]);
 const _supertype_listElement_ids = new Set<number>([38, 52]);
 const _supertype_namedNodeGroup_ids = new Set<number>([61, 62]);
 const _supertype_whitespace_ids = new Set<number>([24, 25, 26, 27, 28, 29, 30, 31]);
+
+const _supertype_namedNode_guard = _vg(_sg(_supertype_namedNode_ids), {
+	plain: _g(TSKindId.NamedNodePlain),
+	supertyped: _g(TSKindId.NamedNodeSupertyped)
+});
+const _supertype_listElement_guard = _vg(_sg(_supertype_listElement_ids), {
+	capture: _g(TSKindId.Capture),
+	quantifier: _g(TSKindId.ListElementQuantifier)
+});
+const _supertype_namedNodeGroup_guard = _vg(_sg(_supertype_namedNodeGroup_ids), {
+	children: _g(TSKindId.NamedNodeGroupChildren),
+	anchoredLast: _g(TSKindId.NamedNodeGroupAnchoredLast)
+});
+const _supertype_definition_guard = _vg(_sg(_supertype_definition_ids), {
+	namedNode: _supertype_namedNode_guard,
+	anonymousNode: _g(TSKindId.AnonymousNode),
+	missingNode: _g(TSKindId.MissingNode),
+	grouping: _g(TSKindId.Grouping),
+	predicate: _g(TSKindId.Predicate),
+	list: _g(TSKindId.List),
+	field: _g(TSKindId.FieldDefinition)
+});
 
 export const is = Object.freeze({
 	program: _g(TSKindId.Program),
 	escapeSequence: _g(TSKindId.EscapeSequence),
 	capture: _g(TSKindId.Capture),
 	string: _g(TSKindId.String),
+	immediateString: _g(TSKindId.ImmediateString),
 	stringContent: _g(TSKindId.StringContent),
 	parameters: _g(TSKindId.Parameters),
 	comment: _g(TSKindId.Comment),
@@ -128,9 +204,9 @@ export const is = Object.freeze({
 	namedNodeExpressionArm: _g(TSKindId.NamedNodeExpressionArm),
 	groupingGroup: _g(TSKindId.GroupingGroup),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
-	definition: _sg(_supertype_definition_ids),
-	namedNode: _sg(_supertype_namedNode_ids),
-	listElement: _sg(_supertype_listElement_ids),
-	namedNodeGroup: _sg(_supertype_namedNodeGroup_ids),
+	definition: _supertype_definition_guard,
+	namedNode: _supertype_namedNode_guard,
+	listElement: _supertype_listElement_guard,
+	namedNodeGroup: _supertype_namedNodeGroup_guard,
 	whitespace: _sg(_supertype_whitespace_ids)
 }) as unknown as IsGuards;

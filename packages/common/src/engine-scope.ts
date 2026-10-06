@@ -1,4 +1,5 @@
 import type { AnyUntypedNode, EngineIdentity, LineGapAddress, LineGaps, Rendered } from '@sittir/types';
+import { treeOf } from './tree-token.ts';
 
 export interface LiveEngine extends EngineIdentity {
 	render(node: AnyUntypedNode | number, options?: object): Rendered;
@@ -17,7 +18,9 @@ export function sameLanguage(a: EngineIdentity, b: EngineIdentity): boolean {
 export function engineOf(value: unknown): EngineHandle['current'] | undefined {
 	if (typeof value !== 'object' || value === null) return undefined;
 	const bound = (value as { readonly $engine?: unknown }).$engine;
-	return typeof bound === 'function' ? bound() : undefined;
+	if (typeof bound === 'function') return bound();
+	const tree = treeOf(value);
+	return tree === undefined ? undefined : treeHandles.get(tree)?.current;
 }
 
 let active: EngineHandle | undefined;

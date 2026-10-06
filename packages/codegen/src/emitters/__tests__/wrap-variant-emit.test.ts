@@ -144,7 +144,7 @@ describe('wrap emitter — polymorph variant stamping', () => {
 		const wrapSrc = emitWrap({ grammar: 'synth', nodeMap: makeHiddenGroupNodeMap() });
 
 		expect(wrapSrc).toContain('export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle) {');
-		expect(wrapSrc).toContain('right() { return hydrateChild<');
+		expect(wrapSrc).toContain('right() { return hydrateSlot<');
 		expect(wrapSrc).toContain("'_assignment_eq': (d, t) => wrapAssignmentEq(d as unknown as T.AssignmentEq, t),");
 		// A hidden helper visible only through its own alias name is MERGED
 		// into that alias symbol by tree-sitter — one id serves both
@@ -184,7 +184,7 @@ describe('wrap emitter — polymorph variant stamping', () => {
 		expect(wrapSrc).toContain(
 			'export function wrapExportStatementDefault(data: T.ExportStatementDefault, tree: TreeHandle) {'
 		);
-		expect(wrapSrc).toContain('return hydrateChild<T.Identifier>(');
+		expect(wrapSrc).toContain('return hydrateSlot<T.Identifier>(');
 		expect(wrapSrc).toContain(
 			"'_export_statement_default': (d, t) => wrapExportStatementDefault(d as unknown as T.ExportStatementDefault, t),"
 		);

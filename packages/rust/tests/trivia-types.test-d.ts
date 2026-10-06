@@ -26,6 +26,14 @@ declare const parsed: Block;
 parsed.$trivia.inner(rs.build.lineComment(' TODO'));
 if (rs.isEmptyNode(parsed)) parsed.$trivia.inner(rs.build.lineComment(' TODO')) satisfies EmptyBlock;
 
+const item = rs.parse('fn a() {}\n').statements()[0]!;
+if (rs.is.functionItem(item)) {
+	const body = item.body();
+	// @ts-expect-error a block an accessor returns is not known to be empty
+	body.$trivia.inner(rs.build.lineComment(' TODO'));
+	if (rs.isEmptyNode(body)) body.$trivia.inner(rs.build.lineComment(' TODO'));
+}
+
 // @ts-expect-error a kind that never realizes empty has no isEmptyNode overload
 rs.isEmptyNode(rs.build.functionItem({ name: 'f', parameters: rs.build.parameters(), body: rs.build.block() }));
 

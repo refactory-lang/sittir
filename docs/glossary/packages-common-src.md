@@ -18,7 +18,11 @@ The error a file verb (`read`, `create`, `edit`, `write`) raises while file chan
 
 ### `packages/common/src/create-engine.ts::languageGuards`
 
-Composes every function on a language's `is` table with the engine's language check: the guard runs only for a value whose stamped engine is of the engine's language (the check the node guards use), and the extra arguments of a guard such as `kind` pass through. A node of another grammar whose kind id the guard would accept is rejected, a value with no stamp is rejected, and a node of a disposed engine is accepted, since only the stamped language is read. It is one composition over the table, so a per-kind guard, a supertype guard and `kind` are all covered without each carrying the check; the result is frozen and keeps the table's type.
+Composes every function on a language's `is` table with the engine's language check: the guard runs only for a value whose stamped engine is of the engine's language (the check the node guards use), and the extra arguments of a guard such as `kind` pass through. A node of another grammar whose kind id the guard would accept is rejected, a value with no stamp is rejected, and a node of a disposed engine is accepted, since only the stamped language is read. It is one composition over the table, so a per-kind guard, a supertype guard, its variant guards and `kind` are all covered without each carrying the check; the result is frozen and keeps the table's type.
+
+### `packages/common/src/create-engine.ts::languageGuard`
+
+One guard composed with the language check. A guard with members (a supertype guard carrying its variants' guards, `is.suite.block`) keeps them: each member is composed in turn through `languageGuards` and defined on the composed function, so `engine.is.suite.block` checks the language as `engine.is.suite` does. Members are defined rather than assigned, because a variant may be called `name` or `length`, which a function already owns.
 
 ### `packages/common/src/create-engine.ts::assembleEngine`
 
@@ -56,7 +60,7 @@ Whether two engine identities are of one language: the same descriptor object, t
 
 ### `packages/common/src/engine-scope.ts::engineOf`
 
-The engine a value's `$engine()` returns, or `undefined` for a value with no engine: not an object, or one that has not been stamped.
+The engine a value belongs to: what its `$engine()` returns, or for a value with no stamp, the engine that read the tree it holds (a parsed leaf is plain data with no `$engine`, but it holds its tree's token, and `bindTree` recorded that tree's engine). `undefined` for a value with neither: not an object, a built node outside an engine, or a copy that lost its token. Every engine check reads it, the `is` guards' language check, `query` and `render`, so a parsed leaf passes and is refused exactly as a stamped node of its language is.
 
 ### `packages/common/src/engine-scope.ts::bindTree`
 
@@ -65,6 +69,10 @@ Records the engine handle that read a tree, so the wrap layer can find it from t
 ### `packages/common/src/tree-token.ts::registerTree`
 
 Records the tree handle a parse made under the tree's token, so anything holding the token reaches the handle (`treeOf`). A weak entry: the handle lives exactly as long as the token, which every node of the tree holds.
+
+### `packages/common/src/tree-token.ts::holdsParse`
+
+Whether a node holds a tree a parse registered (`registerTree`). For such a node holding its coordinate proves nothing below it was rebuilt, so the fold needs no walk. Data whose token no parse registered (hand-assembled data) answers no.
 
 ### `packages/common/src/tree-token.ts::treeOf`
 
@@ -203,6 +211,14 @@ The bitflag encoding of a separated list's optional flanks: the wire's `_delimit
 
 Where a node came from, the value of its `$source` stamp: `Ts` for a node read from a tree-sitter parse, `Sg` for the ast-grep read path, `Factory` for a node a builder made. The reader and the factories stamp it once, and an edit keeps it (`$with` and `detachCoordinate` drop only coordinates), so it records the node's origin, not whether it still holds a live tree handle. Rust's `enum Source` in sittir-core is the mirror the native renderer branches on: any non-`Factory` node renders with its tree's format. The object `satisfies` `AnyUntypedNode['$source']`, so the type-level `0 | 1 | 2` union stays the one declaration of the values.
 
+### `packages/common/src/utils.ts::adoptChild`
+
+Records the node a wrapped node's accessor handed `child` out of, the generated wrap's `hydrateSlot` and `hydrateSlots` call it for every child they return. Only a parsed node reached through an accessor has a parent recorded; a root, a built node and a draft have none. The trivia writer refuses a write on a parsed node that still sits at its source position (`sourceOf`), has no parent recorded and is not its tree's root (the root alone carries `$errors`): such a node was reached outside the accessors, through a query, which hands out a node of its own that no parent slot holds, so the render, which walks parent slots, would never reach a comment written on it.
+
+### `packages/common/src/utils.ts::detachAncestors`
+
+Detaches the coordinate of every node above one a trivia writer just changed, following the parents `adoptChild` recorded. Extras are not part of the node they are written on: they sit in the parent's gaps, so a comment written in place changes the text of every ancestor, whose coordinate would otherwise fold to bytes without it. Each ancestor first carries its source identity (`carrySource`), as a rebuilt node does, so it still renders with its source layout from its slots; untouched siblings keep their coordinates and fold.
+
 ### `packages/common/src/utils.ts::isNode`
 
 Whether a value is a sittir node, built or read: an object with a numeric `$type` that carries storage (`_` keys), text (`$text`), a whitespace-kind `$other`, or a `$source` stamp. A bare `{ $type }` is a factory config, not a node.
@@ -327,7 +343,7 @@ The tree a node's handle names, whichever of `$handle` (its own), `$parentHandle
 
 ### `packages/common/src/transport-data.ts::canFold`
 
-Whether a node crosses to the render as its coordinate (its span and the tree that span slices) in place of its storage: it names its tree, carries no trivia outside its span, and nothing below it was rebuilt. Read depth plays no part: an untouched node renders its source bytes however it was read. That holds because every node a read hands back names its tree: the read's root by its own handle, a stub by its parent's, and a child the read expanded by the tree's tag. An edit detaches the coordinate of the node it rebuilds, so each untouched child below it is then the node that folds, and it must be able to name the tree itself. Below the node that folds a span is the whole requirement, since its bytes carry everything under it. The trivia it is judged by is the trivia it crosses with (`TriviaOf`), so a read node that owns a line-break run outside its span does not fold. A node that cannot fold (it was rebuilt, or it owns leading or trailing trivia) crosses as its stored slots, which the generated wrap keeps in model shape at every level (`storeExpanded`).
+Whether a node crosses to the render as its coordinate (its span and the tree that span slices) in place of its storage: it names its tree, carries no trivia outside its span, and nothing below it was rebuilt. Read depth plays no part: an untouched node renders its source bytes however it was read. Nor does it cost anything: on a tree a parse registered (`holdsParse`) a node that still holds its coordinate has nothing rebuilt below it, so the check is local, however much of the tree was expanded. That holds because nothing changes a read node's text without detaching its coordinate: every rebuild goes through `markEdited`, and `$with` rebuilds each ancestor up to the edit; a trivia writer, which changes a node in place, detaches every ancestor it was reached through (`detachAncestors`). The walk below (`isUntouchedBelow`) runs only for data no parse registered: hand-assembled test and tool data. That holds because every node a read hands back names its tree: the read's root by its own handle, a stub by its parent's, and a child the read expanded by the tree's tag. An edit detaches the coordinate of the node it rebuilds, so each untouched child below it is then the node that folds, and it must be able to name the tree itself. Below the node that folds a span is the whole requirement, since its bytes carry everything under it. The trivia it is judged by is the trivia it crosses with (`TriviaOf`), so a read node that owns a line-break run outside its span does not fold. A node that cannot fold (it was rebuilt, or it owns leading or trailing trivia) crosses as its stored slots, which the generated wrap keeps in model shape at every level (`storeExpanded`).
 
 ### `packages/common/src/transport-data.ts::TriviaView`
 

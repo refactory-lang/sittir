@@ -9,6 +9,7 @@ import {
 	isStub,
 	isTypedNode,
 	holdsSlots,
+	adoptChild,
 	markEdited as $edited,
 	carryRead,
 	treeHandleOf,
@@ -218,6 +219,16 @@ function normalizeRepeatedWrapSlot<T>(
 // else passes through untouched. It must NOT re-wrap: wrapping
 // would dispatch straight back into the wrap function that called
 // this, with the same data.
+const _INTERIOR_KINDS: ReadonlySet<number> = new Set([TSKindId.Comment, TSKindId.EscapeSequence]);
+function _needsWrap(node: object): boolean {
+	const data = node as _UntypedNode & { readonly $displayType?: number };
+	return (
+		holdsSlots(node) ||
+		data.$displayType !== undefined ||
+		_spellingTokens(data) !== undefined ||
+		(_INTERIOR_KINDS.has(data.$type as number) && _isReadTextLeaf(node))
+	);
+}
 function hydrateSelf<T>(entry: T, tree: TreeHandle): T {
 	if (entry == null) return undefined as unknown as T;
 	const e = entry as unknown as _UntypedNode;
@@ -233,11 +244,30 @@ export type ParsedOfData<D> = D extends { readonly $type: infer Id }
 		: D
 	: D;
 export function hydrateChild<T>(entry: T | ParsedOfData<T>, tree: TreeHandle): ParsedOfData<T> {
+	if (typeof entry === 'object' && entry !== null && !isStub(entry) && (isTypedNode(entry) || !_needsWrap(entry)))
+		return entry as ParsedOfData<T>;
 	const resolved = hydrateSelf(entry, tree);
 	const e = resolved as unknown as _UntypedNode;
-	if (resolved === entry && typeof e?.$type === 'number' && !isTypedNode(e))
-		return wrapNode(e, tree) as unknown as ParsedOfData<T>;
-	return resolved as unknown as ParsedOfData<T>;
+	const child = resolved === entry && typeof e?.$type === 'number' && !isTypedNode(e) ? wrapNode(e, tree) : resolved;
+	return child as unknown as ParsedOfData<T>;
+}
+function hydrateSlot<T>(node: object, key: string, tree: TreeHandle): ParsedOfData<T> {
+	const slots = node as Record<string, unknown>;
+	const child = hydrateChild(slots[key] as T, tree);
+	if (child !== slots[key]) slots[key] = child;
+	adoptChild(node, child);
+	return child;
+}
+const _noChildren: readonly never[] = Object.freeze([]);
+function hydrateSlots<T>(node: object, key: string, tree: TreeHandle): readonly ParsedOfData<T>[] {
+	const slots = node as Record<string, unknown>;
+	const stored = slots[key];
+	if (!Array.isArray(stored)) return stored == null ? _noChildren : [hydrateSlot<T>(node, key, tree)];
+	if (Object.isFrozen(stored)) return stored as readonly ParsedOfData<T>[];
+	const children = Object.freeze(stored.map((entry) => hydrateChild(entry as T, tree)));
+	for (const child of children) adoptChild(node, child);
+	slots[key] = children;
+	return children;
 }
 // Store a slot value in model shape: a child a read already expanded
 // is typed here, with its parent, so storage has one shape at every
@@ -249,7 +279,7 @@ function storeExpanded<T>(value: T, tree: TreeHandle): StoredOf<T>;
 function storeExpanded(value: unknown, tree: TreeHandle): unknown {
 	if (Array.isArray(value)) return value.map((entry) => storeExpanded(entry, tree));
 	if (!isNode(value)) return value;
-	if (isStub(value) || isTypedNode(value) || !holdsSlots(value)) return value;
+	if (isStub(value) || isTypedNode(value) || !_needsWrap(value)) return value;
 	return wrapNode(value, tree);
 }
 function hydrateChildren<T>(
@@ -507,7 +537,7 @@ export function wrapProgram(data: T.Program, tree: TreeHandle): T.Program.Parsed
 		),
 
 		definitions() {
-			return hydrateChildren<T.Definition>(this._definitions as readonly T.Definition[] | undefined, tree);
+			return hydrateSlots<T.Definition>(this, '_definitions', tree);
 		},
 		$with: {
 			definitions: (...v: NonNullable<T.Program['_definitions']>[number][]) =>
@@ -729,7 +759,7 @@ export function wrapEscapeSequence(data: T.EscapeSequence, tree: TreeHandle): T.
 		),
 
 		content() {
-			return hydrateChild<string>(this._content, tree);
+			return hydrateSlot<string>(this, '_content', tree);
 		},
 		$with: {
 			content: (v: NonNullable<T.EscapeSequence['_content']>) =>
@@ -794,7 +824,7 @@ export function wrapCapture(data: T.Capture, tree: TreeHandle): T.Capture.Parsed
 		),
 
 		name() {
-			return hydrateChild<T.ImmediateIdentifier>(this._name, tree);
+			return hydrateSlot<T.ImmediateIdentifier>(this, '_name', tree);
 		},
 		$with: {
 			name: (v: NonNullable<T.Capture['_name']>) =>
@@ -828,7 +858,7 @@ export function wrapString(data: T.String, tree: TreeHandle): T.String.Parsed {
 		),
 
 		stringContent() {
-			return hydrateChild<T.StringContent | undefined>(this._string_content, tree);
+			return hydrateSlot<T.StringContent | undefined>(this, '_string_content', tree);
 		},
 		$with: {
 			stringContent: (v: NonNullable<T.String['_string_content']>) =>
@@ -862,7 +892,7 @@ export function wrapImmediateString(data: T.ImmediateString, tree: TreeHandle): 
 		),
 
 		stringContent() {
-			return hydrateChild<T.StringContent | undefined>(this._string_content, tree);
+			return hydrateSlot<T.StringContent | undefined>(this, '_string_content', tree);
 		},
 		$with: {
 			stringContent: (v: NonNullable<T.ImmediateString['_string_content']>) =>
@@ -900,10 +930,7 @@ export function wrapStringContent(data: T.StringContent, tree: TreeHandle): T.St
 		),
 
 		contents() {
-			return hydrateChildren<T.StringContentText | T.EscapeSequence>(
-				this._content as readonly (T.StringContentText | T.EscapeSequence)[] | undefined,
-				tree
-			);
+			return hydrateSlots<T.StringContentText | T.EscapeSequence>(this, '_content', tree);
 		},
 		$with: {
 			contents: (...v: NonNullable<T.StringContent['_content']>[number][]) =>
@@ -937,10 +964,7 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 		),
 
 		elements() {
-			return hydrateChildren<T.Capture | T.String | T.Identifier>(
-				this._elements as readonly (T.Capture | T.String | T.Identifier)[] | undefined,
-				tree
-			);
+			return hydrateSlots<T.Capture | T.String | T.Identifier>(this, '_elements', tree);
 		},
 		$with: {
 			elements: (...v: NonEmptyArray<NonNullable<T.Parameters['_elements']>[number]>) =>
@@ -975,7 +999,7 @@ export function wrapComment(data: T.Comment, tree: TreeHandle): T.Comment.Parsed
 		),
 
 		content() {
-			return hydrateChild<string>(this._content, tree);
+			return hydrateSlot<string>(this, '_content', tree);
 		},
 		$with: {
 			content: (v: NonNullable<T.Comment['_content']>) =>
@@ -1018,10 +1042,10 @@ export function wrapList(data: T.List, tree: TreeHandle): T.List.Parsed {
 		),
 
 		definitions() {
-			return hydrateChildren<T.Definition>(this._definitions as readonly T.Definition[] | undefined, tree);
+			return hydrateSlots<T.Definition>(this, '_definitions', tree);
 		},
 		elements() {
-			return hydrateChildren<T.ListElement>(this._elements as readonly T.ListElement[] | undefined, tree);
+			return hydrateSlots<T.ListElement>(this, '_elements', tree);
 		},
 		$with: {
 			definitions: (...v: NonEmptyArray<NonNullable<T.List['_definitions']>[number]>) =>
@@ -1066,10 +1090,10 @@ export function wrapGrouping(data: T.Grouping, tree: TreeHandle): T.Grouping.Par
 		),
 
 		groupingGroups() {
-			return hydrateChildren<T.GroupingGroup>(this._grouping_group as readonly T.GroupingGroup[] | undefined, tree);
+			return hydrateSlots<T.GroupingGroup>(this, '_grouping_group', tree);
 		},
 		elements() {
-			return hydrateChildren<T.ListElement>(this._elements as readonly T.ListElement[] | undefined, tree);
+			return hydrateSlots<T.ListElement>(this, '_elements', tree);
 		},
 		$with: {
 			groupingGroups: (...v: NonEmptyArray<NonNullable<T.Grouping['_grouping_group']>[number]>) =>
@@ -1116,10 +1140,10 @@ export function wrapMissingNode(data: T.MissingNode, tree: TreeHandle): T.Missin
 		),
 
 		name() {
-			return hydrateChild<T.Identifier | T.String | undefined>(this._name, tree);
+			return hydrateSlot<T.Identifier | T.String | undefined>(this, '_name', tree);
 		},
 		elements() {
-			return hydrateChildren<T.ListElement>(this._elements as readonly T.ListElement[] | undefined, tree);
+			return hydrateSlots<T.ListElement>(this, '_elements', tree);
 		},
 		$with: {
 			name: (v: NonNullable<T.MissingNode['_name']>) =>
@@ -1182,10 +1206,10 @@ export function wrapAnonymousNode(data: T.AnonymousNode, tree: TreeHandle): T.An
 		),
 
 		name() {
-			return hydrateChild<T.String | TSKindId.Underscore>(this._name, tree);
+			return hydrateSlot<T.String | TSKindId.Underscore>(this, '_name', tree);
 		},
 		elements() {
-			return hydrateChildren<T.ListElement>(this._elements as readonly T.ListElement[] | undefined, tree);
+			return hydrateSlots<T.ListElement>(this, '_elements', tree);
 		},
 		$with: {
 			name: (v: NonNullable<T.AnonymousNode['_name']>) =>
@@ -1261,10 +1285,10 @@ export function wrapFieldDefinition(data: T.FieldDefinition, tree: TreeHandle): 
 		...(_order && { $slotOrder: _order }),
 
 		name() {
-			return hydrateChild<T.Identifier>(this._name, tree);
+			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
 		definition() {
-			return hydrateChild<T.Definition>(this._definition, tree);
+			return hydrateSlot<T.Definition>(this, '_definition', tree);
 		},
 		$with: {
 			name: (v: NonNullable<T.FieldDefinition['_name']>) =>
@@ -1300,7 +1324,7 @@ export function wrapNegatedField(data: T.NegatedField, tree: TreeHandle): T.Nega
 		),
 
 		identifier() {
-			return hydrateChild<T.Identifier>(this._identifier, tree);
+			return hydrateSlot<T.Identifier>(this, '_identifier', tree);
 		},
 		$with: {
 			identifier: (v: NonNullable<T.NegatedField['_identifier']>) =>
@@ -1378,13 +1402,13 @@ export function wrapPredicate(data: T.Predicate, tree: TreeHandle): T.Predicate.
 			return this._prefix;
 		},
 		name() {
-			return hydrateChild<T.ImmediateIdentifier>(this._name, tree);
+			return hydrateSlot<T.ImmediateIdentifier>(this, '_name', tree);
 		},
 		type() {
 			return this._type;
 		},
 		parameters() {
-			return hydrateChild<T.Parameters | undefined>(this._parameters, tree);
+			return hydrateSlot<T.Parameters | undefined>(this, '_parameters', tree);
 		},
 		$with: {
 			prefix: (v: NonNullable<T.Predicate['_prefix']>) =>
@@ -1512,10 +1536,10 @@ export function wrapGroupExpressionArm(data: T.GroupExpressionArm, tree: TreeHan
 		),
 
 		left() {
-			return hydrateChild<T.Definition | T.GroupExpressionArm>(this._left, tree);
+			return hydrateSlot<T.Definition | T.GroupExpressionArm>(this, '_left', tree);
 		},
 		right() {
-			return hydrateChild<T.Definition | T.GroupExpressionArm>(this._right, tree);
+			return hydrateSlot<T.Definition | T.GroupExpressionArm>(this, '_right', tree);
 		},
 		$with: {
 			left: (v: NonNullable<T.GroupExpressionArm['_left']>) =>
@@ -1563,10 +1587,10 @@ export function wrapNamedNodeExpressionArm(
 		),
 
 		left() {
-			return hydrateChild<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(this._left, tree);
+			return hydrateSlot<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(this, '_left', tree);
 		},
 		right() {
-			return hydrateChild<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(this._right, tree);
+			return hydrateSlot<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(this, '_right', tree);
 		},
 		$with: {
 			left: (v: NonNullable<T.NamedNodeExpressionArm['_left']>) =>
@@ -1635,7 +1659,7 @@ export function wrapGroupingGroup(data: T.GroupingGroup, tree: TreeHandle): T.Gr
 		),
 
 		groupExpression() {
-			return hydrateChild<T.Definition | T.GroupExpressionArm>(this._group_expression, tree);
+			return hydrateSlot<T.Definition | T.GroupExpressionArm>(this, '_group_expression', tree);
 		},
 		anchor() {
 			return this._anchor;
@@ -1743,13 +1767,13 @@ export function wrapNamedNodePlain(data: T.NamedNodePlain, tree: TreeHandle): T.
 		),
 
 		name() {
-			return hydrateChild<T.Identifier | TSKindId.Underscore>(this._name, tree);
+			return hydrateSlot<T.Identifier | TSKindId.Underscore>(this, '_name', tree);
 		},
 		namedNodeGroup() {
-			return hydrateChild<T.NamedNodeGroup | undefined>(this._named_node_group, tree);
+			return hydrateSlot<T.NamedNodeGroup | undefined>(this, '_named_node_group', tree);
 		},
 		elements() {
-			return hydrateChildren<T.ListElement>(this._elements as readonly T.ListElement[] | undefined, tree);
+			return hydrateSlots<T.ListElement>(this, '_elements', tree);
 		},
 		$with: {
 			name: (v: NonNullable<T.NamedNodePlain['_name']>) =>
@@ -1818,16 +1842,16 @@ export function wrapNamedNodeSupertyped(data: T.NamedNodeSupertyped, tree: TreeH
 		),
 
 		supertype() {
-			return hydrateChild<T.Identifier>(this._supertype, tree);
+			return hydrateSlot<T.Identifier>(this, '_supertype', tree);
 		},
 		name() {
-			return hydrateChild<T.ImmediateIdentifier | T.ImmediateString>(this._name, tree);
+			return hydrateSlot<T.ImmediateIdentifier | T.ImmediateString>(this, '_name', tree);
 		},
 		namedNodeGroup() {
-			return hydrateChild<T.NamedNodeGroup | undefined>(this._named_node_group, tree);
+			return hydrateSlot<T.NamedNodeGroup | undefined>(this, '_named_node_group', tree);
 		},
 		elements() {
-			return hydrateChildren<T.ListElement>(this._elements as readonly T.ListElement[] | undefined, tree);
+			return hydrateSlots<T.ListElement>(this, '_elements', tree);
 		},
 		$with: {
 			supertype: (v: NonNullable<T.NamedNodeSupertyped['_supertype']>) =>
@@ -1897,10 +1921,9 @@ export function wrapNamedNodeGroupChildren(
 			return this._anchor;
 		},
 		namedNodeExpressions() {
-			return hydrateChildren<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(
-				this._named_node_expressions as
-					| readonly (T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[]
-					| undefined,
+			return hydrateSlots<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(
+				this,
+				'_named_node_expressions',
 				tree
 			);
 		},
@@ -1982,15 +2005,14 @@ export function wrapNamedNodeGroupAnchoredLast(
 			return this._anchor;
 		},
 		namedNodeExpressions() {
-			return hydrateChildren<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(
-				this._named_node_expressions as
-					| readonly (T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[]
-					| undefined,
+			return hydrateSlots<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(
+				this,
+				'_named_node_expressions',
 				tree
 			);
 		},
 		last() {
-			return hydrateChild<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(this._last, tree);
+			return hydrateSlot<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(this, '_last', tree);
 		},
 		$with: {
 			anchor: (v: NonNullable<T.NamedNodeGroupAnchoredLast['_anchor']>) =>
