@@ -321,9 +321,11 @@ re-taken in the engine beside theirs.
 
 **Gate on the record step.** Its plan lands only if records match or beat napi objects on read
 time, one node per call and every match in one call, and on retained heap per node, as well as
-beating them on render decode. The 1.9 KB a node holds over a record looks like the view's
-overhead, the `$with` and `$trivia` closures a view makes over its record, and the record step
-attacks that first.
+beating them on render decode. The 1.9 KB a node holds over a record is not its member closures
+as such: every form carries the same ones, and the views as first committed, with an empty `$with`
+and no `$trivia`, held 3 702 B against the objects' 4 949 B. How V8 builds the view's literal moves
+it, and adding member groups one at a time does not raise it monotonically (the transport probes'
+README), so the record step attacks the view's construction first.
 
 ### What the JavaScript wrap keeps
 
