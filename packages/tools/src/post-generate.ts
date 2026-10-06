@@ -128,7 +128,7 @@ export async function runRoundtripProbes(grammar: string): Promise<number> {
 	});
 	console.log(formatReadRenderParseReport(readRenderParseResult));
 
-	// Factory render-parse (corpus → readUntypedNode → factory() → render → re-parse)
+	// Factory storage (corpus → read → factory() → storage compare), and the built node rendered and reparsed
 	const factoryStorageResult = await validateFactoryStorage(grammar, 'native');
 	console.log(formatFactoryStorageReport(factoryStorageResult));
 
@@ -136,5 +136,6 @@ export async function runRoundtripProbes(grammar: string): Promise<number> {
 	const fromResult = await validateFrom(grammar, 'native');
 	console.log(formatFromReport(fromResult));
 
-	return readRenderParseResult.fail + factoryStorageResult.fail + fromResult.fail;
+	const { render } = factoryStorageResult;
+	return readRenderParseResult.fail + factoryStorageResult.fail + render.errors.length + render.astMismatches.length + fromResult.fail;
 }

@@ -861,5 +861,15 @@ export function formatFactoryStorageReport(result: FactoryStorageResult): string
 			lines.push(`    … and ${result.astMismatches.length - 20} more`);
 		}
 	}
+	const { render } = result;
+	const renderFailures = [...render.errors, ...render.astMismatches];
+	lines.push(
+		`  ${renderFailures.length === 0 ? 'v' : 'x'} ${render.astMatchPass}/${render.total} built nodes render and reparse (${render.excluded.length} excluded)`
+	);
+	for (const e of renderFailures.slice(0, 20)) {
+		lines.push(`    x ${e.entry} (${e.kind}): ${e.message}`);
+		lines.push(`      source:   ${JSON.stringify(e.input)}`);
+	}
+	if (renderFailures.length > 20) lines.push(`    … and ${renderFailures.length - 20} more`);
 	return lines.join('\n');
 }

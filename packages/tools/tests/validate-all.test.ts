@@ -39,7 +39,7 @@ const RENDER_PARSE_CEILINGS: Record<string, { readRenderParse: number; factorySt
 	// collisions — readRenderParse ceilings lowered to reflect actual JS-path
 	// fail counts (rust 65→15, typescript 60→25, python 75→70).
 	rust: { readRenderParse: 15, factoryStorage: 350 },
-	// factoryStorage 215 → 226 (PR2 Task 3.B, 2026-05-20): polymorph
+	// factoryStorage 215 → 226 (2026-05-20): polymorph
 	// templates now use `variant` (correct Nunjucks/Askama variable) instead
 	// of `$variant` (dollar-prefixed name never present in render context).
 	// The old `$variant` silently made every branch always-false → empty render
