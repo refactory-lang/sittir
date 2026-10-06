@@ -7,7 +7,7 @@ export interface DiffFailuresOptions {
 }
 
 export async function run(opts: DiffFailuresOptions): Promise<number> {
-	const { validateFactoryRenderParse } = await import('./factory-render-parse.ts');
+	const { validateFactoryStorage } = await import('./factory-storage.ts');
 	const { validateFrom } = await import('./from.ts');
 	const { validateReadRenderParse } = await import('./read-render-parse.ts');
 	const { validateTemplateCoverage } = await import('./template-coverage.ts');
@@ -31,7 +31,7 @@ export async function run(opts: DiffFailuresOptions): Promise<number> {
 		for (const i of r.issues) console.log(`  ${i.type === 'literal-leak' ? 'W' : 'E'} ${i.kind}: ${i.message}`);
 	}
 	if (which === 'all' || which === 'factory') {
-		const r = await validateFactoryRenderParse(opts.grammar, 'native');
+		const r = await validateFactoryStorage(opts.grammar, 'native');
 		console.log(`\n=== FACTORY_RENDER_PARSE (${r.pass}/${r.total}, ast=${r.astMatchPass}) ===`);
 		for (const e of r.errors) console.log(`  E ${e.kind}: ${e.message}`);
 	}

@@ -14,8 +14,8 @@ vi.mock('../src/validate/from.ts', () => ({
 	}),
 	formatFromReport: vi.fn().mockReturnValue('mock from report')
 }));
-vi.mock('../src/validate/factory-render-parse.ts', () => ({
-	validateFactoryRenderParse: vi.fn().mockResolvedValue({
+vi.mock('../src/validate/factory-storage.ts', () => ({
+	validateFactoryStorage: vi.fn().mockResolvedValue({
 		grammar: 'rust',
 		total: 5,
 		pass: 5,
@@ -25,7 +25,7 @@ vi.mock('../src/validate/factory-render-parse.ts', () => ({
 		errors: [],
 		astMismatches: []
 	}),
-	formatFactoryRenderParseReport: vi.fn().mockReturnValue('mock factory report')
+	formatFactoryStorageReport: vi.fn().mockReturnValue('mock factory report')
 }));
 vi.mock('../src/validate/read-render-parse.ts', () => ({
 	validateReadRenderParse: vi.fn().mockResolvedValue({
@@ -50,11 +50,11 @@ import {
 	runCoverage,
 	runFactory,
 	formatFromReport,
-	formatFactoryRenderParseReport,
+	formatFactoryStorageReport,
 	formatReadRenderParseReport
 } from '../src/run.ts';
 import { validateFrom } from '../src/validate/from.ts';
-import { validateFactoryRenderParse } from '../src/validate/factory-render-parse.ts';
+import { validateFactoryStorage } from '../src/validate/factory-storage.ts';
 import { validateReadRenderParse } from '../src/validate/read-render-parse.ts';
 import { validateTemplateCoverage } from '../src/validate/template-coverage.ts';
 
@@ -77,7 +77,7 @@ describe('@sittir/validator run surface — exports', () => {
 
 	it('exports format helpers as functions', () => {
 		expect(typeof formatFromReport).toBe('function');
-		expect(typeof formatFactoryRenderParseReport).toBe('function');
+		expect(typeof formatFactoryStorageReport).toBe('function');
 		expect(typeof formatReadRenderParseReport).toBe('function');
 	});
 });
@@ -97,11 +97,11 @@ describe('@sittir/validator run surface — forwarding behavior', () => {
 		expect(vi.mocked(validateReadRenderParse)).toHaveBeenCalledWith('rust', { backend: 'native' });
 	});
 
-	it('runFactory forwards (grammar, backend, surface) to validateFactoryRenderParse', async () => {
+	it('runFactory forwards (grammar, backend, surface) to validateFactoryStorage', async () => {
 		await runFactory('python');
-		expect(vi.mocked(validateFactoryRenderParse)).toHaveBeenCalledWith('python', 'native', { surface: 'raw' });
+		expect(vi.mocked(validateFactoryStorage)).toHaveBeenCalledWith('python', 'native', { surface: 'raw' });
 		await runFactory('python', 'native', 'ir');
-		expect(vi.mocked(validateFactoryRenderParse)).toHaveBeenCalledWith('python', 'native', { surface: 'ir' });
+		expect(vi.mocked(validateFactoryStorage)).toHaveBeenCalledWith('python', 'native', { surface: 'ir' });
 	});
 
 	it('runCoverage forwards to validateTemplateCoverage', () => {

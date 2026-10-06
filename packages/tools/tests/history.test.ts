@@ -25,9 +25,9 @@ function makeEntry(overrides: Partial<ValidationRun> = {}): ValidationRun {
 		readRenderParseShallowPass: 4,
 		readRenderParseShallowTotal: 6,
 		readRenderParseShallowAstMatchPass: 3,
-		factoryRenderParsePass: 3,
-		factoryRenderParseTotal: 4,
-		factoryRenderParseAstMatchPass: 3,
+		factoryStoragePass: 3,
+		factoryStorageTotal: 4,
+		factoryStorageAstMatchPass: 3,
 		...overrides
 	};
 }
@@ -139,9 +139,9 @@ describe('@sittir/validator history round-trip (scratch file)', () => {
 			'readRenderParseShallowPass',
 			'readRenderParseShallowTotal',
 			'readRenderParseShallowAstMatchPass',
-			'factoryRenderParsePass',
-			'factoryRenderParseTotal',
-			'factoryRenderParseAstMatchPass'
+			'factoryStoragePass',
+			'factoryStorageTotal',
+			'factoryStorageAstMatchPass'
 		];
 		for (const k of keys) {
 			expect(Object.prototype.hasOwnProperty.call(entry, k)).toBe(true);

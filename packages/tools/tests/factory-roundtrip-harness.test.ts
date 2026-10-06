@@ -31,7 +31,7 @@ describe('factory-roundtrip harness', () => {
 	});
 
 	it('validator and exercise tool share ONE factory-call dispatch', () => {
-		const validator = readFileSync(resolve(import.meta.dirname, '../src/validate/factory-render-parse.ts'), 'utf-8');
+		const validator = readFileSync(resolve(import.meta.dirname, '../src/validate/factory-storage.ts'), 'utf-8');
 		const exercise = readFileSync(resolve(import.meta.dirname, '../src/exercise/roundtrip.ts'), 'utf-8');
 		expect(validator).toMatch(/buildFactoryNodeFromReference\(/);
 		expect(exercise).toMatch(/common\.buildFactoryNodeFromReference\(/);

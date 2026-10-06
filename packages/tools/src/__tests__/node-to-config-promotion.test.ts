@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { getChildFactoryArgs, nodeToConfig } from '../validate/common.ts';
-import { validateFactoryRenderParse } from '../validate/factory-render-parse.ts';
+import { validateFactoryStorage } from '../validate/factory-storage.ts';
 
 function makeFactorySlots(
 	kind: string,
@@ -563,7 +563,7 @@ describe('nodeToConfig field promotion', () => {
 	});
 
 	it('keeps python argument_list factory reconstruction from re-emitting double-wrapped unnamed children', async () => {
-		const result = await validateFactoryRenderParse('python', 'native');
+		const result = await validateFactoryStorage('python', 'native');
 		const regression = result.errors.find(
 			(error) =>
 				error.kind === 'argument_list' &&

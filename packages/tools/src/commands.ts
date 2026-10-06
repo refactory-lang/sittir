@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { existsSync, readFileSync } from 'node:fs';
 import { join, resolve as resolvePath } from 'node:path';
 import { runFrom, runRt, runCoverage, runFactory, type Backend, type FactorySurface } from './run.ts';
+import { combineBuiltRender, type BuiltRenderResult } from './validate/built-render.ts';
 import { grammarPackage, isGrammar, sittirDirOf, stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
 import { appendHistory, commitHistory, readHistory, type ValidationRun } from './history.ts';
 import { readTestHistory } from './test-history.ts';
@@ -69,8 +70,9 @@ export interface GrammarCounts {
 	readonly coverage: ReturnType<typeof runCoverage>;
 	readonly readRenderParse: Awaited<ReturnType<typeof runRt>>;
 	readonly readRenderParseShallow: Awaited<ReturnType<typeof runRt>>;
-	readonly factoryRenderParse: Awaited<ReturnType<typeof runFactory>>;
-	readonly irRenderParse: Awaited<ReturnType<typeof runFactory>>;
+	readonly factoryStorage: Awaited<ReturnType<typeof runFactory>>;
+	readonly irStorage: Awaited<ReturnType<typeof runFactory>>;
+	readonly builtRenderParse: BuiltRenderResult;
 }
 
 export async function collectGrammarCounts(grammar: GrammarName, backend: Backend): Promise<GrammarCounts> {
@@ -78,7 +80,7 @@ export async function collectGrammarCounts(grammar: GrammarName, backend: Backen
 	// wasn't rebuilt after the last regen, so these counts would not be true
 	// native. Warn loudly rather than mislead.
 	if (backend === 'native') warnIfNativeBinaryStale(grammar);
-	const [from, coverage, factoryRenderParse, irRenderParse] = await Promise.all([
+	const [from, coverage, factoryStorage, irStorage] = await Promise.all([
 		runFrom(grammar, backend),
 		runCoverage(grammar),
 		runFactory(grammar, backend),
@@ -95,13 +97,14 @@ export async function collectGrammarCounts(grammar: GrammarName, backend: Backen
 		coverage,
 		readRenderParse,
 		readRenderParseShallow,
-		factoryRenderParse,
-		irRenderParse
+		factoryStorage,
+		irStorage,
+		builtRenderParse: combineBuiltRender({ factory: factoryStorage.render, ir: irStorage.render })
 	};
 }
 
 export function formatGrammarCounts(counts: GrammarCounts): string {
-	const { grammar, backend, from, coverage, readRenderParse, readRenderParseShallow, factoryRenderParse, irRenderParse } =
+	const { grammar, backend, from, coverage, readRenderParse, readRenderParseShallow, factoryStorage, irStorage, builtRenderParse } =
 		counts;
 	const lines = [
 		`${grammar}/${formatBackendLabel(backend)}:`,
@@ -109,8 +112,9 @@ export function formatGrammarCounts(counts: GrammarCounts): string {
 		`  covPass=${coverage.pass}    covTotal=${coverage.total}`,
 		`  read-render-parsePass=${readRenderParse.pass}    read-render-parseTotal=${readRenderParse.total}    read-render-parseAstMatchPass=${readRenderParse.astMatchPass}    read-render-parseTrivia=${readRenderParse.trivia.length}`,
 		`  read-render-parse-shallowPass=${readRenderParseShallow.pass}    read-render-parse-shallowTotal=${readRenderParseShallow.total}    read-render-parse-shallowAstMatchPass=${readRenderParseShallow.astMatchPass}    read-render-parse-shallowTrivia=${readRenderParseShallow.trivia.length}`,
-		`  factory-render-parsePass=${factoryRenderParse.pass}    factory-render-parseTotal=${factoryRenderParse.total}    factory-render-parseAstMatchPass=${factoryRenderParse.astMatchPass}`,
-		`  ir-render-parsePass=${irRenderParse.pass}    ir-render-parseTotal=${irRenderParse.total}    ir-render-parseAstMatchPass=${irRenderParse.astMatchPass}`
+		`  factory-storagePass=${factoryStorage.pass}    factory-storageTotal=${factoryStorage.total}    factory-storageAstMatchPass=${factoryStorage.astMatchPass}`,
+		`  ir-storagePass=${irStorage.pass}    ir-storageTotal=${irStorage.total}    ir-storageAstMatchPass=${irStorage.astMatchPass}`,
+		`  built-render-parsePass=${builtRenderParse.pass}    built-render-parseTotal=${builtRenderParse.total}    built-render-parseAstMatchPass=${builtRenderParse.astMatchPass}`
 	];
 	const rtFails = formatFirstFailures(
 		'read-render-parse',
@@ -131,18 +135,26 @@ export function formatGrammarCounts(counts: GrammarCounts): string {
 	);
 	if (rtShallowFails) lines.push(rtShallowFails);
 	const factoryFails = formatFirstFailures(
-		'factory-render-parse',
-		factoryRenderParse.errors.map((e) => ({ label: e.entry ? `${e.entry} (${e.kind})` : e.kind, message: e.message }))
+		'factory-storage',
+		factoryStorage.errors.map((e) => ({ label: e.entry ? `${e.entry} (${e.kind})` : e.kind, message: e.message }))
 	);
 	if (factoryFails) lines.push(factoryFails);
 	const irFails = formatFirstFailures(
-		'ir-render-parse',
-		[...irRenderParse.errors, ...irRenderParse.astMismatches].map((e) => ({
+		'ir-storage',
+		[...irStorage.errors, ...irStorage.astMismatches].map((e) => ({
 			label: e.entry ? `${e.entry} (${e.kind})` : e.kind,
 			message: e.message
 		}))
 	);
 	if (irFails) lines.push(irFails);
+	const builtFails = formatFirstFailures(
+		'built-render-parse',
+		[...builtRenderParse.errors, ...builtRenderParse.astMismatches].map((e) => ({
+			label: `${e.entry} (${e.kind})`,
+			message: e.message
+		}))
+	);
+	if (builtFails) lines.push(builtFails);
 	const fromFails = formatFirstFailures(
 		'from',
 		from.errors.map((e) => ({ label: e.kind, message: e.message }))
@@ -170,7 +182,7 @@ export function formatFirstFailures(
 }
 
 export function toValidationRun(counts: GrammarCounts): ValidationRun {
-	const { grammar, backend, from, coverage, readRenderParse, readRenderParseShallow, factoryRenderParse, irRenderParse } =
+	const { grammar, backend, from, coverage, readRenderParse, readRenderParseShallow, factoryStorage, irStorage, builtRenderParse } =
 		counts;
 	return {
 		ts: new Date().toISOString(),
@@ -186,19 +198,22 @@ export function toValidationRun(counts: GrammarCounts): ValidationRun {
 		readRenderParseShallowPass: readRenderParseShallow.pass,
 		readRenderParseShallowTotal: readRenderParseShallow.total,
 		readRenderParseShallowAstMatchPass: readRenderParseShallow.astMatchPass,
-		factoryRenderParsePass: factoryRenderParse.pass,
-		factoryRenderParseTotal: factoryRenderParse.total,
-		factoryRenderParseAstMatchPass: factoryRenderParse.astMatchPass,
-		irRenderParsePass: irRenderParse.pass,
-		irRenderParseTotal: irRenderParse.total,
-		irRenderParseAstMatchPass: irRenderParse.astMatchPass,
+		factoryStoragePass: factoryStorage.pass,
+		factoryStorageTotal: factoryStorage.total,
+		factoryStorageAstMatchPass: factoryStorage.astMatchPass,
+		irStoragePass: irStorage.pass,
+		irStorageTotal: irStorage.total,
+		irStorageAstMatchPass: irStorage.astMatchPass,
+		builtRenderParsePass: builtRenderParse.pass,
+		builtRenderParseTotal: builtRenderParse.total,
+		builtRenderParseAstMatchPass: builtRenderParse.astMatchPass,
 		fromTrivia: from.trivia.length,
 		readRenderParseTrivia: readRenderParse.trivia.length,
 		readRenderParseShallowTrivia: readRenderParseShallow.trivia.length
 	};
 }
 
-/** Print top-8 error buckets from factory-render-parse for one grammar, on the raw or the `ir` surface. */
+/** Print top-8 error buckets from factory-storage for one grammar, on the raw or the `ir` surface. */
 export async function grammarProbeFactory(
 	grammar: GrammarName,
 	backend: Backend,
@@ -395,7 +410,7 @@ export function readGrammarDiagnosticsEntries(grammar: GrammarName): GrammarDiag
  * collector entirely.
  */
 export function collectValidatorFailuresForGrammar(counts: GrammarCounts): ValidatorDiagnostic[] {
-	const { from, coverage, readRenderParse, readRenderParseShallow, factoryRenderParse, irRenderParse } = counts;
+	const { from, coverage, readRenderParse, readRenderParseShallow, factoryStorage, irStorage, builtRenderParse } = counts;
 	// Every push spreads the original validator-result object first — each
 	// source (read-render-parse errors/mismatches/accessor-throws, factory
 	// errors, coverage issues, …) carries its own extra fields (`input`,
@@ -477,8 +492,8 @@ export function collectValidatorFailuresForGrammar(counts: GrammarCounts): Valid
 	}
 
 	for (const [stage, result] of [
-		['factory-render-parse', factoryRenderParse],
-		['ir-render-parse', irRenderParse]
+		['factory-storage', factoryStorage],
+		['ir-storage', irStorage]
 	] as const) {
 		for (const e of result.errors)
 			failures.push({ ...e, stage, code: `${stage}-error`, severity: 'error', label: entryKindLabel(e) });
@@ -492,6 +507,18 @@ export function collectValidatorFailuresForGrammar(counts: GrammarCounts): Valid
 			});
 		pushSkips(stage, result);
 	}
+
+	for (const e of builtRenderParse.errors)
+		failures.push({ ...e, stage: 'built-render-parse', code: 'built-render-parse-error', severity: 'error', label: entryKindLabel(e) });
+	for (const m of builtRenderParse.astMismatches)
+		failures.push({
+			...m,
+			stage: 'built-render-parse-ast-mismatch',
+			code: 'built-render-parse-ast-mismatch',
+			severity: 'error',
+			label: entryKindLabel(m)
+		});
+	pushSkips('built-render-parse', builtRenderParse);
 
 	// `literal-leak` issues are a heuristic near-miss surfaced for visibility
 	// (a suspicious doubled-punctuation run), not a hard structural failure
@@ -807,7 +834,7 @@ export async function runCountsCli(
 	}
 }
 
-/** Exported entry: probe-factory subcommand — error-bucket diagnostics for factory-render-parse. */
+/** Exported entry: probe-factory subcommand — error-bucket diagnostics for factory-storage. */
 export async function runProbeFactoryCli(
 	args: string[],
 	backendMode: CliBackend = 'native',
@@ -841,8 +868,11 @@ export function runHistoryCli(args: string[]): void {
 				`  cov=${r.covPass}/${r.covTotal}` +
 				`  read-render-parse=${r.readRenderParsePass}/${r.readRenderParseTotal}` +
 				`  read-render-parse-shallow=${r.readRenderParseShallowPass}/${r.readRenderParseShallowTotal}` +
-				`  factory-render-parse=${r.factoryRenderParsePass}/${r.factoryRenderParseTotal}` +
-				(r.irRenderParseTotal === undefined ? '' : `  ir-render-parse=${r.irRenderParsePass}/${r.irRenderParseTotal}`)
+				`  factory-storage=${r.factoryStoragePass}/${r.factoryStorageTotal}` +
+				(r.irStorageTotal === undefined ? '' : `  ir-storage=${r.irStoragePass}/${r.irStorageTotal}`) +
+				(r.builtRenderParseTotal === undefined
+					? ''
+					: `  built-render-parse=${r.builtRenderParsePass}/${r.builtRenderParseTotal}`)
 		);
 	}
 }

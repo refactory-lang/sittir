@@ -104,9 +104,10 @@ transports; `--no-default-features` is what lets their test binaries link
 without a Node runtime.
 
 `validate:native` is the primary gate for codegen-affecting work. For
-corpus-affecting changes report raw per-grammar counts (fromPass/fromTotal,
-covPass/covTotal, rtPass/rtTotal/rtAstMatchPass, factoryPass/factoryTotal),
-compared against a recorded baseline — not eyeballed.
+corpus-affecting changes report raw per-grammar counts (from, cov,
+read-render-parse and its shallow run, factory-storage, ir-storage,
+built-render-parse; `pnpm run validate:history` prints them), compared
+against a recorded baseline — not eyeballed.
 
 Two committed ratchets back the run (both only ever tighten):
 

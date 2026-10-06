@@ -32,24 +32,21 @@ export interface ValidationRun {
 	readRenderParseShallowPass: number;
 	readRenderParseShallowTotal: number;
 	readRenderParseShallowAstMatchPass: number;
-	factoryRenderParsePass: number;
-	factoryRenderParseTotal: number;
-	factoryRenderParseAstMatchPass: number;
-	/** The `ir`-surface run of factory-render-parse; absent on rows recorded before it existed. */
-	irRenderParsePass?: number;
-	irRenderParseTotal?: number;
-	irRenderParseAstMatchPass?: number;
+	factoryStoragePass: number;
+	factoryStorageTotal: number;
+	factoryStorageAstMatchPass: number;
+	/** The `ir`-surface run of factory-storage; absent on rows recorded before it existed. */
+	irStoragePass?: number;
+	irStorageTotal?: number;
+	irStorageAstMatchPass?: number;
+	/** Built nodes rendered and reparsed; absent on rows recorded before the row existed. */
+	builtRenderParsePass?: number;
+	builtRenderParseTotal?: number;
+	builtRenderParseAstMatchPass?: number;
 	/** Trivia-only losses, kept out of the totals; absent on rows recorded before the trivia row existed. */
 	fromTrivia?: number;
 	readRenderParseTrivia?: number;
 	readRenderParseShallowTrivia?: number;
-	/** Legacy pre-rename fields kept optional for older rows. */
-	rtPass?: number;
-	rtTotal?: number;
-	rtAstMatchPass?: number;
-	factoryPass?: number;
-	factoryTotal?: number;
-	factoryAstMatchPass?: number;
 }
 
 /**

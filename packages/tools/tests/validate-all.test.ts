@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import { FULL_PIPELINE_TIMEOUT } from '../../codegen/src/__tests__/helpers/timeouts.ts';
 import { generate } from '../../codegen/src/compiler/generate.ts';
 import { validateReadRenderParse } from '../src/validate/read-render-parse.ts';
-import { validateFactoryRenderParse } from '../src/validate/factory-render-parse.ts';
+import { validateFactoryStorage } from '../src/validate/factory-storage.ts';
 import { stableGrammars } from '@sittir/codegen/grammars';
 
 const GRAMMARS = stableGrammars();
@@ -23,14 +23,14 @@ const GRAMMARS = stableGrammars();
 // fix + null-wrap→skip expose the true failure counts, which are the
 // new ceilings. No real regression — numbers were inflated by silent
 // skip.
-const RENDER_PARSE_CEILINGS: Record<string, { readRenderParse: number; factoryRenderParse: number }> = {
+const RENDER_PARSE_CEILINGS: Record<string, { readRenderParse: number; factoryStorage: number }> = {
 	// MEASUREMENT RESET (2026-04-25): rust readRenderParse 55 → 65,
-	// factoryRenderParse 45 → 70. TS-side post-processing was hiding
+	// factoryStorage 45 → 70. TS-side post-processing was hiding
 	// walker whitespace artifacts; raw output exposes more real fail
 	// counts (see corpus-validation.test.ts FLOORS preamble + project
 	// memory note `project_post_processing_reset.md`). Cluster F walker
 	// refactor will lower these ceilings back down.
-	// Phase D (KindID migration, 2026-05-01): factoryRenderParse 70→280.
+	// Phase D (KindID migration, 2026-05-01): factoryStorage 70→280.
 	// Codegen-synthesized variant/form/alias kinds get $type=0 under
 	// numeric dispatch — factory round-trip fails for all of them. The
 	// ceiling rise is proportional to the number of synthesized kinds
@@ -38,8 +38,8 @@ const RENDER_PARSE_CEILINGS: Record<string, { readRenderParse: number; factoryRe
 	// ADR-0017 fix (2026-05-02): composite span key resolves node identity
 	// collisions — readRenderParse ceilings lowered to reflect actual JS-path
 	// fail counts (rust 65→15, typescript 60→25, python 75→70).
-	rust: { readRenderParse: 15, factoryRenderParse: 350 },
-	// factoryRenderParse 215 → 226 (PR2 Task 3.B, 2026-05-20): polymorph
+	rust: { readRenderParse: 15, factoryStorage: 350 },
+	// factoryStorage 215 → 226 (2026-05-20): polymorph
 	// templates now use `variant` (correct Nunjucks/Askama variable) instead
 	// of `$variant` (dollar-prefixed name never present in render context).
 	// The old `$variant` silently made every branch always-false → empty render
@@ -48,8 +48,8 @@ const RENDER_PARSE_CEILINGS: Record<string, { readRenderParse: number; factoryRe
 	// silently-empty now attempt dispatch but fail for separate reasons
 	// (nodeToConfig $variant tagging gaps, factory-rp JS-path issues). These
 	// are pre-existing failures now made visible, not new regressions.
-	typescript: { readRenderParse: 25, factoryRenderParse: 226 },
-	python: { readRenderParse: 70, factoryRenderParse: 75 }
+	typescript: { readRenderParse: 25, factoryStorage: 226 },
+	python: { readRenderParse: 70, factoryStorage: 75 }
 };
 
 for (const grammar of GRAMMARS) {
@@ -86,12 +86,12 @@ for (const grammar of GRAMMARS) {
 			}, 30_000);
 
 			it('factory render-parse — factory → render → parse matches', async () => {
-				const frt = await validateFactoryRenderParse(grammar);
+				const frt = await validateFactoryStorage(grammar);
 				expect(frt.pass).toBeGreaterThan(0);
 				expect(
 					frt.fail,
-					`factory-render-parse regressions (ceiling ${ceiling.factoryRenderParse})`
-				).toBeLessThanOrEqual(ceiling.factoryRenderParse);
+					`factory-storage regressions (ceiling ${ceiling.factoryStorage})`
+				).toBeLessThanOrEqual(ceiling.factoryStorage);
 			}, 30_000);
 		});
 	});

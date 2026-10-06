@@ -1496,7 +1496,7 @@ supertype only by shape has none.
  * genuinely differs from the storage kind on the wire (see
  * {@link aliasRestampRequired}), as `[parseName, storageName]` pairs.
  * Serialized into the node model's `fieldAliasMap` and consumed by the
- * corpus validators (`validate/factory-render-parse.ts`, `validate/from.ts`)
+ * corpus validators (`validate/factory-storage.ts`, `validate/from.ts`)
  * to normalize display names against storage kinds; the wire `$type` itself
  * is the grammar symbol stamped by the native read and needs no restamp.
  */
