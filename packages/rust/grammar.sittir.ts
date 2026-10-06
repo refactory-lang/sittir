@@ -701,5 +701,27 @@ export default sittirGrammar(base, {
 		_raw_string_literal_end: token.immediate(/"#*/),
 		_line_doc_content: token.immediate(/.*\n?/),
 		_block_comment_content: token.immediate(/[^]*/)
-	})
+	}),
+	reparseHosts: {
+		hosts: {
+			_expression: 'fn _f() { let _ = $r; }',
+			_type: 'type _X = $r;',
+			_pattern: 'fn _f() { let $r = (); }',
+			_declaration_statement: '$r',
+			_literal: 'fn _f() { let _ = $r; }',
+			_literal_pattern: 'fn _f() { let $r = (); }',
+			parameters: 'fn _f$r {}',
+			parameter: 'fn _f($r) {}',
+			arguments: 'f$r;',
+			type_parameters: 'fn _f$r() {}',
+			type_parameter: 'fn _f<$r>() {}',
+			mut_pattern: 'fn _f(x: i32) { match x { $r => () } }',
+			generic_type_with_turbofish: 'type _X = $r::Item;',
+			scoped_type_identifier_in_expression_position: 'fn _f() { let _ = $r { val: 1 }; }',
+			delim_token_tree: 'fn _f() { mac! $r }',
+			token_tree: 'macro_rules! _m { () => $r }',
+			visibility_modifier: '$r fn _f() {}'
+		},
+		gated: ['visibility_modifier']
+	},
 });

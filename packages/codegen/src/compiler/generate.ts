@@ -40,6 +40,7 @@ export interface GeneratedFiles {
 	factoriesIndex: string;
 	wrap: string;
 	utils: string;
+	reparseHosts?: string;
 	from: string;
 	irNamespace: string;
 	consts: string;
@@ -124,6 +125,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			grammarRoles,
 			emitRenderModule: cfg.emitRenderModule,
 			expectTestFailures: raw.expectTestFailures,
+			reparseHosts: raw.reparseHosts,
 			options: raw.options,
 			visibleExternals: raw.visibleExternals,
 			diagnostics: compilation.diagnostics
@@ -165,6 +167,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			factoriesIndex: emitted.factoriesIndex,
 			wrap: emitted.wrap,
 			utils: emitted.utils,
+			reparseHosts: emitted.reparseHosts,
 			from: emitted.from,
 			irNamespace: emitted.irNamespace,
 			consts: emitted.consts,

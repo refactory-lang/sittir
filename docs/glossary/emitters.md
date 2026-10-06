@@ -16574,3 +16574,19 @@ The checks that need every type printed. Two slots of a kind that take an untagg
 ### `packages/codegen/src/emitters/render-module.ts::isCompoundOf`
 
 Whether a kind prints a layout field and its slots: a branch, an envelope, a list, an alias, or a polymorph that is not a supertype.
+
+### `packages/codegen/src/emitters/factories.ts::buildDelimitedConsts`
+
+Emits one `_delimited_<factory>` constant per delimited kind into the raw module: the kind and its kind id, the excluded characters as a `u`-flag class, the fixed delimiter texts, the parse-back host and the node kinds. The host is resolved here, once, from the grammar's `reparseHosts` block through the supertype closure; a trivia kind (an extra) falls back to the bare `$r` host, and any other kind with no host throws at generation time.
+
+### `packages/codegen/src/emitters/factories.ts::delimitedCheckLine`
+
+The `checkDelimited(handle, node, spec, [content slots], open, close)` call emitted before a delimited builder returns. The delimiter slots come from the stamped fact; every other slot is content.
+
+### `packages/codegen/src/emitters/test.ts::delimiterSamples`
+
+The sample text of every leaf that ends a delimited composite: the shortest text its pattern accepts, so the generated tests build a string with a matching start and end instead of `test` on both sides.
+
+### `packages/codegen/src/emitters/reparse-hosts.ts::emitReparseHosts`
+
+Writes the grammar's `reparseHosts` block as the generated `reparse-hosts.ts`: the host templates, the priority list and the gated kinds.

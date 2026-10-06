@@ -1,6 +1,6 @@
 {
     "backend": "native",
-    "commit": "40b211b",
+    "commit": "61f2a5d",
     "grammars": {
         "python": {
             "hoistedKindCount": 45,
@@ -14,59 +14,11 @@
             "supertypeKindCount": 15,
             "validators": {
                 "builtRenderParse": {
-                    "astMatchPass": 1161,
-                    "failingKinds": [
-                        "factory: _simple_statements",
-                        "factory: argument_list",
-                        "factory: argument_list_elements",
-                        "factory: assignment_eq",
-                        "factory: block",
-                        "factory: call",
-                        "factory: concatenated_string",
-                        "factory: expression_statement",
-                        "factory: function_definition",
-                        "factory: if_statement",
-                        "factory: keyword_argument",
-                        "factory: match_block",
-                        "factory: match_block_block",
-                        "factory: match_statement",
-                        "factory: module",
-                        "factory: named_expression",
-                        "factory: parenthesized_expression",
-                        "factory: print_arguments",
-                        "factory: print_statement",
-                        "factory: print_statement_plain",
-                        "factory: return_statement",
-                        "factory: simple_statements_elements",
-                        "factory: string",
-                        "factory: string_content",
-                        "factory: suite_block",
-                        "ir: _simple_statements",
-                        "ir: argument_list",
-                        "ir: argument_list_elements",
-                        "ir: block",
-                        "ir: call",
-                        "ir: concatenated_string",
-                        "ir: expression_statement",
-                        "ir: function_definition",
-                        "ir: if_statement",
-                        "ir: keyword_argument",
-                        "ir: match_block",
-                        "ir: match_statement",
-                        "ir: module",
-                        "ir: named_expression",
-                        "ir: parenthesized_expression",
-                        "ir: print_arguments",
-                        "ir: print_statement",
-                        "ir: print_statement_plain",
-                        "ir: return_statement",
-                        "ir: simple_statements_elements",
-                        "ir: string",
-                        "ir: string_content"
-                    ],
+                    "astMatchPass": 1246,
+                    "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1161,
-                    "total": 1303
+                    "pass": 1246,
+                    "total": 1246
                 },
                 "coverage": {
                     "failingKinds": [],
@@ -287,8 +239,8 @@
         }
     },
     "totals": {
-        "fail": 145,
-        "pass": 16674,
-        "total": 16819
+        "fail": 3,
+        "pass": 16759,
+        "total": 16762
     }
 }

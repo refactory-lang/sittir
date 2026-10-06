@@ -91,6 +91,7 @@ import {
 	readNodeOf,
 	walkNativeForKind,
 	buildKindToSupertypes,
+	loadReparseHosts,
 	wrapForReparse,
 	upstreamWasmPath,
 	nativeNodeIsKind,
@@ -358,6 +359,7 @@ async function computeValidatorWrapDiag(
 	const renderedKind =
 		typeof dType === 'number' && canonicalKindNameFromId ? (canonicalKindNameFromId(dType) ?? targetKind) : targetKind;
 
+	await loadReparseHosts(grammar);
 	const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes, {
 		adoptedVariantKinds: adoptedVariantKindNames,
 		targetKind,

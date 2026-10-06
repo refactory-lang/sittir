@@ -259,6 +259,7 @@ function grammarFn(optionsOrBase: GrammarOptions | GrammarResult, options?: Gram
 	const renderAs = drainRenderAsMetadata(opts, ctx);
 	const visibleExternals = drainVisibleExternalsMetadata(opts, ctx);
 	const optionsBlock = drainOptionsMetadata(opts);
+	const reparseHosts = getWireContext(opts)?.reparseHosts;
 	const { ruleCauses, undeclaredRules } = drainRuleCausesMetadata(opts);
 	const patchSites = drainPatchSitesMetadata(opts);
 	const stages = base !== undefined && departsFromBase(ctx) ? evaluateStages(base, ctx) : undefined;
@@ -286,6 +287,7 @@ function grammarFn(optionsOrBase: GrammarOptions | GrammarResult, options?: Gram
 		options: optionsBlock,
 		expectDiagnostics,
 		expectTestFailures,
+		reparseHosts,
 		ruleCauses,
 		undeclaredRules,
 		patchSites,

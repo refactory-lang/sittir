@@ -572,3 +572,11 @@ The value a seated key reads: the group's own reader of that field, or `undefine
 
 The key a node keeps the readers of its seated slots under, by accessor name, for the case where a flattened key spells its slot and so replaces that slot's own accessor. `storedSlotReader` reads it.
 
+
+### `packages/common/src/reparse.ts::hostTemplateFor`
+
+The host template that reparses a rendered kind: its own, its target kind's, or the best-priority reachable supertype's, with the gated hosts applying only to adopted variants. `applyHost` splices the text into `$r` and reports the offset.
+
+### `packages/common/src/delimited-check.ts::checkDelimited`
+
+Refuses a delimited composite whose content would not read back inside its own delimiters. Content free of the spec's excluded characters passes on its own. A delimiter pair a parse has not confirmed is confirmed by parsing the empty composite through the engine in scope, memoized per kind and pair. Anything else is parsed back in its host and must parse with no error, show a node of the kind starting where it was rendered and ending where the text ends, and show the same node arms among its children. Extras are found among the root's inner trivia. With no engine in scope, a varying pair that has not been confirmed, or content that needs the parse, is refused ("needs an engine").

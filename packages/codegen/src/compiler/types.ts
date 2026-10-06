@@ -11,6 +11,7 @@ import type { ExternalRole } from '../types/ir.ts';
 export type { ExternalRole };
 export type { OptionsConfig } from '../dsl/wire/options-block.ts';
 import type { OptionsConfig } from '../dsl/wire/options-block.ts';
+import type { ReparseHostsConfig } from '../dsl/wire/reparse-hosts.ts';
 import type { RuleCauseDeclaration } from '../dsl/primitives/rule-cause.ts';
 
 export type RulePathSegment =
@@ -123,6 +124,7 @@ export interface RawGrammar {
 	readonly options?: OptionsConfig;
 	readonly expectDiagnostics?: Readonly<Record<string, readonly string[]>>;
 	readonly expectTestFailures?: Readonly<Record<string, string>>;
+	readonly reparseHosts?: ReparseHostsConfig;
 	readonly ruleCauses?: Readonly<Record<string, RuleCauseDeclaration>>;
 	readonly undeclaredRules?: readonly string[];
 	readonly patchSites?: readonly PatchSite[];

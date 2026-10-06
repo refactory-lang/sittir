@@ -1,6 +1,7 @@
 import type { NodeMap } from '../types.ts';
 import {
 	AbstractAssembledCompound,
+	AssembledPattern,
 	AssembledPolymorph,
 	type AssembledNode,
 	type FullFormAffix,
@@ -10,6 +11,7 @@ import {
 	storageKindOfRef
 } from './node-map.ts';
 import { leadingRegex } from './leaf-pattern.ts';
+import { endsWithLineBreak, patternDfa, requiresNonSpace } from './pattern-automaton.ts';
 import { declaresWhitespace, whitespaceSymbolsOf } from './whitespace-arms.ts';
 import { escapeRegexLiteral } from '../../util/word-matcher.ts';
 import { SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
@@ -165,6 +167,26 @@ export function whitespaceTriviaKinds(nodeMap: NodeMap): string[] {
 		const node = nodeMap.nodes.get(kind);
 		return node instanceof AssembledPunctuation && nodelessExtrasRun.test(node.text);
 	});
+}
+
+function continuesLine(nodeMap: NodeMap, kind: string): boolean {
+	const node = nodeMap.nodes.get(kind);
+	if (!(node instanceof AssembledPattern) || node.textPattern === undefined) return false;
+	const dfa = patternDfa(node.textPattern);
+	return dfa !== undefined && requiresNonSpace(dfa) && endsWithLineBreak(dfa);
+}
+
+export function continuationTriviaKinds(nodeMap: NodeMap): string[] {
+	const kinds = triviaKinds(nodeMap);
+	const direct = [...kinds].filter((kind) => continuesLine(nodeMap, kind));
+	const byDefault = [...kinds].flatMap((kind) => {
+		const node = nodeMap.nodes.get(kind);
+		const arm = node instanceof AssembledSupertype ? node.defaultVariantSubtype : undefined;
+		return node instanceof AssembledSupertype && arm !== undefined && continuesLine(nodeMap, storageKindOfRef(arm.node))
+			? node.subtypeNames
+			: [];
+	});
+	return [...new Set([...direct, ...byDefault])].filter((kind) => kinds.has(kind));
 }
 
 export interface WhitespaceTrivia {

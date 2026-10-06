@@ -9,7 +9,7 @@
  */
 import { describe, it, expect, vi } from 'vitest';
 import { fileURLToPath } from 'node:url';
-import { validateFrom } from '../src/validate/from.ts';
+const loadValidateFrom = async () => (await import('../src/validate/from.ts')).validateFrom;
 
 describe('validateFrom — module load failure sentinel', () => {
 	it('surfaces a rejected from.ts import as a (from-module-load) sentinel error, not a false 0/0 pass', async () => {
@@ -21,7 +21,7 @@ describe('validateFrom — module load failure sentinel', () => {
 		});
 		vi.resetModules();
 
-		const { validateFrom } = await import('../src/validate/from.ts');
+		const validateFrom = await loadValidateFrom();
 		const result = await validateFrom('rust');
 
 		expect(result.total).toBe(0);
@@ -44,6 +44,7 @@ describe('validateFrom — unresolved native coords diagnostic', () => {
 		// validator now routes text-shaped kinds through from(text) vs
 		// factory(text) instead of refusing to compare. python's corpus has
 		// no other from() failure mode, so the run passes fully.
+		const validateFrom = await loadValidateFrom();
 		const result = await validateFrom('python', 'native');
 
 		expect(result.fail).toBe(0);
@@ -57,6 +58,7 @@ describe('validateFrom — unresolved native coords diagnostic', () => {
 		// branch-shaped block_comment) — for those the guard is correct and
 		// must keep refusing the unsound comparison. Which rows survive
 		// depends on corpus content, so pin the contract, not the roster.
+		const validateFrom = await loadValidateFrom();
 		const result = await validateFrom('rust', 'native');
 		const { loadNodeModel } = await import('../src/validate/common.ts');
 		const model = await loadNodeModel('rust');
