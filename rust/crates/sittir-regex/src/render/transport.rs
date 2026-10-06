@@ -909,12 +909,14 @@ impl ::sittir_core::render::Render for NamedCapturingGroupContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             NamedCapturingGroupContentTransportSlot::LparenQmarkLt => {
+                w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_BEFORE);
                 let written = render_lparen_qmark_lt(w);
                 written?;
                 w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_AFTER);
                 Ok(())
             }
             NamedCapturingGroupContentTransportSlot::LparenQmarkPLt => {
+                w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_BEFORE);
                 let written = render_lparen_qmark_plt(w);
                 written?;
                 w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_AFTER);
@@ -2114,6 +2116,10 @@ impl ::sittir_core::options::Edged for NamedCapturingGroupTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(63) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+    fn edge_arm_kinds(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> (Option<::sittir_core::types::KindId>, Option<::sittir_core::types::KindId>) {
+        use ::sittir_core::prepare::ArmOf;
+        (self.content.arm_among(ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(63), ::sittir_core::options::Side::Before)), None)
+    }
 }
 
 impl ::sittir_core::render::Render for NamedCapturingGroupTransport {

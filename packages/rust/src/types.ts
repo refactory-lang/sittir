@@ -12560,7 +12560,10 @@ export namespace TokenRepetitionPattern {
 			readonly dollar?: { readonly after?: WhitespaceArm };
 			readonly lparen?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly operator?: { readonly before?: WhitespaceArm };
+			readonly plus?: { readonly after?: WhitespaceArm };
+			readonly qmark?: { readonly after?: WhitespaceArm };
 			readonly rparen?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly star?: { readonly after?: WhitespaceArm };
 			readonly tokenPatterns?: {
 				readonly end?: WhitespaceArm;
 				readonly rawStringLiteral?: { readonly after?: WhitespaceArm };
@@ -12585,7 +12588,10 @@ export namespace TokenRepetition {
 			readonly dollar?: { readonly after?: WhitespaceArm };
 			readonly lparen?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly operator?: { readonly before?: WhitespaceArm };
+			readonly plus?: { readonly after?: WhitespaceArm };
+			readonly qmark?: { readonly after?: WhitespaceArm };
 			readonly rparen?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly star?: { readonly after?: WhitespaceArm };
 			readonly tokens?: {
 				readonly end?: WhitespaceArm;
 				readonly rawStringLiteral?: { readonly after?: WhitespaceArm };
@@ -13310,8 +13316,11 @@ export namespace UnaryExpression {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
+			readonly bang?: { readonly before?: WhitespaceArm };
 			readonly before?: WhitespaceArm;
+			readonly dash?: { readonly before?: WhitespaceArm };
 			readonly operator?: { readonly after?: WhitespaceArm };
+			readonly star?: { readonly before?: WhitespaceArm };
 		};
 	}
 }
@@ -15006,8 +15015,8 @@ export namespace RangePatternPrefix {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly dotDot?: { readonly after?: WhitespaceArm };
-			readonly dotDotEq?: { readonly after?: WhitespaceArm };
+			readonly dotDot?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly dotDotEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
 }
@@ -15017,9 +15026,9 @@ export namespace RangePatternWithLeftWithRight {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly dotDot?: { readonly after?: WhitespaceArm };
-			readonly dotDotDot?: { readonly after?: WhitespaceArm };
-			readonly dotDotEq?: { readonly after?: WhitespaceArm };
+			readonly dotDot?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly dotDotDot?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly dotDotEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
 }

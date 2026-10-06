@@ -3607,6 +3607,15 @@ its array's sites and its end follows them. One entry per kind × transport
 field; two seams of one token in one kind resolving to different defaults
 is an error, since they share one transport field.
 
+A kind edge that opens or closes with a choice of two or more tokens
+(`edgeLiterals`), where the member beside the seam is a slot with no
+multiplicity, also gets one arm site per token: address `<token>_<side>`, the
+edge's own arms and default, and `edgeArm` naming the edge's address as its
+parent and the token. A face on one token then resolves that arm alone, and the
+edge's own address reaches the edge and every arm. An edge whose first or last
+member is optional or a run has no slot to read an arm from and keeps its single
+site.
+
 After the walk it appends the seated sites (`seatedSites`), which carry no
 transport field of the kind that holds them.
 
@@ -4176,6 +4185,12 @@ with those literals) also gets one `cascadePaths` entry per token:
 `[kind, literal, side]`, the path that token's own seam would have inside that
 kind. `cascadePathsOf` builds them; the primary `path` stays `[kind, side]`, so `options.ts` keys and
 kind rows are unchanged.
+
+An arm site of such an edge (`edgeArm`) has the token's path `[kind, literal,
+side]` and a `parentPath` of `[kind, side]`: an address that names the edge
+(`matchAddressWith`) reaches the arm through its parent path as well as its
+own. The edge itself still takes the unanimous face of its tokens through the
+cascade, since a coordinate of that kind is written from the edge's own site.
 
 ### `packages/codegen/src/compiler/model/site-addresses.ts::pathOf`
 

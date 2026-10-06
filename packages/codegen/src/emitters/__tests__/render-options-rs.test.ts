@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { SEAM_DECLARED, planRenderOptions, renderOptionsRs, seatTableName, seatTablesOf } from '../render-options-rs.ts';
+import { SEAM_DECLARED, edgeSitesOf, planRenderOptions, renderOptionsRs, seatTableName, seatTablesOf } from '../render-options-rs.ts';
 import { deriveAddressTables, kindIdArmType } from '../options.ts';
 import type { SitePreference } from '../../compiler/model/site-preferences.ts';
 import { makeSiteKindsNodeMap } from '../../__tests__/helpers/node-map-fixtures.ts';
@@ -251,5 +251,49 @@ describe('renderOptionsRs', () => {
 		expect(plan.depthSites).toEqual([{ kind: 'call_expression', sites: [2, 1] }]);
 		const addresses = deriveAddressTables([...sites, depth('rparen', 'rparen_before'), depth('lparen', 'lparen_after')], entries, makeSiteKindsNodeMap([...sites, depth('rparen', 'rparen_before'), depth('lparen', 'lparen_after')]), kindIdArmType(entries as never), (() => []) as never);
 		expect(renderOptionsRs(plan, addresses, entries)).toContain('    ("call_expression", &[2, 1]),');
+	});
+});
+
+describe('a kind edge over a choice of tokens', () => {
+	const entries = [...kindEntries, { kind: 'bracket', member: 'Bracket', id: 40 }];
+	const seam = (address: string, extra: Partial<SitePreference> = {}): SitePreference => ({
+		kind: 'bracket',
+		slot: 'bracket',
+		address,
+		label: address,
+		arms: SPACING,
+		defaultArm: 'space',
+		source: 'spacing',
+		side: 'seam',
+		...extra
+	});
+	const armSites = [
+		seam('bracket_before', { edgeLiterals: ['lparen', 'semi'] }),
+		seam('lparen_before', { slot: 'lparen', edgeArm: { parent: 'bracket_before', token: 'lparen' } }),
+		seam('semi_before', { slot: 'semi', edgeArm: { parent: 'bracket_before', token: 'semi' } })
+	];
+	const plan = planRenderOptions(armSites, entries, makeSiteKindsNodeMap(armSites), whitespaceText, undefined, 'rust');
+
+	it('keys its arm sites by the arm token\'s kind id under the kind\'s edge row', () => {
+		const row = edgeSitesOf(plan, entries)[0]!;
+		const siteOf = (address: string) => plan.spacingSites.findIndex((site) => site.address === address);
+		expect(row.kind).toBe(40);
+		expect(row.before).toBe(siteOf('bracket_before'));
+		expect(row.beforeArms).toEqual([
+			{ arm: 21, site: siteOf('lparen_before') },
+			{ arm: 20, site: siteOf('semi_before') }
+		]);
+		expect(row.afterArms).toEqual([]);
+	});
+
+	it('prints the arm tables in the edge row', () => {
+		const text = renderOptionsRs(plan, deriveAddressTables(armSites, entries, makeSiteKindsNodeMap(armSites), kindIdArmType(entries as never), (() => []) as never), entries);
+		expect(text).toMatch(/before_arms: &\[::sittir_core::options::ArmSite \{ arm: 21, site: \d+ \}, ::sittir_core::options::ArmSite \{ arm: 20, site: \d+ \}\], after_arms: &\[\]/);
+	});
+
+	it('refuses an arm token with no kind id', () => {
+		const lost = [armSites[0]!, { ...armSites[1]!, edgeArm: { parent: 'bracket_before', token: 'unknown_token' } }];
+		const lostPlan = planRenderOptions(lost, entries, makeSiteKindsNodeMap(lost), whitespaceText, undefined, 'rust');
+		expect(() => edgeSitesOf(lostPlan, entries)).toThrow(/unknown_token/);
 	});
 });

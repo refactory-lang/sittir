@@ -526,7 +526,7 @@ mod tests {
             indent: 0,
             dedent: 0,
         };
-        static EDGES: [EdgeSite; 1] = [EdgeSite { before: 0, after: NO_SITE }];
+        static EDGES: [EdgeSite; 1] = [EdgeSite { before: 0, after: NO_SITE, before_arms: &[], after_arms: &[] }];
         static EDGE_ROWS: [u16; 10] = [NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 0];
         static SITES: [SiteSpec; 1] = [SiteSpec { default_arm: TIGHT, strength: SEAM_CASCADE }];
         let sources = Kinded(Sources(HashMap::from([(1, Arc::from("f()"))])));

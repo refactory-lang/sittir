@@ -107,6 +107,12 @@ export interface RuleSpacingSite {
 	readonly seat?: SeatedChild;
 	readonly path?: readonly PreferenceSegment[];
 	readonly edgeLiterals?: readonly string[];
+	readonly edgeArm?: EdgeArm;
+}
+
+export interface EdgeArm {
+	readonly parent: string;
+	readonly token: string;
 }
 
 type Bag = {
@@ -887,7 +893,7 @@ export function declaredOptionArms(
 export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): RuleSpacingSite[] {
 	const out = new Map<string, RuleSpacingSite>();
 	const seats: Seat[] = [];
-	const add = (kind: string, slot: string, part: SpacingPart, address: string): void => {
+	const add = (kind: string, slot: string, part: SpacingPart, address: string, edgeArm?: EdgeArm): void => {
 		const key = `${kind} ${part.fieldName}`;
 		const prior = out.get(key);
 		if (prior !== undefined && prior.defaultArm !== part.defaultArm) {
@@ -903,7 +909,8 @@ export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): Rule
 				defaultArm: part.defaultArm,
 				arms: part.arms,
 				...(part.origin === 'word-default' ? { origin: part.origin } : {}),
-				...(part.edgeLiterals === undefined ? {} : { edgeLiterals: part.edgeLiterals })
+				...(part.edgeLiterals === undefined ? {} : { edgeLiterals: part.edgeLiterals }),
+				...(edgeArm === undefined ? {} : { edgeArm })
 			});
 		}
 	};
@@ -923,13 +930,23 @@ export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): Rule
 			return;
 		}
 		const b = bag(r);
-		for (const m of b.members ?? []) {
+		const members = b.members ?? [];
+		for (const [i, m] of members.entries()) {
 			if (!isSeamChoice(m)) {
 				visit(kind, m);
 				continue;
 			}
 			const part = seamPartOf(m);
-			add(kind, parseSeamLabel(part.fieldName)!.token, part, part.fieldName);
+			const seam = parseSeamLabel(part.fieldName)!;
+			add(kind, seam.token, part, part.fieldName);
+			const beside = members[seam.side === 'before' ? i + 1 : i - 1];
+			const armSlot = beside === undefined || bag(beside).multiplicity !== undefined ? undefined : bag(beside).id;
+			if (seam.token !== displayNameOf(kind, nodeMap) || (part.edgeLiterals?.length ?? 0) < 2) continue;
+			if (armSlot === undefined || !nodeMap.slotByRuleId.has(armSlot)) continue;
+			for (const token of part.edgeLiterals!) {
+				const address = seamLabel(token, seam.side);
+				add(kind, token, { ...part, fieldName: address, label: address, edgeLiterals: undefined }, address, { parent: part.fieldName, token });
+			}
 		}
 		if (b.content !== undefined) visit(kind, b.content);
 		const spaced = isRepeated(r) ? spacedSeparatorOf(r) : undefined;

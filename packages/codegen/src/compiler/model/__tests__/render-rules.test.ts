@@ -523,6 +523,27 @@ describe('seamRenderRules', () => {
 		expect(build({ _: { '".."/before': preference('tight') } }).origin).toBe('fallback');
 	});
 
+	it('gives a kind edge over a slot\'s choice of tokens one arm site per token, and none when a literal stands alone', () => {
+		const entries = [
+			...(kindEntries as never as object[]),
+			{ kind: 'dot_dot', anon: true, symbolName: '..', literalText: '..', member: 'DotDot', id: 30 },
+			{ kind: 'dot_dot_eq', anon: true, symbolName: '..=', literalText: '..=', member: 'DotDotEq', id: 31 }
+		] as never;
+		const operators = { ...choice(str('..'), str('..=')), id: 'r1' } as never;
+		const rules = { range: seq(operators, sym('right')), call: seq(str('('), sym('args')) };
+		const nodeMap = nodeMapOf(rules, { r1: 'operator' });
+		for (const kind of ['range', 'call'] as const) nodeMap.nodes.set(kind, new AssembledBranch(kind, rules[kind] as never, rules[kind]));
+		const out = resolveRenderRules({ nodeMap, kindEntries: entries, options: {} } as never, () => {}).seamed;
+		const sites = spacingSitesOf(out, nodeMap);
+		const arms = sites.filter((site) => site.edgeArm !== undefined);
+		expect(arms.map((site) => [site.kind, site.address, site.edgeArm])).toEqual([
+			['range', 'dot_dot_before', { parent: 'range_before', token: 'dot_dot' }],
+			['range', 'dot_dot_eq_before', { parent: 'range_before', token: 'dot_dot_eq' }]
+		]);
+		expect(arms.map((site) => site.defaultArm)).toEqual(sites.filter((site) => site.address === 'range_before').map((site) => site.defaultArm).flatMap((arm) => [arm, arm]));
+		expect(sites.filter((site) => site.kind === 'call' && site.edgeArm !== undefined)).toEqual([]);
+	});
+
 	it('puts a list kind\'s edge seams around its flank wrapper, which stays a three-member seq', () => {
 		const rules = { list: commaList() };
 		const nodeMap = nodeMapOf(rules, { r1: 'items' });

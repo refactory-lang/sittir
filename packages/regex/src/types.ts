@@ -1248,8 +1248,8 @@ export namespace NamedCapturingGroup {
 			readonly after?: SpacingArm;
 			readonly before?: SpacingArm;
 			readonly gt?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly lparenQmarkPLt?: { readonly after?: SpacingArm };
-			readonly lparenQmarkLt?: { readonly after?: SpacingArm };
+			readonly lparenQmarkPLt?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly lparenQmarkLt?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 			readonly rparen?: { readonly before?: SpacingArm };
 		};
 	}
