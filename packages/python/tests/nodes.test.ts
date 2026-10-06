@@ -4241,10 +4241,10 @@ describe('escape_interpolation', () => {
 
 describe('string_end', () => {
 	it('factory produces correct type', () => {
-		const node = ir.stringEnd('"');
+		const node = ir.stringEnd('\\"');
 		expect(node.$type).toBe(TSKindId.StringEnd);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('"');
+		expect(node.$text).toBe('\\"');
 	});
 });
 

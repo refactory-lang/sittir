@@ -572,9 +572,15 @@ beneath it.
 			// space. `token.immediate` cannot be written on an externals entry,
 			// so each token's sittir-side `renderAs` body carries the wrapper:
 			// the TOKEN flatten at link pushes `immediate` onto the rule the
-			// render pipeline sees. The pattern bodies are nominal text shapes
-			// (these leaves render verbatim from wire text, never from the
-			// pattern).
+			// render pipeline sees. The leaves render verbatim from wire text,
+			// but each pattern is also the leaf's guard, so it must admit
+			// every text the scanner reads for the token, in any string
+			// context (the guard does not know the delimiter). A string's
+			// text run is anything: a quote that is not the delimiter, a
+			// backslash in a raw string, a newline in a triple-quoted one, a
+			// brace outside a format string. The start token may end in a
+			// backtick, and a raw string's end token carries the backslashes
+			// before its closing quote.
 ```
 
 ### `import_from_statement` (`packages/python/grammar.sittir.ts:196`)

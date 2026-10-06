@@ -41,10 +41,10 @@ export default sittirGrammar(base, {
 
 	// See docs/python-grammar-sittir-glossary.md::renderAs
 	renderAs: (_$) => ({
-		string_start: /[a-zA-Z]*["']+/,
-		_string_content: token.immediate(/[^"'\\{}\n]+/),
+		string_start: /[a-zA-Z]*["'`]+/,
+		_string_content: token.immediate(/[\s\S]+/),
 		escape_interpolation: token.immediate(/\{\{|\}\}/),
-		string_end: token.immediate(/["']+/)
+		string_end: token.immediate(/\\*["'`]+/)
 	}),
 	groups: {
 		comparison_operator_comparator: ($) =>
