@@ -17,6 +17,7 @@ import type {
 	WithoutGroup,
 	GrammarTypeMap,
 	NodeMethods,
+	HoldsTree,
 	TriviaSetter,
 	GrammarInnerTrivia,
 	SlotHint,
@@ -19817,7 +19818,7 @@ export namespace SourceFile {
 		readonly $type: T.SourceFile['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.SourceFile, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.SourceFile, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.SourceFile['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -19834,7 +19835,7 @@ export namespace ExpressionStatement {
 		readonly $type: T.ExpressionStatement['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ExpressionStatement, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ExpressionStatement, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ExpressionStatement['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -19866,7 +19867,7 @@ export namespace MacroRule {
 		readonly $type: T.MacroRule['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.MacroRule, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.MacroRule, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.MacroRule['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -19883,7 +19884,7 @@ export namespace TokenBindingPattern {
 		readonly $type: T.TokenBindingPattern['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.TokenBindingPattern, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TokenBindingPattern, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TokenBindingPattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -19900,7 +19901,7 @@ export namespace TokenRepetitionPattern {
 		readonly $type: T.TokenRepetitionPattern['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.TokenRepetitionPattern, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TokenRepetitionPattern, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TokenRepetitionPattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -19917,7 +19918,7 @@ export namespace TokenRepetition {
 		readonly $type: T.TokenRepetition['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.TokenRepetition, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TokenRepetition, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TokenRepetition['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -19934,7 +19935,7 @@ export namespace NonSpecialToken {
 		readonly $type: T.NonSpecialToken['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.NonSpecialToken, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.NonSpecialToken, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.NonSpecialToken['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20050,7 +20051,7 @@ export namespace AttributeItem {
 		readonly $type: T.AttributeItem['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.AttributeItem, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.AttributeItem, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.AttributeItem['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20067,7 +20068,7 @@ export namespace InnerAttributeItem {
 		readonly $type: T.InnerAttributeItem['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.InnerAttributeItem, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.InnerAttributeItem, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.InnerAttributeItem['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20084,7 +20085,7 @@ export namespace Attribute {
 		readonly $type: T.Attribute['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.Attribute, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.Attribute, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.Attribute['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20101,7 +20102,7 @@ export namespace DeclarationList {
 		readonly $type: T.DeclarationList['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.DeclarationList, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.DeclarationList, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.DeclarationList['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20123,7 +20124,7 @@ export namespace UnionItem {
 		readonly $type: T.UnionItem['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.UnionItem, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.UnionItem, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.UnionItem['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20140,7 +20141,7 @@ export namespace EnumItem {
 		readonly $type: T.EnumItem['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.EnumItem, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.EnumItem, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.EnumItem['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20157,7 +20158,7 @@ export namespace EnumVariantList {
 		readonly $type: T.EnumVariantList['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.EnumVariantList, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.EnumVariantList, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.EnumVariantList['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20174,7 +20175,7 @@ export namespace EnumVariant {
 		readonly $type: T.EnumVariant['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.EnumVariant, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.EnumVariant, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.EnumVariant['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20191,7 +20192,7 @@ export namespace FieldDeclarationList {
 		readonly $type: T.FieldDeclarationList['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.FieldDeclarationList, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.FieldDeclarationList, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.FieldDeclarationList['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20208,7 +20209,7 @@ export namespace FieldDeclaration {
 		readonly $type: T.FieldDeclaration['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.FieldDeclaration, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.FieldDeclaration, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.FieldDeclaration['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20225,7 +20226,7 @@ export namespace OrderedFieldDeclarationList {
 		readonly $type: T.OrderedFieldDeclarationList['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.OrderedFieldDeclarationList, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.OrderedFieldDeclarationList, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.OrderedFieldDeclarationList['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20246,7 +20247,7 @@ export namespace ExternCrateDeclaration {
 		readonly $type: T.ExternCrateDeclaration['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ExternCrateDeclaration, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ExternCrateDeclaration, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ExternCrateDeclaration['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20263,7 +20264,7 @@ export namespace ConstItem {
 		readonly $type: T.ConstItem['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ConstItem, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ConstItem, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ConstItem['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20280,7 +20281,7 @@ export namespace StaticItem {
 		readonly $type: T.StaticItem['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.StaticItem, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.StaticItem, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.StaticItem['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20297,7 +20298,7 @@ export namespace TypeItem {
 		readonly $type: T.TypeItem['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.TypeItem, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TypeItem, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TypeItem['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20314,7 +20315,7 @@ export namespace FunctionItem {
 		readonly $type: T.FunctionItem['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.FunctionItem, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.FunctionItem, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.FunctionItem['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20331,7 +20332,7 @@ export namespace FunctionSignatureItem {
 		readonly $type: T.FunctionSignatureItem['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.FunctionSignatureItem, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.FunctionSignatureItem, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.FunctionSignatureItem['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20348,7 +20349,7 @@ export namespace FunctionModifiers {
 		readonly $type: T.FunctionModifiers['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.FunctionModifiers, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.FunctionModifiers, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.FunctionModifiers['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20395,7 +20396,7 @@ export namespace WhereClause {
 		readonly $type: T.WhereClause['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.WhereClause, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.WhereClause, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.WhereClause['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20412,7 +20413,7 @@ export namespace WherePredicate {
 		readonly $type: T.WherePredicate['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.WherePredicate, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.WherePredicate, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.WherePredicate['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20429,7 +20430,7 @@ export namespace TraitItem {
 		readonly $type: T.TraitItem['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.TraitItem, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TraitItem, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TraitItem['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20446,7 +20447,7 @@ export namespace AssociatedType {
 		readonly $type: T.AssociatedType['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.AssociatedType, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.AssociatedType, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.AssociatedType['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20463,7 +20464,7 @@ export namespace TraitBounds {
 		readonly $type: T.TraitBounds['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.TraitBounds, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TraitBounds, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TraitBounds['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20493,7 +20494,7 @@ export namespace HigherRankedTraitBound {
 		readonly $type: T.HigherRankedTraitBound['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.HigherRankedTraitBound, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.HigherRankedTraitBound, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.HigherRankedTraitBound['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20510,7 +20511,7 @@ export namespace RemovedTraitBound {
 		readonly $type: T.RemovedTraitBound['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.RemovedTraitBound, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.RemovedTraitBound, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.RemovedTraitBound['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20527,7 +20528,7 @@ export namespace TypeParameters {
 		readonly $type: T.TypeParameters['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.TypeParameters, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TypeParameters, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TypeParameters['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20544,7 +20545,7 @@ export namespace ConstParameter {
 		readonly $type: T.ConstParameter['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ConstParameter, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ConstParameter, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ConstParameter['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20561,7 +20562,7 @@ export namespace TypeParameter {
 		readonly $type: T.TypeParameter['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.TypeParameter, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TypeParameter, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TypeParameter['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20578,7 +20579,7 @@ export namespace LifetimeParameter {
 		readonly $type: T.LifetimeParameter['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.LifetimeParameter, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.LifetimeParameter, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.LifetimeParameter['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20595,7 +20596,7 @@ export namespace LetDeclaration {
 		readonly $type: T.LetDeclaration['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.LetDeclaration, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.LetDeclaration, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.LetDeclaration['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20612,7 +20613,7 @@ export namespace UseDeclaration {
 		readonly $type: T.UseDeclaration['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.UseDeclaration, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.UseDeclaration, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.UseDeclaration['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20629,7 +20630,7 @@ export namespace ScopedUseList {
 		readonly $type: T.ScopedUseList['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ScopedUseList, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ScopedUseList, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ScopedUseList['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20646,7 +20647,7 @@ export namespace UseList {
 		readonly $type: T.UseList['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.UseList, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.UseList, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.UseList['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20663,7 +20664,7 @@ export namespace UseAsClause {
 		readonly $type: T.UseAsClause['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.UseAsClause, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.UseAsClause, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.UseAsClause['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20680,7 +20681,7 @@ export namespace UseWildcard {
 		readonly $type: T.UseWildcard['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.UseWildcard, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.UseWildcard, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.UseWildcard['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20728,7 +20729,7 @@ export namespace Parameters {
 		readonly $type: T.Parameters['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.Parameters, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.Parameters, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.Parameters['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20745,7 +20746,7 @@ export namespace SelfParameter {
 		readonly $type: T.SelfParameter['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.SelfParameter, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.SelfParameter, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.SelfParameter['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20762,7 +20763,7 @@ export namespace VariadicParameter {
 		readonly $type: T.VariadicParameter['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.VariadicParameter, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.VariadicParameter, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.VariadicParameter['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20779,7 +20780,7 @@ export namespace Parameter {
 		readonly $type: T.Parameter['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.Parameter, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.Parameter, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.Parameter['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20796,7 +20797,7 @@ export namespace ExternModifier {
 		readonly $type: T.ExternModifier['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ExternModifier, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ExternModifier, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ExternModifier['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20813,7 +20814,7 @@ export namespace VisibilityModifier {
 		readonly $type: T.VisibilityModifier['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.VisibilityModifier, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.VisibilityModifier, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.VisibilityModifier['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20830,7 +20831,7 @@ export namespace BracketedType {
 		readonly $type: T.BracketedType['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.BracketedType, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.BracketedType, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.BracketedType['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20847,7 +20848,7 @@ export namespace QualifiedType {
 		readonly $type: T.QualifiedType['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.QualifiedType, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.QualifiedType, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.QualifiedType['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20864,7 +20865,7 @@ export namespace Lifetime {
 		readonly $type: T.Lifetime['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.Lifetime, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.Lifetime, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.Lifetime['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20881,7 +20882,7 @@ export namespace ArrayType {
 		readonly $type: T.ArrayType['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ArrayType, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ArrayType, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ArrayType['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20898,7 +20899,7 @@ export namespace ForLifetimes {
 		readonly $type: T.ForLifetimes['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ForLifetimes, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ForLifetimes, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ForLifetimes['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20915,7 +20916,7 @@ export namespace FunctionType {
 		readonly $type: T.FunctionType['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.FunctionType, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.FunctionType, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.FunctionType['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20932,7 +20933,7 @@ export namespace TupleType {
 		readonly $type: T.TupleType['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.TupleType, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TupleType, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TupleType['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20949,7 +20950,7 @@ export namespace GenericFunction {
 		readonly $type: T.GenericFunction['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.GenericFunction, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.GenericFunction, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.GenericFunction['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20966,7 +20967,7 @@ export namespace GenericType {
 		readonly $type: T.GenericType['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.GenericType, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.GenericType, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.GenericType['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -20983,7 +20984,7 @@ export namespace GenericTypeWithTurbofish {
 		readonly $type: T.GenericTypeWithTurbofish['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.GenericTypeWithTurbofish, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.GenericTypeWithTurbofish, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.GenericTypeWithTurbofish['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21000,7 +21001,7 @@ export namespace BoundedType {
 		readonly $type: T.BoundedType['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.BoundedType, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.BoundedType, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.BoundedType['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21017,7 +21018,7 @@ export namespace UseBounds {
 		readonly $type: T.UseBounds['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.UseBounds, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.UseBounds, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.UseBounds['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21034,7 +21035,7 @@ export namespace TypeArguments {
 		readonly $type: T.TypeArguments['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.TypeArguments, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TypeArguments, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TypeArguments['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21051,7 +21052,7 @@ export namespace TypeBinding {
 		readonly $type: T.TypeBinding['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.TypeBinding, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TypeBinding, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TypeBinding['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21068,7 +21069,7 @@ export namespace ReferenceType {
 		readonly $type: T.ReferenceType['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ReferenceType, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ReferenceType, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ReferenceType['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21085,7 +21086,7 @@ export namespace AbstractType {
 		readonly $type: T.AbstractType['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.AbstractType, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.AbstractType, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.AbstractType['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21102,7 +21103,7 @@ export namespace DynamicType {
 		readonly $type: T.DynamicType['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.DynamicType, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.DynamicType, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.DynamicType['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21131,7 +21132,7 @@ export namespace MacroInvocation {
 		readonly $type: T.MacroInvocation['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.MacroInvocation, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.MacroInvocation, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.MacroInvocation['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21148,7 +21149,7 @@ export namespace ScopedIdentifier {
 		readonly $type: T.ScopedIdentifier['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ScopedIdentifier, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ScopedIdentifier, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ScopedIdentifier['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21165,7 +21166,8 @@ export namespace ScopedTypeIdentifierInExpressionPosition {
 		readonly $type: T.ScopedTypeIdentifierInExpressionPosition['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ScopedTypeIdentifierInExpressionPosition, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed
+		extends ParsedOf<T.ScopedTypeIdentifierInExpressionPosition, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ScopedTypeIdentifierInExpressionPosition['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21182,7 +21184,7 @@ export namespace ScopedTypeIdentifier {
 		readonly $type: T.ScopedTypeIdentifier['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ScopedTypeIdentifier, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ScopedTypeIdentifier, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ScopedTypeIdentifier['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21199,7 +21201,7 @@ export namespace UnaryExpression {
 		readonly $type: T.UnaryExpression['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.UnaryExpression, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.UnaryExpression, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.UnaryExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21216,7 +21218,7 @@ export namespace TryExpression {
 		readonly $type: T.TryExpression['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.TryExpression, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TryExpression, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TryExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21233,7 +21235,7 @@ export namespace BinaryExpression {
 		readonly $type: T.BinaryExpression['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.BinaryExpression, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.BinaryExpression, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.BinaryExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21250,7 +21252,7 @@ export namespace AssignmentExpression {
 		readonly $type: T.AssignmentExpression['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.AssignmentExpression, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.AssignmentExpression, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.AssignmentExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21267,7 +21269,7 @@ export namespace CompoundAssignmentExpr {
 		readonly $type: T.CompoundAssignmentExpr['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.CompoundAssignmentExpr, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.CompoundAssignmentExpr, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.CompoundAssignmentExpr['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21284,7 +21286,7 @@ export namespace TypeCastExpression {
 		readonly $type: T.TypeCastExpression['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.TypeCastExpression, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TypeCastExpression, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TypeCastExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21301,7 +21303,7 @@ export namespace ReturnExpression {
 		readonly $type: T.ReturnExpression['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ReturnExpression, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ReturnExpression, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ReturnExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21318,7 +21320,7 @@ export namespace YieldExpression {
 		readonly $type: T.YieldExpression['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.YieldExpression, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.YieldExpression, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.YieldExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21335,7 +21337,7 @@ export namespace CallExpression {
 		readonly $type: T.CallExpression['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.CallExpression, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.CallExpression, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.CallExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21352,7 +21354,7 @@ export namespace Arguments {
 		readonly $type: T.Arguments['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.Arguments, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.Arguments, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.Arguments['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21369,7 +21371,7 @@ export namespace ParenthesizedExpression {
 		readonly $type: T.ParenthesizedExpression['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ParenthesizedExpression, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ParenthesizedExpression, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ParenthesizedExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21386,7 +21388,7 @@ export namespace TupleExpression {
 		readonly $type: T.TupleExpression['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.TupleExpression, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TupleExpression, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TupleExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21411,7 +21413,7 @@ export namespace StructExpression {
 		readonly $type: T.StructExpression['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.StructExpression, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.StructExpression, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.StructExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21428,7 +21430,7 @@ export namespace FieldInitializerList {
 		readonly $type: T.FieldInitializerList['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.FieldInitializerList, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.FieldInitializerList, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.FieldInitializerList['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21445,7 +21447,7 @@ export namespace ShorthandFieldInitializer {
 		readonly $type: T.ShorthandFieldInitializer['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ShorthandFieldInitializer, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ShorthandFieldInitializer, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ShorthandFieldInitializer['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21462,7 +21464,7 @@ export namespace FieldInitializer {
 		readonly $type: T.FieldInitializer['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.FieldInitializer, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.FieldInitializer, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.FieldInitializer['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21479,7 +21481,7 @@ export namespace BaseFieldInitializer {
 		readonly $type: T.BaseFieldInitializer['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.BaseFieldInitializer, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.BaseFieldInitializer, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.BaseFieldInitializer['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21496,7 +21498,7 @@ export namespace IfExpression {
 		readonly $type: T.IfExpression['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.IfExpression, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.IfExpression, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.IfExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21513,7 +21515,7 @@ export namespace LetCondition {
 		readonly $type: T.LetCondition['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.LetCondition, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.LetCondition, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.LetCondition['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21530,7 +21532,7 @@ export namespace LetChain {
 		readonly $type: T.LetChain['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.LetChain, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.LetChain, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.LetChain['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21547,7 +21549,7 @@ export namespace ElseClause {
 		readonly $type: T.ElseClause['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ElseClause, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ElseClause, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ElseClause['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21564,7 +21566,7 @@ export namespace MatchExpression {
 		readonly $type: T.MatchExpression['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.MatchExpression, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.MatchExpression, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.MatchExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21582,7 +21584,7 @@ export namespace MatchBlock {
 		readonly $with: BoundWithNode<Bound, BoundByKindId, BoundSurface>;
 	}
 	export type Bound = BoundSurface & FlatShapesOf<BoundSurface, T.MatchBlock, BoundByKindId>;
-	interface ParsedSurface extends ParsedOf<T.MatchBlock, ParsedByKindId>, NodeMethodsOf {
+	interface ParsedSurface extends ParsedOf<T.MatchBlock, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.MatchBlock['$type'];
 		readonly $with: WithNode<Parsed, BoundByKindId, ParsedSurface>;
 		readonly $query: () => QueryFacet<Parsed, ParsedByKindId>;
@@ -21601,7 +21603,7 @@ export namespace LastMatchArm {
 		readonly $with: BoundWithNode<Bound, BoundByKindId, BoundSurface>;
 	}
 	export type Bound = BoundSurface & FlatShapesOf<BoundSurface, T.LastMatchArm, BoundByKindId>;
-	interface ParsedSurface extends ParsedOf<T.LastMatchArm, ParsedByKindId>, NodeMethodsOf {
+	interface ParsedSurface extends ParsedOf<T.LastMatchArm, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.LastMatchArm['$type'];
 		readonly $with: WithNode<Parsed, BoundByKindId, ParsedSurface>;
 		readonly $query: () => QueryFacet<Parsed, ParsedByKindId>;
@@ -21632,7 +21634,7 @@ export namespace MatchPattern {
 		readonly $type: T.MatchPattern['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.MatchPattern, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.MatchPattern, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.MatchPattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21649,7 +21651,7 @@ export namespace WhileExpression {
 		readonly $type: T.WhileExpression['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.WhileExpression, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.WhileExpression, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.WhileExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21666,7 +21668,7 @@ export namespace LoopExpression {
 		readonly $type: T.LoopExpression['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.LoopExpression, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.LoopExpression, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.LoopExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21683,7 +21685,7 @@ export namespace ForExpression {
 		readonly $type: T.ForExpression['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ForExpression, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ForExpression, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ForExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21700,7 +21702,7 @@ export namespace ConstBlock {
 		readonly $type: T.ConstBlock['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ConstBlock, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ConstBlock, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ConstBlock['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21717,7 +21719,7 @@ export namespace ClosureParameters {
 		readonly $type: T.ClosureParameters['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ClosureParameters, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ClosureParameters, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ClosureParameters['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21739,7 +21741,7 @@ export namespace Label {
 		readonly $type: T.Label['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.Label, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.Label, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.Label['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21756,7 +21758,7 @@ export namespace BreakExpression {
 		readonly $type: T.BreakExpression['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.BreakExpression, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.BreakExpression, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.BreakExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21773,7 +21775,7 @@ export namespace ContinueExpression {
 		readonly $type: T.ContinueExpression['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ContinueExpression, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ContinueExpression, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ContinueExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21790,7 +21792,7 @@ export namespace IndexExpression {
 		readonly $type: T.IndexExpression['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.IndexExpression, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.IndexExpression, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.IndexExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21807,7 +21809,7 @@ export namespace AwaitExpression {
 		readonly $type: T.AwaitExpression['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.AwaitExpression, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.AwaitExpression, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.AwaitExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21824,7 +21826,7 @@ export namespace FieldExpression {
 		readonly $type: T.FieldExpression['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.FieldExpression, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.FieldExpression, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.FieldExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21841,7 +21843,7 @@ export namespace UnsafeBlock {
 		readonly $type: T.UnsafeBlock['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.UnsafeBlock, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.UnsafeBlock, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.UnsafeBlock['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21858,7 +21860,7 @@ export namespace AsyncBlock {
 		readonly $type: T.AsyncBlock['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.AsyncBlock, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.AsyncBlock, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.AsyncBlock['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21875,7 +21877,7 @@ export namespace GenBlock {
 		readonly $type: T.GenBlock['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.GenBlock, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.GenBlock, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.GenBlock['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21892,7 +21894,7 @@ export namespace TryBlock {
 		readonly $type: T.TryBlock['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.TryBlock, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TryBlock, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TryBlock['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21909,7 +21911,7 @@ export namespace Block {
 		readonly $type: T.Block['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.Block, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.Block, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.Block['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21926,7 +21928,7 @@ export namespace GenericPattern {
 		readonly $type: T.GenericPattern['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.GenericPattern, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.GenericPattern, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.GenericPattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21943,7 +21945,7 @@ export namespace TuplePattern {
 		readonly $type: T.TuplePattern['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.TuplePattern, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TuplePattern, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TuplePattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21960,7 +21962,7 @@ export namespace SlicePattern {
 		readonly $type: T.SlicePattern['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.SlicePattern, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.SlicePattern, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.SlicePattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -21977,7 +21979,7 @@ export namespace TupleStructPattern {
 		readonly $type: T.TupleStructPattern['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.TupleStructPattern, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TupleStructPattern, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TupleStructPattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -22002,7 +22004,7 @@ export namespace StructPattern {
 		readonly $type: T.StructPattern['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.StructPattern, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.StructPattern, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.StructPattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -22027,7 +22029,7 @@ export namespace MutPattern {
 		readonly $type: T.MutPattern['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.MutPattern, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.MutPattern, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.MutPattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -22044,7 +22046,7 @@ export namespace RefPattern {
 		readonly $type: T.RefPattern['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.RefPattern, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.RefPattern, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.RefPattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -22061,7 +22063,7 @@ export namespace CapturedPattern {
 		readonly $type: T.CapturedPattern['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.CapturedPattern, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.CapturedPattern, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.CapturedPattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -22078,7 +22080,7 @@ export namespace ReferencePattern {
 		readonly $type: T.ReferencePattern['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ReferencePattern, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ReferencePattern, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ReferencePattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -22095,7 +22097,7 @@ export namespace NegativeLiteral {
 		readonly $type: T.NegativeLiteral['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.NegativeLiteral, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.NegativeLiteral, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.NegativeLiteral['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -22112,7 +22114,7 @@ export namespace StringLiteral {
 		readonly $type: T.StringLiteral['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.StringLiteral, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.StringLiteral, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.StringLiteral['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -22129,7 +22131,7 @@ export namespace RawStringLiteral {
 		readonly $type: T.RawStringLiteral['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.RawStringLiteral, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.RawStringLiteral, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.RawStringLiteral['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -22146,7 +22148,7 @@ export namespace LineComment {
 		readonly $type: T.LineComment['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.LineComment, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.LineComment, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.LineComment['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -22165,7 +22167,7 @@ export namespace BlockComment {
 		readonly $type: T.BlockComment['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.BlockComment, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.BlockComment, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.BlockComment['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -22182,7 +22184,7 @@ export namespace Shebang {
 		readonly $type: T.Shebang['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.Shebang, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.Shebang, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.Shebang['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -22199,7 +22201,7 @@ export namespace Metavariable {
 		readonly $type: T.Metavariable['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.Metavariable, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.Metavariable, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.Metavariable['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -22217,7 +22219,7 @@ export namespace MacroRules {
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 		readonly _delimiter: Delimiter | undefined;
 	}
-	export interface Parsed extends ParsedOf<T.MacroRules, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.MacroRules, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.MacroRules['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -22251,7 +22253,7 @@ export namespace EnumVariantListElements {
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 		readonly _delimiter: Delimiter | undefined;
 	}
-	export interface Parsed extends ParsedOf<T.EnumVariantListElements, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.EnumVariantListElements, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.EnumVariantListElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -22302,7 +22304,7 @@ export namespace FieldDeclarationListElements {
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 		readonly _delimiter: Delimiter | undefined;
 	}
-	export interface Parsed extends ParsedOf<T.FieldDeclarationListElements, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.FieldDeclarationListElements, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.FieldDeclarationListElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -22379,7 +22381,8 @@ export namespace OrderedFieldDeclarationListElements {
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 		readonly _delimiter: Delimiter | undefined;
 	}
-	export interface Parsed extends ParsedOf<T.OrderedFieldDeclarationListElements, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed
+		extends ParsedOf<T.OrderedFieldDeclarationListElements, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.OrderedFieldDeclarationListElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -22460,7 +22463,7 @@ export namespace WherePredicates {
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 		readonly _delimiter: Delimiter | undefined;
 	}
-	export interface Parsed extends ParsedOf<T.WherePredicates, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.WherePredicates, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.WherePredicates['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -22504,7 +22507,7 @@ export namespace TypeParametersElements {
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 		readonly _delimiter: Delimiter | undefined;
 	}
-	export interface Parsed extends ParsedOf<T.TypeParametersElements, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TypeParametersElements, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TypeParametersElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -22585,7 +22588,7 @@ export namespace UseClauses {
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 		readonly _delimiter: Delimiter | undefined;
 	}
-	export interface Parsed extends ParsedOf<T.UseClauses, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.UseClauses, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.UseClauses['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -22892,7 +22895,7 @@ export namespace ParametersElements {
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 		readonly _delimiter: Delimiter | undefined;
 	}
-	export interface Parsed extends ParsedOf<T.ParametersElements, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ParametersElements, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ParametersElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23029,7 +23032,7 @@ export namespace Lifetimes {
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 		readonly _delimiter: Delimiter | undefined;
 	}
-	export interface Parsed extends ParsedOf<T.Lifetimes, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.Lifetimes, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.Lifetimes['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23063,7 +23066,7 @@ export namespace Types {
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 		readonly _delimiter: Delimiter | undefined;
 	}
-	export interface Parsed extends ParsedOf<T.Types, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.Types, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.Types['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23107,7 +23110,7 @@ export namespace UseBoundsElements {
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 		readonly _delimiter: Delimiter | undefined;
 	}
-	export interface Parsed extends ParsedOf<T.UseBoundsElements, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.UseBoundsElements, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.UseBoundsElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23174,7 +23177,7 @@ export namespace TypeArgumentsElements {
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 		readonly _delimiter: Delimiter | undefined;
 	}
-	export interface Parsed extends ParsedOf<T.TypeArgumentsElements, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TypeArgumentsElements, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TypeArgumentsElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23255,7 +23258,7 @@ export namespace ArgumentsElements {
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 		readonly _delimiter: Delimiter | undefined;
 	}
-	export interface Parsed extends ParsedOf<T.ArgumentsElements, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ArgumentsElements, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ArgumentsElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23306,7 +23309,7 @@ export namespace Expressions {
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 		readonly _delimiter: Delimiter | undefined;
 	}
-	export interface Parsed extends ParsedOf<T.Expressions, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.Expressions, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.Expressions['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23346,7 +23349,7 @@ export namespace FieldInitializerListElements {
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 		readonly _delimiter: Delimiter | undefined;
 	}
-	export interface Parsed extends ParsedOf<T.FieldInitializerListElements, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.FieldInitializerListElements, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.FieldInitializerListElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23413,7 +23416,7 @@ export namespace TuplePatternElements {
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 		readonly _delimiter: Delimiter | undefined;
 	}
-	export interface Parsed extends ParsedOf<T.TuplePatternElements, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TuplePatternElements, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TuplePatternElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23457,7 +23460,7 @@ export namespace Patterns {
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 		readonly _delimiter: Delimiter | undefined;
 	}
-	export interface Parsed extends ParsedOf<T.Patterns, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.Patterns, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.Patterns['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23491,7 +23494,7 @@ export namespace StructPatternElements {
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 		readonly _delimiter: Delimiter | undefined;
 	}
-	export interface Parsed extends ParsedOf<T.StructPatternElements, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.StructPatternElements, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.StructPatternElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23557,7 +23560,7 @@ export namespace UseWildcardGroup {
 		readonly $type: T.UseWildcardGroup['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.UseWildcardGroup, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.UseWildcardGroup, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.UseWildcardGroup['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23603,7 +23606,7 @@ export namespace IntegerLiteralDecimal {
 		readonly $type: T.IntegerLiteralDecimal['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.IntegerLiteralDecimal, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.IntegerLiteralDecimal, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.IntegerLiteralDecimal['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23624,7 +23627,7 @@ export namespace IntegerLiteralHex {
 		readonly $type: T.IntegerLiteralHex['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.IntegerLiteralHex, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.IntegerLiteralHex, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.IntegerLiteralHex['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23645,7 +23648,7 @@ export namespace IntegerLiteralBinary {
 		readonly $type: T.IntegerLiteralBinary['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.IntegerLiteralBinary, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.IntegerLiteralBinary, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.IntegerLiteralBinary['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23666,7 +23669,7 @@ export namespace IntegerLiteralOctal {
 		readonly $type: T.IntegerLiteralOctal['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.IntegerLiteralOctal, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.IntegerLiteralOctal, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.IntegerLiteralOctal['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23687,7 +23690,7 @@ export namespace CharLiteralPlain {
 		readonly $type: T.CharLiteralPlain['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.CharLiteralPlain, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.CharLiteralPlain, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.CharLiteralPlain['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23704,7 +23707,7 @@ export namespace CharLiteralEscapedSimple {
 		readonly $type: T.CharLiteralEscapedSimple['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.CharLiteralEscapedSimple, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.CharLiteralEscapedSimple, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.CharLiteralEscapedSimple['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23721,7 +23724,7 @@ export namespace CharLiteralEscapedUnicodeFixed {
 		readonly $type: T.CharLiteralEscapedUnicodeFixed['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.CharLiteralEscapedUnicodeFixed, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.CharLiteralEscapedUnicodeFixed, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.CharLiteralEscapedUnicodeFixed['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23738,7 +23741,8 @@ export namespace CharLiteralEscapedUnicodeBraced {
 		readonly $type: T.CharLiteralEscapedUnicodeBraced['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.CharLiteralEscapedUnicodeBraced, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed
+		extends ParsedOf<T.CharLiteralEscapedUnicodeBraced, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.CharLiteralEscapedUnicodeBraced['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23755,7 +23759,7 @@ export namespace CharLiteralEscapedHex {
 		readonly $type: T.CharLiteralEscapedHex['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.CharLiteralEscapedHex, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.CharLiteralEscapedHex, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.CharLiteralEscapedHex['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23772,7 +23776,7 @@ export namespace EscapeSequenceSimple {
 		readonly $type: T.EscapeSequenceSimple['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.EscapeSequenceSimple, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.EscapeSequenceSimple, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.EscapeSequenceSimple['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23789,7 +23793,7 @@ export namespace EscapeSequenceUnicodeFixed {
 		readonly $type: T.EscapeSequenceUnicodeFixed['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.EscapeSequenceUnicodeFixed, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.EscapeSequenceUnicodeFixed, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.EscapeSequenceUnicodeFixed['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23806,7 +23810,7 @@ export namespace EscapeSequenceUnicodeBraced {
 		readonly $type: T.EscapeSequenceUnicodeBraced['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.EscapeSequenceUnicodeBraced, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.EscapeSequenceUnicodeBraced, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.EscapeSequenceUnicodeBraced['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23823,7 +23827,7 @@ export namespace EscapeSequenceHex {
 		readonly $type: T.EscapeSequenceHex['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.EscapeSequenceHex, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.EscapeSequenceHex, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.EscapeSequenceHex['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23840,7 +23844,7 @@ export namespace ArrayExpressionSemi {
 		readonly $type: T.ArrayExpressionSemi['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ArrayExpressionSemi, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ArrayExpressionSemi, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ArrayExpressionSemi['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23857,7 +23861,7 @@ export namespace ArrayExpressionList {
 		readonly $type: T.ArrayExpressionList['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ArrayExpressionList, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ArrayExpressionList, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ArrayExpressionList['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23884,7 +23888,7 @@ export namespace AttributeInput {
 		readonly $type: T.AttributeInput['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.AttributeInput, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.AttributeInput, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.AttributeInput['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23901,7 +23905,7 @@ export namespace ClosureExpressionBlock {
 		readonly $type: T.ClosureExpressionBlock['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ClosureExpressionBlock, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ClosureExpressionBlock, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ClosureExpressionBlock['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23918,7 +23922,7 @@ export namespace ClosureExpressionExpr {
 		readonly $type: T.ClosureExpressionExpr['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ClosureExpressionExpr, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ClosureExpressionExpr, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ClosureExpressionExpr['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23935,7 +23939,7 @@ export namespace ReferenceExpressionRawConst {
 		readonly $type: T.ReferenceExpressionRawConst['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ReferenceExpressionRawConst, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ReferenceExpressionRawConst, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ReferenceExpressionRawConst['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23952,7 +23956,7 @@ export namespace ReferenceExpressionRawMut {
 		readonly $type: T.ReferenceExpressionRawMut['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ReferenceExpressionRawMut, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ReferenceExpressionRawMut, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ReferenceExpressionRawMut['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23969,7 +23973,7 @@ export namespace ReferenceExpressionMut {
 		readonly $type: T.ReferenceExpressionMut['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ReferenceExpressionMut, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ReferenceExpressionMut, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ReferenceExpressionMut['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -23986,7 +23990,7 @@ export namespace ReferenceExpressionBare {
 		readonly $type: T.ReferenceExpressionBare['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ReferenceExpressionBare, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ReferenceExpressionBare, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ReferenceExpressionBare['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24003,7 +24007,7 @@ export namespace ImplItemPositiveClause {
 		readonly $type: T.ImplItemPositiveClause['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ImplItemPositiveClause, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ImplItemPositiveClause, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ImplItemPositiveClause['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24022,7 +24026,7 @@ export namespace ImplItemNegativeClause {
 		readonly $type: T.ImplItemNegativeClause['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ImplItemNegativeClause, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ImplItemNegativeClause, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ImplItemNegativeClause['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24041,7 +24045,7 @@ export namespace ImplItemBody {
 		readonly $type: T.ImplItemBody['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ImplItemBody, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ImplItemBody, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ImplItemBody['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24058,7 +24062,7 @@ export namespace ImplItemSemi {
 		readonly $type: T.ImplItemSemi['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ImplItemSemi, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ImplItemSemi, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ImplItemSemi['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24075,7 +24079,8 @@ export namespace VisibilityModifierPubScopeInPath {
 		readonly $type: T.VisibilityModifierPubScopeInPath['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.VisibilityModifierPubScopeInPath, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed
+		extends ParsedOf<T.VisibilityModifierPubScopeInPath, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.VisibilityModifierPubScopeInPath['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24121,7 +24126,7 @@ export namespace VisibilityModifierPubScope {
 		readonly $type: T.VisibilityModifierPubScope['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.VisibilityModifierPubScope, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.VisibilityModifierPubScope, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.VisibilityModifierPubScope['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24140,7 +24145,7 @@ export namespace VisibilityModifierPub {
 		readonly $type: T.VisibilityModifierPub['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.VisibilityModifierPub, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.VisibilityModifierPub, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.VisibilityModifierPub['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24159,7 +24164,7 @@ export namespace FunctionTypeTraitForm {
 		readonly $type: T.FunctionTypeTraitForm['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.FunctionTypeTraitForm, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.FunctionTypeTraitForm, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.FunctionTypeTraitForm['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24176,7 +24181,7 @@ export namespace FunctionTypeFnForm {
 		readonly $type: T.FunctionTypeFnForm['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.FunctionTypeFnForm, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.FunctionTypeFnForm, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.FunctionTypeFnForm['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24193,7 +24198,7 @@ export namespace ModItemExternal {
 		readonly $type: T.ModItemExternal['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ModItemExternal, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ModItemExternal, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ModItemExternal['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24210,7 +24215,7 @@ export namespace ModItemInline {
 		readonly $type: T.ModItemInline['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ModItemInline, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ModItemInline, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ModItemInline['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24227,7 +24232,7 @@ export namespace OrPatternBinary {
 		readonly $type: T.OrPatternBinary['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.OrPatternBinary, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.OrPatternBinary, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.OrPatternBinary['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24244,7 +24249,7 @@ export namespace OrPatternPrefix {
 		readonly $type: T.OrPatternPrefix['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.OrPatternPrefix, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.OrPatternPrefix, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.OrPatternPrefix['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24261,7 +24266,7 @@ export namespace PointerTypeConst {
 		readonly $type: T.PointerTypeConst['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.PointerTypeConst, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.PointerTypeConst, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.PointerTypeConst['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24278,7 +24283,7 @@ export namespace PointerTypeMut {
 		readonly $type: T.PointerTypeMut['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.PointerTypeMut, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.PointerTypeMut, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.PointerTypeMut['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24295,7 +24300,7 @@ export namespace RangeExpressionBinary {
 		readonly $type: T.RangeExpressionBinary['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.RangeExpressionBinary, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.RangeExpressionBinary, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.RangeExpressionBinary['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24312,7 +24317,7 @@ export namespace RangeExpressionPostfix {
 		readonly $type: T.RangeExpressionPostfix['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.RangeExpressionPostfix, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.RangeExpressionPostfix, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.RangeExpressionPostfix['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24329,7 +24334,7 @@ export namespace RangeExpressionPrefix {
 		readonly $type: T.RangeExpressionPrefix['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.RangeExpressionPrefix, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.RangeExpressionPrefix, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.RangeExpressionPrefix['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24346,7 +24351,7 @@ export namespace RangeExpressionBare {
 		readonly $type: T.RangeExpressionBare['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.RangeExpressionBare, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.RangeExpressionBare, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.RangeExpressionBare['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24363,7 +24368,7 @@ export namespace ExpressionStatementWithSemi {
 		readonly $type: T.ExpressionStatementWithSemi['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ExpressionStatementWithSemi, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ExpressionStatementWithSemi, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ExpressionStatementWithSemi['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24380,7 +24385,7 @@ export namespace ForeignModItemSemi {
 		readonly $type: T.ForeignModItemSemi['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ForeignModItemSemi, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ForeignModItemSemi, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ForeignModItemSemi['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24397,7 +24402,7 @@ export namespace ForeignModItemBody {
 		readonly $type: T.ForeignModItemBody['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ForeignModItemBody, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ForeignModItemBody, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ForeignModItemBody['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24415,7 +24420,7 @@ export namespace MatchArmWithComma {
 		readonly $with: BoundWithNode<Bound, BoundByKindId, BoundSurface>;
 	}
 	export type Bound = BoundSurface & FlatShapesOf<BoundSurface, T.MatchArmWithComma, BoundByKindId>;
-	interface ParsedSurface extends ParsedOf<T.MatchArmWithComma, ParsedByKindId>, NodeMethodsOf {
+	interface ParsedSurface extends ParsedOf<T.MatchArmWithComma, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.MatchArmWithComma['$type'];
 		readonly $with: WithNode<Parsed, BoundByKindId, ParsedSurface>;
 		readonly $query: () => QueryFacet<Parsed, ParsedByKindId>;
@@ -24447,7 +24452,7 @@ export namespace MatchArmBlockEnding {
 		readonly $with: BoundWithNode<Bound, BoundByKindId, BoundSurface>;
 	}
 	export type Bound = BoundSurface & FlatShapesOf<BoundSurface, T.MatchArmBlockEnding, BoundByKindId>;
-	interface ParsedSurface extends ParsedOf<T.MatchArmBlockEnding, ParsedByKindId>, NodeMethodsOf {
+	interface ParsedSurface extends ParsedOf<T.MatchArmBlockEnding, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.MatchArmBlockEnding['$type'];
 		readonly $with: WithNode<Parsed, BoundByKindId, ParsedSurface>;
 		readonly $query: () => QueryFacet<Parsed, ParsedByKindId>;
@@ -24481,7 +24486,7 @@ export namespace LineCommentDocOuter {
 		readonly $type: T.LineCommentDocOuter['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.LineCommentDocOuter, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.LineCommentDocOuter, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.LineCommentDocOuter['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24498,7 +24503,7 @@ export namespace LineCommentDocInner {
 		readonly $type: T.LineCommentDocInner['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.LineCommentDocInner, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.LineCommentDocInner, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.LineCommentDocInner['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24515,7 +24520,7 @@ export namespace BlockCommentDocOuter {
 		readonly $type: T.BlockCommentDocOuter['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.BlockCommentDocOuter, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.BlockCommentDocOuter, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.BlockCommentDocOuter['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24532,7 +24537,7 @@ export namespace BlockCommentDocInner {
 		readonly $type: T.BlockCommentDocInner['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.BlockCommentDocInner, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.BlockCommentDocInner, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.BlockCommentDocInner['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24549,7 +24554,7 @@ export namespace TokenTreePatternParen {
 		readonly $type: T.TokenTreePatternParen['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.TokenTreePatternParen, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TokenTreePatternParen, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TokenTreePatternParen['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24580,7 +24585,7 @@ export namespace TokenTreePatternBracket {
 		readonly $type: T.TokenTreePatternBracket['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.TokenTreePatternBracket, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TokenTreePatternBracket, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TokenTreePatternBracket['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24611,7 +24616,7 @@ export namespace TokenTreePatternBrace {
 		readonly $type: T.TokenTreePatternBrace['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.TokenTreePatternBrace, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TokenTreePatternBrace, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TokenTreePatternBrace['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24642,7 +24647,7 @@ export namespace TokenTreeParen {
 		readonly $type: T.TokenTreeParen['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.TokenTreeParen, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TokenTreeParen, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TokenTreeParen['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24671,7 +24676,7 @@ export namespace TokenTreeBracket {
 		readonly $type: T.TokenTreeBracket['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.TokenTreeBracket, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TokenTreeBracket, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TokenTreeBracket['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24700,7 +24705,7 @@ export namespace TokenTreeBrace {
 		readonly $type: T.TokenTreeBrace['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.TokenTreeBrace, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TokenTreeBrace, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TokenTreeBrace['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24729,7 +24734,7 @@ export namespace DelimTokenTreeParen {
 		readonly $type: T.DelimTokenTreeParen['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.DelimTokenTreeParen, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.DelimTokenTreeParen, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.DelimTokenTreeParen['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24757,7 +24762,7 @@ export namespace DelimTokenTreeBracket {
 		readonly $type: T.DelimTokenTreeBracket['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.DelimTokenTreeBracket, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.DelimTokenTreeBracket, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.DelimTokenTreeBracket['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24785,7 +24790,7 @@ export namespace DelimTokenTreeBrace {
 		readonly $type: T.DelimTokenTreeBrace['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.DelimTokenTreeBrace, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.DelimTokenTreeBrace, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.DelimTokenTreeBrace['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24813,7 +24818,7 @@ export namespace FieldPatternShorthand {
 		readonly $type: T.FieldPatternShorthand['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.FieldPatternShorthand, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.FieldPatternShorthand, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.FieldPatternShorthand['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24830,7 +24835,7 @@ export namespace FieldPatternNamed {
 		readonly $type: T.FieldPatternNamed['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.FieldPatternNamed, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.FieldPatternNamed, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.FieldPatternNamed['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24847,7 +24852,7 @@ export namespace MacroDefinitionParen {
 		readonly $type: T.MacroDefinitionParen['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.MacroDefinitionParen, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.MacroDefinitionParen, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.MacroDefinitionParen['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24872,7 +24877,7 @@ export namespace MacroDefinitionBracket {
 		readonly $type: T.MacroDefinitionBracket['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.MacroDefinitionBracket, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.MacroDefinitionBracket, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.MacroDefinitionBracket['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24899,7 +24904,7 @@ export namespace MacroDefinitionBrace {
 		readonly $type: T.MacroDefinitionBrace['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.MacroDefinitionBrace, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.MacroDefinitionBrace, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.MacroDefinitionBrace['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24924,7 +24929,7 @@ export namespace RangePatternPrefix {
 		readonly $type: T.RangePatternPrefix['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.RangePatternPrefix, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.RangePatternPrefix, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.RangePatternPrefix['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24941,7 +24946,7 @@ export namespace RangePatternWithLeftWithRight {
 		readonly $type: T.RangePatternWithLeftWithRight['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.RangePatternWithLeftWithRight, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.RangePatternWithLeftWithRight, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.RangePatternWithLeftWithRight['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24958,7 +24963,7 @@ export namespace RangePatternWithLeft {
 		readonly $type: T.RangePatternWithLeft['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.RangePatternWithLeft, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.RangePatternWithLeft, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.RangePatternWithLeft['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24975,7 +24980,7 @@ export namespace StructItemBrace {
 		readonly $type: T.StructItemBrace['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.StructItemBrace, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.StructItemBrace, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.StructItemBrace['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -24992,7 +24997,7 @@ export namespace StructItemTuple {
 		readonly $type: T.StructItemTuple['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.StructItemTuple, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.StructItemTuple, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.StructItemTuple['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -25009,7 +25014,7 @@ export namespace StructItemUnit {
 		readonly $type: T.StructItemUnit['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.StructItemUnit, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.StructItemUnit, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.StructItemUnit['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -25026,7 +25031,7 @@ export namespace AttributedFieldDeclaration {
 		readonly $type: T.AttributedFieldDeclaration['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.AttributedFieldDeclaration, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.AttributedFieldDeclaration, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.AttributedFieldDeclaration['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -25043,7 +25048,7 @@ export namespace AttributedEnumVariant {
 		readonly $type: T.AttributedEnumVariant['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.AttributedEnumVariant, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.AttributedEnumVariant, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.AttributedEnumVariant['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -25060,7 +25065,7 @@ export namespace AttributedParameter {
 		readonly $type: T.AttributedParameter['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.AttributedParameter, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.AttributedParameter, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.AttributedParameter['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -25077,7 +25082,7 @@ export namespace AttributedTypeParameter {
 		readonly $type: T.AttributedTypeParameter['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.AttributedTypeParameter, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.AttributedTypeParameter, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.AttributedTypeParameter['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -25094,7 +25099,7 @@ export namespace AttributedArgument {
 		readonly $type: T.AttributedArgument['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.AttributedArgument, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.AttributedArgument, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.AttributedArgument['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -25111,7 +25116,7 @@ export namespace AttributedOrderedField {
 		readonly $type: T.AttributedOrderedField['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.AttributedOrderedField, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.AttributedOrderedField, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.AttributedOrderedField['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -25128,7 +25133,7 @@ export namespace TypeArgument {
 		readonly $type: T.TypeArgument['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.TypeArgument, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TypeArgument, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TypeArgument['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -25145,7 +25150,7 @@ export namespace MatchBlockArms {
 		readonly $type: T.MatchBlockArms['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.MatchBlockArms, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.MatchBlockArms, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.MatchBlockArms['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -25163,7 +25168,7 @@ export namespace TypeIdentifier {
 		readonly $type: T.TypeIdentifier['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.TypeIdentifier, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.TypeIdentifier, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TypeIdentifier['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -25181,7 +25186,7 @@ export namespace FieldIdentifier {
 		readonly $type: T.FieldIdentifier['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.FieldIdentifier, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.FieldIdentifier, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.FieldIdentifier['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -25199,7 +25204,7 @@ export namespace ShorthandFieldIdentifier {
 		readonly $type: T.ShorthandFieldIdentifier['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.ShorthandFieldIdentifier, ParsedByKindId>, NodeMethodsOf {
+	export interface Parsed extends ParsedOf<T.ShorthandFieldIdentifier, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ShorthandFieldIdentifier['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
@@ -25658,7 +25663,12 @@ export namespace Identifier {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.Identifier;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = IdentifierNs['Loose'];
 	export type LooseConfig = IdentifierNs['LooseConfig'];
 	export type BuildArgs = IdentifierNs['BuildArgs'];
@@ -25673,7 +25683,12 @@ export namespace TokenRepetitionPatternText {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.TokenRepetitionPatternText;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = TokenRepetitionPatternTextNs['Loose'];
 	export type LooseConfig = TokenRepetitionPatternTextNs['LooseConfig'];
 	export type BuildArgs = TokenRepetitionPatternTextNs['BuildArgs'];
@@ -25688,7 +25703,12 @@ export namespace StringOpen {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.StringOpen;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = StringOpenNs['Loose'];
 	export type LooseConfig = StringOpenNs['LooseConfig'];
 	export type BuildArgs = StringOpenNs['BuildArgs'];
@@ -25703,7 +25723,12 @@ export namespace CharLiteralEmpty {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.CharLiteralEmpty;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = CharLiteralEmptyNs['Loose'];
 	export type LooseConfig = CharLiteralEmptyNs['LooseConfig'];
 	export type BuildArgs = CharLiteralEmptyNs['BuildArgs'];
@@ -25718,7 +25743,12 @@ export namespace LineCommentExtraSlashes {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.LineCommentExtraSlashes;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = LineCommentExtraSlashesNs['Loose'];
 	export type LooseConfig = LineCommentExtraSlashesNs['LooseConfig'];
 	export type BuildArgs = LineCommentExtraSlashesNs['BuildArgs'];
@@ -25733,7 +25763,12 @@ export namespace LineCommentRegular {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.LineCommentRegular;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = LineCommentRegularNs['Loose'];
 	export type LooseConfig = LineCommentRegularNs['LooseConfig'];
 	export type BuildArgs = LineCommentRegularNs['BuildArgs'];
@@ -25748,7 +25783,12 @@ export namespace BlockCommentRegular {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.BlockCommentRegular;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = BlockCommentRegularNs['Loose'];
 	export type LooseConfig = BlockCommentRegularNs['LooseConfig'];
 	export type BuildArgs = BlockCommentRegularNs['BuildArgs'];
@@ -25763,7 +25803,12 @@ export namespace FloatLiteral {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.FloatLiteral;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = FloatLiteralNs['Loose'];
 	export type LooseConfig = FloatLiteralNs['LooseConfig'];
 	export type BuildArgs = FloatLiteralNs['BuildArgs'];
@@ -25778,7 +25823,12 @@ export namespace StringContent {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.StringContent;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = StringContentNs['Loose'];
 	export type LooseConfig = StringContentNs['LooseConfig'];
 	export type BuildArgs = StringContentNs['BuildArgs'];
@@ -25793,7 +25843,12 @@ export namespace RawStringLiteralContent {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.RawStringLiteralContent;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = RawStringLiteralContentNs['Loose'];
 	export type LooseConfig = RawStringLiteralContentNs['LooseConfig'];
 	export type BuildArgs = RawStringLiteralContentNs['BuildArgs'];
@@ -25808,7 +25863,12 @@ export namespace RawStringLiteralStart {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.RawStringLiteralStart;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = RawStringLiteralStartNs['Loose'];
 	export type LooseConfig = RawStringLiteralStartNs['LooseConfig'];
 	export type BuildArgs = RawStringLiteralStartNs['BuildArgs'];
@@ -25823,7 +25883,12 @@ export namespace RawStringLiteralEnd {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.RawStringLiteralEnd;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = RawStringLiteralEndNs['Loose'];
 	export type LooseConfig = RawStringLiteralEndNs['LooseConfig'];
 	export type BuildArgs = RawStringLiteralEndNs['BuildArgs'];
@@ -25838,7 +25903,12 @@ export namespace DocComment {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.DocComment;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = DocCommentNs['Loose'];
 	export type LooseConfig = DocCommentNs['LooseConfig'];
 	export type BuildArgs = DocCommentNs['BuildArgs'];
@@ -25853,7 +25923,12 @@ export namespace BlockCommentContent {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.BlockCommentContent;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = BlockCommentContentNs['Loose'];
 	export type LooseConfig = BlockCommentContentNs['LooseConfig'];
 	export type BuildArgs = BlockCommentContentNs['BuildArgs'];
@@ -25868,7 +25943,12 @@ export namespace ErrorSentinel {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.ErrorSentinel;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = ErrorSentinelNs['Loose'];
 	export type LooseConfig = ErrorSentinelNs['LooseConfig'];
 	export type BuildArgs = ErrorSentinelNs['BuildArgs'];

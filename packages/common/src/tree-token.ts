@@ -1,12 +1,7 @@
+import type { TreeMember, TreeToken } from '@sittir/types';
 import type { TreeHandle } from './readUntypedNode.ts';
 
-/**
- * What a parsed object holds to keep its tree live: one per tree, shared by
- * every object read from it.
- */
-export interface TreeToken {
-	readonly treeId: number;
-}
+export type { TreeToken };
 
 /**
  * The member a parsed object holds its token under. A symbol that never
@@ -17,7 +12,7 @@ export interface TreeToken {
  * copy by string keys do not, so data that left this thread arrives holding
  * no tree.
  */
-const TREE = Symbol('sittir.tree');
+const TREE = Symbol('sittir.tree') as typeof TreeMember;
 
 type Holder = { [TREE]?: TreeToken };
 
