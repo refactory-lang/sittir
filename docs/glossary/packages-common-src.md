@@ -213,7 +213,7 @@ Where a node came from, the value of its `$source` stamp: `Ts` for a node read f
 
 ### `packages/common/src/utils.ts::adoptChild`
 
-Records the node a wrapped node's accessor handed `child` out of, the generated wrap's `hydrateSlot` and `hydrateSlots` call it for every child they return. Only a parsed node reached through an accessor has a parent recorded; a root, a built node and a draft have none.
+Records the node a wrapped node's accessor handed `child` out of, the generated wrap's `hydrateSlot` and `hydrateSlots` call it for every child they return. Only a parsed node reached through an accessor has a parent recorded; a root, a built node and a draft have none. The trivia writer refuses a write on a parsed node that still sits at its source position (`sourceOf`), has no parent recorded and is not its tree's root (the root alone carries `$errors`): such a node was reached outside the accessors, through a query, which hands out a node of its own that no parent slot holds, so the render, which walks parent slots, would never reach a comment written on it.
 
 ### `packages/common/src/utils.ts::detachAncestors`
 

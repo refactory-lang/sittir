@@ -1334,7 +1334,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						`const _LIST_OWNER_KINDS: ReadonlySet<number> = new Set([${listOwnerMembers.map((member) => `TSKindId.${member}`).join(', ')}]);`
 					]),
 			...(kindEntries === undefined
-				? ['const _needsWrap = holdsSlots;']
+				? ['function _needsWrap(node: object): boolean {', '  return holdsSlots(node);', '}']
 				: [
 						...(interiorMembers.length === 0
 							? []
