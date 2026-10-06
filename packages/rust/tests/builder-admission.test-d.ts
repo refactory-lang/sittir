@@ -6,6 +6,7 @@
  * Compile-time only: `pnpm --filter @sittir/rust type-check`.
  */
 
+import type { HoldsTree } from '@sittir/types';
 import type * as T from '../src/types.ts';
 import rust from '../src/index.ts';
 import { createEngine } from '@sittir/common';
@@ -71,4 +72,11 @@ export function parsedLeafAdmittedByItsTree(storage: T.Identifier): string {
 	// @ts-expect-error a storage-shaped leaf literal is not a node
 	rs.build.functionItem.strict({ name: { $type: rs.kinds.Identifier, $text: 'g' }, parameters: rs.build.parameters(), body: rs.build.block() });
 	return rs.build.functionItem.strict({ name, parameters: rs.build.parameters(), body: rs.build.block() }).$render() + rs.render(name).toString();
+}
+
+export function parsedNodesHoldTheirTree(): readonly HoldsTree[] {
+	const root = rs.parse('fn f() { 1; }\n');
+	const fn = root.statements()[0]!;
+	if (!rs.is.functionItem(fn)) return [];
+	return [root, fn, fn.body(), fn.name()];
 }
