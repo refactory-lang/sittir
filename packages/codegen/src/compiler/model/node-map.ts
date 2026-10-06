@@ -640,7 +640,8 @@ export function extractSeparatorString(sep: RuleBase<'normalize'>['separator']):
 
 export function extractSeparatorKindId(sep: RuleBase<'normalize'>['separator']): number | undefined {
 	if (sep === undefined || !isStringType(sep.value.type)) return undefined;
-	return (sep.value as { resolvedKindId?: number }).resolvedKindId;
+	const stamped = sep.value as { aliasedToId?: number; resolvedKindId?: number };
+	return stamped.aliasedToId ?? stamped.resolvedKindId;
 }
 
 export interface ListSlotFactsCtx {

@@ -1389,8 +1389,8 @@ export function fieldTaggedLiterals(node: AssembledNode): ReadonlyMap<string, re
 			case STRING:
 				if (own !== undefined && own !== (rule as { fieldName?: string }).fieldName) {
 					const list = out.get(own) ?? [];
-					if (!list.some((literal) => literal.text === rule.value)) {
-						const kindId = (rule as { aliasedToId?: number; resolvedKindId?: number }).aliasedToId ?? (rule as { resolvedKindId?: number }).resolvedKindId;
+					const kindId = (rule as { aliasedToId?: number; resolvedKindId?: number }).aliasedToId ?? (rule as { resolvedKindId?: number }).resolvedKindId;
+					if (!list.some((literal) => literal.text === rule.value && literal.kindId === kindId)) {
 						list.push({ text: rule.value, ...(kindId === undefined ? {} : { kindId }) });
 					}
 					out.set(own, list);
@@ -1409,7 +1409,7 @@ export function fieldTaggedLiterals(node: AssembledNode): ReadonlyMap<string, re
 }
 
 export function fieldTaggedLiteralTexts(node: AssembledNode): ReadonlyMap<string, readonly string[]> {
-	return new Map([...fieldTaggedLiterals(node)].map(([field, literals]) => [field, literals.map((literal) => literal.text)]));
+	return new Map([...fieldTaggedLiterals(node)].map(([field, literals]) => [field, [...new Set(literals.map((literal) => literal.text))]]));
 }
 
 export function slotDropTexts(slot: AssembledNonterminal, owner: AssembledNode | undefined, elided: boolean): string[] {
