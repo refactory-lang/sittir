@@ -55,7 +55,7 @@ import {
 } from './transport-projection.ts';
 import { listViewOwners } from './factories.ts';
 import { interiorOf } from './interior.ts';
-import { assertEnvelopeExtrasPinned, type EnvelopeClaims } from './envelope-claims.ts';
+import { ENVELOPE_PINS, assertEnvelopeExtrasPinned, type EnvelopeClaims, type EnvelopePin } from './envelope-claims.ts';
 import { BOXED_PAYLOADS, PAYLOAD_CEILING_BYTES } from './boxed-payloads.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
 import {
@@ -155,10 +155,11 @@ export interface RenderOptionsInputs {
 	readonly sites?: readonly SitePreference[];
 	readonly addresses?: AddressTables;
 	readonly boxedPayloads?: readonly string[];
+	readonly envelopePins?: Readonly<Record<string, EnvelopePin>>;
 }
 
 export function grammarRenderInputs(grammar: GrammarName, inputs: RenderOptionsInputs): RenderOptionsInputs {
-	return { ...inputs, boxedPayloads: BOXED_PAYLOADS[grammar] ?? [] };
+	return { ...inputs, boxedPayloads: BOXED_PAYLOADS[grammar] ?? [], envelopePins: ENVELOPE_PINS[grammar] ?? {} };
 }
 
 export interface RenderModuleEmitterConfig extends RenderOptionsInputs {
@@ -1125,7 +1126,7 @@ export function emitRenderModule(
 			'use super::{field_ids as field, kind_ids as kind};',
 			'use ::sittir_core::VerbatimTransport;',
 			'',
-			renderTransportSupport(lang, nodeMap, structs, meta, generatedIdTables, plan, inputs.boxedPayloads ?? [])
+			renderTransportSupport(lang, nodeMap, structs, meta, generatedIdTables, plan, inputs.boxedPayloads ?? [], inputs.envelopePins)
 		].join('\n') + '\n';
 	const optionsRs = renderOptionsRs(plan, addresses, optionsKindEntries);
 	const { hashRs, hashTs } = emitHashFiles(lang, [
@@ -1224,7 +1225,8 @@ function renderTransportSupport(
 	meta: MetaData,
 	generatedIdTables: GeneratedIdTables,
 	plan: RenderPlan,
-	boxedPayloads: readonly string[]
+	boxedPayloads: readonly string[],
+	envelopePins: Readonly<Record<string, EnvelopePin>> | undefined
 ): string {
 	const projection = getTransportProjection(nodeMap);
 	const nodes = projection.nodes;
@@ -1274,7 +1276,7 @@ function renderTransportSupport(
 			: renderTransportStruct(node, nodeMap, choices.names, kindEntries, plan, read, bodyOf.get(node.kind))
 	);
 	assertReadableTransports(nodes, nodeMap, choices.names, read);
-	assertEnvelopeExtrasPinned(read.grammar, read.envelopeExtras, read.printedEnums);
+	assertEnvelopeExtrasPinned(read.grammar, envelopePins, read.envelopeExtras, read.printedEnums, kindEntries);
 	const seatTargetLines = renderSeatTargets(
 		nodes,
 		nodeMap,

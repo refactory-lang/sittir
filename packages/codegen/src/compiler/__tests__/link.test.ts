@@ -1193,6 +1193,37 @@ describe('canonicalizeRuleLiterals — kindId stamping', () => {
 		expect(misses.symbols.size).toBe(0);
 	});
 
+	it('stamps a string inside a TOKEN body with its public symbol, and records no miss for one with none', () => {
+		const entries: GeneratedKindEntry[] = [
+			{ kind: 'lt', id: 43, anon: true, symbolName: '<', literalText: '<' },
+			{ kind: 'lt2', id: 53, anon: true, symbolName: '<', literalText: '<' }
+		];
+		const misses = noMisses();
+		const rule: Rule<'link'> = {
+			type: TOKEN,
+			content: { type: SEQ, members: [{ type: STRING, value: '<' }, { type: STRING, value: 'nowhere' }] },
+			immediate: true
+		} as unknown as Rule<'link'>;
+		const result = canonicalizeRuleLiterals(rule, entries, false, misses) as unknown as { content: { members: StringRule<'link'>[] } };
+		expect(result.content.members[0]!.resolvedKindId).toBe(43);
+		expect(result.content.members[1]!.resolvedKindId).toBeUndefined();
+		expect(misses.literals.size).toBe(0);
+	});
+
+	it('stamps a separator string on REPEAT and REPEAT1 and leaves it a string', () => {
+		const entries: GeneratedKindEntry[] = [{ kind: 'comma', id: 11, anon: true, symbolName: ',', literalText: ',' }];
+		for (const type of [REPEAT, REPEAT1]) {
+			const rule = {
+				type,
+				content: { type: SYMBOL, name: 'comma', inline: false },
+				separator: { value: { type: STRING, value: ',' }, trailing: 'none' }
+			} as unknown as Rule<'link'>;
+			const result = canonicalizeRuleLiterals(rule, entries, true, noMisses()) as unknown as { separator: { value: StringRule<'link'> } };
+			expect(result.separator.value.type).toBe(STRING);
+			expect(result.separator.value.resolvedKindId).toBe(11);
+		}
+	});
+
 	it('leaves a lexed-interior field literal as text: the parser emits no node inside a token', () => {
 		const entries: GeneratedKindEntry[] = [
 			{ kind: 'blank_identifier', id: 5, literalRule: true, literalText: '_' },

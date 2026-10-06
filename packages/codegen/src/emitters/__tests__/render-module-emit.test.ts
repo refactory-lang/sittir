@@ -11,10 +11,11 @@
  */
 
 import { beforeAll, describe, expect, it } from 'vitest';
+import { DEDENT_TEXT, INDENT_TEXT } from '../../dsl/primitives/spacing.ts';
 import { classifySlot, buildSupertypeTransportSet, deriveChildrenKinds, type SlotClass } from '../transport-common.ts';
-import { TEXT_RESOLVED_LAYOUT_SITES } from '../layout-text-sites.ts';
 import { emitRenderModule, grammarRenderInputs, payloadCeilingAssertions, rustTransportStructName, transportSlotShapeOf } from '../render-module.ts';
 import { BOXED_PAYLOADS, PAYLOAD_CEILING_BYTES } from '../boxed-payloads.ts';
+import { ENVELOPE_PINS } from '../envelope-claims.ts';
 import { collectCatalogKinds, collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
 import { seamRenderRules, spaceRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
 import { link } from '../../compiler/link.ts';
@@ -182,7 +183,7 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript' | 'scm'):
 		templates,
 		nodeMap,
 		generatedIdTables,
-		grammarRenderInputs(grammar, { renderRules, visibleExternals: raw.visibleExternals, options: raw.options })
+		{ ...grammarRenderInputs(grammar, { renderRules, visibleExternals: raw.visibleExternals, options: raw.options }), envelopePins: undefined }
 	);
 	if (grammar === 'rust') _rustOptionsRs = emit.optionsRs.contents;
 	return emit.transportRs.contents;
@@ -635,17 +636,13 @@ describe('transport read facts', () => {
 		expect(args('FunctionItemTransport')).toBe('kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT]');
 	});
 
-	it('resolves an unstamped layout token by text only at a listed site', () => {
+	it('reads a layout token from its stamp and refuses one with none', () => {
 		const n = node('UseBoundsTransport');
 		expect(() => transportArgs(n, ownId(n), ctx, n.slots)).not.toThrow();
-		expect(() => transportArgs(n, ownId(n), { ...ctx, grammar: 'unlisted' }, n.slots)).toThrow(
-			/'use_bounds' layout token "<" has no stamped kind id and is not a listed text-resolved site/
+		const unstamped = { kind: 'use_bounds', lexedInterior: false, renderRule: { type: 'STRING', value: '<' } };
+		expect(() => layoutTokenIds(unstamped as unknown as AbstractAssembledCompound, ctx, [])).toThrow(
+			/'use_bounds' layout token "<" has no stamped kind id/
 		);
-	});
-
-	it('refuses a listed site that is stamped now, so the list is exact', () => {
-		const stamped = { kind: 'use_bounds', lexedInterior: false, renderRule: { type: 'STRING', value: '<', resolvedKindId: 43 } };
-		expect(() => layoutTokenIds(stamped as unknown as AbstractAssembledCompound, ctx, [])).toThrow(/'use_bounds' layout token "<" is stamped now; remove it/);
 	});
 
 	it('gives a list owner its minimum depth, its tokens and its inner gap', () => {
@@ -763,7 +760,8 @@ describe('a slot whose only scalar source is an enum of immediate tokens', () =>
 	}, 120_000);
 });
 
-describe('the listed text-resolved layout sites are exact', () => {
+describe('every string a kind writes is stamped', () => {
+	const RENDER_ONLY: ReadonlySet<string> = new Set([INDENT_TEXT, DEDENT_TEXT]);
 	const unstampedStrings = (rule: unknown, found: Set<string> = new Set()): Set<string> => {
 		const r = rule as { type?: string; value?: string; aliasedToId?: number; resolvedKindId?: number; members?: unknown[]; content?: unknown };
 		if (r.type === 'STRING' && r.value !== undefined && r.aliasedToId === undefined && r.resolvedKindId === undefined) found.add(r.value);
@@ -772,15 +770,13 @@ describe('the listed text-resolved layout sites are exact', () => {
 		return found;
 	};
 
-	for (const grammar of Object.keys(TEXT_RESOLVED_LAYOUT_SITES) as ('rust' | 'typescript' | 'scm')[]) {
-		it(`${grammar}: every listed (kind, text) is still an unstamped string of its kind`, async () => {
+	for (const grammar of ['rust', 'typescript', 'scm'] as const) {
+		it(`${grammar}: no compound's render rule holds an unstamped string`, async () => {
 			const { nodeMap } = await modelFor(grammar);
-			const missing = TEXT_RESOLVED_LAYOUT_SITES[grammar]!.filter((key) => {
-				const [kind = '', text = ''] = key.split('\t');
-				const node = nodeMap.nodes.get(kind);
-				return !(node instanceof AbstractAssembledCompound) || !unstampedStrings(node.renderRule).has(text);
-			});
-			expect(missing.map((key) => key.replace('\t', ' ')), 'listed sites that no longer exist; remove them from layout-text-sites.ts').toEqual([]);
+			const compounds: AbstractAssembledCompound[] = [];
+			for (const node of nodeMap.nodes.values()) if (node instanceof AbstractAssembledCompound && !node.lexedInterior) compounds.push(node);
+			const unstamped = compounds.flatMap((node) => [...unstampedStrings(node.renderRule)].filter((text) => !RENDER_ONLY.has(text)).map((text) => `${node.kind} ${JSON.stringify(text)}`));
+			expect(unstamped).toEqual([]);
 		}, 120_000);
 	}
 });
@@ -819,6 +815,22 @@ describe('the wire codec facts', () => {
 		expect(src).toMatch(/    #\[transport\(text\)\]\n    #\[kind\([^\n]*\)\]\n    Text\(::sittir_core::trivia::TriviaText\),/);
 		expect(src).toMatch(/    #\[transport\(verbatim\)\]\n    Verbatim\(VerbatimTransport\),\n    #\[transport\(text\)\]/);
 	});
+});
+
+describe('the envelope pin gate is wired to the real pipeline', () => {
+	it('hands each grammar its pin table, so the gate cannot be dropped without a test failing', () => {
+		expect(grammarRenderInputs('typescript', {}).envelopePins).toBe(ENVELOPE_PINS.typescript);
+		expect(grammarRenderInputs('rust', {}).envelopePins).toEqual({});
+	});
+
+	it('refuses a full emission that carries a pin for an enum it does not print', async () => {
+		const { raw, nodeMap, generatedIdTables, templates, renderRules } = await modelFor('typescript');
+		const inputs = grammarRenderInputs('typescript', { renderRules, visibleExternals: raw.visibleExternals, options: raw.options });
+		const stale = { ...inputs.envelopePins, 'GoneTransportSlot.Variant': { display: '_property_identifier', extras: [] } };
+		expect(() => emitRenderModule('typescript', templates, nodeMap, generatedIdTables, { ...inputs, envelopePins: stale })).toThrow(
+			/typescript GoneTransportSlot\.Variant pins an enum codegen does not print/
+		);
+	}, 120_000);
 });
 
 describe('the payload ceiling', () => {

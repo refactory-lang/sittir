@@ -11,13 +11,12 @@ import {
 	kindIdText,
 	storageTargetOf
 } from '../compiler/model/node-map.ts';
-import { findKindEntry, findKindEntryForLiteral, type KindEnumEntry } from './kind-discriminant.ts';
-import { isTextResolvedLayoutSite } from './layout-text-sites.ts';
+import { findKindEntry, type KindEnumEntry } from './kind-discriminant.ts';
 import { DEDENT_TEXT, INDENT_TEXT } from '../dsl/primitives/spacing.ts';
 import { isScalarStorage, kindConstants } from './kind-id-rust.ts';
 import { fieldConstName } from './field-id-rust.ts';
 import { queryRoutesOf } from './client-utils.ts';
-import { canonicalSeparatedListField, fieldTypeComponents, isTextLeaf, slotDropTexts, slotKindNames } from './shared.ts';
+import { canonicalSeparatedListField, fieldTypeComponents, isTextLeaf, slotDropKindIds, slotKindNames } from './shared.ts';
 import { interiorOf } from './interior.ts';
 import { rustStringLiteral } from './render-body.ts';
 import { STRING, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
@@ -184,14 +183,6 @@ function oneOrList(paths: readonly string[]): string {
 	return paths.length === 1 ? paths[0]! : `[${paths.join(', ')}]`;
 }
 
-function literalIds(texts: readonly string[], ctx: ReadFactsCtx, what: string): number[] {
-	return texts.map((text) => {
-		const id = findKindEntryForLiteral(ctx.kindEntries, text)?.id;
-		if (id === undefined) throw new Error(`transport read facts: ${what} ${JSON.stringify(text)} has no parser symbol`);
-		return id;
-	});
-}
-
 const RENDER_MARKERS: ReadonlySet<string> = new Set([INDENT_TEXT, DEDENT_TEXT]);
 
 export function layoutTokenIds(node: AbstractAssembledCompound, ctx: ReadFactsCtx, slots: readonly AssembledNonterminal[]): number[] {
@@ -201,19 +192,10 @@ export function layoutTokenIds(node: AbstractAssembledCompound, ctx: ReadFactsCt
 	const add = (id: number): void => {
 		if (!ids.includes(id)) ids.push(id);
 	};
-	const listedSeen = new Set<string>();
-	const textResolved = new Set<string>();
 	const layoutString = (rule: { readonly value: string; readonly aliasedToId?: number; readonly resolvedKindId?: number }): number => {
-		const listed = isTextResolvedLayoutSite(ctx.grammar, node.kind, rule.value);
-		if (listed) listedSeen.add(rule.value);
 		const stamped = rule.aliasedToId ?? rule.resolvedKindId;
-		if (stamped !== undefined) return stamped;
-		const id = listed ? findKindEntryForLiteral(ctx.kindEntries, rule.value)?.id : undefined;
-		if (id === undefined) {
-			throw new Error(`transport.rs: '${node.kind}' layout token ${JSON.stringify(rule.value)} has no stamped kind id and is not a listed text-resolved site`);
-		}
-		textResolved.add(rule.value);
-		return id;
+		if (stamped === undefined) throw new Error(`transport.rs: '${node.kind}' layout token ${JSON.stringify(rule.value)} has no stamped kind id`);
+		return stamped;
 	};
 	const externals = new Set((ctx.nodeMap.externals ?? []).flatMap((entry) => (entry.type === SYMBOL ? [entry.name] : [])));
 	const walk = (rule: RenderRule): void => {
@@ -244,9 +226,6 @@ export function layoutTokenIds(node: AbstractAssembledCompound, ctx: ReadFactsCt
 		}
 	};
 	if (!node.lexedInterior) walk(node.renderRule);
-	for (const text of listedSeen) {
-		if (!textResolved.has(text)) throw new Error(`transport.rs: '${node.kind}' layout token ${JSON.stringify(text)} is stamped now; remove it from layout-text-sites.ts`);
-	}
 	return ids;
 }
 
@@ -317,7 +296,7 @@ export function slotArgs(slot: AssembledNonterminal, owner: AssembledNode, shape
 		if (routes.kinds.length > 0) args.push('untagged');
 	}
 	if (shape.tag === 'presence') args.push(`presence = ${ctx.names.kind(presenceKeywordId(shape, owner, slot, ctx))}`);
-	const separators = literalIds(slotDropTexts(slot, owner, false), ctx, `${owner.kind}.${slot.name}'s separator`);
+	const separators = slotDropKindIds(slot, owner, false);
 	if (owner instanceof AssembledList && slot === listItemSlot(owner)) {
 		for (const id of separatorCandidateIds(owner, ctx)) if (!separators.includes(id)) separators.push(id);
 	}

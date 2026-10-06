@@ -13195,7 +13195,7 @@ Removes the `occurrence`-th entry named `slot` from a node's `$slotOrder` draft.
 
 ### `packages/codegen/src/emitters/shared.ts::fieldTaggedLiteralTexts`
 
-The literal texts a compound's render rule places directly under each field, keyed by field name: a `STRING` reached through `CHOICE`/`SEQ` inside `field(name, …)`. Tree-sitter tags such a token with the field (the `,` in python's `for_in_clause.right`, the `;` in typescript's `for_statement.condition`), so the reader puts it in the field's storage beside the field's real content. The token is punctuation the render template already emits, so `slotDropTexts` adds these texts to the slot's drop set and `dropWireDelimiters` strips them, for singular slots as well as `many` ones, along with their `$slotOrder` entries (`_dropOrderEntry`). Lexed-interior compounds are skipped: their interior is one token, not fields.
+The texts of `fieldTaggedLiterals`, keyed by field name, for the wrap layer's drop expression. See there for what they are.
 
 ### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.aliasIdentityLines`
 
@@ -16415,6 +16415,14 @@ The Rust constant a parser field has in `field_ids.rs`: the field name in upper 
 
 The source of `render/field_ids.rs`: one `FieldId` constant per entry of the parser's field table, in id order. The ids are `parser.c`'s own, so a generated attribute names a field by constant and the native reader compares ids without looking a name up.
 
+### `packages/codegen/src/emitters/shared.ts::fieldTaggedLiterals`
+
+The literals a compound's render rule places directly under each field, keyed by field name: a `STRING` reached through `CHOICE`/`SEQ` inside `field(name, …)`, each with its text and its stamped kind id (the aliased id when the site aliases it). Tree-sitter tags such a token with the field (the `,` in python's `for_in_clause.right`, the `;` in typescript's `for_statement.condition`), so the reader puts it in the field's storage beside the field's real content. The token is punctuation the render template already emits, so `slotDropTexts` adds these texts to the slot's drop set and `dropWireDelimiters` strips them, for singular slots as well as `many` ones, along with their `$slotOrder` entries (`_dropOrderEntry`). Lexed-interior compounds are skipped: their interior is one token, not fields.
+
+### `packages/codegen/src/emitters/shared.ts::slotDropKindIds`
+
+The kind ids of a slot's drop set, for the reader: the `separatorKindId` stamped on each of the slot's separated values, and the kind id of each field-tagged literal. Each id is the public symbol link stamped; a separator with no stamp is an error naming it. The ids come out once each, in the order `slotDropTexts` lists the texts.
+
 ### `packages/codegen/src/emitters/shared.ts::slotDropTexts`
 
 The literal texts a slot's drop set holds: the separators `slotSeparatorTexts` derives and the tokens the parser tags with the slot's own field (`fieldTaggedLiteralTexts`). The wrap strips them as wire delimiters, and the reader declares them as the slot's separators, so one set answers both.
@@ -16439,21 +16447,9 @@ What the read facts are computed from: the node map, the kind entries, the names
 
 A path, or a bracketed list of paths when there are several.
 
-### `packages/codegen/src/emitters/transport-projection.ts::literalIds`
-
-The kind ids of literal texts, as separators and keywords are declared by id. A text with no parser symbol throws and names what asked.
-
 ### `packages/codegen/src/emitters/transport-projection.ts::layoutTokenIds`
 
-The tokens a kind's own rule writes and no slot takes, as the ids the parser shows for them: an unfielded string (its aliased id when the site aliases it), an unfielded literal symbol, an external, and a fixed-text leaf that no printed slot holds, fielded or not. Tokens inside a printed slot's field belong to the slot. The reader skips these tokens where it routes children. A string with no stamped id (one the grammar writes twice, or inside a `token(…)`) is resolved by the parser's symbol for its text only at a site `TEXT_RESOLVED_LAYOUT_SITES` lists; any other unstamped string, and a fixed symbol with no kind id, is a diagnostic naming the kind and the token, so nothing drops silently. The indent and dedent render markers are not tokens and are skipped.
-
-### `packages/codegen/src/emitters/layout-text-sites.ts::TEXT_RESOLVED_LAYOUT_SITES`
-
-Per grammar, the exact (kind, text) sites whose layout token has no stamped kind id and takes the parser's symbol for its text, which is the public symbol the reader compares. It is a ceiling that only shrinks: a new unstamped site fails codegen, and a listed site that becomes stamped fails it too.
-
-### `packages/codegen/src/emitters/layout-text-sites.ts::isTextResolvedLayoutSite`
-
-Whether a (grammar, kind, text) site is listed. `layoutTokenIds` refuses a listed site that is stamped now, so the list is exact.
+The tokens a kind's own rule writes and no slot takes, as the ids the parser shows for them: an unfielded string (its aliased id when the site aliases it), an unfielded literal symbol, an external, and a fixed-text leaf that no printed slot holds, fielded or not. Tokens inside a printed slot's field belong to the slot. The reader skips these tokens where it routes children. Every string reads its stamp: link stamps the public symbol on each string site, duplicates and `token(…)`-wrapped strings included, so there is no lookup by text. A string with no stamp, and a fixed symbol with no kind id, is a diagnostic naming the kind and the token, so nothing drops silently. The indent and dedent render markers are not tokens and are skipped.
 
 ### `packages/codegen/src/emitters/transport-projection.ts::listItemSlot`
 
@@ -16469,7 +16465,7 @@ Whether a slot takes children that carry no field: when it has no field route or
 
 ### `packages/codegen/src/emitters/transport-projection.ts::slotArgs`
 
-The `#[slot(…)]` arguments of one slot: its field routes, `untagged` when it also takes untagged kinds, the keyword a presence slot reads, its separators (a list's item slot also takes the list's separator candidates), and `scalar` for a text slot stored as a unit. Empty means a bare `#[slot]`.
+The `#[slot(…)]` arguments of one slot: its field routes, `untagged` when it also takes untagged kinds, the keyword a presence slot reads, its separators, read from the stamps (`slotDropKindIds`; a list's item slot also takes the list's separator candidates), and `scalar` for a text slot stored as a unit. Empty means a bare `#[slot]`.
 
 ### `packages/codegen/src/emitters/transport-projection.ts::captureArgs`
 
@@ -16533,15 +16529,19 @@ The kind ids of a list's separator candidates, resolved from the model's candida
 
 ### `packages/codegen/src/emitters/envelope-claims.ts::EnvelopeClaims`
 
-The display id an envelope variant shows as, and the further kind ids the decode claims for it.
+The display kind id an envelope variant shows as, and the further kind ids the decode claims for it, as the printer sees them. The pin compares them by kind name.
 
-### `packages/codegen/src/emitters/envelope-claims.ts::ENVELOPE_EXTRA_IDS`
+### `packages/codegen/src/emitters/envelope-claims.ts::ENVELOPE_PINS`
 
-The display id and the kind ids, per grammar and envelope variant, that the decode claims for the variant beyond its display id. The reader does not accept them. The pin is a ceiling: it lists the ids that exist today so none is added unnoticed.
+The display kind and the further kinds, by kind name, per grammar and envelope variant, that the decode claims for the variant beyond its display kind (`EnvelopePin`). The reader does not accept them. The pin is a ceiling: it lists the kinds that exist today so none is added unnoticed. Names, not parser ids, so a grammar edit that renumbers symbols does not touch it. The real pipeline hands the table in through the emitter inputs (`grammarRenderInputs`); an emission without one checks nothing.
 
 ### `packages/codegen/src/emitters/envelope-claims.ts::assertEnvelopeExtrasPinned`
 
-Fails the build when a variant claims an id outside its pin (a new claimed id is a decision, never a raised pin) or a pinned variant of an enum the grammar emits is no longer an envelope variant, or no longer claims a pinned id (the pin is lowered or removed to match). A pin for an enum the model does not print at all is not checked.
+With a pin table given, refuses a pin whose enum the generation did not print or that names a kind the grammar does not have (naming the entry), a variant that claims a kind outside its pin (a new claimed kind is a decision, never a raised pin), and a pinned variant that is no longer an envelope variant, displays as another kind, or no longer claims a pinned kind (the pin is lowered or removed to match). Claimed ids are turned into kind names through the kind entries, so the comparison and every message speak in kinds. Without a table nothing is checked.
+
+### `packages/codegen/src/emitters/envelope-claims.ts::EnvelopePin`
+
+One pinned envelope variant: its display kind name and the kind names it may claim beyond it.
 
 ### `packages/codegen/src/emitters/render-module.ts::alternatesOf`
 

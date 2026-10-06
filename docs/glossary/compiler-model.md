@@ -1944,6 +1944,10 @@ from the model instead of recovering them from the subtype's name.
 // actually tells apart.
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::extractSeparatorKindId`
+
+The public-symbol kind id link stamped on a list's separator string, or `undefined` when the separator is not a string or carries no stamp. It rides on each separated value as `separatorKindId` beside `separator`, so the reader reads the id and never resolves the text.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::stampListFactsOnValues`
 
 ```text
