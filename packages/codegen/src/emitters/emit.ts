@@ -24,7 +24,7 @@ import { emitTests } from './test.ts';
 import { TemplateEmitter, stampStaticSpacing } from './templates.ts';
 import { emitClientUtils } from './client-utils.ts';
 import { collectCatalogKinds, collectKindEntries } from './kind-discriminant.ts';
-import { RenderModuleEmitter } from './render-module.ts';
+import { grammarRenderInputs, RenderModuleEmitter } from './render-module.ts';
 import { isGrammar } from '../grammars.ts';
 import {
 	classifyFactoryEmission,
@@ -169,12 +169,14 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 					grammar: renderModuleEmission.validGrammar,
 					nodeMap,
 					generatedIdTables: renderModuleEmission.generatedIdTables,
-					renderRules,
-					options: optionsBlock,
-					visibleExternals,
-					kindEntries,
-					sites: sitePreferences,
-					addresses: addressTables
+					...grammarRenderInputs(renderModuleEmission.validGrammar, {
+						renderRules,
+						options: optionsBlock,
+						visibleExternals,
+						kindEntries,
+						sites: sitePreferences,
+						addresses: addressTables
+					})
 				})
 			: undefined;
 

@@ -399,7 +399,7 @@ macro_rules! napi_engine {
             /// or `null` when it reads it.
             #[::napi_derive::napi]
             pub fn typed_read_refusal(&self, tree_id: f64) -> ::napi::Result<Option<String>> {
-                self.with_typed_read(tree_id, |typed: ::std::result::Result<$render_root, $crate::read::ReadError>, name| {
+                self.with_typed_read(tree_id, $crate::read::Depth::All, |typed: ::std::result::Result<$render_root, $crate::read::ReadError>, name| {
                     Ok(typed.err().map(|refusal| refusal.describe(name)))
                 })
             }
@@ -413,7 +413,7 @@ macro_rules! napi_engine {
             /// other place the two differ.
             #[::napi_derive::napi(ts_args_type = "treeId: number, today: object")]
             pub fn typed_read_parity(&self, tree_id: f64, today: $render_root) -> ::napi::Result<Option<String>> {
-                self.with_typed_read(tree_id, |typed: ::std::result::Result<$render_root, $crate::read::ReadError>, name| {
+                self.with_typed_read(tree_id, $crate::read::Depth::All, |typed: ::std::result::Result<$render_root, $crate::read::ReadError>, name| {
                     Ok(match typed {
                         Err(refusal) => Some(format!("refused: {}", refusal.describe(name))),
                         Ok(typed) if typed == today => None,
@@ -421,6 +421,37 @@ macro_rules! napi_engine {
                             .or_else(|| Some("the reads differ where their debug text does not".to_owned())),
                     })
                 })
+            }
+
+            /// Transitional, while today's read and the typed read both exist:
+            /// encode the typed read of tree `treeId` to JavaScript and decode it
+            /// back, read one level deep and then whole. `null` when both come
+            /// back unchanged; otherwise the depth, and the refusal, the encoder's
+            /// or decoder's error, or the first place the decoded read differs.
+            #[::napi_derive::napi]
+            pub fn typed_read_round_trip(&self, env: ::napi::Env, tree_id: f64) -> ::napi::Result<Option<String>> {
+                for (depth, label) in [($crate::read::Depth::ONE, "one level"), ($crate::read::Depth::All, "whole")] {
+                    let typed = self.with_typed_read(tree_id, depth, |typed: ::std::result::Result<$render_root, $crate::read::ReadError>, name| {
+                        Ok(typed.map_err(|refusal| refusal.describe(name)))
+                    })?;
+                    let typed = match typed {
+                        Ok(typed) => typed,
+                        Err(refusal) => return Ok(Some(format!("read {label}: refused: {refusal}"))),
+                    };
+                    let encoded = format!("{typed:#?}");
+                    let value = match unsafe { <$render_root as ::napi::bindgen_prelude::ToNapiValue>::to_napi_value(env.raw(), typed) } {
+                        Ok(value) => value,
+                        Err(error) => return Ok(Some(format!("read {label}: encoding failed: {error}"))),
+                    };
+                    let decoded = match unsafe { <$render_root as ::napi::bindgen_prelude::FromNapiValue>::from_napi_value(env.raw(), value) } {
+                        Ok(decoded) => decoded,
+                        Err(error) => return Ok(Some(format!("read {label}: decoding failed: {error}"))),
+                    };
+                    if let Some(report) = $crate::napi_engine::round_trip_report(&encoded, &format!("{decoded:#?}")) {
+                        return Ok(Some(format!("read {label}: {report}")));
+                    }
+                }
+                Ok(None)
             }
 
             /// Render a typed transport object (napi-native, numeric `$type`).
@@ -505,6 +536,7 @@ macro_rules! napi_engine {
             fn with_typed_read<T>(
                 &self,
                 tree_id: f64,
+                depth: $crate::read::Depth,
                 then: impl FnOnce(
                     ::std::result::Result<$render_root, $crate::read::ReadError>,
                     &dyn Fn($crate::types::KindId) -> &'static str,
@@ -517,7 +549,7 @@ macro_rules! napi_engine {
                     let trees = trees.borrow();
                     let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
                     let typed = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| {
-                        parsed.typed_read::<$render_root>($crate::read::Depth::All)
+                        parsed.typed_read::<$render_root>(depth)
                     }))
                     .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(payload, "typed_read panicked")))?;
                     let grammar = <$grammar as ::std::default::Default>::default();
@@ -640,14 +672,26 @@ pub fn parity_report(typed: &str, today: &str) -> Option<String> {
         }
     }
     if i < typed.len() || j < today.len() {
-        let window = |lines: &[String], at: usize| lines[at.saturating_sub(12)..(at + 12).min(lines.len())].join("\n");
-        report.push(format!(
-            "first difference at line {i}\n--- typed read\n{}\n--- today's read\n{}",
-            window(&typed, i),
-            window(&today, j)
-        ));
+        report.push(first_difference(i, ("typed read", &typed, i), ("today's read", &today, j)));
     }
     (!report.is_empty()).then(|| report.join("\n"))
+}
+
+/// How a read decoded from its own encoding differs from the read, from their
+/// debug text. Every line counts, a coordinate's handle and text-only flag
+/// included, since both sides come from one read. `None` when they agree.
+pub fn round_trip_report(encoded: &str, decoded: &str) -> Option<String> {
+    let lines = |dump: &str| dump.lines().map(str::to_owned).collect::<Vec<_>>();
+    let (encoded, decoded) = (lines(encoded), lines(decoded));
+    let at = encoded.iter().zip(&decoded).take_while(|(a, b)| a == b).count();
+    (at < encoded.len().max(decoded.len())).then(|| first_difference(at, ("encoded", &encoded, at), ("decoded", &decoded, at)))
+}
+
+/// Twelve lines of each dump around the first place they part, headed by the
+/// line number and each dump's name.
+fn first_difference(at: usize, first: (&str, &[String], usize), second: (&str, &[String], usize)) -> String {
+    let window = |lines: &[String], at: usize| lines[at.saturating_sub(12)..(at + 12).min(lines.len())].join("\n");
+    format!("first difference at line {at}\n--- {}\n{}\n--- {}\n{}", first.0, window(first.1, first.2), second.0, window(second.1, second.2))
 }
 
 /// The lines after a `slot: Some(` line that spell an empty slot value.
@@ -707,7 +751,7 @@ pub fn depth_from_wire(depth: Option<f64>) -> napi::Result<crate::ReadDepth> {
 
 #[cfg(test)]
 mod tests {
-    use super::parity_report;
+    use super::{parity_report, round_trip_report};
 
     const EMPTY: &str = "Block {\n    statements: Some(\n        [],\n    ),\n    layout: None,\n}";
     const ABSENT: &str = "Block {\n    statements: None,\n    layout: None,\n}";
@@ -742,5 +786,19 @@ mod tests {
     fn identical_dumps_and_handle_only_differences_agree() {
         assert_eq!(parity_report(ABSENT, ABSENT), None);
         assert_eq!(parity_report("A {\n    handle: 1,\n}", "A {\n    handle: 2,\n}"), None);
+    }
+
+    #[test]
+    fn a_round_trip_compares_every_line_handles_included() {
+        assert_eq!(round_trip_report(ABSENT, ABSENT), None);
+        let report = round_trip_report("A {\n    handle: 1,\n}", "A {\n    handle: 2,\n}").unwrap();
+        assert!(report.starts_with("first difference at line 1\n--- encoded\n"), "{report}");
+        assert!(report.contains("\n--- decoded\n"), "{report}");
+    }
+
+    #[test]
+    fn a_decoded_read_that_ends_early_is_a_difference() {
+        let report = round_trip_report(EMPTY, "Block {").unwrap();
+        assert!(report.starts_with("first difference at line 1"), "{report}");
     }
 }

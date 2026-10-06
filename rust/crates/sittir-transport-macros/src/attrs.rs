@@ -26,6 +26,10 @@ pub struct KindAttrs {
     pub content: Option<Ident>,
     pub list: bool,
     pub item: Option<Ident>,
+    /// On a variant: the arm bare text and an `ERROR` object decode as.
+    pub verbatim: bool,
+    /// On a choice: the wire codec alone, with no typed reader.
+    pub codec_only: bool,
 }
 
 /// `#[slot]` or `#[slot(…)]` on a field.
@@ -48,6 +52,9 @@ pub struct VariantKinds {
     /// `folded(PATH)`; matched by grammar id after every exact claim.
     pub folded: Vec<Path>,
     pub display: bool,
+    /// Ids the codec also decodes as this variant, written `decodes(PATH, …)`;
+    /// the reader ignores them.
+    pub decodes: Vec<Path>,
 }
 
 /// `#[flank(leading = N, trailing = N)]`: the flanks a list's delimiter
@@ -106,6 +113,8 @@ pub fn kind_attrs(attrs: &[Attribute]) -> syn::Result<KindAttrs> {
                 "content" => out.content = Some(meta.value()?.parse()?),
                 "list" => out.list = true,
                 "item" => out.item = Some(meta.value()?.parse()?),
+                "verbatim" => out.verbatim = true,
+                "codec_only" => out.codec_only = true,
                 _ => return Err(meta.error("unknown `transport` attribute")),
             }
             Ok(())
@@ -137,14 +146,22 @@ pub fn slot_attrs(attrs: &[Attribute]) -> syn::Result<Option<SlotAttrs>> {
 
 pub fn variant_kinds(attrs: &[Attribute]) -> syn::Result<Option<VariantKinds>> {
     let Some(attr) = attrs.iter().find(|a| a.path().is_ident("kind")) else { return Ok(None) };
-    let mut out = VariantKinds { kinds: Vec::new(), shown: Vec::new(), folded: Vec::new(), display: false };
+    let mut out = VariantKinds { kinds: Vec::new(), shown: Vec::new(), folded: Vec::new(), display: false, decodes: Vec::new() };
     for meta in attr.parse_args_with(Punctuated::<Meta, Token![,]>::parse_terminated)? {
         match meta {
             Meta::Path(path) if path.is_ident("display") => out.display = true,
             Meta::Path(path) => out.kinds.push(path),
             Meta::List(list) if list.path.is_ident("display") => out.shown.push(list.parse_args()?),
             Meta::List(list) if list.path.is_ident("folded") => out.folded.push(list.parse_args()?),
-            other => return Err(syn::Error::new_spanned(other, "`kind` takes kinds, `display`, `display(kind)`, or `folded(kind)`")),
+            Meta::List(list) if list.path.is_ident("decodes") => {
+                out.decodes.extend(list.parse_args_with(Punctuated::<Path, Token![,]>::parse_terminated)?)
+            }
+            other => {
+                return Err(syn::Error::new_spanned(
+                    other,
+                    "`kind` takes kinds, `display`, `display(kind)`, `folded(kind)` or `decodes(kind, …)`",
+                ))
+            }
         }
     }
     if out.kinds.is_empty() && out.shown.is_empty() {
@@ -180,4 +197,19 @@ pub fn separator_kind_attrs(attrs: &[Attribute]) -> syn::Result<Option<Separator
         Ok(())
     })?;
     Ok(Some(out))
+}
+
+/// `#[wire(key = "…")]` on a field: the key it crosses the wire under.
+pub fn wire_key(attrs: &[Attribute]) -> syn::Result<Option<LitStr>> {
+    let Some(attr) = attrs.iter().find(|a| a.path().is_ident("wire")) else { return Ok(None) };
+    let mut key = None;
+    attr.parse_nested_meta(|meta| {
+        if meta.path.is_ident("key") {
+            key = Some(meta.value()?.parse::<LitStr>()?);
+            Ok(())
+        } else {
+            Err(meta.error("`wire` takes `key = \"…\"`"))
+        }
+    })?;
+    key.map(Some).ok_or_else(|| syn::Error::new_spanned(attr, "`wire` names its key: `#[wire(key = \"…\")]`"))
 }

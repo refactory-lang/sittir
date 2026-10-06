@@ -18,13 +18,51 @@ struct Ceilings {
 }
 
 const CEILINGS: &[Ceilings] = &[
-    Ceilings { os: "macos", arch: "aarch64", release: true, bytes_per_level: 1536.0, root_kib: 96 },
-    Ceilings { os: "macos", arch: "aarch64", release: false, bytes_per_level: 5632.0, root_kib: 384 },
+    Ceilings { os: "macos", arch: "aarch64", release: true, bytes_per_level: 1434.0, root_kib: 40 },
+    Ceilings { os: "macos", arch: "aarch64", release: false, bytes_per_level: 5216.0, root_kib: 168 },
     Ceilings { os: "linux", arch: "x86_64", release: false, bytes_per_level: 5632.0, root_kib: 400 },
 ];
 
-fn nested(n: usize) -> String {
-    format!("fn f() {{ {}1{}; }}", "(".repeat(n), ")".repeat(n))
+/// The deepest entry of the rust corpus by parse-tree depth, saved as a probe
+/// input by `corpus-depth.ts --write`.
+/// Its least stack is printed beside the nesting's, not gated.
+const DEEPEST: &str = "rust-deepest.txt";
+
+/// What a stack probe reads: `n` nested parentheses, or a saved probe input.
+#[derive(Clone, Copy, Debug)]
+enum Probe {
+    Nested(usize),
+    Input(&'static str),
+}
+
+impl Probe {
+    fn source(self) -> String {
+        match self {
+            Probe::Nested(n) => format!("fn f() {{ {}1{}; }}", "(".repeat(n), ")".repeat(n)),
+            Probe::Input(name) => {
+                let path = format!(
+                    "{}/../../../docs/superpowers/probes/2026-10-01-shared-arena/stack/inputs/{name}",
+                    env!("CARGO_MANIFEST_DIR")
+                );
+                std::fs::read_to_string(&path).unwrap_or_else(|e| panic!("{path}: {e}"))
+            }
+        }
+    }
+
+    fn env(self) -> String {
+        match self {
+            Probe::Nested(n) => format!("nested:{n}"),
+            Probe::Input(name) => format!("input:{name}"),
+        }
+    }
+
+    fn from_env(value: &str) -> Probe {
+        match value.split_once(':') {
+            Some(("nested", n)) => Probe::Nested(n.parse().unwrap()),
+            Some(("input", name)) if name == DEEPEST => Probe::Input(DEEPEST),
+            _ => panic!("unknown stack probe {value}"),
+        }
+    }
 }
 
 fn parse(source: &str) -> tree_sitter::Tree {
@@ -33,8 +71,8 @@ fn parse(source: &str) -> tree_sitter::Tree {
     parser.parse(source, None).unwrap()
 }
 
-fn read_on_thread(reader: &'static str, n: usize, stack: usize) {
-    let source = nested(n);
+fn read_on_thread(reader: &'static str, probe: Probe, stack: usize) {
+    let source = probe.source();
     std::thread::Builder::new()
         .name(reader.into())
         .stack_size(stack)
@@ -55,30 +93,30 @@ fn read_on_thread(reader: &'static str, n: usize, stack: usize) {
 #[test]
 fn a_nesting_today_reads_does_not_overflow_the_typed_read() {
     let n = 250;
-    read_on_thread("today", n, TWO_MIB);
-    read_on_thread("typed", n, TWO_MIB);
+    read_on_thread("today", Probe::Nested(n), TWO_MIB);
+    read_on_thread("typed", Probe::Nested(n), TWO_MIB);
 }
 
-/// A child of the depth test: reads `STACK_N` nested parentheses with the
-/// reader `STACK_READER` on a thread of `STACK_KIB` KiB, and aborts if that
+/// A child of the depth test: reads `STACK_PROBE` with the reader
+/// `STACK_READER` on a thread of `STACK_KIB` KiB, and aborts if that
 /// overflows. A plain run of the suite has none of the variables and passes.
 #[test]
 fn stack_probe_child() {
-    let Ok(n) = std::env::var("STACK_N") else { return };
+    let Ok(probe) = std::env::var("STACK_PROBE") else { return };
     let reader = match std::env::var("STACK_READER").unwrap().as_str() {
         "today" => "today",
         _ => "typed",
     };
     let kib: usize = std::env::var("STACK_KIB").unwrap().parse().unwrap();
-    read_on_thread(reader, n.parse().unwrap(), kib * 1024);
+    read_on_thread(reader, Probe::from_env(&probe), kib * 1024);
 }
 
-/// Whether `reader` reads `n` nested parentheses on a stack of `kib` KiB: the
-/// child test ran (it reports one test passed) and did not overflow.
-fn survives(reader: &str, n: usize, kib: usize) -> bool {
+/// Whether `reader` reads `probe` on a stack of `kib` KiB: the child test ran
+/// (it reports one test passed) and did not overflow.
+fn survives(reader: &str, probe: Probe, kib: usize) -> bool {
     let output = Command::new(std::env::current_exe().unwrap())
         .args(["--exact", "stack_probe_child", "--test-threads=1"])
-        .env("STACK_N", n.to_string())
+        .env("STACK_PROBE", probe.env())
         .env("STACK_READER", reader)
         .env("STACK_KIB", kib.to_string())
         .output()
@@ -86,14 +124,14 @@ fn survives(reader: &str, n: usize, kib: usize) -> bool {
     output.status.success() && String::from_utf8_lossy(&output.stdout).contains("1 passed")
 }
 
-/// The least stack, in KiB, on which `reader` reads `n` nested parentheses,
-/// found by running the child on smaller and larger stacks.
-fn least_stack_kib(reader: &str, n: usize) -> usize {
+/// The least stack, in KiB, on which `reader` reads `probe`, found by running
+/// the child on smaller and larger stacks.
+fn least_stack_kib(reader: &str, probe: Probe) -> usize {
     let (mut lo, mut hi) = (16, 16 * 1024);
-    assert!(survives(reader, n, hi), "{reader} overflows {hi} KiB at {n} levels, or the probe did not run");
+    assert!(survives(reader, probe, hi), "{reader} overflows {hi} KiB reading {probe:?}, or the probe did not run");
     while hi - lo > 8 {
         let mid = (lo + hi) / 2;
-        if survives(reader, n, mid) {
+        if survives(reader, probe, mid) {
             hi = mid;
         } else {
             lo = mid;
@@ -105,10 +143,10 @@ fn least_stack_kib(reader: &str, n: usize) -> usize {
 /// The most nested parentheses `reader` reads on a stack of `kib` KiB.
 fn max_levels(reader: &str, kib: usize) -> usize {
     let (mut lo, mut hi) = (1, 8192);
-    assert!(survives(reader, lo, kib), "{reader} overflows {kib} KiB at one level, or the probe did not run");
+    assert!(survives(reader, Probe::Nested(lo), kib), "{reader} overflows {kib} KiB at one level, or the probe did not run");
     while hi - lo > 4 {
         let mid = (lo + hi) / 2;
-        if survives(reader, mid, kib) {
+        if survives(reader, Probe::Nested(mid), kib) {
             lo = mid;
         } else {
             hi = mid;
@@ -117,15 +155,17 @@ fn max_levels(reader: &str, kib: usize) -> usize {
     lo
 }
 
-/// The measured guarantee: per nesting level the typed read costs no more
-/// stack than today's in both profiles, and in release it reads at least as
-/// deep on 2 MiB. Its fixed root cost is higher than today's, so in the dev
-/// profile it reads about fifteen levels fewer on 2 MiB; the root cost is
-/// pinned as a ceiling that only tightens.
+/// The measured guarantee, in both profiles: per nesting level the typed read
+/// costs no more stack than today's, and at 200 nested levels it needs no more
+/// stack than today's. In release it reads at least as deep on 2 MiB. Its
+/// fixed root cost is higher than today's, so a shallow source, the deepest
+/// corpus entry included, needs more stack than today's; that cost is printed,
+/// not gated. The root and per-level costs are pinned per target and profile
+/// as ceilings that only tighten.
 #[test]
 fn the_typed_read_costs_no_more_stack_per_level_than_today_s() {
     let levels = [1, 10, 40, 200];
-    let cost = |reader: &str| levels.map(|n| least_stack_kib(reader, n));
+    let cost = |reader: &str| levels.map(|n| least_stack_kib(reader, Probe::Nested(n)));
     let (typed, today) = (cost("typed"), cost("today"));
     let per_level = |kib: [usize; 4]| {
         assert!(kib[3] > kib[2] && kib[2] > kib[0], "the least stack must grow with the nesting: {kib:?}");
@@ -135,6 +175,10 @@ fn the_typed_read_costs_no_more_stack_per_level_than_today_s() {
     eprintln!("least stack KiB at {levels:?} levels: typed {typed:?}, today {today:?}");
     eprintln!("bytes per level: typed {typed_per_level:.0}, today {today_per_level:.0}");
     assert!(typed_per_level <= today_per_level, "typed {typed_per_level:.0} B per level, today {today_per_level:.0} B");
+    let deepest = |reader: &str| least_stack_kib(reader, Probe::Input(DEEPEST));
+    let (typed_deepest, today_deepest) = (deepest("typed"), deepest("today"));
+    eprintln!("least stack KiB reading the deepest corpus entry: typed {typed_deepest}, today {today_deepest}");
+    assert!(typed[3] <= today[3], "typed {} KiB at {} levels exceeds today's {} KiB", typed[3], levels[3], today[3]);
     let release = !cfg!(debug_assertions);
     let (os, arch) = (std::env::consts::OS, std::env::consts::ARCH);
     let Some(pinned) = CEILINGS.iter().find(|row| row.os == os && row.arch == arch && row.release == release) else {

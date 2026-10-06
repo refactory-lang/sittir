@@ -4427,7 +4427,7 @@ The maintainer's, through brainstorm, unless marked as design's.
 7. **The derive emits `ToNapiValue` as well, proven by a corpus round trip.** No transport crosses to JavaScript before 1c, which reads through the encoder; 1b's harness encodes and decodes every corpus read and compares.
 8. **`debug-transport` goes** (design). Nothing builds with it, and its leaf decoder is the object branch of the release one.
 9. **Choices stay under a payload ceiling** (design). This refines the route of boxing a short list of dominant kinds, which the census shows cannot shrink the choices. Every choice payload type over the ceiling is boxed, by a list pinned per grammar. Generated `const` assertions check every payload against the ceiling both ways, so a type that grows past it, or a pinned type that shrinks under it, fails the build and names the type.
-10. **The stack gate.** The typed read's root cost in the dev profile is at most today's read's on each target (39 KiB macOS arm64, 63 KiB linux x86_64, against 1a's 375 and 391 KiB), and per level it stays at most today's in both profiles. The release row is re-pinned at 1b's measurement and never raised (design).
+10. **The stack gate.** On each target and in both profiles, the typed read needs no more stack than today's read at 200 nested levels, and costs no more per level. Its fixed root cost is accepted above today's (maintainer): a shallow source, the deepest corpus entry included, needs more stack than today's, and that cost is reported, not gated. The per-target rows pin the root and per-level costs as ceilings, re-pinned at 1b's measurement and never raised (design).
 11. **ABI 19.** The JavaScript harness calls a new native method, as 1a's did.
 12. **Scope.** 1b is cut from master. These stay out:
     - link stamping the layout token ids the read now resolves;
@@ -4458,7 +4458,7 @@ Modify:
 | `rust/crates/sittir-core/Cargo.toml` | `debug-transport` goes |
 | `rust/crates/sittir-transport-macros/src/lib.rs`, `attrs.rs`, `expand.rs` | `wire`, `decodes`, `verbatim`, `text` variants, `codec_only`; the codec wired in |
 | `rust/crates/sittir-parity-tests/tests/typed_read.rs` | every declared field gains its key |
-| `rust/crates/sittir-parity-tests/tests/typed_read_nesting.rs` | the ceilings; the dev root at most today's |
+| `rust/crates/sittir-parity-tests/tests/typed_read_nesting.rs` | the ceilings; 200 levels and per level at most today's; the deepest corpus entry reported |
 | `packages/codegen/src/emitters/render-module.ts` | keys, variant facts, `TriviaTransport`'s derive, `boxedInEnum`, size assertions; the hand-written decoders, the decode trials and `VerbatimTransport` go |
 | `packages/codegen/src/emitters/native-crate.ts` | `debug-transport` goes; ABI 19 |
 | `packages/codegen/src/emitters/__tests__/render-module-emit.test.ts`, `native-transport-emit.test.ts`, `render-module-separated-list.test.ts` | the printed facts |
@@ -5013,7 +5013,26 @@ mod tests {
                 pub text: String,
             }
         });
-        assert!(has(&out, r#"::std::format!("kind id {id} has no fixed text: {} renders from a node, not a kind id", "IdentifierTransport")"#));
+        assert!(has(
+            &out,
+            r#"::std::format!("kind id {id} ({:?}) has no fixed text: {} renders from a node, not a kind id", u16::try_from(id).map_or("<unknown>", |id| kind::kind_name_from_id(::sittir_core::types::KindId(id))), "IdentifierTransport")"#
+        ));
+    }
+
+    #[test]
+    fn a_text_leaf_whose_kind_names_no_module_is_refused() {
+        let input: syn::DeriveInput = parse_quote! {
+            #[transport(kind = IDENTIFIER, text)]
+            pub struct IdentifierTransport {
+                #[wire(key = "$_layout")]
+                pub layout: Option<TransportLayout>,
+                #[wire(key = "$text")]
+                pub text: String,
+            }
+        };
+        let error = crate::expand::derive(&input).expect_err("a kind with no module");
+        assert!(error.to_string().contains("IdentifierTransport"));
+        assert!(error.to_string().contains("kind_name_from_id"));
     }
 
     #[test]
@@ -5288,9 +5307,26 @@ pub fn structure(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenSt
     }))
 }
 
+/// The module a kind constant lives in: the declared `kind` path less its
+/// last segment, where the grammar's `kind_name_from_id` sits beside it.
+fn kind_module(ident: &Ident, kind: Option<&Path>) -> syn::Result<Path> {
+    let mut module = kind.cloned().ok_or_else(|| syn::Error::new_spanned(ident, "a text leaf declares its kind: `#[transport(kind = …)]`"))?;
+    if module.segments.len() < 2 {
+        return Err(syn::Error::new_spanned(
+            &module,
+            format!("{ident}'s kind names no module to find `kind_name_from_id` in: write it as `<kind_ids module>::<CONST>`"),
+        ));
+    }
+    module.segments.pop();
+    module.segments.pop_punct();
+    Ok(module)
+}
+
 /// A text leaf: decoded from its text, from a bare kind id (its fixed text) or
 /// from an object; encoded as a struct, so a leaf in a choice keeps its `$type`.
-pub fn text_leaf(ident: &Ident, fields: &[WireField<'_>], fixed: Option<&LitStr>) -> syn::Result<TokenStream> {
+/// A leaf with no fixed text refuses a bare kind id, naming that id's kind
+/// through `kind_name_from_id` in the module its `kind` constant lives in.
+pub fn text_leaf(ident: &Ident, fields: &[WireField<'_>], fixed: Option<&LitStr>, kind: Option<&Path>) -> syn::Result<TokenStream> {
     let napi = napi();
     let owner = ident.to_string();
     let text_key = fields
@@ -5313,14 +5349,19 @@ pub fn text_leaf(ident: &Ident, fields: &[WireField<'_>], fixed: Option<&LitStr>
         Some(text) => quote! {
             #napi::ValueType::Number => ::core::result::Result::Ok(Self { text: ::std::string::ToString::to_string(#text), #(#defaults)* }),
         },
-        None => quote! {
-            #napi::ValueType::Number => {
-                let id = unsafe { <u32 as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val)? };
-                ::core::result::Result::Err(#napi::Error::from_reason(::std::format!(
-                    "kind id {id} has no fixed text: {} renders from a node, not a kind id", #owner
-                )))
+        None => {
+            let names = kind_module(ident, kind)?;
+            quote! {
+                #napi::ValueType::Number => {
+                    let id = unsafe { <u32 as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val)? };
+                    ::core::result::Result::Err(#napi::Error::from_reason(::std::format!(
+                        "kind id {id} ({:?}) has no fixed text: {} renders from a node, not a kind id",
+                        u16::try_from(id).map_or("<unknown>", |id| #names::kind_name_from_id(::sittir_core::types::KindId(id))),
+                        #owner
+                    )))
+                }
             }
-        },
+        }
     };
     let encode = struct_encode(ident, fields)?;
     let boxed = boxed(ident);
@@ -5492,7 +5533,7 @@ In `expand.rs`:
         })
         .collect::<syn::Result<Vec<_>>>()?;
     let codec = match &attrs.text {
-        Some(fixed) => codec::text_leaf(ident, &wire, fixed.as_ref())?,
+        Some(fixed) => codec::text_leaf(ident, &wire, fixed.as_ref(), attrs.kind.as_ref())?,
         None => codec::structure(ident, &wire)?,
     };
 ```
@@ -5510,7 +5551,7 @@ In `expand.rs`:
 - [ ] **Step 6: Run the derive's tests**
 
 Run: `rtk cargo test -p sittir-transport-macros`
-Expected: PASS, 8 tests.
+Expected: PASS, 9 tests.
 
 - [ ] **Step 7: Write codegen's failing tests**
 
@@ -5919,7 +5960,7 @@ Message: `feat(engine): every corpus read crosses to JavaScript and back unchang
 
 A choice is as large as its largest payload. In the dev profile, every frame that holds a choice by value pays that size once per temporary. The typed read's root therefore costs 375 KiB of stack in the dev profile against today's 39 KiB on macOS arm64, and 391 against 63 KiB on linux x86_64. The size census (`docs/superpowers/probes/2026-10-01-shared-arena/stack/size-census.py`) finds the largest choices at 4,256 bytes (rust's `StatementTransport`) and 9,432 (typescript). No short list of kinds shrinks them: 90 payload types are over 512 bytes in rust, 128 in typescript, 61 in python, 6 in scm and 16 in regex.
 
-A byte ceiling does (ruling 9). Every payload type over the ceiling is boxed in every choice the reader reads, by a list pinned per grammar. Generated `const` assertions check every such payload against the ceiling both ways. A payload that grows past the ceiling fails the build asking to be pinned. A pinned payload that shrinks under it fails asking to be unpinned. The ceiling starts at 512 bytes. It halves, to 256 and then 128, only while the dev-profile root cost stays above today's (ruling 10). Past 128, stop and report the measurements.
+A byte ceiling does (ruling 9). Every payload type over the ceiling is boxed in every choice the reader reads, by a list pinned per grammar. Generated `const` assertions check every such payload against the ceiling both ways. A payload that grows past the ceiling fails the build asking to be pinned. A pinned payload that shrinks under it fails asking to be unpinned. The ceiling is the largest of 512, 256 and 128 bytes that passes the stack gate (ruling 10) in both profiles: at 200 levels and per level, the typed read needs no more stack than today's. A tie at 200 levels does not decide between ceilings; the next one down is measured. If none passes, stop and report the measurements.
 
 A payload's size depends only on the types it holds by value, and those never hold it back: a cycle through a choice is already boxed at the field that closes it. So pinning settles from the leaves up, and the pin list converges in a few rounds.
 
@@ -5927,7 +5968,7 @@ A payload's size depends only on the types it holds by value, and those never ho
 
 **Files:**
 - Create: `packages/codegen/src/emitters/boxed-payloads.ts`
-- Modify: `packages/codegen/src/emitters/render-module.ts` (`ReadPrint`, `readPrintOf`, `boxedInEnum`, `emitSupertypeTransportEnum`, `emitSupertypeRenderHelper`, `emitPerSlotChildEnum`, `renderAnyTransport`, `renderTransportSupport`)
+- Modify: `packages/codegen/src/emitters/render-module.ts` (`RenderOptionsInputs`, `ReadPrint`, `readPrintOf`, `boxedInEnum`, `emitSupertypeTransportEnum`, `emitSupertypeRenderHelper`, `emitPerSlotChildEnum`, `renderAnyTransport`, `renderTypedDispatch`, `renderTransportSupport`), `emit.ts`
 - Modify: `rust/crates/sittir-parity-tests/tests/typed_read_nesting.rs`
 - Test: `packages/codegen/src/emitters/__tests__/render-module-emit.test.ts`
 - Generated: `rust/crates/sittir-*/src/render/transport.rs`
@@ -5937,10 +5978,11 @@ A payload's size depends only on the types it holds by value, and those never ho
 - Consumes: Task 13's codec impls for `Box<T>` of every derived `T`; `impl<T: ReadTransport> ReadTransport for Box<T>` in `sittir_core::read`.
 - Produces:
   - `PAYLOAD_CEILING_BYTES: number` and `BOXED_PAYLOADS: Readonly<Record<string, readonly string[]>>`, keyed by grammar name and holding transport type names;
-  - `boxedInEnum(node: AssembledNode, grammar: GrammarName): boolean`;
+  - `RenderOptionsInputs.boxedPayloads?: readonly string[]`, the pins an emission is given, and `grammarRenderInputs(grammar: GrammarName, inputs: RenderOptionsInputs): RenderOptionsInputs`, the one read of `BOXED_PAYLOADS`, which `emit.ts` and the render-module test's real-model helper both call (a fixture emission passes no pins, so it boxes and refuses nothing);
+  - `boxedInEnum(node: AssembledNode, boxedPayloads: readonly string[]): boolean`;
   - `choicePayloadType(node: AssembledNode, read: ReadPrint): string`, which records the payload and returns `Box<T>` or `T`;
-  - `payloadCeilingAssertions(grammar: GrammarName, payloads: ReadonlySet<string>): string[]`;
-  - `ReadPrint.choicePayloads: Set<string>`.
+  - `payloadCeilingAssertions(pinned: readonly string[], payloads: ReadonlySet<string>): string[]`;
+  - `ReadPrint.choicePayloads: Set<string>` and `ReadPrint.boxedPayloads: readonly string[]`.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -5953,7 +5995,7 @@ describe('the payload ceiling', () => {
 		expect(BOXED_PAYLOADS.rust!.length).toBeGreaterThan(0);
 		for (const name of BOXED_PAYLOADS.rust!) {
 			expect(src).toMatch(new RegExp(`\\n    \\w+\\(Box<${name}>\\),`));
-			expect(src).not.toMatch(new RegExp(`\\n    \\w+\\(${name}\\),`));
+			expect(src.replace(/\npub enum TriviaTransport \{[^}]*\}/, '')).not.toMatch(new RegExp(`\\n    \\w+\\(${name}\\),`));
 		}
 	});
 
@@ -5968,12 +6010,27 @@ describe('the payload ceiling', () => {
 
 	it('refuses a pin no choice holds', () => {
 		const [stale] = BOXED_PAYLOADS.rust!;
-		expect(() => payloadCeilingAssertions('rust', new Set())).toThrow(`${stale} is pinned in boxed-payloads.ts but no choice holds it`);
+		expect(() => payloadCeilingAssertions(BOXED_PAYLOADS.rust!, new Set())).toThrow(`${stale} is pinned in boxed-payloads.ts but no choice holds it`);
 	});
 });
 ```
 
-A pinned type may still be a struct field, whose shape is `pub name: T,`. The negative pattern matches only a variant's shape, `    Name(T),`.
+A pinned type may still be a struct field, whose shape is `pub name: T,`. The negative pattern matches only a variant's shape, `    Name(T),`, and leaves out `TriviaTransport`, which is outside the rule. The test's real-model helper emits through `grammarRenderInputs(grammar, { renderRules, visibleExternals, options })`, as `emit.ts` does.
+
+In `native-transport-emit.test.ts`, a fixture emission given pins covers the boxing path on a toy model:
+
+```ts
+	it('boxes a pinned payload, asserts it over the ceiling, and refuses a pin no choice holds', () => {
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeMinimalNodeMap, MINIMAL_TOKENS);
+		const templates = emittedTemplates({ call_expression: slot('callee') });
+		const emitted = emitRenderModule('rust', templates, nodeMap, generatedIdTables, { boxedPayloads: ['CallExpressionTransport'] }).transportRs.contents;
+		expect(emitted).toContain('    CallExpression(Box<CallExpressionTransport>),');
+		expect(emitted).toMatch(new RegExp(`^const _: \\(\\) = assert!\\(::core::mem::size_of::<CallExpressionTransport>\\(\\) > ${PAYLOAD_CEILING_BYTES}, "`, 'm'));
+		expect(() => emitRenderModule('rust', templates, nodeMap, generatedIdTables, { boxedPayloads: ['UnheldTransport'] })).toThrow(
+			'UnheldTransport is pinned in boxed-payloads.ts but no choice holds it'
+		);
+	});
+```
 
 - [ ] **Step 2: Run to verify failure**
 
@@ -6008,12 +6065,21 @@ The lists are measured, not chosen, so they come from the command. The census ke
 
 In `render-module.ts`:
 
-- `ReadPrint` gains `readonly choicePayloads: Set<string>;`. `readPrintOf` starts it empty.
+- `RenderOptionsInputs` gains `readonly boxedPayloads?: readonly string[];`, and the real pipeline reads the table once:
+
+```ts
+export function grammarRenderInputs(grammar: GrammarName, inputs: RenderOptionsInputs): RenderOptionsInputs {
+	return { ...inputs, boxedPayloads: BOXED_PAYLOADS[grammar] ?? [] };
+}
+```
+
+  `emit.ts` builds the `RenderModuleEmitter` config through it; `RenderModuleEmitter` and `synthesizeRenderModuleBundle` pass `boxedPayloads` on, and `emitRenderModule` hands `inputs.boxedPayloads ?? []` to `renderTransportSupport`.
+- `ReadPrint` gains `readonly choicePayloads: Set<string>;`, started empty, and `readonly boxedPayloads: readonly string[];`, from the inputs.
 - `boxedInEnum` becomes the lookup:
 
 ```ts
-function boxedInEnum(node: AssembledNode, grammar: GrammarName): boolean {
-	return (BOXED_PAYLOADS[grammar] ?? []).includes(rustTransportStructName(node));
+function boxedInEnum(node: AssembledNode, boxedPayloads: readonly string[]): boolean {
+	return boxedPayloads.includes(rustTransportStructName(node));
 }
 ```
 
@@ -6023,22 +6089,21 @@ function boxedInEnum(node: AssembledNode, grammar: GrammarName): boolean {
 function choicePayloadType(node: AssembledNode, read: ReadPrint): string {
 	const name = rustTransportStructName(node);
 	read.choicePayloads.add(name);
-	return boxedInEnum(node, read.grammar) ? `Box<${name}>` : name;
+	return boxedInEnum(node, read.boxedPayloads) ? `Box<${name}>` : name;
 }
 ```
 
 - `emitSupertypeTransportEnum`:
-  - Its `isBoxed` becomes `(subNode: AssembledNode): boolean => boxedInEnum(subNode, read.grammar)`.
+  - Its `isBoxed` becomes `(subNode: AssembledNode): boolean => boxedInEnum(subNode, read.boxedPayloads)`.
   - The variant line takes `choicePayloadType(subNode, read)` in place of `variantType`.
   - In the bridge to `AnyTransport`, a payload that is not a supertype passes as it is, `AnyTransport::${anyVariant}(inner)`, since `AnyTransport` boxes the same types. A boxed supertype payload is still unboxed to call its own bridge, `${subBridgeFn}(*inner)`.
-- `emitSupertypeRenderHelper` takes `grammar: GrammarName`, and its arm reads `boxedInEnum(subNode, grammar) ? 'inner.as_ref()' : 'inner'`. Its caller passes `read.grammar`.
-- `emitPerSlotChildEnum`: its `isBoxed` becomes `(variantNode: AssembledNode): boolean => boxedInEnum(variantNode, read.grammar)`. The variant line takes `choicePayloadType(node, read)`. Its render arm keeps `inner.as_ref()` for a boxed payload.
+- `emitSupertypeRenderHelper` takes `boxedPayloads: readonly string[]`, and its arm reads `boxedInEnum(subNode, boxedPayloads) ? 'inner.as_ref()' : 'inner'`. Its caller, `renderTypedDispatch`, takes the pins too, and `renderTransportSupport` passes `read.boxedPayloads`.
+- `emitPerSlotChildEnum`: its `isBoxed` becomes `(variantNode: AssembledNode): boolean => boxedInEnum(variantNode, read.boxedPayloads)`. The variant line takes `choicePayloadType(node, read)`. Its render arm keeps `inner.as_ref()` for a boxed payload.
 - `renderAnyTransport`: the variant line becomes `` `    ${variant}(${choicePayloadType(node, read)}),` ``. Its render and prepare arms call methods on the payload, which reach through a box unchanged.
 - Add the assertions:
 
 ```ts
-export function payloadCeilingAssertions(grammar: GrammarName, payloads: ReadonlySet<string>): string[] {
-	const pinned = BOXED_PAYLOADS[grammar] ?? [];
+export function payloadCeilingAssertions(pinned: readonly string[], payloads: ReadonlySet<string>): string[] {
 	const stale = pinned.find((name) => !payloads.has(name));
 	if (stale !== undefined) throw new Error(`${stale} is pinned in boxed-payloads.ts but no choice holds it: unpin it`);
 	const n = PAYLOAD_CEILING_BYTES;
@@ -6050,7 +6115,7 @@ export function payloadCeilingAssertions(grammar: GrammarName, payloads: Readonl
 }
 ```
 
-  `renderTransportSupport` appends `'', ...payloadCeilingAssertions(read.grammar, read.choicePayloads)` to the lines it returns, after every choice has been printed. Each assertion is its own item, so one build reports every payload on the wrong side of the ceiling, not just the first.
+  `renderTransportSupport` appends `'', ...payloadCeilingAssertions(read.boxedPayloads, read.choicePayloads)` to the lines it returns, after every choice has been printed. Each assertion is its own item, so one build reports every payload on the wrong side of the ceiling, not just the first.
 
 - [ ] **Step 5: Run the tests**
 
@@ -6070,23 +6135,24 @@ Regenerate each grammar without building its native, `pnpm exec tsx packages/cli
 
 Run: `rtk cargo test -p sittir-parity-tests --test typed_read_nesting the_typed_read_costs -- --nocapture`
 
-It prints the least stack at 1, 10, 40 and 200 levels for both readers. The gate is the typed root (the 1-level figure) at most today's, on macOS arm64 in the dev profile. While it fails, halve `PAYLOAD_CEILING_BYTES`, take the lists from `size-census.py --pins <new ceiling>`, and repeat Steps 6 and 7. If it still fails at 128 bytes, stop and report each round's ceiling, pin counts and least stacks.
+Run it in both profiles (the second with `--release`). It prints the least stack at 1, 10, 40 and 200 levels for both readers, the bytes per level, and the least stack reading the deepest corpus entry. The gate, in both profiles, is the typed read at 200 levels and per level at most today's. Measure 512, 256 and 128 bytes, each with its lists from `size-census.py --pins <ceiling>` and Steps 6 and 7, and keep the largest that passes strictly. If none passes, stop and report each round's ceiling, pin counts and least stacks.
 
 - [ ] **Step 8: The nesting test states the new guarantee**
 
 In `typed_read_nesting.rs`:
 
-- After the per-level assertion, the dev profile's root cost must not exceed today's:
+- After the per-level assertion, the typed read at 200 levels must not exceed today's, in both profiles, and the deepest corpus entry's least stack is printed for both readers. That entry is saved as a probe input (`stack/inputs/rust-deepest.txt`, written by `corpus-depth.ts --write`), and a stack probe reads either nested parentheses or that input:
 
 ```rust
-    if cfg!(debug_assertions) {
-        assert!(typed[0] <= today[0], "typed root cost {} KiB exceeds today's {} KiB", typed[0], today[0]);
-    }
+    let deepest = |reader: &str| least_stack_kib(reader, Probe::Input(DEEPEST));
+    let (typed_deepest, today_deepest) = (deepest("typed"), deepest("today"));
+    eprintln!("least stack KiB reading the deepest corpus entry: typed {typed_deepest}, today {today_deepest}");
+    assert!(typed[3] <= today[3], "typed {} KiB at {} levels exceeds today's {} KiB", typed[3], levels[3], today[3]);
 ```
 
 - Re-pin the macOS rows from Step 7's run and from a release run (`… --release -- --nocapture`), rounded up to the search's granularity (8 KiB for a root, the printed value for a level). A release value above its current row (1536 B per level, 96 KiB root) is a regression: stop and report it, and do not raise the row.
 - The linux row is re-pinned from the CI log of the pushed branch, in a commit of its own.
-- The test's doc comment states the measured guarantee. Per level, the typed read costs no more stack than today's in both profiles. In release it reads at least as deep on 2 MiB. In the dev profile its root cost is at most today's. Both profiles' per-level and root figures are pinned as ceilings that only tighten.
+- The test's doc comment states the measured guarantee. In both profiles, per level and at 200 levels, the typed read costs no more stack than today's. In release it reads at least as deep on 2 MiB. Its fixed root cost is higher than today's, so a shallow source needs more stack; that is printed, not gated. Both profiles' per-level and root figures are pinned as ceilings that only tighten.
 
 Run: `rtk cargo test -p sittir-parity-tests --test typed_read_nesting` and the same with `--release`.
 Expected: PASS.
@@ -6097,7 +6163,7 @@ In `docs/glossary/emitters.md`:
 
 - `boxedInEnum`: replace the entry's body, which says every choice variant is inline, with the rule. A choice payload is boxed when its transport type is pinned for the grammar. The pins hold the payload types over the ceiling, and the generated assertions keep them exact.
 - `emitSupertypeTransportEnum`: its "SCC-driven Box rule" body gives way to the same rule. The bridge to `AnyTransport` passes a box through, since both choices box the same types.
-- Add entries for `choicePayloadType`, `payloadCeilingAssertions`, `PAYLOAD_CEILING_BYTES` and `BOXED_PAYLOADS`, and the `choicePayloads` member in `ReadPrint`'s entry. The `BOXED_PAYLOADS` entry says the lists are measured with `size-census.py --pins`, that the build refuses a list that is wrong either way, and that the ceiling is the largest that brings the dev-profile root cost within today's.
+- Add entries for `choicePayloadType`, `payloadCeilingAssertions`, `PAYLOAD_CEILING_BYTES` and `BOXED_PAYLOADS`, and the `choicePayloads` member in `ReadPrint`'s entry. The `BOXED_PAYLOADS` entry says the lists are measured with `size-census.py --pins`, that the build refuses a list that is wrong either way, and that the ceiling is the largest that keeps the typed read within today's at 200 levels and per level in both profiles.
 
 - [ ] **Step 10: Gates and commit**
 

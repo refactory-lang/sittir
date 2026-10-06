@@ -1,8 +1,6 @@
 //! Resolved render options: one whitespace kind id per spacing site, one
 //! bitflag per flank site, and the indentation unit.
 
-#[cfg(feature = "napi-bindings")]
-use napi_derive::napi;
 
 /// The seams a kind wraps around itself: the spacing site on each side, or
 /// `NO_SITE` when the kind owns no seam there.
@@ -65,10 +63,8 @@ impl SiteSpec {
 /// the stamp knows it. The render side stamps both, from the site that set the
 /// edge (the kind's own edge site, or the seat of the list that holds the
 /// node), so a seated gap writes at its own site's strength. A stamp without a
-/// strength writes at the strength the kind's edge site gives that arm; the
-/// field is optional because napi cannot skip a field and an arm-only object
-/// must still read.
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+/// strength writes at the strength the kind's edge site gives that arm, which
+/// is why the strength is optional.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct EdgeArm {
     pub arm: u16,
@@ -86,7 +82,6 @@ impl From<crate::slot::SeamArm> for EdgeArm {
 
 /// The two edges every transport carries in its base. An unset side is
 /// filled by `prepare_edges` from the kind's edge row, or by a seat.
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct Edges {
     pub before: Option<EdgeArm>,

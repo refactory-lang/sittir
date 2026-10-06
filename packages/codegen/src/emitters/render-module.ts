@@ -1,9 +1,8 @@
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
-import { isFixedTextLeaf, isTerminalNode, kindIdText } from '../compiler/model/node-map.ts';
+import { isFixedTextLeaf, isTerminalNode } from '../compiler/model/node-map.ts';
 import { STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import { wordCharAsciiTable } from '../util/word-matcher.ts';
-import { isBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import type { AssembledNode, RenderTemplateSurface, AssembledNonterminal } from '../compiler/model/node-map.ts';
@@ -57,6 +56,7 @@ import {
 import { listViewOwners } from './factories.ts';
 import { interiorOf } from './interior.ts';
 import { assertEnvelopeExtrasPinned, type EnvelopeClaims } from './envelope-claims.ts';
+import { BOXED_PAYLOADS, PAYLOAD_CEILING_BYTES } from './boxed-payloads.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
 import {
 	RESERVED_SUPERTYPE_ENUM_NAMES,
@@ -88,7 +88,6 @@ import {
 	findKindEntry,
 	findKindEntryForLiteral,
 	hasCatalogEntry,
-	kindIdMemberName,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import { pascalCase, toScreamingSnakeCase } from '../compiler/model/casing.ts';
@@ -154,6 +153,11 @@ export interface RenderOptionsInputs {
 	readonly kindEntries?: readonly KindEnumEntry[];
 	readonly sites?: readonly SitePreference[];
 	readonly addresses?: AddressTables;
+	readonly boxedPayloads?: readonly string[];
+}
+
+export function grammarRenderInputs(grammar: GrammarName, inputs: RenderOptionsInputs): RenderOptionsInputs {
+	return { ...inputs, boxedPayloads: BOXED_PAYLOADS[grammar] ?? [] };
 }
 
 export interface RenderModuleEmitterConfig extends RenderOptionsInputs {
@@ -180,7 +184,8 @@ function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig
 		options,
 		kindEntries,
 		sites,
-		addresses
+		addresses,
+		boxedPayloads
 	} = config;
 	return {
 		emit: emitRenderModule(grammar, templates, nodeMap, generatedIdTables, {
@@ -189,7 +194,8 @@ function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig
 			options,
 			kindEntries,
 			sites,
-			addresses
+			addresses,
+			boxedPayloads
 		})
 	};
 }
@@ -210,7 +216,8 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 			options: config.options,
 			kindEntries: config.kindEntries,
 			sites: config.sites,
-			addresses: config.addresses
+			addresses: config.addresses,
+			boxedPayloads: config.boxedPayloads
 		};
 	}
 
@@ -259,9 +266,9 @@ function generatedHeader(lang: GrammarName): string {
 function transportRsHeader(lang: GrammarName): string {
 	return `${generatedHeader(lang)}
 //
-// Per-kind view structs and render bodies, AnyTransport enum + FromNapiValue
-// impls + per-kind transport structs + typed dispatch
-// (render_transport_dispatch) + transport bridge helpers.`;
+// Per-kind view structs and render bodies, AnyTransport enum + per-kind
+// transport structs + typed dispatch (render_transport_dispatch) + transport
+// bridge helpers.`;
 }
 
 type EmittedNonterminalView = 'scalar' | 'list' | 'field';
@@ -593,7 +600,8 @@ function renderTypedDispatch(
 	usedSupertypeNames: ReadonlySet<string>,
 	kindIdByKind: ReadonlyMap<string, number>,
 	plan: RenderPlan,
-	kindEntries: readonly KindEntryLike[]
+	kindEntries: readonly KindEntryLike[],
+	boxedPayloads: readonly string[]
 ): string[] {
 	const structsByKind = new Map(structs.map((s) => [s.kind, s]));
 	const lines: string[] = [];
@@ -608,7 +616,7 @@ function renderTypedDispatch(
 		if (!usedSupertypeNames.has(node.typeName)) continue;
 		const enumName = `${rustTypeIdent(node.typeName)}Transport`;
 		if (RESERVED_SUPERTYPE_ENUM_NAMES.has(enumName)) continue;
-		lines.push(...emitSupertypeRenderHelper(node, nodeMap, fixed));
+		lines.push(...emitSupertypeRenderHelper(node, nodeMap, fixed, boxedPayloads));
 	}
 
 	const wordTable = wordCharAsciiTable(nodeMap.wordMatcher ?? /\w/);
@@ -1114,8 +1122,9 @@ export function emitRenderModule(
 			'use ::sittir_core::options::Edged as _;',
 			'use super::options;',
 			'use super::{field_ids as field, kind_ids as kind};',
+			'use ::sittir_core::VerbatimTransport;',
 			'',
-			renderTransportSupport(lang, nodeMap, structs, meta, generatedIdTables, plan)
+			renderTransportSupport(lang, nodeMap, structs, meta, generatedIdTables, plan, inputs.boxedPayloads ?? [])
 		].join('\n') + '\n';
 	const optionsRs = renderOptionsRs(plan, addresses, optionsKindEntries);
 	const { hashRs, hashTs } = emitHashFiles(lang, [
@@ -1148,6 +1157,8 @@ interface ReadPrint {
 	readonly printedEnums: Set<string>;
 	readonly admitted: Map<string, number[]>;
 	readonly blankChoices: Set<string>;
+	readonly choicePayloads: Set<string>;
+	readonly boxedPayloads: readonly string[];
 }
 
 function readPrintOf(
@@ -1155,9 +1166,11 @@ function readPrintOf(
 	structs: readonly EmittedStruct[],
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[],
-	generatedIdTables: GeneratedIdTables
+	generatedIdTables: GeneratedIdTables,
+	boxedPayloads: readonly string[]
 ): ReadPrint {
 	return {
+		boxedPayloads,
 		grammar,
 		envelopeExtras: new Map(),
 		printedEnums: new Set(),
@@ -1171,7 +1184,8 @@ function readPrintOf(
 			grammar
 		},
 		admitted: new Map(),
-		blankChoices: new Set()
+		blankChoices: new Set(),
+		choicePayloads: new Set()
 	};
 }
 
@@ -1194,11 +1208,10 @@ function variantKindLines(
 ): string[] {
 	read.printedEnums.add(enumName);
 	if (variant instanceof AssembledAlias) {
-		read.envelopeExtras.set(`${enumName}.${variantName}`, {
-			display: variant.aliasTypeId,
-			extras: ids.filter((id) => id !== variant.aliasTypeId)
-		});
-		return [`    #[kind(${variantKindArgs([variant.aliasTypeId], true, read.ctx)})]`];
+		const extras = ids.filter((id) => id !== variant.aliasTypeId);
+		read.envelopeExtras.set(`${enumName}.${variantName}`, { display: variant.aliasTypeId, extras });
+		const decodes = extras.length === 0 ? '' : `, decodes(${extras.map((id) => read.ctx.names.kind(id)).join(', ')})`;
+		return [`    #[kind(${variantKindArgs([variant.aliasTypeId], true, read.ctx)}${decodes})]`];
 	}
 	return ids.length === 0 ? [] : [`    #[kind(${variantKindArgs(ids, false, read.ctx)})]`];
 }
@@ -1209,7 +1222,8 @@ function renderTransportSupport(
 	structs: EmittedStruct[],
 	meta: MetaData,
 	generatedIdTables: GeneratedIdTables,
-	plan: RenderPlan
+	plan: RenderPlan,
+	boxedPayloads: readonly string[]
 ): string {
 	const projection = getTransportProjection(nodeMap);
 	const nodes = projection.nodes;
@@ -1219,8 +1233,8 @@ function renderTransportSupport(
 	const fixed = collectFixedLiterals(projection, nodeMap, kindEntries, kidByKind);
 	const payloadNodes = nodes.filter((node) => !isFixedTextLeaf(node));
 
-	const read = readPrintOf(lang, structs, nodeMap, kindEntries, generatedIdTables);
-	const anyTransportLines = renderAnyTransportWithNapiFromValue(payloadNodes, fixed, nodeMap, kindEntries, read);
+	const read = readPrintOf(lang, structs, nodeMap, kindEntries, generatedIdTables, boxedPayloads);
+	const anyTransportLines = renderAnyTransport(payloadNodes, fixed, nodeMap, kindEntries, read);
 
 	const usedSupertypeNames = collectUsedSupertypeNames(nodes, nodeMap);
 	const selfAliasIdsBySupertype = new Map<string, number[]>();
@@ -1272,9 +1286,8 @@ function renderTransportSupport(
 		[
 			...anyTransportLines,
 			'',
-			...renderTriviaTransportSupport(nodeMap, fixed, kindEntries),
+			...renderTriviaTransportSupport(nodeMap, fixed, kindEntries, read),
 			'',
-			...renderVerbatimTransport(),
 			...(supertypeEnumLines.length > 0 ? [...supertypeEnumLines, ''] : []),
 			...(perSlotEnumLines.length > 0 ? [...perSlotEnumLines, ''] : []),
 			...structLines,
@@ -1291,31 +1304,14 @@ function renderTransportSupport(
 				usedSupertypeNames,
 				kidByKind,
 				plan,
-				kindEntries
+				kindEntries,
+				read.boxedPayloads
 			),
-			...renderTransportEntry()
+			...renderTransportEntry(),
+			'',
+			...payloadCeilingAssertions(read.boxedPayloads, read.choicePayloads)
 		].join('\n')
 	);
-}
-
-function renderVerbatimTransport(): string[] {
-	return [
-		"/// Text that is a slot's content with no kind of its own: a bare string in",
-		'/// a slot whose members all render from their own text, where the variant',
-		'/// tag is render-invisible and picking one would be a guess.',
-		'#[derive(Debug, Clone, PartialEq)]',
-		'pub struct VerbatimTransport {',
-		'    pub text: String,',
-		'}',
-		'',
-		'impl ::sittir_core::render::Render for VerbatimTransport {',
-		'    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {',
-		'        w.text(&self.text)',
-		'    }',
-		'}',
-		'',
-		...inertPrepareImpl('VerbatimTransport')
-	];
 }
 
 function supertypeAdmitsVerbatim(supertypeNode: AssembledSupertype, nodeMap: NodeMap): boolean {
@@ -1373,9 +1369,6 @@ function commonRustUseImports(): string {
 	lines.push('use ::sittir_core::types::{');
 	lines.push('    FieldValue, OneOrMany, Source, Span, NodeTrivia,');
 	lines.push('};');
-	lines.push('');
-	lines.push('#[cfg(feature = "napi-bindings")]');
-	lines.push('use ::napi_derive::napi;');
 	lines.push('');
 	return lines.join('\n');
 }
@@ -1454,145 +1447,74 @@ function isTransportRequired(slot: AssembledNonterminal): boolean {
 	return isRequired(slot) && !isPrepareFilled(slot);
 }
 
-function nodeTransportHasRequiredField(node: AssembledNode): boolean {
-	if (isTerminalNode(node)) {
-		return true;
-	}
-	return node.slots.some((slot) => isTransportRequired(slot));
+function boxedInEnum(node: AssembledNode, boxedPayloads: readonly string[]): boolean {
+	return boxedPayloads.includes(rustTransportStructName(node));
 }
 
-function isLeafLikeNode(n: AssembledNode): boolean {
-	return isTerminalNode(n);
+function choicePayloadType(node: AssembledNode, read: ReadPrint): string {
+	const name = rustTransportStructName(node);
+	read.choicePayloads.add(name);
+	return boxedInEnum(node, read.boxedPayloads) ? `Box<${name}>` : name;
 }
 
-function boxedInEnum(
-	variantKind: string,
-	enumOwnerKind: string,
-	variantNode: AssembledNode,
-	nodeMap: NodeMap
-): boolean {
-	void variantKind;
-	void enumOwnerKind;
-	void variantNode;
-	void nodeMap;
-	return false;
-}
-
-function wirePropertyRead(key: string, rustType?: string): string {
-	const turbofish = rustType === undefined ? '' : `::<${rustType}>`;
-	return `::sittir_core::boundary::property${turbofish}(env, napi_val, c${rustStringLiteral(key)})?`;
-}
-
-function emitTransportEnumFromNapiValueBody(
-	enumName: string,
-	kindIdArms: readonly string[],
-	admitsVerbatim: boolean,
-	textArms: readonly string[] = []
-): string[] {
-	const lines: string[] = [];
-	lines.push(`        match ::sittir_core::slot::transport_value_type(env, napi_val)? {`);
-	lines.push(`            ::napi::ValueType::Number => {`);
-	lines.push(`                match u16::from_napi_value(env, napi_val)? {`);
-	for (const arm of kindIdArms) lines.push(`    ${arm}`);
-	lines.push(`                }`);
-	lines.push(`            }`);
-	lines.push(`            ::napi::ValueType::Object => {`);
-	lines.push(`                let kind_id: u16 = ${wirePropertyRead('$type')}.ok_or_else(||`);
-	lines.push(
-		`                    ::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)})`
+export function payloadCeilingAssertions(pinned: readonly string[], payloads: ReadonlySet<string>): string[] {
+	const stale = pinned.find((name) => !payloads.has(name));
+	if (stale !== undefined) throw new Error(`${stale} is pinned in boxed-payloads.ts but no choice holds it: unpin it`);
+	const n = PAYLOAD_CEILING_BYTES;
+	return [...payloads].sort().map((name) =>
+		pinned.includes(name)
+			? `const _: () = assert!(::core::mem::size_of::<${name}>() > ${n}, "${name} is within the ${n}-byte payload ceiling: unpin it in boxed-payloads.ts");`
+			: `const _: () = assert!(::core::mem::size_of::<${name}>() <= ${n}, "${name} is over the ${n}-byte payload ceiling: pin it in boxed-payloads.ts");`
 	);
-	lines.push(`                )?;`);
-	if (textArms.length > 0) lines.push(`                let text: Option<String> = ${wirePropertyRead('$text')};`);
-	lines.push(`                match kind_id {`);
-	if (admitsVerbatim) {
-		lines.push(`                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {`);
-		lines.push(
-			`                        text: ${wirePropertyRead('$text')}.ok_or_else(|| ::napi::Error::from_reason(${JSON.stringify(`ERROR node without $text in ${enumName}`)}))?,`
-		);
-		lines.push(`                    })),`);
-	}
-	for (const arm of textArms) lines.push(`    ${arm}`);
-	for (const arm of kindIdArms) lines.push(`    ${arm}`);
-	lines.push(`                }`);
-	lines.push(`            }`);
-	if (admitsVerbatim) {
-		lines.push(
-			`            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),`
-		);
-	}
-	lines.push(
-		`            _ => Err(::napi::Error::from_reason(${JSON.stringify(
-			`${enumName}: expected u16 kind_id${admitsVerbatim ? ', string,' : ''} or object with $type`
-		)})),`
-	);
-	lines.push(`        }`);
-	return lines;
-}
-
-interface AliasLeafTrial {
-	readonly typeName: string;
-	readonly variant: string;
-}
-
-function emitAliasUnwrapRecurseArm(
-	aliasId: number,
-	enumName: string,
-	errorLabel: string,
-	leafTrials: readonly AliasLeafTrial[] = []
-): string[] {
-	const arms: string[] = [];
-	arms.push(`                ${aliasId} => {`);
-	arms.push(`                    if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {`);
-	arms.push(`                        if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {`);
-	arms.push(`                            for key in keys {`);
-	arms.push(`                                if !key.starts_with('_') {`);
-	arms.push(`                                    continue;`);
-	arms.push(`                                }`);
-	arms.push(
-		`                                if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {`
-	);
-	arms.push(`                                    return Self::from_napi_value(env, ::napi::JsValue::raw(&child));`);
-	arms.push(`                                }`);
-	arms.push(`                            }`);
-	arms.push(`                        }`);
-	arms.push(`                    }`);
-	for (const trial of leafTrials) {
-		arms.push(
-			`                    if let Ok(v) = ${trial.typeName}::from_napi_value(env, napi_val) { return Ok(Self::${trial.variant}(v)); }`
-		);
-	}
-	arms.push(
-		`                    Err(::napi::Error::from_reason(${JSON.stringify(
-			`${errorLabel} kind id ${aliasId} in ${enumName}: no kind-keyed child slot to unwrap`
-		)}))`
-	);
-	arms.push(`                },`);
-	return arms;
-}
-
-function aliasLeafTrialOrder(node: AssembledNode): number {
-	if (node instanceof AssembledEnum) return 0;
-	if (isBuilderTextLeaf(node)) return 1;
-	if (isBuilderlessPunctuationLeaf(node)) return 2;
-	if (node instanceof AssembledPattern) return 3;
-	return -1;
 }
 
 function kindIdStoredFirst<T>(entries: readonly T[], nodeOf: (entry: T) => AssembledNode): T[] {
 	return [...entries].sort((a, b) => Number(isKindIdStored(nodeOf(b))) - Number(isKindIdStored(nodeOf(a))));
 }
 
-function supertypeClosureOf(kinds: readonly string[], nodeMap: NodeMap): Set<string> {
-	const seen = new Set<string>();
-	const queue = [...kinds];
-	while (queue.length > 0) {
-		const kind = queue.pop()!;
-		if (seen.has(kind)) continue;
-		seen.add(kind);
-		const node = nodeMap.nodes.get(kind);
-		if (node instanceof AssembledSupertype) queue.push(...node.subtypeNames);
+function claimSupertypeIds(
+	supertypeNode: AssembledSupertype,
+	enumName: string,
+	shape: EffectiveSupertypeTransportShape,
+	selfAliasIds: readonly number[] | undefined,
+	kindIdByKind: ReadonlyMap<string, number>,
+	kindEntries: readonly KindEnumEntry[],
+	nodeMap: NodeMap
+): Map<string, number[]> {
+	const claimedBy = new Map<string, number[]>();
+	const emittedIds = new Set<number>();
+	const selfId = kindIdByKind.get(supertypeNode.kind);
+	if (selfId !== undefined) emittedIds.add(selfId);
+	for (const suppressedKind of shape.suppressedKinds) {
+		const id = kindIdByKind.get(suppressedKind);
+		if (id !== undefined) emittedIds.add(id);
 	}
-	return seen;
+	for (const aliasId of selfAliasIds ?? []) emittedIds.add(aliasId);
+	const members = kindIdStoredFirst(shape.subtypes, (s) => s.subNode).map(({ subKind, subNode }) => {
+		const variant = rustTypeIdent(subNode.typeName);
+		const idsOf = (parseName: string | undefined): number[] =>
+			resolveAcceptedTransportIds({ kind: subKind, node: subNode, nodeMap, kindIdByKind, kindEntries, parseName });
+		const acceptedIds = idsOf(shape.parseNames.get(subKind));
+		assertRoutableTransportIds(
+			acceptedIds,
+			subKind,
+			variant,
+			enumName,
+			`under supertype '${supertypeNode.kind}'`,
+			kindEntries
+		);
+		return { variant, ownIds: idsOf(undefined), acceptedIds };
+	});
+	const claim = (variant: string, ids: readonly number[]): void => {
+		for (const id of ids) {
+			if (emittedIds.has(id)) continue;
+			emittedIds.add(id);
+			claimedBy.set(variant, [...(claimedBy.get(variant) ?? []), id]);
+		}
+	};
+	for (const member of members) claim(member.variant, member.ownIds);
+	for (const member of members) claim(member.variant, member.acceptedIds);
+	return claimedBy;
 }
 
 function emitSupertypeTransportEnum(
@@ -1606,142 +1528,23 @@ function emitSupertypeTransportEnum(
 ): string[] {
 	const enumName = `${rustTypeIdent(supertypeNode.typeName)}Transport`;
 	const lines: string[] = [];
-	const {
-		subtypes: validSubtypes,
-		suppressedKinds,
-		parseNames
-	} = collectEffectiveSupertypeTransportShape(supertypeNode, nodeMap);
-	const ownerKind = supertypeNode.kind;
+	const shape = collectEffectiveSupertypeTransportShape(supertypeNode, nodeMap);
+	const validSubtypes = shape.subtypes;
 	const admitsVerbatim = supertypeAdmitsVerbatim(supertypeNode, nodeMap);
 
-	const isBoxed = (subKind: string, subNode: AssembledNode): boolean =>
-		boxedInEnum(subKind, ownerKind, subNode, nodeMap);
+	const isBoxed = (subNode: AssembledNode): boolean => boxedInEnum(subNode, read.boxedPayloads);
 
-	const emitDecodeTrials = (leafOnly = false, indent = '                '): string[] => {
-		const out: string[] = [];
-		const sortedSubtypes = [...validSubtypes].sort(
-			(a, b) => (nodeTransportHasRequiredField(b.subNode) ? 1 : 0) - (nodeTransportHasRequiredField(a.subNode) ? 1 : 0)
-		);
-		for (const { subKind, subNode } of sortedSubtypes) {
-			if (leafOnly && !isLeafLikeNode(subNode)) continue;
-			if (isFixedTextLeaf(subNode)) continue;
-			const variant = rustTypeIdent(subNode.typeName);
-			const typeName = rustTransportStructName(subNode);
-			if (isBoxed(subKind, subNode)) {
-				out.push(`${indent}if let Ok(value) = ${typeName}::from_napi_value(env, napi_val) {`);
-				out.push(`${indent}    return Ok(Self::${variant}(Box::new(value)));`);
-				out.push(`${indent}}`);
-			} else {
-				out.push(`${indent}if let Ok(value) = ${typeName}::from_napi_value(env, napi_val) {`);
-				out.push(`${indent}    return Ok(Self::${variant}(value));`);
-				out.push(`${indent}}`);
-			}
-		}
-		return out;
-	};
-
-	const claimedBy = new Map<string, number[]>();
-	const buildKindIdArms = (): string[] => {
-		const arms: string[] = [];
-		const emittedIds = new Set<number>();
-		const selfId = kindIdByKind.get(supertypeNode.kind);
-		if (selfId !== undefined) {
-			arms.push(`                ${selfId} => {`);
-			for (const t of emitDecodeTrials(false, '                    ')) arms.push(t);
-			arms.push(
-				`                    Err(::napi::Error::from_reason(${JSON.stringify(`aliased kind id ${selfId} in ${enumName} decodes as none of its members`)}))`
-			);
-			arms.push(`                },`);
-			emittedIds.add(selfId);
-		}
-		for (const suppressedKind of suppressedKinds) {
-			const id = kindIdByKind.get(suppressedKind);
-			if (id === undefined || emittedIds.has(id)) continue;
-			arms.push(`                ${id} => {`);
-			for (const t of emitDecodeTrials(false, '                    ')) arms.push(t);
-			arms.push(
-				`                    Err(::napi::Error::from_reason(${JSON.stringify(`reserved supertype kind id ${id} in ${enumName} decodes as none of its members`)}))`
-			);
-			arms.push(`                },`);
-			emittedIds.add(id);
-		}
-		const selfAliasLeafTrials = validSubtypes
-			.map(({ subKind, subNode }) => ({
-				subKind,
-				subNode,
-				order: aliasLeafTrialOrder(subNode)
-			}))
-			.filter((t) => t.order >= 0 && !isFixedTextLeaf(t.subNode))
-			.sort((a, b) => a.order - b.order)
-			.map((t) => ({
-				typeName: rustTransportStructName(t.subNode),
-				variant: rustTypeIdent(t.subNode.typeName)
-			}));
-		for (const aliasId of selfAliasIds ?? []) {
-			if (emittedIds.has(aliasId)) continue;
-			emittedIds.add(aliasId);
-			arms.push(...emitAliasUnwrapRecurseArm(aliasId, enumName, 'self-alias', selfAliasLeafTrials));
-		}
-		const members = kindIdStoredFirst(validSubtypes, (s) => s.subNode).map(({ subKind, subNode }) => {
-			const variant = rustTypeIdent(subNode.typeName);
-			const idsOf = (parseName: string | undefined): number[] =>
-				resolveAcceptedTransportIds({ kind: subKind, node: subNode, nodeMap, kindIdByKind, kindEntries, parseName });
-			const acceptedIds = idsOf(parseNames.get(subKind));
-			assertRoutableTransportIds(
-				acceptedIds,
-				subKind,
-				variant,
-				enumName,
-				`under supertype '${ownerKind}'`,
-				kindEntries
-			);
-			return {
-				variant,
-				typeName: rustTransportStructName(subNode),
-				unit: isFixedTextLeaf(subNode) ? fixedLiteralOf(fixed, subKind) : undefined,
-				boxed: isBoxed(subKind, subNode),
-				ownIds: idsOf(undefined),
-				acceptedIds
-			};
-		});
-		const claim = (member: (typeof members)[number], ids: readonly number[]): void => {
-			for (const id of ids) {
-				if (emittedIds.has(id)) continue;
-				emittedIds.add(id);
-				claimedBy.set(member.variant, [...(claimedBy.get(member.variant) ?? []), id]);
-				if (member.unit !== undefined) {
-					arms.push(unitDecodeArm(id, member.unit, 'Self'));
-				} else if (member.boxed) {
-					arms.push(`                ${id} => Ok(Self::${member.variant}(Box::new(`);
-					arms.push(`                    ${member.typeName}::from_napi_value(env, napi_val)?`);
-					arms.push(`                ))),`);
-				} else {
-					arms.push(`                ${id} => Ok(Self::${member.variant}(`);
-					arms.push(`                    ${member.typeName}::from_napi_value(env, napi_val)?`);
-					arms.push(`                )),`);
-				}
-			}
-		};
-		for (const member of members) claim(member, member.ownIds);
-		for (const member of members) claim(member, member.acceptedIds);
-		arms.push(`                other => Err(::napi::Error::from_reason(format!(`);
-		arms.push(`                    "unknown kind id {other} in ${enumName}",`);
-		arms.push(`                ))),`);
-		return arms;
-	};
-	const kindIdArms = buildKindIdArms();
+	const claimedBy = claimSupertypeIds(supertypeNode, enumName, shape, selfAliasIds, kindIdByKind, kindEntries, nodeMap);
 
 	lines.push(TRANSPORT_DERIVE);
 	lines.push(`#[transport(choice)]`);
 	lines.push(`pub enum ${enumName} {`);
-	for (const { subKind, subNode } of validSubtypes) {
+	for (const { subNode } of validSubtypes) {
 		const variant = rustTypeIdent(subNode.typeName);
-		const typeName = rustTransportStructName(subNode);
-		const variantType = isBoxed(subKind, subNode) ? `Box<${typeName}>` : typeName;
 		lines.push(...variantKindLines(enumName, variant, subNode, claimedBy.get(variant) ?? [], read));
-		lines.push(isFixedTextLeaf(subNode) ? `    ${variant},` : `    ${variant}(${variantType}),`);
+		lines.push(isFixedTextLeaf(subNode) ? `    ${variant},` : `    ${variant}(${choicePayloadType(subNode, read)}),`);
 	}
-	if (admitsVerbatim) lines.push(`    Verbatim(VerbatimTransport),`);
+	if (admitsVerbatim) lines.push(`    #[transport(verbatim)]`, `    Verbatim(VerbatimTransport),`);
 	lines.push(`}`);
 	lines.push(``);
 	admit(read, enumName, [...claimedBy.values()].flat());
@@ -1754,30 +1557,6 @@ function emitSupertypeTransportEnum(
 			...(admitsVerbatim ? [{ variant: 'Verbatim', payload: true }] : [])
 		])
 	);
-
-	lines.push(`#[cfg(feature = "napi-bindings")]`);
-	lines.push(`impl ::napi::bindgen_prelude::FromNapiValue for ${enumName} {`);
-	lines.push(`    unsafe fn from_napi_value(`);
-	lines.push(`        env: ::napi::sys::napi_env,`);
-	lines.push(`        napi_val: ::napi::sys::napi_value,`);
-	lines.push(`    ) -> ::napi::Result<Self> {`);
-	lines.push(...emitTransportEnumFromNapiValueBody(enumName, kindIdArms, admitsVerbatim));
-	lines.push(`    }`);
-	lines.push(`}`);
-	lines.push(``);
-
-	lines.push(`#[cfg(feature = "napi-bindings")]`);
-	lines.push(`impl ::napi::bindgen_prelude::ToNapiValue for ${enumName} {`);
-	lines.push(`    unsafe fn to_napi_value(`);
-	lines.push(`        _env: ::napi::sys::napi_env,`);
-	lines.push(`        _val: Self,`);
-	lines.push(`    ) -> ::napi::Result<::napi::sys::napi_value> {`);
-	lines.push(`        Err(::napi::Error::from_reason(${JSON.stringify(`${enumName} is receive-only`)}))`);
-	lines.push(`    }`);
-	lines.push(`}`);
-	lines.push(``);
-
-	lines.push(...renderBoxedEnumNapiImpls(enumName));
 
 	lines.push(
 		...kindOfImplLines(
@@ -1799,9 +1578,9 @@ function emitSupertypeTransportEnum(
 
 	lines.push(`fn ${rustSnakeIdent(supertypeNode.typeName)}_transport_to_any(t: ${enumName}) -> AnyTransport {`);
 	lines.push(`    match t {`);
-	for (const { subKind, subNode } of validSubtypes) {
+	for (const { subNode } of validSubtypes) {
 		const variant = rustTypeIdent(subNode.typeName);
-		const boxed = isBoxed(subKind, subNode);
+		const boxed = isBoxed(subNode);
 		if (isFixedTextLeaf(subNode)) {
 			lines.push(`        ${enumName}::${variant} => AnyTransport::${variant},`);
 		} else if (subNode instanceof AssembledSupertype) {
@@ -1812,12 +1591,7 @@ function emitSupertypeTransportEnum(
 				lines.push(`        ${enumName}::${variant}(inner) => ${subBridgeFn}(inner),`);
 			}
 		} else {
-			const anyVariant = rustTypeIdent(subNode.typeName);
-			if (boxed) {
-				lines.push(`        ${enumName}::${variant}(inner) => AnyTransport::${anyVariant}(*inner),`);
-			} else {
-				lines.push(`        ${enumName}::${variant}(inner) => AnyTransport::${anyVariant}(inner),`);
-			}
+			lines.push(`        ${enumName}::${variant}(inner) => AnyTransport::${rustTypeIdent(subNode.typeName)}(inner),`);
 		}
 	}
 	if (admitsVerbatim) lines.push(`        ${enumName}::Verbatim(inner) => AnyTransport::Verbatim(inner),`);
@@ -1838,12 +1612,11 @@ function emitSupertypeTransportEnum(
 	return lines;
 }
 
-function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: NodeMap, fixed: FixedLiterals): string[] {
+function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: NodeMap, fixed: FixedLiterals, boxedPayloads: readonly string[]): string[] {
 	const enumName = `${rustTypeIdent(supertypeNode.typeName)}Transport`;
 	const fnName = `render_${rustSnakeIdent(supertypeNode.typeName)}`;
 	const lines: string[] = [];
 	const { subtypes: validSubtypes } = collectEffectiveSupertypeTransportShape(supertypeNode, nodeMap);
-	const ownerKind = supertypeNode.kind;
 
 	lines.push(
 		`fn ${fnName}(t: &${enumName}, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
@@ -1855,7 +1628,7 @@ function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: N
 			lines.push(`        ${enumName}::${variant} => ${fixedLiteralOf(fixed, subKind).renderFn}(w),`);
 			continue;
 		}
-		const innerExpr = boxedInEnum(subKind, ownerKind, subNode, nodeMap) ? `inner.as_ref()` : `inner`;
+		const innerExpr = boxedInEnum(subNode, boxedPayloads) ? `inner.as_ref()` : `inner`;
 		lines.push(`        ${enumName}::${variant}(inner) => ${innerExpr}.render(w),`);
 	}
 	if (supertypeAdmitsVerbatim(supertypeNode, nodeMap)) {
@@ -2385,8 +2158,7 @@ function emitPerSlotChildEnum(
 	const units = choiceUnitsOf(entry, validKinds, fixed, plan, kindEntries, nodeMap);
 	const admitsVerbatim = validKinds.some(({ node }) => node.modelType === 'pattern');
 
-	const isBoxed = (variantKind: string, variantNode: AssembledNode): boolean =>
-		boxedInEnum(variantKind, ownerKind, variantNode, nodeMap);
+	const isBoxed = (variantNode: AssembledNode): boolean => boxedInEnum(variantNode, read.boxedPayloads);
 	const modelSlot = nodeMap.nodes.get(ownerKind)?.slots.find((candidate) => candidate.name === entry.fieldName);
 	const blank = modelSlot !== undefined && hasBlankArm(modelSlot);
 
@@ -2411,7 +2183,6 @@ function emitPerSlotChildEnum(
 		return acceptedIds;
 	};
 	const unitIds = unitKindIdsOf(entry, units, acceptedIdsOf, validKinds, fixed, kindEntries);
-	const kindIdArms: string[] = [];
 	const emittedIds = new Set<number>();
 	const claimedBy = new Map<string, number[]>();
 	const claim = (variant: string, id: number): void => {
@@ -2420,69 +2191,25 @@ function emitPerSlotChildEnum(
 	for (const { id, unit } of unitIds.ids) {
 		emittedIds.add(id);
 		claim(unit.variant, id);
-		kindIdArms.push(unitDecodeArm(id, unit, 'Self'));
 	}
-	if (blank) {
-		emittedIds.add(BLANK_KIND_ID);
-		kindIdArms.push(`                ${BLANK_KIND_ID} => Ok(Self::${BLANK_VARIANT}),`);
-	}
-	for (const { kind, node, concreteName } of kindIdStoredFirst(nodeKinds, (v) => v.node)) {
+	if (blank) emittedIds.add(BLANK_KIND_ID);
+	for (const { kind, node } of kindIdStoredFirst(nodeKinds, (v) => v.node)) {
 		const variant = rustTypeIdent(node.typeName);
-		const typeName = concreteName;
-		const acceptedIds = acceptedIdsOf(kind, node);
-		const boxed = isBoxed(kind, node);
-		for (const id of acceptedIds) {
+		for (const id of acceptedIdsOf(kind, node)) {
 			if (emittedIds.has(id)) continue;
 			emittedIds.add(id);
 			claim(variant, id);
-			if (boxed) {
-				kindIdArms.push(`                ${id} => Ok(Self::${variant}(Box::new(`);
-				kindIdArms.push(`                    ${typeName}::from_napi_value(env, napi_val)?`);
-				kindIdArms.push(`                ))),`);
-			} else {
-				kindIdArms.push(`                ${id} => Ok(Self::${variant}(`);
-				kindIdArms.push(`                    ${typeName}::from_napi_value(env, napi_val)?`);
-				kindIdArms.push(`                )),`);
-			}
 		}
 	}
-	const kindsClosure = supertypeClosureOf(entry.kinds, nodeMap);
-	const validKindSet = new Map(validKinds.map((v) => [v.kind, v] as const));
-	const aliasPairs: Record<string, string> = { ...entry.parseAliases };
-	for (const closureKind of kindsClosure) {
-		const closureNode = nodeMap.nodes.get(closureKind);
-		if (!(closureNode instanceof AssembledSupertype)) continue;
-		for (const [storage, parse] of Object.entries(closureNode.subtypeParseNames ?? {})) {
-			aliasPairs[parse] ??= storage;
-		}
-	}
-	for (const [parseName, storageKind] of Object.entries(aliasPairs)) {
-		if (!kindsClosure.has(storageKind)) continue;
-		if (!(nodeMap.nodes.get(storageKind) instanceof AssembledSupertype)) continue;
-		const parseEntry = findKindEntry(kindEntries, parseName);
-		const aliasId = parseEntry?.parseId ?? parseEntry?.id ?? kindIdByKind.get(parseName);
-		if (aliasId === undefined || emittedIds.has(aliasId)) continue;
-		emittedIds.add(aliasId);
-		const leafTrials = expandConcreteTransportKinds([storageKind], nodeMap)
-			.map((e) => ({ e, order: aliasLeafTrialOrder(e.node), own: validKindSet.get(e.kind) }))
-			.filter((t) => t.order >= 0 && t.own !== undefined && !isFixedTextLeaf(t.own.node))
-			.sort((a, b) => a.order - b.order)
-			.map((t) => ({ typeName: t.own!.concreteName, variant: rustTypeIdent(t.own!.node.typeName) }));
-		kindIdArms.push(...emitAliasUnwrapRecurseArm(aliasId, enumName, 'alias-wrapper', leafTrials));
-	}
-	kindIdArms.push(`                other => Err(::napi::Error::from_reason(format!(`);
-	kindIdArms.push(`                    "unknown kind id {other} in ${enumName}",`);
-	kindIdArms.push(`                ))),`);
 
 	const altIds = new Map(modelSlot === undefined ? [] : kindEnumAltIdPairs(modelSlot, nodeMap));
 	lines.push(TRANSPORT_DERIVE);
 	lines.push(`#[transport(choice)]`);
 	lines.push(`pub enum ${enumName} {`);
-	for (const { kind, node, concreteName } of nodeKinds) {
+	for (const { node } of nodeKinds) {
 		const variant = rustTypeIdent(node.typeName);
-		const variantType = isBoxed(kind, node) ? `Box<${concreteName}>` : concreteName;
 		lines.push(...variantKindLines(enumName, variant, node, claimedBy.get(variant) ?? [], read));
-		lines.push(`    ${variant}(${variantType}),`);
+		lines.push(`    ${variant}(${choicePayloadType(node, read)}),`);
 	}
 	for (const variant of units.keys()) {
 		const claimed = claimedBy.get(variant) ?? [];
@@ -2490,7 +2217,7 @@ function emitPerSlotChildEnum(
 		lines.push(`    ${variant},`);
 	}
 	if (blank) lines.push(`    #[transport(blank)]`, `    ${BLANK_VARIANT},`);
-	if (admitsVerbatim) lines.push(`    Verbatim(VerbatimTransport),`);
+	if (admitsVerbatim) lines.push(`    #[transport(verbatim)]`, `    Verbatim(VerbatimTransport),`);
 	lines.push(`}`);
 	lines.push(``);
 	admit(read, enumName, [...claimedBy.values()].flat());
@@ -2527,30 +2254,6 @@ function emitPerSlotChildEnum(
 	if (prepareFilledSlotOf(entry, nodeMap) !== undefined) {
 		lines.push(...fromKindIdImpl(enumName, entry, unitIds, nodeKinds.length > 0, blank));
 	}
-	lines.push(`#[cfg(feature = "napi-bindings")]`);
-	lines.push(`impl ::napi::bindgen_prelude::FromNapiValue for ${enumName} {`);
-	lines.push(`    unsafe fn from_napi_value(`);
-	lines.push(`        env: ::napi::sys::napi_env,`);
-	lines.push(`        napi_val: ::napi::sys::napi_value,`);
-	lines.push(`    ) -> ::napi::Result<Self> {`);
-	lines.push(...emitTransportEnumFromNapiValueBody(enumName, kindIdArms, admitsVerbatim));
-	lines.push(`    }`);
-	lines.push(`}`);
-	lines.push(``);
-
-	lines.push(`#[cfg(feature = "napi-bindings")]`);
-	lines.push(`impl ::napi::bindgen_prelude::ToNapiValue for ${enumName} {`);
-	lines.push(`    unsafe fn to_napi_value(`);
-	lines.push(`        _env: ::napi::sys::napi_env,`);
-	lines.push(`        _val: Self,`);
-	lines.push(`    ) -> ::napi::Result<::napi::sys::napi_value> {`);
-	lines.push(`        Err(::napi::Error::from_reason(${JSON.stringify(`${enumName} is receive-only`)}))`);
-	lines.push(`    }`);
-	lines.push(`}`);
-	lines.push(``);
-
-	lines.push(...renderBoxedEnumNapiImpls(enumName));
-
 	lines.push(`impl ::sittir_core::render::Render for ${enumName} {`);
 	lines.push(
 		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
@@ -2558,7 +2261,7 @@ function emitPerSlotChildEnum(
 	lines.push(`        match self {`);
 	for (const { kind, node } of nodeKinds) {
 		const variant = rustTypeIdent(node.typeName);
-		const innerExpr = isBoxed(kind, node) ? 'inner.as_ref()' : 'inner';
+		const innerExpr = isBoxed(node) ? 'inner.as_ref()' : 'inner';
 		const call = `${innerExpr}.render(w)`;
 		const arm =
 			!(node instanceof AssembledLeaf) && isLeftImmediateKind(kind, nodeMap) ? `{ w.adjacent(); ${call} }` : call;
@@ -2575,7 +2278,7 @@ function emitPerSlotChildEnum(
 	return lines;
 }
 
-function renderAnyTransportWithNapiFromValue(
+function renderAnyTransport(
 	payloadNodes: readonly AssembledNode[],
 	fixed: FixedLiterals,
 	nodeMap: NodeMap,
@@ -2588,28 +2291,19 @@ function renderAnyTransportWithNapiFromValue(
 
 	const emittedNodeIds = new Set<number>();
 	const claimedBy = new Map<string, number[]>();
-	const idArms: string[] = [];
 	for (const node of payloadNodes) {
 		const id = kindIdByKind.get(node.kind);
 		if (id === undefined) continue;
 		if (emittedNodeIds.has(id)) continue;
 		emittedNodeIds.add(id);
 		const variant = rustTransportVariantName(node);
-		const structName = rustTransportStructName(node);
-		const constName = toScreamingSnakeCase(kindIdMemberName(nodeMap, node.kind), node.kind);
 		claimedBy.set(variant, [...(claimedBy.get(variant) ?? []), id]);
-		idArms.push(`                // kind: ${node.kind} (${constName})`);
-		idArms.push(`                ${id} => Ok(AnyTransport::${variant}(`);
-		idArms.push(`                    ${structName}::from_napi_value(env, napi_val)?`);
-		idArms.push(`                )),`);
 	}
 	for (const literal of fixed.values()) {
 		const id = literal.ownId;
 		if (id === undefined || emittedNodeIds.has(id)) continue;
 		emittedNodeIds.add(id);
 		claimedBy.set(literal.variant, [...(claimedBy.get(literal.variant) ?? []), id]);
-		idArms.push(`                // kind: ${literal.kind}`);
-		idArms.push(unitDecodeArm(id, literal, 'AnyTransport'));
 	}
 
 	lines.push(TRANSPORT_DERIVE);
@@ -2617,9 +2311,8 @@ function renderAnyTransportWithNapiFromValue(
 	lines.push('pub enum AnyTransport {');
 	for (const node of payloadNodes) {
 		const variant = rustTransportVariantName(node);
-		const structName = rustTransportStructName(node);
 		lines.push(...variantKindLines('AnyTransport', variant, node, claimedBy.get(variant) ?? [], read));
-		lines.push(`    ${variant}(${structName}),`);
+		lines.push(`    ${variant}(${choicePayloadType(node, read)}),`);
 	}
 	for (const literal of fixed.values()) {
 		lines.push(...variantKindLines('AnyTransport', literal.variant, undefined, claimedBy.get(literal.variant) ?? [], read));
@@ -2630,65 +2323,6 @@ function renderAnyTransportWithNapiFromValue(
 	lines.push('');
 	admit(read, 'AnyTransport', [...claimedBy.values()].flat());
 	lines.push(...prepareEnumImpl('AnyTransport', anyTransportPrepareArms(payloadNodes, fixed)));
-
-	lines.push('#[cfg(feature = "napi-bindings")]');
-	lines.push('impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {');
-	lines.push('    unsafe fn from_napi_value(');
-	lines.push('        env: ::napi::sys::napi_env,');
-	lines.push('        napi_val: ::napi::sys::napi_value,');
-	lines.push('    ) -> ::napi::Result<Self> {');
-	lines.push('        let kind_id = if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {');
-	lines.push('            Some(kind_id)');
-	lines.push('        } else {');
-	lines.push(`            ${wirePropertyRead('$type', 'u16')}`);
-	lines.push('        };');
-	lines.push('        if let Some(kind_id) = kind_id {');
-	lines.push('            return match kind_id {');
-
-	lines.push(...idArms);
-
-	lines.push('                other => Err(::napi::Error::from_reason(format!(');
-	lines.push('                    "unknown kind id {other} in AnyTransport"');
-	lines.push('                ))),');
-	lines.push('            };');
-	lines.push('        }');
-	lines.push('        Err(::napi::Error::from_reason(');
-	lines.push('            "AnyTransport: expected u16 kind_id or object with $type",');
-	lines.push('        ))');
-	lines.push('    }');
-	lines.push('}');
-
-	lines.push('#[cfg(feature = "napi-bindings")]');
-	lines.push('impl ::napi::bindgen_prelude::ToNapiValue for AnyTransport {');
-	lines.push('    unsafe fn to_napi_value(');
-	lines.push('        env: ::napi::sys::napi_env,');
-	lines.push('        _val: Self,');
-	lines.push('    ) -> ::napi::Result<::napi::sys::napi_value> {');
-	lines.push('        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())');
-	lines.push('    }');
-	lines.push('}');
-	lines.push('');
-
-	lines.push('#[cfg(feature = "napi-bindings")]');
-	lines.push('impl ::napi::bindgen_prelude::FromNapiValue for Box<AnyTransport> {');
-	lines.push('    unsafe fn from_napi_value(');
-	lines.push('        env: ::napi::sys::napi_env,');
-	lines.push('        napi_val: ::napi::sys::napi_value,');
-	lines.push('    ) -> ::napi::Result<Self> {');
-	lines.push('        AnyTransport::from_napi_value(env, napi_val).map(Box::new)');
-	lines.push('    }');
-	lines.push('}');
-	lines.push('');
-	lines.push('#[cfg(feature = "napi-bindings")]');
-	lines.push('impl ::napi::bindgen_prelude::ToNapiValue for Box<AnyTransport> {');
-	lines.push('    unsafe fn to_napi_value(');
-	lines.push('        env: ::napi::sys::napi_env,');
-	lines.push('        val: Self,');
-	lines.push('    ) -> ::napi::Result<::napi::sys::napi_value> {');
-	lines.push('        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, *val)');
-	lines.push('    }');
-	lines.push('}');
-	lines.push('');
 
 	return lines;
 }
@@ -2718,7 +2352,8 @@ function renderTransportEntry(): string[] {
 function renderTriviaTransportSupport(
 	nodeMap: NodeMap,
 	fixed: FixedLiterals,
-	kindEntries: readonly KindEnumEntry[]
+	kindEntries: readonly KindEnumEntry[],
+	read: ReadPrint
 ): string[] {
 	const extrasNodes = [...triviaKinds(nodeMap)]
 		.map((kind) => nodeMap.nodes.get(kind))
@@ -2726,14 +2361,25 @@ function renderTriviaTransportSupport(
 	const unitOf = (node: AssembledNode): FixedLiteral | undefined =>
 		isFixedTextLeaf(node) ? fixedLiteralOf(fixed, node.kind) : undefined;
 
+	const kindIdByKind = buildKindIdByKind(kindEntries);
+	const textIds = extrasNodes.flatMap((node) => {
+		const id = kindIdByKind.get(node.kind);
+		return id === undefined || !(node instanceof AbstractAssembledCompound) ? [] : [id];
+	});
+
 	const lines: string[] = [];
-	lines.push('#[derive(Debug, Clone, PartialEq)]');
+	lines.push(TRANSPORT_DERIVE);
+	lines.push('#[transport(choice, codec_only)]');
 	lines.push('pub enum TriviaTransport {');
 	for (const node of extrasNodes) {
 		const variant = rustTransportVariantName(node);
+		const id = kindIdByKind.get(node.kind);
+		if (id !== undefined) lines.push(`    #[kind(${variantKindArgs([id], false, read.ctx)})]`);
 		lines.push(unitOf(node) === undefined ? `    ${variant}(${rustTransportStructName(node)}),` : `    ${variant},`);
 	}
+	lines.push('    #[transport(verbatim)]');
 	lines.push('    Verbatim(VerbatimTransport),');
+	if (textIds.length > 0) lines.push('    #[transport(text)]', `    #[kind(${variantKindArgs(textIds, false, read.ctx)})]`);
 	lines.push('    Text(::sittir_core::trivia::TriviaText),');
 	lines.push('}');
 	lines.push('');
@@ -2767,7 +2413,6 @@ function renderTriviaTransportSupport(
 	lines.push('');
 
 	const whitespaceKinds = new Set(whitespaceTriviaKinds(nodeMap));
-	const kindIdByKind = buildKindIdByKind(kindEntries);
 	lines.push('impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {');
 	lines.push('    fn seam_text(&self) -> Option<&str> {');
 	lines.push('        match self {');
@@ -2778,52 +2423,6 @@ function renderTriviaTransportSupport(
 	}
 	lines.push('            _ => None,');
 	lines.push('        }');
-	lines.push('    }');
-	lines.push('}');
-	lines.push('');
-
-	const kindIdArms: string[] = [];
-	for (const node of extrasNodes) {
-		const id = kindIdByKind.get(node.kind);
-		if (id === undefined) continue;
-		const variant = rustTransportVariantName(node);
-		const unit = unitOf(node);
-		kindIdArms.push(
-			unit === undefined
-				? `                ${id} => Ok(Self::${variant}(${rustTransportStructName(node)}::from_napi_value(env, napi_val)?)),`
-				: unitDecodeArm(id, unit, 'Self')
-		);
-	}
-	kindIdArms.push('                other => Err(::napi::Error::from_reason(format!(');
-	kindIdArms.push('                    "unknown kind id {other} in TriviaTransport",');
-	kindIdArms.push('                ))),');
-
-	lines.push('#[cfg(feature = "napi-bindings")]');
-	lines.push('impl ::napi::bindgen_prelude::FromNapiValue for TriviaTransport {');
-	lines.push('    unsafe fn from_napi_value(');
-	lines.push('        env: ::napi::sys::napi_env,');
-	lines.push('        napi_val: ::napi::sys::napi_value,');
-	lines.push('    ) -> ::napi::Result<Self> {');
-	const textArms = extrasNodes.flatMap((node) => {
-		const id = kindIdByKind.get(node.kind);
-		return id === undefined || !(node instanceof AbstractAssembledCompound)
-			? []
-			: [
-					`                ${id} if text.is_some() => Ok(Self::Text(::sittir_core::trivia::TriviaText { kind: ::sittir_core::types::KindId(${id}), text: text.unwrap_or_default() })),`
-				];
-	});
-	lines.push(...emitTransportEnumFromNapiValueBody('TriviaTransport', kindIdArms, true, textArms));
-	lines.push('    }');
-	lines.push('}');
-	lines.push('');
-
-	lines.push('#[cfg(feature = "napi-bindings")]');
-	lines.push('impl ::napi::bindgen_prelude::ToNapiValue for TriviaTransport {');
-	lines.push('    unsafe fn to_napi_value(');
-	lines.push('        env: ::napi::sys::napi_env,');
-	lines.push('        _val: Self,');
-	lines.push('    ) -> ::napi::Result<::napi::sys::napi_value> {');
-	lines.push('        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())');
 	lines.push('    }');
 	lines.push('}');
 	lines.push('');
@@ -3403,9 +3002,6 @@ function renderTransportDataStruct(
 	const lines: string[] = [];
 	const fillFields: string[] = [];
 	const ownId = findKindEntry(kindEntries, node.kind)?.id;
-	if (!isLeafNode) {
-		lines.push('#[cfg_attr(feature = "napi-bindings", napi(object))]');
-	}
 	lines.push(TRANSPORT_DERIVE);
 	const printedSlots = isCompoundOf(node) ? structSlotsOf(node, slotModel, nodeMap) : [];
 	lines.push(`#[transport(${transportArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot))})]`);
@@ -3431,14 +3027,14 @@ function renderTransportDataStruct(
 			if (node instanceof AssembledList) {
 				if (node.leadingDelimiter === 'optional' || node.trailingDelimiter === 'optional') {
 					lines.push(
-						'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]',
+						wireKeyAttr('_delimiter'),
 						`    #[flank(${flankArgs(node)})]`,
 						'    pub delimiter: Option<u8>,'
 					);
 				}
 				if (node.separatorRule !== undefined) {
 					lines.push(
-						'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_separator"))]',
+						wireKeyAttr('_separator'),
 						`    #[separator_kind(${separatorKindArgs(node, read.ctx)})]`,
 						'    pub separator_kind: Option<u16>,'
 					);
@@ -3447,7 +3043,7 @@ function renderTransportDataStruct(
 			for (const site of synthesizedSpacingSites(plan, node)) {
 				if (!carriesPerNodeValue(site)) continue;
 				lines.push(
-					`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(site.wireKey)}))]`,
+					wireKeyAttr(site.wireKey),
 					`    pub ${rustFieldIdent(site.fieldIdent)}: Option<u16>,`
 				);
 			}
@@ -3472,12 +3068,6 @@ function renderTransportDataStruct(
 	lines.push(`}`);
 	lines.push('');
 	lines.push(...prepareStructImpl(structName, node, fillFields, plan, isCompoundOf(node), nodeMap, choices, kindEntries));
-	if (isLeafNode) {
-		lines.push(
-			...renderLeafTransportNapiImpls(structName, kindIdText(node))
-		);
-	}
-	lines.push(...renderBoxedEnumNapiImpls(structName));
 	return lines;
 }
 
@@ -3550,10 +3140,6 @@ function collectFixedLiterals(
 	return fixed;
 }
 
-function unitDecodeArm(id: number, unit: FixedLiteral, enumPath: string): string {
-	return `                ${id} => Ok(${enumPath}::${unit.variant}),`;
-}
-
 function fixedLiteralOf(fixed: FixedLiterals, kind: string, text?: string): FixedLiteral {
 	const literal = fixed.get(kind);
 	if (literal === undefined) {
@@ -3604,8 +3190,6 @@ function renderFixedLiteralTransport(typeName: string, fixed: FixedLiteral, read
 		'',
 		...kindOfImplLines(typeName, [], undefined, fixed.ownId === undefined ? [] : [fixed.ownId]),
 		...inertPrepareImpl(typeName),
-		...fixedLiteralNapiImpls(typeName, fixed),
-		...renderBoxedEnumNapiImpls(typeName),
 		`impl ::sittir_core::render::Render for ${typeName} {`,
 		'    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {',
 		`        ${fixed.renderFn}(w)`,
@@ -3615,135 +3199,18 @@ function renderFixedLiteralTransport(typeName: string, fixed: FixedLiteral, read
 	];
 }
 
-function fixedLiteralNapiImpls(typeName: string, fixed: FixedLiteral): string[] {
-	return kindIdNapiImpls(typeName, [{ variant: fixed.variant, ids: fixedLiteralIds(fixed) }]);
+const LAYOUT_FIELD = { wireKey: '$_layout', rustName: 'layout', rustType: 'Option<TransportLayout>' } as const;
+
+function wireKeyAttr(key: string): string {
+	return `    #[wire(key = ${JSON.stringify(key)})]`;
 }
-
-interface KindIdArm {
-	readonly variant: string;
-	readonly ids: readonly number[];
-}
-
-function kindIdNapiImpls(typeName: string, arms: readonly KindIdArm[]): string[] {
-	return [
-		'#[cfg(feature = "napi-bindings")]',
-		`impl ::napi::bindgen_prelude::FromNapiValue for ${typeName} {`,
-		'    unsafe fn from_napi_value(',
-		'        env: ::napi::sys::napi_env,',
-		'        napi_val: ::napi::sys::napi_value,',
-		'    ) -> ::napi::Result<Self> {',
-		'        match u16::from_napi_value(env, napi_val)? {',
-		...arms.flatMap((arm) => (arm.ids.length === 0 ? [] : [`            ${arm.ids.join(' | ')} => Ok(Self::${arm.variant}),`])),
-		'            other => Err(::napi::Error::from_reason(format!(',
-		`                ${JSON.stringify(`kind id {other} is not a kind ${typeName} takes`)},`,
-		'            ))),',
-		'        }',
-		'    }',
-		'}',
-		'',
-		'#[cfg(feature = "napi-bindings")]',
-		`impl ::napi::bindgen_prelude::ToNapiValue for ${typeName} {`,
-		'    unsafe fn to_napi_value(',
-		'        _env: ::napi::sys::napi_env,',
-		'        _val: Self,',
-		'    ) -> ::napi::Result<::napi::sys::napi_value> {',
-		`        Err(::napi::Error::from_reason(${JSON.stringify(`${typeName} is receive-only`)}))`,
-		'    }',
-		'}',
-		''
-	];
-}
-
-function renderLeafTransportNapiImpls(structName: string, defaultTextLiteral?: string): string[] {
-	const lines: string[] = [];
-
-	lines.push(`#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]`);
-	lines.push(`impl ::napi::bindgen_prelude::FromNapiValue for ${structName} {`);
-	lines.push(`    unsafe fn from_napi_value(`);
-	lines.push(`        env: ::napi::sys::napi_env,`);
-	lines.push(`        napi_val: ::napi::sys::napi_value,`);
-	lines.push(`    ) -> ::napi::Result<Self> {`);
-	lines.push(`        let mut layout: ${LAYOUT_FIELD.rustType} = None;`);
-	lines.push(`        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {`);
-	lines.push(`            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,`);
-	if (defaultTextLiteral !== undefined) {
-		lines.push(`            ::napi::ValueType::Number => ${rustStringLiteral(defaultTextLiteral)}.to_string(),`);
-	} else {
-		lines.push(`            ::napi::ValueType::Number => {`);
-		lines.push(`                let id = u32::from_napi_value(env, napi_val)?;`);
-		lines.push(`                return Err(::napi::Error::from_reason(format!(`);
-		lines.push(
-			`                    ${JSON.stringify(`kind id {} ({:?}) has no fixed text: ${structName} renders from a node, not a kind id`)},`
-		);
-		lines.push(`                    id,`);
-		lines.push(
-			`                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))`
-		);
-		lines.push(`                )));`);
-		lines.push(`            }`);
-	}
-	lines.push(`            _ => {`);
-	lines.push(`                layout = ${wirePropertyRead(LAYOUT_FIELD.jsName)};`);
-	lines.push(
-		defaultTextLiteral !== undefined
-			? `                ${wirePropertyRead('$text')}.unwrap_or_else(|| ${rustStringLiteral(defaultTextLiteral)}.to_string())`
-			: `                ${wirePropertyRead('$text')}.unwrap_or_default()`
-	);
-	lines.push(`            }`);
-	lines.push(`        };`);
-	lines.push(`        Ok(Self {`);
-	lines.push(`            layout,`);
-	lines.push(`            text,`);
-	lines.push(`        })`);
-	lines.push(`    }`);
-	lines.push(`}`);
-	lines.push('');
-
-	lines.push(`#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]`);
-	lines.push(`impl ::napi::bindgen_prelude::FromNapiValue for ${structName} {`);
-	lines.push(`    unsafe fn from_napi_value(`);
-	lines.push(`        env: ::napi::sys::napi_env,`);
-	lines.push(`        napi_val: ::napi::sys::napi_value,`);
-	lines.push(`    ) -> ::napi::Result<Self> {`);
-	lines.push(
-		defaultTextLiteral !== undefined
-			? `        let text: String = ${wirePropertyRead('$text')}.unwrap_or_else(|| ${rustStringLiteral(defaultTextLiteral)}.to_string());`
-			: `        let text: String = ${wirePropertyRead('$text')}.unwrap_or_default();`
-	);
-	lines.push(`        let layout = ${wirePropertyRead(LAYOUT_FIELD.jsName)};`);
-	lines.push(`        Ok(Self {`);
-	lines.push(`            layout,`);
-	lines.push(`            text,`);
-	lines.push(`        })`);
-	lines.push(`    }`);
-	lines.push(`}`);
-	lines.push('');
-
-	lines.push(`#[cfg(feature = "napi-bindings")]`);
-	lines.push(`impl ::napi::bindgen_prelude::ToNapiValue for ${structName} {`);
-	lines.push(`    unsafe fn to_napi_value(`);
-	lines.push(`        env: ::napi::sys::napi_env,`);
-	lines.push(`        _val: Self,`);
-	lines.push(`    ) -> ::napi::Result<::napi::sys::napi_value> {`);
-	lines.push(`        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())`);
-	lines.push(`    }`);
-	lines.push(`}`);
-	lines.push('');
-
-	return lines;
-}
-
-const LAYOUT_FIELD = { jsName: '$_layout', rustName: 'layout', rustType: 'Option<TransportLayout>' } as const;
 
 function renderLayoutField(): string[] {
-	return [
-		`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(LAYOUT_FIELD.jsName)}))]`,
-		`    pub ${LAYOUT_FIELD.rustName}: ${LAYOUT_FIELD.rustType},`
-	];
+	return [wireKeyAttr(LAYOUT_FIELD.wireKey), `    pub ${LAYOUT_FIELD.rustName}: ${LAYOUT_FIELD.rustType},`];
 }
 
 function renderLeafTransportPlainFields(): string[] {
-	return [`    pub ${LAYOUT_FIELD.rustName}: ${LAYOUT_FIELD.rustType},`, '    pub text: String,'];
+	return [...renderLayoutField(), wireKeyAttr('$text'), '    pub text: String,'];
 }
 
 interface StructSlot {
@@ -3844,7 +3311,7 @@ function renderTransportField(
 ): string[] {
 	const lines: string[] = [];
 	const rustName = rustFieldIdent(field.storageName);
-	lines.push(`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(`_${field.storageName}`)}))]`);
+	lines.push(wireKeyAttr(`_${field.storageName}`));
 	if (readAttr !== undefined) lines.push(`    ${readAttr}`);
 	const required = forceOptional ? false : isTransportRequired(field);
 	const adjacent = slotVerbatimIsImmediate(field, nodeMap);
@@ -3974,41 +3441,13 @@ function rustTransportSlotType(
 	return wrap(shape.tag === 'any' && !multiple ? `Box<${inner}>` : inner);
 }
 
-function renderBoxedEnumNapiImpls(enumName: string): string[] {
-	return [
-		`#[cfg(feature = "napi-bindings")]`,
-		`impl ::napi::bindgen_prelude::FromNapiValue for Box<${enumName}> {`,
-		`    unsafe fn from_napi_value(`,
-		`        env: ::napi::sys::napi_env,`,
-		`        napi_val: ::napi::sys::napi_value,`,
-		`    ) -> ::napi::Result<Self> {`,
-		`        ${enumName}::from_napi_value(env, napi_val).map(Box::new)`,
-		`    }`,
-		`}`,
-		``,
-		`#[cfg(feature = "napi-bindings")]`,
-		`impl ::napi::bindgen_prelude::ToNapiValue for Box<${enumName}> {`,
-		`    unsafe fn to_napi_value(`,
-		`        env: ::napi::sys::napi_env,`,
-		`        val: Self,`,
-		`    ) -> ::napi::Result<::napi::sys::napi_value> {`,
-		`        ${enumName}::to_napi_value(env, *val)`,
-		`    }`,
-		`}`,
-		``
-	];
-}
-
 function concreteTransportTypeName(kind: string, nodeMap: NodeMap): string | null {
 	const node = nodeMap.nodes.get(kind);
 	if (node !== undefined) {
 		if (node instanceof AssembledSupertype) {
 			return null;
 		}
-		if (node instanceof AssembledEnum) {
-			return enumTypeName(node);
-		}
-		return `${rustTypeIdent(node.typeName)}Transport`;
+		return rustTransportStructName(node);
 	}
 	return null;
 }
@@ -4299,7 +3738,6 @@ function renderEnumType(node: AssembledEnum, kindEntries: readonly KindEnumEntry
 	admit(read, enumName, [ownId, ...arms.flatMap((arm) => arm.ids)]);
 	lines.push(...inertPrepareImpl(enumName));
 
-	lines.push(...kindIdNapiImpls(enumName, arms));
 	lines.push(...kindOfImplLines(enumName, arms.map((arm) => ({ ...arm, payload: false })), undefined));
 	lines.push(`impl ::sittir_core::render::Render for ${enumName} {`);
 	lines.push(

@@ -2,6 +2,7 @@
 //! helper items it defines never meet the transport's own names.
 
 use crate::attrs::{self, FlankAttrs, KindAttrs, SeparatorKindAttrs, SlotAttrs};
+use crate::codec;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 use syn::{Data, DataEnum, DataStruct, DeriveInput, Fields, GenericArgument, Ident, LitStr, Path, PathArguments, Type};
@@ -10,13 +11,13 @@ pub fn derive(input: &DeriveInput) -> syn::Result<TokenStream> {
     let attrs = attrs::kind_attrs(&input.attrs)?;
     match &input.data {
         Data::Struct(data) => structure(&input.ident, &attrs, data),
-        Data::Enum(data) if attrs.choice => choice(&input.ident, data),
+        Data::Enum(data) if attrs.choice => choice(&input.ident, &attrs, data),
         Data::Enum(data) => members(&input.ident, &attrs, data),
         Data::Union(_) => Err(syn::Error::new_spanned(&input.ident, "a transport is a struct or an enum")),
     }
 }
 
-fn choice(ident: &Ident, data: &DataEnum) -> syn::Result<TokenStream> {
+fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<TokenStream> {
     if data.variants.len() > usize::from(u16::MAX) {
         return Err(syn::Error::new_spanned(ident, "a choice indexes its variants by u16: at most 65535"));
     }
@@ -30,9 +31,25 @@ fn choice(ident: &Ident, data: &DataEnum) -> syn::Result<TokenStream> {
     let mut sides = Vec::new();
     let mut blank = None;
     let mut payloads: Vec<(&Ident, &Type)> = Vec::new();
+    let mut wire: Vec<codec::WireVariant<'_>> = Vec::new();
     for (at, variant) in data.variants.iter().enumerate() {
         let name = &variant.ident;
-        if attrs::kind_attrs(&variant.attrs)?.blank {
+        let payload = match &variant.fields {
+            Fields::Unnamed(fields) if fields.unnamed.len() == 1 => Some(&fields.unnamed[0].ty),
+            _ => None,
+        };
+        let unread = |payload| codec::WireVariant {
+            name,
+            payload,
+            index: None,
+            first: None,
+            decodes: Vec::new(),
+            blank: false,
+            verbatim: false,
+            text: None,
+        };
+        let form = attrs::kind_attrs(&variant.attrs)?;
+        if form.blank {
             if !matches!(variant.fields, Fields::Unit) {
                 return Err(syn::Error::new_spanned(variant, "a blank variant is a unit"));
             }
@@ -41,10 +58,30 @@ fn choice(ident: &Ident, data: &DataEnum) -> syn::Result<TokenStream> {
                     ::core::option::Option::Some(Self::#name)
                 }
             });
+            wire.push(codec::WireVariant { blank: true, ..unread(None) });
             continue;
         }
-        let Some(kinds) = attrs::variant_kinds(&variant.attrs)? else { continue };
+        if form.verbatim {
+            wire.push(codec::WireVariant { verbatim: true, ..unread(payload) });
+            continue;
+        }
+        if form.text.is_some() {
+            let kinds = attrs::variant_kinds(&variant.attrs)?
+                .ok_or_else(|| syn::Error::new_spanned(variant, "a text variant names the kinds whose text it takes: `#[kind(…)]`"))?;
+            wire.push(codec::WireVariant { text: Some(kinds.kinds), ..unread(payload) });
+            continue;
+        }
+        let Some(kinds) = attrs::variant_kinds(&variant.attrs)? else {
+            wire.push(unread(payload));
+            continue;
+        };
         let i = at as u16;
+        wire.push(codec::WireVariant {
+            index: Some(i),
+            first: kinds.kinds.first().or(kinds.shown.first()).or(kinds.folded.first()).cloned(),
+            decodes: kinds.decodes.clone(),
+            ..unread(payload)
+        });
         let ids = &kinds.kinds;
         let shown = &kinds.shown;
         if !shown.is_empty() {
@@ -149,6 +186,22 @@ fn choice(ident: &Ident, data: &DataEnum) -> syn::Result<TokenStream> {
             }
         }
     };
+    let codec = codec::choice(ident, &wire)?;
+    if attrs.codec_only {
+        return Ok(quote! {
+            const _: () = {
+                use ::sittir_core::types::KindId as __Kind;
+                #[allow(dead_code)]
+                fn __variant(grammar: __Kind, display: __Kind) -> ::core::option::Option<u16> {
+                    #(#by_display)*
+                    #(#by_grammar)*
+                    #(#by_folded)*
+                    ::core::option::Option::None
+                }
+                #codec
+            };
+        });
+    }
     Ok(quote! {
         const _: () = {
             use ::sittir_core::read as __rt;
@@ -227,6 +280,7 @@ fn choice(ident: &Ident, data: &DataEnum) -> syn::Result<TokenStream> {
                 }
             }
             #has_layout
+            #codec
         };
     })
 }
@@ -237,6 +291,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
         .as_ref()
         .ok_or_else(|| syn::Error::new_spanned(ident, "an enum kind names its kind: `#[transport(kind = …)]`"))?;
     let mut by_kind = Vec::new();
+    let mut firsts: Vec<(&Ident, Path)> = Vec::new();
     for variant in &data.variants {
         if !matches!(variant.fields, Fields::Unit) {
             return Err(syn::Error::new_spanned(variant, "an enum kind's members are units"));
@@ -244,6 +299,8 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
         let kinds = attrs::variant_kinds(&variant.attrs)?
             .ok_or_else(|| syn::Error::new_spanned(variant, "an enum kind's member names its token: `#[kind(…)]`"))?;
         let (name, ids, shown, folded) = (&variant.ident, &kinds.kinds, &kinds.shown, &kinds.folded);
+        let first = ids.first().or(shown.first()).or(folded.first()).cloned().expect("`kind` names at least one kind");
+        firsts.push((name, first));
         by_kind.push(quote!(if [#(#ids),*].contains(&grammar) || [#(#folded),*].contains(&grammar) || [#(#shown),*].contains(&display) { return ::core::option::Option::Some(#ident::#name); }));
     }
     let spelled = attrs.spelled.then(|| {
@@ -253,6 +310,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
             }
         }
     });
+    let codec = codec::members(ident, &firsts);
     Ok(quote! {
         const _: () = {
             use ::sittir_core::read as __rt;
@@ -297,6 +355,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
                     ::core::default::Default::default()
                 }
             }
+            #codec
         };
     })
 }
@@ -313,6 +372,7 @@ struct Field<'a> {
     ident: &'a Ident,
     ty: &'a Type,
     role: Role,
+    key: Option<LitStr>,
 }
 
 fn fields_of<'a>(owner: &Ident, data: &'a DataStruct) -> syn::Result<Vec<Field<'a>>> {
@@ -335,12 +395,12 @@ fn fields_of<'a>(owner: &Ident, data: &'a DataStruct) -> syn::Result<Vec<Field<'
             } else {
                 Role::Other
             };
-            Ok(Field { ident, ty: &field.ty, role })
+            Ok(Field { ident, ty: &field.ty, role, key: attrs::wire_key(&field.attrs)? })
         })
         .collect()
 }
 
-fn last_segment(ty: &Type) -> Option<String> {
+pub(crate) fn last_segment(ty: &Type) -> Option<String> {
     match ty {
         Type::Path(path) => path.path.segments.last().map(|segment| segment.ident.to_string()),
         _ => None,
@@ -405,6 +465,17 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
             }
         }
     });
+    let wire = fields
+        .iter()
+        .map(|field| match &field.key {
+            Some(key) => Ok(codec::WireField { ident: field.ident, ty: field.ty, key }),
+            None => Err(syn::Error::new_spanned(field.ident, "a transport field crosses the wire under a key: `#[wire(key = \"…\")]`")),
+        })
+        .collect::<syn::Result<Vec<_>>>()?;
+    let codec = match &attrs.text {
+        Some(fixed) => codec::text_leaf(ident, &wire, fixed.as_ref(), attrs.kind.as_ref())?,
+        None => codec::structure(ident, &wire)?,
+    };
     Ok(quote! {
         const _: () = {
             use ::sittir_core::read as __rt;
@@ -447,6 +518,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
                 }
             }
             #has_layout
+            #codec
         };
     })
 }

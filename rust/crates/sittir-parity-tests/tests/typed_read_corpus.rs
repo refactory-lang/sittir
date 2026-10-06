@@ -20,7 +20,7 @@ fn probe_input(name: &str) -> String {
 fn root(tree: &tree_sitter::Tree, source: &str, depth: Depth) -> SourceFileTransport {
     let ctx = ReadCtx::new(source, 1);
     match RenderRoot::read_root(&mut tree.walk(), &ctx, depth).unwrap() {
-        SlotValue::Transport(AnyTransport::SourceFile(file)) => file,
+        SlotValue::Transport(AnyTransport::SourceFile(file)) => *file,
         other => panic!("not a source file: {other:?}"),
     }
 }
