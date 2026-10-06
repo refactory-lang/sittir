@@ -25,30 +25,7 @@ export namespace Identifier {
 	export interface Label<G extends GrammarContext> extends SubKindOf<V.Identifier<G>> {
 		// claimed by rt
 		readonly $kind: 'identifier.label';
-		readonly content?:
-			| G['identifier']
-			| 'any'
-			| 'async'
-			| 'boolean'
-			| 'declare'
-			| 'export'
-			| 'get'
-			| 'let'
-			| 'module'
-			| 'namespace'
-			| 'new'
-			| 'number'
-			| 'object'
-			| 'override'
-			| 'private'
-			| 'protected'
-			| 'public'
-			| 'readonly'
-			| 'set'
-			| 'static'
-			| 'string'
-			| 'symbol'
-			| 'type';
+		readonly content?: G['identifier'];
 		// t only
 		readonly name?: G['identifier'];
 		// r only
@@ -62,6 +39,7 @@ export namespace Identifier {
 		// claimed by r
 		readonly $kind: 'identifier.metavariable';
 		readonly attributes?: G['attribute'][];
+		readonly name: G['slots']['identifier.metavariable']['name'];
 	}
 	export interface Nested<G extends GrammarContext> extends SubKindOf<V.Identifier<G>> {
 		// claimed by t
@@ -72,68 +50,23 @@ export namespace Identifier {
 	export interface Property<G extends GrammarContext> extends SubKindOf<V.Identifier<G>> {
 		// claimed by t
 		readonly $kind: 'identifier.property';
-		readonly content?:
-			| G['identifier']
-			| 'any'
-			| 'async'
-			| 'boolean'
-			| 'declare'
-			| 'export'
-			| 'get'
-			| 'let'
-			| 'module'
-			| 'namespace'
-			| 'new'
-			| 'number'
-			| 'object'
-			| 'override'
-			| 'private'
-			| 'protected'
-			| 'public'
-			| 'readonly'
-			| 'set'
-			| 'static'
-			| 'string'
-			| 'symbol'
-			| 'type';
+		readonly content?: G['identifier'];
 	}
 	export namespace Property {
 		export interface Computed<G extends GrammarContext> extends SubKindOf<V.Identifier.Property<G>> {
 			// claimed by t
 			readonly $kind: 'identifier.property.computed';
-			readonly expression: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'];
+			readonly expression: G['slots']['identifier.property.computed']['expression'];
 		}
 		export interface Private<G extends GrammarContext> extends SubKindOf<V.Identifier.Property<G>> {
 			// claimed by t
 			readonly $kind: 'identifier.property.private';
+			readonly content: G['slots']['identifier.property.private']['content'];
 		}
 		export interface Shorthand<G extends GrammarContext> extends SubKindOf<V.Identifier.Property<G>> {
 			// claimed by t
 			readonly $kind: 'identifier.property.shorthand';
-			readonly content:
-				| G['identifier']
-				| 'any'
-				| 'async'
-				| 'boolean'
-				| 'declare'
-				| 'export'
-				| 'get'
-				| 'let'
-				| 'module'
-				| 'namespace'
-				| 'new'
-				| 'number'
-				| 'object'
-				| 'override'
-				| 'private'
-				| 'protected'
-				| 'public'
-				| 'readonly'
-				| 'set'
-				| 'static'
-				| 'string'
-				| 'symbol'
-				| 'type';
+			readonly content: G['identifier'];
 		}
 		export type Any<G extends GrammarContext> =
 			| V.Identifier.Property<G>
@@ -145,29 +78,7 @@ export namespace Identifier {
 		// claimed by r
 		readonly $kind: 'identifier.scoped';
 		readonly name: G['identifier'];
-		readonly path?:
-			| G['identifier']
-			| 'bool'
-			| 'char'
-			| 'default'
-			| 'f32'
-			| 'f64'
-			| 'gen'
-			| 'i128'
-			| 'i16'
-			| 'i32'
-			| 'i64'
-			| 'i8'
-			| 'isize'
-			| 'str'
-			| 'u128'
-			| 'u16'
-			| 'u32'
-			| 'u64'
-			| 'u8'
-			| 'union'
-			| 'usize'
-			| G['type'];
+		readonly path?: G['slots']['identifier.scoped']['path'];
 	}
 	export interface Self<G extends GrammarContext> extends SubKindOf<V.Identifier<G>> {
 		// claimed by rt

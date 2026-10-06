@@ -195,7 +195,7 @@ describe('the committed vocabulary', () => {
 	it('renders its doc comments as block comments and its notes as line comments', () => {
 		const context = readFileSync(join(VOCABULARY_DIR, 'context.ts'), 'utf8');
 		expect(context).toContain(
-			"\n/** The typemap: one key per top-level namespace, projecting to that namespace's kind-set for a grammar. */\n"
+			"\n/** The typemap: one key per top-level namespace, projecting to that namespace's kind-set for a grammar, and the slots whose type the grammar states. */\n"
 		);
 		expect(context).toMatch(/^\/\/ Generated from the grammars' bindings\.scm\. Do not edit\.$/m);
 		for (const file of readdirSync(VOCABULARY_DIR)) {
@@ -231,11 +231,32 @@ describe('vocabularyFiles', () => {
 		expect(source).toContain("readonly $kind: 'modifier.extern';");
 		expect(source).not.toContain('extends V.');
 	});
+	it('types a member of one role as that role, and any other member as its context entry', async () => {
+		const files = vocabularyFiles(await deriveVocabulary());
+		const argument = files.find((f) => f.name === 'argument');
+		expect(argument).toBeDefined();
+		if (!argument) return;
+		const source = renderVocabularyFile(argument);
+		expect(source).toMatch(/readonly name: G\['identifier'\]\s/);
+		expect(source).toMatch(/readonly value: G\['slots'\]\['argument'\]\['value'\]\s/);
+	});
+	it('declares every context entry in SlotTable and fills it in BaseContext with roles, refs or string', async () => {
+		const files = vocabularyFiles(await deriveVocabulary());
+		const context = files.find((f) => f.name === 'context');
+		expect(context).toBeDefined();
+		if (!context) return;
+		const source = renderVocabularyFile(context);
+		expect(source).toContain('readonly slots: SlotTable;');
+		expect(source).toMatch(/export interface SlotTable \{\s+readonly 'argument': \{\s+readonly value: unknown;/);
+		const base = source.slice(source.indexOf('export interface BaseContext'));
+		expect(base).toMatch(/readonly 'argument': \{\s+readonly value: BaseContext\['expression'\] \|/);
+		expect(base).not.toMatch(/readonly \w+:\s*'[^']*';/);
+	});
 	it('builds the index of the namespace files through the typescript factories', async () => {
 		const files = vocabularyFiles(await deriveVocabulary());
 		const source = renderVocabularyFile(indexFile(files));
 		expect(source).toContain("export * from './comment.ts';\nexport * from './declaration.ts';");
-		expect(source).toContain("export type { GrammarContext, BaseContext, Unmapped } from './context.ts';");
+		expect(source).toContain("export type { GrammarContext, BaseContext, SlotTable, Unmapped } from './context.ts';");
 		expect(source).not.toMatch(/\.ts';\n\nexport \*/);
 	});
 });

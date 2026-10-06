@@ -168,19 +168,54 @@ grammar claims takes a member as required when every claimed child does.
 
 ```text
 The tree as typescript programs, one per top-level namespace plus
-`context.ts` (the `GrammarContext` typemap, `Unmapped` and `BaseContext`),
-built directly through the loose builders: an interface merged with a
-namespace at every level, an interface alone at a leaf, a refinement
-extending its path parent with its literal pinned, every namespace exporting
-`Any<G>`. Member types collapse to the smallest covering kind-set: the
-namespace lookup when the admitted leaves' common prefix is the namespace
-root, a sub-namespace's `Any` when it is a claimed prefix, the leaf
-interfaces otherwise. A union keeps one arm per type it builds, keyed by the
-vocabulary kind the arm stands for. Member kinds arrive resolved: the
-derivation has read through containers and left out layout slots, so a
-`<grammar:kind>` that remains is unmapped and is spelled `Unmapped<...>`
-with a note naming it.
+`context.ts` (the `GrammarContext` typemap, the `SlotTable`, `Unmapped` and
+`BaseContext`), built directly through the loose builders: an interface
+merged with a namespace at every level, an interface alone at a leaf, a
+refinement extending its path parent with its literal pinned, every
+namespace exporting `Any<G>`. A member's type is grammar-neutral: its sole
+role, its vocabulary refs, or its scalar, and otherwise its entry in the
+language context's slot table, `G['slots']['<kind path>']['<member>']`.
 ```
+
+Member kinds arrive resolved: the derivation has read through containers and left out layout slots. A member list or a member that may hold several values wraps whichever of the two it is, so a list's element type is what the entry states.
+
+`GrammarContext` declares `slots: SlotTable`, and `SlotTable` declares every entry `slotEntries` lists, typed `unknown`; a grammar's context fills each from its own routes. `BaseContext` fills each with `armsOf` over the member's kinds, so the permissive closure states roles and refs and `string` for text, never a concrete literal.
+
+### `packages/tools/src/inventory/derive.ts::armClass`
+
+What one collapsed member kind stands for: a `scalar` keyword (`boolean`, `string`, `number`), a `role` (a top-level namespace), a `ref` (a dotted vocabulary kind or a `set:` prefix), `text` (a `text:` or `literal:` token), or `unmapped` (a `<grammar:kind>` no binding claims).
+
+### `packages/tools/src/inventory/derive.ts::collapsedKinds`
+
+A member's kinds collapsed to the smallest covering set: a namespace's leaves fold into the namespace when it is itself admitted or their common prefix is the namespace root, and into a `set:<prefix>` when that prefix is a claimed one; other kinds stand as they are. The emitter and the binding generator's probe both collapse through it, so a slot entry's keys and a grammar's fill agree.
+
+### `packages/tools/src/inventory/derive.ts::soleRole`
+
+The one role a member's collapsed kinds state, with the text beside it, when every other arm is text: the member is typed as the role, and the text is keyword text a grammar aliases into that role, which the grammar's context admits under the role rather than the vocabulary naming it.
+
+### `packages/tools/src/inventory/derive.ts::directKinds`
+
+A member typed without the language context: its `soleRole`, or its collapsed kinds when they are all refs or all scalars. Anything else, differing roles, roles beside refs, text alone or nothing, is `undefined`, and the member is typed through its slot entry.
+
+### `packages/tools/src/inventory/derive.ts::levelsWithMembers`
+
+The kind paths that declare their own members: every claimed kind and prefix except refinements and template holes, which pin literals or holes over their parent's members. Sorted, so the slot table's order is stable.
+
+### `packages/tools/src/inventory/derive.ts::slotEntries`
+
+Every member the language context states, one per kind path and member, in path then member order: the members of `levelsWithMembers` that `directKinds` leaves `undefined`.
+
+### `packages/tools/src/inventory/emit.ts::armsOf`
+
+The arms of a member type in a context: a scalar keyword, text as `string`, an unmapped kind as `unknown`, a `set:` prefix as that namespace's `Any`, and a role or ref through `elementArm`. One arm per type, keyed by what it stands for. `BaseContext`'s fill and a direct member's type both build through it.
+
+### `packages/tools/src/inventory/emit.ts::objectTypeOf`
+
+An object type literal of property signatures, `;`-separated with a trailing one, the leading comments on its first member: an interface body and a slot table's entries are both built through it.
+
+### `packages/tools/src/inventory/emit.ts::slotSignatures`
+
+The slot table's members: one quoted kind path per entry's path, holding an object type of that path's members typed by the given function. `SlotTable` types each `unknown`; `BaseContext` types each by `armsOf`.
 
 A sub-kind's interface — a refinement, a content-derived leaf, or a level
 under its top namespace — extends `SubKindOf<V.<Parent><G>>` rather than the

@@ -24,173 +24,15 @@ export namespace Element {
 		export interface TokenRepetition<G extends GrammarContext> extends SubKindOf<V.Element.Macro<G>> {
 			// claimed by r
 			readonly $kind: 'element.macro.token_repetition';
-			readonly operator: '*' | '+' | '?';
-			readonly tokens?: (
-				| G['identifier']
-				| G['literal']
-				| V.Element.Macro.Any<G>
-				| '!'
-				| '!='
-				| '#'
-				| '%'
-				| '%='
-				| '&'
-				| '&&'
-				| '&='
-				| "'"
-				| '*'
-				| '*='
-				| '+'
-				| '+='
-				| ','
-				| '-'
-				| '-='
-				| '->'
-				| '.'
-				| '..'
-				| '...'
-				| '..='
-				| '/'
-				| '/='
-				| ':'
-				| '::'
-				| ';'
-				| '<'
-				| '<<'
-				| '<<='
-				| '<='
-				| '='
-				| '=='
-				| '=>'
-				| '>'
-				| '>='
-				| '>>'
-				| '>>='
-				| '?'
-				| '@'
-				| '^'
-				| '^='
-				| '_'
-				| 'as'
-				| 'async'
-				| 'await'
-				| 'break'
-				| 'const'
-				| 'continue'
-				| 'default'
-				| 'enum'
-				| 'fn'
-				| 'for'
-				| 'gen'
-				| 'if'
-				| 'impl'
-				| 'let'
-				| 'loop'
-				| 'match'
-				| 'mod'
-				| 'pub'
-				| 'return'
-				| 'static'
-				| 'struct'
-				| 'trait'
-				| 'type'
-				| 'union'
-				| 'unsafe'
-				| 'use'
-				| 'where'
-				| 'while'
-				| '|'
-				| '|='
-				| '||'
-				| V.Type.Primitive<G>
-			)[];
-			// unmapped: literal:mutable_specifier
+			readonly operator: G['slots']['element.macro.token_repetition']['operator'];
+			readonly tokens?: G['slots']['element.macro.token_repetition']['tokens'][];
 		}
 		export namespace TokenRepetition {
 			export interface Pattern<G extends GrammarContext> extends SubKindOf<V.Element.Macro.TokenRepetition<G>> {
 				// claimed by r
 				readonly $kind: 'element.macro.token_repetition.pattern';
-				readonly operator: '*' | '+' | '?';
-				readonly tokenPatterns?: (
-					| G['identifier']
-					| G['literal']
-					| V.Element.Macro.Any<G>
-					| '!'
-					| '!='
-					| '#'
-					| '%'
-					| '%='
-					| '&'
-					| '&&'
-					| '&='
-					| "'"
-					| '*'
-					| '*='
-					| '+'
-					| '+='
-					| ','
-					| '-'
-					| '-='
-					| '->'
-					| '.'
-					| '..'
-					| '...'
-					| '..='
-					| '/'
-					| '/='
-					| ':'
-					| '::'
-					| ';'
-					| '<'
-					| '<<'
-					| '<<='
-					| '<='
-					| '='
-					| '=='
-					| '=>'
-					| '>'
-					| '>='
-					| '>>'
-					| '>>='
-					| '?'
-					| '@'
-					| '^'
-					| '^='
-					| '_'
-					| 'as'
-					| 'async'
-					| 'await'
-					| 'break'
-					| 'const'
-					| 'continue'
-					| 'default'
-					| 'enum'
-					| 'fn'
-					| 'for'
-					| 'gen'
-					| 'if'
-					| 'impl'
-					| 'let'
-					| 'loop'
-					| 'match'
-					| 'mod'
-					| 'pub'
-					| 'return'
-					| 'static'
-					| 'struct'
-					| 'trait'
-					| 'type'
-					| 'union'
-					| 'unsafe'
-					| 'use'
-					| 'where'
-					| 'while'
-					| '|'
-					| '|='
-					| '||'
-					| V.Type.Primitive<G>
-				)[];
-				// unmapped: literal:mutable_specifier
+				readonly operator: G['slots']['element.macro.token_repetition.pattern']['operator'];
+				readonly tokenPatterns?: G['slots']['element.macro.token_repetition.pattern']['tokenPatterns'][];
 			}
 			export type Any<G extends GrammarContext> =
 				| V.Element.Macro.TokenRepetition<G>
@@ -226,45 +68,19 @@ export namespace Element {
 	export interface Pair<G extends GrammarContext> extends SubKindOf<V.Element<G>> {
 		// claimed by pt
 		readonly $kind: 'element.pair';
-		readonly key:
-			| G['expression']
-			| G['identifier']
-			| G['literal']
-			| G['pattern']
-			| 'any'
-			| 'async'
-			| 'boolean'
-			| 'declare'
-			| 'export'
-			| 'get'
-			| 'let'
-			| 'module'
-			| 'namespace'
-			| 'new'
-			| 'number'
-			| 'object'
-			| 'override'
-			| 'private'
-			| 'protected'
-			| 'public'
-			| 'readonly'
-			| 'set'
-			| 'static'
-			| 'string'
-			| 'symbol'
-			| 'type';
-		readonly value: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+		readonly key: G['slots']['element.pair']['key'];
+		readonly value: G['slots']['element.pair']['value'];
 	}
 	export interface Splat<G extends GrammarContext> extends SubKindOf<V.Element<G>> {
 		// claimed by pt
 		readonly $kind: 'element.splat';
-		readonly expression?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+		readonly expression?: G['slots']['element.splat']['expression'];
 	}
 	export namespace Splat {
 		export interface Dictionary<G extends GrammarContext> extends SubKindOf<V.Element.Splat<G>> {
 			// claimed by p
 			readonly $kind: 'element.splat.dictionary';
-			readonly expression: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+			readonly expression: G['slots']['element.splat.dictionary']['expression'];
 		}
 		export interface Parenthesized<G extends GrammarContext> extends SubKindOf<V.Element.Splat<G>> {
 			// claimed by p
@@ -283,14 +99,14 @@ export namespace Element {
 		export interface Base<G extends GrammarContext> extends SubKindOf<V.Element.Struct<G>> {
 			// claimed by r
 			readonly $kind: 'element.struct.base';
-			readonly value: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
+			readonly value: G['slots']['element.struct.base']['value'];
 		}
 		export interface Field<G extends GrammarContext> extends SubKindOf<V.Element.Struct<G>> {
 			// claimed by r
 			readonly $kind: 'element.struct.field';
 			readonly attributeItems?: G['attribute'][];
 			readonly field?: V.Identifier.Field<G> | V.Literal.Number.Integer<G>;
-			readonly value?: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
+			readonly value?: G['slots']['element.struct.field']['value'];
 		}
 		export namespace Field {
 			export interface Shorthand<G extends GrammarContext> extends SubKindOf<V.Element.Struct.Field<G>> {
@@ -308,37 +124,37 @@ export namespace Element {
 	}
 	export interface Template<G extends GrammarContext> extends SubKindOf<V.Element<G>> {
 		readonly $kind: 'element.template';
-		readonly type: G['identifier'] | G['type'];
+		readonly type: G['slots']['element.template']['type'];
 		// t only
 	}
 	export namespace Template {
 		export interface Substitution<G extends GrammarContext> extends SubKindOf<V.Element.Template<G>> {
 			// claimed by t
 			readonly $kind: 'element.template.substitution';
-			readonly type: G['identifier'] | G['type'];
+			readonly type: G['slots']['element.template.substitution']['type'];
 		}
 		export type Any<G extends GrammarContext> = V.Element.Template.Substitution<G>;
 	}
 	export interface Tuple<G extends GrammarContext> extends SubKindOf<V.Element<G>> {
 		readonly $kind: 'element.tuple';
-		readonly name: G['identifier'] | V.Pattern.Rest<G>;
+		readonly name: G['slots']['element.tuple']['name'];
 		// t only
-		readonly type: G['identifier'] | G['type'];
+		readonly type: G['slots']['element.tuple']['type'];
 		// t only
 	}
 	export namespace Tuple {
 		export interface Member<G extends GrammarContext> extends SubKindOf<V.Element.Tuple<G>> {
 			// claimed by t
 			readonly $kind: 'element.tuple.member';
-			readonly name: G['identifier'] | V.Pattern.Rest<G>;
-			readonly type: G['identifier'] | G['type'];
+			readonly name: G['slots']['element.tuple.member']['name'];
+			readonly type: G['slots']['element.tuple.member']['type'];
 		}
 		export namespace Member {
 			export interface Optional<G extends GrammarContext> extends SubKindOf<V.Element.Tuple.Member<G>> {
 				// claimed by t
 				readonly $kind: 'element.tuple.member.optional';
 				readonly name: G['identifier'];
-				readonly type: G['identifier'] | G['type'];
+				readonly type: G['slots']['element.tuple.member.optional']['type'];
 			}
 			export type Any<G extends GrammarContext> = V.Element.Tuple.Member<G> | V.Element.Tuple.Member.Optional<G>;
 		}
@@ -348,20 +164,13 @@ export namespace Element {
 		// claimed by r
 		readonly $kind: 'element.type_argument';
 		readonly constraint?: V.Clause.Bounds<G>;
-		readonly content:
-			| V.Clause.Bounds.Removed<G>
-			| V.Element.TypeBinding<G>
-			| V.Expression.Call.Macro<G>
-			| G['identifier']
-			| G['literal']
-			| V.Statement.Block<G>
-			| G['type'];
+		readonly content: G['slots']['element.type_argument']['content'];
 	}
 	export interface TypeBinding<G extends GrammarContext> extends SubKindOf<V.Element<G>> {
 		// claimed by r
 		readonly $kind: 'element.type_binding';
 		readonly name: V.Identifier.Type<G>;
-		readonly type: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
+		readonly type: G['slots']['element.type_binding']['type'];
 		readonly typeArguments?: V.Element.TypeArgument<G>[];
 	}
 	export type Any<G extends GrammarContext> =

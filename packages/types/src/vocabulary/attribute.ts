@@ -5,7 +5,7 @@ import type * as V from './index.ts';
 export interface Attribute<G extends GrammarContext> {
 	// claimed by r
 	readonly $kind: 'attribute';
-	readonly content?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'] | V.Attribute.Content.Any<G>;
+	readonly content?: G['slots']['attribute']['content'];
 	// prt only
 }
 
@@ -13,55 +13,27 @@ export namespace Attribute {
 	export interface Content<G extends GrammarContext> extends SubKindOf<V.Attribute<G>> {
 		// claimed by r
 		readonly $kind: 'attribute.content';
-		readonly input?: V.Unmapped<'rust:attribute_input'>;
-		// unmapped: <rust:attribute_input>
-		readonly path?:
-			| G['identifier']
-			| 'bool'
-			| 'char'
-			| 'default'
-			| 'f32'
-			| 'f64'
-			| 'gen'
-			| 'i128'
-			| 'i16'
-			| 'i32'
-			| 'i64'
-			| 'i8'
-			| 'isize'
-			| 'str'
-			| 'u128'
-			| 'u16'
-			| 'u32'
-			| 'u64'
-			| 'u8'
-			| 'union'
-			| 'usize';
+		readonly input?: G['slots']['attribute.content']['input'];
+		readonly path?: G['identifier'];
 	}
 	export namespace Content {
 		export interface Call<G extends GrammarContext> extends SubKindOf<V.Attribute.Content<G>> {
 			// claimed by t
 			readonly $kind: 'attribute.content.call';
-			readonly arguments: (
-				| V.Declaration.Module<G>
-				| V.Element.Splat<G>
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-			)[];
-			readonly function: V.Attribute.Content.Member<G> | G['identifier'];
-			readonly typeArguments?: (G['identifier'] | G['type'])[];
+			readonly arguments: G['slots']['attribute.content.call']['arguments'][];
+			readonly function: G['slots']['attribute.content.call']['function'];
+			readonly typeArguments?: G['slots']['attribute.content.call']['typeArguments'][];
 		}
 		export interface Member<G extends GrammarContext> extends SubKindOf<V.Attribute.Content<G>> {
 			// claimed by t
 			readonly $kind: 'attribute.content.member';
-			readonly object: V.Attribute.Content.Member<G> | G['identifier'];
+			readonly object: G['slots']['attribute.content.member']['object'];
 			readonly property: V.Identifier.Property<G>;
 		}
 		export interface Parenthesized<G extends GrammarContext> extends SubKindOf<V.Attribute.Content<G>> {
 			// claimed by t
 			readonly $kind: 'attribute.content.parenthesized';
-			readonly expression: G['identifier'] | V.Attribute.Content.Any<G>;
+			readonly expression: G['slots']['attribute.content.parenthesized']['expression'];
 		}
 		export type Any<G extends GrammarContext> =
 			| V.Attribute.Content<G>
@@ -72,7 +44,7 @@ export namespace Attribute {
 	export interface Decorator<G extends GrammarContext> extends SubKindOf<V.Attribute<G>> {
 		// claimed by pt
 		readonly $kind: 'attribute.decorator';
-		readonly content: G['expression'] | G['identifier'] | G['literal'] | G['pattern'] | V.Attribute.Content.Any<G>;
+		readonly content: G['slots']['attribute.decorator']['content'];
 	}
 	export interface Inner<G extends GrammarContext> extends SubKindOf<V.Attribute<G>> {
 		// claimed by r

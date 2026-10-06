@@ -89,13 +89,26 @@ interface RawNode {
 	readonly slots?: readonly { readonly name: string; readonly paramName?: string; readonly values?: readonly RawValue[] }[];
 }
 
-const { loadInputs } = (await import(join(ROOT, 'packages/tools/src/inventory/index.ts'))) as {
+interface MemberFacts {
+	readonly kinds: ReadonlySet<string>;
+}
+type Derivation = object;
+const { loadInputs, deriveVocabulary } = (await import(join(ROOT, 'packages/tools/src/inventory/index.ts'))) as {
 	loadInputs: (g: readonly string[]) => Promise<GrammarInput[]>;
+	deriveVocabulary: () => Promise<Derivation>;
 };
-const { camel, tsname } = (await import(join(ROOT, 'packages/tools/src/inventory/derive.ts'))) as {
-	camel: (s: string) => string;
-	tsname: (s: string) => string;
-};
+const { camel, tsname, derive, levelMembers, slotEntries, collapsedKinds, armClass, soleRole, levelsWithMembers } =
+	(await import(join(ROOT, 'packages/tools/src/inventory/derive.ts'))) as {
+		camel: (s: string) => string;
+		tsname: (s: string) => string;
+		derive: (inputs: readonly GrammarInput[]) => Derivation;
+		levelMembers: (d: Derivation, path: string) => ReadonlyMap<string, MemberFacts>;
+		slotEntries: (d: Derivation) => readonly { readonly path: string; readonly member: string }[];
+		collapsedKinds: (d: Derivation, kinds: ReadonlySet<string>) => string[];
+		armClass: (kind: string) => 'scalar' | 'role' | 'ref' | 'text' | 'unmapped';
+		soleRole: (d: Derivation, kinds: ReadonlySet<string>) => { role: string; text: string[] } | undefined;
+		levelsWithMembers: (d: Derivation) => string[];
+	};
 const { readNodeModelFile } = (await import(join(ROOT, 'packages/tools/src/validate/common.ts'))) as {
 	readNodeModelFile: (g: string) => string | undefined;
 };
@@ -379,12 +392,57 @@ const NAMESPACES = [
 	'type'
 ] as const;
 const claimedPaths = [...new Set(facts.claims.map((c) => c.vocab))].sort();
+// The language context's fill. Collapsing is the vocabulary's; a terminal or enum value is its literal, a
+// pattern-matched leaf is `string`. A role admits the keyword text this grammar's members hold beside it, and each slot
+// the vocabulary leaves to the language holds what this grammar's own member facts route there, or `never`.
+const vocabulary = await deriveVocabulary();
+const own = derive([input]);
+const patterns = new Set([...model.values()].flatMap((n) => (n.pattern === null ? [] : [n.pattern])));
+const roleText = new Map<string, Set<string>>();
+for (const path of levelsWithMembers(own))
+	for (const facts of levelMembers(own, path).values()) {
+		const sole = soleRole(vocabulary, facts.kinds);
+		for (const k of sole?.text ?? []) (roleText.get(sole!.role) ?? roleText.set(sole!.role, new Set()).get(sole!.role)!).add(k);
+	}
+const slotArm = (k: string): string => {
+	switch (armClass(k)) {
+		case 'scalar':
+			return k;
+		case 'role':
+			return `Ctx['${k}']`;
+		case 'unmapped':
+			return `V.Unmapped<'${k.slice(1, -1)}'>`;
+		case 'ref':
+			return k.startsWith('set:') ? `V.${k.slice(4).split('.').map(tsname).join('.')}.Any<Ctx>` : interfaceOf(k);
+		case 'text': {
+			if (k.startsWith('literal:')) {
+				const text = tokenText.get(k.slice(8));
+				return text === undefined ? 'string' : quote(text);
+			}
+			return patterns.has(k.slice(5)) ? 'string' : quote(k.slice(5));
+		}
+	}
+};
 emit(`/** ${GRAMMAR}'s context: each namespace's kind-set, the interfaces of the kinds ${GRAMMAR} claims. */`);
 emit('export interface Ctx extends GrammarContext {');
 for (const ns of NAMESPACES) {
 	const paths = claimedPaths.filter((p) => p === ns || p.startsWith(`${ns}.`));
-	emit(`\treadonly ${ns}: ${paths.length > 0 ? paths.map(interfaceOf).join(' | ') : 'never'};`);
+	const arms = [...paths.map(interfaceOf), ...[...new Set([...(roleText.get(ns) ?? [])].map(slotArm))].sort()];
+	emit(`\treadonly ${ns}: ${arms.length > 0 ? arms.join(' | ') : 'never'};`);
 }
+emit('\treadonly slots: {');
+const byPath = new Map<string, string[]>();
+for (const { path, member } of slotEntries(vocabulary)) (byPath.get(path) ?? byPath.set(path, []).get(path)!).push(member);
+for (const [path, members] of byPath) {
+	emit(`\t\treadonly '${path}': {`);
+	for (const member of members) {
+		const facts = levelMembers(own, path).get(member);
+		const arms = facts === undefined ? [] : [...new Set(collapsedKinds(vocabulary, facts.kinds).map(slotArm))];
+		emit(`\t\t\treadonly ${member}: ${arms.length === 0 ? 'never' : arms.join(' | ')};`);
+	}
+	emit('\t\t};');
+}
+emit('\t};');
 emit('}');
 emit();
 

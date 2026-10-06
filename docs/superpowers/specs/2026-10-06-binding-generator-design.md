@@ -19,10 +19,21 @@ These go into the grammar package's types module, beside `ParsedByKindId` and `B
 
   ```ts
   export interface Ctx extends GrammarContext {
-  	readonly identifier: V.Identifier<Ctx> | V.Identifier.Crate<Ctx> | V.Identifier.Field<Ctx> | …;
+  	readonly identifier: V.Identifier<Ctx> | V.Identifier.Crate<Ctx> | … | 'bool' | 'gen' | 'union' | …;
   	…
+  	readonly slots: {
+  		readonly argument: { readonly value: … };
+  		readonly 'expression.binary': { readonly operator: '!=' | '%' | '&' | … };
+  		…
+  	};
   }
   ```
+
+  - **A role admits the grammar's keyword text.** A vocabulary member that names one role beside keyword text is typed as the role (`G['identifier']`), and the grammar's role entry admits the keywords its grammar aliases there.
+  - **`slots`, the context slot table,** is keyed by kind path, then member: `G['slots']['<kind path>']['<member>']`. A vocabulary member is typed through it unless it collapses to one role, to vocabulary refs, or to a scalar. `SlotTable` declares every entry, typed `unknown`.
+  - **The grammar fills each entry** from its own routes: roles and refs, a fixed literal or enum value as its const string, a pattern-matched leaf as `string`. An entry the grammar does not route is `never`.
+  - **`BaseContext`, the permissive closure, fills each entry** with roles and refs where its arms are kinds, and `string` where they are text. The vocabulary itself names no concrete literal.
+  - **Nothing is dropped.** The only member left undeclared is one no grammar routes.
 
 - **`ViewForm<I>`,** the one mapped type that turns a property-shaped interface into its portable node form: each member becomes a closure that is always present, its return type carrying the optionality (`body(): … | undefined`). Member types resolve through `VocabViews`, recursing only through arrays, as `Resolve` goes through `ParsedByKindId` by `$type`.
 - **`VocabViews`,** a flat table from each vocabulary kind the grammar claims to its portable node type, `ViewForm` of its interface. Being flat keeps the mapped types out of deep comparisons.

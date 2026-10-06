@@ -10,21 +10,15 @@ export namespace Statement {
 	export interface Assert<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by p
 		readonly $kind: 'statement.assert';
-		readonly expressions: (G['expression'] | G['identifier'] | G['literal'] | G['pattern'])[];
+		readonly expressions: G['slots']['statement.assert']['expressions'][];
 	}
 	export interface Block<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by prt
 		readonly $kind: 'statement.block';
 		readonly label?: V.Identifier.Label<G>;
 		// r only
-		readonly statements?: (
-			| G['attribute']
-			| V.Clause.Import.Alias<G>
-			| G['declaration']
-			| V.Expression.Call.Macro<G>
-			| G['statement']
-		)[];
-		readonly trailingExpression?: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
+		readonly statements?: G['slots']['statement.block']['statements'][];
+		readonly trailingExpression?: G['slots']['statement.block']['trailingExpression'];
 		// r only
 	}
 	export namespace Block {
@@ -38,7 +32,7 @@ export namespace Statement {
 	export interface Break<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by prt
 		readonly $kind: 'statement.break';
-		readonly expression?: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
+		readonly expression?: G['slots']['statement.break']['expression'];
 		// r only
 		readonly label?: V.Identifier.Label<G>;
 		// rt only
@@ -56,7 +50,7 @@ export namespace Statement {
 	export interface Delete<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by p
 		readonly $kind: 'statement.delete';
-		readonly expressions: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+		readonly expressions: G['slots']['statement.delete']['expressions'];
 	}
 	export interface Empty<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by rt
@@ -65,8 +59,8 @@ export namespace Statement {
 	export interface Exec<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by p
 		readonly $kind: 'statement.exec';
-		readonly code: G['identifier'] | V.Literal.String<G>;
-		readonly inClauses?: (G['expression'] | G['identifier'] | G['literal'] | G['pattern'])[];
+		readonly code: G['slots']['statement.exec']['code'];
+		readonly inClauses?: G['slots']['statement.exec']['inClauses'][];
 	}
 	export interface Export<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by t
@@ -75,23 +69,9 @@ export namespace Statement {
 	export interface Expression<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by prt
 		readonly $kind: 'statement.expression';
-		readonly content?:
-			| V.Declaration.Variable<G>
-			| G['expression']
-			| G['identifier']
-			| G['literal']
-			| G['pattern']
-			| G['statement']
-			| (
-					| V.Declaration.Variable<G>
-					| G['expression']
-					| G['identifier']
-					| G['literal']
-					| G['pattern']
-					| G['statement']
-			  )[];
+		readonly content?: G['slots']['statement.expression']['content'] | G['slots']['statement.expression']['content'][];
 		// pr only
-		readonly expression?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'];
+		readonly expression?: G['slots']['statement.expression']['expression'];
 		// t only
 	}
 	export interface Global<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
@@ -106,51 +86,19 @@ export namespace Statement {
 		// rt only
 		readonly alternatives?: G['clause'][];
 		// p only
-		readonly condition:
-			| G['expression']
-			| G['identifier']
-			| G['literal']
-			| G['pattern']
-			| V.Clause.Let.Any<G>
-			| G['statement'];
-		readonly consequence: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+		readonly condition: G['slots']['statement.if']['condition'];
+		readonly consequence: G['slots']['statement.if']['consequence'];
 	}
 	export interface Import<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by prt
 		readonly $kind: 'statement.import';
-		readonly argument?:
-			| G['identifier']
-			| V.Clause.Import.Any<G>
-			| 'bool'
-			| 'char'
-			| 'default'
-			| 'f32'
-			| 'f64'
-			| 'gen'
-			| 'i128'
-			| 'i16'
-			| 'i32'
-			| 'i64'
-			| 'i8'
-			| 'isize'
-			| 'str'
-			| 'u128'
-			| 'u16'
-			| 'u32'
-			| 'u64'
-			| 'u8'
-			| 'union'
-			| 'usize';
+		readonly argument?: G['slots']['statement.import']['argument'];
 		// r only
-		readonly fromClause?:
-			| V.Unmapped<'typescript:import_statement_clause_from'>
-			| V.Clause.Import.Require<G>
-			| V.Literal.String<G>;
+		readonly fromClause?: G['slots']['statement.import']['fromClause'];
 		// t only
-		// unmapped: <typescript:import_statement_clause_from>
 		readonly importAttribute?: V.Clause.Import.Attribute<G>;
 		// t only
-		readonly importClause?: 'type' | 'typeof';
+		readonly importClause?: G['slots']['statement.import']['importClause'];
 		// t only
 		readonly names?: (V.Clause.Import.Alias<G> | V.Identifier.Dotted<G>)[];
 		// p only
@@ -188,36 +136,13 @@ export namespace Statement {
 	export interface Labeled<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by t
 		readonly $kind: 'statement.labeled';
-		readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
-		readonly label:
-			| V.Identifier.Label<G>
-			| 'any'
-			| 'async'
-			| 'boolean'
-			| 'declare'
-			| 'export'
-			| 'get'
-			| 'let'
-			| 'module'
-			| 'namespace'
-			| 'new'
-			| 'number'
-			| 'object'
-			| 'override'
-			| 'private'
-			| 'protected'
-			| 'public'
-			| 'readonly'
-			| 'set'
-			| 'static'
-			| 'string'
-			| 'symbol'
-			| 'type';
+		readonly body: G['slots']['statement.labeled']['body'];
+		readonly label: G['slots']['statement.labeled']['label'];
 	}
 	export interface Loop<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by r
 		readonly $kind: 'statement.loop';
-		readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+		readonly body: G['slots']['statement.loop']['body'];
 		// prt only
 		readonly label?: V.Identifier.Label<G>;
 	}
@@ -225,20 +150,15 @@ export namespace Statement {
 		export interface Counted<G extends GrammarContext> extends SubKindOf<V.Statement.Loop<G>> {
 			// claimed by t
 			readonly $kind: 'statement.loop.counted';
-			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
-			readonly condition:
-				| V.Declaration.Module<G>
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| V.Statement.Empty<G>;
-			readonly increment?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'];
-			readonly initializer: G['declaration'] | G['expression'] | G['identifier'] | G['literal'] | V.Statement.Empty<G>;
+			readonly body: G['slots']['statement.loop.counted']['body'];
+			readonly condition: G['slots']['statement.loop.counted']['condition'];
+			readonly increment?: G['slots']['statement.loop.counted']['increment'];
+			readonly initializer: G['slots']['statement.loop.counted']['initializer'];
 		}
 		export interface DoWhile<G extends GrammarContext> extends SubKindOf<V.Statement.Loop<G>> {
 			// claimed by t
 			readonly $kind: 'statement.loop.do_while';
-			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+			readonly body: G['slots']['statement.loop.do_while']['body'];
 			readonly condition: V.Expression.Parenthesized<G>;
 		}
 		export interface For<G extends GrammarContext> extends SubKindOf<V.Statement.Loop<G>> {
@@ -250,16 +170,14 @@ export namespace Statement {
 			// p only
 			readonly await?: boolean;
 			// t only
-			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
-			readonly forHeader?: V.Unmapped<'typescript:for_header'>;
+			readonly body: G['slots']['statement.loop.for']['body'];
+			readonly forHeader?: G['slots']['statement.loop.for']['forHeader'];
 			// t only
-			// unmapped: <typescript:for_header>
 			readonly label?: V.Identifier.Label<G>;
 			// r only
-			readonly left?: V.Unmapped<'rust:pattern'> | G['expression'] | G['identifier'] | G['pattern'];
+			readonly left?: G['slots']['statement.loop.for']['left'];
 			// pr only
-			// unmapped: <rust:pattern>
-			readonly right?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'] | G['statement'];
+			readonly right?: G['slots']['statement.loop.for']['right'];
 			// pr only
 		}
 		export interface While<G extends GrammarContext> extends SubKindOf<V.Statement.Loop<G>> {
@@ -267,14 +185,8 @@ export namespace Statement {
 			readonly $kind: 'statement.loop.while';
 			readonly alternative?: V.Clause.Else<G>;
 			// p only
-			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
-			readonly condition:
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| G['pattern']
-				| V.Clause.Let.Any<G>
-				| G['statement'];
+			readonly body: G['slots']['statement.loop.while']['body'];
+			readonly condition: G['slots']['statement.loop.while']['condition'];
 			readonly label?: V.Identifier.Label<G>;
 			// r only
 		}
@@ -288,17 +200,8 @@ export namespace Statement {
 	export interface Match<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by pr
 		readonly $kind: 'statement.match';
-		readonly body:
-			| V.Unmapped<'rust:match_block_arms'>
-			| V.Clause.Case<G>
-			| (V.Unmapped<'rust:match_block_arms'> | V.Clause.Case<G>)[];
-		// unmapped: <rust:match_block_arms> literal:_newline
-		readonly subject?:
-			| G['expression']
-			| G['identifier']
-			| G['literal']
-			| G['statement']
-			| (G['expression'] | G['identifier'] | G['literal'] | G['statement'])[];
+		readonly body: G['slots']['statement.match']['body'] | G['slots']['statement.match']['body'][];
+		readonly subject?: G['slots']['statement.match']['subject'] | G['slots']['statement.match']['subject'][];
 	}
 	export interface Nonlocal<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by p
@@ -313,7 +216,7 @@ export namespace Statement {
 		// claimed by p
 		readonly $kind: 'statement.print';
 		readonly content?: V.Statement.Print.Any<G>;
-		readonly printArguments?: (G['expression'] | G['identifier'] | G['literal'] | G['pattern'])[];
+		readonly printArguments?: G['slots']['statement.print']['printArguments'][];
 	}
 	export namespace Print {
 		export interface Chevron<G extends GrammarContext> extends SubKindOf<V.Statement.Print<G>> {
@@ -321,30 +224,20 @@ export namespace Statement {
 			readonly $kind: 'statement.print.chevron';
 			readonly chevron: V.Clause.Print.Chevron<G>;
 			readonly printChevronArguments?:
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| G['pattern']
-				| ','
-				| (G['expression'] | G['identifier'] | G['literal'] | G['pattern'] | ',')[];
+				| G['slots']['statement.print.chevron']['printChevronArguments']
+				| G['slots']['statement.print.chevron']['printChevronArguments'][];
 		}
 		export type Any<G extends GrammarContext> = V.Statement.Print<G> | V.Statement.Print.Chevron<G>;
 	}
 	export interface Return<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by prt
 		readonly $kind: 'statement.return';
-		readonly expression?:
-			| V.Declaration.Module<G>
-			| G['expression']
-			| G['identifier']
-			| G['literal']
-			| G['pattern']
-			| G['statement'];
+		readonly expression?: G['slots']['statement.return']['expression'];
 	}
 	export interface Scope<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by t
 		readonly $kind: 'statement.scope';
-		readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+		readonly body: G['slots']['statement.scope']['body'];
 		readonly object: V.Expression.Parenthesized<G>;
 	}
 	export interface Switch<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
@@ -356,16 +249,16 @@ export namespace Statement {
 	export interface Throw<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by pt
 		readonly $kind: 'statement.throw';
-		readonly cause?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+		readonly cause?: G['slots']['statement.throw']['cause'];
 		// p only
-		readonly expression?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+		readonly expression?: G['slots']['statement.throw']['expression'];
 	}
 	export interface Try<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by pt
 		readonly $kind: 'statement.try';
 		readonly alternative?: V.Clause.Else<G>;
 		// p only
-		readonly body: V.Declaration.TypeAlias<G> | G['statement'];
+		readonly body: G['slots']['statement.try']['body'];
 		readonly finalizer?: V.Clause.Finally<G>;
 		readonly handlers?: G['clause'] | G['clause'][];
 	}
@@ -373,7 +266,7 @@ export namespace Statement {
 		// claimed by p
 		readonly $kind: 'statement.with';
 		readonly async?: boolean;
-		readonly body: V.Declaration.TypeAlias<G> | G['statement'];
+		readonly body: G['slots']['statement.with']['body'];
 		readonly withClause: V.Clause.With<G>;
 	}
 	export type Any<G extends GrammarContext> =

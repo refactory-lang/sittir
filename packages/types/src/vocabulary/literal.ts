@@ -52,38 +52,32 @@ export namespace Literal {
 		export interface Float<G extends GrammarContext> extends SubKindOf<V.Literal.Number<G>> {
 			// claimed by prt
 			readonly $kind: 'literal.number.float';
-			readonly marker?: 'E' | 'e';
+			readonly exponent?: G['slots']['literal.number.float']['exponent'];
 			// t only
-			readonly sign?: '+' | '-';
+			readonly fraction?: G['slots']['literal.number.float']['fraction'];
+			// t only
+			readonly integer?: G['slots']['literal.number.float']['integer'];
+			// t only
+			readonly marker?: G['slots']['literal.number.float']['marker'];
+			// t only
+			readonly sign?: G['slots']['literal.number.float']['sign'];
 			// t only
 		}
 		export interface Integer<G extends GrammarContext> extends SubKindOf<V.Literal.Number<G>> {
 			// claimed by prt
 			readonly $kind: 'literal.number.integer';
-			readonly prefix?: '0B' | '0O' | '0X' | '0b' | '0o' | '0x';
+			readonly content?: G['slots']['literal.number.integer']['content'];
+			readonly prefix?: G['slots']['literal.number.integer']['prefix'];
 			// pt only
 		}
 		export namespace Integer {
 			export interface Hex<G extends GrammarContext> extends SubKindOf<V.Literal.Number.Integer<G>> {
 				// claimed by prt
 				readonly $kind: 'literal.number.integer.hex';
-				readonly prefix?: '0X' | '0x';
+				readonly content: G['slots']['literal.number.integer.hex']['content'];
+				readonly prefix?: G['slots']['literal.number.integer.hex']['prefix'];
 				// pt only
-				readonly suffix?:
-					| 'f32'
-					| 'f64'
-					| 'i128'
-					| 'i16'
-					| 'i32'
-					| 'i64'
-					| 'i8'
-					| 'isize'
-					| 'u128'
-					| 'u16'
-					| 'u32'
-					| 'u64'
-					| 'u8'
-					| 'usize';
+				readonly suffix?: G['slots']['literal.number.integer.hex']['suffix'];
 				// r only
 			}
 			export type Any<G extends GrammarContext> = V.Literal.Number.Integer<G> | V.Literal.Number.Integer.Hex<G>;
@@ -123,25 +117,10 @@ export namespace Literal {
 	export interface String<G extends GrammarContext> extends SubKindOf<V.Literal<G>> {
 		// claimed by prt
 		readonly $kind: 'literal.string';
-		readonly content?:
-			| V.Unmapped<'rust:raw_string_literal_content'>
-			| V.Unmapped<'rust:string_content'>
-			| V.Literal.String.Escape<G>
-			| (
-					| V.Unmapped<'rust:raw_string_literal_content'>
-					| V.Unmapped<'rust:string_content'>
-					| V.Literal.String.Escape<G>
-			  )[];
+		readonly content?: G['slots']['literal.string']['content'] | G['slots']['literal.string']['content'][];
 		// rt only
-		// unmapped: <rust:raw_string_literal_content> <rust:string_content>
-		readonly contents?: (
-			| V.Unmapped<'python:escape_interpolation'>
-			| V.Unmapped<'python:string_fragment'>
-			| V.Expression.Interpolation<G>
-			| V.Literal.String.Escape<G>
-		)[];
+		readonly contents?: G['slots']['literal.string']['contents'][];
 		// p only
-		// unmapped: <python:escape_interpolation> <python:string_fragment> literal:not_escape_sequence
 	}
 	export namespace String {
 		export interface Bytes<G extends GrammarContext> extends SubKindOf<V.Literal.String<G>> {
@@ -156,17 +135,13 @@ export namespace Literal {
 		export interface Docstring<G extends GrammarContext> extends SubKindOf<V.Literal.String<G>> {
 			// claimed by p
 			readonly $kind: 'literal.string.docstring';
-			readonly contents?: (
-				| V.Unmapped<'python:escape_interpolation'>
-				| V.Unmapped<'python:string_fragment'>
-				| V.Expression.Interpolation<G>
-				| V.Literal.String.Escape<G>
-			)[];
-			// unmapped: <python:escape_interpolation> <python:string_fragment> literal:not_escape_sequence
+			readonly contents?: G['slots']['literal.string.docstring']['contents'][];
 		}
 		export interface Escape<G extends GrammarContext> extends SubKindOf<V.Literal.String<G>> {
 			// claimed by prt
 			readonly $kind: 'literal.string.escape';
+			readonly content?: G['slots']['literal.string.escape']['content'];
+			// t only
 		}
 		export interface F<G extends GrammarContext> extends SubKindOf<V.Literal.String<G>> {
 			// claimed by p
@@ -175,9 +150,8 @@ export namespace Literal {
 		export interface Raw<G extends GrammarContext> extends SubKindOf<V.Literal.String<G>> {
 			// claimed by pr
 			readonly $kind: 'literal.string.raw';
-			readonly content: V.Unmapped<'rust:raw_string_literal_content'>;
+			readonly content: G['slots']['literal.string.raw']['content'];
 			// r only
-			// unmapped: <rust:raw_string_literal_content>
 		}
 		export interface Triple<G extends GrammarContext> extends SubKindOf<V.Literal.String<G>> {
 			// claimed by p
@@ -196,12 +170,7 @@ export namespace Literal {
 	export interface Template<G extends GrammarContext> extends SubKindOf<V.Literal<G>> {
 		// claimed by t
 		readonly $kind: 'literal.template';
-		readonly elements?: (
-			| V.Unmapped<'typescript:template_chars'>
-			| V.Expression.Interpolation<G>
-			| V.Literal.String.Escape<G>
-		)[];
-		// unmapped: <typescript:template_chars>
+		readonly elements?: G['slots']['literal.template']['elements'][];
 	}
 	export type Any<G extends GrammarContext> =
 		| V.Literal.Boolean<G>

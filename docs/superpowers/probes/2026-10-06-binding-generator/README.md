@@ -13,7 +13,8 @@ The prototype predates the portable engine surface. It:
 - reads contextual claims by their context-free claim, and does not test predicate claims;
 - routes a presence member by its capture name as the token's text, since the facts it reads keep no token text: `"async" @async` resolves, `"async" @isAsync` would have no route, so it does not validate renamed presence captures;
 - skips build entries whose kind has no bare factory, where the spec routes them through the existing form and subtype routing;
-- keeps the type maps in its own module rather than the grammar's types module, and names its literals "view classes" in its output.
+- keeps the type maps in its own module rather than the grammar's types module, and names its literals "view classes" in its output;
+- fills its context (each role's keyword text and the slot table) from a derivation of its one grammar, through the inventory's collapsing, where the spec has the type maps' emitter fill it.
 
 Its views have the shape of a portable node (an object literal of closures), so its read and type-check figures stand for the spec's.
 
@@ -21,7 +22,7 @@ Its views have the shape of a portable node (an object literal of closures), so 
 
 | file | what it does |
 | --- | --- |
-| `generate.mts` | The generator prototype. Writes `out/<grammar>.vocab.ts` (the context `Ctx`, `ViewForm`, `VocabViews`, the kind-id view types, `Backward`, one literal factory per read entry, the internal `view()`/`viewEnum()` dispatch, `viewNode()` and `builder()`) and `out/<grammar>.engine.ts` (a typed re-export of the engine). Every interface member gets a closure, read from the vocabulary's own files (`VOCAB_DIR`, inherited members included); a member with no route returns `undefined`. Prints what it emitted and every entry it skipped, with the reason. |
+| `generate.mts` | The generator prototype. Writes `out/<grammar>.vocab.ts` (the context `Ctx` with its slot table filled from the grammar's own routes, `ViewForm`, `VocabViews`, the kind-id view types, `Backward`, one literal factory per read entry, the internal `view()`/`viewEnum()` dispatch, `viewNode()` and `builder()`) and `out/<grammar>.engine.ts` (a typed re-export of the engine). Every interface member gets a closure, read from the vocabulary's own files (`VOCAB_DIR`, inherited members included); a member with no route returns `undefined`. Prints what it emitted and every entry it skipped, with the reason. |
 | `lock-vocabulary.mts` | Writes `locked/`, a stand-in for the locked vocabulary: today's vocabulary with the bindings spec's §3.4 kind rule applied, so each level's `kind` admits every path beneath it. Generate with `VOCAB_DIR=<this folder>/locked` to check against it. |
 | `conformance.py` | Sorts the type errors of a generated module by cause (spec §4) and names one location per cause. Reads `tsc` output on stdin. |
 | `demo.mts` | Reads a rust function through the views, builds a structure and the view back, renders both, and times the views against the low-level reader. It is type-checked with the module, so it also shows the consumer's typing. |
@@ -68,6 +69,20 @@ Rust, measured at `f4a78b7fb` on an Apple-silicon Mac.
   | **rejected** | **142** | **139** |
 
   Against the stand-in, 3 further errors fall outside the view members (TS2339, TS2349, TS2722), in the demo's use of the views.
+- **Conformance with the context slot table,** measured on the vocabulary whose members are typed by a sole role, refs, a scalar or their slot entry, with the probe filling rust's context: **133** rejected, against 142 for the same probe and classifier on the vocabulary before it.
+
+  | cause | before | after |
+  | --- | --- | --- |
+  | token text | 74 | 98 |
+  | text leaf | 33 | 0 |
+  | predicate | 13 | 13 |
+  | unmapped | 10 | 12 |
+  | untyped reader | 6 | 6 |
+  | refinement | 3 | 3 |
+  | extra member | 2 | 0 |
+  | absent | 1 | 1 |
+
+  Per member: 2 extra members are declared now; 7 members are admitted by the fill (4 text leaves, 3 token texts); 28 text-leaf members still fail on another arm, a primitive type token read as `type.primitive` in an expression slot, which the classifier files under token text because the deepest pair it reads is the `$kind` literals; 2 members show the fill's unmapped `rust:pattern` arm.
 - **Demo:** `async fn add(a: i32, b: i32) -> i32 { a + b }` reads as `declaration.function` with `async: true`, two `declaration.parameter`s, a `type.primitive` return type and a `statement.block` whose tail is `expression.binary.arithmetic.add` with operator `+`. Building the view back renders the same text (the demo exits non-zero when it does not), and the structure `{ kind: 'expression.binary.arithmetic.add', … }` renders `x + y`.
 - **Backward:** excludes `function_item` and `function_signature_item`, 2 of 152 claimed kinds, the holders of the 5 contextual claims.
 - **Cost** (best of 5 over 200k): the low-level reader 105 ns; making the root's view 136 ns; reading a view's `name` 249 ns, the low-level read plus making the child's view.

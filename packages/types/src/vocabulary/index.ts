@@ -13,4 +13,4 @@ export * from './module.ts';
 export * from './pattern.ts';
 export * from './statement.ts';
 export * from './type.ts';
-export type { GrammarContext, BaseContext, Unmapped } from './context.ts';
+export type { GrammarContext, BaseContext, SlotTable, Unmapped } from './context.ts';

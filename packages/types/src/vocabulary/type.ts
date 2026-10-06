@@ -5,72 +5,45 @@ import type * as V from './index.ts';
 export interface Type<G extends GrammarContext> {
 	// claimed by p
 	readonly $kind: 'type';
-	readonly content?:
-		| V.Unmapped<'rust:function_type_trait_form'>
-		| V.Unmapped<'typescript:literal_type_negative_number'>
-		| G['expression']
-		| G['identifier']
-		| G['literal']
-		| V.Modifier.Extern<G>
-		| G['pattern']
-		| 'async'
-		| 'const'
-		| 'default'
-		| 'unsafe'
-		| G['type']
-		| (
-				| V.Unmapped<'rust:function_type_trait_form'>
-				| V.Unmapped<'typescript:literal_type_negative_number'>
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| V.Modifier.Extern<G>
-				| G['pattern']
-				| 'async'
-				| 'const'
-				| 'default'
-				| 'unsafe'
-				| G['type']
-		  )[];
+	readonly content?: G['slots']['type']['content'] | G['slots']['type']['content'][];
 	// prt only
-	// unmapped: <rust:function_type_trait_form> <typescript:literal_type_negative_number>
 }
 
 export namespace Type {
 	export interface Abstract<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by r
 		readonly $kind: 'type.abstract';
-		readonly trait: V.Clause.Bounds.Removed<G> | V.Identifier.Type<G> | G['type'];
+		readonly trait: G['slots']['type.abstract']['trait'];
 		readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
 	}
 	export interface Array<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by rt
 		readonly $kind: 'type.array';
-		readonly element?: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
+		readonly element?: G['slots']['type.array']['element'];
 		// r only
-		readonly length?: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
+		readonly length?: G['slots']['type.array']['length'];
 		// r only
-		readonly type?: G['identifier'] | G['type'];
+		readonly type?: G['slots']['type.array']['type'];
 		// t only
 	}
 	export interface Bounded<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by r
 		readonly $kind: 'type.bounded';
-		readonly left: V.Expression.Call.Macro<G> | G['identifier'] | V.Clause.Bounds.Any<G> | G['type'];
-		readonly right: V.Expression.Call.Macro<G> | G['identifier'] | V.Clause.Bounds.Any<G> | G['type'];
+		readonly left: G['slots']['type.bounded']['left'];
+		readonly right: G['slots']['type.bounded']['right'];
 	}
 	export interface Bracketed<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by r
 		readonly $kind: 'type.bracketed';
-		readonly type: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
+		readonly type: G['slots']['type.bracketed']['type'];
 	}
 	export interface Conditional<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.conditional';
-		readonly alternative: G['identifier'] | G['type'];
-		readonly consequence: G['identifier'] | G['type'];
-		readonly left: G['identifier'] | G['type'];
-		readonly right: G['identifier'] | G['type'];
+		readonly alternative: G['slots']['type.conditional']['alternative'];
+		readonly consequence: G['slots']['type.conditional']['consequence'];
+		readonly left: G['slots']['type.conditional']['left'];
+		readonly right: G['slots']['type.conditional']['right'];
 	}
 	export interface Constrained<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by p
@@ -81,7 +54,7 @@ export namespace Type {
 	export interface Dynamic<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by r
 		readonly $kind: 'type.dynamic';
-		readonly trait: V.Clause.Bounds.HigherRanked<G> | V.Identifier.Type<G> | G['type'];
+		readonly trait: G['slots']['type.dynamic']['trait'];
 	}
 	export interface Existential<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by t
@@ -90,34 +63,12 @@ export namespace Type {
 	export interface Function<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by rt
 		readonly $kind: 'type.function';
-		readonly content?:
-			| V.Unmapped<'rust:function_type_trait_form'>
-			| V.Modifier.Extern<G>
-			| 'async'
-			| 'const'
-			| 'default'
-			| 'unsafe'
-			| (
-					| V.Unmapped<'rust:function_type_trait_form'>
-					| V.Modifier.Extern<G>
-					| 'async'
-					| 'const'
-					| 'default'
-					| 'unsafe'
-			  )[];
+		readonly content?: G['slots']['type.function']['content'] | G['slots']['type.function']['content'][];
 		// r only
-		// unmapped: <rust:function_type_trait_form>
 		readonly forLifetimes?: V.Clause.Lifetimes<G>;
 		// r only
-		readonly parameters: (
-			| V.Clause.Bounds.Removed<G>
-			| V.Expression.Call.Macro<G>
-			| G['identifier']
-			| V.Declaration.Parameter.Any<G>
-			| '_'
-			| G['type']
-		)[];
-		readonly returnType?: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
+		readonly parameters: G['slots']['type.function']['parameters'][];
+		readonly returnType?: G['slots']['type.function']['returnType'];
 		readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 		// t only
 	}
@@ -127,7 +78,7 @@ export namespace Type {
 			readonly $kind: 'type.function.constructor';
 			readonly abstract?: boolean;
 			readonly parameters: V.Declaration.Parameter.Any<G>[];
-			readonly type: G['identifier'] | G['type'];
+			readonly type: G['slots']['type.function.constructor']['type'];
 			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 		}
 		export type Any<G extends GrammarContext> = V.Type.Function<G> | V.Type.Function.Constructor<G>;
@@ -135,11 +86,11 @@ export namespace Type {
 	export interface Generic<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by prt
 		readonly $kind: 'type.generic';
-		readonly name?: G['identifier'] | 'type' | V.Type.Path<G>;
+		readonly name?: G['slots']['type.generic']['name'];
 		// pt only
-		readonly type?: G['identifier'] | 'default' | 'gen' | 'union' | V.Type.Path<G>;
+		readonly type?: G['slots']['type.generic']['type'];
 		// r only
-		readonly typeArguments?: (V.Element.TypeArgument<G> | G['identifier'] | G['type'])[];
+		readonly typeArguments?: G['slots']['type.generic']['typeArguments'][];
 		// rt only
 		readonly typeParameter?: V.Declaration.TypeParameter<G>;
 		// p only
@@ -156,36 +107,35 @@ export namespace Type {
 	export interface IndexQuery<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.index_query';
-		readonly type: G['identifier'] | G['type'];
+		readonly type: G['slots']['type.index_query']['type'];
 	}
 	export interface Infer<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.infer';
 		readonly name: V.Identifier.Type<G>;
-		readonly type?: G['identifier'] | G['type'];
+		readonly type?: G['slots']['type.infer']['type'];
 	}
 	export interface Intersection<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.intersection';
-		readonly left?: G['identifier'] | G['type'];
-		readonly right: G['identifier'] | G['type'];
+		readonly left?: G['slots']['type.intersection']['left'];
+		readonly right: G['slots']['type.intersection']['right'];
 	}
 	export interface Literal<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.literal';
-		readonly content: V.Unmapped<'typescript:literal_type_negative_number'> | G['literal'];
-		// unmapped: <typescript:literal_type_negative_number>
+		readonly content: G['slots']['type.literal']['content'];
 	}
 	export interface Lookup<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.lookup';
-		readonly indexType: G['identifier'] | G['type'];
-		readonly type: G['identifier'] | G['type'];
+		readonly indexType: G['slots']['type.lookup']['indexType'];
+		readonly type: G['slots']['type.lookup']['type'];
 	}
 	export interface Maybe<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.maybe';
-		readonly type: G['identifier'] | G['type'];
+		readonly type: G['slots']['type.maybe']['type'];
 	}
 	export interface Named<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		readonly $kind: 'type.named';
@@ -200,19 +150,19 @@ export namespace Type {
 	export interface Object<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.object';
-		readonly closing: '|}' | '}';
-		readonly members?: (G['declaration'] | V.Statement.Export<G>)[];
-		readonly opening: '{' | '{|';
+		readonly closing: G['slots']['type.object']['closing'];
+		readonly members?: G['slots']['type.object']['members'][];
+		readonly opening: G['slots']['type.object']['opening'];
 	}
 	export interface Optional<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.optional';
-		readonly type: G['identifier'] | G['type'];
+		readonly type: G['slots']['type.optional']['type'];
 	}
 	export interface Parenthesized<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.parenthesized';
-		readonly type: G['identifier'] | G['type'];
+		readonly type: G['slots']['type.parenthesized']['type'];
 	}
 	export interface Path<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by prt
@@ -222,29 +172,7 @@ export namespace Type {
 		readonly module?: G['identifier'];
 		// t only
 		readonly name: G['identifier'];
-		readonly path?:
-			| G['identifier']
-			| 'bool'
-			| 'char'
-			| 'default'
-			| 'f32'
-			| 'f64'
-			| 'gen'
-			| 'i128'
-			| 'i16'
-			| 'i32'
-			| 'i64'
-			| 'i8'
-			| 'isize'
-			| 'str'
-			| 'u128'
-			| 'u16'
-			| 'u32'
-			| 'u64'
-			| 'u8'
-			| 'union'
-			| 'usize'
-			| G['type'];
+		readonly path?: G['slots']['type.path']['path'];
 		// r only
 	}
 	export namespace Path {
@@ -252,29 +180,7 @@ export namespace Type {
 			// claimed by r
 			readonly $kind: 'type.path.expression';
 			readonly name: V.Identifier.Type<G>;
-			readonly path?:
-				| G['identifier']
-				| 'bool'
-				| 'char'
-				| 'default'
-				| 'f32'
-				| 'f64'
-				| 'gen'
-				| 'i128'
-				| 'i16'
-				| 'i32'
-				| 'i64'
-				| 'i8'
-				| 'isize'
-				| 'str'
-				| 'u128'
-				| 'u16'
-				| 'u32'
-				| 'u64'
-				| 'u8'
-				| 'union'
-				| 'usize'
-				| V.Type.Generic.Turbofish<G>;
+			readonly path?: G['slots']['type.path.expression']['path'];
 		}
 		export type Any<G extends GrammarContext> = V.Type.Path<G> | V.Type.Path.Expression<G>;
 	}
@@ -285,14 +191,14 @@ export namespace Type {
 	export interface Predicate<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.predicate';
-		readonly name?: G['identifier'] | V.Type.Primitive<G>;
-		readonly type?: G['identifier'] | G['type'];
+		readonly name?: G['slots']['type.predicate']['name'];
+		readonly type?: G['slots']['type.predicate']['type'];
 	}
 	export namespace Predicate {
 		export interface Asserts<G extends GrammarContext> extends SubKindOf<V.Type.Predicate<G>> {
 			// claimed by t
 			readonly $kind: 'type.predicate.asserts';
-			readonly value: G['identifier'] | V.Type.Predicate<G>;
+			readonly value: G['slots']['type.predicate.asserts']['value'];
 		}
 		export type Any<G extends GrammarContext> = V.Type.Predicate<G> | V.Type.Predicate.Asserts<G>;
 	}
@@ -310,62 +216,55 @@ export namespace Type {
 	export interface Qualified<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by r
 		readonly $kind: 'type.qualified';
-		readonly alias: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
-		readonly type: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
+		readonly alias: G['slots']['type.qualified']['alias'];
+		readonly type: G['slots']['type.qualified']['type'];
 	}
 	export interface Query<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.query';
-		readonly expression:
-			| V.Unmapped<'typescript:type_query_call_expression'>
-			| V.Unmapped<'typescript:type_query_instantiation_expression'>
-			| V.Unmapped<'typescript:type_query_member_expression'>
-			| V.Unmapped<'typescript:type_query_subscript_expression'>
-			| G['identifier'];
-		// unmapped: <typescript:type_query_call_expression> <typescript:type_query_instantiation_expression> <typescript:type_query_member_expression> <typescript:type_query_subscript_expression>
+		readonly expression: G['slots']['type.query']['expression'];
 	}
 	export interface Readonly<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.readonly';
-		readonly type: G['identifier'] | G['type'];
+		readonly type: G['slots']['type.readonly']['type'];
 	}
 	export interface Reference<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by r
 		readonly $kind: 'type.reference';
 		readonly lifetime?: V.Identifier.Lifetime<G>;
 		readonly mutable?: boolean;
-		readonly type: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
+		readonly type: G['slots']['type.reference']['type'];
 	}
 	export interface Rest<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.rest';
-		readonly type: G['identifier'] | G['type'];
+		readonly type: G['slots']['type.rest']['type'];
 	}
 	export interface Splat<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by p
 		readonly $kind: 'type.splat';
 		readonly name: G['identifier'];
-		readonly operator: '*' | '**';
+		readonly operator: G['slots']['type.splat']['operator'];
 	}
 	export interface Template<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.template';
-		readonly elements?: (V.Unmapped<'typescript:template_chars'> | V.Element.Template.Substitution<G>)[];
-		// unmapped: <typescript:template_chars>
+		readonly elements?: G['slots']['type.template']['elements'][];
 	}
 	export interface Tuple<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by rt
 		readonly $kind: 'type.tuple';
-		readonly tupleTypeMembers?: (G['identifier'] | V.Element.Tuple.Member.Any<G> | G['type'])[];
+		readonly tupleTypeMembers?: G['slots']['type.tuple']['tupleTypeMembers'][];
 		// t only
-		readonly types?: (V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'])[];
+		readonly types?: G['slots']['type.tuple']['types'][];
 		// r only
 	}
 	export interface Union<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by pt
 		readonly $kind: 'type.union';
-		readonly left?: G['identifier'] | G['type'];
-		readonly right: G['identifier'] | G['type'];
+		readonly left?: G['slots']['type.union']['left'];
+		readonly right: G['slots']['type.union']['right'];
 	}
 	export interface Unit<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		// claimed by r

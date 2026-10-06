@@ -16,7 +16,21 @@ import type {
 	Type,
 	TypeIdentifier
 } from '@sittir/typescript';
-import { type Derivation, type MemberFacts, camel, childrenOf, commonPrefix, levelMembers, tsname } from './derive.ts';
+import {
+	type Derivation,
+	type MemberFacts,
+	type Scalar,
+	type SlotEntry,
+	camel,
+	childrenOf,
+	collapsedKinds,
+	directKinds,
+	isScalar,
+	armClass,
+	levelMembers,
+	slotEntries,
+	tsname
+} from './derive.ts';
 
 const engine = await createEngine(typescript);
 const { build: ir, kinds: TSKindId } = engine;
@@ -43,7 +57,7 @@ const KEYWORDS = {
 	string: TSKindId.StringKeyword,
 	boolean: TSKindId.BooleanKeyword,
 	number: TSKindId.NumberKeyword
-} as const;
+} as const satisfies Record<Scalar, unknown>;
 
 const ESCAPED_CONTENT: Record<string, string> = { '\\': '\\', "'": "'", '\n': 'n', '\r': 'r', '\t': 't' };
 const str = (text: string) =>
@@ -87,7 +101,10 @@ const generic = (name: Name, argument: Arm | TypeNode) =>
 const pathOf = (vocab: string): string[] => vocab.split('.').map(tsname);
 const vocabRef = (path: readonly string[], scope: Scope) =>
 	generic(typeName(['V', ...path]), ir.identifier(scope.context));
-const lookup = (ns: string): Arm => ir.lookupType({ type: ir.identifier('G'), indexType: ir.literalType(str(ns)) });
+const lookup = (ns: string, scope: Scope): Arm =>
+	ir.lookupType({ type: ir.identifier(scope.context), indexType: ir.literalType(str(ns)) });
+const slotRef = (v: string, member: string, scope: Scope): Arm =>
+	ir.lookupType({ type: ir.lookupType({ type: lookup('slots', scope), indexType: ir.literalType(str(v)) }), indexType: ir.literalType(str(member)) });
 const literal = (text: string): Arm => ir.literalType(str(text));
 
 function unionOf(arms: readonly (Arm | TypeNode)[]): TypeNode {
@@ -115,65 +132,32 @@ function subKindOf(path: string, scope: Scope): Heritage {
 function elementArm(element: string, scope: Scope): { readonly key: string; readonly arm: Arm } {
 	return element.includes('.')
 		? { key: `ref:${pathOf(element).join('.')}`, arm: vocabRef(pathOf(element), scope) }
-		: { key: `lookup:${element}`, arm: lookup(element) };
+		: { key: `lookup:${element}`, arm: lookup(element, scope) };
 }
 
-
-function collapsedKinds(d: Derivation, kinds: ReadonlySet<string>): string[] {
-	const byns = new Map<string, Set<string>>();
-	for (const k of kinds) {
-		if (k.includes('.') && !k.startsWith('text:') && !k.startsWith('literal:') && !k.startsWith('<')) {
-			const ns = k.split('.')[0] ?? k;
-			(byns.get(ns) ?? byns.set(ns, new Set()).get(ns))?.add(k);
-		}
-	}
-	const remaining = new Set(kinds);
-	const all = new Set([...d.allvocab, ...d.prefixes]);
-	for (const [ns, ks] of byns) {
-		if (remaining.has(ns)) {
-			for (const k of ks) remaining.delete(k);
-			continue;
-		}
-		if (ks.size < 2) continue;
-		const prefix = commonPrefix([...ks].sort()) ?? ns;
-		if (prefix === ns) {
-			for (const k of ks) remaining.delete(k);
-			remaining.add(ns);
-		} else if ([...all].some((o) => o.startsWith(`${prefix}.`))) {
-			for (const k of ks) remaining.delete(k);
-			remaining.add(`set:${prefix}`);
-		}
-	}
-	return [...remaining].sort();
-}
-
-function memberArms(d: Derivation, kinds: ReadonlySet<string>, scope: Scope): { arms: Arm[]; dropped: string[] } {
+function armsOf(d: Derivation, kinds: ReadonlySet<string>, scope: Scope): Arm[] {
 	const arms: Arm[] = [];
-	const dropped: string[] = [];
 	const seen = new Set<string>();
 	const add = (key: string, arm: Arm): void => {
-		if (seen.has(key)) return;
-		seen.add(key);
-		arms.push(arm);
+		if (!seen.has(key)) {
+			seen.add(key);
+			arms.push(arm);
+		}
 	};
 	for (const k of collapsedKinds(d, kinds)) {
-		if (k === 'boolean' || k === 'string' || k === 'number') add(`kw:${k}`, KEYWORDS[k]);
-		else if (k.startsWith('text:')) add(`lit:${k.slice(5)}`, literal(k.slice(5)));
-		else if (k.startsWith('literal:')) dropped.push(k);
-		else if (k.startsWith('<')) {
-			const name = k.slice(1, -1);
-			add(`unmapped:${name}`, generic(typeName(['V', 'Unmapped']), literal(name)));
-			dropped.push(k);
-		} else if (k.startsWith('set:')) {
-			const path = [...pathOf(k.slice(4)), 'Any'];
-			add(`ref:${path.join('.')}`, vocabRef(path, scope));
-		} else {
+		const cls = armClass(k);
+		if (isScalar(k)) add(`kw:${k}`, KEYWORDS[k]);
+		else if (cls === 'text') add('kw:string', KEYWORDS.string);
+		else if (cls === 'unmapped') add('kw:unknown', TSKindId.UnknownKeyword);
+		else if (k.startsWith('set:')) add(`ref:${k}`, vocabRef([...pathOf(k.slice(4)), 'Any'], scope));
+		else {
 			const { key, arm } = elementArm(k, scope);
 			add(key, arm);
 		}
 	}
-	return { arms, dropped };
+	return arms;
 }
+
 
 const grammarTag = (gs: ReadonlySet<string> | undefined): string =>
 	[...(gs ?? [])]
@@ -204,20 +188,20 @@ function memberSignature(
 	name: string,
 	f: MemberFacts,
 	scope: Scope
-): PropertySignature.Bound | null {
-	const { arms, dropped } = memberArms(d, f.kinds, scope);
+): PropertySignature.Bound {
+	const direct = directKinds(d, f.kinds);
+	const arms = direct === undefined ? [slotRef(v, name, scope)] : armsOf(d, new Set(direct), scope);
 	const [only] = arms;
 	const single = arms.length === 1 && only !== undefined;
 	let type: TypeNode = unionOf(arms);
 	if (f.multiple && !(single && typeof only !== 'number' && only.$type === TSKindId.ArrayType)) {
-		const list = listOf(arms.length === 0 ? [TSKindId.UnknownKeyword] : arms);
+		const list = listOf(arms);
 		type = f.scalar ? ir.unionType({ left: type, right: list }) : list;
-	} else if (arms.length === 0) return null;
+	}
 	const trailing: CommentNode[] = [];
 	const claimers = d.claimers.get(v);
 	if (claimers === undefined || [...f.grammars].sort().join() !== [...claimers].sort().join())
 		trailing.push(lineComment(`// ${grammarTag(f.grammars)} only`));
-	if (dropped.length > 0) trailing.push(lineComment(`// unmapped: ${dropped.join(' ')}`));
 	return signature(name, type, f.optional, trailing);
 }
 
@@ -247,21 +231,25 @@ interface InterfaceSpec {
 	readonly trailing?: readonly CommentNode[];
 }
 
-function exportInterface(spec: InterfaceSpec): ExportNode {
-	const [first, ...rest] = spec.members;
+function objectTypeOf(signatures: readonly PropertySignature.Bound[], leading: readonly CommentNode[] = []) {
+	const [first, ...rest] = signatures;
 	const members =
 		first === undefined
 			? undefined
 			: ir.objectTypeContent(
 					{ delimiter: Delimiter.Trailing, separator: TSKindId.Semi },
-					withTrivia(first, spec.bodyLeading ?? [], []),
+					withTrivia(first, leading, []),
 					...rest
 				);
+	return ir.objectType({ opening: TSKindId.Lbrace, ...(members ? { members } : {}), closing: TSKindId.Rbrace });
+}
+
+function exportInterface(spec: InterfaceSpec): ExportNode {
 	const decl = ir.interfaceDeclaration({
 		name: ir.identifier(spec.name),
 		...(spec.typeParameters ? { typeParameters: spec.typeParameters } : {}),
 		...(spec.heritage ? { extendsTypeClause: ir.extendsTypeClause(spec.heritage) } : {}),
-		body: ir.objectType({ opening: TSKindId.Lbrace, ...(members ? { members } : {}), closing: TSKindId.Rbrace })
+		body: objectTypeOf(spec.members, spec.bodyLeading)
 	});
 	return withTrivia(ir.exportStatement.default.declaration({ content: decl }), spec.leading ?? [], spec.trailing ?? []);
 }
@@ -322,8 +310,7 @@ function emitLevel(d: Derivation, v: string, scope: Scope): ExportNode[] {
 		const heritage = sameTop ? subKindOf(parentPath, scope) : null;
 		const members = [kindSignature(v)];
 		for (const [member, f] of [...levelMembers(d, v)].sort(([a], [b]) => a.localeCompare(b))) {
-			const built = memberSignature(d, v, member, f, scope);
-			if (built !== null) members.push(built);
+			members.push(memberSignature(d, v, member, f, scope));
 		}
 		const claim = claimedBy === '' ? [] : [lineComment(`// claimed by ${claimedBy}`)];
 		out.push(
@@ -405,15 +392,43 @@ function namespaceFile(d: Derivation, top: string): VocabularyFile {
 	};
 }
 
-function contextFile(tops: readonly string[]): VocabularyFile {
+function slotSignatures(
+	entries: readonly SlotEntry[],
+	typeOf: (entry: SlotEntry) => TypeNode
+): PropertySignature.Bound[] {
+	return [...new Set(entries.map((e) => e.path))].map((path) =>
+		ir.propertySignature({
+			readonly: true,
+			name: str(path),
+			type: ir.typeAnnotation(
+				objectTypeOf(entries.filter((e) => e.path === path).map((e) => signature(e.member, typeOf(e), false)))
+			)
+		})
+	);
+}
+
+function contextFile(d: Derivation, tops: readonly string[]): VocabularyFile {
 	const scope: Scope = { context: 'BaseContext', subKind: false };
+	const entries = slotEntries(d);
 	const statements = [
 		exportInterface({
 			name: 'GrammarContext',
-			members: tops.map((t) => signature(t, TSKindId.UnknownKeyword, false)),
+			members: [
+				...tops.map((t) => signature(t, TSKindId.UnknownKeyword, false)),
+				signature('slots', ir.identifier('SlotTable'), false)
+			],
 			leading: [
 				blockComment(
-					"/** The typemap: one key per top-level namespace, projecting to that namespace's kind-set for a grammar. */"
+					"/** The typemap: one key per top-level namespace, projecting to that namespace's kind-set for a grammar, and the slots whose type the grammar states. */"
+				)
+			]
+		}),
+		exportInterface({
+			name: 'SlotTable',
+			members: slotSignatures(entries, () => TSKindId.UnknownKeyword),
+			leading: [
+				blockComment(
+					'/** The slots the vocabulary names and the language states: by kind path, then member. A grammar fills each from its bindings. */'
 				)
 			]
 		}),
@@ -426,8 +441,15 @@ function contextFile(tops: readonly string[]): VocabularyFile {
 		exportInterface({
 			name: 'BaseContext',
 			heritage: ir.identifier('GrammarContext'),
-			members: tops.map((t) => signature(t, vocabRef([tsname(t), 'Any'], scope), false)),
-			leading: [blockComment("/** The permissive closure: every namespace's full kind-set. */")]
+			members: [
+				...tops.map((t) => signature(t, vocabRef([tsname(t), 'Any'], scope), false)),
+				signature('slots', objectTypeOf(slotSignatures(entries, (e) => unionOf(armsOf(d, e.facts.kinds, scope)))), false)
+			],
+			leading: [
+				blockComment(
+					"/** The permissive closure: every namespace's full kind-set, and each slot's roles and refs, or `string` where it is text. */"
+				)
+			]
 		})
 	];
 	return {
@@ -442,7 +464,7 @@ function contextFile(tops: readonly string[]): VocabularyFile {
 
 export function vocabularyFiles(d: Derivation): VocabularyFile[] {
 	const tops = [...new Set([...d.allvocab].map((v) => v.split('.')[0] ?? v))].sort();
-	return [...tops.map((top) => namespaceFile(d, top)), contextFile(tops)];
+	return [...tops.map((top) => namespaceFile(d, top)), contextFile(d, tops)];
 }
 
 export function indexFile(files: readonly VocabularyFile[]): VocabularyFile {
@@ -453,7 +475,7 @@ export function indexFile(files: readonly VocabularyFile[]): VocabularyFile {
 		);
 	const context = ir.exportStatement.typeExport(
 		{
-			exportClause: ['GrammarContext', 'BaseContext', 'Unmapped'].map((n) =>
+			exportClause: ['GrammarContext', 'BaseContext', 'SlotTable', 'Unmapped'].map((n) =>
 				ir.exportSpecifier({ name: ir.identifier(n) })
 			),
 			source: str('./context.ts')

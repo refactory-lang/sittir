@@ -23,7 +23,7 @@ console.log('read', JSON.stringify(source));
 if (fn === undefined || typeof fn !== 'object' || fn.$kind !== 'declaration.function') throw new Error(`expected a function, read ${kindOf(fn)}`);
 console.log('  kind      ', fn.$kind);
 const name = fn.name();
-console.log('  name      ', kindOf(name), name.$text?.() ?? '');
+console.log('  name      ', kindOf(name), typeof name === 'string' ? name : (name.$text?.() ?? ''));
 console.log('  async     ', fn.async(), ' unsafe', fn.unsafe());
 console.log('  parameters', fn.parameters().map(kindOf).join(', '));
 const returnType = fn.returnType();
