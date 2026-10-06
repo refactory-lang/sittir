@@ -34089,29 +34089,9 @@
                   "$source": 0,
                   "$named": true,
                   "_item": [
-                    {
-                      "$type": 359,
-                      "$source": 0,
-                      "$named": true,
-                      "$span": {
-                        "start": 21,
-                        "end": 27
-                      },
-                      "$text": "number"
-                    }
+                    39
                   ],
-                  "_delimiter": 0,
-                  "$_layout": {
-                    "flank": {
-                      "$text": "foo as any as Array<number>",
-                      "$span": {
-                        "start": 20,
-                        "end": 26
-                      },
-                      "$before": true,
-                      "$after": true
-                    }
-                  }
+                  "_delimiter": 0
                 },
                 "$other": [
                   {
@@ -34400,29 +34380,9 @@
               "$source": 0,
               "$named": true,
               "_item": [
-                {
-                  "$type": 359,
-                  "$source": 0,
-                  "$named": true,
-                  "$span": {
-                    "start": 21,
-                    "end": 27
-                  },
-                  "$text": "number"
-                }
+                39
               ],
-              "_delimiter": 0,
-              "$_layout": {
-                "flank": {
-                  "$text": "foo as any as Array<number>",
-                  "$span": {
-                    "start": 20,
-                    "end": 26
-                  },
-                  "$before": true,
-                  "$after": true
-                }
-              }
+              "_delimiter": 0
             },
             "$other": [
               {
@@ -34721,29 +34681,9 @@
             "$source": 0,
             "$named": true,
             "_item": [
-              {
-                "$type": 359,
-                "$source": 0,
-                "$named": true,
-                "$span": {
-                  "start": 21,
-                  "end": 27
-                },
-                "$text": "number"
-              }
+              39
             ],
-            "_delimiter": 0,
-            "$_layout": {
-              "flank": {
-                "$text": "foo as any as Array<number>",
-                "$span": {
-                  "start": 20,
-                  "end": 26
-                },
-                "$before": true,
-                "$after": true
-              }
-            }
+            "_delimiter": 0
           },
           "$other": [
             {
@@ -34956,29 +34896,9 @@
           "$source": 0,
           "$named": true,
           "_item": [
-            {
-              "$type": 359,
-              "$source": 0,
-              "$named": true,
-              "$span": {
-                "start": 21,
-                "end": 27
-              },
-              "$text": "number"
-            }
+            39
           ],
-          "_delimiter": 0,
-          "$_layout": {
-            "flank": {
-              "$text": "foo as any as Array<number>",
-              "$span": {
-                "start": 20,
-                "end": 26
-              },
-              "$before": true,
-              "$after": true
-            }
-          }
+          "_delimiter": 0
         },
         "$other": [
           {
@@ -48211,29 +48131,9 @@
                                       "$source": 0,
                                       "$named": true,
                                       "_item": [
-                                        {
-                                          "$type": 359,
-                                          "$source": 0,
-                                          "$named": true,
-                                          "$span": {
-                                            "start": 121,
-                                            "end": 128
-                                          },
-                                          "$text": "boolean"
-                                        }
+                                        40
                                       ],
-                                      "_delimiter": 0,
-                                      "$_layout": {
-                                        "flank": {
-                                          "$text": "  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>",
-                                          "$span": {
-                                            "start": 108,
-                                            "end": 115
-                                          },
-                                          "$before": true,
-                                          "$after": true
-                                        }
-                                      }
+                                      "_delimiter": 0
                                     },
                                     "$other": [
                                       {
@@ -49464,29 +49364,9 @@
                                   "$source": 0,
                                   "$named": true,
                                   "_item": [
-                                    {
-                                      "$type": 359,
-                                      "$source": 0,
-                                      "$named": true,
-                                      "$span": {
-                                        "start": 121,
-                                        "end": 128
-                                      },
-                                      "$text": "boolean"
-                                    }
+                                    40
                                   ],
-                                  "_delimiter": 0,
-                                  "$_layout": {
-                                    "flank": {
-                                      "$text": "  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>",
-                                      "$span": {
-                                        "start": 108,
-                                        "end": 115
-                                      },
-                                      "$before": true,
-                                      "$after": true
-                                    }
-                                  }
+                                  "_delimiter": 0
                                 },
                                 "$other": [
                                   {
@@ -51040,29 +50920,9 @@
                                 "$source": 0,
                                 "$named": true,
                                 "_item": [
-                                  {
-                                    "$type": 359,
-                                    "$source": 0,
-                                    "$named": true,
-                                    "$span": {
-                                      "start": 121,
-                                      "end": 128
-                                    },
-                                    "$text": "boolean"
-                                  }
+                                  40
                                 ],
-                                "_delimiter": 0,
-                                "$_layout": {
-                                  "flank": {
-                                    "$text": "  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>",
-                                    "$span": {
-                                      "start": 108,
-                                      "end": 115
-                                    },
-                                    "$before": true,
-                                    "$after": true
-                                  }
-                                }
+                                "_delimiter": 0
                               },
                               "$other": [
                                 {
@@ -52313,29 +52173,9 @@
                         "$source": 0,
                         "$named": true,
                         "_item": [
-                          {
-                            "$type": 359,
-                            "$source": 0,
-                            "$named": true,
-                            "$span": {
-                              "start": 121,
-                              "end": 128
-                            },
-                            "$text": "boolean"
-                          }
+                          40
                         ],
-                        "_delimiter": 0,
-                        "$_layout": {
-                          "flank": {
-                            "$text": "  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>",
-                            "$span": {
-                              "start": 108,
-                              "end": 115
-                            },
-                            "$before": true,
-                            "$after": true
-                          }
-                        }
+                        "_delimiter": 0
                       },
                       "$other": [
                         {
@@ -53664,29 +53504,9 @@
                 "$source": 0,
                 "$named": true,
                 "_item": [
-                  {
-                    "$type": 359,
-                    "$source": 0,
-                    "$named": true,
-                    "$span": {
-                      "start": 121,
-                      "end": 128
-                    },
-                    "$text": "boolean"
-                  }
+                  40
                 ],
-                "_delimiter": 0,
-                "$_layout": {
-                  "flank": {
-                    "$text": "  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>",
-                    "$span": {
-                      "start": 108,
-                      "end": 115
-                    },
-                    "$before": true,
-                    "$after": true
-                  }
-                }
+                "_delimiter": 0
               },
               "$other": [
                 {
@@ -54383,29 +54203,9 @@
               "$source": 0,
               "$named": true,
               "_item": [
-                {
-                  "$type": 359,
-                  "$source": 0,
-                  "$named": true,
-                  "$span": {
-                    "start": 121,
-                    "end": 128
-                  },
-                  "$text": "boolean"
-                }
+                40
               ],
-              "_delimiter": 0,
-              "$_layout": {
-                "flank": {
-                  "$text": "  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>",
-                  "$span": {
-                    "start": 108,
-                    "end": 115
-                  },
-                  "$before": true,
-                  "$after": true
-                }
-              }
+              "_delimiter": 0
             },
             "$other": [
               {
@@ -54734,29 +54534,9 @@
             "$source": 0,
             "$named": true,
             "_item": [
-              {
-                "$type": 359,
-                "$source": 0,
-                "$named": true,
-                "$span": {
-                  "start": 121,
-                  "end": 128
-                },
-                "$text": "boolean"
-              }
+              40
             ],
-            "_delimiter": 0,
-            "$_layout": {
-              "flank": {
-                "$text": "  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>",
-                "$span": {
-                  "start": 108,
-                  "end": 115
-                },
-                "$before": true,
-                "$after": true
-              }
-            }
+            "_delimiter": 0
           },
           "$other": [
             {
@@ -54971,29 +54751,9 @@
           "$source": 0,
           "$named": true,
           "_item": [
-            {
-              "$type": 359,
-              "$source": 0,
-              "$named": true,
-              "$span": {
-                "start": 121,
-                "end": 128
-              },
-              "$text": "boolean"
-            }
+            40
           ],
-          "_delimiter": 0,
-          "$_layout": {
-            "flank": {
-              "$text": "  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>",
-              "$span": {
-                "start": 108,
-                "end": 115
-              },
-              "$before": true,
-              "$after": true
-            }
-          }
+          "_delimiter": 0
         },
         "$other": [
           {
@@ -99128,29 +98888,9 @@
                     "$source": 0,
                     "$named": true,
                     "_item": [
-                      {
-                        "$type": 359,
-                        "$source": 0,
-                        "$named": true,
-                        "$span": {
-                          "start": 70,
-                          "end": 76
-                        },
-                        "$text": "string"
-                      }
+                      41
                     ],
-                    "_delimiter": 0,
-                    "$_layout": {
-                      "flank": {
-                        "$text": "const makeStringBox = makeBox<string>",
-                        "$span": {
-                          "start": 30,
-                          "end": 36
-                        },
-                        "$before": true,
-                        "$after": true
-                      }
-                    }
+                    "_delimiter": 0
                   },
                   "$other": [
                     {
@@ -99252,16 +98992,7 @@
                     "$source": 0,
                     "$named": true,
                     "_item": [
-                      {
-                        "$type": 359,
-                        "$source": 0,
-                        "$named": true,
-                        "$span": {
-                          "start": 100,
-                          "end": 106
-                        },
-                        "$text": "string"
-                      },
+                      41,
                       {
                         "$type": 467,
                         "$source": 0,
@@ -99274,11 +99005,6 @@
                           "$span": {
                             "start": 108,
                             "end": 113
-                          }
-                        },
-                        "$_layout": {
-                          "gap": {
-                            "$text": ", "
                           }
                         }
                       }
@@ -99302,7 +99028,7 @@
                           "start": 21,
                           "end": 34
                         },
-                        "$before": true,
+                        "$before": false,
                         "$after": true
                       }
                     }
@@ -99569,29 +99295,9 @@
                 "$source": 0,
                 "$named": true,
                 "_item": [
-                  {
-                    "$type": 359,
-                    "$source": 0,
-                    "$named": true,
-                    "$span": {
-                      "start": 70,
-                      "end": 76
-                    },
-                    "$text": "string"
-                  }
+                  41
                 ],
-                "_delimiter": 0,
-                "$_layout": {
-                  "flank": {
-                    "$text": "const makeStringBox = makeBox<string>",
-                    "$span": {
-                      "start": 30,
-                      "end": 36
-                    },
-                    "$before": true,
-                    "$after": true
-                  }
-                }
+                "_delimiter": 0
               },
               "$other": [
                 {
@@ -99703,16 +99409,7 @@
                 "$source": 0,
                 "$named": true,
                 "_item": [
-                  {
-                    "$type": 359,
-                    "$source": 0,
-                    "$named": true,
-                    "$span": {
-                      "start": 100,
-                      "end": 106
-                    },
-                    "$text": "string"
-                  },
+                  41,
                   {
                     "$type": 467,
                     "$source": 0,
@@ -99725,11 +99422,6 @@
                       "$span": {
                         "start": 108,
                         "end": 113
-                      }
-                    },
-                    "$_layout": {
-                      "gap": {
-                        "$text": ", "
                       }
                     }
                   }
@@ -99753,7 +99445,7 @@
                       "start": 21,
                       "end": 34
                     },
-                    "$before": true,
+                    "$before": false,
                     "$after": true
                   }
                 }
@@ -99987,29 +99679,9 @@
             "$source": 0,
             "$named": true,
             "_item": [
-              {
-                "$type": 359,
-                "$source": 0,
-                "$named": true,
-                "$span": {
-                  "start": 70,
-                  "end": 76
-                },
-                "$text": "string"
-              }
+              41
             ],
-            "_delimiter": 0,
-            "$_layout": {
-              "flank": {
-                "$text": "const makeStringBox = makeBox<string>",
-                "$span": {
-                  "start": 30,
-                  "end": 36
-                },
-                "$before": true,
-                "$after": true
-              }
-            }
+            "_delimiter": 0
           },
           "$other": [
             {
@@ -100107,16 +99779,7 @@
             "$source": 0,
             "$named": true,
             "_item": [
-              {
-                "$type": 359,
-                "$source": 0,
-                "$named": true,
-                "$span": {
-                  "start": 100,
-                  "end": 106
-                },
-                "$text": "string"
-              },
+              41,
               {
                 "$type": 467,
                 "$source": 0,
@@ -100129,11 +99792,6 @@
                   "$span": {
                     "start": 108,
                     "end": 113
-                  }
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ", "
                   }
                 }
               }
@@ -100157,7 +99815,7 @@
                   "start": 21,
                   "end": 34
                 },
-                "$before": true,
+                "$before": false,
                 "$after": true
               }
             }
@@ -100339,29 +99997,9 @@
           "$source": 0,
           "$named": true,
           "_item": [
-            {
-              "$type": 359,
-              "$source": 0,
-              "$named": true,
-              "$span": {
-                "start": 70,
-                "end": 76
-              },
-              "$text": "string"
-            }
+            41
           ],
-          "_delimiter": 0,
-          "$_layout": {
-            "flank": {
-              "$text": "const makeStringBox = makeBox<string>",
-              "$span": {
-                "start": 30,
-                "end": 36
-              },
-              "$before": true,
-              "$after": true
-            }
-          }
+          "_delimiter": 0
         },
         "$other": [
           {
@@ -100429,16 +100067,7 @@
           "$source": 0,
           "$named": true,
           "_item": [
-            {
-              "$type": 359,
-              "$source": 0,
-              "$named": true,
-              "$span": {
-                "start": 100,
-                "end": 106
-              },
-              "$text": "string"
-            },
+            41,
             {
               "$type": 467,
               "$source": 0,
@@ -100451,11 +100080,6 @@
                 "$span": {
                   "start": 108,
                   "end": 113
-                }
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ", "
                 }
               }
             }
@@ -100479,7 +100103,7 @@
                 "start": 21,
                 "end": 34
               },
-              "$before": true,
+              "$before": false,
               "$after": true
             }
           }
@@ -143516,16 +143140,7 @@
                 "$type": 326,
                 "$source": 0,
                 "$named": true,
-                "_type": {
-                  "$type": 359,
-                  "$source": 0,
-                  "$named": true,
-                  "$span": {
-                    "start": 15,
-                    "end": 28
-                  },
-                  "$text": "unique symbol"
-                },
+                "_type": 143,
                 "$other": [
                   {
                     "$type": 51,
@@ -143873,16 +143488,7 @@
             "$type": 326,
             "$source": 0,
             "$named": true,
-            "_type": {
-              "$type": 359,
-              "$source": 0,
-              "$named": true,
-              "$span": {
-                "start": 15,
-                "end": 28
-              },
-              "$text": "unique symbol"
-            },
+            "_type": 143,
             "$other": [
               {
                 "$type": 51,
@@ -144228,16 +143834,7 @@
         "$type": 326,
         "$source": 0,
         "$named": true,
-        "_type": {
-          "$type": 359,
-          "$source": 0,
-          "$named": true,
-          "$span": {
-            "start": 15,
-            "end": 28
-          },
-          "$text": "unique symbol"
-        },
+        "_type": 143,
         "$other": [
           {
             "$type": 51,
@@ -144547,16 +144144,7 @@
       "$type": 326,
       "$source": 0,
       "$named": true,
-      "_type": {
-        "$type": 359,
-        "$source": 0,
-        "$named": true,
-        "$span": {
-          "start": 15,
-          "end": 28
-        },
-        "$text": "unique symbol"
-      },
+      "_type": 143,
       "$other": [
         {
           "$type": 51,
@@ -162180,29 +161768,9 @@
                       "$source": 0,
                       "$named": true,
                       "_item": [
-                        {
-                          "$type": 356,
-                          "$source": 0,
-                          "$named": true,
-                          "$span": {
-                            "start": 14,
-                            "end": 15
-                          },
-                          "$text": "*"
-                        }
+                        356
                       ],
-                      "_delimiter": 0,
-                      "$_layout": {
-                        "flank": {
-                          "$text": "let x: Array<*>",
-                          "$span": {
-                            "start": 13,
-                            "end": 14
-                          },
-                          "$before": true,
-                          "$after": true
-                        }
-                      }
+                      "_delimiter": 0
                     },
                     "$other": [
                       {
@@ -162334,29 +161902,9 @@
                   "$source": 0,
                   "$named": true,
                   "_item": [
-                    {
-                      "$type": 356,
-                      "$source": 0,
-                      "$named": true,
-                      "$span": {
-                        "start": 14,
-                        "end": 15
-                      },
-                      "$text": "*"
-                    }
+                    356
                   ],
-                  "_delimiter": 0,
-                  "$_layout": {
-                    "flank": {
-                      "$text": "let x: Array<*>",
-                      "$span": {
-                        "start": 13,
-                        "end": 14
-                      },
-                      "$before": true,
-                      "$after": true
-                    }
-                  }
+                  "_delimiter": 0
                 },
                 "$other": [
                   {
@@ -162472,29 +162020,9 @@
               "$source": 0,
               "$named": true,
               "_item": [
-                {
-                  "$type": 356,
-                  "$source": 0,
-                  "$named": true,
-                  "$span": {
-                    "start": 14,
-                    "end": 15
-                  },
-                  "$text": "*"
-                }
+                356
               ],
-              "_delimiter": 0,
-              "$_layout": {
-                "flank": {
-                  "$text": "let x: Array<*>",
-                  "$span": {
-                    "start": 13,
-                    "end": 14
-                  },
-                  "$before": true,
-                  "$after": true
-                }
-              }
+              "_delimiter": 0
             },
             "$other": [
               {
@@ -162588,29 +162116,9 @@
             "$source": 0,
             "$named": true,
             "_item": [
-              {
-                "$type": 356,
-                "$source": 0,
-                "$named": true,
-                "$span": {
-                  "start": 14,
-                  "end": 15
-                },
-                "$text": "*"
-              }
+              356
             ],
-            "_delimiter": 0,
-            "$_layout": {
-              "flank": {
-                "$text": "let x: Array<*>",
-                "$span": {
-                  "start": 13,
-                  "end": 14
-                },
-                "$before": true,
-                "$after": true
-              }
-            }
+            "_delimiter": 0
           },
           "$other": [
             {
@@ -162695,29 +162203,9 @@
           "$source": 0,
           "$named": true,
           "_item": [
-            {
-              "$type": 356,
-              "$source": 0,
-              "$named": true,
-              "$span": {
-                "start": 14,
-                "end": 15
-              },
-              "$text": "*"
-            }
+            356
           ],
-          "_delimiter": 0,
-          "$_layout": {
-            "flank": {
-              "$text": "let x: Array<*>",
-              "$span": {
-                "start": 13,
-                "end": 14
-              },
-              "$before": true,
-              "$after": true
-            }
-          }
+          "_delimiter": 0
         },
         "$other": [
           {
@@ -168275,16 +167763,7 @@
                       "$source": 0,
                       "$named": true,
                       "_item": [
-                        {
-                          "$type": 359,
-                          "$source": 0,
-                          "$named": true,
-                          "$span": {
-                            "start": 57,
-                            "end": 63
-                          },
-                          "$text": "number"
-                        },
+                        39,
                         {
                           "$type": 343,
                           "$source": 0,
@@ -168564,12 +168043,7 @@
                           "$slotOrder": [
                             "name",
                             "type_arguments"
-                          ],
-                          "$_layout": {
-                            "gap": {
-                              "$text": ", "
-                            }
-                          }
+                          ]
                         }
                       ],
                       "$other": [
@@ -168591,7 +168065,7 @@
                             "start": 11,
                             "end": 52
                           },
-                          "$before": true,
+                          "$before": false,
                           "$after": true
                         }
                       }
@@ -170113,16 +169587,7 @@
             "$source": 0,
             "$named": true,
             "_item": [
-              {
-                "$type": 359,
-                "$source": 0,
-                "$named": true,
-                "$span": {
-                  "start": 57,
-                  "end": 63
-                },
-                "$text": "number"
-              },
+              39,
               {
                 "$type": 343,
                 "$source": 0,
@@ -170402,12 +169867,7 @@
                 "$slotOrder": [
                   "name",
                   "type_arguments"
-                ],
-                "$_layout": {
-                  "gap": {
-                    "$text": ", "
-                  }
-                }
+                ]
               }
             ],
             "$other": [
@@ -170429,7 +169889,7 @@
                   "start": 11,
                   "end": 52
                 },
-                "$before": true,
+                "$before": false,
                 "$after": true
               }
             }
@@ -170785,16 +170245,7 @@
           "$source": 0,
           "$named": true,
           "_item": [
-            {
-              "$type": 359,
-              "$source": 0,
-              "$named": true,
-              "$span": {
-                "start": 57,
-                "end": 63
-              },
-              "$text": "number"
-            },
+            39,
             {
               "$type": 343,
               "$source": 0,
@@ -171074,12 +170525,7 @@
               "$slotOrder": [
                 "name",
                 "type_arguments"
-              ],
-              "$_layout": {
-                "gap": {
-                  "$text": ", "
-                }
-              }
+              ]
             }
           ],
           "$other": [
@@ -171101,7 +170547,7 @@
                 "start": 11,
                 "end": 52
               },
-              "$before": true,
+              "$before": false,
               "$after": true
             }
           }
@@ -171859,16 +171305,7 @@
                   "$source": 0,
                   "$named": true,
                   "_item": [
-                    {
-                      "$type": 359,
-                      "$source": 0,
-                      "$named": true,
-                      "$span": {
-                        "start": 57,
-                        "end": 63
-                      },
-                      "$text": "number"
-                    },
+                    39,
                     {
                       "$type": 343,
                       "$source": 0,
@@ -172148,12 +171585,7 @@
                       "$slotOrder": [
                         "name",
                         "type_arguments"
-                      ],
-                      "$_layout": {
-                        "gap": {
-                          "$text": ", "
-                        }
-                      }
+                      ]
                     }
                   ],
                   "$other": [
@@ -172175,7 +171607,7 @@
                         "start": 11,
                         "end": 52
                       },
-                      "$before": true,
+                      "$before": false,
                       "$after": true
                     }
                   }
@@ -172304,16 +171736,7 @@
               "$source": 0,
               "$named": true,
               "_item": [
-                {
-                  "$type": 359,
-                  "$source": 0,
-                  "$named": true,
-                  "$span": {
-                    "start": 57,
-                    "end": 63
-                  },
-                  "$text": "number"
-                },
+                39,
                 {
                   "$type": 343,
                   "$source": 0,
@@ -172593,12 +172016,7 @@
                   "$slotOrder": [
                     "name",
                     "type_arguments"
-                  ],
-                  "$_layout": {
-                    "gap": {
-                      "$text": ", "
-                    }
-                  }
+                  ]
                 }
               ],
               "$other": [
@@ -172620,7 +172038,7 @@
                     "start": 11,
                     "end": 52
                   },
-                  "$before": true,
+                  "$before": false,
                   "$after": true
                 }
               }
@@ -233076,86 +232494,16 @@
                 "$source": 0,
                 "$named": true,
                 "_item": [
-                  {
-                    "$type": 359,
-                    "$source": 0,
-                    "$named": true,
-                    "$span": {
-                      "start": 14,
-                      "end": 17
-                    },
-                    "$text": "any"
-                  },
-                  {
-                    "$type": 359,
-                    "$source": 0,
-                    "$named": true,
-                    "$span": {
-                      "start": 19,
-                      "end": 26
-                    },
-                    "$text": "unknown",
-                    "$_layout": {
-                      "gap": {
-                        "$text": ", "
-                      }
-                    }
-                  },
-                  {
-                    "$type": 359,
-                    "$source": 0,
-                    "$named": true,
-                    "$span": {
-                      "start": 28,
-                      "end": 34
-                    },
-                    "$text": "number",
-                    "$_layout": {
-                      "gap": {
-                        "$text": ", "
-                      }
-                    }
-                  },
-                  {
-                    "$type": 359,
-                    "$source": 0,
-                    "$named": true,
-                    "$span": {
-                      "start": 36,
-                      "end": 42
-                    },
-                    "$text": "string",
-                    "$_layout": {
-                      "gap": {
-                        "$text": ", "
-                      }
-                    }
-                  },
-                  {
-                    "$type": 359,
-                    "$source": 0,
-                    "$named": true,
-                    "$span": {
-                      "start": 44,
-                      "end": 48
-                    },
-                    "$text": "void",
-                    "$_layout": {
-                      "gap": {
-                        "$text": ", "
-                      }
-                    }
-                  },
+                  38,
+                  144,
+                  39,
+                  41,
+                  107,
                   {
                     "$type": 354,
                     "$source": 0,
                     "$named": true,
-                    "_content": 121,
-                    "$_layout": {
-                      "gap": {
-                        "$text": ", "
-                      }
-                    }
+                    "_content": 121
                   },
                   {
                     "$type": 354,
@@ -233359,7 +232707,7 @@
                       "start": 13,
                       "end": 87
                     },
-                    "$before": true,
+                    "$before": false,
                     "$after": true
                   }
                 }
@@ -233491,86 +232839,16 @@
             "$source": 0,
             "$named": true,
             "_item": [
-              {
-                "$type": 359,
-                "$source": 0,
-                "$named": true,
-                "$span": {
-                  "start": 14,
-                  "end": 17
-                },
-                "$text": "any"
-              },
-              {
-                "$type": 359,
-                "$source": 0,
-                "$named": true,
-                "$span": {
-                  "start": 19,
-                  "end": 26
-                },
-                "$text": "unknown",
-                "$_layout": {
-                  "gap": {
-                    "$text": ", "
-                  }
-                }
-              },
-              {
-                "$type": 359,
-                "$source": 0,
-                "$named": true,
-                "$span": {
-                  "start": 28,
-                  "end": 34
-                },
-                "$text": "number",
-                "$_layout": {
-                  "gap": {
-                    "$text": ", "
-                  }
-                }
-              },
-              {
-                "$type": 359,
-                "$source": 0,
-                "$named": true,
-                "$span": {
-                  "start": 36,
-                  "end": 42
-                },
-                "$text": "string",
-                "$_layout": {
-                  "gap": {
-                    "$text": ", "
-                  }
-                }
-              },
-              {
-                "$type": 359,
-                "$source": 0,
-                "$named": true,
-                "$span": {
-                  "start": 44,
-                  "end": 48
-                },
-                "$text": "void",
-                "$_layout": {
-                  "gap": {
-                    "$text": ", "
-                  }
-                }
-              },
+              38,
+              144,
+              39,
+              41,
+              107,
               {
                 "$type": 354,
                 "$source": 0,
                 "$named": true,
-                "_content": 121,
-                "$_layout": {
-                  "gap": {
-                    "$text": ", "
-                  }
-                }
+                "_content": 121
               },
               {
                 "$type": 354,
@@ -233774,7 +233052,7 @@
                   "start": 13,
                   "end": 87
                 },
-                "$before": true,
+                "$before": false,
                 "$after": true
               }
             }
@@ -233941,86 +233219,16 @@
           "$source": 0,
           "$named": true,
           "_item": [
-            {
-              "$type": 359,
-              "$source": 0,
-              "$named": true,
-              "$span": {
-                "start": 14,
-                "end": 17
-              },
-              "$text": "any"
-            },
-            {
-              "$type": 359,
-              "$source": 0,
-              "$named": true,
-              "$span": {
-                "start": 19,
-                "end": 26
-              },
-              "$text": "unknown",
-              "$_layout": {
-                "gap": {
-                  "$text": ", "
-                }
-              }
-            },
-            {
-              "$type": 359,
-              "$source": 0,
-              "$named": true,
-              "$span": {
-                "start": 28,
-                "end": 34
-              },
-              "$text": "number",
-              "$_layout": {
-                "gap": {
-                  "$text": ", "
-                }
-              }
-            },
-            {
-              "$type": 359,
-              "$source": 0,
-              "$named": true,
-              "$span": {
-                "start": 36,
-                "end": 42
-              },
-              "$text": "string",
-              "$_layout": {
-                "gap": {
-                  "$text": ", "
-                }
-              }
-            },
-            {
-              "$type": 359,
-              "$source": 0,
-              "$named": true,
-              "$span": {
-                "start": 44,
-                "end": 48
-              },
-              "$text": "void",
-              "$_layout": {
-                "gap": {
-                  "$text": ", "
-                }
-              }
-            },
+            38,
+            144,
+            39,
+            41,
+            107,
             {
               "$type": 354,
               "$source": 0,
               "$named": true,
-              "_content": 121,
-              "$_layout": {
-                "gap": {
-                  "$text": ", "
-                }
-              }
+              "_content": 121
             },
             {
               "$type": 354,
@@ -234224,7 +233432,7 @@
                 "start": 13,
                 "end": 87
               },
-              "$before": true,
+              "$before": false,
               "$after": true
             }
           }
