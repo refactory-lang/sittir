@@ -36,10 +36,12 @@ In 1a the typed read runs beside today's read. Two transitional napi methods bac
 
 Brainstorm split step 1 of the spec into three PRs. This plan writes 1a in full and outlines 1b and 1c; their tasks are detailed after 1a lands, against the code 1a leaves.
 
+1a is cut from master at or after `efbf817b9`, #659's merge. #659 makes enum members cross as their kind ids and decode by id alone. Tasks 5, 8 and 9 build on what it adds: `enumMemberId` and the decoder `arms` in `renderEnumType`, `AssembledEnum`'s refusal of two members with one id, and the wrap's `_spelledMemberId` fold. Task 10's harness compares against today's read with those folds.
+
 | PR | Lands | Gate |
 | --- | --- | --- |
 | **1a** | the typed reader beside today's read: field-id constants, the `sittir_core::read` runtime, the derive crate, codegen attributes with the unfielded-slot diagnostic, and the corpus parity harness | zero refusals and zero differences against today's read, wrap and detach for every corpus entry of the five grammars; rendered bytes and validation rows unchanged |
-| **1b** | the derive's napi codec replaces `#[napi(object)]` and the hand-printed `FromNapiValue` impls | render-neutral (verification 15), measured against the phase 0 merge; build time and binary size per crate; standalone `type-check:native` passes and is chained into `type-check` |
+| **1b** | the derive's napi codec replaces `#[napi(object)]` and the hand-printed `FromNapiValue` impls | render-neutral (verification 15), measured against master as 1b starts, past #659; build time and binary size per crate; standalone `type-check:native` passes and is chained into `type-check` |
 | **1c** | every read goes through the typed reader; the wrap keeps members only; today's reader and its tables are removed | rendered bytes and validation rows unchanged; verification 3–8; "two readers must not outlive step 1" |
 
 ## Global Constraints
@@ -285,7 +287,7 @@ Message: `feat(codegen): parser field ids as generated constants`.
 - Produces (all in `sittir_core::read`):
   - `Depth { Levels(NonZeroU32), All }`: `Depth::ONE`, `below()`, `at_least(u32)`.
   - `ReadCtx<'s> { source: &'s str, tree_id: u32 }`: `new`, `coordinate_of(&Child)`, `coordinate(&Node, row)`, `text(&Node)`.
-  - `Child` (the survey's per-child facts), `survey(&mut TreeCursor) -> Vec<Child>`, `row_of(&TreeCursor) -> u32`, `tiles(&[Child], start: u32, end: u32) -> bool`.
+  - `Child` (the survey's per-child facts), `survey(&mut TreeCursor) -> Vec<Child>`, `row_of(&TreeCursor) -> u32`, `tiles(&[Child], start: u32, end: u32) -> bool`, `spelled_id(&[Child]) -> Option<KindId>`.
   - `Route { Trivia, Slot { slot: u16, scalar: bool }, Separator { slot: u16, tagged: bool }, Layout }`.
   - `ReadError` (`Unrouted`, `Missing`, `Overfull`, `Unadmitted`, `Interior`, `Unspelled`), with `describe(&dyn Fn(KindId) -> &'static str) -> String`.
   - `SlotSite { kind, slot, row }`.
@@ -368,6 +370,18 @@ mod tests {
         assert!(!tiles(&[token(0, 1, false), token(2, 3, false)], 0, 3));
         assert!(!tiles(&[token(0, 1, false)], 0, 3));
         assert!(!tiles(&[token(0, 1, false), token(1, 3, true)], 0, 3));
+    }
+
+    #[test]
+    fn a_node_is_spelled_by_the_one_id_all_its_tokens_display() {
+        let shown = |display: u16| Child { display: KindId(display), ..token(0, 1, false) };
+        assert_eq!(spelled_id(&[shown(143), shown(143)]), Some(KindId(143)));
+        assert_eq!(spelled_id(&[shown(143), token(1, 2, true), shown(143)]), Some(KindId(143)));
+        assert_eq!(spelled_id(&[shown(61), shown(51)]), None);
+        assert_eq!(spelled_id(&[Child { named: true, ..shown(143) }]), None);
+        assert_eq!(spelled_id(&[Child { field: Some(FieldId(1)), ..shown(143) }]), None);
+        assert_eq!(spelled_id(&[token(0, 1, true)]), None);
+        assert_eq!(spelled_id(&[]), None);
     }
 
     #[test]
@@ -559,7 +573,7 @@ impl Child {
 /// Whether a node's children tile its span `start..end`: none at all, or
 /// non-trivia children each starting where the one before ends, from the
 /// node's start to its end. A text leaf whose children tile it reads the text
-/// it spans, as today's `_tiledSpelling` joins its tokens.
+/// it spans.
 pub fn tiles(children: &[Child], start: u32, end: u32) -> bool {
     let mut at = start;
     for child in children {
@@ -569,6 +583,18 @@ pub fn tiles(children: &[Child], start: u32, end: u32) -> bool {
         at = child.end;
     }
     children.is_empty() || at == end
+}
+
+/// The one id every spelling token of a node displays: its children apart
+/// from trivia, each an anonymous token with no field, when there is at
+/// least one and all of them display the same id. A multi-token enum member
+/// is an alias over its tokens, so each token displays the member's id, and
+/// a node whose tokens display different ids spells none of them.
+pub fn spelled_id(children: &[Child]) -> Option<KindId> {
+    let mut tokens = children.iter().filter(|child| !child.trivia);
+    let first = tokens.next()?;
+    let spells = |child: &Child| !child.named && child.field.is_none() && child.display == first.display;
+    (spells(first) && tokens.all(spells)).then_some(first.display)
 }
 
 /// Survey the children of the node the cursor is on. The cursor ends where
@@ -1171,7 +1197,7 @@ impl<T: PartialEq, const ADJACENT: bool> PartialEq for SlotValue<T, ADJACENT> {
 - [ ] **Step 4: Run the tests**
 
 Run: `rtk cargo test -p sittir-core --no-default-features read::tests`
-Expected: PASS, all eleven.
+Expected: PASS, all twelve.
 
 - [ ] **Step 5: Gates and commit**
 
@@ -2541,7 +2567,7 @@ Message: `feat(core): #[derive(Transport)] reads a struct by its slots' fields a
 
 A choice lists its kinds once, on its variants. A unit variant is a fixed literal stored as its kind id, and a variant holding a transport is a node read into that transport. A variant with neither `#[kind]` nor `#[transport(blank)]` is never read: builders make `Verbatim` and `Text`, readers do not.
 
-The blank variant (`#[transport(blank)]`) is what an optional slot with a blank arm holds when no child came: today's wrap stores the blank id for it (`blankFromRead`), and a parsed node keeps its blank. The reader does the same through `ReadTransport::blank`. The spec does not list this attribute; it is the one this plan adds to the spec's attribute set.
+The blank variant (`#[transport(blank)]`) is the "none" arm of a blank option: an optional slot registered as a preference, which the model marks `hasBlankArm` (today the nine typescript `terminator` slots). When no child came, such a slot holds its blank: today's wrap stores the blank id for it (`blankFromRead`), and a parsed node keeps its blank. The reader does the same through `ReadTransport::blank`. Every other optional slot reads an absent child as `None`, never as a blank arm, and Task 9's codegen check keeps any other slot from holding a choice that has one. The spec lists the attribute with the others (§ The transport declaration).
 
 A choice tries its variants in the order today's dispatch does:
 
@@ -2551,19 +2577,22 @@ A choice tries its variants in the order today's dispatch does:
 
 Each variant's ids are the ids today's claim loop gives it, so no id belongs to two variants.
 
-An enum kind (`PrimitiveTypeEnum`) has one unit variant per member, each with its token's kind id. A member token that arrives as the node itself is read by its id. An enum marked `spelled` also reads its own node (`primitive_type`, kind 341, which holds the token `u8`) as the member its first token is. That is the spec's "read as the member its text spells", decided by the token's kind id rather than by comparing text.
+An enum kind (`PrimitiveTypeEnum`) has one unit variant per member, each with its token's kind id. A member token that arrives as the node itself is read by its id. An enum marked `spelled` also reads its own node (`primitive_type`, kind 341, which holds the token `u8`) as the member its spelling tokens display (Task 2's `spelled_id`). The node's children, apart from trivia, must be anonymous tokens with no field that all display one id, and that id must be a member's. That is the spec's "read as the member its text spells", decided by kind ids rather than by comparing text, and it is the rule today's wrap folds by (`_spelledMemberId`).
+
+A multi-token member is an alias over its tokens, so every token displays the member's id. Typescript's `unique symbol` reads as `unique` (143) and `symbol` (grammar 42, displayed 143). Requiring every token to agree keeps a member from being read as another member its first token is: python's `is not` is not `is`. Codegen refuses an enum kind whose two members resolve to one id (`AssembledEnum`), so a fold has one answer.
 
 **Files:**
 - Modify: `rust/crates/sittir-transport-macros/src/expand.rs`
 - Test: `rust/crates/sittir-parity-tests/tests/typed_read.rs`
 
 **Interfaces:**
-- Consumes: Task 4's `attrs::variant_kinds` and `attrs::kind_attrs`; Task 2's `ReadTransport::blank`.
+- Consumes: Task 4's `attrs::variant_kinds` and `attrs::kind_attrs`; Task 2's `ReadTransport::blank`, `survey` and `spelled_id`.
 - Produces: `ReadTransport` for `#[transport(choice)]` enums and for `#[transport(kind = …[, spelled])]` enums of unit members.
 
 - [ ] **Step 1: Write the failing tests**
 
 ```rust
+use sittir_python::render::kind_ids as py;
 use sittir_typescript::render::field_ids as ts_field;
 
 #[derive(Debug, Clone, Copy, PartialEq, Transport)]
@@ -2613,6 +2642,42 @@ fn a_unit_variant_stores_its_kind_and_an_enum_kind_reads_the_member_its_token_is
 fn an_enum_kind_whose_token_is_none_of_its_members_is_refused() {
     let err = typed_function("fn f() -> u16 {}").unwrap_err();
     assert!(matches!(err, ReadError::Unspelled { kind: refused, .. } if refused == kind::_PRIMITIVE_TYPE), "{err:?}");
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Transport)]
+#[transport(kind = ts::PREDEFINED_TYPE, spelled)]
+enum Predefined {
+    #[kind(ts::SYMBOL_KEYWORD)]
+    Symbol,
+    #[kind(ts::UNIQUE)]
+    UniqueSymbol,
+}
+
+#[test]
+fn a_member_spelled_by_two_tokens_reads_as_the_id_both_display() {
+    for (source, member) in [("declare const x: unique symbol;", Predefined::UniqueSymbol), ("declare const x: symbol;", Predefined::Symbol)] {
+        let tree = parse(&sittir_typescript::language(), source);
+        assert_eq!(read_nth::<Predefined>(&tree, source, ts::PREDEFINED_TYPE, 0, Depth::All).unwrap(), member, "{source}");
+    }
+}
+
+/// Members `is` and `not` but not `is not`, whose node holds one token of each.
+#[derive(Debug, Clone, Copy, PartialEq, Transport)]
+#[transport(kind = py::_IS_NOT, spelled)]
+enum IsOrNot {
+    #[kind(py::IS_KEYWORD)]
+    Is,
+    #[kind(py::NOT_KEYWORD)]
+    Not,
+}
+
+#[test]
+fn a_node_whose_tokens_display_different_ids_is_none_of_its_members() {
+    // read by its first token, `is not` would be `is`
+    let source = "a is not b\n";
+    let tree = parse(&sittir_python::language(), source);
+    let err = read_nth::<IsOrNot>(&tree, source, py::_IS_NOT, 0, Depth::All).unwrap_err();
+    assert!(matches!(err, ReadError::Unspelled { kind: refused, .. } if refused == py::_IS_NOT), "{err:?}");
 }
 
 #[test]
@@ -2721,6 +2786,8 @@ fn an_absent_slot_with_a_blank_arm_reads_as_its_blank() {
 Facts checked with the generated parsers:
 
 - `primitive_type` is grammar kind 341 (`kind::_PRIMITIVE_TYPE`) and holds its keyword token (`u8` is kind 58).
+- In `declare const x: unique symbol;`, `predefined_type` (359, `ts::PREDEFINED_TYPE`) holds two anonymous tokens: `unique` (grammar 143, displayed 143) and `symbol` (grammar 42, displayed 143). The member `unique symbol` is 143 (`ts::UNIQUE`) and `symbol` is 42 (`ts::SYMBOL_KEYWORD`), as the generated `PredefinedTypeEnum` decoder maps them.
+- Python's `is not` is its own anonymous kind 211 (`py::_IS_NOT`), holding `is` (61, `py::IS_KEYWORD`) and `not` (51, `py::NOT_KEYWORD`), each displayed as itself.
 - `!` is a named `never_type` holding one anonymous `!`.
 - In `let x = 1 // c`, the comment (10..14) and the zero-width `automatic_semicolon` (14..14) are both children of `lexical_declaration`.
 - The `if` block of `if (a) { } else { }` has no `terminator` child; the `else` block's is an `automatic_semicolon`.
@@ -2864,7 +2931,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
     }
     let spelled = attrs.spelled.then(|| {
         quote! {
-            if let ::core::option::Option::Some(member) = node.child(0).and_then(|token| __member(__Kind(token.grammar_id()))) {
+            if let ::core::option::Option::Some(member) = __rt::spelled_id(&__rt::survey(cursor)).and_then(__member) {
                 return ::core::result::Result::Ok(member);
             }
         }
@@ -2924,7 +2991,7 @@ Expected: PASS.
 
 Run `rtk cargo test --workspace --no-default-features` and `rtk cargo clippy -p sittir-transport-macros -p sittir-core --no-default-features -- -D warnings`, then `git commit -F msg -- rust/crates/sittir-transport-macros rust/crates/sittir-parity-tests/tests/typed_read.rs`.
 
-Message: `feat(core): choices read their variants by kind, with a blank arm; enum kinds by their member token`.
+Message: `feat(core): choices read their variants by kind, with a blank arm; enum kinds by the id their tokens display`.
 
 ---
 
@@ -3114,7 +3181,7 @@ Message: `feat(core): token interiors read their captures; envelopes take their 
 
 ## Task 7: A list's flags, minimum depth, and reading at a row
 
-A list kind's delimiter flags and separator kind are read from the source, as each list's wrap computes them today (`_hasSeparatorFlank`, `_separatorKindOf`). The spec's A.2 calls `delimiter` a render-option field that the render side stamps from its site. Prepare does fill it, but only when it is unset, and today's read sets it from the source. So the reader computes it here, keeping the gate at zero differences. This is a spec discrepancy for brainstorm to rule on.
+A list kind's delimiter flags and separator kind are read from the source, as each list's wrap computes them today (`_hasSeparatorFlank`, `_separatorKindOf`). The spec's A.2 calls `delimiter` a render-option field that the render side stamps from its site. Prepare does fill it, but only when it is unset, and today's read sets it from the source. So the reader computes it here, keeping the gate at zero differences. Brainstorm ruled that step 1 keeps it computed. § Outline: after step 1 names the step where it becomes the render option A.2 lists.
 
 A list owner's `min_depth` brings its items with it. Reading the node at a coordinate's row (`read_at`) gives that node the sides its parent's placement gives it, so a row read equals the same node inside a whole read, trivia included. The hydration step in 1c is built on that.
 
@@ -3300,7 +3367,7 @@ Codegen states every read fact a type cannot, and each fact comes from the deriv
 | a text slot stored as a scalar | the storage `scalarChildRows` reads (`stores_scalar`) | `scalar` |
 | delimiter flanks | `leadingDelimiter`, `trailingDelimiter` (`_hasSeparatorFlank`'s arguments) | `#[flank(leading = n, trailing = n)]` |
 | separator kind | `separatorCandidateKindNames`, `resolvedSeparatorArm` (`_separatorKindOf`) | `#[separator_kind(candidates = […], default = …)]` |
-| enum members | `AssembledEnum.resolvedByText` (`renderEnumType`'s kind-id arms) | `kind = kind::X, spelled`, and `#[kind(kind::TOKEN)]` per member |
+| enum members | `renderEnumType`'s `arms`, the member ids its id decoder takes (`enumMemberId`) | `kind = kind::X, spelled`, and `#[kind(kind::TOKEN)]` per member from the same arms |
 
 The words `words`/`word` (record offsets) and `group` (seats) in the spec's examples are not emitted in step 1. Offsets belong to the record step, and a group seat is used by `$with` only.
 
@@ -3323,7 +3390,7 @@ The words `words`/`word` (record offsets) and `group` (seats) in the spec's exam
   - `captureArgs(slot): string`.
   - `flankArgs(list): string | undefined`.
   - `separatorKindArgs(list, ctx): string | undefined`.
-  - `enumKindArgs(node, ownId, ctx): { transport: string; member(literal: string): string }`.
+  - `enumKindArgs(ownId, ctx): string`. An enum's members take their `#[kind]` from `variantKindArgs` over the ids `renderEnumType`'s decoder arms hold, so the reader and the decoder read one list.
   - `variantKindArgs(ids, display, ctx): string`.
   - `takesUntagged(slot, ctx): boolean`.
   - `assertOneUntaggedSlot(kind, slots: readonly { name: string; ids: readonly number[] }[], kindEntries): void`.
@@ -3338,7 +3405,7 @@ import { generatedFieldIds } from '../../dsl/symbol-table.ts';
 import { listViewOwners } from '../factories.ts';
 import { findKindEntry } from '../kind-discriminant.ts';
 import { rustTransportStructName, transportSlotShapeOf } from '../render-module.ts';
-import { AssembledEnum, AssembledList, type AssembledNode, type AssembledNonterminal } from '../../compiler/model/node-map.ts';
+import { AssembledList, type AssembledNode, type AssembledNonterminal } from '../../compiler/model/node-map.ts';
 import {
 	assertOneUntaggedSlot,
 	enumKindArgs,
@@ -3409,11 +3476,8 @@ describe('transport read facts', () => {
 		);
 	});
 
-	it('reads an enum kind as the member token it holds', () => {
-		const primitive = node('PrimitiveTypeEnum') as AssembledEnum;
-		const facts = enumKindArgs(primitive, ownId(primitive), ctx);
-		expect(facts.transport).toBe('kind = kind::_PRIMITIVE_TYPE, spelled');
-		expect([facts.member('u8'), facts.member('bool')]).toEqual(['kind::U8_KEYWORD', 'kind::BOOL_KEYWORD']);
+	it('reads an enum kind by its own id, and its own node by the member its tokens spell', () => {
+		expect(enumKindArgs(ownId(node('PrimitiveTypeEnum')), ctx)).toBe('kind = kind::_PRIMITIVE_TYPE, spelled');
 	});
 
 	it('refuses two slots of one kind that take the same untagged kind', () => {
@@ -3475,7 +3539,6 @@ Merge these imports into the file's own (it already imports `NodeMap`, the node 
 import {
 	AbstractAssembledCompound,
 	AssembledAlias,
-	AssembledEnum,
 	AssembledList,
 	kindIdText
 } from '../compiler/model/node-map.ts';
@@ -3618,15 +3681,8 @@ export function separatorKindArgs(list: AssembledList, ctx: ReadFactsCtx): strin
 	return `candidates = [${candidates.join(', ')}]${declared === undefined ? '' : `, default = ${ctx.names.kind(declared.id)}`}`;
 }
 
-export function enumKindArgs(node: AssembledEnum, ownId: number, ctx: ReadFactsCtx): { transport: string; member(literal: string): string } {
-	return {
-		transport: `kind = ${ctx.names.kind(ownId)}, spelled`,
-		member(literal) {
-			const id = node.resolvedByText.get(literal)?.id;
-			if (id === undefined) throw new Error(`transport read facts: ${node.kind}'s member ${JSON.stringify(literal)} has no parser symbol`);
-			return ctx.names.kind(id);
-		}
-	};
+export function enumKindArgs(ownId: number, ctx: ReadFactsCtx): string {
+	return `kind = ${ctx.names.kind(ownId)}, spelled`;
 }
 
 export function variantKindArgs(ids: readonly number[], display: boolean, ctx: ReadFactsCtx): string {
@@ -3690,6 +3746,8 @@ Message: `feat(codegen): the read facts each transport declares, from the deriva
 
 - [ ] **Step 1: Write the failing tests**
 
+Add `AbstractAssembledCompound` to the file's `node-map.ts` import, and import `hasBlankArm` from `../../compiler/model/site-preferences.ts`. `getTypescriptTransportRs()` emits from `modelFor('typescript')`'s node map, and the emit registers preference slots on it, so the census test calls it first.
+
 ```ts
 describe('transport attributes', () => {
 	it('derives the reader and states the read facts on a struct', async () => {
@@ -3716,6 +3774,21 @@ describe('transport attributes', () => {
 		const terminator = src.slice(src.indexOf('pub enum StatementBlockTerminatorTransportSlot {'));
 		expect(terminator).toMatch(/    #\[transport\(blank\)\]\n    Blank,/);
 	});
+
+	it('gives a blank arm only to the choices that blank options hold', async () => {
+		const src = await getTypescriptTransportRs();
+		const model = await modelFor('typescript');
+		const blankOptions = [...model.nodeMap.nodes.values()]
+			.flatMap((n) => (n instanceof AbstractAssembledCompound ? n.slots : []))
+			.filter(hasBlankArm);
+		const blankChoices = [...src.matchAll(/pub enum (\w+) \{[^}]*\n    #\[transport\(blank\)\]\n    Blank,/g)].map((m) => m[1]!);
+		const heldByBlankChoices = [...src.matchAll(/pub \w+: Option<::sittir_core::SlotValue<(\w+)>>,/g)].filter((m) => blankChoices.includes(m[1]!));
+		const blankIdArms = [...src.matchAll(/ 0 => (?:Ok|Some)\(Self::Blank\)/g)];
+		expect(blankOptions).toHaveLength(9);
+		expect(heldByBlankChoices).toHaveLength(blankOptions.length);
+		expect(blankChoices).toHaveLength(4);
+		expect(blankIdArms).toHaveLength(3 * blankChoices.length);
+	});
 });
 ```
 
@@ -3737,7 +3810,7 @@ Every printed type puts its attributes in this order: `#[cfg_attr(… napi(objec
    - Give `renderTransportField` a `readAttr` argument and print it between the napi line and the field. It is `#[slot]` when `slotArgs(slot, node, transportSlotShapeOf(slot, nodeMap), ctx)` is empty and `#[slot(${args})]` otherwise, or `#[slot(${captureArgs(slot)})]` for each slot of an interior kind (`interiorOf(node) !== undefined`). A hoisted inner slot passes its helper node as the owner.
    - On a list's `delimiter` field, print `#[flank(${flankArgs(node)})]`, and on its `separator_kind` field `#[separator_kind(${separatorKindArgs(node, ctx)})]`, in the same position.
    - Spacing fields get no attribute: they read as their `Default`, as today's read leaves them unset.
-2. **Enum kinds** (`renderEnumType`): print `#[derive(Debug, Clone, Copy, PartialEq, Eq, ::sittir_core::Transport)]`, then `#[transport(${facts.transport})]`, and `#[kind(${facts.member(v)})]` above each member. Admitted ids: the kind's own id and every member's.
+2. **Enum kinds** (`renderEnumType`): build `arms` (each member's `enumMemberId`) before printing the enum, not after it. Print `#[derive(Debug, Clone, Copy, PartialEq, Eq, ::sittir_core::Transport)]`, then `#[transport(${enumKindArgs(ownId, ctx)})]`, and `#[kind(${variantKindArgs(arm.ids, false, ctx)})]` above each member, from the same `arms` `kindIdNapiImpls` decodes by. Admitted ids: the kind's own id and every member's.
 3. **Fixed literals** (`renderFixedLiteralTransport`): print `#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]`, `#[transport(choice)]`, and `#[kind(…)]` on the one variant with the ids `fixedLiteralNapiImpls` accepts. Name that id list once (`fixedLiteralIds(fixed)`) and use it in both.
 4. **Supertype choices** (`emitSupertypeTransportEnum`): run `buildKindIdArms` before printing the enum, and record in `claim` which ids each member takes (`claimedBy: Map<variant, number[]>`, first claim wins as now).
    - Print `#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]` and `#[transport(choice)]`.
@@ -3749,7 +3822,7 @@ Every printed type puts its attributes in this order: `#[cfg_attr(… napi(objec
    - A unit variant also lists the alternate ids `kindEnumAltIdPairs(slot, nodeMap)` folds into its id, for the slot the enum was built for (`nodeMap.nodes.get(entry.ownerKind)` and `entry.fieldName`, as the blank-arm check finds it). Today's wrap folds those ids before the wire (`projectKindEnumStorage`), so today's decode never meets them, but the reader reads the parser's own id.
    - Print the same derive and `#[transport(choice)]`.
    - Print `#[kind(…)]` per variant, with the envelope rule above.
-   - Print `#[transport(blank)]` on `BLANK_VARIANT` when `blank`.
+   - Print `#[transport(blank)]` on `BLANK_VARIANT` when `blank`, which stays `hasBlankArm(modelSlot)`: the model's preference fact is the attribute's only source. Record the choice's name in `blankChoices: Set<string>`.
 6. **`AnyTransport`** (`renderAnyTransportWithNapiFromValue`): print `#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]` and `#[transport(choice)]`.
    - Each payload variant gets `#[kind(…)]` with the id its decode arm claims (first claim wins), with the envelope rule.
    - Each fixed literal's unit variant gets its `ownId`.
@@ -3759,6 +3832,8 @@ Every printed type puts its attributes in this order: `#[cfg_attr(… napi(objec
 Today's decode also has arms that try members in turn rather than claiming an id: a supertype's own id, its suppressed kinds, its self-alias ids, and a per-slot enum's alias-wrapper ids. A `#[kind]` list cannot express a trial, so these arms get no attribute. If one of them carries real corpus nodes, Task 10's harness reports a refusal (`Unadmitted`) or a difference at that node. The stop rule then applies: report the kind and the arm, and do not add a fallback.
 
 After all types are printed, run the diagnostic. For each struct, call `assertOneUntaggedSlot(node.kind, slots, kindEntries)` with its slots that take untagged children (`takesUntagged`). Each slot's ids are `admitted.get(typeName)`, where `typeName` is the inner type `rustTransportSlotType` wraps. Factor `slotTransportTypeName(slot, nodeMap, choices, typeName)` out of `rustTransportSlotType` and use it in both. A presence slot's ids are its keyword's.
+
+In the same pass, check the blank arms. For every struct slot, `blankChoices.has(slotTransportTypeName(…))` must equal `hasBlankArm(slot)`. A per-slot choice is named for the first slot that needs it and shared by every slot with the same name (typescript's `StatementBlockTerminatorTransportSlot` serves six), and its blank arm is decided by that first slot. So a shared choice whose slots disagree is a codegen error naming the choice, the slots registered as preferences and the slots that are not. The expected count is zero.
 
 In `native-crate.ts`, add to the generated `impl EngineGrammar`:
 
@@ -4262,7 +4337,14 @@ The global gates, plus:
 
 - `pnpm exec tsx packages/cli/src/cli.ts tool typed-read-parity --all-grammars`, with zero refusals and zero differences;
 - `pnpm run type-check:native`;
-- `rtk cargo clippy --workspace --no-default-features -- -D warnings`.
+- `rtk cargo clippy --workspace --no-default-features -- -D warnings`;
+- the blank-arm census, counted on the regenerated `transport.rs` files and the model:
+  - the slots registered as blank options (`hasBlankArm`) are the 9 typescript `terminator` slots;
+  - the slots whose type carries `#[transport(blank)]` are the same 9;
+  - the `#[transport(blank)]` attributes are 4, one per choice those slots hold;
+  - the native arms admitting id 0 are 12, three in each of those 4 choices (`from_kind_id` and the two napi decoder branches), and none elsewhere in any grammar.
+
+  Task 9's census test pins the typescript numbers. The other four grammars have none of these: count them with the same patterns.
 
 Rendered bytes and validation rows are unchanged from the base of the branch.
 
@@ -4293,7 +4375,7 @@ Detailed against the code 1a leaves. The derive gains the wire codec the spec li
    - The trial arms Task 9 left unexpressed are settled first, as rulings from Task 10's report.
 2. The decode Task 10 compares against is then the derive's own. The parity harness keeps running against today's wrap output until 1c removes it.
 3. **Gates:**
-   - Render-neutral (verification 15): rebuilt render's cost per slot value with `measure-rebuilt.mts`, back to back on this branch and on the phase 0 merge (`f5ee2d734`), per grammar, the native call and the projection measured separately. The same script, inputs and population at both commits.
+   - Render-neutral (verification 15): rebuilt render's cost per slot value with `measure-rebuilt.mts`, back to back on this branch and on its base, master as 1b starts, per grammar, the native call and the projection measured separately. The same script, inputs and population at both commits. The base is past #659, which changes enum decoding, so the phase 0 merge is not a like-for-like base.
    - Build time, peak memory and binary size per grammar crate, before and after, with the same commands, outside watched worktrees (verification 12).
    - `pnpm run type-check:native` passes on its own and is chained into `pnpm run type-check` (#655).
    - Rendered bytes and validation rows unchanged.
@@ -4315,7 +4397,7 @@ Every read goes through the typed reader, and the wrap attaches members only. "T
 
    1c is detailed on top of #653 once it merges.
 4. **The wrap** attaches members only (§ What the JavaScript wrap keeps), and a child within the depth gets its members on first access. Removed from every wrap:
-   - `modelSlots`, the `normalize…` and `coerce…` helpers and the enum projections;
+   - `modelSlots`, the `normalize…` and `coerce…` helpers and the enum projections, with their text-to-id tables (`kindEnumTextIdPairs`): the reader folds every member by kind id, which closes #660;
    - `readTerminalFromOther`, `_aliasEnvelope`, the spelling helpers, `_projectLexed` and `_wrapTrivia`;
    - `dropWireDelimiters`, `_hasSeparatorFlank`, `_separatorKindOf`;
    - stub hydration (`hydrateSelf`, `hydrateChild`), the `_ROUTES_<Kind>` tables and `_LIST_OWNER_KINDS`.
@@ -4336,5 +4418,10 @@ Every read goes through the typed reader, and the wrap attaches members only. "T
 
 ## Outline: after step 1
 
+- **`delimiter` becomes the render option spec A.2 lists.** Step 1 reads a list's flank from the source, because today's read sets it and prepare fills it only when it is unset. The read stops computing it once nothing needs the read value:
+  - an untouched parsed list renders from its source bytes (the fold), flank included;
+  - a ruling says whether an edited parsed list keeps its source flank or takes the option's.
+
+  At that step the render side stamps `delimiter` from its site with the spacing fields at prepare, and the reader's `delimiter` and the `#[flank]` attribute go. The gate is rendered bytes unchanged on the corpus. Until that step, the reader and today's read compute it the same way, so it cannot drift from the read it replaces.
 - **Relative coordinates** (ruling 6.2), re-planned against rows: relative points for detached data, coordinate facts derived instead of stamped, `$detach()`, and `$cst()` fetched by row.
 - **The record wire** (ruling 6.3). Its plan lands only past the gate on the record step: records must match or beat napi objects on read time, both one node per call and every match in one call, and on retained heap per node, as well as beating them on render decode. The object wire's numbers are re-taken in the engine beside the records'. The first thing the step attacks is the view's overhead: the `$with` and `$trivia` closures a view makes over its record, about 1.9 KB a node in the like-for-like re-take. At that step `#[napi(object)]` and the derive's object codec give way to records, and a parsed node's literal holds a reference to its record (ruling 4).
