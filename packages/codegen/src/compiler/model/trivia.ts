@@ -169,13 +169,24 @@ export function whitespaceTriviaKinds(nodeMap: NodeMap): string[] {
 	});
 }
 
+function continuesLine(nodeMap: NodeMap, kind: string): boolean {
+	const node = nodeMap.nodes.get(kind);
+	if (!(node instanceof AssembledPattern) || node.textPattern === undefined) return false;
+	const dfa = patternDfa(node.textPattern);
+	return dfa !== undefined && requiresNonSpace(dfa) && endsWithLineBreak(dfa);
+}
+
 export function continuationTriviaKinds(nodeMap: NodeMap): string[] {
-	return [...triviaKinds(nodeMap)].filter((kind) => {
+	const kinds = triviaKinds(nodeMap);
+	const direct = [...kinds].filter((kind) => continuesLine(nodeMap, kind));
+	const byDefault = [...kinds].flatMap((kind) => {
 		const node = nodeMap.nodes.get(kind);
-		if (!(node instanceof AssembledPattern) || node.textPattern === undefined) return false;
-		const dfa = patternDfa(node.textPattern);
-		return dfa !== undefined && requiresNonSpace(dfa) && endsWithLineBreak(dfa);
+		const arm = node instanceof AssembledSupertype ? node.defaultVariantSubtype : undefined;
+		return node instanceof AssembledSupertype && arm !== undefined && continuesLine(nodeMap, storageKindOfRef(arm.node))
+			? node.subtypeNames
+			: [];
 	});
+	return [...new Set([...direct, ...byDefault])].filter((kind) => kinds.has(kind));
 }
 
 export interface WhitespaceTrivia {

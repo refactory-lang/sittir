@@ -2419,7 +2419,12 @@ function renderTriviaTransportSupport(
 	const continuationKinds = new Set(continuationTriviaKinds(nodeMap));
 	for (const node of extrasNodes) {
 		if (continuationKinds.has(node.kind)) {
-			lines.push(`            TriviaTransport::${rustTransportVariantName(node)}(t) => Some(&t.text),`);
+			const unit = unitOf(node);
+			lines.push(
+				unit === undefined
+					? `            TriviaTransport::${rustTransportVariantName(node)}(t) => Some(&t.text),`
+					: `            TriviaTransport::${unit.variant} => Some(${rustStringLiteral(unit.text)}),`
+			);
 			continue;
 		}
 		if (!whitespaceKinds.has(node.kind)) continue;
