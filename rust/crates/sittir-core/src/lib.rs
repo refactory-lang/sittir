@@ -19,6 +19,7 @@ pub mod napi_engine;
 pub mod options;
 pub mod prepare;
 pub mod query;
+pub mod read;
 pub mod read_untyped_node;
 pub mod render;
 pub mod slot;

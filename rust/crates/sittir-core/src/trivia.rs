@@ -16,7 +16,7 @@ use std::collections::BTreeMap;
 /// One trivia entry: the node (or the coordinate of one), whether it shares
 /// a row with its owner, and on a same-line trailing entry the anonymous
 /// tokens between the owner and it.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct TriviaEntry<T> {
     pub value: SlotValue<T>,
     pub same_line: bool,
@@ -63,7 +63,7 @@ impl<T: crate::prepare::Prepare> crate::prepare::Prepare for TransportTrivia<T> 
 /// Trivia read from source and detached from its tree: the text the reader
 /// captured, with the kind the reader stamped on it. It writes that kind's
 /// edges around the text, as a rendered node of the kind does.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct TriviaText {
     pub kind: KindId,
     pub text: String,
@@ -86,7 +86,7 @@ impl crate::prepare::Prepare for TriviaText {
 }
 
 /// The trivia one transport owns. Mirrors `NodeTrivia` in `@sittir/types`.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct TransportTrivia<T> {
     pub leading: Option<Vec<TriviaEntry<T>>>,
     pub trailing: Option<Vec<TriviaEntry<T>>>,
