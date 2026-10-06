@@ -130,7 +130,7 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodeGroupAnchoredLast };
 	};
-	whitespace<T extends { readonly $type: string | number } | number>(
+	layout<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is NarrowTo<
 		T,
@@ -160,7 +160,7 @@ const _supertype_definition_ids = new Set<number>([61, 62, 47, 46, 45, 52, 44, 5
 const _supertype_namedNode_ids = new Set<number>([61, 62]);
 const _supertype_listElement_ids = new Set<number>([39, 54]);
 const _supertype_namedNodeGroup_ids = new Set<number>([63, 64]);
-const _supertype_whitespace_ids = new Set<number>([25, 26, 27, 28, 29, 30, 31, 32]);
+const _supertype_layout_ids = new Set<number>([25, 26, 27, 28, 29, 30, 31, 32]);
 
 const _supertype_namedNode_guard = _vg(_sg(_supertype_namedNode_ids), {
 	plain: _g(TSKindId.NamedNodePlain),
@@ -208,5 +208,5 @@ export const is = Object.freeze({
 	namedNode: _supertype_namedNode_guard,
 	listElement: _supertype_listElement_guard,
 	namedNodeGroup: _supertype_namedNodeGroup_guard,
-	whitespace: _sg(_supertype_whitespace_ids)
+	layout: _sg(_supertype_layout_ids)
 }) as unknown as IsGuards;

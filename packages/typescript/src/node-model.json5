@@ -13,10 +13,10 @@
     "_formal_parameter",
     "_identifier",
     "_import_identifier",
+    "_layout",
     "_module_export_name",
     "_property_name",
     "_tuple_type_member",
-    "_whitespace",
     "call_expression",
     "comment",
     "declaration",
@@ -4597,6 +4597,24 @@
       "factoryShape": "constant"
     },
     {
+      "kind": "_layout",
+      "modelType": "supertype",
+      "typeName": "Layout",
+      "irKey": "layout",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "_blankline",
+        "_dedent",
+        "_double_blankline",
+        "_indent",
+        "_newline",
+        "_space",
+        "_tab",
+        "_tight"
+      ]
+    },
+    {
       "kind": "_lhs_expression",
       "modelType": "envelope",
       "typeName": "LhsExpression",
@@ -5002,24 +5020,6 @@
         "rest_type",
         "tuple_parameter",
         "type"
-      ]
-    },
-    {
-      "kind": "_whitespace",
-      "modelType": "supertype",
-      "typeName": "Whitespace",
-      "irKey": "whitespace",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
-        "_blankline",
-        "_dedent",
-        "_double_blankline",
-        "_indent",
-        "_newline",
-        "_space",
-        "_tab",
-        "_tight"
       ]
     },
     {

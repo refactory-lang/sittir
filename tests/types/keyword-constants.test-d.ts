@@ -17,14 +17,14 @@ export const rustConstant: Constants<typeof rust.build> = rust.build.self;
 export const pythonConstant: Constants<typeof python.build> = python.build.passStatement;
 export const typescriptConstant: Constants<typeof typescript.build> = typescript.build.this;
 
-rust.render(rust.build.whitespace.space);
-rust.render(rust.build.whitespace.tab);
-rust.render(rust.build.whitespace.newline);
-rust.render(rust.build.whitespace.blankline);
-rust.render(rust.build.whitespace.doubleBlankline);
+rust.render(rust.build.layout.space);
+rust.render(rust.build.layout.tab);
+rust.render(rust.build.layout.newline);
+rust.render(rust.build.layout.blankline);
+rust.render(rust.build.layout.doubleBlankline);
 // @ts-expect-error a zero-width kind has no text
-rust.render(rust.build.whitespace.tight);
+rust.render(rust.build.layout.tight);
 // @ts-expect-error a depth sentinel has no text
-rust.render(rust.build.whitespace.indent);
+rust.render(rust.build.layout.indent);
 // @ts-expect-error a depth sentinel has no text
-rust.render(rust.build.whitespace.dedent);
+rust.render(rust.build.layout.dedent);

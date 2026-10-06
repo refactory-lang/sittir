@@ -105,7 +105,7 @@ import {
 import { resolveBitflagConstName } from './consts.ts';
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
-import { armAliasesOf, hintEmitterOf, type AddressTables, type HintEmitter, type HintRoot } from './options.ts';
+import { layoutKindAliasesOf, hintEmitterOf, type AddressTables, type HintEmitter, type HintRoot } from './options.ts';
 import type { SitePreference } from '../compiler/model/site-preferences.ts';
 import { displayNameOf, displayedKinds, ownsItsDisplay } from '../compiler/model/display-name.ts';
 import { emptyForms, innerGapsKeyed } from '../compiler/model/trivia.ts';
@@ -191,13 +191,13 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	lines.push('');
 
 	if (kindEntries) emitKindIdEnumAndLookups(lines, kindEntries, nodeMap);
-	const arms = kindEntries === undefined || config.sites === undefined ? undefined : armAliasesOf(nodeMap, kindEntries, config.sites);
-	if (arms !== undefined) {
-		lines.push(`export type SpacingArm = ${arms.spacingType};`);
-		lines.push(`export type WhitespaceArm = ${arms.whitespaceType};`);
+	const aliases = kindEntries === undefined || config.sites === undefined ? undefined : layoutKindAliasesOf(nodeMap, kindEntries, config.sites);
+	if (aliases !== undefined) {
+		lines.push(`export type WhitespaceKindId = ${aliases.whitespaceType};`);
+		lines.push(`export type LayoutKindId = ${aliases.layoutType};`);
 		lines.push('');
 	}
-	const hints = kindEntries !== undefined && config.addresses !== undefined ? hintEmitterOf(config.addresses, kindEntries, arms, displayedKinds(nodeMap)) : undefined;
+	const hints = kindEntries !== undefined && config.addresses !== undefined ? hintEmitterOf(config.addresses, kindEntries, aliases, displayedKinds(nodeMap)) : undefined;
 
 	if (supertypes.length > 0) {
 		lines.push('// Scoped enums per supertype');

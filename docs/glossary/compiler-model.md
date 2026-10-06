@@ -2283,7 +2283,7 @@ for them.
 ### `packages/codegen/src/compiler/model/node-map.ts::isBuilderTextLeaf`
 
 A fixed-text leaf that has a builder (`factoryName` set): a visible kind, or
-a `_whitespace` member, which is hidden but gets a builder. The class answers
+a `_layout` member, which is hidden but gets a builder. The class answers
 only whether the text is word-shaped. Emitters that produce a leaf's builder,
 coercer, type, `ir` member, wrap entry or keyword test ask this, never
 `hidden`.
@@ -2292,7 +2292,7 @@ coercer, type, `ir` member, wrap entry or keyword test ask this, never
 
 A non-word fixed-text leaf with no builder: an anonymous or `_`-prefixed
 delimiter. Emitters that skip factories and types for delimiters ask this, so
-neither a visible non-word literal nor a `_whitespace` member is skipped with
+neither a visible non-word literal nor a `_layout` member is skipped with
 them.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::isWordOrBuilderTextLeaf`
@@ -2314,7 +2314,7 @@ and not `isBuilderTextLeaf`.
 ### `packages/codegen/src/compiler/model/node-map.ts::isHiddenPunctuationLeaf`
 
 A non-word fixed-text leaf the grammar hides: `hidden`, not builder presence.
-The `consts` operator table and `markUserFacing` ask it, so a `_whitespace`
+The `consts` operator table and `markUserFacing` ask it, so a `_layout`
 member with a builder is still an operator, not a keyword.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::isWordOrVisibleTextLeaf`
@@ -3575,10 +3575,10 @@ The catalog kinds of a list's separator token arms (`AssembledList.separatorToke
  * flank arms. Every choice's arms carry the preference label and the
  * resolved default exactly as a declared choice does, so sites, transport
  * fields, the native fill and the list view are all reads of the rule. A
- * grammar whose `_whitespace` supertype is empty gets its rules back
+ * grammar whose `_layout` supertype is empty gets its rules back
  * unchanged; the arms of every separator gap are that supertype's members
- * less `indent`/`dedent` (`spacingArmsOf`), the arms of a flank all of them
- * (`whitespaceArmsOf`).
+ * less `indent`/`dedent` (`whitespaceKindsOf`), the arms of a flank all of them
+ * (`layoutKindsOf`).
  * Assemble and the factory surface never see the injected choices. The
  * declared defaults are not validated here: `seamRenderRules`, the pass
  * that follows the seam-stamping dry run, validates them once over every
@@ -3626,7 +3626,7 @@ with `inline: true`, since an inlined body prints into the referencing
 kind's transport, which holds no field for it. Finishes by validating the
 declared defaults over every site of the result. Then every compound kind
 that owns its edges (`ownsKindEdges`) gets its kind edge seams
-(`withKindEdges`). A grammar with no whitespace kinds gets the spaced rules
+(`withKindEdges`). A grammar with no layout kinds gets the spaced rules
 back untouched.
 
 #### token interior
@@ -3665,9 +3665,9 @@ grammar-wide face as well as to `<kind>_before`/`_after` (see
 own; a kind row still overrides it, and a kind whose edge is a slot cascades
 nothing.
 
-The grammar root always owns its edges, whatever its rule's shape: a root rule that is not a seq (python's `module`, regex's `pattern`) is wrapped in one to hold them. Its edges are the render's own flanks, not seams between neighbours, so their defaults come from `rootEdgeArms` and the writer writes them at the start and the end of a render instead of dropping them there (`KIND_ROOT` in the grammar's `KIND_FLAGS`). A parsed root keeps its source flanks: rendered untouched, its slice already holds them; rebuilt through `$with`, its prepare classifies the tree bytes before its first and after its last coordinate item into these sites (`rootEdgeStamp`), and an item that was rebuilt leaves the edge to the options and the default.
+The grammar root always owns its edges, whatever its rule's shape: a root rule that is not a seq (python's `module`, regex's `pattern`) is wrapped in one to hold them. Its edges are the render's own flanks, not seams between neighbours, so their defaults come from `rootEdgeKinds` and the writer writes them at the start and the end of a render instead of dropping them there (`KIND_ROOT` in the grammar's `KIND_FLAGS`). A parsed root keeps its source flanks: rendered untouched, its slice already holds them; rebuilt through `$with`, its prepare classifies the tree bytes before its first and after its last coordinate item into these sites (`rootEdgeStamp`), and an item that was rebuilt leaves the edge to the options and the default.
 
-The after edge of a line-terminated kind (`lineTerminatedKinds`) is the exception to the `space` fallback: its arms are `lineBreakingArms` and its default is the first of them, so `line_comment_after` is `newline`. A kind with no seq rule, such as python's pattern-leaf `comment` or typescript's lexed `hash_bang_line`, owns no edges; the runtime still breaks after it, from the line-terminated fact itself, which reaches the runtime as `KIND_LINE_TERMINATED` in the grammar's `KIND_FLAGS` table.
+The after edge of a line-terminated kind (`lineTerminatedKinds`) is the exception to the `space` fallback: its arms are `lineBreakingKinds` and its default is the first of them, so `line_comment_after` is `newline`. A kind with no seq rule, such as python's pattern-leaf `comment` or typescript's lexed `hash_bang_line`, owns no edges; the runtime still breaks after it, from the line-terminated fact itself, which reaches the runtime as `KIND_LINE_TERMINATED` in the grammar's `KIND_FLAGS` table.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::ownsKindEdges`
 
@@ -3883,7 +3883,7 @@ place this fact is decided; nothing downstream re-derives it.
 ### `packages/codegen/src/compiler/model/render-rules.ts::SeamArms`
 
 The arms every seam of a grammar admits and the symbols that spell them:
-the three spacing kinds, or all five whitespace kinds when the grammar
+the whitespace kinds, or every layout kind when the grammar
 renders indentation, on both sides of every token, since an indent may
 open after a token or before one (`lbrace_after`, a method chain's
 `dot_before`) and its dedent close wherever the kind's depth walk pairs
@@ -4007,7 +4007,7 @@ Resolves each site's default: the arm the `options:` block declares for it
 (`declaredOptionArms`, keyed by kind and address, with supertype and
 wildcard declarations already matched to the sites they reach), otherwise
 the grammar's default arm, derived once in the constructor
-(`defaultWhitespaceArmOf`) and the same for a separator gap, a flank and a
+(`defaultWhitespaceKindOf`) and the same for a separator gap, a flank and a
 seam. A site's label is its address; a seam's resolved arm must be one its
 site admits.
 
@@ -4148,8 +4148,8 @@ labels tell them apart, since a flank label never parses as a seam label.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::whitespaceTextOf`
 
-The render text of each member of the grammar's `_whitespace` supertype
-(`whitespaceSymbolsOf`), keyed by arm, for each member symbol
+The render text of each member of the grammar's `_layout` supertype
+(`layoutSymbolsOf`), keyed by arm, for each member symbol
 `visibleExternals` declares as a `string(...)`:
 `_tight` is `''`, python's `_double_blankline` is `'\n\n\n'`, and `_indent` /
 `_dedent` carry the writer's depth marks (`INDENT_TEXT`, `DEDENT_TEXT`,
@@ -4282,55 +4282,58 @@ a polymorph parent is not transparent at read, which is why it is absent from
 `matchAddress` and `resolveBindings` rather than derived inside them, so the
 membership has one source.
 
-### `packages/codegen/src/compiler/model/whitespace-arms.ts::whitespaceSymbolsOf`
+### `packages/codegen/src/compiler/model/layout-kinds.ts::layoutSymbolsOf`
 
-The whitespace kinds a grammar renders, in declaration order, as arm to
-member symbol: the members of its `_whitespace` supertype
-(`WHITESPACE_SUPERTYPE`), each armed by its parse name or its display
+The layout kinds a grammar renders, in declaration order, as arm to
+member symbol: the members of its `_layout` supertype
+(`LAYOUT_SUPERTYPE`), each armed by its parse name or its display
 (`tight`, `space`, `newline`, `blankline`, `indent`, `dedent`, python's
 `double_blankline`). A grammar without the supertype is an error: nothing in
-codegen lists whitespace kinds by name, so every spacing site, `options.ts`
+codegen lists layout kinds by name, so every spacing site, `options.ts`
 union, whitespace text and choice member symbol is read from here.
 
-### `packages/codegen/src/compiler/model/whitespace-arms.ts::declaresWhitespace`
+### `packages/codegen/src/compiler/model/layout-kinds.ts::declaresWhitespace`
 
-Whether the grammar has a `_whitespace` supertype. Every real grammar does; a unit-test grammar may not, and the model passes that read the vocabulary during assembly skip it there.
+Whether the grammar has a `_layout` supertype. Every real grammar does; a unit-test grammar may not, and the model passes that read the vocabulary during assembly skip it there.
 
-### `packages/codegen/src/compiler/model/whitespace-arms.ts::whitespaceArmsOf`
+### `packages/codegen/src/compiler/model/layout-kinds.ts::layoutKindsOf`
 
-The arms of `whitespaceSymbolsOf`, in declaration order.
+The layout kinds, in declaration order: the arms of `layoutSymbolsOf`, every
+`_layout` member, indent and dedent included. A flank, a kind edge or a
+token seam of an indenting grammar chooses among them.
 
-### `packages/codegen/src/compiler/model/whitespace-arms.ts::defaultWhitespaceArmOf`
+### `packages/codegen/src/compiler/model/layout-kinds.ts::defaultWhitespaceKindOf`
 
 The arm every site falls back to when no declaration reaches it: the arm of
-`_space` when the grammar's `_whitespace` supertype lists it, otherwise the
+`_space` when the grammar's `_layout` supertype lists it, otherwise the
 arm of `_tight`. Enrich admits `_space` only when the grammar's extras accept
 a space, so a grammar that cannot lex one between tokens (regex) renders
 tight by default instead of emitting text its parser rejects. `_tight` is
 always a member; a supertype listing neither is an error.
 
-### `packages/codegen/src/compiler/model/whitespace-arms.ts::spacingArmsOf`
+### `packages/codegen/src/compiler/model/layout-kinds.ts::whitespaceKindsOf`
 
-`whitespaceArmsOf` less the depth movers (`DEPTH_ARMS`): the arms a
-separator gap admits, where moving depth has no meaning.
+The whitespace kinds: `layoutKindsOf` less the depth movers (`DEPTH_KINDS`),
+the members that write a whitespace run. They are what a separator gap
+admits, where moving depth has no meaning.
 
-### `packages/codegen/src/compiler/model/whitespace-arms.ts::RootEdgeArms`
+### `packages/codegen/src/compiler/model/layout-kinds.ts::RootEdgeKinds`
 
-The default arms of the grammar root's two edges.
+The default layout kinds of the grammar root's two edges.
 
-### `packages/codegen/src/compiler/model/whitespace-arms.ts::rootEdgeArms`
+### `packages/codegen/src/compiler/model/layout-kinds.ts::rootEdgeKinds`
 
 The grammar root's edge defaults: `tight` before; after, a line break when the grammar declares file types (`NodeMap.fileTypes`), else `tight`. A grammar with file types has a file surface, and a file ends in a line break; a grammar without them (regex) has no file surface, so its root's render ends where its content does. rust, typescript, python and scm end in a line break; regex does not. A grammar that declares file types but whose whitespace vocabulary lists no line break is a compile error. The sites still admit every arm the vocabulary does, so options can set either edge (force or strip a final newline), and a parsed tree's own flanks outrank the default (`withKindEdges`).
 
-### `packages/codegen/src/compiler/model/whitespace-arms.ts::lineBreakingArms`
+### `packages/codegen/src/compiler/model/layout-kinds.ts::lineBreakingKinds`
 
-The seam arms of a site that admits only line breaks, the after edge of a line-terminated trivia kind: the spacing arms whose whitespace kind's literal text contains a line break (read from the `_whitespace` members' own text, never from the arm names), and the site's stated default, the arm spelled by `_newline` (`NEWLINE_MEMBER`). A grammar that lists no `_newline` stops codegen, since such a site would have no default.
+The seam arms of a site that admits only line breaks, the after edge of a line-terminated trivia kind: the spacing arms whose whitespace kind's literal text contains a line break (read from the `_layout` members' own text, never from the arm names), and the site's stated default, the arm spelled by `_newline` (`NEWLINE_MEMBER`). A grammar that lists no `_newline` stops codegen, since such a site would have no default.
 
-### `packages/codegen/src/compiler/model/whitespace-arms.ts::indentChars`
+### `packages/codegen/src/compiler/model/layout-kinds.ts::indentChars`
 
-The characters a render's `indent` unit may be made of: the literal texts of the `INDENT_MEMBERS` (`_space`, `_tab`) the grammar's `_whitespace` supertype lists, in that order. rust, typescript, python and scm give `' '` and `'\t'`; regex, which admits neither, gives none and has no `indent` option. A node map with no `_whitespace` supertype (`declaresWhitespace`) admits no member, so none either. The one fact behind the `IndentChar` type in `options.ts` (`renderOptionsModule`) and the runtime's `OptionTables.indent_chars` (`planRenderOptions`), so the type and the runtime check cannot disagree.
+The characters a render's `indent` unit may be made of: the literal texts of the `INDENT_MEMBERS` (`_space`, `_tab`) the grammar's `_layout` supertype lists, in that order. rust, typescript, python and scm give `' '` and `'\t'`; regex, which admits neither, gives none and has no `indent` option. A node map with no `_layout` supertype (`declaresWhitespace`) admits no member, so none either. The one fact behind the `IndentChar` type in `options.ts` (`renderOptionsModule`) and the runtime's `OptionTables.indent_chars` (`planRenderOptions`), so the type and the runtime check cannot disagree.
 
-### `packages/codegen/src/compiler/model/whitespace-arms.ts::indentUnitOf`
+### `packages/codegen/src/compiler/model/layout-kinds.ts::indentUnitOf`
 
 The grammar's declared render indent unit, checked against `indentChars`. A grammar with indent characters must declare `indent` in its `options:` block, and a missing declaration throws naming the grammar; the unit must be non-empty and made only of those characters. A grammar with none (regex) must not declare one, and gets the empty unit. The unit is the one source of the render default: `renderOptionsRs` emits it into `defaults()`, and the runtime's format extractor compares parsed sources against it.
 
@@ -4611,7 +4614,7 @@ A text made of one or more of the grammar's node-less extras: the `nodelessExtra
 
 ### `packages/codegen/src/compiler/model/trivia.ts::whitespaceTriviaKinds`
 
-The `_whitespace` members that are extras: those whose literal text `lexicalExtrasRun` accepts whole, since tree-sitter skips a run of extras. Rust and typescript get `space`, `newline` and `blankline`, and python adds `double_blankline`. `tight` is excluded because an empty text is no run, and the depth marks because their text is not whitespace. The builders of the rest still exist; a trivia position refuses them.
+The `_layout` members that are extras: those whose literal text `lexicalExtrasRun` accepts whole, since tree-sitter skips a run of extras. Rust and typescript get `space`, `newline` and `blankline`, and python adds `double_blankline`. `tight` is excluded because an empty text is no run, and the depth marks because their text is not whitespace. The builders of the rest still exist; a trivia position refuses them.
 
 ### `packages/codegen/src/compiler/model/trivia.ts::WhitespaceTrivia`
 
@@ -4631,7 +4634,7 @@ Whether every way a kind's text can end reaches the grammar's declared newline t
 
 ### `packages/codegen/src/compiler/model/trivia.ts::lineBreakTerminatedKinds`
 
-The outermost kinds that hold `lineBreakTerminated` (`outermostEnds`). They reach the runtime as `KIND_LINE_BREAK_TERMINATED` in the grammar's `KIND_FLAGS`. After a node of such a kind the writer holds its line end as a `LineHold::Break`: the same floor as a line-terminated kind's, but not written at the end of a render, because the break is not part of the node's span. A render of a node ending in one reproduces its span without the break, so a splice lands before the source's own newline. Their after edges keep their arms: `lineBreakingArms` reads only `lineTerminatedKinds`. Memoised per node map.
+The outermost kinds that hold `lineBreakTerminated` (`outermostEnds`). They reach the runtime as `KIND_LINE_BREAK_TERMINATED` in the grammar's `KIND_FLAGS`. After a node of such a kind the writer holds its line end as a `LineHold::Break`: the same floor as a line-terminated kind's, but not written at the end of a render, because the break is not part of the node's span. A render of a node ending in one reproduces its span without the break, so a splice lands before the source's own newline. Their after edges keep their arms: `lineBreakingKinds` reads only `lineTerminatedKinds`. Memoised per node map.
 
 ### `packages/codegen/src/compiler/model/trivia.ts::outermostEnds`
 

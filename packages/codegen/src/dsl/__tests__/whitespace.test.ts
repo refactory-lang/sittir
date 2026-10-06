@@ -66,14 +66,14 @@ describe('enrichWhitespace', () => {
 	});
 
 	it('reports an upstream rule that defines a minted name differently, and not one that defines it the same', () => {
-		const rules = { _whitespace: S(' '), _space: S(' '), _newline: S('\n'), _tight: S('') };
+		const rules = { _layout: S(' '), _space: S(' '), _newline: S('\n'), _tight: S('') };
 		const out = enrichWhitespace([sym('_newline')], [P('\\s')], rules);
-		expect(out.collisions).toEqual([{ name: '_whitespace', site: 'upstream' }]);
+		expect(out.collisions).toEqual([{ name: '_layout', site: 'upstream' }]);
 		expect(enrichWhitespace([], [P('\\s')], { _space: S('  ') }).collisions).toEqual([{ name: '_space', site: 'upstream' }]);
 	});
 });
 
-describe('enrich mints the whitespace supertype', () => {
+describe('enrich mints the layout supertype', () => {
 	beforeAll(() => installFakeDsl());
 	afterAll(() => restoreFakeDsl());
 
@@ -81,8 +81,8 @@ describe('enrich mints the whitespace supertype', () => {
 
 	it('adds the rule, the supertype, the missing externals and the bodies', () => {
 		const out = enrich(grammar({ source: S('x') })) as { rules: Record<string, unknown>; supertypes: unknown[]; externals: unknown[] };
-		expect(out.rules['_whitespace']).toEqual({ type: 'CHOICE', members: ['_tight', '_newline', '_blankline', '_double_blankline'].map(sym) });
-		expect(out.supertypes).toContain('_whitespace');
+		expect(out.rules['_layout']).toEqual({ type: 'CHOICE', members: ['_tight', '_newline', '_blankline', '_double_blankline'].map(sym) });
+		expect(out.supertypes).toContain('_layout');
 		expect(out.externals).toEqual([sym('_newline'), sym('_tight'), sym('_blankline'), sym('_double_blankline')]);
 		expect(getEnrichWhitespace(out)).toEqual({
 			bodies: { _tight: S(''), _newline: S('\n'), _blankline: S('\n\n'), _double_blankline: S('\n\n\n') },
@@ -91,11 +91,11 @@ describe('enrich mints the whitespace supertype', () => {
 	});
 
 	it('replaces an upstream definition of a minted name with the minted one and records the collision', () => {
-		const out = enrich(grammar({ source: S('x'), _whitespace: S(' '), _tight: S('t') })) as { rules: Record<string, unknown> };
-		expect(out.rules['_whitespace']).toEqual({ type: 'CHOICE', members: ['_tight', '_newline', '_blankline', '_double_blankline'].map(sym) });
+		const out = enrich(grammar({ source: S('x'), _layout: S(' '), _tight: S('t') })) as { rules: Record<string, unknown> };
+		expect(out.rules['_layout']).toEqual({ type: 'CHOICE', members: ['_tight', '_newline', '_blankline', '_double_blankline'].map(sym) });
 		expect(out.rules['_tight']).toBeUndefined();
 		expect(getEnrichWhitespace(out).collisions).toEqual([
-			{ name: '_whitespace', site: 'upstream' },
+			{ name: '_layout', site: 'upstream' },
 			{ name: '_tight', site: 'upstream' }
 		]);
 	});

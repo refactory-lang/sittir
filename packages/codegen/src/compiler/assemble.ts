@@ -26,10 +26,10 @@ import type {
 	SupertypeRule
 } from '../types/rule.ts';
 import { subtypeParseNamesOf } from '../types/rule.ts';
-import { declaresWhitespace, whitespaceSymbolsOf } from './model/whitespace-arms.ts';
+import { declaresWhitespace, layoutSymbolsOf } from './model/layout-kinds.ts';
 import { stampFullForms } from './model/full-form.ts';
 import { stampTriviaInterior } from './model/trivia.ts';
-import { WHITESPACE_SUPERTYPE } from '../dsl/primitives/spacing.ts';
+import { LAYOUT_SUPERTYPE } from '../dsl/primitives/spacing.ts';
 import { admitsWhitespaceMember } from '../dsl/whitespace.ts';
 import { isEnumChoiceRule, isHiddenRule, ruleListParts } from '../dsl/rule-patterns.ts';
 import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
@@ -776,7 +776,7 @@ function markUserFacing(node: AssembledNode, ctx: _UserFacingCtx): void {
 
 function stampWhitespaceBuilders(nodes: Map<string, AssembledNode>): void {
 	if (!declaresWhitespace({ nodes })) return;
-	for (const kind of whitespaceSymbolsOf({ nodes }).values()) {
+	for (const kind of layoutSymbolsOf({ nodes }).values()) {
 		const node = nodes.get(kind);
 		if (!(node instanceof AssembledPunctuation)) throw new Error(`assemble: whitespace arm '${kind}' is not a literal kind`);
 		node.factoryName ??= nameNode(node.kind).factoryName;
@@ -785,11 +785,11 @@ function stampWhitespaceBuilders(nodes: Map<string, AssembledNode>): void {
 
 export function assertWhitespaceAdmitted(nodeMap: Pick<NodeMap, 'nodes' | 'nodelessExtrasRun'>): void {
 	if (!declaresWhitespace(nodeMap)) return;
-	for (const kind of whitespaceSymbolsOf(nodeMap).values()) {
+	for (const kind of layoutSymbolsOf(nodeMap).values()) {
 		const node = nodeMap.nodes.get(kind);
 		if (node instanceof AssembledPunctuation && !admitsWhitespaceMember(nodeMap.nodelessExtrasRun, kind, node.text)) {
 			throw new Error(
-				`assemble: '${WHITESPACE_SUPERTYPE}' lists '${kind}', but the grammar's extras do not admit its text; enrich's effective extras and the final grammar's extras disagree`
+				`assemble: '${LAYOUT_SUPERTYPE}' lists '${kind}', but the grammar's extras do not admit its text; enrich's effective extras and the final grammar's extras disagree`
 			);
 		}
 	}

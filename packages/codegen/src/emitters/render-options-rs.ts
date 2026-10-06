@@ -14,7 +14,7 @@ import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
 import { rustStringLiteral } from './render-body.ts';
 import { childIndexOf, optionKey, type AddressLeafEntry, type AddressTables, type ChildIndex } from './options.ts';
 import { lineBreakTerminatedKinds, lineTerminatedKinds } from '../compiler/model/trivia.ts';
-import { indentChars, indentUnitOf } from '../compiler/model/whitespace-arms.ts';
+import { indentChars, indentUnitOf } from '../compiler/model/layout-kinds.ts';
 
 export type SeamStrength = 0 | 1 | 2;
 
@@ -556,8 +556,8 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('    }');
 	L.push('}', '');
 	L.push("pub fn allowed(site: usize) -> &'static [u16] {", '    SPACING_SITES[site].3', '}', '');
-	L.push('/// Every whitespace member, the domain of `spacing_text`.');
-	L.push(`pub const WHITESPACE_KINDS: &[u16] = &[${plan.whitespaceText.map((w) => w.id).join(', ')}];`, '');
+	L.push('/// Every layout kind (each `_layout` member, indent and dedent included), the domain of `spacing_text`.');
+	L.push(`pub const LAYOUT_KINDS: &[u16] = &[${plan.whitespaceText.map((w) => w.id).join(', ')}];`, '');
 	L.push(
 		'pub const WHITESPACE: ::sittir_core::render::WhitespaceTable = ::sittir_core::render::WhitespaceTable { text_of: spacing_text, indent: INDENT_KIND, dedent: DEDENT_KIND };',
 		''

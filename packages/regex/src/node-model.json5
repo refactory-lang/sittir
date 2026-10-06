@@ -6,7 +6,7 @@
   "supertypes": [
     "_character_escape",
     "_class_atom",
-    "_whitespace",
+    "_layout",
     "inline_flags_group"
   ],
   "externals": [
@@ -530,6 +530,20 @@
       "factoryShape": "constant"
     },
     {
+      "kind": "_layout",
+      "modelType": "supertype",
+      "typeName": "Layout",
+      "irKey": "layout",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "_blankline",
+        "_double_blankline",
+        "_newline",
+        "_tight"
+      ]
+    },
+    {
       "kind": "_newline",
       "modelType": "punctuation",
       "typeName": "Newline",
@@ -554,20 +568,6 @@
       "text": "",
       "oneSurface": true,
       "factoryShape": "constant"
-    },
-    {
-      "kind": "_whitespace",
-      "modelType": "supertype",
-      "typeName": "Whitespace",
-      "irKey": "whitespace",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
-        "_blankline",
-        "_double_blankline",
-        "_newline",
-        "_tight"
-      ]
     },
     {
       "kind": "alternation",

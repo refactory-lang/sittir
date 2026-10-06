@@ -20,8 +20,8 @@ describe('whitespace-mint-collision', () => {
 	}, 60_000);
 
 	it('blocks an upstream rule that defines a minted name differently', async () => {
-		expect(await collisionsOf("_whitespace: () => 'ws', _space: () => 'sp'", '')).toEqual([
-			{ owner: '_whitespace', canProceed: false },
+		expect(await collisionsOf("_layout: () => 'ws', _space: () => 'sp'", '')).toEqual([
+			{ owner: '_layout', canProceed: false },
 			{ owner: '_space', canProceed: false }
 		]);
 	}, 60_000);

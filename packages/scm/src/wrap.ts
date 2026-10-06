@@ -386,7 +386,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 	named_node: new Set(['named_node_plain', 'named_node_supertyped']),
 	_list_element: new Set(['capture', 'list_element_quantifier']),
 	named_node_group: new Set(['named_node_group_children', 'named_node_group_anchored_last']),
-	_whitespace: new Set([
+	_layout: new Set([
 		'_tight',
 		'tight',
 		'_space',

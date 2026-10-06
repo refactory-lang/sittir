@@ -201,7 +201,7 @@ export const primaryType: {
 	union: F.unionType
 };
 
-export const whitespace: {
+export const layout: {
 	readonly tight: typeof F.buildTight;
 	readonly space: typeof F.buildSpace;
 	readonly tab: typeof F.buildTab;
@@ -441,7 +441,7 @@ export const ir: {
 	readonly primaryExpression: typeof primaryExpression;
 	readonly type: typeof type;
 	readonly primaryType: typeof primaryType;
-	readonly whitespace: typeof whitespace;
+	readonly layout: typeof layout;
 	readonly declaration: typeof declaration;
 	readonly pattern: typeof pattern;
 	readonly classBodyMember: typeof classBodyMember;
@@ -667,7 +667,7 @@ export const ir: {
 	primaryExpression,
 	type,
 	primaryType,
-	whitespace,
+	layout,
 	declaration,
 	pattern,
 	classBodyMember,

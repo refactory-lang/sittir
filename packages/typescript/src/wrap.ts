@@ -986,7 +986,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'empty_member'
 	]),
 	_enum_body_element: new Set(['enum_body_element_name', 'enum_assignment']),
-	_whitespace: new Set([
+	_layout: new Set([
 		'_tight',
 		'tight',
 		'_space',

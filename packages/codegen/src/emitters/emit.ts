@@ -16,7 +16,7 @@ import { WrapEmitter } from './wrap.ts';
 import { emitTypesModules } from './types.ts';
 import { emitConsts } from './consts.ts';
 import { addressTablesFor, emitOptions, renderOptionsModule } from './options.ts';
-import { indentChars } from '../compiler/model/whitespace-arms.ts';
+import { indentChars } from '../compiler/model/layout-kinds.ts';
 import { collectSitePreferences } from '../compiler/model/site-preferences.ts';
 import { emitIr } from './ir.ts';
 import { emitIs } from './is.ts';

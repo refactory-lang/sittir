@@ -15,7 +15,7 @@ import * as F from './factories/index.js';
 
 // Supertype-grouped sub-namespaces — tree-shakeable top-level consts.
 // Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).
-export const whitespace: {
+export const layout: {
 	readonly tight: typeof F.buildTight;
 	readonly newline: typeof F.buildNewline;
 	readonly blankline: typeof F.buildBlankline;
@@ -70,7 +70,7 @@ export const ir: {
 	readonly decimalDigits: typeof F.buildDecimalDigits;
 	readonly characterClassEscapeText1: typeof F.buildCharacterClassEscapeText1;
 	readonly characterClassEscapeText2: typeof F.buildCharacterClassEscapeText2;
-	readonly whitespace: typeof whitespace;
+	readonly layout: typeof layout;
 } = Object.freeze({
 	// Node factories
 	pattern: F.pattern,
@@ -123,5 +123,5 @@ export const ir: {
 	characterClassEscapeText2: F.buildCharacterClassEscapeText2,
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
-	whitespace
+	layout
 });

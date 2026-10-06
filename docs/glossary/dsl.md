@@ -3614,7 +3614,7 @@ The render body of a whitespace member: a STRING, whose value is the member's te
 
 ### `packages/codegen/src/dsl/whitespace.ts::TIGHT_MEMBER`
 
-`_tight`, the whitespace member that renders nothing. Every grammar admits it, since joining two tokens with nothing between them needs no lexing; it is the default arm of a grammar that admits no space (`defaultWhitespaceArmOf`).
+`_tight`, the whitespace member that renders nothing. Every grammar admits it, since joining two tokens with nothing between them needs no lexing; it is the default arm of a grammar that admits no space (`defaultWhitespaceKindOf`).
 
 ### `packages/codegen/src/dsl/whitespace.ts::SPACE_MEMBER`
 
@@ -3630,11 +3630,11 @@ The members an indentation unit is made of: `_space` and `_tab`. The characters 
 
 ### `packages/codegen/src/dsl/whitespace.ts::NEWLINE_MEMBER`
 
-`_newline`, the whitespace member that renders one line break. It is the stated default of a seam that admits only line breaks: the after edge of a line-terminated trivia kind (`lineBreakingArms`).
+`_newline`, the whitespace member that renders one line break. It is the stated default of a seam that admits only line breaks: the after edge of a line-terminated trivia kind (`lineBreakingKinds`).
 
 ### `packages/codegen/src/dsl/whitespace.ts::WHITESPACE_MEMBERS`
 
-Every whitespace member sittir can mint, in the order `_whitespace` lists them: `_tight`, `_space`, `_tab`, `_newline`, `_blankline`, `_double_blankline`, `_indent`, `_dedent`, each with its render body.
+Every whitespace member sittir can mint, in the order `_layout` lists them: `_tight`, `_space`, `_tab`, `_newline`, `_blankline`, `_double_blankline`, `_indent`, `_dedent`, each with its render body.
 
 ### `packages/codegen/src/dsl/whitespace.ts::admittedTextOf`
 
@@ -3642,11 +3642,11 @@ The text a member must lex as extras for the grammar to admit it: its own text, 
 
 ### `packages/codegen/src/dsl/whitespace.ts::admitsWhitespaceMember`
 
-The one admission law for a whitespace member: `_tight` always, any other member when the extras run matches its admitted text (`admittedTextOf`). Enrich filters the members with it, and assemble checks the final `_whitespace` against the link-stamped run with it (`assertWhitespaceAdmitted`), so the two can only disagree when the extras themselves do.
+The one admission law for a whitespace member: `_tight` always, any other member when the extras run matches its admitted text (`admittedTextOf`). Enrich filters the members with it, and assemble checks the final `_layout` against the link-stamped run with it (`assertWhitespaceAdmitted`), so the two can only disagree when the extras themselves do.
 
 ### `packages/codegen/src/dsl/whitespace.ts::EnrichedWhitespace`
 
-What `enrichWhitespace` derives: the admitted `members` in `WHITESPACE_MEMBERS` order, the `addedExternals` the upstream grammar does not already declare, the render `bodies` wire makes visible, the `_whitespace` rule (a CHOICE of the members), and the upstream `collisions`.
+What `enrichWhitespace` derives: the admitted `members` in `WHITESPACE_MEMBERS` order, the `addedExternals` the upstream grammar does not already declare, the render `bodies` wire makes visible, the `_layout` rule (a CHOICE of the members), and the upstream `collisions`.
 
 ### `packages/codegen/src/dsl/whitespace.ts::WhitespaceCollision`
 
@@ -3654,7 +3654,7 @@ A name enrich mints for the whitespace vocabulary that the grammar also defines,
 
 ### `packages/codegen/src/dsl/whitespace.ts::enrichWhitespace`
 
-Derives a grammar's whitespace vocabulary from its facts: a member is admitted when the grammar's extras run (`nodelessExtrasRun`) matches its admitted text (`admittedTextOf`), and `_tight` always is. A text member whose name the upstream grammar already declares as an external is reused rather than added, keeping its minted body (python's scanned `_newline`). A depth member (`_indent`, `_dedent`) whose name is an upstream external is left out entirely, neither minted nor a member: a scanned depth token renders through its role, not a fixed body, so python's depth tokens come from its upstream roles, not `_whitespace`. The enriched stage, evaluated without the config's roles, then agrees with the final evaluation. Enrich calls it once per grammar, so no grammar authors its whitespace externals, supertype or vocabulary rule. Given the upstream rules, it reports as `collisions` each minted name (`_whitespace` and every added member) that an upstream rule defines differently; enrich then drops that rule so the minted definition stands. An upstream rule equal to the minted one is enrich's own output and passes through, which keeps enrich idempotent.
+Derives a grammar's whitespace vocabulary from its facts: a member is admitted when the grammar's extras run (`nodelessExtrasRun`) matches its admitted text (`admittedTextOf`), and `_tight` always is. A text member whose name the upstream grammar already declares as an external is reused rather than added, keeping its minted body (python's scanned `_newline`). A depth member (`_indent`, `_dedent`) whose name is an upstream external is left out entirely, neither minted nor a member: a scanned depth token renders through its role, not a fixed body, so python's depth tokens come from its upstream roles, not `_layout`. The enriched stage, evaluated without the config's roles, then agrees with the final evaluation. Enrich calls it once per grammar, so no grammar authors its whitespace externals, supertype or vocabulary rule. Given the upstream rules, it reports as `collisions` each minted name (`_layout` and every added member) that an upstream rule defines differently; enrich then drops that rule so the minted definition stands. An upstream rule equal to the minted one is enrich's own output and passes through, which keeps enrich idempotent.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::symbolFactsOf`
 
@@ -6139,7 +6139,7 @@ The arm a token-form parent's own factory builds from a bare value. Among the ar
 
 ### `packages/codegen/src/dsl/enrich.ts::appendGrammarNames`
 
-Appends rule names to one of the grammar's name lists (`supertypes` or `externals`), whether it is an array or a `$ => [...]` function, skipping names already listed. An array takes each name through `entryOf` (a bare name for `supertypes`, a SYMBOL entry for `externals`, matching how the base grammar holds each list); a function appends `$[name]`. The token-form parents and `_whitespace` join `supertypes` here so tree-sitter treats each as a supertype, and the whitespace members the upstream grammar lacks join `externals`.
+Appends rule names to one of the grammar's name lists (`supertypes` or `externals`), whether it is an array or a `$ => [...]` function, skipping names already listed. An array takes each name through `entryOf` (a bare name for `supertypes`, a SYMBOL entry for `externals`, matching how the base grammar holds each list); a function appends `$[name]`. The token-form parents and `_layout` join `supertypes` here so tree-sitter treats each as a supertype, and the whitespace members the upstream grammar lacks join `externals`.
 
 ### `packages/codegen/src/dsl/enrich.ts::ENRICH_WHITESPACE_KEY`
 
@@ -6311,7 +6311,7 @@ What kind of rule enrich added:
 - `visible-subsequence`: a visible group, list, structured-arm or token-form lift;
 - `literal-alias-storage`: `mintInlineLiteralAliasStorage`;
 - `field-enum`: `synthesizeFieldEnumRules` (inlined by wire);
-- `whitespace`: the `_whitespace` supertype.
+- `whitespace`: the `_layout` supertype.
 
 A mint is a rule enrich adds, so a name the base grammar already has is never one.
 
@@ -6755,7 +6755,7 @@ Whether a kind is hidden in the parser: its catalog row's `hidden` fact (never f
 
 ### `packages/codegen/src/dsl/symbol-table.ts::parserSupertypeOf`
 
-Whether a kind is a supertype: its catalog row's `supertype` flag. For a name with no catalog row it is the grammar's `supertypes:` declaration, because tree-sitter issues no symbol for a hidden supertype (rust `_declaration_statement`, python `_suite`, every grammar's `_whitespace`); this is the same rowless-only class as `parserHiddenOf`'s spelling fallback.
+Whether a kind is a supertype: its catalog row's `supertype` flag. For a name with no catalog row it is the grammar's `supertypes:` declaration, because tree-sitter issues no symbol for a hidden supertype (rust `_declaration_statement`, python `_suite`, every grammar's `_layout`); this is the same rowless-only class as `parserHiddenOf`'s spelling fallback.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::surfaceHiddenOf`
 

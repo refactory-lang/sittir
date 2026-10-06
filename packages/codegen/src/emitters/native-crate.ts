@@ -226,7 +226,7 @@ sittir_core::napi_engine!(
     NATIVE_RENDER_TRANSPORT_ABI,
     render::options::defaults,
     render::options::WHITESPACE,
-    render::options::WHITESPACE_KINDS
+    render::options::LAYOUT_KINDS
 );
 `
 		}

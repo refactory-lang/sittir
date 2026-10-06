@@ -815,7 +815,7 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LineContinuationNul };
 	};
-	whitespace<T extends { readonly $type: string | number } | number>(
+	layout<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is NarrowTo<
 		T,
@@ -870,7 +870,7 @@ const _supertype_escapeSequence_ids = new Set<number>([99, 100, 101, 102, 103, 1
 const _supertype_integer_ids = new Set<number>([90, 91, 92, 93, 94, 95]);
 const _supertype_float_ids = new Set<number>([96, 97, 98]);
 const _supertype_lineContinuation_ids = new Set<number>([106, 107]);
-const _supertype_whitespace_ids = new Set<number>([122, 123, 124, 115, 125, 126]);
+const _supertype_layout_ids = new Set<number>([122, 123, 124, 115, 125, 126]);
 const _supertype_integerDecimal_ids = new Set<number>([93, 94, 95]);
 
 const _supertype_simpleStatement_guard = _vg(_sg(_supertype_simpleStatement_ids), {
@@ -1107,6 +1107,6 @@ export const is = Object.freeze({
 	integer: _supertype_integer_guard,
 	float: _supertype_float_guard,
 	lineContinuation: _supertype_lineContinuation_guard,
-	whitespace: _sg(_supertype_whitespace_ids),
+	layout: _sg(_supertype_layout_ids),
 	integerDecimal: _supertype_integerDecimal_guard
 }) as unknown as IsGuards;

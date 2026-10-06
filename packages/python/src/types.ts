@@ -1990,14 +1990,14 @@ export function kindIdFromName(kindName: string): TSKindId {
 	}
 }
 
-export type SpacingArm =
+export type WhitespaceKindId =
 	| TSKindId.Tight
 	| TSKindId.Space
 	| TSKindId.Tab
 	| TSKindId.Newline
 	| TSKindId.Blankline
 	| TSKindId.DoubleBlankline;
-export type WhitespaceArm =
+export type LayoutKindId =
 	| TSKindId.Tight
 	| TSKindId.Space
 	| TSKindId.Tab
@@ -2218,7 +2218,7 @@ export enum LineContinuationKind {
 	LineContinuationNul = 'line_continuation_nul'
 }
 
-export enum WhitespaceKind {
+export enum LayoutKind {
 	Tight = '_tight',
 	Space = '_space',
 	Tab = '_tab',
@@ -5416,7 +5416,7 @@ export type Float = FloatPoint | FloatLeadingPoint | FloatScientific;
 
 export type LineContinuation = LineContinuationNewline | LineContinuationNul;
 
-export type Whitespace = Tight | Space | Tab | Newline | Blankline | DoubleBlankline;
+export type Layout = Tight | Space | Tab | Newline | Blankline | DoubleBlankline;
 
 export type IntegerDecimal = IntegerDecimalLong | IntegerDecimalImaginary | IntegerDecimalPlain;
 
@@ -5504,10 +5504,10 @@ export namespace LineContinuation {
 	export type Parsed = SupertypeSurface<LineContinuation, ParsedByKindId>;
 }
 
-export namespace Whitespace {
-	export type Kind = '_whitespace';
-	export type Bound = SupertypeSurface<Whitespace, BoundByKindId>;
-	export type Parsed = SupertypeSurface<Whitespace, ParsedByKindId>;
+export namespace Layout {
+	export type Kind = '_layout';
+	export type Bound = SupertypeSurface<Layout, BoundByKindId>;
+	export type Parsed = SupertypeSurface<Layout, ParsedByKindId>;
 }
 
 export namespace IntegerDecimal {
@@ -5659,20 +5659,20 @@ export interface OptionsHintMap {
 export namespace Module {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
 			readonly statements?: {
-				readonly classDefinition?: { readonly after?: SpacingArm };
-				readonly decoratedDefinition?: { readonly after?: SpacingArm };
-				readonly forStatement?: { readonly after?: SpacingArm };
-				readonly functionDefinition?: { readonly after?: SpacingArm };
-				readonly ifStatement?: { readonly after?: SpacingArm };
-				readonly matchStatement?: { readonly after?: SpacingArm };
-				readonly separator?: SpacingArm;
-				readonly simpleStatements?: { readonly after?: SpacingArm };
-				readonly tryStatement?: { readonly after?: SpacingArm };
-				readonly whileStatement?: { readonly after?: SpacingArm };
-				readonly withStatement?: { readonly after?: SpacingArm };
+				readonly classDefinition?: { readonly after?: WhitespaceKindId };
+				readonly decoratedDefinition?: { readonly after?: WhitespaceKindId };
+				readonly forStatement?: { readonly after?: WhitespaceKindId };
+				readonly functionDefinition?: { readonly after?: WhitespaceKindId };
+				readonly ifStatement?: { readonly after?: WhitespaceKindId };
+				readonly matchStatement?: { readonly after?: WhitespaceKindId };
+				readonly separator?: WhitespaceKindId;
+				readonly simpleStatements?: { readonly after?: WhitespaceKindId };
+				readonly tryStatement?: { readonly after?: WhitespaceKindId };
+				readonly whileStatement?: { readonly after?: WhitespaceKindId };
+				readonly withStatement?: { readonly after?: WhitespaceKindId };
 			};
 		};
 	}
@@ -5680,34 +5680,34 @@ export namespace Module {
 
 export namespace SimpleStatements {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		readonly __optionsHint__?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 	}
 }
 
 export namespace ImportStatement {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly importKeyword?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly importKeyword?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
 
 export namespace RelativeImport {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		readonly __optionsHint__?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 	}
 }
 
 export namespace FutureImportStatement {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly fromKeyword?: { readonly after?: SpacingArm };
-			readonly future__Keyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly importKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly fromKeyword?: { readonly after?: WhitespaceKindId };
+			readonly future__Keyword?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly importKeyword?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -5715,11 +5715,11 @@ export namespace FutureImportStatement {
 export namespace ImportFromStatement {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly fromKeyword?: { readonly after?: SpacingArm };
-			readonly importKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly star?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly fromKeyword?: { readonly after?: WhitespaceKindId };
+			readonly importKeyword?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly star?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -5728,9 +5728,11 @@ export namespace ImportList {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly name?: {
-				readonly aliasedImport?: { readonly after?: SpacingArm };
+				readonly aliasedImport?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
 			};
 		};
 	}
@@ -5739,9 +5741,9 @@ export namespace ImportList {
 export namespace AliasedImport {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly asKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly before?: SpacingArm;
+			readonly after?: WhitespaceKindId;
+			readonly asKeyword?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly before?: WhitespaceKindId;
 		};
 	}
 }
@@ -5749,9 +5751,9 @@ export namespace AliasedImport {
 export namespace Chevron {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly gtGt?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly gtGt?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -5759,36 +5761,38 @@ export namespace Chevron {
 export namespace AssertStatement {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly assertKeyword?: { readonly after?: SpacingArm };
-			readonly before?: SpacingArm;
+			readonly after?: WhitespaceKindId;
+			readonly assertKeyword?: { readonly after?: WhitespaceKindId };
+			readonly before?: WhitespaceKindId;
 			readonly expression?: {
-				readonly asPattern?: { readonly after?: SpacingArm };
-				readonly attribute?: { readonly after?: SpacingArm };
-				readonly await?: { readonly after?: SpacingArm };
-				readonly binaryOperator?: { readonly after?: SpacingArm };
-				readonly booleanOperator?: { readonly after?: SpacingArm };
-				readonly call?: { readonly after?: SpacingArm };
-				readonly comparisonOperator?: { readonly after?: SpacingArm };
-				readonly concatenatedString?: { readonly after?: SpacingArm };
-				readonly conditionalExpression?: { readonly after?: SpacingArm };
-				readonly dictionary?: { readonly after?: SpacingArm };
-				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
-				readonly generatorExpression?: { readonly after?: SpacingArm };
-				readonly lambda?: { readonly after?: SpacingArm };
-				readonly list?: { readonly after?: SpacingArm };
-				readonly listComprehension?: { readonly after?: SpacingArm };
-				readonly listSplatPattern?: { readonly after?: SpacingArm };
-				readonly namedExpression?: { readonly after?: SpacingArm };
-				readonly notOperator?: { readonly after?: SpacingArm };
-				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
-				readonly set?: { readonly after?: SpacingArm };
-				readonly setComprehension?: { readonly after?: SpacingArm };
-				readonly string?: { readonly after?: SpacingArm };
-				readonly subscript?: { readonly after?: SpacingArm };
-				readonly tuple?: { readonly after?: SpacingArm };
-				readonly unaryOperator?: { readonly after?: SpacingArm };
+				readonly asPattern?: { readonly after?: WhitespaceKindId };
+				readonly attribute?: { readonly after?: WhitespaceKindId };
+				readonly await?: { readonly after?: WhitespaceKindId };
+				readonly binaryOperator?: { readonly after?: WhitespaceKindId };
+				readonly booleanOperator?: { readonly after?: WhitespaceKindId };
+				readonly call?: { readonly after?: WhitespaceKindId };
+				readonly comparisonOperator?: { readonly after?: WhitespaceKindId };
+				readonly concatenatedString?: { readonly after?: WhitespaceKindId };
+				readonly conditionalExpression?: { readonly after?: WhitespaceKindId };
+				readonly dictionary?: { readonly after?: WhitespaceKindId };
+				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
+				readonly lambda?: { readonly after?: WhitespaceKindId };
+				readonly list?: { readonly after?: WhitespaceKindId };
+				readonly listComprehension?: { readonly after?: WhitespaceKindId };
+				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly notOperator?: { readonly after?: WhitespaceKindId };
+				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
+				readonly set?: { readonly after?: WhitespaceKindId };
+				readonly setComprehension?: { readonly after?: WhitespaceKindId };
+				readonly string?: { readonly after?: WhitespaceKindId };
+				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly tuple?: { readonly after?: WhitespaceKindId };
+				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
 		};
 	}
@@ -5797,9 +5801,9 @@ export namespace AssertStatement {
 export namespace NamedExpression {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly colonEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly colonEq?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -5807,9 +5811,9 @@ export namespace NamedExpression {
 export namespace ReturnStatement {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly returnKeyword?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly returnKeyword?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -5817,9 +5821,9 @@ export namespace ReturnStatement {
 export namespace DeleteStatement {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly delKeyword?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly delKeyword?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -5827,10 +5831,10 @@ export namespace DeleteStatement {
 export namespace RaiseStatement {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly fromKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly raiseKeyword?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly fromKeyword?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly raiseKeyword?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -5838,15 +5842,15 @@ export namespace RaiseStatement {
 export namespace IfStatement {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
+			readonly after?: WhitespaceKindId;
 			readonly alternative?: {
-				readonly elifClause?: { readonly after?: SpacingArm };
-				readonly elseClause?: { readonly after?: SpacingArm };
-				readonly separator?: SpacingArm;
+				readonly elifClause?: { readonly after?: WhitespaceKindId };
+				readonly elseClause?: { readonly after?: WhitespaceKindId };
+				readonly separator?: WhitespaceKindId;
 			};
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly ifKeyword?: { readonly after?: SpacingArm };
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly ifKeyword?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -5854,10 +5858,10 @@ export namespace IfStatement {
 export namespace ElifClause {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly elifKeyword?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly elifKeyword?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -5865,10 +5869,10 @@ export namespace ElifClause {
 export namespace ElseClause {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly elseKeyword?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly elseKeyword?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -5876,10 +5880,10 @@ export namespace ElseClause {
 export namespace MatchStatement {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly matchKeyword?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly matchKeyword?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -5887,10 +5891,10 @@ export namespace MatchStatement {
 export namespace CaseClause {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly caseKeyword?: { readonly after?: SpacingArm };
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly caseKeyword?: { readonly after?: WhitespaceKindId };
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -5898,12 +5902,12 @@ export namespace CaseClause {
 export namespace ForStatement {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly asyncKeyword?: { readonly after?: SpacingArm };
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly forKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly inKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly asyncKeyword?: { readonly after?: WhitespaceKindId };
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly forKeyword?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly inKeyword?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -5911,10 +5915,10 @@ export namespace ForStatement {
 export namespace WhileStatement {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly whileKeyword?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly whileKeyword?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -5922,14 +5926,14 @@ export namespace WhileStatement {
 export namespace TryStatement {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 			readonly exceptClauses?: {
-				readonly exceptClause?: { readonly after?: SpacingArm };
-				readonly separator?: SpacingArm;
+				readonly exceptClause?: { readonly after?: WhitespaceKindId };
+				readonly separator?: WhitespaceKindId;
 			};
-			readonly tryKeyword?: { readonly after?: SpacingArm };
+			readonly tryKeyword?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -5937,11 +5941,11 @@ export namespace TryStatement {
 export namespace ExceptClause {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly exceptKeyword?: { readonly after?: SpacingArm };
-			readonly group?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly exceptKeyword?: { readonly after?: WhitespaceKindId };
+			readonly group?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -5949,10 +5953,10 @@ export namespace ExceptClause {
 export namespace FinallyClause {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly finallyKeyword?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly finallyKeyword?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -5960,11 +5964,11 @@ export namespace FinallyClause {
 export namespace WithStatement {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly asyncKeyword?: { readonly after?: SpacingArm };
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly withKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly asyncKeyword?: { readonly after?: WhitespaceKindId };
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly withKeyword?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -5972,12 +5976,12 @@ export namespace WithStatement {
 export namespace FunctionDefinition {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly asyncKeyword?: { readonly after?: SpacingArm };
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly dashGt?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly defKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly asyncKeyword?: { readonly after?: WhitespaceKindId };
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly dashGt?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly defKeyword?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -5985,10 +5989,10 @@ export namespace FunctionDefinition {
 export namespace Parameters {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lparen?: { readonly after?: SpacingArm };
-			readonly rparen?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lparen?: { readonly after?: WhitespaceKindId };
+			readonly rparen?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -5996,9 +6000,9 @@ export namespace Parameters {
 export namespace ListSplat {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly star?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly star?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -6006,9 +6010,9 @@ export namespace ListSplat {
 export namespace DictionarySplat {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly starStar?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly starStar?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -6016,11 +6020,13 @@ export namespace DictionarySplat {
 export namespace GlobalStatement {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly globalKeyword?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly globalKeyword?: { readonly after?: WhitespaceKindId };
 			readonly names?: {
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
 			};
 		};
 	}
@@ -6029,12 +6035,14 @@ export namespace GlobalStatement {
 export namespace NonlocalStatement {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
 			readonly names?: {
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
 			};
-			readonly nonlocalKeyword?: { readonly after?: SpacingArm };
+			readonly nonlocalKeyword?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -6042,38 +6050,40 @@ export namespace NonlocalStatement {
 export namespace ExecStatement {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly execKeyword?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly execKeyword?: { readonly after?: WhitespaceKindId };
 			readonly inClause?: {
-				readonly asPattern?: { readonly after?: SpacingArm };
-				readonly attribute?: { readonly after?: SpacingArm };
-				readonly await?: { readonly after?: SpacingArm };
-				readonly binaryOperator?: { readonly after?: SpacingArm };
-				readonly booleanOperator?: { readonly after?: SpacingArm };
-				readonly call?: { readonly after?: SpacingArm };
-				readonly comparisonOperator?: { readonly after?: SpacingArm };
-				readonly concatenatedString?: { readonly after?: SpacingArm };
-				readonly conditionalExpression?: { readonly after?: SpacingArm };
-				readonly dictionary?: { readonly after?: SpacingArm };
-				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
-				readonly generatorExpression?: { readonly after?: SpacingArm };
-				readonly lambda?: { readonly after?: SpacingArm };
-				readonly list?: { readonly after?: SpacingArm };
-				readonly listComprehension?: { readonly after?: SpacingArm };
-				readonly listSplatPattern?: { readonly after?: SpacingArm };
-				readonly namedExpression?: { readonly after?: SpacingArm };
-				readonly notOperator?: { readonly after?: SpacingArm };
-				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
-				readonly set?: { readonly after?: SpacingArm };
-				readonly setComprehension?: { readonly after?: SpacingArm };
-				readonly string?: { readonly after?: SpacingArm };
-				readonly subscript?: { readonly after?: SpacingArm };
-				readonly tuple?: { readonly after?: SpacingArm };
-				readonly unaryOperator?: { readonly after?: SpacingArm };
+				readonly asPattern?: { readonly after?: WhitespaceKindId };
+				readonly attribute?: { readonly after?: WhitespaceKindId };
+				readonly await?: { readonly after?: WhitespaceKindId };
+				readonly binaryOperator?: { readonly after?: WhitespaceKindId };
+				readonly booleanOperator?: { readonly after?: WhitespaceKindId };
+				readonly call?: { readonly after?: WhitespaceKindId };
+				readonly comparisonOperator?: { readonly after?: WhitespaceKindId };
+				readonly concatenatedString?: { readonly after?: WhitespaceKindId };
+				readonly conditionalExpression?: { readonly after?: WhitespaceKindId };
+				readonly dictionary?: { readonly after?: WhitespaceKindId };
+				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
+				readonly lambda?: { readonly after?: WhitespaceKindId };
+				readonly list?: { readonly after?: WhitespaceKindId };
+				readonly listComprehension?: { readonly after?: WhitespaceKindId };
+				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly notOperator?: { readonly after?: WhitespaceKindId };
+				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
+				readonly set?: { readonly after?: WhitespaceKindId };
+				readonly setComprehension?: { readonly after?: WhitespaceKindId };
+				readonly string?: { readonly after?: WhitespaceKindId };
+				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly tuple?: { readonly after?: WhitespaceKindId };
+				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
-			readonly inKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly inKeyword?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6081,10 +6091,10 @@ export namespace ExecStatement {
 export namespace TypeAliasStatement {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly eq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly typeKeyword?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly eq?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly typeKeyword?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -6092,10 +6102,10 @@ export namespace TypeAliasStatement {
 export namespace ClassDefinition {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly classKeyword?: { readonly after?: SpacingArm };
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly classKeyword?: { readonly after?: WhitespaceKindId };
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6103,10 +6113,10 @@ export namespace ClassDefinition {
 export namespace TypeParameter {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lbrack?: { readonly after?: SpacingArm };
-			readonly rbrack?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lbrack?: { readonly after?: WhitespaceKindId };
+			readonly rbrack?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6114,10 +6124,10 @@ export namespace TypeParameter {
 export namespace ParenthesizedListSplat {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lparen?: { readonly after?: SpacingArm };
-			readonly rparen?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lparen?: { readonly after?: WhitespaceKindId };
+			readonly rparen?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6125,10 +6135,10 @@ export namespace ParenthesizedListSplat {
 export namespace ArgumentList {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lparen?: { readonly after?: SpacingArm };
-			readonly rparen?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lparen?: { readonly after?: WhitespaceKindId };
+			readonly rparen?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6136,9 +6146,12 @@ export namespace ArgumentList {
 export namespace DecoratedDefinition {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly decorator?: { readonly decorator?: { readonly after?: SpacingArm }; readonly separator?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly decorator?: {
+				readonly decorator?: { readonly after?: WhitespaceKindId };
+				readonly separator?: WhitespaceKindId;
+			};
 		};
 	}
 }
@@ -6146,9 +6159,9 @@ export namespace DecoratedDefinition {
 export namespace Decorator {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly at?: { readonly after?: SpacingArm };
-			readonly before?: SpacingArm;
+			readonly after?: WhitespaceKindId;
+			readonly at?: { readonly after?: WhitespaceKindId };
+			readonly before?: WhitespaceKindId;
 		};
 	}
 }
@@ -6156,20 +6169,20 @@ export namespace Decorator {
 export namespace Block {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
 			readonly statements?: {
-				readonly classDefinition?: { readonly after?: SpacingArm };
-				readonly decoratedDefinition?: { readonly after?: SpacingArm };
-				readonly forStatement?: { readonly after?: SpacingArm };
-				readonly functionDefinition?: { readonly after?: SpacingArm };
-				readonly ifStatement?: { readonly after?: SpacingArm };
-				readonly matchStatement?: { readonly after?: SpacingArm };
-				readonly separator?: SpacingArm;
-				readonly simpleStatements?: { readonly after?: SpacingArm };
-				readonly tryStatement?: { readonly after?: SpacingArm };
-				readonly whileStatement?: { readonly after?: SpacingArm };
-				readonly withStatement?: { readonly after?: SpacingArm };
+				readonly classDefinition?: { readonly after?: WhitespaceKindId };
+				readonly decoratedDefinition?: { readonly after?: WhitespaceKindId };
+				readonly forStatement?: { readonly after?: WhitespaceKindId };
+				readonly functionDefinition?: { readonly after?: WhitespaceKindId };
+				readonly ifStatement?: { readonly after?: WhitespaceKindId };
+				readonly matchStatement?: { readonly after?: WhitespaceKindId };
+				readonly separator?: WhitespaceKindId;
+				readonly simpleStatements?: { readonly after?: WhitespaceKindId };
+				readonly tryStatement?: { readonly after?: WhitespaceKindId };
+				readonly whileStatement?: { readonly after?: WhitespaceKindId };
+				readonly withStatement?: { readonly after?: WhitespaceKindId };
 			};
 		};
 	}
@@ -6179,33 +6192,35 @@ export namespace ExpressionList {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly item?: {
-				readonly asPattern?: { readonly after?: SpacingArm };
-				readonly attribute?: { readonly after?: SpacingArm };
-				readonly await?: { readonly after?: SpacingArm };
-				readonly binaryOperator?: { readonly after?: SpacingArm };
-				readonly booleanOperator?: { readonly after?: SpacingArm };
-				readonly call?: { readonly after?: SpacingArm };
-				readonly comparisonOperator?: { readonly after?: SpacingArm };
-				readonly concatenatedString?: { readonly after?: SpacingArm };
-				readonly conditionalExpression?: { readonly after?: SpacingArm };
+				readonly asPattern?: { readonly after?: WhitespaceKindId };
+				readonly attribute?: { readonly after?: WhitespaceKindId };
+				readonly await?: { readonly after?: WhitespaceKindId };
+				readonly binaryOperator?: { readonly after?: WhitespaceKindId };
+				readonly booleanOperator?: { readonly after?: WhitespaceKindId };
+				readonly call?: { readonly after?: WhitespaceKindId };
+				readonly comparisonOperator?: { readonly after?: WhitespaceKindId };
+				readonly concatenatedString?: { readonly after?: WhitespaceKindId };
+				readonly conditionalExpression?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly dictionary?: { readonly after?: SpacingArm };
-				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
-				readonly generatorExpression?: { readonly after?: SpacingArm };
-				readonly lambda?: { readonly after?: SpacingArm };
-				readonly list?: { readonly after?: SpacingArm };
-				readonly listComprehension?: { readonly after?: SpacingArm };
-				readonly listSplatPattern?: { readonly after?: SpacingArm };
-				readonly namedExpression?: { readonly after?: SpacingArm };
-				readonly notOperator?: { readonly after?: SpacingArm };
-				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
-				readonly set?: { readonly after?: SpacingArm };
-				readonly setComprehension?: { readonly after?: SpacingArm };
-				readonly string?: { readonly after?: SpacingArm };
-				readonly subscript?: { readonly after?: SpacingArm };
-				readonly tuple?: { readonly after?: SpacingArm };
-				readonly unaryOperator?: { readonly after?: SpacingArm };
+				readonly dictionary?: { readonly after?: WhitespaceKindId };
+				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
+				readonly lambda?: { readonly after?: WhitespaceKindId };
+				readonly list?: { readonly after?: WhitespaceKindId };
+				readonly listComprehension?: { readonly after?: WhitespaceKindId };
+				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly notOperator?: { readonly after?: WhitespaceKindId };
+				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
+				readonly set?: { readonly after?: WhitespaceKindId };
+				readonly setComprehension?: { readonly after?: WhitespaceKindId };
+				readonly string?: { readonly after?: WhitespaceKindId };
+				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly tuple?: { readonly after?: WhitespaceKindId };
+				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
 		};
 	}
@@ -6215,7 +6230,9 @@ export namespace DottedName {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly names?: {
-				readonly separator?: { readonly dot?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly separator?: {
+					readonly dot?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
 			};
 		};
 	}
@@ -6224,9 +6241,9 @@ export namespace DottedName {
 export namespace CaseAsPattern {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly asKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly before?: SpacingArm;
+			readonly after?: WhitespaceKindId;
+			readonly asKeyword?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly before?: WhitespaceKindId;
 		};
 	}
 }
@@ -6235,16 +6252,18 @@ export namespace UnionPattern {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly patterns?: {
-				readonly caseListPattern?: { readonly after?: SpacingArm };
-				readonly caseTuplePattern?: { readonly after?: SpacingArm };
-				readonly classPattern?: { readonly after?: SpacingArm };
-				readonly complexPattern?: { readonly after?: SpacingArm };
-				readonly concatenatedString?: { readonly after?: SpacingArm };
-				readonly dictPattern?: { readonly after?: SpacingArm };
-				readonly separator?: { readonly pipe?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
-				readonly simplePatternNegative?: { readonly after?: SpacingArm };
-				readonly splatPattern?: { readonly after?: SpacingArm };
-				readonly string?: { readonly after?: SpacingArm };
+				readonly caseListPattern?: { readonly after?: WhitespaceKindId };
+				readonly caseTuplePattern?: { readonly after?: WhitespaceKindId };
+				readonly classPattern?: { readonly after?: WhitespaceKindId };
+				readonly complexPattern?: { readonly after?: WhitespaceKindId };
+				readonly concatenatedString?: { readonly after?: WhitespaceKindId };
+				readonly dictPattern?: { readonly after?: WhitespaceKindId };
+				readonly separator?: {
+					readonly pipe?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
+				readonly simplePatternNegative?: { readonly after?: WhitespaceKindId };
+				readonly splatPattern?: { readonly after?: WhitespaceKindId };
+				readonly string?: { readonly after?: WhitespaceKindId };
 			};
 		};
 	}
@@ -6253,10 +6272,10 @@ export namespace UnionPattern {
 export namespace DictPattern {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lbrace?: { readonly after?: SpacingArm };
-			readonly rbrace?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lbrace?: { readonly after?: WhitespaceKindId };
+			readonly rbrace?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6264,9 +6283,9 @@ export namespace DictPattern {
 export namespace KeyValuePattern {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6274,9 +6293,9 @@ export namespace KeyValuePattern {
 export namespace KeywordPattern {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly eq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly eq?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6284,10 +6303,10 @@ export namespace KeywordPattern {
 export namespace SplatPattern {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly operator?: { readonly after?: SpacingArm };
-			readonly underscore?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly operator?: { readonly after?: WhitespaceKindId };
+			readonly underscore?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6295,10 +6314,10 @@ export namespace SplatPattern {
 export namespace ClassPattern {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lparen?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly rparen?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lparen?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly rparen?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6306,10 +6325,10 @@ export namespace ClassPattern {
 export namespace ComplexPattern {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly operator?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly sign?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly operator?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly sign?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -6318,14 +6337,16 @@ export namespace ParametersElements {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly item?: {
-				readonly defaultParameter?: { readonly after?: SpacingArm };
+				readonly defaultParameter?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly dictionarySplatPattern?: { readonly after?: SpacingArm };
-				readonly listSplatPattern?: { readonly after?: SpacingArm };
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
-				readonly tuplePattern?: { readonly after?: SpacingArm };
-				readonly typedDefaultParameter?: { readonly after?: SpacingArm };
-				readonly typedParameter?: { readonly after?: SpacingArm };
+				readonly dictionarySplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
+				readonly tuplePattern?: { readonly after?: WhitespaceKindId };
+				readonly typedDefaultParameter?: { readonly after?: WhitespaceKindId };
+				readonly typedParameter?: { readonly after?: WhitespaceKindId };
 			};
 		};
 	}
@@ -6335,13 +6356,15 @@ export namespace Patterns {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly item?: {
-				readonly attribute?: { readonly after?: SpacingArm };
+				readonly attribute?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly listPattern?: { readonly after?: SpacingArm };
-				readonly listSplatPattern?: { readonly after?: SpacingArm };
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
-				readonly subscript?: { readonly after?: SpacingArm };
-				readonly tuplePattern?: { readonly after?: SpacingArm };
+				readonly listPattern?: { readonly after?: WhitespaceKindId };
+				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
+				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly tuplePattern?: { readonly after?: WhitespaceKindId };
 			};
 		};
 	}
@@ -6350,10 +6373,10 @@ export namespace Patterns {
 export namespace TuplePattern {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lparen?: { readonly after?: SpacingArm };
-			readonly rparen?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lparen?: { readonly after?: WhitespaceKindId };
+			readonly rparen?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6361,10 +6384,10 @@ export namespace TuplePattern {
 export namespace ListPattern {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lbrack?: { readonly after?: SpacingArm };
-			readonly rbrack?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lbrack?: { readonly after?: WhitespaceKindId };
+			readonly rbrack?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6372,9 +6395,9 @@ export namespace ListPattern {
 export namespace DefaultParameter {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly eq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly eq?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6382,10 +6405,10 @@ export namespace DefaultParameter {
 export namespace TypedDefaultParameter {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly eq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly eq?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6393,9 +6416,9 @@ export namespace TypedDefaultParameter {
 export namespace ListSplatPattern {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly star?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly star?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -6403,9 +6426,9 @@ export namespace ListSplatPattern {
 export namespace DictionarySplatPattern {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly starStar?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly starStar?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -6413,9 +6436,9 @@ export namespace DictionarySplatPattern {
 export namespace AsPattern {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly asKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly before?: SpacingArm;
+			readonly after?: WhitespaceKindId;
+			readonly asKeyword?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly before?: WhitespaceKindId;
 		};
 	}
 }
@@ -6423,9 +6446,9 @@ export namespace AsPattern {
 export namespace NotOperator {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly notKeyword?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly notKeyword?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -6433,9 +6456,9 @@ export namespace NotOperator {
 export namespace BooleanOperator {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly operator?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly operator?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6443,9 +6466,9 @@ export namespace BooleanOperator {
 export namespace BinaryOperator {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly operator?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly operator?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6453,9 +6476,9 @@ export namespace BinaryOperator {
 export namespace UnaryOperator {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly operator?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly operator?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -6463,11 +6486,11 @@ export namespace UnaryOperator {
 export namespace ComparisonOperator {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
 			readonly comparators?: {
-				readonly comparisonOperatorComparator?: { readonly after?: SpacingArm };
-				readonly separator?: SpacingArm;
+				readonly comparisonOperatorComparator?: { readonly after?: WhitespaceKindId };
+				readonly separator?: WhitespaceKindId;
 			};
 		};
 	}
@@ -6476,10 +6499,10 @@ export namespace ComparisonOperator {
 export namespace Lambda {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly lambdaKeyword?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly lambdaKeyword?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -6487,10 +6510,10 @@ export namespace Lambda {
 export namespace LambdaWithinForInClause {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly lambdaKeyword?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly lambdaKeyword?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -6498,9 +6521,9 @@ export namespace LambdaWithinForInClause {
 export namespace AugmentedAssignment {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly operator?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly operator?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6509,13 +6532,15 @@ export namespace PatternList {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly item?: {
-				readonly attribute?: { readonly after?: SpacingArm };
+				readonly attribute?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly listPattern?: { readonly after?: SpacingArm };
-				readonly listSplatPattern?: { readonly after?: SpacingArm };
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
-				readonly subscript?: { readonly after?: SpacingArm };
-				readonly tuplePattern?: { readonly after?: SpacingArm };
+				readonly listPattern?: { readonly after?: WhitespaceKindId };
+				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
+				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly tuplePattern?: { readonly after?: WhitespaceKindId };
 			};
 		};
 	}
@@ -6524,9 +6549,9 @@ export namespace PatternList {
 export namespace Yield {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly yieldKeyword?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly yieldKeyword?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -6534,9 +6559,9 @@ export namespace Yield {
 export namespace Attribute {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly dot?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly dot?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6544,10 +6569,10 @@ export namespace Attribute {
 export namespace Subscript {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lbrack?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly rbrack?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lbrack?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly rbrack?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6555,25 +6580,25 @@ export namespace Subscript {
 export namespace Slice {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
 
 export namespace Call {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		readonly __optionsHint__?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 	}
 }
 
 export namespace TypedParameter {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6581,25 +6606,25 @@ export namespace TypedParameter {
 export namespace SplatType {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly operator?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly operator?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
 
 export namespace GenericType {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		readonly __optionsHint__?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 	}
 }
 
 export namespace UnionType {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly pipe?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly pipe?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6607,9 +6632,9 @@ export namespace UnionType {
 export namespace ConstrainedType {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6617,9 +6642,9 @@ export namespace ConstrainedType {
 export namespace MemberType {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly dot?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly dot?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6627,9 +6652,9 @@ export namespace MemberType {
 export namespace KeywordArgument {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly eq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly eq?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6637,10 +6662,10 @@ export namespace KeywordArgument {
 export namespace List {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lbrack?: { readonly after?: SpacingArm };
-			readonly rbrack?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lbrack?: { readonly after?: WhitespaceKindId };
+			readonly rbrack?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6648,10 +6673,10 @@ export namespace List {
 export namespace Set {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lbrace?: { readonly after?: SpacingArm };
-			readonly rbrace?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lbrace?: { readonly after?: WhitespaceKindId };
+			readonly rbrace?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6659,10 +6684,10 @@ export namespace Set {
 export namespace Tuple {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lparen?: { readonly after?: SpacingArm };
-			readonly rparen?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lparen?: { readonly after?: WhitespaceKindId };
+			readonly rparen?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6670,10 +6695,10 @@ export namespace Tuple {
 export namespace Dictionary {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lbrace?: { readonly after?: SpacingArm };
-			readonly rbrace?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lbrace?: { readonly after?: WhitespaceKindId };
+			readonly rbrace?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6681,9 +6706,9 @@ export namespace Dictionary {
 export namespace Pair {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6691,10 +6716,10 @@ export namespace Pair {
 export namespace ListComprehension {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lbrack?: { readonly after?: SpacingArm };
-			readonly rbrack?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lbrack?: { readonly after?: WhitespaceKindId };
+			readonly rbrack?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6702,10 +6727,10 @@ export namespace ListComprehension {
 export namespace DictionaryComprehension {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lbrace?: { readonly after?: SpacingArm };
-			readonly rbrace?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lbrace?: { readonly after?: WhitespaceKindId };
+			readonly rbrace?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6713,10 +6738,10 @@ export namespace DictionaryComprehension {
 export namespace SetComprehension {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lbrace?: { readonly after?: SpacingArm };
-			readonly rbrace?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lbrace?: { readonly after?: WhitespaceKindId };
+			readonly rbrace?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6724,10 +6749,10 @@ export namespace SetComprehension {
 export namespace GeneratorExpression {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lparen?: { readonly after?: SpacingArm };
-			readonly rparen?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lparen?: { readonly after?: WhitespaceKindId };
+			readonly rparen?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6735,10 +6760,10 @@ export namespace GeneratorExpression {
 export namespace ParenthesizedExpression {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lparen?: { readonly after?: SpacingArm };
-			readonly rparen?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lparen?: { readonly after?: WhitespaceKindId };
+			readonly rparen?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6747,36 +6772,38 @@ export namespace CollectionElements {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly item?: {
-				readonly asPattern?: { readonly after?: SpacingArm };
-				readonly attribute?: { readonly after?: SpacingArm };
-				readonly await?: { readonly after?: SpacingArm };
-				readonly binaryOperator?: { readonly after?: SpacingArm };
-				readonly booleanOperator?: { readonly after?: SpacingArm };
-				readonly call?: { readonly after?: SpacingArm };
-				readonly comparisonOperator?: { readonly after?: SpacingArm };
-				readonly concatenatedString?: { readonly after?: SpacingArm };
-				readonly conditionalExpression?: { readonly after?: SpacingArm };
+				readonly asPattern?: { readonly after?: WhitespaceKindId };
+				readonly attribute?: { readonly after?: WhitespaceKindId };
+				readonly await?: { readonly after?: WhitespaceKindId };
+				readonly binaryOperator?: { readonly after?: WhitespaceKindId };
+				readonly booleanOperator?: { readonly after?: WhitespaceKindId };
+				readonly call?: { readonly after?: WhitespaceKindId };
+				readonly comparisonOperator?: { readonly after?: WhitespaceKindId };
+				readonly concatenatedString?: { readonly after?: WhitespaceKindId };
+				readonly conditionalExpression?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly dictionary?: { readonly after?: SpacingArm };
-				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
-				readonly generatorExpression?: { readonly after?: SpacingArm };
-				readonly lambda?: { readonly after?: SpacingArm };
-				readonly list?: { readonly after?: SpacingArm };
-				readonly listComprehension?: { readonly after?: SpacingArm };
-				readonly listSplat?: { readonly after?: SpacingArm };
-				readonly listSplatPattern?: { readonly after?: SpacingArm };
-				readonly namedExpression?: { readonly after?: SpacingArm };
-				readonly notOperator?: { readonly after?: SpacingArm };
-				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
-				readonly parenthesizedListSplat?: { readonly after?: SpacingArm };
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
-				readonly set?: { readonly after?: SpacingArm };
-				readonly setComprehension?: { readonly after?: SpacingArm };
-				readonly string?: { readonly after?: SpacingArm };
-				readonly subscript?: { readonly after?: SpacingArm };
-				readonly tuple?: { readonly after?: SpacingArm };
-				readonly unaryOperator?: { readonly after?: SpacingArm };
-				readonly yield?: { readonly after?: SpacingArm };
+				readonly dictionary?: { readonly after?: WhitespaceKindId };
+				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
+				readonly lambda?: { readonly after?: WhitespaceKindId };
+				readonly list?: { readonly after?: WhitespaceKindId };
+				readonly listComprehension?: { readonly after?: WhitespaceKindId };
+				readonly listSplat?: { readonly after?: WhitespaceKindId };
+				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly notOperator?: { readonly after?: WhitespaceKindId };
+				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly parenthesizedListSplat?: { readonly after?: WhitespaceKindId };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
+				readonly set?: { readonly after?: WhitespaceKindId };
+				readonly setComprehension?: { readonly after?: WhitespaceKindId };
+				readonly string?: { readonly after?: WhitespaceKindId };
+				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly tuple?: { readonly after?: WhitespaceKindId };
+				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
+				readonly yield?: { readonly after?: WhitespaceKindId };
 			};
 		};
 	}
@@ -6785,40 +6812,42 @@ export namespace CollectionElements {
 export namespace ForInClause {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly asyncKeyword?: { readonly after?: SpacingArm };
-			readonly before?: SpacingArm;
-			readonly comma?: { readonly before?: SpacingArm };
-			readonly forKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly inKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly asyncKeyword?: { readonly after?: WhitespaceKindId };
+			readonly before?: WhitespaceKindId;
+			readonly comma?: { readonly before?: WhitespaceKindId };
+			readonly forKeyword?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly inKeyword?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 			readonly right?: {
-				readonly asPattern?: { readonly after?: SpacingArm };
-				readonly attribute?: { readonly after?: SpacingArm };
-				readonly await?: { readonly after?: SpacingArm };
-				readonly binaryOperator?: { readonly after?: SpacingArm };
-				readonly booleanOperator?: { readonly after?: SpacingArm };
-				readonly call?: { readonly after?: SpacingArm };
-				readonly comparisonOperator?: { readonly after?: SpacingArm };
-				readonly concatenatedString?: { readonly after?: SpacingArm };
-				readonly conditionalExpression?: { readonly after?: SpacingArm };
-				readonly dictionary?: { readonly after?: SpacingArm };
-				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
-				readonly generatorExpression?: { readonly after?: SpacingArm };
-				readonly lambda?: { readonly after?: SpacingArm };
-				readonly lambdaWithinForInClause?: { readonly after?: SpacingArm };
-				readonly list?: { readonly after?: SpacingArm };
-				readonly listComprehension?: { readonly after?: SpacingArm };
-				readonly listSplatPattern?: { readonly after?: SpacingArm };
-				readonly namedExpression?: { readonly after?: SpacingArm };
-				readonly notOperator?: { readonly after?: SpacingArm };
-				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
-				readonly set?: { readonly after?: SpacingArm };
-				readonly setComprehension?: { readonly after?: SpacingArm };
-				readonly string?: { readonly after?: SpacingArm };
-				readonly subscript?: { readonly after?: SpacingArm };
-				readonly tuple?: { readonly after?: SpacingArm };
-				readonly unaryOperator?: { readonly after?: SpacingArm };
+				readonly asPattern?: { readonly after?: WhitespaceKindId };
+				readonly attribute?: { readonly after?: WhitespaceKindId };
+				readonly await?: { readonly after?: WhitespaceKindId };
+				readonly binaryOperator?: { readonly after?: WhitespaceKindId };
+				readonly booleanOperator?: { readonly after?: WhitespaceKindId };
+				readonly call?: { readonly after?: WhitespaceKindId };
+				readonly comparisonOperator?: { readonly after?: WhitespaceKindId };
+				readonly concatenatedString?: { readonly after?: WhitespaceKindId };
+				readonly conditionalExpression?: { readonly after?: WhitespaceKindId };
+				readonly dictionary?: { readonly after?: WhitespaceKindId };
+				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
+				readonly lambda?: { readonly after?: WhitespaceKindId };
+				readonly lambdaWithinForInClause?: { readonly after?: WhitespaceKindId };
+				readonly list?: { readonly after?: WhitespaceKindId };
+				readonly listComprehension?: { readonly after?: WhitespaceKindId };
+				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly notOperator?: { readonly after?: WhitespaceKindId };
+				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
+				readonly set?: { readonly after?: WhitespaceKindId };
+				readonly setComprehension?: { readonly after?: WhitespaceKindId };
+				readonly string?: { readonly after?: WhitespaceKindId };
+				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly tuple?: { readonly after?: WhitespaceKindId };
+				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
 		};
 	}
@@ -6827,9 +6856,9 @@ export namespace ForInClause {
 export namespace IfClause {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly ifKeyword?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly ifKeyword?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -6837,10 +6866,10 @@ export namespace IfClause {
 export namespace ConditionalExpression {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly elseKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly ifKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly elseKeyword?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly ifKeyword?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6848,27 +6877,30 @@ export namespace ConditionalExpression {
 export namespace ConcatenatedString {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly string?: { readonly separator?: SpacingArm; readonly string?: { readonly after?: SpacingArm } };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly string?: {
+				readonly separator?: WhitespaceKindId;
+				readonly string?: { readonly after?: WhitespaceKindId };
+			};
 		};
 	}
 }
 
 export namespace String {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		readonly __optionsHint__?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 	}
 }
 
 export namespace Interpolation {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly debug?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly lbrace?: { readonly after?: SpacingArm };
-			readonly rbrace?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly debug?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly lbrace?: { readonly after?: WhitespaceKindId };
+			readonly rbrace?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6876,9 +6908,9 @@ export namespace Interpolation {
 export namespace FormatSpecifier {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -6886,9 +6918,9 @@ export namespace FormatSpecifier {
 export namespace Await {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly awaitKeyword?: { readonly after?: SpacingArm };
-			readonly before?: SpacingArm;
+			readonly after?: WhitespaceKindId;
+			readonly awaitKeyword?: { readonly after?: WhitespaceKindId };
+			readonly before?: WhitespaceKindId;
 		};
 	}
 }
@@ -6897,51 +6929,53 @@ export namespace SimpleStatementsElements {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly item?: {
-				readonly asPattern?: { readonly after?: SpacingArm };
-				readonly assertStatement?: { readonly after?: SpacingArm };
-				readonly assignmentEq?: { readonly after?: SpacingArm };
-				readonly assignmentType?: { readonly after?: SpacingArm };
-				readonly assignmentTyped?: { readonly after?: SpacingArm };
-				readonly attribute?: { readonly after?: SpacingArm };
-				readonly augmentedAssignment?: { readonly after?: SpacingArm };
-				readonly await?: { readonly after?: SpacingArm };
-				readonly binaryOperator?: { readonly after?: SpacingArm };
-				readonly booleanOperator?: { readonly after?: SpacingArm };
-				readonly call?: { readonly after?: SpacingArm };
-				readonly comparisonOperator?: { readonly after?: SpacingArm };
-				readonly concatenatedString?: { readonly after?: SpacingArm };
-				readonly conditionalExpression?: { readonly after?: SpacingArm };
-				readonly deleteStatement?: { readonly after?: SpacingArm };
+				readonly asPattern?: { readonly after?: WhitespaceKindId };
+				readonly assertStatement?: { readonly after?: WhitespaceKindId };
+				readonly assignmentEq?: { readonly after?: WhitespaceKindId };
+				readonly assignmentType?: { readonly after?: WhitespaceKindId };
+				readonly assignmentTyped?: { readonly after?: WhitespaceKindId };
+				readonly attribute?: { readonly after?: WhitespaceKindId };
+				readonly augmentedAssignment?: { readonly after?: WhitespaceKindId };
+				readonly await?: { readonly after?: WhitespaceKindId };
+				readonly binaryOperator?: { readonly after?: WhitespaceKindId };
+				readonly booleanOperator?: { readonly after?: WhitespaceKindId };
+				readonly call?: { readonly after?: WhitespaceKindId };
+				readonly comparisonOperator?: { readonly after?: WhitespaceKindId };
+				readonly concatenatedString?: { readonly after?: WhitespaceKindId };
+				readonly conditionalExpression?: { readonly after?: WhitespaceKindId };
+				readonly deleteStatement?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly dictionary?: { readonly after?: SpacingArm };
-				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
-				readonly execStatement?: { readonly after?: SpacingArm };
-				readonly futureImportStatement?: { readonly after?: SpacingArm };
-				readonly generatorExpression?: { readonly after?: SpacingArm };
-				readonly globalStatement?: { readonly after?: SpacingArm };
-				readonly importFromStatement?: { readonly after?: SpacingArm };
-				readonly importStatement?: { readonly after?: SpacingArm };
-				readonly lambda?: { readonly after?: SpacingArm };
-				readonly list?: { readonly after?: SpacingArm };
-				readonly listComprehension?: { readonly after?: SpacingArm };
-				readonly listSplatPattern?: { readonly after?: SpacingArm };
-				readonly namedExpression?: { readonly after?: SpacingArm };
-				readonly nonlocalStatement?: { readonly after?: SpacingArm };
-				readonly notOperator?: { readonly after?: SpacingArm };
-				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
-				readonly printStatementChevron?: { readonly after?: SpacingArm };
-				readonly printStatementPlain?: { readonly after?: SpacingArm };
-				readonly raiseStatement?: { readonly after?: SpacingArm };
-				readonly returnStatement?: { readonly after?: SpacingArm };
-				readonly separator?: { readonly semi?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
-				readonly set?: { readonly after?: SpacingArm };
-				readonly setComprehension?: { readonly after?: SpacingArm };
-				readonly string?: { readonly after?: SpacingArm };
-				readonly subscript?: { readonly after?: SpacingArm };
-				readonly tuple?: { readonly after?: SpacingArm };
-				readonly typeAliasStatement?: { readonly after?: SpacingArm };
-				readonly unaryOperator?: { readonly after?: SpacingArm };
-				readonly yield?: { readonly after?: SpacingArm };
+				readonly dictionary?: { readonly after?: WhitespaceKindId };
+				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly execStatement?: { readonly after?: WhitespaceKindId };
+				readonly futureImportStatement?: { readonly after?: WhitespaceKindId };
+				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
+				readonly globalStatement?: { readonly after?: WhitespaceKindId };
+				readonly importFromStatement?: { readonly after?: WhitespaceKindId };
+				readonly importStatement?: { readonly after?: WhitespaceKindId };
+				readonly lambda?: { readonly after?: WhitespaceKindId };
+				readonly list?: { readonly after?: WhitespaceKindId };
+				readonly listComprehension?: { readonly after?: WhitespaceKindId };
+				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly nonlocalStatement?: { readonly after?: WhitespaceKindId };
+				readonly notOperator?: { readonly after?: WhitespaceKindId };
+				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly printStatementChevron?: { readonly after?: WhitespaceKindId };
+				readonly printStatementPlain?: { readonly after?: WhitespaceKindId };
+				readonly raiseStatement?: { readonly after?: WhitespaceKindId };
+				readonly returnStatement?: { readonly after?: WhitespaceKindId };
+				readonly separator?: {
+					readonly semi?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
+				readonly set?: { readonly after?: WhitespaceKindId };
+				readonly setComprehension?: { readonly after?: WhitespaceKindId };
+				readonly string?: { readonly after?: WhitespaceKindId };
+				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly tuple?: { readonly after?: WhitespaceKindId };
+				readonly typeAliasStatement?: { readonly after?: WhitespaceKindId };
+				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
+				readonly yield?: { readonly after?: WhitespaceKindId };
 			};
 		};
 	}
@@ -6951,33 +6985,35 @@ export namespace Subjects {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly subject?: {
-				readonly asPattern?: { readonly after?: SpacingArm };
-				readonly attribute?: { readonly after?: SpacingArm };
-				readonly await?: { readonly after?: SpacingArm };
-				readonly binaryOperator?: { readonly after?: SpacingArm };
-				readonly booleanOperator?: { readonly after?: SpacingArm };
-				readonly call?: { readonly after?: SpacingArm };
-				readonly comparisonOperator?: { readonly after?: SpacingArm };
-				readonly concatenatedString?: { readonly after?: SpacingArm };
-				readonly conditionalExpression?: { readonly after?: SpacingArm };
+				readonly asPattern?: { readonly after?: WhitespaceKindId };
+				readonly attribute?: { readonly after?: WhitespaceKindId };
+				readonly await?: { readonly after?: WhitespaceKindId };
+				readonly binaryOperator?: { readonly after?: WhitespaceKindId };
+				readonly booleanOperator?: { readonly after?: WhitespaceKindId };
+				readonly call?: { readonly after?: WhitespaceKindId };
+				readonly comparisonOperator?: { readonly after?: WhitespaceKindId };
+				readonly concatenatedString?: { readonly after?: WhitespaceKindId };
+				readonly conditionalExpression?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly dictionary?: { readonly after?: SpacingArm };
-				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
-				readonly generatorExpression?: { readonly after?: SpacingArm };
-				readonly lambda?: { readonly after?: SpacingArm };
-				readonly list?: { readonly after?: SpacingArm };
-				readonly listComprehension?: { readonly after?: SpacingArm };
-				readonly listSplatPattern?: { readonly after?: SpacingArm };
-				readonly namedExpression?: { readonly after?: SpacingArm };
-				readonly notOperator?: { readonly after?: SpacingArm };
-				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
-				readonly set?: { readonly after?: SpacingArm };
-				readonly setComprehension?: { readonly after?: SpacingArm };
-				readonly string?: { readonly after?: SpacingArm };
-				readonly subscript?: { readonly after?: SpacingArm };
-				readonly tuple?: { readonly after?: SpacingArm };
-				readonly unaryOperator?: { readonly after?: SpacingArm };
+				readonly dictionary?: { readonly after?: WhitespaceKindId };
+				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
+				readonly lambda?: { readonly after?: WhitespaceKindId };
+				readonly list?: { readonly after?: WhitespaceKindId };
+				readonly listComprehension?: { readonly after?: WhitespaceKindId };
+				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly notOperator?: { readonly after?: WhitespaceKindId };
+				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
+				readonly set?: { readonly after?: WhitespaceKindId };
+				readonly setComprehension?: { readonly after?: WhitespaceKindId };
+				readonly string?: { readonly after?: WhitespaceKindId };
+				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly tuple?: { readonly after?: WhitespaceKindId };
+				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
 		};
 	}
@@ -6987,10 +7023,12 @@ export namespace CasePatterns {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly item?: {
-				readonly caseAsPattern?: { readonly after?: SpacingArm };
+				readonly caseAsPattern?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly keywordPattern?: { readonly after?: SpacingArm };
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly keywordPattern?: { readonly after?: WhitespaceKindId };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
 			};
 		};
 	}
@@ -7001,7 +7039,9 @@ export namespace WithClauseWithItems {
 		readonly __optionsHint__?: {
 			readonly item?: {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
 			};
 		};
 	}
@@ -7011,38 +7051,40 @@ export namespace Types {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly item?: {
-				readonly asPattern?: { readonly after?: SpacingArm };
-				readonly attribute?: { readonly after?: SpacingArm };
-				readonly await?: { readonly after?: SpacingArm };
-				readonly binaryOperator?: { readonly after?: SpacingArm };
-				readonly booleanOperator?: { readonly after?: SpacingArm };
-				readonly call?: { readonly after?: SpacingArm };
-				readonly comparisonOperator?: { readonly after?: SpacingArm };
-				readonly concatenatedString?: { readonly after?: SpacingArm };
-				readonly conditionalExpression?: { readonly after?: SpacingArm };
-				readonly constrainedType?: { readonly after?: SpacingArm };
+				readonly asPattern?: { readonly after?: WhitespaceKindId };
+				readonly attribute?: { readonly after?: WhitespaceKindId };
+				readonly await?: { readonly after?: WhitespaceKindId };
+				readonly binaryOperator?: { readonly after?: WhitespaceKindId };
+				readonly booleanOperator?: { readonly after?: WhitespaceKindId };
+				readonly call?: { readonly after?: WhitespaceKindId };
+				readonly comparisonOperator?: { readonly after?: WhitespaceKindId };
+				readonly concatenatedString?: { readonly after?: WhitespaceKindId };
+				readonly conditionalExpression?: { readonly after?: WhitespaceKindId };
+				readonly constrainedType?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly dictionary?: { readonly after?: SpacingArm };
-				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
-				readonly generatorExpression?: { readonly after?: SpacingArm };
-				readonly genericType?: { readonly after?: SpacingArm };
-				readonly lambda?: { readonly after?: SpacingArm };
-				readonly list?: { readonly after?: SpacingArm };
-				readonly listComprehension?: { readonly after?: SpacingArm };
-				readonly listSplatPattern?: { readonly after?: SpacingArm };
-				readonly memberType?: { readonly after?: SpacingArm };
-				readonly namedExpression?: { readonly after?: SpacingArm };
-				readonly notOperator?: { readonly after?: SpacingArm };
-				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
-				readonly set?: { readonly after?: SpacingArm };
-				readonly setComprehension?: { readonly after?: SpacingArm };
-				readonly splatType?: { readonly after?: SpacingArm };
-				readonly string?: { readonly after?: SpacingArm };
-				readonly subscript?: { readonly after?: SpacingArm };
-				readonly tuple?: { readonly after?: SpacingArm };
-				readonly unaryOperator?: { readonly after?: SpacingArm };
-				readonly unionType?: { readonly after?: SpacingArm };
+				readonly dictionary?: { readonly after?: WhitespaceKindId };
+				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
+				readonly genericType?: { readonly after?: WhitespaceKindId };
+				readonly lambda?: { readonly after?: WhitespaceKindId };
+				readonly list?: { readonly after?: WhitespaceKindId };
+				readonly listComprehension?: { readonly after?: WhitespaceKindId };
+				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly memberType?: { readonly after?: WhitespaceKindId };
+				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly notOperator?: { readonly after?: WhitespaceKindId };
+				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
+				readonly set?: { readonly after?: WhitespaceKindId };
+				readonly setComprehension?: { readonly after?: WhitespaceKindId };
+				readonly splatType?: { readonly after?: WhitespaceKindId };
+				readonly string?: { readonly after?: WhitespaceKindId };
+				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly tuple?: { readonly after?: WhitespaceKindId };
+				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
+				readonly unionType?: { readonly after?: WhitespaceKindId };
 			};
 		};
 	}
@@ -7052,37 +7094,39 @@ export namespace ArgumentListElements {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly item?: {
-				readonly asPattern?: { readonly after?: SpacingArm };
-				readonly attribute?: { readonly after?: SpacingArm };
-				readonly await?: { readonly after?: SpacingArm };
-				readonly binaryOperator?: { readonly after?: SpacingArm };
-				readonly booleanOperator?: { readonly after?: SpacingArm };
-				readonly call?: { readonly after?: SpacingArm };
-				readonly comparisonOperator?: { readonly after?: SpacingArm };
-				readonly concatenatedString?: { readonly after?: SpacingArm };
-				readonly conditionalExpression?: { readonly after?: SpacingArm };
+				readonly asPattern?: { readonly after?: WhitespaceKindId };
+				readonly attribute?: { readonly after?: WhitespaceKindId };
+				readonly await?: { readonly after?: WhitespaceKindId };
+				readonly binaryOperator?: { readonly after?: WhitespaceKindId };
+				readonly booleanOperator?: { readonly after?: WhitespaceKindId };
+				readonly call?: { readonly after?: WhitespaceKindId };
+				readonly comparisonOperator?: { readonly after?: WhitespaceKindId };
+				readonly concatenatedString?: { readonly after?: WhitespaceKindId };
+				readonly conditionalExpression?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly dictionary?: { readonly after?: SpacingArm };
-				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
-				readonly dictionarySplat?: { readonly after?: SpacingArm };
-				readonly generatorExpression?: { readonly after?: SpacingArm };
-				readonly keywordArgument?: { readonly after?: SpacingArm };
-				readonly lambda?: { readonly after?: SpacingArm };
-				readonly list?: { readonly after?: SpacingArm };
-				readonly listComprehension?: { readonly after?: SpacingArm };
-				readonly listSplat?: { readonly after?: SpacingArm };
-				readonly listSplatPattern?: { readonly after?: SpacingArm };
-				readonly namedExpression?: { readonly after?: SpacingArm };
-				readonly notOperator?: { readonly after?: SpacingArm };
-				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
-				readonly parenthesizedListSplat?: { readonly after?: SpacingArm };
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
-				readonly set?: { readonly after?: SpacingArm };
-				readonly setComprehension?: { readonly after?: SpacingArm };
-				readonly string?: { readonly after?: SpacingArm };
-				readonly subscript?: { readonly after?: SpacingArm };
-				readonly tuple?: { readonly after?: SpacingArm };
-				readonly unaryOperator?: { readonly after?: SpacingArm };
+				readonly dictionary?: { readonly after?: WhitespaceKindId };
+				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly dictionarySplat?: { readonly after?: WhitespaceKindId };
+				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
+				readonly keywordArgument?: { readonly after?: WhitespaceKindId };
+				readonly lambda?: { readonly after?: WhitespaceKindId };
+				readonly list?: { readonly after?: WhitespaceKindId };
+				readonly listComprehension?: { readonly after?: WhitespaceKindId };
+				readonly listSplat?: { readonly after?: WhitespaceKindId };
+				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly notOperator?: { readonly after?: WhitespaceKindId };
+				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly parenthesizedListSplat?: { readonly after?: WhitespaceKindId };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
+				readonly set?: { readonly after?: WhitespaceKindId };
+				readonly setComprehension?: { readonly after?: WhitespaceKindId };
+				readonly string?: { readonly after?: WhitespaceKindId };
+				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly tuple?: { readonly after?: WhitespaceKindId };
+				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
 		};
 	}
@@ -7092,10 +7136,12 @@ export namespace ListPatternCasePatterns {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly item?: {
-				readonly caseAsPattern?: { readonly after?: SpacingArm };
+				readonly caseAsPattern?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly keywordPattern?: { readonly after?: SpacingArm };
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly keywordPattern?: { readonly after?: WhitespaceKindId };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
 			};
 		};
 	}
@@ -7106,9 +7152,11 @@ export namespace DictPatternElements {
 		readonly __optionsHint__?: {
 			readonly item?: {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly keyValuePattern?: { readonly after?: SpacingArm };
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
-				readonly splatPattern?: { readonly after?: SpacingArm };
+				readonly keyValuePattern?: { readonly after?: WhitespaceKindId };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
+				readonly splatPattern?: { readonly after?: WhitespaceKindId };
 			};
 		};
 	}
@@ -7118,34 +7166,36 @@ export namespace Subscripts {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly subscript?: {
-				readonly asPattern?: { readonly after?: SpacingArm };
-				readonly attribute?: { readonly after?: SpacingArm };
-				readonly await?: { readonly after?: SpacingArm };
-				readonly binaryOperator?: { readonly after?: SpacingArm };
-				readonly booleanOperator?: { readonly after?: SpacingArm };
-				readonly call?: { readonly after?: SpacingArm };
-				readonly comparisonOperator?: { readonly after?: SpacingArm };
-				readonly concatenatedString?: { readonly after?: SpacingArm };
-				readonly conditionalExpression?: { readonly after?: SpacingArm };
+				readonly asPattern?: { readonly after?: WhitespaceKindId };
+				readonly attribute?: { readonly after?: WhitespaceKindId };
+				readonly await?: { readonly after?: WhitespaceKindId };
+				readonly binaryOperator?: { readonly after?: WhitespaceKindId };
+				readonly booleanOperator?: { readonly after?: WhitespaceKindId };
+				readonly call?: { readonly after?: WhitespaceKindId };
+				readonly comparisonOperator?: { readonly after?: WhitespaceKindId };
+				readonly concatenatedString?: { readonly after?: WhitespaceKindId };
+				readonly conditionalExpression?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly dictionary?: { readonly after?: SpacingArm };
-				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
-				readonly generatorExpression?: { readonly after?: SpacingArm };
-				readonly lambda?: { readonly after?: SpacingArm };
-				readonly list?: { readonly after?: SpacingArm };
-				readonly listComprehension?: { readonly after?: SpacingArm };
-				readonly listSplatPattern?: { readonly after?: SpacingArm };
-				readonly namedExpression?: { readonly after?: SpacingArm };
-				readonly notOperator?: { readonly after?: SpacingArm };
-				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
-				readonly set?: { readonly after?: SpacingArm };
-				readonly setComprehension?: { readonly after?: SpacingArm };
-				readonly slice?: { readonly after?: SpacingArm };
-				readonly string?: { readonly after?: SpacingArm };
-				readonly subscript?: { readonly after?: SpacingArm };
-				readonly tuple?: { readonly after?: SpacingArm };
-				readonly unaryOperator?: { readonly after?: SpacingArm };
+				readonly dictionary?: { readonly after?: WhitespaceKindId };
+				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
+				readonly lambda?: { readonly after?: WhitespaceKindId };
+				readonly list?: { readonly after?: WhitespaceKindId };
+				readonly listComprehension?: { readonly after?: WhitespaceKindId };
+				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly notOperator?: { readonly after?: WhitespaceKindId };
+				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
+				readonly set?: { readonly after?: WhitespaceKindId };
+				readonly setComprehension?: { readonly after?: WhitespaceKindId };
+				readonly slice?: { readonly after?: WhitespaceKindId };
+				readonly string?: { readonly after?: WhitespaceKindId };
+				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly tuple?: { readonly after?: WhitespaceKindId };
+				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
 		};
 	}
@@ -7156,9 +7206,11 @@ export namespace DictionaryElements {
 		readonly __optionsHint__?: {
 			readonly item?: {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly dictionarySplat?: { readonly after?: SpacingArm };
-				readonly pair?: { readonly after?: SpacingArm };
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly dictionarySplat?: { readonly after?: WhitespaceKindId };
+				readonly pair?: { readonly after?: WhitespaceKindId };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
 			};
 		};
 	}
@@ -7167,9 +7219,9 @@ export namespace DictionaryElements {
 export namespace SliceGroup {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -7178,36 +7230,38 @@ export namespace TupleElements {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly item?: {
-				readonly asPattern?: { readonly after?: SpacingArm };
-				readonly attribute?: { readonly after?: SpacingArm };
-				readonly await?: { readonly after?: SpacingArm };
-				readonly binaryOperator?: { readonly after?: SpacingArm };
-				readonly booleanOperator?: { readonly after?: SpacingArm };
-				readonly call?: { readonly after?: SpacingArm };
-				readonly comparisonOperator?: { readonly after?: SpacingArm };
-				readonly concatenatedString?: { readonly after?: SpacingArm };
-				readonly conditionalExpression?: { readonly after?: SpacingArm };
+				readonly asPattern?: { readonly after?: WhitespaceKindId };
+				readonly attribute?: { readonly after?: WhitespaceKindId };
+				readonly await?: { readonly after?: WhitespaceKindId };
+				readonly binaryOperator?: { readonly after?: WhitespaceKindId };
+				readonly booleanOperator?: { readonly after?: WhitespaceKindId };
+				readonly call?: { readonly after?: WhitespaceKindId };
+				readonly comparisonOperator?: { readonly after?: WhitespaceKindId };
+				readonly concatenatedString?: { readonly after?: WhitespaceKindId };
+				readonly conditionalExpression?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly dictionary?: { readonly after?: SpacingArm };
-				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
-				readonly generatorExpression?: { readonly after?: SpacingArm };
-				readonly lambda?: { readonly after?: SpacingArm };
-				readonly list?: { readonly after?: SpacingArm };
-				readonly listComprehension?: { readonly after?: SpacingArm };
-				readonly listSplat?: { readonly after?: SpacingArm };
-				readonly listSplatPattern?: { readonly after?: SpacingArm };
-				readonly namedExpression?: { readonly after?: SpacingArm };
-				readonly notOperator?: { readonly after?: SpacingArm };
-				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
-				readonly parenthesizedListSplat?: { readonly after?: SpacingArm };
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
-				readonly set?: { readonly after?: SpacingArm };
-				readonly setComprehension?: { readonly after?: SpacingArm };
-				readonly string?: { readonly after?: SpacingArm };
-				readonly subscript?: { readonly after?: SpacingArm };
-				readonly tuple?: { readonly after?: SpacingArm };
-				readonly unaryOperator?: { readonly after?: SpacingArm };
-				readonly yield?: { readonly after?: SpacingArm };
+				readonly dictionary?: { readonly after?: WhitespaceKindId };
+				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
+				readonly lambda?: { readonly after?: WhitespaceKindId };
+				readonly list?: { readonly after?: WhitespaceKindId };
+				readonly listComprehension?: { readonly after?: WhitespaceKindId };
+				readonly listSplat?: { readonly after?: WhitespaceKindId };
+				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly notOperator?: { readonly after?: WhitespaceKindId };
+				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly parenthesizedListSplat?: { readonly after?: WhitespaceKindId };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
+				readonly set?: { readonly after?: WhitespaceKindId };
+				readonly setComprehension?: { readonly after?: WhitespaceKindId };
+				readonly string?: { readonly after?: WhitespaceKindId };
+				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly tuple?: { readonly after?: WhitespaceKindId };
+				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
+				readonly yield?: { readonly after?: WhitespaceKindId };
 			};
 		};
 	}
@@ -7216,9 +7270,9 @@ export namespace TupleElements {
 export namespace ExceptClauseExceptionAs {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly asKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly before?: SpacingArm;
+			readonly after?: WhitespaceKindId;
+			readonly asKeyword?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly before?: WhitespaceKindId;
 		};
 	}
 }
@@ -7226,10 +7280,10 @@ export namespace ExceptClauseExceptionAs {
 export namespace CaseTuplePattern {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lparen?: { readonly after?: SpacingArm };
-			readonly rparen?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lparen?: { readonly after?: WhitespaceKindId };
+			readonly rparen?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -7237,10 +7291,10 @@ export namespace CaseTuplePattern {
 export namespace CaseListPattern {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lbrack?: { readonly after?: SpacingArm };
-			readonly rbrack?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lbrack?: { readonly after?: WhitespaceKindId };
+			readonly rbrack?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -7249,33 +7303,35 @@ export namespace PrintArguments {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly argument?: {
-				readonly asPattern?: { readonly after?: SpacingArm };
-				readonly attribute?: { readonly after?: SpacingArm };
-				readonly await?: { readonly after?: SpacingArm };
-				readonly binaryOperator?: { readonly after?: SpacingArm };
-				readonly booleanOperator?: { readonly after?: SpacingArm };
-				readonly call?: { readonly after?: SpacingArm };
-				readonly comparisonOperator?: { readonly after?: SpacingArm };
-				readonly concatenatedString?: { readonly after?: SpacingArm };
-				readonly conditionalExpression?: { readonly after?: SpacingArm };
+				readonly asPattern?: { readonly after?: WhitespaceKindId };
+				readonly attribute?: { readonly after?: WhitespaceKindId };
+				readonly await?: { readonly after?: WhitespaceKindId };
+				readonly binaryOperator?: { readonly after?: WhitespaceKindId };
+				readonly booleanOperator?: { readonly after?: WhitespaceKindId };
+				readonly call?: { readonly after?: WhitespaceKindId };
+				readonly comparisonOperator?: { readonly after?: WhitespaceKindId };
+				readonly concatenatedString?: { readonly after?: WhitespaceKindId };
+				readonly conditionalExpression?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly dictionary?: { readonly after?: SpacingArm };
-				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
-				readonly generatorExpression?: { readonly after?: SpacingArm };
-				readonly lambda?: { readonly after?: SpacingArm };
-				readonly list?: { readonly after?: SpacingArm };
-				readonly listComprehension?: { readonly after?: SpacingArm };
-				readonly listSplatPattern?: { readonly after?: SpacingArm };
-				readonly namedExpression?: { readonly after?: SpacingArm };
-				readonly notOperator?: { readonly after?: SpacingArm };
-				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
-				readonly set?: { readonly after?: SpacingArm };
-				readonly setComprehension?: { readonly after?: SpacingArm };
-				readonly string?: { readonly after?: SpacingArm };
-				readonly subscript?: { readonly after?: SpacingArm };
-				readonly tuple?: { readonly after?: SpacingArm };
-				readonly unaryOperator?: { readonly after?: SpacingArm };
+				readonly dictionary?: { readonly after?: WhitespaceKindId };
+				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
+				readonly lambda?: { readonly after?: WhitespaceKindId };
+				readonly list?: { readonly after?: WhitespaceKindId };
+				readonly listComprehension?: { readonly after?: WhitespaceKindId };
+				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly notOperator?: { readonly after?: WhitespaceKindId };
+				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
+				readonly set?: { readonly after?: WhitespaceKindId };
+				readonly setComprehension?: { readonly after?: WhitespaceKindId };
+				readonly string?: { readonly after?: WhitespaceKindId };
+				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly tuple?: { readonly after?: WhitespaceKindId };
+				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
 		};
 	}
@@ -7285,33 +7341,35 @@ export namespace PrintChevronArguments {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly argument?: {
-				readonly asPattern?: { readonly after?: SpacingArm };
-				readonly attribute?: { readonly after?: SpacingArm };
-				readonly await?: { readonly after?: SpacingArm };
-				readonly binaryOperator?: { readonly after?: SpacingArm };
-				readonly booleanOperator?: { readonly after?: SpacingArm };
-				readonly call?: { readonly after?: SpacingArm };
-				readonly comparisonOperator?: { readonly after?: SpacingArm };
-				readonly concatenatedString?: { readonly after?: SpacingArm };
-				readonly conditionalExpression?: { readonly after?: SpacingArm };
+				readonly asPattern?: { readonly after?: WhitespaceKindId };
+				readonly attribute?: { readonly after?: WhitespaceKindId };
+				readonly await?: { readonly after?: WhitespaceKindId };
+				readonly binaryOperator?: { readonly after?: WhitespaceKindId };
+				readonly booleanOperator?: { readonly after?: WhitespaceKindId };
+				readonly call?: { readonly after?: WhitespaceKindId };
+				readonly comparisonOperator?: { readonly after?: WhitespaceKindId };
+				readonly concatenatedString?: { readonly after?: WhitespaceKindId };
+				readonly conditionalExpression?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly dictionary?: { readonly after?: SpacingArm };
-				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
-				readonly generatorExpression?: { readonly after?: SpacingArm };
-				readonly lambda?: { readonly after?: SpacingArm };
-				readonly list?: { readonly after?: SpacingArm };
-				readonly listComprehension?: { readonly after?: SpacingArm };
-				readonly listSplatPattern?: { readonly after?: SpacingArm };
-				readonly namedExpression?: { readonly after?: SpacingArm };
-				readonly notOperator?: { readonly after?: SpacingArm };
-				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
-				readonly set?: { readonly after?: SpacingArm };
-				readonly setComprehension?: { readonly after?: SpacingArm };
-				readonly string?: { readonly after?: SpacingArm };
-				readonly subscript?: { readonly after?: SpacingArm };
-				readonly tuple?: { readonly after?: SpacingArm };
-				readonly unaryOperator?: { readonly after?: SpacingArm };
+				readonly dictionary?: { readonly after?: WhitespaceKindId };
+				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
+				readonly lambda?: { readonly after?: WhitespaceKindId };
+				readonly list?: { readonly after?: WhitespaceKindId };
+				readonly listComprehension?: { readonly after?: WhitespaceKindId };
+				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly notOperator?: { readonly after?: WhitespaceKindId };
+				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
+				readonly set?: { readonly after?: WhitespaceKindId };
+				readonly setComprehension?: { readonly after?: WhitespaceKindId };
+				readonly string?: { readonly after?: WhitespaceKindId };
+				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly tuple?: { readonly after?: WhitespaceKindId };
+				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
 		};
 	}
@@ -7320,10 +7378,10 @@ export namespace PrintChevronArguments {
 export namespace PrintStatementChevron {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly comma?: { readonly before?: SpacingArm };
-			readonly printKeyword?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly comma?: { readonly before?: WhitespaceKindId };
+			readonly printKeyword?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -7331,9 +7389,9 @@ export namespace PrintStatementChevron {
 export namespace PrintStatementPlain {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly printKeyword?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly printKeyword?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -7341,10 +7399,10 @@ export namespace PrintStatementPlain {
 export namespace ParenthesizedImportList {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lparen?: { readonly after?: SpacingArm };
-			readonly rparen?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lparen?: { readonly after?: WhitespaceKindId };
+			readonly rparen?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -7353,9 +7411,9 @@ export namespace ComprehensionClauses {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly content?: {
-				readonly forInClause?: { readonly after?: SpacingArm };
-				readonly ifClause?: { readonly after?: SpacingArm };
-				readonly separator?: SpacingArm;
+				readonly forInClause?: { readonly after?: WhitespaceKindId };
+				readonly ifClause?: { readonly after?: WhitespaceKindId };
+				readonly separator?: WhitespaceKindId;
 			};
 		};
 	}
@@ -7364,9 +7422,9 @@ export namespace ComprehensionClauses {
 export namespace SimplePatternNegative {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly sign?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly sign?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -7375,32 +7433,34 @@ export namespace ExceptClauseExceptionList {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly value?: {
-				readonly asPattern?: { readonly after?: SpacingArm };
-				readonly attribute?: { readonly after?: SpacingArm };
-				readonly await?: { readonly after?: SpacingArm };
-				readonly binaryOperator?: { readonly after?: SpacingArm };
-				readonly booleanOperator?: { readonly after?: SpacingArm };
-				readonly call?: { readonly after?: SpacingArm };
-				readonly comparisonOperator?: { readonly after?: SpacingArm };
-				readonly concatenatedString?: { readonly after?: SpacingArm };
-				readonly conditionalExpression?: { readonly after?: SpacingArm };
-				readonly dictionary?: { readonly after?: SpacingArm };
-				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
-				readonly generatorExpression?: { readonly after?: SpacingArm };
-				readonly lambda?: { readonly after?: SpacingArm };
-				readonly list?: { readonly after?: SpacingArm };
-				readonly listComprehension?: { readonly after?: SpacingArm };
-				readonly listSplatPattern?: { readonly after?: SpacingArm };
-				readonly namedExpression?: { readonly after?: SpacingArm };
-				readonly notOperator?: { readonly after?: SpacingArm };
-				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
-				readonly set?: { readonly after?: SpacingArm };
-				readonly setComprehension?: { readonly after?: SpacingArm };
-				readonly string?: { readonly after?: SpacingArm };
-				readonly subscript?: { readonly after?: SpacingArm };
-				readonly tuple?: { readonly after?: SpacingArm };
-				readonly unaryOperator?: { readonly after?: SpacingArm };
+				readonly asPattern?: { readonly after?: WhitespaceKindId };
+				readonly attribute?: { readonly after?: WhitespaceKindId };
+				readonly await?: { readonly after?: WhitespaceKindId };
+				readonly binaryOperator?: { readonly after?: WhitespaceKindId };
+				readonly booleanOperator?: { readonly after?: WhitespaceKindId };
+				readonly call?: { readonly after?: WhitespaceKindId };
+				readonly comparisonOperator?: { readonly after?: WhitespaceKindId };
+				readonly concatenatedString?: { readonly after?: WhitespaceKindId };
+				readonly conditionalExpression?: { readonly after?: WhitespaceKindId };
+				readonly dictionary?: { readonly after?: WhitespaceKindId };
+				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
+				readonly lambda?: { readonly after?: WhitespaceKindId };
+				readonly list?: { readonly after?: WhitespaceKindId };
+				readonly listComprehension?: { readonly after?: WhitespaceKindId };
+				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly notOperator?: { readonly after?: WhitespaceKindId };
+				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
+				readonly set?: { readonly after?: WhitespaceKindId };
+				readonly setComprehension?: { readonly after?: WhitespaceKindId };
+				readonly string?: { readonly after?: WhitespaceKindId };
+				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly tuple?: { readonly after?: WhitespaceKindId };
+				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
 		};
 	}
@@ -7409,9 +7469,9 @@ export namespace ExceptClauseExceptionList {
 export namespace AssignmentEq {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly eq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly eq?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -7419,9 +7479,9 @@ export namespace AssignmentEq {
 export namespace AssignmentType {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -7429,10 +7489,10 @@ export namespace AssignmentType {
 export namespace AssignmentTyped {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly eq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly eq?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -7441,33 +7501,35 @@ export namespace ExpressionStatementTuple {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly item?: {
-				readonly asPattern?: { readonly after?: SpacingArm };
-				readonly attribute?: { readonly after?: SpacingArm };
-				readonly await?: { readonly after?: SpacingArm };
-				readonly binaryOperator?: { readonly after?: SpacingArm };
-				readonly booleanOperator?: { readonly after?: SpacingArm };
-				readonly call?: { readonly after?: SpacingArm };
-				readonly comparisonOperator?: { readonly after?: SpacingArm };
-				readonly concatenatedString?: { readonly after?: SpacingArm };
-				readonly conditionalExpression?: { readonly after?: SpacingArm };
+				readonly asPattern?: { readonly after?: WhitespaceKindId };
+				readonly attribute?: { readonly after?: WhitespaceKindId };
+				readonly await?: { readonly after?: WhitespaceKindId };
+				readonly binaryOperator?: { readonly after?: WhitespaceKindId };
+				readonly booleanOperator?: { readonly after?: WhitespaceKindId };
+				readonly call?: { readonly after?: WhitespaceKindId };
+				readonly comparisonOperator?: { readonly after?: WhitespaceKindId };
+				readonly concatenatedString?: { readonly after?: WhitespaceKindId };
+				readonly conditionalExpression?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly dictionary?: { readonly after?: SpacingArm };
-				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
-				readonly generatorExpression?: { readonly after?: SpacingArm };
-				readonly lambda?: { readonly after?: SpacingArm };
-				readonly list?: { readonly after?: SpacingArm };
-				readonly listComprehension?: { readonly after?: SpacingArm };
-				readonly listSplatPattern?: { readonly after?: SpacingArm };
-				readonly namedExpression?: { readonly after?: SpacingArm };
-				readonly notOperator?: { readonly after?: SpacingArm };
-				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
-				readonly set?: { readonly after?: SpacingArm };
-				readonly setComprehension?: { readonly after?: SpacingArm };
-				readonly string?: { readonly after?: SpacingArm };
-				readonly subscript?: { readonly after?: SpacingArm };
-				readonly tuple?: { readonly after?: SpacingArm };
-				readonly unaryOperator?: { readonly after?: SpacingArm };
+				readonly dictionary?: { readonly after?: WhitespaceKindId };
+				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
+				readonly lambda?: { readonly after?: WhitespaceKindId };
+				readonly list?: { readonly after?: WhitespaceKindId };
+				readonly listComprehension?: { readonly after?: WhitespaceKindId };
+				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly notOperator?: { readonly after?: WhitespaceKindId };
+				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
+				readonly set?: { readonly after?: WhitespaceKindId };
+				readonly setComprehension?: { readonly after?: WhitespaceKindId };
+				readonly string?: { readonly after?: WhitespaceKindId };
+				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly tuple?: { readonly after?: WhitespaceKindId };
+				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
 		};
 	}
@@ -7478,7 +7540,9 @@ export namespace WithClauseBare {
 		readonly __optionsHint__?: {
 			readonly item?: {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
 			};
 		};
 	}
@@ -7487,10 +7551,10 @@ export namespace WithClauseBare {
 export namespace WithClauseParen {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lparen?: { readonly after?: SpacingArm };
-			readonly rparen?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lparen?: { readonly after?: WhitespaceKindId };
+			readonly rparen?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -7498,31 +7562,34 @@ export namespace WithClauseParen {
 export namespace MatchBlockBlock {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly alternative?: { readonly caseClause?: { readonly after?: SpacingArm }; readonly separator?: SpacingArm };
-			readonly before?: SpacingArm;
+			readonly after?: WhitespaceKindId;
+			readonly alternative?: {
+				readonly caseClause?: { readonly after?: WhitespaceKindId };
+				readonly separator?: WhitespaceKindId;
+			};
+			readonly before?: WhitespaceKindId;
 		};
 	}
 }
 
 export namespace SuiteInline {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		readonly __optionsHint__?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 	}
 }
 
 export namespace SuiteBlock {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		readonly __optionsHint__?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 	}
 }
 
 export namespace ComparisonOperatorComparator {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly operators?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly operators?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -7530,9 +7597,9 @@ export namespace ComparisonOperatorComparator {
 export namespace YieldFromClause {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly fromKeyword?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly fromKeyword?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }

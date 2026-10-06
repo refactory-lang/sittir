@@ -1311,7 +1311,7 @@
       "type": "PATTERN",
       "value": "\\\\x[0-9a-fA-F]{2}"
     },
-    "_whitespace": {
+    "_layout": {
       "type": "CHOICE",
       "members": [
         {
@@ -1558,7 +1558,7 @@
     "_inline_flags_group_optional1"
   ],
   "supertypes": [
-    "_whitespace",
+    "_layout",
     "inline_flags_group"
   ],
   "reserved": {}

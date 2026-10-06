@@ -163,7 +163,7 @@ export const primaryExpression: {
 	listSplat: F.listSplatPattern
 };
 
-export const whitespace: {
+export const layout: {
 	readonly tight: typeof F.buildTight;
 	readonly space: typeof F.buildSpace;
 	readonly tab: typeof F.buildTab;
@@ -350,7 +350,7 @@ export const ir: {
 	readonly pattern: typeof pattern;
 	readonly expression: typeof expression;
 	readonly primaryExpression: typeof primaryExpression;
-	readonly whitespace: typeof whitespace;
+	readonly layout: typeof layout;
 	readonly simpleStatement: typeof simpleStatement;
 	readonly compoundStatement: typeof compoundStatement;
 	readonly parameter: typeof parameter;
@@ -529,7 +529,7 @@ export const ir: {
 	pattern,
 	expression,
 	primaryExpression,
-	whitespace,
+	layout,
 	simpleStatement,
 	compoundStatement,
 	parameter,

@@ -10,7 +10,7 @@ import {
 	storageKindOfRef
 } from './node-map.ts';
 import { leadingRegex } from './leaf-pattern.ts';
-import { declaresWhitespace, whitespaceSymbolsOf } from './whitespace-arms.ts';
+import { declaresWhitespace, layoutSymbolsOf } from './layout-kinds.ts';
 import { escapeRegexLiteral } from '../../util/word-matcher.ts';
 import { SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { extrasClosure } from '../../dsl/extras.ts';
@@ -161,7 +161,7 @@ export function lexicalExtrasRun(nodeMap: NodeMap): RegExp | undefined {
 export function whitespaceTriviaKinds(nodeMap: NodeMap): string[] {
 	const nodelessExtrasRun = lexicalExtrasRun(nodeMap);
 	if (nodelessExtrasRun === undefined || !declaresWhitespace(nodeMap)) return [];
-	return [...whitespaceSymbolsOf(nodeMap).values()].filter((kind) => {
+	return [...layoutSymbolsOf(nodeMap).values()].filter((kind) => {
 		const node = nodeMap.nodes.get(kind);
 		return node instanceof AssembledPunctuation && nodelessExtrasRun.test(node.text);
 	});

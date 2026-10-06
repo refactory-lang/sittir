@@ -630,7 +630,7 @@ the declaration or deletion that resolves it:
 - `whitespace-mint-collision`: a name enrich mints for the whitespace
   vocabulary that the grammar also defines, stamped where it is found
   (`WhitespaceCollision`): a `visibleExternals:` key naming a minted member
-  (delete the entry), or an upstream rule named `_whitespace` or a member
+  (delete the entry), or an upstream rule named `_layout` or a member
   whose definition differs from the minted one. The minted definition wins in
   both, so the tree-sitter build still completes; this record stops the
   compile. Judged without the enriched stage.

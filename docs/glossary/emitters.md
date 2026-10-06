@@ -6516,7 +6516,7 @@ nodes and names the variants; `slotElementKinds` reads the kinds alone.
  * A member is written when its type exists: an interface emitted above, or
  * a token, whose kind-id alias `collectAndEmitTokenTypeAliases` writes
  * next (membership in a supertype references it). A supertype of nothing
- * but tokens — python's `_whitespace`, whose members are all fixed-text
+ * but tokens — python's `_layout`, whose members are all fixed-text
  * externals — is therefore a union of kind ids, the same union `options.ts`
  * types its whitespace sites with.
  */
@@ -12053,7 +12053,7 @@ A supertype gets an ir namespace if and only if the grammar declares it (`Assemb
 ```text
 /** Does this keyword / pattern kind get a flat `ir.<irKey>` entry —
  *  user-facing (the assemble-time fact: visible, or hidden but an alias
- *  source or a variant child; sittir's own whitespace kinds are not), not
+ *  source or a variant child; sittir's own layout kinds are not), not
  *  inlined, with a factory, a legal identifier key and a catalog id?
  *  A hidden pattern whose key keeps its underscore because the bare name
  *  is taken (python's `_string_content` beside `string_content`) still
@@ -12106,7 +12106,7 @@ a flat leaf's key throws (`flattenedVariantParents`), as does a supertype
 group whose name is a flat key: two surfaces never share one `ir` key.
 
 A group lists a surface-hidden member only when it is a punctuation leaf
-with a builder (`isBuilderTextLeaf`), which gives `ir.whitespace` its
+with a builder (`isBuilderTextLeaf`), which gives `ir.layout` its
 members; any other surface-hidden member stays out of the group.
 
 The `ir` namespace's node-factory members come from `bundleEntries` — the same SSOT the bundle module and the overlay wire map consume — so `ir`, the bundles, and `keyByKind` can never disagree on which kinds are surfaced or under what key. Aliased-hidden kinds therefore appear in `ir` under their visible-style keys the moment they qualify for a bundle; `ir` adds only the group-name dedupe on top. Keyword and leaf members keep their own loops (leaves have no coercers, so no bundle entry exists to consume).
@@ -15059,7 +15059,7 @@ The blank arm is typed `null`.
 
 ### `packages/codegen/src/emitters/options.ts::renderOptionsModule`
 
-Source text for `options.ts`: a re-export of `SpacingArm` and `WhitespaceArm`
+Source text for `options.ts`: a re-export of `WhitespaceKindId` and `LayoutKindId`
 (declared in `types.ts`, where the hints that use them live), `LabelOptions`
 from the label roots, `IndentChar` (the `indentChars` texts as a union,
 `never` when there are none), and `Options = DerivedOptions<T.OptionsHintMap,
@@ -15068,13 +15068,13 @@ kind's sites are on its namespace as `X.Hints` (`emitOptionsHints`),
 `OptionsHintMap` points at them by key, and `DerivedOptions` in
 `@sittir/types` is a plain mapped type over that map, so each property
 resolves lazily. `indent` comes with `DerivedOptions`, only where `IndentChar`
-is not `never`. Without arm aliases (a
+is not `never`. Without the kind aliases (a
 grammar with no sites) the two aliases are declared `never` here instead of
 re-exported.
 
 ### `packages/codegen/src/emitters/options.ts::OptionsModuleInputs`
 
-What the module is written from: the arm aliases (`armAliasesOf`), the
+What the module is written from: the kind aliases (`layoutKindAliasesOf`), the
 hint emitter over the address tables (`hintEmitterOf`), whose label roots
 become `LabelOptions`, and the grammar's indent characters (`indentChars`),
 which become `IndentChar`.
@@ -15129,22 +15129,22 @@ Builds the `ChildIndex`. Takes `kindEntries` because a literal segment's
 name is its token's kind name (`nestedKey`), the same derivation the address
 tables used for `path` and `children`.
 
-### `packages/codegen/src/emitters/options.ts::ArmAliases`
+### `packages/codegen/src/emitters/options.ts::LayoutKindAliases`
 
-The two arm unions every whitespace leaf is typed by: `spacingType` (the
-`_whitespace` members a separator admits) and `whitespaceType` (every member,
-indent and dedent included when some site admits depth, else the same as
-`spacingType`).
+The two unions every layout leaf is typed by: `whitespaceType`, the
+whitespace kinds (the `_layout` members a separator admits), and
+`layoutType`, the layout kinds (every member, indent and dedent included,
+when some site admits depth; otherwise the same as `whitespaceType`).
 
-### `packages/codegen/src/emitters/options.ts::armAliasesOf`
+### `packages/codegen/src/emitters/options.ts::layoutKindAliasesOf`
 
-`ArmAliases` for a grammar, from `spacingArmsOf`/`whitespaceArmsOf` and
+`LayoutKindAliases` for a grammar, from `whitespaceKindsOf`/`layoutKindsOf` and
 whether any site admits depth. `types.ts` declares the aliases from it and
 `options.ts` re-exports them, so there is one source.
 
-### `packages/codegen/src/emitters/options.ts::armAliasName`
+### `packages/codegen/src/emitters/options.ts::layoutKindAliasName`
 
-Writes a leaf type as `SpacingArm` or `WhitespaceArm` when it is exactly one
+Writes a leaf type as `WhitespaceKindId` or `LayoutKindId` when it is exactly one
 of the two unions, and as itself otherwise.
 
 ### `packages/codegen/src/emitters/options.ts::HintEmitter`
@@ -15332,7 +15332,7 @@ grouping whether a slot has seats.
 ```text
 /** Everything `options.rs` is written from, in emission order: spacing and
 *  delimiter sites, the merged path table over both, the depth walk, and
- *  the whitespace kinds' render text. */
+ *  the layout kinds' render text. */
 ```
 
 `indentChars` is the grammar's indent characters (`indentChars`), written as `OptionTables.indent_chars`: the runtime refuses an `indent` unit that is empty or holds any other character, and treats `indent` as an unknown key when there are none.

@@ -25,7 +25,7 @@ import type { AssembledNode, AssembledNonterminal, NodeOrTerminal, SeamEdgeClass
 import type { Rule, RuleBase, RenderRule, Multiplicity, SeamOrigin } from '../types/rule.ts';
 import type { DiagnosticSink } from '../types/diagnostics.ts';
 import type { DroppedTokens } from '../compiler/diagnostics/grammar-diagnostics.ts';
-import { DEDENT_TEXT, INDENT_TEXT, type WhitespaceArm } from '../dsl/primitives/spacing.ts';
+import { DEDENT_TEXT, INDENT_TEXT, type Layout } from '../dsl/primitives/spacing.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { classifyTemplateEmission, literalMergePairs } from './shared.ts';
 import { wordCharAsciiTable } from '../util/word-matcher.ts';
@@ -498,13 +498,13 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 				rightPartIdx: number
 			): {
 				readonly origin: SeamOrigin;
-				readonly arm: WhitespaceArm | undefined;
+				readonly arm: Layout | undefined;
 				readonly label: string | undefined;
 			} => {
 				const from = partIndices[leftPartIdx]! + 1;
 				const to = partIndices[rightPartIdx]!;
 				let bestOrigin: SeamOrigin = 'fallback';
-				let bestArm: WhitespaceArm | undefined;
+				let bestArm: Layout | undefined;
 				let bestLabel: string | undefined;
 				let bestArmRank = -1;
 				for (let i = from; i < to; i++) {
