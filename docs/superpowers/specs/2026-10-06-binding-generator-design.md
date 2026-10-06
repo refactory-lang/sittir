@@ -91,7 +91,7 @@ The input is runtime data (a structure can arrive as JSON), so the build side ca
 
 - **Low→high:** a node of a `Backward` kind is read through its read entries. A parsed node keeps its tree row and is re-wrapped with no reparse; a built node is rebuilt with the portable builders, its members read through the read entries and built through the build entries.
 - **High→low:** a parsed portable node is re-wrapped as its low-level node from the same row; a built one is rebuilt through the build entries.
-- **A node of the engine's own surface:** open (bindings spec §11).
+- **A node of the engine's own surface:** a node bound to this engine is returned as is; one bound to another engine of the same surface is re-wrapped from its row when parsed, or rebuilt when built, exactly as a crossing is. No identity is promised either way.
 
 `is.<role path>` is compiled from the read entries under the path, a grammar kind set plus slot constraints (`operator === '+='`), into the query facet's plan form: one derivation, no separate kind table.
 
