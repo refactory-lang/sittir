@@ -36,6 +36,10 @@
  *      shape. A `fail` DECREASE alongside the total drop (a failing
  *      fixture quietly deleted) still trips this rule — that is not the
  *      same shape as a rename and deserves a look, not an automatic pass.
+      A head that carries `baselineCounterChange: { reason, validators }`
+      is held to a per-grammar check instead: a validator's total may
+      drop only if declared and its `pass` did not fall (so the total
+      fell no more than its fail count did).
  *   3. Total-fail rise — `totals.fail` increased.
  *   4. Schema violation — missing keys, unsorted arrays, missing
  *      `formatDeferredKinds` / `formatDeferredByKind`.
@@ -594,8 +598,35 @@ function checkLeftOutRise(base: BackendBaseline, head: BackendBaseline): Regress
 	return null;
 }
 
+function declaredCounterChangeHolds(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
+	const declared = new Set(head.baselineCounterChange?.validators ?? []);
+	for (const [g, baseGrammar, headGrammar] of comparedGrammars(base, head)) {
+		for (const vName of baseValidators(baseGrammar.validators)) {
+			const b = baseGrammar.validators[vName] as ValidatorResult;
+			const h = headGrammar.validators[vName] as ValidatorResult;
+			const path = `grammars.${g}.validators.${vName}`;
+			if (h.total >= b.total) continue;
+			const note = !declared.has(vName)
+				? `${vName} total dropped without a baselineCounterChange declaration`
+				: h.pass < b.pass
+					? `${vName} pass fell under a declared counter change`
+					: undefined;
+			if (note !== undefined) {
+				return {
+					ok: false,
+					reason: 'total-drop',
+					summary: `${path}.total decreased: ${b.total} → ${h.total} (${note})`,
+					details: { path: `${path}.total`, before: b.total, after: h.total, note }
+				};
+			}
+		}
+	}
+	return null;
+}
+
 function checkTotalDrop(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
 	if (head.totals.total < base.totals.total && head.totals.fail !== base.totals.fail) {
+		if (head.baselineCounterChange !== undefined) return declaredCounterChangeHolds(base, head);
 		return {
 			ok: false,
 			reason: 'total-drop',

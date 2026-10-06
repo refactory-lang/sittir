@@ -115,9 +115,15 @@ export interface GrammarEntry {
 	hoistedKindCount?: number;
 }
 
+export interface BaselineCounterChange {
+	reason: string;
+	validators: readonly string[];
+}
+
 export interface BackendBaseline {
 	backend: Backend;
 	commit: string;
+	baselineCounterChange?: BaselineCounterChange;
 	grammars: Readonly<Record<GrammarName, GrammarEntry>>;
 	totals: {
 		pass: number;

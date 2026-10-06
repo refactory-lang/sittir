@@ -129,6 +129,47 @@ describe('checkRegression', () => {
 		expect(verdict.details.path).toBe('grammars.rust.validators.builtRenderParse.pass');
 	});
 
+	describe('declared counter change', () => {
+		function shrunk(): { base: BackendBaseline; head: BackendBaseline } {
+			const base = baseline();
+			base.grammars.python!.validators.builtRenderParse = rt(8, 10, 8);
+			base.totals = { pass: base.totals.pass - 2, fail: 2, total: base.totals.total };
+			const head = clone(base);
+			head.grammars.python!.validators.builtRenderParse = rt(8, 9, 8);
+			head.totals = { pass: base.totals.pass, fail: 1, total: base.totals.total - 1 };
+			return { base, head };
+		}
+
+		it('an undeclared total drop fails', () => {
+			const { base, head } = shrunk();
+			expectFail(checkRegression(base, head));
+		});
+
+		it('a declared drop whose total falls no more than its fail count passes', () => {
+			const { base, head } = shrunk();
+			head.baselineCounterChange = { reason: 'population pinned', validators: ['builtRenderParse'] };
+			expect(checkRegression(base, head).ok).toBe(true);
+		});
+
+		it('a declared drop where pass fell fails', () => {
+			const { base, head } = shrunk();
+			head.baselineCounterChange = { reason: 'population pinned', validators: ['builtRenderParse'] };
+			head.grammars.python!.validators.builtRenderParse = rt(7, 9, 7);
+			head.totals = { pass: base.totals.pass - 1, fail: 2, total: base.totals.total - 1 };
+			expectFail(checkRegression(base, head));
+		});
+
+		it('a drop in an undeclared validator fails', () => {
+			const { base, head } = shrunk();
+			head.baselineCounterChange = { reason: 'population pinned', validators: ['builtRenderParse'] };
+			head.grammars.python!.validators.from = vr(9, 9);
+			head.totals = { pass: base.totals.pass - 1, fail: 1, total: base.totals.total - 2 };
+			const verdict = checkRegression(base, head);
+			expectFail(verdict);
+			expect(verdict.details.path).toBe('grammars.python.validators.from.total');
+		});
+	});
+
 	it('head must record every validator', () => {
 		const base = baseline();
 		const head = clone(base);
