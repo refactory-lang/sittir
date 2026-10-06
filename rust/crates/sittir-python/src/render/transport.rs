@@ -1550,6 +1550,7 @@ impl ::sittir_core::render::Render for TriviaTransport {
 impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {
     fn seam_text(&self) -> Option<&str> {
         match self {
+            TriviaTransport::LineContinuationNewline(t) => Some(&t.text),
             TriviaTransport::Space => Some(" "),
             TriviaTransport::Tab => Some("\t"),
             TriviaTransport::Newline => Some("\n"),

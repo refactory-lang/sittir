@@ -1,6 +1,7 @@
 import type { NodeMap } from '../types.ts';
 import {
 	AbstractAssembledCompound,
+	AssembledPattern,
 	AssembledPolymorph,
 	type AssembledNode,
 	type FullFormAffix,
@@ -10,6 +11,7 @@ import {
 	storageKindOfRef
 } from './node-map.ts';
 import { leadingRegex } from './leaf-pattern.ts';
+import { endsWithLineBreak, patternDfa, requiresNonSpace } from './pattern-automaton.ts';
 import { declaresWhitespace, whitespaceSymbolsOf } from './whitespace-arms.ts';
 import { escapeRegexLiteral } from '../../util/word-matcher.ts';
 import { SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
@@ -164,6 +166,15 @@ export function whitespaceTriviaKinds(nodeMap: NodeMap): string[] {
 	return [...whitespaceSymbolsOf(nodeMap).values()].filter((kind) => {
 		const node = nodeMap.nodes.get(kind);
 		return node instanceof AssembledPunctuation && nodelessExtrasRun.test(node.text);
+	});
+}
+
+export function continuationTriviaKinds(nodeMap: NodeMap): string[] {
+	return [...triviaKinds(nodeMap)].filter((kind) => {
+		const node = nodeMap.nodes.get(kind);
+		if (!(node instanceof AssembledPattern) || node.textPattern === undefined) return false;
+		const dfa = patternDfa(node.textPattern);
+		return dfa !== undefined && requiresNonSpace(dfa) && endsWithLineBreak(dfa);
 	});
 }
 

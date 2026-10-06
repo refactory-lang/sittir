@@ -132,7 +132,7 @@ import type { CodegenEmitter } from './emitter.ts';
 import type { Rule } from '../types/rule.ts';
 import type { KindEntryLike } from '../dsl/symbol-table.ts';
 import type { GrammarName } from '../grammars.ts';
-import { triviaKinds, whitespaceTriviaKinds } from '../compiler/model/trivia.ts';
+import { continuationTriviaKinds, triviaKinds, whitespaceTriviaKinds } from '../compiler/model/trivia.ts';
 
 export interface RustRenderModuleEmit {
 	hashRs: { path: string; contents: string };
@@ -2416,7 +2416,12 @@ function renderTriviaTransportSupport(
 	lines.push('impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {');
 	lines.push('    fn seam_text(&self) -> Option<&str> {');
 	lines.push('        match self {');
+	const continuationKinds = new Set(continuationTriviaKinds(nodeMap));
 	for (const node of extrasNodes) {
+		if (continuationKinds.has(node.kind)) {
+			lines.push(`            TriviaTransport::${rustTransportVariantName(node)}(t) => Some(&t.text),`);
+			continue;
+		}
 		if (!whitespaceKinds.has(node.kind)) continue;
 		const unit = fixedLiteralOf(fixed, node.kind);
 		lines.push(`            TriviaTransport::${unit.variant} => Some(${rustStringLiteral(unit.text)}),`);
