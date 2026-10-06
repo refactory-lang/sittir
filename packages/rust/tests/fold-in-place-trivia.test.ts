@@ -26,7 +26,7 @@ describe.each([
 		const statement = second.body().statements()[0];
 		if (!engine.isNode(statement)) throw new Error('expected a statement node');
 		statement.$trivia.leading(engine.build.lineComment(' before'));
-		expect(root.$render()).toContain('// before');
+		expect(root.$render()).toBe('fn a() {}\nfn b() {\n    // before\n    let x = 1;\n}\n');
 	});
 
 	it('leaves an untouched file rendering its bytes', () => {
