@@ -12,6 +12,7 @@
 
 import { beforeAll, describe, expect, it } from 'vitest';
 import { classifySlot, buildSupertypeTransportSet, deriveChildrenKinds, type SlotClass } from '../transport-common.ts';
+import { TEXT_RESOLVED_LAYOUT_SITES } from '../layout-text-sites.ts';
 import { emitRenderModule, rustTransportStructName, transportSlotShapeOf } from '../render-module.ts';
 import { collectCatalogKinds, collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
 import { seamRenderRules, spaceRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
@@ -771,4 +772,26 @@ describe('a slot whose only scalar source is an enum of immediate tokens', () =>
 		expect(extractStructBody(scm, 'PredicateTransport')).toContain('pub type_: ::sittir_core::SlotValue<PredicateTypeEnum, true>,');
 		expect(extractFnBody(scm, 'render_predicate_type')).toContain('w.adjacent();');
 	}, 120_000);
+});
+
+describe('the listed text-resolved layout sites are exact', () => {
+	const unstampedStrings = (rule: unknown, found: Set<string> = new Set()): Set<string> => {
+		const r = rule as { type?: string; value?: string; aliasedToId?: number; resolvedKindId?: number; members?: unknown[]; content?: unknown };
+		if (r.type === 'STRING' && r.value !== undefined && r.aliasedToId === undefined && r.resolvedKindId === undefined) found.add(r.value);
+		for (const member of r.members ?? []) unstampedStrings(member, found);
+		if (r.content !== undefined) unstampedStrings(r.content, found);
+		return found;
+	};
+
+	for (const grammar of Object.keys(TEXT_RESOLVED_LAYOUT_SITES) as ('rust' | 'typescript' | 'scm')[]) {
+		it(`${grammar}: every listed (kind, text) is still an unstamped string of its kind`, async () => {
+			const { nodeMap } = await modelFor(grammar);
+			const missing = TEXT_RESOLVED_LAYOUT_SITES[grammar]!.filter((key) => {
+				const [kind = '', text = ''] = key.split('\t');
+				const node = nodeMap.nodes.get(kind);
+				return !(node instanceof AbstractAssembledCompound) || !unstampedStrings(node.renderRule).has(text);
+			});
+			expect(missing.map((key) => key.replace('\t', ' ')), 'listed sites that no longer exist; remove them from layout-text-sites.ts').toEqual([]);
+		}, 120_000);
+	}
 });
