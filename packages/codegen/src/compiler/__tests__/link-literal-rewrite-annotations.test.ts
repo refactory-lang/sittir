@@ -34,7 +34,16 @@ describe('canonicalizeRuleLiterals — a literal rewritten into its kind symbol'
 		const entries = [{ kind: 'dquote', id: 70, anon: true, symbolName: '"', literalText: '"' }];
 		const misses = { symbols: new Set<string>(), literals: new Set<string>(), aliasTargets: new Set<string>() };
 		const out = canonicalizeRuleLiterals(rule, entries, false, misses);
-		expect(out).toEqual(rule);
+		expect(out).toEqual({
+			type: TOKEN,
+			content: {
+				type: SEQ,
+				members: [
+					{ type: STRING, value: '\\' },
+					{ type: FIELD, name: 'content', content: { type: CHOICE, members: [{ type: STRING, value: 'n' }, { type: STRING, value: '"', resolvedKindId: 70 }] } }
+				]
+			}
+		});
 	});
 
 	it('still rewrites a field holding a whole token', () => {

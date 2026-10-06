@@ -444,18 +444,23 @@ export function canonicalizeRuleLiterals(
 				)
 			};
 		case OPTIONAL:
+			return {
+				...rule,
+				content: canonicalizeRuleLiterals(rule.content, kindEntries, allowLiteralRewrite, misses, syntactic, aliasBodies)
+			};
 		case REPEAT:
 		case REPEAT1:
 			return {
 				...rule,
-				content: canonicalizeRuleLiterals(
-					rule.content,
-					kindEntries,
-					allowLiteralRewrite,
-					misses,
-					syntactic,
-					aliasBodies
-				)
+				content: canonicalizeRuleLiterals(rule.content, kindEntries, allowLiteralRewrite, misses, syntactic, aliasBodies),
+				...(rule.separator === undefined
+					? {}
+					: {
+							separator: {
+								...rule.separator,
+								value: canonicalizeRuleLiterals(rule.separator.value, kindEntries, false, misses, syntactic, aliasBodies)
+							}
+						})
 			};
 		case TOKEN:
 			return {
@@ -512,10 +517,10 @@ export function canonicalizeRuleLiterals(
 					};
 				}
 			}
-			if (!syntactic || kindEntries.length === 0) return rule;
+			if (kindEntries.length === 0) return rule;
 			const literalEntry = findEntryForLiteralText(kindEntries, rule.value);
 			if (literalEntry === undefined) {
-				misses.literals.add(rule.value);
+				if (syntactic) misses.literals.add(rule.value);
 				return rule;
 			}
 			return { ...rule, resolvedKindId: literalEntry.id };
