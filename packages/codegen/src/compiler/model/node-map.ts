@@ -2120,6 +2120,7 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
 		const resolved: string[] = [];
 		const resolvedIds: number[] = [];
 		const byText = new Map<string, { kind: string; id: number }>();
+		const textById = new Map<number, string>();
 		for (const member of this.literalMembers) {
 			const text = literalTextOf(member);
 			if (text === undefined) continue;
@@ -2129,7 +2130,15 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
 			if (entry === undefined) continue;
 			resolved.push(entry.kind);
 			resolvedIds.push(entry.id);
-			if (!byText.has(text)) byText.set(text, { kind: entry.kind, id: entry.id });
+			if (byText.has(text)) continue;
+			const sharing = textById.get(entry.id);
+			if (sharing !== undefined) {
+				throw new Error(
+					`AssembledEnum '${kind}': members ${JSON.stringify(sharing)} and ${JSON.stringify(text)} share kind id ${entry.id}, so a read cannot tell them apart`
+				);
+			}
+			textById.set(entry.id, text);
+			byText.set(text, { kind: entry.kind, id: entry.id });
 		}
 		this.resolvedKinds = resolved;
 		this.resolvedKindIds = resolvedIds;

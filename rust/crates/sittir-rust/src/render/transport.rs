@@ -31119,109 +31119,26 @@ impl ::napi::bindgen_prelude::FromNapiValue for FragmentSpecifierEnum {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-                    match kind_id {
-                        11 => return Ok(Self::Block), // "block"
-                        12 => return Ok(Self::Expr), // "expr"
-                        13 => return Ok(Self::Expr2021), // "expr_2021"
-                        14 => return Ok(Self::Ident), // "ident"
-                        15 => return Ok(Self::Item), // "item"
-                        16 => return Ok(Self::Lifetime), // "lifetime"
-                        17 => return Ok(Self::Literal), // "literal"
-                        18 => return Ok(Self::Meta), // "meta"
-                        19 => return Ok(Self::Pat), // "pat"
-                        20 => return Ok(Self::PatParam), // "pat_param"
-                        21 => return Ok(Self::Path), // "path"
-                        22 => return Ok(Self::Stmt), // "stmt"
-                        23 => return Ok(Self::Tt), // "tt"
-                        24 => return Ok(Self::Ty), // "ty"
-                        25 => return Ok(Self::Vis), // "vis"
-                        _ => {}
-                    }
-                }
-            }
-            ::napi::ValueType::String => {
-                match String::from_napi_value(env, napi_val)?.as_str() {
-                    "block" => return Ok(Self::Block),
-                    "expr" => return Ok(Self::Expr),
-                    "expr_2021" => return Ok(Self::Expr2021),
-                    "ident" => return Ok(Self::Ident),
-                    "item" => return Ok(Self::Item),
-                    "lifetime" => return Ok(Self::Lifetime),
-                    "literal" => return Ok(Self::Literal),
-                    "meta" => return Ok(Self::Meta),
-                    "pat" => return Ok(Self::Pat),
-                    "pat_param" => return Ok(Self::PatParam),
-                    "path" => return Ok(Self::Path),
-                    "stmt" => return Ok(Self::Stmt),
-                    "tt" => return Ok(Self::Tt),
-                    "ty" => return Ok(Self::Ty),
-                    "vis" => return Ok(Self::Vis),
-                    _ => {}
-                }
-            }
-            ::napi::ValueType::Object => {
-                if let Some(kind_id) = ::sittir_core::boundary::property::<u16>(env, napi_val, c"$type")? {
-                    match kind_id {
-                        11 => return Ok(Self::Block), // "block"
-                        12 => return Ok(Self::Expr), // "expr"
-                        13 => return Ok(Self::Expr2021), // "expr_2021"
-                        14 => return Ok(Self::Ident), // "ident"
-                        15 => return Ok(Self::Item), // "item"
-                        16 => return Ok(Self::Lifetime), // "lifetime"
-                        17 => return Ok(Self::Literal), // "literal"
-                        18 => return Ok(Self::Meta), // "meta"
-                        19 => return Ok(Self::Pat), // "pat"
-                        20 => return Ok(Self::PatParam), // "pat_param"
-                        21 => return Ok(Self::Path), // "path"
-                        22 => return Ok(Self::Stmt), // "stmt"
-                        23 => return Ok(Self::Tt), // "tt"
-                        24 => return Ok(Self::Ty), // "ty"
-                        25 => return Ok(Self::Vis), // "vis"
-                        _ => {}
-                    }
-                }
-                if let Some(text) = ::sittir_core::boundary::property::<String>(env, napi_val, c"$text")? {
-                    match text.as_str() {
-                        "block" => return Ok(Self::Block),
-                        "expr" => return Ok(Self::Expr),
-                        "expr_2021" => return Ok(Self::Expr2021),
-                        "ident" => return Ok(Self::Ident),
-                        "item" => return Ok(Self::Item),
-                        "lifetime" => return Ok(Self::Lifetime),
-                        "literal" => return Ok(Self::Literal),
-                        "meta" => return Ok(Self::Meta),
-                        "pat" => return Ok(Self::Pat),
-                        "pat_param" => return Ok(Self::PatParam),
-                        "path" => return Ok(Self::Path),
-                        "stmt" => return Ok(Self::Stmt),
-                        "tt" => return Ok(Self::Tt),
-                        "ty" => return Ok(Self::Ty),
-                        "vis" => return Ok(Self::Vis),
-                        _ => {}
-                    }
-                }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_block")?.is_some() { return Ok(Self::Block); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_expr")?.is_some() { return Ok(Self::Expr); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_expr_2021")?.is_some() { return Ok(Self::Expr2021); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_ident")?.is_some() { return Ok(Self::Ident); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_item")?.is_some() { return Ok(Self::Item); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_lifetime")?.is_some() { return Ok(Self::Lifetime); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_literal")?.is_some() { return Ok(Self::Literal); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_meta")?.is_some() { return Ok(Self::Meta); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_pat")?.is_some() { return Ok(Self::Pat); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_pat_param")?.is_some() { return Ok(Self::PatParam); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_path")?.is_some() { return Ok(Self::Path); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_stmt")?.is_some() { return Ok(Self::Stmt); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_tt")?.is_some() { return Ok(Self::Tt); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_ty")?.is_some() { return Ok(Self::Ty); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_vis")?.is_some() { return Ok(Self::Vis); }
-            }
-            _ => {}
+        match u16::from_napi_value(env, napi_val)? {
+            11 => Ok(Self::Block),
+            12 => Ok(Self::Expr),
+            13 => Ok(Self::Expr2021),
+            14 => Ok(Self::Ident),
+            15 => Ok(Self::Item),
+            16 => Ok(Self::Lifetime),
+            17 => Ok(Self::Literal),
+            18 => Ok(Self::Meta),
+            19 => Ok(Self::Pat),
+            20 => Ok(Self::PatParam),
+            21 => Ok(Self::Path),
+            22 => Ok(Self::Stmt),
+            23 => Ok(Self::Tt),
+            24 => Ok(Self::Ty),
+            25 => Ok(Self::Vis),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind FragmentSpecifierEnum takes",
+            ))),
         }
-        Err(::napi::Error::from_reason("unknown enum payload for FragmentSpecifierEnum"))
     }
 }
 
@@ -39579,44 +39496,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for BooleanLiteralEnum {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-                    match kind_id {
-                        117 => return Ok(Self::True), // "true"
-                        118 => return Ok(Self::False), // "false"
-                        _ => {}
-                    }
-                }
-            }
-            ::napi::ValueType::String => {
-                match String::from_napi_value(env, napi_val)?.as_str() {
-                    "true" => return Ok(Self::True),
-                    "false" => return Ok(Self::False),
-                    _ => {}
-                }
-            }
-            ::napi::ValueType::Object => {
-                if let Some(kind_id) = ::sittir_core::boundary::property::<u16>(env, napi_val, c"$type")? {
-                    match kind_id {
-                        117 => return Ok(Self::True), // "true"
-                        118 => return Ok(Self::False), // "false"
-                        _ => {}
-                    }
-                }
-                if let Some(text) = ::sittir_core::boundary::property::<String>(env, napi_val, c"$text")? {
-                    match text.as_str() {
-                        "true" => return Ok(Self::True),
-                        "false" => return Ok(Self::False),
-                        _ => {}
-                    }
-                }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_true")?.is_some() { return Ok(Self::True); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_false")?.is_some() { return Ok(Self::False); }
-            }
-            _ => {}
+        match u16::from_napi_value(env, napi_val)? {
+            117 => Ok(Self::True),
+            118 => Ok(Self::False),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind BooleanLiteralEnum takes",
+            ))),
         }
-        Err(::napi::Error::from_reason("unknown enum payload for BooleanLiteralEnum"))
     }
 }
 
@@ -40382,119 +40268,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimitiveTypeEnum {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-                    match kind_id {
-                        58 => return Ok(Self::U8), // "u8"
-                        59 => return Ok(Self::I8), // "i8"
-                        60 => return Ok(Self::U16), // "u16"
-                        61 => return Ok(Self::I16), // "i16"
-                        62 => return Ok(Self::U32), // "u32"
-                        63 => return Ok(Self::I32), // "i32"
-                        64 => return Ok(Self::U64), // "u64"
-                        65 => return Ok(Self::I64), // "i64"
-                        66 => return Ok(Self::U128), // "u128"
-                        67 => return Ok(Self::I128), // "i128"
-                        68 => return Ok(Self::Isize), // "isize"
-                        69 => return Ok(Self::Usize), // "usize"
-                        70 => return Ok(Self::F32), // "f32"
-                        71 => return Ok(Self::F64), // "f64"
-                        72 => return Ok(Self::Bool), // "bool"
-                        73 => return Ok(Self::Str), // "str"
-                        74 => return Ok(Self::Char), // "char"
-                        _ => {}
-                    }
-                }
-            }
-            ::napi::ValueType::String => {
-                match String::from_napi_value(env, napi_val)?.as_str() {
-                    "u8" => return Ok(Self::U8),
-                    "i8" => return Ok(Self::I8),
-                    "u16" => return Ok(Self::U16),
-                    "i16" => return Ok(Self::I16),
-                    "u32" => return Ok(Self::U32),
-                    "i32" => return Ok(Self::I32),
-                    "u64" => return Ok(Self::U64),
-                    "i64" => return Ok(Self::I64),
-                    "u128" => return Ok(Self::U128),
-                    "i128" => return Ok(Self::I128),
-                    "isize" => return Ok(Self::Isize),
-                    "usize" => return Ok(Self::Usize),
-                    "f32" => return Ok(Self::F32),
-                    "f64" => return Ok(Self::F64),
-                    "bool" => return Ok(Self::Bool),
-                    "str" => return Ok(Self::Str),
-                    "char" => return Ok(Self::Char),
-                    _ => {}
-                }
-            }
-            ::napi::ValueType::Object => {
-                if let Some(kind_id) = ::sittir_core::boundary::property::<u16>(env, napi_val, c"$type")? {
-                    match kind_id {
-                        58 => return Ok(Self::U8), // "u8"
-                        59 => return Ok(Self::I8), // "i8"
-                        60 => return Ok(Self::U16), // "u16"
-                        61 => return Ok(Self::I16), // "i16"
-                        62 => return Ok(Self::U32), // "u32"
-                        63 => return Ok(Self::I32), // "i32"
-                        64 => return Ok(Self::U64), // "u64"
-                        65 => return Ok(Self::I64), // "i64"
-                        66 => return Ok(Self::U128), // "u128"
-                        67 => return Ok(Self::I128), // "i128"
-                        68 => return Ok(Self::Isize), // "isize"
-                        69 => return Ok(Self::Usize), // "usize"
-                        70 => return Ok(Self::F32), // "f32"
-                        71 => return Ok(Self::F64), // "f64"
-                        72 => return Ok(Self::Bool), // "bool"
-                        73 => return Ok(Self::Str), // "str"
-                        74 => return Ok(Self::Char), // "char"
-                        _ => {}
-                    }
-                }
-                if let Some(text) = ::sittir_core::boundary::property::<String>(env, napi_val, c"$text")? {
-                    match text.as_str() {
-                        "u8" => return Ok(Self::U8),
-                        "i8" => return Ok(Self::I8),
-                        "u16" => return Ok(Self::U16),
-                        "i16" => return Ok(Self::I16),
-                        "u32" => return Ok(Self::U32),
-                        "i32" => return Ok(Self::I32),
-                        "u64" => return Ok(Self::U64),
-                        "i64" => return Ok(Self::I64),
-                        "u128" => return Ok(Self::U128),
-                        "i128" => return Ok(Self::I128),
-                        "isize" => return Ok(Self::Isize),
-                        "usize" => return Ok(Self::Usize),
-                        "f32" => return Ok(Self::F32),
-                        "f64" => return Ok(Self::F64),
-                        "bool" => return Ok(Self::Bool),
-                        "str" => return Ok(Self::Str),
-                        "char" => return Ok(Self::Char),
-                        _ => {}
-                    }
-                }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_u8")?.is_some() { return Ok(Self::U8); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_i8")?.is_some() { return Ok(Self::I8); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_u16")?.is_some() { return Ok(Self::U16); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_i16")?.is_some() { return Ok(Self::I16); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_u32")?.is_some() { return Ok(Self::U32); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_i32")?.is_some() { return Ok(Self::I32); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_u64")?.is_some() { return Ok(Self::U64); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_i64")?.is_some() { return Ok(Self::I64); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_u128")?.is_some() { return Ok(Self::U128); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_i128")?.is_some() { return Ok(Self::I128); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_isize")?.is_some() { return Ok(Self::Isize); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_usize")?.is_some() { return Ok(Self::Usize); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_f32")?.is_some() { return Ok(Self::F32); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_f64")?.is_some() { return Ok(Self::F64); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_bool")?.is_some() { return Ok(Self::Bool); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_str")?.is_some() { return Ok(Self::Str); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_char")?.is_some() { return Ok(Self::Char); }
-            }
-            _ => {}
+        match u16::from_napi_value(env, napi_val)? {
+            58 => Ok(Self::U8),
+            59 => Ok(Self::I8),
+            60 => Ok(Self::U16),
+            61 => Ok(Self::I16),
+            62 => Ok(Self::U32),
+            63 => Ok(Self::I32),
+            64 => Ok(Self::U64),
+            65 => Ok(Self::I64),
+            66 => Ok(Self::U128),
+            67 => Ok(Self::I128),
+            68 => Ok(Self::Isize),
+            69 => Ok(Self::Usize),
+            70 => Ok(Self::F32),
+            71 => Ok(Self::F64),
+            72 => Ok(Self::Bool),
+            73 => Ok(Self::Str),
+            74 => Ok(Self::Char),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind PrimitiveTypeEnum takes",
+            ))),
         }
-        Err(::napi::Error::from_reason("unknown enum payload for PrimitiveTypeEnum"))
     }
 }
 
@@ -42252,254 +42047,55 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePunctuationEnum {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-                    match kind_id {
-                        8 => return Ok(Self::Plus), // "+"
-                        75 => return Ok(Self::Minus), // "-"
-                        9 => return Ok(Self::Star), // "*"
-                        86 => return Ok(Self::Slash), // "/"
-                        87 => return Ok(Self::Percent), // "%"
-                        79 => return Ok(Self::Caret), // "^"
-                        29 => return Ok(Self::Bang), // "!"
-                        54 => return Ok(Self::Amp), // "&"
-                        78 => return Ok(Self::Pipe), // "|"
-                        76 => return Ok(Self::AmpAmp), // "&&"
-                        77 => return Ok(Self::PipePipe), // "||"
-                        84 => return Ok(Self::LtLt), // "<<"
-                        85 => return Ok(Self::GtGt), // ">>"
-                        88 => return Ok(Self::PlusEq), // "+="
-                        89 => return Ok(Self::MinusEq), // "-="
-                        90 => return Ok(Self::StarEq), // "*="
-                        91 => return Ok(Self::SlashEq), // "/="
-                        92 => return Ok(Self::PercentEq), // "%="
-                        95 => return Ok(Self::CaretEq), // "^="
-                        93 => return Ok(Self::AmpEq), // "&="
-                        94 => return Ok(Self::PipeEq), // "|="
-                        96 => return Ok(Self::LtLtEq), // "<<="
-                        97 => return Ok(Self::GtGtEq), // ">>="
-                        38 => return Ok(Self::Eq), // "="
-                        80 => return Ok(Self::EqEq), // "=="
-                        81 => return Ok(Self::BangEq), // "!="
-                        44 => return Ok(Self::Gt), // ">"
-                        43 => return Ok(Self::Lt), // "<"
-                        83 => return Ok(Self::GtEq), // ">="
-                        82 => return Ok(Self::LtEq), // "<="
-                        115 => return Ok(Self::At), // "@"
-                        136 => return Ok(Self::Underscore), // "_"
-                        109 => return Ok(Self::Dot), // "."
-                        100 => return Ok(Self::DotDot), // ".."
-                        49 => return Ok(Self::DotDotDot), // "..."
-                        137 => return Ok(Self::DotDotEq), // "..="
-                        130 => return Ok(Self::Comma), // ","
-                        2 => return Ok(Self::Semi), // ";"
-                        4 => return Ok(Self::Colon), // ":"
-                        47 => return Ok(Self::ColonColon), // "::"
-                        131 => return Ok(Self::ThinArrow), // "->"
-                        3 => return Ok(Self::FatArrow), // "=>"
-                        26 => return Ok(Self::Hash), // "#"
-                        10 => return Ok(Self::Question), // "?"
-                        _ => {}
-                    }
-                }
-            }
-            ::napi::ValueType::String => {
-                match String::from_napi_value(env, napi_val)?.as_str() {
-                    "+" => return Ok(Self::Plus),
-                    "-" => return Ok(Self::Minus),
-                    "*" => return Ok(Self::Star),
-                    "/" => return Ok(Self::Slash),
-                    "%" => return Ok(Self::Percent),
-                    "^" => return Ok(Self::Caret),
-                    "!" => return Ok(Self::Bang),
-                    "&" => return Ok(Self::Amp),
-                    "|" => return Ok(Self::Pipe),
-                    "&&" => return Ok(Self::AmpAmp),
-                    "||" => return Ok(Self::PipePipe),
-                    "<<" => return Ok(Self::LtLt),
-                    ">>" => return Ok(Self::GtGt),
-                    "+=" => return Ok(Self::PlusEq),
-                    "-=" => return Ok(Self::MinusEq),
-                    "*=" => return Ok(Self::StarEq),
-                    "/=" => return Ok(Self::SlashEq),
-                    "%=" => return Ok(Self::PercentEq),
-                    "^=" => return Ok(Self::CaretEq),
-                    "&=" => return Ok(Self::AmpEq),
-                    "|=" => return Ok(Self::PipeEq),
-                    "<<=" => return Ok(Self::LtLtEq),
-                    ">>=" => return Ok(Self::GtGtEq),
-                    "=" => return Ok(Self::Eq),
-                    "==" => return Ok(Self::EqEq),
-                    "!=" => return Ok(Self::BangEq),
-                    ">" => return Ok(Self::Gt),
-                    "<" => return Ok(Self::Lt),
-                    ">=" => return Ok(Self::GtEq),
-                    "<=" => return Ok(Self::LtEq),
-                    "@" => return Ok(Self::At),
-                    "_" => return Ok(Self::Underscore),
-                    "." => return Ok(Self::Dot),
-                    ".." => return Ok(Self::DotDot),
-                    "..." => return Ok(Self::DotDotDot),
-                    "..=" => return Ok(Self::DotDotEq),
-                    "," => return Ok(Self::Comma),
-                    ";" => return Ok(Self::Semi),
-                    ":" => return Ok(Self::Colon),
-                    "::" => return Ok(Self::ColonColon),
-                    "->" => return Ok(Self::ThinArrow),
-                    "=>" => return Ok(Self::FatArrow),
-                    "#" => return Ok(Self::Hash),
-                    "?" => return Ok(Self::Question),
-                    _ => {}
-                }
-            }
-            ::napi::ValueType::Object => {
-                if let Some(kind_id) = ::sittir_core::boundary::property::<u16>(env, napi_val, c"$type")? {
-                    match kind_id {
-                        8 => return Ok(Self::Plus), // "+"
-                        75 => return Ok(Self::Minus), // "-"
-                        9 => return Ok(Self::Star), // "*"
-                        86 => return Ok(Self::Slash), // "/"
-                        87 => return Ok(Self::Percent), // "%"
-                        79 => return Ok(Self::Caret), // "^"
-                        29 => return Ok(Self::Bang), // "!"
-                        54 => return Ok(Self::Amp), // "&"
-                        78 => return Ok(Self::Pipe), // "|"
-                        76 => return Ok(Self::AmpAmp), // "&&"
-                        77 => return Ok(Self::PipePipe), // "||"
-                        84 => return Ok(Self::LtLt), // "<<"
-                        85 => return Ok(Self::GtGt), // ">>"
-                        88 => return Ok(Self::PlusEq), // "+="
-                        89 => return Ok(Self::MinusEq), // "-="
-                        90 => return Ok(Self::StarEq), // "*="
-                        91 => return Ok(Self::SlashEq), // "/="
-                        92 => return Ok(Self::PercentEq), // "%="
-                        95 => return Ok(Self::CaretEq), // "^="
-                        93 => return Ok(Self::AmpEq), // "&="
-                        94 => return Ok(Self::PipeEq), // "|="
-                        96 => return Ok(Self::LtLtEq), // "<<="
-                        97 => return Ok(Self::GtGtEq), // ">>="
-                        38 => return Ok(Self::Eq), // "="
-                        80 => return Ok(Self::EqEq), // "=="
-                        81 => return Ok(Self::BangEq), // "!="
-                        44 => return Ok(Self::Gt), // ">"
-                        43 => return Ok(Self::Lt), // "<"
-                        83 => return Ok(Self::GtEq), // ">="
-                        82 => return Ok(Self::LtEq), // "<="
-                        115 => return Ok(Self::At), // "@"
-                        136 => return Ok(Self::Underscore), // "_"
-                        109 => return Ok(Self::Dot), // "."
-                        100 => return Ok(Self::DotDot), // ".."
-                        49 => return Ok(Self::DotDotDot), // "..."
-                        137 => return Ok(Self::DotDotEq), // "..="
-                        130 => return Ok(Self::Comma), // ","
-                        2 => return Ok(Self::Semi), // ";"
-                        4 => return Ok(Self::Colon), // ":"
-                        47 => return Ok(Self::ColonColon), // "::"
-                        131 => return Ok(Self::ThinArrow), // "->"
-                        3 => return Ok(Self::FatArrow), // "=>"
-                        26 => return Ok(Self::Hash), // "#"
-                        10 => return Ok(Self::Question), // "?"
-                        _ => {}
-                    }
-                }
-                if let Some(text) = ::sittir_core::boundary::property::<String>(env, napi_val, c"$text")? {
-                    match text.as_str() {
-                        "+" => return Ok(Self::Plus),
-                        "-" => return Ok(Self::Minus),
-                        "*" => return Ok(Self::Star),
-                        "/" => return Ok(Self::Slash),
-                        "%" => return Ok(Self::Percent),
-                        "^" => return Ok(Self::Caret),
-                        "!" => return Ok(Self::Bang),
-                        "&" => return Ok(Self::Amp),
-                        "|" => return Ok(Self::Pipe),
-                        "&&" => return Ok(Self::AmpAmp),
-                        "||" => return Ok(Self::PipePipe),
-                        "<<" => return Ok(Self::LtLt),
-                        ">>" => return Ok(Self::GtGt),
-                        "+=" => return Ok(Self::PlusEq),
-                        "-=" => return Ok(Self::MinusEq),
-                        "*=" => return Ok(Self::StarEq),
-                        "/=" => return Ok(Self::SlashEq),
-                        "%=" => return Ok(Self::PercentEq),
-                        "^=" => return Ok(Self::CaretEq),
-                        "&=" => return Ok(Self::AmpEq),
-                        "|=" => return Ok(Self::PipeEq),
-                        "<<=" => return Ok(Self::LtLtEq),
-                        ">>=" => return Ok(Self::GtGtEq),
-                        "=" => return Ok(Self::Eq),
-                        "==" => return Ok(Self::EqEq),
-                        "!=" => return Ok(Self::BangEq),
-                        ">" => return Ok(Self::Gt),
-                        "<" => return Ok(Self::Lt),
-                        ">=" => return Ok(Self::GtEq),
-                        "<=" => return Ok(Self::LtEq),
-                        "@" => return Ok(Self::At),
-                        "_" => return Ok(Self::Underscore),
-                        "." => return Ok(Self::Dot),
-                        ".." => return Ok(Self::DotDot),
-                        "..." => return Ok(Self::DotDotDot),
-                        "..=" => return Ok(Self::DotDotEq),
-                        "," => return Ok(Self::Comma),
-                        ";" => return Ok(Self::Semi),
-                        ":" => return Ok(Self::Colon),
-                        "::" => return Ok(Self::ColonColon),
-                        "->" => return Ok(Self::ThinArrow),
-                        "=>" => return Ok(Self::FatArrow),
-                        "#" => return Ok(Self::Hash),
-                        "?" => return Ok(Self::Question),
-                        _ => {}
-                    }
-                }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_+")?.is_some() { return Ok(Self::Plus); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_-")?.is_some() { return Ok(Self::Minus); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_*")?.is_some() { return Ok(Self::Star); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_/")?.is_some() { return Ok(Self::Slash); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_%")?.is_some() { return Ok(Self::Percent); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_^")?.is_some() { return Ok(Self::Caret); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_!")?.is_some() { return Ok(Self::Bang); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_&")?.is_some() { return Ok(Self::Amp); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_|")?.is_some() { return Ok(Self::Pipe); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_&&")?.is_some() { return Ok(Self::AmpAmp); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_||")?.is_some() { return Ok(Self::PipePipe); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_<<")?.is_some() { return Ok(Self::LtLt); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_>>")?.is_some() { return Ok(Self::GtGt); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_+=")?.is_some() { return Ok(Self::PlusEq); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_-=")?.is_some() { return Ok(Self::MinusEq); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_*=")?.is_some() { return Ok(Self::StarEq); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_/=")?.is_some() { return Ok(Self::SlashEq); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_%=")?.is_some() { return Ok(Self::PercentEq); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_^=")?.is_some() { return Ok(Self::CaretEq); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_&=")?.is_some() { return Ok(Self::AmpEq); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_|=")?.is_some() { return Ok(Self::PipeEq); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_<<=")?.is_some() { return Ok(Self::LtLtEq); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_>>=")?.is_some() { return Ok(Self::GtGtEq); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_=")?.is_some() { return Ok(Self::Eq); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_==")?.is_some() { return Ok(Self::EqEq); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_!=")?.is_some() { return Ok(Self::BangEq); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_>")?.is_some() { return Ok(Self::Gt); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_<")?.is_some() { return Ok(Self::Lt); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_>=")?.is_some() { return Ok(Self::GtEq); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_<=")?.is_some() { return Ok(Self::LtEq); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_@")?.is_some() { return Ok(Self::At); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"__")?.is_some() { return Ok(Self::Underscore); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_.")?.is_some() { return Ok(Self::Dot); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_..")?.is_some() { return Ok(Self::DotDot); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_...")?.is_some() { return Ok(Self::DotDotDot); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_..=")?.is_some() { return Ok(Self::DotDotEq); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_,")?.is_some() { return Ok(Self::Comma); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_;")?.is_some() { return Ok(Self::Semi); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_:")?.is_some() { return Ok(Self::Colon); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_::")?.is_some() { return Ok(Self::ColonColon); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_->")?.is_some() { return Ok(Self::ThinArrow); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_=>")?.is_some() { return Ok(Self::FatArrow); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_#")?.is_some() { return Ok(Self::Hash); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_?")?.is_some() { return Ok(Self::Question); }
-            }
-            _ => {}
+        match u16::from_napi_value(env, napi_val)? {
+            8 => Ok(Self::Plus),
+            75 => Ok(Self::Minus),
+            9 => Ok(Self::Star),
+            86 => Ok(Self::Slash),
+            87 => Ok(Self::Percent),
+            79 => Ok(Self::Caret),
+            29 => Ok(Self::Bang),
+            54 => Ok(Self::Amp),
+            78 => Ok(Self::Pipe),
+            76 => Ok(Self::AmpAmp),
+            77 => Ok(Self::PipePipe),
+            84 => Ok(Self::LtLt),
+            85 => Ok(Self::GtGt),
+            88 => Ok(Self::PlusEq),
+            89 => Ok(Self::MinusEq),
+            90 => Ok(Self::StarEq),
+            91 => Ok(Self::SlashEq),
+            92 => Ok(Self::PercentEq),
+            95 => Ok(Self::CaretEq),
+            93 => Ok(Self::AmpEq),
+            94 => Ok(Self::PipeEq),
+            96 => Ok(Self::LtLtEq),
+            97 => Ok(Self::GtGtEq),
+            38 => Ok(Self::Eq),
+            80 => Ok(Self::EqEq),
+            81 => Ok(Self::BangEq),
+            44 => Ok(Self::Gt),
+            43 => Ok(Self::Lt),
+            83 => Ok(Self::GtEq),
+            82 => Ok(Self::LtEq),
+            115 => Ok(Self::At),
+            136 => Ok(Self::Underscore),
+            109 => Ok(Self::Dot),
+            100 => Ok(Self::DotDot),
+            49 => Ok(Self::DotDotDot),
+            137 => Ok(Self::DotDotEq),
+            130 => Ok(Self::Comma),
+            2 => Ok(Self::Semi),
+            4 => Ok(Self::Colon),
+            47 => Ok(Self::ColonColon),
+            131 => Ok(Self::ThinArrow),
+            3 => Ok(Self::FatArrow),
+            26 => Ok(Self::Hash),
+            10 => Ok(Self::Question),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind TokenTreePunctuationEnum takes",
+            ))),
         }
-        Err(::napi::Error::from_reason("unknown enum payload for TokenTreePunctuationEnum"))
     }
 }
 
@@ -42660,179 +42256,40 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenKeywordsEnum {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-                    match kind_id {
-                        50 => return Ok(Self::V27), // "'"
-                        48 => return Ok(Self::AsKw), // "as"
-                        112 => return Ok(Self::AsyncKw), // "async"
-                        110 => return Ok(Self::AwaitKw), // "await"
-                        107 => return Ok(Self::BreakKw), // "break"
-                        35 => return Ok(Self::ConstKw), // "const"
-                        108 => return Ok(Self::ContinueKw), // "continue"
-                        51 => return Ok(Self::DefaultKw), // "default"
-                        33 => return Ok(Self::EnumKw), // "enum"
-                        39 => return Ok(Self::FnKw), // "fn"
-                        42 => return Ok(Self::ForKw), // "for"
-                        52 => return Ok(Self::Gen), // "gen"
-                        101 => return Ok(Self::IfKw), // "if"
-                        55 => return Ok(Self::ImplKw), // "impl"
-                        45 => return Ok(Self::LetKw), // "let"
-                        105 => return Ok(Self::LoopKw), // "loop"
-                        103 => return Ok(Self::MatchKw), // "match"
-                        138 => return Ok(Self::ModKw), // "mod"
-                        139 => return Ok(Self::PubKw), // "pub"
-                        98 => return Ok(Self::ReturnKw), // "return"
-                        36 => return Ok(Self::StaticKw), // "static"
-                        140 => return Ok(Self::StructKw), // "struct"
-                        41 => return Ok(Self::TraitKw), // "trait"
-                        37 => return Ok(Self::TypeKw), // "type"
-                        32 => return Ok(Self::Union), // "union"
-                        111 => return Ok(Self::UnsafeKw), // "unsafe"
-                        46 => return Ok(Self::UseKw), // "use"
-                        40 => return Ok(Self::WhereKw), // "where"
-                        104 => return Ok(Self::WhileKw), // "while"
-                        _ => {}
-                    }
-                }
-            }
-            ::napi::ValueType::String => {
-                match String::from_napi_value(env, napi_val)?.as_str() {
-                    "'" => return Ok(Self::V27),
-                    "as" => return Ok(Self::AsKw),
-                    "async" => return Ok(Self::AsyncKw),
-                    "await" => return Ok(Self::AwaitKw),
-                    "break" => return Ok(Self::BreakKw),
-                    "const" => return Ok(Self::ConstKw),
-                    "continue" => return Ok(Self::ContinueKw),
-                    "default" => return Ok(Self::DefaultKw),
-                    "enum" => return Ok(Self::EnumKw),
-                    "fn" => return Ok(Self::FnKw),
-                    "for" => return Ok(Self::ForKw),
-                    "gen" => return Ok(Self::Gen),
-                    "if" => return Ok(Self::IfKw),
-                    "impl" => return Ok(Self::ImplKw),
-                    "let" => return Ok(Self::LetKw),
-                    "loop" => return Ok(Self::LoopKw),
-                    "match" => return Ok(Self::MatchKw),
-                    "mod" => return Ok(Self::ModKw),
-                    "pub" => return Ok(Self::PubKw),
-                    "return" => return Ok(Self::ReturnKw),
-                    "static" => return Ok(Self::StaticKw),
-                    "struct" => return Ok(Self::StructKw),
-                    "trait" => return Ok(Self::TraitKw),
-                    "type" => return Ok(Self::TypeKw),
-                    "union" => return Ok(Self::Union),
-                    "unsafe" => return Ok(Self::UnsafeKw),
-                    "use" => return Ok(Self::UseKw),
-                    "where" => return Ok(Self::WhereKw),
-                    "while" => return Ok(Self::WhileKw),
-                    _ => {}
-                }
-            }
-            ::napi::ValueType::Object => {
-                if let Some(kind_id) = ::sittir_core::boundary::property::<u16>(env, napi_val, c"$type")? {
-                    match kind_id {
-                        50 => return Ok(Self::V27), // "'"
-                        48 => return Ok(Self::AsKw), // "as"
-                        112 => return Ok(Self::AsyncKw), // "async"
-                        110 => return Ok(Self::AwaitKw), // "await"
-                        107 => return Ok(Self::BreakKw), // "break"
-                        35 => return Ok(Self::ConstKw), // "const"
-                        108 => return Ok(Self::ContinueKw), // "continue"
-                        51 => return Ok(Self::DefaultKw), // "default"
-                        33 => return Ok(Self::EnumKw), // "enum"
-                        39 => return Ok(Self::FnKw), // "fn"
-                        42 => return Ok(Self::ForKw), // "for"
-                        52 => return Ok(Self::Gen), // "gen"
-                        101 => return Ok(Self::IfKw), // "if"
-                        55 => return Ok(Self::ImplKw), // "impl"
-                        45 => return Ok(Self::LetKw), // "let"
-                        105 => return Ok(Self::LoopKw), // "loop"
-                        103 => return Ok(Self::MatchKw), // "match"
-                        138 => return Ok(Self::ModKw), // "mod"
-                        139 => return Ok(Self::PubKw), // "pub"
-                        98 => return Ok(Self::ReturnKw), // "return"
-                        36 => return Ok(Self::StaticKw), // "static"
-                        140 => return Ok(Self::StructKw), // "struct"
-                        41 => return Ok(Self::TraitKw), // "trait"
-                        37 => return Ok(Self::TypeKw), // "type"
-                        32 => return Ok(Self::Union), // "union"
-                        111 => return Ok(Self::UnsafeKw), // "unsafe"
-                        46 => return Ok(Self::UseKw), // "use"
-                        40 => return Ok(Self::WhereKw), // "where"
-                        104 => return Ok(Self::WhileKw), // "while"
-                        _ => {}
-                    }
-                }
-                if let Some(text) = ::sittir_core::boundary::property::<String>(env, napi_val, c"$text")? {
-                    match text.as_str() {
-                        "'" => return Ok(Self::V27),
-                        "as" => return Ok(Self::AsKw),
-                        "async" => return Ok(Self::AsyncKw),
-                        "await" => return Ok(Self::AwaitKw),
-                        "break" => return Ok(Self::BreakKw),
-                        "const" => return Ok(Self::ConstKw),
-                        "continue" => return Ok(Self::ContinueKw),
-                        "default" => return Ok(Self::DefaultKw),
-                        "enum" => return Ok(Self::EnumKw),
-                        "fn" => return Ok(Self::FnKw),
-                        "for" => return Ok(Self::ForKw),
-                        "gen" => return Ok(Self::Gen),
-                        "if" => return Ok(Self::IfKw),
-                        "impl" => return Ok(Self::ImplKw),
-                        "let" => return Ok(Self::LetKw),
-                        "loop" => return Ok(Self::LoopKw),
-                        "match" => return Ok(Self::MatchKw),
-                        "mod" => return Ok(Self::ModKw),
-                        "pub" => return Ok(Self::PubKw),
-                        "return" => return Ok(Self::ReturnKw),
-                        "static" => return Ok(Self::StaticKw),
-                        "struct" => return Ok(Self::StructKw),
-                        "trait" => return Ok(Self::TraitKw),
-                        "type" => return Ok(Self::TypeKw),
-                        "union" => return Ok(Self::Union),
-                        "unsafe" => return Ok(Self::UnsafeKw),
-                        "use" => return Ok(Self::UseKw),
-                        "where" => return Ok(Self::WhereKw),
-                        "while" => return Ok(Self::WhileKw),
-                        _ => {}
-                    }
-                }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_'")?.is_some() { return Ok(Self::V27); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_as")?.is_some() { return Ok(Self::AsKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_async")?.is_some() { return Ok(Self::AsyncKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_await")?.is_some() { return Ok(Self::AwaitKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_break")?.is_some() { return Ok(Self::BreakKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_const")?.is_some() { return Ok(Self::ConstKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_continue")?.is_some() { return Ok(Self::ContinueKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_default")?.is_some() { return Ok(Self::DefaultKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_enum")?.is_some() { return Ok(Self::EnumKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_fn")?.is_some() { return Ok(Self::FnKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_for")?.is_some() { return Ok(Self::ForKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_gen")?.is_some() { return Ok(Self::Gen); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_if")?.is_some() { return Ok(Self::IfKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_impl")?.is_some() { return Ok(Self::ImplKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_let")?.is_some() { return Ok(Self::LetKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_loop")?.is_some() { return Ok(Self::LoopKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_match")?.is_some() { return Ok(Self::MatchKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_mod")?.is_some() { return Ok(Self::ModKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_pub")?.is_some() { return Ok(Self::PubKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_return")?.is_some() { return Ok(Self::ReturnKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_static")?.is_some() { return Ok(Self::StaticKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_struct")?.is_some() { return Ok(Self::StructKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_trait")?.is_some() { return Ok(Self::TraitKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_type")?.is_some() { return Ok(Self::TypeKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_union")?.is_some() { return Ok(Self::Union); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_unsafe")?.is_some() { return Ok(Self::UnsafeKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_use")?.is_some() { return Ok(Self::UseKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_where")?.is_some() { return Ok(Self::WhereKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_while")?.is_some() { return Ok(Self::WhileKw); }
-            }
-            _ => {}
+        match u16::from_napi_value(env, napi_val)? {
+            50 => Ok(Self::V27),
+            48 => Ok(Self::AsKw),
+            112 => Ok(Self::AsyncKw),
+            110 => Ok(Self::AwaitKw),
+            107 => Ok(Self::BreakKw),
+            35 => Ok(Self::ConstKw),
+            108 => Ok(Self::ContinueKw),
+            51 => Ok(Self::DefaultKw),
+            33 => Ok(Self::EnumKw),
+            39 => Ok(Self::FnKw),
+            42 => Ok(Self::ForKw),
+            52 => Ok(Self::Gen),
+            101 => Ok(Self::IfKw),
+            55 => Ok(Self::ImplKw),
+            45 => Ok(Self::LetKw),
+            105 => Ok(Self::LoopKw),
+            103 => Ok(Self::MatchKw),
+            138 => Ok(Self::ModKw),
+            139 => Ok(Self::PubKw),
+            98 => Ok(Self::ReturnKw),
+            36 => Ok(Self::StaticKw),
+            140 => Ok(Self::StructKw),
+            41 => Ok(Self::TraitKw),
+            37 => Ok(Self::TypeKw),
+            32 => Ok(Self::Union),
+            111 => Ok(Self::UnsafeKw),
+            46 => Ok(Self::UseKw),
+            40 => Ok(Self::WhereKw),
+            104 => Ok(Self::WhileKw),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind TokenKeywordsEnum takes",
+            ))),
         }
-        Err(::napi::Error::from_reason("unknown enum payload for TokenKeywordsEnum"))
     }
 }
 

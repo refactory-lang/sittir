@@ -304,6 +304,8 @@ function projectMixedEnumStorage<T>(
 		const folded = altIds?.[kind];
 		if (folded !== undefined) return folded as unknown as T;
 		if (textIds && Object.values(textIds).includes(kind)) return kind as unknown as T;
+		const member = ownSymbols?.includes(kind) ? _spelledMemberId(entry, Object.values(textIds ?? {})) : undefined;
+		if (member !== undefined) return member as unknown as T;
 		const text = ownSymbols?.includes(kind) ? _spelledText(entry) : undefined;
 		if (text !== undefined) {
 			const memberId = textIds?.[text];
@@ -2188,6 +2190,11 @@ function _spellingTokens(data: _UntypedNode): readonly _UntypedNode[] | undefine
 	if (tokens.some((token) => typeof token !== 'object' || token === null || (token as _UntypedNode).$named !== false))
 		return undefined;
 	return tokens as readonly _UntypedNode[];
+}
+function _spelledMemberId(data: _UntypedNode, memberIds: readonly number[]): number | undefined {
+	const shown = _spellingTokens(data)?.map(_displayOf);
+	const id = shown?.[0];
+	return typeof id === 'number' && shown!.every((other) => other === id) && memberIds.includes(id) ? id : undefined;
 }
 function _spelledText(data: _UntypedNode): string | undefined {
 	if (data.$text !== undefined) return data.$text;
