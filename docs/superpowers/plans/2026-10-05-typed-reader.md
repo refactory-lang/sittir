@@ -6325,6 +6325,7 @@ Modify:
 
 - No rendered byte and no validation row moves, in any task.
 - Each task ends with the gates green; no task leaves two coordinate forms in the tree.
+- `$_layout` in this section is always the wire key of a transport's `TransportLayout`, never the grammar's `_layout` supertype (`LAYOUT_SUPERTYPE`).
 - `index` is the only name for the descendant index in new code, docs and glossary entries. 1a's `row` names are renamed where a task touches them and are gone by Task 22.
 
 ### Review Focus (1c-i)
