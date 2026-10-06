@@ -109,7 +109,7 @@ const literalUnion = (texts: Iterable<string>): TypeNode => unionOf([...texts].s
 
 function subKindOf(path: string, scope: Scope): Heritage {
 	scope.subKind = true;
-	return generic(ir.identifier('Simplify'), generic(ir.identifier('SubKindOf'), vocabRef(pathOf(path), scope)));
+	return generic(ir.identifier('SubKindOf'), vocabRef(pathOf(path), scope));
 }
 
 function elementArm(element: string, scope: Scope): { readonly key: string; readonly arm: Arm } {
@@ -118,11 +118,6 @@ function elementArm(element: string, scope: Scope): { readonly key: string; read
 		: { key: `lookup:${element}`, arm: lookup(element) };
 }
 
-function kindsBeneath(d: Derivation, v: string): string[] {
-	const byPath = [...d.allvocab].filter((o) => o === v || o.startsWith(`${v}.`));
-	const byClaim = [...d.refinements].filter(([, r]) => r.parent === v || r.parent.startsWith(`${v}.`)).map(([o]) => o);
-	return [...new Set([...byPath, ...byClaim])].sort();
-}
 
 function collapsedKinds(d: Derivation, kinds: ReadonlySet<string>): string[] {
 	const byns = new Map<string, Set<string>>();
@@ -201,7 +196,7 @@ function signature(
 	return withTrivia(built, [], trailing);
 }
 
-const kindSignature = (v: string): PropertySignature.Bound => signature('kind', literal(v), false);
+const kindSignature = (v: string): PropertySignature.Bound => signature('$kind', literal(v), false);
 
 function memberSignature(
 	d: Derivation,
@@ -301,9 +296,12 @@ function emitLevel(d: Derivation, v: string, scope: Scope): ExportNode[] {
 				name,
 				typeParameters: typeParameters(),
 				heritage: extendsParent ? subKindOf(parentPath, scope) : null,
-				members: [...holes]
-					.sort(([a], [b]) => a.localeCompare(b))
-					.map(([m, t]) => signature(m, t === 'string' ? KEYWORDS.string : templateType(t.slice(1, -1)), false)),
+				members: [
+					kindSignature(v),
+					...[...holes]
+						.sort(([a], [b]) => a.localeCompare(b))
+						.map(([m, t]) => signature(m, t === 'string' ? KEYWORDS.string : templateType(t.slice(1, -1)), false))
+				],
 				trailing: [lineComment(`// claimed by ${claimedBy} content-derived`)]
 			})
 		);
@@ -322,7 +320,7 @@ function emitLevel(d: Derivation, v: string, scope: Scope): ExportNode[] {
 		);
 	} else {
 		const heritage = sameTop ? subKindOf(parentPath, scope) : null;
-		const members = kindsBeneath(d, v).length > 0 ? [kindSignature(v)] : [];
+		const members = [kindSignature(v)];
 		for (const [member, f] of [...levelMembers(d, v)].sort(([a], [b]) => a.localeCompare(b))) {
 			const built = memberSignature(d, v, member, f, scope);
 			if (built !== null) members.push(built);
@@ -398,7 +396,7 @@ function namespaceFile(d: Derivation, top: string): VocabularyFile {
 		statements.push(exportNamespace(tsname(top), [exportAlias('Any', vocabRef(pathOf(top), scope))]));
 	const imports = [
 		importNames(['GrammarContext'], './context.ts'),
-		...(scope.subKind ? [importNames(['Simplify'], 'type-fest'), importNames(['SubKindOf'], './utils.ts')] : []),
+		...(scope.subKind ? [importNames(['SubKindOf'], './utils.ts')] : []),
 		importNamespace('V', './index.ts')
 	];
 	return {

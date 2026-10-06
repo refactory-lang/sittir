@@ -1,31 +1,30 @@
 // Generated from the grammars' bindings.scm and slot models. Do not edit.
 import type { GrammarContext } from './context.ts';
-import type { Simplify } from 'type-fest';
 import type { SubKindOf } from './utils.ts';
 import type * as V from './index.ts';
 export interface Identifier<G extends GrammarContext> {
 	// claimed by prt
-	readonly kind: 'identifier';
+	readonly $kind: 'identifier';
 }
 
 export namespace Identifier {
-	export interface Crate<G extends GrammarContext> extends Simplify<SubKindOf<V.Identifier<G>>> {
+	export interface Crate<G extends GrammarContext> extends SubKindOf<V.Identifier<G>> {
 		// claimed by r
-		readonly kind: 'identifier.crate';
+		readonly $kind: 'identifier.crate';
 	}
-	export interface Dotted<G extends GrammarContext> extends Simplify<SubKindOf<V.Identifier<G>>> {
+	export interface Dotted<G extends GrammarContext> extends SubKindOf<V.Identifier<G>> {
 		// claimed by p
-		readonly kind: 'identifier.dotted';
+		readonly $kind: 'identifier.dotted';
 		readonly names: G['identifier'][];
 	}
-	export interface Field<G extends GrammarContext> extends Simplify<SubKindOf<V.Identifier<G>>> {
+	export interface Field<G extends GrammarContext> extends SubKindOf<V.Identifier<G>> {
 		// claimed by r
-		readonly kind: 'identifier.field';
+		readonly $kind: 'identifier.field';
 		readonly content: G['identifier'];
 	}
-	export interface Label<G extends GrammarContext> extends Simplify<SubKindOf<V.Identifier<G>>> {
+	export interface Label<G extends GrammarContext> extends SubKindOf<V.Identifier<G>> {
 		// claimed by rt
-		readonly kind: 'identifier.label';
+		readonly $kind: 'identifier.label';
 		readonly content?:
 			| G['identifier']
 			| 'any'
@@ -54,25 +53,25 @@ export namespace Identifier {
 		readonly name?: G['identifier'];
 		// r only
 	}
-	export interface Lifetime<G extends GrammarContext> extends Simplify<SubKindOf<V.Identifier<G>>> {
+	export interface Lifetime<G extends GrammarContext> extends SubKindOf<V.Identifier<G>> {
 		// claimed by r
-		readonly kind: 'identifier.lifetime';
+		readonly $kind: 'identifier.lifetime';
 		readonly name: G['identifier'];
 	}
-	export interface Metavariable<G extends GrammarContext> extends Simplify<SubKindOf<V.Identifier<G>>> {
+	export interface Metavariable<G extends GrammarContext> extends SubKindOf<V.Identifier<G>> {
 		// claimed by r
-		readonly kind: 'identifier.metavariable';
+		readonly $kind: 'identifier.metavariable';
 		readonly attributes?: G['attribute'][];
 	}
-	export interface Nested<G extends GrammarContext> extends Simplify<SubKindOf<V.Identifier<G>>> {
+	export interface Nested<G extends GrammarContext> extends SubKindOf<V.Identifier<G>> {
 		// claimed by t
-		readonly kind: 'identifier.nested';
+		readonly $kind: 'identifier.nested';
 		readonly object: G['identifier'];
 		readonly property: V.Identifier.Property<G>;
 	}
-	export interface Property<G extends GrammarContext> extends Simplify<SubKindOf<V.Identifier<G>>> {
+	export interface Property<G extends GrammarContext> extends SubKindOf<V.Identifier<G>> {
 		// claimed by t
-		readonly kind: 'identifier.property';
+		readonly $kind: 'identifier.property';
 		readonly content?:
 			| G['identifier']
 			| 'any'
@@ -99,18 +98,18 @@ export namespace Identifier {
 			| 'type';
 	}
 	export namespace Property {
-		export interface Computed<G extends GrammarContext> extends Simplify<SubKindOf<V.Identifier.Property<G>>> {
+		export interface Computed<G extends GrammarContext> extends SubKindOf<V.Identifier.Property<G>> {
 			// claimed by t
-			readonly kind: 'identifier.property.computed';
+			readonly $kind: 'identifier.property.computed';
 			readonly expression: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'];
 		}
-		export interface Private<G extends GrammarContext> extends Simplify<SubKindOf<V.Identifier.Property<G>>> {
+		export interface Private<G extends GrammarContext> extends SubKindOf<V.Identifier.Property<G>> {
 			// claimed by t
-			readonly kind: 'identifier.property.private';
+			readonly $kind: 'identifier.property.private';
 		}
-		export interface Shorthand<G extends GrammarContext> extends Simplify<SubKindOf<V.Identifier.Property<G>>> {
+		export interface Shorthand<G extends GrammarContext> extends SubKindOf<V.Identifier.Property<G>> {
 			// claimed by t
-			readonly kind: 'identifier.property.shorthand';
+			readonly $kind: 'identifier.property.shorthand';
 			readonly content:
 				| G['identifier']
 				| 'any'
@@ -142,9 +141,9 @@ export namespace Identifier {
 			| V.Identifier.Property.Private<G>
 			| V.Identifier.Property.Shorthand<G>;
 	}
-	export interface Scoped<G extends GrammarContext> extends Simplify<SubKindOf<V.Identifier<G>>> {
+	export interface Scoped<G extends GrammarContext> extends SubKindOf<V.Identifier<G>> {
 		// claimed by r
-		readonly kind: 'identifier.scoped';
+		readonly $kind: 'identifier.scoped';
 		readonly name: G['identifier'];
 		readonly path?:
 			| G['identifier']
@@ -170,17 +169,17 @@ export namespace Identifier {
 			| 'usize'
 			| G['type'];
 	}
-	export interface Self<G extends GrammarContext> extends Simplify<SubKindOf<V.Identifier<G>>> {
+	export interface Self<G extends GrammarContext> extends SubKindOf<V.Identifier<G>> {
 		// claimed by rt
-		readonly kind: 'identifier.self';
+		readonly $kind: 'identifier.self';
 	}
-	export interface Super<G extends GrammarContext> extends Simplify<SubKindOf<V.Identifier<G>>> {
+	export interface Super<G extends GrammarContext> extends SubKindOf<V.Identifier<G>> {
 		// claimed by rt
-		readonly kind: 'identifier.super';
+		readonly $kind: 'identifier.super';
 	}
-	export interface Type<G extends GrammarContext> extends Simplify<SubKindOf<V.Identifier<G>>> {
+	export interface Type<G extends GrammarContext> extends SubKindOf<V.Identifier<G>> {
 		// claimed by prt
-		readonly kind: 'identifier.type';
+		readonly $kind: 'identifier.type';
 		readonly content?: G['identifier'];
 		// rt only
 	}

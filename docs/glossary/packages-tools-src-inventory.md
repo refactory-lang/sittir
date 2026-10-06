@@ -183,13 +183,16 @@ with a note naming it.
 ```
 
 A sub-kind's interface — a refinement, a content-derived leaf, or a level
-under its top namespace — extends `Simplify<SubKindOf<V.<Parent><G>>>`
-rather than the parent itself: `SubKindOf` (`./utils.ts`, authored) narrows
-the parent's `kind` to the dotted sub-kind pattern, so a sub-kind is
-assignable to its parent while its own `kind` literal stays the narrower
-fact. A file imports `Simplify` (type-fest) and `SubKindOf` only when one of
-its interfaces extends that way, which the file's scope records as the
-heritage is built.
+under its top namespace — extends `SubKindOf<V.<Parent><G>>` rather than the
+parent itself: `SubKindOf` (`./utils.ts`, authored) maps the parent's members
+over unchanged and narrows its `$kind` to the dotted sub-kind pattern, so a
+sub-kind is assignable to its parent while its own `$kind` literal stays the
+narrower fact. Being a flat mapped type, it needs no `Simplify` around it. A
+file imports `SubKindOf` only when one of its interfaces extends that way,
+which the file's scope records as the heritage is built.
+
+Every interface carries `$kind`, its own dotted path, template holes'
+interfaces included.
 
 ### `packages/tools/src/inventory/emit.ts::indexFile`
 

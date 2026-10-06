@@ -225,9 +225,10 @@ describe('vocabularyFiles', () => {
 		expect(modifier).toBeDefined();
 		if (!modifier) return;
 		const source = renderVocabularyFile(modifier);
-		expect(source).toContain('extends Simplify<SubKindOf<V.Modifier<G>>>');
-		expect(source).toContain("import type { Simplify } from 'type-fest';");
+		expect(source).toContain('extends SubKindOf<V.Modifier<G>>');
+		expect(source).not.toContain('Simplify');
 		expect(source).toContain("import type { SubKindOf } from './utils.ts';");
+		expect(source).toContain("readonly $kind: 'modifier.extern';");
 		expect(source).not.toContain('extends V.');
 	});
 	it('builds the index of the namespace files through the typescript factories', async () => {

@@ -61,7 +61,7 @@ const FunctionItemAsDeclarationFunction = (n: T.FunctionItem.Parsed): VocabViews
 - **A refinement** (a claim with field literals beside the grammar kind's plain claim) reads like its parent and pins each literal (`operator: () => '+'`).
 - **Leaf text:** a leaf whose text varies carries a `$value` closure; a fixed-literal leaf is its const string, with no `$value`.
 - **The low-level node** `n` is captured by the closures and never exposed.
-- **No `kind` member:** the vocabulary kind is the literal's type, and a role is tested with `is`.
+- **`$kind` is type-only:** the literal's type carries it, selecting its interface, and the literal holds no `$kind` value; a role is tested at run time with `is`.
 
 ### 2.3 The read dispatch
 
@@ -75,7 +75,7 @@ Nothing queries the tree at read time. A portable node costs one small object, a
 
 ### 2.4 Build entries
 
-The portable engine's `build` is typed per kind from the vocabulary. A structure's kind, named by `kind` where its context does not decide it (bindings spec §3.4), selects the build entry, and each member is handed to its slot's loose-builder parameter:
+The portable engine's `build` is typed per kind from the vocabulary. A structure's kind, named by `$kind` where its context does not decide it (bindings spec §3.4), selects the build entry, and each member is handed to its slot's loose-builder parameter:
 
 - A presence or nested member routed through an intermediate kind builds that kind's input; through a forwarded envelope that is its spread form (`functionModifiers(TSKindId.AsyncKeyword, …)`). Loose builders never guess a keyword from text.
 - A refinement fills in its pinned literals.
@@ -115,7 +115,7 @@ The generated module is type-checked against the vocabulary, and the target is z
 | a content-derived claim the member type leaves out (`type.named.prelude`, `literal.boolean.true`) | A member that admits a kind admits every claim of that kind, predicate claims included. |
 | an unmapped marker where the read gives a mapped kind | The unmapped ratchet: it falls as claims complete, onto an existing kind or one a feature adds. |
 | a low-level reader typed `unknown` (`token_repetition.operator`) | Type those readers in the typed surface. |
-| a refinement where its parent is admitted (`kind` is a single literal) | The bindings spec's §3.4 rule: a level's `kind` admits every path beneath it. |
+| a refinement where its parent is admitted (`$kind` is a single literal) | The bindings spec's §3.4 rule: a level's `$kind` admits every path beneath it. |
 | a member that can be absent where the interface requires it (an optional element inside a required container) | Requiredness carries through containers. |
 | a member the bindings route that the interface does not declare | A feature adds the member, or the binding drops it. |
 

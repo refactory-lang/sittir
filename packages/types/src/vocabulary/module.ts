@@ -3,7 +3,7 @@ import type { GrammarContext } from './context.ts';
 import type * as V from './index.ts';
 export interface Module<G extends GrammarContext> {
 	// claimed by prt
-	readonly kind: 'module';
+	readonly $kind: 'module';
 	readonly statements?: (
 		| G['attribute']
 		| V.Clause.Import.Alias<G>

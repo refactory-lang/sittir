@@ -1,21 +1,20 @@
 // Generated from the grammars' bindings.scm and slot models. Do not edit.
 import type { GrammarContext } from './context.ts';
-import type { Simplify } from 'type-fest';
 import type { SubKindOf } from './utils.ts';
 import type * as V from './index.ts';
 export interface Statement<G extends GrammarContext> {
-	readonly kind: 'statement';
+	readonly $kind: 'statement';
 }
 
 export namespace Statement {
-	export interface Assert<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+	export interface Assert<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by p
-		readonly kind: 'statement.assert';
+		readonly $kind: 'statement.assert';
 		readonly expressions: (G['expression'] | G['identifier'] | G['literal'] | G['pattern'])[];
 	}
-	export interface Block<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+	export interface Block<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by prt
-		readonly kind: 'statement.block';
+		readonly $kind: 'statement.block';
 		readonly label?: V.Identifier.Label<G>;
 		// r only
 		readonly statements?: (
@@ -29,53 +28,53 @@ export namespace Statement {
 		// r only
 	}
 	export namespace Block {
-		export interface Static<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement.Block<G>>> {
+		export interface Static<G extends GrammarContext> extends SubKindOf<V.Statement.Block<G>> {
 			// claimed by t
-			readonly kind: 'statement.block.static';
+			readonly $kind: 'statement.block.static';
 			readonly body: V.Statement.Block<G>;
 		}
 		export type Any<G extends GrammarContext> = V.Statement.Block<G> | V.Statement.Block.Static<G>;
 	}
-	export interface Break<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+	export interface Break<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by prt
-		readonly kind: 'statement.break';
+		readonly $kind: 'statement.break';
 		readonly expression?: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
 		// r only
 		readonly label?: V.Identifier.Label<G>;
 		// rt only
 	}
-	export interface Continue<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+	export interface Continue<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by prt
-		readonly kind: 'statement.continue';
+		readonly $kind: 'statement.continue';
 		readonly label?: V.Identifier.Label<G>;
 		// rt only
 	}
-	export interface Debugger<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+	export interface Debugger<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by t
-		readonly kind: 'statement.debugger';
+		readonly $kind: 'statement.debugger';
 	}
-	export interface Delete<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+	export interface Delete<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by p
-		readonly kind: 'statement.delete';
+		readonly $kind: 'statement.delete';
 		readonly expressions: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 	}
-	export interface Empty<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+	export interface Empty<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by rt
-		readonly kind: 'statement.empty';
+		readonly $kind: 'statement.empty';
 	}
-	export interface Exec<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+	export interface Exec<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by p
-		readonly kind: 'statement.exec';
+		readonly $kind: 'statement.exec';
 		readonly code: G['identifier'] | V.Literal.String<G>;
 		readonly inClauses?: (G['expression'] | G['identifier'] | G['literal'] | G['pattern'])[];
 	}
-	export interface Export<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+	export interface Export<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by t
-		readonly kind: 'statement.export';
+		readonly $kind: 'statement.export';
 	}
-	export interface Expression<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+	export interface Expression<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by prt
-		readonly kind: 'statement.expression';
+		readonly $kind: 'statement.expression';
 		readonly content?:
 			| V.Declaration.Variable<G>
 			| G['expression']
@@ -95,14 +94,14 @@ export namespace Statement {
 		readonly expression?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'];
 		// t only
 	}
-	export interface Global<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+	export interface Global<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by p
-		readonly kind: 'statement.global';
+		readonly $kind: 'statement.global';
 		readonly names: G['identifier'][];
 	}
-	export interface If<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+	export interface If<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by prt
-		readonly kind: 'statement.if';
+		readonly $kind: 'statement.if';
 		readonly alternative?: V.Clause.Else<G>;
 		// rt only
 		readonly alternatives?: G['clause'][];
@@ -116,9 +115,9 @@ export namespace Statement {
 			| G['statement'];
 		readonly consequence: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
 	}
-	export interface Import<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+	export interface Import<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by prt
-		readonly kind: 'statement.import';
+		readonly $kind: 'statement.import';
 		readonly argument?:
 			| G['identifier']
 			| V.Clause.Import.Any<G>
@@ -159,25 +158,25 @@ export namespace Statement {
 		// r only
 	}
 	export namespace Import {
-		export interface Crate<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement.Import<G>>> {
+		export interface Crate<G extends GrammarContext> extends SubKindOf<V.Statement.Import<G>> {
 			// claimed by r
-			readonly kind: 'statement.import.crate';
+			readonly $kind: 'statement.import.crate';
 			readonly alias?: G['identifier'];
 			readonly name: G['identifier'];
 			readonly visibility?: V.Modifier.Visibility<G>;
 		}
-		export interface From<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement.Import<G>>> {
+		export interface From<G extends GrammarContext> extends SubKindOf<V.Statement.Import<G>> {
 			// claimed by p
-			readonly kind: 'statement.import.from';
+			readonly $kind: 'statement.import.from';
 			readonly content:
 				| V.Identifier.Dotted<G>
 				| V.Clause.Import.Any<G>
 				| (V.Identifier.Dotted<G> | V.Clause.Import.Any<G>)[];
 			readonly moduleName: V.Clause.Import.Relative<G> | V.Identifier.Dotted<G>;
 		}
-		export interface Future<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement.Import<G>>> {
+		export interface Future<G extends GrammarContext> extends SubKindOf<V.Statement.Import<G>> {
 			// claimed by p
-			readonly kind: 'statement.import.future';
+			readonly $kind: 'statement.import.future';
 			readonly content: (V.Clause.Import.Alias<G> | V.Identifier.Dotted<G>)[];
 		}
 		export type Any<G extends GrammarContext> =
@@ -186,9 +185,9 @@ export namespace Statement {
 			| V.Statement.Import.From<G>
 			| V.Statement.Import.Future<G>;
 	}
-	export interface Labeled<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+	export interface Labeled<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by t
-		readonly kind: 'statement.labeled';
+		readonly $kind: 'statement.labeled';
 		readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
 		readonly label:
 			| V.Identifier.Label<G>
@@ -215,17 +214,17 @@ export namespace Statement {
 			| 'symbol'
 			| 'type';
 	}
-	export interface Loop<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+	export interface Loop<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by r
-		readonly kind: 'statement.loop';
+		readonly $kind: 'statement.loop';
 		readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
 		// prt only
 		readonly label?: V.Identifier.Label<G>;
 	}
 	export namespace Loop {
-		export interface Counted<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement.Loop<G>>> {
+		export interface Counted<G extends GrammarContext> extends SubKindOf<V.Statement.Loop<G>> {
 			// claimed by t
-			readonly kind: 'statement.loop.counted';
+			readonly $kind: 'statement.loop.counted';
 			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
 			readonly condition:
 				| V.Declaration.Module<G>
@@ -236,15 +235,15 @@ export namespace Statement {
 			readonly increment?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'];
 			readonly initializer: G['declaration'] | G['expression'] | G['identifier'] | G['literal'] | V.Statement.Empty<G>;
 		}
-		export interface DoWhile<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement.Loop<G>>> {
+		export interface DoWhile<G extends GrammarContext> extends SubKindOf<V.Statement.Loop<G>> {
 			// claimed by t
-			readonly kind: 'statement.loop.do_while';
+			readonly $kind: 'statement.loop.do_while';
 			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
 			readonly condition: V.Expression.Parenthesized<G>;
 		}
-		export interface For<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement.Loop<G>>> {
+		export interface For<G extends GrammarContext> extends SubKindOf<V.Statement.Loop<G>> {
 			// claimed by prt
-			readonly kind: 'statement.loop.for';
+			readonly $kind: 'statement.loop.for';
 			readonly alternative?: V.Clause.Else<G>;
 			// p only
 			readonly async?: boolean;
@@ -263,9 +262,9 @@ export namespace Statement {
 			readonly right?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'] | G['statement'];
 			// pr only
 		}
-		export interface While<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement.Loop<G>>> {
+		export interface While<G extends GrammarContext> extends SubKindOf<V.Statement.Loop<G>> {
 			// claimed by prt
-			readonly kind: 'statement.loop.while';
+			readonly $kind: 'statement.loop.while';
 			readonly alternative?: V.Clause.Else<G>;
 			// p only
 			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
@@ -286,9 +285,9 @@ export namespace Statement {
 			| V.Statement.Loop.For<G>
 			| V.Statement.Loop.While<G>;
 	}
-	export interface Match<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+	export interface Match<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by pr
-		readonly kind: 'statement.match';
+		readonly $kind: 'statement.match';
 		readonly body:
 			| V.Unmapped<'rust:match_block_arms'>
 			| V.Clause.Case<G>
@@ -301,25 +300,25 @@ export namespace Statement {
 			| G['statement']
 			| (G['expression'] | G['identifier'] | G['literal'] | G['statement'])[];
 	}
-	export interface Nonlocal<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+	export interface Nonlocal<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by p
-		readonly kind: 'statement.nonlocal';
+		readonly $kind: 'statement.nonlocal';
 		readonly names: G['identifier'][];
 	}
-	export interface Pass<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+	export interface Pass<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by p
-		readonly kind: 'statement.pass';
+		readonly $kind: 'statement.pass';
 	}
-	export interface Print<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+	export interface Print<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by p
-		readonly kind: 'statement.print';
+		readonly $kind: 'statement.print';
 		readonly content?: V.Statement.Print.Any<G>;
 		readonly printArguments?: (G['expression'] | G['identifier'] | G['literal'] | G['pattern'])[];
 	}
 	export namespace Print {
-		export interface Chevron<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement.Print<G>>> {
+		export interface Chevron<G extends GrammarContext> extends SubKindOf<V.Statement.Print<G>> {
 			// claimed by p
-			readonly kind: 'statement.print.chevron';
+			readonly $kind: 'statement.print.chevron';
 			readonly chevron: V.Clause.Print.Chevron<G>;
 			readonly printChevronArguments?:
 				| G['expression']
@@ -331,9 +330,9 @@ export namespace Statement {
 		}
 		export type Any<G extends GrammarContext> = V.Statement.Print<G> | V.Statement.Print.Chevron<G>;
 	}
-	export interface Return<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+	export interface Return<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by prt
-		readonly kind: 'statement.return';
+		readonly $kind: 'statement.return';
 		readonly expression?:
 			| V.Declaration.Module<G>
 			| G['expression']
@@ -342,37 +341,37 @@ export namespace Statement {
 			| G['pattern']
 			| G['statement'];
 	}
-	export interface Scope<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+	export interface Scope<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by t
-		readonly kind: 'statement.scope';
+		readonly $kind: 'statement.scope';
 		readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
 		readonly object: V.Expression.Parenthesized<G>;
 	}
-	export interface Switch<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+	export interface Switch<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by t
-		readonly kind: 'statement.switch';
+		readonly $kind: 'statement.switch';
 		readonly body: V.Clause.Case.Any<G>[];
 		readonly value: V.Expression.Parenthesized<G>;
 	}
-	export interface Throw<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+	export interface Throw<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by pt
-		readonly kind: 'statement.throw';
+		readonly $kind: 'statement.throw';
 		readonly cause?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 		// p only
 		readonly expression?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 	}
-	export interface Try<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+	export interface Try<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by pt
-		readonly kind: 'statement.try';
+		readonly $kind: 'statement.try';
 		readonly alternative?: V.Clause.Else<G>;
 		// p only
 		readonly body: V.Declaration.TypeAlias<G> | G['statement'];
 		readonly finalizer?: V.Clause.Finally<G>;
 		readonly handlers?: G['clause'] | G['clause'][];
 	}
-	export interface With<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+	export interface With<G extends GrammarContext> extends SubKindOf<V.Statement<G>> {
 		// claimed by p
-		readonly kind: 'statement.with';
+		readonly $kind: 'statement.with';
 		readonly async?: boolean;
 		readonly body: V.Declaration.TypeAlias<G> | G['statement'];
 		readonly withClause: V.Clause.With<G>;
