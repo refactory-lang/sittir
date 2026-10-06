@@ -2796,6 +2796,8 @@ for a named non-word literal kind so it keeps its factory and type.
 	 */
 ```
 
+The id is the one the parser shows for the member: a multi-token member such as typescript `unique symbol` is an alias, and each of its tokens displays the alias's id (143). A read enum node is folded onto its member by that id, so two members resolving to one id could not be told apart on a read: construction throws, naming the enum and both members.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.storage`
 
 ```text

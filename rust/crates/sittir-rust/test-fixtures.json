@@ -7175,31 +7175,8 @@
               "$source": 0,
               "$named": true,
               "_item": [
-                {
-                  "$type": 341,
-                  "$source": 0,
-                  "$named": true,
-                  "$span": {
-                    "start": 191,
-                    "end": 194
-                  },
-                  "$text": "u32"
-                },
-                {
-                  "$type": 341,
-                  "$source": 0,
-                  "$named": true,
-                  "$span": {
-                    "start": 196,
-                    "end": 199
-                  },
-                  "$text": "u16",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ", "
-                    }
-                  }
-                }
+                62,
+                60
               ],
               "$other": [
                 {
@@ -7212,18 +7189,7 @@
                   }
                 }
               ],
-              "_delimiter": 0,
-              "$_layout": {
-                "flank": {
-                  "$text": "fn foo() -> (u32, u16)",
-                  "$span": {
-                    "start": 13,
-                    "end": 21
-                  },
-                  "$before": true,
-                  "$after": true
-                }
-              }
+              "_delimiter": 0
             },
             "$other": [
               {
@@ -9832,31 +9798,8 @@
           "$source": 0,
           "$named": true,
           "_item": [
-            {
-              "$type": 341,
-              "$source": 0,
-              "$named": true,
-              "$span": {
-                "start": 191,
-                "end": 194
-              },
-              "$text": "u32"
-            },
-            {
-              "$type": 341,
-              "$source": 0,
-              "$named": true,
-              "$span": {
-                "start": 196,
-                "end": 199
-              },
-              "$text": "u16",
-              "$_layout": {
-                "gap": {
-                  "$text": ", "
-                }
-              }
-            }
+            62,
+            60
           ],
           "$other": [
             {
@@ -9869,18 +9812,7 @@
               }
             }
           ],
-          "_delimiter": 0,
-          "$_layout": {
-            "flank": {
-              "$text": "fn foo() -> (u32, u16)",
-              "$span": {
-                "start": 13,
-                "end": 21
-              },
-              "$before": true,
-              "$after": true
-            }
-          }
+          "_delimiter": 0
         },
         "$other": [
           {
@@ -15756,31 +15688,8 @@
         "$source": 0,
         "$named": true,
         "_item": [
-          {
-            "$type": 341,
-            "$source": 0,
-            "$named": true,
-            "$span": {
-              "start": 191,
-              "end": 194
-            },
-            "$text": "u32"
-          },
-          {
-            "$type": 341,
-            "$source": 0,
-            "$named": true,
-            "$span": {
-              "start": 196,
-              "end": 199
-            },
-            "$text": "u16",
-            "$_layout": {
-              "gap": {
-                "$text": ", "
-              }
-            }
-          }
+          62,
+          60
         ],
         "$other": [
           {
@@ -15793,18 +15702,7 @@
             }
           }
         ],
-        "_delimiter": 0,
-        "$_layout": {
-          "flank": {
-            "$text": "fn foo() -> (u32, u16)",
-            "$span": {
-              "start": 13,
-              "end": 21
-            },
-            "$before": true,
-            "$after": true
-          }
-        }
+        "_delimiter": 0
       },
       "$other": [
         {
@@ -18311,29 +18209,9 @@
                             "$source": 0,
                             "$named": true,
                             "_item": [
-                              {
-                                "$type": 341,
-                                "$source": 0,
-                                "$named": true,
-                                "$span": {
-                                  "start": 46,
-                                  "end": 51
-                                },
-                                "$text": "usize"
-                              }
+                              69
                             ],
-                            "_delimiter": 0,
-                            "$_layout": {
-                              "flank": {
-                                "$text": "fn triples(a: impl B) -> impl Iterator<Item=(usize)",
-                                "$span": {
-                                  "start": 45,
-                                  "end": 50
-                                },
-                                "$before": true,
-                                "$after": true
-                              }
-                            }
+                            "_delimiter": 0
                           },
                           "$other": [
                             {
@@ -18674,29 +18552,9 @@
                         "$source": 0,
                         "$named": true,
                         "_item": [
-                          {
-                            "$type": 341,
-                            "$source": 0,
-                            "$named": true,
-                            "$span": {
-                              "start": 46,
-                              "end": 51
-                            },
-                            "$text": "usize"
-                          }
+                          69
                         ],
-                        "_delimiter": 0,
-                        "$_layout": {
-                          "flank": {
-                            "$text": "fn triples(a: impl B) -> impl Iterator<Item=(usize)",
-                            "$span": {
-                              "start": 45,
-                              "end": 50
-                            },
-                            "$before": true,
-                            "$after": true
-                          }
-                        }
+                        "_delimiter": 0
                       },
                       "$other": [
                         {
@@ -19156,29 +19014,9 @@
                       "$source": 0,
                       "$named": true,
                       "_item": [
-                        {
-                          "$type": 341,
-                          "$source": 0,
-                          "$named": true,
-                          "$span": {
-                            "start": 46,
-                            "end": 51
-                          },
-                          "$text": "usize"
-                        }
+                        69
                       ],
-                      "_delimiter": 0,
-                      "$_layout": {
-                        "flank": {
-                          "$text": "fn triples(a: impl B) -> impl Iterator<Item=(usize)",
-                          "$span": {
-                            "start": 45,
-                            "end": 50
-                          },
-                          "$before": true,
-                          "$after": true
-                        }
-                      }
+                      "_delimiter": 0
                     },
                     "$other": [
                       {
@@ -19444,29 +19282,9 @@
                     "$source": 0,
                     "$named": true,
                     "_item": [
-                      {
-                        "$type": 341,
-                        "$source": 0,
-                        "$named": true,
-                        "$span": {
-                          "start": 46,
-                          "end": 51
-                        },
-                        "$text": "usize"
-                      }
+                      69
                     ],
-                    "_delimiter": 0,
-                    "$_layout": {
-                      "flank": {
-                        "$text": "fn triples(a: impl B) -> impl Iterator<Item=(usize)",
-                        "$span": {
-                          "start": 45,
-                          "end": 50
-                        },
-                        "$before": true,
-                        "$after": true
-                      }
-                    }
+                    "_delimiter": 0
                   },
                   "$other": [
                     {
@@ -19573,29 +19391,9 @@
         "$source": 0,
         "$named": true,
         "_item": [
-          {
-            "$type": 341,
-            "$source": 0,
-            "$named": true,
-            "$span": {
-              "start": 46,
-              "end": 51
-            },
-            "$text": "usize"
-          }
+          69
         ],
-        "_delimiter": 0,
-        "$_layout": {
-          "flank": {
-            "$text": "fn triples(a: impl B) -> impl Iterator<Item=(usize)",
-            "$span": {
-              "start": 45,
-              "end": 50
-            },
-            "$before": true,
-            "$after": true
-          }
-        }
+        "_delimiter": 0
       },
       "$other": [
         {
@@ -28567,16 +28365,7 @@
             "$source": 0,
             "$named": true,
             "_item": [
-              {
-                "$type": 125,
-                "$source": 0,
-                "$named": true,
-                "$text": "self",
-                "$span": {
-                  "start": 253,
-                  "end": 257
-                }
-              },
+              125,
               {
                 "$type": 228,
                 "$source": 0,
@@ -207540,16 +207329,7 @@
                         "$source": 0,
                         "$named": true,
                         "_item": [
-                          {
-                            "$type": 426,
-                            "$source": 0,
-                            "$named": true,
-                            "$span": {
-                              "start": 148,
-                              "end": 149
-                            },
-                            "$text": "_"
-                          },
+                          426,
                           {
                             "$type": 318,
                             "$source": 0,
@@ -208737,16 +208517,7 @@
                   "$source": 0,
                   "$named": true,
                   "_item": [
-                    {
-                      "$type": 426,
-                      "$source": 0,
-                      "$named": true,
-                      "$span": {
-                        "start": 148,
-                        "end": 149
-                      },
-                      "$text": "_"
-                    },
+                    426,
                     {
                       "$type": 318,
                       "$source": 0,
@@ -210093,16 +209864,7 @@
         "$source": 0,
         "$named": true,
         "_item": [
-          {
-            "$type": 426,
-            "$source": 0,
-            "$named": true,
-            "$span": {
-              "start": 148,
-              "end": 149
-            },
-            "$text": "_"
-          },
+          426,
           {
             "$type": 318,
             "$source": 0,
@@ -210906,16 +210668,7 @@
                                 "end": 15
                               }
                             },
-                            {
-                              "$type": 321,
-                              "$source": 0,
-                              "$named": true,
-                              "$span": {
-                                "start": 17,
-                                "end": 19
-                              },
-                              "$text": ".."
-                            }
+                            321
                           ],
                           "$other": [
                             {
@@ -211026,29 +210779,9 @@
                           "$source": 0,
                           "$named": true,
                           "_item": [
-                            {
-                              "$type": 321,
-                              "$source": 0,
-                              "$named": true,
-                              "$span": {
-                                "start": 31,
-                                "end": 33
-                              },
-                              "$text": ".."
-                            }
+                            321
                           ],
-                          "_delimiter": 0,
-                          "$_layout": {
-                            "flank": {
-                              "$text": "  B(..)",
-                              "$span": {
-                                "start": 4,
-                                "end": 6
-                              },
-                              "$before": true,
-                              "$after": true
-                            }
-                          }
+                          "_delimiter": 0
                         },
                         "$other": [
                           {
@@ -211227,16 +210960,7 @@
                               "pattern"
                             ]
                           },
-                          {
-                            "$type": 321,
-                            "$source": 0,
-                            "$named": true,
-                            "$span": {
-                              "start": 54,
-                              "end": 56
-                            },
-                            "$text": ".."
-                          }
+                          321
                         ],
                         "$other": [
                           {
@@ -211453,16 +211177,7 @@
                           "end": 15
                         }
                       },
-                      {
-                        "$type": 321,
-                        "$source": 0,
-                        "$named": true,
-                        "$span": {
-                          "start": 17,
-                          "end": 19
-                        },
-                        "$text": ".."
-                      }
+                      321
                     ],
                     "$other": [
                       {
@@ -211573,29 +211288,9 @@
                     "$source": 0,
                     "$named": true,
                     "_item": [
-                      {
-                        "$type": 321,
-                        "$source": 0,
-                        "$named": true,
-                        "$span": {
-                          "start": 31,
-                          "end": 33
-                        },
-                        "$text": ".."
-                      }
+                      321
                     ],
-                    "_delimiter": 0,
-                    "$_layout": {
-                      "flank": {
-                        "$text": "  B(..)",
-                        "$span": {
-                          "start": 4,
-                          "end": 6
-                        },
-                        "$before": true,
-                        "$after": true
-                      }
-                    }
+                    "_delimiter": 0
                   },
                   "$other": [
                     {
@@ -211774,16 +211469,7 @@
                         "pattern"
                       ]
                     },
-                    {
-                      "$type": 321,
-                      "$source": 0,
-                      "$named": true,
-                      "$span": {
-                        "start": 54,
-                        "end": 56
-                      },
-                      "$text": ".."
-                    }
+                    321
                   ],
                   "$other": [
                     {
@@ -211958,16 +211644,7 @@
               "end": 15
             }
           },
-          {
-            "$type": 321,
-            "$source": 0,
-            "$named": true,
-            "$span": {
-              "start": 17,
-              "end": 19
-            },
-            "$text": ".."
-          }
+          321
         ],
         "$other": [
           {
@@ -212050,29 +211727,9 @@
         "$source": 0,
         "$named": true,
         "_item": [
-          {
-            "$type": 321,
-            "$source": 0,
-            "$named": true,
-            "$span": {
-              "start": 31,
-              "end": 33
-            },
-            "$text": ".."
-          }
+          321
         ],
-        "_delimiter": 0,
-        "$_layout": {
-          "flank": {
-            "$text": "  B(..)",
-            "$span": {
-              "start": 4,
-              "end": 6
-            },
-            "$before": true,
-            "$after": true
-          }
-        }
+        "_delimiter": 0
       },
       "$other": [
         {
@@ -212215,16 +211872,7 @@
               "pattern"
             ]
           },
-          {
-            "$type": 321,
-            "$source": 0,
-            "$named": true,
-            "$span": {
-              "start": 54,
-              "end": 56
-            },
-            "$text": ".."
-          }
+          321
         ],
         "$other": [
           {
@@ -212463,29 +212111,9 @@
                               "$source": 0,
                               "$named": true,
                               "_item": [
-                                {
-                                  "$type": 426,
-                                  "$source": 0,
-                                  "$named": true,
-                                  "$span": {
-                                    "start": 19,
-                                    "end": 20
-                                  },
-                                  "$text": "_"
-                                }
+                                426
                               ],
-                              "_delimiter": 0,
-                              "$_layout": {
-                                "flank": {
-                                  "$text": "  a @ A(_)",
-                                  "$span": {
-                                    "start": 8,
-                                    "end": 9
-                                  },
-                                  "$before": true,
-                                  "$after": true
-                                }
-                              }
+                              "_delimiter": 0
                             },
                             "$other": [
                               {
@@ -212561,29 +212189,9 @@
                               "$source": 0,
                               "$named": true,
                               "_item": [
-                                {
-                                  "$type": 321,
-                                  "$source": 0,
-                                  "$named": true,
-                                  "$span": {
-                                    "start": 30,
-                                    "end": 32
-                                  },
-                                  "$text": ".."
-                                }
+                                321
                               ],
-                              "_delimiter": 0,
-                              "$_layout": {
-                                "flank": {
-                                  "$text": "  a @ A(_) | b @ B(..)",
-                                  "$span": {
-                                    "start": 19,
-                                    "end": 21
-                                  },
-                                  "$before": true,
-                                  "$after": true
-                                }
-                              }
+                              "_delimiter": 0
                             },
                             "$other": [
                               {
@@ -213944,29 +213552,9 @@
                         "$source": 0,
                         "$named": true,
                         "_item": [
-                          {
-                            "$type": 426,
-                            "$source": 0,
-                            "$named": true,
-                            "$span": {
-                              "start": 19,
-                              "end": 20
-                            },
-                            "$text": "_"
-                          }
+                          426
                         ],
-                        "_delimiter": 0,
-                        "$_layout": {
-                          "flank": {
-                            "$text": "  a @ A(_)",
-                            "$span": {
-                              "start": 8,
-                              "end": 9
-                            },
-                            "$before": true,
-                            "$after": true
-                          }
-                        }
+                        "_delimiter": 0
                       },
                       "$other": [
                         {
@@ -214042,29 +213630,9 @@
                         "$source": 0,
                         "$named": true,
                         "_item": [
-                          {
-                            "$type": 321,
-                            "$source": 0,
-                            "$named": true,
-                            "$span": {
-                              "start": 30,
-                              "end": 32
-                            },
-                            "$text": ".."
-                          }
+                          321
                         ],
-                        "_delimiter": 0,
-                        "$_layout": {
-                          "flank": {
-                            "$text": "  a @ A(_) | b @ B(..)",
-                            "$span": {
-                              "start": 19,
-                              "end": 21
-                            },
-                            "$before": true,
-                            "$after": true
-                          }
-                        }
+                        "_delimiter": 0
                       },
                       "$other": [
                         {
@@ -215392,29 +214960,9 @@
             "$source": 0,
             "$named": true,
             "_item": [
-              {
-                "$type": 426,
-                "$source": 0,
-                "$named": true,
-                "$span": {
-                  "start": 19,
-                  "end": 20
-                },
-                "$text": "_"
-              }
+              426
             ],
-            "_delimiter": 0,
-            "$_layout": {
-              "flank": {
-                "$text": "  a @ A(_)",
-                "$span": {
-                  "start": 8,
-                  "end": 9
-                },
-                "$before": true,
-                "$after": true
-              }
-            }
+            "_delimiter": 0
           },
           "$other": [
             {
@@ -215490,29 +215038,9 @@
             "$source": 0,
             "$named": true,
             "_item": [
-              {
-                "$type": 321,
-                "$source": 0,
-                "$named": true,
-                "$span": {
-                  "start": 30,
-                  "end": 32
-                },
-                "$text": ".."
-              }
+              321
             ],
-            "_delimiter": 0,
-            "$_layout": {
-              "flank": {
-                "$text": "  a @ A(_) | b @ B(..)",
-                "$span": {
-                  "start": 19,
-                  "end": 21
-                },
-                "$before": true,
-                "$after": true
-              }
-            }
+            "_delimiter": 0
           },
           "$other": [
             {
@@ -215957,29 +215485,9 @@
           "$source": 0,
           "$named": true,
           "_item": [
-            {
-              "$type": 426,
-              "$source": 0,
-              "$named": true,
-              "$span": {
-                "start": 19,
-                "end": 20
-              },
-              "$text": "_"
-            }
+            426
           ],
-          "_delimiter": 0,
-          "$_layout": {
-            "flank": {
-              "$text": "  a @ A(_)",
-              "$span": {
-                "start": 8,
-                "end": 9
-              },
-              "$before": true,
-              "$after": true
-            }
-          }
+          "_delimiter": 0
         },
         "$other": [
           {
@@ -216072,29 +215580,9 @@
           "$source": 0,
           "$named": true,
           "_item": [
-            {
-              "$type": 321,
-              "$source": 0,
-              "$named": true,
-              "$span": {
-                "start": 30,
-                "end": 32
-              },
-              "$text": ".."
-            }
+            321
           ],
-          "_delimiter": 0,
-          "$_layout": {
-            "flank": {
-              "$text": "  a @ A(_) | b @ B(..)",
-              "$span": {
-                "start": 19,
-                "end": 21
-              },
-              "$before": true,
-              "$after": true
-            }
-          }
+          "_delimiter": 0
         },
         "$other": [
           {
@@ -216514,29 +216002,9 @@
         "$source": 0,
         "$named": true,
         "_item": [
-          {
-            "$type": 426,
-            "$source": 0,
-            "$named": true,
-            "$span": {
-              "start": 19,
-              "end": 20
-            },
-            "$text": "_"
-          }
+          426
         ],
-        "_delimiter": 0,
-        "$_layout": {
-          "flank": {
-            "$text": "  a @ A(_)",
-            "$span": {
-              "start": 8,
-              "end": 9
-            },
-            "$before": true,
-            "$after": true
-          }
-        }
+        "_delimiter": 0
       },
       "$other": [
         {
@@ -216599,29 +216067,9 @@
         "$source": 0,
         "$named": true,
         "_item": [
-          {
-            "$type": 321,
-            "$source": 0,
-            "$named": true,
-            "$span": {
-              "start": 30,
-              "end": 32
-            },
-            "$text": ".."
-          }
+          321
         ],
-        "_delimiter": 0,
-        "$_layout": {
-          "flank": {
-            "$text": "  a @ A(_) | b @ B(..)",
-            "$span": {
-              "start": 19,
-              "end": 21
-            },
-            "$before": true,
-            "$after": true
-          }
-        }
+        "_delimiter": 0
       },
       "$other": [
         {
@@ -237945,16 +237393,7 @@
               "$source": 0,
               "$named": true,
               "_item": [
-                {
-                  "$type": 341,
-                  "$source": 0,
-                  "$named": true,
-                  "$span": {
-                    "start": 11,
-                    "end": 14
-                  },
-                  "$text": "i32"
-                },
+                63,
                 {
                   "$type": 468,
                   "$source": 0,
@@ -237967,11 +237406,6 @@
                     "$span": {
                       "start": 16,
                       "end": 22
-                    }
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": ", "
                     }
                   }
                 }
@@ -237995,7 +237429,7 @@
                     "start": 10,
                     "end": 21
                   },
-                  "$before": true,
+                  "$before": false,
                   "$after": true
                 }
               }
@@ -238110,16 +237544,7 @@
           "$source": 0,
           "$named": true,
           "_item": [
-            {
-              "$type": 341,
-              "$source": 0,
-              "$named": true,
-              "$span": {
-                "start": 11,
-                "end": 14
-              },
-              "$text": "i32"
-            },
+            63,
             {
               "$type": 468,
               "$source": 0,
@@ -238132,11 +237557,6 @@
                 "$span": {
                   "start": 16,
                   "end": 22
-                }
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ", "
                 }
               }
             }
@@ -238160,7 +237580,7 @@
                 "start": 10,
                 "end": 21
               },
-              "$before": true,
+              "$before": false,
               "$after": true
             }
           }
@@ -238310,16 +237730,7 @@
         "$source": 0,
         "$named": true,
         "_item": [
-          {
-            "$type": 341,
-            "$source": 0,
-            "$named": true,
-            "$span": {
-              "start": 11,
-              "end": 14
-            },
-            "$text": "i32"
-          },
+          63,
           {
             "$type": 468,
             "$source": 0,
@@ -238332,11 +237743,6 @@
               "$span": {
                 "start": 16,
                 "end": 22
-              }
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ", "
               }
             }
           }
@@ -238360,7 +237766,7 @@
               "start": 10,
               "end": 21
             },
-            "$before": true,
+            "$before": false,
             "$after": true
           }
         }

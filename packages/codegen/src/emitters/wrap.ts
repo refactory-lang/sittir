@@ -179,6 +179,20 @@ interface WrapNode {
 	readonly exposesChildren: boolean;
 }
 
+function enumProjectionOf(
+	slot: AssembledNonterminal,
+	storageInfo: ReturnType<typeof resolveFieldStorageInfo>,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): Pick<ResolveSlotHydrateConfig, 'kindEnumTextIdPairs' | 'kindEnumAltIdPairs' | 'kindEnumOwnSymbolIds'> {
+	if (storageInfo.kind !== 'kindEnum' && storageInfo.kind !== 'mixedEnum') return {};
+	return {
+		kindEnumTextIdPairs: kindEnumTextIdPairs(slot, nodeMap, kindEntries),
+		kindEnumAltIdPairs: kindEnumAltIdPairs(slot, nodeMap),
+		kindEnumOwnSymbolIds: storageInfo.kind === 'mixedEnum' ? kindEnumOwnSymbolIds(slot, nodeMap) : undefined
+	};
+}
+
 interface ResolveSlotHydrateConfig {
 	readonly dataExpr: string;
 	readonly elemType: string;
@@ -431,6 +445,7 @@ function emitSeparatedListWrap(
 		required: node.nonEmpty,
 		nonEmpty: node.nonEmpty,
 		storageInfo,
+		...enumProjectionOf(contentSlot, storageInfo, nodeMap, kindEntries),
 		forceUnknownElement: node.slots.length > 1
 	});
 	lines.push(`  const _content = ${storeExpr};`);
@@ -564,15 +579,7 @@ function emitFieldStorageLines(
 			nonEmpty: isNonEmpty(f),
 			storageInfo,
 			reclaimKindIdsExpr,
-			kindEnumTextIdPairs:
-				storageInfo.kind === 'kindEnum' || storageInfo.kind === 'mixedEnum'
-					? kindEnumTextIdPairs(f, nodeMap, kindEntries)
-					: undefined,
-			kindEnumAltIdPairs:
-				storageInfo.kind === 'kindEnum' || storageInfo.kind === 'mixedEnum'
-					? kindEnumAltIdPairs(f, nodeMap)
-					: undefined,
-			kindEnumOwnSymbolIds: storageInfo.kind === 'mixedEnum' ? kindEnumOwnSymbolIds(f, nodeMap) : undefined,
+			...enumProjectionOf(f, storageInfo, nodeMap, kindEntries),
 			separatorIdsExpr: separatorIdsExprOf(f, nodeMap.nodes.get(ownerKind), kindEntries, elided),
 			elided,
 			blank: hasBlankArm(f)
@@ -1035,6 +1042,11 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'  if (tokens.some((token) => typeof token !== "object" || token === null || (token as _UntypedNode).$named !== false)) return undefined;',
 			'  return tokens as readonly _UntypedNode[];',
 			'}',
+			'function _spelledMemberId(data: _UntypedNode, memberIds: readonly number[]): number | undefined {',
+			'  const shown = _spellingTokens(data)?.map(_displayOf);',
+			'  const id = shown?.[0];',
+			'  return typeof id === "number" && shown!.every((other) => other === id) && memberIds.includes(id) ? id : undefined;',
+			'}',
 			'function _spelledText(data: _UntypedNode): string | undefined {',
 			'  if (data.$text !== undefined) return data.$text;',
 			'  const tokens = _spellingTokens(data);',
@@ -1434,6 +1446,8 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'    const folded = altIds?.[kind];',
 						'    if (folded !== undefined) return folded as unknown as T;',
 						'    if (textIds && Object.values(textIds).includes(kind)) return kind as unknown as T;',
+						'    const member = ownSymbols?.includes(kind) ? _spelledMemberId(entry, Object.values(textIds ?? {})) : undefined;',
+						'    if (member !== undefined) return member as unknown as T;',
 						'    const text = ownSymbols?.includes(kind) ? _spelledText(entry) : undefined;',
 						'    if (text !== undefined) {',
 						'      const memberId = textIds?.[text];',

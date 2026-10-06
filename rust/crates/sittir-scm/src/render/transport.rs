@@ -2688,49 +2688,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for QuantifierEnum {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-                    match kind_id {
-                        2 => return Ok(Self::Star), // "*"
-                        3 => return Ok(Self::Plus), // "+"
-                        4 => return Ok(Self::Question), // "?"
-                        _ => {}
-                    }
-                }
-            }
-            ::napi::ValueType::String => {
-                match String::from_napi_value(env, napi_val)?.as_str() {
-                    "*" => return Ok(Self::Star),
-                    "+" => return Ok(Self::Plus),
-                    "?" => return Ok(Self::Question),
-                    _ => {}
-                }
-            }
-            ::napi::ValueType::Object => {
-                if let Some(kind_id) = ::sittir_core::boundary::property::<u16>(env, napi_val, c"$type")? {
-                    match kind_id {
-                        2 => return Ok(Self::Star), // "*"
-                        3 => return Ok(Self::Plus), // "+"
-                        4 => return Ok(Self::Question), // "?"
-                        _ => {}
-                    }
-                }
-                if let Some(text) = ::sittir_core::boundary::property::<String>(env, napi_val, c"$text")? {
-                    match text.as_str() {
-                        "*" => return Ok(Self::Star),
-                        "+" => return Ok(Self::Plus),
-                        "?" => return Ok(Self::Question),
-                        _ => {}
-                    }
-                }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_*")?.is_some() { return Ok(Self::Star); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_+")?.is_some() { return Ok(Self::Plus); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_?")?.is_some() { return Ok(Self::Question); }
-            }
-            _ => {}
+        match u16::from_napi_value(env, napi_val)? {
+            2 => Ok(Self::Star),
+            3 => Ok(Self::Plus),
+            4 => Ok(Self::Question),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind QuantifierEnum takes",
+            ))),
         }
-        Err(::napi::Error::from_reason("unknown enum payload for QuantifierEnum"))
     }
 }
 
@@ -3889,44 +3854,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for PredicateTypeEnum {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-                    match kind_id {
-                        4 => return Ok(Self::Question), // "?"
-                        18 => return Ok(Self::Bang), // "!"
-                        _ => {}
-                    }
-                }
-            }
-            ::napi::ValueType::String => {
-                match String::from_napi_value(env, napi_val)?.as_str() {
-                    "?" => return Ok(Self::Question),
-                    "!" => return Ok(Self::Bang),
-                    _ => {}
-                }
-            }
-            ::napi::ValueType::Object => {
-                if let Some(kind_id) = ::sittir_core::boundary::property::<u16>(env, napi_val, c"$type")? {
-                    match kind_id {
-                        4 => return Ok(Self::Question), // "?"
-                        18 => return Ok(Self::Bang), // "!"
-                        _ => {}
-                    }
-                }
-                if let Some(text) = ::sittir_core::boundary::property::<String>(env, napi_val, c"$text")? {
-                    match text.as_str() {
-                        "?" => return Ok(Self::Question),
-                        "!" => return Ok(Self::Bang),
-                        _ => {}
-                    }
-                }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_?")?.is_some() { return Ok(Self::Question); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_!")?.is_some() { return Ok(Self::Bang); }
-            }
-            _ => {}
+        match u16::from_napi_value(env, napi_val)? {
+            4 => Ok(Self::Question),
+            18 => Ok(Self::Bang),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind PredicateTypeEnum takes",
+            ))),
         }
-        Err(::napi::Error::from_reason("unknown enum payload for PredicateTypeEnum"))
     }
 }
 

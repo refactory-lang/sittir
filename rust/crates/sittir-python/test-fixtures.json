@@ -1693,16 +1693,7 @@
                           "stop"
                         ]
                       },
-                      {
-                        "$type": 64,
-                        "$source": 0,
-                        "$named": true,
-                        "$text": "...",
-                        "$span": {
-                          "start": 19,
-                          "end": 22
-                        }
-                      }
+                      64
                     ],
                     "$other": [
                       {
@@ -2192,16 +2183,7 @@
                 "stop"
               ]
             },
-            {
-              "$type": 64,
-              "$source": 0,
-              "$named": true,
-              "$text": "...",
-              "$span": {
-                "start": 19,
-                "end": 22
-              }
-            }
+            64
           ],
           "$other": [
             {
@@ -2627,16 +2609,7 @@
               "stop"
             ]
           },
-          {
-            "$type": 64,
-            "$source": 0,
-            "$named": true,
-            "$text": "...",
-            "$span": {
-              "start": 19,
-              "end": 22
-            }
-          }
+          64
         ],
         "$other": [
           {
@@ -105270,29 +105243,9 @@
                       "$source": 0,
                       "$named": true,
                       "_item": [
-                        {
-                          "$type": 147,
-                          "$source": 0,
-                          "$named": true,
-                          "$span": {
-                            "start": 118,
-                            "end": 122
-                          },
-                          "$text": "pass"
-                        }
+                        147
                       ],
-                      "_delimiter": 0,
-                      "$_layout": {
-                        "flank": {
-                          "$text": "    case [\"go\", direction]: pass\n    c",
-                          "$span": {
-                            "start": 28,
-                            "end": 32
-                          },
-                          "$before": true,
-                          "$after": true
-                        }
-                      }
+                      "_delimiter": 0
                     },
                     "$slotOrder": [
                       "elements",
@@ -105522,29 +105475,9 @@
                       "$source": 0,
                       "$named": true,
                       "_item": [
-                        {
-                          "$type": 147,
-                          "$source": 0,
-                          "$named": true,
-                          "$span": {
-                            "start": 152,
-                            "end": 156
-                          },
-                          "$text": "pass"
-                        }
+                        147
                       ],
-                      "_delimiter": 0,
-                      "$_layout": {
-                        "flank": {
-                          "$text": "    case [\"drop\", *objects]: pass\n    c",
-                          "$span": {
-                            "start": 29,
-                            "end": 33
-                          },
-                          "$before": true,
-                          "$after": true
-                        }
-                      }
+                      "_delimiter": 0
                     },
                     "$slotOrder": [
                       "elements",
@@ -107963,29 +107896,9 @@
                             "$source": 0,
                             "$named": true,
                             "_item": [
-                              {
-                                "$type": 147,
-                                "$source": 0,
-                                "$named": true,
-                                "$span": {
-                                  "start": 191,
-                                  "end": 195
-                                },
-                                "$text": "pass"
-                              }
+                              147
                             ],
-                            "_delimiter": 0,
-                            "$_layout": {
-                              "flank": {
-                                "$text": "    case [\"get\", obj] | [\"pick\", \"up\", obj] | [\"pick\", obj, \"up\"]:\n        pass\n",
-                                "$span": {
-                                  "start": 75,
-                                  "end": 79
-                                },
-                                "$before": true,
-                                "$after": true
-                              }
-                            }
+                            "_delimiter": 0
                           },
                           "$slotOrder": [
                             "elements",
@@ -112435,29 +112348,9 @@
               "$source": 0,
               "$named": true,
               "_item": [
-                {
-                  "$type": 147,
-                  "$source": 0,
-                  "$named": true,
-                  "$span": {
-                    "start": 122,
-                    "end": 126
-                  },
-                  "$text": "pass"
-                }
+                147
               ],
-              "_delimiter": 0,
-              "$_layout": {
-                "flank": {
-                  "$text": "def foo(**match): pass\n",
-                  "$span": {
-                    "start": 18,
-                    "end": 22
-                  },
-                  "$before": true,
-                  "$after": true
-                }
-              }
+              "_delimiter": 0
             },
             "$slotOrder": [
               "elements",
@@ -114232,29 +114125,9 @@
           "$source": 0,
           "$named": true,
           "_item": [
-            {
-              "$type": 147,
-              "$source": 0,
-              "$named": true,
-              "$span": {
-                "start": 122,
-                "end": 126
-              },
-              "$text": "pass"
-            }
+            147
           ],
-          "_delimiter": 0,
-          "$_layout": {
-            "flank": {
-              "$text": "def foo(**match): pass\n",
-              "$span": {
-                "start": 18,
-                "end": 22
-              },
-              "$before": true,
-              "$after": true
-            }
-          }
+          "_delimiter": 0
         },
         "$slotOrder": [
           "elements",
@@ -119310,29 +119183,9 @@
                             "$source": 0,
                             "$named": true,
                             "_item": [
-                              {
-                                "$type": 147,
-                                "$source": 0,
-                                "$named": true,
-                                "$span": {
-                                  "start": 35,
-                                  "end": 39
-                                },
-                                "$text": "pass"
-                              }
+                              147
                             ],
-                            "_delimiter": 0,
-                            "$_layout": {
-                              "flank": {
-                                "$text": "    case 3 | -3:\n      pass\n    c",
-                                "$span": {
-                                  "start": 23,
-                                  "end": 27
-                                },
-                                "$before": true,
-                                "$after": true
-                              }
-                            }
+                            "_delimiter": 0
                           },
                           "$slotOrder": [
                             "elements",
@@ -119481,29 +119334,9 @@
                             "$source": 0,
                             "$named": true,
                             "_item": [
-                              {
-                                "$type": 147,
-                                "$source": 0,
-                                "$named": true,
-                                "$span": {
-                                  "start": 68,
-                                  "end": 72
-                                },
-                                "$text": "pass"
-                              }
+                              147
                             ],
-                            "_delimiter": 0,
-                            "$_layout": {
-                              "flank": {
-                                "$text": "    case \"something\":\n      pass\n    c",
-                                "$span": {
-                                  "start": 28,
-                                  "end": 32
-                                },
-                                "$before": true,
-                                "$after": true
-                              }
-                            }
+                            "_delimiter": 0
                           },
                           "$slotOrder": [
                             "elements",
@@ -119713,29 +119546,9 @@
                             "$source": 0,
                             "$named": true,
                             "_item": [
-                              {
-                                "$type": 147,
-                                "$source": 0,
-                                "$named": true,
-                                "$span": {
-                                  "start": 108,
-                                  "end": 112
-                                },
-                                "$text": "pass"
-                              }
+                              147
                             ],
-                            "_delimiter": 0,
-                            "$_layout": {
-                              "flank": {
-                                "$text": "    case \"something\" \"else\":\n      pass\n    c",
-                                "$span": {
-                                  "start": 35,
-                                  "end": 39
-                                },
-                                "$before": true,
-                                "$after": true
-                              }
-                            }
+                            "_delimiter": 0
                           },
                           "$slotOrder": [
                             "elements",
@@ -119887,29 +119700,9 @@
                             "$source": 0,
                             "$named": true,
                             "_item": [
-                              {
-                                "$type": 147,
-                                "$source": 0,
-                                "$named": true,
-                                "$span": {
-                                  "start": 140,
-                                  "end": 144
-                                },
-                                "$text": "pass"
-                              }
+                              147
                             ],
-                            "_delimiter": 0,
-                            "$_layout": {
-                              "flank": {
-                                "$text": "    case 1.0 | -1.0:\n      pass\n    c",
-                                "$span": {
-                                  "start": 27,
-                                  "end": 31
-                                },
-                                "$before": true,
-                                "$after": true
-                              }
-                            }
+                            "_delimiter": 0
                           },
                           "$slotOrder": [
                             "elements",
@@ -120029,29 +119822,9 @@
                             "$source": 0,
                             "$named": true,
                             "_item": [
-                              {
-                                "$type": 147,
-                                "$source": 0,
-                                "$named": true,
-                                "$span": {
-                                  "start": 174,
-                                  "end": 178
-                                },
-                                "$text": "pass"
-                              }
+                              147
                             ],
-                            "_delimiter": 0,
-                            "$_layout": {
-                              "flank": {
-                                "$text": "    case True | False:\n      pass\n    c",
-                                "$span": {
-                                  "start": 29,
-                                  "end": 33
-                                },
-                                "$before": true,
-                                "$after": true
-                              }
-                            }
+                            "_delimiter": 0
                           },
                           "$slotOrder": [
                             "elements",
@@ -120152,29 +119925,9 @@
                             "$source": 0,
                             "$named": true,
                             "_item": [
-                              {
-                                "$type": 147,
-                                "$source": 0,
-                                "$named": true,
-                                "$span": {
-                                  "start": 200,
-                                  "end": 204
-                                },
-                                "$text": "pass"
-                              }
+                              147
                             ],
-                            "_delimiter": 0,
-                            "$_layout": {
-                              "flank": {
-                                "$text": "    case None:\n      pass\n",
-                                "$span": {
-                                  "start": 21,
-                                  "end": 25
-                                },
-                                "$before": true,
-                                "$after": true
-                              }
-                            }
+                            "_delimiter": 0
                           },
                           "$slotOrder": [
                             "elements",
@@ -122071,26 +121824,8 @@
             "$source": 0,
             "$named": true,
             "_subject": [
-              {
-                "$type": 64,
-                "$source": 0,
-                "$named": true,
-                "$text": "...",
-                "$span": {
-                  "start": 7,
-                  "end": 10
-                }
-              },
-              {
-                "$type": 64,
-                "$source": 0,
-                "$named": true,
-                "$text": "...",
-                "$span": {
-                  "start": 12,
-                  "end": 15
-                }
-              }
+              64,
+              64
             ],
             "$other": [
               {
@@ -122103,18 +121838,7 @@
                 }
               }
             ],
-            "_delimiter": 0,
-            "$_layout": {
-              "flank": {
-                "$text": "match ..., ...:",
-                "$span": {
-                  "start": 6,
-                  "end": 14
-                },
-                "$before": true,
-                "$after": true
-              }
-            }
+            "_delimiter": 0
           },
           "_body": {
             "$type": 154,
@@ -126048,16 +125772,7 @@
                             "$source": 0,
                             "$named": true,
                             "_item": [
-                              {
-                                "$type": 147,
-                                "$source": 0,
-                                "$named": true,
-                                "$span": {
-                                  "start": 250,
-                                  "end": 254
-                                },
-                                "$text": "pass"
-                              }
+                              147
                             ],
                             "_delimiter": 0,
                             "$_layout": {
@@ -126076,15 +125791,6 @@
                                     "_content": " Ignore other keystrokes"
                                   }
                                 ]
-                              },
-                              "flank": {
-                                "$text": "    case KeyPress():\n        pass #",
-                                "$span": {
-                                  "start": 29,
-                                  "end": 33
-                                },
-                                "$before": true,
-                                "$after": true
                               }
                             }
                           },
@@ -130176,16 +129882,7 @@
                             "$source": 0,
                             "$named": true,
                             "_item": [
-                              {
-                                "$type": 147,
-                                "$source": 0,
-                                "$named": true,
-                                "$span": {
-                                  "start": 144,
-                                  "end": 148
-                                },
-                                "$text": "pass"
-                              }
+                              147
                             ],
                             "_delimiter": 0,
                             "$_layout": {
@@ -130204,15 +129901,6 @@
                                     "_content": " ignore other clicks"
                                   }
                                 ]
-                              },
-                              "flank": {
-                                "$text": "    case Click():\n        pass  #",
-                                "$span": {
-                                  "start": 26,
-                                  "end": 30
-                                },
-                                "$before": true,
-                                "$after": true
                               }
                             }
                           },
@@ -145703,29 +145391,9 @@
                             "$source": 0,
                             "$named": true,
                             "_item": [
-                              {
-                                "$type": 147,
-                                "$source": 0,
-                                "$named": true,
-                                "$span": {
-                                  "start": 37,
-                                  "end": 41
-                                },
-                                "$text": "pass"
-                              }
+                              147
                             ],
-                            "_delimiter": 0,
-                            "$_layout": {
-                              "flank": {
-                                "$text": "    case  -3 + 5j:\n        pass\n    c",
-                                "$span": {
-                                  "start": 27,
-                                  "end": 31
-                                },
-                                "$before": true,
-                                "$after": true
-                              }
-                            }
+                            "_delimiter": 0
                           },
                           "$slotOrder": [
                             "elements",
@@ -145893,29 +145561,9 @@
                             "$source": 0,
                             "$named": true,
                             "_item": [
-                              {
-                                "$type": 147,
-                                "$source": 0,
-                                "$named": true,
-                                "$span": {
-                                  "start": 75,
-                                  "end": 79
-                                },
-                                "$text": "pass"
-                              }
+                              147
                             ],
-                            "_delimiter": 0,
-                            "$_layout": {
-                              "flank": {
-                                "$text": "    case  -3 + 5j as b2:\n        pass\n    c",
-                                "$span": {
-                                  "start": 33,
-                                  "end": 37
-                                },
-                                "$before": true,
-                                "$after": true
-                              }
-                            }
+                            "_delimiter": 0
                           },
                           "$slotOrder": [
                             "elements",
@@ -146159,29 +145807,9 @@
                             "$source": 0,
                             "$named": true,
                             "_item": [
-                              {
-                                "$type": 147,
-                                "$source": 0,
-                                "$named": true,
-                                "$span": {
-                                  "start": 122,
-                                  "end": 126
-                                },
-                                "$text": "pass"
-                              }
+                              147
                             ],
-                            "_delimiter": 0,
-                            "$_layout": {
-                              "flank": {
-                                "$text": "    case 3j as b1, -3 + 5j as b2:\n        pass\n    c",
-                                "$span": {
-                                  "start": 42,
-                                  "end": 46
-                                },
-                                "$before": true,
-                                "$after": true
-                              }
-                            }
+                            "_delimiter": 0
                           },
                           "$slotOrder": [
                             "elements",
@@ -146310,29 +145938,9 @@
                             "$source": 0,
                             "$named": true,
                             "_item": [
-                              {
-                                "$type": 147,
-                                "$source": 0,
-                                "$named": true,
-                                "$span": {
-                                  "start": 155,
-                                  "end": 159
-                                },
-                                "$text": "pass"
-                              }
+                              147
                             ],
-                            "_delimiter": 0,
-                            "$_layout": {
-                              "flank": {
-                                "$text": "    case  -3. + 5j:\n        pass\n    c",
-                                "$span": {
-                                  "start": 28,
-                                  "end": 32
-                                },
-                                "$before": true,
-                                "$after": true
-                              }
-                            }
+                            "_delimiter": 0
                           },
                           "$slotOrder": [
                             "elements",
@@ -146460,29 +146068,9 @@
                             "$source": 0,
                             "$named": true,
                             "_item": [
-                              {
-                                "$type": 147,
-                                "$source": 0,
-                                "$named": true,
-                                "$span": {
-                                  "start": 187,
-                                  "end": 191
-                                },
-                                "$text": "pass"
-                              }
+                              147
                             ],
-                            "_delimiter": 0,
-                            "$_layout": {
-                              "flank": {
-                                "$text": "    case  3 - 5.j:\n        pass\n",
-                                "$span": {
-                                  "start": 27,
-                                  "end": 31
-                                },
-                                "$before": true,
-                                "$after": true
-                              }
-                            }
+                            "_delimiter": 0
                           },
                           "$slotOrder": [
                             "elements",
@@ -146835,29 +146423,9 @@
                             "$source": 0,
                             "$named": true,
                             "_item": [
-                              {
-                                "$type": 147,
-                                "$source": 0,
-                                "$named": true,
-                                "$span": {
-                                  "start": 40,
-                                  "end": 44
-                                },
-                                "$text": "pass"
-                              }
+                              147
                             ],
-                            "_delimiter": 0,
-                            "$_layout": {
-                              "flank": {
-                                "$text": "    case a1, *a2, a3:\n        pass\n",
-                                "$span": {
-                                  "start": 30,
-                                  "end": 34
-                                },
-                                "$before": true,
-                                "$after": true
-                              }
-                            }
+                            "_delimiter": 0
                           },
                           "$slotOrder": [
                             "elements",
@@ -152454,29 +152022,9 @@
                     "$source": 0,
                     "$named": true,
                     "_item": [
-                      {
-                        "$type": 147,
-                        "$source": 0,
-                        "$named": true,
-                        "$span": {
-                          "start": 15,
-                          "end": 19
-                        },
-                        "$text": "pass"
-                      }
+                      147
                     ],
-                    "_delimiter": 0,
-                    "$_layout": {
-                      "flank": {
-                        "$text": "while true:\n  pass\n  b",
-                        "$span": {
-                          "start": 14,
-                          "end": 18
-                        },
-                        "$before": true,
-                        "$after": true
-                      }
-                    }
+                    "_delimiter": 0
                   },
                   "$slotOrder": [
                     "elements",
@@ -152492,29 +152040,9 @@
                     "$source": 0,
                     "$named": true,
                     "_item": [
-                      {
-                        "$type": 148,
-                        "$source": 0,
-                        "$named": true,
-                        "$span": {
-                          "start": 22,
-                          "end": 27
-                        },
-                        "$text": "break"
-                      }
+                      148
                     ],
-                    "_delimiter": 0,
-                    "$_layout": {
-                      "flank": {
-                        "$text": "  pass\n  break\n  c",
-                        "$span": {
-                          "start": 9,
-                          "end": 14
-                        },
-                        "$before": true,
-                        "$after": true
-                      }
-                    }
+                    "_delimiter": 0
                   },
                   "$slotOrder": [
                     "elements",
@@ -152537,29 +152065,9 @@
                     "$source": 0,
                     "$named": true,
                     "_item": [
-                      {
-                        "$type": 149,
-                        "$source": 0,
-                        "$named": true,
-                        "$span": {
-                          "start": 30,
-                          "end": 38
-                        },
-                        "$text": "continue"
-                      }
+                      149
                     ],
-                    "_delimiter": 0,
-                    "$_layout": {
-                      "flank": {
-                        "$text": "  break\n  continue\n",
-                        "$span": {
-                          "start": 10,
-                          "end": 18
-                        },
-                        "$before": true,
-                        "$after": true
-                      }
-                    }
+                    "_delimiter": 0
                   },
                   "$slotOrder": [
                     "elements",
@@ -168517,29 +168025,9 @@
                     "$source": 0,
                     "$named": true,
                     "_item": [
-                      {
-                        "$type": 147,
-                        "$source": 0,
-                        "$named": true,
-                        "$span": {
-                          "start": 52,
-                          "end": 56
-                        },
-                        "$text": "pass"
-                      }
+                      147
                     ],
-                    "_delimiter": 0,
-                    "$_layout": {
-                      "flank": {
-                        "$text": "def e(*list: str):\n  pass\n\nd",
-                        "$span": {
-                          "start": 21,
-                          "end": 25
-                        },
-                        "$before": true,
-                        "$after": true
-                      }
-                    }
+                    "_delimiter": 0
                   },
                   "$slotOrder": [
                     "elements",
@@ -168726,29 +168214,9 @@
                     "$source": 0,
                     "$named": true,
                     "_item": [
-                      {
-                        "$type": 147,
-                        "$source": 0,
-                        "$named": true,
-                        "$span": {
-                          "start": 80,
-                          "end": 84
-                        },
-                        "$text": "pass"
-                      }
+                      147
                     ],
-                    "_delimiter": 0,
-                    "$_layout": {
-                      "flank": {
-                        "$text": "def e(**list: str):\n  pass\n\nd",
-                        "$span": {
-                          "start": 22,
-                          "end": 26
-                        },
-                        "$before": true,
-                        "$after": true
-                      }
-                    }
+                    "_delimiter": 0
                   },
                   "$slotOrder": [
                     "elements",
@@ -168978,16 +168446,7 @@
                     }
                   }
                 },
-                {
-                  "$type": 257,
-                  "$source": 0,
-                  "$named": true,
-                  "$span": {
-                    "start": 121,
-                    "end": 122
-                  },
-                  "$text": "/"
-                },
+                257,
                 {
                   "$type": 1,
                   "$source": 0,
@@ -168998,16 +168457,7 @@
                     "end": 125
                   }
                 },
-                {
-                  "$type": 258,
-                  "$source": 0,
-                  "$named": true,
-                  "$span": {
-                    "start": 127,
-                    "end": 128
-                  },
-                  "$text": "*"
-                },
+                258,
                 {
                   "$type": 198,
                   "$source": 0,
@@ -169897,29 +169347,9 @@
                     "$source": 0,
                     "$named": true,
                     "_item": [
-                      {
-                        "$type": 147,
-                        "$source": 0,
-                        "$named": true,
-                        "$span": {
-                          "start": 220,
-                          "end": 224
-                        },
-                        "$text": "pass"
-                      }
+                      147
                     ],
-                    "_delimiter": 0,
-                    "$_layout": {
-                      "flank": {
-                        "$text": "def foo():\n    pass \\",
-                        "$span": {
-                          "start": 15,
-                          "end": 19
-                        },
-                        "$before": true,
-                        "$after": true
-                      }
-                    }
+                    "_delimiter": 0
                   },
                   "$slotOrder": [
                     "elements",
@@ -170465,29 +169895,9 @@
                 "$source": 0,
                 "$named": true,
                 "_item": [
-                  {
-                    "$type": 147,
-                    "$source": 0,
-                    "$named": true,
-                    "$span": {
-                      "start": 52,
-                      "end": 56
-                    },
-                    "$text": "pass"
-                  }
+                  147
                 ],
-                "_delimiter": 0,
-                "$_layout": {
-                  "flank": {
-                    "$text": "def e(*list: str):\n  pass\n\nd",
-                    "$span": {
-                      "start": 21,
-                      "end": 25
-                    },
-                    "$before": true,
-                    "$after": true
-                  }
-                }
+                "_delimiter": 0
               },
               "$slotOrder": [
                 "elements",
@@ -170684,29 +170094,9 @@
                 "$source": 0,
                 "$named": true,
                 "_item": [
-                  {
-                    "$type": 147,
-                    "$source": 0,
-                    "$named": true,
-                    "$span": {
-                      "start": 80,
-                      "end": 84
-                    },
-                    "$text": "pass"
-                  }
+                  147
                 ],
-                "_delimiter": 0,
-                "$_layout": {
-                  "flank": {
-                    "$text": "def e(**list: str):\n  pass\n\nd",
-                    "$span": {
-                      "start": 22,
-                      "end": 26
-                    },
-                    "$before": true,
-                    "$after": true
-                  }
-                }
+                "_delimiter": 0
               },
               "$slotOrder": [
                 "elements",
@@ -170956,16 +170346,7 @@
                 }
               }
             },
-            {
-              "$type": 257,
-              "$source": 0,
-              "$named": true,
-              "$span": {
-                "start": 121,
-                "end": 122
-              },
-              "$text": "/"
-            },
+            257,
             {
               "$type": 1,
               "$source": 0,
@@ -170976,16 +170357,7 @@
                 "end": 125
               }
             },
-            {
-              "$type": 258,
-              "$source": 0,
-              "$named": true,
-              "$span": {
-                "start": 127,
-                "end": 128
-              },
-              "$text": "*"
-            },
+            258,
             {
               "$type": 198,
               "$source": 0,
@@ -171895,29 +171267,9 @@
                 "$source": 0,
                 "$named": true,
                 "_item": [
-                  {
-                    "$type": 147,
-                    "$source": 0,
-                    "$named": true,
-                    "$span": {
-                      "start": 220,
-                      "end": 224
-                    },
-                    "$text": "pass"
-                  }
+                  147
                 ],
-                "_delimiter": 0,
-                "$_layout": {
-                  "flank": {
-                    "$text": "def foo():\n    pass \\",
-                    "$span": {
-                      "start": 15,
-                      "end": 19
-                    },
-                    "$before": true,
-                    "$after": true
-                  }
-                }
+                "_delimiter": 0
               },
               "$slotOrder": [
                 "elements",
@@ -172442,16 +171794,7 @@
               }
             }
           },
-          {
-            "$type": 257,
-            "$source": 0,
-            "$named": true,
-            "$span": {
-              "start": 121,
-              "end": 122
-            },
-            "$text": "/"
-          },
+          257,
           {
             "$type": 1,
             "$source": 0,
@@ -172462,16 +171805,7 @@
               "end": 125
             }
           },
-          {
-            "$type": 258,
-            "$source": 0,
-            "$named": true,
-            "$span": {
-              "start": 127,
-              "end": 128
-            },
-            "$text": "*"
-          },
+          258,
           {
             "$type": 198,
             "$source": 0,
@@ -173105,16 +172439,7 @@
             }
           }
         },
-        {
-          "$type": 257,
-          "$source": 0,
-          "$named": true,
-          "$span": {
-            "start": 121,
-            "end": 122
-          },
-          "$text": "/"
-        },
+        257,
         {
           "$type": 1,
           "$source": 0,
@@ -173125,16 +172450,7 @@
             "end": 125
           }
         },
-        {
-          "$type": 258,
-          "$source": 0,
-          "$named": true,
-          "$span": {
-            "start": 127,
-            "end": 128
-          },
-          "$text": "*"
-        },
+        258,
         {
           "$type": 198,
           "$source": 0,
@@ -175752,29 +175068,9 @@
                     "$source": 0,
                     "$named": true,
                     "_item": [
-                      {
-                        "$type": 147,
-                        "$source": 0,
-                        "$named": true,
-                        "$span": {
-                          "start": 51,
-                          "end": 55
-                        },
-                        "$text": "pass"
-                      }
+                      147
                     ],
-                    "_delimiter": 0,
-                    "$_layout": {
-                      "flank": {
-                        "$text": "class B():\n  pass\nc",
-                        "$span": {
-                          "start": 13,
-                          "end": 17
-                        },
-                        "$before": true,
-                        "$after": true
-                      }
-                    }
+                    "_delimiter": 0
                   },
                   "$slotOrder": [
                     "elements",
@@ -176271,29 +175567,9 @@
                     "$source": 0,
                     "$named": true,
                     "_item": [
-                      {
-                        "$type": 147,
-                        "$source": 0,
-                        "$named": true,
-                        "$span": {
-                          "start": 139,
-                          "end": 143
-                        },
-                        "$text": "pass"
-                      }
+                      147
                     ],
-                    "_delimiter": 0,
-                    "$_layout": {
-                      "flank": {
-                        "$text": "class C(method1, Sequence[T]):\n  pass\nc",
-                        "$span": {
-                          "start": 33,
-                          "end": 37
-                        },
-                        "$before": true,
-                        "$after": true
-                      }
-                    }
+                    "_delimiter": 0
                   },
                   "$slotOrder": [
                     "elements",
@@ -176513,29 +175789,9 @@
                     "$source": 0,
                     "$named": true,
                     "_item": [
-                      {
-                        "$type": 147,
-                        "$source": 0,
-                        "$named": true,
-                        "$span": {
-                          "start": 171,
-                          "end": 175
-                        },
-                        "$text": "pass"
-                      }
+                      147
                     ],
-                    "_delimiter": 0,
-                    "$_layout": {
-                      "flank": {
-                        "$text": "class D(Sequence[T, U]):\n  pass\n",
-                        "$span": {
-                          "start": 27,
-                          "end": 31
-                        },
-                        "$before": true,
-                        "$after": true
-                      }
-                    }
+                    "_delimiter": 0
                   },
                   "$slotOrder": [
                     "elements",

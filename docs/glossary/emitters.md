@@ -4239,10 +4239,27 @@ one-variant enum `<Kind>Transport { <Variant> }`. Its `KindOf` answers its
 own id, its `Prepare` is inert, it renders through `renderFixedLiteralFn`'s
 function, and it decodes from its kind id (`fixedLiteralNapiImpls`).
 
+### `packages/codegen/src/emitters/render-module.ts::KindIdArm`
+
+One variant of a type decoded by kind id, with every id that decodes to it.
+
+### `packages/codegen/src/emitters/render-module.ts::kindIdNapiImpls`
+
+The napi impls of a type that crosses as a kind id: `FromNapiValue` matches a
+`u16` against each arm's ids and fails on any other id, naming the type;
+`ToNapiValue` is receive-only. A fixed literal (one arm) and an enum kind (one
+arm per member) both decode through it, so no value whose text its kind fixes
+is decoded from text at render time.
+
+### `packages/codegen/src/emitters/render-module.ts::enumMemberId`
+
+An enum member's kind id (`AssembledEnum.resolvedByText`). A member with none
+is a codegen error, since the transport has no other way to decode it.
+
 ### `packages/codegen/src/emitters/render-module.ts::fixedLiteralNapiImpls`
 
-The napi decode for a fixed literal's own type: a `u16` kind id, nothing
-else. Its accepted ids (its own and every id its values are stored under)
+The napi decode for a fixed literal's own type (`kindIdNapiImpls` with one
+arm): a `u16` kind id, nothing else. Its accepted ids (its own and every id its values are stored under)
 build the unit; any other id fails naming the type. A fixed literal crosses
 as its kind id, the least it can be stored as, so nothing about it is
 decoded at run time: no text, no presence flag (a presence slot is a
@@ -4506,9 +4523,8 @@ sides use. An arm missing either side is left out.
  * with a closed, statically-known variant set.
  * Emits for multi-member enums:
  * - `#[derive(Debug, Clone, Copy)] pub enum XxxEnum { ... }`
- * - `impl FromNapiValue` — matches a member's `u16` KindId, bare or as the
- *   object's `$type`, then its text: a string, the object's `$text`, or a
- *   `_<text>` key.
+ * - `impl FromNapiValue` — `kindIdNapiImpls`: a member's `u16` kind id,
+ *   nothing else.
  * - `impl Render` — writes the static literal text per variant; a variant
  *   whose arm has a seam pair (`armSeamPairsOf`) writes its before site, the
  *   text, then its after site, each read from the resolved options with
@@ -4534,28 +4550,8 @@ sides use. An arm missing either side is left out.
 #### body
 
 ```text
-// Enum-valued fields cross the native boundary as UntypedNode-shaped objects.
-// Some grammars send the resolved leaf kind in `$type` (primitive_type),
-// while others keep the parent enum kind and expose the chosen literal
-// under `$text` or `_<literal>` child fields (fragment_specifier).
-// typeof dispatch — never probe a typed read on a mismatched shape
-// (String::from_napi_value's failure path JSON.stringify's Object
-// inputs; see sittir_core::slot::transport_value_type).
-```
-
-#### body
-
-```text
-// `values` are LITERAL member texts — read the node's
-// construction-time literal-chain resolution
-// (anon-scoped first so a same-spelled named rule
-// can't shadow, #129).
-```
-
-#### body
-
-```text
-// Stub ToNapiValue — enum is receive-only (JS → Rust).
+// An enum member crosses as its kind id: the wrap folds a read enum node
+// onto the member id, in a field slot and a list item alike.
 ```
 
 #### body
@@ -13318,6 +13314,13 @@ The wrap header's type from a wrapped datum to its declared `Parsed` node: a dat
 // position-splitting store path over filter+normalize.
 ```
 
+### `packages/codegen/src/emitters/wrap.ts::enumProjectionOf`
+
+The enum projection facts a slot's storage call needs (text→id pairs, alias
+id pairs, own symbols), for a `kindEnum` or `mixedEnum` slot and nothing for
+any other. A field slot and a separated list's item slot both take them from
+here, so a list item is folded onto its member id exactly as a field value is.
+
 ### `packages/codegen/src/emitters/wrap.ts::resolveSlotHydrateExprs`
 
 #### body
@@ -13602,13 +13605,15 @@ A grammar without a kind catalog gets `_displayOf` and a `_kindOf` that returns 
 
 ### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.dropSpellingLines`
 
-Emits `_RECLAIMS_ANONYMOUS`, `_spellingTokens`, `_spelledText`, `_dropSpelling`, `_spellingOf`, `_tiledSpelling`, `_readChildren` and `_spelledLeaf`. `wrapNode` applies `_dropSpelling` to every node before its per-kind wrap, trivia entries included.
+Emits `_RECLAIMS_ANONYMOUS`, `_spellingTokens`, `_spelledMemberId`, `_spelledText`, `_dropSpelling`, `_spellingOf`, `_tiledSpelling`, `_readChildren` and `_spelledLeaf`. `wrapNode` applies `_dropSpelling` to every node before its per-kind wrap, trivia entries included.
 
 The reader ships anonymous children as `$other`, and sends `$text` only for a node with no children. A node whose only unfielded content is anonymous tokens (no `_`-prefixed slot keys, every `$other` entry `$named: false`) is spelled by those tokens, not structured by them. `_spellingTokens` returns those tokens, and nothing for any other node.
 
 `_spelledText` is a node's text: its `$text`, or else `_tiledSpelling` of its spelling tokens. `_tiledSpelling` joins children's spellings, provided they tile the node's `$span` with no gap (`python` `import_prefix` `..`, `typescript` `predefined_type`). A child's spelling (`_spellingOf`) is its `_spelledText`, or for an anonymous token without text, `KIND_DISPLAY_NAMES` of its `_displayOf` id. `_dropSpelling` removes a spelled node's `$other` and keeps `_spelledText` as its `$text`. The raw-child enum projections (`projectKindEnumStorage`, `projectMixedEnumStorage`) read `_spelledText` too, so a child still sitting in its parent's storage is decoded from the same text it will wrap with.
 
 The reader omits a token's text exactly when it equals the parser's name for the token, so the display name is that text.
+
+`_spelledMemberId` is the one id every spelling token of a node displays (`_displayOf`), when they all agree and it is one of the member ids it is given. A multi-token enum member is an alias over its tokens, and the parser shows each token as the alias: typescript `unique symbol` reads as `unique` (143) and `symbol` (displayed 143). `projectMixedEnumStorage` folds a read node of an enum kind of its own (`ownSymbols`) by that id before it tries text, so the member folds although its tokens leave a gap. Requiring every token to agree keeps a member from being taken for another whose text it starts with (python's `is not` is not `is`). A single-token member reads as a leaf with `$text` and no tokens, and folds by text as before. `projectKindEnumStorage` (a slot whose values are member tokens, not enum nodes) folds by text only.
 
 `_spelledLeaf` is the wrap-table row of every model leaf kind (`pattern`, `enum`, or a builder text leaf). A leaf renders from its text, but the read may carry structure the model doesn't have: regex `zero_or_more` over `*?` reads as a `*` token plus a named `lazy` child. When such a node has no `$text`, `_readChildren` gathers every read child (`_`-slot values and `$other`, ordered by span). If they all tile the span, their joined spelling becomes the leaf's `$text` and the read structure (`_` slots, `$other`, `$slotOrder`) is dropped. If they don't tile, the node is left as read, unspelled, rather than guessed. Tokens that leave a gap mean some content belongs to no token (`format_specifier`'s `:` before `#06x`, `block_comment`'s delimiters around its body), so their joined spelling is not the node's text and none is taken.
 
