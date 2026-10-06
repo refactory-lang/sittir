@@ -175,9 +175,9 @@ pub enum FunctionModifiersModifierTransportSlot {
   one id by its display id alone. It is used only where the identity is the alias: an alias
   envelope's site, an anonymous token the parser shows only by its public symbol, and the query
   plans that the bindings rows and `is.*` compile to. Layout tokens, separators, presence keywords
-  and a list's separator kind are tokens, and compare the public symbol. A raw string-literal token
-  the parser folds into a named target is listed by that target, `folded = [kind::X]` on a struct
-  and `folded(kind::X)` on a variant, and a choice matches it after every exact claim. The macro
+  and a list's separator kind are tokens, and compare the public symbol. A raw symbol the parser
+  folds into a named target is listed on that target by its own grammar id, `folded = [kind::X]` on
+  a struct and `folded(kind::X)` on a variant, and a choice matches it after every exact claim. The macro
   picks the accessor from the flag, so the reader never decides at run time. A display union stays a
   name: a display id has no transport.
 - **An unfielded child has exactly one slot.** In a kind's declaration, no two slots without a

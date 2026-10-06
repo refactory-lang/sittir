@@ -41,7 +41,7 @@ Brainstorm split step 1 of the spec into three PRs. This plan writes 1a in full 
 | PR | Lands | Gate |
 | --- | --- | --- |
 | **1a** | the typed reader beside today's read: field-id constants, the `sittir_core::read` runtime, the derive crate, codegen attributes with the unfielded-slot diagnostic, and the corpus parity harness | zero refusals and zero differences against today's read, wrap and detach for every corpus entry of the five grammars; rendered bytes and validation rows unchanged |
-| **1b** | the derive's napi codec replaces `#[napi(object)]` and the hand-printed `FromNapiValue` impls | render-neutral (verification 15), measured against master as 1b starts, whose enum members decode by kind id; build time and binary size per crate; standalone `type-check:native` passes and is chained into `type-check` |
+| **1b** | the derive's napi codec replaces `#[napi(object)]` and the hand-printed `FromNapiValue` impls | render-neutral (verification 15), measured against master as 1b starts, whose enum members decode by kind id; build time and binary size per crate; standalone `type-check:native` passes and is chained into `type-check`; the typed read's root stack cost in the dev profile at most today's read's |
 | **1c** | every read goes through the typed reader; the wrap keeps members only; today's reader and its tables are removed; an empty list is `[]` in reads, factories and fixtures | rendered bytes and validation rows unchanged; the fixture and factory moves of the empty-list form listed; verification 3–8; "two readers must not outlive step 1" |
 
 ## Global Constraints
@@ -3918,7 +3918,7 @@ The gate of 1a: for every corpus entry of the five grammars, the typed read of t
 
 Today's detached data carries two things the typed reader leaves to the render side, and the harness drops both before comparing: `$_layout.gap` and `$_layout.flank` (layout evidence), and an empty `$_layout`. It keeps the trivia entries, which arrive as coordinates (`$treeHandle`, `$span`, `$type`) and decode as `SlotValue::Coord`, the form the typed reader gives them. `SlotValue`'s equality compares a coordinate by its tree, span and kind, so the handle's form does not matter.
 
-The two reads differ in one class by construction, and the comparison reports it instead of failing on it: a slot today's read leaves absent because its node has no named child, which the typed read fills with its empty value. The native comparison prints each as a `normalized: <Kind>.<slot>` line, and the harness holds the rows it accepts per grammar as (entry, kind, slot), a list that may only shrink. A row outside the list is a difference.
+The two reads differ in one class by construction, and the comparison reports it instead of failing on it: a slot today's read leaves absent because its node has no named child, which the typed read fills with its empty value. The native comparison prints each as a `normalized: <Kind>.<slot>` line, and the harness holds the rows it accepts per grammar as (entry, kind, slot), a list that may only shrink. A row outside the list is a difference, and a listed row the corpus no longer shows fails the run as stale, so the list is exact.
 
 The harness also reports the envelope pin (`ENVELOPE_EXTRA_IDS` in `envelope-claims.ts`): for each pinned id of each variant, how many corpus nodes the reader's display pass admits as that variant, and whether the id still shows as the variant's display id. A variant that claims an id outside its pin, or a pinned id that stops displaying as the variant's display id, fails the run. The pin is a ceiling; the report says whether the ids it holds are reached by the corpus.
 
@@ -4340,8 +4340,10 @@ fn the_typed_read_costs_no_more_stack_per_level_than_today_s() {
     // the least stack at 1, 10, 40 and 200 levels, per reader, found by running a child
     // test on smaller and larger threads; the per-level cost is the slope from 40 to 200
     assert!(typed_per_level <= today_per_level);
+    assert!(typed_per_level <= per_level_ceiling); // per profile, measured and rounded up
+    assert!(typed_root_kib <= root_ceiling); // per profile, 96 KiB release, 384 KiB dev
     if !cfg!(debug_assertions) {
-        assert!(typed_per_level <= RELEASE_BYTES_PER_LEVEL); // 1.6 KiB
+        assert!(typed_levels_on_2_mib >= today_levels_on_2_mib);
     }
 }
 
@@ -4359,7 +4361,7 @@ fn sittir_core_holds_no_grammar_fact() {
 
 The statements of `engine.rs` and `spacing.rs` are top-level items, each with structure, so one level leaves them all coordinates. If a top-level item without a named child ever appears (a bare `;`), it is inline by the leaf rule, and the first test must allow it. Check the two files before running.
 
-A thread that overflows its stack aborts the whole test binary, so the nesting test names its threads and the depth test measures each reader in a child process. The depth is not a number of its own: the typed read must fit wherever today's read fits. A generated choice's `read` holds one temporary per arm, which in the dev profile reaches megabytes for the dispatch enums; the derive therefore expands a choice into one `#[inline(never)]` function per variant, dispatched through a table, and reads a boxed slot into its box through `ReadTransport::read_boxed`, whose box is built in a function that is not live while the child is read. The tests pin the result: the dev corpus read at `Depth::ONE` fits the default 2 MiB test thread, 250 nested parentheses fit it for both readers, and the typed read costs no more stack per level than today's (and in release no more than 1.6 KiB).
+A thread that overflows its stack aborts the whole test binary, so the nesting test names its threads and the depth test measures each reader in a child process. The test states the guarantee that was measured, not a stronger one: per nesting level the typed read costs no more stack than today's in both profiles, and in release it reads at least as deep on 2 MiB; the per-level and root figures of both profiles are pinned as ceilings that only tighten. It does not hold everywhere: the typed read's fixed root cost is higher than today's (375 KiB against 39 KiB in the dev profile, from the `source_file` to item chain), so on a 2 MiB dev thread it reads about 15 levels fewer. A generated choice's `read` holds one temporary per arm, which in the dev profile reaches megabytes for the dispatch enums; the derive therefore expands a choice into one `#[inline(never)]` function per variant, dispatched through a table, and reads a boxed slot into its box through `ReadTransport::read_boxed`, whose box is built in a function that is not live while the child is read. The tests pin the result: the dev corpus read at `Depth::ONE` fits the default 2 MiB test thread, 250 nested parentheses fit it for both readers, and the typed read costs no more stack per level than today's, with its per-level and root cost pinned.
 
 `sittir_core_holds_no_grammar_fact` is the mechanical half of verification 9. The other half, that the expansion is a pure function of the declaration, holds by construction: the derive reads only its input tokens.
 
@@ -4415,6 +4417,7 @@ Detailed against the code 1a leaves. The derive gains the wire codec the spec li
    - Render-neutral (verification 15): rebuilt render's cost per slot value with `measure-rebuilt.mts`, back to back on this branch and on its base, master as 1b starts, per grammar, the native call and the projection measured separately. The same script, inputs and population at both commits. The base decodes enum members by kind id and the phase 0 merge does not, so the phase 0 merge is not a like-for-like base.
    - Build time, peak memory and binary size per grammar crate, before and after, with the same commands, outside watched worktrees (verification 12).
    - The standalone native type-check, which waits for the derive codec, passes: `pnpm run type-check:native` on its own, then chained into `pnpm run type-check`.
+   - Stack: the typed read's root cost in the dev profile is at most today's read's, measured as Task 11's depth test measures it. 1a leaves it at 375 KiB against 39 KiB, from the `source_file` to item chain. The expected route is boxing the dominant variants, `FunctionItem` and the statement choices, by a pinned list of kinds that generated `const` size assertions check; 1b changes the transport types anyway.
    - Rendered bytes and validation rows unchanged.
 
 ## Outline: 1c, one reader
@@ -4463,7 +4466,7 @@ Every read goes through the typed reader, and the wrap attaches members only. "T
    - `stores_scalar` and `inner_gap_key` in each `kind_ids.rs`, and the `ReadModel` impls;
    - the transitional `typed_read_refusal` and `typed_read_parity`;
    - Task 3's placement driver.
-7. **Removed from `@sittir/common`:** `modelSlots`, the storage coercions and the stub machinery (`isStub`, `hydrateStub`).
+7. **Removed from `@sittir/common` and `@sittir/types`:** `modelSlots`, the storage coercions, the stub machinery (`isStub`, `hydrateStub`), and the transitional `typedReadRefusal` and `typedReadParity` on the engine diagnostics (`EngineDiagnostics`, `NativeLanguageEngine`, `NativeEngineLike`).
 8. **Gates:**
    - rendered bytes and validation rows unchanged. The detached render of a node today's read holds as text, `{}` among them, keeps its text now that its typed transport carries an empty list;
    - item 5's fixture and factory moves, each at a slot on item 5's census, from nothing to `[]`. A move at any other slot, or of any other shape, stops the work;
