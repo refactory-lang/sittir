@@ -89,12 +89,15 @@ export async function loadInputs(grammars: readonly GrammarName[]): Promise<Gram
 	);
 }
 
-export function writeBindingFacts(grammars: readonly GrammarName[]): void {
+export function writeBindingFacts(
+	grammars: readonly GrammarName[],
+	destination: (grammar: GrammarName) => string = bindingFactsPath
+): void {
 	for (const grammar of grammars) {
 		const text = readFileSync(bindingsPath(grammar), 'utf8');
 		const artifact: BindingFactsArtifact = { bindingsHash: bindingsHash(text), facts: readBindings(text) };
-		writeFileSync(bindingFactsPath(grammar), `${JSON.stringify(artifact, null, '\t')}\n`);
-		process.stdout.write(`${grammar}: wrote ${bindingFactsPath(grammar)}\n`);
+		writeFileSync(destination(grammar), `${JSON.stringify(artifact, null, '\t')}\n`);
+		process.stdout.write(`${grammar}: wrote ${destination(grammar)}\n`);
 	}
 }
 
