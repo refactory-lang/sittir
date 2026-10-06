@@ -22,14 +22,14 @@ No stage touches `packages/common/src/transport-data.ts` or the native reader; t
 - The form and subtype routing for kinds with no bare factory lives in `packages/tools/src/validate/common.ts` (`buildFactoryNodeFromReference` over the `ir` surface).
 - Probe, rust at `f4a78b7fb`: 190 read entries, 173 build entries, 142 of 374 members rejected by the vocabulary.
 
-## Decision needed before stage 2
+## Decision needed before stage 1
 
-**How codegen gets the bindings facts.** The generator runs inside the codegen pass that writes `types.ts`, and reading `bindings.scm` needs the scm parser. The bindings spec's §5.3 requires a pinned `@sittir/scm` build, so that regenerating `@sittir/scm` never depends on the workspace copy. Options:
+**How codegen gets the bindings facts.** The generator runs inside the codegen pass that writes `types.ts`, and reading `bindings.scm` needs the scm parser. No generation may depend on the workspace `@sittir/scm`, so that a change which breaks `@sittir/scm` can never break regenerating the fix. Options:
 
 - **(a) A committed facts artifact.** The inventory writes `packages/<grammar>/.sittir/bindings.json` (the resolved facts, with a hash of `bindings.scm`), and codegen reads only that file. Codegen never runs scm; a stale artifact (hash mismatch) is a codegen diagnostic. Regenerating `@sittir/scm` reads its own committed artifact, so there is no bootstrap cycle.
 - **(b) A pinned reader in codegen:** codegen loads a pinned build of `@sittir/scm` and reads `bindings.scm` itself. This needs the pinned bootstrap first.
 
-Recommended: (a). It meets §5.3's intent (no generation depends on the workspace `@sittir/scm`) with no new build machinery, and the artifact is the same kind of stamped input as `.sittir/src/grammar.json`.
+Recommended: (a). No generation depends on the workspace `@sittir/scm`, no new build machinery is needed, and the artifact is the same kind of stamped input as `.sittir/src/grammar.json`.
 
 ## The rejected members: the rule
 
@@ -42,17 +42,18 @@ Stage 3 drives the count to zero for each cause on the side that owns it. Rust i
 ## Stage 0: lock the vocabulary
 
 - The vocabulary files lose their "Generated" banner and become authored.
-- The inventory's `--emit` stops writing them. `--check` reports where the bindings and the vocabulary disagree (bindings spec §10), as it does for every other diagnostic.
+- The inventory's `--emit` stops writing them. `--check` reports where the bindings and the vocabulary disagree (a claimed path that is no vocabulary kind, a routed member its interface lacks, a required member with no route), as it does for every other diagnostic.
 - Gate: the inventory's check passes with the same report as before; no generated-output drift.
 
 ## Stage 1: bindings facts reach codegen
 
-- `readBindings` and the derivation move into `packages/codegen/src/bindings/` as pure functions of the facts and the slot model; the inventory imports them.
-- The facts keep two things they drop today (spec §3):
-  - a predicate claim's predicate (operator, capture, argument);
-  - a presence member's token text.
-- The facts artifact or pinned reader follows the decision above.
-- Gate: the inventory's report is byte-identical; unit tests pin the two new facts (`#eq? @name "__init__"`, `"async" @isAsync`).
+With the artifact (option a):
+- The facts schema and the derivation move into `packages/codegen/src/bindings/`, as pure functions of the facts and the slot model. `readBindings` stays in the inventory, since it parses `bindings.scm` through `@sittir/scm`, and the inventory writes the artifact. Codegen reads only the artifact, and refuses one whose hash does not match `bindings.scm`.
+- The facts keep two things they drop today:
+  - a predicate claim's predicate (operator, capture, argument), so a read entry can test it and a build entry can pin it;
+  - a presence member's token text, so a capture named otherwise than its token (`"async" @isAsync`) still has a route.
+- With a pinned reader (option b), `readBindings` moves too, over the pinned build.
+- Gate: the inventory's report is byte-identical; the artifacts are committed for rust, typescript and python; unit tests pin the two new facts (`#eq? @name "__init__"`, `"async" @isAsync`) and the stale-artifact refusal.
 
 ## Stage 2: one route resolution
 
@@ -69,9 +70,9 @@ The causes the probe reports, each on the side that owns it:
 | token text | 74 | The generator reads a fixed literal as its const string (stage 4's reading). Re-measured once the probe follows it; what remains is the low-level types narrowing aliased keyword tokens, or the member admitting them. |
 | text leaf | 33 | A varying leaf is a node carrying `$value`; members admit it (vocabulary). |
 | predicate | 13 | A member that admits a kind admits all its claims (vocabulary). |
-| unmapped | 10 | Claims complete onto existing kinds or a feature's (bindings, vocabulary). |
+| unmapped | 10 | Each unmapped grammar kind gets a claim (bindings): onto an existing vocabulary kind, or onto a kind a feature adds to the vocabulary when none fits. |
 | untyped reader | 6 | The readers typed `unknown` get types (codegen typed surface). |
-| refinement | 3 | The bindings spec's §3.4 kind rule in the authored vocabulary. |
+| refinement | 3 | In the authored vocabulary, a level's `kind` admits every path beneath it. |
 | extra member | 2 | A feature adds the member, or the binding drops it. |
 | absent | 1 | Requiredness carries through containers (vocabulary projection). |
 
@@ -82,7 +83,7 @@ The causes the probe reports, each on the side that owns it:
 
 - `ViewForm` lives in `@sittir/types`.
 - The types emitter writes `Ctx`, `VocabViews`, `ViewByKind`, `ViewOf`, `EnumViewByKind`, `ViewEnumOf` and `Backward` into a zero-conformance grammar's `types.ts`, beside `ParsedByKindId`.
-- Gate: the workspace type-check, before and after with the same command, does not regress beyond noise (bindings spec §10.13); generated-output drift is clean.
+- Gate: the workspace type-check, timed before and after with the same command, does not regress beyond noise; generated-output drift is clean.
 
 ## Stage 5: read (the portable `parse` and `render`)
 
@@ -99,7 +100,7 @@ The causes the probe reports, each on the side that owns it:
 
 - Build entries per vocabulary kind, through `call(factory, input)` and the stage-2 routing for kinds with no bare factory.
 - The portable `build` is typed per kind from the vocabulary; the low-level generic build is keyed by `$type`.
-- A portable round-trip lane joins `validate:native` (bindings spec §10.7): parse portable, build every node from its members, render, parse-equal.
+- A portable round-trip lane joins `validate:native`: parse with the portable engine, build every node again from its members, render, and parse-equal over the corpus.
 - Gate: the existing rows are equal; the new lane's row is recorded as its baseline.
 
 ## Stage 7: crossing
@@ -107,10 +108,10 @@ The causes the probe reports, each on the side that owns it:
 - `attach` on both engines, overload-typed from `Backward`, `ViewByKind` and the build map.
 - A parsed node is re-wrapped from its row with no reparse; a built node is rebuilt.
 - A node bound to the engine is returned as is; one bound to another engine of the same surface is re-wrapped or rebuilt.
-- Gate: the crossing checks of bindings spec §10.14, as tests.
+- Gate, as tests: a parsed node attached to the other engine is re-wrapped with no reparse and renders the same text; a built node attached is rebuilt and renders the same text; attaching a low-level node of a kind that does not cross on its own is a type error; attaching a node to its own engine returns it.
 
 ## Stage 8: role tests
 
 - `is.<role path>`, compiled from the read entries under the path into a kind set plus a `QueryPlan`, evaluated with `holds`.
 - Overloads narrow a grammar node to the row's grammar types and a portable node to the vocabulary interface.
-- Gate: the checks of bindings spec §10.15, including `identifier` against `type_identifier`, at runtime and at compile time.
+- Gate: `is.<role path>` holds for exactly the nodes whose read entries classify them under the path, on both surfaces, and tells `identifier` from `type_identifier` where their roles differ; the narrowing is checked at compile time.
