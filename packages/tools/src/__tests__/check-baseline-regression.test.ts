@@ -143,6 +143,29 @@ describe('checkRegression', () => {
 			return { base, head };
 		}
 
+		const declaration = (): BackendBaseline['baselineCounterChange'] => ({
+			reason: 'population pinned',
+			grammars: { python: { builtRenderParse: { from: { total: 10, pass: 8 }, to: { total: 9, pass: 8 } } } }
+		});
+
+		it('an inherited declaration whose from no longer equals the base fails', () => {
+			const { base, head } = shrunk();
+			head.baselineCounterChange = declaration();
+			base.grammars.python!.validators.builtRenderParse = rt(9, 10, 9);
+			head.grammars.python!.validators.builtRenderParse = rt(9, 9, 9);
+			const verdict = checkRegression(base, head);
+			expectFail(verdict);
+			expect(verdict.details.path).toBe('grammars.python.validators.builtRenderParse.total');
+		});
+
+		it('a declaration whose to differs from the head fails', () => {
+			const { base, head } = shrunk();
+			head.baselineCounterChange = declaration();
+			head.grammars.python!.validators.builtRenderParse = rt(8, 8, 8);
+			head.totals = { pass: base.totals.pass, fail: 0, total: base.totals.total - 2 };
+			expectFail(checkRegression(base, head));
+		});
+
 		it('an undeclared total drop fails', () => {
 			const { base, head } = shrunk();
 			expectFail(checkRegression(base, head));
@@ -150,13 +173,13 @@ describe('checkRegression', () => {
 
 		it('a declared drop whose total falls no more than its fail count passes', () => {
 			const { base, head } = shrunk();
-			head.baselineCounterChange = { reason: 'population pinned', validators: ['builtRenderParse'] };
+			head.baselineCounterChange = declaration();
 			expect(checkRegression(base, head).ok).toBe(true);
 		});
 
 		it('a declared drop where pass fell fails', () => {
 			const { base, head } = shrunk();
-			head.baselineCounterChange = { reason: 'population pinned', validators: ['builtRenderParse'] };
+			head.baselineCounterChange = declaration();
 			head.grammars.python!.validators.builtRenderParse = rt(7, 9, 7);
 			head.totals = { pass: base.totals.pass - 1, fail: 2, total: base.totals.total - 1 };
 			expectFail(checkRegression(base, head));
@@ -165,7 +188,7 @@ describe('checkRegression', () => {
 		it('a collected head takes its declaration from the committed record named by --declared', async () => {
 			const { base, head } = shrunk();
 			const declared = clone(head);
-			declared.baselineCounterChange = { reason: 'population pinned', validators: ['builtRenderParse'] };
+			declared.baselineCounterChange = declaration();
 			const dir = mkdtempSync(join(tmpdir(), 'baseline-'));
 			const write = (name: string, value: unknown) => {
 				writeFileSync(join(dir, name), JSON.stringify(value));
@@ -178,7 +201,7 @@ describe('checkRegression', () => {
 
 		it('a drop in an undeclared validator fails', () => {
 			const { base, head } = shrunk();
-			head.baselineCounterChange = { reason: 'population pinned', validators: ['builtRenderParse'] };
+			head.baselineCounterChange = declaration();
 			head.grammars.python!.validators.from = vr(9, 9);
 			head.totals = { pass: base.totals.pass - 1, fail: 1, total: base.totals.total - 2 };
 			const verdict = checkRegression(base, head);

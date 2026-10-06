@@ -3,7 +3,14 @@
     "commit": "3b1de72",
     "baselineCounterChange": {
         "reason": "builtRenderParse excludes kinds with no reparse host before the build outcome; the pinned population shrinks by the delimited kinds that previously failed",
-        "validators": ["builtRenderParse"]
+        "grammars": {
+            "python": {
+                "builtRenderParse": {
+                    "from": { "total": 1303, "pass": 1161 },
+                    "to": { "total": 1246, "pass": 1242 }
+                }
+            }
+        }
     },
     "grammars": {
         "python": {

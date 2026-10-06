@@ -39,10 +39,12 @@
       The head record's declaration is read from the head itself, or, for
       a freshly collected head, from the committed record named by
       `--declared`.
-      A head that carries `baselineCounterChange: { reason, validators }`
-      is held to a per-grammar check instead: a validator's total may
-      drop only if declared and its `pass` did not fall (so the total
-      fell no more than its fail count did).
+      A head that carries `baselineCounterChange` is held to a per-grammar
+      check instead: a validator's total may drop only if the declaration
+      names that grammar's validator with `from` equal to the base's
+      counters and `to` equal to the head's, and its `pass` did not fall
+      (so the total fell no more than its fail count did). Once the head
+      merges, the base equals `to` and the declaration is inert.
  *   3. Total-fail rise — `totals.fail` increased.
  *   4. Schema violation — missing keys, unsorted arrays, missing
  *      `formatDeferredKinds` / `formatDeferredByKind`.
@@ -602,18 +604,23 @@ function checkLeftOutRise(base: BackendBaseline, head: BackendBaseline): Regress
 }
 
 function declaredCounterChangeHolds(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
-	const declared = new Set(head.baselineCounterChange?.validators ?? []);
 	for (const [g, baseGrammar, headGrammar] of comparedGrammars(base, head)) {
 		for (const vName of baseValidators(baseGrammar.validators)) {
 			const b = baseGrammar.validators[vName] as ValidatorResult;
 			const h = headGrammar.validators[vName] as ValidatorResult;
-			const path = `grammars.${g}.validators.${vName}`;
 			if (h.total >= b.total) continue;
-			const note = !declared.has(vName)
-				? `${vName} total dropped without a baselineCounterChange declaration`
-				: h.pass < b.pass
-					? `${vName} pass fell under a declared counter change`
-					: undefined;
+			const path = `grammars.${g}.validators.${vName}`;
+			const declared = head.baselineCounterChange?.grammars[g]?.[vName];
+			const note =
+				declared === undefined
+					? `${vName} total dropped without a baselineCounterChange declaration`
+					: declared.from.total !== b.total || declared.from.pass !== b.pass
+						? `${vName} base ${b.pass}/${b.total} is not the declared from ${declared.from.pass}/${declared.from.total}`
+						: declared.to.total !== h.total || declared.to.pass !== h.pass
+							? `${vName} head ${h.pass}/${h.total} is not the declared to ${declared.to.pass}/${declared.to.total}`
+							: h.pass < b.pass
+								? `${vName} pass fell under a declared counter change`
+								: undefined;
 			if (note !== undefined) {
 				return {
 					ok: false,
