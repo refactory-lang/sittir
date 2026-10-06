@@ -743,6 +743,14 @@ Each grammar package's type-check ceiling: a file-to-maximum map in the same sha
 
 Runs a type-check through pnpm with `--pretty false` appended and returns tsc's `error TS` lines. The flag keeps the output plain whatever the terminal or `FORCE_COLOR` asks for; coloured output splits `error` from `TS` and no line would match. An exit other than 1 with error lines rethrows.
 
+### `packages/codegen/src/__tests__/helpers/node-map-fixtures.ts::withGeneratedIdTables`
+
+A hand-built node map with the parser tables `tree-sitter generate` would give it, for an emitter that requires them (the render module). `build` runs twice: once to learn the kinds, then with the tables' kind entries, so inline literals and enum members are stamped as link stamps them. Each node kind gets a named row and each `tokens` entry (`{ semi: ';' }`) an anonymous token row, numbered from 1 in that order. A token key that is also a node kind is an error.
+
+### `packages/codegen/src/__tests__/helpers/node-map-fixtures.ts::nodeParserRow`
+
+A node kind's row as the parser reports it: named, hidden as the model says, flagged as a supertype when it is one, and terminal for a pattern or fixed-text kind; an enum is a named rule over its tokens, not a terminal. A fixed-text kind carries its text as a literal rule.
+
 ### `packages/codegen/src/grammars.ts::grammarPackages`
 
 Every grammar package under `packages/`, sorted by name, each resolved by `grammarPackage`. Cached for the process: packages are not created mid-run.

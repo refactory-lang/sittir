@@ -24,9 +24,9 @@ the same input bytes and adds the probe. Release native build, Apple M4 Pro, Nod
 | `transport-types-census.py` | The spec's phase 0 census of a `transport.rs`'s choices (enums): how many each family holds (per-slot `*TransportSlot`, supertype `*Transport`, enum-kind `*Enum`), the distinct variant sets and distinct generated bodies (names normalized) they come to, how many nothing but their own items reference, the unit (fixed-literal) variants and one-literal choices, and the slot fields typed `AnyTransport`. |
 | `slot-storage-dump.mts`, `slot-storage-census.py` | The dump writes every slot's stamped storage facts as JSON lines (the storage class `slot.storageInfo.kind`, the primitive classification, each value's storage); the census joins them with each field's Rust type in a `transport.rs` and counts the slots per storage class and type, showing how many encodings one storage class gets. |
 | `generated-tables-census.py` | Counts every generated table the spec's Appendix B classifies, per grammar, in the checkout it is given (or the current directory): wrap projection against member lines, the route and set tables, `consts.ts` and `utils.ts` tables, `kind_ids.rs`'s constants and read tables, option sites, the node model, fixtures and the JS-only surface. Uses `transport-census.py` for `transport.rs`. |
-| `proto/slot-derive/` | The probe's proc macro: `#[transport(kind = "…", wire = "words\|napi\|json\|all")]` on a struct whose fields carry `#[slot(field = "…")]`, `#[slot(kinds = […], tokens = […])]` or `#[trivia]`. Expands mechanically into the struct with a `kind_id` (`$type`) and storage keys `_<field>`, a one-level `TreeCursor` reader (tree → transport, children with structure as coordinates, leaves inline, anonymous tokens as kind ids), the arena record writer and reader, and the napi object and serde forms the `wire` names. |
-| `proto/probe/` | A napi addon declaring rust `function_item` (eight slots, as `FunctionItemTransport` holds them) and `function_modifiers` through the macro. It compiles sittir's generated rust parser directly from the checkout. `Probe` reads them in batch and one node per call, in each wire form, decodes each form back (the render direction), and times the native read alone. `rt.rs` is the runtime the expansion calls: `Slot`, `Coord`, `Leaf`, route resolution, the child reader, the arena encoding. |
-| `measure-proto.mts` | Runs the probe against today's engine on the same nodes: native read alone, each wire form (with the members a wrap would still attach), today's `$query().$descendants.ofType` read split into walk / read / wrap, retained heap (today's from one root parsed outside the measured window), and decode per form. |
+| `proto/slot-derive/` | The probe's proc macro: `#[transport(kind = "…", layout = […], wire = "words\|napi\|json\|all")]` on a struct whose fields carry `#[slot(field = "…")]`, `#[slot(kinds = […], tokens = […])]` or `#[trivia]`. Expands mechanically into the struct with a `kind_id` (`$type`) and storage keys `_<field>`, a one-level `TreeCursor` reader (tree → transport, children with structure as coordinates, leaves inline, anonymous tokens as kind ids, the kind's layout tokens skipped, and any other child no route takes refused with the node's kind, the child's kind and its row), the arena record writer and reader, and the napi object and serde forms the `wire` names. |
+| `proto/probe/` | A napi addon declaring rust `function_item` (eight slots, as `FunctionItemTransport` holds them) and `function_modifiers` through the macro. It compiles sittir's generated rust parser directly from the checkout. `Probe` reads them in batch and one node per call, in each wire form, decodes each form back (the render direction), and times the native read alone. `rt.rs` is the runtime the expansion calls: `Slot`, `Coord`, `Leaf`, route resolution, the refusal, the child reader, the arena encoding. |
+| `measure-proto.mts` | Runs the probe against today's engine on the same nodes. First it checks that the three wire forms, with the members a wrap would still attach, read the same: every slot, the trivia and the member set of every node; and that a read with the `body` route removed is refused. Then it times the native read alone, each wire form with its members, today's `$query().$descendants.ofType` read split into walk / read / wrap, retained heap (today's from one root parsed outside the measured window), and decode per form. |
 | `proto/synthetic/`, `proto/gen_synthetic.py`, `proto/time-synthetic.sh` | Compile-cost probe: 395 kinds with 696 slots between them (rust's `transport.rs` shape), built under seven expansions with sccache off. |
 
 ## Commands
@@ -152,15 +152,31 @@ The 2026-10-01 shares (50.9–56.3 %) were counted another way; these count impl
 | native typed read, per node, beyond the walk | ≈ 260 ns | ≈ 300 ns |
 | the whole-tree cursor walk, per match | 6.2 µs | 7.1 µs |
 | read one node at its row (`goto_descendant` + read) | 0.93 µs | 1.01 µs |
-| one node per call, crossing + members: napi objects / JSON / arena words | 4.1 / 4.3 / 3.5 µs | 4.1 / 4.3 / 3.7 µs |
-| every match in one call, crossing + members: objects / JSON / words | 9.9 / 9.4 / 7.9 µs | 10.0 / 10.1 / 8.9 µs |
+| one node per call, crossing + members: napi objects / JSON / arena words | 4.5 / 4.6 / 4.8 µs | 4.3 / 4.6 / 5.0 µs |
+| every match in one call, crossing + members: objects / JSON / words | 9.6 / 9.5 / 9.2 µs | 10.4 / 10.3 / 10.1 µs |
 | today, per match: kind-filtered walk + one-level read and `JSON.parse` + wrap and query plumbing | 6.7 + 38.5 + 18.7 = 64.0 µs | 7.9 + 26.4 + 10.1 = 44.4 µs |
 | render direction, native decode per node: objects / JSON / words | 1 651 / 958 / 52 ns | 1 403 / 832 / 54 ns |
 | JSON.stringify before the JSON decode | 250 ns | 178 ns |
-| retained JS heap per node, members attached: objects / JSON / views | 4 628 / 4 659 / 3 702 B | 4 588 / 4 611 / 3 694 B |
+| retained JS heap per node, members attached: objects / JSON / views | 4 949 / 4 979 / 6 871 B | 4 907 / 4 931 / 6 861 B |
 
-The three forms carry the same transports (compared with absent options dropped and keys sorted:
-napi objects leave an absent option out, JSON writes `null`).
+Each form carries the same members: an accessor and a `$with` setter per slot, `$trivia`,
+`$render`, `$query` and `$engine`. Before anything is timed the probe checks every slot, the trivia
+and the member set of every node across the three forms (absent options dropped and keys sorted:
+napi objects leave an absent option out, JSON writes `null`), and the arena view decodes a leaf to
+the same `{ $type, $text, $start, $end }` the other forms carry. The member rows above were re-taken
+that way on 2026-10-05, three rounds alternating with the probe as first committed, whose views had
+an empty `$with`, no `$trivia` and leaves read as strings (medians, engine.rs / spacing.rs):
+
+| arena views | first committed | same members |
+| --- | --- | --- |
+| one node per call, crossing + members | 3.6 / 3.7 µs | 4.8 / 5.0 µs |
+| every match in one call, crossing + members | 7.9 / 8.9 µs | 9.2 / 10.1 µs |
+| retained JS heap per node | 3 702 / 3 694 B | 6 871 / 6 861 B |
+
+The objects and JSON rows rose by their `$trivia` member: 0.1–0.4 µs a node and 320 B. A node's
+member closures, not its data, decide its heap here, and how V8 builds the literal moves it: adding
+member groups to a view literal one at a time does not raise its heap monotonically. The native
+rows, the decode rows and today's rows did not move.
 
 Today's heap per `function_item` read one level (`function-item-heap.mts`; `measure-proto.mts` gives
 the same with one root parsed outside its window, 17 905 / 10 438 B):
@@ -185,7 +201,9 @@ compares the three wires, not a wire with today's engine.
 What the probe leaves out: trivia ownership (it records only the extras among a node's own
 children), alias envelopes, token interiors, list owners, group seats, and typed content per kind
 (a leaf is generic). The reader routes by field and by kind, stores anonymous keyword tokens as kind
-ids, and reads leaves inline.
+ids, reads leaves inline, skips the kind's layout tokens (`fn`, `->`) and refuses any other child no
+route takes: read with its `body` route removed, `function_item` is refused with "function_item
+(kind 208) has no route for its child block (kind 313) at row 451" (engine.rs).
 
 ### Build cost
 
@@ -196,13 +214,27 @@ ids, and reads leaves inline.
 
 | expansion | seconds |
 | --- | --- |
-| plain structs | 0.46 |
-| `#[napi(object)]` (today's derive) | 5.8 |
-| `#[napi(object)]` + serde | 8.4 |
+| plain structs | 0.43 |
+| `#[napi(object)]` (today's derive) | 3.8 |
+| `#[napi(object)]` + serde | 6.3 |
 | `#[transport]`, reader + arena words | 3.6 |
-| `#[transport]`, + napi object | 10.6 |
+| `#[transport]`, + napi object | 8.4 |
 | `#[transport]`, + serde | 6.6 |
-| `#[transport]`, all three wires | 13.9 |
+| `#[transport]`, all three wires | 11.3 |
+
+Re-taken on 2026-10-05 with the refusing reader. Time a copy of `proto/` outside any indexed
+checkout: an indexer that re-reads the files a build writes takes most of the cores while the
+build runs, and the times that run gave were up to three times these. Against the probe as first
+committed, two rounds alternating the two copies (medians of wall time, user time within 0.15 s of
+it), refusing a child no route takes adds 1.2–1.3 s to each `#[transport]` expansion:
+
+| expansion | first committed | refusing |
+| --- | --- | --- |
+| `#[napi(object)]` (today's derive) | 3.90 | 3.88 |
+| `#[transport]`, reader + arena words | 2.55 | 3.70 |
+| `#[transport]`, + napi object | 7.29 | 8.59 |
+| `#[transport]`, + serde | 5.52 | 6.72 |
+| `#[transport]`, all three wires | 10.25 | 11.49 |
 
 ### Phase 0: one layout field, and decoders reading by static keys
 

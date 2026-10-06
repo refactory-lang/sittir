@@ -9,11 +9,14 @@ import {
 	AssembledEnum,
 	AssembledKeyword,
 	AssembledPattern,
-	AssembledSupertype
+	AssembledSupertype,
+	isFixedTextLeaf
 } from '../../compiler/model/node-map.ts';
 import type { AssembledNode } from '../../compiler/model/node-map.ts';
 import type { ChoiceRule, SeqRule } from '../../types/rule.ts';
-import type { NodeMap } from '../../compiler/types.ts';
+import type { KindParserMetadata, NodeMap } from '../../compiler/types.ts';
+import { collectGeneratedKindEntries } from '../../dsl/symbol-table.ts';
+import type { GeneratedIdEntry, GeneratedIdTables, GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { flatten } from '../../compiler/flatten.ts';
 
 export function makeNodeMapWith(nodes: Map<string, AssembledNode>): NodeMap {
@@ -33,6 +36,59 @@ export function makeNodeMapWith(nodes: Map<string, AssembledNode>): NodeMap {
 		externals: [],
 		word: undefined
 	} satisfies NodeMap;
+}
+
+export interface NodeMapWithIdTables {
+	readonly nodeMap: NodeMap;
+	readonly generatedIdTables: GeneratedIdTables;
+}
+
+export function withGeneratedIdTables(
+	build: (kindEntries: readonly GeneratedKindEntry[]) => NodeMap,
+	tokens: Readonly<Record<string, string>> = {}
+): NodeMapWithIdTables {
+	const generatedIdTables = generatedIdTablesOf(build([]), tokens);
+	return { nodeMap: build(collectGeneratedKindEntries(generatedIdTables)), generatedIdTables };
+}
+
+function generatedIdTablesOf(nodeMap: NodeMap, tokens: Readonly<Record<string, string>>): GeneratedIdTables {
+	const rows = new Map<string, GeneratedIdEntry>();
+	const add = (kind: string, parser: KindParserMetadata): void => {
+		if (rows.has(kind)) throw new Error(`fixture id tables: '${kind}' is both a node kind and a token`);
+		rows.set(kind, { id: rows.size + 1, parser });
+	};
+	for (const node of nodeMap.nodes.values()) add(node.kind, nodeParserRow(node));
+	for (const [kind, text] of Object.entries(tokens)) add(kind, tokenParserRow(kind, text));
+	return { kindIds: rows, sourceArtifact: 'fixture' };
+}
+
+function nodeParserRow(node: AssembledNode): KindParserMetadata {
+	return {
+		cSymbol: `sym_${node.kind}`,
+		parserName: node.kind,
+		symbolName: node.kind,
+		anon: false,
+		aux: false,
+		alias: false,
+		hidden: node.hidden,
+		...(isFixedTextLeaf(node) ? { literalText: node.text, literalRule: true } : {}),
+		...(node instanceof AssembledSupertype ? { supertype: true } : {}),
+		...(node.modelType === 'pattern' || isFixedTextLeaf(node) ? { terminal: true } : {})
+	};
+}
+
+function tokenParserRow(kind: string, text: string): KindParserMetadata {
+	return {
+		cSymbol: `anon_sym_${kind}`,
+		parserName: kind,
+		symbolName: text,
+		literalText: text,
+		anon: true,
+		aux: false,
+		alias: false,
+		hidden: false,
+		terminal: true
+	};
 }
 
 export function makeSiteKindsNodeMap<T extends { readonly kind: string; readonly seat?: { readonly kind: string } }>(sites: readonly T[]): NodeMap {

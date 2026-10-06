@@ -6,7 +6,8 @@ import re, sys
 
 
 def census(path):
-    lines = open(path).read().split('\n')
+    with open(path) as f:
+        lines = f.read().split('\n')
     structs = slots = enums = 0
     napi_lines = render_lines = 0
     i = 0

@@ -28,7 +28,7 @@ const N = stubs.length;
 
 const COPIES = 100;
 function perNode(make: () => unknown[]): number {
-	let held: unknown[] = [];
+	const held: unknown[] = [];
 	make();
 	gc!();
 	gc!();
@@ -37,7 +37,7 @@ function perNode(make: () => unknown[]): number {
 	gc!();
 	gc!();
 	const after = process.memoryUsage().heapUsed;
-	held = [];
+	void held.length;
 	return (after - before) / (COPIES * N);
 }
 

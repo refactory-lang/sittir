@@ -280,28 +280,37 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 		expect(fnBody).not.toContain('render_block');
 	});
 
-	it('leaf transport napi impls accept strings, structured objects, and boolean-presence leaves', async () => {
+	it('leaf transport napi impls accept strings and structured objects', async () => {
 		// napi typeof-dispatch transport fix: leaf FromNapiValue impls now
 		// branch on `transport_value_type(env, napi_val)?` up front instead of
-		// speculatively trying `String::from_napi_value`/`bool::from_napi_value`
-		// and catching failures — calling `String::from_napi_value` on a
-		// non-string input had a bad failure path (JSON.stringify on Object
-		// inputs). Same accept surface (string / object $text / boolean
-		// presence), different, safer dispatch shape.
+		// speculatively trying `String::from_napi_value` and catching failures —
+		// calling `String::from_napi_value` on a non-string input had a bad
+		// failure path (JSON.stringify on Object inputs).
 		const src = await getTypescriptTransportRs();
 		expect(src).toContain('::napi::ValueType::String => String::from_napi_value(env, napi_val)?,');
-		expect(src).toContain('obj.get("$text")?.unwrap_or_default()');
-		expect(src).toContain('::napi::ValueType::Boolean => {');
-		expect(src).toContain('if !bool::from_napi_value(env, napi_val)? {');
-		expect(src).toContain('received false; omit the field instead of sending false');
+		expect(src).toContain('::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()');
 	});
 
-	it('leaf token transport napi impls recover literal text from numeric kind ids', async () => {
+	it('a presence slot holding a keyword kind crosses as a boolean and renders the kind', async () => {
+		const src = await getRustTemplatesRs();
+		expect(extractStructBody(src, 'ReferenceTypeTransport')).toContain('pub mutable: Option<bool>,');
+		expect(extractFnBody(src, 'render_reference_type')).toContain(
+			'let mutable = View::new(::sittir_core::view::Presence::new(node.mutable, MutableSpecifierTransport::MutableSpecifier), "{}");'
+		);
+		expect(src).not.toContain('::napi::ValueType::Boolean');
+	});
+
+	it('a fixed-text kind decodes its numeric kind id into its unit, which writes the kind text', async () => {
 		const src = await getTypescriptTransportRs();
-		// Raw kind_id (Number) input is matched directly via the same
-		// transport_value_type dispatch, not a speculative u16 try-parse.
-		expect(src).toContain('::napi::ValueType::Number => "+".to_string(),');
-		expect(src).toContain('obj.get("$text")?.unwrap_or_else(|| "+".to_string())');
+		const from = src.indexOf('impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {');
+		expect(from).toBeGreaterThan(-1);
+		const decoder = src.slice(from, src.indexOf('\n}\n', from));
+		expect(decoder).toContain('match u16::from_napi_value(env, napi_val)? {');
+		expect(decoder).toMatch(/^ {12}\d+ => Ok\(Self::Plus\),$/m);
+		expect(decoder).not.toContain('ValueType');
+		expect(src).toMatch(
+			/fn render_plus\(w: &mut dyn ::sittir_core::render::RenderSink\) -> ::sittir_core::render::RenderResult \{\n    TransportLayout::render\(None, Some\(::sittir_core::types::KindId\(\d+\)\), ::sittir_core::layout::TriviaRole::Token, w, \|w\| w\.text\("\+"\)\)/
+		);
 	});
 });
 
@@ -381,7 +390,7 @@ describe('render options on transports', () => {
 		const fn = src.slice(src.indexOf('fn render_arguments('));
 		const render = fn.slice(0, fn.indexOf('\n}\n'));
 		expect(render).toMatch(
-			/w\.edge\(::sittir_core::types::KindId\(\d+\), ::sittir_core::options::Side::Before, node\.edges\.and_then\(\|e\| e\.before\)\);\s*\n\s*w\.text\("\("\)\?;\s*\n\s*w\.site_at\(options::SITE_ARGUMENTS_LPAREN_AFTER\);/
+			/w\.edge\(::sittir_core::types::KindId\(\d+\), ::sittir_core::options::Side::Before, node\.layout\.edges\(\)\.before\);\s*\n\s*w\.text\("\("\)\?;\s*\n\s*w\.site_at\(options::SITE_ARGUMENTS_LPAREN_AFTER\);/
 		);
 		expect(src).toContain('    w.finish()?;');
 		const binary = extractStructBody(src, 'BinaryExpressionTransport');
@@ -397,12 +406,12 @@ describe('render options on transports', () => {
 	it('a literal arm of a per-slot child enum writes its owner-kind seam sites around the literal from the resolved options', async () => {
 		const src = await getTypescriptTransportRs();
 		const enumSrc = src.slice(src.indexOf('pub enum LexicalDeclarationTerminatorTransportSlot {'));
-		expect(enumSrc.slice(0, enumSrc.indexOf('\n}\n'))).toMatch(/Literal3_73_65_6d_69,/);
+		expect(enumSrc.slice(0, enumSrc.indexOf('\n}\n'))).toMatch(/^    Semi,$/m);
 		const render = src.slice(
 			src.indexOf('impl ::sittir_core::render::Render for LexicalDeclarationTerminatorTransportSlot {')
 		);
 		expect(render.slice(0, render.indexOf('\n}\n'))).toMatch(
-			/Literal3_73_65_6d_69 => \{\s*w\.site_at\(options::SITE_LEXICAL_DECLARATION_SEMI_BEFORE\);\s*let written = w\.text\(";"\);/
+			/Semi => \{\s*w\.site_at\(options::SITE_LEXICAL_DECLARATION_SEMI_BEFORE\);\s*let written = render_semi\(w\);/
 		);
 	});
 
@@ -413,12 +422,12 @@ describe('render options on transports', () => {
 		expect(src).toContain('    ::sittir_core::prepare::Prepare::prepare(&mut transport, ctx)?;');
 	});
 
-	it('every transport carries base edges; a kind edge is prepared from its edge row and written through the sink', async () => {
+	it('every transport carries base edges in its layout; a kind edge is prepared from its edge row and written through the sink', async () => {
 		const src = await getTypescriptTransportRs();
 		for (const name of ['ArgumentsTransport', 'StatementBlockTransport']) {
 			const body = extractStructBody(src, name);
-			expect(body).toContain('napi(js_name = "$_edges")');
-			expect(body).toContain('pub edges: Option<::sittir_core::options::Edges>,');
+			expect(body).toContain('napi(js_name = "$_layout")');
+			expect(body).toContain('pub layout: Option<TransportLayout>,');
 			expect(src).toContain(`impl ::sittir_core::options::Edged for ${name} {`);
 			const prepare = src.slice(src.indexOf(`impl ::sittir_core::prepare::Prepare for ${name} {`));
 			expect(prepare.slice(0, prepare.indexOf('\n}\n'))).toContain('::sittir_core::prepare::prepare_edges(self, ctx);');
@@ -427,7 +436,7 @@ describe('render options on transports', () => {
 		expect(src).not.toContain('self.statement_block_before.get_or_insert');
 		const blockFn = src.slice(src.indexOf('fn render_statement_block('));
 		expect(blockFn.slice(0, blockFn.indexOf('\n}\n'))).toMatch(
-			/w\.edge\(::sittir_core::types::KindId\(\d+\), ::sittir_core::options::Side::Before, node\.edges\.and_then\(\|e\| e\.before\)\);/
+			/w\.edge\(::sittir_core::types::KindId\(\d+\), ::sittir_core::options::Side::Before, node\.layout\.edges\(\)\.before\);/
 		);
 		expect(src).toContain('.with_sources(ctx.sources).with_options(ctx.options)');
 		expect(src).not.toMatch(/t\.\w+_after\.get_or_insert/);
@@ -448,7 +457,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		)?.id;
 		expect(tokenId).toBeDefined();
 		expect(_rustKindEntries?.some((entry) => entry.kind === '_reserved_identifier')).toBe(false);
-		expect(body).toContain(`${tokenId} => Ok(Self::DefaultKeyword(`);
+		expect(body).toContain(`${tokenId} => Ok(Self::DefaultKeyword),`);
 	});
 
 	it('gives each source-adjacent list gap its source class before the list site and the seats fill it', async () => {
@@ -498,11 +507,15 @@ describe('the typed sink replaces the mark-based Display path', () => {
 			'transport_node_handle',
 			'transport_child_index',
 			'transport_source',
-			'transport_named'
+			'transport_named',
+			'transport_trivia_data',
+			'edges',
+			'source_gap',
+			'source_flank'
 		]) {
 			expect(transportRs).not.toContain(`pub ${field}:`);
 		}
-		expect(transportRs).toContain('pub transport_trivia_data: Option<TransportTrivia>');
+		expect(transportRs).toContain('pub layout: Option<TransportLayout>');
 		expect(transportRs).not.toContain('pub transport_text: Option<String>');
 	});
 

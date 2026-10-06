@@ -596,7 +596,7 @@ function printStatements(
 		if (seated.has(name) || printer.innerGap?.(name) !== true) return;
 		seated.add(name);
 		lines.push(
-			`${pad}::sittir_core::trivia::render_inner(&node.transport_trivia_data, ${rustStringLiteral(name)}, w)?;`
+			`${pad}::sittir_core::trivia::render_inner(node.layout.trivia(), ${rustStringLiteral(name)}, w)?;`
 		);
 	};
 	let literal = '';
@@ -643,7 +643,7 @@ function printStatements(
 				const edge = printer.edge?.(node.field);
 				if (edge !== undefined) {
 					const side = edge.side === 'before' ? 'Before' : 'After';
-					lines.push(`${pad}w.edge(::sittir_core::types::KindId(${edge.kindId}), ::sittir_core::options::Side::${side}, node.edges.and_then(|e| e.${edge.side}));`);
+					lines.push(`${pad}w.edge(::sittir_core::types::KindId(${edge.kindId}), ::sittir_core::options::Side::${side}, node.layout.edges().${edge.side});`);
 				} else {
 					lines.push(`${pad}w.site_at(${printer.site(node.field)});`);
 				}

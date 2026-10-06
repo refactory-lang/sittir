@@ -236,7 +236,7 @@ impl<T: Render + TriviaSeam> TransportTrivia<T> {
 
 /// The inner entries at gap `key` of a transport's trivia, if it has any.
 pub fn render_inner<T: Render + TriviaSeam>(
-    trivia: &Option<TransportTrivia<T>>,
+    trivia: Option<&TransportTrivia<T>>,
     key: &str,
     w: &mut dyn RenderSink,
 ) -> RenderResult {
@@ -267,10 +267,12 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNap
                 tokens_between: 0,
             });
         }
-        let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        let same_line = obj.get::<bool>("$sameLine")?.unwrap_or(false);
-        let tokens_between = obj.get::<u32>("$tokensBetween")?.unwrap_or(0) as u16;
-        let value = match (obj.get::<u32>("$type")?, obj.get::<String>("$text")?) {
+        use crate::boundary::property;
+        let same_line = unsafe { property::<bool>(env, napi_val, c"$sameLine")? }.unwrap_or(false);
+        let tokens_between = unsafe { property::<u32>(env, napi_val, c"$tokensBetween")? }.unwrap_or(0) as u16;
+        let kind = unsafe { property::<u32>(env, napi_val, c"$type")? };
+        let text = unsafe { property::<String>(env, napi_val, c"$text")? };
+        let value = match (kind, text) {
             (None, Some(text)) => unsafe {
                 let text = ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, text)?;
                 SlotValue::from_napi_value(env, text)?
@@ -293,8 +295,8 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNap
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        let inner = match obj.get::<::napi::bindgen_prelude::Object>("inner")? {
+        use crate::boundary::property;
+        let inner = match unsafe { property::<::napi::bindgen_prelude::Object>(env, napi_val, c"inner")? } {
             None => None,
             Some(gaps) => {
                 let mut inner = BTreeMap::new();
@@ -307,8 +309,8 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNap
             }
         };
         Ok(Self {
-            leading: obj.get("leading")?,
-            trailing: obj.get("trailing")?,
+            leading: unsafe { property(env, napi_val, c"leading")? },
+            trailing: unsafe { property(env, napi_val, c"trailing")? },
             inner,
         })
     }

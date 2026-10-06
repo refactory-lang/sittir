@@ -789,7 +789,7 @@ export { hydrateStub, isStub, readUntypedNode, type Stub, type TreeHandle } from
 export { currentHandle } from './engine-scope.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toTransportData, toDetachedTransportData, STORED_TRIVIA, carrySource, type SourceGapEvidence, type SourceFlankEvidence, type TriviaView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead } from './transport-data.ts';
+export { toTransportData, toDetachedTransportData, STORED_TRIVIA, carrySource, type SourceGapEvidence, type SourceFlankEvidence, type TransportLayout, type TriviaView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead } from './transport-data.ts';
 export { carryTree, treeTokenOf, type TreeToken } from './tree-token.ts';
 export {
 	projectInterior,

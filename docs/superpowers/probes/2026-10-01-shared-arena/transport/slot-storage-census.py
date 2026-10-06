@@ -38,13 +38,15 @@ def type_class(rust_type):
 
 
 slots_path, transport_path = sys.argv[1], sys.argv[2]
-text = open(transport_path).read()
+with open(transport_path) as f:
+    text = f.read()
 structs = {m.group(1): dict(re.findall(r'^\s+pub (\w+): (.+),$', m.group(2), re.M))
            for m in re.finditer(r'^pub struct (\w+) \{\n(.*?)^\}', text, re.S | re.M)}
 table = Counter()
 examples = defaultdict(list)
 joined = 0
-rows = [json.loads(line) for line in open(slots_path)]
+with open(slots_path) as f:
+    rows = [json.loads(line) for line in f]
 for row in rows:
     struct = structs.get(type_ident(row['typeName']) + 'Transport') or structs.get(type_ident(row['typeName']) + 'KindTransport')
     rust_type = struct.get(field_ident(row['storageName'])) if struct else None

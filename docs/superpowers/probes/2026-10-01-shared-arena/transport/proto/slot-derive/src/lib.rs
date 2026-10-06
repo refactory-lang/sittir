@@ -1,13 +1,15 @@
 //! Probe: what a transport attribute macro expands to. Not sittir code.
 //!
-//! `#[transport(kind = "function_item")]` on a struct whose fields carry
+//! `#[transport(kind = "function_item", layout = ["fn", "->"])]` on a struct whose fields carry
 //! `#[slot(field = "name")]`, `#[slot(kinds = ["where_clause"], tokens = ["async"])]` or `#[trivia]`.
 //! The expansion is mechanical: every decision (route, storage key, arity, word offset) is read
 //! off the attributes and the field's declared type, in declaration order. It emits:
 //!
 //! - the struct again, with a `kind_id` field (`$type`), napi object and serde attributes whose
 //!   storage keys are `_<field>` (`$trivia` for the trivia field);
-//! - `ReadNode`: a one-level cursor reader, tree -> transport, with children as coordinates;
+//! - `ReadNode`: a one-level cursor reader, tree -> transport, with children as coordinates. A
+//!   layout token is skipped; any other child no route takes refuses the read, naming the node's
+//!   kind, the child's kind and its row;
 //! - `Words`: the arena record writer and reader, fixed width per kind.
 //!
 //! In production the attributes would carry the parser's numeric field and kind ids, emitted by
@@ -65,16 +67,20 @@ fn shape_of(ty: &Type, trivia: bool) -> Shape {
 #[proc_macro_attribute]
 pub fn transport(attr: TokenStream, item: TokenStream) -> TokenStream {
     let mut kind: Option<LitStr> = None;
+    let mut layout: Vec<String> = Vec::new();
     let mut wire = String::from("all");
     let parser = syn::meta::parser(|meta| {
         if meta.path.is_ident("kind") {
             kind = Some(meta.value()?.parse()?);
             Ok(())
+        } else if meta.path.is_ident("layout") {
+            layout = strings(meta.value()?.parse()?)?;
+            Ok(())
         } else if meta.path.is_ident("wire") {
             wire = meta.value()?.parse::<LitStr>()?.value();
             Ok(())
         } else {
-            Err(meta.error("expected `kind = \"...\"` or `wire = \"words|napi|json|all\"`"))
+            Err(meta.error("expected `kind = \"...\"`, `layout = [\"...\"]` or `wire = \"words|napi|json|all\"`"))
         }
     });
     parse_macro_input!(attr with parser);
@@ -165,7 +171,7 @@ pub fn transport(attr: TokenStream, item: TokenStream) -> TokenStream {
                 Shape::Opt => quote!(#v = Some(crate::rt::slot_at(cur, src))),
                 _ => quote!(#v.push(crate::rt::slot_at(cur, src))),
             };
-            quote!(#i => { #set; })
+            quote!(Some(#i) => { #set; })
         })
         .collect();
     let trivia_push = specs
@@ -225,13 +231,14 @@ pub fn transport(attr: TokenStream, item: TokenStream) -> TokenStream {
 
         impl crate::rt::ReadNode for #ident {
             const KIND: &'static str = #kind;
+            const LAYOUT: &'static [&'static str] = &[#(#layout),*];
             const KEYS: &'static [&'static str] = &[#(#keys),*];
             fn route_specs() -> &'static [crate::rt::RouteSpec] {
                 const SPECS: &[crate::rt::RouteSpec] = &[#(#route_specs),*];
                 SPECS
             }
             #[allow(unused_mut, unused_variables)]
-            fn read(cur: &mut ::tree_sitter::TreeCursor<'_>, src: &[u8], routes: &crate::rt::Routes) -> Self {
+            fn read(cur: &mut ::tree_sitter::TreeCursor<'_>, src: &[u8], routes: &crate::rt::Routes) -> Result<Self, crate::rt::Refusal> {
                 let kind_id = cur.node().kind_id();
                 #(let mut #vars = #inits;)*
                 if cur.goto_first_child() {
@@ -239,10 +246,16 @@ pub fn transport(attr: TokenStream, item: TokenStream) -> TokenStream {
                         let node = cur.node();
                         if node.is_extra() {
                             #trivia_push
-                        } else {
-                            match routes.slot_of(cur.field_id().map(|f| f.get()), node.kind_id(), node.is_named()) {
+                        } else if !routes.is_layout(node.kind_id()) {
+                            match routes.slot_of(cur.field_id().map(|f| f.get()), node.kind_id()) {
                                 #(#arms)*
-                                _ => {}
+                                _ => {
+                                    return Err(crate::rt::Refusal {
+                                        parent: kind_id,
+                                        child: node.kind_id(),
+                                        row: cur.descendant_index() as u32,
+                                    })
+                                }
                             }
                         }
                         if !cur.goto_next_sibling() {
@@ -251,7 +264,7 @@ pub fn transport(attr: TokenStream, item: TokenStream) -> TokenStream {
                     }
                     cur.goto_parent();
                 }
-                Self { kind_id, #(#idents: #vars),* }
+                Ok(Self { kind_id, #(#idents: #vars),* })
             }
         }
 

@@ -1793,7 +1793,7 @@ reads it back out after `assemble()` runs), so its owner is
 
 Each expanded member records the enum it came through as `enumKind`: a
 member arm reached through an enum reference takes that enum's token seams
-(`literalArmSeamSites`), not the seams of the slot's owner.
+(`literalSeamsOf`), not the seams of the slot's owner.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.value`
 
@@ -2245,10 +2245,13 @@ Content-bearing patterns (identifier, number, …) have none. A depth token
 (`isDepthText`) has none either: its render never reads text — the sink
 dispatches on the kind id (`w.indent()` / `w.dedent(seam)` through
 `literalWrite`). A spacing sentinel (Tight) has no text at all. How the
-kind is stored does not enter into it. Both consumers of the fact read it
-here: the leaf transport's kind-id arm (`renderLeafTransportNapiImpls`) and
-the `FixedTextKindId` union (`emitTypes`), so the kinds the type admits
-are the kinds the runtime renders.
+kind is stored does not enter into it. The fact types `engine.render`'s
+kind-id argument (the `FixedTextKindId` union, `emitTypes`) and a pattern
+leaf's kind-id arm (`renderLeafTransportNapiImpls`). A fixed-text leaf
+renders from its kind id whatever its text (its unit, `collectFixedLiterals`),
+so the runtime also renders a depth token or a spacing sentinel given its id
+(nothing, on its own); the union leaves those out because no text stands
+for them.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::NodesCtx`
 

@@ -23,19 +23,13 @@ fn an_empty_suite_block_closes_the_indent_it_opened() {
     let options = options::defaults();
     let ctx = RenderContext { options: &options, sources: &NoSources };
     let block = BlockTransport {
-        transport_trivia_data: None,
+        layout: None,
         statements: None,
         statements_separator_space: None,
-        edges: None,
-        source_gap: None,
-        source_flank: None,
     };
     let suite = SuiteBlockTransport {
-        transport_trivia_data: None,
+        layout: None,
         block: ::sittir_core::SlotValue::Transport(block),
-        edges: None,
-        source_gap: None,
-        source_flank: None,
     };
     let root: RenderRoot = ::sittir_core::SlotValue::Transport(AnyTransport::SuiteBlock(suite));
     let (_, rendered) = render_transport_parts(root, &ctx).expect("render");
