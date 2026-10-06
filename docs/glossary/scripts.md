@@ -201,6 +201,14 @@ The repo-relative paths git tracks or would track: `git ls-files --cached --othe
  */
 ```
 
+### `packages/codegen/src/scripts/napi-typedefs.ts::removeNapiTypedefs`
+
+Removes the napi typedef directories of one grammar under a cargo target directory (`napi-rs/sittir-<grammar>-<hash>`). napi-derive appends each exported type's typedef to a file in that directory and never clears it, so a type that stops being napi-exported stays in the directory and is merged into every later `index.d.ts`; a build from a clean checkout has no such leftovers. The grammar's directories are matched by name, so another grammar's directories are untouched.
+
+### `packages/codegen/src/scripts/napi-typedefs.ts::clearNapiTypedefs`
+
+`removeNapiTypedefs` for the repository's cargo target directory (from `cargo metadata`, read once per working directory). Codegen calls it before each grammar's native build so the typings that build writes match a clean build's.
+
 ### `packages/codegen/src/scripts/native-binary-freshness.ts::hostBinaryFreshnessFor`
 
 ```text
