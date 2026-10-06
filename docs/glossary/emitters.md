@@ -16879,3 +16879,15 @@ The same lines for a separated list node that is the list itself: its own stored
 ### `packages/codegen/src/emitters/wrap.ts::fieldAccessorBodies`
 
 The reader body of each slot of a wrap: the expression its accessor returns, built from the stored value. The accessor lines of a wrap and the wrap's own uses of a slot's reader take it from here.
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::kindConstName`
+
+The Rust constant a kind has in `kind_ids.rs`: the screaming-snake name of its member and kind. `kind_ids.rs` and every generated attribute that names a kind take the name from here, so a kind has one spelling in native code.
+
+### `packages/codegen/src/emitters/field-id-rust.ts::fieldConstName`
+
+The Rust constant a parser field has in `field_ids.rs`: the field name in upper case. Fields stay under their module (`field_ids::NAME`) because a field and a kind can share a name.
+
+### `packages/codegen/src/emitters/field-id-rust.ts::emitFieldIdRust`
+
+The source of `render/field_ids.rs`: one `FieldId` constant per entry of the parser's field table, in id order. The ids are `parser.c`'s own, so a generated attribute names a field by constant and the native reader compares ids without looking a name up.

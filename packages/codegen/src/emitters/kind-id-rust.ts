@@ -12,6 +12,10 @@ export interface EmitKindIdRustConfig {
 	generatedIdTables: GeneratedIdTables;
 }
 
+export function kindConstName(entry: { readonly member: string; readonly kind: string }): string {
+	return toScreamingSnakeCase(entry.member, entry.kind);
+}
+
 export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	const { grammar, nodeMap, generatedIdTables } = config;
 	const entries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
@@ -30,12 +34,12 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	];
 
 	for (const entry of entries) {
-		const constName = toScreamingSnakeCase(entry.member, entry.kind);
+		const constName = kindConstName(entry);
 		lines.push(`pub const ${constName}: KindId = KindId(${entry.id});`);
 	}
 	const errorEntry = entries.find((entry) => entry.id === ERROR_KIND_ID);
 	if (errorEntry === undefined) throw new Error(`kind_ids.rs: ${grammar} has no ${ERROR_KIND_NAME} kind entry`);
-	lines.push(`const _: () = assert!(${toScreamingSnakeCase(errorEntry.member, errorEntry.kind)}.0 == KindId::ERROR.0);`);
+	lines.push(`const _: () = assert!(${kindConstName(errorEntry)}.0 == KindId::ERROR.0);`);
 
 	lines.push('');
 	lines.push(`/// Map a \`KindId\` back to its grammar kind string for diagnostics.`);

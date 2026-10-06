@@ -531,6 +531,15 @@ export function collectGeneratedKindEntries(tables: GeneratedIdTables | undefine
 		}));
 }
 
+export function generatedFieldIds(
+	tables: GeneratedIdTables | undefined
+): readonly { readonly name: string; readonly id: number }[] {
+	return toEntries(tables?.fieldIds)
+		.filter((row): row is readonly [string, GeneratedIdEntry & { readonly id: number }] => row[1].id !== undefined)
+		.map(([name, entry]) => ({ name, id: entry.id }))
+		.sort((a, b) => a.id - b.id);
+}
+
 export interface KindEntryLike {
 	readonly kind: string;
 	readonly symbolName?: string;

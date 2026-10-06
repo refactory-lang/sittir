@@ -7166,3 +7166,7 @@ A `BLANK` is never a slot. Tree-sitter's DSL spells an optional as `CHOICE(x, BL
 ### `packages/codegen/src/dsl/choice-arm-partition.ts::PREC_TYPES`
 
 The precedence wrapper types, which carry no slot topology.
+
+### `packages/codegen/src/dsl/symbol-table.ts::generatedFieldIds`
+
+The parser's field table as `{ name, id }` rows in id order, skipping entries without an id. It is the field-side counterpart of `collectGeneratedKindEntries` and the single source `field_ids.rs` is emitted from.

@@ -1,6 +1,7 @@
 // @generated from packages/scm/node-model.json5 — do not hand-edit.
 // Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar scm --all --output packages/scm/src
 
+pub mod field_ids;
 pub mod hash;
 pub mod kind_ids;
 pub mod options;

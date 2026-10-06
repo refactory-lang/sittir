@@ -996,6 +996,7 @@ function libRsContents(lang: GrammarName): string {
 	return `// @generated from packages/${lang}/node-model.json5 — do not hand-edit.
 // Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar ${lang} --all --output packages/${lang}/src
 
+pub mod field_ids;
 pub mod hash;
 pub mod kind_ids;
 pub mod options;
