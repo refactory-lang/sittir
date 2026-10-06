@@ -3,54 +3,96 @@ export interface EnvelopeClaims {
 	readonly extras: readonly number[];
 }
 
-const KEYWORD_IDS = [7, ...Array.from({ length: 21 }, (_, i) => 30 + i)];
-const PROPERTY_IDENTIFIER_DISPLAY = 462;
+export interface EnvelopePin {
+	readonly display: string;
+	readonly extras: readonly string[];
+}
 
-export const ENVELOPE_EXTRA_IDS: Readonly<Record<string, Readonly<Record<string, EnvelopeClaims>>>> = {
+export interface PinnableKind {
+	readonly kind: string;
+	readonly id: number;
+}
+
+const KEYWORD_KINDS = [
+	'type_keyword',
+	'declare_keyword',
+	'namespace_keyword',
+	'public_keyword',
+	'private_keyword',
+	'protected_keyword',
+	'override_keyword',
+	'readonly_keyword',
+	'module_keyword',
+	'any_keyword',
+	'number_keyword',
+	'boolean_keyword',
+	'string_keyword',
+	'symbol_keyword',
+	'export_keyword',
+	'object_keyword',
+	'new_keyword',
+	'get_keyword',
+	'set_keyword',
+	'async_keyword',
+	'static_keyword',
+	'let_keyword'
+];
+const PROPERTY_IDENTIFIER_DISPLAY = '_property_identifier';
+
+export const ENVELOPE_PINS: Readonly<Record<string, Readonly<Record<string, EnvelopePin>>>> = {
 	typescript: {
-		'MemberExpressionPropertyTransportSlot.PropertyIdentifier': { display: PROPERTY_IDENTIFIER_DISPLAY, extras: KEYWORD_IDS },
-		'TypeQueryMemberExpressionInTypeAnnotationPropertyTransportSlot.PropertyIdentifier': {
-			display: PROPERTY_IDENTIFIER_DISPLAY,
-			extras: KEYWORD_IDS
-		},
-		'TypeQueryMemberExpressionPropertyTransportSlot.PropertyIdentifier': { display: PROPERTY_IDENTIFIER_DISPLAY, extras: KEYWORD_IDS }
+		'MemberExpressionPropertyTransportSlot.PropertyIdentifier': { display: PROPERTY_IDENTIFIER_DISPLAY, extras: KEYWORD_KINDS }
 	}
 };
 
-const sorted = (ids: readonly number[]): number[] => [...ids].sort((a, b) => a - b);
+const sorted = (names: readonly string[]): string[] => [...names].sort();
 
 export function assertEnvelopeExtrasPinned(
 	grammar: string,
+	pins: Readonly<Record<string, EnvelopePin>> | undefined,
 	actual: ReadonlyMap<string, EnvelopeClaims>,
-	printedEnums: ReadonlySet<string>
+	printedEnums: ReadonlySet<string>,
+	kinds: readonly PinnableKind[]
 ): void {
-	const pinned = ENVELOPE_EXTRA_IDS[grammar] ?? {};
+	if (pins === undefined) return;
+	const idOf = new Map(kinds.map((entry) => [entry.kind, entry.id]));
+	const nameOf = new Map(kinds.map((entry) => [entry.id, entry.kind]));
+	const named = (id: number): string => nameOf.get(id) ?? `#${id}`;
+	for (const [variant, pin] of Object.entries(pins)) {
+		const enumName = variant.slice(0, variant.indexOf('.'));
+		if (!printedEnums.has(enumName)) {
+			throw new Error(`envelope claims: ${grammar} ${variant} pins an enum codegen does not print; remove its pin in envelope-claims.ts`);
+		}
+		for (const kind of [pin.display, ...pin.extras]) {
+			if (!idOf.has(kind)) {
+				throw new Error(`envelope claims: ${grammar} ${variant} pins kind '${kind}', which the grammar does not have; fix its pin in envelope-claims.ts`);
+			}
+		}
+	}
 	for (const [variant, claims] of actual) {
-		const pin = pinned[variant];
-		const added = sorted(claims.extras).filter((id) => pin === undefined || !pin.extras.includes(id));
+		const pin = pins[variant];
+		const added = sorted(claims.extras.map(named)).filter((kind) => pin === undefined || !pin.extras.includes(kind));
 		if (added.length > 0) {
 			throw new Error(
-				`envelope claims: ${grammar} ${variant} claims kind ids ${added.join(', ')} beyond its display id, which no pin allows; a new id is a ruling, never a raised pin`
+				`envelope claims: ${grammar} ${variant} claims kinds ${added.join(', ')} beyond its display kind, which no pin allows; a new kind is a ruling, never a raised pin`
 			);
 		}
 	}
-	for (const [variant, pin] of Object.entries(pinned)) {
+	for (const [variant, pin] of Object.entries(pins)) {
 		const claims = actual.get(variant);
 		if (claims === undefined) {
-			if (printedEnums.has(variant.slice(0, variant.indexOf('.')))) {
-				throw new Error(`envelope claims: ${grammar} ${variant} is no longer an envelope variant; remove its pin in envelope-claims.ts`);
-			}
-			continue;
+			throw new Error(`envelope claims: ${grammar} ${variant} is no longer an envelope variant; remove its pin in envelope-claims.ts`);
 		}
-		if (claims.display !== pin.display) {
+		if (named(claims.display) !== pin.display) {
 			throw new Error(
-				`envelope claims: ${grammar} ${variant} displays as kind id ${claims.display}, not its pinned ${pin.display}; update the pin in envelope-claims.ts`
+				`envelope claims: ${grammar} ${variant} displays as kind ${named(claims.display)}, not its pinned ${pin.display}; update the pin in envelope-claims.ts`
 			);
 		}
-		const dropped = sorted(pin.extras).filter((id) => !claims.extras.includes(id));
+		const claimed = claims.extras.map(named);
+		const dropped = sorted(pin.extras).filter((kind) => !claimed.includes(kind));
 		if (dropped.length > 0) {
 			throw new Error(
-				`envelope claims: ${grammar} ${variant} no longer claims kind ids ${dropped.join(', ')}; lower the pin in envelope-claims.ts`
+				`envelope claims: ${grammar} ${variant} no longer claims kinds ${dropped.join(', ')}; lower the pin in envelope-claims.ts`
 			);
 		}
 	}
