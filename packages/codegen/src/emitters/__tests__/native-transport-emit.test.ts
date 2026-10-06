@@ -10,7 +10,6 @@ import {
 	AssembledPattern,
 	AssembledSupertype
 } from '../../compiler/model/node-map.ts';
-import { collectGeneratedKindEntries } from '../../dsl/symbol-table.ts';
 import type { GeneratedIdTables, GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import type { AssembledNode } from '../../compiler/model/node-map.ts';
 import type { ChoiceRule, SeqRule } from '../../types/rule.ts';
@@ -22,9 +21,6 @@ import { flatten } from '../../compiler/flatten.ts';
 const nodeMapWith = makeNodeMapWith;
 
 const MINIMAL_TOKENS = { semi: ';', plus: '+', minus: '-' };
-
-const kindIdOf = (tables: GeneratedIdTables, kind: string): number | undefined =>
-	collectGeneratedKindEntries(tables).find((entry) => entry.kind === kind)?.id;
 
 function makeMinimalNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap {
 	const opts = { kindEntries };
@@ -403,14 +399,13 @@ describe('native transport emission', () => {
 			nodeMap,
 			generatedIdTables
 		);
-		const semiId = kindIdOf(generatedIdTables, 'semi');
 
 		expect(emitted.transportRs.contents).toContain('pub enum AnyTransport');
-		expect(emitted.transportRs.contents).toContain('::sittir_core::boundary::property::<u16>(env, napi_val, c"$type")?');
+		expect(emitted.transportRs.contents).toContain('#[transport(choice)]\npub enum AnyTransport {');
 		expect(emitted.transportRs.contents).toContain('CallExpression(CallExpressionTransport),');
 		expect(emitted.transportRs.contents).toContain('pub struct CallExpressionTransport');
 		expect(emitted.transportRs.contents).toContain('pub callee: ::sittir_core::SlotValue<ExpressionTransport>,');
-		expect(emitted.transportRs.contents).toContain(`${semiId} => Ok(AnyTransport::Semi),`);
+		expect(emitted.transportRs.contents).toMatch(/pub enum AnyTransport \{[^}]*\n    #\[kind\(kind::SEMI\)\]\n    Semi,/);
 		expect(emitted.transportRs.contents).not.toContain('pub struct LiteralTransport');
 		// `from_transport` (2026-04-29 renderable-native-views plan, Task 4) was
 		// the interim bridge name; it was since renamed to the two functions
@@ -449,7 +444,7 @@ describe('native transport emission', () => {
 		).transportRs.contents;
 
 		expect(rust).toContain(
-			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]\n    #[slot]\n    pub identifier: Option<::sittir_core::SlotValue<IdentifierTransport>>,'
+			'#[wire(key = "_identifier")]\n    #[slot]\n    pub identifier: Option<::sittir_core::SlotValue<IdentifierTransport>>,'
 		);
 		expect(rust).not.toContain('pub identifier: Option<Vec<');
 		expect(rust).not.toContain('pub identifier: OneOrMany<');
@@ -468,7 +463,7 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]\n    #[slot]\n    pub identifier: ::sittir_core::SlotValue<IdentifierTransport>,'
+			'#[wire(key = "_identifier")]\n    #[slot]\n    pub identifier: ::sittir_core::SlotValue<IdentifierTransport>,'
 		);
 		expect(structBody).not.toContain('pub identifier: Option<');
 		expect(structBody).not.toContain('pub identifier: Vec<');
@@ -499,7 +494,7 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]\n    #[slot]\n    pub content: ::sittir_core::SlotValue<SupertypeAliasParentContentTransportSlot>,'
+			'#[wire(key = "_content")]\n    #[slot]\n    pub content: ::sittir_core::SlotValue<SupertypeAliasParentContentTransportSlot>,'
 		);
 		expect(emitted.transportRs.contents).toContain('pub enum SupertypeAliasParentContentTransportSlot {');
 		expect(emitted.transportRs.contents).toContain('Identifier(IdentifierTransport),');
@@ -519,7 +514,7 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]\n    #[slot]\n    pub identifier: Vec<::sittir_core::SlotValue<IdentifierTransport>>,'
+			'#[wire(key = "_identifier")]\n    #[slot]\n    pub identifier: Vec<::sittir_core::SlotValue<IdentifierTransport>>,'
 		);
 		expect(structBody).not.toContain('OneOrMany<');
 	});
@@ -542,7 +537,7 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]\n    #[slot]\n    pub identifier: Option<Vec<::sittir_core::SlotValue<IdentifierTransport>>>,'
+			'#[wire(key = "_identifier")]\n    #[slot]\n    pub identifier: Option<Vec<::sittir_core::SlotValue<IdentifierTransport>>>,'
 		);
 	});
 
@@ -573,7 +568,7 @@ describe('native transport emission', () => {
 		// default, not a regression.
 		expect(emitted).toContain('SimpleStatements(SimpleStatementsTransport),');
 		expect(emitted).toContain('ExpressionStatement(ExpressionStatementTransport),');
-		expect(emitted).toContain('122 => Ok(Self::ExpressionStatement(');
+		expect(emitted).toMatch(/    #\[kind\([^\n]*\)\]\n    ExpressionStatement\(/);
 	});
 
 	it('accepts a hidden wrapper kind id for hidden-wrapper child enums', () => {
@@ -594,11 +589,11 @@ describe('native transport emission', () => {
 		).transportRs.contents;
 
 		expect(emitted).toContain('pub enum HiddenWrapperParentContentTransportSlot {');
-		expect(emitted).toContain('410 => Ok(Self::WrappedItem(');
-		expect(emitted).toContain('411 => Ok(Self::Integer(');
+		expect(emitted).toMatch(/    #\[kind\([^\n]*\)\]\n    WrappedItem\(/);
+		expect(emitted).toMatch(/    #\[kind\([^\n]*\)\]\n    Integer\(/);
 	});
 
-	it('lets supertype-backed child enums fall back to object parsing before unknown-kind errors', () => {
+	it('claims each member of a supertype-backed child enum by its kind', () => {
 		const generatedIdTables: GeneratedIdTables = {
 			kindIds: {
 				object_like: 500,
@@ -623,14 +618,9 @@ describe('native transport emission', () => {
 		expect(emitted).toContain('Pair(PairTransport),');
 		expect(emitted).toContain('Identifier(IdentifierTransport),');
 		expect(emitted).toContain('ReservedIdentifier(ReservedIdentifierTransport),');
-		// Object-fallback: the unified `transport_value_type` match dispatches
-		// Number/String/Object inputs; the Object arm reads `$type` and falls
-		// through the same kind-id match as the Number arm, ending in the same
-		// "unknown kind id" error for anything unrecognized — same intent as
-		// the old `if X.is_ok() || Y.is_ok()` idiom, current code shape.
-		expect(emitted).toContain('::napi::ValueType::Object => {');
-		expect(emitted).toContain('let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||');
-		expect(emitted).toContain('"unknown kind id {other} in ObjectLikeContentTransportSlot"');
+		for (const variant of ['Pair', 'Identifier', 'ReservedIdentifier']) {
+			expect(emitted).toMatch(new RegExp(`    #\\[kind\\([^\\n]*\\)\\]\\n    ${variant}\\(`));
+		}
 	});
 
 	it('emits per-slot typed enum for named heterogeneous fields (cleanup-rules §E1)', () => {
@@ -676,7 +666,7 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_items"))]\n    #[slot(field = field::ITEMS)]\n    pub items: Vec<::sittir_core::SlotValue<IdentifierTransport>>,'
+			'#[wire(key = "_items")]\n    #[slot(field = field::ITEMS)]\n    pub items: Vec<::sittir_core::SlotValue<IdentifierTransport>>,'
 		);
 		expect(structBody).not.toContain('OneOrMany<');
 	});
@@ -694,7 +684,7 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_items"))]\n    #[slot(field = field::ITEMS)]\n    pub items: Option<Vec<::sittir_core::SlotValue<IdentifierTransport>>>,'
+			'#[wire(key = "_items")]\n    #[slot(field = field::ITEMS)]\n    pub items: Option<Vec<::sittir_core::SlotValue<IdentifierTransport>>>,'
 		);
 		expect(structBody).not.toContain('OneOrMany<');
 	});
@@ -723,11 +713,9 @@ describe('native transport emission', () => {
 			nodeMap,
 			generatedIdTables
 		);
-		const selfId = kindIdOf(generatedIdTables, 'self');
 
-		expect(emitted.transportRs.contents).toContain(`${selfId} => Ok(AnyTransport::Self_),`);
+		expect(emitted.transportRs.contents).toMatch(/pub enum AnyTransport \{[^}]*\n    #\[kind\(kind::SELF\)\]\n    Self_,/);
 		expect(emitted.transportRs.contents).toContain('pub enum Self_Transport {\n    #[kind(kind::SELF)]\n    Self_,\n}');
-		expect(emitted.transportRs.contents).toContain(`${selfId} => Ok(Self::Self_),`);
 		expect(emitted.transportRs.contents).not.toContain('\n    Self,');
 	});
 });

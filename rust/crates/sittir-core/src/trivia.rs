@@ -391,16 +391,3 @@ impl ::napi::bindgen_prelude::ToNapiValue for TriviaText {
         }
     }
 }
-
-#[cfg(feature = "napi-bindings")]
-impl<T> ::napi::bindgen_prelude::TypeName for TransportTrivia<T> {
-    fn type_name() -> &'static str {
-        "TransportTrivia"
-    }
-    fn value_type() -> ::napi::ValueType {
-        ::napi::ValueType::Object
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl<T> ::napi::bindgen_prelude::ValidateNapiValue for TransportTrivia<T> {}

@@ -1,9 +1,9 @@
 // @generated from packages/regex/node-model.json5 — do not hand-edit.
 // Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar regex --all --output packages/regex/src
 //
-// Per-kind view structs and render bodies, AnyTransport enum + FromNapiValue
-// impls + per-kind transport structs + typed dispatch
-// (render_transport_dispatch) + transport bridge helpers.
+// Per-kind view structs and render bodies, AnyTransport enum + per-kind
+// transport structs + typed dispatch (render_transport_dispatch) + transport
+// bridge helpers.
 
 #![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]
 
@@ -13,13 +13,11 @@ use ::sittir_core::types::{
     FieldValue, OneOrMany, Source, Span, NodeTrivia,
 };
 
-#[cfg(feature = "napi-bindings")]
-use ::napi_derive::napi;
-
 use ::sittir_core::layout::Layout as _;
 use ::sittir_core::options::Edged as _;
 use super::options;
 use super::{field_ids as field, kind_ids as kind};
+use ::sittir_core::VerbatimTransport;
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
@@ -445,313 +443,17 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let kind_id = if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-            Some(kind_id)
-        } else {
-            ::sittir_core::boundary::property::<u16>(env, napi_val, c"$type")?
-        };
-        if let Some(kind_id) = kind_id {
-            return match kind_id {
-                // kind: pattern (PATTERN)
-                51 => Ok(AnyTransport::Pattern(
-                    PatternTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: alternation (ALTERNATION)
-                52 => Ok(AnyTransport::Alternation(
-                    AlternationTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: term (TERM)
-                53 => Ok(AnyTransport::Term(
-                    TermTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: lookaround_assertion (LOOKAROUND_ASSERTION)
-                55 => Ok(AnyTransport::LookaroundAssertion(
-                    LookaroundAssertionTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: lookahead_assertion (LOOKAHEAD_ASSERTION)
-                56 => Ok(AnyTransport::LookaheadAssertion(
-                    LookaheadAssertionTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: lookbehind_assertion (LOOKBEHIND_ASSERTION)
-                57 => Ok(AnyTransport::LookbehindAssertion(
-                    LookbehindAssertionTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: pattern_character (PATTERN_CHARACTER)
-                12 => Ok(AnyTransport::PatternCharacter(
-                    PatternCharacterTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: character_class (CHARACTER_CLASS)
-                58 => Ok(AnyTransport::CharacterClass(
-                    CharacterClassTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: posix_character_class (POSIX_CHARACTER_CLASS)
-                59 => Ok(AnyTransport::PosixCharacterClass(
-                    PosixCharacterClassTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: posix_class_name (POSIX_CLASS_NAME)
-                60 => Ok(AnyTransport::PosixClassName(
-                    PosixClassNameTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: class_range (CLASS_RANGE)
-                61 => Ok(AnyTransport::ClassRange(
-                    ClassRangeTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: class_character (CLASS_CHARACTER)
-                20 => Ok(AnyTransport::ClassCharacter(
-                    ClassCharacterTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: anonymous_capturing_group (ANONYMOUS_CAPTURING_GROUP)
-                62 => Ok(AnyTransport::AnonymousCapturingGroup(
-                    AnonymousCapturingGroupTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: named_capturing_group (NAMED_CAPTURING_GROUP)
-                63 => Ok(AnyTransport::NamedCapturingGroup(
-                    NamedCapturingGroupTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: non_capturing_group (NON_CAPTURING_GROUP)
-                64 => Ok(AnyTransport::NonCapturingGroup(
-                    NonCapturingGroupTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: flags (FLAGS)
-                66 => Ok(AnyTransport::Flags(
-                    FlagsTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: zero_or_more (ZERO_OR_MORE)
-                67 => Ok(AnyTransport::ZeroOrMore(
-                    ZeroOrMoreTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: one_or_more (ONE_OR_MORE)
-                68 => Ok(AnyTransport::OneOrMore(
-                    OneOrMoreTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: optional (OPTIONAL)
-                69 => Ok(AnyTransport::Optional(
-                    OptionalTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: count_quantifier (COUNT_QUANTIFIER)
-                70 => Ok(AnyTransport::CountQuantifier(
-                    CountQuantifierTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: backreference_escape (BACKREFERENCE_ESCAPE)
-                71 => Ok(AnyTransport::BackreferenceEscape(
-                    BackreferenceEscapeTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: named_group_backreference (NAMED_GROUP_BACKREFERENCE)
-                72 => Ok(AnyTransport::NamedGroupBackreference(
-                    NamedGroupBackreferenceTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: decimal_escape (DECIMAL_ESCAPE)
-                34 => Ok(AnyTransport::DecimalEscape(
-                    DecimalEscapeTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: character_class_escape (CHARACTER_CLASS_ESCAPE)
-                73 => Ok(AnyTransport::CharacterClassEscape(
-                    CharacterClassEscapeTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: unicode_character_escape (UNICODE_CHARACTER_ESCAPE)
-                74 => Ok(AnyTransport::UnicodeCharacterEscape(
-                    UnicodeCharacterEscapeTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: unicode_property_value_expression (UNICODE_PROPERTY_VALUE_EXPRESSION)
-                75 => Ok(AnyTransport::UnicodePropertyValueExpression(
-                    UnicodePropertyValueExpressionTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: unicode_property_value (UNICODE_PROPERTY_VALUE)
-                35 => Ok(AnyTransport::UnicodePropertyValue(
-                    UnicodePropertyValueTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: control_escape (CONTROL_ESCAPE)
-                76 => Ok(AnyTransport::ControlEscape(
-                    ControlEscapeTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: control_letter_escape (CONTROL_LETTER_ESCAPE)
-                36 => Ok(AnyTransport::ControlLetterEscape(
-                    ControlLetterEscapeTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: identity_escape (IDENTITY_ESCAPE)
-                37 => Ok(AnyTransport::IdentityEscape(
-                    IdentityEscapeTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: group_name (GROUP_NAME)
-                38 => Ok(AnyTransport::GroupName(
-                    GroupNameTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: decimal_digits (DECIMAL_DIGITS)
-                39 => Ok(AnyTransport::DecimalDigits(
-                    DecimalDigitsTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: term_group (TERM_GROUP)
-                77 => Ok(AnyTransport::TermGroup(
-                    TermGroupTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: count_quantifier_group (COUNT_QUANTIFIER_GROUP)
-                78 => Ok(AnyTransport::CountQuantifierGroup(
-                    CountQuantifierGroupTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: count_quantifier_arm (COUNT_QUANTIFIER_ARM)
-                79 => Ok(AnyTransport::CountQuantifierArm(
-                    CountQuantifierArmTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: character_class_escape_arm (CHARACTER_CLASS_ESCAPE_ARM)
-                80 => Ok(AnyTransport::CharacterClassEscapeArm(
-                    CharacterClassEscapeArmTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: unicode_property_value_expression_group (UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP)
-                81 => Ok(AnyTransport::UnicodePropertyValueExpressionGroup(
-                    UnicodePropertyValueExpressionGroupTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: character_class_escape_text1 (CHARACTER_CLASS_ESCAPE_TEXT1)
-                41 => Ok(AnyTransport::CharacterClassEscapeText1(
-                    CharacterClassEscapeText1Transport::from_napi_value(env, napi_val)?
-                )),
-                // kind: character_class_escape_text2 (CHARACTER_CLASS_ESCAPE_TEXT2)
-                42 => Ok(AnyTransport::CharacterClassEscapeText2(
-                    CharacterClassEscapeText2Transport::from_napi_value(env, napi_val)?
-                )),
-                // kind: inline_flags_group_enable (INLINE_FLAGS_GROUP_ENABLE)
-                83 => Ok(AnyTransport::InlineFlagsGroupEnable(
-                    InlineFlagsGroupEnableTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: inline_flags_group_toggle (INLINE_FLAGS_GROUP_TOGGLE)
-                84 => Ok(AnyTransport::InlineFlagsGroupToggle(
-                    InlineFlagsGroupToggleTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: inline_flags_group_disable (INLINE_FLAGS_GROUP_DISABLE)
-                85 => Ok(AnyTransport::InlineFlagsGroupDisable(
-                    InlineFlagsGroupDisableTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: lazy (LAZY)
-                89 => Ok(AnyTransport::Lazy(
-                    LazyTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: unicode_property_name (UNICODE_PROPERTY_NAME)
-                90 => Ok(AnyTransport::UnicodePropertyName(
-                    UnicodePropertyNameTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: any_character
-                2 => Ok(AnyTransport::AnyCharacter),
-                // kind: start_assertion
-                54 => Ok(AnyTransport::StartAssertion),
-                // kind: end_assertion
-                4 => Ok(AnyTransport::EndAssertion),
-                // kind: boundary_assertion
-                5 => Ok(AnyTransport::BoundaryAssertion),
-                // kind: non_boundary_assertion
-                6 => Ok(AnyTransport::NonBoundaryAssertion),
-                // kind: negation
-                82 => Ok(AnyTransport::Negation),
-                // kind: _tight
-                47 => Ok(AnyTransport::Tight),
-                // kind: _newline
-                48 => Ok(AnyTransport::Newline),
-                // kind: _blankline
-                49 => Ok(AnyTransport::Blankline),
-                // kind: _double_blankline
-                50 => Ok(AnyTransport::DoubleBlankline),
-                // kind: caret
-                3 => Ok(AnyTransport::Caret),
-                // kind: lparen_qmark
-                7 => Ok(AnyTransport::LparenQmark),
-                // kind: eq
-                8 => Ok(AnyTransport::Eq),
-                // kind: bang
-                9 => Ok(AnyTransport::Bang),
-                // kind: rparen
-                10 => Ok(AnyTransport::Rparen),
-                // kind: lparen_qmark_lt
-                11 => Ok(AnyTransport::LparenQmarkLt),
-                // kind: lbrack
-                13 => Ok(AnyTransport::Lbrack),
-                // kind: dash
-                14 => Ok(AnyTransport::Dash),
-                // kind: bslash_dash
-                19 => Ok(AnyTransport::BslashDash),
-                // kind: rbrack
-                15 => Ok(AnyTransport::Rbrack),
-                // kind: lbrack_colon
-                16 => Ok(AnyTransport::LbrackColon),
-                // kind: colon_rbrack
-                17 => Ok(AnyTransport::ColonRbrack),
-                // kind: lparen
-                21 => Ok(AnyTransport::Lparen),
-                // kind: lparen_qmarkP_lt
-                22 => Ok(AnyTransport::LparenQmarkPLt),
-                // kind: gt
-                23 => Ok(AnyTransport::Gt),
-                // kind: lparen_qmark_colon
-                24 => Ok(AnyTransport::LparenQmarkColon),
-                // kind: star
-                25 => Ok(AnyTransport::Star),
-                // kind: qmark
-                26 => Ok(AnyTransport::Qmark),
-                // kind: plus
-                27 => Ok(AnyTransport::Plus),
-                // kind: lbrace
-                28 => Ok(AnyTransport::Lbrace),
-                // kind: rbrace
-                30 => Ok(AnyTransport::Rbrace),
-                // kind: bslashk
-                31 => Ok(AnyTransport::Bslashk),
-                // kind: lt
-                32 => Ok(AnyTransport::Lt),
-                // kind: lparen_qmarkP_eq
-                33 => Ok(AnyTransport::LparenQmarkPEq),
-                // kind: comma
-                29 => Ok(AnyTransport::Comma),
-                // kind: colon
-                40 => Ok(AnyTransport::Colon),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in AnyTransport"
-                ))),
-            };
-        }
-        Err(::napi::Error::from_reason(
-            "AnyTransport: expected u16 kind_id or object with $type",
-        ))
-    }
-}
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AnyTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AnyTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        AnyTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AnyTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, *val)
-    }
-}
-
-
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice, codec_only)]
 pub enum TriviaTransport {
+    #[kind(kind::_NEWLINE)]
     Newline,
+    #[kind(kind::_BLANKLINE)]
     Blankline,
+    #[kind(kind::_DOUBLE_BLANKLINE)]
     DoubleBlankline,
+    #[transport(verbatim)]
     Verbatim(VerbatimTransport),
     Text(::sittir_core::trivia::TriviaText),
 }
@@ -809,77 +511,8 @@ impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TriviaTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    48 => Ok(Self::Newline),
-                    49 => Ok(Self::Blankline),
-                    50 => Ok(Self::DoubleBlankline),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in TriviaTransport",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in TriviaTransport")
-                )?;
-                match kind_id {
-                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
-                        text: ::sittir_core::boundary::property(env, napi_val, c"$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in TriviaTransport"))?,
-                    })),
-                    48 => Ok(Self::Newline),
-                    49 => Ok(Self::Blankline),
-                    50 => Ok(Self::DoubleBlankline),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in TriviaTransport",
-                    ))),
-                }
-            }
-            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("TriviaTransport: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TriviaTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
 pub type TransportLayout = ::sittir_core::layout::TransportLayout<TriviaTransport>;
 
-
-/// Text that is a slot's content with no kind of its own: a bare string in
-/// a slot whose members all render from their own text, where the variant
-/// tag is render-invisible and picking one would be a guess.
-#[derive(Debug, Clone, PartialEq)]
-pub struct VerbatimTransport {
-    pub text: String,
-}
-
-impl ::sittir_core::render::Render for VerbatimTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        w.text(&self.text)
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for VerbatimTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
@@ -917,77 +550,6 @@ impl ::sittir_core::view::KindOf for PatternContentTransportSlot {
             Self::Alternation(inner) => inner.kind_in(kinds),
             Self::Term(inner) => inner.kind_in(kinds),
         }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for PatternContentTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    52 => Ok(Self::Alternation(
-                        AlternationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    53 => Ok(Self::Term(
-                        TermTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in PatternContentTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in PatternContentTransportSlot")
-                )?;
-                match kind_id {
-                    52 => Ok(Self::Alternation(
-                        AlternationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    53 => Ok(Self::Term(
-                        TermTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in PatternContentTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("PatternContentTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PatternContentTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("PatternContentTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<PatternContentTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        PatternContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<PatternContentTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        PatternContentTransportSlot::to_napi_value(env, *val)
     }
 }
 
@@ -1039,77 +601,6 @@ impl ::sittir_core::view::KindOf for LookaroundAssertionContentTransportSlot {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for LookaroundAssertionContentTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    56 => Ok(Self::LookaheadAssertion(
-                        LookaheadAssertionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    57 => Ok(Self::LookbehindAssertion(
-                        LookbehindAssertionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in LookaroundAssertionContentTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in LookaroundAssertionContentTransportSlot")
-                )?;
-                match kind_id {
-                    56 => Ok(Self::LookaheadAssertion(
-                        LookaheadAssertionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    57 => Ok(Self::LookbehindAssertion(
-                        LookbehindAssertionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in LookaroundAssertionContentTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("LookaroundAssertionContentTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LookaroundAssertionContentTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("LookaroundAssertionContentTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LookaroundAssertionContentTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LookaroundAssertionContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LookaroundAssertionContentTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LookaroundAssertionContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for LookaroundAssertionContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -1143,69 +634,6 @@ impl ::sittir_core::view::KindOf for LookaheadAssertionContentTransportSlot {
             Self::Eq => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
             Self::Bang => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
         }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for LookaheadAssertionContentTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    8 => Ok(Self::Eq),
-                    9 => Ok(Self::Bang),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in LookaheadAssertionContentTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in LookaheadAssertionContentTransportSlot")
-                )?;
-                match kind_id {
-                    8 => Ok(Self::Eq),
-                    9 => Ok(Self::Bang),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in LookaheadAssertionContentTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("LookaheadAssertionContentTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LookaheadAssertionContentTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("LookaheadAssertionContentTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LookaheadAssertionContentTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LookaheadAssertionContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LookaheadAssertionContentTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LookaheadAssertionContentTransportSlot::to_napi_value(env, *val)
     }
 }
 
@@ -1257,69 +685,6 @@ impl ::sittir_core::view::KindOf for LookbehindAssertionContentTransportSlot {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for LookbehindAssertionContentTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    8 => Ok(Self::Eq),
-                    9 => Ok(Self::Bang),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in LookbehindAssertionContentTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in LookbehindAssertionContentTransportSlot")
-                )?;
-                match kind_id {
-                    8 => Ok(Self::Eq),
-                    9 => Ok(Self::Bang),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in LookbehindAssertionContentTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("LookbehindAssertionContentTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LookbehindAssertionContentTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("LookbehindAssertionContentTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LookbehindAssertionContentTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LookbehindAssertionContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LookbehindAssertionContentTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LookbehindAssertionContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for LookbehindAssertionContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -1360,6 +725,7 @@ pub enum CharacterClassClassAtomsTransportSlot {
     ClassRange(ClassRangeTransport),
     #[kind(kind::BSLASH_DASH)]
     BslashDash,
+    #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
 
@@ -1421,119 +787,6 @@ impl ::sittir_core::view::KindOf for CharacterClassClassAtomsTransportSlot {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for CharacterClassClassAtomsTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    19 => Ok(Self::BslashDash),
-                    20 => Ok(Self::ClassCharacter(
-                        ClassCharacterTransport::from_napi_value(env, napi_val)?
-                    )),
-                    14 => Ok(Self::ClassCharacter(
-                        ClassCharacterTransport::from_napi_value(env, napi_val)?
-                    )),
-                    73 => Ok(Self::CharacterClassEscape(
-                        CharacterClassEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    76 => Ok(Self::ControlEscape(
-                        ControlEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    36 => Ok(Self::ControlLetterEscape(
-                        ControlLetterEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    37 => Ok(Self::IdentityEscape(
-                        IdentityEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    59 => Ok(Self::PosixCharacterClass(
-                        PosixCharacterClassTransport::from_napi_value(env, napi_val)?
-                    )),
-                    61 => Ok(Self::ClassRange(
-                        ClassRangeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in CharacterClassClassAtomsTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in CharacterClassClassAtomsTransportSlot")
-                )?;
-                match kind_id {
-                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
-                        text: ::sittir_core::boundary::property(env, napi_val, c"$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in CharacterClassClassAtomsTransportSlot"))?,
-                    })),
-                    19 => Ok(Self::BslashDash),
-                    20 => Ok(Self::ClassCharacter(
-                        ClassCharacterTransport::from_napi_value(env, napi_val)?
-                    )),
-                    14 => Ok(Self::ClassCharacter(
-                        ClassCharacterTransport::from_napi_value(env, napi_val)?
-                    )),
-                    73 => Ok(Self::CharacterClassEscape(
-                        CharacterClassEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    76 => Ok(Self::ControlEscape(
-                        ControlEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    36 => Ok(Self::ControlLetterEscape(
-                        ControlLetterEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    37 => Ok(Self::IdentityEscape(
-                        IdentityEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    59 => Ok(Self::PosixCharacterClass(
-                        PosixCharacterClassTransport::from_napi_value(env, napi_val)?
-                    )),
-                    61 => Ok(Self::ClassRange(
-                        ClassRangeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in CharacterClassClassAtomsTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("CharacterClassClassAtomsTransportSlot: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for CharacterClassClassAtomsTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("CharacterClassClassAtomsTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CharacterClassClassAtomsTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        CharacterClassClassAtomsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CharacterClassClassAtomsTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        CharacterClassClassAtomsTransportSlot::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for CharacterClassClassAtomsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -1561,6 +814,7 @@ pub enum ClassRangeStartTransportSlot {
     ControlEscape(ControlEscapeTransport),
     #[kind(kind::DASH)]
     Dash,
+    #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
 
@@ -1603,89 +857,6 @@ impl ::sittir_core::view::KindOf for ClassRangeStartTransportSlot {
             Self::Dash => [::sittir_core::types::KindId(14)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(20), ::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
         }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ClassRangeStartTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    14 => Ok(Self::Dash),
-                    20 => Ok(Self::ClassCharacter(
-                        ClassCharacterTransport::from_napi_value(env, napi_val)?
-                    )),
-                    73 => Ok(Self::CharacterClassEscape(
-                        CharacterClassEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    76 => Ok(Self::ControlEscape(
-                        ControlEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ClassRangeStartTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ClassRangeStartTransportSlot")
-                )?;
-                match kind_id {
-                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
-                        text: ::sittir_core::boundary::property(env, napi_val, c"$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in ClassRangeStartTransportSlot"))?,
-                    })),
-                    14 => Ok(Self::Dash),
-                    20 => Ok(Self::ClassCharacter(
-                        ClassCharacterTransport::from_napi_value(env, napi_val)?
-                    )),
-                    73 => Ok(Self::CharacterClassEscape(
-                        CharacterClassEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    76 => Ok(Self::ControlEscape(
-                        ControlEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ClassRangeStartTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("ClassRangeStartTransportSlot: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ClassRangeStartTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ClassRangeStartTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ClassRangeStartTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ClassRangeStartTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassRangeStartTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ClassRangeStartTransportSlot::to_napi_value(env, *val)
     }
 }
 
@@ -1734,69 +905,6 @@ impl ::sittir_core::view::KindOf for NamedCapturingGroupContentTransportSlot {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for NamedCapturingGroupContentTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    11 => Ok(Self::LparenQmarkLt),
-                    22 => Ok(Self::LparenQmarkPLt),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in NamedCapturingGroupContentTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in NamedCapturingGroupContentTransportSlot")
-                )?;
-                match kind_id {
-                    11 => Ok(Self::LparenQmarkLt),
-                    22 => Ok(Self::LparenQmarkPLt),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in NamedCapturingGroupContentTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("NamedCapturingGroupContentTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for NamedCapturingGroupContentTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("NamedCapturingGroupContentTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<NamedCapturingGroupContentTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        NamedCapturingGroupContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedCapturingGroupContentTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        NamedCapturingGroupContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for NamedCapturingGroupContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -1823,6 +931,7 @@ pub enum CountQuantifierContentTransportSlot {
     CountQuantifierArm(CountQuantifierArmTransport),
     #[kind(kind::DECIMAL_DIGITS)]
     DecimalDigits(DecimalDigitsTransport),
+    #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
 
@@ -1860,81 +969,6 @@ impl ::sittir_core::view::KindOf for CountQuantifierContentTransportSlot {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for CountQuantifierContentTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    79 => Ok(Self::CountQuantifierArm(
-                        CountQuantifierArmTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::DecimalDigits(
-                        DecimalDigitsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in CountQuantifierContentTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in CountQuantifierContentTransportSlot")
-                )?;
-                match kind_id {
-                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
-                        text: ::sittir_core::boundary::property(env, napi_val, c"$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in CountQuantifierContentTransportSlot"))?,
-                    })),
-                    79 => Ok(Self::CountQuantifierArm(
-                        CountQuantifierArmTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::DecimalDigits(
-                        DecimalDigitsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in CountQuantifierContentTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("CountQuantifierContentTransportSlot: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for CountQuantifierContentTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("CountQuantifierContentTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CountQuantifierContentTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        CountQuantifierContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CountQuantifierContentTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        CountQuantifierContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for CountQuantifierContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -1954,6 +988,7 @@ pub enum CharacterClassEscapeContentTransportSlot {
     CharacterClassEscapeArm(CharacterClassEscapeArmTransport),
     #[kind(kind::UNICODE_CHARACTER_ESCAPE)]
     UnicodeCharacterEscape(UnicodeCharacterEscapeTransport),
+    #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
 
@@ -1995,87 +1030,6 @@ impl ::sittir_core::view::KindOf for CharacterClassEscapeContentTransportSlot {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for CharacterClassEscapeContentTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    41 => Ok(Self::CharacterClassEscapeText1(
-                        CharacterClassEscapeText1Transport::from_napi_value(env, napi_val)?
-                    )),
-                    80 => Ok(Self::CharacterClassEscapeArm(
-                        CharacterClassEscapeArmTransport::from_napi_value(env, napi_val)?
-                    )),
-                    74 => Ok(Self::UnicodeCharacterEscape(
-                        UnicodeCharacterEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in CharacterClassEscapeContentTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in CharacterClassEscapeContentTransportSlot")
-                )?;
-                match kind_id {
-                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
-                        text: ::sittir_core::boundary::property(env, napi_val, c"$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in CharacterClassEscapeContentTransportSlot"))?,
-                    })),
-                    41 => Ok(Self::CharacterClassEscapeText1(
-                        CharacterClassEscapeText1Transport::from_napi_value(env, napi_val)?
-                    )),
-                    80 => Ok(Self::CharacterClassEscapeArm(
-                        CharacterClassEscapeArmTransport::from_napi_value(env, napi_val)?
-                    )),
-                    74 => Ok(Self::UnicodeCharacterEscape(
-                        UnicodeCharacterEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in CharacterClassEscapeContentTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("CharacterClassEscapeContentTransportSlot: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for CharacterClassEscapeContentTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("CharacterClassEscapeContentTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CharacterClassEscapeContentTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        CharacterClassEscapeContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CharacterClassEscapeContentTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        CharacterClassEscapeContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for CharacterClassEscapeContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -2098,6 +1052,7 @@ pub enum TermGroupQuantifierTransportSlot {
     Optional(OptionalTransport),
     #[kind(kind::COUNT_QUANTIFIER)]
     CountQuantifier(CountQuantifierTransport),
+    #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
 
@@ -2140,93 +1095,6 @@ impl ::sittir_core::view::KindOf for TermGroupQuantifierTransportSlot {
             Self::CountQuantifier(inner) => inner.kind_in(kinds),
             Self::Verbatim(_) => [::sittir_core::types::KindId(67), ::sittir_core::types::KindId(68), ::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
         }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TermGroupQuantifierTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    67 => Ok(Self::ZeroOrMore(
-                        ZeroOrMoreTransport::from_napi_value(env, napi_val)?
-                    )),
-                    68 => Ok(Self::OneOrMore(
-                        OneOrMoreTransport::from_napi_value(env, napi_val)?
-                    )),
-                    69 => Ok(Self::Optional(
-                        OptionalTransport::from_napi_value(env, napi_val)?
-                    )),
-                    70 => Ok(Self::CountQuantifier(
-                        CountQuantifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in TermGroupQuantifierTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in TermGroupQuantifierTransportSlot")
-                )?;
-                match kind_id {
-                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
-                        text: ::sittir_core::boundary::property(env, napi_val, c"$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in TermGroupQuantifierTransportSlot"))?,
-                    })),
-                    67 => Ok(Self::ZeroOrMore(
-                        ZeroOrMoreTransport::from_napi_value(env, napi_val)?
-                    )),
-                    68 => Ok(Self::OneOrMore(
-                        OneOrMoreTransport::from_napi_value(env, napi_val)?
-                    )),
-                    69 => Ok(Self::Optional(
-                        OptionalTransport::from_napi_value(env, napi_val)?
-                    )),
-                    70 => Ok(Self::CountQuantifier(
-                        CountQuantifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in TermGroupQuantifierTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("TermGroupQuantifierTransportSlot: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TermGroupQuantifierTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("TermGroupQuantifierTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TermGroupQuantifierTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        TermGroupQuantifierTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TermGroupQuantifierTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        TermGroupQuantifierTransportSlot::to_napi_value(env, *val)
     }
 }
 
@@ -2289,6 +1157,7 @@ pub enum TermGroupContentTransportSlot {
     NonBoundaryAssertion,
     #[kind(kind::ANY_CHARACTER)]
     AnyCharacter,
+    #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
 
@@ -2406,187 +1275,6 @@ impl ::sittir_core::view::KindOf for TermGroupContentTransportSlot {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TermGroupContentTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    54 => Ok(Self::StartAssertion),
-                    4 => Ok(Self::EndAssertion),
-                    5 => Ok(Self::BoundaryAssertion),
-                    6 => Ok(Self::NonBoundaryAssertion),
-                    2 => Ok(Self::AnyCharacter),
-                    55 => Ok(Self::LookaroundAssertion(
-                        LookaroundAssertionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    12 => Ok(Self::PatternCharacter(
-                        PatternCharacterTransport::from_napi_value(env, napi_val)?
-                    )),
-                    58 => Ok(Self::CharacterClass(
-                        CharacterClassTransport::from_napi_value(env, napi_val)?
-                    )),
-                    59 => Ok(Self::PosixCharacterClass(
-                        PosixCharacterClassTransport::from_napi_value(env, napi_val)?
-                    )),
-                    34 => Ok(Self::DecimalEscape(
-                        DecimalEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    73 => Ok(Self::CharacterClassEscape(
-                        CharacterClassEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    76 => Ok(Self::ControlEscape(
-                        ControlEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    36 => Ok(Self::ControlLetterEscape(
-                        ControlLetterEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    37 => Ok(Self::IdentityEscape(
-                        IdentityEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    19 => Ok(Self::IdentityEscape(
-                        IdentityEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    71 => Ok(Self::BackreferenceEscape(
-                        BackreferenceEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    72 => Ok(Self::NamedGroupBackreference(
-                        NamedGroupBackreferenceTransport::from_napi_value(env, napi_val)?
-                    )),
-                    62 => Ok(Self::AnonymousCapturingGroup(
-                        AnonymousCapturingGroupTransport::from_napi_value(env, napi_val)?
-                    )),
-                    63 => Ok(Self::NamedCapturingGroup(
-                        NamedCapturingGroupTransport::from_napi_value(env, napi_val)?
-                    )),
-                    64 => Ok(Self::NonCapturingGroup(
-                        NonCapturingGroupTransport::from_napi_value(env, napi_val)?
-                    )),
-                    83 => Ok(Self::InlineFlagsGroupEnable(
-                        InlineFlagsGroupEnableTransport::from_napi_value(env, napi_val)?
-                    )),
-                    84 => Ok(Self::InlineFlagsGroupToggle(
-                        InlineFlagsGroupToggleTransport::from_napi_value(env, napi_val)?
-                    )),
-                    85 => Ok(Self::InlineFlagsGroupDisable(
-                        InlineFlagsGroupDisableTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in TermGroupContentTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in TermGroupContentTransportSlot")
-                )?;
-                match kind_id {
-                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
-                        text: ::sittir_core::boundary::property(env, napi_val, c"$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in TermGroupContentTransportSlot"))?,
-                    })),
-                    54 => Ok(Self::StartAssertion),
-                    4 => Ok(Self::EndAssertion),
-                    5 => Ok(Self::BoundaryAssertion),
-                    6 => Ok(Self::NonBoundaryAssertion),
-                    2 => Ok(Self::AnyCharacter),
-                    55 => Ok(Self::LookaroundAssertion(
-                        LookaroundAssertionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    12 => Ok(Self::PatternCharacter(
-                        PatternCharacterTransport::from_napi_value(env, napi_val)?
-                    )),
-                    58 => Ok(Self::CharacterClass(
-                        CharacterClassTransport::from_napi_value(env, napi_val)?
-                    )),
-                    59 => Ok(Self::PosixCharacterClass(
-                        PosixCharacterClassTransport::from_napi_value(env, napi_val)?
-                    )),
-                    34 => Ok(Self::DecimalEscape(
-                        DecimalEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    73 => Ok(Self::CharacterClassEscape(
-                        CharacterClassEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    76 => Ok(Self::ControlEscape(
-                        ControlEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    36 => Ok(Self::ControlLetterEscape(
-                        ControlLetterEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    37 => Ok(Self::IdentityEscape(
-                        IdentityEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    19 => Ok(Self::IdentityEscape(
-                        IdentityEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    71 => Ok(Self::BackreferenceEscape(
-                        BackreferenceEscapeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    72 => Ok(Self::NamedGroupBackreference(
-                        NamedGroupBackreferenceTransport::from_napi_value(env, napi_val)?
-                    )),
-                    62 => Ok(Self::AnonymousCapturingGroup(
-                        AnonymousCapturingGroupTransport::from_napi_value(env, napi_val)?
-                    )),
-                    63 => Ok(Self::NamedCapturingGroup(
-                        NamedCapturingGroupTransport::from_napi_value(env, napi_val)?
-                    )),
-                    64 => Ok(Self::NonCapturingGroup(
-                        NonCapturingGroupTransport::from_napi_value(env, napi_val)?
-                    )),
-                    83 => Ok(Self::InlineFlagsGroupEnable(
-                        InlineFlagsGroupEnableTransport::from_napi_value(env, napi_val)?
-                    )),
-                    84 => Ok(Self::InlineFlagsGroupToggle(
-                        InlineFlagsGroupToggleTransport::from_napi_value(env, napi_val)?
-                    )),
-                    85 => Ok(Self::InlineFlagsGroupDisable(
-                        InlineFlagsGroupDisableTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in TermGroupContentTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("TermGroupContentTransportSlot: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TermGroupContentTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("TermGroupContentTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TermGroupContentTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        TermGroupContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TermGroupContentTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        TermGroupContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for TermGroupContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -2665,67 +1353,6 @@ impl ::sittir_core::view::KindOf for LazyContentTransportSlot {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for LazyContentTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    26 => Ok(Self::Qmark),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in LazyContentTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in LazyContentTransportSlot")
-                )?;
-                match kind_id {
-                    26 => Ok(Self::Qmark),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in LazyContentTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("LazyContentTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LazyContentTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("LazyContentTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LazyContentTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LazyContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LazyContentTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LazyContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for LazyContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
@@ -2735,13 +1362,12 @@ impl ::sittir_core::render::Render for LazyContentTransportSlot {
 }
 
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::PATTERN)]
 pub struct PatternTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<PatternContentTransportSlot>,
 }
@@ -2785,38 +1411,17 @@ impl ::sittir_core::prepare::Prepare for PatternTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<PatternTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        PatternTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<PatternTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        PatternTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::ALTERNATION)]
 pub struct AlternationTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terms"))]
+    #[wire(key = "_terms")]
     #[slot(field = field::TERMS, separator = kind::PIPE)]
     pub terms: Vec<Option<::sittir_core::SlotValue<TermTransport>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terms_separator_space_before"))]
+    #[wire(key = "_terms_separator_space_before")]
     pub terms_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terms_separator_space_after"))]
+    #[wire(key = "_terms_separator_space_after")]
     pub terms_separator_space_after: Option<u16>,
 }
 
@@ -2855,36 +1460,15 @@ impl ::sittir_core::prepare::Prepare for AlternationTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AlternationTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        AlternationTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AlternationTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        AlternationTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::TERM)]
 pub struct TermTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_term_group"))]
+    #[wire(key = "_term_group")]
     #[slot]
     pub term_group: Vec<::sittir_core::SlotValue<TermGroupTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_term_group_separator_space"))]
+    #[wire(key = "_term_group_separator_space")]
     pub term_group_separator_space: Option<u16>,
 }
 
@@ -2923,26 +1507,6 @@ impl ::sittir_core::prepare::Prepare for TermTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TermTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        TermTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TermTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        TermTransport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum AnyCharacterTransport {
@@ -2959,51 +1523,6 @@ impl ::sittir_core::view::KindOf for AnyCharacterTransport {
 impl ::sittir_core::prepare::Prepare for AnyCharacterTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for AnyCharacterTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            2 => Ok(Self::AnyCharacter),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind AnyCharacterTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AnyCharacterTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("AnyCharacterTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AnyCharacterTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        AnyCharacterTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AnyCharacterTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        AnyCharacterTransport::to_napi_value(env, *val)
     }
 }
 
@@ -3032,51 +1551,6 @@ impl ::sittir_core::prepare::Prepare for StartAssertionTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for StartAssertionTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            54 => Ok(Self::StartAssertion),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind StartAssertionTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for StartAssertionTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("StartAssertionTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<StartAssertionTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        StartAssertionTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<StartAssertionTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        StartAssertionTransport::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for StartAssertionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_start_assertion(w)
@@ -3099,51 +1573,6 @@ impl ::sittir_core::view::KindOf for EndAssertionTransport {
 impl ::sittir_core::prepare::Prepare for EndAssertionTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for EndAssertionTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            4 => Ok(Self::EndAssertion),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind EndAssertionTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for EndAssertionTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("EndAssertionTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<EndAssertionTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        EndAssertionTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<EndAssertionTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        EndAssertionTransport::to_napi_value(env, *val)
     }
 }
 
@@ -3172,51 +1601,6 @@ impl ::sittir_core::prepare::Prepare for BoundaryAssertionTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for BoundaryAssertionTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            5 => Ok(Self::BoundaryAssertion),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind BoundaryAssertionTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for BoundaryAssertionTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("BoundaryAssertionTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BoundaryAssertionTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        BoundaryAssertionTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BoundaryAssertionTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        BoundaryAssertionTransport::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for BoundaryAssertionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_boundary_assertion(w)
@@ -3242,64 +1626,18 @@ impl ::sittir_core::prepare::Prepare for NonBoundaryAssertionTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for NonBoundaryAssertionTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            6 => Ok(Self::NonBoundaryAssertion),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind NonBoundaryAssertionTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for NonBoundaryAssertionTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("NonBoundaryAssertionTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<NonBoundaryAssertionTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        NonBoundaryAssertionTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<NonBoundaryAssertionTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        NonBoundaryAssertionTransport::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for NonBoundaryAssertionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_non_boundary_assertion(w)
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::LOOKAROUND_ASSERTION)]
 pub struct LookaroundAssertionTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<LookaroundAssertionContentTransportSlot>,
 }
@@ -3336,36 +1674,15 @@ impl ::sittir_core::prepare::Prepare for LookaroundAssertionTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LookaroundAssertionTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LookaroundAssertionTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LookaroundAssertionTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LookaroundAssertionTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::_LOOKAHEAD_ASSERTION, layout = [kind::LPAREN_QMARK, kind::EQ, kind::BANG, kind::RPAREN])]
 pub struct LookaheadAssertionTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<LookaheadAssertionContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
+    #[wire(key = "_pattern")]
     #[slot]
     pub pattern: ::sittir_core::SlotValue<PatternTransport>,
 }
@@ -3406,36 +1723,15 @@ impl ::sittir_core::prepare::Prepare for LookaheadAssertionTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LookaheadAssertionTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LookaheadAssertionTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LookaheadAssertionTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LookaheadAssertionTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::_LOOKBEHIND_ASSERTION, layout = [kind::LPAREN_QMARK_LT, kind::EQ, kind::BANG, kind::RPAREN])]
 pub struct LookbehindAssertionTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<LookbehindAssertionContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
+    #[wire(key = "_pattern")]
     #[slot]
     pub pattern: ::sittir_core::SlotValue<PatternTransport>,
 }
@@ -3476,30 +1772,12 @@ impl ::sittir_core::prepare::Prepare for LookbehindAssertionTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LookbehindAssertionTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LookbehindAssertionTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LookbehindAssertionTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LookbehindAssertionTransport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::PATTERN_CHARACTER, text)]
 pub struct PatternCharacterTransport {
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
+    #[wire(key = "$text")]
     pub text: String,
 }
 
@@ -3534,96 +1812,21 @@ impl ::sittir_core::prepare::Prepare for PatternCharacterTransport {
     }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for PatternCharacterTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut layout: Option<TransportLayout> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => {
-                let id = u32::from_napi_value(env, napi_val)?;
-                return Err(::napi::Error::from_reason(format!(
-                    "kind id {} ({:?}) has no fixed text: PatternCharacterTransport renders from a node, not a kind id",
-                    id,
-                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
-                )));
-            }
-            _ => {
-                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for PatternCharacterTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
-        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PatternCharacterTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<PatternCharacterTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        PatternCharacterTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<PatternCharacterTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        PatternCharacterTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::CHARACTER_CLASS, layout = [kind::LBRACK, kind::RBRACK], gap(1) = negation)]
 pub struct CharacterClassTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_leading"))]
+    #[wire(key = "_leading")]
     #[slot(field = field::LEADING, presence = kind::CLASS_CHARACTER)]
     pub leading: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_atoms"))]
+    #[wire(key = "_class_atoms")]
     #[slot(field = field::CLASS_ATOMS)]
     pub class_atoms: Option<Vec<::sittir_core::SlotValue<CharacterClassClassAtomsTransportSlot>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing"))]
+    #[wire(key = "_trailing")]
     #[slot(field = field::TRAILING, presence = kind::CLASS_CHARACTER)]
     pub trailing: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_negation"))]
+    #[wire(key = "_negation")]
     #[slot(presence = kind::_NEGATION)]
     pub negation: Option<bool>,
 }
@@ -3666,33 +1869,12 @@ impl ::sittir_core::prepare::Prepare for CharacterClassTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CharacterClassTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        CharacterClassTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CharacterClassTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        CharacterClassTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::POSIX_CHARACTER_CLASS, layout = [kind::LBRACK_COLON, kind::COLON_RBRACK])]
 pub struct PosixCharacterClassTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_posix_class_name"))]
+    #[wire(key = "_posix_class_name")]
     #[slot(field = field::POSIX_CLASS_NAME)]
     pub posix_class_name: ::sittir_core::SlotValue<PosixClassNameTransport>,
 }
@@ -3732,30 +1914,12 @@ impl ::sittir_core::prepare::Prepare for PosixCharacterClassTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<PosixCharacterClassTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        PosixCharacterClassTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<PosixCharacterClassTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        PosixCharacterClassTransport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::POSIX_CLASS_NAME, text)]
 pub struct PosixClassNameTransport {
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
+    #[wire(key = "$text")]
     pub text: String,
 }
 
@@ -3790,90 +1954,15 @@ impl ::sittir_core::prepare::Prepare for PosixClassNameTransport {
     }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for PosixClassNameTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut layout: Option<TransportLayout> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => {
-                let id = u32::from_napi_value(env, napi_val)?;
-                return Err(::napi::Error::from_reason(format!(
-                    "kind id {} ({:?}) has no fixed text: PosixClassNameTransport renders from a node, not a kind id",
-                    id,
-                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
-                )));
-            }
-            _ => {
-                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for PosixClassNameTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
-        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PosixClassNameTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<PosixClassNameTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        PosixClassNameTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<PosixClassNameTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        PosixClassNameTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::CLASS_RANGE, layout = [kind::DASH])]
 pub struct ClassRangeTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_start"))]
+    #[wire(key = "_start")]
     #[slot(field = field::START)]
     pub start: ::sittir_core::SlotValue<ClassRangeStartTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_end"))]
+    #[wire(key = "_end")]
     #[slot(field = field::END)]
     pub end: ::sittir_core::SlotValue<ClassRangeStartTransportSlot>,
 }
@@ -3914,30 +2003,12 @@ impl ::sittir_core::prepare::Prepare for ClassRangeTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ClassRangeTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ClassRangeTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassRangeTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ClassRangeTransport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::CLASS_CHARACTER, text)]
 pub struct ClassCharacterTransport {
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
+    #[wire(key = "$text")]
     pub text: String,
 }
 
@@ -3972,87 +2043,12 @@ impl ::sittir_core::prepare::Prepare for ClassCharacterTransport {
     }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ClassCharacterTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut layout: Option<TransportLayout> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => {
-                let id = u32::from_napi_value(env, napi_val)?;
-                return Err(::napi::Error::from_reason(format!(
-                    "kind id {} ({:?}) has no fixed text: ClassCharacterTransport renders from a node, not a kind id",
-                    id,
-                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
-                )));
-            }
-            _ => {
-                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ClassCharacterTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
-        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ClassCharacterTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ClassCharacterTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ClassCharacterTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassCharacterTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ClassCharacterTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::ANONYMOUS_CAPTURING_GROUP, layout = [kind::LPAREN, kind::RPAREN])]
 pub struct AnonymousCapturingGroupTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
+    #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN)]
     pub pattern: ::sittir_core::SlotValue<PatternTransport>,
 }
@@ -4092,39 +2088,18 @@ impl ::sittir_core::prepare::Prepare for AnonymousCapturingGroupTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AnonymousCapturingGroupTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        AnonymousCapturingGroupTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AnonymousCapturingGroupTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        AnonymousCapturingGroupTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::NAMED_CAPTURING_GROUP, layout = [kind::LPAREN_QMARK_LT, kind::LPAREN_QMARK_P_LT, kind::GT, kind::RPAREN])]
 pub struct NamedCapturingGroupTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_group_name"))]
+    #[wire(key = "_group_name")]
     #[slot(field = field::GROUP_NAME)]
     pub group_name: ::sittir_core::SlotValue<GroupNameTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
+    #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN)]
     pub pattern: ::sittir_core::SlotValue<PatternTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<NamedCapturingGroupContentTransportSlot>,
 }
@@ -4166,33 +2141,12 @@ impl ::sittir_core::prepare::Prepare for NamedCapturingGroupTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<NamedCapturingGroupTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        NamedCapturingGroupTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedCapturingGroupTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        NamedCapturingGroupTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::NON_CAPTURING_GROUP, layout = [kind::LPAREN_QMARK_COLON, kind::RPAREN])]
 pub struct NonCapturingGroupTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
+    #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN)]
     pub pattern: ::sittir_core::SlotValue<PatternTransport>,
 }
@@ -4232,30 +2186,12 @@ impl ::sittir_core::prepare::Prepare for NonCapturingGroupTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<NonCapturingGroupTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        NonCapturingGroupTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<NonCapturingGroupTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        NonCapturingGroupTransport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::FLAGS, text)]
 pub struct FlagsTransport {
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
+    #[wire(key = "$text")]
     pub text: String,
 }
 
@@ -4290,84 +2226,12 @@ impl ::sittir_core::prepare::Prepare for FlagsTransport {
     }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for FlagsTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut layout: Option<TransportLayout> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => {
-                let id = u32::from_napi_value(env, napi_val)?;
-                return Err(::napi::Error::from_reason(format!(
-                    "kind id {} ({:?}) has no fixed text: FlagsTransport renders from a node, not a kind id",
-                    id,
-                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
-                )));
-            }
-            _ => {
-                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for FlagsTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
-        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FlagsTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<FlagsTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        FlagsTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<FlagsTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        FlagsTransport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::ZERO_OR_MORE, text)]
 pub struct ZeroOrMoreTransport {
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
+    #[wire(key = "$text")]
     pub text: String,
 }
 
@@ -4402,84 +2266,12 @@ impl ::sittir_core::prepare::Prepare for ZeroOrMoreTransport {
     }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ZeroOrMoreTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut layout: Option<TransportLayout> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => {
-                let id = u32::from_napi_value(env, napi_val)?;
-                return Err(::napi::Error::from_reason(format!(
-                    "kind id {} ({:?}) has no fixed text: ZeroOrMoreTransport renders from a node, not a kind id",
-                    id,
-                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
-                )));
-            }
-            _ => {
-                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ZeroOrMoreTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
-        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ZeroOrMoreTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ZeroOrMoreTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ZeroOrMoreTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ZeroOrMoreTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ZeroOrMoreTransport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::ONE_OR_MORE, text)]
 pub struct OneOrMoreTransport {
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
+    #[wire(key = "$text")]
     pub text: String,
 }
 
@@ -4514,84 +2306,12 @@ impl ::sittir_core::prepare::Prepare for OneOrMoreTransport {
     }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for OneOrMoreTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut layout: Option<TransportLayout> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => {
-                let id = u32::from_napi_value(env, napi_val)?;
-                return Err(::napi::Error::from_reason(format!(
-                    "kind id {} ({:?}) has no fixed text: OneOrMoreTransport renders from a node, not a kind id",
-                    id,
-                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
-                )));
-            }
-            _ => {
-                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for OneOrMoreTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
-        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for OneOrMoreTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<OneOrMoreTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        OneOrMoreTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<OneOrMoreTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        OneOrMoreTransport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::OPTIONAL, text)]
 pub struct OptionalTransport {
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
+    #[wire(key = "$text")]
     pub text: String,
 }
 
@@ -4626,90 +2346,15 @@ impl ::sittir_core::prepare::Prepare for OptionalTransport {
     }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for OptionalTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut layout: Option<TransportLayout> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => {
-                let id = u32::from_napi_value(env, napi_val)?;
-                return Err(::napi::Error::from_reason(format!(
-                    "kind id {} ({:?}) has no fixed text: OptionalTransport renders from a node, not a kind id",
-                    id,
-                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
-                )));
-            }
-            _ => {
-                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for OptionalTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
-        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for OptionalTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<OptionalTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        OptionalTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<OptionalTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        OptionalTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::COUNT_QUANTIFIER, layout = [kind::LBRACE, kind::RBRACE, kind::_LAZY])]
 pub struct CountQuantifierTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<CountQuantifierContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lazy"))]
+    #[wire(key = "_lazy")]
     #[slot(presence = kind::_LAZY)]
     pub lazy: Option<bool>,
 }
@@ -4750,33 +2395,12 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CountQuantifierTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        CountQuantifierTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CountQuantifierTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        CountQuantifierTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::BACKREFERENCE_ESCAPE, layout = [kind::BSLASHK, kind::LT, kind::GT])]
 pub struct BackreferenceEscapeTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_group_name"))]
+    #[wire(key = "_group_name")]
     #[slot(field = field::GROUP_NAME)]
     pub group_name: ::sittir_core::SlotValue<GroupNameTransport>,
 }
@@ -4816,33 +2440,12 @@ impl ::sittir_core::prepare::Prepare for BackreferenceEscapeTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BackreferenceEscapeTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        BackreferenceEscapeTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BackreferenceEscapeTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        BackreferenceEscapeTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::NAMED_GROUP_BACKREFERENCE, layout = [kind::LPAREN_QMARK_P_EQ, kind::RPAREN])]
 pub struct NamedGroupBackreferenceTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_group_name"))]
+    #[wire(key = "_group_name")]
     #[slot(field = field::GROUP_NAME)]
     pub group_name: ::sittir_core::SlotValue<GroupNameTransport>,
 }
@@ -4882,30 +2485,12 @@ impl ::sittir_core::prepare::Prepare for NamedGroupBackreferenceTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<NamedGroupBackreferenceTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        NamedGroupBackreferenceTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedGroupBackreferenceTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        NamedGroupBackreferenceTransport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::DECIMAL_ESCAPE, text)]
 pub struct DecimalEscapeTransport {
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
+    #[wire(key = "$text")]
     pub text: String,
 }
 
@@ -4940,87 +2525,12 @@ impl ::sittir_core::prepare::Prepare for DecimalEscapeTransport {
     }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for DecimalEscapeTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut layout: Option<TransportLayout> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => {
-                let id = u32::from_napi_value(env, napi_val)?;
-                return Err(::napi::Error::from_reason(format!(
-                    "kind id {} ({:?}) has no fixed text: DecimalEscapeTransport renders from a node, not a kind id",
-                    id,
-                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
-                )));
-            }
-            _ => {
-                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for DecimalEscapeTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
-        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for DecimalEscapeTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<DecimalEscapeTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        DecimalEscapeTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<DecimalEscapeTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        DecimalEscapeTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::CHARACTER_CLASS_ESCAPE)]
 pub struct CharacterClassEscapeTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<CharacterClassEscapeContentTransportSlot>,
 }
@@ -5057,30 +2567,12 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CharacterClassEscapeTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        CharacterClassEscapeTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CharacterClassEscapeTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        CharacterClassEscapeTransport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::UNICODE_CHARACTER_ESCAPE, text)]
 pub struct UnicodeCharacterEscapeTransport {
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
+    #[wire(key = "$text")]
     pub text: String,
 }
 
@@ -5115,90 +2607,15 @@ impl ::sittir_core::prepare::Prepare for UnicodeCharacterEscapeTransport {
     }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for UnicodeCharacterEscapeTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut layout: Option<TransportLayout> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => {
-                let id = u32::from_napi_value(env, napi_val)?;
-                return Err(::napi::Error::from_reason(format!(
-                    "kind id {} ({:?}) has no fixed text: UnicodeCharacterEscapeTransport renders from a node, not a kind id",
-                    id,
-                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
-                )));
-            }
-            _ => {
-                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for UnicodeCharacterEscapeTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
-        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for UnicodeCharacterEscapeTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<UnicodeCharacterEscapeTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        UnicodeCharacterEscapeTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<UnicodeCharacterEscapeTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        UnicodeCharacterEscapeTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::UNICODE_PROPERTY_VALUE_EXPRESSION)]
 pub struct UnicodePropertyValueExpressionTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_unicode_property_value_expression_group"))]
+    #[wire(key = "_unicode_property_value_expression_group")]
     #[slot]
     pub unicode_property_value_expression_group: Option<::sittir_core::SlotValue<UnicodePropertyValueExpressionGroupTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_unicode_property_value"))]
+    #[wire(key = "_unicode_property_value")]
     #[slot]
     pub unicode_property_value: ::sittir_core::SlotValue<UnicodePropertyValueTransport>,
 }
@@ -5239,30 +2656,12 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyValueExpressionTransport
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<UnicodePropertyValueExpressionTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        UnicodePropertyValueExpressionTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<UnicodePropertyValueExpressionTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        UnicodePropertyValueExpressionTransport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::UNICODE_PROPERTY_VALUE, text)]
 pub struct UnicodePropertyValueTransport {
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
+    #[wire(key = "$text")]
     pub text: String,
 }
 
@@ -5297,84 +2696,12 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyValueTransport {
     }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for UnicodePropertyValueTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut layout: Option<TransportLayout> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => {
-                let id = u32::from_napi_value(env, napi_val)?;
-                return Err(::napi::Error::from_reason(format!(
-                    "kind id {} ({:?}) has no fixed text: UnicodePropertyValueTransport renders from a node, not a kind id",
-                    id,
-                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
-                )));
-            }
-            _ => {
-                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for UnicodePropertyValueTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
-        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for UnicodePropertyValueTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<UnicodePropertyValueTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        UnicodePropertyValueTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<UnicodePropertyValueTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        UnicodePropertyValueTransport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::CONTROL_ESCAPE, text)]
 pub struct ControlEscapeTransport {
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
+    #[wire(key = "$text")]
     pub text: String,
 }
 
@@ -5409,84 +2736,12 @@ impl ::sittir_core::prepare::Prepare for ControlEscapeTransport {
     }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ControlEscapeTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut layout: Option<TransportLayout> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => {
-                let id = u32::from_napi_value(env, napi_val)?;
-                return Err(::napi::Error::from_reason(format!(
-                    "kind id {} ({:?}) has no fixed text: ControlEscapeTransport renders from a node, not a kind id",
-                    id,
-                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
-                )));
-            }
-            _ => {
-                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ControlEscapeTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
-        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ControlEscapeTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ControlEscapeTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ControlEscapeTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ControlEscapeTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ControlEscapeTransport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::CONTROL_LETTER_ESCAPE, text)]
 pub struct ControlLetterEscapeTransport {
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
+    #[wire(key = "$text")]
     pub text: String,
 }
 
@@ -5521,87 +2776,12 @@ impl ::sittir_core::prepare::Prepare for ControlLetterEscapeTransport {
     }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ControlLetterEscapeTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut layout: Option<TransportLayout> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => {
-                let id = u32::from_napi_value(env, napi_val)?;
-                return Err(::napi::Error::from_reason(format!(
-                    "kind id {} ({:?}) has no fixed text: ControlLetterEscapeTransport renders from a node, not a kind id",
-                    id,
-                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
-                )));
-            }
-            _ => {
-                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ControlLetterEscapeTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
-        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ControlLetterEscapeTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ControlLetterEscapeTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ControlLetterEscapeTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ControlLetterEscapeTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ControlLetterEscapeTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::IDENTITY_ESCAPE, folded = [kind::BSLASH_DASH], interior = "^\\\\(?<content>(?:[^kdDsSpPwWbfnrtv0-9]))$")]
 pub struct IdentityEscapeTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[wire(key = "_content")]
     #[slot(capture = "content")]
     pub content: String,
 }
@@ -5638,30 +2818,12 @@ impl ::sittir_core::prepare::Prepare for IdentityEscapeTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<IdentityEscapeTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        IdentityEscapeTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<IdentityEscapeTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        IdentityEscapeTransport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::GROUP_NAME, text)]
 pub struct GroupNameTransport {
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
+    #[wire(key = "$text")]
     pub text: String,
 }
 
@@ -5696,84 +2858,12 @@ impl ::sittir_core::prepare::Prepare for GroupNameTransport {
     }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for GroupNameTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut layout: Option<TransportLayout> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => {
-                let id = u32::from_napi_value(env, napi_val)?;
-                return Err(::napi::Error::from_reason(format!(
-                    "kind id {} ({:?}) has no fixed text: GroupNameTransport renders from a node, not a kind id",
-                    id,
-                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
-                )));
-            }
-            _ => {
-                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for GroupNameTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
-        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for GroupNameTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<GroupNameTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        GroupNameTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<GroupNameTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        GroupNameTransport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::DECIMAL_DIGITS, text)]
 pub struct DecimalDigitsTransport {
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
+    #[wire(key = "$text")]
     pub text: String,
 }
 
@@ -5808,90 +2898,15 @@ impl ::sittir_core::prepare::Prepare for DecimalDigitsTransport {
     }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for DecimalDigitsTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut layout: Option<TransportLayout> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => {
-                let id = u32::from_napi_value(env, napi_val)?;
-                return Err(::napi::Error::from_reason(format!(
-                    "kind id {} ({:?}) has no fixed text: DecimalDigitsTransport renders from a node, not a kind id",
-                    id,
-                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
-                )));
-            }
-            _ => {
-                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for DecimalDigitsTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
-        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for DecimalDigitsTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<DecimalDigitsTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        DecimalDigitsTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<DecimalDigitsTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        DecimalDigitsTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::TERM_GROUP)]
 pub struct TermGroupTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_quantifier"))]
+    #[wire(key = "_quantifier")]
     #[slot(field = field::QUANTIFIER)]
     pub quantifier: Option<::sittir_core::SlotValue<TermGroupQuantifierTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<TermGroupContentTransportSlot>,
 }
@@ -5932,33 +2947,12 @@ impl ::sittir_core::prepare::Prepare for TermGroupTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TermGroupTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        TermGroupTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TermGroupTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        TermGroupTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::COUNT_QUANTIFIER_GROUP, layout = [kind::COMMA])]
 pub struct CountQuantifierGroupTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decimal_digits"))]
+    #[wire(key = "_decimal_digits")]
     #[slot]
     pub decimal_digits: Option<::sittir_core::SlotValue<DecimalDigitsTransport>>,
 }
@@ -5998,36 +2992,15 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierGroupTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CountQuantifierGroupTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        CountQuantifierGroupTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CountQuantifierGroupTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        CountQuantifierGroupTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::COUNT_QUANTIFIER_ARM)]
 pub struct CountQuantifierArmTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decimal_digits"))]
+    #[wire(key = "_decimal_digits")]
     #[slot]
     pub decimal_digits: ::sittir_core::SlotValue<DecimalDigitsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_count_quantifier_group"))]
+    #[wire(key = "_count_quantifier_group")]
     #[slot]
     pub count_quantifier_group: Option<::sittir_core::SlotValue<CountQuantifierGroupTransport>>,
 }
@@ -6068,36 +3041,15 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierArmTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CountQuantifierArmTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        CountQuantifierArmTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CountQuantifierArmTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        CountQuantifierArmTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::CHARACTER_CLASS_ESCAPE_ARM, layout = [kind::LBRACE, kind::RBRACE])]
 pub struct CharacterClassEscapeArmTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_unicode_property_value_expression"))]
+    #[wire(key = "_unicode_property_value_expression")]
     #[slot(field = field::UNICODE_PROPERTY_VALUE_EXPRESSION)]
     pub unicode_property_value_expression: ::sittir_core::SlotValue<UnicodePropertyValueExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_character_class_escape_text2"))]
+    #[wire(key = "_character_class_escape_text2")]
     #[slot]
     pub character_class_escape_text2: ::sittir_core::SlotValue<CharacterClassEscapeText2Transport>,
 }
@@ -6138,33 +3090,12 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeArmTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CharacterClassEscapeArmTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        CharacterClassEscapeArmTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CharacterClassEscapeArmTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        CharacterClassEscapeArmTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP, layout = [kind::EQ])]
 pub struct UnicodePropertyValueExpressionGroupTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_unicode_property_name"))]
+    #[wire(key = "_unicode_property_name")]
     #[slot]
     pub unicode_property_name: ::sittir_core::SlotValue<UnicodePropertyNameTransport>,
 }
@@ -6204,30 +3135,12 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyValueExpressionGroupTran
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<UnicodePropertyValueExpressionGroupTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        UnicodePropertyValueExpressionGroupTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<UnicodePropertyValueExpressionGroupTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        UnicodePropertyValueExpressionGroupTransport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::CHARACTER_CLASS_ESCAPE_TEXT1, text)]
 pub struct CharacterClassEscapeText1Transport {
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
+    #[wire(key = "$text")]
     pub text: String,
 }
 
@@ -6262,84 +3175,12 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeText1Transport {
     }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for CharacterClassEscapeText1Transport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut layout: Option<TransportLayout> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => {
-                let id = u32::from_napi_value(env, napi_val)?;
-                return Err(::napi::Error::from_reason(format!(
-                    "kind id {} ({:?}) has no fixed text: CharacterClassEscapeText1Transport renders from a node, not a kind id",
-                    id,
-                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
-                )));
-            }
-            _ => {
-                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for CharacterClassEscapeText1Transport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
-        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for CharacterClassEscapeText1Transport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CharacterClassEscapeText1Transport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        CharacterClassEscapeText1Transport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CharacterClassEscapeText1Transport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        CharacterClassEscapeText1Transport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::CHARACTER_CLASS_ESCAPE_TEXT2, text)]
 pub struct CharacterClassEscapeText2Transport {
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
+    #[wire(key = "$text")]
     pub text: String,
 }
 
@@ -6374,80 +3215,6 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeText2Transport {
     }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for CharacterClassEscapeText2Transport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut layout: Option<TransportLayout> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => {
-                let id = u32::from_napi_value(env, napi_val)?;
-                return Err(::napi::Error::from_reason(format!(
-                    "kind id {} ({:?}) has no fixed text: CharacterClassEscapeText2Transport renders from a node, not a kind id",
-                    id,
-                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
-                )));
-            }
-            _ => {
-                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for CharacterClassEscapeText2Transport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
-        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
-        Ok(Self {
-            layout,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for CharacterClassEscapeText2Transport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CharacterClassEscapeText2Transport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        CharacterClassEscapeText2Transport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CharacterClassEscapeText2Transport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        CharacterClassEscapeText2Transport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum NegationTransport {
@@ -6467,67 +3234,21 @@ impl ::sittir_core::prepare::Prepare for NegationTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for NegationTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            82 => Ok(Self::Negation),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind NegationTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for NegationTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("NegationTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<NegationTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        NegationTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<NegationTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        NegationTransport::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for NegationTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_negation(w)
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::INLINE_FLAGS_GROUP_ENABLE, layout = [kind::LPAREN_QMARK, kind::COLON, kind::RPAREN])]
 pub struct InlineFlagsGroupEnableTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enabled"))]
+    #[wire(key = "_enabled")]
     #[slot(field = field::ENABLED)]
     pub enabled: ::sittir_core::SlotValue<FlagsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
+    #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN)]
     pub pattern: Option<::sittir_core::SlotValue<PatternTransport>>,
 }
@@ -6568,39 +3289,18 @@ impl ::sittir_core::prepare::Prepare for InlineFlagsGroupEnableTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<InlineFlagsGroupEnableTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        InlineFlagsGroupEnableTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<InlineFlagsGroupEnableTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        InlineFlagsGroupEnableTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::INLINE_FLAGS_GROUP_TOGGLE, layout = [kind::LPAREN_QMARK, kind::DASH, kind::COLON, kind::RPAREN])]
 pub struct InlineFlagsGroupToggleTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enabled"))]
+    #[wire(key = "_enabled")]
     #[slot(field = field::ENABLED)]
     pub enabled: ::sittir_core::SlotValue<FlagsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_disabled"))]
+    #[wire(key = "_disabled")]
     #[slot(field = field::DISABLED)]
     pub disabled: ::sittir_core::SlotValue<FlagsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
+    #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN)]
     pub pattern: Option<::sittir_core::SlotValue<PatternTransport>>,
 }
@@ -6642,36 +3342,15 @@ impl ::sittir_core::prepare::Prepare for InlineFlagsGroupToggleTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<InlineFlagsGroupToggleTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        InlineFlagsGroupToggleTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<InlineFlagsGroupToggleTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        InlineFlagsGroupToggleTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::INLINE_FLAGS_GROUP_DISABLE, layout = [kind::LPAREN_QMARK, kind::DASH, kind::COLON, kind::RPAREN])]
 pub struct InlineFlagsGroupDisableTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_disabled"))]
+    #[wire(key = "_disabled")]
     #[slot(field = field::DISABLED)]
     pub disabled: ::sittir_core::SlotValue<FlagsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
+    #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN)]
     pub pattern: Option<::sittir_core::SlotValue<PatternTransport>>,
 }
@@ -6712,26 +3391,6 @@ impl ::sittir_core::prepare::Prepare for InlineFlagsGroupDisableTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<InlineFlagsGroupDisableTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        InlineFlagsGroupDisableTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<InlineFlagsGroupDisableTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        InlineFlagsGroupDisableTransport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum TightTransport {
@@ -6748,51 +3407,6 @@ impl ::sittir_core::view::KindOf for TightTransport {
 impl ::sittir_core::prepare::Prepare for TightTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TightTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            47 => Ok(Self::Tight),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind TightTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TightTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("TightTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TightTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        TightTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TightTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        TightTransport::to_napi_value(env, *val)
     }
 }
 
@@ -6821,51 +3435,6 @@ impl ::sittir_core::prepare::Prepare for NewlineTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for NewlineTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            48 => Ok(Self::Newline),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind NewlineTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for NewlineTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("NewlineTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<NewlineTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        NewlineTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<NewlineTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        NewlineTransport::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for NewlineTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_newline(w)
@@ -6888,51 +3457,6 @@ impl ::sittir_core::view::KindOf for BlanklineTransport {
 impl ::sittir_core::prepare::Prepare for BlanklineTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for BlanklineTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            49 => Ok(Self::Blankline),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind BlanklineTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for BlanklineTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("BlanklineTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BlanklineTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        BlanklineTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BlanklineTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        BlanklineTransport::to_napi_value(env, *val)
     }
 }
 
@@ -6961,64 +3485,18 @@ impl ::sittir_core::prepare::Prepare for DoubleBlanklineTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for DoubleBlanklineTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            50 => Ok(Self::DoubleBlankline),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind DoubleBlanklineTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for DoubleBlanklineTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("DoubleBlanklineTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<DoubleBlanklineTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        DoubleBlanklineTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<DoubleBlanklineTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        DoubleBlanklineTransport::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for DoubleBlanklineTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_double_blankline(w)
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::_LAZY, display, envelope, content = content)]
 pub struct LazyTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[wire(key = "_content")]
     pub content: ::sittir_core::SlotValue<LazyContentTransportSlot>,
 }
 
@@ -7054,33 +3532,12 @@ impl ::sittir_core::prepare::Prepare for LazyTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LazyTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LazyTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LazyTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LazyTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::_UNICODE_PROPERTY_NAME, display, envelope, content = content)]
 pub struct UnicodePropertyNameTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
+    #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[wire(key = "_content")]
     pub content: ::sittir_core::SlotValue<UnicodePropertyValueTransport>,
 }
 
@@ -7116,26 +3573,6 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyNameTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<UnicodePropertyNameTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        UnicodePropertyNameTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<UnicodePropertyNameTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        UnicodePropertyNameTransport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum CaretTransport {
@@ -7152,51 +3589,6 @@ impl ::sittir_core::view::KindOf for CaretTransport {
 impl ::sittir_core::prepare::Prepare for CaretTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for CaretTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            3 => Ok(Self::Caret),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind CaretTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for CaretTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("CaretTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CaretTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        CaretTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CaretTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        CaretTransport::to_napi_value(env, *val)
     }
 }
 
@@ -7225,51 +3617,6 @@ impl ::sittir_core::prepare::Prepare for LparenQmarkTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            7 => Ok(Self::LparenQmark),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind LparenQmarkTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LparenQmarkTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("LparenQmarkTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LparenQmarkTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LparenQmarkTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LparenQmarkTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LparenQmarkTransport::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for LparenQmarkTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_lparen_qmark(w)
@@ -7292,51 +3639,6 @@ impl ::sittir_core::view::KindOf for EqTransport {
 impl ::sittir_core::prepare::Prepare for EqTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for EqTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            8 => Ok(Self::Eq),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind EqTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for EqTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("EqTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<EqTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        EqTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<EqTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        EqTransport::to_napi_value(env, *val)
     }
 }
 
@@ -7365,51 +3667,6 @@ impl ::sittir_core::prepare::Prepare for BangTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for BangTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            9 => Ok(Self::Bang),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind BangTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for BangTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("BangTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BangTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        BangTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BangTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        BangTransport::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for BangTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_bang(w)
@@ -7432,51 +3689,6 @@ impl ::sittir_core::view::KindOf for RparenTransport {
 impl ::sittir_core::prepare::Prepare for RparenTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for RparenTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            10 => Ok(Self::Rparen),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind RparenTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for RparenTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("RparenTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<RparenTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        RparenTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<RparenTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        RparenTransport::to_napi_value(env, *val)
     }
 }
 
@@ -7505,51 +3717,6 @@ impl ::sittir_core::prepare::Prepare for LparenQmarkLtTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkLtTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            11 => Ok(Self::LparenQmarkLt),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind LparenQmarkLtTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LparenQmarkLtTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("LparenQmarkLtTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LparenQmarkLtTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LparenQmarkLtTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LparenQmarkLtTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LparenQmarkLtTransport::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for LparenQmarkLtTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_lparen_qmark_lt(w)
@@ -7572,51 +3739,6 @@ impl ::sittir_core::view::KindOf for LbrackTransport {
 impl ::sittir_core::prepare::Prepare for LbrackTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for LbrackTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            13 => Ok(Self::Lbrack),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind LbrackTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LbrackTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("LbrackTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LbrackTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LbrackTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LbrackTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LbrackTransport::to_napi_value(env, *val)
     }
 }
 
@@ -7645,51 +3767,6 @@ impl ::sittir_core::prepare::Prepare for DashTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for DashTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            14 => Ok(Self::Dash),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind DashTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for DashTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("DashTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<DashTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        DashTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<DashTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        DashTransport::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for DashTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_dash(w)
@@ -7712,51 +3789,6 @@ impl ::sittir_core::view::KindOf for BslashDashTransport {
 impl ::sittir_core::prepare::Prepare for BslashDashTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for BslashDashTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            19 => Ok(Self::BslashDash),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind BslashDashTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for BslashDashTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("BslashDashTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BslashDashTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        BslashDashTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BslashDashTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        BslashDashTransport::to_napi_value(env, *val)
     }
 }
 
@@ -7785,51 +3817,6 @@ impl ::sittir_core::prepare::Prepare for RbrackTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for RbrackTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            15 => Ok(Self::Rbrack),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind RbrackTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for RbrackTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("RbrackTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<RbrackTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        RbrackTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<RbrackTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        RbrackTransport::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for RbrackTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_rbrack(w)
@@ -7852,51 +3839,6 @@ impl ::sittir_core::view::KindOf for LbrackColonTransport {
 impl ::sittir_core::prepare::Prepare for LbrackColonTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for LbrackColonTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            16 => Ok(Self::LbrackColon),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind LbrackColonTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LbrackColonTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("LbrackColonTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LbrackColonTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LbrackColonTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LbrackColonTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LbrackColonTransport::to_napi_value(env, *val)
     }
 }
 
@@ -7925,51 +3867,6 @@ impl ::sittir_core::prepare::Prepare for ColonRbrackTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ColonRbrackTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            17 => Ok(Self::ColonRbrack),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind ColonRbrackTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ColonRbrackTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ColonRbrackTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ColonRbrackTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ColonRbrackTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ColonRbrackTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ColonRbrackTransport::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for ColonRbrackTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_colon_rbrack(w)
@@ -7992,51 +3889,6 @@ impl ::sittir_core::view::KindOf for LparenTransport {
 impl ::sittir_core::prepare::Prepare for LparenTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for LparenTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            21 => Ok(Self::Lparen),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind LparenTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LparenTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("LparenTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LparenTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LparenTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LparenTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LparenTransport::to_napi_value(env, *val)
     }
 }
 
@@ -8065,51 +3917,6 @@ impl ::sittir_core::prepare::Prepare for LparenQmarkPLtTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkPLtTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            22 => Ok(Self::LparenQmarkPLt),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind LparenQmarkPLtTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LparenQmarkPLtTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("LparenQmarkPLtTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LparenQmarkPLtTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LparenQmarkPLtTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LparenQmarkPLtTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LparenQmarkPLtTransport::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for LparenQmarkPLtTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_lparen_qmark_plt(w)
@@ -8132,51 +3939,6 @@ impl ::sittir_core::view::KindOf for GtTransport {
 impl ::sittir_core::prepare::Prepare for GtTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for GtTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            23 => Ok(Self::Gt),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind GtTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for GtTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("GtTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<GtTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        GtTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<GtTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        GtTransport::to_napi_value(env, *val)
     }
 }
 
@@ -8205,51 +3967,6 @@ impl ::sittir_core::prepare::Prepare for LparenQmarkColonTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkColonTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            24 => Ok(Self::LparenQmarkColon),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind LparenQmarkColonTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LparenQmarkColonTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("LparenQmarkColonTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LparenQmarkColonTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LparenQmarkColonTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LparenQmarkColonTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LparenQmarkColonTransport::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for LparenQmarkColonTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_lparen_qmark_colon(w)
@@ -8272,51 +3989,6 @@ impl ::sittir_core::view::KindOf for StarTransport {
 impl ::sittir_core::prepare::Prepare for StarTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            25 => Ok(Self::Star),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind StarTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for StarTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("StarTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<StarTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        StarTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<StarTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        StarTransport::to_napi_value(env, *val)
     }
 }
 
@@ -8345,51 +4017,6 @@ impl ::sittir_core::prepare::Prepare for QmarkTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for QmarkTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            26 => Ok(Self::Qmark),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind QmarkTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for QmarkTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("QmarkTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<QmarkTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        QmarkTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<QmarkTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        QmarkTransport::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for QmarkTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_qmark(w)
@@ -8412,51 +4039,6 @@ impl ::sittir_core::view::KindOf for PlusTransport {
 impl ::sittir_core::prepare::Prepare for PlusTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            27 => Ok(Self::Plus),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind PlusTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PlusTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("PlusTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<PlusTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        PlusTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<PlusTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        PlusTransport::to_napi_value(env, *val)
     }
 }
 
@@ -8485,51 +4067,6 @@ impl ::sittir_core::prepare::Prepare for LbraceTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for LbraceTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            28 => Ok(Self::Lbrace),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind LbraceTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LbraceTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("LbraceTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LbraceTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LbraceTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LbraceTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LbraceTransport::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for LbraceTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_lbrace(w)
@@ -8552,51 +4089,6 @@ impl ::sittir_core::view::KindOf for RbraceTransport {
 impl ::sittir_core::prepare::Prepare for RbraceTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for RbraceTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            30 => Ok(Self::Rbrace),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind RbraceTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for RbraceTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("RbraceTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<RbraceTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        RbraceTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<RbraceTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        RbraceTransport::to_napi_value(env, *val)
     }
 }
 
@@ -8625,51 +4117,6 @@ impl ::sittir_core::prepare::Prepare for BslashkTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for BslashkTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            31 => Ok(Self::Bslashk),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind BslashkTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for BslashkTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("BslashkTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BslashkTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        BslashkTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BslashkTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        BslashkTransport::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for BslashkTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_bslashk(w)
@@ -8692,51 +4139,6 @@ impl ::sittir_core::view::KindOf for LtTransport {
 impl ::sittir_core::prepare::Prepare for LtTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for LtTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            32 => Ok(Self::Lt),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind LtTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LtTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("LtTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LtTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LtTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LtTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LtTransport::to_napi_value(env, *val)
     }
 }
 
@@ -8765,51 +4167,6 @@ impl ::sittir_core::prepare::Prepare for LparenQmarkPEqTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkPEqTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            33 => Ok(Self::LparenQmarkPEq),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind LparenQmarkPEqTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LparenQmarkPEqTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("LparenQmarkPEqTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LparenQmarkPEqTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LparenQmarkPEqTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LparenQmarkPEqTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LparenQmarkPEqTransport::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for LparenQmarkPEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_lparen_qmark_peq(w)
@@ -8835,51 +4192,6 @@ impl ::sittir_core::prepare::Prepare for CommaTransport {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            29 => Ok(Self::Comma),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind CommaTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for CommaTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("CommaTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CommaTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        CommaTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CommaTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        CommaTransport::to_napi_value(env, *val)
-    }
-}
-
 impl ::sittir_core::render::Render for CommaTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_comma(w)
@@ -8902,51 +4214,6 @@ impl ::sittir_core::view::KindOf for ColonTransport {
 impl ::sittir_core::prepare::Prepare for ColonTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match u16::from_napi_value(env, napi_val)? {
-            40 => Ok(Self::Colon),
-            other => Err(::napi::Error::from_reason(format!(
-                "kind id {other} is not a kind ColonTransport takes",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ColonTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ColonTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ColonTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ColonTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ColonTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ColonTransport::to_napi_value(env, *val)
     }
 }
 

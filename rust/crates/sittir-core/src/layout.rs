@@ -174,19 +174,6 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
     }
 }
 
-#[cfg(feature = "napi-bindings")]
-impl<T> ::napi::bindgen_prelude::TypeName for TransportLayout<T> {
-    fn type_name() -> &'static str {
-        "TransportLayout"
-    }
-    fn value_type() -> ::napi::ValueType {
-        ::napi::ValueType::Object
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl<T> ::napi::bindgen_prelude::ValidateNapiValue for TransportLayout<T> {}
-
 #[cfg(test)]
 mod tests {
     use super::{TransportLayout, TriviaRole};

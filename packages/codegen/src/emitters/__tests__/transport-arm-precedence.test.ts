@@ -58,7 +58,7 @@ describe('supertype transport arm precedence', () => {
 			makeNodeMap(),
 			generatedIdTables
 		).transportRs.contents;
-		expect(emitted).toContain('28 => Ok(Self::Prim(');
-		expect(emitted).not.toContain('28 => Ok(Self::Identifier(');
+		expect(emitted).toContain('    #[kind(kind::IDENTIFIER)]\n    Identifier(IdentifierTransport),');
+		expect(emitted).toContain('    #[kind(kind::_PRIM, kind::U8, kind::BOOL)]\n    Prim(PrimEnum),');
 	});
 });

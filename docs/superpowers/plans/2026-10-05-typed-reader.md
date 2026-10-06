@@ -5013,7 +5013,26 @@ mod tests {
                 pub text: String,
             }
         });
-        assert!(has(&out, r#"::std::format!("kind id {id} has no fixed text: {} renders from a node, not a kind id", "IdentifierTransport")"#));
+        assert!(has(
+            &out,
+            r#"::std::format!("kind id {id} ({:?}) has no fixed text: {} renders from a node, not a kind id", u16::try_from(id).map_or("<unknown>", |id| kind::kind_name_from_id(::sittir_core::types::KindId(id))), "IdentifierTransport")"#
+        ));
+    }
+
+    #[test]
+    fn a_text_leaf_whose_kind_names_no_module_is_refused() {
+        let input: syn::DeriveInput = parse_quote! {
+            #[transport(kind = IDENTIFIER, text)]
+            pub struct IdentifierTransport {
+                #[wire(key = "$_layout")]
+                pub layout: Option<TransportLayout>,
+                #[wire(key = "$text")]
+                pub text: String,
+            }
+        };
+        let error = crate::expand::derive(&input).expect_err("a kind with no module");
+        assert!(error.to_string().contains("IdentifierTransport"));
+        assert!(error.to_string().contains("kind_name_from_id"));
     }
 
     #[test]
@@ -5288,9 +5307,26 @@ pub fn structure(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenSt
     }))
 }
 
+/// The module a kind constant lives in: the declared `kind` path less its
+/// last segment, where the grammar's `kind_name_from_id` sits beside it.
+fn kind_module(ident: &Ident, kind: Option<&Path>) -> syn::Result<Path> {
+    let mut module = kind.cloned().ok_or_else(|| syn::Error::new_spanned(ident, "a text leaf declares its kind: `#[transport(kind = …)]`"))?;
+    if module.segments.len() < 2 {
+        return Err(syn::Error::new_spanned(
+            &module,
+            format!("{ident}'s kind names no module to find `kind_name_from_id` in: write it as `<kind_ids module>::<CONST>`"),
+        ));
+    }
+    module.segments.pop();
+    module.segments.pop_punct();
+    Ok(module)
+}
+
 /// A text leaf: decoded from its text, from a bare kind id (its fixed text) or
 /// from an object; encoded as a struct, so a leaf in a choice keeps its `$type`.
-pub fn text_leaf(ident: &Ident, fields: &[WireField<'_>], fixed: Option<&LitStr>) -> syn::Result<TokenStream> {
+/// A leaf with no fixed text refuses a bare kind id, naming that id's kind
+/// through `kind_name_from_id` in the module its `kind` constant lives in.
+pub fn text_leaf(ident: &Ident, fields: &[WireField<'_>], fixed: Option<&LitStr>, kind: Option<&Path>) -> syn::Result<TokenStream> {
     let napi = napi();
     let owner = ident.to_string();
     let text_key = fields
@@ -5313,14 +5349,19 @@ pub fn text_leaf(ident: &Ident, fields: &[WireField<'_>], fixed: Option<&LitStr>
         Some(text) => quote! {
             #napi::ValueType::Number => ::core::result::Result::Ok(Self { text: ::std::string::ToString::to_string(#text), #(#defaults)* }),
         },
-        None => quote! {
-            #napi::ValueType::Number => {
-                let id = unsafe { <u32 as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val)? };
-                ::core::result::Result::Err(#napi::Error::from_reason(::std::format!(
-                    "kind id {id} has no fixed text: {} renders from a node, not a kind id", #owner
-                )))
+        None => {
+            let names = kind_module(ident, kind)?;
+            quote! {
+                #napi::ValueType::Number => {
+                    let id = unsafe { <u32 as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val)? };
+                    ::core::result::Result::Err(#napi::Error::from_reason(::std::format!(
+                        "kind id {id} ({:?}) has no fixed text: {} renders from a node, not a kind id",
+                        u16::try_from(id).map_or("<unknown>", |id| #names::kind_name_from_id(::sittir_core::types::KindId(id))),
+                        #owner
+                    )))
+                }
             }
-        },
+        }
     };
     let encode = struct_encode(ident, fields)?;
     let boxed = boxed(ident);
@@ -5492,7 +5533,7 @@ In `expand.rs`:
         })
         .collect::<syn::Result<Vec<_>>>()?;
     let codec = match &attrs.text {
-        Some(fixed) => codec::text_leaf(ident, &wire, fixed.as_ref())?,
+        Some(fixed) => codec::text_leaf(ident, &wire, fixed.as_ref(), attrs.kind.as_ref())?,
         None => codec::structure(ident, &wire)?,
     };
 ```
@@ -5510,7 +5551,7 @@ In `expand.rs`:
 - [ ] **Step 6: Run the derive's tests**
 
 Run: `rtk cargo test -p sittir-transport-macros`
-Expected: PASS, 8 tests.
+Expected: PASS, 9 tests.
 
 - [ ] **Step 7: Write codegen's failing tests**
 

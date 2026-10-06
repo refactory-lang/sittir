@@ -175,20 +175,25 @@ type Layout = Option<sittir_core::layout::TransportLayout<()>>;
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = kind::IDENTIFIER, text)]
 struct Ident {
+    #[wire(key = "$_layout")]
     layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[wire(key = "$text")]
     text: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = kind::PARAMETERS, layout = [kind::LPAREN, kind::RPAREN])]
 struct Params {
+    #[wire(key = "$_layout")]
     layout: Option<sittir_core::layout::TransportLayout<()>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = kind::BLOCK, layout = [kind::LBRACE, kind::RBRACE], gap(1) = statements)]
 struct Block {
+    #[wire(key = "$_layout")]
     layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS)]
     statements: Option<Vec<SlotValue<Function>>>,
 }
@@ -196,11 +201,15 @@ struct Block {
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD])]
 struct Function {
+    #[wire(key = "$_layout")]
     layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     name: SlotValue<Ident>,
+    #[wire(key = "_parameters")]
     #[slot(field = field::PARAMETERS)]
     parameters: SlotValue<Params>,
+    #[wire(key = "_body")]
     #[slot(field = field::BODY)]
     body: SlotValue<Box<Block>>,
 }
@@ -209,9 +218,12 @@ struct Function {
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD])]
 struct FunctionWithoutBody {
+    #[wire(key = "$_layout")]
     layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     name: SlotValue<Ident>,
+    #[wire(key = "_parameters")]
     #[slot(field = field::PARAMETERS)]
     parameters: SlotValue<Params>,
 }
@@ -219,7 +231,9 @@ struct FunctionWithoutBody {
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = kind::SOURCE_FILE, gap(0) = statements)]
 struct File {
+    #[wire(key = "$_layout")]
     layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS)]
     statements: Option<Vec<SlotValue<Function>>>,
 }
@@ -228,7 +242,9 @@ struct File {
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = ts::_AUTOMATIC_SEMICOLON, text = ";")]
 struct Inserted {
+    #[wire(key = "$_layout")]
     layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[wire(key = "$text")]
     text: String,
 }
 
@@ -403,13 +419,18 @@ enum Type {
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT])]
 struct Typed {
+    #[wire(key = "$_layout")]
     layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     name: SlotValue<Ident>,
+    #[wire(key = "_parameters")]
     #[slot(field = field::PARAMETERS)]
     parameters: SlotValue<Params>,
+    #[wire(key = "_return_type")]
     #[slot(field = field::RETURN_TYPE)]
     return_type: Option<SlotValue<Type>>,
+    #[wire(key = "_body")]
     #[slot(field = field::BODY)]
     body: SlotValue<Box<Block>>,
 }
@@ -477,23 +498,30 @@ fn a_unit_variant_owns_no_trivia_so_a_comment_after_it_trails_the_owner_before()
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = ts::IDENTIFIER, text)]
 struct TsIdent {
+    #[wire(key = "$_layout")]
     layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[wire(key = "$text")]
     text: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = ts::NUMBER_DECIMAL, text)]
 struct TsNumber {
+    #[wire(key = "$_layout")]
     layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[wire(key = "$text")]
     text: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = ts::VARIABLE_DECLARATOR_PLAIN, layout = [ts::EQ])]
 struct Declarator {
+    #[wire(key = "$_layout")]
     layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[wire(key = "_name")]
     #[slot(field = ts_field::NAME)]
     name: SlotValue<TsIdent>,
+    #[wire(key = "_value")]
     #[slot(field = ts_field::VALUE)]
     value: Option<SlotValue<TsNumber>>,
 }
@@ -519,11 +547,15 @@ enum Terminator {
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = ts::LEXICAL_DECLARATION)]
 struct Declaration {
+    #[wire(key = "$_layout")]
     layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[wire(key = "_kind")]
     #[slot(field = ts_field::KIND)]
     kind: SlotValue<DeclarationKind>,
+    #[wire(key = "_declarators")]
     #[slot(field = ts_field::DECLARATORS)]
     declarators: Vec<SlotValue<Declarator>>,
+    #[wire(key = "_terminator")]
     #[slot(field = ts_field::TERMINATOR)]
     terminator: Option<SlotValue<Terminator>>,
 }
@@ -553,7 +585,9 @@ enum BlockTerminator {
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = ts::STATEMENT_BLOCK, layout = [ts::LBRACE, ts::RBRACE])]
 struct StatementBlock {
+    #[wire(key = "$_layout")]
     layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[wire(key = "_terminator")]
     #[slot(field = ts_field::TERMINATOR)]
     terminator: Option<SlotValue<BlockTerminator>>,
 }
@@ -575,9 +609,12 @@ fn an_absent_slot_with_a_blank_arm_reads_as_its_blank() {
     interior = "^(?<content>(?:[0-9][0-9_]*))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$"
 )]
 struct Decimal {
+    #[wire(key = "$_layout")]
     layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[wire(key = "_content")]
     #[slot(capture = "content")]
     content: String,
+    #[wire(key = "_suffix")]
     #[slot(capture = "suffix")]
     suffix: Option<String>,
 }
@@ -585,7 +622,9 @@ struct Decimal {
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = kind::_TYPE_IDENTIFIER, display, envelope, content = content)]
 struct TypeIdent {
+    #[wire(key = "$_layout")]
     layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[wire(key = "_content")]
     content: SlotValue<Ident>,
 }
 
@@ -601,13 +640,18 @@ enum NamedType {
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT])]
 struct Named {
+    #[wire(key = "$_layout")]
     layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     name: SlotValue<Ident>,
+    #[wire(key = "_parameters")]
     #[slot(field = field::PARAMETERS)]
     parameters: SlotValue<Params>,
+    #[wire(key = "_return_type")]
     #[slot(field = field::RETURN_TYPE)]
     return_type: Option<SlotValue<NamedType>>,
+    #[wire(key = "_body")]
     #[slot(field = field::BODY)]
     body: SlotValue<Box<Block>>,
 }
@@ -634,15 +678,19 @@ fn an_envelope_holds_its_content_and_the_trivia_its_content_was_given() {
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = kind::_ATTRIBUTED_PARAMETER)]
 struct Param {
+    #[wire(key = "$_layout")]
     layout: Option<sittir_core::layout::TransportLayout<()>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = kind::PARAMETERS_ELEMENTS, list, item = item)]
 struct List {
+    #[wire(key = "$_layout")]
     layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
     item: Vec<SlotValue<Param>>,
+    #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     delimiter: Option<u8>,
 }
@@ -650,7 +698,9 @@ struct List {
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = kind::PARAMETERS, layout = [kind::LPAREN, kind::RPAREN], min_depth = 2, gap(1) = elements)]
 struct Owner {
+    #[wire(key = "$_layout")]
     layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
     elements: Option<SlotValue<List>>,
 }
@@ -698,7 +748,9 @@ enum Name {
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = kind::_TYPE_IDENTIFIER, display, envelope, content = content)]
 struct TypeIdentOfChoice {
+    #[wire(key = "$_layout")]
     layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[wire(key = "_content")]
     content: SlotValue<Name>,
 }
 
@@ -712,13 +764,18 @@ enum NamedTypeOfChoice {
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT])]
 struct NamedOfChoice {
+    #[wire(key = "$_layout")]
     layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     name: SlotValue<Ident>,
+    #[wire(key = "_parameters")]
     #[slot(field = field::PARAMETERS)]
     parameters: SlotValue<Params>,
+    #[wire(key = "_return_type")]
     #[slot(field = field::RETURN_TYPE)]
     return_type: Option<SlotValue<NamedTypeOfChoice>>,
+    #[wire(key = "_body")]
     #[slot(field = field::BODY)]
     body: SlotValue<Box<Block>>,
 }

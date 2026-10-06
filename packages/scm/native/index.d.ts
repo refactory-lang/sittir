@@ -103,23 +103,6 @@ export declare class SittirEngine {
   dispose(): void
 }
 
-export interface AnonymousNodeTransport {
-  '$_layout'?: TransportLayout
-  _name: SlotValue<AnonymousNodeNameTransportSlot>
-  _elements?: Array<SlotValue<ListElementTransport>>
-  _elements_separator_space?: number
-}
-
-export interface CaptureTransport {
-  '$_layout'?: TransportLayout
-  _name: SlotValue<ImmediateIdentifierTransport, true>
-}
-
-export interface CommentTransport {
-  '$_layout'?: TransportLayout
-  _content: string
-}
-
 /**
  * Drop one tree. Called from the boundary's `FinalizationRegistry`
  * once JavaScript has collected the last object naming it.
@@ -139,138 +122,9 @@ export interface EngineOptions {
   options?: object
 }
 
-export interface EscapeSequenceTransport {
-  '$_layout'?: TransportLayout
-  _content: string
-}
-
-export interface FieldDefinitionTransport {
-  '$_layout'?: TransportLayout
-  _name: SlotValue<IdentifierTransport>
-  _definition: SlotValue<Box<DefinitionTransport>>
-}
-
-export interface GroupExpressionArmTransport {
-  '$_layout'?: TransportLayout
-  _left: SlotValue<Box<GroupExpressionArmLeftTransportSlot>>
-  _right: SlotValue<Box<GroupExpressionArmLeftTransportSlot>>
-}
-
-export interface GroupingGroupTransport {
-  '$_layout'?: TransportLayout
-  _group_expression: SlotValue<GroupExpressionArmLeftTransportSlot>
-  _anchor?: boolean
-}
-
-export interface GroupingTransport {
-  '$_layout'?: TransportLayout
-  _elements?: Array<SlotValue<ListElementTransport>>
-  _grouping_group: Array<SlotValue<GroupingGroupTransport>>
-  _elements_separator_space?: number
-  _grouping_group_separator_space?: number
-}
-
-export interface ImmediateStringTransport {
-  '$_layout'?: TransportLayout
-  _string_content?: SlotValue<StringContentTransport>
-}
-
-export interface ListElementQuantifierTransport {
-  '$_layout'?: TransportLayout
-  _quantifier: SlotValue<QuantifierEnum>
-}
-
-export interface ListTransport {
-  '$_layout'?: TransportLayout
-  _definitions: Array<SlotValue<DefinitionTransport>>
-  _elements?: Array<SlotValue<ListElementTransport>>
-  _definitions_separator_space?: number
-  _elements_separator_space?: number
-}
-
 /**
  * Number of trees still held on this thread. Diagnostics only — the
  * boundary's disposal is driven by GC, so this is the way a test can
  * observe that trees are actually being released.
  */
 export declare function liveTreeCount(): number
-
-export interface MissingNodeTransport {
-  '$_layout'?: TransportLayout
-  _name?: SlotValue<MissingNodeNameTransportSlot>
-  _elements?: Array<SlotValue<ListElementTransport>>
-  _elements_separator_space?: number
-}
-
-export interface NamedNodeExpressionArmTransport {
-  '$_layout'?: TransportLayout
-  _left: SlotValue<Box<NamedNodeExpressionArmLeftTransportSlot>>
-  _right: SlotValue<Box<NamedNodeExpressionArmLeftTransportSlot>>
-}
-
-export interface NamedNodeGroupAnchoredLastTransport {
-  '$_layout'?: TransportLayout
-  _named_node_expressions?: Array<SlotValue<NamedNodeExpressionArmLeftTransportSlot>>
-  _last: SlotValue<Box<NamedNodeExpressionArmLeftTransportSlot>>
-  _anchor?: boolean
-  _named_node_expressions_separator_space?: number
-}
-
-export interface NamedNodeGroupChildrenTransport {
-  '$_layout'?: TransportLayout
-  _named_node_expressions: Array<SlotValue<NamedNodeExpressionArmLeftTransportSlot>>
-  _anchor?: boolean
-  _named_node_expressions_separator_space?: number
-}
-
-export interface NamedNodePlainTransport {
-  '$_layout'?: TransportLayout
-  _name: SlotValue<NamedNodePlainNameTransportSlot>
-  _elements?: Array<SlotValue<ListElementTransport>>
-  _named_node_group?: SlotValue<Box<NamedNodeGroupTransport>>
-  _elements_separator_space?: number
-}
-
-export interface NamedNodeSupertypedTransport {
-  '$_layout'?: TransportLayout
-  _supertype: SlotValue<IdentifierTransport>
-  _name: SlotValue<NamedNodeSupertypedNameTransportSlot, true>
-  _elements?: Array<SlotValue<ListElementTransport>>
-  _named_node_group?: SlotValue<Box<NamedNodeGroupTransport>>
-  _elements_separator_space?: number
-}
-
-export interface NegatedFieldTransport {
-  '$_layout'?: TransportLayout
-  _identifier: SlotValue<IdentifierTransport>
-}
-
-export interface ParametersTransport {
-  '$_layout'?: TransportLayout
-  _elements: Array<SlotValue<ParametersElementsTransportSlot>>
-  _elements_separator_space?: number
-}
-
-export interface PredicateTransport {
-  '$_layout'?: TransportLayout
-  _prefix: SlotValue<PredicatePrefixTransportSlot>
-  _name: SlotValue<ImmediateIdentifierTransport, true>
-  _type: SlotValue<PredicateTypeEnum, true>
-  _parameters?: SlotValue<ParametersTransport>
-}
-
-export interface ProgramTransport {
-  '$_layout'?: TransportLayout
-  _definitions?: Array<SlotValue<DefinitionTransport>>
-  _definitions_separator_space?: number
-}
-
-export interface StringContentTransport {
-  '$_layout'?: TransportLayout
-  _content?: Array<SlotValue<StringContentContentTransportSlot, true>>
-}
-
-export interface StringTransport {
-  '$_layout'?: TransportLayout
-  _string_content?: SlotValue<StringContentTransport>
-}
