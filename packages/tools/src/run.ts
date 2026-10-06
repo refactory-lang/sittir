@@ -1,18 +1,17 @@
 /**
  * Canonical validation facade — single import point with explicit backend propagation.
  *
- * This module wraps the per-validator functions in `@sittir/codegen/validate/*`
- * and provides a stable API for callers that should not depend on internal
- * codegen paths directly.
+ * This module wraps the per-validator functions in `./validate/*` and
+ * provides a stable API for callers that should not import them directly.
  */
 
 
 import { validateFrom, formatFromReport } from './validate/from.ts';
 import {
-	validateFactoryRenderParse,
-	formatFactoryRenderParseReport,
+	validateFactoryStorage,
+	formatFactoryStorageReport,
 	type FactorySurface
-} from './validate/factory-render-parse.ts';
+} from './validate/factory-storage.ts';
 import { validateReadRenderParse, formatReadRenderParseReport } from './validate/read-render-parse.ts';
 import type { ValidateReadRenderParseOptions } from './validate/read-render-parse.ts';
 import { validateTemplateCoverage } from './validate/template-coverage.ts';
@@ -22,12 +21,12 @@ export type Backend = 'native';
 
 // Re-export result types so callers only need @sittir/tools.
 export type { FromValidationResult, FromValidationError } from './validate/from.ts';
-export type { FactoryRenderParseResult, FactorySurface } from './validate/factory-render-parse.ts';
+export type { FactoryStorageResult, FactorySurface } from './validate/factory-storage.ts';
 export type { ReadRenderParseResult, ValidateReadRenderParseOptions } from './validate/read-render-parse.ts';
 export type { TemplateCoverageResult, CoverageIssue } from './validate/template-coverage.ts';
 
 // Re-export formatting helpers.
-export { formatFromReport, formatFactoryRenderParseReport, formatReadRenderParseReport };
+export { formatFromReport, formatFactoryStorageReport, formatReadRenderParseReport };
 
 /** Run from() correctness validation with an explicit backend. */
 export function runFrom(grammar: GrammarName, backend: Backend = 'native') {
@@ -48,7 +47,7 @@ export function runCoverage(grammar: GrammarName) {
 	return validateTemplateCoverage(grammar);
 }
 
-/** Run factory-render-parse validation with an explicit backend, through the raw or the `ir` surface. */
+/** Run factory-storage validation with an explicit backend, through the raw or the `ir` surface. */
 export function runFactory(grammar: GrammarName, backend: Backend = 'native', surface: FactorySurface = 'raw') {
-	return validateFactoryRenderParse(grammar, backend, { surface });
+	return validateFactoryStorage(grammar, backend, { surface });
 }

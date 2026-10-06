@@ -1,11 +1,10 @@
 /**
- * Factory-render-parse validation — corpus → parse → read (wrapped tree,
+ * Factory-storage validation — corpus → parse → read (wrapped tree,
  * same materialization rrp uses) → config object → factory() → compare
  * storage.
  *
  * Uses direct factory calls (via `_factoryMap`) to isolate the factory
- * API's own correctness from render-template bugs and from `from()`
- * resolver bugs:
+ * API's own correctness from `from()` resolver bugs:
  * 1. Parse corpus source with tree-sitter.
  * 2. Walk the wrapped tree (rrp's own read path) and fully materialize
  *    each candidate node — this is the canonical "what a real parse+read
@@ -15,16 +14,14 @@
  * 5. Compare the factory-built node's storage against the reference,
  *    field by field, ignoring identity-only metadata.
  *
- * Previously this rendered the factory output and re-parsed it, which (a)
- * duplicated what `read-render-parse` already exercises with real read
- * data of the same shape, and (b) conflated factory-API bugs with
- * render-template bugs and native-transport strictness on incomplete
- * data. Comparing storage directly gives a precise "factory dropped/
- * mis-shaped field X" signal instead of an opaque re-parsed-AST diff.
+ * 6. Render the factory-built node, which carries no source identity,
+ *    reparse it and compare its AST with the source's — reported apart
+ *    from the storage comparison (`render`), so a factory-API defect and a
+ *    render defect each fail on their own.
  */
 
 import type { AnyUntypedNode } from '@sittir/types';
-import { spanOf } from '@sittir/common/utils';
+import { sourceOf, spanOf } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { load } from '../codegen-surface.ts';
 import { deriveRuleKinds } from './render-bodies.ts';
@@ -47,9 +44,12 @@ import {
 	type ValidatorSkip,
 	loadIrSurface,
 	buildFactoryNodeFromReference,
-	importGrammarModule
+	importGrammarModule,
+	loadNativeEngine
 } from './common.ts';
 import { nativeShownKindId } from './shown-kind.ts';
+import { loadRenderReparseContext, renderReparse } from './read-render-parse.ts';
+import { emptyBuiltRender, type BuiltRenderFailure, type BuiltRenderResult } from './built-render.ts';
 import { sourceSpans } from '@sittir/common';
 
 /**
@@ -60,7 +60,7 @@ import { sourceSpans } from '@sittir/common';
  */
 export type FactorySurface = 'raw' | 'ir';
 
-export interface ValidateFactoryRenderParseOptions {
+export interface ValidateFactoryStorageOptions {
 	readonly surface?: FactorySurface;
 }
 
@@ -266,7 +266,7 @@ function compareNodeStorage(
 // Validation
 // ---------------------------------------------------------------------------
 
-export interface FactoryRenderParseResult {
+export interface FactoryStorageResult {
 	grammar: string;
 	total: number;
 	pass: number;
@@ -298,6 +298,33 @@ export interface FactoryRenderParseResult {
 	}[];
 	skips: ValidatorSkip[];
 	excluded: ValidatorSkip[];
+	/** Each built node rendered and reparsed, its AST compared with the source's. */
+	render: BuiltRenderResult;
+}
+
+const SOURCE_KEYS: ReadonlySet<string> = new Set(['$handle', '$parentHandle', '$treeHandle', '$childIndex', '$span', '$source']);
+
+/**
+ * `node` with every node under it built through `build` from its leaves up,
+ * so none keeps the identity of the read it came from. A node `build` has no
+ * factory for is kept as its data, without the keys that name its source.
+ */
+function rebuildChildren(node: Record<string, unknown>, build: (node: Record<string, unknown>) => unknown): Record<string, unknown> {
+	const rebuild = (value: unknown): unknown => {
+		if (Array.isArray(value)) return value.map(rebuild);
+		if (typeof value !== 'object' || value === null) return value;
+		const data = rebuildChildren(value as Record<string, unknown>, build);
+		return isComparableNode(value) ? (build(data) ?? data) : data;
+	};
+	return Object.fromEntries(Object.entries(node).filter(([key]) => !SOURCE_KEYS.has(key)).map(([key, value]) => [key, rebuild(value)]));
+}
+
+/** Whether `value` or any node under it carries the identity of a parsed source node. */
+function carriesSource(value: unknown): boolean {
+	if (Array.isArray(value)) return value.some(carriesSource);
+	if (typeof value !== 'object' || value === null) return false;
+	if (sourceOf(value) !== undefined) return true;
+	return Object.values(value).some(carriesSource);
 }
 
 /**
@@ -516,11 +543,11 @@ function buildFactoryUntypedNode(
 	}
 }
 
-export async function validateFactoryRenderParse(
+export async function validateFactoryStorage(
 	grammar: string,
 	backend: 'native' = 'native',
-	options: ValidateFactoryRenderParseOptions = {}
-): Promise<FactoryRenderParseResult> {
+	options: ValidateFactoryStorageOptions = {}
+): Promise<FactoryStorageResult> {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
@@ -540,6 +567,8 @@ export async function validateFactoryRenderParse(
 
 	const readNode = await readNodeOf(grammar);
 	const surface = options.surface === 'ir' ? await loadIrSurface(grammar) : undefined;
+	const renderReparseContext = await loadRenderReparseContext(grammar, parser, await loadNativeEngine(grammar));
+	const render = emptyBuiltRender();
 
 	const entries = loadCorpusEntries(grammar);
 	const errors: {
@@ -579,7 +608,8 @@ export async function validateFactoryRenderParse(
 			errors,
 			astMismatches: [],
 			skips: [],
-			excluded: []
+			excluded: [],
+			render: emptyBuiltRender()
 		};
 	}
 
@@ -615,7 +645,8 @@ export async function validateFactoryRenderParse(
 			errors,
 			astMismatches: [],
 			skips: [],
-			excluded: []
+			excluded: [],
+			render: emptyBuiltRender()
 		};
 	}
 
@@ -699,6 +730,77 @@ export async function validateFactoryRenderParse(
 					continue;
 				}
 
+				render.total++;
+				const renderFailure = (message: string, rendered?: string): BuiltRenderFailure => ({
+					kind,
+					entry: entry.name,
+					message,
+					input: inputSource,
+					...(rendered === undefined ? {} : { rendered })
+				});
+				const buildInner = (node: Record<string, unknown>): unknown => {
+					const innerKind = typeof node.$type === 'number' ? kindNameFromId?.(node.$type) : undefined;
+					if (innerKind === undefined) return null;
+					const innerSurface = surface?.entries[innerKind] === undefined ? undefined : surface;
+					return buildFactoryNodeFromReference(
+						node,
+						innerKind,
+						{ factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, surface: innerSurface },
+						{ kindNameFromId }
+					);
+				};
+				const buildErrors: typeof errors = [];
+				let builtTree: AnyUntypedNode | null = null;
+				try {
+					builtTree = buildFactoryUntypedNode(
+						rebuildChildren(referenceData as unknown as Record<string, unknown>, buildInner) as unknown as AnyUntypedNode,
+						kind,
+						node1?.type,
+						cstNamedChildKinds[0],
+						cstNamedChildKinds,
+						factoryMap,
+						factoryShapes,
+						fieldAliasMap,
+						factoryFields,
+						factorySlots,
+						surface,
+						entry.name,
+						inputSource,
+						buildErrors,
+						kindNameFromId
+					);
+				} catch (e) {
+					buildErrors.push({ kind, message: `factory threw: ${(e as Error)?.message ?? String(e)}` });
+				}
+				if (builtTree === null) {
+					render.errors.push(renderFailure(buildErrors[0]?.message ?? 'no node built'));
+				} else if (carriesSource(builtTree)) {
+					render.errors.push(renderFailure('built node carries source identity'));
+				} else {
+					try {
+						const outcome = renderReparse(
+							builtTree,
+							kind,
+							node1?.type ?? kind,
+							node1,
+							node1 !== null && node1.type === tree1.rootNode.type,
+							renderReparseContext
+						);
+						if (outcome.status === 'excluded') {
+							render.total--;
+							render.excluded.push({ entry: entry.name, kind, reason: outcome.reason, input: inputSource });
+						} else if (outcome.status === 'failed') {
+							render.errors.push(renderFailure(outcome.message, outcome.rendered));
+						} else {
+							render.pass++;
+							if (outcome.astDiff === null) render.astMatchPass++;
+							else render.astMismatches.push(renderFailure(outcome.astDiff, outcome.rendered));
+						}
+					} catch (e) {
+						render.errors.push(renderFailure(`render: ${(e as Error)?.message ?? String(e)}`));
+					}
+				}
+
 				const diff = compareNodeStorage(
 					referenceData as unknown as Record<string, unknown>,
 					factoryData as unknown as Record<string, unknown>,
@@ -733,11 +835,12 @@ export async function validateFactoryRenderParse(
 		errors,
 		astMismatches: dedupeMismatchesByContainment(astMismatches),
 		skips,
-		excluded
+		excluded,
+		render
 	};
 }
 
-export function formatFactoryRenderParseReport(result: FactoryRenderParseResult): string {
+export function formatFactoryStorageReport(result: FactoryStorageResult): string {
 	const lines: string[] = [];
 	const icon = result.fail === 0 ? 'v' : 'x';
 	lines.push(

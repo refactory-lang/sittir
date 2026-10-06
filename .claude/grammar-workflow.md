@@ -55,10 +55,10 @@ The real fix: promote the WHOLE arm to a genuine, distinguishable CST node via a
 
 For corpus-affecting iterations, report raw per-grammar counts, not just aggregates:
 
-- `fromPass/fromTotal`
-- `covPass/covTotal`
-- `rtPass/rtTotal/rtAstMatchPass`
-- `factoryPass/factoryTotal`
+- `from` and `cov`
+- `read-render-parse` and `read-render-parse-shallow` (pass, total, AST match)
+- `factory-storage` and `ir-storage`: a built node's storage against the read's
+- `built-render-parse`: a built node, with no source identity, rendered and reparsed (pass, total, AST match)
 
 ## KindID / parser-symbol rules
 

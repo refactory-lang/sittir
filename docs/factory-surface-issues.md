@@ -148,7 +148,7 @@ The example emitter did not use it — it re-read each child raw through
 `handle.read`, which hands the separator back as an element.
 
 The emitter now builds from `materialize`, the same input
-`factory-render-parse` builds from, and applies the seat key-move as a plain
+`factory-storage` builds from, and applies the seat key-move as a plain
 walker over the result. Four defects had to fall with it, and the first is why
 an earlier attempt at the switch alone fixed typescript while regressing rust:
 
@@ -180,7 +180,7 @@ count. The single remaining typescript error is S9's census residue
 between the typescript rebuild and rendering.
 
 Neither validator would have caught any of this: `read-render-parse` never
-constructs, and `factory-render-parse` passes no tree handle, so `resolveChild`
+constructs, and `factory-storage` passes no tree handle, so `resolveChild`
 halts and its children are never rebuilt. The example emitter is the only
 consumer that rebuilds a tree bottom-up, and the rebuild ceiling is its only
 signal.

@@ -36,9 +36,13 @@ The two counts are read differently when the base lacks them. A base without `su
 
 Both counts are checked by `validateBaselineShape` before any arithmetic: each is a non-negative integer or absent, on the base and on the head. A count of another type would make the departed count `NaN`, and every comparison against `NaN` is false, which would let a drop of any size through.
 
+### `packages/tools/src/scripts/check-baseline-regression.ts::baseValidators`
+
+The validators a base baseline is checked and compared on: those it records. A validator a change adds has no base to regress from, so the base may lack it, as it may lack a grammar new to head. Head is always checked for every validator.
+
 ### `packages/tools/src/scripts/check-baseline-regression.ts::DEPARTURE_EXPLAINED_DROP`
 
-The validators whose pass count may fall when kinds leave the direct-render set, each with the largest drop a given `departedKindCount` explains. `coverage` and `factoryRoundtrip` are unbounded: a departed kind has no template and no raw builder, and one kind can remove several cases there. `from` is bounded by the count: a departed kind removes exactly one `from` case, its own, so a larger drop is not explained by it. A validator not listed (`roundtrip`) is never exempt.
+The validators whose pass count may fall when kinds leave the direct-render set, each with the largest drop a given `departedKindCount` explains. `coverage`, `factoryStorage` and `builtRenderParse` are unbounded: a departed kind has no template and no raw builder, and one kind can remove several cases there. `from` is bounded by the count: a departed kind removes exactly one `from` case, its own, so a larger drop is not explained by it. A validator not listed (`roundtrip`) is never exempt.
 
 ### `packages/tools/src/scripts/collect-baseline.ts::GrammarEntry.hoistedKindCount`
 

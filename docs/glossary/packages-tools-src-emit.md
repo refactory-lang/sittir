@@ -501,7 +501,7 @@ A spread builder given a leading options object (a plain object, never a printed
  * `ir.<parent>.<mount>….strict(…)`. Handing this to
  * `buildFactoryNodeFromReference` as the surface makes the printer take the
  * same seat projection the validators take, so the emitted spelling is the
- * one `ir-render-parse` builds rather than a second derivation of it.
+ * one `ir-storage` builds rather than a second derivation of it.
  */
 ```
 

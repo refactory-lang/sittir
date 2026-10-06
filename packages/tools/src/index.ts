@@ -90,7 +90,7 @@ export {
 	runCoverage,
 	runFactory,
 	formatFromReport,
-	formatFactoryRenderParseReport,
+	formatFactoryStorageReport,
 	formatReadRenderParseReport
 } from './run.ts';
 
@@ -98,7 +98,7 @@ export type {
 	Backend,
 	FromValidationResult,
 	FromValidationError,
-	FactoryRenderParseResult,
+	FactoryStorageResult,
 	ReadRenderParseResult,
 	ValidateReadRenderParseOptions,
 	TemplateCoverageResult,

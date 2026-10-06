@@ -112,11 +112,11 @@ describe('collect-baseline', () => {
 			expect(Object.keys(entry).sort()).toEqual(['hoistedKindCount', 'parityFixtures', 'supertypeKindCount', 'validators']);
 
 			const validators = entry['validators'] as Record<string, unknown>;
-			expect(Object.keys(validators)).toEqual(['coverage', 'factoryRoundtrip', 'from', 'roundtrip']);
+			expect(Object.keys(validators)).toEqual(['builtRenderParse', 'coverage', 'factoryStorage', 'from', 'roundtrip']);
 
 			// Each validator entry has failingKinds AND formatDeferredKinds.
 			// Roundtrip variants additionally have astMatchPass.
-			for (const vname of ['coverage', 'factoryRoundtrip', 'from', 'roundtrip'] as const) {
+			for (const vname of ['coverage', 'factoryStorage', 'from', 'roundtrip'] as const) {
 				const v = validators[vname] as Record<string, unknown>;
 				const expected =
 					vname === 'from' || vname === 'coverage'
@@ -133,7 +133,7 @@ describe('collect-baseline', () => {
 	it('failingKinds and formatDeferredKinds arrays are sorted ascending', () => {
 		for (const grammar of grammarKeys) {
 			const validators = result.grammars[grammar]!.validators;
-			for (const name of ['from', 'coverage', 'roundtrip', 'factoryRoundtrip'] as const) {
+			for (const name of ['from', 'coverage', 'roundtrip', 'factoryStorage'] as const) {
 				const fk = validators[name].failingKinds;
 				const fdk = validators[name].formatDeferredKinds;
 				expect(Array.isArray(fk)).toBe(true);
@@ -162,7 +162,7 @@ describe('collect-baseline', () => {
 		// be empty at baseline since no triage has run yet.)
 		for (const grammar of grammarKeys) {
 			const validators = result.grammars[grammar]!.validators;
-			for (const name of ['from', 'coverage', 'roundtrip', 'factoryRoundtrip'] as const) {
+			for (const name of ['from', 'coverage', 'roundtrip', 'factoryStorage'] as const) {
 				expect(Array.isArray(validators[name].failingKinds)).toBe(true);
 				expect(Array.isArray(validators[name].formatDeferredKinds)).toBe(true);
 				// At baseline, no triage has been performed.

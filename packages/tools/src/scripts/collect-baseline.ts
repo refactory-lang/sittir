@@ -33,7 +33,8 @@ import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import type { AnyUntypedNode } from '@sittir/types';
 
-import { validateFactoryRenderParse } from '../validate/factory-render-parse.ts';
+import { validateFactoryStorage } from '../validate/factory-storage.ts';
+import { combineBuiltRender } from '../validate/built-render.ts';
 import { validateFrom } from '../validate/from.ts';
 import { validateReadRenderParse } from '../validate/read-render-parse.ts';
 import { validateTemplateCoverage } from '../validate/template-coverage.ts';
@@ -87,7 +88,8 @@ export interface GrammarEntry {
 		from: ValidatorResult;
 		coverage: ValidatorResult;
 		roundtrip: RoundtripResult;
-		factoryRoundtrip: RoundtripResult;
+		factoryStorage: RoundtripResult;
+		builtRenderParse: RoundtripResult;
 	};
 	parityFixtures: ParityFixtures;
 	/**
@@ -95,7 +97,7 @@ export interface GrammarEntry {
 	 * direct render/factory path of their own. A structural fact of the
 	 * grammar, known from `node-types.json` alone with no corpus run: the
 	 * regression checker uses a RISE here to explain a same-grammar drop in
-	 * `coverage`/`factoryRoundtrip` (a kind losing its own case by becoming
+	 * `coverage`/`factoryStorage` (a kind losing its own case by becoming
 	 * one, not a new failure). Optional because a baseline committed before
 	 * this field existed won't have it; an absent BASE count reads as 0 (a
 	 * baseline that never recorded the fact reads the same as one taken
@@ -265,12 +267,14 @@ async function collectValidatorsForGrammar(grammar: GrammarName, backend: Backen
 	// without touching process.env — avoids cross-contamination when
 	// collectBaseline() is called concurrently.
 	const backendArg: 'native' = backend;
-	const [from, cov, rt, fac] = await Promise.all([
+	const [from, cov, rt, fac, ir] = await Promise.all([
 		validateFrom(grammar, backendArg),
 		Promise.resolve(validateTemplateCoverage(grammar)),
 		validateReadRenderParse(grammar, { backend: backendArg }),
-		validateFactoryRenderParse(grammar, backendArg)
+		validateFactoryStorage(grammar, backendArg),
+		validateFactoryStorage(grammar, backendArg, { surface: 'ir' })
 	]);
+	const built = combineBuiltRender({ factory: fac.render, ir: ir.render });
 
 	// Format-deferred kinds default to []. Triage runs during cluster
 	// commits — see contracts/baseline-json.md verdict rules. When a
@@ -304,11 +308,18 @@ async function collectValidatorsForGrammar(grammar: GrammarName, backend: Backen
 			),
 			formatDeferredKinds: empty
 		},
-		factoryRoundtrip: {
+		factoryStorage: {
 			pass: fac.pass,
 			total: fac.total,
 			astMatchPass: fac.astMatchPass,
 			failingKinds: uniqSorted([...fac.errors, ...fac.astMismatches].map((e) => e.kind)),
+			formatDeferredKinds: empty
+		},
+		builtRenderParse: {
+			pass: built.pass,
+			total: built.total,
+			astMatchPass: built.astMatchPass,
+			failingKinds: uniqSorted([...built.errors, ...built.astMismatches].map((e) => e.kind)),
 			formatDeferredKinds: empty
 		}
 	};
@@ -338,12 +349,7 @@ function computeTotals(grammars: BackendBaseline['grammars']): BackendBaseline['
 	for (const entry of Object.values(grammars)) {
 		// RoundtripResult extends ValidatorResult, so this iteration is
 		// type-correct over the union of validator shapes.
-		const validators: readonly ValidatorResult[] = [
-			entry.validators.from,
-			entry.validators.coverage,
-			entry.validators.roundtrip,
-			entry.validators.factoryRoundtrip
-		];
+		const validators: readonly ValidatorResult[] = Object.values(entry.validators);
 		for (const v of validators) {
 			pass += v.pass;
 			total += v.total;

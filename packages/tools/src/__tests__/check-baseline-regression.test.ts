@@ -63,11 +63,12 @@ function pf(pass: number, total: number): ParityFixtures {
 
 function entry(): GrammarEntry {
 	// Validator keys MUST be sorted ascending to satisfy
-	// validateBaselineShape — coverage, factoryRoundtrip, from, roundtrip.
+	// validateBaselineShape — builtRenderParse, coverage, factoryStorage, from, roundtrip.
 	return {
 		validators: {
+			builtRenderParse: rt(10, 10, 10),
 			coverage: vr(10, 10),
-			factoryRoundtrip: rt(10, 10, 10),
+			factoryStorage: rt(10, 10, 10),
 			from: vr(10, 10),
 			roundtrip: rt(10, 10, 10)
 		},
@@ -110,6 +111,29 @@ describe('checkRegression', () => {
 			// Sanity: summary mentions both backends or at least confirms parity.
 			expect(verdict.summary.length).toBeGreaterThan(0);
 		}
+	});
+
+	it('a validator new to head passes — the base baseline may predate it', () => {
+		const head = baseline();
+		const base = clone(head);
+		for (const g of Object.values(base.grammars)) delete (g.validators as Partial<GrammarEntry['validators']>).builtRenderParse;
+		expect(checkRegression(base, head).ok).toBe(true);
+	});
+
+	it('a validator the base records may not drop', () => {
+		const base = baseline();
+		const head = clone(base);
+		head.grammars.rust!.validators.builtRenderParse = rt(9, 10, 9);
+		const verdict = checkRegression(base, head);
+		expectFail(verdict);
+		expect(verdict.details.path).toBe('grammars.rust.validators.builtRenderParse.pass');
+	});
+
+	it('head must record every validator', () => {
+		const base = baseline();
+		const head = clone(base);
+		delete (head.grammars.rust!.validators as Partial<GrammarEntry['validators']>).builtRenderParse;
+		expectFail(checkRegression(base, head));
 	});
 
 	it('a grammar new to head passes — the base baseline may predate it', () => {
@@ -211,13 +235,13 @@ describe('checkRegression', () => {
 		expect(verdict.ok).toBe(true);
 	});
 
-	it('factoryRoundtrip pass drop explained by a new supertype — passes (astMatchPass too)', () => {
+	it('factoryStorage pass drop explained by a new supertype — passes (astMatchPass too)', () => {
 		const base = baseline();
 		base.grammars.python!.supertypeKindCount = 2;
-		base.grammars.python!.validators.factoryRoundtrip = rt(1390, 1390, 1390);
+		base.grammars.python!.validators.factoryStorage = rt(1390, 1390, 1390);
 		const head = clone(base);
 		head.grammars.python!.supertypeKindCount = 5;
-		head.grammars.python!.validators.factoryRoundtrip = rt(1368, 1368, 1368);
+		head.grammars.python!.validators.factoryStorage = rt(1368, 1368, 1368);
 		head.totals.pass = 149 - 22;
 		head.totals.total = 150 - 22;
 		const verdict = checkRegression(base, head);
@@ -292,15 +316,15 @@ describe('checkRegression', () => {
 		expect(verdict.details.path).toBe('grammars.rust.validators.from.pass');
 	});
 
-	it('coverage and factoryRoundtrip drops explained by hoisted kinds leaving — pass (their cases left with them)', () => {
+	it('coverage and factoryStorage drops explained by hoisted kinds leaving — pass (their cases left with them)', () => {
 		const base = baseline();
 		base.grammars.python!.hoistedKindCount = 40;
 		base.grammars.python!.validators.coverage = vr(147, 147);
-		base.grammars.python!.validators.factoryRoundtrip = rt(1417, 1417, 1417);
+		base.grammars.python!.validators.factoryStorage = rt(1417, 1417, 1417);
 		const head = clone(base);
 		head.grammars.python!.hoistedKindCount = 38;
 		head.grammars.python!.validators.coverage = vr(145, 145);
-		head.grammars.python!.validators.factoryRoundtrip = rt(1402, 1402, 1402);
+		head.grammars.python!.validators.factoryStorage = rt(1402, 1402, 1402);
 		head.totals.pass -= 17;
 		head.totals.total -= 17;
 		expect(checkRegression(base, head).ok).toBe(true);

@@ -295,7 +295,7 @@ Whether a node from the native read is of a given kind name, under either identi
 
 ### `packages/tools/src/validate/shown-kind.ts::nativeShownKindId`
 
-The kind a node from the native read is shown as: its `$displayType` when the reader sent one, and its `$type` otherwise. An in-place leaf alias reads as the token it aliases, for example regex `lazy` over `?`, which arrives as `$type` `?` with `$displayType` `lazy`. The model kind of such a node is the shown one. Every site that classifies a read node as a model kind reads it here: the factory-render-parse candidate walk and storage comparison, the read-render-parse leaf check, the exercise walk, the factory-source printer, and `nativeNodeIsKind`. Sites that compare two reads, or that name the grammar symbol that parsed a node, keep `$type`.
+The kind a node from the native read is shown as: its `$displayType` when the reader sent one, and its `$type` otherwise. An in-place leaf alias reads as the token it aliases, for example regex `lazy` over `?`, which arrives as `$type` `?` with `$displayType` `lazy`. The model kind of such a node is the shown one. Every site that classifies a read node as a model kind reads it here: the factory-storage candidate walk and storage comparison, the read-render-parse leaf check, the exercise walk, the factory-source printer, and `nativeNodeIsKind`. Sites that compare two reads, or that name the grammar symbol that parsed a node, keep `$type`.
 
 ### `packages/tools/src/validate/common.ts::findNativeNodeId`
 
@@ -1703,7 +1703,7 @@ One entry of a factory map: the factory function of a kind, or, for a `constant`
 ```text
 /**
  * A failing node re-renders as part of every enclosing ancestor kind's own
- * independent round-trip test, so read-render-parse and factory-render-parse
+ * independent round-trip test, so read-render-parse and factory-storage
  * each report the same defect once per ancestor kind — one bug becomes N
  * rows. Collapse to the innermost (root-cause) span per entry: drop a
  * mismatch when another mismatch for the same entry has a span strictly
@@ -1731,7 +1731,7 @@ One entry of a factory map: the factory function of a kind, or, for a `constant`
 ```text
 // ---------------------------------------------------------------------------
 // Factory-call dispatch — the ONE mapping from a factory's declared shape to
-// its calling convention, shared by the factory-render-parse validator and
+// its calling convention, shared by the factory-storage validator and
 // the exercise tool.
 // ---------------------------------------------------------------------------
 ```
@@ -1792,6 +1792,20 @@ Whether the grammar's emitted `InnerTrivia` takes a gap key, as the node model s
 Reads each corpus candidate, renders it, reparses the render inside its supertype wrapper and compares the reparsed node's AST with the source's. The reparsed node is found at the wrapper's splice offset (`findReparsedNodeAtOffset`), past the candidate's own leading trivia. A candidate that is the tree's root (its kind is the first parse's root node type) is compared against the reparsed tree's root node directly: the root's render carries its source flanks, and a leading whitespace flank is padding tree-sitter starts no node at, so no offset names it. Every other candidate keeps the offset lookup, so a non-root render that starts with whitespace still fails it as `kind not found at rendered offset`.
 
 A kind passes when any of its candidates round-trips, so a candidate that only renders badly is outweighed by one that renders well. A candidate that throws is not: an error while its input is read, rendered, measured (`leadingTriviaRenderedWidth`) or captured as a fixture (`selfContainedRenderInput`) is reported with its message and fails the entry whatever its kind's other candidates do, so a broken trivia view or line-gap query surfaces as a failure instead of one fewer fixture.
+
+### `packages/tools/src/validate/read-render-parse.ts::renderReparse`
+
+The render-and-reparse step every rendering row shares. It renders a node with the native engine, wraps the text in its kind's reparse wrapper (`wrapForReparse`), reparses it, finds the reparsed node of the target kind at the wrapper's offset (or the tree's root for a root candidate), and diffs its AST with the source node's (`astStructuralDiff`). It returns one outcome: excluded (no wrapper for the kind, or an empty render), failed (a reparse error, or the kind not at the offset), or round-tripped with the AST difference. A render that throws propagates, so each row reports it in its own terms. `loadRenderReparseContext` loads what it needs for a grammar once per run.
+
+### `packages/tools/src/validate/factory-storage.ts::validateFactoryStorage`
+
+Builds a node through the factory surface (raw builders, or the `ir` binding) from each corpus candidate's read, then checks two things apart. Its storage is compared with the read's (`compareNodeStorage`): the `factory-storage` and `ir-storage` rows. The built node is rendered and reparsed through `renderReparse`, its AST compared with the source's: the `render` result, the `built-render-parse` row. The render runs whether or not storage matched, so a storage defect and a render defect never hide each other.
+
+A built node carries no source identity, so its render cannot fold back to source bytes or classify its layout from the source. A node that does carry one (`sourceOf` on it or any node under it) is a render failure.
+
+### `packages/tools/src/validate/built-render.ts::combineBuiltRender`
+
+The `built-render-parse` row: the render results of the raw and the `ir` runs summed, each failure's kind labeled with its surface (`factory: <kind>`, `ir: <kind>`).
 
 ### `packages/tools/src/validate/uncovered-content.ts::computeUncoveredContentCensus`
 

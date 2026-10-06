@@ -586,6 +586,112 @@ export interface ReadRenderParseFailure {
 	message: string;
 }
 
+/** What rendering a node and reparsing it needs from its grammar: the parser, the native render, and the reparse wrappers. */
+export interface RenderReparseContext {
+	readonly grammar: string;
+	readonly parser: { parse(text: string): unknown };
+	readonly render: (node: AnyUntypedNode) => string;
+	readonly triviaOf: (node: object) => NodeTrivia | undefined;
+	readonly kindToSupertypes: ReturnType<typeof buildKindToSupertypes>;
+	readonly adoptedVariantKinds: ReadonlySet<string>;
+	readonly root: Awaited<ReturnType<typeof loadNodeModel>>['root'];
+	readonly variantChildKinds: ReadonlyMap<string, ReadonlySet<string>>;
+}
+
+/**
+ * How a node's render-and-reparse ended: excluded (no reparse wrapper for its
+ * kind, or an empty render), failed (the reparse has an error, or the kind is
+ * not at the rendered offset), or round-tripped, with the AST difference from
+ * `source` when one is given.
+ */
+export type RenderReparseOutcome =
+	| { readonly status: 'excluded'; readonly reason: 'no-reparse-wrapper' | 'empty-render'; readonly rendered: string }
+	| { readonly status: 'failed'; readonly message: string; readonly rendered: string }
+	| {
+			readonly status: 'round-trip';
+			readonly rendered: string;
+			readonly wrapped: NonNullable<ReturnType<typeof wrapForReparse>>;
+			readonly reparsed: TSNode;
+			readonly astDiff: string | null;
+	  };
+
+/**
+ * Render `data` with the native engine, reparse the text inside its kind's
+ * reparse wrapper, find the reparsed node of `targetKind` (or `renderedKind`)
+ * at the rendered offset (the root when `treeRoot`), and compare its AST with
+ * `source`. A render that throws propagates. `dumpLabel` turns on the render
+ * and reparse dumps for one entry.
+ */
+export function renderReparse(
+	data: AnyUntypedNode,
+	renderedKind: string,
+	targetKind: string,
+	source: TSNode | null,
+	treeRoot: boolean,
+	ctx: RenderReparseContext,
+	dumpLabel?: string
+): RenderReparseOutcome {
+	const rendered = ctx.render(data);
+	if (dumpLabel !== undefined) {
+		writeSync(2, `[dump-render] ${dumpLabel} data=${JSON.stringify(data)}\n`);
+		writeSync(2, `[dump-render] ${dumpLabel} rendered=${JSON.stringify(rendered)}\n`);
+	}
+	const wrapped = wrapForReparse(rendered, renderedKind, ctx.grammar, ctx.kindToSupertypes, {
+		adoptedVariantKinds: ctx.adoptedVariantKinds,
+		targetKind,
+		root: ctx.root
+	});
+	if (wrapped === null) return { status: 'excluded', reason: 'no-reparse-wrapper', rendered };
+	if (rendered.trim() === '') return { status: 'excluded', reason: 'empty-render', rendered };
+	const tree2 = ctx.parser.parse(wrapped.text) as TSTree;
+	if (dumpLabel !== undefined) {
+		writeSync(
+			2,
+			`[dump-reparse] ${dumpLabel} hasError=${tree2.rootNode.hasError} wrappedText=${JSON.stringify(wrapped.text)} sexp=${JSON.stringify(tree2.rootNode.toString().slice(0, 300))}\n`
+		);
+	}
+	if (tree2.rootNode.hasError) {
+		return { status: 'failed', message: `re-parse error [${firstParseDefect(tree2.rootNode) ?? 'unlocated'}]`, rendered };
+	}
+	const triviaOffsetAdjust = leadingTriviaRenderedWidth(data, ctx.render, ctx.triviaOf);
+	const reparsed = treeRoot
+		? tree2.rootNode
+		: (findReparsedNodeAtOffset(tree2, targetKind, wrapped, triviaOffsetAdjust) ??
+			(renderedKind !== targetKind ? findReparsedNodeAtOffset(tree2, renderedKind, wrapped, triviaOffsetAdjust) : null));
+	if (!reparsed) {
+		return {
+			status: 'failed',
+			message: `kind not found at rendered offset ${wrapped.offset}${/^\s/.test(rendered) ? ' [leading-whitespace render]' : ''}`,
+			rendered
+		};
+	}
+	return {
+		status: 'round-trip',
+		rendered,
+		wrapped,
+		reparsed,
+		astDiff: source ? astStructuralDiff(source, reparsed, '', ctx.variantChildKinds) : null
+	};
+}
+
+/** Load what `renderReparse` needs for `grammar`, rendering through `nativeEngine`. */
+export async function loadRenderReparseContext(
+	grammar: string,
+	parser: RenderReparseContext['parser'],
+	nativeEngine: Awaited<ReturnType<typeof loadNativeEngine>>
+): Promise<RenderReparseContext> {
+	return {
+		grammar,
+		parser,
+		render: (node) => nativeEngine.render(node).toString(),
+		triviaOf: (node) => readTrivia(node, nativeEngine.diagnostics.lineGapsOf),
+		kindToSupertypes: buildKindToSupertypes(loadRawEntries(grammar)),
+		adoptedVariantKinds: await loadVariantAdoptedKinds(grammar),
+		root: (await loadNodeModel(grammar)).root,
+		variantChildKinds: await loadVariantChildKindsByOwner(grammar)
+	};
+}
+
 export async function validateReadRenderParse(
 	grammar: string,
 	options: ValidateReadRenderParseOptions = {}
@@ -594,23 +700,17 @@ export async function validateReadRenderParse(
 	const parser = new Parser();
 	parser.setLanguage(lang);
 
-	const rawEntries = loadRawEntries(grammar);
 	const kindNameFromId = await loadKindNameFromId(grammar);
 	const { backend } = options;
 	const nativeEngine = await loadNativeEngine(grammar);
-	const render = (node: AnyUntypedNode): string => nativeEngine.render(node).toString();
-	const triviaOf = (node: object): NodeTrivia | undefined => readTrivia(node, nativeEngine.diagnostics.lineGapsOf);
+	const renderReparseContext = await loadRenderReparseContext(grammar, parser, nativeEngine);
 	const view = triviaViewOf(nativeEngine);
 	// The kinds the renderer can handle are those with an emitted body.
 	const ruleKinds = deriveRuleKinds(grammar);
-	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
 	const readNode = await readNodeOf(grammar);
 	const isLeafKind = await loadIsLeafKind(grammar);
 	const canonicalKindNameFromId = await loadCanonicalKindNameFromId(grammar);
-	const adoptedVariantKindNames = await loadVariantAdoptedKinds(grammar);
-	const { root } = await loadNodeModel(grammar);
-	const variantChildKinds = await loadVariantChildKindsByOwner(grammar);
 	const rawKindIdFromName = await loadKindIdFromName(grammar);
 	// Wrap so unknown kind names return undefined (instead of throwing).
 	// The generated kindIdFromName throws on missing entries; readUntypedNode's
@@ -809,56 +909,26 @@ export async function validateReadRenderParse(
 						writeSync(2, `[isolate-progress] ${grammar} ${String(kind)}\n`);
 					}
 					try {
-						const rendered = render(data);
-						if (
-							process.env['SITTIR_VALIDATOR_DUMP_RENDER'] &&
-							entry.name === process.env['SITTIR_VALIDATOR_DUMP_RENDER']
-						) {
-							writeSync(
-								2,
-								`[dump-render] mode=${recursive ? 'deep' : 'shallow'} entry=${entry.name} kind=${String(kind)} data=${JSON.stringify(data)}\n`
-							);
-							writeSync(
-								2,
-								`[dump-render] mode=${recursive ? 'deep' : 'shallow'} entry=${entry.name} kind=${String(kind)} rendered=${JSON.stringify(rendered)}\n`
-							);
-						}
-
-						// Wrap for reparse using supertype context. `renderedKind` IS the
-						// canonical source kind (candidates are bucketed by it), so the
-						// wrapper lookup needs no separate source resolution.
-						const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes, {
-							adoptedVariantKinds: adoptedVariantKindNames,
+						const outcome = renderReparse(
+							data,
+							renderedKind,
 							targetKind,
-							root
-						});
-						if (wrapped === null) {
-							excluded.push({ entry: entry.name, kind, reason: 'no-reparse-wrapper', input: inputSource });
+							node1ForAst,
+							treeRoot,
+							renderReparseContext,
+							process.env['SITTIR_VALIDATOR_DUMP_RENDER'] && entry.name === process.env['SITTIR_VALIDATOR_DUMP_RENDER']
+								? `mode=${recursive ? 'deep' : 'shallow'} entry=${entry.name} kind=${String(kind)}`
+								: undefined
+						);
+						if (outcome.status === 'excluded') {
+							excluded.push({ entry: entry.name, kind, reason: outcome.reason, input: inputSource });
 							continue;
 						}
-						// Skip candidates whose render produces only whitespace: an
-						// empty render is indistinguishable from a missing node and
-						// cannot be reparsed meaningfully.
-						if (rendered.trim() === '') {
-							excluded.push({ entry: entry.name, kind, reason: 'empty-render', input: inputSource });
-							continue;
-						}
-
-						// Re-parse
-						const tree2 = parser.parse(wrapped.text) as TSTree;
-						if (
-							process.env['SITTIR_VALIDATOR_DUMP_RENDER'] &&
-							entry.name === process.env['SITTIR_VALIDATOR_DUMP_RENDER']
-						) {
-							writeSync(
-								2,
-								`[dump-reparse] mode=${recursive ? 'deep' : 'shallow'} entry=${entry.name} kind=${String(kind)} hasError=${tree2.rootNode.hasError} wrappedText=${JSON.stringify(wrapped.text)} sexp=${JSON.stringify(tree2.rootNode.toString().slice(0, 300))}\n`
-							);
-						}
-						if (tree2.rootNode.hasError) {
+						const { rendered } = outcome;
+						if (outcome.status === 'failed') {
 							const failure = {
 								name: `${entry.name} [${renderedKind}]`,
-								message: `re-parse error [${firstParseDefect(tree2.rootNode) ?? 'unlocated'}]`,
+								message: outcome.message,
 								input: inputSource,
 								rendered
 							};
@@ -880,45 +950,7 @@ export async function validateReadRenderParse(
 							shouldStop = options.stopOnFirstFailure === true;
 							continue;
 						}
-
-						// Reparse produces either the alias target (wrapper
-						// context re-triggers the alias) OR the alias source
-						// (wrapper is a generic supertype context that
-						// doesn't re-alias — ts's interface_body rendered as
-						// object_type inside `type _X = …;`). Accept either
-						// at the rendered offset.
-						const triviaOffsetAdjust = leadingTriviaRenderedWidth(data, render, triviaOf);
-						const node2 = treeRoot
-							? tree2.rootNode
-							: (findReparsedNodeAtOffset(tree2, targetKind, wrapped, triviaOffsetAdjust) ??
-								(renderedKind !== targetKind
-									? findReparsedNodeAtOffset(tree2, renderedKind, wrapped, triviaOffsetAdjust)
-									: null));
-						if (!node2) {
-							const failure = {
-								name: `${entry.name} [${renderedKind}]`,
-								message: `kind not found at rendered offset ${wrapped.offset}${/^\s/.test(rendered) ? ' [leading-whitespace render]' : ''}`,
-								input: inputSource,
-								rendered
-							};
-							kindErrors.push(failure);
-							reportFailure(options, {
-								grammar,
-								backend: backend ?? 'native',
-								recursive: recursive === true,
-								entryName: entry.name,
-								entrySource: entry.source,
-								kind,
-								renderedKind,
-								targetKind,
-								range: { start: cand.start, end: cand.end },
-								input: inputSource,
-								rendered,
-								message: failure.message
-							});
-							shouldStop = options.stopOnFirstFailure === true;
-							continue;
-						}
+						const { wrapped, reparsed: node2 } = outcome;
 
 						// Only mark the kind as having had a real candidate attempt
 						// when at least one candidate fully round-trips (reparse OK +
@@ -933,7 +965,7 @@ export async function validateReadRenderParse(
 						kindOk = true;
 						// AST comparison: only when we have a WASM source node to
 						// compare against (native path without $span skips this).
-						const diff = node1ForAst ? astStructuralDiff(node1ForAst, node2, '', variantChildKinds) : null;
+						const diff = outcome.astDiff;
 						if (diff) {
 							kindAstMismatches.push({
 								kind: renderedKind,

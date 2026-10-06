@@ -5,7 +5,7 @@
  * baseline regression check and refreshable via `sittir tool check-baseline
  * --collect --backend native`) is the single floor authority for the
  * shallow-read validators: from(), template coverage, shallow
- * read-render-parse, factory-render-parse, and parity fixtures. This file
+ * read-render-parse, factory-storage, and parity fixtures. This file
  * deliberately asserts NONE of those — a second hardcoded copy of the same
  * floors drifts (this suite sat failing for weeks with numbers above AND
  * below measured reality).

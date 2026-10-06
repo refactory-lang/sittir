@@ -2,7 +2,7 @@
 
 ### `packages/tools/src/exercise/roundtrip.ts::run`
 
-Parses each case with the grammar's engine (`loadNativeEngine`, which is `createEngine` over the grammar's descriptor), finds the first named node of the case's kind in the parsed tree, rebuilds it through the factories (`buildFactoryNodeFromReference`, the dispatch the factory-render-parse validator uses) and renders the rebuilt node with the same engine. A case passes when the render equals the node's source text up to whitespace. This is the path a user takes: the rebuilt node's children are the engine's own parsed nodes, so they render from the tree the engine holds.
+Parses each case with the grammar's engine (`loadNativeEngine`, which is `createEngine` over the grammar's descriptor), finds the first named node of the case's kind in the parsed tree, rebuilds it through the factories (`buildFactoryNodeFromReference`, the dispatch the factory-storage validator uses) and renders the rebuilt node with the same engine. A case passes when the render equals the node's source text up to whitespace. This is the path a user takes: the rebuilt node's children are the engine's own parsed nodes, so they render from the tree the engine holds.
 
 ### `packages/tools/src/exercise/roundtrip.ts::findFirstOfKind`
 

@@ -12,10 +12,12 @@
  *
  * The six fail conditions:
  *   1. Pass-count drop — any of `validators.{from,coverage,roundtrip,
- *      factoryRoundtrip}.pass`, `validators.{roundtrip,factoryRoundtrip}.
- *      astMatchPass`, `parityFixtures.pass`, per grammar. This is what
+ *      factoryStorage,builtRenderParse}.pass`, `validators.{roundtrip,
+ *      factoryStorage,builtRenderParse}.astMatchPass`, `parityFixtures.pass`,
+ *      per grammar, for each validator the base records (a validator the
+ *      change adds has no base). This is what
  *      actually guards regressions; rule 2 below is a coarser tripwire on
- *      top of it. `coverage`/`factoryRoundtrip`/`from` are exempt
+ *      top of it. `coverage`/`factoryStorage`/`builtRenderParse`/`from` are exempt
  *      from this floor when the drop is explained by kinds leaving that
  *      grammar's direct-render set (`supertypeKindCount` rising: a kind
  *      losing its own render/factory path by becoming a supertype; or
@@ -101,10 +103,19 @@ export type RegressionVerdict =
 
 const GRAMMARS = stableGrammars();
 
-const VALIDATORS = ['from', 'coverage', 'roundtrip', 'factoryRoundtrip'] as const;
+const VALIDATORS = ['from', 'coverage', 'roundtrip', 'factoryStorage', 'builtRenderParse'] as const;
 type ValidatorName = (typeof VALIDATORS)[number];
 
-const ROUNDTRIP_VALIDATORS: readonly ValidatorName[] = ['roundtrip', 'factoryRoundtrip'];
+const ROUNDTRIP_VALIDATORS: readonly ValidatorName[] = ['roundtrip', 'factoryStorage', 'builtRenderParse'];
+
+/**
+ * The validators a base baseline is compared on: those it records. A
+ * validator a change adds has no base to regress from, so head alone must
+ * record every validator.
+ */
+function baseValidators(validators: object): readonly ValidatorName[] {
+	return VALIDATORS.filter((vName) => vName in validators);
+}
 
 // ---------------------------------------------------------------------------
 // Schema validation — runs on BOTH base and head. Catches manual edits
@@ -384,7 +395,7 @@ function validateBaselineShape(b: unknown, label: string): RegressionVerdict | n
 				}
 			};
 		}
-		for (const vName of VALIDATORS) {
+		for (const vName of label === 'head' ? VALIDATORS : baseValidators(validators as object)) {
 			const vPath = `${gPath}.validators.${vName}`;
 			const vv = (validators as Record<string, unknown>)[vName];
 			const isRoundtrip = ROUNDTRIP_VALIDATORS.includes(vName);
@@ -425,18 +436,19 @@ function validateBaselineShape(b: unknown, label: string): RegressionVerdict | n
 // ---------------------------------------------------------------------------
 
 /**
- * `coverage` and `factoryRoundtrip` are validators whose
+ * `coverage`, `factoryStorage` and `builtRenderParse` are validators whose
  * denominator is tied to how many kinds have their own direct render
  * path: `validate-template-coverage`'s own `subtypes.length > 0` guard
  * skips a supertype (no template of its own to check), and a supertype
- * likewise has no raw builder for `factoryRoundtrip` to exercise. A kind
+ * likewise has no raw builder for `factoryStorage` or `builtRenderParse` to exercise. A kind
  * crossing into that guard, or a hoisted kind leaving the grammar,
  * shrinks the denominator without touching the pass RATE — it isn't a
  * new failure.
  */
 const DEPARTURE_EXPLAINED_DROP: Partial<Record<ValidatorName, (departedKinds: number) => number>> = {
 	coverage: () => Infinity,
-	factoryRoundtrip: () => Infinity,
+	factoryStorage: () => Infinity,
+	builtRenderParse: () => Infinity,
 	from: (departedKinds) => departedKinds
 };
 
@@ -527,7 +539,7 @@ function* comparedGrammars(
 
 function checkPassCounts(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
 	for (const [g, baseGrammar, headGrammar] of comparedGrammars(base, head)) {
-		for (const vName of VALIDATORS) {
+		for (const vName of baseValidators(baseGrammar.validators)) {
 			const b = baseGrammar.validators[vName] as ValidatorResult;
 			const h = headGrammar.validators[vName] as ValidatorResult;
 			const path = `grammars.${g}.validators.${vName}.pass`;
@@ -641,7 +653,7 @@ function parityFixturesSum(p: ParityFixtures): number {
 
 function checkFormatDeferredRise(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
 	for (const [g, baseGE, headGE] of comparedGrammars(base, head)) {
-		for (const vName of VALIDATORS) {
+		for (const vName of baseValidators(baseGE.validators)) {
 			const baseV = baseGE.validators[vName] as ValidatorResult;
 			const headV = headGE.validators[vName] as ValidatorResult;
 			const before = validatorSum(baseV);

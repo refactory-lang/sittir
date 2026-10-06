@@ -3,7 +3,7 @@ import { withGrammar } from '../../framework/options.ts';
 
 export const profileFactory: CommandModule = {
 	name: 'profile-factory',
-	describe: 'Profile factory-render-parse failures',
+	describe: 'Profile factory-storage failures',
 	register: (program) => {
 		withGrammar(defineCommand(program, profileFactory))
 			.option('--ast', 'Include AST mismatch breakdown')

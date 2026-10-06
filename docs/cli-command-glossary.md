@@ -64,7 +64,7 @@ pnpm exec tsx packages/cli/src/cli.ts validate counts [grammars] [options]
 
 ### `validate probe-factory`
 
-Factory-render-parse error bucketing (top-8 buckets)
+Factory-storage error bucketing (top-8 buckets)
 
 **Arguments**
 
@@ -641,7 +641,7 @@ pnpm exec tsx packages/cli/src/cli.ts tool profile [options]
 
 ### `tool profile-factory`
 
-Profile factory-render-parse failures
+Profile factory-storage failures
 
 **Options**
 

@@ -6779,7 +6779,7 @@ nodes and names the variants; `slotElementKinds` reads the kinds alone.
 //    match for every hidden kind whose display label differs from
 //    its catalog key (`_newline` vs `"newline"`, etc.), which
 //    surfaces as native/WASM node-lookup misses across
-//    `from.ts`/`read-render-parse.ts`/`factory-render-parse.ts` —
+//    `from.ts`/`read-render-parse.ts`/`factory-storage.ts` —
 //    confirmed empirically: reusing this map there dropped
 //    python's `from` validator from 102/120 to 97/120 with zero
 //    new *reported* errors, because the failure mode is a silent
@@ -15391,7 +15391,7 @@ keys (`seatsConfigChild`), which is how the validator knows to spell the
 call), `flatten` when the slot
 is one of the wire set's flatten seats, `elements` when the slot is one of its
 elements seats; `undefined` for a value that is not a hoisted kind, or
-whose parent has no wire set, or that no seating reaches. The validators' `ir-render-parse` and the example emitter consume
+whose parent has no wire set, or that no seating reaches. The validators' `ir-storage` and the example emitter consume
 the stamp rather than re-deriving it; the census reports every hoisted kind
 no seat names.
 

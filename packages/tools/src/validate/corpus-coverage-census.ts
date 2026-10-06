@@ -3,7 +3,7 @@
  * in any corpus entry.
  *
  * "Declared" here means the same testable-kind universe read-render-parse
- * and factory-render-parse already use (`deriveRuleKinds(grammar)` — the
+ * and factory-storage already use (`deriveRuleKinds(grammar)` — the
  * kinds with an emitted render body), not a separately-derived
  * catalog: reusing it keeps this census answering exactly the question the
  * validators' own candidate enumeration asks ("of the kinds we'd test, which
