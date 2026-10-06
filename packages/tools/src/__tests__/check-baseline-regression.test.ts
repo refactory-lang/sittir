@@ -13,7 +13,10 @@
 
 import { describe, it, expect } from 'vitest';
 import { stableGrammars } from '@sittir/codegen/grammars';
-import { checkRegression, type RegressionVerdict } from '../scripts/check-baseline-regression.ts';
+import { mkdtempSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { checkRegression, run, type RegressionVerdict } from '../scripts/check-baseline-regression.ts';
 import type {
 	BackendBaseline,
 	GrammarEntry,
@@ -157,6 +160,20 @@ describe('checkRegression', () => {
 			head.grammars.python!.validators.builtRenderParse = rt(7, 9, 7);
 			head.totals = { pass: base.totals.pass - 1, fail: 2, total: base.totals.total - 1 };
 			expectFail(checkRegression(base, head));
+		});
+
+		it('a collected head takes its declaration from the committed record named by --declared', async () => {
+			const { base, head } = shrunk();
+			const declared = clone(head);
+			declared.baselineCounterChange = { reason: 'population pinned', validators: ['builtRenderParse'] };
+			const dir = mkdtempSync(join(tmpdir(), 'baseline-'));
+			const write = (name: string, value: unknown) => {
+				writeFileSync(join(dir, name), JSON.stringify(value));
+				return join(dir, name);
+			};
+			const args = ['--base', write('base.json', base), '--head', write('head.json', head)];
+			expect(await run(args)).toBe(1);
+			expect(await run([...args, '--declared', write('declared.json', declared)])).toBe(0);
 		});
 
 		it('a drop in an undeclared validator fails', () => {
