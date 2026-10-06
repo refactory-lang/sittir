@@ -26,9 +26,9 @@ No stage touches `packages/common/src/transport-data.ts` or the native reader; t
 
 The generator runs inside the codegen pass that writes `types.ts`, and reading `bindings.scm` needs the scm parser. No generation may depend on the workspace `@sittir/scm`, so that a change which breaks `@sittir/scm` can never break regenerating the fix.
 
-- **A committed facts artifact,** `packages/<grammar>/.sittir/bindings.json`: the facts read from `bindings.scm`, with a hash of it.
+- **A committed facts artifact,** `packages/<grammar>/.sittir/bindings.json`: the facts read from `bindings.scm`, keyed by a hash of its text together with the facts and derivation version.
 - The inventory reads `bindings.scm` through `@sittir/scm` and writes the artifact.
-- Codegen reads only the artifact. It refuses a stale one (a hash that does not match `bindings.scm`) with a diagnostic naming the command that regenerates it.
+- Codegen reads only the artifact. It refuses a stale one (a key that does not match `bindings.scm` and the current version) with a diagnostic naming the command that regenerates it.
 - The facts schema and the derivation live in codegen, and the inventory calls them, so there is one derivation.
 - Codegen stays out of the scm engine's bootstrap: regenerating `@sittir/scm` reads its own committed artifact.
 - Not a pinned scm reader in codegen: that would be a second reader and a second derivation.

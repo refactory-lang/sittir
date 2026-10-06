@@ -43,6 +43,7 @@ packages/*/.sittir/*
 !packages/*/.sittir/grammar-diagnostics.json
 !packages/*/.sittir/render-bodies.json
 !packages/*/.sittir/resolutions.json
+!packages/*/.sittir/bindings.json
 !packages/*/.sittir/parser.wasm
 !packages/*/.sittir/src/
 

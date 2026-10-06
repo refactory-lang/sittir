@@ -2,6 +2,21 @@ import { describe, it, expect } from 'vitest';
 import { BindingsSyntaxError, bindingPatterns, readBindings } from '../../src/inventory/bindings.ts';
 
 describe('readBindings', () => {
+	it('keeps a presence capture\'s token text beside its name', () => {
+		const facts = readBindings('(function_item "async" @isAsync) @declaration.function');
+		expect(facts.members).toEqual([{ route: 'presence', owner: 'function_item', name: 'isAsync', token: 'async', via: [] }]);
+	});
+	it('keeps every predicate with its operator, capture and arguments, and leaves directives out', () => {
+		const facts = readBindings(
+			'((identifier) @identifier.self (#match? @identifier.self "^self$") (#lua-match? @identifier.self "%a") (#eq? @identifier.self @identifier.self) (#set! reason "x"))'
+		);
+		expect(facts.claims[0]?.predicates).toEqual([
+			{ operator: 'match', capture: 'identifier.self', arguments: [{ text: '^self$' }] },
+			{ operator: 'lua-match', capture: 'identifier.self', arguments: [{ text: '%a' }] },
+			{ operator: 'eq', capture: 'identifier.self', arguments: [{ capture: 'identifier.self' }] }
+		]);
+	});
+
 	it('reads claims, member captures, field literals, quantifiers, containers and predicates', () => {
 		const facts = readBindings(
 			[
@@ -11,10 +26,15 @@ describe('readBindings', () => {
 				'((function_definition name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))'
 			].join('\n')
 		);
-		expect(facts.claims.map((c) => [c.vocab, c.kind, c.predicate, c.toplevel])).toEqual([
-			['declaration.function', 'function_definition', false, true],
-			['expression.binary.arithmetic.add', 'binary_expression', false, true],
-			['declaration.constructor', 'function_definition', true, true]
+		expect(facts.claims.map((c) => [c.vocab, c.kind, c.predicates, c.toplevel])).toEqual([
+			['declaration.function', 'function_definition', [], true],
+			['expression.binary.arithmetic.add', 'binary_expression', [], true],
+			[
+				'declaration.constructor',
+				'function_definition',
+				[{ operator: 'eq', capture: 'name', arguments: [{ text: '__init__' }] }],
+				true
+			]
 		]);
 		expect(facts.claims[1]?.fieldLiterals).toEqual({ operator: '+' });
 		expect(facts.members).toEqual([
@@ -112,7 +132,7 @@ describe('readBindings', () => {
 
 	it('reads a token capture as the presence of the token', () => {
 		const { members } = readBindings('(expression_statement ";" @semi) @statement.expression');
-		expect(members).toEqual([{ route: 'presence', owner: 'expression_statement', name: 'semi', via: [] }]);
+		expect(members).toEqual([{ route: 'presence', owner: 'expression_statement', name: 'semi', token: ';', via: [] }]);
 	});
 
 	it('gives each option of an alternation the field and the captures of the alternation', () => {

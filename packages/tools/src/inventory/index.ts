@@ -1,23 +1,34 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 import { bindingIssues, compileQuery, readBindings } from './bindings.ts';
 import { loadSlotModel } from './model.ts';
-import { type Derivation, type GrammarInput, type LayoutSlot, camel, derive } from './derive.ts';
+import {
+	type BindingFactsArtifact,
+	type Derivation,
+	type GrammarInput,
+	type LayoutSlot,
+	bindingFactsPath,
+	bindingsHash,
+	bindingsPath,
+	camel,
+	derive
+} from '@sittir/codegen/bindings';
 import { type Vocabulary, readVocabulary } from './vocabulary.ts';
-import { allGrammars, grammarPackageDir, type GrammarName } from '@sittir/codegen/grammars';
+import { allGrammars, type GrammarName } from '@sittir/codegen/grammars';
 import { evaluateGrammar, load, type RawGrammar } from '../codegen-surface.ts';
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 export const VOCABULARY_DIR = join(ROOT, 'packages', 'types', 'src', 'vocabulary');
 export function inventoryGrammars(): readonly GrammarName[] {
-	return allGrammars().filter((g) => existsSync(join(grammarPackageDir(g), 'bindings.scm')));
+	return allGrammars().filter((g) => existsSync(bindingsPath(g)));
 }
 
 export interface BindingsInventoryOptions {
-	readonly grammars?: readonly string[];
+	readonly grammars?: readonly GrammarName[];
 	readonly check?: boolean;
 	readonly members?: boolean;
+	readonly writeFacts?: boolean;
 }
 
 export interface CompileReport {
@@ -26,10 +37,10 @@ export interface CompileReport {
 	readonly error: string | null;
 }
 
-export async function compileBindings(grammars: readonly string[]): Promise<CompileReport[]> {
+export async function compileBindings(grammars: readonly GrammarName[]): Promise<CompileReport[]> {
 	const out: CompileReport[] = [];
 	for (const grammar of grammars) {
-		const text = readFileSync(join(grammarPackageDir(grammar), 'bindings.scm'), 'utf8');
+		const text = readFileSync(bindingsPath(grammar), 'utf8');
 		try {
 			const compiled = await compileQuery(grammar, text);
 			out.push({ grammar, patterns: compiled.patterns, error: null });
@@ -62,14 +73,14 @@ async function layoutSlots(raw: RawGrammar, kinds: ReadonlySet<string>): Promise
 	return [...optionSites, { kind: null, slot: SEPARATOR_LABEL }];
 }
 
-export async function loadInputs(grammars: readonly string[]): Promise<GrammarInput[]> {
+export async function loadInputs(grammars: readonly GrammarName[]): Promise<GrammarInput[]> {
 	return Promise.all(
 		grammars.map(async (grammar) => {
 			const raw = await evaluateGrammar(grammar);
 			const model = loadSlotModel(grammar);
 			return {
 				grammar,
-				bindings: readBindings(readFileSync(join(grammarPackageDir(grammar), 'bindings.scm'), 'utf8')),
+				bindings: readBindings(readFileSync(bindingsPath(grammar), 'utf8')),
 				model,
 				textTokens: new Set(raw.textTokens ?? []),
 				layoutSlots: await layoutSlots(raw, new Set(model.keys()))
@@ -78,7 +89,16 @@ export async function loadInputs(grammars: readonly string[]): Promise<GrammarIn
 	);
 }
 
-export async function deriveVocabulary(grammars: readonly string[] = inventoryGrammars()): Promise<Derivation> {
+export function writeBindingFacts(grammars: readonly GrammarName[]): void {
+	for (const grammar of grammars) {
+		const text = readFileSync(bindingsPath(grammar), 'utf8');
+		const artifact: BindingFactsArtifact = { bindingsHash: bindingsHash(text), facts: readBindings(text) };
+		writeFileSync(bindingFactsPath(grammar), `${JSON.stringify(artifact, null, '\t')}\n`);
+		process.stdout.write(`${grammar}: wrote ${bindingFactsPath(grammar)}\n`);
+	}
+}
+
+export async function deriveVocabulary(grammars: readonly GrammarName[] = inventoryGrammars()): Promise<Derivation> {
 	return derive(await loadInputs(grammars));
 }
 
@@ -117,6 +137,8 @@ export function summarize(d: Derivation): string {
 	lines.push(
 		`container slots left uncaptured ${d.uncaptured.length === 0 ? 'none' : `${d.uncaptured.join('; ')}: capture each slot, or mark it @dropped with its reason`}`
 	);
+	if (d.unknownPredicates.length > 0)
+		lines.push(`predicates with an operator the derivation does not know ${d.unknownPredicates.join('; ')}`);
 	const top = [...d.unmapped].sort((a, b) => b[1] - a[1]).slice(0, 12);
 	if (top.length > 0) lines.push(`  ${top.map(([k, n]) => `${k.slice(1, -1)}×${n}`).join(' ')}`);
 	return lines.join('\n');
@@ -148,6 +170,7 @@ export function membersTable(d: Derivation): string {
 export async function run(opts: BindingsInventoryOptions): Promise<number> {
 	const grammars = opts.grammars ?? inventoryGrammars();
 	let code = 0;
+	if (opts.writeFacts) writeBindingFacts(grammars);
 	if (opts.check) {
 		for (const report of await compileBindings(grammars)) {
 			if (report.error !== null) {
@@ -166,6 +189,6 @@ export async function run(opts: BindingsInventoryOptions): Promise<number> {
 			`bindings and vocabulary: ${disagreements.length === 0 ? 'agree' : `${disagreements.length} disagreements\n  ${disagreements.join('\n  ')}`}\n`
 		);
 	}
-	if (d.cycles.length > 0 || d.untargeted.length > 0 || d.uncaptured.length > 0) code = 1;
+	if (d.cycles.length > 0 || d.untargeted.length > 0 || d.uncaptured.length > 0 || d.unknownPredicates.length > 0) code = 1;
 	return code;
 }

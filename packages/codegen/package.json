@@ -43,6 +43,12 @@
 			"import": "./dist/grammars.js",
 			"default": "./dist/grammars.js"
 		},
+		"./bindings": {
+			"types": "./src/bindings/index.ts",
+			"source": "./src/bindings/index.ts",
+			"import": "./dist/bindings/index.js",
+			"default": "./dist/bindings/index.js"
+		},
 		"./envelope-claims": {
 			"types": "./src/emitters/envelope-claims.ts",
 			"source": "./src/emitters/envelope-claims.ts",

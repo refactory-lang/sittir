@@ -12,6 +12,7 @@
 			"@sittir/codegen": ["./packages/codegen/src/index.ts"],
 			"@sittir/codegen/run-codegen": ["./packages/codegen/src/run-codegen.ts"],
 			"@sittir/codegen/grammars": ["./packages/codegen/src/grammars.ts"],
+			"@sittir/codegen/bindings": ["./packages/codegen/src/bindings/index.ts"],
 			"@sittir/codegen/envelope-claims": ["./packages/codegen/src/emitters/envelope-claims.ts"],
 			"@sittir/codegen/validate/from": ["./packages/codegen/src/validate/from.ts"],
 			"@sittir/codegen/validate/factory-render-parse": ["./packages/codegen/src/validate/factory-render-parse.ts"],
