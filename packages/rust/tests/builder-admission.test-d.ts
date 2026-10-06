@@ -59,3 +59,16 @@ export function storageShapeRefused(storage: T.Block): void {
 	// @ts-expect-error a storage-shaped literal is not a node
 	fn.$with.body({ $type: rs.kinds.Block });
 }
+
+export function parsedLeafAdmittedByItsTree(storage: T.Identifier): string {
+	const fn = rs.parse('fn f() {}\n').statements()[0]!;
+	if (!rs.is.functionItem(fn)) return '';
+	const name = fn.name();
+	// @ts-expect-error a parsed leaf is data: it holds its tree, not a $render
+	name.$render();
+	// @ts-expect-error the leaf storage interface is not a node
+	rs.build.functionItem.strict({ name: storage, parameters: rs.build.parameters(), body: rs.build.block() });
+	// @ts-expect-error a storage-shaped leaf literal is not a node
+	rs.build.functionItem.strict({ name: { $type: rs.kinds.Identifier, $text: 'g' }, parameters: rs.build.parameters(), body: rs.build.block() });
+	return rs.build.functionItem.strict({ name, parameters: rs.build.parameters(), body: rs.build.block() }).$render() + rs.render(name).toString();
+}

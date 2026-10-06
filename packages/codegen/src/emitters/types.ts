@@ -481,6 +481,7 @@ const VOCABULARY_IMPORTS = [
 	'RenameKeys',
 	'GrammarTypeMap',
 	'NodeMethods',
+	'HoldsTree',
 	'TriviaSetter',
 	'GrammarInnerTrivia',
 	'GrammarInnerTriviaAt',
@@ -932,7 +933,7 @@ function emitNodeSurfaceInterfaces(lines: string[], surface: BuiltTypeSurface, i
 	};
 	if (surface.mainType === undefined) {
 		emit('Bound', 'NodeMethodsOf', false);
-		lines.push(`${indent}export interface Parsed extends Bound {}`);
+		emit('Parsed', 'HoldsTree', false);
 		return;
 	}
 	for (const [name, of, byKindId] of [

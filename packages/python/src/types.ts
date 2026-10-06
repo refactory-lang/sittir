@@ -17,6 +17,7 @@ import type {
 	WithoutGroup,
 	GrammarTypeMap,
 	NodeMethods,
+	HoldsTree,
 	TriviaSetter,
 	GrammarInnerTrivia,
 	SlotHint,
@@ -14716,7 +14717,12 @@ export namespace ImportPrefix {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.ImportPrefix;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = ImportPrefixNs['Loose'];
 	export type LooseConfig = ImportPrefixNs['LooseConfig'];
 	export type BuildArgs = ImportPrefixNs['BuildArgs'];
@@ -14731,7 +14737,12 @@ export namespace TypeConversion {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.TypeConversion;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = TypeConversionNs['Loose'];
 	export type LooseConfig = TypeConversionNs['LooseConfig'];
 	export type BuildArgs = TypeConversionNs['BuildArgs'];
@@ -14746,7 +14757,12 @@ export namespace Identifier {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.Identifier;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = IdentifierNs['Loose'];
 	export type LooseConfig = IdentifierNs['LooseConfig'];
 	export type BuildArgs = IdentifierNs['BuildArgs'];
@@ -14761,7 +14777,12 @@ export namespace FormatSpecifierText {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.FormatSpecifierText;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = FormatSpecifierTextNs['Loose'];
 	export type LooseConfig = FormatSpecifierTextNs['LooseConfig'];
 	export type BuildArgs = FormatSpecifierTextNs['BuildArgs'];
@@ -14776,7 +14797,12 @@ export namespace IntegerDecimalLong {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.IntegerDecimalLong;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = IntegerDecimalLongNs['Loose'];
 	export type LooseConfig = IntegerDecimalLongNs['LooseConfig'];
 	export type BuildArgs = IntegerDecimalLongNs['BuildArgs'];
@@ -14791,7 +14817,12 @@ export namespace IntegerDecimalImaginary {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.IntegerDecimalImaginary;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = IntegerDecimalImaginaryNs['Loose'];
 	export type LooseConfig = IntegerDecimalImaginaryNs['LooseConfig'];
 	export type BuildArgs = IntegerDecimalImaginaryNs['BuildArgs'];
@@ -14806,7 +14837,12 @@ export namespace IntegerDecimalPlain {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.IntegerDecimalPlain;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = IntegerDecimalPlainNs['Loose'];
 	export type LooseConfig = IntegerDecimalPlainNs['LooseConfig'];
 	export type BuildArgs = IntegerDecimalPlainNs['BuildArgs'];
@@ -14821,7 +14857,12 @@ export namespace LineContinuationNewline {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.LineContinuationNewline;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = LineContinuationNewlineNs['Loose'];
 	export type LooseConfig = LineContinuationNewlineNs['LooseConfig'];
 	export type BuildArgs = LineContinuationNewlineNs['BuildArgs'];
@@ -14836,7 +14877,12 @@ export namespace StringStart {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.StringStart;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = StringStartNs['Loose'];
 	export type LooseConfig = StringStartNs['LooseConfig'];
 	export type BuildArgs = StringStartNs['BuildArgs'];
@@ -14851,7 +14897,12 @@ export namespace StringFragment {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.StringFragment;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = StringFragmentNs['Loose'];
 	export type LooseConfig = StringFragmentNs['LooseConfig'];
 	export type BuildArgs = StringFragmentNs['BuildArgs'];
@@ -14866,7 +14917,12 @@ export namespace EscapeInterpolation {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.EscapeInterpolation;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = EscapeInterpolationNs['Loose'];
 	export type LooseConfig = EscapeInterpolationNs['LooseConfig'];
 	export type BuildArgs = EscapeInterpolationNs['BuildArgs'];
@@ -14881,7 +14937,12 @@ export namespace StringEnd {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.StringEnd;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = StringEndNs['Loose'];
 	export type LooseConfig = StringEndNs['LooseConfig'];
 	export type BuildArgs = StringEndNs['BuildArgs'];
@@ -14896,7 +14957,12 @@ export namespace Indent {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.Indent;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = IndentNs['Loose'];
 	export type LooseConfig = IndentNs['LooseConfig'];
 	export type BuildArgs = IndentNs['BuildArgs'];
@@ -14911,7 +14977,12 @@ export namespace Dedent {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends Bound {}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.Dedent;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = DedentNs['Loose'];
 	export type LooseConfig = DedentNs['LooseConfig'];
 	export type BuildArgs = DedentNs['BuildArgs'];
