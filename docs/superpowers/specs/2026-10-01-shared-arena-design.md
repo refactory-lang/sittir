@@ -153,8 +153,15 @@ pub enum FunctionModifiersModifierTransportSlot {
   (`min = 1`).
 - **The attributes state only what the types cannot:** the field a slot routes by, the keyword a
   presence slot holds (`presence = kind::…`), the record's word offsets, a list's separator, a
-  flank, a group seat, a kind's minimum depth, its layout tokens and its inner gaps. The macro
-  computes none of them.
+  flank, a group seat, a kind's minimum depth, its layout tokens and its inner gaps, and the blank
+  arm of a blank option's choice (`#[transport(blank)]`). The macro computes none of them.
+- **Only a blank option has a blank arm.** An optional slot registered as a preference (the model's
+  `hasBlankArm`; today the nine typescript `terminator` slots) chooses between a value and none.
+  Its choice carries the none as a unit variant marked `#[transport(blank)]`: an absent child reads
+  as that variant, which crosses as id 0. Every other optional slot reads an absent child as
+  `None`. Codegen emits the attribute from `hasBlankArm` alone. A choice is declared once for its
+  content and may be shared by several slots, so a choice shared by a blank option and a slot that
+  is not one is a codegen error.
 - **A kind constant names the grammar id unless it is marked `display`.** The parser gives a node
   two ids: its grammar id (`grammar_id()`, the rule that parsed it) and its display id
   (`kind_id()`, the alias target at its site). Transports, routing, choice variants and presence
@@ -169,7 +176,7 @@ pub enum FunctionModifiersModifierTransportSlot {
   the kind, both slots and the kind they share. The reader never picks between slots at run time.
 - **A kind's minimum read depth** is on its `#[transport]`: `min_depth = 2` on a list owner, whose
   items arrive with it. Codegen derives it from the model, once per kind. A leaf the reader spells
-  or projects (`spelled`, `interior`) is read inline at any depth and needs none.
+  or projects (`text`, `interior`) is read inline at any depth and needs none.
 - **A kind's layout tokens** are listed on its `#[transport]` (`layout = […]`): the anonymous tokens
   its rule writes and no slot stores. The reader skips them; a render from data writes them from
   the template, and an untouched node slices them from the source.
@@ -238,13 +245,14 @@ Each is derived once, in codegen; a fact a type states is not repeated in an att
 | **Arity and requiredness** | the wrap's `normalizeSingularWrapSlot` and `normalizeRepeatedWrapSlot` | the field's type; `min` |
 | **Keyword presence** | the wrap's `coerceBooleanKeywordStorage` | the type, `Option<bool>`, and `presence = kind::…` naming the keyword |
 | **Flag sets** | the wrap's `coerceBitflagStorage` | the type: a `Vec` of the flags' choice. No grammar has a flag set today |
-| **Kind-enum storage** | the wrap's `projectKindEnumStorage` and `projectMixedEnumStorage`, with text-to-id and alternate-id tables and the kinds read by their spelled text | the type: a choice whose unit variants are the kinds stored as ids, beside the node variants where the slot also holds nodes. An enum kind read as the member its text spells says so once, on its own choice (`#[transport(kind = …, spelled)]`), and an alternate id once, on the variant it folds into |
+| **Kind-enum storage** | the wrap's `projectKindEnumStorage` and `projectMixedEnumStorage`, with text-to-id and alternate-id tables and the kinds read by their spelled text | the type: a choice whose unit variants are the kinds stored as ids, beside the node variants where the slot also holds nodes. An enum kind whose own node reads as the member its spelling tokens display says so once, on its own choice (`#[transport(kind = …, spelled)]`): every token must display the one member id, so a node is never read as the member its first token is. An alternate id is stated once, on the variant it folds into |
 | **Scalar storage for trivia** | `ReadModel::stores_scalar`, emitted per grammar in `kind_ids.rs` (`emitters/kind-id-rust.ts`) | none of its own: a child is scalar exactly when its slot stores it as a unit variant or a presence flag. The table and the trait method go |
 | **`$other`** | the reader puts anonymous unfielded children there; the wrap reclaims terminals with `readTerminalFromOther` and spellings with `_spellingTokens` | routed to the slot whose type admits the token; a layout token is skipped; any other child is refused (ruling 7) |
-| **Text leaves** | the reader's `read_leaf` captures `$text`; the wrap's `_isReadTextLeaf` and the `_spelled…` helpers tile anonymous tokens into a leaf's text | `#[transport(text)]`, or `#[transport(spelled)]` for a leaf spelled by its tokens |
+| **Text leaves** | the reader's `read_leaf` captures `$text`; the wrap's `_isReadTextLeaf` and the `_spelled…` helpers tile anonymous tokens into a leaf's text | `#[transport(text)]`, which also covers a leaf spelled by its tokens: the text the leaf spans when its tokens tile it, else its fixed text (`text = "…"`) |
 | **Token interiors** | the wrap's `_projectLexed` with `projectInterior` and `TOKEN_INTERIORS` (`emitters/consts.ts`) | `#[transport(interior = …)]` |
 | **Alias envelopes** | the reader stamps `$displayType`; the wrap's `_aliasEnvelope` with `_ALIAS_ENVELOPES` and `_HIDDEN_KINDS` re-wraps | `#[transport(envelope, content = …)]` on the envelope kind, whose kind is its display id (`display`) |
 | **Transparent supertypes** | the wrap's `SUPERTYPE_MEMBERS`, `_filterWrapChildrenByKind`, `_firstKindKeyedWrapChild` | the slot's type: the supertype's choice, whose variants list its members once |
+| **Blank options** | the wrap's `blankFromRead` stores the blank id (0) for an absent slot the model marks `hasBlankArm`; the slot's per-slot decoder admits id 0 | `#[transport(blank)]` on the blank variant of the choice a blank option holds; any other optional slot reads absent as `None` |
 | **Delimiters and layout** | the wrap's `dropWireDelimiters`, `_hasSeparatorFlank` and `listOption` | `layout` on the kind; `separator` and `flank` on the slot |
 | **List owners** | `_LIST_OWNER_KINDS`, `listItems`, `ownerView`, `storedElements` | `#[transport(list, item = …)]` |
 | **Read depth per kind** | the wrap's `hydrateSelf` reads a `_LIST_OWNER_KINDS` member two levels deep | `min_depth` on the kind |
@@ -616,7 +624,7 @@ pub enum PrimitiveTypeEnum {
   and the rest optional; the field types carry it.
 - **Storage:** `return_type`'s type is the `_type` supertype's choice. `!` is its unit variant
   `NeverType`, stored as its kind id, and a primitive keyword is `PrimitiveType(PrimitiveTypeEnum)`,
-  the enum kind whose choice says once that the reader reads it as the member its text spells; any
+  the enum kind whose choice says once that the reader reads it as the member its tokens display; any
   other type is a node. Today that is `projectMixedEnumStorage` with an 18-entry text table and
   `[341]` as the kinds read by their spelled text, plus `stores_scalar`'s arm `(208, "return_type")`.
 - **Layout:** `fn` and `->` are the template's own tokens (`render-bodies.json`). The reader skips
@@ -690,7 +698,7 @@ pub enum BooleanLiteralEnum {
   variant stored as its kind id. Today that is `projectKindEnumStorage` with an 18-entry text table,
   plus `stores_scalar`'s arm `(270, "operator")`.
 - **`left` and `right`:** their type is the `_expression` supertype's choice. It holds
-  `boolean_literal` as `BooleanLiteral(BooleanLiteralEnum)`, read as the member its text spells, and
+  `boolean_literal` as `BooleanLiteral(BooleanLiteralEnum)`, read as the member its token displays, and
   `self` as the unit variant `Self_`; any other expression is a node. Today that is
   `projectMixedEnumStorage` with `{ true, false, self }` and `[336]`, and `stores_scalar`'s arms
   `(270, "left")` and `(270, "right")`.
