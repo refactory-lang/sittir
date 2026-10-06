@@ -650,5 +650,29 @@ export default sittirGrammar(base, {
 		html_comment: /<!--[\s\S]*?-->/,
 		jsx_text: /[^{}<>]+/,
 		_template_chars: token.immediate(/[^`\\$]+/)
-	})
+	}),
+	reparseHosts: {
+		hosts: {
+			expression: 'let _ = $r;',
+			type: 'type _X = $r;',
+			pattern: 'let $r = null;',
+			declaration: '$r',
+			statement: '$r',
+			formal_parameters: 'function _f$r {}',
+			required_parameter: 'function _f($r) {}',
+			arguments: '_f$r;',
+			type_parameters: 'function _f$r() {}',
+			variable_declarator: 'let $r;',
+			type_annotation: 'let _$r;',
+			class_body: 'class _C $r',
+			property_signature: 'interface _I { $r }',
+			index_signature: 'type _T = { $r }',
+			interface_body: 'interface _I $r',
+			decorator_member_expression: '@$r\nclass _W {}',
+			decorator_call_expression: '@$r\nclass _W {}',
+			decorator_parenthesized_expression: '@$r\nclass _W {}',
+			rest_pattern: 'const [$r] = [];',
+			lhs_expression: '($r = null);'
+		}
+	},
 });

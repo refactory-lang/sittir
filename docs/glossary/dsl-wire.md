@@ -2000,3 +2000,7 @@ Resolves every reference to a renamed enrich lift through `liftNames`, over the 
 
 Every `liftNames` key must be a rule enrich minted, else it throws. A renamed lift that is an external throws, naming the lift (`assertNoRenamedExternal`): both runtimes read `externals` before any rule runs, so that list cannot follow the rename. The externals checked are the effective list, the names the grammar's `externals` callback returned (`WireContext.evaluatedExternals`), not the base's: a config may add an external or remove one. A reference is matched by name alone, so a reference that lost its lift metadata is still resolved. A lift whose variant was hoisted (`LiftName.hoisted`) is not a pure rename: a rule that still references it throws, naming the lift and the rule, because giving that reference the variant's name would change what the rule matches.
 
+
+### `packages/codegen/src/dsl/wire/reparse-hosts.ts::ReparseHostsConfig`
+
+The grammar's `reparseHosts` block: a template per supertype or kind whose `$r` hole takes rendered text so it parses as a whole file, the priority order between reachable supertype hosts, and the kinds whose own host applies only when a variant is adopted. It passes through wire, evaluate and generate untouched and is emitted as data; the validator and the delimiter check both read it.

@@ -152,9 +152,9 @@ describe('non_special_token sub-factories', () => {
 	});
 	it('rawString builds the parent', () => {
 		const node = ir.nonSpecialToken.rawString({
-			rawStringLiteralStart: { $type: TSKindId.RawStringLiteralStart, $text: 'test', $source: 2, $named: true } as any,
+			rawStringLiteralStart: { $type: TSKindId.RawStringLiteralStart, $text: 'r"', $source: 2, $named: true } as any,
 			stringContent: { $type: TSKindId.RawStringLiteralContent, $text: 'test', $source: 2, $named: true } as any,
-			rawStringLiteralEnd: { $type: TSKindId.RawStringLiteralEnd, $text: 'test', $source: 2, $named: true } as any
+			rawStringLiteralEnd: { $type: TSKindId.RawStringLiteralEnd, $text: '"', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.NonSpecialToken);
 		expect((node as any).content()).toBeDefined();
@@ -2935,18 +2935,18 @@ describe('string_literal', () => {
 describe('raw_string_literal', () => {
 	it('factory produces correct type', () => {
 		const node = ir.rawStringLiteral({
-			rawStringLiteralStart: { $type: TSKindId.RawStringLiteralStart, $text: 'test', $source: 2, $named: true } as any,
+			rawStringLiteralStart: { $type: TSKindId.RawStringLiteralStart, $text: 'r"', $source: 2, $named: true } as any,
 			stringContent: { $type: TSKindId.RawStringLiteralContent, $text: 'test', $source: 2, $named: true } as any,
-			rawStringLiteralEnd: { $type: TSKindId.RawStringLiteralEnd, $text: 'test', $source: 2, $named: true } as any
+			rawStringLiteralEnd: { $type: TSKindId.RawStringLiteralEnd, $text: '"', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.RawStringLiteral);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.rawStringLiteral({
-			rawStringLiteralStart: { $type: TSKindId.RawStringLiteralStart, $text: 'test', $source: 2, $named: true } as any,
+			rawStringLiteralStart: { $type: TSKindId.RawStringLiteralStart, $text: 'r"', $source: 2, $named: true } as any,
 			stringContent: { $type: TSKindId.RawStringLiteralContent, $text: 'test', $source: 2, $named: true } as any,
-			rawStringLiteralEnd: { $type: TSKindId.RawStringLiteralEnd, $text: 'test', $source: 2, $named: true } as any
+			rawStringLiteralEnd: { $type: TSKindId.RawStringLiteralEnd, $text: '"', $source: 2, $named: true } as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);

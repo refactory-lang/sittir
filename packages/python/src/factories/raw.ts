@@ -4,8 +4,10 @@ import type * as T from '../types-internal.js';
 import { Delimiter } from '@sittir/common/utils';
 import { TSKindId } from '../types.js';
 import type { Admit, ListOptions, NonEmptyArray, NumericConfig, NumericLiteral, WidenNumeric } from '@sittir/types';
+import type { DelimitedSpec } from '@sittir/common/utils';
 import {
 	currentHandle,
+	checkDelimited,
 	listSlotWith,
 	LIST_ITEMS,
 	LIST_READ,
@@ -91,10 +93,10 @@ const _leafRe_buildIntegerDecimalLong = /^(?:(?:(?:[0-9]+_?))+(?:[Ll]))$/u;
 const _leafRe_buildIntegerDecimalImaginary = /^(?:(?:(?:[0-9]+_?))+(?:[jJ]))$/u;
 const _leafRe_buildIntegerDecimalPlain = /^(?:(?:(?:[0-9]+_?))+)$/u;
 const _leafRe_buildLineContinuationNewline = /^(?:\\(?:\r)?\n)$/u;
-const _leafRe_buildStringStart = /^(?:(?:[a-zA-Z]*["']+))$/u;
-const _leafRe_buildStringFragment = /^(?:(?:[^"'\\{}\n]+))$/u;
+const _leafRe_buildStringStart = /^(?:(?:[a-zA-Z]*["'`]+))$/u;
+const _leafRe_buildStringFragment = /^(?:(?:[\s\S]+))$/u;
 const _leafRe_buildEscapeInterpolation = /^(?:(?:\{\{|\}\}))$/u;
-const _leafRe_buildStringEnd = /^(?:(?:["']+))$/u;
+const _leafRe_buildStringEnd = /^(?:(?:\\*["'`]+))$/u;
 export const _slotRe_buildComment_content = /^(?:(?:.*))$/u;
 export const _slotRe_buildIntegerHex_prefix = /^(?:0x|0X)$/u;
 export const _slotRe_buildIntegerHex_content = /^(?:(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?)$/u;
@@ -123,6 +125,13 @@ export const _slotRe_buildEscapeSequenceOctal_content = /^(?:(?:\d{1,3}))$/u;
 export const _slotRe_buildEscapeSequenceLineBreak_content = /^(?:(?:\r?\n))$/u;
 export const _slotRe_buildEscapeSequenceSimple_content = /^(?:(?:['"abfrntv\\]))$/u;
 export const _slotRe_buildEscapeSequenceNamed_content = /^(?:(?:N\{[^}]+\}))$/u;
+const _delimited_buildString: DelimitedSpec = {
+	kind: 'string',
+	id: TSKindId.String as const,
+	excluded: /[\u{a}\u{d}\u{22}\u{27}\u{5c}\u{60}\u{7b}\u{7d}\u{2028}-\u{2029}]/u,
+	host: '_ = ($r)',
+	nodeKinds: [TSKindId.Interpolation as const, TSKindId.EscapeSequence as const]
+};
 
 export function buildModule(): T.EmptyModule;
 export function buildModule(...children: Admit<T.Statement[]>): T.Module.Bound;
@@ -4302,6 +4311,7 @@ export function buildString(config: T.String.Config): T.String.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
+	checkDelimited(handle, node, _delimited_buildString, [_content], _string_start, _string_end);
 	return node as unknown as T.String.Bound;
 }
 

@@ -34,6 +34,7 @@ interface CommonModule {
 	loadCorpusEntries(grammar: string): readonly { name: string; source: string }[];
 	loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined>;
 	walkWrappedTree(root: unknown, visit: (node: ParsedNode) => void): void;
+	loadScopedFactoryMap<T extends Record<string, unknown>>(grammar: string, map: T): Promise<T>;
 	loadNodeModel(grammar: string): Promise<{
 		factoryShapes: Record<string, FactoryShape>;
 		factoryFields: Record<string, readonly string[]>;
@@ -114,7 +115,7 @@ export async function loadFactoryArtifacts(grammar: GrammarName): Promise<Factor
 	const common = await loadCommon();
 	const model = await common.loadNodeModel(grammar);
 	return {
-		factoryMap: factoryModule._factoryMap ?? {},
+		factoryMap: await common.loadScopedFactoryMap(grammar, factoryModule._factoryMap ?? {}),
 		factoryShapes: model.factoryShapes,
 		fieldAliasMap: model.fieldAliasMap,
 		factoryFields: model.factoryFields,

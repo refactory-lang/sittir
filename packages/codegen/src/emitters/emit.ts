@@ -1,4 +1,6 @@
 import type { OptionsConfig } from '../dsl/wire/options-block.ts';
+import type { ReparseHostsConfig } from '../dsl/wire/reparse-hosts.ts';
+import { emitReparseHosts } from './reparse-hosts.ts';
 import { isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
 import type { DiagnosticSink } from '../types/diagnostics.ts';
 import { resolveRenderRules, whitespaceTextOf } from '../compiler/model/render-rules.ts';
@@ -55,6 +57,7 @@ export interface EmitAllConfig {
 	grammarRoles?: GrammarRoles;
 	emitRenderModule?: boolean;
 	expectTestFailures?: Readonly<Record<string, string>>;
+	reparseHosts?: ReparseHostsConfig;
 	options?: OptionsConfig;
 	visibleExternals?: Readonly<Record<string, EvaluatedRule<'evaluate'>>>;
 	diagnostics?: DiagnosticSink;
@@ -76,6 +79,7 @@ export interface EmitAllResult {
 	tests: string;
 	templates: EmittedTemplates;
 	utils: string;
+	reparseHosts?: string;
 	renderModule?: RenderModuleBundle;
 	rootTreeTypeName?: string;
 }
@@ -109,6 +113,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		grammarRoles,
 		emitRenderModule,
 		expectTestFailures,
+		reparseHosts,
 		options: optionsBlock,
 		visibleExternals,
 		diagnostics
@@ -132,7 +137,8 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		kindEntries,
 		inlineKinds,
 		synthesizedKinds,
-		triviaKinds
+		triviaKinds,
+		reparseHosts
 	});
 
 	const fromEmitter = new FromEmitter({
@@ -234,6 +240,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		tests,
 		templates,
 		utils,
+		reparseHosts: emitReparseHosts(reparseHosts),
 		renderModule,
 		rootTreeTypeName: wrapEmitter.rootTreeTypeName
 	};
