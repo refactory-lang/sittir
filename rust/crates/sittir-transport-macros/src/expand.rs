@@ -21,11 +21,13 @@ fn choice(ident: &Ident, data: &DataEnum) -> syn::Result<TokenStream> {
     let mut by_grammar = Vec::new();
     let mut by_folded = Vec::new();
     let mut scalars = Vec::new();
-    let mut reads = Vec::new();
+    let mut read_table: Vec<TokenStream> = vec![quote!(__unadmitted); data.variants.len()];
+    let mut boxed_table: Vec<TokenStream> = vec![quote!(__unadmitted); data.variants.len()];
+    let mut variant_fns = Vec::new();
     let mut sides = Vec::new();
     let mut blank = None;
     let mut payloads: Vec<(&Ident, &Type)> = Vec::new();
-    for (i, variant) in data.variants.iter().enumerate() {
+    for (at, variant) in data.variants.iter().enumerate() {
         let name = &variant.ident;
         if attrs::kind_attrs(&variant.attrs)?.blank {
             if !matches!(variant.fields, Fields::Unit) {
@@ -39,7 +41,7 @@ fn choice(ident: &Ident, data: &DataEnum) -> syn::Result<TokenStream> {
             continue;
         }
         let Some(kinds) = attrs::variant_kinds(&variant.attrs)? else { continue };
-        let i = i as u16;
+        let i = at as u16;
         let ids = &kinds.kinds;
         let shown = &kinds.shown;
         if !shown.is_empty() {
@@ -57,17 +59,62 @@ fn choice(ident: &Ident, data: &DataEnum) -> syn::Result<TokenStream> {
         match &variant.fields {
             Fields::Unit => {
                 scalars.push(quote!(::core::option::Option::Some(#i) => true,));
-                reads.push(quote!(::core::option::Option::Some(#i) => ::core::result::Result::Ok(Self::#name),));
+                let (read_fn, boxed_fn) = (format_ident!("__read_{}", i), format_ident!("__read_boxed_{}", i));
+                variant_fns.push(quote! {
+                    #[inline(never)]
+                    fn #read_fn(
+                        _cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                        _ctx: &__rt::ReadCtx<'_>,
+                        _depth: __rt::Depth,
+                        _sides: __rt::Sides,
+                    ) -> ::core::result::Result<#ident, __rt::ReadError> {
+                        ::core::result::Result::Ok(#ident::#name)
+                    }
+                    #[inline(never)]
+                    fn #boxed_fn(
+                        _cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                        _ctx: &__rt::ReadCtx<'_>,
+                        _depth: __rt::Depth,
+                        _sides: __rt::Sides,
+                    ) -> ::core::result::Result<::std::boxed::Box<#ident>, __rt::ReadError> {
+                        ::core::result::Result::Ok(::std::boxed::Box::new(#ident::#name))
+                    }
+                });
+                read_table[at] = quote!(#read_fn);
+                boxed_table[at] = quote!(#boxed_fn);
             }
             Fields::Unnamed(payload) if payload.unnamed.len() == 1 => {
                 let ty = &payload.unnamed[0].ty;
                 payloads.push((name, ty));
                 scalars.push(quote!(::core::option::Option::Some(#i) => <#ty as __rt::ReadTransport>::scalar(grammar, display),));
-                reads.push(quote! {
-                    ::core::option::Option::Some(#i) => ::core::result::Result::Ok(Self::#name(
-                        <#ty as __rt::ReadTransport>::read(cursor, ctx, depth, sides)?,
-                    )),
+                let (read_fn, boxed_fn, box_fn) = (format_ident!("__read_{}", i), format_ident!("__read_boxed_{}", i), format_ident!("__box_{}", i));
+                variant_fns.push(quote! {
+                    #[inline(never)]
+                    fn #read_fn(
+                        cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                        ctx: &__rt::ReadCtx<'_>,
+                        depth: __rt::Depth,
+                        sides: __rt::Sides,
+                    ) -> ::core::result::Result<#ident, __rt::ReadError> {
+                        ::core::result::Result::Ok(#ident::#name(<#ty as __rt::ReadTransport>::read(cursor, ctx, depth, sides)?))
+                    }
+                    #[inline(never)]
+                    fn #boxed_fn(
+                        cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                        ctx: &__rt::ReadCtx<'_>,
+                        depth: __rt::Depth,
+                        sides: __rt::Sides,
+                    ) -> ::core::result::Result<::std::boxed::Box<#ident>, __rt::ReadError> {
+                        let payload = <#ty as __rt::ReadTransport>::read(cursor, ctx, depth, sides)?;
+                        ::core::result::Result::Ok(#box_fn(payload))
+                    }
+                    #[inline(never)]
+                    fn #box_fn(payload: #ty) -> ::std::boxed::Box<#ident> {
+                        ::std::boxed::Box::new(#ident::#name(payload))
+                    }
                 });
+                read_table[at] = quote!(#read_fn);
+                boxed_table[at] = quote!(#boxed_fn);
                 sides.push(quote!(::core::option::Option::Some(#i) => <#ty as __rt::ReadTransport>::sides_of(cursor, ctx, row),));
             }
             _ => return Err(syn::Error::new_spanned(variant, "a choice's variant is a unit or holds one transport")),
@@ -103,6 +150,18 @@ fn choice(ident: &Ident, data: &DataEnum) -> syn::Result<TokenStream> {
         const _: () = {
             use ::sittir_core::read as __rt;
             use ::sittir_core::types::KindId as __Kind;
+            type __Read<T> = fn(&mut ::tree_sitter::TreeCursor<'_>, &__rt::ReadCtx<'_>, __rt::Depth, __rt::Sides) -> ::core::result::Result<T, __rt::ReadError>;
+            fn __unadmitted<T>(
+                cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                _ctx: &__rt::ReadCtx<'_>,
+                _depth: __rt::Depth,
+                _sides: __rt::Sides,
+            ) -> ::core::result::Result<T, __rt::ReadError> {
+                ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: __Kind(cursor.node().grammar_id()), row: __rt::row_of(cursor) })
+            }
+            #(#variant_fns)*
+            const __READS: &[__Read<#ident>] = &[#(#read_table),*];
+            const __READS_BOXED: &[__Read<::std::boxed::Box<#ident>>] = &[#(#boxed_table),*];
             fn __variant(grammar: __Kind, display: __Kind) -> ::core::option::Option<u16> {
                 #(#by_display)*
                 #(#by_grammar)*
@@ -133,8 +192,22 @@ fn choice(ident: &Ident, data: &DataEnum) -> syn::Result<TokenStream> {
                     let node = cursor.node();
                     let (grammar, display) = (__Kind(node.grammar_id()), __Kind(node.kind_id()));
                     match __variant(grammar, display) {
-                        #(#reads)*
-                        _ => ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: grammar, row: __rt::row_of(cursor) }),
+                        ::core::option::Option::Some(i) => __READS[i as usize](cursor, ctx, depth, sides),
+                        ::core::option::Option::None => ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: grammar, row: __rt::row_of(cursor) }),
+                    }
+                }
+                #[allow(unused_variables)]
+                fn read_boxed(
+                    cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                    ctx: &__rt::ReadCtx<'_>,
+                    depth: __rt::Depth,
+                    sides: __rt::Sides,
+                ) -> ::core::result::Result<::std::boxed::Box<Self>, __rt::ReadError> {
+                    let node = cursor.node();
+                    let (grammar, display) = (__Kind(node.grammar_id()), __Kind(node.kind_id()));
+                    match __variant(grammar, display) {
+                        ::core::option::Option::Some(i) => __READS_BOXED[i as usize](cursor, ctx, depth, sides),
+                        ::core::option::Option::None => ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: grammar, row: __rt::row_of(cursor) }),
                     }
                 }
                 #[allow(unused_variables)]

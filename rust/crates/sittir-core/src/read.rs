@@ -309,6 +309,12 @@ pub trait ReadTransport: Sized {
     /// Read the node the cursor is on. The cursor was created at the tree's
     /// root and ends where it started.
     fn read(cursor: &mut TreeCursor<'_>, ctx: &ReadCtx<'_>, depth: Depth, sides: Sides) -> Result<Self, ReadError>;
+    /// [`read`](Self::read) into a fresh box. A transport that owns a large
+    /// value overrides it to build the value in the box, so the read keeps
+    /// no second copy of it on the stack while its children are read.
+    fn read_boxed(cursor: &mut TreeCursor<'_>, ctx: &ReadCtx<'_>, depth: Depth, sides: Sides) -> Result<Box<Self>, ReadError> {
+        Self::read(cursor, ctx, depth, sides).map(Box::new)
+    }
     /// The sides the placement rule gives the child at `row` among the
     /// children of the node the cursor is on.
     fn sides_of(cursor: &mut TreeCursor<'_>, ctx: &ReadCtx<'_>, row: u32) -> Result<Sides, ReadError>;
@@ -328,7 +334,7 @@ impl<T: ReadTransport> ReadTransport for Box<T> {
         T::blank().map(Box::new)
     }
     fn read(cursor: &mut TreeCursor<'_>, ctx: &ReadCtx<'_>, depth: Depth, sides: Sides) -> Result<Self, ReadError> {
-        T::read(cursor, ctx, depth, sides).map(Box::new)
+        T::read_boxed(cursor, ctx, depth, sides)
     }
     fn sides_of(cursor: &mut TreeCursor<'_>, ctx: &ReadCtx<'_>, row: u32) -> Result<Sides, ReadError> {
         T::sides_of(cursor, ctx, row)
