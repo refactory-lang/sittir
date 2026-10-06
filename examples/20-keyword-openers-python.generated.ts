@@ -33,7 +33,7 @@ export function rebuildKeywordOpenersPythonGenerated() {
 		}), py.build.forStatement.strict({
 			left: py.build.identifier("i"),
 			right: py.build.parenthesizedExpression.strict(py.build.identifier("a")),
-			body: py.build.suite.block.strict(py.build.simpleStatements.strict(py.build.passStatement)),
+			body: py.build.suite.block.strict(py.build.simpleStatements.strict(py.kinds.PassStatement)),
 		}), py.build.simpleStatements.strict(py.build.assertStatement.strict(py.build.parenthesizedExpression.strict(py.build.identifier("x")))), py.build.simpleStatements.strict(py.build.deleteStatement.strict(py.build.parenthesizedExpression.strict(py.build.identifier("x")))), py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.assignment.eq.strict({
 			left: py.build.identifier("g"),
 			right: py.build.lambda.strict({

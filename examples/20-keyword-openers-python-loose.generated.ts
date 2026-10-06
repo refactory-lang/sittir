@@ -33,7 +33,7 @@ export function rebuildKeywordOpenersPythonLoose() {
 		}), py.build.forStatement({
 			left: "i",
 			right: py.build.parenthesizedExpression("a"),
-			body: py.build.suite.block(py.build.simpleStatements(py.build.passStatement)),
+			body: py.build.suite.block(py.build.simpleStatements(py.kinds.PassStatement)),
 		}), py.build.simpleStatements(py.build.assertStatement(py.build.parenthesizedExpression("x"))), py.build.simpleStatements(py.build.deleteStatement(py.build.parenthesizedExpression("x"))), py.build.simpleStatements(py.build.assignment.eq({
 			left: "g",
 			right: py.build.lambda({

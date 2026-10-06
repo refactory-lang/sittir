@@ -3477,6 +3477,15 @@ function renderFixedLiteralTransport(typeName: string, fixed: FixedLiteral): str
 
 function fixedLiteralNapiImpls(typeName: string, fixed: FixedLiteral): string[] {
 	const ids = [...new Set(fixed.acceptedIds.length > 0 ? fixed.acceptedIds : fixed.ownId === undefined ? [] : [fixed.ownId])];
+	return kindIdNapiImpls(typeName, [{ variant: fixed.variant, ids }]);
+}
+
+interface KindIdArm {
+	readonly variant: string;
+	readonly ids: readonly number[];
+}
+
+function kindIdNapiImpls(typeName: string, arms: readonly KindIdArm[]): string[] {
 	return [
 		'#[cfg(feature = "napi-bindings")]',
 		`impl ::napi::bindgen_prelude::FromNapiValue for ${typeName} {`,
@@ -3485,7 +3494,7 @@ function fixedLiteralNapiImpls(typeName: string, fixed: FixedLiteral): string[] 
 		'        napi_val: ::napi::sys::napi_value,',
 		'    ) -> ::napi::Result<Self> {',
 		'        match u16::from_napi_value(env, napi_val)? {',
-		...(ids.length === 0 ? [] : [`            ${ids.join(' | ')} => Ok(Self::${fixed.variant}),`]),
+		...arms.flatMap((arm) => (arm.ids.length === 0 ? [] : [`            ${arm.ids.join(' | ')} => Ok(Self::${arm.variant}),`])),
 		'            other => Err(::napi::Error::from_reason(format!(',
 		`                ${JSON.stringify(`kind id {other} is not a kind ${typeName} takes`)},`,
 		'            ))),',
@@ -4044,6 +4053,12 @@ function armSeamPairsOf(
 	return out;
 }
 
+function enumMemberId(node: AssembledEnum, text: string): number {
+	const id = node.resolvedByText.get(text)?.id;
+	if (id === undefined) throw new Error(`transport.rs: enum member ${JSON.stringify(text)} of '${node.kind}' has no kind id`);
+	return id;
+}
+
 function renderEnumType(node: AssembledEnum, kindEntries: readonly KindEnumEntry[], plan: RenderPlan): string[] {
 	const publicName = enumTypeName(node);
 	const seamPairs = armSeamPairsOf(plan, node, kindEntries);
@@ -4060,91 +4075,9 @@ function renderEnumType(node: AssembledEnum, kindEntries: readonly KindEnumEntry
 	lines.push('');
 	lines.push(...inertPrepareImpl(enumName));
 
-	lines.push(`#[cfg(feature = "napi-bindings")]`);
-	lines.push(`impl ::napi::bindgen_prelude::FromNapiValue for ${enumName} {`);
-	lines.push(`    unsafe fn from_napi_value(`);
-	lines.push(`        env: ::napi::sys::napi_env,`);
-	lines.push(`        napi_val: ::napi::sys::napi_value,`);
-	lines.push(`    ) -> ::napi::Result<Self> {`);
-
-	const kindIdMatchArms = (indent: string): void => {
-		for (const v of values) {
-			const entry = node.resolvedByText.get(v);
-			const variant = literalToVariantName(v);
-			if (entry !== undefined) {
-				lines.push(`${indent}${entry.id} => return Ok(Self::${variant}), // ${JSON.stringify(v)}`);
-			} else {
-				lines.push(`${indent}// ${JSON.stringify(v)}: no parser symbol — cannot dispatch by KindId`);
-			}
-		}
-		lines.push(`${indent}_ => {}`);
-	};
-	const textMatchArms = (indent: string): void => {
-		for (const v of values) {
-			lines.push(`${indent}${JSON.stringify(v)} => return Ok(Self::${literalToVariantName(v)}),`);
-		}
-		lines.push(`${indent}_ => {}`);
-	};
-	lines.push(`        match ::sittir_core::slot::transport_value_type(env, napi_val)? {`);
-	lines.push(`            ::napi::ValueType::Number => {`);
-	lines.push(`                if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {`);
-	lines.push(`                    match kind_id {`);
-	kindIdMatchArms(`                        `);
-	lines.push(`                    }`);
-	lines.push(`                }`);
-	lines.push(`            }`);
-	lines.push(`            ::napi::ValueType::String => {`);
-	lines.push(`                match String::from_napi_value(env, napi_val)?.as_str() {`);
-	textMatchArms(`                    `);
-	lines.push(`                }`);
-	lines.push(`            }`);
-	lines.push(`            ::napi::ValueType::Object => {`);
-	lines.push(`                if let Some(kind_id) = ${wirePropertyRead('$type', 'u16')} {`);
-	lines.push(`                    match kind_id {`);
-	kindIdMatchArms(`                        `);
-	lines.push(`                    }`);
-	lines.push(`                }`);
-	lines.push(`                if let Some(text) = ${wirePropertyRead('$text', 'String')} {`);
-	lines.push(`                    match text.as_str() {`);
-	textMatchArms(`                        `);
-	lines.push(`                    }`);
-	lines.push(`                }`);
-	for (const v of values) {
-		const variant = literalToVariantName(v);
-		lines.push(
-			`                if ${wirePropertyRead(`_${v}`, '::napi::bindgen_prelude::Object')}.is_some() { return Ok(Self::${variant}); }`
-		);
-	}
-	lines.push(`            }`);
-	lines.push(`            _ => {}`);
-	lines.push(`        }`);
-	lines.push(`        Err(::napi::Error::from_reason(${JSON.stringify(`unknown enum payload for ${enumName}`)}))`);
-
-	lines.push(`    }`);
-	lines.push(`}`);
-	lines.push('');
-
-	lines.push(`#[cfg(feature = "napi-bindings")]`);
-	lines.push(`impl ::napi::bindgen_prelude::ToNapiValue for ${enumName} {`);
-	lines.push(`    unsafe fn to_napi_value(`);
-	lines.push(`        _env: ::napi::sys::napi_env,`);
-	lines.push(`        _val: Self,`);
-	lines.push(`    ) -> ::napi::Result<::napi::sys::napi_value> {`);
-	lines.push(`        Err(::napi::Error::from_reason(${JSON.stringify(`${enumName} is receive-only`)}))`);
-	lines.push(`    }`);
-	lines.push(`}`);
-	lines.push('');
-
-	lines.push(
-		...kindOfImplLines(
-			enumName,
-			values.map((v) => {
-				const id = node.resolvedByText.get(v)?.id;
-				return { variant: literalToVariantName(v), payload: false, ids: id === undefined ? [] : [id] };
-			}),
-			undefined
-		)
-	);
+	const arms = values.map((v) => ({ variant: literalToVariantName(v), ids: [enumMemberId(node, v)] }));
+	lines.push(...kindIdNapiImpls(enumName, arms));
+	lines.push(...kindOfImplLines(enumName, arms.map((arm) => ({ ...arm, payload: false })), undefined));
 	lines.push(`impl ::sittir_core::render::Render for ${enumName} {`);
 	lines.push(
 		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
