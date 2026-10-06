@@ -7239,9 +7239,11 @@ The parser catalog rows (`kindEntries`) a link pass reads before `LinkCtx` exist
  * facts instead of re-resolving names/texts per site. Leaves that resolve
  * nothing are collected into `misses` — the link-time phantom-kind
  * diagnostic. `syntactic` is false inside a lexed interior (below a
- * TOKEN): stamping is suppressed there, since its inner strings are lexeme
- * fragments of the token, not separate anon tokens, so a miss there is
- * meaningless by construction. Rewriting is suppressed there too, FIELD
+ * TOKEN): a string there is still stamped with its public symbol, but a
+ * miss is not recorded, since its inner strings are lexeme fragments of
+ * the token, not separate anon tokens, so a miss there is meaningless by
+ * construction. A REPEAT's separator string is stamped the same way and
+ * stays a string. Rewriting is suppressed there too, FIELD
  * included: a FIELD re-enables the rewrite only in syntactic context, so a
  * structured token-interior slot's literals stay text (Go's `_` digit
  * separator and a rune escape's `"` never become `blank_identifier` or

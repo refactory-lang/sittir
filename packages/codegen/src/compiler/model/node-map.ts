@@ -242,6 +242,7 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly flattened?: true;
 	readonly multiplicity: Multiplicity;
 	readonly separator?: string;
+	readonly separatorKindId?: number;
 	readonly trailing?: boolean;
 	readonly leading?: boolean;
 	readonly optionalElement?: boolean;
@@ -637,19 +638,26 @@ export function extractSeparatorString(sep: RuleBase<'normalize'>['separator']):
 	return undefined;
 }
 
+export function extractSeparatorKindId(sep: RuleBase<'normalize'>['separator']): number | undefined {
+	if (sep === undefined || !isStringType(sep.value.type)) return undefined;
+	return (sep.value as { resolvedKindId?: number }).resolvedKindId;
+}
+
 export interface ListSlotFactsCtx {
 	readonly separator?: string;
+	readonly separatorKindId?: number;
 	readonly optionalElement?: boolean;
 }
 
 export function stampListFactsOnValues(values: NodeOrTerminal[], ctx: ListSlotFactsCtx): NodeOrTerminal[] {
-	const { separator, optionalElement } = ctx;
+	const { separator, separatorKindId, optionalElement } = ctx;
 	if (!separator && optionalElement !== true) return values;
 	return values.map((v) => {
 		if (v.multiplicity !== 'array' && v.multiplicity !== 'nonEmptyArray') return v;
 		return {
 			...v,
 			...(separator ? { separator } : {}),
+			...(separator && separatorKindId !== undefined ? { separatorKindId } : {}),
 			...(optionalElement === true ? { optionalElement: true } : {})
 		};
 	});

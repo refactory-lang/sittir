@@ -18,6 +18,7 @@ import {
 	type NodeOrTerminal,
 	deriveValuesForRule,
 	dedupeValues,
+	extractSeparatorKindId,
 	extractSeparatorString,
 	mergeDelimiterMode,
 	isTerminalValue,
@@ -305,6 +306,7 @@ function buildSlot(
 	}
 	const values: readonly NodeOrTerminal[] = stampListFactsOnValues([...dedupedValues], {
 		separator: separatorStr,
+		separatorKindId: isMultiSlot ? extractSeparatorKindId(sep) : undefined,
 		optionalElement: (rule as { optionalElement?: boolean }).optionalElement
 	});
 

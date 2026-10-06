@@ -1376,15 +1376,23 @@ export function aliasEnvelopeIds(envelopes: readonly AssembledAlias[]): number[]
 	return [...new Set(envelopes.map((node) => node.aliasTypeId))].sort((a, b) => a - b);
 }
 
-export function fieldTaggedLiteralTexts(node: AssembledNode): ReadonlyMap<string, readonly string[]> {
-	const out = new Map<string, string[]>();
+export interface TaggedLiteral {
+	readonly text: string;
+	readonly kindId?: number;
+}
+
+export function fieldTaggedLiterals(node: AssembledNode): ReadonlyMap<string, readonly TaggedLiteral[]> {
+	const out = new Map<string, TaggedLiteral[]>();
 	const walk = (rule: RenderRule, field: string | undefined): void => {
 		const own = (rule as { fieldName?: string }).fieldName ?? field;
 		switch (rule.type) {
 			case STRING:
 				if (own !== undefined && own !== (rule as { fieldName?: string }).fieldName) {
 					const list = out.get(own) ?? [];
-					if (!list.includes(rule.value)) list.push(rule.value);
+					if (!list.some((literal) => literal.text === rule.value)) {
+						const kindId = (rule as { aliasedToId?: number; resolvedKindId?: number }).aliasedToId ?? (rule as { resolvedKindId?: number }).resolvedKindId;
+						list.push({ text: rule.value, ...(kindId === undefined ? {} : { kindId }) });
+					}
 					out.set(own, list);
 				}
 				return;
@@ -1400,7 +1408,27 @@ export function fieldTaggedLiteralTexts(node: AssembledNode): ReadonlyMap<string
 	return out;
 }
 
+export function fieldTaggedLiteralTexts(node: AssembledNode): ReadonlyMap<string, readonly string[]> {
+	return new Map([...fieldTaggedLiterals(node)].map(([field, literals]) => [field, literals.map((literal) => literal.text)]));
+}
+
 export function slotDropTexts(slot: AssembledNonterminal, owner: AssembledNode | undefined, elided: boolean): string[] {
 	const tagged = owner !== undefined && slot.fieldName !== undefined ? (fieldTaggedLiteralTexts(owner).get(slot.fieldName) ?? []) : [];
 	return [...new Set([...slotSeparatorTexts(slot, elided), ...tagged])];
+}
+
+export function slotDropKindIds(slot: AssembledNonterminal, owner: AssembledNode | undefined, elided: boolean): number[] {
+	const ids: number[] = [];
+	const add = (text: string, kindId: number | undefined): void => {
+		if (kindId === undefined) {
+			throw new Error(`${owner?.kind ?? '(no owner)'}.${slot.name}'s separator ${JSON.stringify(text)} has no stamped kind id`);
+		}
+		if (!ids.includes(kindId)) ids.push(kindId);
+	};
+	for (const value of slot.values) {
+		if (value.separator !== undefined && (!elided || value.optionalElement === true)) add(value.separator, value.separatorKindId);
+	}
+	const tagged = owner !== undefined && slot.fieldName !== undefined ? (fieldTaggedLiterals(owner).get(slot.fieldName) ?? []) : [];
+	for (const literal of tagged) add(literal.text, literal.kindId);
+	return ids;
 }
