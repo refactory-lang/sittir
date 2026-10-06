@@ -4443,8 +4443,11 @@ Every read goes through the typed reader, and the wrap attaches members only. "T
 
    A query result is the node its parent's slot holds, not a second wrapper. The typed reader's cursor walk gives each match its child-index path from the facet node: at each step, the slot that holds the next node and the node's index in that slot. JS follows the path down through the slots with `hydrateSlot` (`hydrateSlots` for a list), and both adopt every node they hand out. No arena is needed, and 1c closes #643.
 
+   A match that its slot stores as a scalar is the stored value the accessor returns: a fixed-text leaf is its kind id, and an enum member is its member id. These are plain data, so 1c stops wrapping a fresh node for them, and `engine.query` on such a leaf gives an empty facet.
+
    Every query result now has a recorded parent, so 1c lifts the refusal of a `$trivia` write on a node reached through a query. That refusal is the "reached outside its parent's accessors" error in `packages/common/src/utils.ts`. 1c's test:
    - reaches one node through a query and through its parent's accessors, and checks that both return the same object;
+   - reaches rust `self` in `self.x`, which `field_expression`'s `value` slot stores as its kind id (`ExpressionTransport::Self_`), through a query and through the accessor, and checks that both give the same kind id;
    - writes the same `$trivia` through each path, in two parses of one source;
    - checks that the two renders are byte-identical.
 
@@ -4466,7 +4469,12 @@ Every read goes through the typed reader, and the wrap attaches members only. "T
 7. **Gates:**
    - rendered bytes and validation rows unchanged;
    - read parity (verification 3) by the validators that today read through the wrap, now reading through the typed reader with members attached;
-   - depth (4), members on first access (5, with `measure-heap.mts`'s untouched whole-tree population), identity (6), unrouted children (7) and trivia ownership (8, `sittir tool trivia-placement`);
+   - depth (4), identity (6), unrouted children (7) and trivia ownership (8, `sittir tool trivia-placement`);
+   - members on first access (5), with two `measure-heap.mts` populations:
+     - the untouched whole-tree read;
+     - a query-heavy one, a whole-file `$descendants` over the corpus, which the probe gains.
+
+     Each is reported against master as 1c starts, like for like, so the ancestors the path walk hydrates are measured rather than assumed;
    - query results: item 3's test, the same object through a query and through accessors, and byte-identical renders of the same `$trivia` write;
    - type-check time (13), and the full suite.
 
