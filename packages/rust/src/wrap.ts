@@ -255,6 +255,32 @@ const _LIST_OWNER_KINDS: ReadonlySet<number> = new Set([
 	TSKindId.UseList,
 	TSKindId.WhereClause
 ]);
+const _INTERIOR_KINDS: ReadonlySet<number> = new Set([
+	TSKindId.CharLiteralEscapedHex,
+	TSKindId.CharLiteralEscapedSimple,
+	TSKindId.CharLiteralEscapedUnicodeBraced,
+	TSKindId.CharLiteralEscapedUnicodeFixed,
+	TSKindId.CharLiteralPlain,
+	TSKindId.EscapeSequenceHex,
+	TSKindId.EscapeSequenceSimple,
+	TSKindId.EscapeSequenceUnicodeBraced,
+	TSKindId.EscapeSequenceUnicodeFixed,
+	TSKindId.IntegerLiteralBinary,
+	TSKindId.IntegerLiteralDecimal,
+	TSKindId.IntegerLiteralHex,
+	TSKindId.IntegerLiteralOctal,
+	TSKindId.Metavariable,
+	TSKindId.Shebang
+]);
+function _needsWrap(node: object): boolean {
+	const data = node as _UntypedNode & { readonly $displayType?: number };
+	return (
+		holdsSlots(node) ||
+		data.$displayType !== undefined ||
+		_spellingTokens(data) !== undefined ||
+		(_INTERIOR_KINDS.has(data.$type as number) && _isReadTextLeaf(node))
+	);
+}
 function hydrateSelf<T>(entry: T, tree: TreeHandle): T {
 	if (entry == null) return undefined as unknown as T;
 	const e = entry as unknown as _UntypedNode;
@@ -275,13 +301,12 @@ export type ParsedOfData<D> = D extends { readonly $type: infer Id }
 		? T.ParsedByKindId[Id]
 		: D
 	: D;
-const _hydrated = new WeakSet<object>();
 export function hydrateChild<T>(entry: T | ParsedOfData<T>, tree: TreeHandle): ParsedOfData<T> {
-	if (typeof entry === 'object' && entry !== null && _hydrated.has(entry)) return entry as ParsedOfData<T>;
+	if (typeof entry === 'object' && entry !== null && !isStub(entry) && (isTypedNode(entry) || !_needsWrap(entry)))
+		return entry as ParsedOfData<T>;
 	const resolved = hydrateSelf(entry, tree);
 	const e = resolved as unknown as _UntypedNode;
 	const child = resolved === entry && typeof e?.$type === 'number' && !isTypedNode(e) ? wrapNode(e, tree) : resolved;
-	if (typeof child === 'object' && child !== null) _hydrated.add(child);
 	return child as unknown as ParsedOfData<T>;
 }
 function hydrateSlot<T>(node: object, key: string, tree: TreeHandle): ParsedOfData<T> {
@@ -296,10 +321,9 @@ function hydrateSlots<T>(node: object, key: string, tree: TreeHandle): readonly 
 	const slots = node as Record<string, unknown>;
 	const stored = slots[key];
 	if (!Array.isArray(stored)) return stored == null ? _noChildren : [hydrateSlot<T>(node, key, tree)];
-	if (_hydrated.has(stored)) return stored as readonly ParsedOfData<T>[];
+	if (Object.isFrozen(stored)) return stored as readonly ParsedOfData<T>[];
 	const children = Object.freeze(stored.map((entry) => hydrateChild(entry as T, tree)));
 	for (const child of children) adoptChild(node, child);
-	_hydrated.add(children);
 	slots[key] = children;
 	return children;
 }
@@ -313,7 +337,7 @@ function storeExpanded<T>(value: T, tree: TreeHandle): StoredOf<T>;
 function storeExpanded(value: unknown, tree: TreeHandle): unknown {
 	if (Array.isArray(value)) return value.map((entry) => storeExpanded(entry, tree));
 	if (!isNode(value)) return value;
-	if (isStub(value) || isTypedNode(value) || !holdsSlots(value)) return value;
+	if (isStub(value) || isTypedNode(value) || !_needsWrap(value)) return value;
 	return wrapNode(value, tree);
 }
 function hydrateChildren<T>(
@@ -367,6 +391,8 @@ function projectMixedEnumStorage<T>(
 		const folded = altIds?.[kind];
 		if (folded !== undefined) return folded as unknown as T;
 		if (textIds && Object.values(textIds).includes(kind)) return kind as unknown as T;
+		const member = ownSymbols?.includes(kind) ? _spelledMemberId(entry, Object.values(textIds ?? {})) : undefined;
+		if (member !== undefined) return member as unknown as T;
 		const text = ownSymbols?.includes(kind) ? _spelledText(entry) : undefined;
 		if (text !== undefined) {
 			const memberId = textIds?.[text];
@@ -13451,12 +13477,39 @@ export function wrapUseClauses(
 		return node as unknown as T.UseClauses.Parsed;
 	}
 	const _content = storeExpanded(
-		normalizeRepeatedWrapSlot(data._item, true, 'item', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'item',
-			span: (data as _UntypedNode).$span
-		}),
+		projectMixedEnumStorage(
+			normalizeRepeatedWrapSlot(data._item, true, 'item', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'item',
+				span: (data as _UntypedNode).$span
+			}),
+			{
+				self: 125,
+				u8: 58,
+				i8: 59,
+				u16: 60,
+				i16: 61,
+				u32: 62,
+				i32: 63,
+				u64: 64,
+				i64: 65,
+				u128: 66,
+				i128: 67,
+				isize: 68,
+				usize: 69,
+				f32: 70,
+				f64: 71,
+				bool: 72,
+				str: 73,
+				char: 74,
+				super: 126,
+				crate: 127,
+				default: 51,
+				union: 32,
+				gen: 52
+			}
+		),
 		tree
 	);
 	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
@@ -13637,12 +13690,36 @@ export function wrapTypes(
 	data = modelSlots(data, ['_item']);
 	const handle = currentHandle();
 	const _content = storeExpanded(
-		normalizeRepeatedWrapSlot(data._item, true, 'item', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'item',
-			span: (data as _UntypedNode).$span
-		}),
+		projectMixedEnumStorage(
+			normalizeRepeatedWrapSlot(data._item, true, 'item', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'item',
+				span: (data as _UntypedNode).$span
+			}),
+			{
+				'!': 254,
+				u8: 58,
+				i8: 59,
+				u16: 60,
+				i16: 61,
+				u32: 62,
+				i32: 63,
+				u64: 64,
+				i64: 65,
+				u128: 66,
+				i128: 67,
+				isize: 68,
+				usize: 69,
+				f32: 70,
+				f64: 71,
+				bool: 72,
+				str: 73,
+				char: 74
+			},
+			undefined,
+			[341]
+		),
 		tree
 	);
 	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
@@ -13852,12 +13929,17 @@ export function wrapExpressions(
 	data = modelSlots(data, ['_item']);
 	const handle = currentHandle();
 	const _content = storeExpanded(
-		normalizeRepeatedWrapSlot(data._item, true, 'item', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'item',
-			span: (data as _UntypedNode).$span
-		}),
+		projectMixedEnumStorage(
+			normalizeRepeatedWrapSlot(data._item, true, 'item', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'item',
+				span: (data as _UntypedNode).$span
+			}),
+			{ true: 117, false: 118, self: 125 },
+			undefined,
+			[336]
+		),
 		tree
 	);
 	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
@@ -13960,12 +14042,17 @@ export function wrapTuplePatternElements(
 	data = modelSlots(data, ['_item']);
 	const handle = currentHandle();
 	const _content = storeExpanded(
-		normalizeRepeatedWrapSlot(data._item, true, 'item', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'item',
-			span: (data as _UntypedNode).$span
-		}),
+		projectMixedEnumStorage(
+			normalizeRepeatedWrapSlot(data._item, true, 'item', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'item',
+				span: (data as _UntypedNode).$span
+			}),
+			{ true: 117, false: 118, '..': 321, _: 426 },
+			undefined,
+			[336]
+		),
 		tree
 	);
 	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
@@ -14009,12 +14096,17 @@ export function wrapPatterns(
 	data = modelSlots(data, ['_item']);
 	const handle = currentHandle();
 	const _content = storeExpanded(
-		normalizeRepeatedWrapSlot(data._item, true, 'item', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'item',
-			span: (data as _UntypedNode).$span
-		}),
+		projectMixedEnumStorage(
+			normalizeRepeatedWrapSlot(data._item, true, 'item', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'item',
+				span: (data as _UntypedNode).$span
+			}),
+			{ true: 117, false: 118, '..': 321, _: 426 },
+			undefined,
+			[336]
+		),
 		tree
 	);
 	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
@@ -14075,12 +14167,16 @@ export function wrapStructPatternElements(
 		return node as unknown as T.StructPatternElements.Parsed;
 	}
 	const _content = storeExpanded(
-		normalizeRepeatedWrapSlot(data._item, true, 'item', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'item',
-			span: (data as _UntypedNode).$span
-		}),
+		projectMixedEnumStorage(
+			normalizeRepeatedWrapSlot(data._item, true, 'item', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'item',
+				span: (data as _UntypedNode).$span
+			}),
+			{ '..': 321 },
+			{ 100: 321 }
+		),
 		tree
 	);
 	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
@@ -20272,6 +20368,11 @@ function _spellingTokens(data: _UntypedNode): readonly _UntypedNode[] | undefine
 	if (tokens.some((token) => typeof token !== 'object' || token === null || (token as _UntypedNode).$named !== false))
 		return undefined;
 	return tokens as readonly _UntypedNode[];
+}
+function _spelledMemberId(data: _UntypedNode, memberIds: readonly number[]): number | undefined {
+	const shown = _spellingTokens(data)?.map(_displayOf);
+	const id = shown?.[0];
+	return typeof id === 'number' && shown!.every((other) => other === id) && memberIds.includes(id) ? id : undefined;
 }
 function _spelledText(data: _UntypedNode): string | undefined {
 	if (data.$text !== undefined) return data.$text;

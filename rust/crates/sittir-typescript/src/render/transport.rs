@@ -44896,49 +44896,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AccessibilityModifierEnum {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-                    match kind_id {
-                        32 => return Ok(Self::PublicKw), // "public"
-                        33 => return Ok(Self::PrivateKw), // "private"
-                        34 => return Ok(Self::ProtectedKw), // "protected"
-                        _ => {}
-                    }
-                }
-            }
-            ::napi::ValueType::String => {
-                match String::from_napi_value(env, napi_val)?.as_str() {
-                    "public" => return Ok(Self::PublicKw),
-                    "private" => return Ok(Self::PrivateKw),
-                    "protected" => return Ok(Self::ProtectedKw),
-                    _ => {}
-                }
-            }
-            ::napi::ValueType::Object => {
-                if let Some(kind_id) = ::sittir_core::boundary::property::<u16>(env, napi_val, c"$type")? {
-                    match kind_id {
-                        32 => return Ok(Self::PublicKw), // "public"
-                        33 => return Ok(Self::PrivateKw), // "private"
-                        34 => return Ok(Self::ProtectedKw), // "protected"
-                        _ => {}
-                    }
-                }
-                if let Some(text) = ::sittir_core::boundary::property::<String>(env, napi_val, c"$text")? {
-                    match text.as_str() {
-                        "public" => return Ok(Self::PublicKw),
-                        "private" => return Ok(Self::PrivateKw),
-                        "protected" => return Ok(Self::ProtectedKw),
-                        _ => {}
-                    }
-                }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_public")?.is_some() { return Ok(Self::PublicKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_private")?.is_some() { return Ok(Self::PrivateKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_protected")?.is_some() { return Ok(Self::ProtectedKw); }
-            }
-            _ => {}
+        match u16::from_napi_value(env, napi_val)? {
+            32 => Ok(Self::PublicKw),
+            33 => Ok(Self::PrivateKw),
+            34 => Ok(Self::ProtectedKw),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind AccessibilityModifierEnum takes",
+            ))),
         }
-        Err(::napi::Error::from_reason("unknown enum payload for AccessibilityModifierEnum"))
     }
 }
 
@@ -47355,84 +47320,21 @@ impl ::napi::bindgen_prelude::FromNapiValue for PredefinedTypeEnum {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-                    match kind_id {
-                        38 => return Ok(Self::AnyKw), // "any"
-                        39 => return Ok(Self::NumberKw), // "number"
-                        40 => return Ok(Self::BooleanKw), // "boolean"
-                        41 => return Ok(Self::StringKw), // "string"
-                        42 => return Ok(Self::SymbolKw), // "symbol"
-                        143 => return Ok(Self::V75_6e_69_71_75_65_20_73_79_6d_62_6f_6c), // "unique symbol"
-                        107 => return Ok(Self::VoidKw), // "void"
-                        144 => return Ok(Self::UnknownKw), // "unknown"
-                        145 => return Ok(Self::NeverKw), // "never"
-                        44 => return Ok(Self::ObjectKw), // "object"
-                        _ => {}
-                    }
-                }
-            }
-            ::napi::ValueType::String => {
-                match String::from_napi_value(env, napi_val)?.as_str() {
-                    "any" => return Ok(Self::AnyKw),
-                    "number" => return Ok(Self::NumberKw),
-                    "boolean" => return Ok(Self::BooleanKw),
-                    "string" => return Ok(Self::StringKw),
-                    "symbol" => return Ok(Self::SymbolKw),
-                    "unique symbol" => return Ok(Self::V75_6e_69_71_75_65_20_73_79_6d_62_6f_6c),
-                    "void" => return Ok(Self::VoidKw),
-                    "unknown" => return Ok(Self::UnknownKw),
-                    "never" => return Ok(Self::NeverKw),
-                    "object" => return Ok(Self::ObjectKw),
-                    _ => {}
-                }
-            }
-            ::napi::ValueType::Object => {
-                if let Some(kind_id) = ::sittir_core::boundary::property::<u16>(env, napi_val, c"$type")? {
-                    match kind_id {
-                        38 => return Ok(Self::AnyKw), // "any"
-                        39 => return Ok(Self::NumberKw), // "number"
-                        40 => return Ok(Self::BooleanKw), // "boolean"
-                        41 => return Ok(Self::StringKw), // "string"
-                        42 => return Ok(Self::SymbolKw), // "symbol"
-                        143 => return Ok(Self::V75_6e_69_71_75_65_20_73_79_6d_62_6f_6c), // "unique symbol"
-                        107 => return Ok(Self::VoidKw), // "void"
-                        144 => return Ok(Self::UnknownKw), // "unknown"
-                        145 => return Ok(Self::NeverKw), // "never"
-                        44 => return Ok(Self::ObjectKw), // "object"
-                        _ => {}
-                    }
-                }
-                if let Some(text) = ::sittir_core::boundary::property::<String>(env, napi_val, c"$text")? {
-                    match text.as_str() {
-                        "any" => return Ok(Self::AnyKw),
-                        "number" => return Ok(Self::NumberKw),
-                        "boolean" => return Ok(Self::BooleanKw),
-                        "string" => return Ok(Self::StringKw),
-                        "symbol" => return Ok(Self::SymbolKw),
-                        "unique symbol" => return Ok(Self::V75_6e_69_71_75_65_20_73_79_6d_62_6f_6c),
-                        "void" => return Ok(Self::VoidKw),
-                        "unknown" => return Ok(Self::UnknownKw),
-                        "never" => return Ok(Self::NeverKw),
-                        "object" => return Ok(Self::ObjectKw),
-                        _ => {}
-                    }
-                }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_any")?.is_some() { return Ok(Self::AnyKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_number")?.is_some() { return Ok(Self::NumberKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_boolean")?.is_some() { return Ok(Self::BooleanKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_string")?.is_some() { return Ok(Self::StringKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_symbol")?.is_some() { return Ok(Self::SymbolKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_unique symbol")?.is_some() { return Ok(Self::V75_6e_69_71_75_65_20_73_79_6d_62_6f_6c); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_void")?.is_some() { return Ok(Self::VoidKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_unknown")?.is_some() { return Ok(Self::UnknownKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_never")?.is_some() { return Ok(Self::NeverKw); }
-                if ::sittir_core::boundary::property::<::napi::bindgen_prelude::Object>(env, napi_val, c"_object")?.is_some() { return Ok(Self::ObjectKw); }
-            }
-            _ => {}
+        match u16::from_napi_value(env, napi_val)? {
+            38 => Ok(Self::AnyKw),
+            39 => Ok(Self::NumberKw),
+            40 => Ok(Self::BooleanKw),
+            41 => Ok(Self::StringKw),
+            42 => Ok(Self::SymbolKw),
+            143 => Ok(Self::V75_6e_69_71_75_65_20_73_79_6d_62_6f_6c),
+            107 => Ok(Self::VoidKw),
+            144 => Ok(Self::UnknownKw),
+            145 => Ok(Self::NeverKw),
+            44 => Ok(Self::ObjectKw),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind PredefinedTypeEnum takes",
+            ))),
         }
-        Err(::napi::Error::from_reason("unknown enum payload for PredefinedTypeEnum"))
     }
 }
 
