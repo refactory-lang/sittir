@@ -1,19 +1,9 @@
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 import { bindingIssues, compileQuery, readBindings } from './bindings.ts';
 import { loadSlotModel } from './model.ts';
-import {
-	type BindingFactsArtifact,
-	type Derivation,
-	type GrammarInput,
-	type LayoutSlot,
-	bindingFactsPath,
-	bindingsHash,
-	bindingsPath,
-	camel,
-	derive
-} from '@sittir/codegen/bindings';
+import { type Derivation, type GrammarInput, type LayoutSlot, bindingsPath, camel, derive } from '@sittir/codegen/bindings';
 import { type Vocabulary, readVocabulary } from './vocabulary.ts';
 import { allGrammars, type GrammarName } from '@sittir/codegen/grammars';
 import { evaluateGrammar, load, type RawGrammar } from '../codegen-surface.ts';
@@ -28,7 +18,6 @@ export interface BindingsInventoryOptions {
 	readonly grammars?: readonly GrammarName[];
 	readonly check?: boolean;
 	readonly members?: boolean;
-	readonly writeFacts?: boolean;
 }
 
 export interface CompileReport {
@@ -87,18 +76,6 @@ export async function loadInputs(grammars: readonly GrammarName[]): Promise<Gram
 			};
 		})
 	);
-}
-
-export function writeBindingFacts(
-	grammars: readonly GrammarName[],
-	destination: (grammar: GrammarName) => string = bindingFactsPath
-): void {
-	for (const grammar of grammars) {
-		const text = readFileSync(bindingsPath(grammar), 'utf8');
-		const artifact: BindingFactsArtifact = { bindingsHash: bindingsHash(text), facts: readBindings(text) };
-		writeFileSync(destination(grammar), `${JSON.stringify(artifact, null, '\t')}\n`);
-		process.stdout.write(`${grammar}: wrote ${destination(grammar)}\n`);
-	}
 }
 
 export async function deriveVocabulary(grammars: readonly GrammarName[] = inventoryGrammars()): Promise<Derivation> {
@@ -173,7 +150,6 @@ export function membersTable(d: Derivation): string {
 export async function run(opts: BindingsInventoryOptions): Promise<number> {
 	const grammars = opts.grammars ?? inventoryGrammars();
 	let code = 0;
-	if (opts.writeFacts) writeBindingFacts(grammars);
 	if (opts.check) {
 		for (const report of await compileBindings(grammars)) {
 			if (report.error !== null) {

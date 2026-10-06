@@ -1,5 +1,3 @@
-import { createHash } from 'node:crypto';
-import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { grammarPackageDir, type GrammarName } from '../grammars.ts';
 
@@ -110,8 +108,6 @@ export interface ModelNode {
 
 export type SlotModel = ReadonlyMap<string, ModelNode>;
 
-export const BINDING_FACTS_VERSION = 1;
-
 export const KNOWN_PREDICATE_OPERATORS: ReadonlySet<string> = new Set([
 	'eq',
 	'not-eq',
@@ -125,35 +121,4 @@ export const KNOWN_PREDICATE_OPERATORS: ReadonlySet<string> = new Set([
 	'not-any-of'
 ]);
 
-export interface BindingFactsArtifact {
-	readonly bindingsHash: string;
-	readonly facts: BindingFacts;
-}
-
-export const WRITE_FACTS_COMMAND = 'sittir tool bindings-inventory --write-facts';
-
-export function bindingsHash(bindingsText: string, version: number = BINDING_FACTS_VERSION): string {
-	return createHash('sha256').update(`${version}\0${bindingsText}`).digest('hex');
-}
-
 export const bindingsPath = (grammar: GrammarName): string => join(grammarPackageDir(grammar), 'bindings.scm');
-export const bindingFactsPath = (grammar: GrammarName): string => join(grammarPackageDir(grammar), '.sittir', 'bindings.json');
-
-export class StaleBindingFactsError extends Error {
-	constructor(readonly grammar: GrammarName, reason: string) {
-		super(`${grammar}: ${reason}; regenerate it with \`${WRITE_FACTS_COMMAND}\``);
-	}
-}
-
-export function verifiedBindingFacts(grammar: GrammarName, artifact: BindingFactsArtifact, bindingsText: string): BindingFacts {
-	if (artifact.bindingsHash !== bindingsHash(bindingsText))
-		throw new StaleBindingFactsError(grammar, `its bindings facts were read from another bindings.scm or derivation`);
-	return artifact.facts;
-}
-
-export function readBindingFacts(grammar: GrammarName): BindingFacts {
-	const artifactPath = bindingFactsPath(grammar);
-	if (!existsSync(artifactPath)) throw new StaleBindingFactsError(grammar, `${artifactPath} is missing`);
-	const artifact = JSON.parse(readFileSync(artifactPath, 'utf8')) as BindingFactsArtifact;
-	return verifiedBindingFacts(grammar, artifact, readFileSync(bindingsPath(grammar), 'utf8'));
-}
