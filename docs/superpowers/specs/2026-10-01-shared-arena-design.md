@@ -166,14 +166,20 @@ pub enum FunctionModifiersModifierTransportSlot {
   `None`. Codegen emits the attribute from `hasBlankArm` alone. A choice is declared once for its
   content and may be shared by several slots, so a choice shared by a blank option and a slot that
   is not one is a codegen error.
-- **A kind constant names the grammar id unless it is marked `display`.** The parser gives a node
-  two ids: its grammar id (`grammar_id()`, the rule that parsed it) and its display id
-  (`kind_id()`, the alias target at its site). Transports, routing, choice variants and presence
-  keywords key on the grammar id, so a kind an attribute names is the grammar id, unmarked. The
-  `display` flag marks the display id, as in `#[kind(kind::FIELD_IDENTIFIER, display)]`. It is
-  used only where the identity is the alias: an alias envelope's site, and the query plans that the
-  bindings rows and `is.*` compile to. The macro picks the accessor from the flag, so the reader
-  never decides at run time. A display union stays a name: a display id has no transport.
+- **A kind constant names the grammar id unless it is marked `display`; a token names its public
+  symbol.** The parser gives a node two ids: its grammar id (`grammar_id()`, the rule that parsed
+  it) and its display id (`kind_id()`, the public symbol: the alias target at its site, or the
+  symbol the parser folds a raw token into). Transports, routing and choice variants key on the
+  grammar id, so a kind an attribute names is the grammar id, unmarked. The `display` flag marks
+  the display id, as in `#[kind(kind::FIELD_IDENTIFIER, display)]`, and `display(kind::X)` claims
+  one id by its display id alone. It is used only where the identity is the alias: an alias
+  envelope's site, an anonymous token the parser shows only by its public symbol, and the query
+  plans that the bindings rows and `is.*` compile to. Layout tokens, separators, presence keywords
+  and a list's separator kind are tokens, and compare the public symbol. A raw string-literal token
+  the parser folds into a named target is listed by that target, `folded = [kind::X]` on a struct
+  and `folded(kind::X)` on a variant, and a choice matches it after every exact claim. The macro
+  picks the accessor from the flag, so the reader never decides at run time. A display union stays a
+  name: a display id has no transport.
 - **An unfielded child has exactly one slot.** In a kind's declaration, no two slots without a
   field admit the same kind, so the slot whose type admits an unfielded child's kind is one slot.
   Codegen checks this as it emits the declaration: two such slots are a codegen diagnostic naming
@@ -717,7 +723,7 @@ pub enum BooleanLiteralEnum {
 | a `Vec` of the flags' choice | none: no grammar has a bitflag field today | `coerceBitflagStorage`, no call sites |
 | `interior = …` | `integer_literal_decimal`: `content` and `suffix` | `TOKEN_INTERIORS` (40 kinds), read by `_projectLexed` (15 sites) |
 | `text` | `identifier` | `read_leaf`'s `$text`, and `_isReadTextLeaf` |
-| `envelope, content = …`, with `display` | `field_identifier`, `shorthand_field_identifier` and `type_identifier` over `identifier` | `_ALIAS_ENVELOPES` = {465, 467, 468}, and `_aliasEnvelope` |
+| `envelope, content = …`, with `display`; `wraps_hidden` when the content is a supertype | `field_identifier`, `shorthand_field_identifier` and `type_identifier` over `identifier`; python `as_pattern_target` over a hidden supertype | `_ALIAS_ENVELOPES` = {465, 467, 468}, and `_aliasEnvelope` |
 | `separator`, `flank` | `closure_parameters` | `dropWireDelimiters` (3 sites in rust) |
 | `group` | `match_arm_with_comma.pattern`, a pattern and its guard | `seatWith`, called from `$with`, which stays a member; the read needs only the slot's `group` |
 

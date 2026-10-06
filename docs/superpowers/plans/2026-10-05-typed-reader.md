@@ -3528,7 +3528,7 @@ A kind with slots that today's read collapses into `$text`, such as `parameters`
 - the struct has no field for it;
 - the reader skips the two layout tokens.
 
-Both reads therefore decode to the same transport.
+A node with no named child reads, today, as its text with no slot keys, so a slot it holds nothing in is absent there. The typed read fills that slot with its empty value: `Some([])` for a list, the blank arm for an optional slot that has one. The corpus comparison names each such slot and lists it per grammar; every other difference fails it.
 
 - [ ] **Step 2: Run to verify failure**
 
@@ -3918,6 +3918,8 @@ The gate of 1a: for every corpus entry of the five grammars, the typed read of t
 
 Today's detached data carries two things the typed reader leaves to the render side, and the harness drops both before comparing: `$_layout.gap` and `$_layout.flank` (layout evidence), and an empty `$_layout`. It keeps the trivia entries, which arrive as coordinates (`$treeHandle`, `$span`, `$type`) and decode as `SlotValue::Coord`, the form the typed reader gives them. `SlotValue`'s equality compares a coordinate by its tree, span and kind, so the handle's form does not matter.
 
+The two reads differ in one class by construction, and the comparison reports it instead of failing on it: a slot today's read leaves absent because its node has no named child, which the typed read fills with its empty value. The native comparison prints each as a `normalized: <Kind>.<slot>` line, and the harness holds the rows it accepts per grammar as (entry, kind, slot), a list that may only shrink. A row outside the list is a difference.
+
 The harness also reports the envelope pin (`ENVELOPE_EXTRA_IDS` in `envelope-claims.ts`): for each pinned id of each variant, how many corpus nodes the reader's display pass admits as that variant, and whether the id still shows as the variant's display id. A variant that claims an id outside its pin, or a pinned id that stops displaying as the variant's display id, fails the run. The pin is a ceiling; the report says whether the ids it holds are reached by the corpus.
 
 **Files:**
@@ -4206,7 +4208,7 @@ Register it in `packages/cli/src/commands/tool/index.ts` beside `triviaPlacement
 Build the release binaries the way `validate:native` does (`pnpm run regen:all`). Then:
 
 Run: `pnpm exec tsx packages/cli/src/cli.ts tool typed-read-parity --all-grammars`
-Expected: every grammar's summary has `refused: 0`, `differs: 0` and `todayFailed: 0`.
+Expected: every grammar's summary has `refused: 0`, `differs: 0` and `todayFailed: 0`. Empty-slot sightings are counted in `emptySlots` and each lies within the listed rows.
 
 Any refusal, difference or `today-failed` entry stops the task. Report each row (the entry, its outcome and its report) and keep the state intact (rule 5b). Each one is one of:
 
@@ -4325,32 +4327,22 @@ fn a_list_owner_read_at_one_level_brings_its_list() {
     assert_eq!(list.item.len(), 2);
 }
 
+// rust/crates/sittir-parity-tests/tests/typed_read_nesting.rs (the nesting and stack tests)
 #[test]
 fn a_nesting_today_reads_does_not_overflow_the_typed_read() {
-    // `n` nested parentheses around a literal, inside a function body
-    let n = 1_000;
-    let source = format!("fn f() {{ {}1{}; }}", "(".repeat(n), ")".repeat(n));
-    let stack = 2 * 1024 * 1024;
-    let today = {
-        let source = source.clone();
-        std::thread::Builder::new()
-            .stack_size(stack)
-            .spawn(move || {
-                let tree = parse(&source);
-                read_untyped_node(&tree, &source, None, None, ReadDepth::Deep, &sittir_rust::RustGrammar, &mut NoMint);
-            })
-            .unwrap()
-    };
-    today.join().expect("today's deep read handles this nesting in this stack");
-    std::thread::Builder::new()
-        .stack_size(stack)
-        .spawn(move || {
-            let tree = parse(&source);
-            root(&tree, &source, Depth::All);
-        })
-        .unwrap()
-        .join()
-        .expect("the typed read handles the nesting today's read handles");
+    let n = 250; // today's dev read overflows 2 MiB at 339 levels
+    read_on_thread("today", n, TWO_MIB);
+    read_on_thread("typed", n, TWO_MIB);
+}
+
+#[test]
+fn the_typed_read_costs_no_more_stack_per_level_than_today_s() {
+    // the least stack at 1, 10, 40 and 200 levels, per reader, found by running a child
+    // test on smaller and larger threads; the per-level cost is the slope from 40 to 200
+    assert!(typed_per_level <= today_per_level);
+    if !cfg!(debug_assertions) {
+        assert!(typed_per_level <= RELEASE_BYTES_PER_LEVEL); // 1.6 KiB
+    }
 }
 
 #[test]
@@ -4367,7 +4359,7 @@ fn sittir_core_holds_no_grammar_fact() {
 
 The statements of `engine.rs` and `spacing.rs` are top-level items, each with structure, so one level leaves them all coordinates. If a top-level item without a named child ever appears (a bare `;`), it is inline by the leaf rule, and the first test must allow it. Check the two files before running.
 
-A thread that overflows its stack aborts the whole test binary, and the abort message names the thread. If today's deep read itself overflows at 1,000 levels in a 2 MiB stack, halve `n` until it does not, and record the depth used. The test pins the typed read to today's depth, not to a number of its own. If the typed read overflows where today's does not, stop and report the depth and each reader's frame cost, measured with a smaller stack. The remedy (boxing large locals, or growing the stack in the reader) is a design choice for brainstorm.
+A thread that overflows its stack aborts the whole test binary, so the nesting test names its threads and the depth test measures each reader in a child process. The depth is not a number of its own: the typed read must fit wherever today's read fits. A generated choice's `read` holds one temporary per arm, which in the dev profile reaches megabytes for the dispatch enums; the derive therefore expands a choice into one `#[inline(never)]` function per variant, dispatched through a table, and reads a boxed slot into its box through `ReadTransport::read_boxed`, whose box is built in a function that is not live while the child is read. The tests pin the result: the dev corpus read at `Depth::ONE` fits the default 2 MiB test thread, 250 nested parentheses fit it for both readers, and the typed read costs no more stack per level than today's (and in release no more than 1.6 KiB).
 
 `sittir_core_holds_no_grammar_fact` is the mechanical half of verification 9. The other half, that the expansion is a pure function of the declaration, holds by construction: the derive reads only its input tokens.
 
