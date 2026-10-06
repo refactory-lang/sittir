@@ -182,7 +182,7 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript' | 'scm'):
 		templates,
 		nodeMap,
 		generatedIdTables,
-		grammarRenderInputs(grammar, { renderRules, visibleExternals: raw.visibleExternals, options: raw.options })
+		{ ...grammarRenderInputs(grammar, { renderRules, visibleExternals: raw.visibleExternals, options: raw.options }), envelopePins: undefined }
 	);
 	if (grammar === 'rust') _rustOptionsRs = emit.optionsRs.contents;
 	return emit.transportRs.contents;

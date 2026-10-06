@@ -1,7 +1,8 @@
 import { assertGrammar, stableGrammars } from '@sittir/codegen/grammars';
-import { ENVELOPE_EXTRA_IDS } from '@sittir/codegen/envelope-claims';
+import { ENVELOPE_PINS } from '@sittir/codegen/envelope-claims';
 import { STORED_TRIVIA, toDetachedTransportData, treeTokenOf } from '@sittir/common/utils';
 import type { AnyUntypedNode } from '@sittir/types';
+import { invoke } from '../codegen-surface.ts';
 import { loadCorpusEntries, loadLanguageForGrammar, loadNativeEngine, type TSNode, type TSTree } from './common.ts';
 
 export type TypedReadParityOutcome = 'refused' | 'differs' | 'round-trip' | 'today-failed' | 'stale-listed';
@@ -77,10 +78,25 @@ function parseReport(entry: string, report: string): { emptySlots: EmptySlotRow[
 	return { emptySlots, difference: rest.join('\n') };
 }
 
-function pinCounts(grammar: string): Map<string, number> {
+async function kindIdResolver(grammar: string): Promise<(kind: string) => number> {
+	const tables = (await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar)) as {
+		readonly kindIds?: ReadonlyMap<string, unknown> | Readonly<Record<string, unknown>>;
+	};
+	const kindIds = tables.kindIds ?? {};
+	const rows = new Map<string, { readonly id?: number }>(
+		(kindIds instanceof Map ? [...kindIds.entries()] : Object.entries(kindIds)) as [string, { readonly id?: number }][]
+	);
+	return (kind) => {
+		const id = rows.get(kind)?.id;
+		if (id === undefined) throw new Error(`typed-read-parity: ${grammar} pins kind '${kind}', which the grammar does not have`);
+		return id;
+	};
+}
+
+function pinCounts(grammar: string, idOf: (kind: string) => number): Map<string, number> {
 	const counts = new Map<string, number>();
-	for (const [variant, { display, extras }] of Object.entries(ENVELOPE_EXTRA_IDS[grammar] ?? {})) {
-		for (const id of extras) counts.set(`${variant}\t${display}\t${id}`, 0);
+	for (const [variant, { display, extras }] of Object.entries(ENVELOPE_PINS[grammar] ?? {})) {
+		for (const kind of extras) counts.set(`${variant}\t${idOf(display)}\t${idOf(kind)}`, 0);
 	}
 	return counts;
 }
@@ -124,7 +140,7 @@ export async function computeTypedReadParity(grammar: string): Promise<TypedRead
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
-	const pins = pinCounts(grammar);
+	const pins = pinCounts(grammar, await kindIdResolver(grammar));
 	const byShown = new Map<string, string[]>();
 	for (const key of pins.keys()) {
 		const [, display, id] = key.split('\t');

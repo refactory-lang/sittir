@@ -16533,15 +16533,19 @@ The kind ids of a list's separator candidates, resolved from the model's candida
 
 ### `packages/codegen/src/emitters/envelope-claims.ts::EnvelopeClaims`
 
-The display id an envelope variant shows as, and the further kind ids the decode claims for it.
+The display kind id an envelope variant shows as, and the further kind ids the decode claims for it, as the printer sees them. The pin compares them by kind name.
 
-### `packages/codegen/src/emitters/envelope-claims.ts::ENVELOPE_EXTRA_IDS`
+### `packages/codegen/src/emitters/envelope-claims.ts::ENVELOPE_PINS`
 
-The display id and the kind ids, per grammar and envelope variant, that the decode claims for the variant beyond its display id. The reader does not accept them. The pin is a ceiling: it lists the ids that exist today so none is added unnoticed.
+The display kind and the further kinds, by kind name, per grammar and envelope variant, that the decode claims for the variant beyond its display kind (`EnvelopePin`). The reader does not accept them. The pin is a ceiling: it lists the kinds that exist today so none is added unnoticed. Names, not parser ids, so a grammar edit that renumbers symbols does not touch it. The real pipeline hands the table in through the emitter inputs (`grammarRenderInputs`); an emission without one checks nothing.
 
 ### `packages/codegen/src/emitters/envelope-claims.ts::assertEnvelopeExtrasPinned`
 
-Fails the build when a variant claims an id outside its pin (a new claimed id is a decision, never a raised pin) or a pinned variant of an enum the grammar emits is no longer an envelope variant, or no longer claims a pinned id (the pin is lowered or removed to match). A pin for an enum the model does not print at all is not checked.
+With a pin table given, refuses a pin whose enum the generation did not print or that names a kind the grammar does not have (naming the entry), a variant that claims a kind outside its pin (a new claimed kind is a decision, never a raised pin), and a pinned variant that is no longer an envelope variant, displays as another kind, or no longer claims a pinned kind (the pin is lowered or removed to match). Claimed ids are turned into kind names through the kind entries, so the comparison and every message speak in kinds. Without a table nothing is checked.
+
+### `packages/codegen/src/emitters/envelope-claims.ts::EnvelopePin`
+
+One pinned envelope variant: its display kind name and the kind names it may claim beyond it.
 
 ### `packages/codegen/src/emitters/render-module.ts::alternatesOf`
 
