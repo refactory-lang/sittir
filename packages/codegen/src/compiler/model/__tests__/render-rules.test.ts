@@ -544,6 +544,26 @@ describe('seamRenderRules', () => {
 		expect(sites.filter((site) => site.kind === 'call' && site.edgeArm !== undefined)).toEqual([]);
 	});
 
+	it('resolves each arm site\'s own default: a keyword arm is a word default, a punctuation arm the edge\'s fallback', () => {
+		const entries = [
+			...(kindEntries as never as object[]),
+			{ kind: 'extends_keyword', anon: true, symbolName: 'extends', literalText: 'extends', member: 'ExtendsKeyword', id: 32 },
+			{ kind: 'colon', anon: true, symbolName: ':', literalText: ':', member: 'Colon', id: 33 }
+		] as never;
+		const content = { ...choice(str('extends'), str(':')), id: 'r1' } as never;
+		const rules = { constraint: seq(content, sym('type')) };
+		const nodeMap = nodeMapOf(rules, { r1: 'content' });
+		nodeMap.nodes.set('constraint', new AssembledBranch('constraint', rules.constraint as never, rules.constraint));
+		nodeMap.nodes.set('extends_keyword', new AssembledKeyword('extends_keyword', str('extends') as never) as never);
+		const out = resolveRenderRules({ nodeMap, kindEntries: entries, options: {} } as never, () => {}).seamed;
+		const arm = (address: string) => {
+			const site = spacingSitesOf(out, nodeMap).find((s) => s.address === address)!;
+			return [site.defaultArm, site.origin];
+		};
+		expect(arm('extends_keyword_before')).toEqual(['space', 'word-default']);
+		expect(arm('colon_before')).toEqual(['space', undefined]);
+	});
+
 	it('puts a list kind\'s edge seams around its flank wrapper, which stays a three-member seq', () => {
 		const rules = { list: commaList() };
 		const nodeMap = nodeMapOf(rules, { r1: 'items' });

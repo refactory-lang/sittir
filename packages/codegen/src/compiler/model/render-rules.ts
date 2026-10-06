@@ -1,6 +1,6 @@
 import { ruleListParts } from '../../dsl/rule-patterns.ts';
 import type { NodeMap } from '../types.ts';
-import { findAnonEntryForLiteralText, findEntryForLiteralText, modelKindOfEntry, type KindEntryLike } from '../../dsl/symbol-table.ts';
+import { findAnonEntryForLiteralText, findEntryForKindName, findEntryForLiteralText, modelKindOfEntry, type KindEntryLike } from '../../dsl/symbol-table.ts';
 import { aliasTargetOf, type RenderRule, type Rule, type RuleAnnotations, type RuleId, type SeamOrigin } from '../../types/rule.ts';
 import { CHOICE, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { RuleWalker } from '../../dsl/rule-walker.ts';
@@ -63,9 +63,15 @@ export interface SpacedSeparator {
 	readonly after?: SpacingPart;
 }
 
+export interface EdgeArmDefault {
+	readonly arm: WhitespaceArm;
+	readonly origin: SeamOrigin;
+}
+
 export interface RenderRules {
 	readonly rules: Readonly<Record<string, RenderRule>>;
 	readonly declared?: ReadonlyMap<string, DeclaredArm>;
+	readonly edgeArms?: ReadonlyMap<string, EdgeArmDefault>;
 }
 
 export interface RenderRulesConfig {
@@ -629,7 +635,11 @@ function seamChoice(
 	);
 }
 
-function edgeLiteralsOf(rule: RenderRule, side: 'first' | 'last', config: RenderRulesConfig): readonly string[] | undefined {
+function edgeTokensOf(
+	rule: RenderRule,
+	side: 'first' | 'last',
+	config: RenderRulesConfig
+): readonly { readonly token: string; readonly member: RenderRule }[] | undefined {
 	const edge = edgeMember(rule, side);
 	if (edge === undefined) return undefined;
 	const token = (member: RenderRule): string | undefined => {
@@ -639,11 +649,16 @@ function edgeLiteralsOf(rule: RenderRule, side: 'first' | 'last', config: Render
 		return bare.length === 1 ? token(bare[0]!) : undefined;
 	};
 	const single = token(edge);
-	if (single !== undefined) return [single];
+	if (single !== undefined) return [{ token: single, member: edge }];
 	const r = bag(edge);
 	if (r.type !== CHOICE || r.members === undefined || r.members.length === 0) return undefined;
-	const tokens = r.members.map(token);
-	return tokens.every((t) => t !== undefined) ? [...new Set(tokens as string[])] : undefined;
+	const tokens = r.members.map((member) => ({ token: token(member), member }));
+	return tokens.every((t) => t.token !== undefined) ? (tokens as { token: string; member: RenderRule }[]) : undefined;
+}
+
+function edgeLiteralsOf(rule: RenderRule, side: 'first' | 'last', config: RenderRulesConfig): readonly string[] | undefined {
+	const tokens = edgeTokensOf(rule, side, config);
+	return tokens === undefined ? undefined : [...new Set(tokens.map((t) => t.token))];
 }
 
 function edgeMember(rule: RenderRule, side: 'first' | 'last'): RenderRule | undefined {
@@ -778,7 +793,8 @@ function withKindEdges(
 	kind: string,
 	config: RenderRulesConfig,
 	resolver: DefaultResolver,
-	seams: SeamArms
+	seams: SeamArms,
+	edgeArms: Map<string, EdgeArmDefault>
 ): RenderRule {
 	const r = bag(rule);
 	const root = config.nodeMap.nodes.get(kind)?.grammarRoot === true ? rootEdgeArms(config.nodeMap) : undefined;
@@ -801,6 +817,23 @@ function withKindEdges(
 			seamsOf(side),
 			edgeLiteralsOf(rule, side === 'before' ? 'first' : 'last', config)
 		);
+	const recordArms = (side: SeparatorSide): void => {
+		if (r.type !== SEQ || r.members === undefined || flanksOf(rule) !== undefined) return;
+		const beside = side === 'before' ? r.members[0] : r.members[r.members.length - 1];
+		const slot = beside === undefined || bag(beside).multiplicity !== undefined ? undefined : bag(beside).id;
+		if (slot === undefined || !config.nodeMap.slotByRuleId.has(slot)) return;
+		const first = new Set<string>();
+		for (const { token } of edgeTokensOf(rule, side === 'before' ? 'first' : 'last', config) ?? []) first.add(token);
+		if (first.size < 2) return;
+		for (const token of first) {
+			const address = seamLabel(token, side);
+			const text = findEntryForKindName(config.kindEntries, token)?.literalText;
+			const { arm, origin } = resolver.resolveSeam(kind, address, seamsOf(side), text !== undefined && isKeywordText(text, config));
+			edgeArms.set(edgeArmKey(kind, address), { arm, origin });
+		}
+	};
+	if (!isImmediateRight(rule, config)) recordArms('before');
+	recordArms('after');
 	const before = isImmediateRight(rule, config) ? [] : [part('before')];
 	if (flanksOf(rule) !== undefined || r.type !== SEQ || r.members === undefined)
 		return { type: SEQ, nonterminal: true, members: [...before, rule, part('after')] } as unknown as RenderRule;
@@ -826,6 +859,7 @@ export function seamRenderRules(
 	const build = (): RenderRules => {
 		const resolver = new DefaultResolver(config.nodeMap, declared);
 		const out: Record<string, RenderRule> = {};
+		const edgeArms = new Map<string, EdgeArmDefault>();
 		for (const [kind, rule] of Object.entries(spaced.rules)) {
 			if (inlined.has(kind)) {
 				out[kind] = rule;
@@ -840,9 +874,9 @@ export function seamRenderRules(
 			const seamed = isLexedKind(kind, config.nodeMap) || tokenInterior(kind) ? rule : visit(walker.map(rule, visit));
 			const insideTrivia = tokenInterior(kind) && !triviaKinds(config.nodeMap).has(kind);
 			const grammarRoot = config.nodeMap.nodes.get(kind)?.grammarRoot === true;
-			out[kind] = (ownsKindEdges(kind, config.nodeMap) || grammarRoot) && !insideTrivia ? withKindEdges(seamed, kind, immediateConfig, resolver, seams) : seamed;
+			out[kind] = (ownsKindEdges(kind, config.nodeMap) || grammarRoot) && !insideTrivia ? withKindEdges(seamed, kind, immediateConfig, resolver, seams, edgeArms) : seamed;
 		}
-		return { rules: out };
+		return { rules: out, edgeArms };
 	};
 	const result = build();
 	const sites = spacingSitesOf(result, config.nodeMap);
@@ -866,6 +900,10 @@ export function resolveRenderRules(
 	const respaced = spaceRenderRules(config, declared);
 	stamp(respaced);
 	return { spaced: respaced, seamed: { ...seamRenderRules(respaced, config, declared), declared } };
+}
+
+function edgeArmKey(kind: string, address: string): string {
+	return `${kind} ${address}`;
 }
 
 function declaredKey(kind: string, address: string): string {
@@ -930,8 +968,7 @@ export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): Rule
 			return;
 		}
 		const b = bag(r);
-		const members = b.members ?? [];
-		for (const [i, m] of members.entries()) {
+		for (const m of b.members ?? []) {
 			if (!isSeamChoice(m)) {
 				visit(kind, m);
 				continue;
@@ -939,13 +976,18 @@ export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): Rule
 			const part = seamPartOf(m);
 			const seam = parseSeamLabel(part.fieldName)!;
 			add(kind, seam.token, part, part.fieldName);
-			const beside = members[seam.side === 'before' ? i + 1 : i - 1];
-			const armSlot = beside === undefined || bag(beside).multiplicity !== undefined ? undefined : bag(beside).id;
-			if (seam.token !== displayNameOf(kind, nodeMap) || (part.edgeLiterals?.length ?? 0) < 2) continue;
-			if (armSlot === undefined || !nodeMap.slotByRuleId.has(armSlot)) continue;
-			for (const token of part.edgeLiterals!) {
+			if (seam.token !== displayNameOf(kind, nodeMap)) continue;
+			for (const token of part.edgeLiterals ?? []) {
 				const address = seamLabel(token, seam.side);
-				add(kind, token, { ...part, fieldName: address, label: address, edgeLiterals: undefined }, address, { parent: part.fieldName, token });
+				const armDefault = renderRules.edgeArms?.get(edgeArmKey(kind, address));
+				if (armDefault === undefined) continue;
+				add(
+					kind,
+					token,
+					{ ...part, fieldName: address, label: address, defaultArm: armDefault.arm, origin: armDefault.origin, edgeLiterals: undefined },
+					address,
+					{ parent: part.fieldName, token }
+				);
 			}
 		}
 		if (b.content !== undefined) visit(kind, b.content);
