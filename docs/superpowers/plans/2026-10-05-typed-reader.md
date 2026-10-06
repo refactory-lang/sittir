@@ -261,7 +261,7 @@ Expected: builds. `git status --short rust/crates` shows only new `render/field_
 
 - [ ] **Step 5: Gates and commit**
 
-Gates: the global list. `kind_ids.rs` must not change: `kindConstName` is the same expression. (A grammar's alias symbols, which have a parser id and no kind row of their own, get constants in Task 9 through `kindConstants`; that is the one place `kind_ids.rs` grows.)
+Gates: the global list. `kind_ids.rs` must not change: `kindConstName` is the same expression. (A grammar's alias symbols, which have a parser id and no kind row of their own, get constants through `kindConstants`; that is the one place `kind_ids.rs` grows.)
 
 ```bash
 git add packages/codegen/src/emitters/field-id-rust.ts packages/codegen/src/emitters/__tests__/field-id-rust.test.ts rust/crates/sittir-*/src/render/field_ids.rs
@@ -4417,7 +4417,7 @@ Detailed against the code 1a leaves. The derive gains the wire codec the spec li
    - Render-neutral (verification 15): rebuilt render's cost per slot value with `measure-rebuilt.mts`, back to back on this branch and on its base, master as 1b starts, per grammar, the native call and the projection measured separately. The same script, inputs and population at both commits. The base decodes enum members by kind id and the phase 0 merge does not, so the phase 0 merge is not a like-for-like base.
    - Build time, peak memory and binary size per grammar crate, before and after, with the same commands, outside watched worktrees (verification 12).
    - The standalone native type-check, which waits for the derive codec, passes: `pnpm run type-check:native` on its own, then chained into `pnpm run type-check`.
-   - Stack: the typed read's root cost in the dev profile is at most today's read's, measured as Task 11's depth test measures it. 1a leaves it at 375 KiB against 39 KiB, from the `source_file` to item chain. The expected route is boxing the dominant variants, `FunctionItem` and the statement choices, by a pinned list of kinds that generated `const` size assertions check; 1b changes the transport types anyway.
+   - Stack: the typed read's root cost in the dev profile is at most today's read's, measured as the depth test measures it. 1a leaves it at 375 KiB against 39 KiB, from the `source_file` to item chain. The expected route is boxing the dominant variants, `FunctionItem` and the statement choices, by a pinned list of kinds that generated `const` size assertions check; 1b changes the transport types anyway.
    - Rendered bytes and validation rows unchanged.
 
 ## Outline: 1c, one reader
