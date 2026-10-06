@@ -1,5 +1,7 @@
 # Relative coordinates
 
+**Superseded** by `docs/superpowers/specs/2026-10-06-relative-coordinates-design.md`, which re-bases this design on the typed reader's tree-and-index coordinates. Kept as the record of the parked `feat/relative-spans` branch.
+
 ## Problem
 
 A node's coordinates are absolute byte offsets into its tree's source, so they
