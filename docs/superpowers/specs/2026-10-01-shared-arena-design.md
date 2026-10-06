@@ -433,12 +433,11 @@ members in the builder's literal — changed all three, and the maintainer ruled
 - **Edit lifecycle.** A `$with` or edit result is a draft, a built node; `$commit()` produces a new
   tree version whose rows are its own. Immutable parsed nodes are what lets a parsed node fold by
   coordinate.
-- **Relative coordinates.** Placed between the typed reader and the record wire (ruling 6). For a
-  source-backed node, rows replace the frame its prepare walk threads and its anchors (a stub's parent
-  handle and child index, the tree-only handle of a deep read's descendants). What remains is
-  re-based on rows before the record layout is fixed: relative points for detached data, coordinate
-  facts derived instead of stamped, `$detach()`, and `$cst()` fetched by row. Its trivia-ownership
-  rule changes the placement the reader applies, nothing else.
+- **Relative coordinates.** Placed between the typed reader and the record wire (ruling 6), and
+  designed against the tree and index in `2026-10-06-relative-coordinates-design.md`: relative points
+  exist only in snapshot data, identity is the tree and the index through one registry per tree, an
+  edited-index set replaces the fold walk, and a comment's owner records which side of a token it
+  sits on. That design states what the record layout must allow.
 - **Source provenance.** Unchanged in substance: provenance is a coordinate, an edit detaches it.
   The coordinate's handle becomes a row.
 - **Spacing writer and render options.** Unchanged: a source slice writes through the same writer,
@@ -553,6 +552,9 @@ raised (11).
    § Render).
 5. **A built node's storage is fields on the object, encoded at render** (§ What the JavaScript wrap
    keeps, § Render).
+   Superseded on 2026-10-06: arena storage holds built nodes too, written eagerly and read and
+   written by their members directly, and the object encoder is retired
+   (`2026-10-06-relative-coordinates-design.md`, § The record wire).
 6. **The typed reader lands first, on today's object wire; the record wire is a separate, measured
    step.** Where the relative-coordinates work falls was left to this draft; placed here and
    accepted in review:

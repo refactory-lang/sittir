@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { BindingsSyntaxError, bindingPatterns, readBindings } from '../../src/inventory/bindings.ts';
 
 describe('readBindings', () => {
-	it('reads claims, member captures, field literals, quantifiers, containers and predicates', () => {
-		const facts = readBindings(
+	it('reads claims, member captures, field literals, quantifiers, containers and predicates', async () => {
+		const facts = await readBindings(
 			[
 				'(function_definition (parameters (identifier)* @names)) @declaration.function',
 				'(binary_expression operator: "+") @expression.binary.arithmetic.add',
@@ -43,10 +43,10 @@ describe('readBindings', () => {
 		]);
 	});
 
-	it('reads a slot a container drops on purpose, from a pattern grouped with its reason', () => {
+	it('reads a slot a container drops on purpose, from a pattern grouped with its reason', async () => {
 		const source =
 			'((attributed_argument (attribute_item)* @dropped (_) @element) (#set! reason "the element is a supertype"))';
-		expect(readBindings(source).containers).toEqual([
+		expect((await readBindings(source)).containers).toEqual([
 			{
 				kind: 'attributed_argument',
 				element: { field: null, kind: null, after: { field: null, kind: 'attribute_item', after: null } },
@@ -58,13 +58,13 @@ describe('readBindings', () => {
 		]);
 	});
 
-	it('keeps the text of a token a container captures', () => {
-		const { containers } = readBindings('(ambient_declaration "declare" @declare (_) @element)');
+	it('keeps the text of a token a container captures', async () => {
+		const { containers } = await readBindings('(ambient_declaration "declare" @declare (_) @element)');
 		expect(containers[0]?.captures.map((c) => [c.name, c.token])).toEqual([['declare', 'declare']]);
 	});
 
-	it('selects an unfielded wildcard by its position after the node pattern before it, never after a token', () => {
-		const { members, containers } = readBindings(
+	it('selects an unfielded wildcard by its position after the node pattern before it, never after a token', async () => {
+		const { members, containers } = await readBindings(
 			[
 				'(index_expression (_) @object (_) @index) @expression.subscript',
 				'(unary_expression "-" (_) @argument) @expression.unary.negation',
@@ -82,14 +82,14 @@ describe('readBindings', () => {
 		]);
 	});
 
-	it('reads an unclaimed pattern as its kind and its reason, never a claim', () => {
-		const facts = readBindings('((string_start) @unclaimed (#set! reason "string delimiter, not content"))');
+	it('reads an unclaimed pattern as its kind and its reason, never a claim', async () => {
+		const facts = await readBindings('((string_start) @unclaimed (#set! reason "string delimiter, not content"))');
 		expect(facts.unclaimed).toEqual([{ kind: 'string_start', reason: 'string delimiter, not content' }]);
 		expect(facts.claims).toEqual([]);
 	});
 
-	it('records the kinds enclosing a claim below the top, nearest first', () => {
-		const { claims } = readBindings(
+	it('records the kinds enclosing a claim below the top, nearest first', async () => {
+		const { claims } = await readBindings(
 			[
 				'(closure_parameters (_) @declaration.parameter)',
 				'(impl_item_body (declaration_list (function_item) @declaration.method))'
@@ -101,8 +101,8 @@ describe('readBindings', () => {
 		]);
 	});
 
-	it('reads a template regex as its literal runs and named holes', () => {
-		const { templates } = readBindings(
+	it('reads a template regex as its literal runs and named holes', async () => {
+		const { templates } = await readBindings(
 			'((function_definition name: (identifier) @name) @declaration.method.dunder (#match? @name "^__(?<stem>.*)__$"))'
 		);
 		expect(templates).toEqual([
@@ -110,21 +110,21 @@ describe('readBindings', () => {
 		]);
 	});
 
-	it('reads a token capture as the presence of the token', () => {
-		const { members } = readBindings('(expression_statement ";" @semi) @statement.expression');
+	it('reads a token capture as the presence of the token', async () => {
+		const { members } = await readBindings('(expression_statement ";" @semi) @statement.expression');
 		expect(members).toEqual([{ route: 'presence', owner: 'expression_statement', name: 'semi', via: [] }]);
 	});
 
-	it('gives each option of an alternation the field and the captures of the alternation', () => {
-		const { members } = readBindings('(foo name: [(a) (b)] @x) @y.z');
+	it('gives each option of an alternation the field and the captures of the alternation', async () => {
+		const { members } = await readBindings('(foo name: [(a) (b)] @x) @y.z');
 		expect(members).toEqual([
 			{ route: 'rename', owner: 'foo', name: 'x', field: 'name', kind: 'a', after: null },
 			{ route: 'rename', owner: 'foo', name: 'x', field: 'name', kind: 'b', after: null }
 		]);
 	});
 
-	it('reads a keyword or punctuation capture in claim position as a token class, never a claim', () => {
-		const { claims, members } = readBindings(
+	it('reads a keyword or punctuation capture in claim position as a token class, never a claim', async () => {
+		const { claims, members } = await readBindings(
 			[
 				'["def" "class"] @keyword.declaration',
 				'(crate) @keyword.import',
@@ -138,28 +138,28 @@ describe('readBindings', () => {
 		]);
 	});
 
-	it('reads a top-level alternation as one pattern per option', () => {
-		const { claims } = readBindings('[(true) (false)] @literal.boolean');
+	it('reads a top-level alternation as one pattern per option', async () => {
+		const { claims } = await readBindings('[(true) (false)] @literal.boolean');
 		expect(claims.map((c) => [c.vocab, c.kind])).toEqual([
 			['literal.boolean', 'true'],
 			['literal.boolean', 'false']
 		]);
 	});
 
-	it('ignores comments, including one that holds quotes and parentheses', () => {
-		const { claims } = readBindings('; a comment with "quotes" and (parens\n(identifier) @identifier');
+	it('ignores comments, including one that holds quotes and parentheses', async () => {
+		const { claims } = await readBindings('; a comment with "quotes" and (parens\n(identifier) @identifier');
 		expect(claims.map((c) => c.vocab)).toEqual(['identifier']);
 	});
 
-	it('refuses a file that does not parse, naming the line', () => {
-		expect(() => readBindings('(call [ (identifier) (number)')).toThrow(BindingsSyntaxError);
-		expect(() => readBindings('(identifier) @identifier\n(call [ (identifier) (number)')).toThrow(/line 2/);
+	it('refuses a file that does not parse, naming the line', async () => {
+		await expect(readBindings('(call [ (identifier) (number)')).rejects.toThrow(BindingsSyntaxError);
+		await expect(readBindings('(identifier) @identifier\n(call [ (identifier) (number)')).rejects.toThrow(/line 2/);
 	});
 });
 
 describe('bindingPatterns', () => {
-	it('slices each top-level pattern by its byte span, after multibyte comments', () => {
-		const patterns = bindingPatterns('; ── module ──\n(module) @module\n; ── é\n(identifier) @identifier\n');
+	it('slices each top-level pattern by its byte span, after multibyte comments', async () => {
+		const patterns = await bindingPatterns('; ── module ──\n(module) @module\n; ── é\n(identifier) @identifier\n');
 		expect(patterns.map((p) => [p.line, p.source])).toEqual([
 			[2, '(module) @module'],
 			[4, '(identifier) @identifier']

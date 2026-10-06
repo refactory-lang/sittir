@@ -1,5 +1,7 @@
 # Relative Coordinates Implementation Plan
 
+**Superseded** by `docs/superpowers/specs/2026-10-06-relative-coordinates-design.md`, which re-bases this design on the typed reader's tree-and-index coordinates. Kept as the record of the parked `feat/relative-spans` branch.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Replace absolute byte spans with points relative to the parent, so a node's layout survives detaching, copying and seating, and every coordinate fact is derived instead of stamped.
