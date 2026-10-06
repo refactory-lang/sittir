@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { classifyTokenChoice, distributeTokenForms, factorSharedOptional } from '../transform/token-forms.ts';
+import { classifyTokenChoice, distributeLeafEnum, distributeTokenForms, factorSharedOptional } from '../transform/token-forms.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 
 const S = (value: string) => ({ type: 'STRING', value }) as unknown as RuntimeRule;
@@ -124,5 +124,22 @@ describe('factorSharedOptional', () => {
 		const rule = token(seq(digits, choice(optional(P('[Ll]')), optional(P('[jJ]')))));
 		const out = distributeTokenForms(factorSharedOptional(rule), 'integer') as unknown as { members: RuntimeRule[] };
 		expect(out.members.map(shape)).toEqual([token(seq(digits, P('[Ll]'))), token(seq(digits, P('[jJ]'))), token(seq(digits))].map(shape));
+	});
+});
+
+describe('distributeLeafEnum', () => {
+	it('turns a token over a spelling choice into a choice of tokens', () => {
+		const out = distributeLeafEnum(immediate(choice(S('?'), S('!'))));
+		expect(shape(out)).toEqual(shape(choice(immediate(S('?')), immediate(S('!')))));
+	});
+	it('keeps a precedence wrapper around the choice, as the token-forms hoist does', () => {
+		const out = distributeLeafEnum(prec(2, token(choice(S('a'), S('b')))));
+		expect(shape(out)).toEqual(shape(prec(2, choice(token(S('a')), token(S('b'))))));
+	});
+	it('leaves a token over forms, and a spelling choice inside a larger token, as written', () => {
+		const forms = token(choice(seq(S('0x'), P('[0-9a-f]+')), P('\\d+')));
+		const nested = token(seq(choice(S('a'), S('b')), P('x')));
+		expect(distributeLeafEnum(forms)).toBe(forms);
+		expect(distributeLeafEnum(nested)).toBe(nested);
 	});
 });
