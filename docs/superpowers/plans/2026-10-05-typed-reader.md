@@ -36,12 +36,12 @@ In 1a the typed read runs beside today's read. Two transitional napi methods bac
 
 Brainstorm split step 1 of the spec into three PRs. This plan writes 1a in full and outlines 1b and 1c; their tasks are detailed after 1a lands, against the code 1a leaves.
 
-1a is cut from master at or after `efbf817b9`, #659's merge. #659 makes enum members cross as their kind ids and decode by id alone. Tasks 5, 8 and 9 build on what it adds: `enumMemberId` and the decoder `arms` in `renderEnumType`, `AssembledEnum`'s refusal of two members with one id, and the wrap's `_spelledMemberId` fold. Task 10's harness compares against today's read with those folds.
+1a is cut from master at or after `efbf817b9`, where enum members cross the transport as their kind ids and decode by id alone. Tasks 5, 8 and 9 build on what that brought: `enumMemberId` and the decoder `arms` in `renderEnumType`, `AssembledEnum`'s refusal of two members with one id, and the wrap's `_spelledMemberId` fold. Task 10's harness compares against today's read with those folds.
 
 | PR | Lands | Gate |
 | --- | --- | --- |
 | **1a** | the typed reader beside today's read: field-id constants, the `sittir_core::read` runtime, the derive crate, codegen attributes with the unfielded-slot diagnostic, and the corpus parity harness | zero refusals and zero differences against today's read, wrap and detach for every corpus entry of the five grammars; rendered bytes and validation rows unchanged |
-| **1b** | the derive's napi codec replaces `#[napi(object)]` and the hand-printed `FromNapiValue` impls | render-neutral (verification 15), measured against master as 1b starts, past #659; build time and binary size per crate; standalone `type-check:native` passes and is chained into `type-check` |
+| **1b** | the derive's napi codec replaces `#[napi(object)]` and the hand-printed `FromNapiValue` impls | render-neutral (verification 15), measured against master as 1b starts, whose enum members decode by kind id; build time and binary size per crate; standalone `type-check:native` passes and is chained into `type-check` |
 | **1c** | every read goes through the typed reader; the wrap keeps members only; today's reader and its tables are removed | rendered bytes and validation rows unchanged; verification 3–8; "two readers must not outlive step 1" |
 
 ## Global Constraints
@@ -4040,7 +4040,7 @@ Run `rtk cargo build --workspace` (with napi). Then regenerate the five grammars
 for g in rust typescript python scm regex; do awk '/typedRead(Refusal|Parity)\(/{n++} END{print FILENAME": "n+0}' packages/$g/native/index.d.ts; done
 ```
 
-Expected: `2` for each file. `type-check:native` is not a 1a gate: today's generated declarations fail it (#655), and it passes only once 1b's codec replaces `#[napi(object)]`. 1b runs it and chains it into `type-check`.
+Expected: `2` for each file. The standalone native type-check (`type-check:native`) is not a 1a gate, because it waits for the derive codec. Today's generated declarations fail it, and it passes only once 1b's codec replaces `#[napi(object)]`. 1b runs it and chains it into `type-check`.
 
 - [ ] **Step 2: The JavaScript plumbing**
 
@@ -4382,7 +4382,7 @@ Expected: PASS. A failure is reported, not adjusted, except for the nesting dept
 The global gates, plus:
 
 - `pnpm exec tsx packages/cli/src/cli.ts tool typed-read-parity --all-grammars`, with zero refusals, zero differences and zero `today-failed` entries;
-- the native builds and their regenerated `native/index.d.ts` files, each declaring `typedReadRefusal` and `typedReadParity` (Task 10's check). `type-check:native` is 1b's gate (#655);
+- the native builds and their regenerated `native/index.d.ts` files, each declaring `typedReadRefusal` and `typedReadParity` (Task 10's check). The standalone native type-check waits for the derive codec, so it is 1b's gate;
 - `rtk cargo clippy --workspace --no-default-features -- -D warnings`;
 - the blank-arm census, counted on the regenerated `transport.rs` files and the model:
   - the slots registered as blank options (`hasBlankArm`) are the 9 typescript `terminator` slots;
@@ -4421,9 +4421,9 @@ Detailed against the code 1a leaves. The derive gains the wire codec the spec li
    - The trial arms Task 9 left unexpressed are settled first, as rulings from Task 10's report.
 2. The decode Task 10 compares against is then the derive's own. The parity harness keeps running against today's wrap output until 1c removes it.
 3. **Gates:**
-   - Render-neutral (verification 15): rebuilt render's cost per slot value with `measure-rebuilt.mts`, back to back on this branch and on its base, master as 1b starts, per grammar, the native call and the projection measured separately. The same script, inputs and population at both commits. The base is past #659, which changes enum decoding, so the phase 0 merge is not a like-for-like base.
+   - Render-neutral (verification 15): rebuilt render's cost per slot value with `measure-rebuilt.mts`, back to back on this branch and on its base, master as 1b starts, per grammar, the native call and the projection measured separately. The same script, inputs and population at both commits. The base decodes enum members by kind id and the phase 0 merge does not, so the phase 0 merge is not a like-for-like base.
    - Build time, peak memory and binary size per grammar crate, before and after, with the same commands, outside watched worktrees (verification 12).
-   - `pnpm run type-check:native` passes on its own and is chained into `pnpm run type-check` (#655).
+   - The standalone native type-check, which waits for the derive codec, passes: `pnpm run type-check:native` on its own, then chained into `pnpm run type-check`.
    - Rendered bytes and validation rows unchanged.
 
 ## Outline: 1c, one reader
@@ -4436,14 +4436,24 @@ Every read goes through the typed reader, and the wrap attaches members only. "T
    - Hydrating a coordinate is one native call: `read_at::<AnyTransport, AnyTransport>` at the coordinate's row, one level or the kind's `min_depth`.
    - A refusal fails the parse or the hydration that meets it, naming the kind, the child and the row, through `EngineGrammar::kind_name` (ruling 7).
 2. **Coordinates:** the tree and the row (ruling 1). The node table, `HandleMint`, and the `$handle`, `$parentHandle`, `$treeHandle` and `$childIndex` forms go. The render side's `SlotValue::Coord` takes the row in place of the handle.
-3. **Members and parent links build on #653**, merged as `f4a78b7fb` (accessor identity and in-place trivia, on today's wire). There, an accessor writes the child it hydrates back into the parent's slot, which is ruling 11's "the parent keeps the wrapper". `adoptChild` records each child's parent in a weak map, and when a trivia writer changes a parsed node, `detachAncestors` follows those links so no ancestor folds to its pre-edit bytes (`canFold`); the maintainer ruled that ancestors are mutated, for parsed nodes only. 1c keeps all of it and reimplements none of it. Every path that hands out a node calls `adoptChild`:
+3. **Members and parent links build on accessor identity and in-place trivia**, which master has had on today's wire since `f4a78b7fb`. There, an accessor writes the child it hydrates back into the parent's slot, which is ruling 11's "the parent keeps the wrapper". `adoptChild` records each child's parent in a weak map, and when a trivia writer changes a parsed node, `detachAncestors` follows those links so no ancestor folds to its pre-edit bytes (`canFold`); the maintainer ruled that ancestors are mutated, for parsed nodes only. 1c keeps all of it and reimplements none of it. Every path that hands out a node calls `adoptChild`:
    - an accessor's hydration, including a row read (`read_at`) of a coordinate;
-   - a query result;
+   - a query result, through the path walk below;
    - the parsed root's own children.
+
+   A query result is the node its parent's slot holds, not a second wrapper. The typed reader's cursor walk gives each match its child-index path from the facet node: at each step, the slot that holds the next node and the node's index in that slot. JS follows the path down through the slots with `hydrateSlot` (`hydrateSlots` for a list), and both adopt every node they hand out. No arena is needed: from 1c on, query views hand out the nodes their parents' slots hold.
+
+   A match that its slot stores as a scalar is the stored value the accessor returns: a fixed-text leaf is its kind id, and an enum member is its member id. These are plain data, so 1c stops wrapping a fresh node for them, and `engine.query` on such a leaf gives an empty facet.
+
+   Every query result now has a recorded parent, so 1c lifts the refusal of a `$trivia` write on a node reached through a query. That refusal is the "reached outside its parent's accessors" error in `packages/common/src/utils.ts`. 1c's test:
+   - reaches one node through a query and through its parent's accessors, and checks that both return the same object;
+   - reaches rust `self` in `self.x`, which `field_expression`'s `value` slot stores as its kind id (`ExpressionTransport::Self_`), through a query and through the accessor, and checks that both give the same kind id;
+   - writes the same `$trivia` through each path, in two parses of one source;
+   - checks that the two renders are byte-identical.
 
    1c's tasks are detailed against master at or after `f4a78b7fb`, where these names live.
 4. **The wrap** attaches members only (§ What the JavaScript wrap keeps), and a child within the depth gets its members on first access. Removed from every wrap:
-   - `modelSlots`, the `normalize…` and `coerce…` helpers and the enum projections, with their text-to-id tables (`kindEnumTextIdPairs`): the reader folds every member by kind id, which closes #660;
+   - `modelSlots`, the `normalize…` and `coerce…` helpers and the enum projections, with their text-to-id tables (`kindEnumTextIdPairs`): the reader folds every member by kind id, so no member is folded by its text any more;
    - `readTerminalFromOther`, `_aliasEnvelope`, the spelling helpers, `_projectLexed` and `_wrapTrivia`;
    - `dropWireDelimiters`, `_hasSeparatorFlank`, `_separatorKindOf`;
    - stub hydration (`hydrateSelf`, `hydrateChild`), the `_ROUTES_<Kind>` tables and `_LIST_OWNER_KINDS`.
@@ -4459,7 +4469,13 @@ Every read goes through the typed reader, and the wrap attaches members only. "T
 7. **Gates:**
    - rendered bytes and validation rows unchanged;
    - read parity (verification 3) by the validators that today read through the wrap, now reading through the typed reader with members attached;
-   - depth (4), members on first access (5, with `measure-heap.mts`'s untouched whole-tree population), identity (6), unrouted children (7) and trivia ownership (8, `sittir tool trivia-placement`);
+   - depth (4), identity (6), unrouted children (7) and trivia ownership (8, `sittir tool trivia-placement`);
+   - members on first access (5), with two `measure-heap.mts` populations:
+     - the untouched whole-tree read;
+     - a query-heavy one, a whole-file `$descendants` over the corpus, which the probe gains.
+
+     Each is reported against master as 1c starts, like for like, so the ancestors the path walk hydrates are measured rather than assumed;
+   - query results: item 3's test, the same object through a query and through accessors, and byte-identical renders of the same `$trivia` write;
    - type-check time (13), and the full suite.
 
 ## Outline: after step 1
