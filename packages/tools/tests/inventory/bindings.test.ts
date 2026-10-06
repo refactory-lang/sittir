@@ -6,6 +6,10 @@ describe('readBindings', () => {
 		const facts = await readBindings('(function_item "async" @isAsync) @declaration.function');
 		expect(facts.members).toEqual([{ route: 'presence', owner: 'function_item', name: 'isAsync', token: 'async', via: [] }]);
 	});
+	it('keeps a property predicate that tests no capture', async () => {
+		const facts = await readBindings('((identifier) @identifier.local (#is-not? local))');
+		expect(facts.claims[0]?.predicates).toEqual([{ operator: 'is-not', capture: null, arguments: [{ text: 'local' }] }]);
+	});
 	it('keeps every predicate with its operator, capture and arguments, and leaves directives out', async () => {
 		const facts = await readBindings(
 			'((identifier) @identifier.self (#match? @identifier.self "^self$") (#lua-match? @identifier.self "%a") (#eq? @identifier.self @identifier.self) (#set! reason "x"))'

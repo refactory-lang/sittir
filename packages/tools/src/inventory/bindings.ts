@@ -259,14 +259,24 @@ function templateOf(predicate: Predicate.Parsed): Omit<TemplateFact, 'vocabs'> |
 
 function predicateFact(predicate: Predicate.Parsed): PredicateFact | null {
 	if (predicate.prefix() !== K.Pound || predicate.type() !== K.Qmark) return null;
-	const [subject, ...rest] = predicate.parameters()?.elements() ?? [];
-	if (subject?.$type !== K.Capture) return null;
+	const parameters = predicate.parameters()?.elements() ?? [];
+	const [subject] = parameters;
+	const tested = subject?.$type === K.Capture ? subject.name().$text : null;
 	return {
 		operator: predicate.name().$text,
-		capture: subject.name().$text,
-		arguments: rest.flatMap((a): PredicateArgument[] =>
-			a.$type === K.Capture ? [{ capture: a.name().$text }] : a.$type === K.String ? [{ text: stringValue(a) }] : []
-		)
+		capture: tested,
+		arguments: parameters.slice(tested === null ? 0 : 1).flatMap((a): PredicateArgument[] => {
+			switch (a.$type) {
+				case K.Capture:
+					return [{ capture: a.name().$text }];
+				case K.String:
+					return [{ text: stringValue(a) }];
+				case K.Identifier:
+					return [{ text: a.$text }];
+				default:
+					return [];
+			}
+		})
 	};
 }
 

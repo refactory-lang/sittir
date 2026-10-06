@@ -8,7 +8,7 @@ What a `bindings.scm` states: claims (a grammar kind as a vocabulary kind, with 
 
 ### `packages/codegen/src/bindings/facts.ts::PredicateFact`
 
-A claim's `#…?` predicate: its operator, the capture it tests, and its arguments, each a capture or a string (`#eq? @name "__init__"` is `eq` on `name` with the text `__init__`). A read entry tests it on the captured node's text; a build entry pins it.
+A claim's `#…?` predicate: its operator, the capture it tests (`null` for a property predicate such as `#is-not? local`), and its arguments, each a capture or text (`#eq? @name "__init__"` is `eq` on `name` with the text `__init__`). A claim with any predicate, known or not, is never read as unconditional. A read entry tests it on the captured node's text; a build entry pins it.
 
 ### `packages/codegen/src/bindings/facts.ts::KNOWN_PREDICATE_OPERATORS`
 

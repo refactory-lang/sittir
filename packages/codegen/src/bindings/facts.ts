@@ -15,7 +15,7 @@ export type PredicateArgument = { readonly capture: string } | { readonly text: 
 
 export interface PredicateFact {
 	readonly operator: string;
-	readonly capture: string;
+	readonly capture: string | null;
 	readonly arguments: readonly PredicateArgument[];
 }
 
