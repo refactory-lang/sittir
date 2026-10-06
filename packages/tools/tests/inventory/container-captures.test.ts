@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { readBindings } from '../../src/inventory/bindings.ts';
-import { type GrammarInput, derive } from '../../src/inventory/derive.ts';
-import type { ModelNode, ModelSlot } from '../../src/inventory/model.ts';
+import { type GrammarInput, type ModelNode, type ModelSlot, derive } from '@sittir/codegen/bindings';
 
 const slot = (name: string, kinds: readonly string[], multiple = false): ModelSlot => ({
 	name,
@@ -108,5 +107,19 @@ describe('container captures', () => {
 		const d = derive([grammar([...CLAIMS, '(declared) @declaration.declared'].join('\n'))]);
 		expect(d.untargeted).toEqual([]);
 		expect([...(d.members.get('declaration.declared')?.keys() ?? [])]).toEqual(['content']);
+	});
+});
+
+describe('derive: predicates', () => {
+	it('reports a claim predicate whose operator the derivation does not know, and accepts the known ones', () => {
+		const d = derive([
+			grammar(
+				'((mark) @identifier.mark (#lua-match? @identifier.mark "%a"))\n((mark) @identifier.other (#match? @identifier.other "^a$"))'
+			)
+		]);
+		expect(d.unknownPredicates).toEqual(['g: #lua-match? on @identifier.mark (identifier.mark)']);
+		expect(derive([grammar('((mark) @identifier.mark (#is-not? local))')]).unknownPredicates).toEqual([
+			'g: #is-not? (identifier.mark)'
+		]);
 	});
 });

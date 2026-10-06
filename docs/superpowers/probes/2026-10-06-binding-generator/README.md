@@ -11,7 +11,6 @@ The prototype predates the portable engine surface. It:
 - exposes leaf text as `$text` and reads a token as text, where the spec has `$value` for a varying leaf and the const string for a fixed literal;
 - puts a `$kind` value on each view literal, where the spec's `$kind` is type-only and the node carries only `$type` at run time;
 - reads contextual claims by their context-free claim, and does not test predicate claims;
-- routes a presence member by its capture name as the token's text, since the facts it reads keep no token text: `"async" @async` resolves, `"async" @isAsync` would have no route, so it does not validate renamed presence captures;
 - skips build entries whose kind has no bare factory, where the spec routes them through the existing form and subtype routing;
 - keeps the type maps in its own module rather than the grammar's types module, and names its literals "view classes" in its output;
 - fills its context (each role's keyword text and the slot table) from a derivation of its one grammar, through the inventory's collapsing, where the spec has the type maps' emitter fill it.

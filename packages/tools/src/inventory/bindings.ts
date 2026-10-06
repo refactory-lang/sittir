@@ -14,6 +14,19 @@ import scm, {
 	type Predicate,
 	type String as QueryString
 } from '@sittir/scm';
+import {
+	type BindingFacts,
+	type ClaimFact,
+	type ContainerFact,
+	type MemberFact,
+	type PatternOrigin,
+	type PredicateArgument,
+	type PredicateFact,
+	type SlotSelector,
+	type TemplateFact,
+	type UnclaimedFact,
+	WILDCARD
+} from '@sittir/codegen/bindings';
 import { loadLanguageForGrammar } from '../validate/common.ts';
 
 const engine = await createEngine(scm);
@@ -21,76 +34,6 @@ const { kinds: K } = engine;
 
 type Expression = Definition.Parsed | NegatedField.Parsed | NamedNodeExpressionArm.Parsed | GroupExpressionArm.Parsed;
 type PatternNode = NamedNode.Parsed | AnonymousNode.Parsed | Grouping.Parsed;
-
-export const WILDCARD = '_';
-
-export interface SlotSelector {
-	readonly field: string | null;
-	readonly kind: string | null;
-	readonly after: SlotSelector | null;
-}
-
-export interface ClaimFact {
-	readonly vocab: string;
-	readonly kind: string | null;
-	readonly predicate: boolean;
-	readonly toplevel: boolean;
-	readonly within: readonly string[];
-	readonly fieldLiterals: Readonly<Record<string, string>>;
-	readonly tokens: readonly string[];
-}
-
-export interface UnclaimedFact {
-	readonly kind: string;
-	readonly reason: string | null;
-}
-
-export type MemberFact =
-	| ({ readonly route: 'rename'; readonly owner: string; readonly name: string } & SlotSelector)
-	| { readonly route: 'presence'; readonly owner: string; readonly name: string; readonly via: readonly string[] }
-	| ({
-			readonly route: 'nested';
-			readonly owner: string;
-			readonly name: string;
-			readonly parent: string;
-			readonly multiple: boolean;
-			readonly via: readonly string[];
-	  } & SlotSelector);
-
-export interface ContainerCapture extends SlotSelector {
-	readonly name: string;
-	readonly token: string | null;
-	readonly multiple: boolean;
-}
-
-export interface PatternOrigin {
-	readonly line: number;
-	readonly source: string;
-}
-
-export interface ContainerFact {
-	readonly kind: string;
-	readonly element: SlotSelector;
-	readonly captures: readonly ContainerCapture[];
-	readonly dropped: readonly SlotSelector[];
-	readonly reason: string | null;
-	readonly pattern: PatternOrigin;
-}
-
-export interface TemplateFact {
-	readonly vocabs: readonly string[];
-	readonly target: string;
-	readonly template: string;
-	readonly holes: readonly string[];
-}
-
-export interface BindingFacts {
-	readonly claims: readonly ClaimFact[];
-	readonly members: readonly MemberFact[];
-	readonly containers: readonly ContainerFact[];
-	readonly templates: readonly TemplateFact[];
-	readonly unclaimed: readonly UnclaimedFact[];
-}
 
 export interface BindingPattern extends PatternOrigin {
 	readonly definition: Definition.Parsed;
@@ -312,7 +255,30 @@ function templateOf(predicate: Predicate.Parsed): Omit<TemplateFact, 'vocabs'> |
 	return { target: target.name().$text, template: rx.slice(1, -1).replace(/\(\?<\w+>[^)]*\)/g, '${string}'), holes };
 }
 
-function claimFact(v: Visit, vocab: string, top: Visit, predicate: boolean): ClaimFact {
+function predicateFact(predicate: Predicate.Parsed): PredicateFact | null {
+	if (predicate.prefix() !== K.Pound || predicate.type() !== K.Qmark) return null;
+	const parameters = predicate.parameters()?.elements() ?? [];
+	const [subject] = parameters;
+	const tested = subject?.$type === K.Capture ? subject.name().$text : null;
+	return {
+		operator: predicate.name().$text,
+		capture: tested,
+		arguments: parameters.slice(tested === null ? 0 : 1).flatMap((a): PredicateArgument[] => {
+			switch (a.$type) {
+				case K.Capture:
+					return [{ capture: a.name().$text }];
+				case K.String:
+					return [{ text: stringValue(a) }];
+				case K.Identifier:
+					return [{ text: a.$text }];
+				default:
+					return [];
+			}
+		})
+	};
+}
+
+function claimFact(v: Visit, vocab: string, top: Visit, predicates: readonly PredicateFact[]): ClaimFact {
 	const first = v.children[0];
 	const kind = isGroup(v) ? (first === undefined ? null : kindOf(first)) : kindOf(v);
 	const fieldLiterals: Record<string, string> = {};
@@ -330,7 +296,7 @@ function claimFact(v: Visit, vocab: string, top: Visit, predicate: boolean): Cla
 		const enclosing = kindOf(cursor);
 		if (enclosing !== null) within.push(enclosing);
 	}
-	return { vocab, kind, predicate, toplevel, within, fieldLiterals, tokens };
+	return { vocab, kind, predicates, toplevel, within, fieldLiterals, tokens };
 }
 
 function memberFact(v: Visit, name: string, top: Visit, topKind: string | null): MemberFact | null {
@@ -338,9 +304,9 @@ function memberFact(v: Visit, name: string, top: Visit, topKind: string | null):
 	if (parent === null || isGroup(parent)) return null;
 	const owner = kindOf(parent);
 	if (owner === null) return null;
-	const token = tokenText(v) !== null;
+	const token = tokenText(v);
 	if (parent === top || topKind === null) {
-		if (token && v.field === null) return { route: 'presence', owner, name, via: [] };
+		if (token !== null && v.field === null) return { route: 'presence', owner, name, token, via: [] };
 		return isGroup(v) && v.field === null ? null : { route: 'rename', owner, name, ...selector(v) };
 	}
 	const via: string[] = [];
@@ -348,7 +314,7 @@ function memberFact(v: Visit, name: string, top: Visit, topKind: string | null):
 		const kind = kindOf(cursor);
 		if (kind !== null) via.push(kind);
 	}
-	if (token) return { route: 'presence', owner: topKind, name, via };
+	if (token !== null) return { route: 'presence', owner: topKind, name, token, via };
 	return { route: 'nested', owner: topKind, name, parent: owner, multiple: quantified(v), via, ...selector(v) };
 }
 
@@ -411,11 +377,11 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 		const template = templateOf(predicate);
 		if (template !== null) facts.templates.push({ vocabs, ...template });
 	}
-	const predicated = predicates.length > 0;
+	const claimPredicates = predicates.flatMap((p) => predicateFact(p) ?? []);
 	for (const v of nodes) {
 		for (const name of captures(v)) {
 			if (inClaimPosition(name, v === top)) {
-				if (isClaim(name, v === top)) facts.claims.push(claimFact(v, name, top, predicated));
+				if (isClaim(name, v === top)) facts.claims.push(claimFact(v, name, top, claimPredicates));
 			} else if (!name.startsWith('_') && name !== 'element') {
 				const member = memberFact(v, name, top, topKind);
 				if (member !== null) facts.members.push(member);
