@@ -5,8 +5,12 @@ use std::process::Command;
 
 const TWO_MIB: usize = 2 * 1024 * 1024;
 
-/// The release stack, per level of nesting, the typed read may cost.
-const RELEASE_BYTES_PER_LEVEL: f64 = 1.6 * 1024.0;
+/// What the typed read may cost in stack, pinned from the measured values
+/// rounded up to the search's granularity. Each only tightens.
+const RELEASE_BYTES_PER_LEVEL: f64 = 1536.0;
+const DEV_BYTES_PER_LEVEL: f64 = 5632.0;
+const RELEASE_ROOT_KIB: usize = 96;
+const DEV_ROOT_KIB: usize = 384;
 
 fn nested(n: usize) -> String {
     format!("fn f() {{ {}1{}; }}", "(".repeat(n), ")".repeat(n))
@@ -86,6 +90,38 @@ fn least_stack_kib(reader: &str, n: usize) -> usize {
     hi
 }
 
+/// The most nested parentheses `reader` reads on a stack of `kib` KiB.
+fn max_levels(reader: &str, kib: usize) -> usize {
+    let exe = std::env::current_exe().unwrap();
+    let survives = |n: usize| {
+        Command::new(&exe)
+            .args(["--exact", "stack_probe_child", "--test-threads=1"])
+            .env("STACK_N", n.to_string())
+            .env("STACK_READER", reader)
+            .env("STACK_KIB", kib.to_string())
+            .output()
+            .unwrap()
+            .status
+            .success()
+    };
+    let (mut lo, mut hi) = (1, 8192);
+    assert!(survives(lo), "{reader} overflows {kib} KiB at one level");
+    while hi - lo > 4 {
+        let mid = (lo + hi) / 2;
+        if survives(mid) {
+            lo = mid;
+        } else {
+            hi = mid;
+        }
+    }
+    lo
+}
+
+/// The measured guarantee: per nesting level the typed read costs no more
+/// stack than today's in both profiles, and in release it reads at least as
+/// deep on 2 MiB. Its fixed root cost is higher than today's, so in the dev
+/// profile it reads about fifteen levels fewer on 2 MiB; the root cost is
+/// pinned as a ceiling that only tightens.
 #[test]
 fn the_typed_read_costs_no_more_stack_per_level_than_today_s() {
     let levels = [1, 10, 40, 200];
@@ -96,7 +132,13 @@ fn the_typed_read_costs_no_more_stack_per_level_than_today_s() {
     eprintln!("least stack KiB at {levels:?} levels: typed {typed:?}, today {today:?}");
     eprintln!("bytes per level: typed {typed_per_level:.0}, today {today_per_level:.0}");
     assert!(typed_per_level <= today_per_level, "typed {typed_per_level:.0} B per level, today {today_per_level:.0} B");
+    let (per_level_ceiling, root_ceiling) =
+        if cfg!(debug_assertions) { (DEV_BYTES_PER_LEVEL, DEV_ROOT_KIB) } else { (RELEASE_BYTES_PER_LEVEL, RELEASE_ROOT_KIB) };
+    assert!(typed_per_level <= per_level_ceiling, "typed {typed_per_level:.0} B per level exceeds {per_level_ceiling:.0} B");
+    assert!(typed[0] <= root_ceiling, "typed root cost {} KiB exceeds {root_ceiling} KiB", typed[0]);
     if !cfg!(debug_assertions) {
-        assert!(typed_per_level <= RELEASE_BYTES_PER_LEVEL, "typed {typed_per_level:.0} B per level exceeds {RELEASE_BYTES_PER_LEVEL:.0} B");
+        let (typed_depth, today_depth) = (max_levels("typed", 2048), max_levels("today", 2048));
+        eprintln!("levels on 2 MiB: typed {typed_depth}, today {today_depth}");
+        assert!(typed_depth >= today_depth, "typed reads {typed_depth} levels on 2 MiB, today {today_depth}");
     }
 }
