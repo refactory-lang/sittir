@@ -29,6 +29,7 @@ import { grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, sittirDir
 import { nativeCrateFiles } from './emitters/native-crate.ts';
 import type { NodeMap } from './compiler/types.ts';
 import { formatEmitDiff } from './scripts/emit-diff.ts';
+import { clearNapiTypedefs } from './scripts/napi-typedefs.ts';
 import { OVERLAY_CHAIN } from './emitters/overlays/module.ts';
 import { compareOrdinal } from './emitters/shared.ts';
 
@@ -358,6 +359,7 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 				`  → rebuilding grammar-owned N-API binding for ${grammar}` +
 					`${nativeBuildScript === 'build:debug' ? ' (debug + incremental)' : ''}…`
 			);
+			clearNapiTypedefs(grammar, process.cwd());
 			try {
 				execSync(`pnpm -C ${nativeCrate} run ${nativeBuildScript}`, {
 					stdio: 'inherit',
