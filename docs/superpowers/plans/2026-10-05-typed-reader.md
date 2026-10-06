@@ -42,7 +42,7 @@ Brainstorm split step 1 of the spec into three PRs. This plan writes 1a in full 
 | --- | --- | --- |
 | **1a** | the typed reader beside today's read: field-id constants, the `sittir_core::read` runtime, the derive crate, codegen attributes with the unfielded-slot diagnostic, and the corpus parity harness | zero refusals and zero differences against today's read, wrap and detach for every corpus entry of the five grammars; rendered bytes and validation rows unchanged |
 | **1b** | the derive's napi codec replaces `#[napi(object)]` and the hand-printed `FromNapiValue` impls | render-neutral (verification 15), measured against master as 1b starts, whose enum members decode by kind id; build time and binary size per crate; standalone `type-check:native` passes and is chained into `type-check` |
-| **1c** | every read goes through the typed reader; the wrap keeps members only; today's reader and its tables are removed | rendered bytes and validation rows unchanged; verification 3–8; "two readers must not outlive step 1" |
+| **1c** | every read goes through the typed reader; the wrap keeps members only; today's reader and its tables are removed; an empty list is `[]` in reads, factories and fixtures | rendered bytes and validation rows unchanged; the fixture and factory moves of the empty-list form listed; verification 3–8; "two readers must not outlive step 1" |
 
 ## Global Constraints
 
@@ -4454,10 +4454,17 @@ Every read goes through the typed reader, and the wrap attaches members only. "T
    1c's tasks are detailed against master at or after `f4a78b7fb`, where these names live.
 4. **The wrap** attaches members only (§ What the JavaScript wrap keeps), and a child within the depth gets its members on first access. Removed from every wrap:
    - `modelSlots`, the `normalize…` and `coerce…` helpers and the enum projections, with their text-to-id tables (`kindEnumTextIdPairs`): the reader folds every member by kind id, so no member is folded by its text any more;
-   - `readTerminalFromOther`, `_aliasEnvelope`, the spelling helpers, `_projectLexed` and `_wrapTrivia`;
+   - `readTerminalFromOther`, `_aliasEnvelope`, the spelling helpers and the text-leaf return they feed (`_isReadTextLeaf`), `_projectLexed` and `_wrapTrivia`;
    - `dropWireDelimiters`, `_hasSeparatorFlank`, `_separatorKindOf`;
    - stub hydration (`hydrateSelf`, `hydrateChild`), the `_ROUTES_<Kind>` tables and `_LIST_OWNER_KINDS`.
-5. **Removed from native code:**
+5. **One form for an empty list.** The maintainer ruled that an empty list slot is `[]`, never absent and never `undefined`, for `repeat` and `optional(repeat1)` alike, in reads, factories and fixtures. 1a keeps today's split so that its parity holds: an empty `optional(repeat1)` reads as absent (`min = 1`). 1c ends the split:
+   - 1c starts with a census of the list slots whose value can be absent today: every stored list key the generated types mark `?`, by grammar, kind and slot. Item 8's gate checks each fixture and factory move against it.
+   - The reader reads every empty list as `[]`. `min = 1` stays only on a list that must not be empty (`repeat1`), whose empty read is a missing child.
+   - An optional list's transport field becomes `Vec<T>`, the arity § The transport declaration states, so the codec refuses a list that crosses absent.
+   - A factory's input may omit a list, and the factory stores `[]`, so a built node has the one form too.
+   - No list slot is optional: its stored key and its accessor have no `?` and no `| undefined` on the list itself. Today the key has it (`ClassDeclaration`'s `_decorator?:`) and the accessor does not (`decorators(): readonly Decorator[]`). The item type may still admit `undefined`, for a hole in an elided list (typescript's `[a, , b]`): a hole is a position in the list, not an absent slot.
+   - The parity harness goes with today's reader (item 6), and with it its normalization rows: the text leaves today's read returns without slots. The typed reader is then the only read. Such a node's empty list is `[]`, and its absent blank option is its blank arm, as the blank-option rule already reads it (typescript's `{}` and its `terminator`).
+6. **Removed from native code:**
    - `read_untyped_node.rs` (`UntypedNode` reading, `ReadDepth`, `HandleMint`, `ReadModel`, the stub and leaf readers, the per-node trivia read);
    - `UntypedNode`, `FieldValue` and `NodeHandle`;
    - the JSON returns of `parse_and_read`, `read_root` and `read_untyped_node`;
@@ -4465,9 +4472,10 @@ Every read goes through the typed reader, and the wrap attaches members only. "T
    - `stores_scalar` and `inner_gap_key` in each `kind_ids.rs`, and the `ReadModel` impls;
    - the transitional `typed_read_refusal` and `typed_read_parity`;
    - Task 3's placement driver.
-6. **Removed from `@sittir/common`:** `modelSlots`, the storage coercions and the stub machinery (`isStub`, `hydrateStub`).
-7. **Gates:**
-   - rendered bytes and validation rows unchanged;
+7. **Removed from `@sittir/common`:** `modelSlots`, the storage coercions and the stub machinery (`isStub`, `hydrateStub`).
+8. **Gates:**
+   - rendered bytes and validation rows unchanged. The detached render of a node today's read holds as text, `{}` among them, keeps its text now that its typed transport carries an empty list;
+   - item 5's fixture and factory moves, each at a slot on item 5's census, from nothing to `[]`. A move at any other slot, or of any other shape, stops the work;
    - read parity (verification 3) by the validators that today read through the wrap, now reading through the typed reader with members attached;
    - depth (4), identity (6), unrouted children (7) and trivia ownership (8, `sittir tool trivia-placement`);
    - members on first access (5), with two `measure-heap.mts` populations:
