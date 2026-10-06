@@ -73,7 +73,7 @@ export function listsReadAsReadonlyArrays(): string {
 	type Item = ItemOf<typeof params>;
 	const owner: ReadonlyArray<Item> = params;
 	const list: ReadonlyArray<Item> | undefined = params.elements();
-	const rendered = params.map((param) => (typeof param === 'number' ? '' : param.$render()));
+	const rendered = params.map((param) => (typeof param === 'number' ? '' : rs.render(param).toString()));
 	const first: Item | undefined = params[0];
 	return [owner.length, list?.length, rendered.join(','), String(first)].join('');
 }

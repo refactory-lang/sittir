@@ -1,6 +1,19 @@
 import type { AnyUntypedNode, TriviaSetter } from './core-types.ts';
 import type { NodeMethods } from './engine-api.ts';
 
+/** The member a parsed object holds its `TreeToken` under. Type-only: no value of it is exported. */
+export declare const TreeMember: unique symbol;
+
+/** What a parsed object holds to keep its tree live: one per tree, shared by every object read from it. */
+export interface TreeToken {
+	readonly treeId: number;
+}
+
+/** An object read from a parse, holding that parse's tree. Every `.Parsed` node is one, a parsed leaf included. */
+export interface HoldsTree {
+	readonly [TreeMember]: TreeToken;
+}
+
 export interface SlotHint<Input, Optional extends boolean = false, Rest extends boolean = false, Config = never> {
 	readonly input: Input;
 	readonly optional: Optional;
@@ -87,7 +100,7 @@ export type Admit<V> = V extends unknown
 	? V extends readonly unknown[]
 		? { [I in keyof V]: Admit<V[I]> }
 		: V extends { readonly $type: infer Id extends number }
-			? { readonly $type: Id; readonly $render: NodeMethods['$render'] }
+			? { readonly $type: Id } & ({ readonly $render: NodeMethods['$render'] } | HoldsTree)
 			: V
 	: never;
 

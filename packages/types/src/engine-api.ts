@@ -283,7 +283,8 @@ export type RenderCall<API extends LanguageAPI, Input> = <const R extends API['o
 /**
  * A node of one of the kinds `Kind`, built, parsed or edited: what `engine.render` takes and what a
  * builder parameter, config field or `$with` setter admits where a slot names a node. It is checked by
- * kind (`$type`) and `$render`, never by the node's other members.
+ * kind (`$type`) and by either `$render` or the tree it was parsed from (`HoldsTree`), never by the
+ * node's other members.
  */
 export type Renderable<Kind extends number> = Admit<{ readonly $type: Kind }>;
 
