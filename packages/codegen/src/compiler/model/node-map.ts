@@ -1603,11 +1603,25 @@ export interface FullForm {
 	readonly close: FullFormAffix;
 }
 
+export interface DelimiterEnd {
+	readonly text?: string;
+	readonly slot?: string;
+}
+
+export interface Delimited {
+	readonly open: DelimiterEnd;
+	readonly close: DelimiterEnd;
+	readonly excluded: readonly (readonly [number, number])[];
+	readonly nodeKinds: readonly string[];
+	readonly varying: boolean;
+}
+
 export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRule> extends AssembledNodeBase<R> {
 	readonly simplifiedRule: SimplifiedRule;
 	readonly renderRule: RenderRule;
 	readonly variantChildKinds: readonly VariantChild[];
 	fullForm?: FullForm;
+	delimited?: Delimited;
 
 	protected readonly _slots: readonly AssembledNonterminal[];
 

@@ -36,6 +36,15 @@
  *      shape. A `fail` DECREASE alongside the total drop (a failing
  *      fixture quietly deleted) still trips this rule — that is not the
  *      same shape as a rename and deserves a look, not an automatic pass.
+      The head record's declaration is read from the head itself, or, for
+      a freshly collected head, from the committed record named by
+      `--declared`.
+      A head that carries `baselineCounterChange` is held to a per-grammar
+      check instead: a validator's total may drop only if the declaration
+      names that grammar's validator with `from` equal to the base's
+      counters and `to` equal to the head's, and its `pass` did not fall
+      (so the total fell no more than its fail count did). Once the head
+      merges, the base equals `to` and the declaration is inert.
  *   3. Total-fail rise — `totals.fail` increased.
  *   4. Schema violation — missing keys, unsorted arrays, missing
  *      `formatDeferredKinds` / `formatDeferredByKind`.
@@ -594,8 +603,40 @@ function checkLeftOutRise(base: BackendBaseline, head: BackendBaseline): Regress
 	return null;
 }
 
+function declaredCounterChangeHolds(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
+	for (const [g, baseGrammar, headGrammar] of comparedGrammars(base, head)) {
+		for (const vName of baseValidators(baseGrammar.validators)) {
+			const b = baseGrammar.validators[vName] as ValidatorResult;
+			const h = headGrammar.validators[vName] as ValidatorResult;
+			if (h.total >= b.total) continue;
+			const path = `grammars.${g}.validators.${vName}`;
+			const declared = head.baselineCounterChange?.grammars[g]?.[vName];
+			const note =
+				declared === undefined
+					? `${vName} total dropped without a baselineCounterChange declaration`
+					: declared.from.total !== b.total || declared.from.pass !== b.pass
+						? `${vName} base ${b.pass}/${b.total} is not the declared from ${declared.from.pass}/${declared.from.total}`
+						: declared.to.total !== h.total || declared.to.pass !== h.pass
+							? `${vName} head ${h.pass}/${h.total} is not the declared to ${declared.to.pass}/${declared.to.total}`
+							: h.pass < b.pass
+								? `${vName} pass fell under a declared counter change`
+								: undefined;
+			if (note !== undefined) {
+				return {
+					ok: false,
+					reason: 'total-drop',
+					summary: `${path}.total decreased: ${b.total} → ${h.total} (${note})`,
+					details: { path: `${path}.total`, before: b.total, after: h.total, note }
+				};
+			}
+		}
+	}
+	return null;
+}
+
 function checkTotalDrop(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
 	if (head.totals.total < base.totals.total && head.totals.fail !== base.totals.fail) {
+		if (head.baselineCounterChange !== undefined) return declaredCounterChangeHolds(base, head);
 		return {
 			ok: false,
 			reason: 'total-drop',
@@ -777,23 +818,27 @@ export function checkRegression(base: BackendBaseline, head: BackendBaseline): R
 interface CliArgs {
 	base: string;
 	head: string;
+	declared?: string;
 }
 
 function parseArgs(argv: readonly string[]): CliArgs {
 	let base: string | undefined;
 	let head: string | undefined;
+	let declared: string | undefined;
 	for (let i = 0; i < argv.length; i++) {
 		const arg = argv[i];
 		if (arg === '--base') {
 			base = argv[++i];
 		} else if (arg === '--head') {
 			head = argv[++i];
+		} else if (arg === '--declared') {
+			declared = argv[++i];
 		}
 	}
 	if (base === undefined || head === undefined) {
-		throw new Error('usage: check-baseline-regression --base <path> --head <path>');
+		throw new Error('usage: check-baseline-regression --base <path> --head <path> [--declared <path>]');
 	}
-	return { base, head };
+	return { base, head, declared };
 }
 
 function readJsonFile(path: string): unknown {
@@ -811,9 +856,13 @@ const isCli = (() => {
 })();
 
 export async function run(argv: string[]): Promise<number> {
-	const { base: basePath, head: headPath } = parseArgs(argv);
+	const { base: basePath, head: headPath, declared: declaredPath } = parseArgs(argv);
 	const base = readJsonFile(basePath) as BackendBaseline;
 	const head = readJsonFile(headPath) as BackendBaseline;
+	if (declaredPath !== undefined) {
+		const declared = (readJsonFile(declaredPath) as BackendBaseline).baselineCounterChange;
+		if (declared !== undefined) head.baselineCounterChange = declared;
+	}
 	const verdict = checkRegression(base, head);
 	if (verdict.ok) {
 		process.stdout.write(`${verdict.summary}\n`);

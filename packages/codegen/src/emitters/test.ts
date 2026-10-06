@@ -1,12 +1,15 @@
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { samplePattern } from '../types/runtime-shapes.ts';
+import { SEQ, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
+import { patternDfa, shortestAccepted } from '../compiler/model/pattern-automaton.ts';
 import { isFixedTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
 import { isBuilderTextLeaf } from '../compiler/model/node-map.ts';
 import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledList,
+	AssembledPattern,
 	AssembledSupertype,
 	isNodeRef,
 	storageKindOfRef
@@ -878,10 +881,29 @@ function dummyValue(
 	return dummyValueForField(field, nodeMap, kindEntries, 0, new Set());
 }
 
+function delimiterSamples(nodeMap: NodeMap): ReadonlyMap<string, string> {
+	const samples = new Map<string, string>();
+	for (const node of nodeMap.nodes.values()) {
+		if (!(node instanceof AbstractAssembledCompound) || node.delimited === undefined || node.renderRule.type !== SEQ) continue;
+		for (const member of [node.renderRule.members[0]!, node.renderRule.members.at(-1)!]) {
+			const leaf = member.type === SYMBOL ? nodeMap.nodes.get(member.name) : undefined;
+			const dfa = leaf instanceof AssembledPattern && leaf.textPattern !== undefined ? patternDfa(leaf.textPattern) : undefined;
+			const sample = dfa === undefined ? undefined : shortestAccepted(dfa);
+			if (sample !== undefined && member.type === SYMBOL) samples.set(member.name, sample);
+		}
+	}
+	return samples;
+}
+
+const delimiterSampleCache = new WeakMap<NodeMap, ReadonlyMap<string, string>>();
+
 function dummyTextForKind(kind: string, nodeMap: NodeMap): string {
 	const node = nodeMap.nodes.get(kind);
 	if (!node) return 'test';
 	if (isFixedTextLeaf(node)) return node.text;
+	if (!delimiterSampleCache.has(nodeMap)) delimiterSampleCache.set(nodeMap, delimiterSamples(nodeMap));
+	const delimiter = delimiterSampleCache.get(nodeMap)!.get(kind);
+	if (delimiter !== undefined) return delimiter;
 	if (node.modelType === 'enum' && node.values.length > 0) return node.values[0]!;
 	return 'test';
 }

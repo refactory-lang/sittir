@@ -572,9 +572,24 @@ beneath it.
 			// space. `token.immediate` cannot be written on an externals entry,
 			// so each token's sittir-side `renderAs` body carries the wrapper:
 			// the TOKEN flatten at link pushes `immediate` onto the rule the
-			// render pipeline sees. The pattern bodies are nominal text shapes
-			// (these leaves render verbatim from wire text, never from the
-			// pattern).
+			// render pipeline sees. The leaves render verbatim from wire text,
+			// but each pattern is also the leaf's guard, so it must admit
+			// every text the scanner reads for the token, in any string
+			// context (the guard does not know the delimiter). A string's
+			// text run is anything: a quote that is not the delimiter, a
+			// backslash in a raw string, a newline in a triple-quoted one, a
+			// brace outside a format string. The start token may end in a
+			// backtick: the scanner takes a backtick as a string's quote
+			// (tree-sitter-python 0.25.0 src/scanner.c, the STRING_START branch
+			// that calls set_end_character(&delimiter, '`')), and the upstream
+			// corpus entry "Strings" (test/corpus/literals.txt, fixtures at
+			// packages/codegen/fixtures/python/upstream/literals.txt) holds
+			// `1` as a string. A raw string's end token carries the backslashes
+			// before its closing quote: the scanner steps over a backslash and
+			// the quote it escapes inside a raw string (src/scanner.c, the
+			// is_raw(delimiter) branch of the STRING_CONTENT loop), and parsing
+			// the corpus entry "Raw strings" (fr"\{0}", ur"\n") yields a
+			// string_end token whose text is `\\"`.
 ```
 
 ### `import_from_statement` (`packages/python/grammar.sittir.ts:196`)

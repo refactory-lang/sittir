@@ -256,6 +256,7 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 	await writeFile(join(factoriesDir, 'index.ts'), result.factoriesIndex);
 	await writeFile(join(outDir, 'wrap.ts'), result.wrap);
 	await writeFile(join(outDir, 'utils.ts'), result.utils);
+	if (result.reparseHosts !== undefined) await writeFile(join(outDir, 'reparse-hosts.ts'), result.reparseHosts);
 	await writeFile(join(outDir, 'ir.ts'), result.irNamespace);
 	await writeFile(join(outDir, 'consts.ts'), result.consts);
 	await writeFile(join(outDir, 'options.ts'), result.options);

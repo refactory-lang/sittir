@@ -176,7 +176,8 @@ jobs:
         run: |
           npx tsx packages/tools/src/scripts/check-baseline-regression.ts \
             --base /tmp/016-base/native.json \
-            --head /tmp/016-head/native.json
+            --head /tmp/016-head/native.json \
+            --declared packages/tools/baselines/native.json
 
   # Spec 054 — perf regression-checker (native only). Compares the FFI
   # roundtrip + call-count from a fresh native-backend metrics run against

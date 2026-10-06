@@ -1,4 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest';
+import { REPARSE_HOSTS } from '../../../../rust/src/reparse-hosts.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
@@ -164,6 +165,6 @@ describe('terminated separated lists', () => {
 	});
 
 	it('the factory accepts one element; the requirement is the render template\'s', () => {
-		expect(emitFactories({ grammar: 'rust', nodeMap })).not.toContain('requires a trailing delimiter');
+		expect(emitFactories({ grammar: 'rust', nodeMap, reparseHosts: REPARSE_HOSTS, triviaKinds: ['block_comment', 'line_comment'] })).not.toContain('requires a trailing delimiter');
 	});
 });

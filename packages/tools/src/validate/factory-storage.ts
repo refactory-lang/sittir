@@ -44,6 +44,8 @@ import {
 	type ValidatorSkip,
 	loadIrSurface,
 	buildFactoryNodeFromReference,
+	wrapForReparse,
+	loadScopedFactoryMap,
 	importGrammarModule,
 	loadNativeEngine
 } from './common.ts';
@@ -368,7 +370,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 				importFailure: null
 			};
 		}
-		factoryMap = factoryModule._factoryMap ?? {};
+		factoryMap = await loadScopedFactoryMap(grammar, factoryModule._factoryMap ?? {});
 		// Validator-only metadata lives in node-model.json5 (PR-K) — pure
 		// data, loaded separately from the factory functions.
 		const mapData = await loadNodeModel(grammar);
@@ -772,7 +774,16 @@ export async function validateFactoryStorage(
 				} catch (e) {
 					buildErrors.push({ kind, message: `factory threw: ${(e as Error)?.message ?? String(e)}` });
 				}
-				if (builtTree === null) {
+				const hostless =
+					wrapForReparse('', kind, grammar, renderReparseContext.kindToSupertypes, {
+						adoptedVariantKinds: renderReparseContext.adoptedVariantKinds,
+						targetKind: node1?.type ?? kind,
+						root: renderReparseContext.root
+					}) === null;
+				if (hostless) {
+					render.total--;
+					render.excluded.push({ entry: entry.name, kind, reason: 'no-reparse-wrapper', input: inputSource });
+				} else if (builtTree === null) {
 					render.errors.push(renderFailure(buildErrors[0]?.message ?? 'no node built'));
 				} else if (carriesSource(builtTree)) {
 					render.errors.push(renderFailure('built node carries source identity'));

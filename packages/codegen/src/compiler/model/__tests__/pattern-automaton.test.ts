@@ -5,7 +5,7 @@ import { allGrammars, grammarPackage, sittirDirOf } from '../../../grammars.ts';
 import { compileGrammar } from '../../compile.ts';
 import { loadGeneratedIdTables } from '../../generated-metadata.ts';
 import { anchoredLeafRegex } from '../leaf-pattern.ts';
-import { dfaAccepts, opensLineEnd, patternDfa, type PatternDfa } from '../pattern-automaton.ts';
+import { admitsInside, dfaAccepts, endsWithLineBreak, leadingChars, opensLineEnd, patternDfa, requiresNonSpace, shortestAccepted, type PatternDfa } from '../pattern-automaton.ts';
 import { lineTerminated, lineTerminatedKinds, triviaKinds } from '../trivia.ts';
 
 type NodeMap = Awaited<ReturnType<typeof compileGrammar>>['nodeMap'];
@@ -138,4 +138,61 @@ describe('pattern automaton', () => {
 			expect([...lineTerminatedKinds(await nodeMapOf(grammar))].sort(), grammar).toEqual(kinds);
 		}
 	}, 120_000);
+});
+
+describe('endsWithLineBreak and requiresNonSpace', () => {
+	const dfa = (pattern: string) => patternDfa(pattern)!;
+
+	it('finds a pattern whose every text ends at a line break', () => {
+		expect(endsWithLineBreak(dfa('\\\\(?:\\r)?\\n'))).toBe(true);
+		expect(endsWithLineBreak(dfa('#.*'))).toBe(false);
+		expect(endsWithLineBreak(dfa('\\n'))).toBe(true);
+		expect(endsWithLineBreak(dfa('a\\nb'))).toBe(false);
+		expect(endsWithLineBreak(dfa('(?:x\\n)+'))).toBe(true);
+		expect(endsWithLineBreak(dfa('(?:x\\n)+x?'))).toBe(false);
+	});
+
+	it('tells a pattern that needs a visible character from one that can be all space', () => {
+		expect(requiresNonSpace(dfa('\\\\(?:\\r)?\\n'))).toBe(true);
+		expect(requiresNonSpace(dfa('\\n'))).toBe(false);
+		expect(requiresNonSpace(dfa('[ \\t]*'))).toBe(false);
+	});
+});
+
+describe('admitsInside', () => {
+	const dfa = (pattern: string): PatternDfa => patternDfa(pattern)!;
+	it('is true when some accepted text holds the literal with more text after it', () => {
+		expect(admitsInside(dfa('[^]*'), '*/')).toBe(true);
+		expect(admitsInside(dfa('[\\s\\S]*'), '"#')).toBe(true);
+		expect(admitsInside(dfa('a[b]*c'), 'bb')).toBe(true);
+	});
+	it('is false when no accepted text can hold it', () => {
+		expect(admitsInside(dfa('[^"\\\\]+'), '"')).toBe(false);
+		expect(admitsInside(dfa('[^`\\\\$]+'), '${')).toBe(false);
+		expect(admitsInside(dfa('a[b]*c'), 'cb')).toBe(false);
+	});
+	it('does not count the literal as the end of the text', () => {
+		expect(admitsInside(dfa('.*\\n?'), '\n')).toBe(false);
+		expect(admitsInside(dfa('ab'), 'b')).toBe(false);
+		expect(admitsInside(dfa('abc'), 'b')).toBe(true);
+	});
+});
+
+describe('leadingChars and shortestAccepted', () => {
+	const dfa = (pattern: string) => patternDfa(pattern)!;
+
+	it('reads the characters a pattern can start with, not the ones it only contains', () => {
+		const lead = (pattern: string) => [...'"\'`\\a#*rbcx'].filter((char) => leadingChars(dfa(pattern)).has(char.codePointAt(0)!)).join('');
+		expect(lead('\\\\*["\'`]+')).toBe('"\'`\\');
+		expect(lead('"#*')).toBe('"');
+		expect(lead('[bc]?r#*"')).toBe('rbc');
+		expect(lead('x[\\s\\S]*')).toBe('x');
+	});
+
+	it('finds the shortest text a pattern accepts', () => {
+		expect(shortestAccepted(dfa('[a-zA-Z]*["\'`]+'))).toBe('"');
+		expect(shortestAccepted(dfa('[bc]?r#*"'))).toBe('r"');
+		expect(shortestAccepted(dfa('"#*'))).toBe('"');
+		expect(shortestAccepted(dfa('[^]*'))).toBe('');
+	});
 });

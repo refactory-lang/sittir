@@ -34,7 +34,7 @@ In 1a the typed read runs beside today's read. Two transitional napi methods bac
 
 ## Scope and sequencing
 
-Brainstorm split step 1 of the spec into three PRs. This plan writes 1a and 1b in full and outlines 1c. 1b's tasks are detailed against the code 1a left; 1c's are detailed after 1b lands, against the code 1b leaves.
+Step 1 of the spec lands as four PRs. This plan writes 1a, 1b and 1c-i in full and outlines 1c-ii. Each step's tasks are detailed against the code the step before it left; 1c-ii's after 1c-i lands.
 
 1a is cut from master at or after `efbf817b9`, where enum members cross the transport as their kind ids and decode by id alone. Tasks 5, 8 and 9 build on what that brought: `enumMemberId` and the decoder `arms` in `renderEnumType`, `AssembledEnum`'s refusal of two members with one id, and the wrap's `_spelledMemberId` fold. Task 10's harness compares against today's read with those folds.
 
@@ -42,7 +42,8 @@ Brainstorm split step 1 of the spec into three PRs. This plan writes 1a and 1b i
 | --- | --- | --- |
 | **1a** | the typed reader beside today's read: field-id constants, the `sittir_core::read` runtime, the derive crate, codegen attributes with the unfielded-slot diagnostic, and the corpus parity harness | zero refusals and zero differences against today's read, wrap and detach for every corpus entry of the five grammars; rendered bytes and validation rows unchanged |
 | **1b** | the derive's napi codec replaces `#[napi(object)]` and every hand-printed `FromNapiValue` and `ToNapiValue`; a corpus round trip proves the encoders; every choice payload over a byte ceiling is boxed | render-neutral (verification 15), measured against master as 1b starts, whose enum members decode by kind id; build time and binary size per crate; standalone `type-check:native` passes and is chained into `type-check`; every corpus read round-trips unchanged; the typed read's root stack cost in the dev profile at most today's read's; rendered bytes and validation rows unchanged |
-| **1c** | every read goes through the typed reader; the wrap keeps members only; today's reader and its tables are removed; an empty list is `[]` in reads, factories and fixtures | rendered bytes and validation rows unchanged; the fixture and factory moves of the empty-list form listed; verification 3–8; "two readers must not outlive step 1" |
+| **1c-i** | one reader: handles name descendant indexes; `parse` and `read` cross the typed read, each transport naming its own node; every read goes through it and the wrap attaches members only; today's reader goes | rendered bytes and validation rows unchanged in every task; arena verifications 3–8 but identity; "two readers must not outlive step 1" |
+| **1c-ii** | identity and the empty list: the index registry and edited-index set, the fold by range, query results through the registry; an empty list is `[]` in reads, factories and fixtures | relative-coordinates verifications 1–6; the fixture and factory moves of the empty-list form listed; rendered bytes and validation rows unchanged |
 
 ## Global Constraints
 
@@ -6275,65 +6276,575 @@ File an issue for each follow-up the work leaves, and link it from the body. Ask
 
 ---
 
-## Outline: 1c, one reader
+## 1c-i: one reader
 
-Every read goes through the typed reader, and the wrap attaches members only. "Two readers must not outlive step 1": 1c removes today's reader in the same PR that switches the last consumer. The work:
+Detailed against master `a3626c9dc`, which holds 1b (#693). Every read goes through the typed reader, and the wrap attaches members only. "Two readers must not outlive step 1": 1c-i switches every consumer and removes today's reader in one PR. Identity (the index registry, the edited-index set, the fold by range) and the single form of an empty list follow in 1c-ii, outlined below.
 
-1. **Engine API:**
-   - `ParseOptions.depth: number` replaces `deep` (ruling 2): default 1, `Infinity` for everything, a kind's `min_depth` applied by the reader.
-   - `parse` returns the root's wrapped node.
-   - Hydrating a coordinate is one native call: `read_at::<AnyTransport, AnyTransport>` at the coordinate's row, one level or the kind's `min_depth`.
-   - A refusal fails the parse or the hydration that meets it, naming the kind, the child and the row, through `EngineGrammar::kind_name` (ruling 7).
-2. **Coordinates:** the tree and the row (ruling 1). The node table, `HandleMint`, and the `$handle`, `$parentHandle`, `$treeHandle` and `$childIndex` forms go. The render side's `SlotValue::Coord` takes the row in place of the handle.
-3. **Members and parent links build on accessor identity and in-place trivia**, which master has had on today's wire since `f4a78b7fb`. There, an accessor writes the child it hydrates back into the parent's slot, which is ruling 11's "the parent keeps the wrapper". `adoptChild` records each child's parent in a weak map, and when a trivia writer changes a parsed node, `detachAncestors` follows those links so no ancestor folds to its pre-edit bytes (`canFold`); the maintainer ruled that ancestors are mutated, for parsed nodes only. 1c keeps all of it and reimplements none of it. Every path that hands out a node calls `adoptChild`:
-   - an accessor's hydration, including a row read (`read_at`) of a coordinate;
-   - a query result, through the path walk below;
-   - the parsed root's own children.
+The design is the shared-arena spec's step 1 and `docs/superpowers/specs/2026-10-06-relative-coordinates-design.md` (§ Coordinates, § The index). Where they meet the code 1b left:
 
-   A query result is the node its parent's slot holds, not a second wrapper. The typed reader's cursor walk gives each match its child-index path from the facet node: at each step, the slot that holds the next node and the node's index in that slot. JS follows the path down through the slots with `hydrateSlot` (`hydrateSlots` for a list), and both adopt every node they hand out. No arena is needed: from 1c on, query views hand out the nodes their parents' slots hold.
+### Rulings (1c-i)
 
-   A match that its slot stores as a scalar is the stored value the accessor returns: a fixed-text leaf is its kind id, and an enum member is its member id. These are plain data, so 1c stops wrapping a fresh node for them, and `engine.query` on such a leaf gives an empty facet.
+The maintainer's, 2026-10-06, unless marked as design's.
 
-   Every query result now has a recorded parent, so 1c lifts the refusal of a `$trivia` write on a node reached through a query. That refusal is the "reached outside its parent's accessors" error in `packages/common/src/utils.ts`. 1c's test:
-   - reaches one node through a query and through its parent's accessors, and checks that both return the same object;
-   - reaches rust `self` in `self.x`, which `field_expression`'s `value` slot stores as its kind id (`ExpressionTransport::Self_`), through a query and through the accessor, and checks that both give the same kind id;
-   - writes the same `$trivia` through each path, in two parses of one source;
-   - checks that the two renders are byte-identical.
+1. **Two PRs.** 1c-i is one reader (Tasks 17, 18, 20, 22); 1c-ii is identity and the empty list (Tasks 19, 21, 23). 1c-i keeps master's identity mechanisms: accessors write the child they hydrate back into the parent's slot, `adoptChild` and `detachAncestors` invalidate ancestors, and the fold walk stays. A `$trivia` write on a node reached through a query is still refused.
+2. **A coordinate's position is the tree's descendant index**, named `index`. A handle packs the tree id and that index (`encode_handle`), for both readers, from Task 17 on. Task 22 gives the coordinate its final fields.
+3. **A read transport's own coordinate is `TransportLayout::at`**, crossing as `$_layout.at`, beside `gap` and `flank`. The reader writes it for every transport it reads; a built node has none. JavaScript folds an untouched parsed node to it and drops it from an edited node's data; the native decoder takes it and renders nothing from it.
+4. **Today's reader computes indexes as it reads** (design). A child's index is its parent's, plus one, plus the descendant counts of the children before it (`Node::descendant_count`, constant time), so today's reader hands out index handles at no walk, and the node table goes in Task 17. The rule is held to tree-sitter by `descendant_index.rs` (Task 17, Step 1), the relative-coordinates plan's Task 2.
+5. **One native read call.** `read(treeId, index, depth)` reads the node at `index` of a live tree into its transport; the root is index 0. `parse(source)` parses and returns the tree's id, its format and its error regions, and reads nothing.
+6. **ABI 20.**
 
-   1c's tasks are detailed against master at or after `f4a78b7fb`, where these names live.
-4. **The wrap** attaches members only (§ What the JavaScript wrap keeps), and a child within the depth gets its members on first access. Removed from every wrap:
-   - `modelSlots`, the `normalize…` and `coerce…` helpers and the enum projections, with their text-to-id tables (`kindEnumTextIdPairs`): the reader folds every member by kind id, so no member is folded by its text any more;
-   - `readTerminalFromOther`, `_aliasEnvelope`, the spelling helpers and the text-leaf return they feed (`_isReadTextLeaf`), `_projectLexed` and `_wrapTrivia`;
-   - `dropWireDelimiters`, `_hasSeparatorFlank`, `_separatorKindOf`;
-   - stub hydration (`hydrateSelf`, `hydrateChild`), the `_ROUTES_<Kind>` tables and `_LIST_OWNER_KINDS`.
-5. **One form for an empty list.** The maintainer ruled that an empty list slot is `[]`, never absent and never `undefined`, for `repeat` and `optional(repeat1)` alike, in reads, factories and fixtures. 1a keeps today's split so that its parity holds: an empty `optional(repeat1)` reads as absent (`min = 1`). 1c ends the split:
-   - 1c starts with a census of the list slots whose value can be absent today: every stored list key the generated types mark `?`, by grammar, kind and slot. Item 8's gate checks each fixture and factory move against it.
-   - The reader reads every empty list as `[]`. `min = 1` stays only on a list that must not be empty (`repeat1`), whose empty read is a missing child.
-   - An optional list's transport field becomes `Vec<T>`, the arity § The transport declaration states, so the codec refuses a list that crosses absent.
-   - A factory's input may omit a list, and the factory stores `[]`, so a built node has the one form too.
-   - No list slot is optional: its stored key and its accessor have no `?` and no `| undefined` on the list itself. Today the key has it (`ClassDeclaration`'s `_decorator?:`) and the accessor does not (`decorators(): readonly Decorator[]`). The item type may still admit `undefined`, for a hole in an elided list (typescript's `[a, , b]`): a hole is a position in the list, not an absent slot.
-   - The parity harness goes with today's reader (item 6), and with it its normalization rows: the text leaves today's read returns without slots. The typed reader is then the only read. Such a node's empty list is `[]`, and its absent blank option is its blank arm, as the blank-option rule already reads it (typescript's `{}` and its `terminator`).
-6. **Removed from native code:**
-   - `read_untyped_node.rs` (`UntypedNode` reading, `ReadDepth`, `HandleMint`, `ReadModel`, the stub and leaf readers, the per-node trivia read);
-   - `UntypedNode`, `FieldValue` and `NodeHandle`;
-   - the JSON returns of `parse_and_read`, `read_root` and `read_untyped_node`;
-   - `read_slots`;
-   - `stores_scalar` and `inner_gap_key` in each `kind_ids.rs`, and the `ReadModel` impls;
-   - the transitional `typed_read_refusal`, `typed_read_parity` and `typed_read_round_trip`;
-   - Task 3's placement driver.
-7. **Removed from `@sittir/common` and `@sittir/types`:** `modelSlots`, the storage coercions, the stub machinery (`isStub`, `hydrateStub`), and the transitional `typedReadRefusal`, `typedReadParity` and `typedReadRoundTrip` on the engine diagnostics (`EngineDiagnostics`, `NativeLanguageEngine`, `NativeEngineLike`).
-8. **Gates:**
-   - rendered bytes and validation rows unchanged. The detached render of a node today's read holds as text, `{}` among them, keeps its text now that its typed transport carries an empty list;
-   - item 5's fixture and factory moves, each at a slot on item 5's census, from nothing to `[]`. A move at any other slot, or of any other shape, stops the work;
-   - read parity (verification 3) by the validators that today read through the wrap, now reading through the typed reader with members attached;
-   - depth (4), identity (6), unrouted children (7) and trivia ownership (8, `sittir tool trivia-placement`);
-   - members on first access (5), with two `measure-heap.mts` populations:
-     - the untouched whole-tree read;
-     - a query-heavy one, a whole-file `$descendants` over the corpus, which the probe gains.
+### File structure (1c-i)
 
-     Each is reported against master as 1c starts, like for like, so the ancestors the path walk hydrates are measured rather than assumed;
-   - query results: item 3's test, the same object through a query and through accessors, and byte-identical renders of the same `$trivia` write;
-   - type-check time (13), and the full suite.
+Create:
+
+| File | Responsibility |
+| --- | --- |
+| `rust/crates/sittir-parity-tests/tests/descendant_index.rs` | the offset and child-index rules, held to tree-sitter |
+| `packages/common/src/read.ts` | the typed read's JavaScript side: `readNode(tree, index, depth)`, coordinates and hydration |
+
+Modify:
+
+| File | Change |
+| --- | --- |
+| `rust/crates/sittir-core/src/engine.rs` | no node table: handles name descendant indexes; `node_at_index`, `child_index_of`; `ParsedTree::read` |
+| `rust/crates/sittir-core/src/read_untyped_node.rs` | `HandleMint::mint` takes the child's index; `read_slots` counts it (Task 17); the file goes (Task 22) |
+| `rust/crates/sittir-core/src/read.rs` | `ReadCtx::coordinate` names `index`; `Placement::into_layout` and `Sides::into_layout` write `at` |
+| `rust/crates/sittir-core/src/layout.rs` | `TransportLayout::at` and its codec |
+| `rust/crates/sittir-core/src/slot.rs` | `NodeCoordinate`'s final fields (Task 22) |
+| `rust/crates/sittir-core/src/napi_engine.rs` | `parse`, `read`; the JSON reads and the transitional methods go |
+| `rust/crates/sittir-transport-macros/src/expand.rs` | the layout init passes the node's coordinate |
+| `packages/codegen/src/emitters/native-crate.ts` | `napi_engine!` takes `AnyTransport`; ABI 20 |
+| `packages/codegen/src/emitters/wrap.ts` | the wrap attaches members only |
+| `packages/common/src/engine.ts`, `create-engine.ts`, `transport-data.ts`, `utils.ts` | the parse and hydration paths read through `read`; the fold reads `$_layout.at` |
+| `packages/types/src/engine-api.ts`, `core-types.ts` | `ParseOptions.depth`; the wire coordinate |
+| `packages/tools/src/validate/*` | validators read through the typed read |
+
+### Global Constraints (1c-i)
+
+1a's and 1b's hold, and:
+
+- No rendered byte and no validation row moves, in any task.
+- Each task ends with the gates green; no task leaves two coordinate forms in the tree.
+- `$_layout` in this section is always the wire key of a transport's `TransportLayout`, never the grammar's `_layout` supertype (`LAYOUT_SUPERTYPE`).
+- `index` is the only name for the descendant index in new code, docs and glossary entries. 1a's `row` names are renamed where a task touches them and are gone by Task 22.
+
+### Review Focus (1c-i)
+
+1. **A node whose children include hidden rules.** `node.child(i)` returns visible children only, and `descendant_count` counts visible descendants, so the child-index rule must hold through hidden wrappers. Test: Task 17 (`descendant_index.rs` checks `child_index_of` against the root cursor for every child of every node).
+2. **A handle from a released tree, or past a tree's last node.** Both are refused naming the handle, never answered from another tree or clamped. Test: Task 17 (`a_handle_past_the_last_node_is_refused`; a released tree is refused by `tree_not_live`, as today).
+3. **A query started at a node deep in the tree.** Its stubs' parents are indexes from the root, not from the start. Test: Task 17 (`a_walk_from_a_deep_start_hands_out_root_indexes`).
+4. **A parsed node edited in place, then rendered.** It crosses as data, never as its `at`. Test: Task 20 (a `$trivia` write on a read node renders the new comment).
+5. **A text leaf inside a choice, read within the depth.** It wraps from its transport object, keeps its `$type`, and folds to its `at`. Test: Task 20 (an identifier as an expression renders its bytes and wraps as `Identifier`).
+
+---
+
+## Task 17: Handles name descendant indexes
+
+Today's reader and the typed reader stop disagreeing about what a handle's index means: in both it is the node's descendant index. The node table, `NodeCoord`, `TreeMint`'s table and `resolve_handle` go; a handle resolves by `goto_descendant`. JavaScript is unchanged: handles stay opaque numbers to it.
+
+**Files:**
+- Create: `rust/crates/sittir-parity-tests/tests/descendant_index.rs`
+- Modify: `rust/crates/sittir-core/src/engine.rs` (`NodeCoord`, `TreeMint`, `ParsedTree`, `push_coord`, `resolve_handle`, `read_root`, `node_at`, `index_of`, `mint`, `descendants`, `advance`, `mint_frame`, `read_at`, `line_gaps_at`, the `SourceTable` impl's `kind_of` and `for_each_kind_ending_with`)
+- Modify: `rust/crates/sittir-core/src/read_untyped_node.rs` (`HandleMint`, `NoMint`, `read_slots`)
+- Modify: `rust/crates/sittir-core/src/read.rs` (`Child::row` → `Child::index`, `row_of` → `index_of`, `read_at`'s `row` parameter → `index`; doc comments)
+
+**Interfaces:**
+- Produces: `sittir_core::engine::node_at_index(tree: &tree_sitter::Tree, index: u32) -> Option<tree_sitter::Node<'_>>`; `sittir_core::engine::child_index_of(node: tree_sitter::Node<'_>, index: u32, position: u32) -> u32`; `HandleMint::mint(&mut self, parent: u64, index: u32) -> Option<u64>`.
+
+- [ ] **Step 1: The tree-sitter rules, held**
+
+Create `rust/crates/sittir-parity-tests/tests/descendant_index.rs` as the relative-coordinates plan's Task 2 writes it (`docs/superpowers/plans/2026-10-06-relative-coordinates.md`), and add a second check to its `check` function, after the inner loop:
+
+```rust
+        let mut at = index + 1;
+        for position in 0..node.child_count() as u32 {
+            let child = node.child(position).unwrap();
+            let (expected, _) = nodes.iter().find(|(_, n)| *n == child).unwrap();
+            assert_eq!(at, *expected, "child {position} of {index}");
+            at += child.descendant_count();
+        }
+```
+
+Run: `rtk cargo test -p sittir-parity-tests --test descendant_index`
+Expected: 3 passed. A failure is a finding: stop and report it, since every handle in this task rests on it.
+
+- [ ] **Step 2: Failing tests in `engine.rs`**
+
+In `engine.rs`'s `mod tests`, beside `parsed`, `kind_id` and `walk`:
+
+```rust
+    /// The descendant index of every node of `tree`, by its id.
+    fn indexes(tree: &tree_sitter::Tree) -> std::collections::HashMap<usize, u32> {
+        let mut out = std::collections::HashMap::new();
+        let mut cursor = tree.walk();
+        loop {
+            out.insert(cursor.node().id(), cursor.descendant_index() as u32);
+            if cursor.goto_first_child() {
+                continue;
+            }
+            loop {
+                if cursor.goto_next_sibling() {
+                    break;
+                }
+                if !cursor.goto_parent() {
+                    return out;
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn a_stub_hydrates_with_its_own_descendant_index() {
+        let (tree, root) = parsed(FNS);
+        let expected = indexes(&tree.tree);
+        for stub in walk(&tree, root, &[], None, u32::MAX) {
+            let Some(crate::types::NodeHandle::Parent(parent)) = stub.handle else { panic!("a stub names its parent") };
+            let parent_node = node_at_index(&tree.tree, decode_handle(parent).1).expect("the parent names a node");
+            assert_eq!(Some(&decode_handle(parent).1), expected.get(&parent_node.id()));
+            let json = tree.read_at(parent, stub.child_index.expect("a stub names its index"), ReadDepth::SHALLOW).expect("hydrate");
+            let read: serde_json::Value = serde_json::from_str(&json).expect("read json");
+            let own = read["$handle"].as_u64().expect("a hydrated node has its own handle");
+            let node = node_at_index(&tree.tree, decode_handle(own).1).expect("the handle names a node");
+            assert_eq!(read["$span"]["start"], serde_json::json!(node.start_byte()));
+            assert_eq!(Some(&decode_handle(own).1), expected.get(&node.id()));
+        }
+    }
+
+    #[test]
+    fn a_handle_past_the_last_node_is_refused() {
+        let (tree, _) = parsed(FNS);
+        let past = encode_handle(1, tree.tree.root_node().descendant_count() as u32);
+        assert!(tree.read_at(past, 0, ReadDepth::SHALLOW).unwrap_err().contains("names no node"));
+    }
+
+    #[test]
+    fn a_walk_from_a_deep_start_hands_out_root_indexes() {
+        let (tree, root) = parsed(FNS);
+        let expected = indexes(&tree.tree);
+        let module = tree.descendants(Address::Own { handle: root }, &[kind_id("mod_item")], None, None, 1, None).expect("walk");
+        let Some(crate::types::NodeHandle::Parent(parent)) = module.stubs[0].handle else { panic!("a stub names its parent") };
+        let start = Address::Child { parent, index: u32::from(module.stubs[0].child_index.expect("a stub names its index")) };
+        let inner = tree.descendants(start, &[kind_id("function_item")], None, None, 16, None).expect("walk");
+        assert_eq!(inner.stubs.len(), 2, "fn b and fn _c");
+        for stub in &inner.stubs {
+            let Some(crate::types::NodeHandle::Parent(parent)) = stub.handle else { panic!("a stub names its parent") };
+            let node = node_at_index(&tree.tree, decode_handle(parent).1).expect("the parent names a node");
+            assert_eq!(Some(&decode_handle(parent).1), expected.get(&node.id()));
+            let child = node.child(u32::from(stub.child_index.expect("a stub names its index"))).expect("the stub's child");
+            assert_eq!(Some(child.start_byte() as u32), stub.span.map(|span| span.start));
+        }
+    }
+```
+
+`walk` takes `&ParsedTree` once Step 3 makes `descendants` take `&self`; change its signature and its callers in the module.
+
+Run: `rtk cargo test -p sittir-core --no-default-features engine::tests`
+Expected: compile errors (`node_at_index` not found).
+
+- [ ] **Step 3: Resolution by index**
+
+In `engine.rs`, delete `NodeCoord` and its impl, the `nodes` field and its doc, `push_coord`, `resolve_handle`, `mint` and `mint_frame`. Replace the `ParsedTree` doc's `# Design` paragraph with one sentence: a handle names a node by its tree's id and its descendant index, and resolves through a cursor (`node_at_index`). Add:
+
+```rust
+/// The node at descendant `index` of `tree`, or `None` past its last node.
+pub fn node_at_index(tree: &tree_sitter::Tree, index: u32) -> Option<tree_sitter::Node<'_>> {
+    if index as usize >= tree.root_node().descendant_count() {
+        return None;
+    }
+    let mut cursor = tree.walk();
+    cursor.goto_descendant(index as usize);
+    Some(cursor.node())
+}
+
+/// The descendant index of child `position` of the node at `index`: its own
+/// index, one for the node, and every earlier child's descendant count.
+pub fn child_index_of(node: tree_sitter::Node<'_>, index: u32, position: u32) -> u32 {
+    (0..position).fold(index + 1, |at, i| at + node.child(i).map_or(0, |child| child.descendant_count() as u32))
+}
+```
+
+`TreeMint` keeps only the tree id:
+
+```rust
+/// Mints the handle a bounded read gives a child it expands: the child's
+/// descendant index in this tree. A parent from another tree mints nothing.
+struct TreeMint {
+    tree_id: u32,
+}
+
+impl HandleMint for TreeMint {
+    fn mint(&mut self, parent: u64, index: u32) -> Option<u64> {
+        (decode_handle(parent).0 == self.tree_id).then(|| encode_handle(self.tree_id, index))
+    }
+}
+```
+
+In `read_untyped_node.rs`, `HandleMint::mint(&mut self, parent: u64, child_index: u16)` becomes `mint(&mut self, parent: u64, index: u32)`, with the doc saying `index` is the child's descendant index; `NoMint` follows. In `read_slots`, count each child's index beside the loop, before any `continue`:
+
+```rust
+    let mut next_index = node_handle.map(|handle| crate::engine::decode_handle(handle).1 + 1);
+    let child_count = node.child_count() as u32;
+    for i in 0..child_count {
+        let child = match node.child(i) {
+            Some(c) => c,
+            None => continue,
+        };
+        let child_index = next_index;
+        next_index = next_index.map(|at| at + child.descendant_count() as u32);
+        if is_trivia(&child) {
+            continue;
+        }
+```
+
+and the mint call becomes `node_handle.zip(child_index).and_then(|(parent, index)| mint.mint(parent, index))`.
+
+In `ParsedTree`:
+- `read_root` mints no table entry: its handle is `encode_handle(self.tree_id, 0)`, and its mint is `TreeMint { tree_id: self.tree_id }`. It takes `&self`.
+- `node_at`: `Address::Own { handle }` is `node_at_index(&self.tree, self.local_index(handle)?)`; `Address::Child { parent, index }` is `node_at_index(&self.tree, self.local_index(parent)?).and_then(|node| node.child(index))`.
+- `index_of` takes `&self` and returns the index of the node `address` names: `Own` is `local_index`; `Child` resolves the parent, checks the child exists, and is `child_index_of(parent_node, parent_index, index)`; `Span` collects the child positions from the node up to the root, as today, then folds down from index 0 with `child_index_of`, descending one child at a time.
+- `read_at(&self, handle, child_index, depth)`: resolve the parent with `node_at_index`, refusing `"handle {handle} names no node of tree {tree_id}"`; take the child as today; its handle is `encode_handle(self.tree_id, child_index_of(parent_node, index, child_index as u32))`; read it with `TreeMint { tree_id: self.tree_id }`.
+- `line_gaps_at` and the `SourceTable` impl's `kind_of` and `for_each_kind_ending_with` resolve with `node_at_index(&tree.tree, index)`.
+- `descendants`: `frames: Vec<Option<u32>>` becomes `indexes: Vec<u32>`, the index of the node at each depth below the start, `indexes[0]` the start's own. The cursor numbers from the start, so each entry is the start's index plus `cursor.descendant_index()`, recorded wherever `advance` and the resume loop move the cursor. A stub's parent is `encode_handle(self.tree_id, indexes[depth - 1])`. `advance` takes the start's index in place of `frames`.
+
+`ParsedTree::read_root`, `read_at`, `index_of` and `descendants` no longer mutate; where a caller in `napi_engine.rs` borrowed `trees` mutably only for them, it borrows immutably.
+
+- [ ] **Step 4: The typed reader's names**
+
+In `read.rs`: `Child::row` → `Child::index`; `row_of` → `index_of`, documented as tree-sitter's descendant index from the tree's root; `read_at`'s `row` parameter → `index`; `ReadError`'s `row` fields → `index`; every doc comment that says "row" for a descendant index says "index". Update `rust/crates/sittir-parity-tests/tests/typed_read*.rs` and the derive's expansion (`expand.rs`) for the renamed items, and the glossary and plan text that names them.
+
+- [ ] **Step 5: Run the tests**
+
+Run: `rtk cargo test --workspace --no-default-features`
+Expected: PASS, the three new tests included.
+
+- [ ] **Step 6: Gates and commit**
+
+The full gates. Rendered bytes and validation rows unchanged; typed-read parity, refusal and round trip report 0 on all five grammars: today's read and the typed read now hand out the same handle for a node.
+
+Commit: `refactor(core): a handle names its node's descendant index, and the node table goes`.
+
+---
+
+## Task 18: The typed read crosses to JavaScript
+
+The native side of the switch: `parse` and `read`, and every read transport carrying its own coordinate in `$_layout.at`. Nothing in JavaScript calls them yet beyond their tests.
+
+**Files:**
+- Modify: `rust/crates/sittir-core/src/layout.rs` (`TransportLayout::at`, its codec)
+- Modify: `rust/crates/sittir-core/src/read.rs` (`ReadCtx::coordinate`, `Placement::into_layout`, `Sides::into_layout`)
+- Modify: `rust/crates/sittir-transport-macros/src/expand.rs` (`common_inits`' layout init; `envelope_body`)
+- Modify: `rust/crates/sittir-core/src/engine.rs` (`ParsedTree::read`)
+- Modify: `rust/crates/sittir-core/src/napi_engine.rs` (`parse`, `read`; the macro takes `$any:ty`)
+- Modify: `packages/codegen/src/emitters/native-crate.ts` (`AnyTransport` passed to `napi_engine!`; `NATIVE_RENDER_TRANSPORT_ABI` 20)
+- Modify: `packages/common/src/engine.ts` (`NativeEngineLike` declares `parse` and `read`)
+- Test: `rust/crates/sittir-parity-tests/tests/typed_read_corpus.rs`; `packages/tools/src/validate/__tests__/typed-read-round-trip.test.ts`
+
+**Interfaces:**
+- Consumes: `node_at_index`, `index_of` (Task 17).
+- Produces:
+  - `TransportLayout<T> { pub at: Option<NodeCoordinate>, .. }`, encoded as `at` inside `$_layout`;
+  - `ParsedTree::read<T: ReadTransport>(&self, index: u32, depth: Depth) -> Result<T, ReadError>`;
+  - napi `parse(source: string): string`, the JSON `{ treeId, format, errors }`, retaining the tree;
+  - napi `read(treeId: number, index: number, depth?: number): object`, the node's transport; a refusal throws `ReadError::describe`'s text.
+
+- [ ] **Step 1: Failing tests**
+
+In `typed_read_corpus.rs`:
+
+```rust
+#[test]
+fn every_read_transport_names_its_own_node() {
+    for name in ["engine.rs", "spacing.rs"] {
+        let source = probe_input(name);
+        let tree = parse(&source);
+        let ctx = ReadCtx::new(&source, 1);
+        let file = root(&tree, &source, Depth::ONE);
+        let at = file.layout.as_ref().and_then(|layout| layout.at.as_ref()).expect("the root names itself");
+        assert_eq!((at.tree_id(), at.index(), at.span.start, at.span.end), (1, 0, 0, source.len() as u32));
+        let functions = file.statements.unwrap().into_iter().filter_map(|s| s.coord().cloned()).filter(|c| c.kind == Some(kind::FUNCTION_ITEM));
+        for coord in functions {
+            let read: FunctionItemTransport = read_at::<FunctionItemTransport, AnyTransport>(&mut tree.walk(), &ctx, coord.index(), Depth::ONE).unwrap();
+            let at = read.layout.as_ref().and_then(|layout| layout.at.as_ref()).expect("a read function names itself");
+            assert_eq!((at.tree_id(), at.index(), at.span, at.kind), (coord.tree_id(), coord.index(), coord.span, coord.kind), "{name}");
+        }
+    }
+}
+```
+
+with `kind` and `FunctionItemTransport` imported from `sittir_rust::render`. `NodeCoordinate::index()` is added in Step 3 beside `tree_id()`.
+
+In `typed-read-round-trip.test.ts`, add a case that reads a rust function one level deep through the native `read`, and checks `$_layout.at` is `{ $treeHandle, $span, $type }` with `$span` equal to the function's bytes.
+
+Run: `rtk cargo test -p sittir-parity-tests --test typed_read_corpus` — expected: compile error (`at` not a field).
+
+- [ ] **Step 2: `at` in the layout**
+
+`layout.rs`:
+
+```rust
+pub struct TransportLayout<T> {
+    pub trivia: Option<TransportTrivia<T>>,
+    pub edges: Option<Edges>,
+    pub gap: Option<SourceGap>,
+    pub flank: Option<SourceFlank>,
+    /// Where a read node came from: its own coordinate. The reader writes it
+    /// for every transport it reads; a built node has none. Nothing renders
+    /// from it: JavaScript crosses an untouched node as this coordinate, and an
+    /// edited one without it.
+    pub at: Option<NodeCoordinate>,
+}
+```
+
+Its `FromNapiValue` reads `at` through `boundary::optional` as a coordinate object (`{ $treeHandle, $span, $type }`, decoded by the same function `SlotValue`'s decoder uses for a coordinate, factored out of it as `coordinate_from_napi`); its `ToNapiValue` writes it with `coordinate_to_napi`. Every literal `TransportLayout { .. }` in the workspace gains `at: None`, or `at` where Step 3 says.
+
+- [ ] **Step 3: The reader writes `at`**
+
+`slot.rs`: `NodeCoordinate::index(&self) -> u32`, `decode_handle(self.handle).1`, beside `tree_id`.
+
+`read.rs`:
+- `ReadCtx` gains `pub at: bool`, true from `ReadCtx::new`, and `ReadCtx::without_at(self) -> Self`, which clears it. The transitional parity, refusal and round-trip methods read with `without_at()`, so they still compare like with like against today's read, which has no `at`, until Task 22 removes them and the flag together.
+- `ReadCtx::at_of(&self, cursor: &TreeCursor<'_>) -> Option<NodeCoordinate>`: the coordinate of the node the cursor is on (`self.coordinate(&cursor.node(), index_of(cursor))`) when `self.at`, else `None`.
+- `Placement::into_layout(self, sides: Sides, at: Option<NodeCoordinate>) -> Option<TransportLayout<T>>` returns `None` only when it holds no entry and `at` is `None`; its layout's `at` is `at`.
+- `Sides::into_layout(self, at: Option<NodeCoordinate>)` likewise.
+
+`expand.rs`: `common_inits`' `Role::Layout` init becomes `placement.into_layout(sides, ctx.at_of(cursor))`, taken while the cursor is on the node, before its children are read; `envelope_body`'s `sides.into_layout()` passes the same. Update the derive's expansion tests for the new init text.
+
+- [ ] **Step 4: `parse` and `read`**
+
+`engine.rs`:
+
+```rust
+    /// The node at `index` read into `T`, `depth` levels down, with the sides
+    /// its parent's placement gives it; index 0 is the root.
+    pub fn read<T: crate::read::ReadTransport>(&self, index: u32, depth: crate::read::Depth) -> Result<T, crate::read::ReadError> {
+        let ctx = crate::read::ReadCtx::new(&self.source, self.tree_id);
+        crate::read::read_at::<T, T>(&mut self.tree.walk(), &ctx, index, depth)
+    }
+```
+
+`read_at`'s second parameter is the parent's type; passing the grammar's any-transport for both reads any parent's routes.
+
+`napi_engine.rs`: the macro gains `$any:ty` after `$render_root`. Add, beside `parse_and_read`:
+
+```rust
+            /// Parse `source` and keep its tree. As JSON `{ treeId, format,
+            /// errors }`: the id `read` and `disposeTree` take, the format the
+            /// parse detected, and its error regions.
+            #[::napi_derive::napi]
+            pub fn parse(&mut self, env: ::napi::Env, source: String) -> ::napi::Result<String> {
+                let tree_id = self.claim_tree_id(&env)?;
+                let parsed = self.engine.parse(source, tree_id).map_err(::napi::Error::from_reason)?;
+                let json = ::serde_json::json!({
+                    "treeId": tree_id,
+                    "format": parsed.format(),
+                    "errors": parsed.error_regions(),
+                })
+                .to_string();
+                LIVE_TREES.with(|trees| trees.borrow_mut().insert(tree_id, parsed));
+                self.last_tree_id = Some(tree_id);
+                Ok(json)
+            }
+
+            /// The node at `index` of tree `treeId` read into its transport,
+            /// `depth` levels down (one when absent, `Infinity` for all); index 0
+            /// is the root. Refuses a tree that is not live, an index past its
+            /// last node, and a node the model has no route for, naming the
+            /// kind, the child and the index.
+            #[::napi_derive::napi(ts_return_type = "object")]
+            pub fn read(&self, tree_id: f64, index: f64, depth: Option<f64>) -> ::napi::Result<$any> {
+                let tree_id = u32::try_from($crate::napi_engine::checked_index(tree_id, "treeId")?)
+                    .map_err(|_| ::napi::Error::from_reason(format!("treeId {tree_id} names no tree")))?;
+                let index = u32::try_from($crate::napi_engine::checked_index(index, "index")?)
+                    .map_err(|_| ::napi::Error::from_reason(format!("index {index} names no node")))?;
+                let depth = $crate::napi_engine::typed_depth_from_wire(depth)?;
+                LIVE_TREES.with(|trees| {
+                    let trees = trees.borrow();
+                    let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                    if $crate::engine::node_at_index(parsed.tree(), index).is_none() {
+                        return Err(::napi::Error::from_reason(format!("index {index} names no node of tree {tree_id}")));
+                    }
+                    let grammar = <$grammar as ::std::default::Default>::default();
+                    ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.read::<$any>(index, depth)))
+                        .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(payload, "read panicked")))?
+                        .map_err(|refusal| ::napi::Error::from_reason(refusal.describe(&|kind| $crate::engine::EngineGrammar::kind_name(grammar, kind))))
+                })
+            }
+```
+
+`ParsedTree::tree(&self) -> &tree_sitter::Tree` is added if absent. `typed_depth_from_wire` maps absent to `Depth::ONE`, `Infinity` to `Depth::All` and a positive integer `n` to `Depth::Levels(n)`, refusing anything else with today's `depth_from_wire` message; it replaces `depth_from_wire` in Task 22.
+
+`native-crate.ts` passes `AnyTransport` after `RenderRoot` and sets the ABI to 20. `NativeEngineLike` in `packages/common/src/engine.ts` declares `parse(source: string): string` and `read(treeId: number, index: number, depth?: number): object`, each with its JSDoc.
+
+- [ ] **Step 5: Regenerate, test, gate, commit**
+
+`pnpm run regen:all`. The round trip (`typed-read-parity`'s `round-trip` outcome) still compares encode and decode, now with `at` on every layout. The full gates; rendered bytes and validation rows unchanged, since no consumer calls the new methods.
+
+Commit: `feat(engine): parse and read cross the typed read, each transport naming its own node`.
+
+---
+
+## Task 20: Every read goes through the typed read, and the wrap attaches members
+
+The switch. The engine parses with `parse`, reads the root with `read(treeId, 0, depth)` and hydrates a coordinate with `read(treeId, index, depth)`. A wrap function takes the transport object as it crossed and attaches its members; it projects nothing. The render side folds an untouched node to its `$_layout.at`. Today's reader is still compiled, and called by nothing but the transitional parity methods, which Task 22 removes with it.
+
+**Files:**
+- Create: `packages/common/src/read.ts`
+- Modify: `packages/types/src/engine-api.ts` (`ParseOptions.depth`), `packages/types/src/core-types.ts` (`TransportCoordinate`)
+- Modify: `packages/common/src/engine.ts` (`parseAndRead`, `readUntypedNode` → `readNode`), `packages/common/src/create-engine.ts`
+- Modify: `packages/common/src/transport-data.ts` (`canFold`, `foldToCoordinate`, `markEdited`, `sourceGapOf`, `sourceFlankOf`, `HANDLE_KEYS`, `COORDINATE_KEYS`)
+- Modify: `packages/common/src/utils.ts` (`hydrateSlot`, `hydrateSlots`, `storeExpanded` goes)
+- Modify: `packages/codegen/src/emitters/wrap.ts` (`emitFieldCarryingWrap`, `emitSeparatedListWrap`, `emitTransparentSupertypeWrap`, `emitFieldStorageLines`, `resolveSlotHydrateExprs`, `WrapEmitter.finalize`)
+- Modify: `packages/tools/src/validate/common.ts` and each validator that reads through `readUntypedNode` or `walkNativeForKind`
+- Modify: `docs/glossary/emitters.md`, `packages-common-src.md`, `packages-types-src.md`, `packages-tools-src-validate.md`
+- Test: `packages/common/tests/read.test.ts` (new); `packages/{rust,typescript,python}/tests/parsed-surface.test-d.ts`
+
+**Interfaces:**
+- Consumes: napi `parse`, `read` (Task 18).
+- Produces:
+  - `ParseOptions.depth?: number` (default 1, `Infinity` for all), replacing `deep`;
+  - `TransportCoordinate = { readonly $treeHandle: number; readonly $span: Span; readonly $type: number }`;
+  - `readNode(tree: TreeHandle, index: number, depth?: number): AnyTransportData`, in `packages/common/src/read.ts`;
+  - `isCoordinate(value: unknown): value is TransportCoordinate`;
+  - `hydrate(value, tree, depth?)`: a coordinate read and wrapped, anything else as it is.
+
+- [ ] **Step 1: The JavaScript read, tested**
+
+`packages/common/src/read.ts`:
+
+```ts
+import type { TransportCoordinate, TreeHandle } from '@sittir/types';
+
+const INDEX_RANGE = 2 ** 32;
+
+/** The descendant index a handle packs: the inverse of the native `encode_handle`, which puts the tree id above 32 bits of index, inside a double's exact range. */
+export function decodeIndex(handle: number): number {
+	return handle % INDEX_RANGE;
+}
+
+/** The tree id a handle packs, as `decodeIndex` reads its index. */
+export function decodeTree(handle: number): number {
+	return Math.floor(handle / INDEX_RANGE);
+}
+
+/** Whether `value` is a coordinate: a node past the read's depth, named by its tree and index. A transport never carries `$treeHandle` itself; its own coordinate is nested in `$_layout.at`. */
+export function isCoordinate(value: unknown): value is TransportCoordinate {
+	return value !== null && typeof value === 'object' && '$treeHandle' in value && '$span' in value;
+}
+
+/** The node a coordinate names, read `depth` levels down (one when absent). */
+export function readNode(tree: TreeHandle, coordinate: TransportCoordinate, depth?: number): object {
+	return tree.read(decodeIndex(coordinate.$treeHandle), depth);
+}
+```
+
+`TreeHandle.read` becomes `read(index: number, depth?: number): object`, calling the native `read(treeId, index, depth)`.
+
+`packages/common/tests/read.test.ts` parses `fn f(a: u8) {}` with the rust engine at depth 1, checks the root's `_items` holds coordinates (`isCoordinate`), reads the first through `readNode`, and checks the result's `$_layout.at.$span` equals the coordinate's `$span` and its `$type` is `function_item`'s id.
+
+- [ ] **Step 2: The engine parses and hydrates through `read`**
+
+`engine.ts`'s `parseAndRead(source, parseOptions)` calls `engine.parse(source)`, keeps the tree token, claims and registers it exactly as it does today, then `engine.read(treeId, 0, depthOf(parseOptions))` for the root. `depthOf` reads `parseOptions.depth`, default 1; `deep: true` no longer exists, and every caller passing it passes `depth: Infinity`. The root's error regions stamp `$errors` as today. `readUntypedNode` is replaced by `TreeHandle.read`, and its callers in `@sittir/common` by `readNode`. The `roots` map keyed by depth stays.
+
+- [ ] **Step 3: The fold reads `at`**
+
+In `transport-data.ts`:
+- `foldToCoordinate(record)` returns `record.$_layout.at`, with the format stamp it carries today;
+- `canFold(record, trivia)` requires `record.$_layout?.at`, no trivia outside it, and today's proof (`holdsParse(record) || isUntouchedBelow(record)`), where `isUntouchedBelow` tests `$_layout.at` in place of `$span`;
+- `markEdited(data)` drops `$_layout.at` (copying the layout without it) in place of the coordinate keys, and `COORDINATE_KEYS` and `HANDLE_KEYS` go;
+- `sourceGapOf` and `sourceFlankOf` read an item's span and tree from its `$_layout.at` (or from the item itself when it is a coordinate);
+- `toTransportValue` crosses a coordinate as it is.
+
+The fold's tests in `packages/common/tests/transport-data.test.ts` build their parsed fixtures with `$_layout.at` in place of `$treeHandle` and `$span`.
+
+- [ ] **Step 4: The wrap attaches members only**
+
+`emitters/wrap.ts`. A wrap function's body becomes:
+
+```ts
+export function wrapFunctionItem(data: T.FunctionItem, tree: TreeHandle): T.FunctionItem.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.FunctionItem as const,
+		// the members, written in the literal as today: each accessor, `$with`, `$trivia`, `$render`, `$query`, `$engine`
+	};
+	return node as T.FunctionItem.Parsed;
+}
+```
+
+- `emitFieldStorageLines` emits no storage line: the slots come in `data` as the reader stored them, under their `_slot` keys.
+- Each accessor reads its slot through `hydrateSlot(node, '_slot', tree)` (one value) or `hydrateSlots(node, '_slot', tree)` (a list). In `utils.ts` both hydrate a coordinate through `readNode`, wrap it, write it back into the slot and `adoptChild` it, as today's do with a stub; a value that is not a coordinate (a transport read within the depth, a kind id, a boolean, text) is wrapped on first access when it is a transport object, and returned as it is otherwise. `storeExpanded` goes: a child read within the depth gets its members when an accessor first reaches it (ruling 11).
+- `$trivia`'s getters read `data.$_layout?.trivia`, and its entries hydrate like slot values.
+- Removed from every wrap, with their helpers and tables in `@sittir/common` and the emitter: `modelSlots`; `normalizeSingularWrapSlot`, `normalizeRepeatedWrapSlot` and the other `normalize…` helpers; `coerceBooleanKeywordStorage`, `coerceBitflagStorage` and the other `coerce…` helpers; `projectKindEnumStorage`, `projectMixedEnumStorage` and `kindEnumTextIdPairs`; `readTerminalFromOther`; `_aliasEnvelope`, `_ALIAS_ENVELOPES`, `_HIDDEN_KINDS`; the `_spelled…` helpers and `_isReadTextLeaf`; `_projectLexed`, `projectInterior`, `TOKEN_INTERIORS`; `_wrapTrivia`, `mapTriviaEntries`; `dropWireDelimiters`; `_hasSeparatorFlank`, `_separatorKindOf`; `hydrateSelf`, `hydrateChild`, `hydrateChildren`; the `_ROUTES_<Kind>` tables and `_LIST_OWNER_KINDS`; `_filterWrapChildrenByKind`, `_firstKindKeyedWrapChild`, `SUPERTYPE_MEMBERS`.
+- `wrapNode` dispatches on `data.$type` as today. A text leaf crosses as `{ $type, $_layout, $text }` and wraps through its kind's wrap; a unit variant stays the kind id the accessor returns.
+
+Write each removal's glossary entry out of its glossary in the same commit, and give the changed emitter functions their new entries.
+
+- [ ] **Step 5: The validators read through the typed read**
+
+In `packages/tools/src/validate/common.ts`, `buildReadHandle`'s native path, `walkNativeForKind`, `findNativeNodeId`, `readUntypedNodeAt` and `hydrateChildOf` read through `TreeHandle.read` and `readNode`; a match is named by its coordinate (`$treeHandle`, `$span`) in place of a parent handle and child index. Each validator that walked `UntypedNode` fields walks the transport's `_slot` keys.
+
+- [ ] **Step 6: Review Focus tests**
+
+In `packages/rust/tests/` (a new `typed-read-switch.test.ts`):
+- a `$trivia` write on a read `function_item` renders the new comment, and the untouched sibling renders its source bytes (Review Focus 4);
+- `let x = a;` read at depth 1: `value()` of the `let_declaration` is an `Identifier` whose `$render()` is `a` (Review Focus 5).
+
+- [ ] **Step 7: Regenerate and gate**
+
+`pnpm run regen:all`, then the full gates. Rendered bytes and validation rows unchanged. Report the type-check time against master, as the global constraints ask for the wrap's size.
+
+Commit: `feat(engine): every read goes through the typed read, and the wrap attaches members`.
+
+---
+
+## Task 22: Today's reader goes, and the coordinate takes its final form
+
+**Files:**
+- Delete: `rust/crates/sittir-core/src/read_untyped_node.rs`; `packages/common/src/readUntypedNode.ts`; `packages/tools/src/validate/typed-read-parity.ts` and `packages/cli/src/commands/tool/typed-read-parity.ts` with their tests
+- Modify: `rust/crates/sittir-core/src/types.rs` (`UntypedNode`, `FieldValue`, `NodeHandle` and their serde go)
+- Modify: `rust/crates/sittir-core/src/engine.rs` (`read_root`, `read_at`, `TreeMint`, `Address::Span`; `descendants` returns coordinates)
+- Modify: `rust/crates/sittir-core/src/napi_engine.rs` (`parse_and_read`, `read_root`, `read_untyped_node`, `typed_read_refusal`, `typed_read_parity`, `typed_read_round_trip`, `with_typed_read`, `parity_report`, `round_trip_report`, `depth_from_wire` go)
+- Modify: `rust/crates/sittir-core/src/slot.rs` (`NodeCoordinate`: `tree: u32`, `index: u32`; `text_only` goes)
+- Modify: `packages/codegen/src/emitters/kind-id-rust.ts` (`stores_scalar`, `inner_gap_key`, the `ReadModel` impl go)
+- Modify: `packages/types/src/engine-api.ts`, `packages/common/src/engine.ts`, `create-engine.ts` (the transitional diagnostics go)
+
+- [ ] **Step 1: Delete today's reader**
+
+Delete `read_untyped_node.rs` and its `pub mod`, `UntypedNode`, `FieldValue`, `NodeHandle`, `ReadDepth`, `HandleMint`, `NoMint`, `ReadModel` and the `ReadModel` impls `kind-id-rust.ts` prints, with `stores_scalar` and `inner_gap_key`. Task 3's placement driver goes. `EngineGrammar` drops its `ReadModel` bound. `error_regions`, `line_gaps`, `node_at_span` and `last_list_child`, which the render side and `parse` still call, move to `engine.rs` unchanged.
+
+- [ ] **Step 2: The queries return coordinates**
+
+`ParsedTree::descendants` returns, for each match, the coordinate `ReadCtx::coordinate` gives it, and `DescendantBatch.stubs` becomes `coordinates`. `Address` keeps `Own { handle }` and `Child { parent, index }`; `Span` goes, since every node a read hands out names its index. The query facet in `@sittir/common` hydrates each through `readNode`.
+
+- [ ] **Step 3: The coordinate's final fields**
+
+`NodeCoordinate { tree: u32, index: u32, span: Span, kind: Option<KindId>, edges: Option<CoordinateEdges>, gap: Option<SourceGap> }`; `text_only` goes, since every coordinate now names a node. On the wire it stays `{ $treeHandle, $span, $type }`, with `$treeHandle` packing the two (`encode_handle`) as today: 1c-ii's registry splits it with `decodeIndex` and `decodeTree`. `SourceGap::Range` and `FlankSource::Tree` carry the tree id.
+
+- [ ] **Step 4: The transitional methods go**
+
+Remove `typed_read_refusal`, `typed_read_parity`, `typed_read_round_trip` and their reports from `napi_engine.rs`; `typedReadRefusal`, `typedReadParity` and `typedReadRoundTrip` from `EngineDiagnostics`, `NativeLanguageEngine` and `NativeEngineLike`; the `typed-read-parity` tool and validator, and its row in `validate:native`. The round trip's encode and decode keep their coverage through every validator that reads a corpus file and renders it.
+
+- [ ] **Step 5: Gates, the PR**
+
+The full gates, then:
+- `validate:native` rows unchanged against master as 1c-i started;
+- verifications 3–8 of the arena spec as the 1c outline listed them, but identity (6), which is 1c-ii's;
+- the heap of an untouched whole-tree read (`measure-heap.mts`), against master, like for like;
+- `rust/crates/sittir-core/src/` holds no `UntypedNode`, `HandleMint`, `ReadModel` or `row` naming a descendant index.
+
+Open the PR with `Owner: sittir-engine-api` first in its body, the follow-up issues linked, and ask brainstorm for the whole-branch review.
+
+---
+
+## Outline: 1c-ii, identity
+
+Detailed against master after 1c-i lands.
+
+- **Task 19: The registry and the edited set.** One weak index-to-wrapper map per tree and surface, which accessors, hydration and queries share; an in-place `$trivia` write adds its node's index to a sorted set per tree; a node folds when no edited index lies in `[index, end)`, `end` being `index + descendant_count()` carried by the coordinate (`$end`); `adoptChild`, `detachAncestors`, `canFold`'s walk and `isUntouchedBelow` go; a query's results resolve through the registry, and the refusal of a `$trivia` write on a node reached through a query is lifted. The query test of the arena spec's identity verification: the same object through a query and through accessors, and byte-identical renders of the same write through each.
+- **Task 21: An empty list is `[]`.** The census of list slots whose value can be absent today, then the reader, `Vec<T>` transports, factories and types; every fixture and factory move at a census slot, from nothing to `[]`.
+- **Task 23: Measurements.** The relative-coordinates spec's verifications 1–6: identity, no ancestor reads, offsets, the fold by range, the fold's timing against 1c-i's walk, and the registry's heap on the untouched whole-tree read and the query-heavy population.
+
 
 ## Outline: after step 1
 

@@ -14280,8 +14280,8 @@
       "factoryName": "stringEnd",
       "irKey": "stringEnd",
       "hidden": false,
-      "pattern": "[\"']+",
-      "leafPattern": "/^(?:(?:[\"']+))$/u",
+      "pattern": "\\\\*[\"'`]+",
+      "leafPattern": "/^(?:(?:\\\\*[\"'`]+))$/u",
       "oneSurface": true,
       "factoryShape": "text"
     },
@@ -14292,8 +14292,8 @@
       "factoryName": "stringFragment",
       "irKey": "stringFragment",
       "hidden": false,
-      "pattern": "[^\"'\\\\{}\\n]+",
-      "leafPattern": "/^(?:(?:[^\"'\\\\{}\\n]+))$/u",
+      "pattern": "[\\s\\S]+",
+      "leafPattern": "/^(?:(?:[\\s\\S]+))$/u",
       "oneSurface": true,
       "factoryShape": "text"
     },
@@ -14304,8 +14304,8 @@
       "factoryName": "stringStart",
       "irKey": "stringStart",
       "hidden": false,
-      "pattern": "[a-zA-Z]*[\"']+",
-      "leafPattern": "/^(?:(?:[a-zA-Z]*[\"']+))$/u",
+      "pattern": "[a-zA-Z]*[\"'`]+",
+      "leafPattern": "/^(?:(?:[a-zA-Z]*[\"'`]+))$/u",
       "oneSurface": true,
       "factoryShape": "text"
     },
