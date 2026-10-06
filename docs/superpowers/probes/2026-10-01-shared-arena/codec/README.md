@@ -1,6 +1,6 @@
 # Codec census
 
-What the hand-printed napi decoders of each grammar's `transport.rs` accept, compared with the read facts the same declarations state. The typed reader's 1b replaces those decoders with the derive's codec, which decodes from the declarations alone. This census found where the two disagree, and the plan's 1b rulings 1–3 settle each case.
+What the hand-printed napi decoders of each grammar's `transport.rs` accept, compared with the read facts the same declarations state. The transport derive's codec replaces those decoders and decodes from the declarations alone, so every place the two disagree is a decision: an id a variant claims beyond its decoder, an id an envelope decodes beyond its claims, and the decode trials.
 
 Measured at master `40b211bce` (2026-10-06), and again at `992c9b4c6` with the same output: no generated file changed between them.
 
@@ -32,7 +32,7 @@ It exits 1 when any compared fact differs, which it does at the commits above: t
 | scm | 41 | 130 | 130 | 0 | 4 | 5 | 3 / 3 |
 | regex | 49 | 170 | 167 | 3 | 0 | 6 | 16 / 16 |
 
-**15 variants claim one id their decoder does not accept.** In each case the claimed id is an alternate that today's wrap folds before the wire. The reader reads it as the parser gives it (ruling 2):
+**15 variants claim one id their decoder does not accept.** In each case the claimed id is an alternate that today's wrap folds before the wire. The reader reads it as the parser gives it, and the derive's codec decodes it too, so one id list per variant serves both directions:
 
 - rust: `StructPatternElementsItemTransportSlot::RemainingFieldPattern` and `RangePatternWithLeftContentTransportSlot::RangePatternWithLeftBare`, id 100;
 - typescript:
@@ -47,8 +47,8 @@ It exits 1 when any compared fact differs, which it does at the commits above: t
   - `AnyTransport::IdentityEscape` and `CharacterClassClassAtomsTransportSlot::IdentityEscape`, id 19;
   - `TermGroupContentTransportSlot::StartAssertion`, id 3.
 
-**One variant decodes 22 ids it does not claim.** typescript's `MemberExpressionPropertyTransportSlot::PropertyIdentifier` takes ids 7 and 30–50: keywords aliased to `property_identifier` cross with their grammar ids, while the reader admits them by display (ruling 3).
+**One variant decodes 22 ids it does not claim.** typescript's `MemberExpressionPropertyTransportSlot::PropertyIdentifier` takes ids 7 and 30–50: keywords aliased to `property_identifier` cross with their grammar ids, while the reader admits them by display. The derive's codec decodes them through the ids the variant states in `decodes(…)`, which the reader ignores.
 
-**59 decode trials** (rust 25, typescript 21, python 9, scm 4). A trial arm takes a polymorph's own id, or a reserved supertype's, and tries its forms in turn. For example, rust's `StatementTransport` id 177 tries 22 variants. No generated factory and no read stamps those ids (ruling 1). The command prints each arm with the variants it tries.
+**59 decode trials** (rust 25, typescript 21, python 9, scm 4). A trial arm takes a polymorph's own id, or a reserved supertype's, and tries its forms in turn. For example, rust's `StatementTransport` id 177 tries 22 variants. No generated factory and no read stamps those ids, so the derive's codec refuses them, naming the type and the id. The command prints each arm with the variants it tries.
 
 **`TriviaTransport`**, not derived at these commits. Each grammar's decoder takes its comment kinds by id, verbatim text from a string or an `ERROR` object, and `$text` objects for the extras that are compounds: rust ids 337 and 340, typescript 152 and 153, python 73, scm 11, and none in regex.

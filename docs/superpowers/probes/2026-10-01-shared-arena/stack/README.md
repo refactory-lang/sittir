@@ -1,8 +1,8 @@
 # Size census
 
-The sizes of every transport type of each grammar, for the typed reader's stack gate. 1a measured the typed read's root at 375 KiB of stack in the dev profile against today's read's 39 KiB on macOS arm64 (391 against 63 KiB on linux x86_64).
+The sizes of every transport type of each grammar, for the typed reader's stack gate. As first merged (`ea0e95e07`), the typed read's root costs 375 KiB of stack in the dev profile against today's read's 39 KiB on macOS arm64 (391 against 63 KiB on linux x86_64).
 
-A choice is as large as its largest payload, and in the dev profile every frame that holds a choice by value pays that size once per temporary. Boxing two dominant kinds was the first route considered. This census shows it cannot shrink the choices, since too many payload types are large. The plan's 1b boxes every payload over a byte ceiling instead (rulings 9 and 10, Task 15).
+A choice is as large as its largest payload, and in the dev profile every frame that holds a choice by value pays that size once per temporary. Boxing two dominant kinds was the first route considered. This census shows it cannot shrink the choices, since too many payload types are large. Every payload over a byte ceiling is boxed instead, by a pinned list the build checks both ways, with the ceiling lowered only while the dev-profile root cost exceeds today's.
 
 Measured at master `40b211bce` (2026-10-06) and re-run at `992c9b4c6` with the same output, before any payload was boxed.
 
@@ -16,7 +16,7 @@ It reads each choice the reader reads (`#[transport(choice)]`, not `codec_only`)
 python3 docs/superpowers/probes/2026-10-01-shared-arena/stack/size-census.py [--pins N] [grammar ...]
 ```
 
-With `--pins N`, it prints per grammar every payload type over N bytes, boxed or not, as a TypeScript array: the list a pin at ceiling N holds once settled. Task 15 starts its pins from that list, and re-runs the census to confirm it. When `packages/codegen/src/emitters/boxed-payloads.ts` exists, the census also says whether the grammar's list there is that list.
+With `--pins N`, it prints per grammar every payload type over N bytes, boxed or not, as a TypeScript array: the list a pin at ceiling N holds once settled. A pin list starts from it, and a re-run confirms the settled list. When `packages/codegen/src/emitters/boxed-payloads.ts` exists, the census also says whether the grammar's list there is that list.
 
 ## Results
 
