@@ -5,12 +5,23 @@ use std::process::Command;
 
 const TWO_MIB: usize = 2 * 1024 * 1024;
 
-/// What the typed read may cost in stack, pinned from the measured values
-/// rounded up to the search's granularity. Each only tightens.
-const RELEASE_BYTES_PER_LEVEL: f64 = 1536.0;
-const DEV_BYTES_PER_LEVEL: f64 = 5632.0;
-const RELEASE_ROOT_KIB: usize = 96;
-const DEV_ROOT_KIB: usize = 384;
+/// What the typed read may cost in stack, pinned per target and profile from
+/// the measured values rounded up to the search's granularity (frames are fixed
+/// at compile time, so there is no jitter to pad for). Each only tightens. A
+/// target with no row fails with its own measurement, so pinning it is one edit.
+struct Ceilings {
+    os: &'static str,
+    arch: &'static str,
+    release: bool,
+    bytes_per_level: f64,
+    root_kib: usize,
+}
+
+const CEILINGS: &[Ceilings] = &[
+    Ceilings { os: "macos", arch: "aarch64", release: true, bytes_per_level: 1536.0, root_kib: 96 },
+    Ceilings { os: "macos", arch: "aarch64", release: false, bytes_per_level: 5632.0, root_kib: 384 },
+    Ceilings { os: "linux", arch: "x86_64", release: false, bytes_per_level: 5632.0, root_kib: 400 },
+];
 
 fn nested(n: usize) -> String {
     format!("fn f() {{ {}1{}; }}", "(".repeat(n), ")".repeat(n))
@@ -124,8 +135,16 @@ fn the_typed_read_costs_no_more_stack_per_level_than_today_s() {
     eprintln!("least stack KiB at {levels:?} levels: typed {typed:?}, today {today:?}");
     eprintln!("bytes per level: typed {typed_per_level:.0}, today {today_per_level:.0}");
     assert!(typed_per_level <= today_per_level, "typed {typed_per_level:.0} B per level, today {today_per_level:.0} B");
-    let (per_level_ceiling, root_ceiling) =
-        if cfg!(debug_assertions) { (DEV_BYTES_PER_LEVEL, DEV_ROOT_KIB) } else { (RELEASE_BYTES_PER_LEVEL, RELEASE_ROOT_KIB) };
+    let release = !cfg!(debug_assertions);
+    let (os, arch) = (std::env::consts::OS, std::env::consts::ARCH);
+    let Some(pinned) = CEILINGS.iter().find(|row| row.os == os && row.arch == arch && row.release == release) else {
+        panic!(
+            "no stack ceilings are pinned for {os}/{arch} ({} profile); measured typed root {} KiB, {typed_per_level:.0} B per level: add a row to CEILINGS",
+            if release { "release" } else { "dev" },
+            typed[0],
+        );
+    };
+    let (per_level_ceiling, root_ceiling) = (pinned.bytes_per_level, pinned.root_kib);
     assert!(typed_per_level <= per_level_ceiling, "typed {typed_per_level:.0} B per level exceeds {per_level_ceiling:.0} B");
     assert!(typed[0] <= root_ceiling, "typed root cost {} KiB exceeds {root_ceiling} KiB", typed[0]);
     if !cfg!(debug_assertions) {
