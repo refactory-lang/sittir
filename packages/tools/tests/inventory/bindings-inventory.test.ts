@@ -182,6 +182,19 @@ describe('the authored vocabulary', () => {
 	it('disagrees with the bindings only where the ceiling records', async () => {
 		expect(vocabularyDisagreements(await deriveVocabulary(), readVocabulary(VOCABULARY_DIR))).toEqual(CEILING.vocabularyDisagreements);
 	}, 120_000);
+	it('reports a template hole its interface does not declare', async () => {
+		const d = await deriveVocabulary();
+		const vocabulary = readVocabulary(VOCABULARY_DIR);
+		const [path, holes] = [...d.holes].find(([, h]) => h.size > 0) ?? [];
+		const [hole] = holes?.keys() ?? [];
+		expect(hole).toBeDefined();
+		if (path === undefined || hole === undefined) return;
+		const withoutHole = {
+			...vocabulary,
+			members: (kind: string) => new Map([...vocabulary.members(kind)].filter(([m]) => kind !== path || m !== hole))
+		};
+		expect(vocabularyDisagreements(d, withoutHole)).toContain(`${path}.${hole}: templated, but its interface does not declare it`);
+	}, 120_000);
 
 	it('is authored: no file says it is generated', () => {
 		for (const file of readdirSync(VOCABULARY_DIR)) {
