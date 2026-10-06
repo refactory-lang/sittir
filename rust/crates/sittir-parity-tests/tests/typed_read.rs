@@ -568,3 +568,65 @@ fn an_absent_slot_with_a_blank_arm_reads_as_its_blank() {
     assert_eq!(consequence.terminator, Some(SlotValue::Transport(BlockTerminator::Blank)));
     assert_eq!(alternative.terminator, Some(SlotValue::Transport(BlockTerminator::Inserted)));
 }
+
+#[derive(Debug, Clone, PartialEq, Transport)]
+#[transport(
+    kind = kind::INTEGER_LITERAL_DECIMAL,
+    interior = "^(?<content>(?:[0-9][0-9_]*))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$"
+)]
+struct Decimal {
+    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[slot(capture = "content")]
+    content: String,
+    #[slot(capture = "suffix")]
+    suffix: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Transport)]
+#[transport(kind = kind::_TYPE_IDENTIFIER, display, envelope, content = content)]
+struct TypeIdent {
+    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    content: SlotValue<Ident>,
+}
+
+#[derive(Debug, Clone, PartialEq, Transport)]
+#[transport(choice)]
+enum NamedType {
+    #[kind(kind::_TYPE_IDENTIFIER, display)]
+    TypeIdentifier(TypeIdent),
+    #[kind(kind::NEVER_TYPE)]
+    Never,
+}
+
+#[derive(Debug, Clone, PartialEq, Transport)]
+#[transport(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT])]
+struct Named {
+    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[slot(field = field::NAME)]
+    name: SlotValue<Ident>,
+    #[slot(field = field::PARAMETERS)]
+    parameters: SlotValue<Params>,
+    #[slot(field = field::RETURN_TYPE)]
+    return_type: Option<SlotValue<NamedType>>,
+    #[slot(field = field::BODY)]
+    body: SlotValue<Box<Block>>,
+}
+
+#[test]
+fn a_token_interior_reads_its_slots_from_its_text() {
+    let source = "const X: u8 = 1_000u8;";
+    let tree = parse_rust(source);
+    let decimal: Decimal = read_nth(&tree, source, kind::INTEGER_LITERAL_DECIMAL, 0, Depth::ONE).unwrap();
+    assert_eq!((decimal.content.as_str(), decimal.suffix.as_deref()), ("1_000", Some("u8")));
+}
+
+#[test]
+fn an_envelope_holds_its_content_and_the_trivia_its_content_was_given() {
+    let source = "fn f() -> T /* c */ {}";
+    let tree = parse_rust(source);
+    let f: Named = read_nth(&tree, source, kind::FUNCTION_ITEM, 0, Depth::All).unwrap();
+    let Some(SlotValue::Transport(NamedType::TypeIdentifier(envelope))) = &f.return_type else { panic!("{:?}", f.return_type) };
+    assert_eq!(envelope.content.transport().unwrap().text, "T");
+    assert_eq!(envelope.content.transport().unwrap().layout, None);
+    assert_eq!(trivia_spans(&envelope.layout, "trailing"), vec![(12, 19, true, 0)]);
+}

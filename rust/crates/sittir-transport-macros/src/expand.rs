@@ -272,6 +272,10 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
     let gap_arms = attrs.gaps.iter().map(|(preceding, slot)| quote!(#preceding => ::core::option::Option::Some(#slot),));
     let Body { items, read, sides_of } = if let Some(fixed) = &attrs.text {
         text_body(ident, &fields, fixed.as_ref())?
+    } else if let Some(pattern) = &attrs.interior {
+        interior_body(ident, &fields, pattern)?
+    } else if attrs.envelope {
+        envelope_body(ident, attrs, &fields)?
     } else {
         routed_body(attrs, &fields)?
     };
@@ -408,6 +412,70 @@ fn text_body(ident: &Ident, fields: &[Field<'_>], fixed: Option<&LitStr>) -> syn
             ::core::result::Result::Ok(Self { text: ::std::string::ToString::to_string(text), #(#inits)* })
         },
         sides_of: sides_of_body(),
+    })
+}
+
+fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr) -> syn::Result<Body> {
+    let flagged = format!("(?s){}", pattern.value());
+    regex::Regex::new(&flagged)
+        .map_err(|e| syn::Error::new_spanned(pattern, format!("`{ident}`'s token interior does not compile as a Rust regex: {e}")))?;
+    let flagged = LitStr::new(&flagged, pattern.span());
+    let mut inits = common_inits(fields, "");
+    for field in fields {
+        if let Role::Slot(slot) = &field.role {
+            let capture = slot
+                .capture
+                .as_ref()
+                .ok_or_else(|| syn::Error::new_spanned(field.ident, "a token interior's slot names its capture"))?;
+            let (name, ty) = (field.ident, field.ty);
+            inits.push(quote!(#name: __rt::capture::<#ty>(&captures, #capture, __rt::SlotSite { kind: __KIND, slot: #capture, row })?,));
+        }
+    }
+    let pass = pass(0);
+    let router = spelling_router();
+    Ok(Body {
+        items: quote! {
+            static __INTERIOR: __rt::Interior = __rt::Interior::new(#flagged);
+            #router
+        },
+        read: quote! {
+            #pass
+            let captures = __INTERIOR
+                .captures(ctx.text(&cursor.node()))
+                .ok_or(__rt::ReadError::Interior { kind: __KIND, row })?;
+            ::core::result::Result::Ok(Self { #(#inits)* })
+        },
+        sides_of: sides_of_body(),
+    })
+}
+
+fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
+    let content = attrs
+        .content
+        .as_ref()
+        .ok_or_else(|| syn::Error::new_spanned(ident, "an envelope names its content field: `content = …`"))?;
+    let field = fields
+        .iter()
+        .find(|f| f.ident == content)
+        .ok_or_else(|| syn::Error::new_spanned(content, "`content` names one of the envelope's fields"))?;
+    let inner = inner_of(field.ty, "SlotValue")
+        .ok_or_else(|| syn::Error::new_spanned(field.ty, "an envelope's content is a `SlotValue<…>`"))?;
+    let inits = fields.iter().map(|other| {
+        let name = other.ident;
+        match other.role {
+            Role::Layout => quote!(#name: layout,),
+            _ if other.ident == content => quote!(#name: ::sittir_core::SlotValue::Transport(content),),
+            _ => quote!(#name: ::core::default::Default::default(),),
+        }
+    });
+    Ok(Body {
+        items: quote!(),
+        read: quote! {
+            let mut content = <#inner as __rt::ReadTransport>::read(cursor, ctx, depth, sides)?;
+            let layout = <#inner as __rt::HasLayout>::take_layout(&mut content);
+            ::core::result::Result::Ok(Self { #(#inits)* })
+        },
+        sides_of: quote!(<#inner as __rt::ReadTransport>::sides_of(cursor, ctx, row)),
     })
 }
 
