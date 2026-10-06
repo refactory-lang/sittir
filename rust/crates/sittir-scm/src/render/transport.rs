@@ -33,11 +33,11 @@ pub enum AnyTransport {
     #[kind(kind::_IMMEDIATE_IDENTIFIER)]
     ImmediateIdentifier(ImmediateIdentifierTransport),
     #[kind(kind::CAPTURE)]
-    Capture(CaptureTransport),
+    Capture(Box<CaptureTransport>),
     #[kind(kind::STRING)]
-    String(StringTransport),
+    String(Box<StringTransport>),
     #[kind(kind::_IMMEDIATE_STRING)]
-    ImmediateString(ImmediateStringTransport),
+    ImmediateString(Box<ImmediateStringTransport>),
     #[kind(kind::STRING_CONTENT)]
     StringContent(StringContentTransport),
     #[kind(kind::PARAMETERS)]
@@ -49,31 +49,31 @@ pub enum AnyTransport {
     #[kind(kind::GROUPING)]
     Grouping(GroupingTransport),
     #[kind(kind::MISSING_NODE)]
-    MissingNode(MissingNodeTransport),
+    MissingNode(Box<MissingNodeTransport>),
     #[kind(kind::ANONYMOUS_NODE)]
     AnonymousNode(AnonymousNodeTransport),
     #[kind(kind::FIELD_DEFINITION)]
-    FieldDefinition(FieldDefinitionTransport),
+    FieldDefinition(Box<FieldDefinitionTransport>),
     #[kind(kind::NEGATED_FIELD)]
-    NegatedField(NegatedFieldTransport),
+    NegatedField(Box<NegatedFieldTransport>),
     #[kind(kind::PREDICATE)]
-    Predicate(PredicateTransport),
+    Predicate(Box<PredicateTransport>),
     #[kind(kind::PREDICATE_TYPE)]
     PredicateType(PredicateTypeEnum),
     #[kind(kind::LIST_ELEMENT_QUANTIFIER)]
     ListElementQuantifier(ListElementQuantifierTransport),
     #[kind(kind::GROUP_EXPRESSION_ARM)]
-    GroupExpressionArm(GroupExpressionArmTransport),
+    GroupExpressionArm(Box<GroupExpressionArmTransport>),
     #[kind(kind::NAMED_NODE_EXPRESSION_ARM)]
-    NamedNodeExpressionArm(NamedNodeExpressionArmTransport),
+    NamedNodeExpressionArm(Box<NamedNodeExpressionArmTransport>),
     #[kind(kind::GROUPING_GROUP)]
-    GroupingGroup(GroupingGroupTransport),
+    GroupingGroup(Box<GroupingGroupTransport>),
     #[kind(kind::STRING_CONTENT_TEXT)]
     StringContentText(StringContentTextTransport),
     #[kind(kind::NAMED_NODE_PLAIN)]
-    NamedNodePlain(NamedNodePlainTransport),
+    NamedNodePlain(Box<NamedNodePlainTransport>),
     #[kind(kind::NAMED_NODE_SUPERTYPED)]
-    NamedNodeSupertyped(NamedNodeSupertypedTransport),
+    NamedNodeSupertyped(Box<NamedNodeSupertypedTransport>),
     #[kind(kind::NAMED_NODE_GROUP_CHILDREN)]
     NamedNodeGroupChildren(NamedNodeGroupChildrenTransport),
     #[kind(kind::NAMED_NODE_GROUP_ANCHORED_LAST)]
@@ -409,15 +409,15 @@ pub enum DefinitionTransport {
     #[kind(kind::ANONYMOUS_NODE)]
     AnonymousNode(AnonymousNodeTransport),
     #[kind(kind::MISSING_NODE)]
-    MissingNode(MissingNodeTransport),
+    MissingNode(Box<MissingNodeTransport>),
     #[kind(kind::GROUPING)]
     Grouping(GroupingTransport),
     #[kind(kind::PREDICATE)]
-    Predicate(PredicateTransport),
+    Predicate(Box<PredicateTransport>),
     #[kind(kind::LIST)]
     List(ListTransport),
     #[kind(kind::FIELD_DEFINITION)]
-    FieldDefinition(FieldDefinitionTransport),
+    FieldDefinition(Box<FieldDefinitionTransport>),
 }
 
 impl ::sittir_core::prepare::Prepare for DefinitionTransport {
@@ -480,9 +480,9 @@ impl ::sittir_core::render::Render for DefinitionTransport {
 #[transport(choice)]
 pub enum NamedNodeTransport {
     #[kind(kind::NAMED_NODE_PLAIN)]
-    NamedNodePlain(NamedNodePlainTransport),
+    NamedNodePlain(Box<NamedNodePlainTransport>),
     #[kind(kind::NAMED_NODE_SUPERTYPED)]
-    NamedNodeSupertyped(NamedNodeSupertypedTransport),
+    NamedNodeSupertyped(Box<NamedNodeSupertypedTransport>),
 }
 
 impl ::sittir_core::prepare::Prepare for NamedNodeTransport {
@@ -532,7 +532,7 @@ impl ::sittir_core::render::Render for NamedNodeTransport {
 #[transport(choice)]
 pub enum ListElementTransport {
     #[kind(kind::CAPTURE)]
-    Capture(CaptureTransport),
+    Capture(Box<CaptureTransport>),
     #[kind(kind::LIST_ELEMENT_QUANTIFIER)]
     ListElementQuantifier(ListElementQuantifierTransport),
 }
@@ -678,9 +678,9 @@ impl ::sittir_core::render::Render for StringContentContentTransportSlot {
 #[transport(choice)]
 pub enum ParametersElementsTransportSlot {
     #[kind(kind::CAPTURE)]
-    Capture(CaptureTransport),
+    Capture(Box<CaptureTransport>),
     #[kind(kind::STRING)]
-    String(StringTransport),
+    String(Box<StringTransport>),
     #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
     #[transport(verbatim)]
@@ -728,8 +728,8 @@ impl ::sittir_core::view::KindOf for ParametersElementsTransportSlot {
 impl ::sittir_core::render::Render for ParametersElementsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ParametersElementsTransportSlot::Capture(inner) => inner.render(w),
-            ParametersElementsTransportSlot::String(inner) => inner.render(w),
+            ParametersElementsTransportSlot::Capture(inner) => inner.as_ref().render(w),
+            ParametersElementsTransportSlot::String(inner) => inner.as_ref().render(w),
             ParametersElementsTransportSlot::Identifier(inner) => inner.render(w),
             ParametersElementsTransportSlot::Verbatim(inner) => inner.render(w),
         }
@@ -742,7 +742,7 @@ pub enum MissingNodeNameTransportSlot {
     #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING)]
-    String(StringTransport),
+    String(Box<StringTransport>),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -785,7 +785,7 @@ impl ::sittir_core::render::Render for MissingNodeNameTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             MissingNodeNameTransportSlot::Identifier(inner) => inner.render(w),
-            MissingNodeNameTransportSlot::String(inner) => inner.render(w),
+            MissingNodeNameTransportSlot::String(inner) => inner.as_ref().render(w),
             MissingNodeNameTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -795,7 +795,7 @@ impl ::sittir_core::render::Render for MissingNodeNameTransportSlot {
 #[transport(choice)]
 pub enum AnonymousNodeNameTransportSlot {
     #[kind(kind::STRING)]
-    String(StringTransport),
+    String(Box<StringTransport>),
     #[kind(kind::UNDERSCORE)]
     Underscore,
 }
@@ -833,7 +833,7 @@ impl ::sittir_core::view::KindOf for AnonymousNodeNameTransportSlot {
 impl ::sittir_core::render::Render for AnonymousNodeNameTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            AnonymousNodeNameTransportSlot::String(inner) => inner.render(w),
+            AnonymousNodeNameTransportSlot::String(inner) => inner.as_ref().render(w),
             AnonymousNodeNameTransportSlot::Underscore => {
                 let written = render_underscore(w);
                 written?;
@@ -884,23 +884,23 @@ impl ::sittir_core::render::Render for PredicatePrefixTransportSlot {
 #[transport(choice)]
 pub enum GroupExpressionArmLeftTransportSlot {
     #[kind(kind::NAMED_NODE_PLAIN)]
-    NamedNodePlain(NamedNodePlainTransport),
+    NamedNodePlain(Box<NamedNodePlainTransport>),
     #[kind(kind::NAMED_NODE_SUPERTYPED)]
-    NamedNodeSupertyped(NamedNodeSupertypedTransport),
+    NamedNodeSupertyped(Box<NamedNodeSupertypedTransport>),
     #[kind(kind::ANONYMOUS_NODE)]
     AnonymousNode(AnonymousNodeTransport),
     #[kind(kind::MISSING_NODE)]
-    MissingNode(MissingNodeTransport),
+    MissingNode(Box<MissingNodeTransport>),
     #[kind(kind::GROUPING)]
     Grouping(GroupingTransport),
     #[kind(kind::PREDICATE)]
-    Predicate(PredicateTransport),
+    Predicate(Box<PredicateTransport>),
     #[kind(kind::LIST)]
     List(ListTransport),
     #[kind(kind::FIELD_DEFINITION)]
-    FieldDefinition(FieldDefinitionTransport),
+    FieldDefinition(Box<FieldDefinitionTransport>),
     #[kind(kind::GROUP_EXPRESSION_ARM)]
-    GroupExpressionArm(GroupExpressionArmTransport),
+    GroupExpressionArm(Box<GroupExpressionArmTransport>),
 }
 
 impl ::sittir_core::prepare::Prepare for GroupExpressionArmLeftTransportSlot {
@@ -964,15 +964,15 @@ impl ::sittir_core::view::KindOf for GroupExpressionArmLeftTransportSlot {
 impl ::sittir_core::render::Render for GroupExpressionArmLeftTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            GroupExpressionArmLeftTransportSlot::NamedNodePlain(inner) => inner.render(w),
-            GroupExpressionArmLeftTransportSlot::NamedNodeSupertyped(inner) => inner.render(w),
+            GroupExpressionArmLeftTransportSlot::NamedNodePlain(inner) => inner.as_ref().render(w),
+            GroupExpressionArmLeftTransportSlot::NamedNodeSupertyped(inner) => inner.as_ref().render(w),
             GroupExpressionArmLeftTransportSlot::AnonymousNode(inner) => inner.render(w),
-            GroupExpressionArmLeftTransportSlot::MissingNode(inner) => inner.render(w),
+            GroupExpressionArmLeftTransportSlot::MissingNode(inner) => inner.as_ref().render(w),
             GroupExpressionArmLeftTransportSlot::Grouping(inner) => inner.render(w),
-            GroupExpressionArmLeftTransportSlot::Predicate(inner) => inner.render(w),
+            GroupExpressionArmLeftTransportSlot::Predicate(inner) => inner.as_ref().render(w),
             GroupExpressionArmLeftTransportSlot::List(inner) => inner.render(w),
-            GroupExpressionArmLeftTransportSlot::FieldDefinition(inner) => inner.render(w),
-            GroupExpressionArmLeftTransportSlot::GroupExpressionArm(inner) => inner.render(w),
+            GroupExpressionArmLeftTransportSlot::FieldDefinition(inner) => inner.as_ref().render(w),
+            GroupExpressionArmLeftTransportSlot::GroupExpressionArm(inner) => inner.as_ref().render(w),
         }
     }
 }
@@ -981,25 +981,25 @@ impl ::sittir_core::render::Render for GroupExpressionArmLeftTransportSlot {
 #[transport(choice)]
 pub enum NamedNodeExpressionArmLeftTransportSlot {
     #[kind(kind::NAMED_NODE_PLAIN)]
-    NamedNodePlain(NamedNodePlainTransport),
+    NamedNodePlain(Box<NamedNodePlainTransport>),
     #[kind(kind::NAMED_NODE_SUPERTYPED)]
-    NamedNodeSupertyped(NamedNodeSupertypedTransport),
+    NamedNodeSupertyped(Box<NamedNodeSupertypedTransport>),
     #[kind(kind::ANONYMOUS_NODE)]
     AnonymousNode(AnonymousNodeTransport),
     #[kind(kind::MISSING_NODE)]
-    MissingNode(MissingNodeTransport),
+    MissingNode(Box<MissingNodeTransport>),
     #[kind(kind::GROUPING)]
     Grouping(GroupingTransport),
     #[kind(kind::PREDICATE)]
-    Predicate(PredicateTransport),
+    Predicate(Box<PredicateTransport>),
     #[kind(kind::LIST)]
     List(ListTransport),
     #[kind(kind::FIELD_DEFINITION)]
-    FieldDefinition(FieldDefinitionTransport),
+    FieldDefinition(Box<FieldDefinitionTransport>),
     #[kind(kind::NEGATED_FIELD)]
-    NegatedField(NegatedFieldTransport),
+    NegatedField(Box<NegatedFieldTransport>),
     #[kind(kind::NAMED_NODE_EXPRESSION_ARM)]
-    NamedNodeExpressionArm(NamedNodeExpressionArmTransport),
+    NamedNodeExpressionArm(Box<NamedNodeExpressionArmTransport>),
 }
 
 impl ::sittir_core::prepare::Prepare for NamedNodeExpressionArmLeftTransportSlot {
@@ -1067,16 +1067,16 @@ impl ::sittir_core::view::KindOf for NamedNodeExpressionArmLeftTransportSlot {
 impl ::sittir_core::render::Render for NamedNodeExpressionArmLeftTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            NamedNodeExpressionArmLeftTransportSlot::NamedNodePlain(inner) => inner.render(w),
-            NamedNodeExpressionArmLeftTransportSlot::NamedNodeSupertyped(inner) => inner.render(w),
+            NamedNodeExpressionArmLeftTransportSlot::NamedNodePlain(inner) => inner.as_ref().render(w),
+            NamedNodeExpressionArmLeftTransportSlot::NamedNodeSupertyped(inner) => inner.as_ref().render(w),
             NamedNodeExpressionArmLeftTransportSlot::AnonymousNode(inner) => inner.render(w),
-            NamedNodeExpressionArmLeftTransportSlot::MissingNode(inner) => inner.render(w),
+            NamedNodeExpressionArmLeftTransportSlot::MissingNode(inner) => inner.as_ref().render(w),
             NamedNodeExpressionArmLeftTransportSlot::Grouping(inner) => inner.render(w),
-            NamedNodeExpressionArmLeftTransportSlot::Predicate(inner) => inner.render(w),
+            NamedNodeExpressionArmLeftTransportSlot::Predicate(inner) => inner.as_ref().render(w),
             NamedNodeExpressionArmLeftTransportSlot::List(inner) => inner.render(w),
-            NamedNodeExpressionArmLeftTransportSlot::FieldDefinition(inner) => inner.render(w),
-            NamedNodeExpressionArmLeftTransportSlot::NegatedField(inner) => inner.render(w),
-            NamedNodeExpressionArmLeftTransportSlot::NamedNodeExpressionArm(inner) => inner.render(w),
+            NamedNodeExpressionArmLeftTransportSlot::FieldDefinition(inner) => inner.as_ref().render(w),
+            NamedNodeExpressionArmLeftTransportSlot::NegatedField(inner) => inner.as_ref().render(w),
+            NamedNodeExpressionArmLeftTransportSlot::NamedNodeExpressionArm(inner) => inner.as_ref().render(w),
         }
     }
 }
@@ -1148,7 +1148,7 @@ pub enum NamedNodeSupertypedNameTransportSlot {
     #[kind(kind::_IMMEDIATE_IDENTIFIER, kind::IDENTIFIER)]
     ImmediateIdentifier(ImmediateIdentifierTransport),
     #[kind(kind::_IMMEDIATE_STRING)]
-    ImmediateString(ImmediateStringTransport),
+    ImmediateString(Box<ImmediateStringTransport>),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -1191,7 +1191,7 @@ impl ::sittir_core::render::Render for NamedNodeSupertypedNameTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             NamedNodeSupertypedNameTransportSlot::ImmediateIdentifier(inner) => inner.render(w),
-            NamedNodeSupertypedNameTransportSlot::ImmediateString(inner) => { w.adjacent(); inner.render(w) },
+            NamedNodeSupertypedNameTransportSlot::ImmediateString(inner) => { w.adjacent(); inner.as_ref().render(w) },
             NamedNodeSupertypedNameTransportSlot::Verbatim(inner) => { w.adjacent(); inner.render(w) },
         }
     }
@@ -3964,24 +3964,24 @@ fn render_definition(t: &DefinitionTransport, w: &mut dyn ::sittir_core::render:
     match t {
         DefinitionTransport::NamedNode(inner) => inner.render(w),
         DefinitionTransport::AnonymousNode(inner) => inner.render(w),
-        DefinitionTransport::MissingNode(inner) => inner.render(w),
+        DefinitionTransport::MissingNode(inner) => inner.as_ref().render(w),
         DefinitionTransport::Grouping(inner) => inner.render(w),
-        DefinitionTransport::Predicate(inner) => inner.render(w),
+        DefinitionTransport::Predicate(inner) => inner.as_ref().render(w),
         DefinitionTransport::List(inner) => inner.render(w),
-        DefinitionTransport::FieldDefinition(inner) => inner.render(w),
+        DefinitionTransport::FieldDefinition(inner) => inner.as_ref().render(w),
     }
 }
 
 fn render_named_node(t: &NamedNodeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        NamedNodeTransport::NamedNodePlain(inner) => inner.render(w),
-        NamedNodeTransport::NamedNodeSupertyped(inner) => inner.render(w),
+        NamedNodeTransport::NamedNodePlain(inner) => inner.as_ref().render(w),
+        NamedNodeTransport::NamedNodeSupertyped(inner) => inner.as_ref().render(w),
     }
 }
 
 fn render_list_element(t: &ListElementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        ListElementTransport::Capture(inner) => inner.render(w),
+        ListElementTransport::Capture(inner) => inner.as_ref().render(w),
         ListElementTransport::ListElementQuantifier(inner) => inner.render(w),
     }
 }
@@ -4150,3 +4150,33 @@ pub fn render_transport_parts(
     let rendered = render_transport_dispatch(&transport, ctx)?;
     Ok((TransportSource::Factory, rendered))
 }
+
+const _: () = assert!(::core::mem::size_of::<AnonymousNodeTransport>() <= 256, "AnonymousNodeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CaptureTransport>() > 256, "CaptureTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CommentTransport>() <= 256, "CommentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<EscapeSequenceTransport>() <= 256, "EscapeSequenceTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<FieldDefinitionTransport>() > 256, "FieldDefinitionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<GroupExpressionArmTransport>() > 256, "GroupExpressionArmTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<GroupingGroupTransport>() > 256, "GroupingGroupTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<GroupingTransport>() <= 256, "GroupingTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<IdentifierTransport>() <= 256, "IdentifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ImmediateIdentifierTransport>() <= 256, "ImmediateIdentifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ImmediateStringTransport>() > 256, "ImmediateStringTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ListElementQuantifierTransport>() <= 256, "ListElementQuantifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ListTransport>() <= 256, "ListTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<MissingNodeTransport>() > 256, "MissingNodeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<NamedNodeExpressionArmTransport>() > 256, "NamedNodeExpressionArmTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<NamedNodeGroupAnchoredLastTransport>() <= 256, "NamedNodeGroupAnchoredLastTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<NamedNodeGroupChildrenTransport>() <= 256, "NamedNodeGroupChildrenTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<NamedNodePlainTransport>() > 256, "NamedNodePlainTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<NamedNodeSupertypedTransport>() > 256, "NamedNodeSupertypedTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<NamedNodeTransport>() <= 256, "NamedNodeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<NegatedFieldTransport>() > 256, "NegatedFieldTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ParametersTransport>() <= 256, "ParametersTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<PredicateTransport>() > 256, "PredicateTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<PredicateTypeEnum>() <= 256, "PredicateTypeEnum is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ProgramTransport>() <= 256, "ProgramTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<QuantifierEnum>() <= 256, "QuantifierEnum is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<StringContentTextTransport>() <= 256, "StringContentTextTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<StringContentTransport>() <= 256, "StringContentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<StringTransport>() > 256, "StringTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");

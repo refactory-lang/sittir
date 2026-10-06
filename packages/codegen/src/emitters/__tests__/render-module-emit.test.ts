@@ -13,7 +13,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { classifySlot, buildSupertypeTransportSet, deriveChildrenKinds, type SlotClass } from '../transport-common.ts';
 import { TEXT_RESOLVED_LAYOUT_SITES } from '../layout-text-sites.ts';
-import { emitRenderModule, rustTransportStructName, transportSlotShapeOf } from '../render-module.ts';
+import { emitRenderModule, grammarRenderInputs, payloadCeilingAssertions, rustTransportStructName, transportSlotShapeOf } from '../render-module.ts';
+import { BOXED_PAYLOADS, PAYLOAD_CEILING_BYTES } from '../boxed-payloads.ts';
 import { collectCatalogKinds, collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
 import { seamRenderRules, spaceRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
 import { link } from '../../compiler/link.ts';
@@ -176,11 +177,13 @@ function modelFor(grammar: 'rust' | 'typescript' | 'scm') {
 async function getTransportRsForGrammar(grammar: 'rust' | 'typescript' | 'scm'): Promise<string> {
 	const { raw, nodeMap, kindEntries, generatedIdTables, templates, renderRules } = await modelFor(grammar);
 	if (grammar === 'rust') _rustKindEntries = kindEntries;
-	const emit = emitRenderModule(grammar, templates, nodeMap, generatedIdTables, {
-		renderRules,
-		visibleExternals: raw.visibleExternals,
-		options: raw.options
-	});
+	const emit = emitRenderModule(
+		grammar,
+		templates,
+		nodeMap,
+		generatedIdTables,
+		grammarRenderInputs(grammar, { renderRules, visibleExternals: raw.visibleExternals, options: raw.options })
+	);
 	if (grammar === 'rust') _rustOptionsRs = emit.optionsRs.contents;
 	return emit.transportRs.contents;
 }
@@ -350,8 +353,8 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 it('variant pairing: function_type_fn_form renders through fn_form (not trait_form)', async () => {
 	const transport = await getRustTemplatesRs();
 	expect(transport).toContain('pub enum FunctionTypeContentTransportSlot {');
-	expect(transport).toContain('FunctionTypeContentTransportSlot::FunctionTypeFnForm(inner) => inner.render(w),');
-	expect(transport).toContain('FunctionTypeContentTransportSlot::FunctionTypeTraitForm(inner) => inner.render(w),');
+	expect(transport).toMatch(/FunctionTypeContentTransportSlot::FunctionTypeFnForm\(inner\) => inner(?:\.as_ref\(\))?\.render\(w\),/);
+	expect(transport).toMatch(/FunctionTypeContentTransportSlot::FunctionTypeTraitForm\(inner\) => inner(?:\.as_ref\(\))?\.render\(w\),/);
 });
 
 describe('render options on transports', () => {
@@ -815,5 +818,30 @@ describe('the wire codec facts', () => {
 		expect(src).toMatch(/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Transport\)\]\n#\[transport\(choice, codec_only\)\]\npub enum TriviaTransport \{/);
 		expect(src).toMatch(/    #\[transport\(text\)\]\n    #\[kind\([^\n]*\)\]\n    Text\(::sittir_core::trivia::TriviaText\),/);
 		expect(src).toMatch(/    #\[transport\(verbatim\)\]\n    Verbatim\(VerbatimTransport\),\n    #\[transport\(text\)\]/);
+	});
+});
+
+describe('the payload ceiling', () => {
+	it('boxes each pinned payload in every choice the reader reads, and nowhere unboxed', async () => {
+		const src = await getRustTemplatesRs();
+		expect(BOXED_PAYLOADS.rust!.length).toBeGreaterThan(0);
+		for (const name of BOXED_PAYLOADS.rust!) {
+			expect(src).toMatch(new RegExp(`\\n    \\w+\\(Box<${name}>\\),`));
+			expect(src.replace(/\npub enum TriviaTransport \{[^}]*\}/, '')).not.toMatch(new RegExp(`\\n    \\w+\\(${name}\\),`));
+		}
+	});
+
+	it('asserts every payload against the ceiling, each one way', async () => {
+		const src = await getRustTemplatesRs();
+		const assertions = [...src.matchAll(/^const _: \(\) = assert!\(::core::mem::size_of::<(\w+)>\(\) (<=|>) (\d+), "/gm)];
+		const over = assertions.filter((m) => m[2] === '>').map((m) => m[1]).sort();
+		expect(over).toEqual([...BOXED_PAYLOADS.rust!].sort());
+		expect(assertions.every((m) => Number(m[3]) === PAYLOAD_CEILING_BYTES)).toBe(true);
+		expect(new Set(assertions.map((m) => m[1])).size).toBe(assertions.length);
+	});
+
+	it('refuses a pin no choice holds', () => {
+		const [stale] = BOXED_PAYLOADS.rust!;
+		expect(() => payloadCeilingAssertions(BOXED_PAYLOADS.rust!, new Set())).toThrow(`${stale} is pinned in boxed-payloads.ts but no choice holds it`);
 	});
 });

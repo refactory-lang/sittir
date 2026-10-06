@@ -31,7 +31,7 @@ fn an_empty_suite_block_closes_the_indent_it_opened() {
         layout: None,
         block: ::sittir_core::SlotValue::Transport(block),
     };
-    let root: RenderRoot = ::sittir_core::SlotValue::Transport(AnyTransport::SuiteBlock(suite));
+    let root: RenderRoot = ::sittir_core::SlotValue::Transport(AnyTransport::SuiteBlock(Box::new(suite)));
     let (_, rendered) = render_transport_parts(root, &ctx).expect("render");
     assert!(!rendered.contains('\u{FDD0}'));
 }

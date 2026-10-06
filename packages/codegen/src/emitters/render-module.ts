@@ -56,6 +56,7 @@ import {
 import { listViewOwners } from './factories.ts';
 import { interiorOf } from './interior.ts';
 import { assertEnvelopeExtrasPinned, type EnvelopeClaims } from './envelope-claims.ts';
+import { BOXED_PAYLOADS, PAYLOAD_CEILING_BYTES } from './boxed-payloads.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
 import {
 	RESERVED_SUPERTYPE_ENUM_NAMES,
@@ -152,6 +153,11 @@ export interface RenderOptionsInputs {
 	readonly kindEntries?: readonly KindEnumEntry[];
 	readonly sites?: readonly SitePreference[];
 	readonly addresses?: AddressTables;
+	readonly boxedPayloads?: readonly string[];
+}
+
+export function grammarRenderInputs(grammar: GrammarName, inputs: RenderOptionsInputs): RenderOptionsInputs {
+	return { ...inputs, boxedPayloads: BOXED_PAYLOADS[grammar] ?? [] };
 }
 
 export interface RenderModuleEmitterConfig extends RenderOptionsInputs {
@@ -178,7 +184,8 @@ function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig
 		options,
 		kindEntries,
 		sites,
-		addresses
+		addresses,
+		boxedPayloads
 	} = config;
 	return {
 		emit: emitRenderModule(grammar, templates, nodeMap, generatedIdTables, {
@@ -187,7 +194,8 @@ function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig
 			options,
 			kindEntries,
 			sites,
-			addresses
+			addresses,
+			boxedPayloads
 		})
 	};
 }
@@ -208,7 +216,8 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 			options: config.options,
 			kindEntries: config.kindEntries,
 			sites: config.sites,
-			addresses: config.addresses
+			addresses: config.addresses,
+			boxedPayloads: config.boxedPayloads
 		};
 	}
 
@@ -591,7 +600,8 @@ function renderTypedDispatch(
 	usedSupertypeNames: ReadonlySet<string>,
 	kindIdByKind: ReadonlyMap<string, number>,
 	plan: RenderPlan,
-	kindEntries: readonly KindEntryLike[]
+	kindEntries: readonly KindEntryLike[],
+	boxedPayloads: readonly string[]
 ): string[] {
 	const structsByKind = new Map(structs.map((s) => [s.kind, s]));
 	const lines: string[] = [];
@@ -606,7 +616,7 @@ function renderTypedDispatch(
 		if (!usedSupertypeNames.has(node.typeName)) continue;
 		const enumName = `${rustTypeIdent(node.typeName)}Transport`;
 		if (RESERVED_SUPERTYPE_ENUM_NAMES.has(enumName)) continue;
-		lines.push(...emitSupertypeRenderHelper(node, nodeMap, fixed));
+		lines.push(...emitSupertypeRenderHelper(node, nodeMap, fixed, boxedPayloads));
 	}
 
 	const wordTable = wordCharAsciiTable(nodeMap.wordMatcher ?? /\w/);
@@ -1114,7 +1124,7 @@ export function emitRenderModule(
 			'use super::{field_ids as field, kind_ids as kind};',
 			'use ::sittir_core::VerbatimTransport;',
 			'',
-			renderTransportSupport(lang, nodeMap, structs, meta, generatedIdTables, plan)
+			renderTransportSupport(lang, nodeMap, structs, meta, generatedIdTables, plan, inputs.boxedPayloads ?? [])
 		].join('\n') + '\n';
 	const optionsRs = renderOptionsRs(plan, addresses, optionsKindEntries);
 	const { hashRs, hashTs } = emitHashFiles(lang, [
@@ -1147,6 +1157,8 @@ interface ReadPrint {
 	readonly printedEnums: Set<string>;
 	readonly admitted: Map<string, number[]>;
 	readonly blankChoices: Set<string>;
+	readonly choicePayloads: Set<string>;
+	readonly boxedPayloads: readonly string[];
 }
 
 function readPrintOf(
@@ -1154,9 +1166,11 @@ function readPrintOf(
 	structs: readonly EmittedStruct[],
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[],
-	generatedIdTables: GeneratedIdTables
+	generatedIdTables: GeneratedIdTables,
+	boxedPayloads: readonly string[]
 ): ReadPrint {
 	return {
+		boxedPayloads,
 		grammar,
 		envelopeExtras: new Map(),
 		printedEnums: new Set(),
@@ -1170,7 +1184,8 @@ function readPrintOf(
 			grammar
 		},
 		admitted: new Map(),
-		blankChoices: new Set()
+		blankChoices: new Set(),
+		choicePayloads: new Set()
 	};
 }
 
@@ -1207,7 +1222,8 @@ function renderTransportSupport(
 	structs: EmittedStruct[],
 	meta: MetaData,
 	generatedIdTables: GeneratedIdTables,
-	plan: RenderPlan
+	plan: RenderPlan,
+	boxedPayloads: readonly string[]
 ): string {
 	const projection = getTransportProjection(nodeMap);
 	const nodes = projection.nodes;
@@ -1217,7 +1233,7 @@ function renderTransportSupport(
 	const fixed = collectFixedLiterals(projection, nodeMap, kindEntries, kidByKind);
 	const payloadNodes = nodes.filter((node) => !isFixedTextLeaf(node));
 
-	const read = readPrintOf(lang, structs, nodeMap, kindEntries, generatedIdTables);
+	const read = readPrintOf(lang, structs, nodeMap, kindEntries, generatedIdTables, boxedPayloads);
 	const anyTransportLines = renderAnyTransport(payloadNodes, fixed, nodeMap, kindEntries, read);
 
 	const usedSupertypeNames = collectUsedSupertypeNames(nodes, nodeMap);
@@ -1288,9 +1304,12 @@ function renderTransportSupport(
 				usedSupertypeNames,
 				kidByKind,
 				plan,
-				kindEntries
+				kindEntries,
+				read.boxedPayloads
 			),
-			...renderTransportEntry()
+			...renderTransportEntry(),
+			'',
+			...payloadCeilingAssertions(read.boxedPayloads, read.choicePayloads)
 		].join('\n')
 	);
 }
@@ -1428,17 +1447,25 @@ function isTransportRequired(slot: AssembledNonterminal): boolean {
 	return isRequired(slot) && !isPrepareFilled(slot);
 }
 
-function boxedInEnum(
-	variantKind: string,
-	enumOwnerKind: string,
-	variantNode: AssembledNode,
-	nodeMap: NodeMap
-): boolean {
-	void variantKind;
-	void enumOwnerKind;
-	void variantNode;
-	void nodeMap;
-	return false;
+function boxedInEnum(node: AssembledNode, boxedPayloads: readonly string[]): boolean {
+	return boxedPayloads.includes(rustTransportStructName(node));
+}
+
+function choicePayloadType(node: AssembledNode, read: ReadPrint): string {
+	const name = rustTransportStructName(node);
+	read.choicePayloads.add(name);
+	return boxedInEnum(node, read.boxedPayloads) ? `Box<${name}>` : name;
+}
+
+export function payloadCeilingAssertions(pinned: readonly string[], payloads: ReadonlySet<string>): string[] {
+	const stale = pinned.find((name) => !payloads.has(name));
+	if (stale !== undefined) throw new Error(`${stale} is pinned in boxed-payloads.ts but no choice holds it: unpin it`);
+	const n = PAYLOAD_CEILING_BYTES;
+	return [...payloads].sort().map((name) =>
+		pinned.includes(name)
+			? `const _: () = assert!(::core::mem::size_of::<${name}>() > ${n}, "${name} is within the ${n}-byte payload ceiling: unpin it in boxed-payloads.ts");`
+			: `const _: () = assert!(::core::mem::size_of::<${name}>() <= ${n}, "${name} is over the ${n}-byte payload ceiling: pin it in boxed-payloads.ts");`
+	);
 }
 
 function kindIdStoredFirst<T>(entries: readonly T[], nodeOf: (entry: T) => AssembledNode): T[] {
@@ -1503,23 +1530,19 @@ function emitSupertypeTransportEnum(
 	const lines: string[] = [];
 	const shape = collectEffectiveSupertypeTransportShape(supertypeNode, nodeMap);
 	const validSubtypes = shape.subtypes;
-	const ownerKind = supertypeNode.kind;
 	const admitsVerbatim = supertypeAdmitsVerbatim(supertypeNode, nodeMap);
 
-	const isBoxed = (subKind: string, subNode: AssembledNode): boolean =>
-		boxedInEnum(subKind, ownerKind, subNode, nodeMap);
+	const isBoxed = (subNode: AssembledNode): boolean => boxedInEnum(subNode, read.boxedPayloads);
 
 	const claimedBy = claimSupertypeIds(supertypeNode, enumName, shape, selfAliasIds, kindIdByKind, kindEntries, nodeMap);
 
 	lines.push(TRANSPORT_DERIVE);
 	lines.push(`#[transport(choice)]`);
 	lines.push(`pub enum ${enumName} {`);
-	for (const { subKind, subNode } of validSubtypes) {
+	for (const { subNode } of validSubtypes) {
 		const variant = rustTypeIdent(subNode.typeName);
-		const typeName = rustTransportStructName(subNode);
-		const variantType = isBoxed(subKind, subNode) ? `Box<${typeName}>` : typeName;
 		lines.push(...variantKindLines(enumName, variant, subNode, claimedBy.get(variant) ?? [], read));
-		lines.push(isFixedTextLeaf(subNode) ? `    ${variant},` : `    ${variant}(${variantType}),`);
+		lines.push(isFixedTextLeaf(subNode) ? `    ${variant},` : `    ${variant}(${choicePayloadType(subNode, read)}),`);
 	}
 	if (admitsVerbatim) lines.push(`    #[transport(verbatim)]`, `    Verbatim(VerbatimTransport),`);
 	lines.push(`}`);
@@ -1555,9 +1578,9 @@ function emitSupertypeTransportEnum(
 
 	lines.push(`fn ${rustSnakeIdent(supertypeNode.typeName)}_transport_to_any(t: ${enumName}) -> AnyTransport {`);
 	lines.push(`    match t {`);
-	for (const { subKind, subNode } of validSubtypes) {
+	for (const { subNode } of validSubtypes) {
 		const variant = rustTypeIdent(subNode.typeName);
-		const boxed = isBoxed(subKind, subNode);
+		const boxed = isBoxed(subNode);
 		if (isFixedTextLeaf(subNode)) {
 			lines.push(`        ${enumName}::${variant} => AnyTransport::${variant},`);
 		} else if (subNode instanceof AssembledSupertype) {
@@ -1568,12 +1591,7 @@ function emitSupertypeTransportEnum(
 				lines.push(`        ${enumName}::${variant}(inner) => ${subBridgeFn}(inner),`);
 			}
 		} else {
-			const anyVariant = rustTypeIdent(subNode.typeName);
-			if (boxed) {
-				lines.push(`        ${enumName}::${variant}(inner) => AnyTransport::${anyVariant}(*inner),`);
-			} else {
-				lines.push(`        ${enumName}::${variant}(inner) => AnyTransport::${anyVariant}(inner),`);
-			}
+			lines.push(`        ${enumName}::${variant}(inner) => AnyTransport::${rustTypeIdent(subNode.typeName)}(inner),`);
 		}
 	}
 	if (admitsVerbatim) lines.push(`        ${enumName}::Verbatim(inner) => AnyTransport::Verbatim(inner),`);
@@ -1594,12 +1612,11 @@ function emitSupertypeTransportEnum(
 	return lines;
 }
 
-function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: NodeMap, fixed: FixedLiterals): string[] {
+function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: NodeMap, fixed: FixedLiterals, boxedPayloads: readonly string[]): string[] {
 	const enumName = `${rustTypeIdent(supertypeNode.typeName)}Transport`;
 	const fnName = `render_${rustSnakeIdent(supertypeNode.typeName)}`;
 	const lines: string[] = [];
 	const { subtypes: validSubtypes } = collectEffectiveSupertypeTransportShape(supertypeNode, nodeMap);
-	const ownerKind = supertypeNode.kind;
 
 	lines.push(
 		`fn ${fnName}(t: &${enumName}, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
@@ -1611,7 +1628,7 @@ function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: N
 			lines.push(`        ${enumName}::${variant} => ${fixedLiteralOf(fixed, subKind).renderFn}(w),`);
 			continue;
 		}
-		const innerExpr = boxedInEnum(subKind, ownerKind, subNode, nodeMap) ? `inner.as_ref()` : `inner`;
+		const innerExpr = boxedInEnum(subNode, boxedPayloads) ? `inner.as_ref()` : `inner`;
 		lines.push(`        ${enumName}::${variant}(inner) => ${innerExpr}.render(w),`);
 	}
 	if (supertypeAdmitsVerbatim(supertypeNode, nodeMap)) {
@@ -2141,8 +2158,7 @@ function emitPerSlotChildEnum(
 	const units = choiceUnitsOf(entry, validKinds, fixed, plan, kindEntries, nodeMap);
 	const admitsVerbatim = validKinds.some(({ node }) => node.modelType === 'pattern');
 
-	const isBoxed = (variantKind: string, variantNode: AssembledNode): boolean =>
-		boxedInEnum(variantKind, ownerKind, variantNode, nodeMap);
+	const isBoxed = (variantNode: AssembledNode): boolean => boxedInEnum(variantNode, read.boxedPayloads);
 	const modelSlot = nodeMap.nodes.get(ownerKind)?.slots.find((candidate) => candidate.name === entry.fieldName);
 	const blank = modelSlot !== undefined && hasBlankArm(modelSlot);
 
@@ -2190,11 +2206,10 @@ function emitPerSlotChildEnum(
 	lines.push(TRANSPORT_DERIVE);
 	lines.push(`#[transport(choice)]`);
 	lines.push(`pub enum ${enumName} {`);
-	for (const { kind, node, concreteName } of nodeKinds) {
+	for (const { node } of nodeKinds) {
 		const variant = rustTypeIdent(node.typeName);
-		const variantType = isBoxed(kind, node) ? `Box<${concreteName}>` : concreteName;
 		lines.push(...variantKindLines(enumName, variant, node, claimedBy.get(variant) ?? [], read));
-		lines.push(`    ${variant}(${variantType}),`);
+		lines.push(`    ${variant}(${choicePayloadType(node, read)}),`);
 	}
 	for (const variant of units.keys()) {
 		const claimed = claimedBy.get(variant) ?? [];
@@ -2246,7 +2261,7 @@ function emitPerSlotChildEnum(
 	lines.push(`        match self {`);
 	for (const { kind, node } of nodeKinds) {
 		const variant = rustTypeIdent(node.typeName);
-		const innerExpr = isBoxed(kind, node) ? 'inner.as_ref()' : 'inner';
+		const innerExpr = isBoxed(node) ? 'inner.as_ref()' : 'inner';
 		const call = `${innerExpr}.render(w)`;
 		const arm =
 			!(node instanceof AssembledLeaf) && isLeftImmediateKind(kind, nodeMap) ? `{ w.adjacent(); ${call} }` : call;
@@ -2296,9 +2311,8 @@ function renderAnyTransport(
 	lines.push('pub enum AnyTransport {');
 	for (const node of payloadNodes) {
 		const variant = rustTransportVariantName(node);
-		const structName = rustTransportStructName(node);
 		lines.push(...variantKindLines('AnyTransport', variant, node, claimedBy.get(variant) ?? [], read));
-		lines.push(`    ${variant}(${structName}),`);
+		lines.push(`    ${variant}(${choicePayloadType(node, read)}),`);
 	}
 	for (const literal of fixed.values()) {
 		lines.push(...variantKindLines('AnyTransport', literal.variant, undefined, claimedBy.get(literal.variant) ?? [], read));
@@ -3433,10 +3447,7 @@ function concreteTransportTypeName(kind: string, nodeMap: NodeMap): string | nul
 		if (node instanceof AssembledSupertype) {
 			return null;
 		}
-		if (node instanceof AssembledEnum) {
-			return enumTypeName(node);
-		}
-		return `${rustTypeIdent(node.typeName)}Transport`;
+		return rustTransportStructName(node);
 	}
 	return null;
 }

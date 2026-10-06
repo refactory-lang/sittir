@@ -23,7 +23,7 @@ use ::sittir_core::VerbatimTransport;
 #[transport(choice)]
 pub enum AnyTransport {
     #[kind(kind::PATTERN)]
-    Pattern(PatternTransport),
+    Pattern(Box<PatternTransport>),
     #[kind(kind::ALTERNATION)]
     Alternation(AlternationTransport),
     #[kind(kind::TERM)]
@@ -31,27 +31,27 @@ pub enum AnyTransport {
     #[kind(kind::LOOKAROUND_ASSERTION)]
     LookaroundAssertion(LookaroundAssertionTransport),
     #[kind(kind::_LOOKAHEAD_ASSERTION)]
-    LookaheadAssertion(LookaheadAssertionTransport),
+    LookaheadAssertion(Box<LookaheadAssertionTransport>),
     #[kind(kind::_LOOKBEHIND_ASSERTION)]
-    LookbehindAssertion(LookbehindAssertionTransport),
+    LookbehindAssertion(Box<LookbehindAssertionTransport>),
     #[kind(kind::PATTERN_CHARACTER)]
     PatternCharacter(PatternCharacterTransport),
     #[kind(kind::CHARACTER_CLASS)]
     CharacterClass(CharacterClassTransport),
     #[kind(kind::POSIX_CHARACTER_CLASS)]
-    PosixCharacterClass(PosixCharacterClassTransport),
+    PosixCharacterClass(Box<PosixCharacterClassTransport>),
     #[kind(kind::POSIX_CLASS_NAME)]
     PosixClassName(PosixClassNameTransport),
     #[kind(kind::CLASS_RANGE)]
-    ClassRange(ClassRangeTransport),
+    ClassRange(Box<ClassRangeTransport>),
     #[kind(kind::CLASS_CHARACTER)]
     ClassCharacter(ClassCharacterTransport),
     #[kind(kind::ANONYMOUS_CAPTURING_GROUP)]
-    AnonymousCapturingGroup(AnonymousCapturingGroupTransport),
+    AnonymousCapturingGroup(Box<AnonymousCapturingGroupTransport>),
     #[kind(kind::NAMED_CAPTURING_GROUP)]
-    NamedCapturingGroup(NamedCapturingGroupTransport),
+    NamedCapturingGroup(Box<NamedCapturingGroupTransport>),
     #[kind(kind::NON_CAPTURING_GROUP)]
-    NonCapturingGroup(NonCapturingGroupTransport),
+    NonCapturingGroup(Box<NonCapturingGroupTransport>),
     #[kind(kind::FLAGS)]
     Flags(FlagsTransport),
     #[kind(kind::ZERO_OR_MORE)]
@@ -61,19 +61,19 @@ pub enum AnyTransport {
     #[kind(kind::OPTIONAL)]
     Optional(OptionalTransport),
     #[kind(kind::COUNT_QUANTIFIER)]
-    CountQuantifier(CountQuantifierTransport),
+    CountQuantifier(Box<CountQuantifierTransport>),
     #[kind(kind::BACKREFERENCE_ESCAPE)]
-    BackreferenceEscape(BackreferenceEscapeTransport),
+    BackreferenceEscape(Box<BackreferenceEscapeTransport>),
     #[kind(kind::NAMED_GROUP_BACKREFERENCE)]
-    NamedGroupBackreference(NamedGroupBackreferenceTransport),
+    NamedGroupBackreference(Box<NamedGroupBackreferenceTransport>),
     #[kind(kind::DECIMAL_ESCAPE)]
     DecimalEscape(DecimalEscapeTransport),
     #[kind(kind::CHARACTER_CLASS_ESCAPE)]
-    CharacterClassEscape(CharacterClassEscapeTransport),
+    CharacterClassEscape(Box<CharacterClassEscapeTransport>),
     #[kind(kind::UNICODE_CHARACTER_ESCAPE)]
     UnicodeCharacterEscape(UnicodeCharacterEscapeTransport),
     #[kind(kind::UNICODE_PROPERTY_VALUE_EXPRESSION)]
-    UnicodePropertyValueExpression(UnicodePropertyValueExpressionTransport),
+    UnicodePropertyValueExpression(Box<UnicodePropertyValueExpressionTransport>),
     #[kind(kind::UNICODE_PROPERTY_VALUE)]
     UnicodePropertyValue(UnicodePropertyValueTransport),
     #[kind(kind::CONTROL_ESCAPE)]
@@ -87,29 +87,29 @@ pub enum AnyTransport {
     #[kind(kind::DECIMAL_DIGITS)]
     DecimalDigits(DecimalDigitsTransport),
     #[kind(kind::TERM_GROUP)]
-    TermGroup(TermGroupTransport),
+    TermGroup(Box<TermGroupTransport>),
     #[kind(kind::COUNT_QUANTIFIER_GROUP)]
-    CountQuantifierGroup(CountQuantifierGroupTransport),
+    CountQuantifierGroup(Box<CountQuantifierGroupTransport>),
     #[kind(kind::COUNT_QUANTIFIER_ARM)]
-    CountQuantifierArm(CountQuantifierArmTransport),
+    CountQuantifierArm(Box<CountQuantifierArmTransport>),
     #[kind(kind::CHARACTER_CLASS_ESCAPE_ARM)]
-    CharacterClassEscapeArm(CharacterClassEscapeArmTransport),
+    CharacterClassEscapeArm(Box<CharacterClassEscapeArmTransport>),
     #[kind(kind::UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP)]
-    UnicodePropertyValueExpressionGroup(UnicodePropertyValueExpressionGroupTransport),
+    UnicodePropertyValueExpressionGroup(Box<UnicodePropertyValueExpressionGroupTransport>),
     #[kind(kind::CHARACTER_CLASS_ESCAPE_TEXT1)]
     CharacterClassEscapeText1(CharacterClassEscapeText1Transport),
     #[kind(kind::CHARACTER_CLASS_ESCAPE_TEXT2)]
     CharacterClassEscapeText2(CharacterClassEscapeText2Transport),
     #[kind(kind::INLINE_FLAGS_GROUP_ENABLE)]
-    InlineFlagsGroupEnable(InlineFlagsGroupEnableTransport),
+    InlineFlagsGroupEnable(Box<InlineFlagsGroupEnableTransport>),
     #[kind(kind::INLINE_FLAGS_GROUP_TOGGLE)]
-    InlineFlagsGroupToggle(InlineFlagsGroupToggleTransport),
+    InlineFlagsGroupToggle(Box<InlineFlagsGroupToggleTransport>),
     #[kind(kind::INLINE_FLAGS_GROUP_DISABLE)]
-    InlineFlagsGroupDisable(InlineFlagsGroupDisableTransport),
+    InlineFlagsGroupDisable(Box<InlineFlagsGroupDisableTransport>),
     #[kind(kind::_LAZY, display)]
     Lazy(LazyTransport),
     #[kind(kind::_UNICODE_PROPERTY_NAME, display)]
-    UnicodePropertyName(UnicodePropertyNameTransport),
+    UnicodePropertyName(Box<UnicodePropertyNameTransport>),
     #[kind(kind::ANY_CHARACTER)]
     AnyCharacter,
     #[kind(kind::START_ASSERTION)]
@@ -566,9 +566,9 @@ impl ::sittir_core::render::Render for PatternContentTransportSlot {
 #[transport(choice)]
 pub enum LookaroundAssertionContentTransportSlot {
     #[kind(kind::_LOOKAHEAD_ASSERTION)]
-    LookaheadAssertion(LookaheadAssertionTransport),
+    LookaheadAssertion(Box<LookaheadAssertionTransport>),
     #[kind(kind::_LOOKBEHIND_ASSERTION)]
-    LookbehindAssertion(LookbehindAssertionTransport),
+    LookbehindAssertion(Box<LookbehindAssertionTransport>),
 }
 
 impl ::sittir_core::prepare::Prepare for LookaroundAssertionContentTransportSlot {
@@ -604,8 +604,8 @@ impl ::sittir_core::view::KindOf for LookaroundAssertionContentTransportSlot {
 impl ::sittir_core::render::Render for LookaroundAssertionContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            LookaroundAssertionContentTransportSlot::LookaheadAssertion(inner) => inner.render(w),
-            LookaroundAssertionContentTransportSlot::LookbehindAssertion(inner) => inner.render(w),
+            LookaroundAssertionContentTransportSlot::LookaheadAssertion(inner) => inner.as_ref().render(w),
+            LookaroundAssertionContentTransportSlot::LookbehindAssertion(inner) => inner.as_ref().render(w),
         }
     }
 }
@@ -712,7 +712,7 @@ pub enum CharacterClassClassAtomsTransportSlot {
     #[kind(kind::CLASS_CHARACTER, kind::DASH)]
     ClassCharacter(ClassCharacterTransport),
     #[kind(kind::CHARACTER_CLASS_ESCAPE)]
-    CharacterClassEscape(CharacterClassEscapeTransport),
+    CharacterClassEscape(Box<CharacterClassEscapeTransport>),
     #[kind(kind::CONTROL_ESCAPE)]
     ControlEscape(ControlEscapeTransport),
     #[kind(kind::CONTROL_LETTER_ESCAPE)]
@@ -720,9 +720,9 @@ pub enum CharacterClassClassAtomsTransportSlot {
     #[kind(kind::IDENTITY_ESCAPE, folded(kind::BSLASH_DASH))]
     IdentityEscape(IdentityEscapeTransport),
     #[kind(kind::POSIX_CHARACTER_CLASS)]
-    PosixCharacterClass(PosixCharacterClassTransport),
+    PosixCharacterClass(Box<PosixCharacterClassTransport>),
     #[kind(kind::CLASS_RANGE)]
-    ClassRange(ClassRangeTransport),
+    ClassRange(Box<ClassRangeTransport>),
     #[kind(kind::BSLASH_DASH)]
     BslashDash,
     #[transport(verbatim)]
@@ -791,12 +791,12 @@ impl ::sittir_core::render::Render for CharacterClassClassAtomsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             CharacterClassClassAtomsTransportSlot::ClassCharacter(inner) => inner.render(w),
-            CharacterClassClassAtomsTransportSlot::CharacterClassEscape(inner) => inner.render(w),
+            CharacterClassClassAtomsTransportSlot::CharacterClassEscape(inner) => inner.as_ref().render(w),
             CharacterClassClassAtomsTransportSlot::ControlEscape(inner) => inner.render(w),
             CharacterClassClassAtomsTransportSlot::ControlLetterEscape(inner) => inner.render(w),
             CharacterClassClassAtomsTransportSlot::IdentityEscape(inner) => inner.render(w),
-            CharacterClassClassAtomsTransportSlot::PosixCharacterClass(inner) => inner.render(w),
-            CharacterClassClassAtomsTransportSlot::ClassRange(inner) => inner.render(w),
+            CharacterClassClassAtomsTransportSlot::PosixCharacterClass(inner) => inner.as_ref().render(w),
+            CharacterClassClassAtomsTransportSlot::ClassRange(inner) => inner.as_ref().render(w),
             CharacterClassClassAtomsTransportSlot::BslashDash => render_bslash_dash(w),
             CharacterClassClassAtomsTransportSlot::Verbatim(inner) => inner.render(w),
         }
@@ -809,7 +809,7 @@ pub enum ClassRangeStartTransportSlot {
     #[kind(kind::CLASS_CHARACTER)]
     ClassCharacter(ClassCharacterTransport),
     #[kind(kind::CHARACTER_CLASS_ESCAPE)]
-    CharacterClassEscape(CharacterClassEscapeTransport),
+    CharacterClassEscape(Box<CharacterClassEscapeTransport>),
     #[kind(kind::CONTROL_ESCAPE)]
     ControlEscape(ControlEscapeTransport),
     #[kind(kind::DASH)]
@@ -864,7 +864,7 @@ impl ::sittir_core::render::Render for ClassRangeStartTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             ClassRangeStartTransportSlot::ClassCharacter(inner) => inner.render(w),
-            ClassRangeStartTransportSlot::CharacterClassEscape(inner) => inner.render(w),
+            ClassRangeStartTransportSlot::CharacterClassEscape(inner) => inner.as_ref().render(w),
             ClassRangeStartTransportSlot::ControlEscape(inner) => inner.render(w),
             ClassRangeStartTransportSlot::Dash => {
                 w.site_at(options::SITE_CLASS_RANGE_DASH_BEFORE);
@@ -928,7 +928,7 @@ impl ::sittir_core::render::Render for NamedCapturingGroupContentTransportSlot {
 #[transport(choice)]
 pub enum CountQuantifierContentTransportSlot {
     #[kind(kind::COUNT_QUANTIFIER_ARM)]
-    CountQuantifierArm(CountQuantifierArmTransport),
+    CountQuantifierArm(Box<CountQuantifierArmTransport>),
     #[kind(kind::DECIMAL_DIGITS)]
     DecimalDigits(DecimalDigitsTransport),
     #[transport(verbatim)]
@@ -972,7 +972,7 @@ impl ::sittir_core::view::KindOf for CountQuantifierContentTransportSlot {
 impl ::sittir_core::render::Render for CountQuantifierContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            CountQuantifierContentTransportSlot::CountQuantifierArm(inner) => inner.render(w),
+            CountQuantifierContentTransportSlot::CountQuantifierArm(inner) => inner.as_ref().render(w),
             CountQuantifierContentTransportSlot::DecimalDigits(inner) => inner.render(w),
             CountQuantifierContentTransportSlot::Verbatim(inner) => inner.render(w),
         }
@@ -985,7 +985,7 @@ pub enum CharacterClassEscapeContentTransportSlot {
     #[kind(kind::CHARACTER_CLASS_ESCAPE_TEXT1)]
     CharacterClassEscapeText1(CharacterClassEscapeText1Transport),
     #[kind(kind::CHARACTER_CLASS_ESCAPE_ARM)]
-    CharacterClassEscapeArm(CharacterClassEscapeArmTransport),
+    CharacterClassEscapeArm(Box<CharacterClassEscapeArmTransport>),
     #[kind(kind::UNICODE_CHARACTER_ESCAPE)]
     UnicodeCharacterEscape(UnicodeCharacterEscapeTransport),
     #[transport(verbatim)]
@@ -1034,7 +1034,7 @@ impl ::sittir_core::render::Render for CharacterClassEscapeContentTransportSlot 
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             CharacterClassEscapeContentTransportSlot::CharacterClassEscapeText1(inner) => inner.render(w),
-            CharacterClassEscapeContentTransportSlot::CharacterClassEscapeArm(inner) => inner.render(w),
+            CharacterClassEscapeContentTransportSlot::CharacterClassEscapeArm(inner) => inner.as_ref().render(w),
             CharacterClassEscapeContentTransportSlot::UnicodeCharacterEscape(inner) => inner.render(w),
             CharacterClassEscapeContentTransportSlot::Verbatim(inner) => inner.render(w),
         }
@@ -1051,7 +1051,7 @@ pub enum TermGroupQuantifierTransportSlot {
     #[kind(kind::OPTIONAL)]
     Optional(OptionalTransport),
     #[kind(kind::COUNT_QUANTIFIER)]
-    CountQuantifier(CountQuantifierTransport),
+    CountQuantifier(Box<CountQuantifierTransport>),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -1104,7 +1104,7 @@ impl ::sittir_core::render::Render for TermGroupQuantifierTransportSlot {
             TermGroupQuantifierTransportSlot::ZeroOrMore(inner) => inner.render(w),
             TermGroupQuantifierTransportSlot::OneOrMore(inner) => inner.render(w),
             TermGroupQuantifierTransportSlot::Optional(inner) => inner.render(w),
-            TermGroupQuantifierTransportSlot::CountQuantifier(inner) => inner.render(w),
+            TermGroupQuantifierTransportSlot::CountQuantifier(inner) => inner.as_ref().render(w),
             TermGroupQuantifierTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -1120,11 +1120,11 @@ pub enum TermGroupContentTransportSlot {
     #[kind(kind::CHARACTER_CLASS)]
     CharacterClass(CharacterClassTransport),
     #[kind(kind::POSIX_CHARACTER_CLASS)]
-    PosixCharacterClass(PosixCharacterClassTransport),
+    PosixCharacterClass(Box<PosixCharacterClassTransport>),
     #[kind(kind::DECIMAL_ESCAPE)]
     DecimalEscape(DecimalEscapeTransport),
     #[kind(kind::CHARACTER_CLASS_ESCAPE)]
-    CharacterClassEscape(CharacterClassEscapeTransport),
+    CharacterClassEscape(Box<CharacterClassEscapeTransport>),
     #[kind(kind::CONTROL_ESCAPE)]
     ControlEscape(ControlEscapeTransport),
     #[kind(kind::CONTROL_LETTER_ESCAPE)]
@@ -1132,21 +1132,21 @@ pub enum TermGroupContentTransportSlot {
     #[kind(kind::IDENTITY_ESCAPE, kind::BSLASH_DASH, folded(kind::BSLASH_DASH))]
     IdentityEscape(IdentityEscapeTransport),
     #[kind(kind::BACKREFERENCE_ESCAPE)]
-    BackreferenceEscape(BackreferenceEscapeTransport),
+    BackreferenceEscape(Box<BackreferenceEscapeTransport>),
     #[kind(kind::NAMED_GROUP_BACKREFERENCE)]
-    NamedGroupBackreference(NamedGroupBackreferenceTransport),
+    NamedGroupBackreference(Box<NamedGroupBackreferenceTransport>),
     #[kind(kind::ANONYMOUS_CAPTURING_GROUP)]
-    AnonymousCapturingGroup(AnonymousCapturingGroupTransport),
+    AnonymousCapturingGroup(Box<AnonymousCapturingGroupTransport>),
     #[kind(kind::NAMED_CAPTURING_GROUP)]
-    NamedCapturingGroup(NamedCapturingGroupTransport),
+    NamedCapturingGroup(Box<NamedCapturingGroupTransport>),
     #[kind(kind::NON_CAPTURING_GROUP)]
-    NonCapturingGroup(NonCapturingGroupTransport),
+    NonCapturingGroup(Box<NonCapturingGroupTransport>),
     #[kind(kind::INLINE_FLAGS_GROUP_ENABLE)]
-    InlineFlagsGroupEnable(InlineFlagsGroupEnableTransport),
+    InlineFlagsGroupEnable(Box<InlineFlagsGroupEnableTransport>),
     #[kind(kind::INLINE_FLAGS_GROUP_TOGGLE)]
-    InlineFlagsGroupToggle(InlineFlagsGroupToggleTransport),
+    InlineFlagsGroupToggle(Box<InlineFlagsGroupToggleTransport>),
     #[kind(kind::INLINE_FLAGS_GROUP_DISABLE)]
-    InlineFlagsGroupDisable(InlineFlagsGroupDisableTransport),
+    InlineFlagsGroupDisable(Box<InlineFlagsGroupDisableTransport>),
     #[kind(kind::START_ASSERTION, kind::CARET)]
     StartAssertion,
     #[kind(kind::END_ASSERTION)]
@@ -1281,20 +1281,20 @@ impl ::sittir_core::render::Render for TermGroupContentTransportSlot {
             TermGroupContentTransportSlot::LookaroundAssertion(inner) => inner.render(w),
             TermGroupContentTransportSlot::PatternCharacter(inner) => inner.render(w),
             TermGroupContentTransportSlot::CharacterClass(inner) => inner.render(w),
-            TermGroupContentTransportSlot::PosixCharacterClass(inner) => inner.render(w),
+            TermGroupContentTransportSlot::PosixCharacterClass(inner) => inner.as_ref().render(w),
             TermGroupContentTransportSlot::DecimalEscape(inner) => inner.render(w),
-            TermGroupContentTransportSlot::CharacterClassEscape(inner) => inner.render(w),
+            TermGroupContentTransportSlot::CharacterClassEscape(inner) => inner.as_ref().render(w),
             TermGroupContentTransportSlot::ControlEscape(inner) => inner.render(w),
             TermGroupContentTransportSlot::ControlLetterEscape(inner) => inner.render(w),
             TermGroupContentTransportSlot::IdentityEscape(inner) => inner.render(w),
-            TermGroupContentTransportSlot::BackreferenceEscape(inner) => inner.render(w),
-            TermGroupContentTransportSlot::NamedGroupBackreference(inner) => inner.render(w),
-            TermGroupContentTransportSlot::AnonymousCapturingGroup(inner) => inner.render(w),
-            TermGroupContentTransportSlot::NamedCapturingGroup(inner) => inner.render(w),
-            TermGroupContentTransportSlot::NonCapturingGroup(inner) => inner.render(w),
-            TermGroupContentTransportSlot::InlineFlagsGroupEnable(inner) => inner.render(w),
-            TermGroupContentTransportSlot::InlineFlagsGroupToggle(inner) => inner.render(w),
-            TermGroupContentTransportSlot::InlineFlagsGroupDisable(inner) => inner.render(w),
+            TermGroupContentTransportSlot::BackreferenceEscape(inner) => inner.as_ref().render(w),
+            TermGroupContentTransportSlot::NamedGroupBackreference(inner) => inner.as_ref().render(w),
+            TermGroupContentTransportSlot::AnonymousCapturingGroup(inner) => inner.as_ref().render(w),
+            TermGroupContentTransportSlot::NamedCapturingGroup(inner) => inner.as_ref().render(w),
+            TermGroupContentTransportSlot::NonCapturingGroup(inner) => inner.as_ref().render(w),
+            TermGroupContentTransportSlot::InlineFlagsGroupEnable(inner) => inner.as_ref().render(w),
+            TermGroupContentTransportSlot::InlineFlagsGroupToggle(inner) => inner.as_ref().render(w),
+            TermGroupContentTransportSlot::InlineFlagsGroupDisable(inner) => inner.as_ref().render(w),
             TermGroupContentTransportSlot::StartAssertion => {
                 let written = render_start_assertion(w);
                 written?;
@@ -5052,3 +5052,48 @@ pub fn render_transport_parts(
     let rendered = render_transport_dispatch(&transport, ctx)?;
     Ok((TransportSource::Factory, rendered))
 }
+
+const _: () = assert!(::core::mem::size_of::<AlternationTransport>() <= 256, "AlternationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<AnonymousCapturingGroupTransport>() > 256, "AnonymousCapturingGroupTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<BackreferenceEscapeTransport>() > 256, "BackreferenceEscapeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CharacterClassEscapeArmTransport>() > 256, "CharacterClassEscapeArmTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CharacterClassEscapeText1Transport>() <= 256, "CharacterClassEscapeText1Transport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CharacterClassEscapeText2Transport>() <= 256, "CharacterClassEscapeText2Transport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CharacterClassEscapeTransport>() > 256, "CharacterClassEscapeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CharacterClassTransport>() <= 256, "CharacterClassTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ClassCharacterTransport>() <= 256, "ClassCharacterTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ClassRangeTransport>() > 256, "ClassRangeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ControlEscapeTransport>() <= 256, "ControlEscapeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ControlLetterEscapeTransport>() <= 256, "ControlLetterEscapeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CountQuantifierArmTransport>() > 256, "CountQuantifierArmTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CountQuantifierGroupTransport>() > 256, "CountQuantifierGroupTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CountQuantifierTransport>() > 256, "CountQuantifierTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<DecimalDigitsTransport>() <= 256, "DecimalDigitsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<DecimalEscapeTransport>() <= 256, "DecimalEscapeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<FlagsTransport>() <= 256, "FlagsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<GroupNameTransport>() <= 256, "GroupNameTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<IdentityEscapeTransport>() <= 256, "IdentityEscapeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<InlineFlagsGroupDisableTransport>() > 256, "InlineFlagsGroupDisableTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<InlineFlagsGroupEnableTransport>() > 256, "InlineFlagsGroupEnableTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<InlineFlagsGroupToggleTransport>() > 256, "InlineFlagsGroupToggleTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<LazyTransport>() <= 256, "LazyTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<LookaheadAssertionTransport>() > 256, "LookaheadAssertionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<LookaroundAssertionTransport>() <= 256, "LookaroundAssertionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<LookbehindAssertionTransport>() > 256, "LookbehindAssertionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<NamedCapturingGroupTransport>() > 256, "NamedCapturingGroupTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<NamedGroupBackreferenceTransport>() > 256, "NamedGroupBackreferenceTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<NonCapturingGroupTransport>() > 256, "NonCapturingGroupTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<OneOrMoreTransport>() <= 256, "OneOrMoreTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<OptionalTransport>() <= 256, "OptionalTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<PatternCharacterTransport>() <= 256, "PatternCharacterTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<PatternTransport>() > 256, "PatternTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<PosixCharacterClassTransport>() > 256, "PosixCharacterClassTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<PosixClassNameTransport>() <= 256, "PosixClassNameTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TermGroupTransport>() > 256, "TermGroupTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TermTransport>() <= 256, "TermTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<UnicodeCharacterEscapeTransport>() <= 256, "UnicodeCharacterEscapeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<UnicodePropertyNameTransport>() > 256, "UnicodePropertyNameTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueExpressionGroupTransport>() > 256, "UnicodePropertyValueExpressionGroupTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueExpressionTransport>() > 256, "UnicodePropertyValueExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueTransport>() <= 256, "UnicodePropertyValueTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ZeroOrMoreTransport>() <= 256, "ZeroOrMoreTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");

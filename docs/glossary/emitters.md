@@ -3472,8 +3472,8 @@ literal, a unit arm per fixed-literal kind, and `Verbatim`. Shared by both
 Emits `render_<supertype>(t: &<Supertype>Transport, w: &mut dyn RenderSink) -> RenderResult`
 as a bounded match over the enum variants, each arm delegating to the
 subtype payload's `.render(w)` so its own trivia-wrapped impl fires; a
-fixed-literal subtype's unit arm calls its kind's render function. Boxed
-(in-cycle) variants reach the inner struct through `.as_ref()`. Arm count
+fixed-literal subtype's unit arm calls its kind's render function. A boxed
+payload (`boxedInEnum`, given the emission's pins) is reached through `.as_ref()`. Arm count
 is bounded by the supertype's subtype count, not the grammar.
 
 ### `packages/codegen/src/emitters/render-module.ts::admitsVerbatimCollapse`
@@ -3682,15 +3682,6 @@ and between the owner's seam sites when it has any (`literalSeamedArm`).
 #### body
 
 ```text
-// SCC-driven Box rule for this per-slot enum's variants. The owner kind
-// is the parent node that hosts the slot; a variant is boxed iff it and
-// the owner share an SCC in the singular-reference graph. Leaf-like
-// variants always stay inline (see `boxedInEnum`).
-```
-
-#### body
-
-```text
 // Claim each accepted kind id once. Unit claims come first, from
 // `unitKindIdsOf`, then the blank id, then each payload variant's
 // accepted ids; an id already claimed stays with its first claimant.
@@ -3742,6 +3733,8 @@ reads the arm from its resolved options. The
 choice's seams sit inside the arm in the render rule, and the template
 collapses the choice to one slot, so the enum is where they are written;
 the parent never sees them.
+
+Each payload is written by `choicePayloadType`, boxed when it is pinned over the payload ceiling, and its render arm reaches a boxed payload through `.as_ref()`.
 
 The unit variants' kind ids are computed once (`unitKindIdsOf`) and feed both
 their `#[kind]` claims and, for an enum that backs a prepare-filled slot, its
@@ -4047,29 +4040,7 @@ A slot with a blank arm is always typed by its per-slot enum (`transportSlotShap
 
 ### `packages/codegen/src/emitters/render-module.ts::concreteTransportTypeName`
 
-```text
-/**
- * Rust type name for a concrete transport struct given a grammar kind.
- * Returns `null` when the kind maps to a supertype or multi node — those are
- * NOT emitted as transport structs/enums in Phase 1 (Phase 2 will add them).
- * The caller must fall back to `Box<AnyTransport>` on `null`.
- *
- * @param kind - Grammar kind string (e.g. `"identifier"`, `"_expression"`).
- * @param nodeMap - For typeName + modelType lookup.
- */
-```
-
-#### body
-
-```text
-// Supertype and multi nodes are not emitted as transport structs.
-```
-
-#### body
-
-```text
-// Unknown kind — conservative fallback.
-```
+The transport type a slot's concrete kind is held as: `rustTransportStructName` of its node, so a per-slot choice names a payload as every other printer does. `null` for a supertype, which a per-slot choice expands to its members, and for a kind with no node.
 
 ### `packages/codegen/src/emitters/render-module.ts::perSlotEnumName`
 
@@ -5311,6 +5282,14 @@ The leading options of a `spread` builder whose node has registered slots;
 undefined for any other node. The factory surface, the `from()` coercer, the
 test emitter and the argument rows all read it here, so whether a builder
 takes leading options is one fact.
+
+### `packages/codegen/src/emitters/boxed-payloads.ts::PAYLOAD_CEILING_BYTES`
+
+The payload ceiling: a choice the reader reads holds every payload larger than this boxed (`BOXED_PAYLOADS`), so a choice is no larger than the ceiling plus its tag. It is the largest of 512, 256 and 128 bytes at which, in both profiles, the typed read needs no more stack than today's read at 200 nested levels and per level (`typed_read_nesting.rs`); it is 256. The typed read's fixed root cost stays above today's at every ceiling, so a shallow source needs more stack than today's; that cost is reported, not gated.
+
+### `packages/codegen/src/emitters/boxed-payloads.ts::BOXED_PAYLOADS`
+
+Per grammar, the transport types a choice holds boxed: every payload type over `PAYLOAD_CEILING_BYTES`. The lists are measured, not chosen, and read once, by `grammarRenderInputs`: `size-census.py --pins <ceiling>` (in the shared-arena stack probes) prints them and says whether this file holds them. The build refuses a list that is wrong either way: the generated assertions (`payloadCeilingAssertions`) fail on an unpinned payload over the ceiling and a pinned one within it, and the printer refuses a pin no choice holds. A payload's size depends only on what it holds by value, and a cycle through a choice is already boxed at the field that closes it, so pinning settles from the leaves up in a few rounds.
 
 ### `packages/codegen/src/emitters/bundle-hash.ts::computeBundleHash`
 
@@ -13717,32 +13696,24 @@ filtered once here.
 
 ### `packages/codegen/src/emitters/render-module.ts::boxedInEnum`
 
-#### body
+Whether a choice holds a payload boxed: when the payload's transport type is among the pins the emission was given (`RenderOptionsInputs.boxedPayloads`, the grammar's `BOXED_PAYLOADS` through `grammarRenderInputs`). The pins hold every payload type over `PAYLOAD_CEILING_BYTES`, and the generated assertions (`payloadCeilingAssertions`) keep them exact, so a choice is no larger than the ceiling plus its tag. Every choice the reader reads boxes the same types, so a payload passes between choices, a supertype's bridge to `AnyTransport` included, as it is.
 
-```text
-// All transport enum variants are now inline. Box decisions moved to
-// the slot-field level (see `rustTransportSlotType` — singular slots
-// whose admit-set intersects parentKind's SCC get `Box<T>` at the
-// source of the back-edge). This keeps enums uniformly small in stack
-// frames and pushes the heap-indirection cost to the exact field that
-// creates the size cycle, not every variant of the enum.
-```
+### `packages/codegen/src/emitters/render-module.ts::choicePayloadType`
+
+The type a choice variant holds its payload as: the payload's transport type, boxed when `boxedInEnum` says so. It records the payload in `ReadPrint.choicePayloads`, so every payload a choice holds is checked against the ceiling.
+
+### `packages/codegen/src/emitters/render-module.ts::payloadCeilingAssertions`
+
+One `const` assertion per payload any choice holds, each one way: a pinned payload must be over `PAYLOAD_CEILING_BYTES`, an unpinned one at most that. A payload that grows past the ceiling fails the build asking to be pinned; a pinned one that shrinks under it fails asking to be unpinned. Each assertion is its own item, so one build reports every payload on the wrong side. A pin no choice holds is refused while printing, asking to be removed. The checks are for the pins the emission was given: the `<= N` assertion on every unpinned payload is what makes an emission that forgets the pins fail the Rust build, naming each payload over the ceiling. `renderTransportSupport` prints them after every choice.
 
 ### `packages/codegen/src/emitters/render-module.ts::emitSupertypeTransportEnum`
-
-#### body
-
-```text
-// SCC-driven Box rule. Box only when the variant kind and the
-// supertype's owner kind are in the same SCC of the singular-
-// reference graph (see `boxedInEnum` docstring). Leaf-like
-// variants (pattern / keyword / token / enum) are always inline.
-```
 
 A supertype whose concrete expansion (`supertypeAdmitsVerbatim`) holds a
 pattern-modeled kind admits `Verbatim(VerbatimTransport)`, marked
 `#[transport(verbatim)]`, beside its members: a prepare arm, a bridge arm to
 `AnyTransport::Verbatim`, and a render arm in the supertype's render helper.
+
+Each payload is written by `choicePayloadType`, boxed when it is pinned over the payload ceiling. The bridge to `AnyTransport` passes a payload as it is, a box included, since both choices box the same types; a boxed supertype payload is unboxed to call its own bridge.
 
 Each member's claims (`claimSupertypeIds`) print as its `#[kind]` line
 (`variantKindLines`), which is what the derive's codec decodes from. A
@@ -15603,6 +15574,12 @@ before and after edge, either absent when the kind owns no seam on that side.
  *  in hand would (tests on fixture node maps). */
 ```
 
+`boxedPayloads` is the grammar's payload pins (`BOXED_PAYLOADS`), a fact beside the node map like the render rules. The real pipeline fills it through `grammarRenderInputs`; a fixture emission that passes none boxes nothing and refuses nothing.
+
+### `packages/codegen/src/emitters/render-module.ts::grammarRenderInputs`
+
+The render inputs a grammar's real emission passes: the caller's facts plus the grammar's payload pins. It is the one read of `BOXED_PAYLOADS`; `emit.ts` and the render-module test's real-model helper both call it.
+
 ### `packages/codegen/src/emitters/render-module.ts::PlannedRenderOptions`
 
 ```text
@@ -16515,7 +16492,7 @@ The kind id of the keyword a presence slot reads: the id the parser shows for th
 
 ### `packages/codegen/src/emitters/render-module.ts::ReadPrint`
 
-What the transport printers share while they state the read facts: the facts' context, the template bodies by kind, the kind ids each printed type admits, and the choices that carry a blank arm. One value is threaded through every printer so a type's ids are recorded where they are printed and checked after all of them are.
+What the transport printers share while they state the read facts: the facts' context, the template bodies by kind, the kind ids each printed type admits, the choices that carry a blank arm, and the payload types the choices hold (`choicePayloads`), which the ceiling assertions check. One value is threaded through every printer so a type's ids are recorded where they are printed and checked after all of them are.
 
 ### `packages/codegen/src/emitters/render-module.ts::readPrintOf`
 

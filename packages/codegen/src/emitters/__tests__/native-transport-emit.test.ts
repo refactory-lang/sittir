@@ -15,6 +15,7 @@ import type { AssembledNode } from '../../compiler/model/node-map.ts';
 import type { ChoiceRule, SeqRule } from '../../types/rule.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 import { emitRenderModule } from '../render-module.ts';
+import { PAYLOAD_CEILING_BYTES } from '../boxed-payloads.ts';
 import { makeNodeMapWith, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { flatten } from '../../compiler/flatten.ts';
 
@@ -391,6 +392,17 @@ function makeSupertypeBackedChildEnumNodeMap(): NodeMap {
 }
 
 describe('native transport emission', () => {
+	it('boxes a pinned payload, asserts it over the ceiling, and refuses a pin no choice holds', () => {
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeMinimalNodeMap, MINIMAL_TOKENS);
+		const templates = emittedTemplates({ call_expression: slot('callee') });
+		const emitted = emitRenderModule('rust', templates, nodeMap, generatedIdTables, { boxedPayloads: ['CallExpressionTransport'] }).transportRs.contents;
+		expect(emitted).toContain('    CallExpression(Box<CallExpressionTransport>),');
+		expect(emitted).toMatch(new RegExp(`^const _: \\(\\) = assert!\\(::core::mem::size_of::<CallExpressionTransport>\\(\\) > ${PAYLOAD_CEILING_BYTES}, "`, 'm'));
+		expect(() => emitRenderModule('rust', templates, nodeMap, generatedIdTables, { boxedPayloads: ['UnheldTransport'] })).toThrow(
+			'UnheldTransport is pinned in boxed-payloads.ts but no choice holds it'
+		);
+	});
+
 	it('emits transport-oriented Rust render support', () => {
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeMinimalNodeMap, MINIMAL_TOKENS);
 		const emitted = emitRenderModule(
