@@ -4436,11 +4436,17 @@ Every read goes through the typed reader, and the wrap attaches members only. "T
    - Hydrating a coordinate is one native call: `read_at::<AnyTransport, AnyTransport>` at the coordinate's row, one level or the kind's `min_depth`.
    - A refusal fails the parse or the hydration that meets it, naming the kind, the child and the row, through `EngineGrammar::kind_name` (ruling 7).
 2. **Coordinates:** the tree and the row (ruling 1). The node table, `HandleMint`, and the `$handle`, `$parentHandle`, `$treeHandle` and `$childIndex` forms go. The render side's `SlotValue::Coord` takes the row in place of the handle.
-3. **Members and parent links build on #653**, merged as `f4a78b7fb` (accessor identity and in-place trivia, on today's wire). There, an accessor writes the child it hydrates back into the parent's slot, which is ruling 11's "the parent keeps the wrapper". `adoptChild` records each child's parent in a weak map, and when a trivia writer changes a parsed node, `detachAncestors` follows those links so no ancestor folds to its pre-edit bytes (`canFold`); the maintainer ruled that ancestors are mutated, for parsed nodes only. 1c keeps all of it and reimplements none of it. Every path in step 1 that hands out a node calls `adoptChild`:
+3. **Members and parent links build on #653**, merged as `f4a78b7fb` (accessor identity and in-place trivia, on today's wire). There, an accessor writes the child it hydrates back into the parent's slot, which is ruling 11's "the parent keeps the wrapper". `adoptChild` records each child's parent in a weak map, and when a trivia writer changes a parsed node, `detachAncestors` follows those links so no ancestor folds to its pre-edit bytes (`canFold`); the maintainer ruled that ancestors are mutated, for parsed nodes only. 1c keeps all of it and reimplements none of it. Every path that hands out a node calls `adoptChild`:
    - an accessor's hydration, including a row read (`read_at`) of a coordinate;
+   - a query result, through the path walk below;
    - the parsed root's own children.
 
-   Query results are not part of step 1. Whether a query hands out the node its parent's slot holds, and so records that parent, waits on the node-identity decision. That decision comes after arena storage is implemented; the maintainer paused #643 until then. Until it is made, a `$trivia` write on a node reached through a query stays refused, as #653 ships it, and 1c keeps that refusal.
+   A query result is the node its parent's slot holds, not a second wrapper. The typed reader's cursor walk gives each match its child-index path from the facet node: at each step, the slot that holds the next node and the node's index in that slot. JS follows the path down through the slots with `hydrateSlot` (`hydrateSlots` for a list), and both adopt every node they hand out. No arena is needed, and 1c closes #643.
+
+   Every query result now has a recorded parent, so 1c lifts the refusal of a `$trivia` write on a node reached through a query. That refusal is the "reached outside its parent's accessors" error in `packages/common/src/utils.ts`. 1c's test:
+   - reaches one node through a query and through its parent's accessors, and checks that both return the same object;
+   - writes the same `$trivia` through each path, in two parses of one source;
+   - checks that the two renders are byte-identical.
 
    1c's tasks are detailed against master at or after `f4a78b7fb`, where these names live.
 4. **The wrap** attaches members only (§ What the JavaScript wrap keeps), and a child within the depth gets its members on first access. Removed from every wrap:
@@ -4461,6 +4467,7 @@ Every read goes through the typed reader, and the wrap attaches members only. "T
    - rendered bytes and validation rows unchanged;
    - read parity (verification 3) by the validators that today read through the wrap, now reading through the typed reader with members attached;
    - depth (4), members on first access (5, with `measure-heap.mts`'s untouched whole-tree population), identity (6), unrouted children (7) and trivia ownership (8, `sittir tool trivia-placement`);
+   - query results: item 3's test, the same object through a query and through accessors, and byte-identical renders of the same `$trivia` write;
    - type-check time (13), and the full suite.
 
 ## Outline: after step 1
@@ -4472,4 +4479,3 @@ Every read goes through the typed reader, and the wrap attaches members only. "T
   At that step the render side stamps `delimiter` from its site with the spacing fields at prepare, and the reader's `delimiter` and the `#[flank]` attribute go. The gate is rendered bytes unchanged on the corpus. Until that step, the reader and today's read compute it the same way, so it cannot drift from the read it replaces.
 - **Relative coordinates** (ruling 6.2), re-planned against rows: relative points for detached data, coordinate facts derived instead of stamped, `$detach()`, and `$cst()` fetched by row.
 - **The record wire** (ruling 6.3). Its plan lands only past the gate on the record step: records must match or beat napi objects on read time, both one node per call and every match in one call, and on retained heap per node, as well as beating them on render decode. The object wire's numbers are re-taken in the engine beside the records'. The first thing the step attacks is the view's overhead: the `$with` and `$trivia` closures a view makes over its record, about 1.9 KB a node in the like-for-like re-take. At that step `#[napi(object)]` and the derive's object codec give way to records, and a parsed node's literal holds a reference to its record (ruling 4).
-- **Query-result identity**, decided once arena storage is implemented: whether a query hands out the node its parent's slot holds, recording that parent so a `$trivia` write on it renders (#643, paused until then). Until the decision, such a write is refused, as step 1 leaves it.
