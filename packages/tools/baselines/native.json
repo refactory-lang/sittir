@@ -1,6 +1,6 @@
 {
     "backend": "native",
-    "commit": "40b211b",
+    "commit": "a0a9760",
     "grammars": {
         "python": {
             "hoistedKindCount": 45,
@@ -14,7 +14,7 @@
             "supertypeKindCount": 15,
             "validators": {
                 "builtRenderParse": {
-                    "astMatchPass": 1161,
+                    "astMatchPass": 1165,
                     "failingKinds": [
                         "factory: _simple_statements",
                         "factory: argument_list",
@@ -65,7 +65,7 @@
                         "ir: string_content"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 1161,
+                    "pass": 1165,
                     "total": 1303
                 },
                 "coverage": {
@@ -287,8 +287,8 @@
         }
     },
     "totals": {
-        "fail": 145,
-        "pass": 16674,
+        "fail": 141,
+        "pass": 16678,
         "total": 16819
     }
 }
