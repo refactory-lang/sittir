@@ -36,6 +36,7 @@ import {
 	loadKindIdFromName,
 	buildReadHandle,
 	buildKindToSupertypes,
+	loadReparseHosts,
 	wrapForReparse,
 	readNodeOf,
 	walkWrappedTree,
@@ -680,6 +681,7 @@ export async function loadRenderReparseContext(
 	parser: RenderReparseContext['parser'],
 	nativeEngine: Awaited<ReturnType<typeof loadNativeEngine>>
 ): Promise<RenderReparseContext> {
+	await loadReparseHosts(grammar);
 	return {
 		grammar,
 		parser,

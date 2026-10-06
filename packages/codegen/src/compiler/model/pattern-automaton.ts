@@ -497,6 +497,19 @@ export function crossesLine(dfa: PatternDfa): boolean {
 	);
 }
 
+export function admitsInside(dfa: PatternDfa, literal: string): boolean {
+	const live = coaccessible(dfa);
+	return [...reachableFrom(dfa, [0], () => true)].some((start) => {
+		let at = start;
+		for (const char of literal) {
+			const edge = dfa.states[at]!.edges.find(({ set }) => set.has(char.codePointAt(0)!));
+			if (edge === undefined) return false;
+			at = edge.to;
+		}
+		return dfa.states[at]!.edges.some((edge) => live.has(edge.to));
+	});
+}
+
 export function absorbsRestOfLine(dfa: PatternDfa): boolean {
 	const reached = reachableFrom(dfa, [0], () => true);
 	const rest = LINE_TERMINATORS.complement();

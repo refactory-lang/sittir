@@ -46,6 +46,27 @@ export default sittirGrammar(base, {
 		escape_interpolation: token.immediate(/\{\{|\}\}/),
 		string_end: token.immediate(/\\*["'`]+/)
 	}),
+	reparseHosts: {
+		hosts: {
+			expression: '_ = ($r)',
+			type: '_: $r = None',
+			pattern: 'for $r in _: pass',
+			simple_statement: '$r',
+			compound_statement: '$r',
+			expression_statement: '$r',
+			assignment: '$r',
+			function_definition: '$r',
+			parameters: 'def _f$r:\n    pass',
+			parameters_elements: 'def _f($r):\n    pass',
+			argument_list: '_f$r',
+			dotted_name: 'import $r',
+			list_splat: '_f($r)',
+			list_splat_pattern: '$r = (1,)',
+			attribute: '[$r]',
+			subscript: '[$r]',
+			parenthesized_expression: 'f($r)'
+		}
+	},
 	groups: {
 		comparison_operator_comparator: ($) =>
 			seq(
