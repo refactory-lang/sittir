@@ -69,7 +69,7 @@ export async function loadInputs(grammars: readonly string[]): Promise<GrammarIn
 			const model = loadSlotModel(grammar);
 			return {
 				grammar,
-				bindings: readBindings(readFileSync(join(grammarPackageDir(grammar), 'bindings.scm'), 'utf8')),
+				bindings: await readBindings(readFileSync(join(grammarPackageDir(grammar), 'bindings.scm'), 'utf8')),
 				model,
 				textTokens: new Set(raw.textTokens ?? []),
 				layoutSlots: await layoutSlots(raw, new Set(model.keys()))

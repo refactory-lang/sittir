@@ -12,12 +12,14 @@ import scm, {
 	type NegatedField,
 	type NodeMethodsOf,
 	type Predicate,
+	type ScmAPI,
 	type String as QueryString
 } from '@sittir/scm';
 import { loadLanguageForGrammar } from '../validate/common.ts';
 
-const engine = await createEngine(scm);
-const { kinds: K } = engine;
+const { kinds: K } = await scm.load();
+let engine: ReturnType<typeof createEngine<ScmAPI>> | undefined;
+const bindingsEngine = () => (engine ??= createEngine(scm));
 
 type Expression = Definition.Parsed | NegatedField.Parsed | NamedNodeExpressionArm.Parsed | GroupExpressionArm.Parsed;
 type PatternNode = NamedNode.Parsed | AnonymousNode.Parsed | Grouping.Parsed;
@@ -157,13 +159,13 @@ function unparsed(node: NodeMethodsOf): number[] {
 	});
 }
 
-function definitionsOf(text: string): readonly Definition.Parsed[] {
-	return engine.parse(text, { deep: true }).definitions();
+async function definitionsOf(text: string): Promise<readonly Definition.Parsed[]> {
+	return (await bindingsEngine()).parse(text, { deep: true }).definitions();
 }
 
-export function bindingPatterns(text: string): BindingPattern[] {
+export async function bindingPatterns(text: string): Promise<BindingPattern[]> {
 	const spans = sourceSpans(text);
-	return definitionsOf(text).map((definition) => {
+	return (await definitionsOf(text)).map((definition) => {
 		const span = spanOf(definition);
 		if (span === undefined) throw new Error('bindings.scm: a parsed definition carries no span');
 		return { line: lineOf(text, spans, span.start), source: spans.slice(span), definition };
@@ -441,10 +443,10 @@ function patternsOf(
 	}
 }
 
-export function readBindings(text: string): BindingFacts {
+export async function readBindings(text: string): Promise<BindingFacts> {
 	const facts: Facts = { claims: [], members: [], containers: [], templates: [], unclaimed: [] };
 	const errors: number[] = [];
-	const patterns = bindingPatterns(text);
+	const patterns = await bindingPatterns(text);
 	if (patterns.length === 0 && text.trim() !== '') errors.push(0);
 	for (const { definition, ...origin } of patterns) {
 		errors.push(...unparsed(definition));
@@ -539,7 +541,7 @@ export async function bindingIssues(grammar: string, text: string): Promise<Bind
 	const { lang } = await loadLanguageForGrammar(grammar);
 	const { Query } = await import('web-tree-sitter');
 	const issues: BindingIssue[] = [];
-	for (const pattern of bindingPatterns(text)) {
+	for (const pattern of await bindingPatterns(text)) {
 		const unknown = new Set<string>();
 		for (const { kind, name } of referencesIn(pattern.definition)) {
 			const known =

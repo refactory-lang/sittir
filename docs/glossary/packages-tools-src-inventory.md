@@ -36,6 +36,8 @@ the alternation's field, captures and quantifier.
 
 The parse reports no errors of its own. A file is refused with `BindingsSyntaxError` when an ERROR region surfaces as trivia on a node the reader visits, or when a non-blank file parses to no pattern; a malformed pattern the parse absorbs without a trace passes here and is caught by the compile gate (`compileQuery`).
 
+The scm engine behind it is created by the first read and shared by the rest, so loading the module costs nothing and only a command that reads bindings needs a native scm build; the read is asynchronous for that reason.
+
 ### `packages/tools/src/inventory/bindings.ts::BindingFacts`
 
 What a bindings file says, before the slot model is consulted: the claims (`ClaimFact`, with the kinds enclosing a claim made below the top), the member captures (`MemberFact`: a `rename` of the slot its selector finds, the `presence` of a token, or a `nested` member with the kinds it routes through and the selector of its slot), the containers (`ContainerFact`: the element's selector, every other capture, the selectors of the slots it drops on purpose with the pattern's reason, and the line and text of its pattern), the templates (`TemplateFact`) and the unclaimed kinds (`UnclaimedFact`, each with its reason). Facts come in file order and, within a pattern, in pre-order, which the derivation's first-claim and rename rules rely on.
@@ -46,7 +48,7 @@ How a captured node finds its slot in a model node: by its field when it has one
 
 ### `packages/tools/src/inventory/bindings.ts::bindingPatterns`
 
-Each top-level definition with the line it starts on and its source text, sliced by the node's byte span. Spans count UTF-8 bytes and the bindings files carry multibyte comment rules, so slicing and line numbers go through `sourceSpans`. It is the unit `bindingIssues` compiles on its own, and `readBindings` reads the file through it, so a container's facts record the line and text given here.
+Each top-level definition with the line it starts on and its source text, sliced by the node's byte span. Spans count UTF-8 bytes and the bindings files carry multibyte comment rules, so slicing and line numbers go through `sourceSpans`. It is the unit `bindingIssues` compiles on its own, and `readBindings` reads the file through it, so a container's facts record the line and text given here. It shares `readBindings`'s lazily created engine and is asynchronous.
 
 ### `packages/tools/src/inventory/bindings.ts::BindingsSyntaxError`
 

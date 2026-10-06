@@ -34,9 +34,9 @@ const node = (kind: string, slots: readonly ModelSlot[] = [], subtypes: readonly
 	pattern: null
 });
 
-const grammar = (bindings: string): GrammarInput => ({
+const grammar = async (bindings: string): Promise<GrammarInput> => ({
 	grammar: 'g',
-	bindings: readBindings(bindings),
+	bindings: await readBindings(bindings),
 	model: new Map(
 		[
 			node('decorated', [slot('decorators', ['decorator'], true), slot('body', ['_definition', 'leaf_b'])]),
@@ -56,28 +56,28 @@ const grammar = (bindings: string): GrammarInput => ({
 const CLAIMS = ['(leaf_a) @declaration.a', '(leaf_b) @declaration.b', '(decorator) @attribute.decorator'];
 
 describe('container captures', () => {
-	it('land on the kinds the element slot names directly, not on kinds behind a supertype', () => {
-		const d = derive([grammar([...CLAIMS, '(decorated (decorator)* @decorators body: (_) @element)'].join('\n'))]);
+	it('land on the kinds the element slot names directly, not on kinds behind a supertype', async () => {
+		const d = derive([await grammar([...CLAIMS, '(decorated (decorator)* @decorators body: (_) @element)'].join('\n'))]);
 		expect(d.members.get('declaration.b')?.get('decorators')?.kinds).toEqual(new Set(['attribute.decorator']));
 		expect(d.members.get('declaration.b')?.get('decorators')?.multiple).toBe(true);
 		expect(d.members.get('declaration.a')?.has('decorators') ?? false).toBe(false);
 		expect(d.untargeted).toEqual([]);
 	});
 
-	it('are reported, not spread, when the element slot names no kind directly', () => {
-		const d = derive([grammar([...CLAIMS, '(declared "declare" @declare (_) @element)'].join('\n'))]);
+	it('are reported, not spread, when the element slot names no kind directly', async () => {
+		const d = derive([await grammar([...CLAIMS, '(declared "declare" @declare (_) @element)'].join('\n'))]);
 		expect(d.untargeted).toEqual(['g: declared (declare)']);
 		for (const [v, members] of d.members) expect(members.has('declare'), v).toBe(false);
 	});
 
-	it('leave no slot of the container behind unless the pattern drops it on purpose', () => {
-		const silent = derive([grammar([...CLAIMS, '(marked body: (_) @element)'].join('\n'))]);
+	it('leave no slot of the container behind unless the pattern drops it on purpose', async () => {
+		const silent = derive([await grammar([...CLAIMS, '(marked body: (_) @element)'].join('\n'))]);
 		expect(silent.uncaptured).toEqual([
 			'g:4 (marked body: (_) @element) leaves async uncaptured',
 			'g:4 (marked body: (_) @element) leaves marks uncaptured'
 		]);
 		const marked = derive([
-			grammar(
+			await grammar(
 				[
 					...CLAIMS,
 					'((marked (mark)* @dropped "async" @async body: (_) @element) (#set! reason "marks carry nothing portable"))'
@@ -88,24 +88,24 @@ describe('container captures', () => {
 		expect(marked.members.get('declaration.b')?.get('async')?.kinds).toEqual(new Set(['boolean']));
 	});
 
-	it('refuse a drop with no reason, or a drop that names no slot', () => {
+	it('refuse a drop with no reason, or a drop that names no slot', async () => {
 		const pattern = '(marked (mark)* @dropped "async" @async body: (_) @element)';
-		expect(derive([grammar([...CLAIMS, pattern].join('\n'))]).uncaptured).toEqual([
+		expect(derive([await grammar([...CLAIMS, pattern].join('\n'))]).uncaptured).toEqual([
 			`g:4 ${pattern} drops marks without a #set! reason`
 		]);
 		const blank = `(${pattern} (#set! reason " "))`;
-		expect(derive([grammar([...CLAIMS, blank].join('\n'))]).uncaptured).toEqual([
+		expect(derive([await grammar([...CLAIMS, blank].join('\n'))]).uncaptured).toEqual([
 			`g:4 ${blank} drops marks without a #set! reason`
 		]);
 		const stray =
 			'((marked (mark)* @dropped (leaf_a) @dropped "async" @async body: (_) @element) (#set! reason "marks carry nothing portable"))';
-		expect(derive([grammar([...CLAIMS, stray].join('\n'))]).uncaptured).toEqual([
+		expect(derive([await grammar([...CLAIMS, stray].join('\n'))]).uncaptured).toEqual([
 			`g:4 ${stray} marks a @dropped node that names no slot (leaf_a)`
 		]);
 	});
 
-	it('leave a claimed wrapper to its own members', () => {
-		const d = derive([grammar([...CLAIMS, '(declared) @declaration.declared'].join('\n'))]);
+	it('leave a claimed wrapper to its own members', async () => {
+		const d = derive([await grammar([...CLAIMS, '(declared) @declaration.declared'].join('\n'))]);
 		expect(d.untargeted).toEqual([]);
 		expect([...(d.members.get('declaration.declared')?.keys() ?? [])]).toEqual(['content']);
 	});
