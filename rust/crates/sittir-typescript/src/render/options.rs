@@ -3235,7 +3235,7 @@ pub fn allowed(site: usize) -> &'static [u16] {
     SPACING_SITES[site].3
 }
 
-/// Every layout kind (each `_layout` member, indent and dedent included), the domain of `spacing_text`.
+/// Every layout kind (each `_layout` member, the depth movers among them where the grammar has them), the domain of `spacing_text`.
 pub const LAYOUT_KINDS: &[u16] = &[180, 181, 182, 183, 184, 185, 186, 187];
 
 pub const WHITESPACE: ::sittir_core::render::WhitespaceTable = ::sittir_core::render::WhitespaceTable { text_of: spacing_text, indent: INDENT_KIND, dedent: DEDENT_KIND };

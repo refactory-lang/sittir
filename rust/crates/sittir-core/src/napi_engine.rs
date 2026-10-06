@@ -39,7 +39,7 @@
 /// - `$abi` — the render transport ABI version this crate was generated against.
 /// - `$defaults` — `fn() -> ResolvedOptions`, the grammar's site table at its declared defaults.
 /// - `$whitespace` — the grammar's [`WhitespaceTable`](crate::render::WhitespaceTable).
-/// - `$layout_kinds` — every layout kind of the grammar (each `_layout` member, indent and dedent included), the domain of `$whitespace`.
+/// - `$layout_kinds` — every layout kind of the grammar (each `_layout` member, the depth movers among them where the grammar has them), the domain of `$whitespace`.
 #[macro_export]
 macro_rules! napi_engine {
     ($grammar:ty, $render_root:ty, $options:ty, $render_parts:path, $abi:expr, $defaults:path, $whitespace:path, $layout_kinds:path) => {

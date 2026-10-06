@@ -4299,7 +4299,7 @@ Whether the grammar has a `_layout` supertype. Every real grammar does; a unit-t
 ### `packages/codegen/src/compiler/model/layout-kinds.ts::layoutKindsOf`
 
 The layout kinds, in declaration order: the arms of `layoutSymbolsOf`, every
-`_layout` member, indent and dedent included. A flank, a kind edge or a
+`_layout` member, the depth movers among them where the grammar has them. A flank, a kind edge or a
 token seam of an indenting grammar chooses among them.
 
 ### `packages/codegen/src/compiler/model/layout-kinds.ts::defaultWhitespaceKindOf`
