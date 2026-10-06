@@ -1216,8 +1216,26 @@ function emitResolveByKindHelper(lines: string[]): void {
 	lines.push('');
 }
 
-function resolveScalarParamName(hasBool: boolean, hasNumeric: boolean): string {
-	return hasBool || hasNumeric ? 'v' : '_v';
+interface ScalarResolution {
+	readonly trueMember: string | undefined;
+	readonly falseMember: string | undefined;
+	readonly numeric: readonly string[];
+	readonly resolves: boolean;
+}
+
+function scalarResolutionOf(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): ScalarResolution {
+	const scalars = scalarLeafKinds(nodeMap);
+	const numeric = numericLeafKinds(nodeMap);
+	const booleanMember = (kind: string): string | undefined =>
+		kindEntries === undefined ? undefined : findKindEntry(kindEntries, kind)?.member;
+	const trueMember = scalars.boolean === undefined ? undefined : booleanMember(scalars.boolean.trueKind);
+	const falseMember = scalars.boolean === undefined ? undefined : booleanMember(scalars.boolean.falseKind);
+	return {
+		trueMember,
+		falseMember,
+		numeric,
+		resolves: (trueMember !== undefined && falseMember !== undefined) || numeric.length > 0
+	};
 }
 
 function bareSlotOf(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal | undefined {
@@ -1317,7 +1335,14 @@ function emitBareRoutingTables(
 	lines.push('};');
 }
 
-function emitResolveOneHelper(lines: string[]): void {
+function emitScalarFallthrough(lines: string[]): void {
+	lines.push('  if (typeof v === "boolean" || typeof v === "number" || typeof v === "bigint") {');
+	lines.push('    const scalar = _resolveScalar(v);');
+	lines.push('    if (scalar !== undefined) return scalar as Admit<T>;');
+	lines.push('  }');
+}
+
+function emitResolveOneHelper(lines: string[], resolvesScalars: boolean): void {
 	lines.push('function _resolveOne<T>(');
 	lines.push('  v: _LooseFieldInput,');
 	lines.push('  leafKinds: readonly string[],');
@@ -1348,10 +1373,7 @@ function emitResolveOneHelper(lines: string[]): void {
 	);
 	lines.push('    }');
 	lines.push('  }');
-	lines.push('  if (typeof v === "boolean" || typeof v === "number" || typeof v === "bigint") {');
-	lines.push('    const scalar = _resolveScalar(v);');
-	lines.push('    if (scalar !== undefined) return scalar as Admit<T>;');
-	lines.push('  }');
+	if (resolvesScalars) emitScalarFallthrough(lines);
 	lines.push('  if (typeof v === "string") {');
 	lines.push('    const leaf = _resolveBareText(v, [...leafKinds, ...branchKinds]);');
 	lines.push('    if (leaf !== undefined) return leaf as Admit<T>;');
@@ -1662,32 +1684,25 @@ function emitResolverHelpers(
 	lines.push('}');
 	lines.push('');
 
-	const scalars = scalarLeafKinds(nodeMap);
-	const numeric = numericLeafKinds(nodeMap);
-	const scalarParam = resolveScalarParamName(
-		scalars.boolean !== undefined && kindEntries !== undefined,
-		numeric.length > 0
-	);
-	lines.push(`function _resolveScalar(${scalarParam}: boolean | number | bigint): AnyUntypedNode | number | undefined {`);
-	const booleanMember = (kind: string): string | undefined =>
-		kindEntries === undefined ? undefined : findKindEntry(kindEntries, kind)?.member;
-	const trueMember = scalars.boolean === undefined ? undefined : booleanMember(scalars.boolean.trueKind);
-	const falseMember = scalars.boolean === undefined ? undefined : booleanMember(scalars.boolean.falseKind);
-	if (trueMember !== undefined && falseMember !== undefined) {
-		lines.push(`  if (typeof v === "boolean") return v ? TSKindId.${trueMember} : TSKindId.${falseMember};`);
+	const scalar = scalarResolutionOf(nodeMap, kindEntries);
+	if (scalar.resolves) {
+		lines.push(`function _resolveScalar(v: boolean | number | bigint): AnyUntypedNode | number | undefined {`);
+		if (scalar.trueMember !== undefined && scalar.falseMember !== undefined) {
+			lines.push(`  if (typeof v === "boolean") return v ? TSKindId.${scalar.trueMember} : TSKindId.${scalar.falseMember};`);
+		}
+		if (scalar.numeric.length > 0) {
+			lines.push('  if (typeof v === "number" || typeof v === "bigint") {');
+			lines.push('    const text = String(v);');
+			lines.push(`    for (const kind of ${JSON.stringify(scalar.numeric)}) {`);
+			lines.push('      const e = _leafRegistry[kind];');
+			lines.push('      if (e?.pattern?.test(text)) return e.factory(text);');
+			lines.push('    }');
+			lines.push('  }');
+		}
+		lines.push('  return undefined;');
+		lines.push('}');
+		lines.push('');
 	}
-	if (numeric.length > 0) {
-		lines.push('  if (typeof v === "number" || typeof v === "bigint") {');
-		lines.push('    const text = String(v);');
-		lines.push(`    for (const kind of ${JSON.stringify(numeric)}) {`);
-		lines.push('      const e = _leafRegistry[kind];');
-		lines.push('      if (e?.pattern?.test(text)) return e.factory(text);');
-		lines.push('    }');
-		lines.push('  }');
-	}
-	lines.push('  return undefined;');
-	lines.push('}');
-	lines.push('');
 
 	const byText: [string, string][] = [];
 	const buildByKind: [string, string][] = [];
@@ -1721,7 +1736,7 @@ function emitResolverHelpers(
 	emitBareRoutingTables(lines, nodeMap, kindEntries);
 	lines.push('');
 
-	emitResolveOneHelper(lines);
+	emitResolveOneHelper(lines, scalar.resolves);
 
 	lines.push('function _resolveMany<T>(');
 	lines.push('  v: _LooseFieldInput,');
@@ -1765,10 +1780,7 @@ function emitResolverHelpers(
 	lines.push('function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): Admit<T> {');
 	lines.push('  if (v === undefined || v === null) return v as Admit<T>;');
 	lines.push('  if (isNode(v)) return v as Admit<T>;');
-	lines.push('  if (typeof v === "boolean" || typeof v === "number" || typeof v === "bigint") {');
-	lines.push('    const scalar = _resolveScalar(v);');
-	lines.push('    if (scalar !== undefined) return scalar as Admit<T>;');
-	lines.push('  }');
+	if (scalar.resolves) emitScalarFallthrough(lines);
 	lines.push('  if (typeof v === "string" && _leafRegistry[kind] !== undefined) return _buildGuardedText(v, kind) as Admit<T>;');
 	lines.push('  const tagged = _splitTag(v);');
 	lines.push('  if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as Admit<T>;');

@@ -169,10 +169,6 @@ function _resolveKindEnumScalar<T>(v: _LooseFieldInput, resolve: () => T): T {
 	return typeof v === 'number' || typeof v === 'string' ? (v as T) : resolve();
 }
 
-function _resolveScalar(_v: boolean | number | bigint): AnyUntypedNode | number | undefined {
-	return undefined;
-}
-
 const _KEYWORD_BRANCH_BY_TEXT: Record<string, string | undefined> = {};
 const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyUntypedNode | number) | undefined> = {};
 const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set(['capture', 'negated_field']);
@@ -219,10 +215,6 @@ function _resolveOne<T>(
 				`_resolveOne: a bare ${kindName ?? kindId} fits more than one arm: [${arms.join(', ')}]; name the arm explicitly`
 			);
 		}
-	}
-	if (typeof v === 'boolean' || typeof v === 'number' || typeof v === 'bigint') {
-		const scalar = _resolveScalar(v);
-		if (scalar !== undefined) return scalar as Admit<T>;
 	}
 	if (typeof v === 'string') {
 		const leaf = _resolveBareText(v, [...leafKinds, ...branchKinds]);
@@ -333,10 +325,6 @@ function _listElements(
 function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): Admit<T> {
 	if (v === undefined || v === null) return v as Admit<T>;
 	if (isNode(v)) return v as Admit<T>;
-	if (typeof v === 'boolean' || typeof v === 'number' || typeof v === 'bigint') {
-		const scalar = _resolveScalar(v);
-		if (scalar !== undefined) return scalar as Admit<T>;
-	}
 	if (typeof v === 'string' && _leafRegistry[kind] !== undefined) return _buildGuardedText(v, kind) as Admit<T>;
 	const tagged = _splitTag(v);
 	if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as Admit<T>;

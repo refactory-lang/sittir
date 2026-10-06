@@ -2216,26 +2216,6 @@ the leaf registry the remaining payload hands its `text` to the leaf's
 resolver, and one without a string `text` throws naming the shape. Bare
 strings, numbers and built nodes pass through unchanged.
 
-### `packages/codegen/src/emitters/from.ts::resolveScalarParamName`
-
-```text
-/**
- * Determines the scalar resolver parameter name, prefixing with `_` when
- * the grammar has no scalar leaf kinds to satisfy the oxlint unused-variable
- * convention.
- *
- * @remarks
- * When the grammar declares no scalar leaf kinds the function body is empty —
- * prefixing the parameter with `_` prevents oxlint from flagging it. Callers
- * still pass arguments; the `_` is a lint convention only.
- *
- * @param hasBool - Whether the grammar has a `boolean_literal` kind.
- * @param hasInt - Whether the grammar has an integer literal kind.
- * @param hasFloat - Whether the grammar has a float literal kind.
- * @returns The parameter name string: `'v'` or `'_v'`.
- */
-```
-
 ### `packages/codegen/src/emitters/from.ts::emitResolveOneHelper`
 
 The order of the three kind-route branches is load-bearing. A value that
@@ -13097,6 +13077,14 @@ instead of being offered to every wrapper whose bare-accept set now lists it
 (`bareAcceptClosure`); a slot that admits the enum directly goes through
 `_resolveKindEnum` first, which is why the arm search only ever saw member
 ids at wrapper-only slots until arrays started resolving per element.
+
+### `packages/codegen/src/emitters/from.ts::scalarResolutionOf`
+
+What a grammar's scalar resolver can resolve: the true and false members of its boolean kind (found in the kind entries, so a boolean kind whose members are missing resolves nothing), the numeric leaf kinds it tries by pattern, and `resolves`, true when either exists. It is the one fact behind every scalar emission: `_resolveScalar` is emitted only when `resolves`, and so is the scalar branch in `_resolveOne` and `_resolveOneLeaf`, so a grammar with no scalars (scm) carries neither, and a scalar falls through to the refusal path.
+
+### `packages/codegen/src/emitters/from.ts::emitScalarFallthrough`
+
+The scalar branch of `_resolveOne` and `_resolveOneLeaf`: a boolean, number or bigint is offered to `_resolveScalar`, and a defined answer is the value. Emitted from one place so the two resolvers cannot drift.
 
 ### `packages/codegen/src/emitters/from.ts::emitResolverHelpers`
 

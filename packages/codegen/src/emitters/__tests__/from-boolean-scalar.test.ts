@@ -120,3 +120,37 @@ describe('a boolean resolves to the keyword kinds of the two texts, whatever the
 		expect(emitted).toContain('if (typeof v === "boolean") return v ? TSKindId.True : TSKindId.False;');
 	});
 });
+
+describe('a grammar with no scalar kinds emits no scalar resolver', () => {
+	const entries: KindEnumEntry[] = [
+		{ id: 1, lexicalRank: 1, kind: 'mode', member: 'Mode' },
+		{ id: 2, lexicalRank: 2, kind: 'let_declaration', member: 'LetDeclaration' }
+	];
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set(
+		'mode',
+		new AssembledEnum(
+			'mode',
+			{
+				type: CHOICE,
+				members: [
+					{ type: STRING, value: 'a' },
+					{ type: STRING, value: 'b' }
+				]
+			},
+			{ kindEntries: entries }
+		)
+	);
+	nodes.set(
+		'_expression',
+		new AssembledSupertype('_expression', { type: CHOICE, members: [{ type: SYMBOL, name: 'mode' }] }, [{ name: 'mode' }])
+	);
+	nodes.set('let_declaration', new AssembledBranch('let_declaration', flatten(slotRule), flatten(slotRule)));
+	const nodeMap = makeNodeMapWith(nodes);
+
+	it('emits neither the resolver nor the branch that calls it', () => {
+		expect(scalarLeafKinds(nodeMap).boolean).toBeUndefined();
+		const emitted = emitFrom({ grammar: 'synth', nodeMap, kindEntries: entries });
+		expect(emitted).not.toContain('_resolveScalar');
+	});
+});
