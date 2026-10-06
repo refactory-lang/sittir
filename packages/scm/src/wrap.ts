@@ -219,6 +219,16 @@ function normalizeRepeatedWrapSlot<T>(
 // else passes through untouched. It must NOT re-wrap: wrapping
 // would dispatch straight back into the wrap function that called
 // this, with the same data.
+const _INTERIOR_KINDS: ReadonlySet<number> = new Set([TSKindId.Comment, TSKindId.EscapeSequence]);
+function _needsWrap(node: object): boolean {
+	const data = node as _UntypedNode & { readonly $displayType?: number };
+	return (
+		holdsSlots(node) ||
+		data.$displayType !== undefined ||
+		_spellingTokens(data) !== undefined ||
+		(_INTERIOR_KINDS.has(data.$type as number) && _isReadTextLeaf(node))
+	);
+}
 function hydrateSelf<T>(entry: T, tree: TreeHandle): T {
 	if (entry == null) return undefined as unknown as T;
 	const e = entry as unknown as _UntypedNode;
@@ -233,13 +243,12 @@ export type ParsedOfData<D> = D extends { readonly $type: infer Id }
 		? T.ParsedByKindId[Id]
 		: D
 	: D;
-const _hydrated = new WeakSet<object>();
 export function hydrateChild<T>(entry: T | ParsedOfData<T>, tree: TreeHandle): ParsedOfData<T> {
-	if (typeof entry === 'object' && entry !== null && _hydrated.has(entry)) return entry as ParsedOfData<T>;
+	if (typeof entry === 'object' && entry !== null && !isStub(entry) && (isTypedNode(entry) || !_needsWrap(entry)))
+		return entry as ParsedOfData<T>;
 	const resolved = hydrateSelf(entry, tree);
 	const e = resolved as unknown as _UntypedNode;
 	const child = resolved === entry && typeof e?.$type === 'number' && !isTypedNode(e) ? wrapNode(e, tree) : resolved;
-	if (typeof child === 'object' && child !== null) _hydrated.add(child);
 	return child as unknown as ParsedOfData<T>;
 }
 function hydrateSlot<T>(node: object, key: string, tree: TreeHandle): ParsedOfData<T> {
@@ -254,10 +263,9 @@ function hydrateSlots<T>(node: object, key: string, tree: TreeHandle): readonly 
 	const slots = node as Record<string, unknown>;
 	const stored = slots[key];
 	if (!Array.isArray(stored)) return stored == null ? _noChildren : [hydrateSlot<T>(node, key, tree)];
-	if (_hydrated.has(stored)) return stored as readonly ParsedOfData<T>[];
+	if (Object.isFrozen(stored)) return stored as readonly ParsedOfData<T>[];
 	const children = Object.freeze(stored.map((entry) => hydrateChild(entry as T, tree)));
 	for (const child of children) adoptChild(node, child);
-	_hydrated.add(children);
 	slots[key] = children;
 	return children;
 }
@@ -271,7 +279,7 @@ function storeExpanded<T>(value: T, tree: TreeHandle): StoredOf<T>;
 function storeExpanded(value: unknown, tree: TreeHandle): unknown {
 	if (Array.isArray(value)) return value.map((entry) => storeExpanded(entry, tree));
 	if (!isNode(value)) return value;
-	if (isStub(value) || isTypedNode(value) || !holdsSlots(value)) return value;
+	if (isStub(value) || isTypedNode(value) || !_needsWrap(value)) return value;
 	return wrapNode(value, tree);
 }
 function hydrateChildren<T>(
