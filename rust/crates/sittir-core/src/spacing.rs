@@ -584,7 +584,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         let Some(options) = self.options else {
             return;
         };
-        let Some(seam) = options.edge_arm(kind, side, stamped) else {
+        let Some(seam) = options.edge_arm(kind, side, stamped, None) else {
             return;
         };
         if options.kind_has(kind, crate::options::KIND_ROOT) {
@@ -602,7 +602,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         let Some(crate::options::EdgeArm { arm, strength: Some(strength), dedent }) = stamped else {
             return;
         };
-        if self.options.is_some_and(|options| options.edge_arm(kind, side, None).is_some()) {
+        if self.options.is_some_and(|options| options.edge_arm(kind, side, None, None).is_some()) {
             return;
         }
         self.seam_arm(crate::slot::SeamArm { arm, strength, dedent: dedent == Some(true) });

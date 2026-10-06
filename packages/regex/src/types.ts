@@ -1253,8 +1253,8 @@ export namespace NamedCapturingGroup {
 			readonly after?: WhitespaceKindId;
 			readonly before?: WhitespaceKindId;
 			readonly gt?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
-			readonly lparenQmarkPLt?: { readonly after?: WhitespaceKindId };
-			readonly lparenQmarkLt?: { readonly after?: WhitespaceKindId };
+			readonly lparenQmarkPLt?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly lparenQmarkLt?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 			readonly rparen?: { readonly before?: WhitespaceKindId };
 		};
 	}

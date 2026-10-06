@@ -54,6 +54,7 @@ export interface SpacingSite {
 	readonly defaultText?: string;
 	readonly seat?: { readonly kind: string; readonly field: string };
 	readonly path?: readonly PreferenceSegment[];
+	readonly edgeArm?: { readonly parent: string; readonly token: string };
 }
 
 export interface DelimiterSite {
@@ -200,7 +201,8 @@ export function planRenderOptions(
 			strength: seamStrength(site.origin),
 			...(site.side === undefined ? {} : { side: site.side }),
 			...(site.seat === undefined ? {} : { seat: site.seat }),
-			...(site.path === undefined ? {} : { path: site.path })
+			...(site.path === undefined ? {} : { path: site.path }),
+			...(site.edgeArm === undefined ? {} : { edgeArm: site.edgeArm })
 		}, site);
 		if (admitsDepth({ arms: site.arms.map((arm) => arm.value) })) depthCapable.push(spacing[spacing.length - 1]!);
 	}
@@ -399,10 +401,17 @@ function unbalancedLeafOf(leaves: readonly SmokeLeaf[], plan: RenderOptionsPlan)
 	return undefined;
 }
 
-interface EdgeSiteRow {
+export interface EdgeArmRow {
+	readonly arm: number;
+	readonly site: number;
+}
+
+export interface EdgeSiteRow {
 	readonly kind: number;
 	readonly before?: number;
 	readonly after?: number;
+	readonly beforeArms: readonly EdgeArmRow[];
+	readonly afterArms: readonly EdgeArmRow[];
 }
 
 export interface SeatTable {
@@ -461,16 +470,31 @@ export function edgeKindId(kindEntries: readonly IdEntry[], kind: string): numbe
 }
 
 export function edgeSitesOf(plan: RenderOptionsPlan, kindEntries: readonly IdEntry[]): EdgeSiteRow[] {
-	const byKind = new Map<number, { before?: number; after?: number }>();
+	const byKind = new Map<number, { before?: number; after?: number; beforeArms: EdgeArmRow[]; afterArms: EdgeArmRow[] }>();
 	const ambiguous = new Set<number>();
+	const rowOf = (id: number) => {
+		const row = byKind.get(id) ?? { beforeArms: [], afterArms: [] };
+		byKind.set(id, row);
+		return row;
+	};
 	plan.spacingSites.forEach((row, site) => {
 		if (!isKindEdge(row)) return;
 		const seam = parseSeamLabel(row.address)!;
 		const id = edgeKindId(kindEntries, row.kind);
 		if (id === undefined) return;
-		const edges = byKind.get(id) ?? {};
+		const edges = rowOf(id);
 		if (edges[seam.side] !== undefined) ambiguous.add(id);
-		byKind.set(id, { ...edges, [seam.side]: site });
+		edges[seam.side] = site;
+	});
+	plan.spacingSites.forEach((row, site) => {
+		if (row.edgeArm === undefined) return;
+		const id = edgeKindId(kindEntries, row.kind);
+		const arm = edgeKindId(kindEntries, row.edgeArm.token);
+		if (id === undefined || arm === undefined) {
+			throw new Error(`options.rs: edge arm site '${row.address}' of '${row.kind}' names '${row.edgeArm.token}', which has no kind id`);
+		}
+		const side = parseSeamLabel(row.edgeArm.parent)!.side;
+		rowOf(id)[side === 'before' ? 'beforeArms' : 'afterArms'].push({ arm, site });
 	});
 	return [...byKind.entries()]
 		.filter(([id]) => !ambiguous.has(id))
@@ -531,7 +555,13 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	const edgeRows = edgeSitesOf(plan, kindEntries);
 	L.push('/// The before and after site of every kind that owns edge seams, in kind id order.');
 	L.push('pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[');
-	for (const e of edgeRows) L.push(`    ::sittir_core::options::EdgeSite { before: ${siteOrNone(e.before)}, after: ${siteOrNone(e.after)} },`);
+	const armSites = (arms: readonly EdgeArmRow[]): string =>
+		`&[${arms.map((a) => `::sittir_core::options::ArmSite { arm: ${a.arm}, site: ${a.site} }`).join(', ')}]`;
+	for (const e of edgeRows) {
+		L.push(
+			`    ::sittir_core::options::EdgeSite { before: ${siteOrNone(e.before)}, after: ${siteOrNone(e.after)}, before_arms: ${armSites(e.beforeArms)}, after_arms: ${armSites(e.afterArms)} },`
+		);
+	}
 	L.push('];', '');
 	L.push('/// Per kind id, its row in EDGE_SITES.');
 	L.push(...denseTable('EDGE_ROWS', new Map(edgeRows.map((e, row) => [e.kind, row]))));

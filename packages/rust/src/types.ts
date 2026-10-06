@@ -12560,7 +12560,10 @@ export namespace TokenRepetitionPattern {
 			readonly dollar?: { readonly after?: LayoutKindId };
 			readonly lparen?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 			readonly operator?: { readonly before?: LayoutKindId };
+			readonly plus?: { readonly after?: LayoutKindId };
+			readonly qmark?: { readonly after?: LayoutKindId };
 			readonly rparen?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly star?: { readonly after?: LayoutKindId };
 			readonly tokenPatterns?: {
 				readonly end?: LayoutKindId;
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
@@ -12585,7 +12588,10 @@ export namespace TokenRepetition {
 			readonly dollar?: { readonly after?: LayoutKindId };
 			readonly lparen?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 			readonly operator?: { readonly before?: LayoutKindId };
+			readonly plus?: { readonly after?: LayoutKindId };
+			readonly qmark?: { readonly after?: LayoutKindId };
 			readonly rparen?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly star?: { readonly after?: LayoutKindId };
 			readonly tokens?: {
 				readonly end?: LayoutKindId;
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
@@ -13312,8 +13318,11 @@ export namespace UnaryExpression {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
+			readonly bang?: { readonly before?: LayoutKindId };
 			readonly before?: LayoutKindId;
+			readonly dash?: { readonly before?: LayoutKindId };
 			readonly operator?: { readonly after?: LayoutKindId };
+			readonly star?: { readonly before?: LayoutKindId };
 		};
 	}
 }
@@ -15048,8 +15057,8 @@ export namespace RangePatternPrefix {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
-			readonly dotDot?: { readonly after?: LayoutKindId };
-			readonly dotDotEq?: { readonly after?: LayoutKindId };
+			readonly dotDot?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly dotDotEq?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 		};
 	}
 }
@@ -15059,9 +15068,9 @@ export namespace RangePatternWithLeftWithRight {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
-			readonly dotDot?: { readonly after?: LayoutKindId };
-			readonly dotDotDot?: { readonly after?: LayoutKindId };
-			readonly dotDotEq?: { readonly after?: LayoutKindId };
+			readonly dotDot?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly dotDotDot?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly dotDotEq?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 		};
 	}
 }

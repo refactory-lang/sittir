@@ -97,7 +97,6 @@ export default sittirGrammar(base, {
 			'"<"/before': preference('tight'),
 			'"<"/after': preference('tight'),
 			'">"/before': preference('tight'),
-			'"!"/before': preference('tight'),
 			'"!"/after': preference('tight'),
 			'"&"/after': preference('tight'),
 			'"#"/after': preference('tight'),
@@ -116,7 +115,8 @@ export default sittirGrammar(base, {
 
 		struct_pattern: { '"{"/before': preference('space') },
 		struct_pattern_elements: { 'item:/start': preference('space'), 'item:/end': preference('space') },
-		macro_invocation: { '"!"/after': preference('tight') },
+		macro_invocation: { '"!"/before': preference('tight'), '"!"/after': preference('tight') },
+		inner_attribute_item: { '"!"/before': preference('tight') },
 		visibility_modifier_pub: { '"pub"/after': preference('tight') },
 		self_parameter: { 'reference:/after': preference('tight') },
 		variadic_parameter: { '"..."/before': preference('space') },
@@ -163,6 +163,7 @@ export default sittirGrammar(base, {
 		range_expression_postfix: { 'operator:/before': preference('tight') },
 		unary_expression: { 'operator:/after': preference('tight') },
 		token_tree_punctuation: {
+			'"!"/before': preference('tight'),
 			'"?"/before': preference('tight'),
 			'","/after': preference('space'),
 			'"..."/before': preference('space'),

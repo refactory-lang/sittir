@@ -15258,8 +15258,11 @@ origins spell the same value core's `spacing::SEAM_DECLARED` holds.
 
 The per-kind edge rows: for each spacing site that is its kind's own edge
 (`isKindEdge`), the kind's id (`edgeKindId`) and the site index of its before
-and after edge. Kinds whose name resolves to more than one id are dropped, and
-rows come out in id order. `renderOptionsRs` writes them as `EDGE_SITES` and
+and after edge, plus, for a kind whose edge is a choice of tokens, the arm sites
+of each side: one `{ arm, site }` per arm site (`edgeArm`), keyed by the arm
+token's kind id. An arm token with no kind id is an error. Kinds whose name
+resolves to more than one id are dropped, and rows come out in id order.
+`renderOptionsRs` writes them as `EDGE_SITES` (`before_arms`/`after_arms`) and
 indexes them by kind id in the dense `EDGE_ROWS` table (`denseTable`), so the
 runtime reaches a kind's row by one array read. A source coordinate of that
 kind meets these seams like a rendered node would, and a transport's
@@ -15548,7 +15551,9 @@ Per kind id, the OR of its flags over every kind entry that carries that id: `KI
 ### `packages/codegen/src/emitters/render-options-rs.ts::EdgeSiteRow`
 
 One kind's edge row before emission: its id and the site index of its
-before and after edge, either absent when the kind owns no seam on that side.
+before and after edge, either absent when the kind owns no seam on that side,
+and the arm sites of each side (`EdgeArmRow`: the arm token's kind id and its
+site), empty when the side has one site for every token.
 
 ### `packages/codegen/src/emitters/render-module.ts::RenderOptionsInputs`
 
@@ -15775,6 +15780,19 @@ throughout. A rebuilt list's trailing delimiter stays canonical.
 A kind's own edge sites among its synthesized sites, by field name to side:
 the seams `isKindEdge` accepts, their side read from the parsed seam label.
 
+### `packages/codegen/src/emitters/render-module.ts::edgeArmSlotsOf`
+
+The slot each side's arm is read from, for a kind whose edge has arm sites. For
+each kind-edge seam of the body whose side has arm sites, the member beside the
+seam (the one after a before seam, the one before an after seam) must be a slot;
+its name is the answer. Anything else is an error, since the arm could not be
+read at render time. Arm sites exist only where the compiler saw such a slot
+(`spacingSitesOf`), so the error marks a disagreement between the two.
+
+### `packages/codegen/src/emitters/render-module.ts::edgeRowsOf`
+
+`edgeSitesOf` for one plan, keyed by kind id and computed once.
+
 ### `packages/codegen/src/emitters/render-module.ts::kindEdgeWriterOf`
 
 The body printer's `edge` lookup for one struct: a seam name answers its
@@ -15802,7 +15820,10 @@ plan so `edgeIdOf` is a set lookup per node.
 
 A transport's `Edged` impl: its edge-row id, and access to its base `edges`,
 inserting the default on first write. `edges()` answers `Edges::NONE` for a
-transport not yet prepared.
+transport not yet prepared. A kind with arm sites also overrides
+`edge_arm_kinds`: each side's edge slot (`edgeArmSlotsOf`) answers which arm
+token it holds (`ArmOf::arm_among`, over the row's arm sites), so
+`prepare_edges` stamps that arm's site and not the shared one.
 
 ### `packages/codegen/src/emitters/render-module.ts::delimiterSiteOf`
 

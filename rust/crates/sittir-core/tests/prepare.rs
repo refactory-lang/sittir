@@ -121,7 +121,7 @@ fn a_nested_container_is_walked_to_the_bottom() {
     );
 }
 
-use sittir_core::options::{EdgeArm, Edged, Edges, EdgeSite, Side, SiteSpec, NO_SITE};
+use sittir_core::options::{ArmSite, EdgeArm, Edged, Edges, EdgeSite, Side, SiteSpec, NO_SITE};
 
 fn wire(arm: u16) -> EdgeArm {
     EdgeArm { arm, strength: None, dedent: None }
@@ -130,7 +130,7 @@ fn wire(arm: u16) -> EdgeArm {
 fn stamped(arm: u16, strength: u8) -> EdgeArm {
     EdgeArm { arm, strength: Some(strength), dedent: None }
 }
-use sittir_core::prepare::prepare_edges;
+use sittir_core::prepare::{prepare_edges, ArmOf};
 use sittir_core::render::{RenderSink, WhitespaceTable};
 use sittir_core::slot::SeamArm;
 use sittir_core::spacing::{SpacingWriter, WordMatcher, SEAM_DECLARED};
@@ -178,7 +178,7 @@ fn a_sink_writes_a_site_from_the_options_it_holds() {
     assert_eq!(out, "a b");
 }
 
-static EDGE_ROWS: &[EdgeSite] = &[EdgeSite { before: 0, after: 1 }];
+static EDGE_ROWS: &[EdgeSite] = &[EdgeSite { before: 0, after: 1, before_arms: &[], after_arms: &[] }];
 static EDGE_ROW_OF: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 0];
 static EDGE_SPECS: &[SiteSpec] = &[SiteSpec { default_arm: 5, strength: 1 }, SiteSpec { default_arm: 6, strength: 1 }];
 
@@ -213,15 +213,82 @@ fn an_edged_transport_prepares_its_edges_from_the_edge_row() {
 #[test]
 fn a_wire_stamp_takes_its_site_spec_strength_and_a_render_stamp_keeps_its_own() {
     let opts = edged_options();
-    assert_eq!(opts.edge_arm(KindId(3), Side::After, Some(wire(9))), Some(SeamArm { arm: 9, strength: SEAM_DECLARED, dedent: false }));
-    assert_eq!(opts.edge_arm(KindId(3), Side::After, Some(wire(6))), Some(SeamArm { arm: 6, strength: 1, dedent: false }));
-    assert_eq!(opts.edge_arm(KindId(3), Side::After, Some(stamped(6, 0))), Some(SeamArm { arm: 6, strength: 0, dedent: false }));
-    assert_eq!(opts.edge_arm(KindId(3), Side::Before, None), Some(SeamArm { arm: 5, strength: 1, dedent: false }));
-    assert_eq!(opts.edge_arm(KindId(4), Side::Before, None), None);
+    assert_eq!(opts.edge_arm(KindId(3), Side::After, Some(wire(9)), None), Some(SeamArm { arm: 9, strength: SEAM_DECLARED, dedent: false }));
+    assert_eq!(opts.edge_arm(KindId(3), Side::After, Some(wire(6)), None), Some(SeamArm { arm: 6, strength: 1, dedent: false }));
+    assert_eq!(opts.edge_arm(KindId(3), Side::After, Some(stamped(6, 0)), None), Some(SeamArm { arm: 6, strength: 0, dedent: false }));
+    assert_eq!(opts.edge_arm(KindId(3), Side::Before, None, None), Some(SeamArm { arm: 5, strength: 1, dedent: false }));
+    assert_eq!(opts.edge_arm(KindId(4), Side::Before, None, None), None);
     let sources = Sources(HashMap::new());
     let mut leaf = Edged3 { edges: Edges { before: None, after: Some(wire(8)) } };
     prepare_edges(&mut leaf, &ctx(&opts, &sources));
     assert_eq!(leaf.edges, Edges { before: Some(stamped(5, 1)), after: Some(wire(8)) });
+}
+
+static ARM_SITES: &[ArmSite] = &[ArmSite { arm: 40, site: 2 }, ArmSite { arm: 41, site: 3 }];
+static ARM_ROWS: &[EdgeSite] = &[EdgeSite { before: 0, after: 1, before_arms: ARM_SITES, after_arms: &[] }];
+static ARM_SPECS: &[SiteSpec] = &[
+    SiteSpec { default_arm: 5, strength: 1 },
+    SiteSpec { default_arm: 6, strength: 1 },
+    SiteSpec { default_arm: 5, strength: 1 },
+    SiteSpec { default_arm: 5, strength: 1 },
+];
+
+fn arm_options() -> ResolvedOptions {
+    ResolvedOptions { edges: ARM_ROWS, edge_rows: EDGE_ROW_OF, ..at_defaults(ARM_SPECS) }
+}
+
+#[test]
+fn an_edge_arm_picks_its_own_site_and_any_other_arm_the_shared_one() {
+    let mut opts = arm_options();
+    opts.set_arm(2, 9);
+    let at = |arm: Option<u16>| opts.edge_arm(KindId(3), Side::Before, None, arm.map(KindId));
+    assert_eq!(at(Some(40)), Some(SeamArm { arm: 9, strength: SEAM_DECLARED, dedent: false }));
+    assert_eq!(at(Some(41)), Some(SeamArm { arm: 5, strength: 1, dedent: false }));
+    assert_eq!(at(Some(42)), at(None));
+    assert_eq!(opts.edge_arm(KindId(3), Side::After, None, Some(KindId(40))), Some(SeamArm { arm: 6, strength: 1, dedent: false }));
+    assert_eq!(opts.edge_arm_sites(KindId(3), Side::Before), ARM_SITES);
+    assert!(opts.edge_arm_sites(KindId(3), Side::After).is_empty());
+}
+
+struct Token(u16);
+impl sittir_core::view::KindOf for Token {
+    fn kind_in(&self, kinds: &[KindId]) -> bool {
+        kinds.contains(&KindId(self.0))
+    }
+}
+
+struct Armed {
+    edges: Edges,
+    slot: Option<SlotValue<Token>>,
+}
+impl Edged for Armed {
+    fn kind_id(&self) -> KindId {
+        KindId(3)
+    }
+    fn edges(&self) -> &Edges {
+        &self.edges
+    }
+    fn edges_mut(&mut self) -> &mut Edges {
+        &mut self.edges
+    }
+    fn edge_arm_kinds(&self, ctx: &RenderContext<'_>) -> (Option<KindId>, Option<KindId>) {
+        (self.slot.arm_among(ctx, ctx.options.edge_arm_sites(self.kind_id(), Side::Before)), None)
+    }
+}
+
+#[test]
+fn a_transport_prepares_the_edge_of_the_arm_its_slot_holds() {
+    let mut opts = arm_options();
+    opts.set_arm(3, 9);
+    let sources = Sources(HashMap::new());
+    let prepared = |slot: Option<SlotValue<Token>>| {
+        let mut node = Armed { edges: Edges::default(), slot };
+        prepare_edges(&mut node, &ctx(&opts, &sources));
+        node.edges.before
+    };
+    assert_eq!(prepared(Some(SlotValue::Transport(Token(41)))), Some(stamped(9, SEAM_DECLARED)));
+    assert_eq!(prepared(Some(SlotValue::Transport(Token(40)))), Some(stamped(5, 1)));
+    assert_eq!(prepared(None), Some(stamped(5, 1)));
 }
 
 use sittir_core::prepare::{fill_seated_gaps, seat_site, SeatTarget};
@@ -419,7 +486,7 @@ fn a_seated_coordinate_keeps_its_seat_when_it_prepares_its_kind_edges() {
     assert_eq!(coord_after_of(&items[1]), Some(6));
 }
 
-static EDGE_ROWS_3: &[EdgeSite] = &[EdgeSite { before: 0, after: 2 }];
+static EDGE_ROWS_3: &[EdgeSite] = &[EdgeSite { before: 0, after: 2, before_arms: &[], after_arms: &[] }];
 static EDGE_SPECS_3: &[SiteSpec] = &[
     SiteSpec { default_arm: 5, strength: 1 },
     SiteSpec { default_arm: 70, strength: 1 },

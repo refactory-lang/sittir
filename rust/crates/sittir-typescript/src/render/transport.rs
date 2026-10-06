@@ -4366,8 +4366,18 @@ impl ::sittir_core::view::KindOf for ImportAttributeAttributeKindTransportSlot {
 impl ::sittir_core::render::Render for ImportAttributeAttributeKindTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ImportAttributeAttributeKindTransportSlot::WithKeyword => render_with_keyword(w),
-            ImportAttributeAttributeKindTransportSlot::AssertKeyword => render_assert_keyword(w),
+            ImportAttributeAttributeKindTransportSlot::WithKeyword => {
+                w.site_at(options::SITE_IMPORT_ATTRIBUTE_WITH_KEYWORD_BEFORE);
+                let written = render_with_keyword(w);
+                written?;
+                Ok(())
+            }
+            ImportAttributeAttributeKindTransportSlot::AssertKeyword => {
+                w.site_at(options::SITE_IMPORT_ATTRIBUTE_ASSERT_KEYWORD_BEFORE);
+                let written = render_assert_keyword(w);
+                written?;
+                Ok(())
+            }
         }
     }
 }
@@ -5077,8 +5087,18 @@ impl ::sittir_core::view::KindOf for LexicalDeclarationKindTransportSlot {
 impl ::sittir_core::render::Render for LexicalDeclarationKindTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            LexicalDeclarationKindTransportSlot::LetKeyword => render_let_keyword(w),
-            LexicalDeclarationKindTransportSlot::ConstKeyword => render_const_keyword(w),
+            LexicalDeclarationKindTransportSlot::LetKeyword => {
+                w.site_at(options::SITE_LEXICAL_DECLARATION_LET_KEYWORD_BEFORE);
+                let written = render_let_keyword(w);
+                written?;
+                Ok(())
+            }
+            LexicalDeclarationKindTransportSlot::ConstKeyword => {
+                w.site_at(options::SITE_LEXICAL_DECLARATION_CONST_KEYWORD_BEFORE);
+                let written = render_const_keyword(w);
+                written?;
+                Ok(())
+            }
         }
     }
 }
@@ -11610,13 +11630,48 @@ impl ::sittir_core::view::KindOf for UnaryExpressionOperatorTransportSlot {
 impl ::sittir_core::render::Render for UnaryExpressionOperatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            UnaryExpressionOperatorTransportSlot::Bang => render_bang(w),
-            UnaryExpressionOperatorTransportSlot::Tilde => render_tilde(w),
-            UnaryExpressionOperatorTransportSlot::Dash => render_dash(w),
-            UnaryExpressionOperatorTransportSlot::Plus => render_plus(w),
-            UnaryExpressionOperatorTransportSlot::TypeofKeyword => render_typeof_keyword(w),
-            UnaryExpressionOperatorTransportSlot::VoidKeyword => render_void_keyword(w),
-            UnaryExpressionOperatorTransportSlot::DeleteKeyword => render_delete_keyword(w),
+            UnaryExpressionOperatorTransportSlot::Bang => {
+                w.site_at(options::SITE_UNARY_EXPRESSION_BANG_BEFORE);
+                let written = render_bang(w);
+                written?;
+                Ok(())
+            }
+            UnaryExpressionOperatorTransportSlot::Tilde => {
+                w.site_at(options::SITE_UNARY_EXPRESSION_TILDE_BEFORE);
+                let written = render_tilde(w);
+                written?;
+                Ok(())
+            }
+            UnaryExpressionOperatorTransportSlot::Dash => {
+                w.site_at(options::SITE_UNARY_EXPRESSION_DASH_BEFORE);
+                let written = render_dash(w);
+                written?;
+                Ok(())
+            }
+            UnaryExpressionOperatorTransportSlot::Plus => {
+                w.site_at(options::SITE_UNARY_EXPRESSION_PLUS_BEFORE);
+                let written = render_plus(w);
+                written?;
+                Ok(())
+            }
+            UnaryExpressionOperatorTransportSlot::TypeofKeyword => {
+                w.site_at(options::SITE_UNARY_EXPRESSION_TYPEOF_KEYWORD_BEFORE);
+                let written = render_typeof_keyword(w);
+                written?;
+                Ok(())
+            }
+            UnaryExpressionOperatorTransportSlot::VoidKeyword => {
+                w.site_at(options::SITE_UNARY_EXPRESSION_VOID_KEYWORD_BEFORE);
+                let written = render_void_keyword(w);
+                written?;
+                Ok(())
+            }
+            UnaryExpressionOperatorTransportSlot::DeleteKeyword => {
+                w.site_at(options::SITE_UNARY_EXPRESSION_DELETE_KEYWORD_BEFORE);
+                let written = render_delete_keyword(w);
+                written?;
+                Ok(())
+            }
         }
     }
 }
@@ -14124,8 +14179,18 @@ impl ::sittir_core::view::KindOf for ObjectTypeOpeningTransportSlot {
 impl ::sittir_core::render::Render for ObjectTypeOpeningTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ObjectTypeOpeningTransportSlot::Lbrace => render_lbrace(w),
-            ObjectTypeOpeningTransportSlot::LbracePipe => render_lbrace_pipe(w),
+            ObjectTypeOpeningTransportSlot::Lbrace => {
+                w.site_at(options::SITE_OBJECT_TYPE_LBRACE_BEFORE);
+                let written = render_lbrace(w);
+                written?;
+                Ok(())
+            }
+            ObjectTypeOpeningTransportSlot::LbracePipe => {
+                w.site_at(options::SITE_OBJECT_TYPE_LBRACE_PIPE_BEFORE);
+                let written = render_lbrace_pipe(w);
+                written?;
+                Ok(())
+            }
         }
     }
 }
@@ -14160,8 +14225,18 @@ impl ::sittir_core::view::KindOf for ObjectTypeClosingTransportSlot {
 impl ::sittir_core::render::Render for ObjectTypeClosingTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ObjectTypeClosingTransportSlot::Rbrace => render_rbrace(w),
-            ObjectTypeClosingTransportSlot::PipeRbrace => render_pipe_rbrace(w),
+            ObjectTypeClosingTransportSlot::Rbrace => {
+                let written = render_rbrace(w);
+                written?;
+                w.site_at(options::SITE_OBJECT_TYPE_RBRACE_AFTER);
+                Ok(())
+            }
+            ObjectTypeClosingTransportSlot::PipeRbrace => {
+                let written = render_pipe_rbrace(w);
+                written?;
+                w.site_at(options::SITE_OBJECT_TYPE_PIPE_RBRACE_AFTER);
+                Ok(())
+            }
         }
     }
 }
@@ -14197,12 +14272,14 @@ impl ::sittir_core::render::Render for ConstraintContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             ConstraintContentTransportSlot::ExtendsKeyword => {
+                w.site_at(options::SITE_CONSTRAINT_EXTENDS_KEYWORD_BEFORE);
                 let written = render_extends_keyword(w);
                 written?;
                 w.site_at(options::SITE_CONSTRAINT_EXTENDS_KEYWORD_AFTER);
                 Ok(())
             }
             ConstraintContentTransportSlot::Colon => {
+                w.site_at(options::SITE_CONSTRAINT_COLON_BEFORE);
                 let written = render_colon(w);
                 written?;
                 w.site_at(options::SITE_CONSTRAINT_COLON_AFTER);
@@ -15181,8 +15258,18 @@ impl ::sittir_core::view::KindOf for LiteralTypeNegativeNumberOperatorTransportS
 impl ::sittir_core::render::Render for LiteralTypeNegativeNumberOperatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            LiteralTypeNegativeNumberOperatorTransportSlot::Dash => render_dash(w),
-            LiteralTypeNegativeNumberOperatorTransportSlot::Plus => render_plus(w),
+            LiteralTypeNegativeNumberOperatorTransportSlot::Dash => {
+                w.site_at(options::SITE_LITERAL_TYPE_NEGATIVE_NUMBER_DASH_BEFORE);
+                let written = render_dash(w);
+                written?;
+                Ok(())
+            }
+            LiteralTypeNegativeNumberOperatorTransportSlot::Plus => {
+                w.site_at(options::SITE_LITERAL_TYPE_NEGATIVE_NUMBER_PLUS_BEFORE);
+                let written = render_plus(w);
+                written?;
+                Ok(())
+            }
         }
     }
 }
@@ -15980,6 +16067,42 @@ impl ::sittir_core::render::Render for ClassBodyMemberDeclarationTerminatorTrans
                 written?;
                 Ok(())
             }
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum IndexSignatureColonSignTransportSlot {
+    #[kind(kind::DASH)]
+    Dash,
+    #[kind(kind::PLUS)]
+    Plus,
+}
+
+impl ::sittir_core::prepare::Prepare for IndexSignatureColonSignTransportSlot {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            IndexSignatureColonSignTransportSlot::Dash => Ok(()),
+            IndexSignatureColonSignTransportSlot::Plus => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for IndexSignatureColonSignTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Dash => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
+            Self::Plus => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for IndexSignatureColonSignTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            IndexSignatureColonSignTransportSlot::Dash => render_dash(w),
+            IndexSignatureColonSignTransportSlot::Plus => render_plus(w),
         }
     }
 }
@@ -17142,8 +17265,64 @@ impl ::sittir_core::view::KindOf for UpdateExpressionPostfixOperatorTransportSlo
 impl ::sittir_core::render::Render for UpdateExpressionPostfixOperatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            UpdateExpressionPostfixOperatorTransportSlot::PlusPlus => render_plus_plus(w),
-            UpdateExpressionPostfixOperatorTransportSlot::DashDash => render_dash_dash(w),
+            UpdateExpressionPostfixOperatorTransportSlot::PlusPlus => {
+                let written = render_plus_plus(w);
+                written?;
+                w.site_at(options::SITE_UPDATE_EXPRESSION_POSTFIX_PLUS_PLUS_AFTER);
+                Ok(())
+            }
+            UpdateExpressionPostfixOperatorTransportSlot::DashDash => {
+                let written = render_dash_dash(w);
+                written?;
+                w.site_at(options::SITE_UPDATE_EXPRESSION_POSTFIX_DASH_DASH_AFTER);
+                Ok(())
+            }
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum UpdateExpressionPrefixOperatorTransportSlot {
+    #[kind(kind::PLUS_PLUS)]
+    PlusPlus,
+    #[kind(kind::DASH_DASH)]
+    DashDash,
+}
+
+impl ::sittir_core::prepare::Prepare for UpdateExpressionPrefixOperatorTransportSlot {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            UpdateExpressionPrefixOperatorTransportSlot::PlusPlus => Ok(()),
+            UpdateExpressionPrefixOperatorTransportSlot::DashDash => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for UpdateExpressionPrefixOperatorTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::PlusPlus => [::sittir_core::types::KindId(169)].iter().any(|k| kinds.contains(k)),
+            Self::DashDash => [::sittir_core::types::KindId(170)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for UpdateExpressionPrefixOperatorTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            UpdateExpressionPrefixOperatorTransportSlot::PlusPlus => {
+                w.site_at(options::SITE_UPDATE_EXPRESSION_PREFIX_PLUS_PLUS_BEFORE);
+                let written = render_plus_plus(w);
+                written?;
+                Ok(())
+            }
+            UpdateExpressionPrefixOperatorTransportSlot::DashDash => {
+                w.site_at(options::SITE_UPDATE_EXPRESSION_PREFIX_DASH_DASH_BEFORE);
+                let written = render_dash_dash(w);
+                written?;
+                Ok(())
+            }
         }
     }
 }
@@ -17736,6 +17915,42 @@ impl ::sittir_core::render::Render for ForHeaderLhsOperatorTransportSlot {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum ForHeaderLetConstKindKindTransportSlot {
+    #[kind(kind::LET_KEYWORD)]
+    LetKeyword,
+    #[kind(kind::CONST_KEYWORD)]
+    ConstKeyword,
+}
+
+impl ::sittir_core::prepare::Prepare for ForHeaderLetConstKindKindTransportSlot {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            ForHeaderLetConstKindKindTransportSlot::LetKeyword => Ok(()),
+            ForHeaderLetConstKindKindTransportSlot::ConstKeyword => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for ForHeaderLetConstKindKindTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::LetKeyword => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
+            Self::ConstKeyword => [::sittir_core::types::KindId(128)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for ForHeaderLetConstKindKindTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            ForHeaderLetConstKindKindTransportSlot::LetKeyword => render_let_keyword(w),
+            ForHeaderLetConstKindKindTransportSlot::ConstKeyword => render_const_keyword(w),
+        }
+    }
+}
+
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::PROGRAM, gap(0) = statements)]
@@ -18218,6 +18433,10 @@ impl ::sittir_core::options::Edged for ImportAttributeTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(202) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+    fn edge_arm_kinds(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> (Option<::sittir_core::types::KindId>, Option<::sittir_core::types::KindId>) {
+        use ::sittir_core::prepare::ArmOf;
+        (self.attribute_kind.arm_among(ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(202), ::sittir_core::options::Side::Before)), None)
+    }
 }
 
 impl ::sittir_core::render::Render for ImportAttributeTransport {
@@ -18382,6 +18601,10 @@ impl ::sittir_core::options::Edged for LexicalDeclarationTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(206) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+    fn edge_arm_kinds(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> (Option<::sittir_core::types::KindId>, Option<::sittir_core::types::KindId>) {
+        use ::sittir_core::prepare::ArmOf;
+        (self.kind.arm_among(ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(206), ::sittir_core::options::Side::Before)), None)
+    }
 }
 
 impl ::sittir_core::render::Render for LexicalDeclarationTransport {
@@ -20957,6 +21180,10 @@ impl ::sittir_core::options::Edged for UnaryExpressionTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(267) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+    fn edge_arm_kinds(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> (Option<::sittir_core::types::KindId>, Option<::sittir_core::types::KindId>) {
+        use ::sittir_core::prepare::ArmOf;
+        (self.operator.arm_among(ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(267), ::sittir_core::options::Side::Before)), None)
+    }
 }
 
 impl ::sittir_core::render::Render for UnaryExpressionTransport {
@@ -25517,6 +25744,10 @@ impl ::sittir_core::options::Edged for ObjectTypeTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(361) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+    fn edge_arm_kinds(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> (Option<::sittir_core::types::KindId>, Option<::sittir_core::types::KindId>) {
+        use ::sittir_core::prepare::ArmOf;
+        (self.opening.arm_among(ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(361), ::sittir_core::options::Side::Before)), self.closing.arm_among(ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(361), ::sittir_core::options::Side::After)))
+    }
 }
 
 impl ::sittir_core::render::Render for ObjectTypeTransport {
@@ -25836,6 +26067,10 @@ impl ::sittir_core::options::Edged for ConstraintTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(367) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+    fn edge_arm_kinds(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> (Option<::sittir_core::types::KindId>, Option<::sittir_core::types::KindId>) {
+        use ::sittir_core::prepare::ArmOf;
+        (self.content.arm_among(ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(367), ::sittir_core::options::Side::Before)), None)
+    }
 }
 
 impl ::sittir_core::render::Render for ConstraintTransport {
@@ -27160,6 +27395,10 @@ impl ::sittir_core::options::Edged for LiteralTypeNegativeNumberTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(395) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+    fn edge_arm_kinds(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> (Option<::sittir_core::types::KindId>, Option<::sittir_core::types::KindId>) {
+        use ::sittir_core::prepare::ArmOf;
+        (self.operator.arm_among(ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(395), ::sittir_core::options::Side::Before)), None)
+    }
 }
 
 impl ::sittir_core::render::Render for LiteralTypeNegativeNumberTransport {
@@ -27937,7 +28176,7 @@ pub struct IndexSignatureColonTransport {
     pub layout: Option<TransportLayout>,
     #[wire(key = "_sign")]
     #[slot(field = field::SIGN)]
-    pub sign: Option<::sittir_core::SlotValue<LiteralTypeNegativeNumberOperatorTransportSlot>>,
+    pub sign: Option<::sittir_core::SlotValue<IndexSignatureColonSignTransportSlot>>,
     #[wire(key = "_readonly")]
     #[slot(field = field::READONLY, presence = kind::READONLY_KEYWORD)]
     pub readonly: Option<bool>,
@@ -27998,7 +28237,7 @@ pub struct IndexSignatureMappedTypeClauseTransport {
     pub layout: Option<TransportLayout>,
     #[wire(key = "_sign")]
     #[slot(field = field::SIGN)]
-    pub sign: Option<::sittir_core::SlotValue<LiteralTypeNegativeNumberOperatorTransportSlot>>,
+    pub sign: Option<::sittir_core::SlotValue<IndexSignatureColonSignTransportSlot>>,
     #[wire(key = "_readonly")]
     #[slot(field = field::READONLY, presence = kind::READONLY_KEYWORD)]
     pub readonly: Option<bool>,
@@ -28631,6 +28870,10 @@ impl ::sittir_core::options::Edged for UpdateExpressionPostfixTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(416) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+    fn edge_arm_kinds(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> (Option<::sittir_core::types::KindId>, Option<::sittir_core::types::KindId>) {
+        use ::sittir_core::prepare::ArmOf;
+        (None, self.operator.arm_among(ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(416), ::sittir_core::options::Side::After)))
+    }
 }
 
 impl ::sittir_core::render::Render for UpdateExpressionPostfixTransport {
@@ -28664,7 +28907,7 @@ pub struct UpdateExpressionPrefixTransport {
     pub layout: Option<TransportLayout>,
     #[wire(key = "_operator")]
     #[slot(field = field::OPERATOR)]
-    pub operator: ::sittir_core::SlotValue<UpdateExpressionPostfixOperatorTransportSlot>,
+    pub operator: ::sittir_core::SlotValue<UpdateExpressionPrefixOperatorTransportSlot>,
     #[wire(key = "_argument")]
     #[slot(field = field::ARGUMENT)]
     pub argument: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -28680,6 +28923,10 @@ impl ::sittir_core::options::Edged for UpdateExpressionPrefixTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(417) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+    fn edge_arm_kinds(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> (Option<::sittir_core::types::KindId>, Option<::sittir_core::types::KindId>) {
+        use ::sittir_core::prepare::ArmOf;
+        (self.operator.arm_among(ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(417), ::sittir_core::options::Side::Before)), None)
+    }
 }
 
 impl ::sittir_core::render::Render for UpdateExpressionPrefixTransport {
@@ -29455,7 +29702,7 @@ pub struct ForHeaderLetConstKindTransport {
     pub layout: Option<TransportLayout>,
     #[wire(key = "_kind")]
     #[slot(field = field::KIND)]
-    pub kind: ::sittir_core::SlotValue<LexicalDeclarationKindTransportSlot>,
+    pub kind: ::sittir_core::SlotValue<ForHeaderLetConstKindKindTransportSlot>,
     #[wire(key = "_left")]
     #[slot(field = field::LEFT)]
     pub left: ::sittir_core::SlotValue<CatchClauseGroupParameterTransportSlot>,

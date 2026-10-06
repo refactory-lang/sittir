@@ -8,6 +8,19 @@
 pub struct EdgeSite {
     pub before: u16,
     pub after: u16,
+    /// Per arm token kind, the site its edge uses on the side before, when the
+    /// kind's edge is a choice of tokens that resolve one by one.
+    pub before_arms: &'static [ArmSite],
+    /// As `before_arms`, for the side after.
+    pub after_arms: &'static [ArmSite],
+}
+
+/// One arm of a token-set edge: the arm token's kind id and the spacing site
+/// that arm's edge uses.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ArmSite {
+    pub arm: u16,
+    pub site: u16,
 }
 
 /// The cell of a kind-indexed site table for a kind that owns no site there.
@@ -98,6 +111,15 @@ pub trait Edged {
     fn kind_id(&self) -> crate::types::KindId;
     fn edges(&self) -> &Edges;
     fn edges_mut(&mut self) -> &mut Edges;
+
+    /// The arm token each side's edge holds, for a kind whose edge is a
+    /// choice of tokens; `None` on a side without one.
+    fn edge_arm_kinds(
+        &self,
+        _ctx: &crate::prepare::RenderContext<'_>,
+    ) -> (Option<crate::types::KindId>, Option<crate::types::KindId>) {
+        (None, None)
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -138,9 +160,25 @@ impl ResolvedOptions {
         kind: crate::types::KindId,
         side: Side,
         stamped: Option<EdgeArm>,
+        arm: Option<crate::types::KindId>,
     ) -> Option<crate::slot::SeamArm> {
         let row = self.edge_row(kind)?;
-        self.edge_seam(match side { Side::Before => row.before, Side::After => row.after }, stamped)
+        let (shared, arms) = match side {
+            Side::Before => (row.before, row.before_arms),
+            Side::After => (row.after, row.after_arms),
+        };
+        let site = arm.and_then(|arm| arms.iter().find(|a| a.arm == arm.0)).map_or(shared, |a| a.site);
+        self.edge_seam(site, stamped)
+    }
+
+    /// The arms a kind's edge on `side` resolves one by one: empty when the
+    /// edge has one site for every token.
+    pub fn edge_arm_sites(&self, kind: crate::types::KindId, side: Side) -> &'static [ArmSite] {
+        match (self.edge_row(kind), side) {
+            (Some(row), Side::Before) => row.before_arms,
+            (Some(row), Side::After) => row.after_arms,
+            (None, _) => &[],
+        }
     }
 
     fn edge_seam(&self, site: u16, stamped: Option<EdgeArm>) -> Option<crate::slot::SeamArm> {

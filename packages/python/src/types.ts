@@ -6306,6 +6306,8 @@ export namespace SplatPattern {
 			readonly after?: WhitespaceKindId;
 			readonly before?: WhitespaceKindId;
 			readonly operator?: { readonly after?: WhitespaceKindId };
+			readonly star?: { readonly before?: WhitespaceKindId };
+			readonly starStar?: { readonly before?: WhitespaceKindId };
 			readonly underscore?: { readonly before?: WhitespaceKindId };
 		};
 	}
@@ -6478,7 +6480,10 @@ export namespace UnaryOperator {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceKindId;
 			readonly before?: WhitespaceKindId;
+			readonly dash?: { readonly before?: WhitespaceKindId };
 			readonly operator?: { readonly after?: WhitespaceKindId };
+			readonly plus?: { readonly before?: WhitespaceKindId };
+			readonly tilde?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6609,6 +6614,8 @@ export namespace SplatType {
 			readonly after?: WhitespaceKindId;
 			readonly before?: WhitespaceKindId;
 			readonly operator?: { readonly after?: WhitespaceKindId };
+			readonly star?: { readonly before?: WhitespaceKindId };
+			readonly starStar?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -7587,8 +7594,19 @@ export namespace SuiteBlock {
 export namespace ComparisonOperatorComparator {
 	export interface Hints {
 		readonly __optionsHint__?: {
+			readonly IsNot?: { readonly before?: WhitespaceKindId };
+			readonly NotIn?: { readonly before?: WhitespaceKindId };
 			readonly after?: WhitespaceKindId;
+			readonly bangEq?: { readonly before?: WhitespaceKindId };
 			readonly before?: WhitespaceKindId;
+			readonly eqEq?: { readonly before?: WhitespaceKindId };
+			readonly gt?: { readonly before?: WhitespaceKindId };
+			readonly gtEq?: { readonly before?: WhitespaceKindId };
+			readonly inKeyword?: { readonly before?: WhitespaceKindId };
+			readonly isKeyword?: { readonly before?: WhitespaceKindId };
+			readonly lt?: { readonly before?: WhitespaceKindId };
+			readonly ltEq?: { readonly before?: WhitespaceKindId };
+			readonly ltGt?: { readonly before?: WhitespaceKindId };
 			readonly operators?: { readonly after?: WhitespaceKindId };
 		};
 	}

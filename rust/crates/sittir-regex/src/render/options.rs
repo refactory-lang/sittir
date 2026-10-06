@@ -2,7 +2,7 @@
 
 use ::sittir_core::options::{ResolvedOptions, NO_SITE};
 
-pub const SPACING_SITE_COUNT: usize = 117;
+pub const SPACING_SITE_COUNT: usize = 119;
 pub const DELIMITER_SITE_COUNT: usize = 0;
 
 pub const SITE_ALTERNATION_TERMS_SEPARATOR_SPACE_BEFORE: usize = 0;
@@ -84,44 +84,46 @@ pub const SITE_LOOKBEHIND_ASSERTION_EQ_BEFORE: usize = 75;
 pub const SITE_LOOKBEHIND_ASSERTION_EQ_AFTER: usize = 76;
 pub const SITE_LOOKBEHIND_ASSERTION_LOOKBEHIND_ASSERTION_BEFORE: usize = 77;
 pub const SITE_LOOKBEHIND_ASSERTION_LOOKBEHIND_ASSERTION_AFTER: usize = 78;
-pub const SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_AFTER: usize = 79;
-pub const SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_AFTER: usize = 80;
-pub const SITE_NAMED_CAPTURING_GROUP_RPAREN_BEFORE: usize = 81;
-pub const SITE_NAMED_CAPTURING_GROUP_GT_BEFORE: usize = 82;
-pub const SITE_NAMED_CAPTURING_GROUP_GT_AFTER: usize = 83;
-pub const SITE_NAMED_CAPTURING_GROUP_NAMED_CAPTURING_GROUP_BEFORE: usize = 84;
-pub const SITE_NAMED_CAPTURING_GROUP_NAMED_CAPTURING_GROUP_AFTER: usize = 85;
-pub const SITE_NAMED_GROUP_BACKREFERENCE_LPAREN_QMARK_P_EQ_AFTER: usize = 86;
-pub const SITE_NAMED_GROUP_BACKREFERENCE_RPAREN_BEFORE: usize = 87;
-pub const SITE_NAMED_GROUP_BACKREFERENCE_NAMED_GROUP_BACKREFERENCE_BEFORE: usize = 88;
-pub const SITE_NAMED_GROUP_BACKREFERENCE_NAMED_GROUP_BACKREFERENCE_AFTER: usize = 89;
-pub const SITE_NON_CAPTURING_GROUP_LPAREN_QMARK_COLON_AFTER: usize = 90;
-pub const SITE_NON_CAPTURING_GROUP_RPAREN_BEFORE: usize = 91;
-pub const SITE_NON_CAPTURING_GROUP_NON_CAPTURING_GROUP_BEFORE: usize = 92;
-pub const SITE_NON_CAPTURING_GROUP_NON_CAPTURING_GROUP_AFTER: usize = 93;
-pub const SITE_ONE_OR_MORE_PLUS_AFTER: usize = 94;
-pub const SITE_OPTIONAL_QMARK_AFTER: usize = 95;
-pub const SITE_PATTERN_PATTERN_BEFORE: usize = 96;
-pub const SITE_PATTERN_PATTERN_AFTER: usize = 97;
-pub const SITE_POSIX_CHARACTER_CLASS_COLON_RBRACK_BEFORE: usize = 98;
-pub const SITE_POSIX_CHARACTER_CLASS_LBRACK_COLON_AFTER: usize = 99;
-pub const SITE_POSIX_CHARACTER_CLASS_POSIX_CHARACTER_CLASS_BEFORE: usize = 100;
-pub const SITE_POSIX_CHARACTER_CLASS_POSIX_CHARACTER_CLASS_AFTER: usize = 101;
-pub const SITE_TERM_TERM_GROUP_TERM_GROUP_AFTER: usize = 102;
-pub const SITE_TERM_TERM_GROUP_SEPARATOR_SPACE: usize = 103;
-pub const SITE_TERM_GROUP_ANY_CHARACTER_AFTER: usize = 104;
-pub const SITE_TERM_GROUP_BOUNDARY_ASSERTION_AFTER: usize = 105;
-pub const SITE_TERM_GROUP_END_ASSERTION_AFTER: usize = 106;
-pub const SITE_TERM_GROUP_NON_BOUNDARY_ASSERTION_AFTER: usize = 107;
-pub const SITE_TERM_GROUP_CARET_AFTER: usize = 108;
-pub const SITE_TERM_GROUP_TERM_GROUP_BEFORE: usize = 109;
-pub const SITE_TERM_GROUP_TERM_GROUP_AFTER: usize = 110;
-pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_UNICODE_PROPERTY_VALUE_EXPRESSION_BEFORE: usize = 111;
-pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_UNICODE_PROPERTY_VALUE_EXPRESSION_AFTER: usize = 112;
-pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_EQ_BEFORE: usize = 113;
-pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_BEFORE: usize = 114;
-pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_AFTER: usize = 115;
-pub const SITE_ZERO_OR_MORE_STAR_AFTER: usize = 116;
+pub const SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_BEFORE: usize = 79;
+pub const SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_AFTER: usize = 80;
+pub const SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_BEFORE: usize = 81;
+pub const SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_AFTER: usize = 82;
+pub const SITE_NAMED_CAPTURING_GROUP_RPAREN_BEFORE: usize = 83;
+pub const SITE_NAMED_CAPTURING_GROUP_GT_BEFORE: usize = 84;
+pub const SITE_NAMED_CAPTURING_GROUP_GT_AFTER: usize = 85;
+pub const SITE_NAMED_CAPTURING_GROUP_NAMED_CAPTURING_GROUP_BEFORE: usize = 86;
+pub const SITE_NAMED_CAPTURING_GROUP_NAMED_CAPTURING_GROUP_AFTER: usize = 87;
+pub const SITE_NAMED_GROUP_BACKREFERENCE_LPAREN_QMARK_P_EQ_AFTER: usize = 88;
+pub const SITE_NAMED_GROUP_BACKREFERENCE_RPAREN_BEFORE: usize = 89;
+pub const SITE_NAMED_GROUP_BACKREFERENCE_NAMED_GROUP_BACKREFERENCE_BEFORE: usize = 90;
+pub const SITE_NAMED_GROUP_BACKREFERENCE_NAMED_GROUP_BACKREFERENCE_AFTER: usize = 91;
+pub const SITE_NON_CAPTURING_GROUP_LPAREN_QMARK_COLON_AFTER: usize = 92;
+pub const SITE_NON_CAPTURING_GROUP_RPAREN_BEFORE: usize = 93;
+pub const SITE_NON_CAPTURING_GROUP_NON_CAPTURING_GROUP_BEFORE: usize = 94;
+pub const SITE_NON_CAPTURING_GROUP_NON_CAPTURING_GROUP_AFTER: usize = 95;
+pub const SITE_ONE_OR_MORE_PLUS_AFTER: usize = 96;
+pub const SITE_OPTIONAL_QMARK_AFTER: usize = 97;
+pub const SITE_PATTERN_PATTERN_BEFORE: usize = 98;
+pub const SITE_PATTERN_PATTERN_AFTER: usize = 99;
+pub const SITE_POSIX_CHARACTER_CLASS_COLON_RBRACK_BEFORE: usize = 100;
+pub const SITE_POSIX_CHARACTER_CLASS_LBRACK_COLON_AFTER: usize = 101;
+pub const SITE_POSIX_CHARACTER_CLASS_POSIX_CHARACTER_CLASS_BEFORE: usize = 102;
+pub const SITE_POSIX_CHARACTER_CLASS_POSIX_CHARACTER_CLASS_AFTER: usize = 103;
+pub const SITE_TERM_TERM_GROUP_TERM_GROUP_AFTER: usize = 104;
+pub const SITE_TERM_TERM_GROUP_SEPARATOR_SPACE: usize = 105;
+pub const SITE_TERM_GROUP_ANY_CHARACTER_AFTER: usize = 106;
+pub const SITE_TERM_GROUP_BOUNDARY_ASSERTION_AFTER: usize = 107;
+pub const SITE_TERM_GROUP_END_ASSERTION_AFTER: usize = 108;
+pub const SITE_TERM_GROUP_NON_BOUNDARY_ASSERTION_AFTER: usize = 109;
+pub const SITE_TERM_GROUP_CARET_AFTER: usize = 110;
+pub const SITE_TERM_GROUP_TERM_GROUP_BEFORE: usize = 111;
+pub const SITE_TERM_GROUP_TERM_GROUP_AFTER: usize = 112;
+pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_UNICODE_PROPERTY_VALUE_EXPRESSION_BEFORE: usize = 113;
+pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_UNICODE_PROPERTY_VALUE_EXPRESSION_AFTER: usize = 114;
+pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_EQ_BEFORE: usize = 115;
+pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_BEFORE: usize = 116;
+pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_AFTER: usize = 117;
+pub const SITE_ZERO_OR_MORE_STAR_AFTER: usize = 118;
 
 /// (kind, address, label, allowed kind ids), in canonical path order.
 pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
@@ -204,7 +206,9 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("lookbehind_assertion", "eq_after", "eq_after", &[47, 48, 49, 50]),
     ("lookbehind_assertion", "lookbehind_assertion_before", "lookbehind_assertion_before", &[47, 48, 49, 50]),
     ("lookbehind_assertion", "lookbehind_assertion_after", "lookbehind_assertion_after", &[47, 48, 49, 50]),
+    ("named_capturing_group", "lparen_qmark_lt_before", "lparen_qmark_lt_before", &[47, 48, 49, 50]),
     ("named_capturing_group", "lparen_qmark_lt_after", "lparen_qmark_lt_after", &[47, 48, 49, 50]),
+    ("named_capturing_group", "lparen_qmarkP_lt_before", "lparen_qmarkP_lt_before", &[47, 48, 49, 50]),
     ("named_capturing_group", "lparen_qmarkP_lt_after", "lparen_qmarkP_lt_after", &[47, 48, 49, 50]),
     ("named_capturing_group", "rparen_before", "rparen_before", &[47, 48, 49, 50]),
     ("named_capturing_group", "gt_before", "gt_before", &[47, 48, 49, 50]),
@@ -246,27 +250,27 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
 
 /// The before and after site of every kind that owns edge seams, in kind id order.
 pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[
-    ::sittir_core::options::EdgeSite { before: 96, after: 97 },
-    ::sittir_core::options::EdgeSite { before: 69, after: 70 },
-    ::sittir_core::options::EdgeSite { before: 77, after: 78 },
-    ::sittir_core::options::EdgeSite { before: 20, after: 21 },
-    ::sittir_core::options::EdgeSite { before: 100, after: 101 },
-    ::sittir_core::options::EdgeSite { before: 29, after: 30 },
-    ::sittir_core::options::EdgeSite { before: 4, after: 5 },
-    ::sittir_core::options::EdgeSite { before: 84, after: 85 },
-    ::sittir_core::options::EdgeSite { before: 92, after: 93 },
-    ::sittir_core::options::EdgeSite { before: 34, after: 35 },
-    ::sittir_core::options::EdgeSite { before: 10, after: 11 },
-    ::sittir_core::options::EdgeSite { before: 88, after: 89 },
-    ::sittir_core::options::EdgeSite { before: 111, after: 112 },
-    ::sittir_core::options::EdgeSite { before: 109, after: 110 },
-    ::sittir_core::options::EdgeSite { before: 39, after: 40 },
-    ::sittir_core::options::EdgeSite { before: 36, after: 37 },
-    ::sittir_core::options::EdgeSite { before: 25, after: 26 },
-    ::sittir_core::options::EdgeSite { before: 114, after: 115 },
-    ::sittir_core::options::EdgeSite { before: 53, after: 54 },
-    ::sittir_core::options::EdgeSite { before: 61, after: 62 },
-    ::sittir_core::options::EdgeSite { before: 47, after: 48 },
+    ::sittir_core::options::EdgeSite { before: 98, after: 99, before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: 69, after: 70, before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: 77, after: 78, before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: 20, after: 21, before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: 102, after: 103, before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: 29, after: 30, before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: 4, after: 5, before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: 86, after: 87, before_arms: &[::sittir_core::options::ArmSite { arm: 11, site: 79 }, ::sittir_core::options::ArmSite { arm: 22, site: 81 }], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: 94, after: 95, before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: 34, after: 35, before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: 10, after: 11, before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: 90, after: 91, before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: 113, after: 114, before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: 111, after: 112, before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: 39, after: 40, before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: 36, after: 37, before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: 25, after: 26, before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: 116, after: 117, before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: 53, after: 54, before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: 61, after: 62, before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: 47, after: 48, before_arms: &[], after_arms: &[] },
 ];
 
 /// Per kind id, its row in EDGE_SITES.
@@ -435,6 +439,8 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: 47, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 47, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 47, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 47, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 47, strength: 0 },
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
@@ -443,7 +449,7 @@ pub static SEATS_TERM_TERM_GROUP: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 102,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 104,
 ];
 
 pub fn defaults() -> ResolvedOptions {
@@ -655,9 +661,11 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "lparenQmarkPLt", path: "(named_capturing_group)/\"(?P<\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_AFTER, path: "(named_capturing_group)/\"(?P<\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_BEFORE, path: "(named_capturing_group)/\"(?P<\"/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "lparenQmarkLt", path: "(named_capturing_group)/\"(?<\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_AFTER, path: "(named_capturing_group)/\"(?<\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_BEFORE, path: "(named_capturing_group)/\"(?<\"/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "rparen", path: "(named_capturing_group)/\")\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_NAMED_CAPTURING_GROUP_RPAREN_BEFORE, path: "(named_capturing_group)/\")\"/before" }] },
