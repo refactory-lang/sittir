@@ -15,6 +15,7 @@ import { classifySlot, buildSupertypeTransportSet, deriveChildrenKinds, type Slo
 import { TEXT_RESOLVED_LAYOUT_SITES } from '../layout-text-sites.ts';
 import { emitRenderModule, grammarRenderInputs, payloadCeilingAssertions, rustTransportStructName, transportSlotShapeOf } from '../render-module.ts';
 import { BOXED_PAYLOADS, PAYLOAD_CEILING_BYTES } from '../boxed-payloads.ts';
+import { ENVELOPE_PINS } from '../envelope-claims.ts';
 import { collectCatalogKinds, collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
 import { seamRenderRules, spaceRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
 import { link } from '../../compiler/link.ts';
@@ -819,6 +820,22 @@ describe('the wire codec facts', () => {
 		expect(src).toMatch(/    #\[transport\(text\)\]\n    #\[kind\([^\n]*\)\]\n    Text\(::sittir_core::trivia::TriviaText\),/);
 		expect(src).toMatch(/    #\[transport\(verbatim\)\]\n    Verbatim\(VerbatimTransport\),\n    #\[transport\(text\)\]/);
 	});
+});
+
+describe('the envelope pin gate is wired to the real pipeline', () => {
+	it('hands each grammar its pin table, so the gate cannot be dropped without a test failing', () => {
+		expect(grammarRenderInputs('typescript', {}).envelopePins).toBe(ENVELOPE_PINS.typescript);
+		expect(grammarRenderInputs('rust', {}).envelopePins).toEqual({});
+	});
+
+	it('refuses a full emission that carries a pin for an enum it does not print', async () => {
+		const { raw, nodeMap, generatedIdTables, templates, renderRules } = await modelFor('typescript');
+		const inputs = grammarRenderInputs('typescript', { renderRules, visibleExternals: raw.visibleExternals, options: raw.options });
+		const stale = { ...inputs.envelopePins, 'GoneTransportSlot.Variant': { display: '_property_identifier', extras: [] } };
+		expect(() => emitRenderModule('typescript', templates, nodeMap, generatedIdTables, { ...inputs, envelopePins: stale })).toThrow(
+			/typescript GoneTransportSlot\.Variant pins an enum codegen does not print/
+		);
+	}, 120_000);
 });
 
 describe('the payload ceiling', () => {

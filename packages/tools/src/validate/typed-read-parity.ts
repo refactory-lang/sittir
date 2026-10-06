@@ -79,15 +79,10 @@ function parseReport(entry: string, report: string): { emptySlots: EmptySlotRow[
 }
 
 async function kindIdResolver(grammar: string): Promise<(kind: string) => number> {
-	const tables = (await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar)) as {
-		readonly kindIds?: ReadonlyMap<string, unknown> | Readonly<Record<string, unknown>>;
-	};
-	const kindIds = tables.kindIds ?? {};
-	const rows = new Map<string, { readonly id?: number }>(
-		(kindIds instanceof Map ? [...kindIds.entries()] : Object.entries(kindIds)) as [string, { readonly id?: number }][]
-	);
+	const tables = await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar);
+	const ids = new Map((await invoke('symbolTable', 'collectGeneratedKindEntries', tables)).map((entry) => [entry.kind, entry.id]));
 	return (kind) => {
-		const id = rows.get(kind)?.id;
+		const id = ids.get(kind);
 		if (id === undefined) throw new Error(`typed-read-parity: ${grammar} pins kind '${kind}', which the grammar does not have`);
 		return id;
 	};
