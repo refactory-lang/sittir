@@ -232,6 +232,10 @@ export namespace Pattern {
 			| V.Pattern.Tuple.Bare<G>
 			| V.Pattern.Tuple.Struct<G>;
 	}
+	export interface Wildcard<G extends GrammarContext> extends SubKindOf<V.Pattern<G>> {
+		// claimed by r
+		readonly $kind: 'pattern.wildcard';
+	}
 	export type Any<G extends GrammarContext> =
 		| V.Pattern.Array<G>
 		| V.Pattern.As<G>
@@ -267,5 +271,6 @@ export namespace Pattern {
 		| V.Pattern.Struct.Rest<G>
 		| V.Pattern.Tuple<G>
 		| V.Pattern.Tuple.Bare<G>
-		| V.Pattern.Tuple.Struct<G>;
+		| V.Pattern.Tuple.Struct<G>
+		| V.Pattern.Wildcard<G>;
 }

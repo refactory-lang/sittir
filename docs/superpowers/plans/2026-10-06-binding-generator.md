@@ -20,7 +20,7 @@ No stage touches `packages/common/src/transport-data.ts` or the native reader; t
 - `bindings.scm` exists for rust, typescript and python.
 - The query facet's plan form is `QueryPlan` (`@sittir/types`), evaluated by `holds` in `packages/common/src/query.ts`.
 - The form and subtype routing for kinds with no bare factory lives in `packages/tools/src/validate/common.ts` (`buildFactoryNodeFromReference` over the `ir` surface).
-- Probe, rust: 190 read entries, 173 build entries, 133 of 374 members rejected by the vocabulary, with the probe filling rust's context (each role's keyword text and the slot table) from rust's own derivation.
+- Probe, rust: 191 read entries, 174 build entries, 133 of 374 members rejected by the vocabulary, with the probe filling rust's context (each role's keyword text and the slot table) from rust's own derivation.
 
 ## How codegen gets the bindings facts (decided)
 
@@ -71,12 +71,12 @@ The causes the probe reports, each on the side that owns it:
 
 | cause | count | stage-3 change |
 | --- | --- | --- |
-| kind | 96 | A primitive type token read as `type.primitive` where the slot admits its const string. The enum-read rule is a routing fact, defined once in the shared route resolution: a token that is a value of a claimed enum reads as the enum's kind where the slot admits that enum, and as its const string otherwise. The conformance count reads through it. |
+| kind | 97 | A primitive type token read as `type.primitive` where the slot admits its const string. The enum-read rule is a routing fact, defined once in the shared route resolution: a token that is a value of a claimed enum reads as the enum's kind where the slot admits that enum, and as its const string otherwise. The conformance count reads through it. |
 | predicate | 13 | A member that admits a kind admits all its claims (vocabulary). |
 | unmapped | 12 | Each unmapped grammar kind gets a claim (bindings): onto an existing vocabulary kind, or onto a kind a feature adds to the vocabulary when none fits. |
 | untyped reader | 6 | The readers typed `unknown` get types (codegen typed surface). |
 | refinement | 3 | In the authored vocabulary, a level's `$kind` admits every path beneath it. |
-| token text | 2 | The wildcard `_` in a pattern slot: the vocabulary gives patterns a wildcard kind, or rust's context admits `'_'` there. |
+| token text | 1 | `parameter.name` reads keyword text (`'default'`) where rust's fill holds only its unmapped `rust:pattern` marker; it is cleared by the unmapped row's claim for `rust:pattern`. |
 | absent | 1 | Requiredness carries through containers (vocabulary projection). |
 
 - `sittir tool portable-conformance <grammar>` (the probe's tools, promoted) reports the count and causes.

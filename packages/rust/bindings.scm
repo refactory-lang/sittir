@@ -177,6 +177,7 @@
 (mut_pattern) @pattern.mutable
 (captured_pattern) @pattern.captured
 (generic_pattern) @pattern.generic
+(wildcard_pattern) @pattern.wildcard
 
 ; ── type ───────────────────────────────────────────────────────────────────────
 (primitive_type) @type.primitive
