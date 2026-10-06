@@ -117,10 +117,7 @@ Two facts the bindings reader drops have to be kept:
 - **A predicate claim's predicate** (operator, capture, argument). Without it a read entry cannot test the claim and a build entry cannot pin it.
 - **A presence member's token text.** Without it a capture named otherwise than its token (`"async" @isAsync`) loses the token.
 
-**The facts artifact.** Codegen never parses `bindings.scm`. The inventory reads it and writes `packages/<grammar>/.sittir/bindings.json`: the facts, keyed by a hash of the `bindings.scm` text together with a version of the facts schema and the derivation over them (`BINDING_FACTS_VERSION`, bumped whenever either changes what it produces). Codegen reads only that artifact, and refuses one whose key does not match the current `bindings.scm` and version, naming the command that regenerates it. So an artifact written by an older derivation is refused even when `bindings.scm` has not changed.
-
-- **A predicate's operator** is kept as written; one the derivation does not know is a derivation diagnostic, never dropped. Directives (`#set!`) are not predicates.
-- **A presence member's token** is its authored text; codegen resolves it to a kind id through the stamped public symbol.
+A predicate's operator is kept as written; one the derivation does not know is a derivation diagnostic, never dropped, and directives (`#set!`) are not predicates. A presence member's token is its authored text, which codegen resolves to a kind id through the stamped public symbol.
 
 ## 4. Conformance: what the locked vocabulary must admit
 
