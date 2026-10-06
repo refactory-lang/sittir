@@ -164,3 +164,217 @@ fn placement_matches_todays_read_on_the_typescript_probe_input() {
     let source = probe_input("create-engine.ts");
     assert_same_placement(&typed(&source, &language, &model, typescript_gap), &today(&source, &language, &model), "create-engine.ts");
 }
+
+use sittir_core::read::{Depth, ReadError, ReadTransport};
+use sittir_core::{SlotValue, Transport};
+use sittir_rust::render::{field_ids as field, kind_ids as kind};
+use sittir_typescript::render::kind_ids as ts;
+
+type Layout = Option<sittir_core::layout::TransportLayout<()>>;
+
+#[derive(Debug, Clone, PartialEq, Transport)]
+#[transport(kind = kind::IDENTIFIER, text)]
+struct Ident {
+    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    text: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Transport)]
+#[transport(kind = kind::PARAMETERS, layout = [kind::LPAREN, kind::RPAREN])]
+struct Params {
+    layout: Option<sittir_core::layout::TransportLayout<()>>,
+}
+
+#[derive(Debug, Clone, PartialEq, Transport)]
+#[transport(kind = kind::BLOCK, layout = [kind::LBRACE, kind::RBRACE], gap(1) = statements)]
+struct Block {
+    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[slot(field = field::STATEMENTS)]
+    statements: Option<Vec<SlotValue<Function>>>,
+}
+
+#[derive(Debug, Clone, PartialEq, Transport)]
+#[transport(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD])]
+struct Function {
+    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[slot(field = field::NAME)]
+    name: SlotValue<Ident>,
+    #[slot(field = field::PARAMETERS)]
+    parameters: SlotValue<Params>,
+    #[slot(field = field::BODY)]
+    body: SlotValue<Box<Block>>,
+}
+
+/// `Function` with no route for its body: every function is refused.
+#[derive(Debug, Clone, PartialEq, Transport)]
+#[transport(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD])]
+struct FunctionWithoutBody {
+    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[slot(field = field::NAME)]
+    name: SlotValue<Ident>,
+    #[slot(field = field::PARAMETERS)]
+    parameters: SlotValue<Params>,
+}
+
+#[derive(Debug, Clone, PartialEq, Transport)]
+#[transport(kind = kind::SOURCE_FILE, gap(0) = statements)]
+struct File {
+    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[slot(field = field::STATEMENTS)]
+    statements: Option<Vec<SlotValue<Function>>>,
+}
+
+/// A zero-width node read as a text leaf: its span is empty, so it reads as its fixed text.
+#[derive(Debug, Clone, PartialEq, Transport)]
+#[transport(kind = ts::_AUTOMATIC_SEMICOLON, text = ";")]
+struct Inserted {
+    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    text: String,
+}
+
+fn parse_rust(source: &str) -> tree_sitter::Tree {
+    parse(&sittir_rust::language(), source)
+}
+
+/// Read the tree's root into `T`, as tree 7.
+fn read<T: ReadTransport>(tree: &tree_sitter::Tree, source: &str, depth: Depth) -> Result<T, ReadError> {
+    T::read(&mut tree.walk(), &ReadCtx::new(source, 7), depth, Sides::root())
+}
+
+/// A cursor on the `nth` node of grammar kind `kind`, in pre-order.
+fn find(tree: &tree_sitter::Tree, kind: KindId, nth: usize) -> tree_sitter::TreeCursor<'_> {
+    let mut cursor = tree.walk();
+    let mut seen = 0;
+    for row in 0..tree.root_node().descendant_count() {
+        cursor.goto_descendant(row);
+        if cursor.node().grammar_id() == kind.0 {
+            if seen == nth {
+                return cursor;
+            }
+            seen += 1;
+        }
+    }
+    panic!("no node {nth} of kind {kind:?}");
+}
+
+/// Read the `nth` node of kind `kind` into `T`, as tree 7, as an owner no parent placed trivia on.
+fn read_nth<T: ReadTransport>(
+    tree: &tree_sitter::Tree,
+    source: &str,
+    kind: KindId,
+    nth: usize,
+    depth: Depth,
+) -> Result<T, ReadError> {
+    T::read(&mut find(tree, kind, nth), &ReadCtx::new(source, 7), depth, Sides::root())
+}
+
+fn function(file: &File, i: usize) -> &Function {
+    file.statements.as_ref().unwrap()[i].transport().expect("read within the depth")
+}
+
+/// One side's entries, or one inner gap's, as (start, end, same_line, tokens_between).
+fn trivia_spans(layout: &Layout, side: &str) -> Vec<(u32, u32, bool, u16)> {
+    let trivia = layout.as_ref().and_then(|l| l.trivia.as_ref());
+    let entries = match side {
+        "leading" => trivia.and_then(|t| t.leading.clone()),
+        "trailing" => trivia.and_then(|t| t.trailing.clone()),
+        key => trivia.and_then(|t| t.inner.as_ref()?.get(key).cloned()),
+    };
+    entries
+        .unwrap_or_default()
+        .iter()
+        .map(|e| {
+            let c = e.value.coord().expect("trivia is a coordinate");
+            (c.span.start, c.span.end, e.same_line, e.tokens_between)
+        })
+        .collect()
+}
+
+#[test]
+fn a_function_reads_into_its_slots_with_its_layout_tokens_skipped() {
+    let source = "fn f() {}";
+    let file: File = read(&parse_rust(source), source, Depth::All).unwrap();
+    let f = function(&file, 0);
+    assert_eq!(f.name.transport().unwrap().text, "f");
+    assert_eq!(f.body.transport().unwrap().statements, Some(vec![]));
+    assert_eq!((&f.layout, &file.layout), (&None, &None));
+}
+
+#[test]
+fn a_child_no_route_takes_refuses_the_read_naming_kind_child_and_row() {
+    let source = "fn f() {}";
+    let tree = parse_rust(source);
+    let refused = read_nth::<FunctionWithoutBody>(&tree, source, kind::FUNCTION_ITEM, 0, Depth::All).unwrap_err();
+    let ReadError::Unrouted { kind: parent, child, row } = refused else { panic!("{refused:?}") };
+    assert_eq!((parent, child), (kind::FUNCTION_ITEM, kind::BLOCK));
+    let mut at = tree.walk();
+    at.goto_descendant(row as usize);
+    assert_eq!(at.node().grammar_id(), kind::BLOCK.0);
+}
+
+#[test]
+fn past_the_depth_a_child_with_structure_is_its_coordinate() {
+    let source = "fn f() { fn g() {} }";
+    let tree = parse_rust(source);
+    let shallow: File = read(&tree, source, Depth::ONE).unwrap();
+    let coord = shallow.statements.as_ref().unwrap()[0].coord().expect("a coordinate at depth one");
+    assert_eq!((coord.span.start, coord.span.end, coord.kind), (0, 20, Some(kind::FUNCTION_ITEM)));
+    assert_eq!(coord.tree_id(), 7);
+    let two: File = read(&tree, source, Depth::Levels(std::num::NonZeroU32::new(2).unwrap())).unwrap();
+    let f = function(&two, 0);
+    assert_eq!(f.name.transport().unwrap().text, "f", "a leaf is inline");
+    assert!(f.body.coord().is_some(), "a block holding a function is past the depth");
+}
+
+#[test]
+fn comments_take_their_owners_by_the_placement_rule() {
+    // rust's line_comment ends before its newline: `// a` is 0..4, `// b` is 15..19
+    let source = "// a\nfn f() {} // b\n";
+    let file: File = read(&parse_rust(source), source, Depth::All).unwrap();
+    let f = function(&file, 0);
+    assert_eq!(trivia_spans(&f.layout, "leading"), vec![(0, 4, false, 0)]);
+    assert_eq!(trivia_spans(&f.layout, "trailing"), vec![(15, 19, true, 0)]);
+}
+
+#[test]
+fn a_comment_in_an_empty_block_takes_the_blocks_inner_gap() {
+    let source = "fn f() { /* c */ }";
+    let file: File = read(&parse_rust(source), source, Depth::All).unwrap();
+    let block = function(&file, 0).body.transport().unwrap();
+    assert_eq!(trivia_spans(&block.layout, "statements"), vec![(9, 16, false, 0)]);
+}
+
+#[test]
+fn a_file_of_comments_keeps_them_in_its_own_gap() {
+    let source = "// only\n";
+    let file: File = read(&parse_rust(source), source, Depth::All).unwrap();
+    assert_eq!(file.statements, Some(vec![]));
+    assert_eq!(trivia_spans(&file.layout, "statements"), vec![(0, 7, false, 0)]);
+}
+
+#[test]
+fn an_error_inside_a_node_is_trivia() {
+    let source = "fn f() { @ }";
+    let file: File = read(&parse_rust(source), source, Depth::All).unwrap();
+    let block = function(&file, 0).body.transport().unwrap();
+    let inner = block.layout.as_ref().unwrap().trivia.as_ref().unwrap().inner.as_ref().unwrap();
+    assert_eq!(inner["statements"][0].value.coord().unwrap().kind, Some(kind::ERROR));
+}
+
+#[test]
+fn a_missing_token_routes_as_its_kind() {
+    // the parser closes the parameters with a zero-width MISSING `)`, one of their layout tokens
+    let source = "fn f( {}";
+    let tree = parse_rust(source);
+    assert!(find(&tree, kind::RPAREN, 0).node().is_missing());
+    let file: File = read(&tree, source, Depth::All).unwrap();
+    assert_eq!(function(&file, 0).parameters.transport().unwrap().layout, None);
+}
+
+#[test]
+fn a_text_leaf_that_spans_nothing_reads_as_its_fixed_text() {
+    let source = "let x = 1\n";
+    let tree = parse(&sittir_typescript::language(), source);
+    let inserted: Inserted = read_nth(&tree, source, ts::_AUTOMATIC_SEMICOLON, 0, Depth::ONE).unwrap();
+    assert_eq!(inserted.text, ";");
+}
