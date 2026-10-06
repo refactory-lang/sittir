@@ -70,7 +70,7 @@ pub unsafe fn object(env: ::napi::sys::napi_env, value: ::napi::sys::napi_value)
 #[cfg(feature = "napi-bindings")]
 pub unsafe fn object_with(
     env: ::napi::sys::napi_env,
-    fields: &[(&'static ::std::ffi::CStr, ::napi::sys::napi_value)],
+    fields: &[(&::std::ffi::CStr, ::napi::sys::napi_value)],
 ) -> ::napi::Result<::napi::sys::napi_value> {
     use ::napi::bindgen_prelude::sys::{napi_property_descriptor, PropertyAttributes};
     let descriptors: Vec<napi_property_descriptor> = fields

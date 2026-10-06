@@ -319,7 +319,8 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNap
 #[cfg(feature = "napi-bindings")]
 impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for TransportTrivia<T> {
     /// `{ leading?, trailing?, inner? }`, each only when present. An inner
-    /// gap's name is data, so its key is too.
+    /// gap's name is data, so its key is too: the gaps object is defined, not
+    /// assigned, so any name (`__proto__` included) stays an own property.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         use crate::boundary::{object_with, set};
         let obj = unsafe { object_with(env, &[])? };
@@ -330,12 +331,13 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
             unsafe { set(env, obj, c"trailing", Vec::to_napi_value(env, trailing)?)? };
         }
         if let Some(inner) = val.inner {
-            let gaps = unsafe { object_with(env, &[])? };
+            let mut fields = Vec::with_capacity(inner.len());
             for (name, entries) in inner {
                 let name = ::std::ffi::CString::new(name).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                let entries = unsafe { Vec::to_napi_value(env, entries)? };
-                unsafe { ::napi::bindgen_prelude::set_named_property_raw(env, gaps, name.as_ptr(), entries)? };
+                fields.push((name, unsafe { Vec::to_napi_value(env, entries)? }));
             }
+            let fields: Vec<_> = fields.iter().map(|(name, entries)| (name.as_c_str(), *entries)).collect();
+            let gaps = unsafe { object_with(env, &fields)? };
             unsafe { set(env, obj, c"inner", gaps)? };
         }
         Ok(obj)
