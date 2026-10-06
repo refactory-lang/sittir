@@ -62,26 +62,27 @@ fn stack_probe_child() {
     read_on_thread(reader, n.parse().unwrap(), kib * 1024);
 }
 
+/// Whether `reader` reads `n` nested parentheses on a stack of `kib` KiB: the
+/// child test ran (it reports one test passed) and did not overflow.
+fn survives(reader: &str, n: usize, kib: usize) -> bool {
+    let output = Command::new(std::env::current_exe().unwrap())
+        .args(["--exact", "stack_probe_child", "--test-threads=1"])
+        .env("STACK_N", n.to_string())
+        .env("STACK_READER", reader)
+        .env("STACK_KIB", kib.to_string())
+        .output()
+        .unwrap();
+    output.status.success() && String::from_utf8_lossy(&output.stdout).contains("1 passed")
+}
+
 /// The least stack, in KiB, on which `reader` reads `n` nested parentheses,
 /// found by running the child on smaller and larger stacks.
 fn least_stack_kib(reader: &str, n: usize) -> usize {
-    let exe = std::env::current_exe().unwrap();
-    let survives = |kib: usize| {
-        Command::new(&exe)
-            .args(["--exact", "stack_probe_child", "--test-threads=1"])
-            .env("STACK_N", n.to_string())
-            .env("STACK_READER", reader)
-            .env("STACK_KIB", kib.to_string())
-            .output()
-            .unwrap()
-            .status
-            .success()
-    };
     let (mut lo, mut hi) = (16, 16 * 1024);
-    assert!(survives(hi), "{reader} overflows {hi} KiB at {n} levels");
+    assert!(survives(reader, n, hi), "{reader} overflows {hi} KiB at {n} levels, or the probe did not run");
     while hi - lo > 8 {
         let mid = (lo + hi) / 2;
-        if survives(mid) {
+        if survives(reader, n, mid) {
             hi = mid;
         } else {
             lo = mid;
@@ -92,23 +93,11 @@ fn least_stack_kib(reader: &str, n: usize) -> usize {
 
 /// The most nested parentheses `reader` reads on a stack of `kib` KiB.
 fn max_levels(reader: &str, kib: usize) -> usize {
-    let exe = std::env::current_exe().unwrap();
-    let survives = |n: usize| {
-        Command::new(&exe)
-            .args(["--exact", "stack_probe_child", "--test-threads=1"])
-            .env("STACK_N", n.to_string())
-            .env("STACK_READER", reader)
-            .env("STACK_KIB", kib.to_string())
-            .output()
-            .unwrap()
-            .status
-            .success()
-    };
     let (mut lo, mut hi) = (1, 8192);
-    assert!(survives(lo), "{reader} overflows {kib} KiB at one level");
+    assert!(survives(reader, lo, kib), "{reader} overflows {kib} KiB at one level, or the probe did not run");
     while hi - lo > 4 {
         let mid = (lo + hi) / 2;
-        if survives(mid) {
+        if survives(reader, mid, kib) {
             lo = mid;
         } else {
             hi = mid;
@@ -127,7 +116,10 @@ fn the_typed_read_costs_no_more_stack_per_level_than_today_s() {
     let levels = [1, 10, 40, 200];
     let cost = |reader: &str| levels.map(|n| least_stack_kib(reader, n));
     let (typed, today) = (cost("typed"), cost("today"));
-    let per_level = |kib: [usize; 4]| (kib[3] - kib[2]) as f64 * 1024.0 / (levels[3] - levels[2]) as f64;
+    let per_level = |kib: [usize; 4]| {
+        assert!(kib[3] > kib[2] && kib[2] > kib[0], "the least stack must grow with the nesting: {kib:?}");
+        (kib[3] - kib[2]) as f64 * 1024.0 / (levels[3] - levels[2]) as f64
+    };
     let (typed_per_level, today_per_level) = (per_level(typed), per_level(today));
     eprintln!("least stack KiB at {levels:?} levels: typed {typed:?}, today {today:?}");
     eprintln!("bytes per level: typed {typed_per_level:.0}, today {today_per_level:.0}");
