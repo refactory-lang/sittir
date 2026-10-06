@@ -150,7 +150,10 @@ pub enum FunctionModifiersModifierTransportSlot {
   holds one kind has that kind's type, and a keyword's presence is a boolean, `Option<bool>`,
   rendered by the keyword kind's own render function.
 - **Arity is the field's type:** `T`, `Option<T>`, `Vec<T>`; a list that must not be empty says so
-  (`min = 1`).
+  (`min = 1`). An empty list has one form, `[]`. A `repeat` and an `optional(repeat1)` read, build
+  and store the same empty list, never an absent slot, and no stored list key or list accessor has
+  `?` or `undefined` in its TypeScript type. A factory's input may omit a list, and the factory
+  stores `[]`. A hole in an elided list is an `undefined` item: a position in the list, not the slot.
 - **The attributes state only what the types cannot:** the field a slot routes by, the keyword a
   presence slot holds (`presence = kind::…`), the record's word offsets, a list's separator, a
   flank, a group seat, a kind's minimum depth, its layout tokens and its inner gaps, and the blank
