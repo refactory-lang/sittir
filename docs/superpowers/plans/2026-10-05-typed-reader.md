@@ -654,7 +654,7 @@ pub enum ReadError {
     Unadmitted { kind: KindId, row: u32 },
     /// A token whose text does not match its kind's interior.
     Interior { kind: KindId, row: u32 },
-    /// An enum kind whose text spells none of its members.
+    /// An enum kind whose spelling tokens display none of its members' ids.
     Unspelled { kind: KindId, row: u32 },
 }
 
@@ -682,7 +682,7 @@ impl ReadError {
                 format!("{} (kind {}) at row {row} does not match its token interior", name(kind), kind.0)
             }
             ReadError::Unspelled { kind, row } => {
-                format!("{} (kind {}) at row {row} spells none of its members", name(kind), kind.0)
+                format!("{} (kind {}) at row {row}: its tokens display none of its members' ids", name(kind), kind.0)
             }
         }
     }
@@ -2577,7 +2577,7 @@ A choice tries its variants in the order today's dispatch does:
 
 Each variant's ids are the ids today's claim loop gives it, so no id belongs to two variants.
 
-An enum kind (`PrimitiveTypeEnum`) has one unit variant per member, each with its token's kind id. A member token that arrives as the node itself is read by its id. An enum marked `spelled` also reads its own node (`primitive_type`, kind 341, which holds the token `u8`) as the member its spelling tokens display (Task 2's `spelled_id`). The node's children, apart from trivia, must be anonymous tokens with no field that all display one id, and that id must be a member's. That is the spec's "read as the member its text spells", decided by kind ids rather than by comparing text, and it is the rule today's wrap folds by (`_spelledMemberId`).
+An enum kind (`PrimitiveTypeEnum`) has one unit variant per member, each with its token's kind id. A member token that arrives as the node itself is read by its id. An enum marked `spelled` also reads its own node (`primitive_type`, kind 341, which holds the token `u8`) as the member its spelling tokens display (Task 2's `spelled_id`). The node's children, apart from trivia, must be anonymous tokens with no field that all display one id, and that id must be a member's. That is the spec's "reads as the member its spelling tokens display". It is decided by kind ids alone, never by comparing text, and it is the rule today's wrap folds by (`_spelledMemberId`).
 
 A multi-token member is an alias over its tokens, so every token displays the member's id. Typescript's `unique symbol` reads as `unique` (143) and `symbol` (grammar 42, displayed 143). Requiring every token to agree keeps a member from being read as another member its first token is: python's `is not` is not `is`. Codegen refuses an enum kind whose two members resolve to one id (`AssembledEnum`), so a fold has one answer.
 
@@ -3355,7 +3355,7 @@ Codegen states every read fact a type cannot, and each fact comes from the deriv
 | --- | --- | --- |
 | the kind | the struct's own kind entry (the `ownId` `renderTransportDataStruct` already computes) | `kind = kind::X` |
 | an alias envelope | `aliasEnvelopesOf` and `AssembledAlias.aliasTypeId` (`_ALIAS_ENVELOPES`) | `kind = kind::X, display, envelope, content = content` |
-| a text leaf | `modelType === 'pattern'`, and its fixed text `kindIdText(node)` (the leaf decode's default) | `text` or `text = "…"` |
+| a text leaf | `isTextLeaf(node)` (`shared.ts`), the set today's wrap reads through `_spelledLeaf`, and its fixed text `kindIdText(node)` (the leaf decode's default) | `text` or `text = "…"` |
 | a token interior | `interiorOf(node)` (`TOKEN_INTERIORS`) | `interior = "…"`, and `capture = "slot"` on each slot |
 | layout tokens | the text nodes of the kind's template body, by `findKindEntryForLiteral` | `layout = […]` |
 | inner gaps | `node.innerGaps` (`inner_gap_key`'s rows) | `gap(n) = slot` |
@@ -3405,6 +3405,7 @@ import { generatedFieldIds } from '../../dsl/symbol-table.ts';
 import { listViewOwners } from '../factories.ts';
 import { findKindEntry } from '../kind-discriminant.ts';
 import { rustTransportStructName, transportSlotShapeOf } from '../render-module.ts';
+import { isTextLeaf } from '../shared.ts';
 import { AssembledList, type AssembledNode, type AssembledNonterminal } from '../../compiler/model/node-map.ts';
 import {
 	assertOneUntaggedSlot,
@@ -3470,6 +3471,30 @@ describe('transport read facts', () => {
 		expect(args('IdentifierTransport')).toBe('kind = kind::IDENTIFIER, text');
 	});
 
+	it('reads as text exactly the kinds whose transport holds text', async () => {
+		const src = await getRustTemplatesRs();
+		const holdsText = new Map(
+			[...src.matchAll(/^pub struct (\w+) \{\n([^}]*)^\}/gm)].map((m) => [m[1]!, /^    pub text: String,$/m.test(m[2]!)])
+		);
+		let structs = 0;
+		for (const n of model.nodeMap.nodes.values()) {
+			const holds = holdsText.get(rustTransportStructName(n));
+			if (holds === undefined) continue;
+			structs++;
+			const reads = /^kind = [\w:]+, text\b/.test(transportArgs(n, ownId(n), model.templates.bodies.get(n.kind), ctx));
+			expect(reads, n.kind).toBe(holds);
+		}
+		expect(structs).toBeGreaterThan(0);
+	});
+
+	it('reads a keyword the spelled-leaf set holds as its kind id, not as text', async () => {
+		const src = await getRustTemplatesRs();
+		const mutable = model.nodeMap.nodes.get('mutable_specifier')!;
+		expect(isTextLeaf(mutable) && mutable.modelType === 'keyword').toBe(true);
+		expect(src).not.toMatch(/^pub struct MutableSpecifierTransport \{/m);
+		expect(src).toMatch(/^pub enum MutableSpecifierTransport \{\n    MutableSpecifier,\n\}/m);
+	});
+
 	it('routes a presence slot by its field and names its keyword', () => {
 		expect(slotArgs(slot('LetDeclarationTransport', 'mutable'), node('LetDeclarationTransport'), shape(slot('LetDeclarationTransport', 'mutable')), ctx)).toBe(
 			'field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER'
@@ -3493,6 +3518,20 @@ The expected texts are the spec's Appendix A declarations, less the record offse
 - `FN_KEYWORD` 39, `DASH_GT` 131, `COMMA` 130;
 - `MUTABLE_SPECIFIER` 57 (the parser tags it with the field `mutable`);
 - `_TYPE_IDENTIFIER` 468, `_PRIMITIVE_TYPE` 341, `U8_KEYWORD` 58, `BOOL_KEYWORD` 72.
+
+A text leaf is `isTextLeaf`, the set today's wrap reads through `_spelledLeaf`: patterns, enum kinds, and fixed-text leaves with a builder. Each of the three has its own transport, so each has its own read mode:
+- a pattern's struct holds `text` and reads in text mode;
+- an enum kind is `renderEnumType`'s choice and reads `spelled`;
+- a fixed-text leaf (`mutable_specifier`, `crate`, `self`) is a one-variant choice read by its kind id.
+
+So among kinds with a struct, `isTextLeaf` selects the patterns. Measured on the five grammars' generated transports, the 64 structs with a `text` field all belong to pattern kinds, apart from `VerbatimTransport`, which no reader produces. The agreement test checks that the read mode matches the struct's `text` field for every rust struct, so a struct and its mode cannot part unnoticed.
+
+A kind with slots that today's read collapses into `$text`, such as `parameters` read from `()`, keeps its routed struct:
+- the detach keeps that `$text` only on a node holding no slots;
+- the struct has no field for it;
+- the reader skips the two layout tokens.
+
+Both reads therefore decode to the same transport.
 
 - [ ] **Step 2: Run to verify failure**
 
@@ -3546,7 +3585,7 @@ import { findKindEntry, findKindEntryForLiteral, type KindEnumEntry } from './ki
 import { isScalarStorage, kindConstName } from './kind-id-rust.ts';
 import { fieldConstName } from './field-id-rust.ts';
 import { queryRoutesOf } from './client-utils.ts';
-import { canonicalSeparatedListField, slotDropTexts } from './shared.ts';
+import { canonicalSeparatedListField, isTextLeaf, slotDropTexts } from './shared.ts';
 import { interiorOf } from './interior.ts';
 import { rustStringLiteral, type Body } from './render-body.ts';
 import { rustFieldIdent } from './transport-common.ts';
@@ -3619,7 +3658,7 @@ export function listItemSlot(node: AssembledNode): AssembledNonterminal | undefi
 export function transportArgs(node: AssembledNode, ownId: number, body: Body | undefined, ctx: ReadFactsCtx): string {
 	if (node instanceof AssembledAlias) return `kind = ${ctx.names.kind(node.aliasTypeId)}, display, envelope, content = content`;
 	const kind = `kind = ${ctx.names.kind(ownId)}`;
-	if (node.modelType === 'pattern') {
+	if (isTextLeaf(node)) {
 		const fixed = kindIdText(node);
 		return fixed === undefined ? `${kind}, text` : `${kind}, text = ${rustStringLiteral(fixed)}`;
 	}
@@ -3995,7 +4034,13 @@ pub fn parity_report(typed: &str, today: &str) -> String {
 }
 ```
 
-Run `rtk cargo build --workspace` (with napi). Then regenerate the five grammars' `native/index.d.ts` the way the build does. `type-check:native` must pass.
+Run `rtk cargo build --workspace` (with napi). Then regenerate the five grammars' `native/index.d.ts` the way the build does, and check that each declares both new methods:
+
+```bash
+for g in rust typescript python scm regex; do awk '/typedRead(Refusal|Parity)\(/{n++} END{print FILENAME": "n+0}' packages/$g/native/index.d.ts; done
+```
+
+Expected: `2` for each file. `type-check:native` is not a 1a gate: today's generated declarations fail it (#655), and it passes only once 1b's codec replaces `#[napi(object)]`. 1b runs it and chains it into `type-check`.
 
 - [ ] **Step 2: The JavaScript plumbing**
 
@@ -4123,11 +4168,11 @@ export async function run(opts: TypedReadParityOptions): Promise<number> {
 			console.log(`# ${summary.grammar}: ${JSON.stringify(summary)}`);
 		}
 	}
-	return censuses.some(({ summary }) => summary.refused + summary.differs > 0) ? 1 : 0;
+	return censuses.some(({ summary }) => summary.refused + summary.differs + summary.todayFailed > 0) ? 1 : 0;
 }
 ```
 
-The harness reads every entry, parse errors included: `ERROR` and `MISSING` are part of what the gate covers. An entry whose detached data does not decode as today's render root is `today-failed`. That is today's pipeline failing, not the typed reader, so it is listed and not counted against the gate. A refusal is checked before the comparison, so an entry today's pipeline cannot decode is still read by the typed reader.
+The harness reads every entry, parse errors included: `ERROR` and `MISSING` are part of what the gate covers. An entry whose detached data does not decode as today's render root is `today-failed`. That is today's pipeline failing, not the typed reader, so it keeps an outcome of its own. It still fails the gate, because an entry nobody compared proves nothing about parity. A refusal is checked before the comparison, so an entry today's pipeline cannot decode is still read by the typed reader.
 
 `packages/tools/src/index.ts`: export `run as typedReadParity`, `computeTypedReadParity` and the types, as `trivia-placement` is exported. `packages/cli/src/commands/tool/typed-read-parity.ts`:
 
@@ -4137,7 +4182,7 @@ import { withGrammar } from '../../framework/options.ts';
 
 export const typedReadParity: CommandModule = {
 	name: 'typed-read-parity',
-	describe: "Compare the typed reader with today's read and wrap on every corpus entry; exits 1 on any refusal or difference",
+	describe: "Compare the typed reader with today's read and wrap on every corpus entry; exits 1 on any refusal, difference or entry today's pipeline cannot decode",
 	register: (program) => {
 		withGrammar(defineCommand(program, typedReadParity))
 			.option('--all-grammars', 'Run every stable grammar')
@@ -4162,20 +4207,21 @@ Register it in `packages/cli/src/commands/tool/index.ts` beside `triviaPlacement
 Build the release binaries the way `validate:native` does (`pnpm run regen:all`). Then:
 
 Run: `pnpm exec tsx packages/cli/src/cli.ts tool typed-read-parity --all-grammars`
-Expected: every grammar's summary has `refused: 0` and `differs: 0`.
+Expected: every grammar's summary has `refused: 0`, `differs: 0` and `todayFailed: 0`.
 
-Any refusal or difference stops the task. Report each row (the entry, its outcome and its report) and keep the state intact (rule 5b). Each one is one of:
+Any refusal, difference or `today-failed` entry stops the task. Report each row (the entry, its outcome and its report) and keep the state intact (rule 5b). Each one is one of:
 
 - a fact Tasks 8–9 print wrongly: the fix is in codegen;
 - a reader rule that departs from today's: the fix is in Tasks 2–7's runtime or expansion;
 - a trial arm Task 9 could not express: a ruling is needed;
-- a difference in today's own data (for example, a value today's wrap computes that the reader cannot see): a ruling is needed.
+- a difference in today's own data (for example, a value today's wrap computes that the reader cannot see): a ruling is needed;
+- an entry today's pipeline cannot decode (`today-failed`): first check that the failure is in today's data, not in the harness; then it is a finding of its own, and the gate stays failed until it is fixed.
 
-Brainstorm decides which, and the maintainer rules on anything that moves a byte. `today-failed` rows are reported with their count, and are expected to be few. Each is checked to be a decode failure of today's data, not of the harness.
+Brainstorm decides which, and the maintainer rules on anything that moves a byte.
 
 - [ ] **Step 5: Gates and commit**
 
-The global gates, and `pnpm run type-check:native`. Rendered bytes and validation rows are unchanged.
+The global gates, and Step 1's declaration check on the regenerated `native/index.d.ts` files. Rendered bytes and validation rows are unchanged.
 
 ```bash
 git add packages/tools/src/validate/typed-read-parity.ts packages/cli/src/commands/tool/typed-read-parity.ts
@@ -4335,8 +4381,8 @@ Expected: PASS. A failure is reported, not adjusted, except for the nesting dept
 
 The global gates, plus:
 
-- `pnpm exec tsx packages/cli/src/cli.ts tool typed-read-parity --all-grammars`, with zero refusals and zero differences;
-- `pnpm run type-check:native`;
+- `pnpm exec tsx packages/cli/src/cli.ts tool typed-read-parity --all-grammars`, with zero refusals, zero differences and zero `today-failed` entries;
+- the native builds and their regenerated `native/index.d.ts` files, each declaring `typedReadRefusal` and `typedReadParity` (Task 10's check). `type-check:native` is 1b's gate (#655);
 - `rtk cargo clippy --workspace --no-default-features -- -D warnings`;
 - the blank-arm census, counted on the regenerated `transport.rs` files and the model:
   - the slots registered as blank options (`hasBlankArm`) are the 9 typescript `terminator` slots;
@@ -4357,8 +4403,8 @@ Message: `test(core): depth, row reads and recursion on generated transports`.
 
 Then open 1a's PR, its body starting with `Owner: sittir-engine-api`. It lists:
 
-- each grammar's parity summary;
-- the `today-failed` rows;
+- each grammar's parity summary, all of whose `refused`, `differs` and `todayFailed` counts are zero;
+- the `today-failed` entries fixed on the way, each with its cause;
 - the nesting depth Task 11 used;
 - the compile time before and after Task 9.
 
@@ -4390,12 +4436,12 @@ Every read goes through the typed reader, and the wrap attaches members only. "T
    - Hydrating a coordinate is one native call: `read_at::<AnyTransport, AnyTransport>` at the coordinate's row, one level or the kind's `min_depth`.
    - A refusal fails the parse or the hydration that meets it, naming the kind, the child and the row, through `EngineGrammar::kind_name` (ruling 7).
 2. **Coordinates:** the tree and the row (ruling 1). The node table, `HandleMint`, and the `$handle`, `$parentHandle`, `$treeHandle` and `$childIndex` forms go. The render side's `SlotValue::Coord` takes the row in place of the handle.
-3. **Members and parent links build on #653** (accessor identity and in-place trivia, on today's wire). There, an accessor writes the child it hydrates back into the parent's slot, which is ruling 11's "the parent keeps the wrapper". `adoptChild` records each child's parent in a weak map, and when a trivia writer changes a parsed node, `detachAncestors` follows those links so no ancestor folds to its pre-edit bytes (`canFold`); the maintainer ruled that ancestors are mutated, for parsed nodes only. 1c keeps all of it and reimplements none of it. Every path that hands out a node calls `adoptChild`:
+3. **Members and parent links build on #653**, merged as `f4a78b7fb` (accessor identity and in-place trivia, on today's wire). There, an accessor writes the child it hydrates back into the parent's slot, which is ruling 11's "the parent keeps the wrapper". `adoptChild` records each child's parent in a weak map, and when a trivia writer changes a parsed node, `detachAncestors` follows those links so no ancestor folds to its pre-edit bytes (`canFold`); the maintainer ruled that ancestors are mutated, for parsed nodes only. 1c keeps all of it and reimplements none of it. Every path that hands out a node calls `adoptChild`:
    - an accessor's hydration, including a row read (`read_at`) of a coordinate;
    - a query result;
    - the parsed root's own children.
 
-   1c is detailed on top of #653 once it merges.
+   1c's tasks are detailed against master at or after `f4a78b7fb`, where these names live.
 4. **The wrap** attaches members only (§ What the JavaScript wrap keeps), and a child within the depth gets its members on first access. Removed from every wrap:
    - `modelSlots`, the `normalize…` and `coerce…` helpers and the enum projections, with their text-to-id tables (`kindEnumTextIdPairs`): the reader folds every member by kind id, which closes #660;
    - `readTerminalFromOther`, `_aliasEnvelope`, the spelling helpers, `_projectLexed` and `_wrapTrivia`;
