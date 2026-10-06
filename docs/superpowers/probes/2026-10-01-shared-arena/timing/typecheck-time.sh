@@ -9,7 +9,7 @@ ROOT=${1:?checkout}; RUNS=${2:-3}
 cd "$ROOT"
 rows=()
 for _ in $(seq 1 "$RUNS"); do
-	out=$( { /usr/bin/time -p bash -c 'pnpm -r --no-bail run type-check && pnpm run type-check:cross-language && pnpm run type-check:tests && pnpm run type-check:examples' >/dev/null 2>&1; } 2>&1 )
+	out=$(/usr/bin/time -p bash -c '{ pnpm -r --no-bail run type-check && pnpm run type-check:cross-language && pnpm run type-check:tests && pnpm run type-check:examples; } >/dev/null 2>&1' 2>&1)
 	wall=$(awk '/^real/{print $2}' <<<"$out"); user=$(awk '/^user/{print $2}' <<<"$out"); sys=$(awk '/^sys/{print $2}' <<<"$out")
 	cpu=$(awk -v u="$user" -v s="$sys" 'BEGIN{printf "%.2f", u+s}')
 	echo "run wall=${wall}s cpu=${cpu}s"

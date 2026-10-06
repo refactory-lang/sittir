@@ -1,6 +1,7 @@
 # Build and type-check timing
 
-Like-for-like timings of the typed reader's 1b against the master it was cut from: the same
+Like-for-like timings of the typed reader's N-API codec (transports decoded and encoded by the
+`Transport` derive) against the master it was cut from: the same
 script, inputs and population at both copies, run on copies outside every watched tree (a
 worktree's index watcher re-indexes while a build writes into it and takes half the cores).
 

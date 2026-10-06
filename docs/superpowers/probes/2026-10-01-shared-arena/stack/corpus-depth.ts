@@ -12,7 +12,7 @@ const depth = (node: TSNode): number => 1 + Math.max(0, ...node.children.map(dep
 const { Parser, lang } = await loadLanguageForGrammar(grammar);
 const parser = new Parser();
 parser.setLanguage(lang);
-const rows = loadCorpusEntries(grammar).map((entry) => ({ name: entry.name, source: entry.source, depth: depth((parser.parse(entry.source) as TSTree).rootNode), bytes: entry.source.length }));
+const rows = loadCorpusEntries(grammar).map((entry) => ({ name: entry.name, source: entry.source, depth: depth((parser.parse(entry.source) as TSTree).rootNode), bytes: Buffer.byteLength(entry.source, 'utf8') }));
 rows.sort((a, b) => b.depth - a.depth);
 for (const row of rows.slice(0, top)) console.log(`${row.depth}\t${row.bytes}\t${row.name}`);
 if (process.argv.includes('--write') && rows[0] !== undefined) {
