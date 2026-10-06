@@ -92,7 +92,9 @@ interface RawNode {
 interface MemberFacts {
 	readonly kinds: ReadonlySet<string>;
 }
-type Derivation = object;
+interface Derivation {
+	readonly refinements: ReadonlyMap<string, { readonly parent: string }>;
+}
 const { loadInputs, deriveVocabulary } = (await import(join(ROOT, 'packages/tools/src/inventory/index.ts'))) as {
 	loadInputs: (g: readonly string[]) => Promise<GrammarInput[]>;
 	deriveVocabulary: () => Promise<Derivation>;
@@ -430,13 +432,21 @@ for (const ns of NAMESPACES) {
 	const arms = [...paths.map(interfaceOf), ...[...new Set([...(roleText.get(ns) ?? [])].map(slotArm))].sort()];
 	emit(`\treadonly ${ns}: ${arms.length > 0 ? arms.join(' | ') : 'never'};`);
 }
+// A member this grammar does not route at a level is the one the level inherits: a refinement's parent's, else the
+// dotted parent's.
+const ownMember = (path: string, member: string): MemberFacts | undefined => {
+	const facts = levelMembers(own, path).get(member);
+	if (facts !== undefined) return facts;
+	const parent = own.refinements.get(path)?.parent ?? (path.includes('.') ? path.slice(0, path.lastIndexOf('.')) : undefined);
+	return parent === undefined ? undefined : ownMember(parent, member);
+};
 emit('\treadonly slots: {');
 const byPath = new Map<string, string[]>();
 for (const { path, member } of slotEntries(vocabulary)) (byPath.get(path) ?? byPath.set(path, []).get(path)!).push(member);
 for (const [path, members] of byPath) {
 	emit(`\t\treadonly '${path}': {`);
 	for (const member of members) {
-		const facts = levelMembers(own, path).get(member);
+		const facts = ownMember(path, member);
 		const arms = facts === undefined ? [] : [...new Set(collapsedKinds(vocabulary, facts.kinds).map(slotArm))];
 		emit(`\t\t\treadonly ${member}: ${arms.length === 0 ? 'never' : arms.join(' | ')};`);
 	}

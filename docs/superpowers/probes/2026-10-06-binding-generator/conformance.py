@@ -24,6 +24,8 @@ CAUSES = [
                           p.split('"')[1].startswith(p.split('"')[3] + '.') for p in pairs)),
     ('predicate', 'a content-derived claim (prelude type, true/false) the member type leaves out',
      lambda d, pairs: re.search(r"(\b(Prelude|True|False)<Ctx>|\"(type\.named\.prelude|literal\.boolean\.(true|false))\")[^']*' is not assignable", d) is not None),
+    ('kind', 'a vocabulary kind the member type does not admit (a primitive type read in an expression slot)',
+     lambda d, pairs: "Types of property '$kind' are incompatible" in d),
     ('token text', "a token read as text that the member type does not admit ('_', 'gen', 'union', …)",
      lambda d, pairs: re.search(r"Type '\"[^\"]+\"' is not assignable", d) is not None),
     ('absent', 'the view can be absent where the member is required (an optional element inside a container)',

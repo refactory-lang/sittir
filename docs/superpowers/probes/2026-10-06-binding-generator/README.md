@@ -73,8 +73,9 @@ Rust, measured at `f4a78b7fb` on an Apple-silicon Mac.
 
   | cause | before | after |
   | --- | --- | --- |
-  | token text | 74 | 98 |
+  | kind | 3 | 96 |
   | text leaf | 33 | 0 |
+  | token text | 71 | 2 |
   | predicate | 13 | 13 |
   | unmapped | 10 | 12 |
   | untyped reader | 6 | 6 |
@@ -82,7 +83,10 @@ Rust, measured at `f4a78b7fb` on an Apple-silicon Mac.
   | extra member | 2 | 0 |
   | absent | 1 | 1 |
 
-  Per member: 2 extra members are declared now; 7 members are admitted by the fill (4 text leaves, 3 token texts); 28 text-leaf members still fail on another arm, a primitive type token read as `type.primitive` in an expression slot, which the classifier files under token text because the deepest pair it reads is the `$kind` literals; 2 members show the fill's unmapped `rust:pattern` arm.
+  - 9 members are admitted now: the 2 extra members are declared, and rust's fill admits 7 reads (4 text leaves, 3 token texts).
+  - Every `kind` rejection after is one read: a primitive type token read as `type.primitive` in a slot that does not admit it. Before, the text or keyword arm failed first and hid it. The spec's dispatch reads such a token as its const string, which the context admits, unless the slot admits the enum. The probe reads every enum token as the enum.
+  - The 2 remaining token-text rejections are the wildcard `_` in a pattern slot.
+  - 2 members now show the fill's unmapped `rust:pattern` arm, which the old role-only member type hid.
 - **Demo:** `async fn add(a: i32, b: i32) -> i32 { a + b }` reads as `declaration.function` with `async: true`, two `declaration.parameter`s, a `type.primitive` return type and a `statement.block` whose tail is `expression.binary.arithmetic.add` with operator `+`. Building the view back renders the same text (the demo exits non-zero when it does not), and the structure `{ kind: 'expression.binary.arithmetic.add', … }` renders `x + y`.
 - **Backward:** excludes `function_item` and `function_signature_item`, 2 of 152 claimed kinds, the holders of the 5 contextual claims.
 - **Cost** (best of 5 over 200k): the low-level reader 105 ns; making the root's view 136 ns; reading a view's `name` 249 ns, the low-level read plus making the child's view.
