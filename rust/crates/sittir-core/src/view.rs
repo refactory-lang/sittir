@@ -152,6 +152,39 @@ impl Slot for bool {
     }
 }
 
+/// A presence slot whose keyword is a kind of its own: present when the flag
+/// is set, and written through that kind's `Render`, so the keyword renders
+/// as its kind does anywhere else.
+#[derive(Debug, Clone, Copy)]
+pub struct Presence<T> {
+    present: bool,
+    kind: T,
+}
+
+impl<T> Presence<T> {
+    pub fn new(flag: Option<bool>, kind: T) -> Self {
+        Self {
+            present: flag == Some(true),
+            kind,
+        }
+    }
+}
+
+impl<T: Render> Slot for Presence<T> {
+    fn write_slot(&self, prefix: &str, suffix: &str, w: &mut dyn RenderSink) -> RenderResult {
+        if !self.present {
+            return Ok(());
+        }
+        write_literal(prefix, w)?;
+        self.kind.render(w)?;
+        write_literal(suffix, w)
+    }
+
+    fn is_present(&self) -> bool {
+        self.present
+    }
+}
+
 /// The template's halves: the text before the first `{}` and the text after
 /// it, both still carrying their `{{` / `}}` escapes. A template without
 /// `{}` is all prefix.
@@ -286,5 +319,41 @@ impl<E: Slot> Render for ListView<'_, E> {
             w.flank_at(tail);
         }
         write_literal(suffix, w)
+    }
+}
+
+#[cfg(test)]
+mod presence_tests {
+    use super::{Presence, View};
+    use crate::render::{Render, RenderResult, RenderSink};
+
+    #[derive(Clone, Copy)]
+    struct Keyword;
+
+    impl Render for Keyword {
+        fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
+            w.text("mut")
+        }
+    }
+
+    fn rendered(flag: Option<bool>) -> String {
+        let mut s = String::new();
+        let mut w = crate::spacing::SpacingWriter::new(&mut s, crate::spacing::WordMatcher::default_ident());
+        let view = View::new(Presence::new(flag, Keyword), "{}");
+        view.render(&mut w).unwrap();
+        w.finish().unwrap();
+        s
+    }
+
+    #[test]
+    fn a_set_flag_renders_the_kind() {
+        assert_eq!(rendered(Some(true)), "mut");
+    }
+
+    #[test]
+    fn an_absent_or_false_flag_renders_nothing() {
+        assert_eq!(rendered(None), "");
+        assert_eq!(rendered(Some(false)), "");
+        assert!(!View::new(Presence::new(Some(false), Keyword), "{}").is_present());
     }
 }

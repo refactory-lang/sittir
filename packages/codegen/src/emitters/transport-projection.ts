@@ -16,13 +16,14 @@ export interface TransportProjection {
 	readonly nodes: readonly AssembledNode[];
 	readonly literals: readonly TransportLiteral[];
 	readonly nodeKinds: ReadonlySet<string>;
+	readonly wireIds: ReadonlyMap<string, readonly number[]>;
 }
 
 export function collectTransportProjection(nodeMap: NodeMap): TransportProjection {
 	const nodes = collectTransportNodes(nodeMap);
 	const nodeKinds = new Set(nodes.map((node) => node.kind));
-	const literals = collectTransportLiterals(nodes, nodeMap, nodeKinds);
-	return { nodes, literals, nodeKinds };
+	const { literals, wireIds } = collectTransportLiterals(nodes, nodeMap, nodeKinds);
+	return { nodes, literals, nodeKinds, wireIds };
 }
 
 function collectTransportNodes(nodeMap: NodeMap): AssembledNode[] {
@@ -60,10 +61,16 @@ function collectTransportLiterals(
 	nodes: readonly AssembledNode[],
 	nodeMap: NodeMap,
 	nodeKinds: ReadonlySet<string>
-): TransportLiteral[] {
+): { literals: TransportLiteral[]; wireIds: Map<string, number[]> } {
 	const literals: TransportLiteral[] = [];
+	const wireIds = new Map<string, number[]>();
 	const seen = new Set<string>();
 	const add = (literal: TransportLiteral, skipIfNodeKind: boolean): void => {
+		if (literal.resolvedKindId !== undefined) {
+			const ids = wireIds.get(literal.kind);
+			if (ids === undefined) wireIds.set(literal.kind, [literal.resolvedKindId]);
+			else if (!ids.includes(literal.resolvedKindId)) ids.push(literal.resolvedKindId);
+		}
 		if (skipIfNodeKind && nodeKinds.has(literal.kind)) return;
 		const key = `${literal.kind}\0${literal.text}`;
 		if (seen.has(key)) return;
@@ -76,7 +83,7 @@ function collectTransportLiterals(
 			for (const { literal, fromKind } of fieldTransportLiterals(field, nodeMap)) add(literal, fromKind);
 		}
 	}
-	return literals;
+	return { literals, wireIds };
 }
 
 function fieldTransportLiterals(

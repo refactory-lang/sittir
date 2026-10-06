@@ -5,13 +5,15 @@ import bisect, re, sys
 from collections import Counter
 sample, symfile, addon = sys.argv[1:4]
 syms = []
-for line in open(symfile):
-    parts = line.split()
-    if len(parts) >= 3 and parts[1] in 'tT':
-        syms.append((int(parts[0], 16), parts[2]))
+with open(symfile) as f:
+    for line in f:
+        parts = line.split()
+        if len(parts) >= 3 and parts[1] in 'tT':
+            syms.append((int(parts[0], 16), parts[2]))
 syms.sort()
 addrs = [a for a, _ in syms]
-text = open(sample).read().split('Sort by top of stack', 1)[1]
+with open(sample) as f:
+    text = f.read().split('Sort by top of stack', 1)[1]
 hits, total = Counter(), 0
 for line in text.splitlines():
     if addon not in line:

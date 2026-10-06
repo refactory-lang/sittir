@@ -13,7 +13,7 @@ import { emitRenderModule } from '../../../codegen/src/emitters/render-module.ts
 import { emittedTemplates } from '../../../codegen/src/emitters/__tests__/support/emitted-templates.ts';
 import { concat, gate, slot, text } from '../../../codegen/src/emitters/render-body.ts';
 import { fixturesOutputPath } from '../validate/parity-fixtures.ts';
-import { makeNodeMapWith } from '../../../codegen/src/__tests__/helpers/node-map-fixtures.ts';
+import { makeNodeMapWith, withGeneratedIdTables } from '../../../codegen/src/__tests__/helpers/node-map-fixtures.ts';
 import { nativeCrateRelDir, stableGrammars } from '../../../codegen/src/grammars.ts';
 
 const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
@@ -198,7 +198,8 @@ describe('render pipeline optimization — retained baseline convergence', () =>
 	it('emits native render artifacts under rust/crates/sittir-{lang}/src/render', () => {
 		const files = emittedTemplates({ function_item: slot('name') });
 
-		const emitted = emitRenderModule('rust', files, makeMinimalNodeMap());
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeMinimalNodeMap);
+		const emitted = emitRenderModule('rust', files, nodeMap, generatedIdTables);
 		expect(emitted.hashRs.path).toBe('rust/crates/sittir-rust/src/render/hash.rs');
 		expect(emitted.hashTs.path).toBe('packages/rust/src/hash.ts');
 		expect(emitted.transportRs.path).toBe('rust/crates/sittir-rust/src/render/transport.rs');
@@ -224,7 +225,8 @@ describe('render pipeline optimization — views built as locals in the kind ren
 	it('binds model-driven slot views from the walker-owned slot contract', () => {
 		const files = emittedTemplates({ function_item: concat(gate('name', slot('name')), text(' ')) });
 
-		const emitted = emitRenderModule('rust', files, makeMinimalNodeMap());
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeMinimalNodeMap);
+		const emitted = emitRenderModule('rust', files, nodeMap, generatedIdTables);
 		expect(emitted.transportRs.contents).not.toContain("Template<'a> {");
 		expect(emitted.transportRs.contents).toContain('let name = &node.name;');
 		expect(emitted.transportRs.contents).not.toContain("    pub text: &'a str,");
@@ -237,26 +239,32 @@ describe('render pipeline optimization — views built as locals in the kind ren
 	});
 
 	it('emits cardinality-aware children views for singular and repeated child slots', () => {
-		const required = emitRenderModule(
+		const required = withGeneratedIdTables(makeRequiredChildrenNodeMap);
+		const optional = withGeneratedIdTables(makeOptionalChildrenNodeMap);
+		const repeated = withGeneratedIdTables(makeRepeatedChildrenNodeMap);
+		const requiredRs = emitRenderModule(
 			'rust',
 			emittedTemplates({ required_child_parent: slot('identifier') }),
-			makeRequiredChildrenNodeMap()
-		);
-		const optional = emitRenderModule(
+			required.nodeMap,
+			required.generatedIdTables
+		).transportRs.contents;
+		const optionalRs = emitRenderModule(
 			'rust',
 			emittedTemplates({ optional_child_parent: gate('identifier', slot('identifier')) }),
-			makeOptionalChildrenNodeMap()
-		);
-		const repeated = emitRenderModule(
+			optional.nodeMap,
+			optional.generatedIdTables
+		).transportRs.contents;
+		const repeatedRs = emitRenderModule(
 			'rust',
 			emittedTemplates({ repeated_child_parent: slot('identifier') }),
-			makeRepeatedChildrenNodeMap()
-		);
+			repeated.nodeMap,
+			repeated.generatedIdTables
+		).transportRs.contents;
 
-		expect(required.transportRs.contents).toContain('let identifier = &node.identifier;');
-		expect(optional.transportRs.contents).toContain('let identifier = View::new(&node.identifier, "{}");');
-		expect(optional.transportRs.contents).toContain('optional_child_parent');
-		expect(repeated.transportRs.contents).toContain('let identifier = ListView {');
+		expect(requiredRs).toContain('let identifier = &node.identifier;');
+		expect(optionalRs).toContain('let identifier = View::new(&node.identifier, "{}");');
+		expect(optionalRs).toContain('optional_child_parent');
+		expect(repeatedRs).toContain('let identifier = ListView {');
 	});
 
 	it('keeps token-only singular children on direct transport views so jjjj does not widen', () => {
@@ -265,10 +273,12 @@ describe('render pipeline optimization — views built as locals in the kind ren
 		// key (`kw_j`) on the transport struct — there is no generic
 		// `children` field for the emitted binding to match against, so the
 		// jinja must reference the real field name.
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeTokenOnlyChildrenNodeMap);
 		const emitted = emitRenderModule(
 			'rust',
 			emittedTemplates({ token_child_parent: slot('kw_j') }),
-			makeTokenOnlyChildrenNodeMap()
+			nodeMap,
+			generatedIdTables
 		);
 
 		expect(emitted.transportRs.contents).toContain('let kw_j = &node.kw_j;');
@@ -280,10 +290,12 @@ describe('render pipeline optimization — views built as locals in the kind ren
 		// mergeChoiceBranches (PR-A) arm-lifts a choice-parent's unnamed
 		// child onto a merged `content` slot (ExpressionContentTransportSlot)
 		// on the transport struct — not a generic `children` field.
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeChoiceParentSingularChildrenNodeMap);
 		const emitted = emitRenderModule(
 			'rust',
 			emittedTemplates({ expression: slot('content') }),
-			makeChoiceParentSingularChildrenNodeMap()
+			nodeMap,
+			generatedIdTables
 		);
 		const renderStart = emitted.transportRs.contents.indexOf('fn render_expression(');
 		const renderEnd = emitted.transportRs.contents.indexOf('\n}', renderStart) + 2;
@@ -294,10 +306,12 @@ describe('render pipeline optimization — views built as locals in the kind ren
 	});
 
 	it('keeps repeated unnamed children on direct Vec-backed transport views', () => {
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeOptionalRepeatedChildrenNodeMap);
 		const emitted = emitRenderModule(
 			'rust',
 			emittedTemplates({ optional_repeated_child_parent: slot('identifier') }),
-			makeOptionalRepeatedChildrenNodeMap()
+			nodeMap,
+			generatedIdTables
 		);
 		const renderStart = emitted.transportRs.contents.indexOf('fn render_optional_repeated_child_parent(');
 		const renderEnd = emitted.transportRs.contents.indexOf('\n}', renderStart) + 2;
@@ -313,7 +327,8 @@ describe('render pipeline optimization — views built as locals in the kind ren
 	it('keeps fallback repeated unnamed children on direct Vec-backed transport views', () => {
 		// Same kind-named slot (`identifier`, Option<Vec<...>>) as the test
 		// above, exercised via the fallback (no custom jinja) render path.
-		const emitted = emitRenderModule('rust', emittedTemplates({}), makeOptionalRepeatedChildrenNodeMap());
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeOptionalRepeatedChildrenNodeMap);
+		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, generatedIdTables);
 		const renderStart = emitted.transportRs.contents.indexOf('fn render_optional_repeated_child_parent(');
 		const renderEnd = emitted.transportRs.contents.indexOf('\n}', renderStart) + 2;
 		const renderBody = emitted.transportRs.contents.slice(renderStart, renderEnd);
@@ -323,10 +338,12 @@ describe('render pipeline optimization — views built as locals in the kind ren
 	});
 
 	it('renders choice parents through the parent helper without per-form typed helpers', () => {
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeChoiceParentSingularChildrenNodeMap);
 		const emitted = emitRenderModule(
 			'rust',
 			emittedTemplates({ expression: slot('content') }),
-			makeChoiceParentSingularChildrenNodeMap()
+			nodeMap,
+			generatedIdTables
 		);
 		const source = readFileSync(resolve(repoRoot, 'packages/codegen/src/emitters/render-module.ts'), 'utf8');
 

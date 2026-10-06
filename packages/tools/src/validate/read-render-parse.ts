@@ -21,7 +21,7 @@ import {
 	spanOf,
 	toDetachedTransportData,
 	type SourceFlankEvidence,
-	type SourceGapEvidence,
+	type TransportLayout,
 	type TriviaView
 } from '@sittir/common/utils';
 import { deriveRuleKinds } from './render-bodies.ts';
@@ -403,9 +403,9 @@ export function flankWindow(
  * its empty slots, and a storage-less trivia entry becomes its text with the
  * kind the reader stamped on it, `{ $type, $text }`, plus `$sameLine` and
  * `$tokensBetween` when it shares its owner's row. The layout evidence a list
- * keeps from its source travels as text: each kept list gap as its bytes
- * (`$_gap: { $text }`), and kept flanks as a window of the source
- * (`$_flank: { $text, $span }`, `flankWindow`).
+ * keeps from its source travels as text, in the node's `$_layout`: each kept
+ * list gap as its bytes (`gap: { $text }`), and kept flanks as a window of the
+ * source (`flank: { $text, $span }`, `flankWindow`).
  */
 export function selfContainedRenderInput(
 	data: unknown,
@@ -431,6 +431,11 @@ export function selfContainedRenderInput(
 			if (record.$sameLine !== true) return { ...kind, $text: text };
 			return { ...kind, $text: text, $sameLine: true, $tokensBetween: record.$tokensBetween };
 		});
+	const layoutOf = (layout: TransportLayout): Record<string, unknown> => ({
+		...(layout.trivia === undefined ? {} : { trivia: mapTriviaEntries(layout.trivia as TriviaSides<unknown>, walkTrivia) }),
+		...(layout.gap === undefined ? {} : { gap: { $text: slice(layout.gap.$span) } }),
+		...(layout.flank === undefined ? {} : { flank: flankWindow(bytes, layout.flank) })
+	});
 	const walk = (value: unknown): unknown => {
 		if (Array.isArray(value)) return value.map(walk);
 		if (value === null || typeof value !== 'object') return value;
@@ -438,9 +443,7 @@ export function selfContainedRenderInput(
 		const out: Record<string, unknown> = {};
 		for (const [key, raw] of Object.entries(record)) {
 			if (key === '$handle' || key === '$parentHandle' || key === '$treeHandle' || key === '$childIndex' || key === '$textOnly') continue;
-			if (key === '$_trivia') out.$_trivia = mapTriviaEntries(raw as TriviaSides<unknown>, walkTrivia);
-			else if (key === '$_gap') out.$_gap = { $text: slice((raw as SourceGapEvidence).$span) };
-			else if (key === '$_flank') out.$_flank = flankWindow(bytes, raw as SourceFlankEvidence);
+			if (key === '$_layout') out.$_layout = layoutOf(raw as TransportLayout);
 			else out[key] = isStorageKey(key) ? walk(raw) : raw;
 		}
 		const shown = typeof out.$type === 'number' ? nativeShownKindId(out as { $type: number }) : undefined;

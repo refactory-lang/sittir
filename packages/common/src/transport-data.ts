@@ -405,6 +405,23 @@ export interface SourceFlankEvidence {
 }
 
 /**
+ * A node's layout as the transport sends it (`$_layout`): the trivia that
+ * crosses with it, and the source evidence a rebuilt node keeps, its gap
+ * toward the list item before it and, for a list, its flanks. Absent when
+ * the node has none of these.
+ */
+export interface TransportLayout {
+	trivia?: unknown;
+	gap?: SourceGapEvidence;
+	flank?: SourceFlankEvidence;
+}
+
+function setLayout<K extends keyof TransportLayout>(out: Record<string, unknown>, key: K, value: TransportLayout[K]): void {
+	const layout = (out.$_layout ??= {}) as TransportLayout;
+	layout[key] = value;
+}
+
+/**
  * The items of a list node: the one array a list kind (`TriviaView.isList`)
  * holds in its slots.
  */
@@ -472,7 +489,7 @@ function toTransportValue(
 			const changed = changedEdges(value, index, view);
 			const out = toTransportValue(entry, view, changed, fold, undefined, evidence);
 			const gap = owner !== undefined ? sourceGapOf(owner, value, index, view, withoutChangedEdges(view.trivia(evidence), changed)) : undefined;
-			if (gap !== undefined && isRecord(out)) out.$_gap = gap;
+			if (gap !== undefined && isRecord(out)) setLayout(out, 'gap', gap);
 			return out;
 		});
 	}
@@ -492,9 +509,9 @@ function toTransportValue(
 		if (typeof raw === 'function') continue;
 		out[key] = isStorageKey(key) ? toTransportValue(raw, view, bears ? NO_EDGES : changed, fold, value, bears ? undefined : bearer) : raw;
 	}
-	if (trivia != null) out.$_trivia = trivia;
+	if (trivia != null) setLayout(out, 'trivia', trivia);
 	const flank = sourceFlankOf(value, view);
-	if (flank !== undefined) out.$_flank = flank;
+	if (flank !== undefined) setLayout(out, 'flank', flank);
 	// Past the fold, nothing is a coordinate: a leaf that kept its trivia
 	// crosses as itself, and a storage-bearing node rebuilds from its slots
 	// with neither its pre-edit text nor the span that would slice it.

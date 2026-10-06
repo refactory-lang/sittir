@@ -9,7 +9,8 @@ from collections import Counter
 path = sys.argv[1]
 addon = sys.argv[2] if len(sys.argv) > 2 else '.node'
 idle = ('__psynch_cvwait', 'kevent', 'semaphore_wait_trap', 'mach_msg', '__workq_kernreturn', '__semwait_signal', 'poll', '__select')
-text = open(path).read()
+with open(path) as f:
+    text = f.read()
 section = text.split('Sort by top of stack', 1)[1]
 by_lib, by_sym = Counter(), Counter()
 for line in section.splitlines()[1:]:

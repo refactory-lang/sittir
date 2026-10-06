@@ -29,7 +29,7 @@ pub struct NodeCoordinate {
     /// takes evidence from it (`is_layout_evidence`).
     pub text_only: bool,
     /// The gap toward the item before this one in a list, when the two are
-    /// still adjacent in the source both were read from (`$_gap`).
+    /// still adjacent in the source both were read from (`$_layout.gap`).
     pub gap: Option<SourceGap>,
 }
 
@@ -61,16 +61,14 @@ impl SourceGap {
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for SourceGap {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
-        let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        if let Some(text) = obj.get::<String>("$text")? {
+        use crate::boundary::property;
+        if let Some(text) = unsafe { property::<String>(env, napi_val, c"$text")? } {
             return Ok(Self::Text(text));
         }
-        let handle = obj
-            .get::<f64>("$treeHandle")?
+        let handle = unsafe { property::<f64>(env, napi_val, c"$treeHandle")? }
             .ok_or_else(|| ::napi::Error::from_reason("a source gap names its tree in $treeHandle or carries its $text"))?;
         let handle = crate::napi_engine::checked_index(handle, "$treeHandle")?;
-        let span: Span = obj
-            .get("$span")?
+        let span: Span = unsafe { property(env, napi_val, c"$span")? }
             .ok_or_else(|| ::napi::Error::from_reason(format!("source gap in tree {handle} carries no $span")))?;
         Ok(Self::Range { handle, span })
     }
@@ -118,24 +116,22 @@ impl SourceFlank {
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for SourceFlank {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
-        let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        let source = match obj.get::<String>("$text")? {
+        use crate::boundary::property;
+        let source = match unsafe { property::<String>(env, napi_val, c"$text")? } {
             Some(text) => FlankSource::Text(text),
             None => {
-                let handle = obj
-                    .get::<f64>("$treeHandle")?
+                let handle = unsafe { property::<f64>(env, napi_val, c"$treeHandle")? }
                     .ok_or_else(|| ::napi::Error::from_reason("source flanks name their tree in $treeHandle or carry its $text"))?;
                 FlankSource::Tree(crate::napi_engine::checked_index(handle, "$treeHandle")?)
             }
         };
-        let span: Span = obj
-            .get("$span")?
+        let span: Span = unsafe { property(env, napi_val, c"$span")? }
             .ok_or_else(|| ::napi::Error::from_reason("source flanks carry no $span"))?;
         Ok(Self {
             source,
             span,
-            before: obj.get::<bool>("$before")?.unwrap_or(false),
-            after: obj.get::<bool>("$after")?.unwrap_or(false),
+            before: unsafe { property::<bool>(env, napi_val, c"$before")? }.unwrap_or(false),
+            after: unsafe { property::<bool>(env, napi_val, c"$after")? }.unwrap_or(false),
         })
     }
 }
@@ -335,17 +331,20 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue, const ADJACENT: bool>
     ) -> ::napi::Result<Self> {
         let value_type = unsafe { transport_value_type(env, napi_val)? };
         if value_type == ::napi::ValueType::Object {
-            let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-            if let Some(handle) = obj.get::<f64>("$treeHandle")? {
+            use crate::boundary::property;
+            if let Some(handle) = unsafe { property::<f64>(env, napi_val, c"$treeHandle")? } {
                 let handle = crate::napi_engine::checked_index(handle, "$treeHandle")?;
-                let span: Span = obj.get("$span")?.ok_or_else(|| {
+                let span: Span = unsafe { property(env, napi_val, c"$span")? }.ok_or_else(|| {
                     ::napi::Error::from_reason(format!(
                         "coordinate with $treeHandle {handle} carries no $span"
                     ))
                 })?;
-                let kind = obj.get::<u32>("$type")?.map(|id| crate::types::KindId(id as u16));
-                let text_only = obj.get::<bool>("$textOnly")?.unwrap_or(false);
-                let gap = obj.get::<SourceGap>("$_gap")?;
+                let kind = unsafe { property::<u32>(env, napi_val, c"$type")? }.map(|id| crate::types::KindId(id as u16));
+                let text_only = unsafe { property::<bool>(env, napi_val, c"$textOnly")? }.unwrap_or(false);
+                let gap = match unsafe { property::<::napi::bindgen_prelude::Object>(env, napi_val, c"$_layout")? } {
+                    Some(layout) => unsafe { property::<SourceGap>(env, ::napi::JsValue::raw(&layout), c"gap")? },
+                    None => None,
+                };
                 return Ok(Self::Coord(NodeCoordinate { kind, text_only, gap, ..NodeCoordinate::new(handle, span) }));
             }
         }

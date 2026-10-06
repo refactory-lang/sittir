@@ -7,7 +7,7 @@ import type { AssembledNode } from '../../compiler/model/node-map.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 import type { SeqRule } from '../../types/rule.ts';
 import { emitRenderModule } from '../render-module.ts';
-import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { makeNodeMapWith, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { flatten } from '../../compiler/flatten.ts';
 
 function makeRepeatedUnnamedChoiceNodeMap(): NodeMap {
@@ -67,7 +67,7 @@ function makeOptionalUnnamedHelperNodeMap(): NodeMap {
 
 describe('render-module unnamed structural signals', () => {
 	it('keeps unnamed repeated choice aliases wired to transport storage via isUnnamed', () => {
-		const nodeMap = makeRepeatedUnnamedChoiceNodeMap();
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeRepeatedUnnamedChoiceNodeMap);
 		const parent = nodeMap.nodes.get('mixed_parent');
 		expect(parent?.modelType).toBe('branch');
 		if (!parent || parent.modelType !== 'branch') throw new Error('expected mixed_parent branch');
@@ -76,7 +76,8 @@ describe('render-module unnamed structural signals', () => {
 		const emitted = emitRenderModule(
 			'rust',
 			emittedTemplates({ mixed_parent: slot('identifier') }),
-			nodeMap
+			nodeMap,
+			generatedIdTables
 		).transportRs.contents;
 
 		expect(emitted).toContain('pub content: Option<Vec<::sittir_core::SlotValue<MixedParentContentTransportSlot>>>,');
@@ -86,7 +87,7 @@ describe('render-module unnamed structural signals', () => {
 	});
 
 	it('skips hoisting unnamed helper internals even if their source drifts', () => {
-		const nodeMap = makeOptionalUnnamedHelperNodeMap();
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeOptionalUnnamedHelperNodeMap);
 		const helper = nodeMap.nodes.get('_helper');
 		expect(helper?.modelType).toBe('branch');
 		if (!helper || helper.modelType !== 'branch') throw new Error('expected _helper branch');
@@ -97,7 +98,8 @@ describe('render-module unnamed structural signals', () => {
 		const emitted = emitRenderModule(
 			'rust',
 			emittedTemplates({ parent_helper: slot('value') }),
-			nodeMap
+			nodeMap,
+			generatedIdTables
 		).transportRs.contents;
 
 		const start = emitted.indexOf('pub struct ParentHelperTransport');

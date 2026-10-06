@@ -50,6 +50,7 @@ macro_rules! napi_engine {
             /// construction; only the resolved ids are kept. A `render` call
             /// carrying its own options resolves again, per call, over the
             /// engine's table — the engine's own table never changes.
+            #[napi(ts_type = "object")]
             pub options: Option<$options>,
         }
 
@@ -397,7 +398,9 @@ macro_rules! napi_engine {
             ///
             /// `treeId` names the parse whose detected format applies. It is
             /// optional because factory-built nodes belong to no tree.
-            #[::napi_derive::napi]
+            #[::napi_derive::napi(
+                ts_args_type = "transport: object, treeId?: number | undefined | null, options?: object | undefined | null"
+            )]
             pub fn render(
                 &self,
                 transport: $render_root,
@@ -445,7 +448,9 @@ macro_rules! napi_engine {
                 })
             }
 
-            #[::napi_derive::napi]
+            #[::napi_derive::napi(
+                ts_args_type = "transport: object, path: string, treeId?: number | undefined | null, options?: object | undefined | null"
+            )]
             pub fn render_to_file(
                 &self,
                 transport: $render_root,

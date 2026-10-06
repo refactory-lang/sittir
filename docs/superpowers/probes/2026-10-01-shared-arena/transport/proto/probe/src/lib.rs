@@ -10,7 +10,7 @@ mod rt;
 
 use napi::bindgen_prelude::{Buffer, Uint32Array};
 use napi_derive::napi;
-use rt::{Arena, ArenaRef, Coord, ReadNode, Routes, Slot, Words};
+use rt::{Arena, ArenaRef, Coord, ReadNode, Refusal, RouteSpec, Routes, Slot, Words};
 use slot_derive::transport;
 use std::hint::black_box;
 use std::time::Instant;
@@ -21,8 +21,9 @@ unsafe extern "C" {
 }
 const LANGUAGE: LanguageFn = unsafe { LanguageFn::from_raw(tree_sitter_rust) };
 
-/// rust `function_item`, slot for slot as `FunctionItemTransport` holds it.
-#[transport(kind = "function_item")]
+/// rust `function_item`, slot for slot as `FunctionItemTransport` holds it; `fn` and `->` are its
+/// layout tokens.
+#[transport(kind = "function_item", layout = ["fn", "->"])]
 pub struct FunctionItem {
     #[slot(field = "visibility_modifier")]
     pub visibility_modifier: Option<Slot>,
@@ -93,16 +94,38 @@ fn each_of_kind(tree: &tree_sitter::Tree, kind: u16, mut f: impl FnMut(&mut tree
 }
 
 impl Probe {
-    fn all<T: ReadNode>(&self, kind: u16, routes: &Routes) -> Vec<T> {
+    fn all<T: ReadNode>(&self, kind: u16, routes: &Routes) -> napi::Result<Vec<T>> {
         let src = self.source.as_bytes();
         let mut out = Vec::new();
-        each_of_kind(&self.tree, kind, |cur| out.push(T::read(cur, src, routes)));
-        out
+        let mut refused = None;
+        each_of_kind(&self.tree, kind, |cur| {
+            if refused.is_none() {
+                match T::read(cur, src, routes) {
+                    Ok(node) => out.push(node),
+                    Err(refusal) => refused = Some(refusal),
+                }
+            }
+        });
+        match refused {
+            Some(refusal) => Err(self.refused(refusal)),
+            None => Ok(out),
+        }
     }
-    fn at<T: ReadNode>(&self, row: u32, routes: &Routes) -> T {
+    fn at<T: ReadNode>(&self, row: u32, routes: &Routes) -> napi::Result<T> {
         let mut cur = self.tree.walk();
         cur.goto_descendant(row as usize);
-        T::read(&mut cur, self.source.as_bytes(), routes)
+        T::read(&mut cur, self.source.as_bytes(), routes).map_err(|refusal| self.refused(refusal))
+    }
+    fn refused(&self, r: Refusal) -> napi::Error {
+        let name = |id: u16| self.lang.node_kind_for_id(id).unwrap_or("?");
+        napi::Error::from_reason(format!(
+            "{} (kind {}) has no route for its child {} (kind {}) at row {}",
+            name(r.parent),
+            r.parent,
+            name(r.child),
+            r.child,
+            r.row
+        ))
     }
     fn words_of<T: Words>(list: &[T]) -> WordsOut {
         let mut a = Arena::default();
@@ -124,8 +147,8 @@ impl Probe {
         let mut parser = tree_sitter::Parser::new();
         parser.set_language(&lang).map_err(|e| napi::Error::from_reason(e.to_string()))?;
         let tree = parser.parse(&source, None).ok_or_else(|| napi::Error::from_reason("parse failed"))?;
-        let fi_routes = Routes::new(&lang, FunctionItem::route_specs());
-        let fm_routes = Routes::new(&lang, FunctionModifiers::route_specs());
+        let fi_routes = Routes::new(&lang, FunctionItem::route_specs(), FunctionItem::LAYOUT);
+        let fm_routes = Routes::new(&lang, FunctionModifiers::route_specs(), FunctionModifiers::LAYOUT);
         let fi_kind = lang.id_for_node_kind(FunctionItem::KIND, true);
         let fm_kind = lang.id_for_node_kind(FunctionModifiers::KIND, true);
         Ok(Probe { source, tree, lang, fi_routes, fm_routes, fi_kind, fm_kind })
@@ -141,6 +164,22 @@ impl Probe {
             self.fm_kind,
             names(&["visibility_modifier", "function_modifiers", "name", "type_parameters", "parameters", "return_type", "where_clause", "body"])
         )
+    }
+
+    /// Every `function_item` read with its `body` route removed. The route is replaced by one that
+    /// takes nothing, so the other slots keep their places; the read is refused at the first
+    /// node's body, and the refusal names the kind, the child and its row.
+    #[napi]
+    pub fn refusal_without_body(&self) -> String {
+        let specs: Vec<RouteSpec> = FunctionItem::route_specs()
+            .iter()
+            .map(|sp| RouteSpec { field: if sp.field == Some("body") { Some("") } else { sp.field }, kinds: sp.kinds, tokens: sp.tokens })
+            .collect();
+        let routes = Routes::new(&self.lang, &specs, FunctionItem::LAYOUT);
+        match self.all::<FunctionItem>(self.fi_kind, &routes) {
+            Ok(read) => format!("not refused: {} nodes read", read.len()),
+            Err(refusal) => refusal.reason,
+        }
     }
 
     /// Tree-sitter parse alone, in ms, for scale.
@@ -167,15 +206,15 @@ impl Probe {
     /// Native only: ns per node to walk the tree and read every function_item one level
     /// (`fm` = true: every function_modifiers), nothing crossing. Also the walk alone.
     #[napi]
-    pub fn native_ns(&self, iters: u32, fm: Option<bool>) -> Vec<f64> {
+    pub fn native_ns(&self, iters: u32, fm: Option<bool>) -> napi::Result<Vec<f64>> {
         let fm = fm == Some(true);
         let (kind, n) = if fm { (self.fm_kind, self.rows(Some(true)).len()) } else { (self.fi_kind, self.rows(None).len()) };
         let t = Instant::now();
         for _ in 0..iters {
             if fm {
-                black_box(self.all::<FunctionModifiers>(kind, &self.fm_routes));
+                black_box(self.all::<FunctionModifiers>(kind, &self.fm_routes)?);
             } else {
-                black_box(self.all::<FunctionItem>(kind, &self.fi_routes));
+                black_box(self.all::<FunctionItem>(kind, &self.fi_routes)?);
             }
         }
         let read = t.elapsed().as_nanos() as f64 / (iters as f64 * n.max(1) as f64);
@@ -186,52 +225,52 @@ impl Probe {
             black_box(c);
         }
         let walk = t.elapsed().as_nanos() as f64 / (iters as f64 * n.max(1) as f64);
-        vec![read, walk, n as f64]
+        Ok(vec![read, walk, n as f64])
     }
 
     /// Native only: ns per node to read one function_item at its row (`goto_descendant` + read),
     /// the lazy path's native work.
     #[napi]
-    pub fn native_at_ns(&self, rows: Vec<u32>, iters: u32) -> f64 {
+    pub fn native_at_ns(&self, rows: Vec<u32>, iters: u32) -> napi::Result<f64> {
         let t = Instant::now();
         for _ in 0..iters {
             for &r in &rows {
-                black_box(self.at::<FunctionItem>(r, &self.fi_routes));
+                black_box(self.at::<FunctionItem>(r, &self.fi_routes)?);
             }
         }
-        t.elapsed().as_nanos() as f64 / (iters as f64 * rows.len().max(1) as f64)
+        Ok(t.elapsed().as_nanos() as f64 / (iters as f64 * rows.len().max(1) as f64))
     }
 
     // --- batch: every function_item, one call -------------------------------------------------
     #[napi]
-    pub fn all_objects(&self) -> Vec<FunctionItem> {
+    pub fn all_objects(&self) -> napi::Result<Vec<FunctionItem>> {
         self.all(self.fi_kind, &self.fi_routes)
     }
     #[napi]
-    pub fn all_json(&self) -> String {
-        serde_json::to_string(&self.all::<FunctionItem>(self.fi_kind, &self.fi_routes)).unwrap()
+    pub fn all_json(&self) -> napi::Result<String> {
+        Ok(serde_json::to_string(&self.all::<FunctionItem>(self.fi_kind, &self.fi_routes)?).unwrap())
     }
     #[napi]
-    pub fn all_words(&self) -> WordsOut {
-        Self::words_of(&self.all::<FunctionItem>(self.fi_kind, &self.fi_routes))
+    pub fn all_words(&self) -> napi::Result<WordsOut> {
+        Ok(Self::words_of(&self.all::<FunctionItem>(self.fi_kind, &self.fi_routes)?))
     }
     #[napi]
-    pub fn all_modifier_objects(&self) -> Vec<FunctionModifiers> {
+    pub fn all_modifier_objects(&self) -> napi::Result<Vec<FunctionModifiers>> {
         self.all(self.fm_kind, &self.fm_routes)
     }
 
     // --- lazy: one function_item per call, at its row -----------------------------------------
     #[napi]
-    pub fn one_object(&self, row: u32) -> FunctionItem {
+    pub fn one_object(&self, row: u32) -> napi::Result<FunctionItem> {
         self.at(row, &self.fi_routes)
     }
     #[napi]
-    pub fn one_json(&self, row: u32) -> String {
-        serde_json::to_string(&self.at::<FunctionItem>(row, &self.fi_routes)).unwrap()
+    pub fn one_json(&self, row: u32) -> napi::Result<String> {
+        Ok(serde_json::to_string(&self.at::<FunctionItem>(row, &self.fi_routes)?).unwrap())
     }
     #[napi]
-    pub fn one_words(&self, row: u32) -> WordsOut {
-        Self::words_of(&[self.at::<FunctionItem>(row, &self.fi_routes)])
+    pub fn one_words(&self, row: u32) -> napi::Result<WordsOut> {
+        Ok(Self::words_of(&[self.at::<FunctionItem>(row, &self.fi_routes)?]))
     }
 
     // --- the render direction: decode each form back into the typed transport ------------------
