@@ -12,8 +12,8 @@ const functionOf = (source: string) => {
 	return item;
 };
 
-const texts = (items: Iterable<unknown>): string[] =>
-	[...items].map((item) => (typeof item === 'number' ? String(item) : (item as { $render(): string }).$render()));
+const texts = (items: Iterable<number | Parameters<typeof rs.render>[0]>): string[] =>
+	[...items].map((item) => (typeof item === 'number' ? String(item) : rs.render(item).toString()));
 
 describe('a list owner and its list node read as a ReadonlyArray of the items', () => {
 	it('indexes, counts and maps the items, a bare wrapper reading as its content', () => {
@@ -33,7 +33,7 @@ describe('a list owner and its list node read as a ReadonlyArray of the items', 
 		const rendered = texts(params);
 		expect(texts(params.slice(1))).toEqual(rendered.slice(1));
 		expect(texts(params.filter((_, index) => index !== 1))).toEqual([rendered[0], rendered[2]]);
-		expect(params.findIndex((param) => typeof param !== 'number' && param.$render() === 'b: i32')).toBe(1);
+		expect(params.findIndex((param) => typeof param !== 'number' && rs.render(param).toString() === 'b: i32')).toBe(1);
 		expect(params.some((param) => typeof param === 'number')).toBe(false);
 		expect(texts(params.toReversed())).toEqual([...rendered].reverse());
 		expect([...params.keys()]).toEqual([0, 1, 2]);

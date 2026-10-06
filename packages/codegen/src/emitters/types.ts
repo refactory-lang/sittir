@@ -481,6 +481,7 @@ const VOCABULARY_IMPORTS = [
 	'RenameKeys',
 	'GrammarTypeMap',
 	'NodeMethods',
+	'HoldsTree',
 	'TriviaSetter',
 	'GrammarInnerTrivia',
 	'GrammarInnerTriviaAt',
@@ -932,18 +933,18 @@ function emitNodeSurfaceInterfaces(lines: string[], surface: BuiltTypeSurface, i
 	};
 	if (surface.mainType === undefined) {
 		emit('Bound', 'NodeMethodsOf', false);
-		lines.push(`${indent}export interface Parsed extends Bound {}`);
+		emit('Parsed', 'HoldsTree', false);
 		return;
 	}
-	for (const [name, of, byKindId] of [
-		['Bound', 'BoundOf', 'BoundByKindId'],
-		['Parsed', 'ParsedOf', 'ParsedByKindId']
+	for (const [name, of, byKindId, held] of [
+		['Bound', 'BoundOf', 'BoundByKindId', ''],
+		['Parsed', 'ParsedOf', 'ParsedByKindId', ', HoldsTree']
 	] as const) {
 		if (!seated) {
-			emit(name, `${of}<${surface.mainType}, ${byKindId}>, NodeMethodsOf`, true);
+			emit(name, `${of}<${surface.mainType}, ${byKindId}>, NodeMethodsOf${held}`, true);
 			continue;
 		}
-		emit(`${name}Surface`, `${of}<${surface.mainType}, ${byKindId}>, NodeMethodsOf`, true, name, false);
+		emit(`${name}Surface`, `${of}<${surface.mainType}, ${byKindId}>, NodeMethodsOf${held}`, true, name, false);
 		lines.push(
 			`${indent}export type ${name} = ${name}Surface & FlatShapesOf<${name}Surface, ${surface.mainType}, ${byKindId}>;`
 		);
