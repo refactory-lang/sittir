@@ -2897,6 +2897,14 @@ A row's member is named from its model kind (`modelKindOfEntry`, so a renamed ro
 // see `utils.ts::modelSlots`.)
 ```
 
+### `packages/codegen/src/emitters/kind-id-rust.ts::KindConstant`
+
+One `kind_ids.rs` constant: its name and the kind id it holds.
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::kindConstants`
+
+The constants of a grammar's kind table, one per kind row, plus one for each alias parse id that has no row of its own: the parser symbol an alias site is read under (`let_chain`, `lhs_expression`), named from its parse name so the reader names every id it matches by constant. An alias whose name another kind already holds is a diagnostic.
+
 ### `packages/codegen/src/emitters/kind-id-rust.ts::innerGapRows`
 
 The `inner_gap_key` rows: every compound's `innerGaps`, under the compound's
@@ -16983,6 +16991,22 @@ Records ids a printed type admits, so a slot typed by it can be checked against 
 ### `packages/codegen/src/emitters/render-module.ts::variantKindLines`
 
 The `#[kind(…)]` line of one choice variant. An alias envelope reads by its display id alone; any other id the decode claims for it is recorded for the pin check, not printed. A variant the decode gives no id gets no line and is never read.
+
+### `packages/codegen/src/emitters/transport-projection.ts::foldedTokens`
+
+The raw string-literal symbols the parser folds into a kind's public symbol (`ts_symbol_map`), from the stamped fold table, restricted to kind rows that carry their literal text: a token the grammar writes twice gets a second raw symbol the parser reports under the first one's id, and the typed reader admits it as that kind. A folded raw symbol with no literal text is a lexical symbol of its own and is not admitted.
+
+### `packages/codegen/src/emitters/transport-projection.ts::isAnonymousToken`
+
+Whether a kind id is an anonymous token row, the kind of claim that is printed `display(kind)` when the parser folds it.
+
+### `packages/codegen/src/emitters/transport-projection.ts::separatorCandidateIds`
+
+The kind ids of a list's separator candidates, resolved from the model's candidate names; a candidate with no kind row gives none.
+
+### `packages/codegen/src/emitters/envelope-claims.ts::EnvelopeClaims`
+
+The display id an envelope variant shows as, and the further kind ids the decode claims for it.
 
 ### `packages/codegen/src/emitters/envelope-claims.ts::ENVELOPE_EXTRA_IDS`
 
