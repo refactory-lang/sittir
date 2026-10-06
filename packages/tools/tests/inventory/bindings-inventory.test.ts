@@ -31,8 +31,8 @@ describe('bindingIssues', () => {
 		'(function_definition no_such_field: (identifier))',
 		'(identifier) @identifier'
 	].join('\n');
-	it('splits a bindings file into its top-level patterns with their lines', () => {
-		expect(bindingPatterns(text).map((p) => p.line)).toEqual([2, 3, 4, 5]);
+	it('splits a bindings file into its top-level patterns with their lines', async () => {
+		expect((await bindingPatterns(text)).map((p) => p.line)).toEqual([2, 3, 4, 5]);
 	});
 	it('lists every unknown node and field, not just the first', async () => {
 		expect(await bindingIssues('python', text)).toEqual([
