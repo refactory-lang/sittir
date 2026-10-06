@@ -18,6 +18,7 @@ import type { KindParserMetadata, NodeMap } from '../../compiler/types.ts';
 import { collectGeneratedKindEntries } from '../../dsl/symbol-table.ts';
 import type { GeneratedIdEntry, GeneratedIdTables, GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { flatten } from '../../compiler/flatten.ts';
+import { queryRoutesOf } from '../../emitters/client-utils.ts';
 
 export function makeNodeMapWith(nodes: Map<string, AssembledNode>): NodeMap {
 	return {
@@ -59,7 +60,13 @@ function generatedIdTablesOf(nodeMap: NodeMap, tokens: Readonly<Record<string, s
 	};
 	for (const node of nodeMap.nodes.values()) add(node.kind, nodeParserRow(node));
 	for (const [kind, text] of Object.entries(tokens)) add(kind, tokenParserRow(kind, text));
-	return { kindIds: rows, sourceArtifact: 'fixture' };
+	const fields = new Map<string, GeneratedIdEntry>();
+	for (const node of nodeMap.nodes.values()) {
+		for (const slot of node.slots) {
+			for (const name of queryRoutesOf(slot, nodeMap).fields) if (!fields.has(name)) fields.set(name, { id: fields.size + 1 });
+		}
+	}
+	return { kindIds: rows, fieldIds: fields, sourceArtifact: 'fixture' };
 }
 
 function nodeParserRow(node: AssembledNode): KindParserMetadata {

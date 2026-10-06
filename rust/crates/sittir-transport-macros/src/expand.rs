@@ -24,6 +24,7 @@ fn choice(ident: &Ident, data: &DataEnum) -> syn::Result<TokenStream> {
     let mut reads = Vec::new();
     let mut sides = Vec::new();
     let mut blank = None;
+    let mut payloads: Vec<(&Ident, &Type)> = Vec::new();
     for (i, variant) in data.variants.iter().enumerate() {
         let name = &variant.ident;
         if attrs::kind_attrs(&variant.attrs)?.blank {
@@ -53,6 +54,7 @@ fn choice(ident: &Ident, data: &DataEnum) -> syn::Result<TokenStream> {
             }
             Fields::Unnamed(payload) if payload.unnamed.len() == 1 => {
                 let ty = &payload.unnamed[0].ty;
+                payloads.push((name, ty));
                 scalars.push(quote!(::core::option::Option::Some(#i) => <#ty as __rt::ReadTransport>::scalar(grammar, display),));
                 reads.push(quote! {
                     ::core::option::Option::Some(#i) => ::core::result::Result::Ok(Self::#name(
@@ -64,6 +66,32 @@ fn choice(ident: &Ident, data: &DataEnum) -> syn::Result<TokenStream> {
             _ => return Err(syn::Error::new_spanned(variant, "a choice's variant is a unit or holds one transport")),
         }
     }
+    let layout_names = payloads.iter().map(|(name, _)| name);
+    let layout_bounds = payloads.iter().map(|(_, ty)| ty);
+    let has_layout = if payloads.is_empty() {
+        quote! {
+            impl<__L: ::core::default::Default> __rt::HasLayout<__L> for #ident {
+                fn take_layout(&mut self) -> __L {
+                    ::core::default::Default::default()
+                }
+            }
+        }
+    } else {
+        quote! {
+            impl<__L: ::core::default::Default> __rt::HasLayout<__L> for #ident
+            where
+                #(#layout_bounds: __rt::HasLayout<__L>,)*
+            {
+                fn take_layout(&mut self) -> __L {
+                    match self {
+                        #(Self::#layout_names(inner) => __rt::HasLayout::take_layout(inner),)*
+                        #[allow(unreachable_patterns)]
+                        _ => ::core::default::Default::default(),
+                    }
+                }
+            }
+        }
+    };
     Ok(quote! {
         const _: () = {
             use ::sittir_core::read as __rt;
@@ -115,6 +143,7 @@ fn choice(ident: &Ident, data: &DataEnum) -> syn::Result<TokenStream> {
                     }
                 }
             }
+            #has_layout
         };
     })
 }
@@ -178,6 +207,11 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
                     _row: u32,
                 ) -> ::core::result::Result<__rt::Sides, __rt::ReadError> {
                     ::core::result::Result::Ok(__rt::Sides::default())
+                }
+            }
+            impl<__L: ::core::default::Default> __rt::HasLayout<__L> for #ident {
+                fn take_layout(&mut self) -> __L {
+                    ::core::default::Default::default()
                 }
             }
         };
@@ -280,8 +314,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
     let has_layout = fields.iter().find(|f| matches!(f.role, Role::Layout)).map(|field| {
         let (name, ty) = (field.ident, field.ty);
         quote! {
-            impl __rt::HasLayout for #ident {
-                type Layout = #ty;
+            impl __rt::HasLayout<#ty> for #ident {
                 fn take_layout(&mut self) -> #ty {
                     ::core::mem::take(&mut self.#name)
                 }
@@ -458,6 +491,11 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
         .ok_or_else(|| syn::Error::new_spanned(content, "`content` names one of the envelope's fields"))?;
     let inner = inner_of(field.ty, "SlotValue")
         .ok_or_else(|| syn::Error::new_spanned(field.ty, "an envelope's content is a `SlotValue<…>`"))?;
+    let layout_ty = fields
+        .iter()
+        .find(|f| matches!(f.role, Role::Layout))
+        .map(|f| f.ty)
+        .ok_or_else(|| syn::Error::new_spanned(ident, "an envelope has a layout field"))?;
     let inits = fields.iter().map(|other| {
         let name = other.ident;
         match other.role {
@@ -469,8 +507,9 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
     Ok(Body {
         items: quote!(),
         read: quote! {
-            let mut content = <#inner as __rt::ReadTransport>::read(cursor, ctx, depth, sides)?;
-            let layout = <#inner as __rt::HasLayout>::take_layout(&mut content);
+            let mut content = <#inner as __rt::ReadTransport>::read(cursor, ctx, depth, sides.clone())?;
+            let layout: #layout_ty = <#inner as __rt::HasLayout<#layout_ty>>::take_layout(&mut content)
+                .or_else(|| sides.into_layout());
             ::core::result::Result::Ok(Self { #(#inits)* })
         },
         sides_of: quote!(<#inner as __rt::ReadTransport>::sides_of(cursor, ctx, row)),

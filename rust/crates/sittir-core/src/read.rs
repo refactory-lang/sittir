@@ -280,6 +280,12 @@ impl Sides {
     pub fn root() -> Sides {
         Sides { owner: true, ..Sides::default() }
     }
+
+    /// The layout of a node that read none of its own: the extras its parent
+    /// placed on it, or `None` when it placed none.
+    pub fn into_layout<T>(self) -> Option<TransportLayout<T>> {
+        Placement::default().into_layout(self)
+    }
 }
 
 /// A transport a node is read into: a kind's struct, a choice over kinds, or
@@ -329,16 +335,16 @@ impl<T: ReadTransport> ReadTransport for Box<T> {
     }
 }
 
-/// A transport with a layout field, from which an envelope takes the layout
-/// its content was read with.
-pub trait HasLayout {
-    type Layout;
-    fn take_layout(&mut self) -> Self::Layout;
+/// A transport an envelope takes the layout of: the layout its content was
+/// read with. A struct holds it in its layout field, a choice takes it from
+/// the variant it holds, and a transport with no layout (a unit variant, an
+/// enum kind's member) gives the default.
+pub trait HasLayout<L> {
+    fn take_layout(&mut self) -> L;
 }
 
-impl<T: HasLayout> HasLayout for Box<T> {
-    type Layout = T::Layout;
-    fn take_layout(&mut self) -> Self::Layout {
+impl<L, T: HasLayout<L>> HasLayout<L> for Box<T> {
+    fn take_layout(&mut self) -> L {
         (**self).take_layout()
     }
 }

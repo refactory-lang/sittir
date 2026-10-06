@@ -26,6 +26,8 @@ use std::sync::Arc;
 pub trait EngineGrammar: Copy + ReadModel {
     fn configure_parser(self, parser: &mut tree_sitter::Parser) -> Result<(), String>;
     fn render_module_hash(self) -> &'static str;
+    /// The name of a kind of this grammar, for messages that name one.
+    fn kind_name(self, kind: KindId) -> &'static str;
 }
 
 // ─── NodeCoord ────────────────────────────────────────────────────────────────────────────
@@ -724,6 +726,10 @@ mod tests {
         }
 
         fn render_module_hash(self) -> &'static str {
+            "test"
+        }
+
+        fn kind_name(self, _kind: KindId) -> &'static str {
             "test"
         }
     }

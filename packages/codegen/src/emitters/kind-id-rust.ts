@@ -16,6 +16,30 @@ export function kindConstName(entry: { readonly member: string; readonly kind: s
 	return toScreamingSnakeCase(entry.member, entry.kind);
 }
 
+export interface KindConstant {
+	readonly name: string;
+	readonly id: number;
+}
+
+export function kindConstants(
+	entries: readonly { readonly member: string; readonly kind: string; readonly id: number; readonly parseId?: number; readonly parseName?: string }[]
+): readonly KindConstant[] {
+	const constants: KindConstant[] = entries.map((entry) => ({ name: kindConstName(entry), id: entry.id }));
+	const names = new Set(constants.map((constant) => constant.name));
+	const ids = new Set(constants.map((constant) => constant.id));
+	for (const entry of entries) {
+		if (entry.parseId === undefined || entry.parseName === undefined || ids.has(entry.parseId)) continue;
+		const name = toScreamingSnakeCase(entry.parseName, entry.parseName);
+		if (names.has(name)) {
+			throw new Error(`kind_ids.rs: the alias '${entry.parseName}' (kind ${entry.parseId}) would take the constant ${name}, which another kind already has`);
+		}
+		names.add(name);
+		ids.add(entry.parseId);
+		constants.push({ name, id: entry.parseId });
+	}
+	return constants;
+}
+
 export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	const { grammar, nodeMap, generatedIdTables } = config;
 	const entries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
@@ -33,10 +57,7 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 		``
 	];
 
-	for (const entry of entries) {
-		const constName = kindConstName(entry);
-		lines.push(`pub const ${constName}: KindId = KindId(${entry.id});`);
-	}
+	for (const { name, id } of kindConstants(entries)) lines.push(`pub const ${name}: KindId = KindId(${id});`);
 	const errorEntry = entries.find((entry) => entry.id === ERROR_KIND_ID);
 	if (errorEntry === undefined) throw new Error(`kind_ids.rs: ${grammar} has no ${ERROR_KIND_NAME} kind entry`);
 	lines.push(`const _: () = assert!(${kindConstName(errorEntry)}.0 == KindId::ERROR.0);`);

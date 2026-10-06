@@ -195,6 +195,10 @@ impl EngineGrammar for ${v.Name}Grammar {
     fn render_module_hash(self) -> &'static str {
         RENDER_MODULE_HASH
     }
+
+    fn kind_name(self, kind: sittir_core::types::KindId) -> &'static str {
+        render::kind_ids::kind_name_from_id(kind)
+    }
 }
 
 impl sittir_core::read_untyped_node::ReadModel for ${v.Name}Grammar {

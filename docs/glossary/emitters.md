@@ -16963,3 +16963,59 @@ The `#[kind(…)]` arguments of a variant: the ids it claims, and `display` when
 ### `packages/codegen/src/emitters/transport-projection.ts::assertOneUntaggedSlot`
 
 Refuses a kind with two slots that take an untagged child of the same kind, naming the kind, both slots and the shared kind: the reader could not choose between them.
+
+### `packages/codegen/src/emitters/transport-projection.ts::presenceKeywordId`
+
+The kind id of the keyword a presence slot reads: the fixed-literal kind the slot references, else the parser symbol of its text. `slotArgs` names it as `presence`, and the diagnostic that checks untagged slots takes the slot's admitted id from it, so one lookup answers both.
+
+### `packages/codegen/src/emitters/render-module.ts::ReadPrint`
+
+What the transport printers share while they state the read facts: the facts' context, the template bodies by kind, the kind ids each printed type admits, and the choices that carry a blank arm. One value is threaded through every printer so a type's ids are recorded where they are printed and checked after all of them are.
+
+### `packages/codegen/src/emitters/render-module.ts::readPrintOf`
+
+Builds the `ReadPrint` of one emit: the names are the kind and field constants, and the list owners are the kinds whose read reaches their items.
+
+### `packages/codegen/src/emitters/render-module.ts::admit`
+
+Records ids a printed type admits, so a slot typed by it can be checked against the other slots of its struct.
+
+### `packages/codegen/src/emitters/render-module.ts::variantKindLines`
+
+The `#[kind(…)]` line of one choice variant. An alias envelope reads by its display id alone; any other id the decode claims for it is recorded for the pin check, not printed. A variant the decode gives no id gets no line and is never read.
+
+### `packages/codegen/src/emitters/envelope-claims.ts::ENVELOPE_EXTRA_IDS`
+
+The kind ids, per grammar and envelope variant, that the decode claims for the variant beyond its display id. The reader does not accept them. The pin is a ceiling: it lists the ids that exist today so none is added unnoticed.
+
+### `packages/codegen/src/emitters/envelope-claims.ts::assertEnvelopeExtrasPinned`
+
+Fails the build when a variant claims an id outside its pin (a new claimed id is a decision, never a raised pin) or a variant the grammar emits no longer claims a pinned id (the pin is lowered to match).
+
+### `packages/codegen/src/emitters/render-module.ts::alternatesOf`
+
+The alternate ids a slot's fixed-literal variant folds into its stored id: the wrap folds them before the wire, so the decode never meets them, and the reader, which reads the parser's own id, lists them on the variant.
+
+### `packages/codegen/src/emitters/render-module.ts::fixedLiteralIds`
+
+The ids a fixed-literal transport takes: its accepted ids, or its own id. The decode and the reader's attribute both list them.
+
+### `packages/codegen/src/emitters/render-module.ts::structSlotsOf`
+
+The slots a struct has fields for, in order: the slot model's named and unnamed slots, then the named slots of each hidden helper node an unnamed slot hoists, all optional. The printer and the check that follows it walk the same list.
+
+### `packages/codegen/src/emitters/render-module.ts::slotReadAttr`
+
+The `#[slot]` attribute of one field: a capture for each slot of a token interior, else the routes, presence keyword, separators and scalar mark `slotArgs` computes. An alias envelope's content has none: it is not a parser field, and the derive's envelope mode names it by `content = …`.
+
+### `packages/codegen/src/emitters/render-module.ts::readsItsSlots`
+
+Whether a kind's reader routes children to its slots: a leaf, an alias envelope and a token interior read otherwise.
+
+### `packages/codegen/src/emitters/render-module.ts::slotTransportTypeName`
+
+The type a slot's carrier wraps: the kind's transport, the supertype's enum, the slot's own choice, or `AnyTransport`. The field type and the untagged-slot check name the type once.
+
+### `packages/codegen/src/emitters/render-module.ts::assertReadableTransports`
+
+The checks that need every type printed. Two slots of a kind that take an untagged child of one kind are refused, naming the kind and both slots. A slot's registration as a blank option must agree with its choice having a blank arm, since a choice is shared by every slot with the same variants.

@@ -11,7 +11,7 @@ import {
 	storageTargetOf
 } from '../compiler/model/node-map.ts';
 import { findKindEntry, findKindEntryForLiteral, type KindEnumEntry } from './kind-discriminant.ts';
-import { isScalarStorage, kindConstName } from './kind-id-rust.ts';
+import { isScalarStorage, kindConstants } from './kind-id-rust.ts';
 import { fieldConstName } from './field-id-rust.ts';
 import { queryRoutesOf } from './client-utils.ts';
 import { canonicalSeparatedListField, fieldTypeComponents, isTextLeaf, slotDropTexts } from './shared.ts';
@@ -150,7 +150,7 @@ export interface ReadNames {
 
 export function readNames(kindEntries: readonly KindEnumEntry[], fieldIds: readonly { readonly name: string }[]): ReadNames {
 	const kinds = new Map<number, string>();
-	for (const entry of kindEntries) if (!kinds.has(entry.id)) kinds.set(entry.id, `kind::${kindConstName(entry)}`);
+	for (const { name, id } of kindConstants(kindEntries)) if (!kinds.has(id)) kinds.set(id, `kind::${name}`);
 	const fields = new Set(fieldIds.map((field) => field.name));
 	return {
 		kind(id) {
@@ -207,8 +207,9 @@ export function listItemSlot(node: AssembledNode): AssembledNonterminal | undefi
 	return flagged ? canonicalSeparatedListField(node) : undefined;
 }
 
-export function transportArgs(node: AssembledNode, ownId: number, body: Body | undefined, ctx: ReadFactsCtx): string {
+export function transportArgs(node: AssembledNode, ownId: number | undefined, body: Body | undefined, ctx: ReadFactsCtx): string {
 	if (node instanceof AssembledAlias) return `kind = ${ctx.names.kind(node.aliasTypeId)}, display, envelope, content = content`;
+	if (ownId === undefined) throw new Error(`transport read facts: ${node.kind} has no parser symbol, so no reader can claim it`);
 	const kind = `kind = ${ctx.names.kind(ownId)}`;
 	if (isTextLeaf(node)) {
 		const fixed = kindIdText(node);
@@ -233,6 +234,17 @@ export function takesUntagged(slot: AssembledNonterminal, ctx: ReadFactsCtx): bo
 	return routes.fields.length === 0 || routes.kinds.length > 0;
 }
 
+export function presenceKeywordId(
+	shape: Extract<TransportSlotShape, { readonly tag: 'presence' }>,
+	owner: AssembledNode,
+	slot: AssembledNonterminal,
+	ctx: ReadFactsCtx
+): number {
+	const keyword = shape.kind === undefined ? findKindEntryForLiteral(ctx.kindEntries, shape.text) : findKindEntry(ctx.kindEntries, shape.kind.kind);
+	if (keyword === undefined) throw new Error(`transport read facts: ${owner.kind}.${slot.name}'s keyword has no parser symbol`);
+	return keyword.id;
+}
+
 export function slotArgs(slot: AssembledNonterminal, owner: AssembledNode, shape: TransportSlotShape, ctx: ReadFactsCtx): string {
 	const args: string[] = [];
 	const routes = queryRoutesOf(slot, ctx.nodeMap);
@@ -240,11 +252,7 @@ export function slotArgs(slot: AssembledNonterminal, owner: AssembledNode, shape
 		args.push(`field = ${oneOrList(routes.fields.map((name) => ctx.names.field(name)))}`);
 		if (routes.kinds.length > 0) args.push('untagged');
 	}
-	if (shape.tag === 'presence') {
-		const keyword = shape.kind === undefined ? findKindEntryForLiteral(ctx.kindEntries, shape.text) : findKindEntry(ctx.kindEntries, shape.kind.kind);
-		if (keyword === undefined) throw new Error(`transport read facts: ${owner.kind}.${slot.name}'s keyword has no parser symbol`);
-		args.push(`presence = ${ctx.names.kind(keyword.id)}`);
-	}
+	if (shape.tag === 'presence') args.push(`presence = ${ctx.names.kind(presenceKeywordId(shape, owner, slot, ctx))}`);
 	const separators = literalIds(slotDropTexts(slot, owner, false), ctx, `${owner.kind}.${slot.name}'s separator`);
 	if (separators.length > 0) args.push(`separator = ${oneOrList(separators.map((id) => ctx.names.kind(id)))}`);
 	if (shape.tag === 'text' && isScalarStorage(slot)) args.push('scalar');

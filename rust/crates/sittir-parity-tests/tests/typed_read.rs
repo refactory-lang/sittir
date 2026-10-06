@@ -687,3 +687,50 @@ fn a_row_read_equals_the_same_node_in_a_whole_read_trivia_included() {
     let body = function(&whole, 0).body.transport().unwrap();
     assert_eq!(&inner, body.statements.as_ref().unwrap()[0].transport().unwrap());
 }
+
+#[derive(Debug, Clone, PartialEq, Transport)]
+#[transport(choice)]
+enum Name {
+    #[kind(kind::IDENTIFIER)]
+    Ident(Ident),
+}
+
+#[derive(Debug, Clone, PartialEq, Transport)]
+#[transport(kind = kind::_TYPE_IDENTIFIER, display, envelope, content = content)]
+struct TypeIdentOfChoice {
+    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    content: SlotValue<Name>,
+}
+
+#[derive(Debug, Clone, PartialEq, Transport)]
+#[transport(choice)]
+enum NamedTypeOfChoice {
+    #[kind(kind::_TYPE_IDENTIFIER, display)]
+    TypeIdentifier(TypeIdentOfChoice),
+}
+
+#[derive(Debug, Clone, PartialEq, Transport)]
+#[transport(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT])]
+struct NamedOfChoice {
+    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[slot(field = field::NAME)]
+    name: SlotValue<Ident>,
+    #[slot(field = field::PARAMETERS)]
+    parameters: SlotValue<Params>,
+    #[slot(field = field::RETURN_TYPE)]
+    return_type: Option<SlotValue<NamedTypeOfChoice>>,
+    #[slot(field = field::BODY)]
+    body: SlotValue<Box<Block>>,
+}
+
+#[test]
+fn an_envelope_over_a_choice_holds_the_trivia_its_content_variant_was_given() {
+    let source = "fn f() -> T /* c */ {}";
+    let tree = parse_rust(source);
+    let f: NamedOfChoice = read_nth(&tree, source, kind::FUNCTION_ITEM, 0, Depth::All).unwrap();
+    let Some(SlotValue::Transport(NamedTypeOfChoice::TypeIdentifier(envelope))) = &f.return_type else { panic!("{:?}", f.return_type) };
+    let Some(Name::Ident(ident)) = envelope.content.transport() else { panic!("{:?}", envelope.content) };
+    assert_eq!(ident.text, "T");
+    assert_eq!(ident.layout, None);
+    assert_eq!(trivia_spans(&envelope.layout, "trailing"), vec![(12, 19, true, 0)]);
+}

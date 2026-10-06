@@ -261,7 +261,7 @@ Expected: builds. `git status --short rust/crates` shows only new `render/field_
 
 - [ ] **Step 5: Gates and commit**
 
-Gates: the global list. `kind_ids.rs` must not change: `kindConstName` is the same expression.
+Gates: the global list. `kind_ids.rs` must not change: `kindConstName` is the same expression. (A grammar's alias symbols, which have a parser id and no kind row of their own, get constants in Task 9 through `kindConstants`; that is the one place `kind_ids.rs` grows.)
 
 ```bash
 git add packages/codegen/src/emitters/field-id-rust.ts packages/codegen/src/emitters/__tests__/field-id-rust.test.ts rust/crates/sittir-*/src/render/field_ids.rs
@@ -780,16 +780,14 @@ impl<T: ReadTransport> ReadTransport for Box<T> {
     }
 }
 
-/// A transport with a layout field, from which an envelope takes the layout
-/// its content was read with.
-pub trait HasLayout {
-    type Layout;
-    fn take_layout(&mut self) -> Self::Layout;
+/// A transport with a layout, from which an envelope takes the layout its
+/// content was read with. `L` is the layout type the envelope declares.
+pub trait HasLayout<L> {
+    fn take_layout(&mut self) -> L;
 }
 
-impl<T: HasLayout> HasLayout for Box<T> {
-    type Layout = T::Layout;
-    fn take_layout(&mut self) -> Self::Layout {
+impl<L, T: HasLayout<L>> HasLayout<L> for Box<T> {
+    fn take_layout(&mut self) -> L {
         (**self).take_layout()
     }
 }
@@ -2256,8 +2254,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
     let has_layout = fields.iter().find(|f| matches!(f.role, Role::Layout)).map(|field| {
         let (name, ty) = (field.ident, field.ty);
         quote! {
-            impl __rt::HasLayout for #ident {
-                type Layout = #ty;
+            impl __rt::HasLayout<#ty> for #ident {
                 fn take_layout(&mut self) -> #ty {
                     ::core::mem::take(&mut self.#name)
                 }
@@ -3156,7 +3153,7 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
         items: quote!(),
         read: quote! {
             let mut content = <#inner as __rt::ReadTransport>::read(cursor, ctx, depth, sides)?;
-            let layout = <#inner as __rt::HasLayout>::take_layout(&mut content);
+            let layout: #layout_ty = <#inner as __rt::HasLayout<#layout_ty>>::take_layout(&mut content).or_else(|| sides.into_layout());
             ::core::result::Result::Ok(Self { #(#inits)* })
         },
         sides_of: quote!(<#inner as __rt::ReadTransport>::sides_of(cursor, ctx, row)),
@@ -3164,7 +3161,7 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
 }
 ```
 
-An envelope never calls its own `__gap`, `__LAYOUT` or `__KIND`; the `#[allow(dead_code)]` on each in `structure` covers that. Envelope content is always a transport with a layout field (a text leaf or a struct), so `HasLayout` is always implemented.
+An envelope never calls its own `__gap`, `__LAYOUT` or `__KIND`; the `#[allow(dead_code)]` on each in `structure` covers that. `layout_ty` is the written type of the envelope's own layout field. Envelope content is a struct, a text leaf, or a choice or member enum: a struct implements `HasLayout` from its layout field, and a choice or member enum delegates to its payload, with a plain `Default` for a variant without one. Content with no layout of its own takes the layout the placement gave the node (`Sides::into_layout`).
 
 - [ ] **Step 4: Run the tests**
 
@@ -3598,7 +3595,7 @@ export interface ReadNames {
 
 export function readNames(kindEntries: readonly KindEnumEntry[], fieldIds: readonly { readonly name: string }[]): ReadNames {
 	const kinds = new Map<number, string>();
-	for (const entry of kindEntries) if (!kinds.has(entry.id)) kinds.set(entry.id, `kind::${kindConstName(entry)}`);
+	for (const { name, id } of kindConstants(kindEntries)) if (!kinds.has(id)) kinds.set(id, `kind::${name}`);
 	const fields = new Set(fieldIds.map((field) => field.name));
 	return {
 		kind(id) {
@@ -3846,7 +3843,7 @@ Every printed type puts its attributes in this order: `#[cfg_attr(… napi(objec
 
 1. **Structs** (`renderTransportDataStruct`): print `#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]` and `#[transport(${transportArgs(node, ownId, body, ctx)})]`.
    - Admitted ids: `[aliasTypeId]` for an envelope, else `[ownId]`.
-   - Give `renderTransportField` a `readAttr` argument and print it between the napi line and the field. It is `#[slot]` when `slotArgs(slot, node, transportSlotShapeOf(slot, nodeMap), ctx)` is empty and `#[slot(${args})]` otherwise, or `#[slot(${captureArgs(slot)})]` for each slot of an interior kind (`interiorOf(node) !== undefined`). A hoisted inner slot passes its helper node as the owner.
+   - Give `renderTransportField` a `readAttr` argument and print it between the napi line and the field. An alias envelope's content field has none (it is not a parser field; the derive names it by `content = …`). Otherwise it is `#[slot]` when `slotArgs(slot, node, transportSlotShapeOf(slot, nodeMap), ctx)` is empty and `#[slot(${args})]` otherwise, or `#[slot(${captureArgs(slot)})]` for each slot of an interior kind (`interiorOf(node) !== undefined`). A hoisted inner slot passes its helper node as the owner.
    - On a list's `delimiter` field, print `#[flank(${flankArgs(node)})]`, and on its `separator_kind` field `#[separator_kind(${separatorKindArgs(node, ctx)})]`, in the same position.
    - Spacing fields get no attribute: they read as their `Default`, as today's read leaves them unset.
 2. **Enum kinds** (`renderEnumType`): build `arms` (each member's `enumMemberId`) before printing the enum, not after it. Print `#[derive(Debug, Clone, Copy, PartialEq, Eq, ::sittir_core::Transport)]`, then `#[transport(${enumKindArgs(ownId, ctx)})]`, and `#[kind(${variantKindArgs(arm.ids, false, ctx)})]` above each member, from the same `arms` `kindIdNapiImpls` decodes by. Admitted ids: the kind's own id and every member's.
@@ -3854,7 +3851,7 @@ Every printed type puts its attributes in this order: `#[cfg_attr(… napi(objec
 4. **Supertype choices** (`emitSupertypeTransportEnum`): run `buildKindIdArms` before printing the enum, and record in `claim` which ids each member takes (`claimedBy: Map<variant, number[]>`, first claim wins as now).
    - Print `#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]` and `#[transport(choice)]`.
    - Print `#[kind(${variantKindArgs(ids, false, ctx)})]` on each variant with claimed ids.
-   - An envelope member (`subNode instanceof AssembledAlias`) prints `#[kind(${ctx.names.kind(subNode.aliasTypeId)}, display)]`. If the claim loop gave it any other id, throw a codegen error naming the enum, the variant and the ids; the expected count is zero.
+   - An envelope member (`subNode instanceof AssembledAlias`) prints `#[kind(${ctx.names.kind(subNode.aliasTypeId)}, display)]` alone. Any other id the claim loop gave it is not printed: it is checked against `ENVELOPE_EXTRA_IDS` in `envelope-claims.ts`, a ceiling per grammar and variant that only shrinks (typescript's three `*PropertyIdentifierTransportSlot` variants hold the keyword ids `7` and `30`–`50`; the other grammars none). A new id fails the build; a pinned id a variant no longer claims fails it too, until the pin is lowered.
    - A variant with no claimed id gets no `#[kind]` and is never read, as no arm decodes it today.
 5. **Per-slot choices** (`emitPerSlotChildEnum`): compute `unitIds` and the node kinds' accepted ids before printing.
    - Group unit ids by `unit.variant`; node kinds claim as now, first claim wins.
@@ -3920,6 +3917,8 @@ Message: `feat(codegen): every transport declares its read facts and derives the
 The gate of 1a: for every corpus entry of the five grammars, the typed read of the whole tree equals what today's read and wrap give the render side, detached from the tree, and refuses nothing. Two transitional native methods answer it. One reads with the typed reader and reports a refusal. The other decodes today's detached data into the same transport types and compares. The harness drives both, and `sittir tool typed-read-parity` reports them.
 
 Today's detached data carries two things the typed reader leaves to the render side, and the harness drops both before comparing: `$_layout.gap` and `$_layout.flank` (layout evidence), and an empty `$_layout`. It keeps the trivia entries, which arrive as coordinates (`$treeHandle`, `$span`, `$type`) and decode as `SlotValue::Coord`, the form the typed reader gives them. `SlotValue`'s equality compares a coordinate by its tree, span and kind, so the handle's form does not matter.
+
+The harness also reports the envelope pin (`ENVELOPE_EXTRA_IDS` in `envelope-claims.ts`): for each pinned id of each variant, how many corpus nodes the reader's display pass admits as that variant, and whether the id still shows as the variant's display id. A variant that claims an id outside its pin, or a pinned id that stops displaying as the variant's display id, fails the run. The pin is a ceiling; the report says whether the ids it holds are reached by the corpus.
 
 **Files:**
 - Modify: `rust/crates/sittir-core/src/engine.rs` (`ParsedTree::typed_read`)

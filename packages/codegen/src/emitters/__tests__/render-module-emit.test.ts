@@ -26,7 +26,8 @@ import { grammarPackage } from '../../grammars.ts';
 import { generatedFieldIds } from '../../dsl/symbol-table.ts';
 import { listViewOwners } from '../factories.ts';
 import { isTextLeaf } from '../shared.ts';
-import { AssembledList, type AssembledNode, type AssembledNonterminal } from '../../compiler/model/node-map.ts';
+import { AbstractAssembledCompound, AssembledList, type AssembledNode, type AssembledNonterminal } from '../../compiler/model/node-map.ts';
+import { hasBlankArm } from '../../compiler/model/site-preferences.ts';
 import {
 	assertOneUntaggedSlot,
 	enumKindArgs,
@@ -685,7 +686,7 @@ describe('transport read facts', () => {
 		const mutable = model.nodeMap.nodes.get('mutable_specifier')!;
 		expect(isTextLeaf(mutable) && mutable.modelType === 'keyword').toBe(true);
 		expect(src).not.toMatch(/^pub struct MutableSpecifierTransport \{/m);
-		expect(src).toMatch(/^pub enum MutableSpecifierTransport \{\n    MutableSpecifier,\n\}/m);
+		expect(src).toMatch(/^pub enum MutableSpecifierTransport \{\n    #\[kind\(kind::MUTABLE_SPECIFIER\)\]\n    MutableSpecifier,\n\}/m);
 	});
 
 	it('routes a presence slot by its field and names its keyword', () => {
@@ -702,5 +703,47 @@ describe('transport read facts', () => {
 		expect(() =>
 			assertOneUntaggedSlot('where_clause', [{ name: 'a', ids: [1, 7] }, { name: 'b', ids: [130, 1] }], model.kindEntries)
 		).toThrow(/where_clause.*'a'.*'b'.*identifier \(kind 1\)/);
+	});
+});
+
+describe('transport attributes', () => {
+	it('derives the reader and states the read facts on a struct', async () => {
+		const src = await getRustTemplatesRs();
+		expect(src).toContain('use super::{field_ids as field, kind_ids as kind};');
+		expect(src).toMatch(
+			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Transport\)\]\n#\[transport\(kind = kind::FUNCTION_ITEM, layout = \[kind::FN_KEYWORD, kind::DASH_GT\]\)\]\npub struct FunctionItemTransport \{/
+		);
+		expect(extractStructBody(src, 'FunctionItemTransport')).toMatch(/    #\[slot\(field = field::NAME\)\]\n    pub name: /);
+		expect(extractStructBody(src, 'ParametersElementsTransport')).toMatch(/    #\[flank\(trailing = 0\)\]\n    pub delimiter: Option<u8>,/);
+	});
+
+	it("gives a choice's variants the ids today's decode claims for them", async () => {
+		const src = await getRustTemplatesRs();
+		const typeEnum = src.slice(src.indexOf('pub enum TypeTransport {'));
+		expect(src).toMatch(/#\[transport\(choice\)\]\npub enum TypeTransport \{/);
+		expect(typeEnum).toMatch(/    #\[kind\(kind::NEVER_TYPE[^\]]*\)\]\n    NeverType,/);
+		expect(typeEnum).toMatch(/    #\[kind\(kind::_PRIMITIVE_TYPE[^\]]*kind::U8_KEYWORD[^\]]*\)\]\n    PrimitiveType\(PrimitiveTypeEnum\),/);
+		expect(src).toMatch(/#\[transport\(kind = kind::_PRIMITIVE_TYPE, spelled\)\]\npub enum PrimitiveTypeEnum \{\n    #\[kind\(kind::U8_KEYWORD\)\]\n    U8,/);
+	});
+
+	it('marks the blank arm of a slot that has one', async () => {
+		const src = await getTypescriptTransportRs();
+		const terminator = src.slice(src.indexOf('pub enum StatementBlockTerminatorTransportSlot {'));
+		expect(terminator).toMatch(/    #\[transport\(blank\)\]\n    Blank,/);
+	});
+
+	it('gives a blank arm only to the choices that blank options hold', async () => {
+		const src = await getTypescriptTransportRs();
+		const model = await modelFor('typescript');
+		const blankOptions = [...model.nodeMap.nodes.values()]
+			.flatMap((n) => (n instanceof AbstractAssembledCompound ? n.slots : []))
+			.filter(hasBlankArm);
+		const blankChoices = [...src.matchAll(/pub enum (\w+) \{[^}]*\n    #\[transport\(blank\)\]\n    Blank,/g)].map((m) => m[1]!);
+		const heldByBlankChoices = [...src.matchAll(/pub \w+: Option<::sittir_core::SlotValue<(\w+)>>,/g)].filter((m) => blankChoices.includes(m[1]!));
+		const blankIdArms = [...src.matchAll(/ 0 => (?:Ok|Some)\(Self::Blank\)/g)];
+		expect(blankOptions).toHaveLength(9);
+		expect(heldByBlankChoices).toHaveLength(blankOptions.length);
+		expect(blankChoices).toHaveLength(4);
+		expect(blankIdArms).toHaveLength(3 * blankChoices.length);
 	});
 });
