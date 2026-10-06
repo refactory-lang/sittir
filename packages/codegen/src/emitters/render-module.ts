@@ -3634,7 +3634,7 @@ function renderTransportField(
 	return lines;
 }
 
-type TransportSlotShape =
+export type TransportSlotShape =
 	| { readonly tag: 'presence'; readonly text: string; readonly kind?: AssembledNode }
 	| { readonly tag: 'text' }
 	| { readonly tag: 'kind'; readonly kind: string; readonly typeName: string; readonly transport: string }
@@ -3642,7 +3642,7 @@ type TransportSlotShape =
 	| { readonly tag: 'union' }
 	| { readonly tag: 'any' };
 
-function transportSlotShapeOf(slot: AssembledNonterminal, nodeMap: NodeMap): TransportSlotShape {
+export function transportSlotShapeOf(slot: AssembledNonterminal, nodeMap: NodeMap): TransportSlotShape {
 	const primitive = classifyPrimitiveField(slot, nodeMap);
 	if (primitive !== undefined) {
 		return primitive.kind === 'boolean'
@@ -3804,7 +3804,7 @@ function perSlotEnumName(typeName: string, fieldName: string): string {
 	return `${base}${sanitized}TransportSlot`;
 }
 
-function rustTransportStructName(node: AssembledNode): string {
+export function rustTransportStructName(node: AssembledNode): string {
 	if (node instanceof AssembledEnum) {
 		return enumTypeName(node);
 	}

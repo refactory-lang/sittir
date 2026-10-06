@@ -2,8 +2,6 @@ import { hasBlankArm } from '../compiler/model/site-preferences.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { AbstractAssembledCompound, AssembledAlias, isBuilderTextLeaf, storageKindOfRef } from '../compiler/model/node-map.ts';
-import { CHOICE, SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
-import type { RenderRule } from '../types/rule.ts';
 import { findOwnKindEntry, type GeneratedIdTables } from '../dsl/symbol-table.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import {
@@ -39,7 +37,9 @@ import {
 	kindEnumAltIdPairs,
 	kindEnumOwnSymbolIds,
 	fieldTypeComponents,
-	slotSeparatorTexts,
+	slotDropTexts,
+	aliasEnvelopesOf,
+	aliasEnvelopeIds,
 	slotRoutesOf,
 	pruneUnusedImports,
 	blankFromInput,
@@ -66,14 +66,6 @@ import {
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
-
-function aliasEnvelopesOf(nodeMap: NodeMap): AssembledAlias[] {
-	return [...nodeMap.nodes.values()].filter((node) => node instanceof AssembledAlias);
-}
-
-function aliasEnvelopeIds(envelopes: readonly AssembledAlias[]): number[] {
-	return [...new Set(envelopes.map((node) => node.aliasTypeId))].sort((a, b) => a - b);
-}
 
 export function listKindIds(nodeMap: NodeMap): number[] {
 	return [...nodeMap.nodes.values()].flatMap((node) => (node instanceof AssembledList && node.kindId !== undefined ? [node.kindId] : [])).sort((a, b) => a - b);
@@ -625,36 +617,10 @@ function separatorIdsExprOf(
 	elided: boolean
 ): string | undefined {
 	if (!kindEntries) return undefined;
-	const tagged = owner !== undefined && f.fieldName !== undefined ? (fieldTaggedLiteralTexts(owner).get(f.fieldName) ?? []) : [];
-	const sepTexts = [...new Set([...slotSeparatorTexts(f, elided), ...tagged])];
+	const sepTexts = slotDropTexts(f, owner, elided);
 	if (sepTexts.length === 0) return undefined;
 	return `[${sepTexts.map((text) => kindDiscriminantExprForLiteral(text, kindEntries)).join(', ')}]`;
 }
-
-function fieldTaggedLiteralTexts(node: AssembledNode): ReadonlyMap<string, readonly string[]> {
-	const out = new Map<string, string[]>();
-	const walk = (rule: RenderRule, field: string | undefined): void => {
-		const own = (rule as { fieldName?: string }).fieldName ?? field;
-		switch (rule.type) {
-			case STRING:
-				if (own !== undefined && own !== (rule as { fieldName?: string }).fieldName) {
-					const list = out.get(own) ?? [];
-					if (!list.includes(rule.value)) list.push(rule.value);
-					out.set(own, list);
-				}
-				return;
-			case SEQ:
-			case CHOICE:
-				for (const member of rule.members) walk(member, own);
-				return;
-			default:
-				return;
-		}
-	};
-	if (node instanceof AbstractAssembledCompound && !node.lexedInterior) walk(node.renderRule, undefined);
-	return out;
-}
-
 
 function fieldAccessorBodies(
 	slots: readonly AssembledNonterminal[],

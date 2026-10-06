@@ -12,10 +12,9 @@
 
 import { beforeAll, describe, expect, it } from 'vitest';
 import { classifySlot, buildSupertypeTransportSet, deriveChildrenKinds, type SlotClass } from '../transport-common.ts';
-import { emitRenderModule } from '../render-module.ts';
-import { collectCatalogKinds, collectKindEntries } from '../kind-discriminant.ts';
+import { emitRenderModule, rustTransportStructName, transportSlotShapeOf } from '../render-module.ts';
+import { collectCatalogKinds, collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
 import { seamRenderRules, spaceRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
-import type { AssembledNonterminal } from '../../compiler/model/node-map.ts';
 import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
@@ -24,6 +23,19 @@ import { runTemplateEmitter, stampStaticSpacing } from '../templates.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 import { evaluatePackage } from '../../compiler/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
+import { generatedFieldIds } from '../../dsl/symbol-table.ts';
+import { listViewOwners } from '../factories.ts';
+import { isTextLeaf } from '../shared.ts';
+import { AssembledList, type AssembledNode, type AssembledNonterminal } from '../../compiler/model/node-map.ts';
+import {
+	assertOneUntaggedSlot,
+	enumKindArgs,
+	flankArgs,
+	readNames,
+	slotArgs,
+	transportArgs,
+	type ReadFactsCtx
+} from '../transport-projection.ts';
 
 
 // ---------------------------------------------------------------------------
@@ -124,7 +136,9 @@ let _rustKindEntries: ReturnType<typeof collectKindEntries> | undefined;
 /** The rust `options.rs` the cached emit produced beside its transports. */
 let _rustOptionsRs: string | undefined;
 
-async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise<string> {
+const _models = new Map<string, ReturnType<typeof buildModel>>();
+
+async function buildModel(grammar: 'rust' | 'typescript') {
 	const raw = await evaluatePackage(grammarPackage(grammar));
 	const generatedIdTables = await loadGeneratedIdTables(grammar);
 	if (generatedIdTables === undefined) throw new Error(`no generated id tables for ${grammar}`);
@@ -135,7 +149,6 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 	);
 
 	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
-	if (grammar === 'rust') _rustKindEntries = kindEntries;
 	const rulesConfig = {
 		nodeMap,
 		kindEntries,
@@ -146,6 +159,20 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 	stampStaticSpacing(nodeMap, grammar, spacedRules);
 	const renderRules = seamRenderRules(spacedRules, rulesConfig);
 	const templates = runTemplateEmitter({ grammar, nodeMap, renderRules });
+	return { raw, nodeMap, kindEntries, generatedIdTables, templates, renderRules };
+}
+
+function modelFor(grammar: 'rust' | 'typescript') {
+	const cached = _models.get(grammar);
+	if (cached !== undefined) return cached;
+	const built = buildModel(grammar);
+	_models.set(grammar, built);
+	return built;
+}
+
+async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise<string> {
+	const { raw, nodeMap, kindEntries, generatedIdTables, templates, renderRules } = await modelFor(grammar);
+	if (grammar === 'rust') _rustKindEntries = kindEntries;
 	const emit = emitRenderModule(grammar, templates, nodeMap, generatedIdTables, {
 		renderRules,
 		visibleExternals: raw.visibleExternals,
@@ -580,5 +607,100 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		expect(block).toMatch(/w\.site_at\(options::SITE_\w+_LBRACE_AFTER\);/);
 		expect(block).toContain('w.text("{")?;');
 		expect(block).toContain('statements.render(w)?;');
+	});
+});
+
+describe('transport read facts', () => {
+	let model: Awaited<ReturnType<typeof modelFor>>;
+	let ctx: ReadFactsCtx;
+	beforeAll(async () => {
+		model = await modelFor('rust');
+		ctx = {
+			nodeMap: model.nodeMap,
+			kindEntries: model.kindEntries,
+			names: readNames(model.kindEntries, generatedFieldIds(model.generatedIdTables)),
+			listOwners: new Set(listViewOwners(model.nodeMap).map((node) => node.kind))
+		};
+	}, 120_000);
+
+	const node = (struct: string): AssembledNode => {
+		const found = [...model.nodeMap.nodes.values()].find((n) => rustTransportStructName(n) === struct);
+		if (found === undefined) throw new Error(`no kind emits ${struct}`);
+		return found;
+	};
+	const ownId = (n: AssembledNode): number => findKindEntry(model.kindEntries, n.kind)!.id;
+	const args = (struct: string): string => {
+		const n = node(struct);
+		return transportArgs(n, ownId(n), model.templates.bodies.get(n.kind), ctx);
+	};
+	const slot = (struct: string, storageName: string) => node(struct).slots.find((s) => s.storageName === storageName)!;
+	const shape = (s: AssembledNonterminal) => transportSlotShapeOf(s, model.nodeMap);
+
+	it('lists the tokens a kind writes itself as its layout', () => {
+		expect(args('FunctionItemTransport')).toBe('kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT]');
+	});
+
+	it('gives a list owner its minimum depth, its tokens and its inner gap', () => {
+		expect(args('ParametersTransport')).toBe(
+			'kind = kind::PARAMETERS, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], gap(1) = elements'
+		);
+	});
+
+	it('marks a separated list, its item slot, its separator and the flank it leaves optional', () => {
+		const list = node('ParametersElementsTransport') as AssembledList;
+		expect(args('ParametersElementsTransport')).toBe('kind = kind::PARAMETERS_ELEMENTS, list, item = item');
+		expect(slotArgs(slot('ParametersElementsTransport', 'item'), list, shape(slot('ParametersElementsTransport', 'item')), ctx)).toBe('field = field::ITEM, separator = kind::COMMA');
+		expect(flankArgs(list)).toBe('trailing = 0');
+	});
+
+	it('reads a token interior by its pattern and an envelope by its display id', () => {
+		expect(args('IntegerLiteralDecimalTransport')).toBe(
+			'kind = kind::INTEGER_LITERAL_DECIMAL, interior = "^(?<content>(?:[0-9][0-9_]*))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$"'
+		);
+		expect(args('TypeIdentifierTransport')).toBe('kind = kind::_TYPE_IDENTIFIER, display, envelope, content = content');
+	});
+
+	it('reads a leaf as its text', () => {
+		expect(args('IdentifierTransport')).toBe('kind = kind::IDENTIFIER, text');
+	});
+
+	it('reads as text exactly the kinds whose transport holds text', async () => {
+		const src = await getRustTemplatesRs();
+		const holdsText = new Map(
+			[...src.matchAll(/^pub struct (\w+) \{\n([^}]*)^\}/gm)].map((m) => [m[1]!, /^    pub text: String,$/m.test(m[2]!)])
+		);
+		let structs = 0;
+		for (const n of model.nodeMap.nodes.values()) {
+			const holds = holdsText.get(rustTransportStructName(n));
+			if (holds === undefined) continue;
+			structs++;
+			const reads = /^kind = [\w:]+, text\b/.test(transportArgs(n, ownId(n), model.templates.bodies.get(n.kind), ctx));
+			expect(reads, n.kind).toBe(holds);
+		}
+		expect(structs).toBeGreaterThan(0);
+	});
+
+	it('reads a keyword the spelled-leaf set holds as its kind id, not as text', async () => {
+		const src = await getRustTemplatesRs();
+		const mutable = model.nodeMap.nodes.get('mutable_specifier')!;
+		expect(isTextLeaf(mutable) && mutable.modelType === 'keyword').toBe(true);
+		expect(src).not.toMatch(/^pub struct MutableSpecifierTransport \{/m);
+		expect(src).toMatch(/^pub enum MutableSpecifierTransport \{\n    MutableSpecifier,\n\}/m);
+	});
+
+	it('routes a presence slot by its field and names its keyword', () => {
+		expect(slotArgs(slot('LetDeclarationTransport', 'mutable'), node('LetDeclarationTransport'), shape(slot('LetDeclarationTransport', 'mutable')), ctx)).toBe(
+			'field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER'
+		);
+	});
+
+	it('reads an enum kind by its own id, and its own node by the member its tokens spell', () => {
+		expect(enumKindArgs(ownId(node('PrimitiveTypeEnum')), ctx)).toBe('kind = kind::_PRIMITIVE_TYPE, spelled');
+	});
+
+	it('refuses two slots of one kind that take the same untagged kind', () => {
+		expect(() =>
+			assertOneUntaggedSlot('where_clause', [{ name: 'a', ids: [1, 7] }, { name: 'b', ids: [130, 1] }], model.kindEntries)
+		).toThrow(/where_clause.*'a'.*'b'.*identifier \(kind 1\)/);
 	});
 });

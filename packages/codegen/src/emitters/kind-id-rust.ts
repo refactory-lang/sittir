@@ -1,7 +1,7 @@
 import { findOwnKindEntry } from '../dsl/symbol-table.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables, KindEntryLike } from '../dsl/symbol-table.ts';
-import { AbstractAssembledCompound } from '../compiler/model/node-map.ts';
+import { AbstractAssembledCompound, type AssembledNonterminal } from '../compiler/model/node-map.ts';
 import { collectKindEntries, collectCatalogKinds } from './kind-discriminant.ts';
 import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
 import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
@@ -110,6 +110,11 @@ function innerGapRows(
 
 const SCALAR_STORAGE: ReadonlySet<string> = new Set(['boolean', 'bitflag', 'kindEnum', 'mixedEnum']);
 
+export function isScalarStorage(slot: AssembledNonterminal): boolean {
+	const info = slot.storageInfo;
+	return info !== undefined && SCALAR_STORAGE.has(info.kind) && info.enumKindsById.size > 0;
+}
+
 export interface ScalarChildRow {
 	readonly parentId: number;
 	readonly field?: string;
@@ -125,8 +130,8 @@ export function scalarChildRows(
 		const parentId = findOwnKindEntry(entries, node.kind)?.id;
 		if (parentId === undefined) continue;
 		for (const slot of node.slots) {
-			const info = slot.storageInfo;
-			if (info === undefined || !SCALAR_STORAGE.has(info.kind) || info.enumKindsById.size === 0) continue;
+			if (!isScalarStorage(slot)) continue;
+			const info = slot.storageInfo!;
 			const field = slot.fieldName;
 			const key = `${parentId} ${field ?? ''}`;
 			const row = rows.get(key) ?? { parentId, ...(field === undefined ? {} : { field }), childIds: new Set<number>() };
