@@ -22,14 +22,16 @@ No stage touches `packages/common/src/transport-data.ts` or the native reader; t
 - The form and subtype routing for kinds with no bare factory lives in `packages/tools/src/validate/common.ts` (`buildFactoryNodeFromReference` over the `ir` surface).
 - Probe, rust at `f4a78b7fb`: 190 read entries, 173 build entries, 142 of 374 members rejected by the vocabulary.
 
-## Decision needed before stage 1
+## How codegen gets the bindings facts (decided)
 
-**How codegen gets the bindings facts.** The generator runs inside the codegen pass that writes `types.ts`, and reading `bindings.scm` needs the scm parser. No generation may depend on the workspace `@sittir/scm`, so that a change which breaks `@sittir/scm` can never break regenerating the fix. Options:
+The generator runs inside the codegen pass that writes `types.ts`, and reading `bindings.scm` needs the scm parser. No generation may depend on the workspace `@sittir/scm`, so that a change which breaks `@sittir/scm` can never break regenerating the fix.
 
-- **(a) A committed facts artifact.** The inventory writes `packages/<grammar>/.sittir/bindings.json` (the resolved facts, with a hash of `bindings.scm`), and codegen reads only that file. Codegen never runs scm; a stale artifact (hash mismatch) is a codegen diagnostic. Regenerating `@sittir/scm` reads its own committed artifact, so there is no bootstrap cycle.
-- **(b) A pinned reader in codegen:** codegen loads a pinned build of `@sittir/scm` and reads `bindings.scm` itself. This needs the pinned bootstrap first.
-
-Recommended: (a). No generation depends on the workspace `@sittir/scm`, no new build machinery is needed, and the artifact is the same kind of stamped input as `.sittir/src/grammar.json`.
+- **A committed facts artifact,** `packages/<grammar>/.sittir/bindings.json`: the facts read from `bindings.scm`, with a hash of it.
+- The inventory reads `bindings.scm` through `@sittir/scm` and writes the artifact.
+- Codegen reads only the artifact. It refuses a stale one (a hash that does not match `bindings.scm`) with a diagnostic naming the command that regenerates it.
+- The facts schema and the derivation live in codegen, and the inventory calls them, so there is one derivation.
+- Codegen stays out of the scm engine's bootstrap: regenerating `@sittir/scm` reads its own committed artifact.
+- Not a pinned scm reader in codegen: that would be a second reader and a second derivation.
 
 ## The rejected members: the rule
 
@@ -47,12 +49,10 @@ Stage 3 drives the count to zero for each cause on the side that owns it. Rust i
 
 ## Stage 1: bindings facts reach codegen
 
-With the artifact (option a):
-- The facts schema and the derivation move into `packages/codegen/src/bindings/`, as pure functions of the facts and the slot model. `readBindings` stays in the inventory, since it parses `bindings.scm` through `@sittir/scm`, and the inventory writes the artifact. Codegen reads only the artifact, and refuses one whose hash does not match `bindings.scm`.
+- The facts schema and the derivation move into `packages/codegen/src/bindings/`, as pure functions of the facts and the slot model. `readBindings` stays in the inventory, since it parses `bindings.scm` through `@sittir/scm`, and the inventory writes the artifact. Codegen reads only the artifact, and refuses one whose hash does not match `bindings.scm`, naming the command that regenerates it.
 - The facts keep two things they drop today:
   - a predicate claim's predicate (operator, capture, argument), so a read entry can test it and a build entry can pin it;
   - a presence member's token text, so a capture named otherwise than its token (`"async" @isAsync`) still has a route.
-- With a pinned reader (option b), `readBindings` moves too, over the pinned build.
 - Gate: the inventory's report is byte-identical; the artifacts are committed for rust, typescript and python; unit tests pin the two new facts (`#eq? @name "__init__"`, `"async" @isAsync`) and the stale-artifact refusal.
 
 ## Stage 2: one route resolution
