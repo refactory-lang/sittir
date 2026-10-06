@@ -89,13 +89,28 @@ interface RawNode {
 	readonly slots?: readonly { readonly name: string; readonly paramName?: string; readonly values?: readonly RawValue[] }[];
 }
 
-const { loadInputs } = (await import(join(ROOT, 'packages/tools/src/inventory/index.ts'))) as {
+interface MemberFacts {
+	readonly kinds: ReadonlySet<string>;
+}
+interface Derivation {
+	readonly refinements: ReadonlyMap<string, { readonly parent: string }>;
+}
+const { loadInputs, deriveVocabulary } = (await import(join(ROOT, 'packages/tools/src/inventory/index.ts'))) as {
 	loadInputs: (g: readonly string[]) => Promise<GrammarInput[]>;
+	deriveVocabulary: () => Promise<Derivation>;
 };
-const { camel, tsname } = (await import(join(ROOT, 'packages/tools/src/inventory/derive.ts'))) as {
-	camel: (s: string) => string;
-	tsname: (s: string) => string;
-};
+const { camel, tsname, derive, levelMembers, slotEntries, collapsedKinds, armClass, soleRole, levelsWithMembers } =
+	(await import(join(ROOT, 'packages/tools/src/inventory/derive.ts'))) as {
+		camel: (s: string) => string;
+		tsname: (s: string) => string;
+		derive: (inputs: readonly GrammarInput[]) => Derivation;
+		levelMembers: (d: Derivation, path: string) => ReadonlyMap<string, MemberFacts>;
+		slotEntries: (d: Derivation) => readonly { readonly path: string; readonly member: string }[];
+		collapsedKinds: (d: Derivation, kinds: ReadonlySet<string>) => string[];
+		armClass: (kind: string) => 'scalar' | 'role' | 'ref' | 'text' | 'unmapped';
+		soleRole: (d: Derivation, kinds: ReadonlySet<string>) => { role: string; text: string[] } | undefined;
+		levelsWithMembers: (d: Derivation) => string[];
+	};
 const { readNodeModelFile } = (await import(join(ROOT, 'packages/tools/src/validate/common.ts'))) as {
 	readNodeModelFile: (g: string) => string | undefined;
 };
@@ -129,10 +144,10 @@ for (const file of readdirSync(VOCAB_FILES).filter((f) => f.endsWith('.ts'))) {
 				open = undefined;
 				continue;
 			}
-			const kind = /^readonly kind: '([a-z_.]+)'/.exec(line.trim());
+			const kind = /^readonly \$kind: '([a-z_.]+)'/.exec(line.trim());
 			if (indent === open.indent + 1 && kind?.[1] !== undefined) open.path = kind[1];
 			const member = /^readonly ([A-Za-z_$][\w$]*)\??:/.exec(line.trim());
-			if (indent === open.indent + 1 && member?.[1] !== undefined && member[1] !== 'kind') open.members.add(member[1]);
+			if (indent === open.indent + 1 && member?.[1] !== undefined && member[1] !== '$kind') open.members.add(member[1]);
 			continue;
 		}
 		const ns = /^export namespace (\w+) \{/.exec(line.trim());
@@ -140,7 +155,7 @@ for (const file of readdirSync(VOCAB_FILES).filter((f) => f.endsWith('.ts'))) {
 			stack.push({ name: ns[1], indent });
 			continue;
 		}
-		const iface = /^export interface (\w+)<G[^>]*>(?: extends Simplify<SubKindOf<V\.([\w.]+)<G>>>)? \{/.exec(trimmed);
+		const iface = /^export interface (\w+)<G[^>]*>(?: extends (?:Simplify<)?SubKindOf<V\.([\w.]+)<G>>>?)? \{/.exec(trimmed);
 		if (iface?.[1] !== undefined) {
 			open = { tsName: [...stack.map((s) => s.name), iface[1]].join('.'), indent, path: '', members: new Set(), parent: iface[2] };
 			continue;
@@ -379,12 +394,65 @@ const NAMESPACES = [
 	'type'
 ] as const;
 const claimedPaths = [...new Set(facts.claims.map((c) => c.vocab))].sort();
+// The language context's fill. Collapsing is the vocabulary's; a terminal or enum value is its literal, a
+// pattern-matched leaf is `string`. A role admits the keyword text this grammar's members hold beside it, and each slot
+// the vocabulary leaves to the language holds what this grammar's own member facts route there, or `never`.
+const vocabulary = await deriveVocabulary();
+const own = derive([input]);
+const patterns = new Set([...model.values()].flatMap((n) => (n.pattern === null ? [] : [n.pattern])));
+const roleText = new Map<string, Set<string>>();
+for (const path of levelsWithMembers(own))
+	for (const facts of levelMembers(own, path).values()) {
+		const sole = soleRole(vocabulary, facts.kinds);
+		for (const k of sole?.text ?? []) (roleText.get(sole!.role) ?? roleText.set(sole!.role, new Set()).get(sole!.role)!).add(k);
+	}
+const slotArm = (k: string): string => {
+	switch (armClass(k)) {
+		case 'scalar':
+			return k;
+		case 'role':
+			return `Ctx['${k}']`;
+		case 'unmapped':
+			return `V.Unmapped<'${k.slice(1, -1)}'>`;
+		case 'ref':
+			return k.startsWith('set:') ? `V.${k.slice(4).split('.').map(tsname).join('.')}.Any<Ctx>` : interfaceOf(k);
+		case 'text': {
+			if (k.startsWith('literal:')) {
+				const text = tokenText.get(k.slice(8));
+				return text === undefined ? 'string' : quote(text);
+			}
+			return patterns.has(k.slice(5)) ? 'string' : quote(k.slice(5));
+		}
+	}
+};
 emit(`/** ${GRAMMAR}'s context: each namespace's kind-set, the interfaces of the kinds ${GRAMMAR} claims. */`);
 emit('export interface Ctx extends GrammarContext {');
 for (const ns of NAMESPACES) {
 	const paths = claimedPaths.filter((p) => p === ns || p.startsWith(`${ns}.`));
-	emit(`\treadonly ${ns}: ${paths.length > 0 ? paths.map(interfaceOf).join(' | ') : 'never'};`);
+	const arms = [...paths.map(interfaceOf), ...[...new Set([...(roleText.get(ns) ?? [])].map(slotArm))].sort()];
+	emit(`\treadonly ${ns}: ${arms.length > 0 ? arms.join(' | ') : 'never'};`);
 }
+// A member this grammar does not route at a level is the one the level inherits: a refinement's parent's, else the
+// dotted parent's.
+const ownMember = (path: string, member: string): MemberFacts | undefined => {
+	const facts = levelMembers(own, path).get(member);
+	if (facts !== undefined) return facts;
+	const parent = own.refinements.get(path)?.parent ?? (path.includes('.') ? path.slice(0, path.lastIndexOf('.')) : undefined);
+	return parent === undefined ? undefined : ownMember(parent, member);
+};
+emit('\treadonly slots: {');
+const byPath = new Map<string, string[]>();
+for (const { path, member } of slotEntries(vocabulary)) (byPath.get(path) ?? byPath.set(path, []).get(path)!).push(member);
+for (const [path, members] of byPath) {
+	emit(`\t\treadonly '${path}': {`);
+	for (const member of members) {
+		const facts = ownMember(path, member);
+		const arms = facts === undefined ? [] : [...new Set(collapsedKinds(vocabulary, facts.kinds).map(slotArm))];
+		emit(`\t\t\treadonly ${member}: ${arms.length === 0 ? 'never' : arms.join(' | ')};`);
+	}
+	emit('\t\t};');
+}
+emit('\t};');
 emit('}');
 emit();
 
@@ -462,14 +530,14 @@ const coreOf = (kind: string): string | undefined => (isEnum(kind) ? 'number' : 
 emit('/** A member type resolved to its view: a vocabulary value by its `kind` through `VocabViews`, an array element by element. */');
 emit('type Resolved<R> = R extends readonly unknown[]');
 emit('\t? { [I in keyof R]: Resolved<R[I]> }');
-emit('\t: R extends { readonly kind: infer K }');
+emit('\t: R extends { readonly $kind: infer K }');
 emit('\t\t? K extends keyof VocabViews');
 emit('\t\t\t? VocabViews[K]');
 emit('\t\t\t: R');
 emit('\t\t: R;');
 emit('/** A vocabulary kind\'s view form: `kind` as data, each property member as a closure returning its resolved value. */');
-emit('export type ViewForm<I> = { readonly kind: I extends { readonly kind: infer K } ? K : never } & {');
-emit("\treadonly [P in keyof I as P extends 'kind' ? never : P]-?: () => Resolved<I[P]>;");
+emit('export type ViewForm<I> = { readonly $kind: I extends { readonly $kind: infer K } ? K : never } & {');
+emit("\treadonly [P in keyof I as P extends '$kind' ? never : P]-?: () => Resolved<I[P]>;");
 emit('};');
 emit();
 emit(`/** Each vocabulary kind ${GRAMMAR} claims, as its view: the kind's view form plus \`$core\`, the low-level node it reads. */`);
@@ -532,13 +600,13 @@ for (const [kind, entries] of entriesOf) {
 		const node = modelNode(kind);
 		const leaf = node !== undefined && (node.modelType === 'pattern' || node.modelType === 'enum' || input.textTokens.has(kind));
 		emit(`const ${classNameOf(e)} = (n: ${coreOf(kind)}): VocabViews[${quote(e.vocab)}] => ({`);
-		emit(`\tkind: ${quote(e.vocab)},`);
+		emit(`\t$kind: ${quote(e.vocab)},`);
 		emit('\t$core: n,');
 		if (leaf) emit(`\t$text: () => ${isEnum(kind) ? "TEXT[n] ?? ''" : 'n.$text'},`);
 		const pins = pinsOf(e);
 		const written = new Set<string>();
 		for (const m of isEnum(kind) ? [] : membersOf(kind)) {
-			if (m.name === 'kind') continue;
+			if (m.name === '$kind') continue;
 			const pin = pins.get(m.name);
 			if (pin !== undefined) {
 				emit(`\t${m.name}: () => ${quote(pin)},`);
@@ -553,7 +621,7 @@ for (const [kind, entries] of entriesOf) {
 			emit(`\t${m.name}: () => ${body.replace(/^return /, '').replace(/;$/, '').replaceAll('this.$core', 'n')},`);
 			written.add(m.name);
 		}
-		for (const name of interfaceMembers(e.vocab)) if (name !== 'kind' && !written.has(name)) emit(`\t${name}: () => undefined,`);
+		for (const name of interfaceMembers(e.vocab)) if (name !== '$kind' && !written.has(name)) emit(`\t${name}: () => undefined,`);
 		emit('});');
 		emit();
 		emitted.push(e);
@@ -685,7 +753,7 @@ for (const [kind, entries] of entriesOf) {
 		const fields: string[] = [];
 		const viaGroups = new Map<string, { path: string[]; parts: string[]; envelope: string | undefined }>();
 		for (const m of membersOf(kind)) {
-			if (m.name === 'kind') continue;
+			if (m.name === '$kind') continue;
 			const value = pins.has(m.name) ? quote(pins.get(m.name)!) : `member(s, ${quote(m.name)})`;
 			if (m.route === 'slot') {
 				const param = paramOf(kind, m.slot.name);
@@ -739,7 +807,7 @@ for (const kind of entriesOf.keys()) {
 emit();
 emit('/** A vocabulary value: a view, or a plain structure carrying `kind` and members. */');
 emit('export interface Value {');
-emit('\treadonly kind: string;');
+emit('\treadonly $kind: string;');
 emit('\treadonly $text?: string | (() => string);');
 emit('}');
 emit();
@@ -766,22 +834,22 @@ emit("\tconst textOf = (s: Value): string => (typeof s.$text === 'function' ? s.
 emit('\tconst tokenOf = (s: Value, ids: { readonly [text: string]: number }): number => {');
 emit("\t\tif ('$core' in s && typeof s.$core === 'number') return s.$core;");
 emit('\t\tconst id = ids[textOf(s)];');
-emit("\t\tif (id === undefined) throw new Error(`${s.kind} has no token spelled ${textOf(s)}`);");
+emit("\t\tif (id === undefined) throw new Error(`${s.$kind} has no token spelled ${textOf(s)}`);");
 emit('\t\treturn id;');
 emit('\t};');
 emit('\tconst back = (v: unknown): unknown => {');
 emit("\t\tif (Array.isArray(v)) return v.map(back);");
-emit("\t\tif (typeof v === 'object' && v !== null && 'kind' in v && typeof v.kind === 'string') return from(v as Value);");
+emit("\t\tif (typeof v === 'object' && v !== null && '$kind' in v && typeof v.$kind === 'string') return from(v as Value);");
 emit('\t\treturn v;');
 emit('\t};');
 emit('\tfunction from<S extends Value>(s: S): unknown {');
-emit('\t\tswitch (s.kind) {');
+emit('\t\tswitch (s.$kind) {');
 for (const [vocab, body] of buildCases) {
 	emit(`\t\t\tcase ${quote(vocab)}:`);
 	for (const l of body) emit(`\t\t\t\t${l}`);
 }
 emit('\t\t\tdefault:');
-emit(`\t\t\t\tthrow new Error(\`${GRAMMAR} has no build entry for \${s.kind}\`);`);
+emit(`\t\t\t\tthrow new Error(\`${GRAMMAR} has no build entry for \${s.$kind}\`);`);
 emit('\t\t}');
 emit('\t}');
 emit('\treturn from;');

@@ -20,9 +20,9 @@ let kinds = 0;
 for (const file of readdirSync(FROM).filter((f) => f.endsWith('.ts'))) {
 	const text = readFileSync(join(FROM, file), 'utf8')
 		.replace(/^import type \{ Simplify \} from 'type-fest';$/m, 'type Simplify<T> = { [K in keyof T]: T[K] } & {};')
-		.replace(/readonly kind: '([a-z_.]+)';/g, (_, path: string) => {
+		.replace(/readonly \$kind: '([a-z_.]+)';/g, (_, path: string) => {
 			kinds++;
-			return `readonly kind: '${path}' | \`${path}.\${string}\`;`;
+			return `readonly $kind: '${path}' | \`${path}.\${string}\`;`;
 		});
 	writeFileSync(join(TO, file), text);
 }

@@ -1,4 +1,3 @@
-// Generated from the grammars' bindings.scm. Do not edit.
 export * from './argument.ts';
 export * from './attribute.ts';
 export * from './clause.ts';
@@ -13,4 +12,4 @@ export * from './module.ts';
 export * from './pattern.ts';
 export * from './statement.ts';
 export * from './type.ts';
-export type { GrammarContext, BaseContext, Unmapped } from './context.ts';
+export type { GrammarContext, BaseContext, SlotTable, Unmapped } from './context.ts';

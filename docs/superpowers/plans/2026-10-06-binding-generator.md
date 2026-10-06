@@ -15,12 +15,12 @@ No stage touches `packages/common/src/transport-data.ts` or the native reader; t
 ## Where things are today
 
 - `ApiSurface` is reserved (`'default' | 'strict' | 'portable'`, `packages/types/src/engine-api.ts`); `createEngine` refuses `api: 'portable'` (`refuseUnimplemented`), and `BuildSurface<…, 'portable'>` is `never`.
-- The vocabulary under `packages/types/src/vocabulary/` is still generated: each file opens with "Generated from the grammars' bindings.scm and slot models", written by the inventory (`packages/tools/src/inventory/emit.ts`).
-- The bindings reader (`readBindings`, `inventory/bindings.ts`) and the derivation (`derive`, `inventory/derive.ts`) live in `packages/tools`, and read `bindings.scm` through the workspace `@sittir/scm`. `packages/codegen` cannot import `packages/tools`.
+- The vocabulary under `packages/types/src/vocabulary/` is authored. A member is typed by its sole role, its vocabulary refs or its scalar, and otherwise by its entry in the context slot table, `G['slots']['<kind path>']['<member>']`. `BaseContext` fills each entry with roles, refs or `string`. The inventory's `--check` reports where the vocabulary and the bindings disagree, and they agree everywhere.
+- The bindings reader (`readBindings`, `inventory/bindings.ts`) and the derivation (`derive`, and the member classification `slotEntries` and `soleRole`, `inventory/derive.ts`) live in `packages/tools`, and read `bindings.scm` through the workspace `@sittir/scm`. `packages/codegen` cannot import `packages/tools`.
 - `bindings.scm` exists for rust, typescript and python.
 - The query facet's plan form is `QueryPlan` (`@sittir/types`), evaluated by `holds` in `packages/common/src/query.ts`.
 - The form and subtype routing for kinds with no bare factory lives in `packages/tools/src/validate/common.ts` (`buildFactoryNodeFromReference` over the `ir` surface).
-- Probe, rust at `f4a78b7fb`: 190 read entries, 173 build entries, 142 of 374 members rejected by the vocabulary.
+- Probe, rust: 191 read entries, 174 build entries, 133 of 374 members rejected by the vocabulary, with the probe filling rust's context (each role's keyword text and the slot table) from rust's own derivation.
 
 ## How codegen gets the bindings facts (decided)
 
@@ -41,11 +41,15 @@ The generator runs inside the codegen pass that writes `types.ts`, and reading `
 
 Stage 3 drives the count to zero for each cause on the side that owns it. Rust is first, then typescript and python.
 
-## Stage 0: lock the vocabulary
+## Stage 0: lock the vocabulary (landed)
 
-- The vocabulary files lose their "Generated" banner and become authored.
-- The inventory's `--emit` stops writing them. `--check` reports where the bindings and the vocabulary disagree (a claimed path that is no vocabulary kind, a routed member its interface lacks, a required member with no route), as it does for every other diagnostic.
-- Gate: the inventory's check passes with the same report as before; no generated-output drift.
+- The emitter was cleaned up first and the vocabulary regenerated:
+  - `$kind` on every interface, holes included;
+  - a flat `SubKindOf` with no `Simplify`;
+  - grammar-neutral member types through the context slot table.
+- Then the vocabulary files lost their "Generated" banner and became authored, and the inventory's emitter and `--emit` were removed.
+- `--check` reads the vocabulary structurally and reports where it and the bindings disagree: a claimed path no interface has as its `$kind`, a routed member, pinned field or template hole its interface does not declare. They agree everywhere; the ceiling records none.
+- A grammar's context is filled by the type maps (stage 4); until then the probe fills rust's from its own derivation.
 
 ## Stage 1: bindings facts reach codegen
 
@@ -67,16 +71,16 @@ The causes the probe reports, each on the side that owns it:
 
 | cause | count | stage-3 change |
 | --- | --- | --- |
-| token text | 74 | The generator reads a fixed literal as its const string (stage 4's reading). Re-measured once the probe follows it; what remains is the low-level types narrowing aliased keyword tokens, or the member admitting them. |
-| text leaf | 33 | A varying leaf is a node carrying `$value`; members admit it (vocabulary). |
+| kind | 97 | A primitive type token read as `type.primitive` where the slot admits its const string. The enum-read rule is a routing fact, defined once in the shared route resolution: a token that is a value of a claimed enum reads as the enum's kind where the slot admits that enum, and as its const string otherwise. The conformance count reads through it. |
 | predicate | 13 | A member that admits a kind admits all its claims (vocabulary). |
-| unmapped | 10 | Each unmapped grammar kind gets a claim (bindings): onto an existing vocabulary kind, or onto a kind a feature adds to the vocabulary when none fits. |
+| unmapped | 12 | Each unmapped grammar kind gets a claim (bindings): onto an existing vocabulary kind, or onto a kind a feature adds to the vocabulary when none fits. |
 | untyped reader | 6 | The readers typed `unknown` get types (codegen typed surface). |
-| refinement | 3 | In the authored vocabulary, a level's `kind` admits every path beneath it. |
-| extra member | 2 | A feature adds the member, or the binding drops it. |
+| refinement | 3 | In the authored vocabulary, a level's `$kind` admits every path beneath it. |
+| token text | 1 | `parameter.name` reads keyword text (`'default'`) where rust's fill holds only its unmapped `rust:pattern` marker; it is cleared by the unmapped row's claim for `rust:pattern`. |
 | absent | 1 | Requiredness carries through containers (vocabulary projection). |
 
 - `sittir tool portable-conformance <grammar>` (the probe's tools, promoted) reports the count and causes.
+- The enum-read rule has unit tests: `i32` in an expression slot reads as `'i32'`, and in a type slot as `type.primitive`; `bool` in a slot that admits both reads as the enum.
 - Gate: rust's count is 0. Typescript's and python's are recorded as their ratchet baselines.
 
 ## Stage 4: type maps beside the low-level ones
@@ -89,10 +93,11 @@ The causes the probe reports, each on the side that owns it:
 
 - A generated `portable.ts` per zero-conformance grammar:
   - node literal factories, with `$type` as the only data member and every member a closure;
-  - the dispatch: placed claims through the enclosing kinds a parent passes down, predicate claims on the captured node's text, the slot deciding an enum value;
+  - the dispatch: placed claims through the enclosing kinds a parent passes down, predicate claims on the captured node's text, an enum value read by stage 3's enum-read rule;
   - a varying leaf's `$value`, and a fixed literal as its const string.
 - `createEngine(lang, { api: 'portable' })` is accepted. `parse` reads portable nodes, and `render` renders one by dispatching on `$type`. The engine reaches a portable node's low-level node through a module-private symbol, never a public member.
 - Gate:
+  - the dispatch reads an enum token by calling stage 3's enum-read rule, the same function the conformance count uses; no second rule;
   - a read lane: every node of the corpus reads through the portable engine with no throw, and every member call returns;
   - rendering a parsed portable root equals the low-level render.
 

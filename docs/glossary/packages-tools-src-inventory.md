@@ -1,6 +1,6 @@
 # `packages/tools/src/inventory` — Function Glossary
 
-The bindings inventory: `sittir tool bindings-inventory`. It reads each grammar's `packages/<grammar>/bindings.scm` through `@sittir/scm` and each grammar's slot model, checks that the bindings compile against the grammar's parser, derives the vocabulary the bindings imply, and emits the base interface tree by building TypeScript through the typescript package's loose builders and rendering it with the native engine. `--emit` writes into `packages/types/src/vocabulary/`, the checked-in tree, unless a directory is named; the tree is emitter output and is regenerated, never hand-edited, so every vocabulary-shape correction is made in a `bindings.scm` or in the derivation and proven by re-emitting.
+The bindings inventory: `sittir tool bindings-inventory`. It reads each grammar's `packages/<grammar>/bindings.scm` through `@sittir/scm` and each grammar's slot model, checks that the bindings compile against the grammar's parser, and derives the vocabulary the bindings imply: its kinds, members, refinements and the members the language context types. The vocabulary under `packages/types/src/vocabulary/` is authored; `--check` reports where it and the derivation disagree, and each disagreement is fixed on the side that is wrong, a feature extending the vocabulary or a binding dropping a claim.
 
 ---
 
@@ -164,57 +164,37 @@ that fails to carry it. A level no
 grammar claims takes a member as required when every claimed child does.
 ```
 
-### `packages/tools/src/inventory/emit.ts::vocabularyFiles`
+### `packages/tools/src/inventory/index.ts::vocabularyDisagreements`
 
-```text
-The tree as typescript programs, one per top-level namespace plus
-`context.ts` (the `GrammarContext` typemap, `Unmapped` and `BaseContext`),
-built directly through the loose builders: an interface merged with a
-namespace at every level, an interface alone at a leaf, a refinement
-extending its path parent with its literal pinned, every namespace exporting
-`Any<G>`. Member types collapse to the smallest covering kind-set: the
-namespace lookup when the admitted leaves' common prefix is the namespace
-root, a sub-namespace's `Any` when it is a claimed prefix, the leaf
-interfaces otherwise. A union keeps one arm per type it builds, keyed by the
-vocabulary kind the arm stands for. Member kinds arrive resolved: the
-derivation has read through containers and left out layout slots, so a
-`<grammar:kind>` that remains is unmapped and is spelled `Unmapped<...>`
-with a note naming it.
-```
+Where the bindings and the authored vocabulary disagree, one line each: a claimed path no vocabulary interface has as its `$kind`, a member the bindings route to a kind whose interface (its own members and its parents') does not declare it, a refinement's pinned field its interface does not declare, and a template hole its interface does not declare. The vocabulary is authored, so a disagreement is fixed on whichever side is wrong: a feature adds the kind or member, or the binding drops it.
 
-A sub-kind's interface — a refinement, a content-derived leaf, or a level
-under its top namespace — extends `Simplify<SubKindOf<V.<Parent><G>>>`
-rather than the parent itself: `SubKindOf` (`./utils.ts`, authored) narrows
-the parent's `kind` to the dotted sub-kind pattern, so a sub-kind is
-assignable to its parent while its own `kind` literal stays the narrower
-fact. A file imports `Simplify` (type-fest) and `SubKindOf` only when one of
-its interfaces extends that way, which the file's scope records as the
-heritage is built.
+### `packages/tools/src/inventory/derive.ts::armClass`
 
-### `packages/tools/src/inventory/emit.ts::indexFile`
+What one collapsed member kind stands for: a `scalar` keyword (`boolean`, `string`, `number`), a `role` (a top-level namespace), a `ref` (a dotted vocabulary kind or a `set:` prefix), `text` (a `text:` or `literal:` token), or `unmapped` (a `<grammar:kind>` no binding claims).
 
-The index: one `export * from` per namespace file, then the context types' `export type`, built through the same builders as the other files.
+### `packages/tools/src/inventory/derive.ts::collapsedKinds`
 
-### `packages/tools/src/inventory/emit.ts::renderVocabularyFile`
+A member's kinds collapsed to the smallest covering set: a namespace's leaves fold into the namespace when it is itself admitted or their common prefix is the namespace root, and into a `set:<prefix>` when that prefix is a claimed one; other kinds stand as they are. The slot table's entries and a grammar's fill of them both collapse through it, so they agree.
 
-```text
-The dogfood step: every file is built through the loose `build` of one
-typescript engine (no `.strict` call anywhere in the module: input is loose
-and the factories resolve arms by lexical rank, so a member named like a
-keyword, such as `object`, takes the keyword arm instead of tripping a strict
-slot guard), created when the module loads (`ir` and `TSKindId` are that
-engine's `build` and `kinds`), and rendered with the same engine and the
-vocabulary's render options: `exportStatementDefaultFrom.after` is a newline,
-so the index's re-exports stay one per line where the typescript default puts
-a blank line between statements. Comments ride as trivia. The caller formats
-the result; a render defect that survives formatting is a finding about the
-typescript package, never something the emitter works around.
-A namespace's block is built empty and given its statements through
-`$with.statements`, because the loose `statementBlock({ statements })`
-input type does not terminate on a list of export statements that
-themselves hold statement blocks (the checker reports excessive stack
-depth); the built node is the same.
-```
+### `packages/tools/src/inventory/derive.ts::soleRole`
+
+The one role a member's collapsed kinds state, with the text beside it, when every other arm is text: the member is typed as the role, and the text is keyword text a grammar aliases into that role, which the grammar's context admits under the role rather than the vocabulary naming it.
+
+### `packages/tools/src/inventory/derive.ts::directKinds`
+
+A member typed without the language context: its `soleRole`, or its collapsed kinds when they are all refs or all scalars. Anything else, differing roles, roles beside refs, text alone or nothing, is `undefined`, and the member is typed through its slot entry.
+
+### `packages/tools/src/inventory/derive.ts::levelsWithMembers`
+
+The kind paths that declare their own members: every claimed kind and prefix except refinements and template holes, which pin literals or holes over their parent's members. Sorted, so the slot table's order is stable.
+
+### `packages/tools/src/inventory/derive.ts::slotEntries`
+
+Every member the language context states, one per kind path and member, in path then member order: the members of `levelsWithMembers` that `directKinds` leaves `undefined`.
+
+### `packages/tools/src/inventory/vocabulary.ts::readVocabulary`
+
+Reads the authored vocabulary structurally, with the TypeScript parser, never by matching lines: every interface under its namespaces, keyed by its `$kind` literal, with its own members (each marked optional or required) and its parent, the interface its `extends` clause names through `V.`. `members(path)` adds the inherited members, nearest first. An interface with no `$kind` literal is not a vocabulary kind (the context's typemap and `Unmapped`).
 
 ### `packages/tools/src/inventory/index.ts::run`
 
@@ -224,8 +204,9 @@ problem per file (`bindingIssues`) rather than the first; the
 derivation summary always prints (kinds, prefixes, members, refinements,
 unmapped references, cycles, container captures with no direct target,
 container slots left uncaptured);
-`--members` prints member names and kinds per shared kind; `--emit [dir]` emits
-the tree into the directory (default `packages/types/src/vocabulary`) and
-formats it with oxfmt. A cycle, a container capture with no direct target, a
-container slot left uncaptured or a failed compile is a non-zero exit.
+`--members` prints member names and kinds per shared kind. `--check` also
+reports where the bindings and the authored vocabulary disagree
+(`vocabularyDisagreements`). A cycle, a container capture with no direct
+target, a container slot left uncaptured, a failed compile or a disagreement is
+a non-zero exit.
 ```

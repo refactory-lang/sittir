@@ -1,22 +1,20 @@
-// Generated from the grammars' bindings.scm and slot models. Do not edit.
 import type { GrammarContext } from './context.ts';
-import type { Simplify } from 'type-fest';
 import type { SubKindOf } from './utils.ts';
 import type * as V from './index.ts';
 export interface Argument<G extends GrammarContext> {
-	readonly kind: 'argument';
-	readonly name: G['identifier'] | 'async' | 'await' | 'exec' | 'match' | 'print' | 'type';
+	readonly $kind: 'argument';
+	readonly name: G['identifier'];
 	// p only
-	readonly value: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+	readonly value: G['slots']['argument']['value'];
 	// p only
 }
 
 export namespace Argument {
-	export interface Keyword<G extends GrammarContext> extends Simplify<SubKindOf<V.Argument<G>>> {
+	export interface Keyword<G extends GrammarContext> extends SubKindOf<V.Argument<G>> {
 		// claimed by p
-		readonly kind: 'argument.keyword';
-		readonly name: G['identifier'] | 'async' | 'await' | 'exec' | 'match' | 'print' | 'type';
-		readonly value: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+		readonly $kind: 'argument.keyword';
+		readonly name: G['identifier'];
+		readonly value: G['slots']['argument.keyword']['value'];
 	}
 	export type Any<G extends GrammarContext> = V.Argument.Keyword<G>;
 }

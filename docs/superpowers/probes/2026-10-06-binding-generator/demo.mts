@@ -12,7 +12,7 @@ import { builder, viewNode } from './out/rust.vocab.ts';
 const rust = await createEngine(language);
 const text = (v: unknown): string => String(rust.render(v as Parameters<typeof rust.render>[0]));
 const kindOf = (v: unknown): string =>
-	typeof v === 'object' && v !== null && 'kind' in v && typeof v.kind === 'string' ? v.kind : JSON.stringify(v);
+	typeof v === 'object' && v !== null && '$kind' in v && typeof v.$kind === 'string' ? v.$kind : JSON.stringify(v);
 
 const source = 'async fn add(a: i32, b: i32) -> i32 {\n    a + b\n}\n';
 const root = rust.parse(source);
@@ -20,10 +20,10 @@ const [item] = root.statements();
 const module = viewNode(root);
 const fn = module.statements()?.[0];
 console.log('read', JSON.stringify(source));
-if (fn === undefined || typeof fn !== 'object' || fn.kind !== 'declaration.function') throw new Error(`expected a function, read ${kindOf(fn)}`);
-console.log('  kind      ', fn.kind);
+if (fn === undefined || typeof fn !== 'object' || fn.$kind !== 'declaration.function') throw new Error(`expected a function, read ${kindOf(fn)}`);
+console.log('  kind      ', fn.$kind);
 const name = fn.name();
-console.log('  name      ', kindOf(name), name.$text?.() ?? '');
+console.log('  name      ', kindOf(name), typeof name === 'string' ? name : (name.$text?.() ?? ''));
 console.log('  async     ', fn.async(), ' unsafe', fn.unsafe());
 console.log('  parameters', fn.parameters().map(kindOf).join(', '));
 const returnType = fn.returnType();
@@ -34,7 +34,7 @@ const tail = typeof body === 'object' && body !== null && 'trailingExpression' i
 console.log('  tail      ', kindOf(tail), typeof tail === 'object' && tail !== null && 'operator' in tail ? tail.operator() : '');
 
 const from = builder(rust.build);
-const sum = from({ kind: 'expression.binary.arithmetic.add', left: { kind: 'identifier', $text: 'x' }, right: { kind: 'identifier', $text: 'y' } });
+const sum = from({ $kind: 'expression.binary.arithmetic.add', left: { $kind: 'identifier', $text: 'x' }, right: { $kind: 'identifier', $text: 'y' } });
 console.log('build a structure  ', JSON.stringify(text(sum)));
 const again = text(from(fn));
 if (again !== source.trimEnd()) {
