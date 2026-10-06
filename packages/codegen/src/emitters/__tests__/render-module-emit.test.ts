@@ -139,7 +139,7 @@ let _rustOptionsRs: string | undefined;
 
 const _models = new Map<string, ReturnType<typeof buildModel>>();
 
-async function buildModel(grammar: 'rust' | 'typescript') {
+async function buildModel(grammar: 'rust' | 'typescript' | 'scm') {
 	const raw = await evaluatePackage(grammarPackage(grammar));
 	const generatedIdTables = await loadGeneratedIdTables(grammar);
 	if (generatedIdTables === undefined) throw new Error(`no generated id tables for ${grammar}`);
@@ -163,7 +163,7 @@ async function buildModel(grammar: 'rust' | 'typescript') {
 	return { raw, nodeMap, kindEntries, generatedIdTables, templates, renderRules };
 }
 
-function modelFor(grammar: 'rust' | 'typescript') {
+function modelFor(grammar: 'rust' | 'typescript' | 'scm') {
 	const cached = _models.get(grammar);
 	if (cached !== undefined) return cached;
 	const built = buildModel(grammar);
@@ -171,7 +171,7 @@ function modelFor(grammar: 'rust' | 'typescript') {
 	return built;
 }
 
-async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise<string> {
+async function getTransportRsForGrammar(grammar: 'rust' | 'typescript' | 'scm'): Promise<string> {
 	const { raw, nodeMap, kindEntries, generatedIdTables, templates, renderRules } = await modelFor(grammar);
 	if (grammar === 'rust') _rustKindEntries = kindEntries;
 	const emit = emitRenderModule(grammar, templates, nodeMap, generatedIdTables, {
@@ -748,4 +748,12 @@ describe('transport attributes', () => {
 		expect(blankChoices).toHaveLength(4);
 		expect(blankIdArms).toHaveLength(3 * blankChoices.length);
 	});
+});
+
+describe('a slot whose only scalar source is an enum of immediate tokens', () => {
+	it('keeps its adjacency flag and the renderer writes it', async () => {
+		const scm = await getTransportRsForGrammar('scm');
+		expect(extractStructBody(scm, 'PredicateTransport')).toContain('pub type_: ::sittir_core::SlotValue<PredicateTypeEnum, true>,');
+		expect(extractFnBody(scm, 'render_predicate_type')).toContain('w.adjacent();');
+	}, 120_000);
 });
