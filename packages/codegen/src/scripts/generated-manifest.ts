@@ -99,7 +99,11 @@ export function gitVisiblePaths(root: string): ReadonlySet<string> {
 }
 
 function landsOnItsOwnCadence(relPath: string): boolean {
-	return relPath.endsWith('/test-fixtures.json') || relPath.endsWith('/test-fixtures.left-out.json');
+	return (
+		relPath.endsWith('/test-fixtures.json') ||
+		relPath.endsWith('/test-fixtures.left-out.json') ||
+		relPath.endsWith('/.sittir/bindings.json')
+	);
 }
 
 function isManifestExcluded(relPath: string, src: ManifestSource): boolean {

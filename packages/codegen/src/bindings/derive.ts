@@ -1,5 +1,4 @@
-import { type BindingFacts, type ContainerCapture, type SlotSelector, WILDCARD } from './bindings.ts';
-import type { ModelNode, ModelSlot, SlotModel } from './model.ts';
+import { type BindingFacts, type ContainerCapture, type ModelNode, type ModelSlot, type SlotModel, type SlotSelector, KNOWN_PREDICATE_OPERATORS, WILDCARD } from './facts.ts';
 
 export interface LayoutSlot {
 	readonly kind: string | null;
@@ -33,6 +32,16 @@ export interface Refinement {
 	readonly literals: Map<string, Set<string>>;
 }
 
+function unknownPredicates(inputs: readonly GrammarInput[]): string[] {
+	const out = new Set<string>();
+	for (const input of inputs)
+		for (const claim of input.bindings.claims)
+			for (const predicate of claim.predicates)
+				if (!KNOWN_PREDICATE_OPERATORS.has(predicate.operator))
+					out.add(`${input.grammar}: #${predicate.operator}? on @${predicate.capture} (${claim.vocab})`);
+	return [...out].sort();
+}
+
 export interface Derivation {
 	readonly grammars: readonly string[];
 	readonly allvocab: Set<string>;
@@ -46,6 +55,7 @@ export interface Derivation {
 	readonly untargeted: readonly string[];
 	readonly uncaptured: readonly string[];
 	readonly unmapped: Map<string, number>;
+	readonly unknownPredicates: readonly string[];
 }
 
 export const snake = (s: string): string => s.replace(/(?<!^)(?=[A-Z])/g, '_').toLowerCase();
@@ -151,7 +161,7 @@ function collect(
 	}
 	for (const claim of input.bindings.claims) {
 		allvocab.add(claim.vocab);
-		if (claim.predicate)
+		if (claim.predicates.length > 0)
 			(contentDerived.get(claim.vocab) ?? contentDerived.set(claim.vocab, new Set<string>()).get(claim.vocab))?.add(
 				input.grammar
 			);
@@ -164,7 +174,7 @@ function collect(
 		}
 		push(claims, claim.kind, {
 			vocab: claim.vocab,
-			predicate: claim.predicate,
+			predicate: claim.predicates.length > 0,
 			fieldLiterals,
 			toplevel: claim.toplevel
 		});
@@ -280,7 +290,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 		inputs.map((input) => [
 			input.grammar,
 			input.bindings.claims.flatMap((c) =>
-				c.kind !== null && !c.predicate && c.within.length > 0
+				c.kind !== null && c.predicates.length === 0 && c.within.length > 0
 					? [{ kind: c.kind, vocab: c.vocab, chain: [...c.within].reverse() }]
 					: []
 			)
@@ -574,7 +584,8 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 		cycles,
 		untargeted: untargeted.sort(),
 		uncaptured: uncaptured.sort(),
-		unmapped
+		unmapped,
+		unknownPredicates: unknownPredicates(inputs)
 	};
 }
 
