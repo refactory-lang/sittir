@@ -37,7 +37,11 @@ const from = builder(rust.build);
 const sum = from({ kind: 'expression.binary.arithmetic.add', left: { kind: 'identifier', $text: 'x' }, right: { kind: 'identifier', $text: 'y' } });
 console.log('build a structure  ', JSON.stringify(text(sum)));
 const again = text(from(fn));
-console.log('build the view back', JSON.stringify(again), again === source.trimEnd() ? '(same text)' : '(differs)');
+if (again !== source.trimEnd()) {
+	console.error('build the view back', JSON.stringify(again), 'differs from', JSON.stringify(source.trimEnd()));
+	process.exit(1);
+}
+console.log('build the view back', JSON.stringify(again), '(same text)');
 
 const best = (n: number, f: () => unknown): number => {
 	let min = Infinity;

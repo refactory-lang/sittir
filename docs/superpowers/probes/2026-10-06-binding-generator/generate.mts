@@ -111,8 +111,18 @@ const declared = new Map<string, { readonly path: string; readonly members: Set<
 for (const file of readdirSync(VOCAB_FILES).filter((f) => f.endsWith('.ts'))) {
 	const stack: { name: string; indent: number }[] = [];
 	let open: { tsName: string; indent: number; path: string; members: Set<string>; parent: string | undefined } | undefined;
+	let header: { text: string; indent: number } | undefined;
 	for (const line of readFileSync(join(VOCAB_FILES, file), 'utf8').split('\n')) {
-		const indent = line.length - line.trimStart().length;
+		if (header !== undefined) {
+			header.text += ` ${line.trim()}`;
+			if (!line.trimEnd().endsWith('{')) continue;
+		} else if (/^export interface \w+/.test(line.trim()) && !line.trimEnd().endsWith('{')) {
+			header = { text: line.trim(), indent: line.length - line.trimStart().length };
+			continue;
+		}
+		const indent = header?.indent ?? line.length - line.trimStart().length;
+		const trimmed = header?.text.replace(/\s+/g, ' ').replace(/< /g, '<').replace(/ >/g, '>') ?? line.trim();
+		header = undefined;
 		if (open !== undefined) {
 			if (indent === open.indent && line.trim() === '}') {
 				declared.set(open.tsName, { path: open.path, members: open.members, parent: open.parent });
@@ -130,7 +140,7 @@ for (const file of readdirSync(VOCAB_FILES).filter((f) => f.endsWith('.ts'))) {
 			stack.push({ name: ns[1], indent });
 			continue;
 		}
-		const iface = /^export interface (\w+)<G[^>]*>(?: extends Simplify<SubKindOf<V\.([\w.]+)<G>>>)? \{/.exec(line.trim());
+		const iface = /^export interface (\w+)<G[^>]*>(?: extends Simplify<SubKindOf<V\.([\w.]+)<G>>>)? \{/.exec(trimmed);
 		if (iface?.[1] !== undefined) {
 			open = { tsName: [...stack.map((s) => s.name), iface[1]].join('.'), indent, path: '', members: new Set(), parent: iface[2] };
 			continue;

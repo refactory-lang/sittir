@@ -1,8 +1,9 @@
-"""Sorts the type errors of a generated binding by cause, for spec.md's conformance table.
+"""Sorts the type errors of a generated binding by cause, as the README's conformance table counts them.
 
-Reads `tsc -p tsconfig.json --noEmit` output on stdin. Each error in the generated views is a view
-member the vocabulary interface rejects (TS2416); the deepest "Type A is not assignable to B" pair
-says why. Errors elsewhere are listed by code.
+Reads `tsc -p tsconfig.json --noEmit` output on stdin. An error in the generated module (TS2322,
+TS2353, TS2741, or TS2416) is a view member the vocabulary interface rejects or does not declare;
+the deepest "Type A is not assignable to B" pair says why, and the example names its location.
+Errors elsewhere are listed by code.
 
     pnpm exec tsc -p tsconfig.json --noEmit | python3 conformance.py
 """

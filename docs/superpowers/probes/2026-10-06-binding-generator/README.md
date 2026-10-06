@@ -11,6 +11,7 @@ The prototype predates the portable engine surface. It:
 - exposes leaf text as `$text` and reads a token as text, where the spec has `$value` for a varying leaf and the const string for a fixed literal;
 - puts a `kind` string on each view literal, where the spec's portable node carries only `$type`;
 - reads contextual claims by their context-free claim, and does not test predicate claims;
+- routes a presence member by its capture name as the token's text, since the facts it reads keep no token text: `"async" @async` resolves, `"async" @isAsync` would have no route, so it does not validate renamed presence captures;
 - skips build entries whose kind has no bare factory, where the spec routes them through the existing form and subtype routing;
 - keeps the type maps in its own module rather than the grammar's types module, and names its literals "view classes" in its output.
 
@@ -48,7 +49,7 @@ pnpm exec tsc -p $P/tsconfig.json --noEmit | python3 $P/conformance.py
 
 Rust, measured at `f4a78b7fb` on an Apple-silicon Mac.
 
-- **Generated:** 190 read entries over 152 grammar kinds, 399 kind ids typed, 173 build entries; a 3.9k-line module. Type-checking this folder (the module and the `.mts` files) takes 4.9 s.
+- **Generated:** 190 read entries over 152 grammar kinds, 399 kind ids typed, 173 build entries; a 3.9k-line module. Type-checking this folder (the module and the `.mts` files) takes 5.1 s.
 - **Skipped (39):**
   - reads (13): 4 contextual claims, 3 predicate claims, 4 unresolved nested routes (`impl_item_body`'s extension members), 2 kinds with no typed surface (`_`, `let_chain`);
   - builds (26): 21 entries whose kind has no bare factory, 3 predicate claims, 2 claims of a vocabulary kind already built from another grammar kind.
@@ -67,6 +68,6 @@ Rust, measured at `f4a78b7fb` on an Apple-silicon Mac.
   | **rejected** | **142** | **139** |
 
   Against the stand-in, 3 further errors fall outside the view members (TS2339, TS2349, TS2722), in the demo's use of the views.
-- **Demo:** `async fn add(a: i32, b: i32) -> i32 { a + b }` reads as `declaration.function` with `async: true`, two `declaration.parameter`s, a `type.primitive` return type and a `statement.block` whose tail is `expression.binary.arithmetic.add` with operator `+`. Building the view back renders the same text, and the structure `{ kind: 'expression.binary.arithmetic.add', … }` renders `x + y`.
+- **Demo:** `async fn add(a: i32, b: i32) -> i32 { a + b }` reads as `declaration.function` with `async: true`, two `declaration.parameter`s, a `type.primitive` return type and a `statement.block` whose tail is `expression.binary.arithmetic.add` with operator `+`. Building the view back renders the same text (the demo exits non-zero when it does not), and the structure `{ kind: 'expression.binary.arithmetic.add', … }` renders `x + y`.
 - **Backward:** excludes `function_item` and `function_signature_item`, 2 of 152 claimed kinds, the holders of the 5 contextual claims.
-- **Cost** (best of 5 over 200k): the low-level reader 106 ns; making the root's view 133 ns; reading a view's `name` 245 ns, the low-level read plus making the child's view.
+- **Cost** (best of 5 over 200k): the low-level reader 105 ns; making the root's view 136 ns; reading a view's `name` 249 ns, the low-level read plus making the child's view.
