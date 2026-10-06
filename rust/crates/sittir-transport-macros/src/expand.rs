@@ -187,9 +187,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
 enum Role {
     Layout,
     Slot(SlotAttrs),
-    #[allow(dead_code)]
     Flank(FlankAttrs),
-    #[allow(dead_code)]
     SeparatorKind(SeparatorKindAttrs),
     Other,
 }
@@ -621,11 +619,44 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
     })
 }
 
-/// A list's flank and separator-kind fields. Neither is read yet, so a struct
-/// with either is an expansion error.
-fn list_inits(_attrs: &KindAttrs, fields: &[Field<'_>], _slots: &[(u16, &Field<'_>, &SlotAttrs)]) -> syn::Result<Vec<TokenStream>> {
-    match fields.iter().find(|f| matches!(f.role, Role::Flank(_) | Role::SeparatorKind(_))) {
-        Some(field) => Err(syn::Error::new_spanned(field.ident, "a list's flank and separator kind are not supported yet")),
-        None => Ok(Vec::new()),
+fn list_inits(attrs: &KindAttrs, fields: &[Field<'_>], slots: &[(u16, &Field<'_>, &SlotAttrs)]) -> syn::Result<Vec<TokenStream>> {
+    let mut inits = Vec::new();
+    for field in fields {
+        let name = field.ident;
+        match &field.role {
+            Role::Flank(flank) => {
+                let item = attrs
+                    .item
+                    .as_ref()
+                    .filter(|_| attrs.list)
+                    .ok_or_else(|| syn::Error::new_spanned(name, "a list's flank needs `#[transport(list, item = …)]`"))?;
+                let slot = slots
+                    .iter()
+                    .find(|(_, f, _)| f.ident == item)
+                    .map(|(i, ..)| *i)
+                    .ok_or_else(|| syn::Error::new_spanned(item, "`item` names one of the list's slots"))?;
+                let (leading, trailing) = (option(flank.leading), option(flank.trailing));
+                inits.push(quote! {
+                    #name: ::core::option::Option::Some(__rt::delimiter(&cursor.node(), &children, &routes, #slot, #leading, #trailing)),
+                });
+            }
+            Role::SeparatorKind(separator) => {
+                let candidates = &separator.candidates;
+                let read = quote!(__rt::separator_kind(&children, &routes, &[#(#candidates),*]));
+                inits.push(match &separator.default {
+                    Some(default) => quote!(#name: ::core::option::Option::Some(#read.unwrap_or(#default.0)),),
+                    None => quote!(#name: #read,),
+                });
+            }
+            _ => {}
+        }
+    }
+    Ok(inits)
+}
+
+fn option(value: Option<u16>) -> TokenStream {
+    match value {
+        Some(value) => quote!(::core::option::Option::Some(#value)),
+        None => quote!(::core::option::Option::None),
     }
 }

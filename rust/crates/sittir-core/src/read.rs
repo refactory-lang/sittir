@@ -721,6 +721,26 @@ pub fn separator_kind(children: &[Child], routes: &[Route], candidates: &[KindId
         .map(|(child, _)| child.grammar.0)
 }
 
+/// Read the node at `row` into `T`, with the sides its parent's placement
+/// gives it. `P` reads the parent's routes. The cursor was created at the
+/// tree's root.
+pub fn read_at<T: ReadTransport, P: ReadTransport>(
+    cursor: &mut TreeCursor<'_>,
+    ctx: &ReadCtx<'_>,
+    row: u32,
+    depth: Depth,
+) -> Result<T, ReadError> {
+    cursor.goto_descendant(row as usize);
+    let sides = if cursor.goto_parent() {
+        let sides = P::sides_of(cursor, ctx, row)?;
+        cursor.goto_descendant(row as usize);
+        sides
+    } else {
+        Sides::root()
+    };
+    T::read(cursor, ctx, depth, sides)
+}
+
 /// Where the placement rule puts the extras among one node's children: the
 /// sides each child receives, and the node's own entries when no child owns
 /// any.

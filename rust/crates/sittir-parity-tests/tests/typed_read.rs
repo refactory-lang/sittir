@@ -630,3 +630,60 @@ fn an_envelope_holds_its_content_and_the_trivia_its_content_was_given() {
     assert_eq!(envelope.content.transport().unwrap().layout, None);
     assert_eq!(trivia_spans(&envelope.layout, "trailing"), vec![(12, 19, true, 0)]);
 }
+
+#[derive(Debug, Clone, PartialEq, Transport)]
+#[transport(kind = kind::_ATTRIBUTED_PARAMETER)]
+struct Param {
+    layout: Option<sittir_core::layout::TransportLayout<()>>,
+}
+
+#[derive(Debug, Clone, PartialEq, Transport)]
+#[transport(kind = kind::PARAMETERS_ELEMENTS, list, item = item)]
+struct List {
+    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[slot(field = field::ITEM, separator = kind::COMMA)]
+    item: Vec<SlotValue<Param>>,
+    #[flank(trailing = 0)]
+    delimiter: Option<u8>,
+}
+
+#[derive(Debug, Clone, PartialEq, Transport)]
+#[transport(kind = kind::PARAMETERS, layout = [kind::LPAREN, kind::RPAREN], min_depth = 2, gap(1) = elements)]
+struct Owner {
+    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[slot(field = field::ELEMENTS)]
+    elements: Option<SlotValue<List>>,
+}
+
+fn owner(source: &str) -> Owner {
+    read_nth(&parse_rust(source), source, kind::PARAMETERS, 0, Depth::ONE).unwrap()
+}
+
+#[test]
+fn a_list_owner_brings_its_list_and_the_list_knows_its_trailing_separator() {
+    let plain = owner("fn f(a: u8, b: u8) {}");
+    let list = plain.elements.as_ref().unwrap().transport().expect("min_depth reads the list");
+    assert_eq!(list.item.len(), 2);
+    assert!(list.item.iter().all(|item| item.coord().is_some()), "the items have structure: past the depth");
+    assert_eq!(list.delimiter, Some(0));
+    let trailing = owner("fn f(a: u8, b: u8,) {}");
+    assert_eq!(trailing.elements.unwrap().transport().unwrap().delimiter, Some(sittir_core::read::TRAILING));
+}
+
+#[test]
+fn a_row_read_equals_the_same_node_in_a_whole_read_trivia_included() {
+    let source = "// lead\nfn f() { fn g() {} } // trail\n";
+    let tree = parse_rust(source);
+    let ctx = ReadCtx::new(source, 7);
+    let whole: File = read(&tree, source, Depth::All).unwrap();
+    let shallow: File = read(&tree, source, Depth::ONE).unwrap();
+    let row = sittir_core::decode_handle(shallow.statements.as_ref().unwrap()[0].coord().unwrap().handle).1;
+    let outer: Function = sittir_core::read::read_at::<Function, File>(&mut tree.walk(), &ctx, row, Depth::All).unwrap();
+    assert_eq!(&outer, function(&whole, 0));
+    assert_eq!(trivia_spans(&outer.layout, "leading"), vec![(0, 7, false, 0)]);
+
+    let inner_row = find(&tree, kind::FUNCTION_ITEM, 1).descendant_index() as u32;
+    let inner: Function = sittir_core::read::read_at::<Function, Block>(&mut tree.walk(), &ctx, inner_row, Depth::All).unwrap();
+    let body = function(&whole, 0).body.transport().unwrap();
+    assert_eq!(&inner, body.statements.as_ref().unwrap()[0].transport().unwrap());
+}
