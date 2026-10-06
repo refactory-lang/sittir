@@ -73,6 +73,7 @@ export interface NativeEngineLike<TTransport = unknown> {
 	lineGapsOf(handle: number, span?: number[], kind?: number): string;
 	typedReadRefusal?(treeId: number): string | null;
 	typedReadParity?(treeId: number, today: TTransport): string | null;
+	typedReadRoundTrip?(treeId: number): string | null;
 	descendants(
 		from: string,
 		kinds: number[] | undefined | null,
@@ -318,6 +319,10 @@ export function createNativeEngine<
 						if (engine.typedReadParity === undefined) throw new Error('typedReadParity: this native binary has no typed reader');
 						return engine.typedReadParity(treeId, today as TTransport);
 					},
+					typedReadRoundTrip(treeId: number): string | null {
+						if (engine.typedReadRoundTrip === undefined) throw new Error('typedReadRoundTrip: this native binary has no typed reader');
+						return engine.typedReadRoundTrip(treeId);
+					},
 					parseAndRead(source: string, parseOptions?: ParseOptions) {
 						const json = engine.parseAndRead(source, depthOf(parseOptions));
 						const parsed = JSON.parse(json) as NativeParseResult;
@@ -409,6 +414,7 @@ export function nativeLanguageEngine<API extends LanguageAPI, IndentChar extends
 		lineGapsOf: (handle) => engine.diagnostics.lineGapsOf(handle),
 		typedReadRefusal: (treeId) => engine.diagnostics.typedReadRefusal(treeId),
 		typedReadParity: (treeId, today) => engine.diagnostics.typedReadParity(treeId, today),
+		typedReadRoundTrip: (treeId) => engine.diagnostics.typedReadRoundTrip(treeId),
 		dispose() {
 			engine.dispose();
 		}

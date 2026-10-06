@@ -3,7 +3,7 @@ import { withGrammar } from '../../framework/options.ts';
 
 export const typedReadParity: CommandModule = {
 	name: 'typed-read-parity',
-	describe: "Compare the typed reader with today's read and wrap on every corpus entry; exits 1 on any refusal, difference or entry today's pipeline cannot decode",
+	describe: "Compare the typed reader with today's read and wrap on every corpus entry, and send each typed read to JavaScript and back; exits 1 on any refusal, difference, failed round trip, stale listed row or entry today's pipeline cannot decode",
 	register: (program) => {
 		withGrammar(defineCommand(program, typedReadParity))
 			.option('--all-grammars', 'Run every stable grammar')

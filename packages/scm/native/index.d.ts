@@ -89,6 +89,14 @@ export declare class SittirEngine {
    */
   typedReadParity(treeId: number, today: object): string | null
   /**
+   * Transitional, while today's read and the typed read both exist:
+   * encode the typed read of tree `treeId` to JavaScript and decode it
+   * back, read one level deep and then whole. `null` when both come
+   * back unchanged; otherwise the depth, and the refusal, the encoder's
+   * or decoder's error, or the first place the decoded read differs.
+   */
+  typedReadRoundTrip(treeId: number): string | null
+  /**
    * Render a typed transport object (napi-native, numeric `$type`).
    *
    * `treeId` names the parse whose detected format applies. It is
