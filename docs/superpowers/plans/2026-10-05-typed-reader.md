@@ -34,14 +34,14 @@ In 1a the typed read runs beside today's read. Two transitional napi methods bac
 
 ## Scope and sequencing
 
-Brainstorm split step 1 of the spec into three PRs. This plan writes 1a in full and outlines 1b and 1c; their tasks are detailed after 1a lands, against the code 1a leaves.
+Brainstorm split step 1 of the spec into three PRs. This plan writes 1a and 1b in full and outlines 1c. 1b's tasks are detailed against the code 1a left; 1c's are detailed after 1b lands, against the code 1b leaves.
 
 1a is cut from master at or after `efbf817b9`, where enum members cross the transport as their kind ids and decode by id alone. Tasks 5, 8 and 9 build on what that brought: `enumMemberId` and the decoder `arms` in `renderEnumType`, `AssembledEnum`'s refusal of two members with one id, and the wrap's `_spelledMemberId` fold. Task 10's harness compares against today's read with those folds.
 
 | PR | Lands | Gate |
 | --- | --- | --- |
 | **1a** | the typed reader beside today's read: field-id constants, the `sittir_core::read` runtime, the derive crate, codegen attributes with the unfielded-slot diagnostic, and the corpus parity harness | zero refusals and zero differences against today's read, wrap and detach for every corpus entry of the five grammars; rendered bytes and validation rows unchanged |
-| **1b** | the derive's napi codec replaces `#[napi(object)]` and the hand-printed `FromNapiValue` impls | render-neutral (verification 15), measured against master as 1b starts, whose enum members decode by kind id; build time and binary size per crate; standalone `type-check:native` passes and is chained into `type-check`; the typed read's root stack cost in the dev profile at most today's read's |
+| **1b** | the derive's napi codec replaces `#[napi(object)]` and every hand-printed `FromNapiValue` and `ToNapiValue`; a corpus round trip proves the encoders; every choice payload over a byte ceiling is boxed | render-neutral (verification 15), measured against master as 1b starts, whose enum members decode by kind id; build time and binary size per crate; standalone `type-check:native` passes and is chained into `type-check`; every corpus read round-trips unchanged; the typed read's root stack cost in the dev profile at most today's read's; rendered bytes and validation rows unchanged |
 | **1c** | every read goes through the typed reader; the wrap keeps members only; today's reader and its tables are removed; an empty list is `[]` in reads, factories and fixtures | rendered bytes and validation rows unchanged; the fixture and factory moves of the empty-list form listed; verification 3–8; "two readers must not outlive step 1" |
 
 ## Global Constraints
@@ -4405,20 +4405,1809 @@ Ask brainstorm for the whole-branch review.
 
 ---
 
-## Outline: 1b, the derive's napi codec
+## 1b: the derive's napi codec
 
-Detailed against the code 1a leaves. The derive gains the wire codec the spec lists as its third expansion, in today's object form (ruling 6). The work:
+Detailed against master `992c9b4c6`, which holds 1a (`ea0e95e07`). The derive gains the spec's third expansion, the wire codec, in today's object form (ruling 6): every transport's `FromNapiValue` and `ToNapiValue` come from its declaration, and codegen stops printing `#[napi(object)]` and the hand-written decoders. With the transports no longer napi objects, each grammar's `native/index.d.ts` states the addon's API alone, and type-checks on its own. 1b also keeps every choice small, which brings the typed read's root stack cost in the dev profile within today's reader's.
 
-1. `#[derive(Transport)]` expands `FromNapiValue` and `ToNapiValue` for every transport type from the same declaration: struct fields by their wire keys, choices by kind id, enum kinds and fixed literals by id, text leaves from their string or object forms, and blank arms by the blank id.
-   - Codegen stops printing `#[napi(object)]` and the hand-printed impls: `renderLeafTransportNapiImpls`, `emitTransportEnumFromNapiValueBody` and its callers, `fixedLiteralNapiImpls`, `renderBoxedEnumNapiImpls`, and the enum decoders in `renderEnumType`.
-   - The trial arms Task 9 left unexpressed are settled first, as rulings from Task 10's report.
-2. The decode Task 10 compares against is then the derive's own. The parity harness keeps running against today's wrap output until 1c removes it.
-3. **Gates:**
-   - Render-neutral (verification 15): rebuilt render's cost per slot value with `measure-rebuilt.mts`, back to back on this branch and on its base, master as 1b starts, per grammar, the native call and the projection measured separately. The same script, inputs and population at both commits. The base decodes enum members by kind id and the phase 0 merge does not, so the phase 0 merge is not a like-for-like base.
-   - Build time, peak memory and binary size per grammar crate, before and after, with the same commands, outside watched worktrees (verification 12).
-   - The standalone native type-check, which waits for the derive codec, passes: `pnpm run type-check:native` on its own, then chained into `pnpm run type-check`.
-   - Stack: the typed read's root cost in the dev profile is at most today's read's on each target, measured as the depth test measures it. 1a leaves it at 375 KiB against 39 KiB on macOS arm64 and 391 KiB against 63 KiB on linux x86_64, from the `source_file` to item chain; the test pins a ceiling per target (384 and 400 KiB), and the 1b gate tightens each. The expected route is boxing the dominant variants, `FunctionItem` and the statement choices, by a pinned list of kinds that generated `const` size assertions check; 1b changes the transport types anyway.
-   - Rendered bytes and validation rows unchanged.
+Two probes, committed beside the spec's others, measured what this section rests on:
+
+- `docs/superpowers/probes/2026-10-01-shared-arena/codec/codec-census.py` compares, for every derived enum of the five grammars, the ids each variant's hand-written decoder accepts with the ids its `#[kind]` claims. Of 5,602 claiming variants, 5,586 agree. The other 16 are the token ids and the envelope that rulings 2 and 3 settle. All 59 text leaves' fixed texts agree with their `text = "…"`. It also lists 59 decode trials.
+- `docs/superpowers/probes/2026-10-01-shared-arena/stack/size-census.py` measures every transport type. A choice is as large as its largest variant: rust's `StatementTransport` is 4,256 bytes and typescript's 9,432. The choice payload types over 512 bytes number 90 in rust, 128 in typescript, 61 in python, 6 in scm and 16 in regex, so no short list of kinds shrinks the choices. A byte ceiling does (Task 15).
+
+### Rulings
+
+The maintainer's, through brainstorm, unless marked as design's.
+
+1. **The codec decodes only the ids a variant declares.** A value decodes as the variant the reader would read its id as (the variant's `#[kind]` kinds, `display(…)` and `folded(…)` ids), or as an envelope variant that names the id in `decodes(…)` (ruling 3). Any other id is refused, naming the type and the id. Today's supertype decoders also try a polymorph's forms in turn when a value carries the polymorph's own id or a reserved supertype's: 59 such arms (rust 25, typescript 21, python 9, scm 4). No generated factory and no read stamps those ids, since factories stamp the form's id and today's read stamps the grammar id. They go with no replacement.
+2. **One id list per variant serves both directions.** 15 variants claim one token id more than today's decoder accepts: rust 2, typescript 7, python 3, regex 3. These are alternate ids that today's wrap folds before the wire, and the reader reads them as the parser gives them. The wire accepts them too.
+3. **An envelope's wire ids are stated** (design, from the census). One envelope variant decodes ids beyond its display id: typescript's `MemberExpressionPropertyTransportSlot::PropertyIdentifier` takes the keyword ids 7 and 30–50. A keyword aliased to `property_identifier` crosses with its grammar id, while the reader admits it by display. Codegen prints those ids in the variant's `#[kind(…, decodes(…))]`, from the claims it records for `ENVELOPE_EXTRA_IDS`. The reader ignores `decodes`. The pin's two other typescript entries name type-query enums that codegen no longer prints; the pin check skips them, so they print nothing.
+4. **Codegen stamps every field's wire key**, `#[wire(key = "…")]`. The macro computes no key.
+5. **Every key is static.** The codec reads and writes keys only through `sittir_core::boundary`, with `c"…"` keys; nothing reads a key through `Object::get(&str)`. The gap names of a node's inner trivia stay data, as today.
+6. **`TriviaTransport` derives the codec in a codec-only mode**, `#[transport(choice, codec_only)]`, since nothing reads into it.
+7. **The derive emits `ToNapiValue` as well, proven by a corpus round trip.** No transport crosses to JavaScript before 1c, which reads through the encoder; 1b's harness encodes and decodes every corpus read and compares.
+8. **`debug-transport` goes** (design). Nothing builds with it, and its leaf decoder is the object branch of the release one.
+9. **Choices stay under a payload ceiling** (design). This refines the route of boxing a short list of dominant kinds, which the census shows cannot shrink the choices. Every choice payload type over the ceiling is boxed, by a list pinned per grammar. Generated `const` assertions check every payload against the ceiling both ways, so a type that grows past it, or a pinned type that shrinks under it, fails the build and names the type.
+10. **The stack gate.** The typed read's root cost in the dev profile is at most today's read's on each target (39 KiB macOS arm64, 63 KiB linux x86_64, against 1a's 375 and 391 KiB), and per level it stays at most today's in both profiles. The release row is re-pinned at 1b's measurement and never raised (design).
+11. **ABI 19.** The JavaScript harness calls a new native method, as 1a's did.
+12. **Scope.** 1b is cut from master. These stay out:
+    - link stamping the layout token ids the read now resolves;
+    - comparing two trees by structure;
+    - the routing checks the typed reader still lacks: two slots on one field, a struct slot's admitted kinds, and `read_at`'s parent type;
+    - the record wire.
+
+### File structure (1b)
+
+Create:
+
+| File | Responsibility |
+| --- | --- |
+| `rust/crates/sittir-transport-macros/src/codec.rs` | the codec expansions: struct, text leaf, choice, enum kind, `Box<T>` |
+| `rust/crates/sittir-core/src/verbatim.rs` | `VerbatimTransport`, which each generated crate prints today, with its codec |
+| `packages/codegen/src/emitters/boxed-payloads.ts` | the payload ceiling and each grammar's pinned boxed payloads |
+| `packages/codegen/src/emitters/__tests__/native-typings.test.ts` | each `native/index.d.ts` declares the addon's API alone |
+| `packages/tools/src/validate/__tests__/typed-read-round-trip.test.ts` | the round trip on small sources |
+
+Modify:
+
+| File | Change |
+| --- | --- |
+| `rust/crates/sittir-core/src/boundary.rs` | napi's field semantics behind static keys; object writes |
+| `rust/crates/sittir-core/src/lib.rs` | `__napi`, `napi_codec!`, `verbatim` |
+| `rust/crates/sittir-core/src/slot.rs`, `layout.rs`, `trivia.rs`, `types.rs`, `options.rs` | encoders; `Span`'s codec; `Edges` and `EdgeArm` lose `#[napi(object)]` |
+| `rust/crates/sittir-core/src/napi_engine.rs` | `typed_read_round_trip`; `with_typed_read` takes a depth |
+| `rust/crates/sittir-core/Cargo.toml` | `debug-transport` goes |
+| `rust/crates/sittir-transport-macros/src/lib.rs`, `attrs.rs`, `expand.rs` | `wire`, `decodes`, `verbatim`, `text` variants, `codec_only`; the codec wired in |
+| `rust/crates/sittir-parity-tests/tests/typed_read.rs` | every declared field gains its key |
+| `rust/crates/sittir-parity-tests/tests/typed_read_nesting.rs` | the ceilings; the dev root at most today's |
+| `packages/codegen/src/emitters/render-module.ts` | keys, variant facts, `TriviaTransport`'s derive, `boxedInEnum`, size assertions; the hand-written decoders, the decode trials and `VerbatimTransport` go |
+| `packages/codegen/src/emitters/native-crate.ts` | `debug-transport` goes; ABI 19 |
+| `packages/codegen/src/emitters/__tests__/render-module-emit.test.ts`, `native-transport-emit.test.ts`, `render-module-separated-list.test.ts` | the printed facts |
+| `packages/types/src/engine-api.ts`, `packages/common/src/engine.ts`, `packages/common/src/create-engine.ts` | `typedReadRoundTrip` |
+| `packages/tools/src/validate/typed-read-parity.ts`, `packages/cli/src/commands/tool/typed-read-parity.ts` | the round-trip outcome |
+| `package.json` | `type-check` runs `type-check:native` |
+| `docs/glossary/emitters.md`, `docs/glossary/packages-tools-src-validate.md` | entries |
+| `docs/cli-command-glossary.md` | regenerated |
+
+### Global Constraints (1b)
+
+1a's hold, and:
+
+- No rendered byte and no validation row moves. The wire keeps its shape: every key and value form today's decoders accept, the derive's accept, except where rulings 1–3 say otherwise.
+- Every codec item sits inside `::sittir_core::napi_codec! { … }` and names napi as `::sittir_core::__napi`. The macro keeps its items only when `sittir-core` is built with `napi-bindings`, so a crate that derives `Transport` needs no napi dependency or feature of its own.
+- The expansion stays a pure function of the declaration (verification 9): the macro computes no key, id or text.
+- No decoder tries one form and then another.
+
+### Review Focus (1b)
+
+1. **A text leaf inside a choice.** Encoded as a bare string, it would decode as the choice's `Verbatim`, so a leaf always encodes as an object carrying its `$type`. Test: Task 14 (an identifier as an expression round-trips).
+2. **`null` in an optional field.** napi reads only `undefined` as absent. `null` reaches the field type's own decoder, and `Option<T>`'s maps it to `None`, as for an elided list's hole. The codec calls napi's own field helpers, so the semantics stay napi's. Test: Task 13 (optional fields read through `boundary::optional`) and Task 14 (typescript's `[a, , b]` round-trips).
+3. **Coordinates past the depth.** Encoded and decoded, a coordinate keeps its tree, span and kind, the three `SlotValue`'s equality compares. Test: Task 14 (every corpus entry read one level deep).
+4. **A polymorph's own id on the wire** is refused, naming the type. Test: Task 13 (an unclaimed id is refused with `unknown kind id … in …`).
+5. **A boxed payload** reads, decodes and encodes through `Box`. Test: Task 15 (the corpus round trip with the pinned boxes in place).
+
+---
+
+## Task 12: The core codec
+
+`sittir-core` gains what every derived codec calls: napi's field semantics behind static keys, object writes, the gate macro, and an encoder for every core type a transport holds. `VerbatimTransport` moves here from the five generated crates, since it holds no grammar fact. No generated file changes, so no byte moves. These encoders run only under Node: Task 14's round trip is their test, and it fails on any form an encoder writes that its decoder does not read back.
+
+**Files:**
+- Modify: `rust/crates/sittir-core/src/boundary.rs`, `lib.rs`
+- Create: `rust/crates/sittir-core/src/verbatim.rs`
+- Modify: `rust/crates/sittir-core/src/slot.rs`, `layout.rs`, `trivia.rs`, `types.rs`, `options.rs`
+
+**Interfaces:**
+- Consumes: napi 3's `get_named_property_raw`, `set_named_property_raw`, `from_raw_required_field`, `from_raw_optional_field`, `create_object_with_properties` (all in `napi::bindgen_prelude`).
+- Produces:
+  - `boundary::required<V: FromNapiValue>(env, obj, key: &'static CStr, owner: &'static str) -> napi::Result<V>` and `boundary::optional<V: FromNapiValue>(…) -> napi::Result<Option<V>>`, with napi's object-derive semantics and messages; `boundary::object(env, value) -> napi::Result<napi_value>`; `boundary::object_with(env, fields: &[(&'static CStr, napi_value)]) -> napi::Result<napi_value>`; `boundary::set(env, obj, key: &'static CStr, value) -> napi::Result<()>`. `boundary::property` stays.
+  - `::sittir_core::__napi` (napi itself) and `::sittir_core::napi_codec!`.
+  - `sittir_core::VerbatimTransport { pub text: String }`, with `Render`, `Prepare`, `PartialEq` and its codec: in, a string or an object's `$text`; out, the string.
+  - `ToNapiValue` for `SlotValue<T: ToNapiValue, A>`, `Span`, `SourceGap`, `SourceFlank`, `TransportLayout<T: ToNapiValue>`, `TransportTrivia<T: ToNapiValue>`, `TriviaEntry<T: ToNapiValue>` and `TriviaText`; `FromNapiValue` for `Span` and `TriviaText`.
+
+- [ ] **Step 1: Field reads and object writes**
+
+In `boundary.rs`, after `property`:
+
+```rust
+/// A required field, read as napi's object derive reads one: `undefined` is
+/// napi's missing-field error, and a value the field's type refuses is that
+/// type's error decorated with `owner` and the key.
+///
+/// # Safety
+/// `obj` must be a live object in `env`.
+#[cfg(feature = "napi-bindings")]
+pub unsafe fn required<V: ::napi::bindgen_prelude::FromNapiValue>(
+    env: ::napi::sys::napi_env,
+    obj: ::napi::sys::napi_value,
+    key: &'static ::std::ffi::CStr,
+    owner: &'static str,
+) -> ::napi::Result<V> {
+    let raw = unsafe { ::napi::bindgen_prelude::get_named_property_raw(env, obj, key.as_ptr())? };
+    unsafe { ::napi::bindgen_prelude::from_raw_required_field(env, raw, owner, key_name(key)) }
+}
+
+/// An optional field, read as napi's object derive reads one: `undefined` is
+/// absent, and every other value goes to the field's type, `null` included.
+///
+/// # Safety
+/// `obj` must be a live object in `env`.
+#[cfg(feature = "napi-bindings")]
+pub unsafe fn optional<V: ::napi::bindgen_prelude::FromNapiValue>(
+    env: ::napi::sys::napi_env,
+    obj: ::napi::sys::napi_value,
+    key: &'static ::std::ffi::CStr,
+    owner: &'static str,
+) -> ::napi::Result<Option<V>> {
+    let raw = unsafe { ::napi::bindgen_prelude::get_named_property_raw(env, obj, key.as_ptr())? };
+    unsafe { ::napi::bindgen_prelude::from_raw_optional_field(env, raw, owner, key_name(key)) }
+}
+
+/// The object a struct decodes from, taken as napi's object derive takes it.
+///
+/// # Safety
+/// `value` must be a live value in `env`.
+#[cfg(feature = "napi-bindings")]
+pub unsafe fn object(env: ::napi::sys::napi_env, value: ::napi::sys::napi_value) -> ::napi::Result<::napi::sys::napi_value> {
+    let obj = unsafe { <::napi::bindgen_prelude::Object as ::napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, value)? };
+    Ok(::napi::JsValue::raw(&obj))
+}
+
+/// A new object holding `fields`, defined in one call.
+///
+/// # Safety
+/// Every value must be live in `env`.
+#[cfg(feature = "napi-bindings")]
+pub unsafe fn object_with(
+    env: ::napi::sys::napi_env,
+    fields: &[(&'static ::std::ffi::CStr, ::napi::sys::napi_value)],
+) -> ::napi::Result<::napi::sys::napi_value> {
+    use ::napi::bindgen_prelude::sys::{napi_property_descriptor, PropertyAttributes};
+    let descriptors: Vec<napi_property_descriptor> = fields
+        .iter()
+        .map(|&(key, value)| napi_property_descriptor {
+            utf8name: key.as_ptr(),
+            name: ::std::ptr::null_mut(),
+            method: None,
+            getter: None,
+            setter: None,
+            value,
+            attributes: PropertyAttributes::writable | PropertyAttributes::enumerable | PropertyAttributes::configurable,
+            data: ::std::ptr::null_mut(),
+        })
+        .collect();
+    unsafe { ::napi::bindgen_prelude::create_object_with_properties(env, &descriptors) }
+}
+
+/// Set `key` on the object `obj`.
+///
+/// # Safety
+/// `obj` and `value` must be live in `env`.
+#[cfg(feature = "napi-bindings")]
+pub unsafe fn set(
+    env: ::napi::sys::napi_env,
+    obj: ::napi::sys::napi_value,
+    key: &'static ::std::ffi::CStr,
+    value: ::napi::sys::napi_value,
+) -> ::napi::Result<()> {
+    unsafe { ::napi::bindgen_prelude::set_named_property_raw(env, obj, key.as_ptr(), value) }
+}
+
+#[cfg(feature = "napi-bindings")]
+fn key_name(key: &'static ::std::ffi::CStr) -> &'static str {
+    key.to_str().unwrap_or("")
+}
+```
+
+napi's derive reads a field the same way: `get_named_property_raw`, then `from_raw_required_field` or `from_raw_optional_field`, which give a missing field and a refused value their messages. Calling them keeps every message napi gives today.
+
+- [ ] **Step 2: The gate macro and napi's path**
+
+In `lib.rs`, after `pub use sittir_transport_macros::Transport;`:
+
+```rust
+#[cfg(feature = "napi-bindings")]
+#[doc(hidden)]
+pub use ::napi as __napi;
+
+/// The items of a derived transport's wire codec, kept only when this crate
+/// is built with napi bindings, so a crate that derives `Transport` needs no
+/// napi dependency or feature of its own.
+#[cfg(feature = "napi-bindings")]
+#[doc(hidden)]
+#[macro_export]
+macro_rules! napi_codec {
+    ($($item:item)*) => { $($item)* };
+}
+
+/// The items of a derived transport's wire codec, dropped: this crate is
+/// built without napi bindings.
+#[cfg(not(feature = "napi-bindings"))]
+#[doc(hidden)]
+#[macro_export]
+macro_rules! napi_codec {
+    ($($item:item)*) => {};
+}
+
+pub use verbatim::VerbatimTransport;
+```
+
+and `pub mod verbatim;` among the modules.
+
+- [ ] **Step 3: `VerbatimTransport` in the core**
+
+Create `verbatim.rs`:
+
+```rust
+//! Text that is a slot's content with no kind of its own: a bare string in a
+//! slot whose members all render from their own text, where the variant tag
+//! is render-invisible and picking one would be a guess.
+
+use crate::render::{Render, RenderResult, RenderSink};
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct VerbatimTransport {
+    pub text: String,
+}
+
+impl Render for VerbatimTransport {
+    fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
+        w.text(&self.text)
+    }
+}
+
+impl crate::prepare::Prepare for VerbatimTransport {
+    fn prepare(&mut self, _ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+/// A string, or an object carrying `$text` (the form an `ERROR` node crosses in).
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for VerbatimTransport {
+    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
+        use ::napi::bindgen_prelude::FromNapiValue;
+        if unsafe { crate::slot::transport_value_type(env, napi_val)? } == ::napi::ValueType::String {
+            return Ok(Self { text: unsafe { String::from_napi_value(env, napi_val)? } });
+        }
+        let text = unsafe { crate::boundary::property::<String>(env, napi_val, c"$text")? }
+            .ok_or_else(|| ::napi::Error::from_reason("verbatim text arrives as a string, or as an object carrying $text"))?;
+        Ok(Self { text })
+    }
+}
+
+/// The string.
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for VerbatimTransport {
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        unsafe { <String as ::napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, val.text) }
+    }
+}
+```
+
+The struct, `Render` and `Prepare` match what `renderVerbatimTransport` prints today; Task 13 deletes that printer and has `transport.rs` import this one.
+
+- [ ] **Step 4: Encoders in `slot.rs`**
+
+Replace `SlotValue`'s receive-only `ToNapiValue` and the `()` stubs of `SourceGap` and `SourceFlank`:
+
+```rust
+#[cfg(feature = "napi-bindings")]
+impl<T: ::napi::bindgen_prelude::ToNapiValue, const ADJACENT: bool> ::napi::bindgen_prelude::ToNapiValue
+    for SlotValue<T, ADJACENT>
+{
+    /// A transport writes itself; a coordinate writes the object the decoder
+    /// reads back as one.
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        match val {
+            Self::Transport(transport) => unsafe { T::to_napi_value(env, transport) },
+            Self::Coord(coord) => unsafe { coordinate_to_napi(env, coord) },
+        }
+    }
+}
+
+/// `{ $treeHandle, $span, $type?, $textOnly?, $_layout?: { gap } }`, the
+/// object `SlotValue`'s decoder reads as a coordinate. Its edges are the
+/// prepare walk's and never cross.
+#[cfg(feature = "napi-bindings")]
+unsafe fn coordinate_to_napi(env: ::napi::sys::napi_env, coord: NodeCoordinate) -> ::napi::Result<::napi::sys::napi_value> {
+    use crate::boundary::{object_with, set};
+    use ::napi::bindgen_prelude::ToNapiValue;
+    let obj = unsafe {
+        object_with(env, &[
+            (c"$treeHandle", f64::to_napi_value(env, coord.handle as f64)?),
+            (c"$span", Span::to_napi_value(env, coord.span)?),
+        ])?
+    };
+    if let Some(kind) = coord.kind {
+        unsafe { set(env, obj, c"$type", u32::to_napi_value(env, u32::from(kind.0))?)? };
+    }
+    if coord.text_only {
+        unsafe { set(env, obj, c"$textOnly", bool::to_napi_value(env, true)?)? };
+    }
+    if let Some(gap) = coord.gap {
+        let layout = unsafe { object_with(env, &[(c"gap", SourceGap::to_napi_value(env, gap)?)])? };
+        unsafe { set(env, obj, c"$_layout", layout)? };
+    }
+    Ok(obj)
+}
+```
+
+`SourceGap`'s encoder writes `{ $text }` for `Text` and `{ $treeHandle, $span }` for `Range`. `SourceFlank`'s writes `$text` (a `Text` source) or `$treeHandle` (a `Tree` source), then `$span`, then `$before` and `$after` only when true, since its decoder reads an absent flag as false:
+
+```rust
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        use crate::boundary::object_with;
+        use ::napi::bindgen_prelude::ToNapiValue;
+        unsafe {
+            match val {
+                Self::Text(text) => object_with(env, &[(c"$text", String::to_napi_value(env, text)?)]),
+                Self::Range { handle, span } => object_with(env, &[
+                    (c"$treeHandle", f64::to_napi_value(env, handle as f64)?),
+                    (c"$span", Span::to_napi_value(env, span)?),
+                ]),
+            }
+        }
+    }
+```
+
+```rust
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        use crate::boundary::{object_with, set};
+        use ::napi::bindgen_prelude::ToNapiValue;
+        let source = unsafe {
+            match val.source {
+                FlankSource::Text(text) => (c"$text", String::to_napi_value(env, text)?),
+                FlankSource::Tree(handle) => (c"$treeHandle", f64::to_napi_value(env, handle as f64)?),
+            }
+        };
+        let obj = unsafe { object_with(env, &[source, (c"$span", Span::to_napi_value(env, val.span)?)])? };
+        if val.before {
+            unsafe { set(env, obj, c"$before", bool::to_napi_value(env, true)?)? };
+        }
+        if val.after {
+            unsafe { set(env, obj, c"$after", bool::to_napi_value(env, true)?)? };
+        }
+        Ok(obj)
+    }
+```
+
+A handle crosses as an `f64` today, from the read's JSON and back through `checked_index`, so every live handle is exact in one.
+
+- [ ] **Step 5: Encoders in `layout.rs` and `trivia.rs`**
+
+`TransportLayout<T>`'s `ToNapiValue` gains the bound `T: ToNapiValue` and writes `{ trivia?, gap?, flank? }`, each only when present. Its edges are the prepare walk's and never cross:
+
+```rust
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        use crate::boundary::{object_with, set};
+        use ::napi::bindgen_prelude::ToNapiValue;
+        let obj = unsafe { object_with(env, &[])? };
+        if let Some(trivia) = val.trivia {
+            unsafe { set(env, obj, c"trivia", TransportTrivia::to_napi_value(env, trivia)?)? };
+        }
+        if let Some(gap) = val.gap {
+            unsafe { set(env, obj, c"gap", SourceGap::to_napi_value(env, gap)?)? };
+        }
+        if let Some(flank) = val.flank {
+            unsafe { set(env, obj, c"flank", SourceFlank::to_napi_value(env, flank)?)? };
+        }
+        Ok(obj)
+    }
+```
+
+In `trivia.rs`, `TransportTrivia<T>`'s `ToNapiValue` (bound `T: ToNapiValue`) writes `{ leading?, trailing?, inner? }`. An inner gap's name is data, so its key is too:
+
+```rust
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        use crate::boundary::{object_with, set};
+        use ::napi::bindgen_prelude::ToNapiValue;
+        let obj = unsafe { object_with(env, &[])? };
+        if let Some(leading) = val.leading {
+            unsafe { set(env, obj, c"leading", Vec::to_napi_value(env, leading)?)? };
+        }
+        if let Some(trailing) = val.trailing {
+            unsafe { set(env, obj, c"trailing", Vec::to_napi_value(env, trailing)?)? };
+        }
+        if let Some(inner) = val.inner {
+            let gaps = unsafe { object_with(env, &[])? };
+            for (name, entries) in inner {
+                let name = ::std::ffi::CString::new(name).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                let entries = unsafe { Vec::to_napi_value(env, entries)? };
+                unsafe { ::napi::bindgen_prelude::set_named_property_raw(env, gaps, name.as_ptr(), entries)? };
+            }
+            unsafe { set(env, obj, c"inner", gaps)? };
+        }
+        Ok(obj)
+    }
+```
+
+`TriviaEntry<T>` gains a `ToNapiValue`, bound `T: ToNapiValue`. It writes its value's own form, and `$sameLine` and `$tokensBetween` on it when they are not their defaults. A value whose form is a string or a kind id carries them in `{ $text }` or `{ $type }`, the objects the decoder reads back:
+
+```rust
+#[cfg(feature = "napi-bindings")]
+impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for TriviaEntry<T> {
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        use crate::boundary::{object_with, set};
+        use ::napi::bindgen_prelude::ToNapiValue;
+        let value = unsafe { SlotValue::to_napi_value(env, val.value)? };
+        if !val.same_line && val.tokens_between == 0 {
+            return Ok(value);
+        }
+        let obj = match unsafe { crate::slot::transport_value_type(env, value)? } {
+            ::napi::ValueType::Object => value,
+            ::napi::ValueType::String => unsafe { object_with(env, &[(c"$text", value)])? },
+            _ => unsafe { object_with(env, &[(c"$type", value)])? },
+        };
+        if val.same_line {
+            unsafe { set(env, obj, c"$sameLine", bool::to_napi_value(env, true)?)? };
+        }
+        if val.tokens_between != 0 {
+            unsafe { set(env, obj, c"$tokensBetween", u32::to_napi_value(env, u32::from(val.tokens_between))?)? };
+        }
+        Ok(obj)
+    }
+}
+```
+
+`TriviaText` gains its codec. In: `{ $type, $text }`, both required. Out: the same:
+
+```rust
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for TriviaText {
+    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
+        let obj = unsafe { crate::boundary::object(env, napi_val)? };
+        let kind: u16 = unsafe { crate::boundary::required(env, obj, c"$type", "TriviaText")? };
+        Ok(Self { kind: KindId(kind), text: unsafe { crate::boundary::required(env, obj, c"$text", "TriviaText")? } })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for TriviaText {
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        use ::napi::bindgen_prelude::ToNapiValue;
+        unsafe {
+            crate::boundary::object_with(env, &[
+                (c"$type", u16::to_napi_value(env, val.kind.0)?),
+                (c"$text", String::to_napi_value(env, val.text)?),
+            ])
+        }
+    }
+}
+```
+
+- [ ] **Step 6: `Span`, `Edges` and `EdgeArm`**
+
+In `types.rs`, replace `Span`'s `#[cfg_attr(feature = "napi-bindings", napi(object))]` with a hand codec, `{ start, end }` both ways, read through `boundary::required(env, obj, c"start", "Span")` and `c"end"` after `boundary::object`, and written with `object_with`. Rewrite its doc comment to say what crosses: a byte range as `{ start, end }`, read and written by the codec below, which every coordinate and gap uses. Drop the `napi_derive::napi` import if nothing else in the file uses it; the compiler's unused-import warning says.
+
+In `options.rs`, delete `#[cfg_attr(feature = "napi-bindings", napi(object))]` from `EdgeArm` and `Edges`. No codec reads either: `TransportLayout`'s decoder leaves the edges to the prepare walk. `EdgeArm`'s doc comment says its strength is optional "because napi cannot skip a field". Restate the live reason: a stamp without a strength writes at the strength its edge site gives the arm. Drop the import as above.
+
+Both changes take the three types out of each grammar's `native/index.d.ts` when Task 13 rebuilds the natives.
+
+- [ ] **Step 7: Build and check**
+
+Run: `rtk cargo clippy -p sittir-core --features napi-bindings`
+Expected: the six lints `sittir-core` has on master, no new one.
+
+Run: `rtk cargo build --workspace`
+Expected: PASS. The generated crates still print their own decoders beside the new encoders, and none of them names the moved `VerbatimTransport` yet.
+
+Run: `rtk cargo test --workspace --no-default-features`
+Expected: PASS.
+
+- [ ] **Step 8: Gates and commit**
+
+The global gates. The natives rebuild with `Span`'s codec in place of napi's, with the same keys and messages, so rendered bytes and validation rows are unchanged.
+
+```bash
+git add rust/crates/sittir-core/src/verbatim.rs
+git commit -F msg -- rust/crates/sittir-core/src
+```
+
+Message: `feat(core): static-key field reads, object writes, and encoders for the core wire types`.
+
+---
+
+## Task 13: The derive's codec replaces the hand-written decoders
+
+The derive expands every transport's codec from its declaration, and codegen prints the facts that codec needs: a key on every field, the verbatim and text variants, and an envelope's wire ids. It stops printing `#[napi(object)]`, every hand-written `FromNapiValue` and `ToNapiValue`, and the 59 decode trials. The derive and codegen change in one commit, since an expansion beside `#[napi(object)]` would implement the same traits twice.
+
+Today's detached data now decodes through the derive. The parity harness's comparison of that data with the typed read therefore becomes this task's compatibility gate, beside rendered bytes and validation rows.
+
+Wire forms. The decoders accept today's forms, except where rulings 1–3 say otherwise:
+
+| type | decodes from | encodes as |
+| --- | --- | --- |
+| struct | an object, each field by its key: required, or optional when its written type is `Option<…>` | an object: `$type` (the struct's kind) and its fields, an optional one only when present |
+| text leaf (`text`) | a string (its text); a number (its fixed text, or refused naming the type when it has none); an object (`$text`, else its fixed text, and its other fields by key) | as a struct |
+| choice | a number: the variant that claims it; an object: the variant its `$type` names, the payload decoded from the same object; a string, or an `ERROR` object: the `verbatim` variant; an object that carries `$text` and whose `$type` a `text` variant claims: that variant; id 0: the blank variant | a unit variant: its first claimed id; the blank variant: 0; a payload variant: its payload |
+| enum kind | a number: the member that claims it | the member's first claimed id |
+| `Box<T>` | as `T` | as `T` |
+
+A choice resolves an id the way its reader does: the reader's `__variant(KindId(id), KindId(id))`, then the `decodes(…)` ids, then the blank arm. Nothing tries one variant and then another.
+
+**Files:**
+- Modify: `rust/crates/sittir-transport-macros/src/lib.rs`, `attrs.rs`, `expand.rs`
+- Create: `rust/crates/sittir-transport-macros/src/codec.rs`
+- Modify: `rust/crates/sittir-parity-tests/tests/typed_read.rs`
+- Modify: `packages/codegen/src/emitters/render-module.ts`, `native-crate.ts`
+- Modify: `rust/crates/sittir-core/Cargo.toml`, `src/layout.rs`, `src/trivia.rs`
+- Modify: `package.json`
+- Test: `codec.rs`'s unit tests; `packages/codegen/src/emitters/__tests__/render-module-emit.test.ts`, `native-transport-emit.test.ts`, `render-module-separated-list.test.ts`
+- Create: `packages/codegen/src/emitters/__tests__/native-typings.test.ts`
+- Generated: `rust/crates/sittir-*/src/render/transport.rs`, `rust/crates/sittir-*/Cargo.toml`, `packages/*/native/index.d.ts`
+- Modify: `docs/glossary/emitters.md`
+
+**Interfaces:**
+- Consumes: Task 12's `boundary::{object, required, optional, object_with, set, property}`, `slot::transport_value_type`, `napi_codec!`, `__napi`, `VerbatimTransport` and `TriviaText`'s codec.
+- Produces:
+  - field attribute `#[wire(key = "…")]`, required on every field of a derived struct;
+  - in `#[kind(…)]`: `decodes(PATH, …)`, ids the codec decodes as the variant and the reader ignores;
+  - variant attributes `#[transport(verbatim)]` and `#[transport(text)]`; choice attribute `codec_only` (`#[transport(choice, codec_only)]`: the codec alone, no `ReadTransport`);
+  - for every derived `T`: `FromNapiValue` and `ToNapiValue` for `T` and for `Box<T>`, inside `::sittir_core::napi_codec!`.
+
+- [ ] **Step 1: Write the derive's failing tests**
+
+Create `codec.rs` holding only its test module for now, and add `mod codec;` to `lib.rs`:
+
+```rust
+#[cfg(test)]
+mod tests {
+    use syn::parse_quote;
+
+    fn expand(input: syn::DeriveInput) -> String {
+        crate::expand::derive(&input).expect("expands").to_string().split_whitespace().collect()
+    }
+
+    fn has(out: &str, part: &str) -> bool {
+        out.contains(&part.split_whitespace().collect::<String>())
+    }
+
+    #[test]
+    fn a_struct_reads_and_writes_each_field_by_its_key() {
+        let out = expand(parse_quote! {
+            #[transport(kind = kind::LET_DECLARATION)]
+            pub struct LetDeclarationTransport {
+                #[wire(key = "$_layout")]
+                pub layout: Option<TransportLayout>,
+                #[wire(key = "_pattern")]
+                #[slot(field = field::PATTERN)]
+                pub pattern: SlotValue<PatternTransport>,
+                #[wire(key = "_value")]
+                #[slot(field = field::VALUE)]
+                pub value: Option<SlotValue<ExpressionTransport>>,
+            }
+        });
+        assert!(has(&out, "::sittir_core::napi_codec! {"));
+        assert!(has(&out, "let obj = unsafe { ::sittir_core::boundary::object(env, napi_val)? };"));
+        assert!(has(&out, r#"pattern: unsafe { ::sittir_core::boundary::required(env, obj, c"_pattern", "LetDeclarationTransport")? },"#));
+        assert!(has(&out, r#"value: unsafe { ::sittir_core::boundary::optional(env, obj, c"_value", "LetDeclarationTransport")? },"#));
+        assert!(has(&out, r#"(c"$type", ::sittir_core::__napi::bindgen_prelude::ToNapiValue::to_napi_value(env, __KIND.0)?),"#));
+        assert!(has(&out, r#"::sittir_core::boundary::set(env, obj, c"_value","#));
+        assert!(has(&out, "impl ::sittir_core::__napi::bindgen_prelude::FromNapiValue for ::std::boxed::Box<LetDeclarationTransport>"));
+    }
+
+    #[test]
+    fn a_text_leaf_decodes_its_text_a_bare_kind_id_or_an_object() {
+        let out = expand(parse_quote! {
+            #[transport(kind = kind::SELF, text = "self")]
+            pub struct SelfTransport {
+                #[wire(key = "$_layout")]
+                pub layout: Option<TransportLayout>,
+                #[wire(key = "$text")]
+                pub text: String,
+            }
+        });
+        assert!(has(&out, r#"::sittir_core::__napi::ValueType::Number => ::core::result::Result::Ok(Self { text: ::std::string::ToString::to_string("self"), layout: ::core::default::Default::default(), }),"#));
+        assert!(has(&out, r#"::sittir_core::boundary::optional::<::std::string::String>(env, obj, c"$text", "SelfTransport")"#));
+        assert!(has(&out, r#".unwrap_or_else(|| ::std::string::ToString::to_string("self"))"#));
+    }
+
+    #[test]
+    fn a_text_leaf_with_no_fixed_text_refuses_a_bare_kind_id() {
+        let out = expand(parse_quote! {
+            #[transport(kind = kind::IDENTIFIER, text)]
+            pub struct IdentifierTransport {
+                #[wire(key = "$_layout")]
+                pub layout: Option<TransportLayout>,
+                #[wire(key = "$text")]
+                pub text: String,
+            }
+        });
+        assert!(has(&out, r#"::std::format!("kind id {id} has no fixed text: {} renders from a node, not a kind id", "IdentifierTransport")"#));
+    }
+
+    #[test]
+    fn a_choice_decodes_the_ids_its_variants_claim_and_refuses_the_rest() {
+        let out = expand(parse_quote! {
+            #[transport(choice)]
+            pub enum PropertyTransportSlot {
+                #[kind(kind::_PROPERTY_IDENTIFIER, display, decodes(kind::GET_KEYWORD, kind::SET_KEYWORD))]
+                PropertyIdentifier(PropertyIdentifierTransport),
+                #[kind(kind::PRIVATE_PROPERTY_IDENTIFIER)]
+                PrivatePropertyIdentifier(PrivatePropertyIdentifierTransport),
+                #[transport(blank)]
+                Blank,
+            }
+        });
+        assert!(has(&out, "match __variant(__Kind(id), __Kind(id)) { ::core::option::Option::Some(0u16) => return"));
+        assert!(has(&out, "if [kind::GET_KEYWORD, kind::SET_KEYWORD].contains(&__Kind(id))"));
+        assert!(has(&out, "if id == 0 { return ::core::result::Result::Ok(PropertyTransportSlot::Blank); }"));
+        assert!(has(&out, r#"::std::format!("unknown kind id {id} in {}", "PropertyTransportSlot")"#));
+        assert!(!has(&out, "if let ::core::result::Result::Ok("));
+    }
+
+    #[test]
+    fn a_unit_variant_writes_its_first_claimed_id_and_the_blank_arm_writes_zero() {
+        let out = expand(parse_quote! {
+            #[transport(choice)]
+            pub enum StatementBlockTerminatorTransportSlot {
+                #[kind(kind::_AUTOMATIC_SEMICOLON, kind::SEMI)]
+                AutomaticSemicolon,
+                #[transport(blank)]
+                Blank,
+            }
+        });
+        assert!(has(&out, "Self::AutomaticSemicolon => unsafe { <u16 as ::sittir_core::__napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, (kind::_AUTOMATIC_SEMICOLON).0) },"));
+        assert!(has(&out, "Self::Blank => unsafe { <u16 as ::sittir_core::__napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, 0) },"));
+    }
+
+    #[test]
+    fn verbatim_and_text_variants_take_their_wire_forms_and_a_codec_only_choice_has_no_reader() {
+        let out = expand(parse_quote! {
+            #[transport(choice, codec_only)]
+            pub enum TriviaTransport {
+                #[kind(kind::LINE_COMMENT)]
+                LineComment(LineCommentTransport),
+                #[transport(verbatim)]
+                Verbatim(VerbatimTransport),
+                #[transport(text)]
+                #[kind(kind::LINE_COMMENT)]
+                Text(::sittir_core::trivia::TriviaText),
+            }
+        });
+        assert!(has(&out, "if id == ::sittir_core::types::KindId::ERROR.0 { return ::core::result::Result::Ok(TriviaTransport::Verbatim("));
+        assert!(has(&out, "::sittir_core::__napi::ValueType::String => ::core::result::Result::Ok(TriviaTransport::Verbatim("));
+        assert!(has(&out, r#"if [kind::LINE_COMMENT].contains(&__Kind(id)) && unsafe { ::sittir_core::boundary::property::<::std::string::String>(env, napi_val, c"$text")? }.is_some()"#));
+        assert!(!has(&out, "::core::option::Option::Some(2u16)"));
+        assert!(!out.contains("ReadTransport"));
+    }
+
+    #[test]
+    fn an_enum_kind_decodes_a_member_id_and_writes_its_first() {
+        let out = expand(parse_quote! {
+            #[transport(kind = kind::_PRIMITIVE_TYPE, spelled)]
+            pub enum PrimitiveTypeEnum {
+                #[kind(kind::U8_KEYWORD)]
+                U8,
+                #[kind(kind::BOOL_KEYWORD)]
+                Bool,
+            }
+        });
+        assert!(has(&out, r#"__member(__Kind(id), __Kind(id)).ok_or_else(|| ::sittir_core::__napi::Error::from_reason(::std::format!("kind id {id} is not a kind {} takes", "PrimitiveTypeEnum")))"#));
+        assert!(has(&out, "Self::U8 => (kind::U8_KEYWORD).0,"));
+    }
+
+    #[test]
+    fn a_field_without_a_key_is_refused() {
+        let input: syn::DeriveInput = parse_quote! {
+            #[transport(kind = kind::X)]
+            pub struct XTransport {
+                #[slot(field = field::NAME)]
+                pub name: SlotValue<IdentifierTransport>,
+            }
+        };
+        let error = crate::expand::derive(&input).expect_err("a field without a key");
+        assert!(error.to_string().contains("crosses the wire under a key"));
+    }
+}
+```
+
+`has` strips whitespace on both sides, so each expected string is written as Rust and compared as the expansion's tokens. The second assertion of the choice test pins the order: the reader's matcher first. The last assertion of the same test pins that no arm tries a decode.
+
+- [ ] **Step 2: Run to verify failure**
+
+Run: `rtk cargo test -p sittir-transport-macros`
+Expected: FAIL. The attributes `wire`, `decodes`, `verbatim`, `text` (on a variant) and `codec_only` are unknown, and no expansion prints a codec.
+
+- [ ] **Step 3: The attributes**
+
+In `attrs.rs`, `KindAttrs` gains `pub verbatim: bool` and `pub codec_only: bool`, and `kind_attrs` parses them: `"verbatim" => out.verbatim = true,` and `"codec_only" => out.codec_only = true,`. `#[transport(text)]` on a variant parses through the existing `text` key.
+
+`VariantKinds` gains:
+
+```rust
+    /// Ids the codec also decodes as this variant, written `decodes(PATH, …)`;
+    /// the reader ignores them.
+    pub decodes: Vec<Path>,
+```
+
+`variant_kinds` initializes it empty and parses `decodes(…)`:
+
+```rust
+            Meta::List(list) if list.path.is_ident("decodes") => {
+                out.decodes.extend(list.parse_args_with(Punctuated::<Path, Token![,]>::parse_terminated)?)
+            }
+```
+
+Its error message becomes "`kind` takes kinds, `display`, `display(kind)`, `folded(kind)` or `decodes(kind, …)`".
+
+Add:
+
+```rust
+/// `#[wire(key = "…")]` on a field: the key it crosses the wire under.
+pub fn wire_key(attrs: &[Attribute]) -> syn::Result<Option<LitStr>> {
+    let Some(attr) = attrs.iter().find(|a| a.path().is_ident("wire")) else { return Ok(None) };
+    let mut key = None;
+    attr.parse_nested_meta(|meta| {
+        if meta.path.is_ident("key") {
+            key = Some(meta.value()?.parse::<LitStr>()?);
+            Ok(())
+        } else {
+            Err(meta.error("`wire` takes `key = \"…\"`"))
+        }
+    })?;
+    key.map(Some).ok_or_else(|| syn::Error::new_spanned(attr, "`wire` names its key: `#[wire(key = \"…\")]`"))
+}
+```
+
+In `lib.rs`, add `wire` to the derive's helper attributes, `attributes(transport, slot, kind, flank, separator_kind, wire)`. The crate doc comment says the derive expands a declaration into its typed reader and its wire codec.
+
+- [ ] **Step 4: The codec**
+
+Above the test module in `codec.rs`:
+
+```rust
+//! The wire codec a transport declaration expands to, in today's napi object
+//! form: `FromNapiValue` and `ToNapiValue` for the type and for `Box` of it.
+//! Every item sits inside `::sittir_core::napi_codec!`, which keeps it only
+//! when `sittir-core` is built with napi bindings, and names napi as
+//! `::sittir_core::__napi`.
+
+use proc_macro2::TokenStream;
+use quote::quote;
+use syn::{Ident, LitStr, Path, Type};
+
+/// A struct field as the wire sees it.
+pub struct WireField<'a> {
+    pub ident: &'a Ident,
+    pub ty: &'a Type,
+    pub key: &'a LitStr,
+}
+
+/// A choice variant as the wire sees it.
+pub struct WireVariant<'a> {
+    pub name: &'a Ident,
+    /// The written payload type; `None` for a unit variant.
+    pub payload: Option<&'a Type>,
+    /// The index the reader's `__variant` gives the variant, when it matches one.
+    pub index: Option<u16>,
+    /// The id a unit variant writes: the first it claims.
+    pub first: Option<Path>,
+    /// Ids the codec also decodes as this variant.
+    pub decodes: Vec<Path>,
+    pub blank: bool,
+    pub verbatim: bool,
+    /// For a `text` variant, the kinds whose objects carrying `$text` it takes.
+    pub text: Option<Vec<Path>>,
+}
+
+fn napi() -> TokenStream {
+    quote!(::sittir_core::__napi)
+}
+
+fn c_key(key: &LitStr) -> syn::Result<syn::LitCStr> {
+    let value = ::std::ffi::CString::new(key.value()).map_err(|_| syn::Error::new_spanned(key, "a wire key holds no NUL byte"))?;
+    Ok(syn::LitCStr::new(&value, key.span()))
+}
+
+fn is_option(ty: &Type) -> bool {
+    crate::expand::last_segment(ty).as_deref() == Some("Option")
+}
+
+fn gated(items: TokenStream) -> TokenStream {
+    quote!(::sittir_core::napi_codec! { #items })
+}
+
+fn boxed(ident: &Ident) -> TokenStream {
+    let napi = napi();
+    quote! {
+        impl #napi::bindgen_prelude::FromNapiValue for ::std::boxed::Box<#ident> {
+            unsafe fn from_napi_value(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value) -> #napi::Result<Self> {
+                unsafe { <#ident as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val) }.map(::std::boxed::Box::new)
+            }
+        }
+        impl #napi::bindgen_prelude::ToNapiValue for ::std::boxed::Box<#ident> {
+            unsafe fn to_napi_value(env: #napi::sys::napi_env, val: Self) -> #napi::Result<#napi::sys::napi_value> {
+                unsafe { <#ident as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, *val) }
+            }
+        }
+    }
+}
+
+/// The initializers that read `fields` from `obj`, each by its key.
+fn field_reads(owner: &str, fields: &[&WireField<'_>]) -> syn::Result<Vec<TokenStream>> {
+    fields
+        .iter()
+        .map(|field| {
+            let (ident, key) = (field.ident, c_key(field.key)?);
+            let read = if is_option(field.ty) { quote!(optional) } else { quote!(required) };
+            Ok(quote!(#ident: unsafe { ::sittir_core::boundary::#read(env, obj, #key, #owner)? },))
+        })
+        .collect()
+}
+
+/// `{ $type, …fields }`: the required fields in one call, an optional one only when present.
+fn struct_encode(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
+    let napi = napi();
+    let names = fields.iter().map(|field| field.ident);
+    let (mut required, mut optional) = (Vec::new(), Vec::new());
+    for field in fields {
+        let (name, key) = (field.ident, c_key(field.key)?);
+        if is_option(field.ty) {
+            optional.push(quote! {
+                if let ::core::option::Option::Some(value) = #name {
+                    unsafe { ::sittir_core::boundary::set(env, obj, #key, #napi::bindgen_prelude::ToNapiValue::to_napi_value(env, value)?)? };
+                }
+            });
+        } else {
+            required.push(quote!((#key, #napi::bindgen_prelude::ToNapiValue::to_napi_value(env, #name)?),));
+        }
+    }
+    Ok(quote! {
+        impl #napi::bindgen_prelude::ToNapiValue for #ident {
+            unsafe fn to_napi_value(env: #napi::sys::napi_env, val: Self) -> #napi::Result<#napi::sys::napi_value> {
+                let Self { #(#names),* } = val;
+                let obj = unsafe {
+                    ::sittir_core::boundary::object_with(env, &[
+                        (c"$type", #napi::bindgen_prelude::ToNapiValue::to_napi_value(env, __KIND.0)?),
+                        #(#required)*
+                    ])?
+                };
+                #(#optional)*
+                ::core::result::Result::Ok(obj)
+            }
+        }
+    })
+}
+
+/// A struct: decoded from an object field by field, encoded as one.
+pub fn structure(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
+    let napi = napi();
+    let reads = field_reads(&ident.to_string(), &fields.iter().collect::<Vec<_>>())?;
+    let encode = struct_encode(ident, fields)?;
+    let boxed = boxed(ident);
+    Ok(gated(quote! {
+        impl #napi::bindgen_prelude::FromNapiValue for #ident {
+            unsafe fn from_napi_value(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value) -> #napi::Result<Self> {
+                let obj = unsafe { ::sittir_core::boundary::object(env, napi_val)? };
+                ::core::result::Result::Ok(Self { #(#reads)* })
+            }
+        }
+        #encode
+        #boxed
+    }))
+}
+
+/// A text leaf: decoded from its text, from a bare kind id (its fixed text) or
+/// from an object; encoded as a struct, so a leaf in a choice keeps its `$type`.
+pub fn text_leaf(ident: &Ident, fields: &[WireField<'_>], fixed: Option<&LitStr>) -> syn::Result<TokenStream> {
+    let napi = napi();
+    let owner = ident.to_string();
+    let text_key = fields
+        .iter()
+        .find(|field| field.ident == "text")
+        .map(|field| c_key(field.key))
+        .transpose()?
+        .ok_or_else(|| syn::Error::new_spanned(ident, "a text leaf has a `text` field"))?;
+    let others: Vec<&WireField<'_>> = fields.iter().filter(|field| field.ident != "text").collect();
+    let defaults: Vec<TokenStream> = others
+        .iter()
+        .map(|field| {
+            let name = field.ident;
+            quote!(#name: ::core::default::Default::default(),)
+        })
+        .collect();
+    let reads = field_reads(&owner, &others)?;
+    let fixed_text = fixed.map_or_else(|| quote!(""), |text| quote!(#text));
+    let number = match fixed {
+        Some(text) => quote! {
+            #napi::ValueType::Number => ::core::result::Result::Ok(Self { text: ::std::string::ToString::to_string(#text), #(#defaults)* }),
+        },
+        None => quote! {
+            #napi::ValueType::Number => {
+                let id = unsafe { <u32 as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val)? };
+                ::core::result::Result::Err(#napi::Error::from_reason(::std::format!(
+                    "kind id {id} has no fixed text: {} renders from a node, not a kind id", #owner
+                )))
+            }
+        },
+    };
+    let encode = struct_encode(ident, fields)?;
+    let boxed = boxed(ident);
+    Ok(gated(quote! {
+        impl #napi::bindgen_prelude::FromNapiValue for #ident {
+            unsafe fn from_napi_value(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value) -> #napi::Result<Self> {
+                match unsafe { ::sittir_core::slot::transport_value_type(env, napi_val)? } {
+                    #napi::ValueType::String => ::core::result::Result::Ok(Self {
+                        text: unsafe { <::std::string::String as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val)? },
+                        #(#defaults)*
+                    }),
+                    #number
+                    _ => {
+                        let obj = unsafe { ::sittir_core::boundary::object(env, napi_val)? };
+                        ::core::result::Result::Ok(Self {
+                            text: unsafe { ::sittir_core::boundary::optional::<::std::string::String>(env, obj, #text_key, #owner)? }
+                                .unwrap_or_else(|| ::std::string::ToString::to_string(#fixed_text)),
+                            #(#reads)*
+                        })
+                    }
+                }
+            }
+        }
+        #encode
+        #boxed
+    }))
+}
+
+/// A choice: an id resolves through the reader's `__variant`, then the
+/// `decodes` ids, then the blank arm; any other id is refused.
+pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenStream> {
+    let napi = napi();
+    let owner = ident.to_string();
+    let decoded = |name: &Ident, ty: &Type| {
+        quote!(#ident::#name(unsafe { <#ty as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val)? }))
+    };
+    let (mut by_index, mut by_decodes, mut encodes) = (Vec::new(), Vec::new(), Vec::new());
+    let (mut blank, mut error_arm, mut string_arm, mut text_arm) = (quote!(), quote!(), quote!(), quote!());
+    for variant in variants {
+        let name = variant.name;
+        let value = match variant.payload {
+            Some(ty) => decoded(name, ty),
+            None => quote!(#ident::#name),
+        };
+        if let Some(i) = variant.index {
+            by_index.push(quote!(::core::option::Option::Some(#i) => return ::core::result::Result::Ok(#value),));
+        }
+        if !variant.decodes.is_empty() {
+            let ids = &variant.decodes;
+            by_decodes.push(quote!(if [#(#ids),*].contains(&__Kind(id)) { return ::core::result::Result::Ok(#value); }));
+        }
+        if variant.blank {
+            blank = quote!(if id == 0 { return ::core::result::Result::Ok(#ident::#name); });
+        }
+        if variant.verbatim {
+            let ty = variant.payload.ok_or_else(|| syn::Error::new_spanned(name, "a verbatim variant holds its text"))?;
+            let value = decoded(name, ty);
+            error_arm = quote!(if id == ::sittir_core::types::KindId::ERROR.0 { return ::core::result::Result::Ok(#value); });
+            string_arm = quote!(#napi::ValueType::String => ::core::result::Result::Ok(#value),);
+        }
+        if let Some(ids) = &variant.text {
+            let ty = variant.payload.ok_or_else(|| syn::Error::new_spanned(name, "a text variant holds its text"))?;
+            let value = decoded(name, ty);
+            text_arm = quote! {
+                if [#(#ids),*].contains(&__Kind(id))
+                    && unsafe { ::sittir_core::boundary::property::<::std::string::String>(env, napi_val, c"$text")? }.is_some()
+                {
+                    return ::core::result::Result::Ok(#value);
+                }
+            };
+        }
+        encodes.push(match (variant.payload, variant.blank, &variant.first) {
+            (Some(ty), _, _) => quote!(Self::#name(payload) => unsafe { <#ty as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, payload) },),
+            (None, true, _) => quote!(Self::#name => unsafe { <u16 as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, 0) },),
+            (None, false, Some(first)) => quote!(Self::#name => unsafe { <u16 as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, (#first).0) },),
+            (None, false, None) => return Err(syn::Error::new_spanned(name, "a unit variant names the kind it writes: `#[kind(…)]`")),
+        });
+    }
+    let expected = if string_arm.is_empty() {
+        format!("{owner}: expected u16 kind_id or object with $type")
+    } else {
+        format!("{owner}: expected u16 kind_id, string, or object with $type")
+    };
+    let missing = format!("$type property missing in {owner}");
+    let boxed = boxed(ident);
+    Ok(gated(quote! {
+        unsafe fn __decode_id(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value, id: u16) -> #napi::Result<#ident> {
+            match __variant(__Kind(id), __Kind(id)) {
+                #(#by_index)*
+                _ => {}
+            }
+            #(#by_decodes)*
+            #blank
+            ::core::result::Result::Err(#napi::Error::from_reason(::std::format!("unknown kind id {id} in {}", #owner)))
+        }
+        impl #napi::bindgen_prelude::FromNapiValue for #ident {
+            unsafe fn from_napi_value(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value) -> #napi::Result<Self> {
+                match unsafe { ::sittir_core::slot::transport_value_type(env, napi_val)? } {
+                    #napi::ValueType::Number => {
+                        let id = unsafe { <u16 as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val)? };
+                        unsafe { __decode_id(env, napi_val, id) }
+                    }
+                    #napi::ValueType::Object => {
+                        let id: u16 = unsafe { ::sittir_core::boundary::property(env, napi_val, c"$type")? }
+                            .ok_or_else(|| #napi::Error::from_reason(#missing))?;
+                        #error_arm
+                        #text_arm
+                        unsafe { __decode_id(env, napi_val, id) }
+                    }
+                    #string_arm
+                    _ => ::core::result::Result::Err(#napi::Error::from_reason(#expected)),
+                }
+            }
+        }
+        impl #napi::bindgen_prelude::ToNapiValue for #ident {
+            unsafe fn to_napi_value(env: #napi::sys::napi_env, val: Self) -> #napi::Result<#napi::sys::napi_value> {
+                match val {
+                    #(#encodes)*
+                }
+            }
+        }
+        #boxed
+    }))
+}
+
+/// An enum kind: a member decodes from an id it claims and writes its first.
+pub fn members(ident: &Ident, firsts: &[(&Ident, Path)]) -> TokenStream {
+    let napi = napi();
+    let owner = ident.to_string();
+    let encodes = firsts.iter().map(|(name, first)| quote!(Self::#name => (#first).0,));
+    let boxed = boxed(ident);
+    gated(quote! {
+        impl #napi::bindgen_prelude::FromNapiValue for #ident {
+            unsafe fn from_napi_value(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value) -> #napi::Result<Self> {
+                let id = unsafe { <u16 as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val)? };
+                __member(__Kind(id), __Kind(id)).ok_or_else(|| #napi::Error::from_reason(::std::format!("kind id {id} is not a kind {} takes", #owner)))
+            }
+        }
+        impl #napi::bindgen_prelude::ToNapiValue for #ident {
+            unsafe fn to_napi_value(env: #napi::sys::napi_env, val: Self) -> #napi::Result<#napi::sys::napi_value> {
+                let id: u16 = match val {
+                    #(#encodes)*
+                };
+                unsafe { <u16 as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, id) }
+            }
+        }
+        #boxed
+    })
+}
+```
+
+The messages are today's: "unknown kind id … in …", "$type property missing in …", "… expected u16 kind_id …" and "kind id … is not a kind … takes". The one new message is the bare-kind-id refusal of a leaf with no fixed text, which names the type but no longer the kind, since the macro looks no kind name up.
+
+- [ ] **Step 5: Wire the codec in**
+
+In `expand.rs`:
+
+- `last_segment` becomes `pub(crate)`.
+- `Field` gains `key: Option<LitStr>`, and `fields_of` fills it with `attrs::wire_key(&field.attrs)?`.
+- `derive` passes the choice's attributes: `Data::Enum(data) if attrs.choice => choice(&input.ident, &attrs, data),`.
+- `structure`, after `has_layout`, builds the codec and places `#codec` after `#has_layout` inside the `const _` block:
+
+```rust
+    let wire = fields
+        .iter()
+        .map(|field| match &field.key {
+            Some(key) => Ok(codec::WireField { ident: field.ident, ty: field.ty, key }),
+            None => Err(syn::Error::new_spanned(field.ident, "a transport field crosses the wire under a key: `#[wire(key = \"…\")]`")),
+        })
+        .collect::<syn::Result<Vec<_>>>()?;
+    let codec = match &attrs.text {
+        Some(fixed) => codec::text_leaf(ident, &wire, fixed.as_ref())?,
+        None => codec::structure(ident, &wire)?,
+    };
+```
+
+- `choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum)` builds `wire: Vec<codec::WireVariant>` in its loop. Take each variant's `payload` (the one unnamed field's type, else `None`) and its `form = attrs::kind_attrs(&variant.attrs)?` once.
+  - A blank variant pushes `WireVariant { blank: true, .. }` with no payload and no index before it continues.
+  - A `form.verbatim` variant pushes `verbatim: true` with its payload, and continues before the read tables.
+  - A `form.text` variant takes its `#[kind]` (an error naming the variant when it has none), pushes `text: Some(kinds.kinds)`, and continues before the read tables: its ids are taken only from an object carrying `$text`.
+  - A variant with no `#[kind]` pushes a `WireVariant` with no index (it is never decoded; its payload still encodes) and continues as now.
+  - Every other variant pushes `index: Some(at as u16)`, `first: kinds.kinds.first().or(kinds.shown.first()).or(kinds.folded.first()).cloned()` and `decodes: kinds.decodes.clone()`, then builds its read-table entries as now.
+  - After the loop, `let codec = codec::choice(ident, &wire)?;` goes inside the `const _` block after `#has_layout`.
+  - With `attrs.codec_only`, the block holds only the `__Kind` import, `__variant` (with `#[allow(dead_code)]`, since without napi bindings nothing calls it) and `#codec`: no read functions, no `ReadTransport` impl, no `HasLayout`.
+- `members` collects `firsts: Vec<(&Ident, Path)>` in its loop, each member's first claimed id taken the same way. It places `codec::members(ident, &firsts)` inside its `const _` block.
+
+- [ ] **Step 6: Run the derive's tests**
+
+Run: `rtk cargo test -p sittir-transport-macros`
+Expected: PASS, 8 tests.
+
+- [ ] **Step 7: Write codegen's failing tests**
+
+In `render-module-emit.test.ts`:
+
+```ts
+describe('the wire codec facts', () => {
+	it('keys every field and prints no napi codec of its own', async () => {
+		const src = await getRustTemplatesRs();
+		for (const gone of ['napi(object)', 'FromNapiValue', 'ToNapiValue', 'debug-transport', 'decodes as none of its members', 'pub struct VerbatimTransport']) {
+			expect(src).not.toContain(gone);
+		}
+		expect(src).toContain('use ::sittir_core::VerbatimTransport;');
+		const item = extractStructBody(src, 'FunctionItemTransport');
+		expect(item).toMatch(/    #\[wire\(key = "\$_layout"\)\]\n    pub layout: Option<TransportLayout>,/);
+		expect(item).toMatch(/    #\[wire\(key = "_name"\)\]\n    #\[slot\(field = field::NAME\)\]\n    pub name: /);
+		expect(extractStructBody(src, 'IdentifierTransport')).toMatch(/    #\[wire\(key = "\$text"\)\]\n    pub text: String,/);
+	});
+
+	it('marks the verbatim arm of a choice that takes bare text, and only there', async () => {
+		const src = await getRustTemplatesRs();
+		expect(src).toMatch(/    #\[transport\(verbatim\)\]\n    Verbatim\(VerbatimTransport\),/);
+		const any = src.slice(src.indexOf('pub enum AnyTransport {'));
+		const anyBody = any.slice(0, any.indexOf('\n}'));
+		expect(anyBody).toMatch(/\n    Verbatim\(VerbatimTransport\),/);
+		expect(anyBody).not.toContain('#[transport(verbatim)]');
+	});
+
+	it("states an envelope's wire ids", async () => {
+		const src = await getTypescriptTransportRs();
+		const member = src.slice(src.indexOf('pub enum MemberExpressionPropertyTransportSlot {'));
+		expect(member).toMatch(/    #\[kind\(kind::_PROPERTY_IDENTIFIER, display, decodes\(kind::\w+(?:, kind::\w+){21}\)\)\]\n    PropertyIdentifier\(/);
+	});
+
+	it('derives the codec alone for trivia', async () => {
+		const src = await getRustTemplatesRs();
+		expect(src).toMatch(/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Transport\)\]\n#\[transport\(choice, codec_only\)\]\npub enum TriviaTransport \{/);
+		expect(src).toMatch(/    #\[transport\(text\)\]\n    #\[kind\([^\n]*\)\]\n    Text\(::sittir_core::trivia::TriviaText\),/);
+		expect(src).toMatch(/    #\[transport\(verbatim\)\]\n    Verbatim\(VerbatimTransport\),\n    #\[transport\(text\)\]/);
+	});
+});
+```
+
+Create `native-typings.test.ts`:
+
+```ts
+import { readFileSync } from 'node:fs';
+import { describe, expect, it } from 'vitest';
+
+const GRAMMARS = ['rust', 'typescript', 'python', 'scm', 'regex'] as const;
+const ADDON_API = ['EngineOptions', 'SittirEngine', 'disposeTree', 'liveTreeCount'];
+
+describe("each grammar's native typings", () => {
+	it.each(GRAMMARS)('%s declares the addon API alone', (grammar) => {
+		const dts = readFileSync(new URL(`../../../../${grammar}/native/index.d.ts`, import.meta.url), 'utf8');
+		const declared = [...dts.matchAll(/^export (?:declare )?(?:class|function|interface|type|const|enum) (\w+)/gm)].map((m) => m[1]).sort();
+		expect(declared).toEqual(ADDON_API);
+	});
+});
+```
+
+The typings test holds the surface shut: `type-check:native` catches a type the file names but does not declare, and this test catches one it declares beyond the API.
+
+- [ ] **Step 8: Run to verify failure**
+
+Run: `pnpm exec vitest run packages/codegen/src/emitters/__tests__/render-module-emit.test.ts -t "the wire codec facts"` and `pnpm exec vitest run packages/codegen/src/emitters/__tests__/native-typings.test.ts`
+Expected: FAIL (`napi(object)` is printed; each `index.d.ts` declares the transports).
+
+- [ ] **Step 9: Print the codec's facts**
+
+In `render-module.ts`:
+
+- Add `wireKeyAttr(key: string): string`, which returns `` `    #[wire(key = ${JSON.stringify(key)})]` ``. Every field key below prints through it.
+- `renderTransportField` prints `wireKeyAttr(`_${field.storageName}`)` in place of its `cfg_attr(… napi(js_name …))` line.
+- `LAYOUT_FIELD.jsName` becomes `wireKey`. `renderLayoutField` prints `wireKeyAttr(LAYOUT_FIELD.wireKey)` above the field. `renderLeafTransportPlainFields` prints `wireKeyAttr(LAYOUT_FIELD.wireKey)` above `layout` and `wireKeyAttr('$text')` above `text`.
+- In `renderTransportDataStruct`, the list's `_delimiter` and `_separator` fields and each spacing site's field print `wireKeyAttr(…)` with the key they print today. Drop the `napi(object)` line.
+- In `emitSupertypeTransportEnum` and `emitPerSlotChildEnum`, print `    #[transport(verbatim)]` above `    Verbatim(VerbatimTransport),` when the choice admits verbatim text: `supertypeAdmitsVerbatim(supertypeNode, nodeMap)` for a supertype, and `validKinds.some(({ node }) => node.modelType === 'pattern')` for a per-slot choice. These are the facts today's decoders read in the `admitsVerbatim` they already compute. `AnyTransport`'s `Verbatim` stays unmarked, since today's `AnyTransport` decodes no verbatim text.
+- `variantKindLines`'s envelope branch appends the extras it records for the pin: `#[kind(${variantKindArgs([variant.aliasTypeId], true, read.ctx)}${extras.length === 0 ? '' : `, decodes(${extras.map((id) => read.ctx.names.kind(id)).join(', ')})`})]`, where `extras` is the list it sets in `read.envelopeExtras`.
+- `renderTriviaTransportSupport` takes `read: ReadPrint` from its caller and prints `TRANSPORT_DERIVE` and `#[transport(choice, codec_only)]` above `pub enum TriviaTransport`.
+  - Each extras variant with a kind id gets `    #[kind(${variantKindArgs([id], false, read.ctx)})]`.
+  - `Verbatim` gets `    #[transport(verbatim)]`.
+  - `Text` gets `    #[transport(text)]` and `    #[kind(${variantKindArgs(textIds, false, read.ctx)})]`, where `textIds` are the ids today's text arms take: the extras nodes that are `AbstractAssembledCompound` and have a kind id.
+- Delete `renderVerbatimTransport` and its call. `emitRenderModule` adds `'use ::sittir_core::VerbatimTransport;'` beside `'use super::{field_ids as field, kind_ids as kind};'`, so every `VerbatimTransport` the module names is the core's.
+
+- [ ] **Step 10: Delete the hand-written codec**
+
+- `emitTransportEnumFromNapiValueBody` and the `FromNapiValue`/`ToNapiValue` impls its three callers print around it (`emitSupertypeTransportEnum`, `emitPerSlotChildEnum`, `renderTriviaTransportSupport`).
+- `renderBoxedEnumNapiImpls` and its four calls; `kindIdNapiImpls`, `KindIdArm` and `fixedLiteralNapiImpls`, with their calls in `renderEnumType` and `renderFixedLiteralTransport`; `renderLeafTransportNapiImpls`; `unitDecodeArm`; `wirePropertyRead`.
+- In `renderAnyTransportWithNapiFromValue`, the three impls. It keeps `emittedNodeIds` and `claimedBy` and its printing, and becomes `renderAnyTransport`.
+- In `emitSupertypeTransportEnum`, `buildKindIdArms` keeps its claim bookkeeping and stops building arm text; it becomes `claimSupertypeIds`, returning `claimedBy`. Its `emittedIds` stays seeded with the supertype's own id, its suppressed kinds' ids and its self-alias ids before the members claim, so every variant's `#[kind]` prints exactly as today and the codec refuses those ids (ruling 1). Delete `emitDecodeTrials`, `selfAliasLeafTrials`, `emitAliasUnwrapRecurseArm`, `AliasLeafTrial` and `aliasLeafTrialOrder`.
+- `emitPerSlotChildEnum` does the same: its claim bookkeeping stays, seeded with its alias-wrapper ids as today, and its arm text goes.
+- Every function or type this leaves without a caller goes too: check each with `find_all_references` (expected: `nodeTransportHasRequiredField`, `isLeafLikeNode`).
+- `native-crate.ts`: the generated `Cargo.toml` loses `debug-transport = ["sittir-core/debug-transport"]`. `sittir-core/Cargo.toml` loses `debug-transport = []` and its comment.
+- `layout.rs` and `trivia.rs`: delete the `TypeName` and `ValidateNapiValue` impls of `TransportLayout` and `TransportTrivia`; napi's object derive was their only user. If the workspace does not build without them, keep them and report which use needs them.
+- Glossary: delete the entries of every deleted declaration. Add `wireKeyAttr`, `claimSupertypeIds` and `renderAnyTransport`. Update the entries of the printers above. `boxedInEnum`'s entry keeps its body until Task 15.
+
+- [ ] **Step 11: The tests that pinned a decoder**
+
+Each test that pinned printed decoder text now pins the facts the derive decodes from. None pins a decoder.
+- `native-transport-emit.test.ts`, lines 452, 471, 502, 522, 545, 679 and 697: `#[cfg_attr(feature = "napi-bindings", napi(js_name = "_x"))]` becomes `#[wire(key = "_x")]`, with the same key.
+- `render-module-separated-list.test.ts`, lines 139–140: `wire(key = "_delimiter")` and `wire(key = "_separator")`.
+- `render-module-emit.test.ts`:
+  - lines 314–320 (a leaf's typeof dispatch) become the leaf's `#[wire(key = "$text")]` line;
+  - lines 335–338 (`PlusTransport`'s `u16` decoder) become its `#[transport(choice)]` and the variant's `#[kind(kind::PLUS)]`;
+  - lines 372–374, 415 and 459 change `napi(js_name = …)` to `wire(key = …)` with the same keys and the same assertions;
+  - the `ExpressionTransport` decoder test from line 482 becomes the variant's `#[kind(…)]` lines it already reaches, plus `#[transport(verbatim)]` where the decoder took a string;
+  - "gives a blank arm only to the choices that blank options hold" (line 753) counted three arms admitting id 0 in each blank choice: `from_kind_id`'s, which render option defaults still call, and the two napi decoder branches. The decoders are gone, so `blankIdArms` is now `blankChoices.length`, one per choice.
+- `native-transport-emit.test.ts`, lines 597–598: the decoder arms `410 => Ok(Self::WrappedItem(` and `411 => Ok(Self::Integer(` become the variants' claims, matched as `/    #\[kind\([^\n]*\)\]\n    WrappedItem\(/` and `/    #\[kind\([^\n]*\)\]\n    Integer\(/`.
+- `typed_read.rs`: every field of every declared transport gains the key codegen would print for it: `$_layout` on the layout field, `$text` on a text leaf's `text`, and `_<name>` on every other field.
+
+- [ ] **Step 12: Regenerate, build, test**
+
+Run the vitest files (PASS, apart from `native-typings` until the natives are rebuilt). Run `pnpm run regen:all`, which regenerates the five grammars and builds their release natives; only the native build rewrites `native/index.d.ts`. Then run:
+
+- `rtk cargo build --workspace`: PASS. A generated crate that fails to compile points at the derive or at a printed fact; fix it there.
+- `rtk cargo test -p sittir-parity-tests --features sittir-core/napi-bindings`: PASS. This compiles every declaration's codec, generated and hand-written.
+- `rtk cargo test --workspace --no-default-features`: PASS.
+- `pnpm exec vitest run packages/codegen/src/emitters/__tests__/native-typings.test.ts`: PASS. Each rebuilt `index.d.ts` declares `SittirEngine`, `EngineOptions`, `disposeTree` and `liveTreeCount` alone.
+
+Then `pnpm run type-check:native`: 0 errors, against 2,732 on master. Chain it into `type-check` in `package.json`: `… && pnpm run type-check:examples && pnpm run type-check:native`.
+
+- [ ] **Step 13: Gates and commit**
+
+The global gates:
+
+- `pnpm run validate:native`: rows unchanged. Two of its checks now go through the derive's decoder:
+  - the `built-render-parse` rows render factory-built nodes through it;
+  - its `typed-read-parity` run decodes today's detached data through it, and must report `refused: 0`, `differs: 0` and `todayFailed: 0` on all five grammars.
+
+  A today-failed entry is data today's decoder took and the derive refuses. Report it with its kind and id (stop rule), since ruling 1 predicts none.
+- Rendered bytes unchanged.
+- Record each `transport.rs`'s line count before and after (master: rust 69,118, typescript 75,079, python 44,338, scm 7,481, regex 9,787).
+
+```bash
+git add rust/crates/sittir-transport-macros/src/codec.rs packages/codegen/src/emitters/__tests__/native-typings.test.ts
+git commit -F msg -- rust/crates packages/codegen/src packages/*/native package.json docs/glossary/emitters.md
+```
+
+Message: `feat(transport): the derive expands every transport's napi codec; codegen prints its facts and no codec of its own`.
+
+---
+
+## Task 14: The corpus round trip
+
+The derive's encoders have no caller before 1c, which sends the typed read to JavaScript through them (ruling 7). This task gives them one. The engine gains a transitional `typedReadRoundTrip(treeId)`. It reads a tree one level deep and then whole, encodes each read to JavaScript, decodes it back through the same codec and compares the two. The comparison is the debug text, line for line. `SlotValue`'s equality compares a coordinate's tree, span and kind only, and leaves out its row, its text-only flag and its gap. Both sides come from one read, so every line must match. The parity harness runs the round trip on every corpus entry, so `validate:native` gates it.
+
+The one-level read is the half that matters for coordinates. Past the depth, every child with structure is a coordinate, so each one is encoded and decoded.
+
+**Files:**
+- Modify: `rust/crates/sittir-core/src/napi_engine.rs` (`with_typed_read`, `typed_read_refusal`, `typed_read_parity`, `parity_report`, its tests)
+- Modify: `packages/codegen/src/emitters/native-crate.ts:3`
+- Modify: `packages/types/src/engine-api.ts:170-204`
+- Modify: `packages/common/src/engine.ts:69-90,313-320,410-411`, `packages/common/src/create-engine.ts:165-166`
+- Modify: `packages/tools/src/validate/typed-read-parity.ts`, `packages/cli/src/commands/tool/typed-read-parity.ts`
+- Create: `packages/tools/src/validate/__tests__/typed-read-round-trip.test.ts`
+- Generated: `packages/*/src/backend.ts`, `rust/crates/sittir-*/src/lib.rs`, `packages/*/native/index.d.ts`, `docs/cli-command-glossary.md`
+- Modify: `docs/glossary/emitters.md`, `docs/glossary/packages-tools-src-validate.md`
+
+**Interfaces:**
+- Consumes: Task 13's `FromNapiValue` and `ToNapiValue` for every transport, and Task 12's encoders for `SlotValue`, `SourceGap`, `SourceFlank`, `TransportLayout`, `TransportTrivia` and `Span`.
+- Produces:
+  - napi `typedReadRoundTrip(treeId: number): string | null`;
+  - diagnostics `typedReadRoundTrip(treeId: number): string | null`;
+  - the harness outcome `'round-trip'` and the summary field `roundTrip: number`;
+  - `with_typed_read(tree_id, depth, then)`;
+  - `sittir_core::napi_engine::round_trip_report(encoded: &str, decoded: &str) -> Option<String>`.
+
+- [ ] **Step 1: Write the report's failing tests**
+
+In `napi_engine.rs`'s test module, import `round_trip_report` beside `parity_report` and add:
+
+```rust
+    #[test]
+    fn a_round_trip_compares_every_line_handles_included() {
+        assert_eq!(round_trip_report(ABSENT, ABSENT), None);
+        let report = round_trip_report("A {\n    handle: 1,\n}", "A {\n    handle: 2,\n}").unwrap();
+        assert!(report.starts_with("first difference at line 1\n--- encoded\n"), "{report}");
+        assert!(report.contains("\n--- decoded\n"), "{report}");
+    }
+
+    #[test]
+    fn a_decoded_read_that_ends_early_is_a_difference() {
+        let report = round_trip_report(EMPTY, "Block {").unwrap();
+        assert!(report.starts_with("first difference at line 1"), "{report}");
+    }
+```
+
+The first test is the line `parity_report` drops on purpose: a coordinate's handle.
+
+- [ ] **Step 2: Run to verify failure**
+
+Run: `rtk cargo test -p sittir-core --features napi-bindings napi_engine::tests`
+Expected: FAIL to compile: `round_trip_report` is not defined.
+
+- [ ] **Step 3: The report**
+
+Both reports print their first difference the same way. Move the window out of `parity_report` into a helper both call:
+
+```rust
+/// Twelve lines of each dump around the first place they part, headed by the
+/// line number and each dump's name.
+fn first_difference(at: usize, first: (&str, &[String], usize), second: (&str, &[String], usize)) -> String {
+    let window = |lines: &[String], at: usize| lines[at.saturating_sub(12)..(at + 12).min(lines.len())].join("\n");
+    format!("first difference at line {at}\n--- {}\n{}\n--- {}\n{}", first.0, window(first.1, first.2), second.0, window(second.1, second.2))
+}
+```
+
+`parity_report`'s tail becomes:
+
+```rust
+    if i < typed.len() || j < today.len() {
+        report.push(first_difference(i, ("typed read", &typed, i), ("today's read", &today, j)));
+    }
+```
+
+Its output is unchanged, and its five tests pin that. Then add:
+
+```rust
+/// How a read decoded from its own encoding differs from the read, from their
+/// debug text. Every line counts, a coordinate's handle and text-only flag
+/// included, since both sides come from one read. `None` when they agree.
+pub fn round_trip_report(encoded: &str, decoded: &str) -> Option<String> {
+    let lines = |dump: &str| dump.lines().map(str::to_owned).collect::<Vec<_>>();
+    let (encoded, decoded) = (lines(encoded), lines(decoded));
+    let at = encoded.iter().zip(&decoded).take_while(|(a, b)| a == b).count();
+    (at < encoded.len().max(decoded.len())).then(|| first_difference(at, ("encoded", &encoded, at), ("decoded", &decoded, at)))
+}
+```
+
+- [ ] **Step 4: The engine call**
+
+`with_typed_read` takes the depth it reads at:
+
+```rust
+            fn with_typed_read<T>(
+                &self,
+                tree_id: f64,
+                depth: $crate::read::Depth,
+                then: impl FnOnce(
+                    ::std::result::Result<$render_root, $crate::read::ReadError>,
+                    &dyn Fn($crate::types::KindId) -> &'static str,
+                ) -> ::napi::Result<T>,
+            ) -> ::napi::Result<T> {
+```
+
+Its read becomes `parsed.typed_read::<$render_root>(depth)`. `typed_read_refusal` and `typed_read_parity` pass `$crate::read::Depth::All`, as they read today. After `typed_read_parity`, add:
+
+```rust
+            /// Transitional, while today's read and the typed read both exist:
+            /// encode the typed read of tree `treeId` to JavaScript and decode it
+            /// back, read one level deep and then whole. `null` when both come
+            /// back unchanged; otherwise the depth, and the refusal, the encoder's
+            /// or decoder's error, or the first place the decoded read differs.
+            #[::napi_derive::napi]
+            pub fn typed_read_round_trip(&self, env: ::napi::Env, tree_id: f64) -> ::napi::Result<Option<String>> {
+                for (depth, label) in [($crate::read::Depth::ONE, "one level"), ($crate::read::Depth::All, "whole")] {
+                    let typed = self.with_typed_read(tree_id, depth, |typed: ::std::result::Result<$render_root, $crate::read::ReadError>, name| {
+                        Ok(typed.map_err(|refusal| refusal.describe(name)))
+                    })?;
+                    let typed = match typed {
+                        Ok(typed) => typed,
+                        Err(refusal) => return Ok(Some(format!("read {label}: refused: {refusal}"))),
+                    };
+                    let encoded = format!("{typed:#?}");
+                    let value = match unsafe { <$render_root as ::napi::bindgen_prelude::ToNapiValue>::to_napi_value(env.raw(), typed) } {
+                        Ok(value) => value,
+                        Err(error) => return Ok(Some(format!("read {label}: encoding failed: {error}"))),
+                    };
+                    let decoded = match unsafe { <$render_root as ::napi::bindgen_prelude::FromNapiValue>::from_napi_value(env.raw(), value) } {
+                        Ok(decoded) => decoded,
+                        Err(error) => return Ok(Some(format!("read {label}: decoding failed: {error}"))),
+                    };
+                    if let Some(report) = $crate::napi_engine::round_trip_report(&encoded, &format!("{decoded:#?}")) {
+                        return Ok(Some(format!("read {label}: {report}")));
+                    }
+                }
+                Ok(None)
+            }
+```
+
+The read ends inside `with_typed_read`, and the encoding and decoding run after it returns, so no JavaScript value is made while the tree table is borrowed. An error in either direction is reported as the entry's round trip, not thrown, so one bad entry does not end the corpus run.
+
+- [ ] **Step 5: Run the report's tests**
+
+Run: `rtk cargo test -p sittir-core --features napi-bindings napi_engine::tests`
+Expected: PASS, 7 tests.
+
+- [ ] **Step 6: Write the JavaScript test**
+
+Create `packages/tools/src/validate/__tests__/typed-read-round-trip.test.ts`:
+
+```ts
+import { describe, expect, it } from 'vitest';
+import { treeTokenOf } from '@sittir/common/utils';
+import { loadNativeEngine } from '../common.ts';
+
+async function roundTrip(grammar: string, source: string): Promise<string | null> {
+	const engine = await loadNativeEngine(grammar);
+	const treeId = treeTokenOf(engine.parse(source, { deep: true }) as object)?.treeId;
+	if (treeId === undefined) throw new Error(`${grammar}: the parsed root holds no tree`);
+	return engine.diagnostics.typedReadRoundTrip(treeId);
+}
+
+describe('a typed read crosses to JavaScript and back unchanged', () => {
+	it.each([
+		['rust', 'fn f() {\n    // note\n    a;\n}\n', 'a comment owned as trivia'],
+		['rust', 'fn f() { let v = [1, 2, 3]; }', 'a separated list'],
+		['rust', 'fn f() { x }', 'a text leaf held by a choice'],
+		['typescript', 'const xs = [a, , b];', "an elided element's hole"],
+		['typescript', 'a.get;', 'a keyword read as a property name'],
+		['python', 'def f():\n    return x  # note\n', 'a trailing comment']
+	])('%s: %s (%s)', async (grammar, source) => {
+		expect(await roundTrip(grammar, source)).toBeNull();
+	});
+});
+```
+
+Each source reaches one of the review focus's cases. The text leaf in a choice must encode as an object carrying its `$type`: encoded as a bare string, it would come back as the choice's `Verbatim`. The hole is `null` in a list. The keyword under a property name is a leaf in an envelope variant. Every case runs at both depths, so each one's coordinates cross too.
+
+Run: `pnpm exec vitest run packages/tools/src/validate/__tests__/typed-read-round-trip.test.ts`
+Expected: FAIL: `typedReadRoundTrip` is not a function of the engine's diagnostics.
+
+- [ ] **Step 7: The JavaScript side**
+
+- `native-crate.ts`: `NATIVE_RENDER_TRANSPORT_ABI` becomes 19, since `backend.ts` must refuse a native build without the new call.
+- `NativeEngineLike`: add `typedReadRoundTrip?(treeId: number): string | null;` after `typedReadParity`.
+- `EngineDiagnostics`, after `typedReadParity`:
+
+```ts
+	/** Transitional: encode the typed read of tree `treeId` to JavaScript and decode it back, read one level deep and then whole; `null` when both come back unchanged, else the depth and the refusal, the codec's error or the first difference. */
+	typedReadRoundTrip(treeId: number): string | null;
+```
+
+- `NativeLanguageEngine`: add `typedReadRoundTrip: EngineDiagnostics['typedReadRoundTrip'];`.
+- `packages/common/src/engine.ts`, the diagnostics after `typedReadParity`:
+
+```ts
+					typedReadRoundTrip(treeId: number): string | null {
+						if (engine.typedReadRoundTrip === undefined) throw new Error('typedReadRoundTrip: this native binary has no typed reader');
+						return engine.typedReadRoundTrip(treeId);
+					},
+```
+
+  and `nativeLanguageEngine` forwards it: `typedReadRoundTrip: (treeId) => engine.diagnostics.typedReadRoundTrip(treeId),`.
+- `packages/common/src/create-engine.ts`: `typedReadRoundTrip: (treeId) => native.typedReadRoundTrip(treeId)` after `typedReadParity`.
+
+Run `pnpm run regen:all`, which regenerates the five grammars with the new ABI and builds their release natives. Each `native/index.d.ts` gains `typedReadRoundTrip(treeId: number): string | null` on `SittirEngine`.
+
+- [ ] **Step 8: Run the test**
+
+Run: `pnpm exec vitest run packages/tools/src/validate/__tests__/typed-read-round-trip.test.ts`
+Expected: PASS, 6 tests. A failure names an encoder that does not invert its decoder. Fix it where the pair is declared, in `codec.rs` or Task 12's core encoders, and pin the fix with a unit test there (the derive's expansion test, or the core type's encoder test). The commit message lists each such fix.
+
+- [ ] **Step 9: The harness runs it on the corpus**
+
+In `typed-read-parity.ts`:
+
+- `TypedReadParityOutcome` becomes `'refused' | 'differs' | 'round-trip' | 'today-failed' | 'stale-listed'`.
+- `TypedReadParitySummary` gains `readonly roundTrip: number;` after `differs`.
+- In `computeTypedReadParity`, after the refusal check:
+
+```ts
+		const roundTrip = engine.diagnostics.typedReadRoundTrip(treeId);
+		if (roundTrip !== null) rows.push({ entry: entry.name, outcome: 'round-trip', report: roundTrip });
+```
+
+  An entry agrees only when its round trip does too. The tail of the loop becomes:
+
+```ts
+		if (difference === '' && unlisted.length === 0) {
+			if (roundTrip === null) agreed++;
+		} else {
+			const notes = unlisted.map(({ kind, slot }) => `empty slot not in the listed rows: ${kind}.${slot}`);
+			rows.push({ entry: entry.name, outcome: 'differs', report: [...notes, difference].filter((part) => part !== '').join('\n') });
+		}
+```
+
+- The summary gains `roundTrip: count('round-trip')`, and `run`'s exit status counts it: `summary.refused + summary.differs + summary.roundTrip + summary.todayFailed + summary.staleListed > 0`.
+
+In `packages/cli/src/commands/tool/typed-read-parity.ts`, `describe` becomes "Compare the typed reader with today's read and wrap on every corpus entry, and send each typed read to JavaScript and back; exits 1 on any refusal, difference, failed round trip, stale listed row or entry today's pipeline cannot decode". Regenerate the CLI glossary: `pnpm exec tsx packages/cli/src/glossary.ts > docs/cli-command-glossary.md`.
+
+- [ ] **Step 10: Run it on the corpus**
+
+Run: `pnpm exec tsx packages/cli/src/cli.ts tool typed-read-parity --all-grammars`
+Expected: each grammar's summary has `roundTrip: 0`, with `refused`, `differs`, `todayFailed` and `staleListed` still 0. A round-trip row is fixed as in Step 8.
+
+- [ ] **Step 11: Glossary**
+
+- `docs/glossary/emitters.md`, `NATIVE_RENDER_TRANSPORT_ABI`: the read calls' list gains "and the typed-read round-trip call takes a tree id".
+- `docs/glossary/packages-tools-src-validate.md`: the module entry says the harness also sends each entry's typed read to JavaScript and back, read one level deep and whole, and that an entry whose read does not come back unchanged is `round-trip`, which fails the gate. Update `computeTypedReadParity`'s and `run`'s entries to match.
+
+- [ ] **Step 12: Gates and commit**
+
+The global gates. Rendered bytes and validation rows are unchanged, and the only generated change is the ABI constant and the new method in each `index.d.ts`.
+
+```bash
+git add packages/tools/src/validate/__tests__/typed-read-round-trip.test.ts
+git commit -F msg -- rust/crates/sittir-core/src/napi_engine.rs packages/codegen/src/emitters/native-crate.ts packages/types/src packages/common/src packages/tools/src packages/cli/src rust/crates packages/*/src/backend.ts packages/*/native/index.d.ts docs/glossary docs/cli-command-glossary.md
+```
+
+Message: `feat(engine): every corpus read crosses to JavaScript and back unchanged`.
+
+---
+
+## Task 15: The payload ceiling
+
+A choice is as large as its largest payload. In the dev profile, every frame that holds a choice by value pays that size once per temporary. The typed read's root therefore costs 375 KiB of stack in the dev profile against today's 39 KiB on macOS arm64, and 391 against 63 KiB on linux x86_64. The size census (`docs/superpowers/probes/2026-10-01-shared-arena/stack/size-census.py`) finds the largest choices at 4,256 bytes (rust's `StatementTransport`) and 9,432 (typescript). No short list of kinds shrinks them: 90 payload types are over 512 bytes in rust, 128 in typescript, 61 in python, 6 in scm and 16 in regex.
+
+A byte ceiling does (ruling 9). Every payload type over the ceiling is boxed in every choice the reader reads, by a list pinned per grammar. Generated `const` assertions check every such payload against the ceiling both ways. A payload that grows past the ceiling fails the build asking to be pinned. A pinned payload that shrinks under it fails asking to be unpinned. The ceiling starts at 512 bytes. It halves, to 256 and then 128, only while the dev-profile root cost stays above today's (ruling 10). Past 128, stop and report the measurements.
+
+A payload's size depends only on the types it holds by value, and those never hold it back: a cycle through a choice is already boxed at the field that closes it. So pinning settles from the leaves up, and the pin list converges in a few rounds.
+
+`TriviaTransport` is outside the rule. It is codec-only, and its values live in the trivia's vectors, never in a reader's frame.
+
+**Files:**
+- Create: `packages/codegen/src/emitters/boxed-payloads.ts`
+- Modify: `packages/codegen/src/emitters/render-module.ts` (`ReadPrint`, `readPrintOf`, `boxedInEnum`, `emitSupertypeTransportEnum`, `emitSupertypeRenderHelper`, `emitPerSlotChildEnum`, `renderAnyTransport`, `renderTransportSupport`)
+- Modify: `rust/crates/sittir-parity-tests/tests/typed_read_nesting.rs`
+- Test: `packages/codegen/src/emitters/__tests__/render-module-emit.test.ts`
+- Generated: `rust/crates/sittir-*/src/render/transport.rs`
+- Modify: `docs/glossary/emitters.md`
+
+**Interfaces:**
+- Consumes: Task 13's codec impls for `Box<T>` of every derived `T`; `impl<T: ReadTransport> ReadTransport for Box<T>` in `sittir_core::read`.
+- Produces:
+  - `PAYLOAD_CEILING_BYTES: number` and `BOXED_PAYLOADS: Readonly<Record<string, readonly string[]>>`, keyed by grammar name and holding transport type names;
+  - `boxedInEnum(node: AssembledNode, grammar: GrammarName): boolean`;
+  - `choicePayloadType(node: AssembledNode, read: ReadPrint): string`, which records the payload and returns `Box<T>` or `T`;
+  - `payloadCeilingAssertions(grammar: GrammarName, payloads: ReadonlySet<string>): string[]`;
+  - `ReadPrint.choicePayloads: Set<string>`.
+
+- [ ] **Step 1: Write the failing tests**
+
+In `render-module-emit.test.ts`, import `BOXED_PAYLOADS` and `PAYLOAD_CEILING_BYTES` from `../boxed-payloads.ts` and `payloadCeilingAssertions` from `../render-module.ts`, and add:
+
+```ts
+describe('the payload ceiling', () => {
+	it('boxes each pinned payload in every choice the reader reads, and nowhere unboxed', async () => {
+		const src = await getRustTemplatesRs();
+		expect(BOXED_PAYLOADS.rust!.length).toBeGreaterThan(0);
+		for (const name of BOXED_PAYLOADS.rust!) {
+			expect(src).toMatch(new RegExp(`\\n    \\w+\\(Box<${name}>\\),`));
+			expect(src).not.toMatch(new RegExp(`\\n    \\w+\\(${name}\\),`));
+		}
+	});
+
+	it('asserts every payload against the ceiling, each one way', async () => {
+		const src = await getRustTemplatesRs();
+		const assertions = [...src.matchAll(/^const _: \(\) = assert!\(::core::mem::size_of::<(\w+)>\(\) (<=|>) (\d+), "/gm)];
+		const over = assertions.filter((m) => m[2] === '>').map((m) => m[1]).sort();
+		expect(over).toEqual([...BOXED_PAYLOADS.rust!].sort());
+		expect(assertions.every((m) => Number(m[3]) === PAYLOAD_CEILING_BYTES)).toBe(true);
+		expect(new Set(assertions.map((m) => m[1])).size).toBe(assertions.length);
+	});
+
+	it('refuses a pin no choice holds', () => {
+		const [stale] = BOXED_PAYLOADS.rust!;
+		expect(() => payloadCeilingAssertions('rust', new Set())).toThrow(`${stale} is pinned in boxed-payloads.ts but no choice holds it`);
+	});
+});
+```
+
+A pinned type may still be a struct field, whose shape is `pub name: T,`. The negative pattern matches only a variant's shape, `    Name(T),`.
+
+- [ ] **Step 2: Run to verify failure**
+
+Run: `pnpm exec vitest run packages/codegen/src/emitters/__tests__/render-module-emit.test.ts -t "the payload ceiling"`
+Expected: FAIL: `../boxed-payloads.ts` does not exist.
+
+- [ ] **Step 3: The pins**
+
+Run the census on the tree as Task 14 leaves it, with nothing boxed:
+
+```bash
+python3 docs/superpowers/probes/2026-10-01-shared-arena/stack/size-census.py --pins 512
+```
+
+It prints, per grammar, a line `   <grammar>: ['…', …],`: every payload type over 512 bytes of a choice the reader reads, boxed or not. Create `packages/codegen/src/emitters/boxed-payloads.ts` from those five lines:
+
+```ts
+export const PAYLOAD_CEILING_BYTES = 512;
+
+export const BOXED_PAYLOADS: Readonly<Record<string, readonly string[]>> = {
+	rust: [/* the census's rust line */],
+	typescript: [/* its typescript line */],
+	python: [/* its python line */],
+	scm: [/* its scm line */],
+	regex: [/* its regex line */]
+};
+```
+
+The lists are measured, not chosen, so they come from the command. The census keeps them right in Step 6.
+
+- [ ] **Step 4: The printers box what the pins name**
+
+In `render-module.ts`:
+
+- `ReadPrint` gains `readonly choicePayloads: Set<string>;`. `readPrintOf` starts it empty.
+- `boxedInEnum` becomes the lookup:
+
+```ts
+function boxedInEnum(node: AssembledNode, grammar: GrammarName): boolean {
+	return (BOXED_PAYLOADS[grammar] ?? []).includes(rustTransportStructName(node));
+}
+```
+
+- A variant's payload type is written by one helper, which also records the payload for the assertions:
+
+```ts
+function choicePayloadType(node: AssembledNode, read: ReadPrint): string {
+	const name = rustTransportStructName(node);
+	read.choicePayloads.add(name);
+	return boxedInEnum(node, read.grammar) ? `Box<${name}>` : name;
+}
+```
+
+- `emitSupertypeTransportEnum`:
+  - Its `isBoxed` becomes `(subNode: AssembledNode): boolean => boxedInEnum(subNode, read.grammar)`.
+  - The variant line takes `choicePayloadType(subNode, read)` in place of `variantType`.
+  - In the bridge to `AnyTransport`, a payload that is not a supertype passes as it is, `AnyTransport::${anyVariant}(inner)`, since `AnyTransport` boxes the same types. A boxed supertype payload is still unboxed to call its own bridge, `${subBridgeFn}(*inner)`.
+- `emitSupertypeRenderHelper` takes `grammar: GrammarName`, and its arm reads `boxedInEnum(subNode, grammar) ? 'inner.as_ref()' : 'inner'`. Its caller passes `read.grammar`.
+- `emitPerSlotChildEnum`: its `isBoxed` becomes `(variantNode: AssembledNode): boolean => boxedInEnum(variantNode, read.grammar)`. The variant line takes `choicePayloadType(node, read)`. Its render arm keeps `inner.as_ref()` for a boxed payload.
+- `renderAnyTransport`: the variant line becomes `` `    ${variant}(${choicePayloadType(node, read)}),` ``. Its render and prepare arms call methods on the payload, which reach through a box unchanged.
+- Add the assertions:
+
+```ts
+export function payloadCeilingAssertions(grammar: GrammarName, payloads: ReadonlySet<string>): string[] {
+	const pinned = BOXED_PAYLOADS[grammar] ?? [];
+	const stale = pinned.find((name) => !payloads.has(name));
+	if (stale !== undefined) throw new Error(`${stale} is pinned in boxed-payloads.ts but no choice holds it: unpin it`);
+	const n = PAYLOAD_CEILING_BYTES;
+	return [...payloads].sort().map((name) =>
+		pinned.includes(name)
+			? `const _: () = assert!(::core::mem::size_of::<${name}>() > ${n}, "${name} is within the ${n}-byte payload ceiling: unpin it in boxed-payloads.ts");`
+			: `const _: () = assert!(::core::mem::size_of::<${name}>() <= ${n}, "${name} is over the ${n}-byte payload ceiling: pin it in boxed-payloads.ts");`
+	);
+}
+```
+
+  `renderTransportSupport` appends `'', ...payloadCeilingAssertions(read.grammar, read.choicePayloads)` to the lines it returns, after every choice has been printed. Each assertion is its own item, so one build reports every payload on the wrong side of the ceiling, not just the first.
+
+- [ ] **Step 5: Run the tests**
+
+Run: `pnpm exec vitest run packages/codegen/src/emitters/__tests__/render-module-emit.test.ts -t "the payload ceiling"`
+Expected: PASS, 3 tests.
+
+- [ ] **Step 6: Settle the pins**
+
+Regenerate each grammar without building its native, `pnpm exec tsx packages/cli/src/cli.ts gen --grammar <g> --all --output packages/<g>/src --no-build-native`, then run `rtk cargo check --workspace --no-default-features`.
+
+- A failing assertion names its type and the edit: pin it, or unpin it.
+- Make every edit the check lists, regenerate, and check again.
+- The rounds end when the check passes. Then the census, `size-census.py --pins 512`, prints exactly the lists the file holds.
+- More than five rounds means the premise above is false: stop and report the types that keep moving.
+
+- [ ] **Step 7: Measure the stack**
+
+Run: `rtk cargo test -p sittir-parity-tests --test typed_read_nesting the_typed_read_costs -- --nocapture`
+
+It prints the least stack at 1, 10, 40 and 200 levels for both readers. The gate is the typed root (the 1-level figure) at most today's, on macOS arm64 in the dev profile. While it fails, halve `PAYLOAD_CEILING_BYTES`, take the lists from `size-census.py --pins <new ceiling>`, and repeat Steps 6 and 7. If it still fails at 128 bytes, stop and report each round's ceiling, pin counts and least stacks.
+
+- [ ] **Step 8: The nesting test states the new guarantee**
+
+In `typed_read_nesting.rs`:
+
+- After the per-level assertion, the dev profile's root cost must not exceed today's:
+
+```rust
+    if cfg!(debug_assertions) {
+        assert!(typed[0] <= today[0], "typed root cost {} KiB exceeds today's {} KiB", typed[0], today[0]);
+    }
+```
+
+- Re-pin the macOS rows from Step 7's run and from a release run (`… --release -- --nocapture`), rounded up to the search's granularity (8 KiB for a root, the printed value for a level). A release value above its current row (1536 B per level, 96 KiB root) is a regression: stop and report it, and do not raise the row.
+- The linux row is re-pinned from the CI log of the pushed branch, in a commit of its own.
+- The test's doc comment states the measured guarantee. Per level, the typed read costs no more stack than today's in both profiles. In release it reads at least as deep on 2 MiB. In the dev profile its root cost is at most today's. Both profiles' per-level and root figures are pinned as ceilings that only tighten.
+
+Run: `rtk cargo test -p sittir-parity-tests --test typed_read_nesting` and the same with `--release`.
+Expected: PASS.
+
+- [ ] **Step 9: Glossary**
+
+In `docs/glossary/emitters.md`:
+
+- `boxedInEnum`: replace the entry's body, which says every choice variant is inline, with the rule. A choice payload is boxed when its transport type is pinned for the grammar. The pins hold the payload types over the ceiling, and the generated assertions keep them exact.
+- `emitSupertypeTransportEnum`: its "SCC-driven Box rule" body gives way to the same rule. The bridge to `AnyTransport` passes a box through, since both choices box the same types.
+- Add entries for `choicePayloadType`, `payloadCeilingAssertions`, `PAYLOAD_CEILING_BYTES` and `BOXED_PAYLOADS`, and the `choicePayloads` member in `ReadPrint`'s entry. The `BOXED_PAYLOADS` entry says the lists are measured with `size-census.py --pins`, that the build refuses a list that is wrong either way, and that the ceiling is the largest that brings the dev-profile root cost within today's.
+
+- [ ] **Step 10: Gates and commit**
+
+Run `pnpm run regen:all`, then the global gates, plus:
+
+- `pnpm exec tsx packages/cli/src/cli.ts tool typed-read-parity --all-grammars`, all zeros. Its round trip covers every boxed payload: each decodes, reads and encodes through `Box`.
+- `rtk cargo build --workspace`, whose generated assertions all hold.
+- The census, run once more: each grammar's largest choice, recorded with the pin counts in the commit message.
+
+Rendered bytes and validation rows are unchanged.
+
+```bash
+git add packages/codegen/src/emitters/boxed-payloads.ts
+git commit -F msg -- packages/codegen/src rust/crates docs/glossary/emitters.md
+```
+
+Message: `perf(transport): box every choice payload over a byte ceiling, by pins the build checks`. The body gives the ceiling, the pin counts, the largest choice per grammar, and the least stacks before and after.
+
+---
+
+## Task 16: Measurements and the whole-branch gates
+
+This task takes the spec's verification 12, 13 and 15 for 1b. Each is measured like for like: the same commands, inputs and populations at the branch's base (master as 1b was cut) and at its head, one script running unchanged at both.
+
+- Render-neutrality (15) and type-check time (13) are gates within noise. A result outside noise stops the work for review (stop rule). Nothing is reverted to pass it.
+- The build figures (12) are recorded, not asserted.
+
+Timings run on copies outside every watched tree. A worktree's index watcher re-indexes while a build writes into it and takes half the cores, which spoils both sides of the comparison.
+
+**Files:** none in the code. The figures go in the PR body.
+
+- [ ] **Step 1: Two copies, natives built**
+
+```bash
+BASE=$(git merge-base HEAD master)
+git worktree add --detach scratchpad/wt-1b-base "$BASE"
+(cd scratchpad/wt-1b-base && pnpm install --frozen-lockfile && pnpm run regen:all)
+M=<a directory outside every watched tree, such as the session scratchpad>/m1b
+rsync -a --exclude target --exclude .infigraph scratchpad/wt-1b-base/ "$M/base/"
+rsync -a --exclude target --exclude .infigraph ./ "$M/head/"
+```
+
+Run the second `rsync` from the head's checkout, after Task 15's `regen:all`, so both copies hold release natives. `git worktree remove scratchpad/wt-1b-base` once the copy is made.
+
+Gate each timed run on instantaneous idle: at least 75 % idle in `top -l 2 -s 1 -n 0`, and no `infigraph ps` process indexing either copy. Record user plus system time beside wall time.
+
+- [ ] **Step 2: Render-neutral (verification 15)**
+
+```bash
+T=docs/superpowers/probes/2026-10-01-shared-arena/transport
+REBUILT=1 $T/layout-rounds.sh 6 "$M/out" base="$M/base" head="$M/head" && python3 $T/layout-report.py "$M/out"
+```
+
+Six rounds, the order rotating each round. Each round runs `measure-rebuilt.mts` at both copies, for rust, typescript and python: rebuilt renders over the parity render fixtures, per slot value, with the projection and the native call measured apart.
+
+The gate: for each grammar, the head's median native-call cost per slot value lies within the base's range across its six rounds, and so does its projection. The native call is the one the codec changes. If either median falls outside, stop and report both copies' six rounds.
+
+- [ ] **Step 3: Build (verification 12)**
+
+For each grammar `<g>` and each profile, in each copy, with that copy's own target directory:
+
+```bash
+cd "$M/<side>/rust" && export CARGO_TARGET_DIR="$M/<side>-target"
+cargo build -p sittir-<g> [--release]                        # warm: dependencies built
+touch crates/sittir-<g>/src/render/transport.rs
+/usr/bin/time -l cargo build -p sittir-<g> [--release]       # timed: the grammar crate alone
+```
+
+Repeat the timed build three times and record the medians:
+
+- wall time, and user plus system time;
+- peak memory (`maximum resident set size`);
+- the release `.node` size, `stat -f %z packages/<g>/native/*.node`;
+- the lines of `rust/crates/sittir-<g>/src/render/transport.rs`.
+
+Also record `python3 $T/transport-census.py` for each `transport.rs`. Its share of lines in napi impls is zero at the head.
+
+- [ ] **Step 4: Type-check time (verification 13)**
+
+Time the base's `type-check` command at both copies, three runs each:
+
+```bash
+pnpm -r --no-bail run type-check && pnpm run type-check:cross-language && pnpm run type-check:tests && pnpm run type-check:examples
+```
+
+The gate: the head's median is within the base's range. Record `pnpm run type-check:native` at the head on its own. At the base it fails with 2,732 errors, which is why it was not chained until Task 13.
+
+- [ ] **Step 5: The whole-branch gates**
+
+The global gates, plus:
+
+- `pnpm exec tsx packages/cli/src/cli.ts tool typed-read-parity --all-grammars`: every summary's `refused`, `differs`, `roundTrip`, `todayFailed` and `staleListed` are 0;
+- `pnpm run type-check`, now holding `type-check:native`, and `native-typings.test.ts`;
+- `rtk cargo build --workspace`, whose payload assertions all hold, and `rtk cargo clippy --workspace --no-default-features -- -D warnings`;
+- `rtk cargo test -p sittir-parity-tests --test typed_read_nesting`, in both profiles;
+- the `built-render-parse` rows, which render factory-built nodes through the derive's decoder, unchanged with the rest of the validation rows;
+- rendered bytes unchanged from the base.
+
+- [ ] **Step 6: The PR**
+
+Open 1b's PR. Its body starts with `Owner: <the session opening it>`, and it lists:
+
+- each grammar's parity summary, every count zero;
+- each encoder fix Task 14 made, with its cause;
+- the payload ceiling, each grammar's pin count and largest choice, and the least stacks before and after (dev and release on macOS arm64; linux x86_64 from CI);
+- the tables of Steps 2–4, base and head side by side.
+
+File an issue for each follow-up the work leaves, and link it from the body. Ask brainstorm for the whole-branch review. The linux row of the nesting test is re-pinned from the PR's CI log, in a commit of its own.
+
+---
 
 ## Outline: 1c, one reader
 
@@ -4464,9 +6253,9 @@ Every read goes through the typed reader, and the wrap attaches members only. "T
    - the JSON returns of `parse_and_read`, `read_root` and `read_untyped_node`;
    - `read_slots`;
    - `stores_scalar` and `inner_gap_key` in each `kind_ids.rs`, and the `ReadModel` impls;
-   - the transitional `typed_read_refusal` and `typed_read_parity`;
+   - the transitional `typed_read_refusal`, `typed_read_parity` and `typed_read_round_trip`;
    - Task 3's placement driver.
-7. **Removed from `@sittir/common` and `@sittir/types`:** `modelSlots`, the storage coercions, the stub machinery (`isStub`, `hydrateStub`), and the transitional `typedReadRefusal` and `typedReadParity` on the engine diagnostics (`EngineDiagnostics`, `NativeLanguageEngine`, `NativeEngineLike`).
+7. **Removed from `@sittir/common` and `@sittir/types`:** `modelSlots`, the storage coercions, the stub machinery (`isStub`, `hydrateStub`), and the transitional `typedReadRefusal`, `typedReadParity` and `typedReadRoundTrip` on the engine diagnostics (`EngineDiagnostics`, `NativeLanguageEngine`, `NativeEngineLike`).
 8. **Gates:**
    - rendered bytes and validation rows unchanged. The detached render of a node today's read holds as text, `{}` among them, keeps its text now that its typed transport carries an empty list;
    - item 5's fixture and factory moves, each at a slot on item 5's census, from nothing to `[]`. A move at any other slot, or of any other shape, stops the work;
@@ -4489,4 +6278,4 @@ Every read goes through the typed reader, and the wrap attaches members only. "T
   At that step the render side stamps `delimiter` from its site with the spacing fields at prepare, and the reader's `delimiter` and the `#[flank]` attribute go. The gate is rendered bytes unchanged on the corpus. Until that step, the reader and today's read compute it the same way, so it cannot drift from the read it replaces.
 - **Stamped layout ids.** Link stamps the public-symbol id on every STRING site, duplicates and wrapped strings included, with the compile phase byte-identical. `layoutTokenIds` then reads stamps only, and 1a's listed text-resolved sites and the text lookup go.
 - **Relative coordinates** (ruling 6.2), re-planned against rows: relative points for detached data, coordinate facts derived instead of stamped, `$detach()`, and `$cst()` fetched by row.
-- **The record wire** (ruling 6.3). Its plan lands only past the gate on the record step: records must match or beat napi objects on read time, both one node per call and every match in one call, and on retained heap per node, as well as beating them on render decode. The object wire's numbers are re-taken in the engine beside the records'. The first thing the step attacks is the view's overhead: the `$with` and `$trivia` closures a view makes over its record, about 1.9 KB a node in the like-for-like re-take. At that step `#[napi(object)]` and the derive's object codec give way to records, and a parsed node's literal holds a reference to its record (ruling 4).
+- **The record wire** (ruling 6.3). Its plan lands only past the gate on the record step: records must match or beat napi objects on read time, both one node per call and every match in one call, and on retained heap per node, as well as beating them on render decode. The object wire's numbers are re-taken in the engine beside the records'. The first thing the step attacks is the view's construction. In the like-for-like re-take a node over a record holds about 1.9 KB more than an object. Every form carries the same member closures, so the gap follows how V8 builds the view's literal, not the closures as such (§ The wire). At that step the derive's object codec gives way to records, and a parsed node's literal holds a reference to its record (ruling 4).
