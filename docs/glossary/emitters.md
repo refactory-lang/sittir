@@ -13080,7 +13080,7 @@ ids at wrapper-only slots until arrays started resolving per element.
 
 ### `packages/codegen/src/emitters/from.ts::scalarResolutionOf`
 
-What a grammar's scalar resolver can resolve: the true and false members of its boolean kind (found in the kind entries, so a boolean kind whose members are missing resolves nothing), the numeric leaf kinds it tries by pattern, and `resolves`, true when either exists. It is the one fact behind every scalar emission: `_resolveScalar` is emitted only when `resolves`, and so is the scalar branch in `_resolveOne` and `_resolveOneLeaf`, so a grammar with no scalars (scm) carries neither, and a scalar falls through to the refusal path.
+What a grammar's scalar resolver can resolve: the true and false members of its boolean kind (found in the kind entries, so a boolean kind whose members are missing resolves nothing), the numeric leaf kinds it tries by pattern, and `resolves`, true when either exists. It is the one fact behind every scalar emission: `_resolveScalar` is emitted only when `resolves`, and so is the scalar branch in `_resolveOne` and `_resolveOneLeaf`, so a grammar with no scalars (scm) carries neither, and a scalar falls through unchanged (`return v`), as it did when the resolver answered nothing.
 
 ### `packages/codegen/src/emitters/from.ts::emitScalarFallthrough`
 
