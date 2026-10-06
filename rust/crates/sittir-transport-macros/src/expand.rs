@@ -17,6 +17,9 @@ pub fn derive(input: &DeriveInput) -> syn::Result<TokenStream> {
 }
 
 fn choice(ident: &Ident, data: &DataEnum) -> syn::Result<TokenStream> {
+    if data.variants.len() > usize::from(u16::MAX) {
+        return Err(syn::Error::new_spanned(ident, "a choice indexes its variants by u16: at most 65535"));
+    }
     let mut by_display = Vec::new();
     let mut by_grammar = Vec::new();
     let mut by_folded = Vec::new();
@@ -639,6 +642,9 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
         .map(|(i, (field, slot))| (i as u16, field, slot))
         .collect();
 
+    if slots.len() > usize::from(u16::MAX) {
+        return Err(syn::Error::new_spanned(attrs.kind.as_ref(), "a kind indexes its slots by u16: at most 65535"));
+    }
     let mut tagged_separators = Vec::new();
     let mut tagged = Vec::new();
     let mut untagged = Vec::new();

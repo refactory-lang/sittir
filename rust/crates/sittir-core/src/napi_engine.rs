@@ -417,7 +417,8 @@ macro_rules! napi_engine {
                     Ok(match typed {
                         Err(refusal) => Some(format!("refused: {}", refusal.describe(name))),
                         Ok(typed) if typed == today => None,
-                        Ok(typed) => $crate::napi_engine::parity_report(&format!("{typed:#?}"), &format!("{today:#?}")),
+                        Ok(typed) => $crate::napi_engine::parity_report(&format!("{typed:#?}"), &format!("{today:#?}"))
+                            .or_else(|| Some("the reads differ where their debug text does not".to_owned())),
                     })
                 })
             }
