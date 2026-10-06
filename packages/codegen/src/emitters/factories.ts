@@ -1,4 +1,7 @@
 import { LIST_VIEW_MEMBERS } from '@sittir/common/utils';
+import { hostTemplateFor } from '@sittir/common';
+import type { ReparseHostsConfig } from '../dsl/wire/reparse-hosts.ts';
+import { REPARSE_HOST_PRIORITY } from '../dsl/wire/reparse-hosts.ts';
 import { groupSeatParts, innerPositionsOf, listSelfViewParts, nodeMemberLines, ownerViewParts, seatedSetters, spelledGroupSlots, triviaInnerImports, type SetterEntry } from './node-members.ts';
 import { findOwnKindEntry, reservedWordset } from '../dsl/symbol-table.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
@@ -110,6 +113,7 @@ export interface EmitFactoriesConfig {
 	inlineKinds?: readonly string[];
 	synthesizedKinds?: ReadonlySet<string>;
 	triviaKinds?: readonly string[];
+	reparseHosts?: ReparseHostsConfig;
 }
 
 function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string[] {
@@ -190,6 +194,88 @@ function leafReDeclaration(kind: string, node: AssembledNode): { constName: stri
 	const literal = anchoredLeafRegexLiteral(kind, node.textPattern);
 	if (literal === undefined) return undefined;
 	return { constName: `_leafRe_${node.rawFactoryName!}`, literal };
+}
+
+function hasDelimited(nodeMap: NodeMap): boolean {
+	return [...nodeMap.nodes.values()].some((node) => node instanceof AbstractAssembledCompound && node.delimited !== undefined && node.rawFactoryName !== undefined);
+}
+
+function delimitedKey(kind: string): string {
+	return `delimited\0${kind}`;
+}
+
+function charClassSource(ranges: readonly (readonly [number, number])[]): string {
+	const code = (point: number) => `\\u{${point.toString(16)}}`;
+	return ranges.map(([lo, hi]) => (lo === hi ? code(lo) : `${code(lo)}-${code(hi)}`)).join('');
+}
+
+function kindToSupertypes(nodeMap: NodeMap): Map<string, string[]> {
+	const result = new Map<string, string[]>();
+	for (const node of nodeMap.nodes.values()) {
+		if (!(node instanceof AssembledSupertype)) continue;
+		for (const subtype of node.subtypeNames) result.set(subtype, [...(result.get(subtype) ?? []), node.kind]);
+	}
+	return result;
+}
+
+function delimitedHost(
+	kind: string,
+	nodeMap: NodeMap,
+	hosts: ReparseHostsConfig | undefined,
+	triviaKinds: ReadonlySet<string>
+): string {
+	if (hosts === undefined) return '$r';
+	const table = { hosts: hosts.hosts, priority: hosts.priority ?? REPARSE_HOST_PRIORITY, gated: hosts.gated ?? [] };
+	const host = hostTemplateFor(kind, table, kindToSupertypes(nodeMap), { root: nodeMap.root });
+	if (host !== undefined) return host;
+	if (triviaKinds.has(kind)) return '$r';
+	throw new Error(`${kind}: its delimiters need a parse-back host, and the grammar's reparseHosts block names none for it`);
+}
+
+function buildDelimitedConsts(
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	hosts: ReparseHostsConfig | undefined,
+	triviaKinds: ReadonlySet<string>,
+	leafReConsts: Map<string, string>,
+	lines: string[]
+): void {
+	for (const [kind, node] of nodeMap.nodes) {
+		if (!(node instanceof AbstractAssembledCompound) || node.delimited === undefined || node.rawFactoryName === undefined) continue;
+		const { open, close, excluded, nodeKinds } = node.delimited;
+		const constName = `_delimited_${node.rawFactoryName}`;
+		leafReConsts.set(delimitedKey(kind), constName);
+		const fields = [
+			`kind: ${JSON.stringify(kind)}`,
+			`id: ${factoryTypeDiscriminant(kind, nodeMap, kindEntries)}`,
+			`excluded: /[${charClassSource(excluded)}]/u`,
+			...(open.text === undefined ? [] : [`open: ${JSON.stringify(open.text)}`]),
+			...(close.text === undefined ? [] : [`close: ${JSON.stringify(close.text)}`]),
+			`host: ${JSON.stringify(delimitedHost(kind, nodeMap, hosts, triviaKinds))}`,
+			`nodeKinds: [${nodeKinds.map((name) => factoryTypeDiscriminant(name, nodeMap, kindEntries)).join(', ')}]`
+		];
+		lines.push(`const ${constName}: DelimitedSpec = { ${fields.join(', ')} };`);
+	}
+}
+
+function delimitedCheckLine(
+	node: AssembledNode,
+	slots: readonly AssembledNonterminal[],
+	leafReConsts: ReadonlyMap<string, string>
+): string | undefined {
+	const constName = leafReConsts.get(delimitedKey(node.kind));
+	if (constName === undefined || !(node instanceof AbstractAssembledCompound) || node.delimited === undefined) return undefined;
+	const { open, close } = node.delimited;
+	const storageOf = (end: { readonly slot?: string }): string | undefined => {
+		if (end.slot === undefined) return undefined;
+		const slot = slots.find((f) => f.name === end.slot);
+		if (slot === undefined) throw new Error(`${node.kind}: its delimiter slot '${end.slot}' is not a slot of the builder`);
+		return slot.storageKey;
+	};
+	const [openKey, closeKey] = [storageOf(open), storageOf(close)];
+	const content = slots.map((f) => f.storageKey).filter((key) => key !== openKey && key !== closeKey);
+	const ends = closeKey === undefined ? (openKey === undefined ? '' : `, ${openKey}`) : `, ${openKey ?? 'undefined'}, ${closeKey}`;
+	return `  checkDelimited(handle, node, ${constName}, [${content.join(', ')}]${ends});`;
 }
 
 function buildLeafReConsts(
@@ -1483,6 +1569,8 @@ function emitFieldCarryingFactory(
 	);
 	lines.push('  };');
 	lines.push(...(view?.postlude ?? []));
+	const delimitedCheck = delimitedCheckLine(node, slotsToEmit, leafReConsts);
+	if (delimitedCheck !== undefined) lines.push(delimitedCheck);
 	lines.push(`  return node as unknown as ${builtName};`);
 	lines.push('}');
 
@@ -2406,8 +2494,9 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		);
 		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
+		if (hasDelimited(nodeMap)) lines.push(`import type { DelimitedSpec } from '@sittir/common/utils';`);
 		lines.push(
-			`import { ${['currentHandle', ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`
+			`import { ${['currentHandle', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`
 		);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());
@@ -2415,6 +2504,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		lines.push('');
 
 		const leafReConsts = buildLeafReConsts(nodeMap, kindEntries, lines);
+		buildDelimitedConsts(nodeMap, kindEntries, config.reparseHosts, new Set(config.triviaKinds ?? []), leafReConsts, lines);
 		if (leafReConsts.size > 0) lines.push('');
 
 		const refineByKind = new Map<string, RefineKindInfo>();

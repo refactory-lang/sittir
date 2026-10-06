@@ -3491,8 +3491,8 @@ describe('concatenated_string', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_string_start: { $type: TSKindId.StringStart, $text: 'test', $source: 2, $named: true } as any,
-			_string_end: { $type: TSKindId.StringEnd, $text: 'test', $source: 2, $named: true } as any
+			_string_start: { $type: TSKindId.StringStart, $text: '"', $source: 2, $named: true } as any,
+			_string_end: { $type: TSKindId.StringEnd, $text: '"', $source: 2, $named: true } as any
 		} as any);
 		expect(node.$type).toBe(TSKindId.ConcatenatedString);
 		expect(node.$source).toBe(2);
@@ -3503,28 +3503,28 @@ describe('concatenated_string', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_string_start: { $type: TSKindId.StringStart, $text: 'test', $source: 2, $named: true } as any,
-			_string_end: { $type: TSKindId.StringEnd, $text: 'test', $source: 2, $named: true } as any
+			_string_start: { $type: TSKindId.StringStart, $text: '"', $source: 2, $named: true } as any,
+			_string_end: { $type: TSKindId.StringEnd, $text: '"', $source: 2, $named: true } as any
 		} as any);
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
-		expect(rendered).toContain('test');
+		expect(rendered).toContain('"');
 	});
 });
 
 describe('string', () => {
 	it('factory produces correct type', () => {
 		const node = ir.string({
-			stringStart: { $type: TSKindId.StringStart, $text: 'test', $source: 2, $named: true } as any,
-			stringEnd: { $type: TSKindId.StringEnd, $text: 'test', $source: 2, $named: true } as any
+			stringStart: { $type: TSKindId.StringStart, $text: '"', $source: 2, $named: true } as any,
+			stringEnd: { $type: TSKindId.StringEnd, $text: '"', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.String);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.string({
-			stringStart: { $type: TSKindId.StringStart, $text: 'test', $source: 2, $named: true } as any,
-			stringEnd: { $type: TSKindId.StringEnd, $text: 'test', $source: 2, $named: true } as any
+			stringStart: { $type: TSKindId.StringStart, $text: '"', $source: 2, $named: true } as any,
+			stringEnd: { $type: TSKindId.StringEnd, $text: '"', $source: 2, $named: true } as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);

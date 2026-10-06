@@ -14,6 +14,7 @@ import {
 	type HostedText,
 	type ReparseHosts
 } from '@sittir/common';
+import { inEngine, type EngineHandle } from '@sittir/common/utils';
 import { carryRead, carrySource, holdTree, readDerivedSides, readTrivia, spanOf, treeTokenOf, type TriviaView } from '@sittir/common/utils';
 import {
 	isStub,
@@ -948,6 +949,34 @@ export interface IrSurface {
 	readonly entries: Record<string, IrEntry>;
 	readonly seats: SeatTable;
 	readonly modelTypes: Record<string, string>;
+	readonly scope?: EngineHandle;
+}
+
+const factoryScopes = new Map<string, Promise<EngineHandle>>();
+
+export function factoryScope(grammar: string): Promise<EngineHandle> {
+	let scope = factoryScopes.get(grammar);
+	if (scope === undefined) {
+		scope = loadNativeEngine(grammar).then((engine) => ({ current: engine }));
+		factoryScopes.set(grammar, scope);
+	}
+	return scope;
+}
+
+export function scopedBuilders<T extends object>(value: T, scope: EngineHandle): T {
+	return new Proxy(value, {
+		apply: (target, self, args) => inEngine(scope, () => Reflect.apply(target as unknown as (...a: unknown[]) => unknown, self, args)),
+		get: (target, key, receiver) => {
+			const member = Reflect.get(target, key, receiver);
+			return typeof member === 'function' || (typeof member === 'object' && member !== null && key !== 'prototype')
+				? scopedBuilders(member, scope)
+				: member;
+		}
+	});
+}
+
+export async function loadScopedFactoryMap<T extends Record<string, unknown>>(grammar: string, map: T): Promise<T> {
+	return scopedBuilders(map, await factoryScope(grammar));
 }
 
 export async function loadIrSurface(grammar: string): Promise<IrSurface | undefined> {
@@ -955,11 +984,12 @@ export async function loadIrSurface(grammar: string): Promise<IrSurface | undefi
 	if (mod?.ir === undefined) return undefined;
 	const model = await loadNodeModel(grammar);
 	const entries: Record<string, IrEntry> = {};
+	const scope = await factoryScope(grammar);
 	for (const [kind, irKey] of Object.entries(model.irKeys)) {
 		const entry = mod.ir[irKey];
 		if (entry !== null && (typeof entry === 'object' || typeof entry === 'function')) entries[kind] = entry as IrEntry;
 	}
-	return { entries, seats: model.seats, modelTypes: model.modelTypes };
+	return { entries, seats: model.seats, modelTypes: model.modelTypes, scope };
 }
 
 export async function loadKindNames(grammar: string): Promise<ReadonlyMap<number, string> | undefined> {
@@ -1997,5 +2027,6 @@ export function buildFactoryNodeFromReference(
 		tree: opts.tree,
 		hydrateChild: opts.hydrateChild
 	} as NodeToConfigOpts;
-	return buildWithFactory(referenceData, kind, factory, configOpts);
+	const build = () => buildWithFactory(referenceData, kind, factory, configOpts);
+	return surface?.scope === undefined ? build() : inEngine(surface.scope, build);
 }

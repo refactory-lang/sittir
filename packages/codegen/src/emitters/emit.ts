@@ -137,7 +137,8 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		kindEntries,
 		inlineKinds,
 		synthesizedKinds,
-		triviaKinds
+		triviaKinds,
+		reparseHosts
 	});
 
 	const fromEmitter = new FromEmitter({

@@ -44,6 +44,7 @@ import {
 	type ValidatorSkip,
 	loadIrSurface,
 	buildFactoryNodeFromReference,
+	loadScopedFactoryMap,
 	importGrammarModule,
 	loadNativeEngine
 } from './common.ts';
@@ -368,7 +369,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 				importFailure: null
 			};
 		}
-		factoryMap = factoryModule._factoryMap ?? {};
+		factoryMap = await loadScopedFactoryMap(grammar, factoryModule._factoryMap ?? {});
 		// Validator-only metadata lives in node-model.json5 (PR-K) — pure
 		// data, loaded separately from the factory functions.
 		const mapData = await loadNodeModel(grammar);

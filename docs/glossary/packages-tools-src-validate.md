@@ -1878,3 +1878,11 @@ The census for one grammar: the agreed count, each refusal, difference and undec
 ### `packages/tools/src/validate/typed-read-parity.ts::run`
 
 Runs the census for one grammar or every stable grammar and prints the rows, the pin counts and a summary per grammar, or JSON. Returns 1 when any grammar has a refusal, a difference, an undecodable entry or a stale listed row.
+
+### `packages/tools/src/validate/common.ts::loadScopedFactoryMap`
+
+The grammar's raw factory map with every builder run inside the validators' native engine, so a composite that checks its content parses it back the way a user's build would. The ir surface carries the same scope and dispatch enters it.
+
+### `packages/tools/src/validate/common.ts::loadReparseHosts`
+
+Loads the grammar's generated `reparse-hosts.ts` once; `wrapForReparse` reads it.

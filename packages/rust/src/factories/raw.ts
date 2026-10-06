@@ -4,8 +4,10 @@ import type * as T from '../types-internal.js';
 import { Delimiter } from '@sittir/common/utils';
 import { TSKindId } from '../types.js';
 import type { Admit, ListOptions, NonEmptyArray, NumericConfig, NumericLiteral, WidenNumeric } from '@sittir/types';
+import type { DelimitedSpec } from '@sittir/common/utils';
 import {
 	currentHandle,
+	checkDelimited,
 	listSlotWith,
 	LIST_ITEMS,
 	LIST_READ,
@@ -83,6 +85,22 @@ export const _slotRe_buildEscapeSequenceSimple_content = /^(?:(?:[^xu]))$/u;
 export const _slotRe_buildEscapeSequenceUnicodeFixed_content = /^(?:(?:u[0-9a-fA-F]{4}))$/u;
 export const _slotRe_buildEscapeSequenceUnicodeBraced_content = /^(?:(?:u\{[0-9a-fA-F]+\}))$/u;
 export const _slotRe_buildEscapeSequenceHex_content = /^(?:(?:x[0-9a-fA-F]{2}))$/u;
+const _delimited_buildRawStringLiteral: DelimitedSpec = {
+	kind: 'raw_string_literal',
+	id: TSKindId.RawStringLiteral as const,
+	excluded: /[\u{a}\u{d}\u{22}\u{2028}-\u{2029}]/u,
+	host: 'fn _f() { let _ = $r; }',
+	nodeKinds: []
+};
+const _delimited_buildBlockComment: DelimitedSpec = {
+	kind: 'block_comment',
+	id: TSKindId.BlockComment as const,
+	excluded: /[\u{a}\u{d}\u{21}\u{2a}\u{2028}-\u{2029}]/u,
+	open: '/*',
+	close: '*/',
+	host: '$r',
+	nodeKinds: []
+};
 
 export function buildSourceFile(): T.EmptySourceFile;
 export function buildSourceFile(config?: Partial<T.SourceFile.Config>): T.SourceFile.Bound;
@@ -6220,6 +6238,14 @@ export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawS
 		},
 		$engine: handle && (() => handle.current)
 	};
+	checkDelimited(
+		handle,
+		node,
+		_delimited_buildRawStringLiteral,
+		[_string_content],
+		_raw_string_literal_start,
+		_raw_string_literal_end
+	);
 	return node as unknown as T.RawStringLiteral.Bound;
 }
 
@@ -6279,6 +6305,7 @@ export function buildBlockComment(
 		},
 		$engine: handle && (() => handle.current)
 	};
+	checkDelimited(handle, node, _delimited_buildBlockComment, [_content]);
 	return node as unknown as T.BlockComment.Bound;
 }
 
