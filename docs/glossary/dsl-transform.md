@@ -1815,7 +1815,15 @@ The field sites below a single-content wrapper: the sites whose first segment is
 
 ### `packages/codegen/src/dsl/transform/token-forms.ts::distributeLeafEnum`
 
-A rule whose whole body is a token wrapper around a choice of plain strings is a leaf enum: one lexical symbol with no children, whose members' symbols the tree never shows. It becomes a choice of the same wrapper around each string, so each member is its own token and the node holds the member as a child. No kinds are minted. A spelling choice nested inside a larger token is left as written.
+A rule whose whole body is a token wrapper around a choice of plain strings is a leaf enum: one lexical symbol with no children, whose members' symbols the tree never shows. It becomes a choice of the same wrapper around each string, so each member is its own token and the node holds the member as a child. Precedence wrappers around the token are kept, as `distributeTokenForms` keeps them. No kind is minted, but each member that the parser folds into the enum's own symbol becomes a raw symbol of its own in the parser's symbol table, which shifts the ids after it. A spelling choice nested inside a larger token is left as written.
+
+### `packages/codegen/src/dsl/transform/token-forms.ts::tokenOverArms`
+
+The choice of the token wrapper around each arm, under the precedence wrappers it was found beneath: the one distribution `distributeTokenForms` and `distributeLeafEnum` share.
+
+### `packages/codegen/src/dsl/transform/token-forms.ts::peelPrecs`
+
+The precedence wrappers above a rule, outermost first, and the rule beneath them.
 
 ### `packages/codegen/src/dsl/transform/token-forms.ts::factorSharedOptional`
 

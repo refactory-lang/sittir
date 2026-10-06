@@ -81,11 +81,28 @@ function dropAt(rule: RuntimeRule, path: readonly number[]): RuntimeRule {
 	return rebuilt(rule, { content: dropAt(contentOf(rule), rest) });
 }
 
+function peelPrecs(rule: RuntimeRule): { precs: RuntimeRule[]; core: RuntimeRule } {
+	const precs: RuntimeRule[] = [];
+	let core = rule;
+	while (isPrecWrapper(core)) {
+		precs.push(core);
+		core = contentOf(core);
+	}
+	return { precs, core };
+}
+
+function tokenOverArms(precs: readonly RuntimeRule[], core: RuntimeRule, arms: readonly RuntimeRule[]): RuntimeRule {
+	let out = { type: 'CHOICE', members: arms.map((arm) => ({ ...core, content: arm })) } as unknown as RuntimeRule;
+	for (let i = precs.length - 1; i >= 0; i--) out = { ...precs[i]!, content: out } as unknown as RuntimeRule;
+	return out;
+}
+
 export function distributeLeafEnum(rule: RuntimeRule): RuntimeRule {
-	if (!isTokenWrapper(rule)) return rule;
-	const body = contentOf(rule);
+	const { precs, core } = peelPrecs(rule);
+	if (!isTokenWrapper(core)) return rule;
+	const body = contentOf(core);
 	if (!isChoiceType(typeOf(body)) || classifyTokenChoice(body) !== 'spelling') return rule;
-	return { type: 'CHOICE', members: membersOf(body).map((arm) => ({ ...rule, content: arm })) } as unknown as RuntimeRule;
+	return tokenOverArms(precs, core, membersOf(body));
 }
 
 export function factorSharedOptional(rule: RuntimeRule): RuntimeRule {
@@ -134,10 +151,5 @@ export function distributeTokenForms(rule: RuntimeRule, kind: string, fielded: F
 		if (prior !== undefined) throw new Error(`token forms: arms ${prior} and ${i} of '${kind}' are identical`);
 		seen.set(key, i);
 	});
-	let out = {
-		type: 'CHOICE',
-		members: arms.map((arm) => ({ ...core, content: arm }))
-	} as unknown as RuntimeRule;
-	for (let i = precStack.length - 1; i >= 0; i--) out = { ...precStack[i]!, content: out } as unknown as RuntimeRule;
-	return out;
+	return tokenOverArms(precStack, core, arms);
 }
