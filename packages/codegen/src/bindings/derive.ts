@@ -38,7 +38,9 @@ function unknownPredicates(inputs: readonly GrammarInput[]): string[] {
 		for (const claim of input.bindings.claims)
 			for (const predicate of claim.predicates)
 				if (!KNOWN_PREDICATE_OPERATORS.has(predicate.operator))
-					out.add(`${input.grammar}: #${predicate.operator}? on @${predicate.capture} (${claim.vocab})`);
+					out.add(
+						`${input.grammar}: #${predicate.operator}?${predicate.capture === null ? '' : ` on @${predicate.capture}`} (${claim.vocab})`
+					);
 	return [...out].sort();
 }
 

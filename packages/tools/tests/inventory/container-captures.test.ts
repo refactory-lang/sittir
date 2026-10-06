@@ -118,5 +118,8 @@ describe('derive: predicates', () => {
 			)
 		]);
 		expect(d.unknownPredicates).toEqual(['g: #lua-match? on @identifier.mark (identifier.mark)']);
+		expect(derive([grammar('((mark) @identifier.mark (#is-not? local))')]).unknownPredicates).toEqual([
+			'g: #is-not? (identifier.mark)'
+		]);
 	});
 });

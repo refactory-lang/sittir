@@ -78,11 +78,11 @@ that can be worked through.
 
 ### `packages/tools/src/inventory/bindings.ts::predicateFact`
 
-A pattern's `#…?` predicate as a fact: its operator (the name between `#` and `?`), the capture it tests, and its remaining arguments, each a capture or a string. A directive (`#…!`, `#set!`) is not a predicate and gives none. Every operator is kept, known or not; the derivation reports the ones it does not know.
+A pattern's `#…?` predicate as a fact: its operator (the name between `#` and `?`), the capture it tests when its first parameter is one (a property predicate such as `#is-not? local` tests none, so its capture is `null` and every parameter is an argument), and its arguments, each a capture or text (a string's value, or a bare identifier). A directive (`#…!`, `#set!`) is not a predicate and gives none. Every operator is kept, known or not; the derivation reports the ones it does not know.
 
 ### `packages/tools/src/inventory/index.ts::writeBindingFacts`
 
-`--write-facts`: reads each grammar's `bindings.scm` and writes its facts, with `bindingsHash` of the text, to `packages/<grammar>/.sittir/bindings.json`.
+`--write-facts`: reads each grammar's `bindings.scm` and writes its facts, with `bindingsHash` of the text, to `packages/<grammar>/.sittir/bindings.json`, or to the path `destination` gives for the grammar.
 
 ### `packages/tools/src/inventory/model.ts::loadSlotModel`
 
