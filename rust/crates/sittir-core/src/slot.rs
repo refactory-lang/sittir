@@ -285,6 +285,21 @@ impl<T, const ADJACENT: bool> SlotValue<T, ADJACENT> {
     }
 }
 
+/// Two slot values are equal when they hold equal transports, or
+/// coordinates naming the same node: the same tree, span and kind. A
+/// coordinate may address its node by any handle its tree answers.
+impl<T: PartialEq, const ADJACENT: bool> PartialEq for SlotValue<T, ADJACENT> {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (Self::Transport(a), Self::Transport(b)) => a == b,
+            (Self::Coord(a), Self::Coord(b)) => {
+                a.tree_id() == b.tree_id() && a.span == b.span && a.kind == b.kind
+            }
+            _ => false,
+        }
+    }
+}
+
 impl<T: crate::render::Render, const ADJACENT: bool> crate::render::Render
     for SlotValue<T, ADJACENT>
 {

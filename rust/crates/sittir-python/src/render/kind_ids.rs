@@ -344,6 +344,8 @@ pub const _AS_PATTERN_TARGET: KindId = KindId(333);
 pub const _FORMAT_EXPRESSION: KindId = KindId(334);
 pub const _NAMES: KindId = KindId(335);
 pub const ERROR: KindId = KindId(65535);
+pub const SIMPLE_STATEMENTS: KindId = KindId(337);
+pub const SIMPLE_PATTERN: KindId = KindId(336);
 const _: () = assert!(ERROR.0 == KindId::ERROR.0);
 
 /// Map a `KindId` back to its grammar kind string for diagnostics.

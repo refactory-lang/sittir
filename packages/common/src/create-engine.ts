@@ -158,7 +158,13 @@ function assembleEngine<API extends LanguageAPI>(
 		is: languageGuards(hooks.is, inLanguage),
 		kinds: hooks.kinds,
 		types: undefined as unknown as API['types'],
-		diagnostics: { buildProfile: native.buildProfile, parseAndRead: readAndBind, lineGapsOf: (address) => native.lineGapsOf(address) },
+		diagnostics: {
+			buildProfile: native.buildProfile,
+			parseAndRead: readAndBind,
+			lineGapsOf: (address) => native.lineGapsOf(address),
+			typedReadRefusal: (treeId) => native.typedReadRefusal(treeId),
+			typedReadParity: (treeId, today) => native.typedReadParity(treeId, today)
+		},
 		isNode: (value): value is API['node'] => isNode(value) && inLanguage(value),
 		isParsedNode: (value): value is API['node'] => isParsedNode(value) && inLanguage(value),
 		isFactoryNode: (value): value is API['node'] => isFactoryNode(value) && inLanguage(value),

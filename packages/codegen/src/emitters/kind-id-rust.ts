@@ -1,7 +1,7 @@
 import { findOwnKindEntry } from '../dsl/symbol-table.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables, KindEntryLike } from '../dsl/symbol-table.ts';
-import { AbstractAssembledCompound } from '../compiler/model/node-map.ts';
+import { AbstractAssembledCompound, type AssembledNonterminal } from '../compiler/model/node-map.ts';
 import { collectKindEntries, collectCatalogKinds } from './kind-discriminant.ts';
 import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
 import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
@@ -10,6 +10,34 @@ export interface EmitKindIdRustConfig {
 	grammar: string;
 	nodeMap: NodeMap;
 	generatedIdTables: GeneratedIdTables;
+}
+
+export function kindConstName(entry: { readonly member: string; readonly kind: string }): string {
+	return toScreamingSnakeCase(entry.member, entry.kind);
+}
+
+export interface KindConstant {
+	readonly name: string;
+	readonly id: number;
+}
+
+export function kindConstants(
+	entries: readonly { readonly member: string; readonly kind: string; readonly id: number; readonly parseId?: number; readonly parseName?: string }[]
+): readonly KindConstant[] {
+	const constants: KindConstant[] = entries.map((entry) => ({ name: kindConstName(entry), id: entry.id }));
+	const names = new Set(constants.map((constant) => constant.name));
+	const ids = new Set(constants.map((constant) => constant.id));
+	for (const entry of entries) {
+		if (entry.parseId === undefined || entry.parseName === undefined || ids.has(entry.parseId)) continue;
+		const name = toScreamingSnakeCase(entry.parseName, entry.parseName);
+		if (names.has(name)) {
+			throw new Error(`kind_ids.rs: the alias '${entry.parseName}' (kind ${entry.parseId}) would take the constant ${name}, which another kind already has`);
+		}
+		names.add(name);
+		ids.add(entry.parseId);
+		constants.push({ name, id: entry.parseId });
+	}
+	return constants;
 }
 
 export function emitKindIdRust(config: EmitKindIdRustConfig): string {
@@ -29,13 +57,10 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 		``
 	];
 
-	for (const entry of entries) {
-		const constName = toScreamingSnakeCase(entry.member, entry.kind);
-		lines.push(`pub const ${constName}: KindId = KindId(${entry.id});`);
-	}
+	for (const { name, id } of kindConstants(entries)) lines.push(`pub const ${name}: KindId = KindId(${id});`);
 	const errorEntry = entries.find((entry) => entry.id === ERROR_KIND_ID);
 	if (errorEntry === undefined) throw new Error(`kind_ids.rs: ${grammar} has no ${ERROR_KIND_NAME} kind entry`);
-	lines.push(`const _: () = assert!(${toScreamingSnakeCase(errorEntry.member, errorEntry.kind)}.0 == KindId::ERROR.0);`);
+	lines.push(`const _: () = assert!(${kindConstName(errorEntry)}.0 == KindId::ERROR.0);`);
 
 	lines.push('');
 	lines.push(`/// Map a \`KindId\` back to its grammar kind string for diagnostics.`);
@@ -106,6 +131,11 @@ function innerGapRows(
 
 const SCALAR_STORAGE: ReadonlySet<string> = new Set(['boolean', 'bitflag', 'kindEnum', 'mixedEnum']);
 
+export function isScalarStorage(slot: AssembledNonterminal): boolean {
+	const info = slot.storageInfo;
+	return info !== undefined && SCALAR_STORAGE.has(info.kind) && info.enumKindsById.size > 0;
+}
+
 export interface ScalarChildRow {
 	readonly parentId: number;
 	readonly field?: string;
@@ -121,8 +151,8 @@ export function scalarChildRows(
 		const parentId = findOwnKindEntry(entries, node.kind)?.id;
 		if (parentId === undefined) continue;
 		for (const slot of node.slots) {
-			const info = slot.storageInfo;
-			if (info === undefined || !SCALAR_STORAGE.has(info.kind) || info.enumKindsById.size === 0) continue;
+			if (!isScalarStorage(slot)) continue;
+			const info = slot.storageInfo!;
 			const field = slot.fieldName;
 			const key = `${parentId} ${field ?? ''}`;
 			const row = rows.get(key) ?? { parentId, ...(field === undefined ? {} : { field }), childIds: new Set<number>() };

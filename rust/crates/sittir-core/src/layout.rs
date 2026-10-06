@@ -14,7 +14,7 @@ use crate::slot::{SourceFlank, SourceGap};
 use crate::trivia::{TransportTrivia, TriviaSeam};
 use crate::types::KindId;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct TransportLayout<T> {
     pub trivia: Option<TransportTrivia<T>>,
     pub edges: Option<Edges>,

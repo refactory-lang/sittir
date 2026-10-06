@@ -19,409 +19,812 @@ use ::napi_derive::napi;
 use ::sittir_core::layout::Layout as _;
 use ::sittir_core::options::Edged as _;
 use super::options;
+use super::{field_ids as field, kind_ids as kind};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum AnyTransport {
+    #[kind(kind::PROGRAM)]
     Program(ProgramTransport),
+    #[kind(kind::HASH_BANG_LINE)]
     HashBangLine(HashBangLineTransport),
+    #[kind(kind::NAMESPACE_EXPORT)]
     NamespaceExport(NamespaceExportTransport),
+    #[kind(kind::EXPORT_CLAUSE)]
     ExportClause(ExportClauseTransport),
+    #[kind(kind::EXPORT_SPECIFIER)]
     ExportSpecifier(ExportSpecifierTransport),
+    #[kind(kind::IMPORT_STATEMENT)]
     ImportStatement(ImportStatementTransport),
+    #[kind(kind::IMPORT_CLAUSE)]
     ImportClause(ImportClauseTransport),
+    #[kind(kind::NAMESPACE_IMPORT)]
     NamespaceImport(NamespaceImportTransport),
+    #[kind(kind::NAMED_IMPORTS)]
     NamedImports(NamedImportsTransport),
+    #[kind(kind::IMPORT_ATTRIBUTE)]
     ImportAttribute(ImportAttributeTransport),
+    #[kind(kind::EXPRESSION_STATEMENT)]
     ExpressionStatement(ExpressionStatementTransport),
+    #[kind(kind::VARIABLE_DECLARATION)]
     VariableDeclaration(VariableDeclarationTransport),
+    #[kind(kind::LEXICAL_DECLARATION)]
     LexicalDeclaration(LexicalDeclarationTransport),
+    #[kind(kind::STATEMENT_BLOCK)]
     StatementBlock(StatementBlockTransport),
+    #[kind(kind::ELSE_CLAUSE)]
     ElseClause(ElseClauseTransport),
+    #[kind(kind::IF_STATEMENT)]
     IfStatement(IfStatementTransport),
+    #[kind(kind::SWITCH_STATEMENT)]
     SwitchStatement(SwitchStatementTransport),
+    #[kind(kind::FOR_STATEMENT)]
     ForStatement(ForStatementTransport),
+    #[kind(kind::FOR_IN_STATEMENT)]
     ForInStatement(ForInStatementTransport),
+    #[kind(kind::WHILE_STATEMENT)]
     WhileStatement(WhileStatementTransport),
+    #[kind(kind::DO_STATEMENT)]
     DoStatement(DoStatementTransport),
+    #[kind(kind::TRY_STATEMENT)]
     TryStatement(TryStatementTransport),
+    #[kind(kind::WITH_STATEMENT)]
     WithStatement(WithStatementTransport),
+    #[kind(kind::BREAK_STATEMENT)]
     BreakStatement(BreakStatementTransport),
+    #[kind(kind::CONTINUE_STATEMENT)]
     ContinueStatement(ContinueStatementTransport),
+    #[kind(kind::DEBUGGER_STATEMENT)]
     DebuggerStatement(DebuggerStatementTransport),
+    #[kind(kind::RETURN_STATEMENT)]
     ReturnStatement(ReturnStatementTransport),
+    #[kind(kind::THROW_STATEMENT)]
     ThrowStatement(ThrowStatementTransport),
+    #[kind(kind::LABELED_STATEMENT)]
     LabeledStatement(LabeledStatementTransport),
+    #[kind(kind::SWITCH_BODY)]
     SwitchBody(SwitchBodyTransport),
+    #[kind(kind::SWITCH_CASE)]
     SwitchCase(SwitchCaseTransport),
+    #[kind(kind::SWITCH_DEFAULT)]
     SwitchDefault(SwitchDefaultTransport),
+    #[kind(kind::CATCH_CLAUSE)]
     CatchClause(CatchClauseTransport),
+    #[kind(kind::FINALLY_CLAUSE)]
     FinallyClause(FinallyClauseTransport),
+    #[kind(kind::YIELD_EXPRESSION)]
     YieldExpression(YieldExpressionTransport),
+    #[kind(kind::OBJECT)]
     Object(ObjectTransport),
+    #[kind(kind::OBJECT_PATTERN)]
     ObjectPattern(ObjectPatternTransport),
+    #[kind(kind::ASSIGNMENT_PATTERN)]
     AssignmentPattern(AssignmentPatternTransport),
+    #[kind(kind::OBJECT_ASSIGNMENT_PATTERN)]
     ObjectAssignmentPattern(ObjectAssignmentPatternTransport),
+    #[kind(kind::ARRAY)]
     Array(ArrayTransport),
+    #[kind(kind::ARRAY_PATTERN)]
     ArrayPattern(ArrayPatternTransport),
+    #[kind(kind::NESTED_IDENTIFIER)]
     NestedIdentifier(NestedIdentifierTransport),
+    #[kind(kind::CLASS)]
     Class(ClassTransport),
+    #[kind(kind::CLASS_DECLARATION)]
     ClassDeclaration(ClassDeclarationTransport),
+    #[kind(kind::CLASS_HERITAGE)]
     ClassHeritage(ClassHeritageTransport),
+    #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(FunctionExpressionTransport),
+    #[kind(kind::FUNCTION_DECLARATION)]
     FunctionDeclaration(FunctionDeclarationTransport),
+    #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(GeneratorFunctionTransport),
+    #[kind(kind::GENERATOR_FUNCTION_DECLARATION)]
     GeneratorFunctionDeclaration(GeneratorFunctionDeclarationTransport),
+    #[kind(kind::ARROW_FUNCTION)]
     ArrowFunction(ArrowFunctionTransport),
+    #[kind(kind::NEW_EXPRESSION)]
     NewExpression(NewExpressionTransport),
+    #[kind(kind::AWAIT_EXPRESSION)]
     AwaitExpression(AwaitExpressionTransport),
+    #[kind(kind::MEMBER_EXPRESSION)]
     MemberExpression(MemberExpressionTransport),
+    #[kind(kind::SUBSCRIPT_EXPRESSION)]
     SubscriptExpression(SubscriptExpressionTransport),
+    #[kind(kind::_LHS_EXPRESSION)]
     LhsExpression(LhsExpressionTransport),
+    #[kind(kind::ASSIGNMENT_EXPRESSION)]
     AssignmentExpression(AssignmentExpressionTransport),
+    #[kind(kind::AUGMENTED_ASSIGNMENT_EXPRESSION)]
     AugmentedAssignmentExpression(AugmentedAssignmentExpressionTransport),
+    #[kind(kind::SPREAD_ELEMENT)]
     SpreadElement(SpreadElementTransport),
+    #[kind(kind::TERNARY_EXPRESSION)]
     TernaryExpression(TernaryExpressionTransport),
+    #[kind(kind::BINARY_EXPRESSION)]
     BinaryExpression(BinaryExpressionTransport),
+    #[kind(kind::UNARY_EXPRESSION)]
     UnaryExpression(UnaryExpressionTransport),
+    #[kind(kind::SEQUENCE_EXPRESSION)]
     SequenceExpression(SequenceExpressionTransport),
+    #[kind(kind::UNESCAPED_DOUBLE_STRING_FRAGMENT)]
     UnescapedDoubleStringFragment(UnescapedDoubleStringFragmentTransport),
+    #[kind(kind::UNESCAPED_SINGLE_STRING_FRAGMENT)]
     UnescapedSingleStringFragment(UnescapedSingleStringFragmentTransport),
+    #[kind(kind::ESCAPE_SEQUENCE)]
     EscapeSequence(EscapeSequenceTransport),
+    #[kind(kind::TEMPLATE_STRING)]
     TemplateString(TemplateStringTransport),
+    #[kind(kind::TEMPLATE_SUBSTITUTION)]
     TemplateSubstitution(TemplateSubstitutionTransport),
+    #[kind(kind::REGEX)]
     Regex(RegexTransport),
+    #[kind(kind::REGEX_PATTERN)]
     RegexPattern(RegexPatternTransport),
+    #[kind(kind::REGEX_FLAGS)]
     RegexFlags(RegexFlagsTransport),
+    #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
+    #[kind(kind::PRIVATE_PROPERTY_IDENTIFIER)]
     PrivatePropertyIdentifier(PrivatePropertyIdentifierTransport),
+    #[kind(kind::ARGUMENTS)]
     Arguments(ArgumentsTransport),
+    #[kind(kind::DECORATOR)]
     Decorator(DecoratorTransport),
+    #[kind(kind::DECORATOR_MEMBER_EXPRESSION)]
     DecoratorMemberExpression(DecoratorMemberExpressionTransport),
+    #[kind(kind::DECORATOR_CALL_EXPRESSION)]
     DecoratorCallExpression(DecoratorCallExpressionTransport),
+    #[kind(kind::CLASS_BODY)]
     ClassBody(ClassBodyTransport),
+    #[kind(kind::FORMAL_PARAMETERS)]
     FormalParameters(FormalParametersTransport),
+    #[kind(kind::CLASS_STATIC_BLOCK)]
     ClassStaticBlock(ClassStaticBlockTransport),
+    #[kind(kind::REST_PATTERN)]
     RestPattern(RestPatternTransport),
+    #[kind(kind::METHOD_DEFINITION)]
     MethodDefinition(MethodDefinitionTransport),
+    #[kind(kind::PAIR)]
     Pair(PairTransport),
+    #[kind(kind::PAIR_PATTERN)]
     PairPattern(PairPatternTransport),
+    #[kind(kind::COMPUTED_PROPERTY_NAME)]
     ComputedPropertyName(ComputedPropertyNameTransport),
+    #[kind(kind::PUBLIC_FIELD_DEFINITION)]
     PublicFieldDefinition(PublicFieldDefinitionTransport),
+    #[kind(kind::NON_NULL_EXPRESSION)]
     NonNullExpression(NonNullExpressionTransport),
+    #[kind(kind::METHOD_SIGNATURE)]
     MethodSignature(MethodSignatureTransport),
+    #[kind(kind::ABSTRACT_METHOD_SIGNATURE)]
     AbstractMethodSignature(AbstractMethodSignatureTransport),
+    #[kind(kind::FUNCTION_SIGNATURE)]
     FunctionSignature(FunctionSignatureTransport),
+    #[kind(kind::DECORATOR_PARENTHESIZED_EXPRESSION)]
     DecoratorParenthesizedExpression(DecoratorParenthesizedExpressionTransport),
+    #[kind(kind::TYPE_ASSERTION)]
     TypeAssertion(TypeAssertionTransport),
+    #[kind(kind::AS_EXPRESSION)]
     AsExpression(AsExpressionTransport),
+    #[kind(kind::SATISFIES_EXPRESSION)]
     SatisfiesExpression(SatisfiesExpressionTransport),
+    #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionTransport),
+    #[kind(kind::IMPORT_REQUIRE_CLAUSE)]
     ImportRequireClause(ImportRequireClauseTransport),
+    #[kind(kind::EXTENDS_CLAUSE)]
     ExtendsClause(ExtendsClauseTransport),
+    #[kind(kind::_EXTENDS_CLAUSE_SINGLE)]
     ExtendsClauseSingle(ExtendsClauseSingleTransport),
+    #[kind(kind::IMPLEMENTS_CLAUSE)]
     ImplementsClause(ImplementsClauseTransport),
+    #[kind(kind::AMBIENT_DECLARATION)]
     AmbientDeclaration(AmbientDeclarationTransport),
+    #[kind(kind::ABSTRACT_CLASS_DECLARATION)]
     AbstractClassDeclaration(AbstractClassDeclarationTransport),
+    #[kind(kind::MODULE)]
     Module(ModuleTransport),
+    #[kind(kind::INTERNAL_MODULE)]
     InternalModule(InternalModuleTransport),
+    #[kind(kind::IMPORT_ALIAS)]
     ImportAlias(ImportAliasTransport),
+    #[kind(kind::NESTED_TYPE_IDENTIFIER)]
     NestedTypeIdentifier(NestedTypeIdentifierTransport),
+    #[kind(kind::INTERFACE_DECLARATION)]
     InterfaceDeclaration(InterfaceDeclarationTransport),
+    #[kind(kind::EXTENDS_TYPE_CLAUSE)]
     ExtendsTypeClause(ExtendsTypeClauseTransport),
+    #[kind(kind::ENUM_DECLARATION)]
     EnumDeclaration(EnumDeclarationTransport),
+    #[kind(kind::ENUM_BODY)]
     EnumBody(EnumBodyTransport),
+    #[kind(kind::ENUM_ASSIGNMENT)]
     EnumAssignment(EnumAssignmentTransport),
+    #[kind(kind::TYPE_ALIAS_DECLARATION)]
     TypeAliasDeclaration(TypeAliasDeclarationTransport),
+    #[kind(kind::ACCESSIBILITY_MODIFIER)]
     AccessibilityModifier(AccessibilityModifierEnum),
+    #[kind(kind::REQUIRED_PARAMETER)]
     RequiredParameter(RequiredParameterTransport),
+    #[kind(kind::OPTIONAL_PARAMETER)]
     OptionalParameter(OptionalParameterTransport),
+    #[kind(kind::OMITTING_TYPE_ANNOTATION)]
     OmittingTypeAnnotation(OmittingTypeAnnotationTransport),
+    #[kind(kind::ADDING_TYPE_ANNOTATION)]
     AddingTypeAnnotation(AddingTypeAnnotationTransport),
+    #[kind(kind::OPTING_TYPE_ANNOTATION)]
     OptingTypeAnnotation(OptingTypeAnnotationTransport),
+    #[kind(kind::TYPE_ANNOTATION)]
     TypeAnnotation(TypeAnnotationTransport),
+    #[kind(kind::_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION)]
     TypeQueryMemberExpressionInTypeAnnotation(TypeQueryMemberExpressionInTypeAnnotationTransport),
+    #[kind(kind::_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION)]
     TypeQueryCallExpressionInTypeAnnotation(TypeQueryCallExpressionInTypeAnnotationTransport),
+    #[kind(kind::ASSERTS)]
     Asserts(AssertsTransport),
+    #[kind(kind::ASSERTS_ANNOTATION)]
     AssertsAnnotation(AssertsAnnotationTransport),
+    #[kind(kind::TUPLE_PARAMETER)]
     TupleParameter(TupleParameterTransport),
+    #[kind(kind::OPTIONAL_TUPLE_PARAMETER)]
     OptionalTupleParameter(OptionalTupleParameterTransport),
+    #[kind(kind::OPTIONAL_TYPE)]
     OptionalType(OptionalTypeTransport),
+    #[kind(kind::REST_TYPE)]
     RestType(RestTypeTransport),
+    #[kind(kind::CONSTRUCTOR_TYPE)]
     ConstructorType(ConstructorTypeTransport),
+    #[kind(kind::TEMPLATE_TYPE)]
     TemplateType(TemplateTypeTransport),
+    #[kind(kind::TEMPLATE_LITERAL_TYPE)]
     TemplateLiteralType(TemplateLiteralTypeTransport),
+    #[kind(kind::INFER_TYPE)]
     InferType(InferTypeTransport),
+    #[kind(kind::CONDITIONAL_TYPE)]
     ConditionalType(ConditionalTypeTransport),
+    #[kind(kind::GENERIC_TYPE)]
     GenericType(GenericTypeTransport),
+    #[kind(kind::TYPE_PREDICATE)]
     TypePredicate(TypePredicateTransport),
+    #[kind(kind::TYPE_PREDICATE_ANNOTATION)]
     TypePredicateAnnotation(TypePredicateAnnotationTransport),
+    #[kind(kind::_TYPE_QUERY_MEMBER_EXPRESSION)]
     TypeQueryMemberExpression(TypeQueryMemberExpressionTransport),
+    #[kind(kind::_TYPE_QUERY_SUBSCRIPT_EXPRESSION)]
     TypeQuerySubscriptExpression(TypeQuerySubscriptExpressionTransport),
+    #[kind(kind::_TYPE_QUERY_CALL_EXPRESSION)]
     TypeQueryCallExpression(TypeQueryCallExpressionTransport),
+    #[kind(kind::_TYPE_QUERY_INSTANTIATION_EXPRESSION)]
     TypeQueryInstantiationExpression(TypeQueryInstantiationExpressionTransport),
+    #[kind(kind::TYPE_QUERY)]
     TypeQuery(TypeQueryTransport),
+    #[kind(kind::INDEX_TYPE_QUERY)]
     IndexTypeQuery(IndexTypeQueryTransport),
+    #[kind(kind::LOOKUP_TYPE)]
     LookupType(LookupTypeTransport),
+    #[kind(kind::MAPPED_TYPE_CLAUSE)]
     MappedTypeClause(MappedTypeClauseTransport),
+    #[kind(kind::LITERAL_TYPE)]
     LiteralType(LiteralTypeTransport),
+    #[kind(kind::FLOW_MAYBE_TYPE)]
     FlowMaybeType(FlowMaybeTypeTransport),
+    #[kind(kind::PARENTHESIZED_TYPE)]
     ParenthesizedType(ParenthesizedTypeTransport),
+    #[kind(kind::PREDEFINED_TYPE)]
     PredefinedType(PredefinedTypeEnum),
+    #[kind(kind::TYPE_ARGUMENTS)]
     TypeArguments(TypeArgumentsTransport),
+    #[kind(kind::OBJECT_TYPE)]
     ObjectType(ObjectTypeTransport),
+    #[kind(kind::CALL_SIGNATURE)]
     CallSignature(CallSignatureTransport),
+    #[kind(kind::PROPERTY_SIGNATURE)]
     PropertySignature(PropertySignatureTransport),
+    #[kind(kind::TYPE_PARAMETERS)]
     TypeParameters(TypeParametersTransport),
+    #[kind(kind::TYPE_PARAMETER)]
     TypeParameter(TypeParameterTransport),
+    #[kind(kind::DEFAULT_TYPE)]
     DefaultType(DefaultTypeTransport),
+    #[kind(kind::CONSTRAINT)]
     Constraint(ConstraintTransport),
+    #[kind(kind::CONSTRUCT_SIGNATURE)]
     ConstructSignature(ConstructSignatureTransport),
+    #[kind(kind::ARRAY_TYPE)]
     ArrayType(ArrayTypeTransport),
+    #[kind(kind::TUPLE_TYPE)]
     TupleType(TupleTypeTransport),
+    #[kind(kind::READONLY_TYPE)]
     ReadonlyType(ReadonlyTypeTransport),
+    #[kind(kind::UNION_TYPE)]
     UnionType(UnionTypeTransport),
+    #[kind(kind::INTERSECTION_TYPE)]
     IntersectionType(IntersectionTypeTransport),
+    #[kind(kind::FUNCTION_TYPE)]
     FunctionType(FunctionTypeTransport),
+    #[kind(kind::EXPORT_SPECIFIERS)]
     ExportSpecifiers(ExportSpecifiersTransport),
+    #[kind(kind::IMPORT_SPECIFIERS)]
     ImportSpecifiers(ImportSpecifiersTransport),
+    #[kind(kind::FORMAL_PARAMETERS_ELEMENTS)]
     FormalParametersElements(FormalParametersElementsTransport),
+    #[kind(kind::ENUM_BODY_ELEMENT_NAME)]
     EnumBodyElementName(EnumBodyElementNameTransport),
+    #[kind(kind::ENUM_BODY_ELEMENTS)]
     EnumBodyElements(EnumBodyElementsTransport),
+    #[kind(kind::TYPES)]
     Types(TypesTransport),
+    #[kind(kind::TYPE_PARAMETERS_ELEMENTS)]
     TypeParametersElements(TypeParametersElementsTransport),
+    #[kind(kind::TUPLE_TYPE_MEMBERS)]
     TupleTypeMembers(TupleTypeMembersTransport),
+    #[kind(kind::IMPORT_CLAUSE_GROUP)]
     ImportClauseGroup(ImportClauseGroupTransport),
+    #[kind(kind::CATCH_CLAUSE_GROUP)]
     CatchClauseGroup(CatchClauseGroupTransport),
+    #[kind(kind::AMBIENT_DECLARATION_GLOBAL)]
     AmbientDeclarationGlobal(AmbientDeclarationGlobalTransport),
+    #[kind(kind::AMBIENT_DECLARATION_MODULE)]
     AmbientDeclarationModule(AmbientDeclarationModuleTransport),
+    #[kind(kind::OBJECT_TYPE_CONTENT)]
     ObjectTypeContent(ObjectTypeContentTransport),
+    #[kind(kind::EXPORT_STATEMENT_NAMESPACE_EXPORT)]
     ExportStatementNamespaceExport(ExportStatementNamespaceExportTransport),
+    #[kind(kind::EXPORT_STATEMENT_TYPE_EXPORT)]
     ExportStatementTypeExport(ExportStatementTypeExportTransport),
+    #[kind(kind::EXPORT_STATEMENT_EQUALS_EXPORT)]
     ExportStatementEqualsExport(ExportStatementEqualsExportTransport),
+    #[kind(kind::COMMENT_LINE)]
     CommentLine(CommentLineTransport),
+    #[kind(kind::COMMENT_BLOCK)]
     CommentBlock(CommentBlockTransport),
+    #[kind(kind::LITERAL_TYPE_NEGATIVE_NUMBER)]
     LiteralTypeNegativeNumber(LiteralTypeNegativeNumberTransport),
+    #[kind(kind::NUMBER_HEX)]
     NumberHex(NumberHexTransport),
+    #[kind(kind::NUMBER_FLOAT_POINT)]
     NumberFloatPoint(NumberFloatPointTransport),
+    #[kind(kind::NUMBER_FLOAT_LEADING_POINT)]
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
+    #[kind(kind::NUMBER_FLOAT_SCIENTIFIC)]
     NumberFloatScientific(NumberFloatScientificTransport),
+    #[kind(kind::NUMBER_DECIMAL)]
     NumberDecimal(NumberDecimalTransport),
+    #[kind(kind::NUMBER_BINARY)]
     NumberBinary(NumberBinaryTransport),
+    #[kind(kind::NUMBER_OCTAL)]
     NumberOctal(NumberOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_HEX)]
     NumberBigintHex(NumberBigintHexTransport),
+    #[kind(kind::NUMBER_BIGINT_BINARY)]
     NumberBigintBinary(NumberBigintBinaryTransport),
+    #[kind(kind::NUMBER_BIGINT_OCTAL)]
     NumberBigintOctal(NumberBigintOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_DECIMAL)]
     NumberBigintDecimal(NumberBigintDecimalTransport),
+    #[kind(kind::BINARY_EXPRESSION_IN)]
     BinaryExpressionIn(BinaryExpressionInTransport),
+    #[kind(kind::CLASS_BODY_MEMBER_METHOD)]
     ClassBodyMemberMethod(ClassBodyMemberMethodTransport),
+    #[kind(kind::CLASS_BODY_MEMBER_METHOD_SIG)]
     ClassBodyMemberMethodSig(ClassBodyMemberMethodSigTransport),
+    #[kind(kind::CLASS_BODY_MEMBER_DECLARATION)]
     ClassBodyMemberDeclaration(ClassBodyMemberDeclarationTransport),
+    #[kind(kind::INDEX_SIGNATURE_COLON)]
     IndexSignatureColon(IndexSignatureColonTransport),
+    #[kind(kind::INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE)]
     IndexSignatureMappedTypeClause(IndexSignatureMappedTypeClauseTransport),
+    #[kind(kind::IMPORT_STATEMENT_CLAUSE_FROM)]
     ImportStatementClauseFrom(ImportStatementClauseFromTransport),
+    #[kind(kind::YIELD_EXPRESSION_DELEGATE)]
     YieldExpressionDelegate(YieldExpressionDelegateTransport),
+    #[kind(kind::IMPORT_SPECIFIER_NAME)]
     ImportSpecifierName(ImportSpecifierNameTransport),
+    #[kind(kind::IMPORT_SPECIFIER_AS)]
     ImportSpecifierAs(ImportSpecifierAsTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
     ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
+    #[kind(kind::CALL_EXPRESSION_CALL)]
     CallExpressionCall(CallExpressionCallTransport),
+    #[kind(kind::CALL_EXPRESSION_TEMPLATE_CALL)]
     CallExpressionTemplateCall(CallExpressionTemplateCallTransport),
+    #[kind(kind::CALL_EXPRESSION_MEMBER)]
     CallExpressionMember(CallExpressionMemberTransport),
+    #[kind(kind::STRING_DOUBLE)]
     StringDouble(StringDoubleTransport),
+    #[kind(kind::STRING_SINGLE)]
     StringSingle(StringSingleTransport),
+    #[kind(kind::UPDATE_EXPRESSION_POSTFIX)]
     UpdateExpressionPostfix(UpdateExpressionPostfixTransport),
+    #[kind(kind::UPDATE_EXPRESSION_PREFIX)]
     UpdateExpressionPrefix(UpdateExpressionPrefixTransport),
+    #[kind(kind::ARROW_FUNCTION_PARAMETER)]
     ArrowFunctionParameter(ArrowFunctionParameterTransport),
+    #[kind(kind::CLASS_HERITAGE_EXTENDS_CLAUSE)]
     ClassHeritageExtendsClause(ClassHeritageExtendsClauseTransport),
+    #[kind(kind::IMPORT_CLAUSE_DEFAULT_IMPORT)]
     ImportClauseDefaultImport(ImportClauseDefaultImportTransport),
+    #[kind(kind::EXPORT_STATEMENT_DEFAULT_FROM)]
     ExportStatementDefaultFrom(ExportStatementDefaultFromTransport),
+    #[kind(kind::EXPORT_STATEMENT_DEFAULT_DECLARATION)]
     ExportStatementDefaultDeclaration(ExportStatementDefaultDeclarationTransport),
+    #[kind(kind::EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM)]
     ExportStatementDefaultFromStarFrom(ExportStatementDefaultFromStarFromTransport),
+    #[kind(kind::EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM)]
     ExportStatementDefaultFromNsFrom(ExportStatementDefaultFromNsFromTransport),
+    #[kind(kind::EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM)]
     ExportStatementDefaultFromClauseFrom(ExportStatementDefaultFromClauseFromTransport),
+    #[kind(kind::EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW)]
     ExportStatementDefaultDeclarationDefaultKw(ExportStatementDefaultDeclarationDefaultKwTransport),
+    #[kind(kind::EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE)]
     ExportStatementDefaultDeclarationDefaultKwValue(ExportStatementDefaultDeclarationDefaultKwValueTransport),
+    #[kind(kind::VARIABLE_DECLARATOR_PLAIN)]
     VariableDeclaratorPlain(VariableDeclaratorPlainTransport),
+    #[kind(kind::VARIABLE_DECLARATOR_DEFINITE)]
     VariableDeclaratorDefinite(VariableDeclaratorDefiniteTransport),
+    #[kind(kind::FOR_HEADER_LHS)]
     ForHeaderLhs(ForHeaderLhsTransport),
+    #[kind(kind::FOR_HEADER_VAR_KIND)]
     ForHeaderVarKind(ForHeaderVarKindTransport),
+    #[kind(kind::FOR_HEADER_LET_CONST_KIND)]
     ForHeaderLetConstKind(ForHeaderLetConstKindTransport),
+    #[kind(kind::HTML_COMMENT)]
     HtmlComment(HtmlCommentTransport),
+    #[kind(kind::JSX_TEXT)]
     JsxText(JsxTextTransport),
+    #[kind(kind::_TEMPLATE_CHARS)]
     TemplateChars(TemplateCharsTransport),
+    #[kind(kind::_TERNARY_QMARK)]
     TernaryQmark(TernaryQmarkTransport),
+    #[kind(kind::__ERROR_RECOVERY)]
     ErrorRecovery(ErrorRecoveryTransport),
+    #[kind(kind::_STATEMENT_IDENTIFIER, display)]
     StatementIdentifier(StatementIdentifierTransport),
+    #[kind(kind::_SHORTHAND_PROPERTY_IDENTIFIER, display)]
     ShorthandPropertyIdentifier(ShorthandPropertyIdentifierTransport),
+    #[kind(kind::_SHORTHAND_PROPERTY_IDENTIFIER_PATTERN, display)]
     ShorthandPropertyIdentifierPattern(ShorthandPropertyIdentifierPatternTransport),
+    #[kind(kind::_PROPERTY_IDENTIFIER, display)]
     PropertyIdentifier(PropertyIdentifierTransport),
+    #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierTransport),
+    #[kind(kind::_INTERFACE_BODY, display)]
     InterfaceBody(InterfaceBodyTransport),
+    #[kind(kind::IMPORT)]
     Import,
+    #[kind(kind::EMPTY_STATEMENT)]
     EmptyStatement,
+    #[kind(kind::OPTIONAL_CHAIN)]
     OptionalChain,
+    #[kind(kind::THIS)]
     This,
+    #[kind(kind::SUPER)]
     Super,
+    #[kind(kind::TRUE)]
     True,
+    #[kind(kind::FALSE)]
     False,
+    #[kind(kind::NULL)]
     Null,
+    #[kind(kind::UNDEFINED)]
     Undefined,
+    #[kind(kind::OVERRIDE_MODIFIER)]
     OverrideModifier,
+    #[kind(kind::EXISTENTIAL_TYPE)]
     ExistentialType,
+    #[kind(kind::_EMPTY_MEMBER)]
     EmptyMember,
+    #[kind(kind::_OPTIONAL_CHAIN_MARKER)]
     OptionalChainMarker,
+    #[kind(kind::META_PROPERTY_NEW_TARGET)]
     MetaPropertyNewTarget,
+    #[kind(kind::META_PROPERTY_IMPORT_META)]
     MetaPropertyImportMeta,
+    #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
+    #[kind(kind::_FUNCTION_SIGNATURE_AUTOMATIC_SEMICOLON)]
     FunctionSignatureAutomaticSemicolon,
+    #[kind(kind::_TIGHT)]
     Tight,
+    #[kind(kind::_SPACE)]
     Space,
+    #[kind(kind::_TAB)]
     Tab,
+    #[kind(kind::_NEWLINE)]
     Newline,
+    #[kind(kind::_BLANKLINE)]
     Blankline,
+    #[kind(kind::_DOUBLE_BLANKLINE)]
     DoubleBlankline,
+    #[kind(kind::_INDENT)]
     Indent,
+    #[kind(kind::_DEDENT)]
     Dedent,
+    #[kind(kind::STAR)]
     Star,
+    #[kind(kind::AS_KEYWORD)]
     AsKeyword,
+    #[kind(kind::LBRACE)]
     Lbrace,
+    #[kind(kind::RBRACE)]
     Rbrace,
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
+    #[kind(kind::TYPEOF_KEYWORD)]
     TypeofKeyword,
+    #[kind(kind::IMPORT_KEYWORD)]
     ImportKeyword,
+    #[kind(kind::SEMI)]
     Semi,
+    #[kind(kind::WITH_KEYWORD)]
     WithKeyword,
+    #[kind(kind::ASSERT_KEYWORD)]
     AssertKeyword,
+    #[kind(kind::VAR_KEYWORD)]
     VarKeyword,
+    #[kind(kind::LET_KEYWORD)]
     LetKeyword,
+    #[kind(kind::CONST_KEYWORD)]
     ConstKeyword,
+    #[kind(kind::ELSE_KEYWORD)]
     ElseKeyword,
+    #[kind(kind::IF_KEYWORD)]
     IfKeyword,
+    #[kind(kind::SWITCH_KEYWORD)]
     SwitchKeyword,
+    #[kind(kind::FOR_KEYWORD)]
     ForKeyword,
+    #[kind(kind::LPAREN)]
     Lparen,
+    #[kind(kind::RPAREN)]
     Rparen,
+    #[kind(kind::AWAIT_KEYWORD)]
     AwaitKeyword,
+    #[kind(kind::WHILE_KEYWORD)]
     WhileKeyword,
+    #[kind(kind::DO_KEYWORD)]
     DoKeyword,
+    #[kind(kind::TRY_KEYWORD)]
     TryKeyword,
+    #[kind(kind::BREAK_KEYWORD)]
     BreakKeyword,
+    #[kind(kind::CONTINUE_KEYWORD)]
     ContinueKeyword,
+    #[kind(kind::DEBUGGER_KEYWORD)]
     DebuggerKeyword,
+    #[kind(kind::RETURN_KEYWORD)]
     ReturnKeyword,
+    #[kind(kind::THROW_KEYWORD)]
     ThrowKeyword,
+    #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
+    #[kind(kind::NAMESPACE_KEYWORD)]
     NamespaceKeyword,
+    #[kind(kind::PUBLIC_KEYWORD)]
     PublicKeyword,
+    #[kind(kind::PRIVATE_KEYWORD)]
     PrivateKeyword,
+    #[kind(kind::PROTECTED_KEYWORD)]
     ProtectedKeyword,
+    #[kind(kind::OVERRIDE_KEYWORD)]
     OverrideKeyword,
+    #[kind(kind::READONLY_KEYWORD)]
     ReadonlyKeyword,
+    #[kind(kind::MODULE_KEYWORD)]
     ModuleKeyword,
+    #[kind(kind::ANY_KEYWORD)]
     AnyKeyword,
+    #[kind(kind::NUMBER_KEYWORD)]
     NumberKeyword,
+    #[kind(kind::BOOLEAN_KEYWORD)]
     BooleanKeyword,
+    #[kind(kind::STRING_KEYWORD)]
     StringKeyword,
+    #[kind(kind::SYMBOL_KEYWORD)]
     SymbolKeyword,
+    #[kind(kind::EXPORT_KEYWORD)]
     ExportKeyword,
+    #[kind(kind::OBJECT_KEYWORD)]
     ObjectKeyword,
+    #[kind(kind::NEW_KEYWORD)]
     NewKeyword,
+    #[kind(kind::GET_KEYWORD)]
     GetKeyword,
+    #[kind(kind::SET_KEYWORD)]
     SetKeyword,
+    #[kind(kind::ASYNC_KEYWORD)]
     AsyncKeyword,
+    #[kind(kind::STATIC_KEYWORD)]
     StaticKeyword,
+    #[kind(kind::COLON)]
     Colon,
+    #[kind(kind::CASE_KEYWORD)]
     CaseKeyword,
+    #[kind(kind::DEFAULT_KEYWORD)]
     DefaultKeyword,
+    #[kind(kind::CATCH_KEYWORD)]
     CatchKeyword,
+    #[kind(kind::FINALLY_KEYWORD)]
     FinallyKeyword,
+    #[kind(kind::YIELD_KEYWORD)]
     YieldKeyword,
+    #[kind(kind::EQ)]
     Eq,
+    #[kind(kind::LBRACK)]
     Lbrack,
+    #[kind(kind::RBRACK)]
     Rbrack,
+    #[kind(kind::DOT)]
     Dot,
+    #[kind(kind::CLASS_KEYWORD)]
     ClassKeyword,
+    #[kind(kind::FUNCTION_KEYWORD)]
     FunctionKeyword,
+    #[kind(kind::EQ_GT)]
     EqGt,
+    #[kind(kind::QMARK_DOT)]
     QmarkDot,
+    #[kind(kind::USING_KEYWORD)]
     UsingKeyword,
+    #[kind(kind::PLUS_EQ)]
     PlusEq,
+    #[kind(kind::DASH_EQ)]
     DashEq,
+    #[kind(kind::STAR_EQ)]
     StarEq,
+    #[kind(kind::SLASH_EQ)]
     SlashEq,
+    #[kind(kind::PERCENT_EQ)]
     PercentEq,
+    #[kind(kind::CARET_EQ)]
     CaretEq,
+    #[kind(kind::AMP_EQ)]
     AmpEq,
+    #[kind(kind::PIPE_EQ)]
     PipeEq,
+    #[kind(kind::GT_GT_EQ)]
     GtGtEq,
+    #[kind(kind::GT_GT_GT_EQ)]
     GtGtGtEq,
+    #[kind(kind::LT_LT_EQ)]
     LtLtEq,
+    #[kind(kind::STAR_STAR_EQ)]
     StarStarEq,
+    #[kind(kind::AMP_AMP_EQ)]
     AmpAmpEq,
+    #[kind(kind::PIPE_PIPE_EQ)]
     PipePipeEq,
+    #[kind(kind::QMARK_QMARK_EQ)]
     QmarkQmarkEq,
+    #[kind(kind::DOT_DOT_DOT)]
     DotDotDot,
+    #[kind(display(kind::QMARK))]
     Qmark,
+    #[kind(kind::AMP_AMP)]
     AmpAmp,
+    #[kind(kind::PIPE_PIPE)]
     PipePipe,
+    #[kind(kind::GT_GT)]
     GtGt,
+    #[kind(kind::GT_GT_GT)]
     GtGtGt,
+    #[kind(kind::LT_LT)]
     LtLt,
+    #[kind(kind::AMP)]
     Amp,
+    #[kind(kind::CARET)]
     Caret,
+    #[kind(kind::PIPE)]
     Pipe,
+    #[kind(kind::PLUS)]
     Plus,
+    #[kind(kind::DASH)]
     Dash,
+    #[kind(display(kind::SLASH))]
     Slash,
+    #[kind(kind::PERCENT)]
     Percent,
+    #[kind(kind::STAR_STAR)]
     StarStar,
+    #[kind(kind::LT)]
     Lt,
+    #[kind(kind::LT_EQ)]
     LtEq,
+    #[kind(kind::EQ_EQ)]
     EqEq,
+    #[kind(kind::EQ_EQ_EQ)]
     EqEqEq,
+    #[kind(kind::BANG_EQ)]
     BangEq,
+    #[kind(kind::BANG_EQ_EQ)]
     BangEqEq,
+    #[kind(kind::GT_EQ)]
     GtEq,
+    #[kind(kind::GT)]
     Gt,
+    #[kind(kind::QMARK_QMARK)]
     QmarkQmark,
+    #[kind(kind::INSTANCEOF_KEYWORD)]
     InstanceofKeyword,
+    #[kind(kind::BANG)]
     Bang,
+    #[kind(kind::TILDE)]
     Tilde,
+    #[kind(kind::VOID_KEYWORD)]
     VoidKeyword,
+    #[kind(kind::DELETE_KEYWORD)]
     DeleteKeyword,
+    #[kind(display(kind::BQUOTE))]
     Bquote,
+    #[kind(kind::DOLLAR_LBRACE)]
     DollarLbrace,
+    #[kind(kind::AT)]
     At,
+    #[kind(kind::ABSTRACT_KEYWORD)]
     AbstractKeyword,
+    #[kind(kind::ACCESSOR_KEYWORD)]
     AccessorKeyword,
+    #[kind(kind::SATISFIES_KEYWORD)]
     SatisfiesKeyword,
+    #[kind(kind::REQUIRE_KEYWORD)]
     RequireKeyword,
+    #[kind(kind::EXTENDS_KEYWORD)]
     ExtendsKeyword,
+    #[kind(kind::IMPLEMENTS_KEYWORD)]
     ImplementsKeyword,
+    #[kind(kind::INTERFACE_KEYWORD)]
     InterfaceKeyword,
+    #[kind(kind::ENUM_KEYWORD)]
     EnumKeyword,
+    #[kind(kind::DASH_QMARK_COLON)]
     DashQmarkColon,
+    #[kind(kind::PLUS_QMARK_COLON)]
     PlusQmarkColon,
+    #[kind(kind::QMARK_COLON)]
     QmarkColon,
+    #[kind(kind::ASSERTS_KEYWORD)]
     AssertsKeyword,
+    #[kind(kind::INFER_KEYWORD)]
     InferKeyword,
+    #[kind(kind::IS_KEYWORD)]
     IsKeyword,
+    #[kind(kind::KEYOF_KEYWORD)]
     KeyofKeyword,
+    #[kind(kind::IN_KEYWORD)]
     InKeyword,
+    #[kind(kind::UNIQUE)]
     Unique,
+    #[kind(kind::UNKNOWN_KEYWORD)]
     UnknownKeyword,
+    #[kind(kind::NEVER_KEYWORD)]
     NeverKeyword,
+    #[kind(kind::LBRACE_PIPE)]
     LbracePipe,
+    #[kind(kind::PIPE_RBRACE)]
     PipeRbrace,
+    #[kind(kind::COMMA)]
     Comma,
+    #[kind(kind::GLOBAL_KEYWORD)]
     GlobalKeyword,
+    #[kind(kind::FROM_KEYWORD)]
     FromKeyword,
+    #[kind(display(kind::DQUOTE))]
     Dquote,
+    #[kind(display(kind::SQUOTE))]
     Squote,
+    #[kind(kind::PLUS_PLUS)]
     PlusPlus,
+    #[kind(kind::DASH_DASH)]
     DashDash,
+    #[kind(kind::TARGET_KEYWORD)]
     TargetKeyword,
+    #[kind(kind::META_KEYWORD)]
     MetaKeyword,
+    #[kind(kind::OF_KEYWORD)]
     OfKeyword,
     Verbatim(VerbatimTransport),
 }
@@ -2973,7 +3376,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AnyTransport> {
 }
 
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum TriviaTransport {
     CommentLine(CommentLineTransport),
     CommentBlock(CommentBlockTransport),
@@ -3130,7 +3533,7 @@ pub type TransportLayout = ::sittir_core::layout::TransportLayout<TriviaTranspor
 /// Text that is a slot's content with no kind of its own: a bare string in
 /// a slot whose members all render from their own text, where the variant
 /// tag is render-invisible and picking one would be a guess.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct VerbatimTransport {
     pub text: String,
 }
@@ -3147,11 +3550,16 @@ impl ::sittir_core::prepare::Prepare for VerbatimTransport {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ExportStatementTransport {
+    #[kind(kind::EXPORT_STATEMENT_DEFAULT_FROM, kind::EXPORT_STATEMENT_DEFAULT_DECLARATION, kind::EXPORT_STATEMENT_DEFAULT)]
     ExportStatementDefault(ExportStatementDefaultTransport),
+    #[kind(kind::EXPORT_STATEMENT_TYPE_EXPORT)]
     ExportStatementTypeExport(ExportStatementTypeExportTransport),
+    #[kind(kind::EXPORT_STATEMENT_EQUALS_EXPORT)]
     ExportStatementEqualsExport(ExportStatementEqualsExportTransport),
+    #[kind(kind::EXPORT_STATEMENT_NAMESPACE_EXPORT)]
     ExportStatementNamespaceExport(ExportStatementNamespaceExportTransport),
 }
 
@@ -3333,21 +3741,36 @@ impl ::sittir_core::render::Render for ExportStatementTransport {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum DeclarationTransport {
+    #[kind(kind::FUNCTION_DECLARATION)]
     FunctionDeclaration(FunctionDeclarationTransport),
+    #[kind(kind::GENERATOR_FUNCTION_DECLARATION)]
     GeneratorFunctionDeclaration(GeneratorFunctionDeclarationTransport),
+    #[kind(kind::CLASS_DECLARATION)]
     ClassDeclaration(ClassDeclarationTransport),
+    #[kind(kind::LEXICAL_DECLARATION)]
     LexicalDeclaration(LexicalDeclarationTransport),
+    #[kind(kind::VARIABLE_DECLARATION)]
     VariableDeclaration(VariableDeclarationTransport),
+    #[kind(kind::FUNCTION_SIGNATURE)]
     FunctionSignature(FunctionSignatureTransport),
+    #[kind(kind::ABSTRACT_CLASS_DECLARATION)]
     AbstractClassDeclaration(AbstractClassDeclarationTransport),
+    #[kind(kind::MODULE)]
     Module(ModuleTransport),
+    #[kind(kind::INTERNAL_MODULE)]
     InternalModule(InternalModuleTransport),
+    #[kind(kind::TYPE_ALIAS_DECLARATION)]
     TypeAliasDeclaration(TypeAliasDeclarationTransport),
+    #[kind(kind::ENUM_DECLARATION)]
     EnumDeclaration(EnumDeclarationTransport),
+    #[kind(kind::INTERFACE_DECLARATION)]
     InterfaceDeclaration(InterfaceDeclarationTransport),
+    #[kind(kind::IMPORT_ALIAS)]
     ImportAlias(ImportAliasTransport),
+    #[kind(kind::AMBIENT_DECLARATION)]
     AmbientDeclaration(AmbientDeclarationTransport),
 }
 
@@ -3687,9 +4110,12 @@ impl ::sittir_core::render::Render for DeclarationTransport {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ImportSpecifierTransport {
+    #[kind(kind::IMPORT_SPECIFIER_NAME)]
     ImportSpecifierName(ImportSpecifierNameTransport),
+    #[kind(kind::IMPORT_SPECIFIER_AS)]
     ImportSpecifierAs(ImportSpecifierAsTransport),
 }
 
@@ -3818,27 +4244,48 @@ impl ::sittir_core::render::Render for ImportSpecifierTransport {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum StatementTransport {
+    #[kind(kind::EXPORT_STATEMENT_DEFAULT_FROM, kind::EXPORT_STATEMENT_DEFAULT_DECLARATION, kind::EXPORT_STATEMENT_TYPE_EXPORT, kind::EXPORT_STATEMENT_EQUALS_EXPORT, kind::EXPORT_STATEMENT_NAMESPACE_EXPORT, kind::EXPORT_STATEMENT, kind::EXPORT_STATEMENT_DEFAULT)]
     ExportStatement(ExportStatementTransport),
+    #[kind(kind::IMPORT_STATEMENT)]
     ImportStatement(ImportStatementTransport),
+    #[kind(kind::DEBUGGER_STATEMENT)]
     DebuggerStatement(DebuggerStatementTransport),
+    #[kind(kind::EXPRESSION_STATEMENT)]
     ExpressionStatement(ExpressionStatementTransport),
+    #[kind(kind::FUNCTION_DECLARATION, kind::GENERATOR_FUNCTION_DECLARATION, kind::CLASS_DECLARATION, kind::LEXICAL_DECLARATION, kind::VARIABLE_DECLARATION, kind::FUNCTION_SIGNATURE, kind::ABSTRACT_CLASS_DECLARATION, kind::MODULE, kind::INTERNAL_MODULE, kind::TYPE_ALIAS_DECLARATION, kind::ENUM_DECLARATION, kind::INTERFACE_DECLARATION, kind::IMPORT_ALIAS, kind::AMBIENT_DECLARATION, kind::DECLARATION)]
     Declaration(DeclarationTransport),
+    #[kind(kind::STATEMENT_BLOCK)]
     StatementBlock(StatementBlockTransport),
+    #[kind(kind::IF_STATEMENT)]
     IfStatement(IfStatementTransport),
+    #[kind(kind::SWITCH_STATEMENT)]
     SwitchStatement(SwitchStatementTransport),
+    #[kind(kind::FOR_STATEMENT)]
     ForStatement(ForStatementTransport),
+    #[kind(kind::FOR_IN_STATEMENT)]
     ForInStatement(ForInStatementTransport),
+    #[kind(kind::WHILE_STATEMENT)]
     WhileStatement(WhileStatementTransport),
+    #[kind(kind::DO_STATEMENT)]
     DoStatement(DoStatementTransport),
+    #[kind(kind::TRY_STATEMENT)]
     TryStatement(TryStatementTransport),
+    #[kind(kind::WITH_STATEMENT)]
     WithStatement(WithStatementTransport),
+    #[kind(kind::BREAK_STATEMENT)]
     BreakStatement(BreakStatementTransport),
+    #[kind(kind::CONTINUE_STATEMENT)]
     ContinueStatement(ContinueStatementTransport),
+    #[kind(kind::RETURN_STATEMENT)]
     ReturnStatement(ReturnStatementTransport),
+    #[kind(kind::THROW_STATEMENT)]
     ThrowStatement(ThrowStatementTransport),
+    #[kind(kind::EMPTY_STATEMENT)]
     EmptyStatement,
+    #[kind(kind::LABELED_STATEMENT)]
     LabeledStatement(LabeledStatementTransport),
 }
 
@@ -4365,9 +4812,12 @@ impl ::sittir_core::render::Render for StatementTransport {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum VariableDeclaratorTransport {
+    #[kind(kind::VARIABLE_DECLARATOR_PLAIN)]
     VariableDeclaratorPlain(VariableDeclaratorPlainTransport),
+    #[kind(kind::VARIABLE_DECLARATOR_DEFINITE)]
     VariableDeclaratorDefinite(VariableDeclaratorDefiniteTransport),
 }
 
@@ -4496,10 +4946,14 @@ impl ::sittir_core::render::Render for VariableDeclaratorTransport {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ForHeaderTransport {
+    #[kind(kind::FOR_HEADER_LHS)]
     ForHeaderLhs(ForHeaderLhsTransport),
+    #[kind(kind::FOR_HEADER_VAR_KIND)]
     ForHeaderVarKind(ForHeaderVarKindTransport),
+    #[kind(kind::FOR_HEADER_LET_CONST_KIND)]
     ForHeaderLetConstKind(ForHeaderLetConstKindTransport),
 }
 
@@ -4644,9 +5098,12 @@ impl ::sittir_core::render::Render for ForHeaderTransport {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ParenthesizedExpressionTransport {
+    #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
     ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
 }
 
@@ -4782,22 +5239,38 @@ impl ::sittir_core::render::Render for ParenthesizedExpressionTransport {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ExpressionTransport {
+    #[kind(kind::AS_EXPRESSION)]
     AsExpression(AsExpressionTransport),
+    #[kind(kind::SATISFIES_EXPRESSION)]
     SatisfiesExpression(SatisfiesExpressionTransport),
+    #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionTransport),
+    #[kind(kind::INTERNAL_MODULE)]
     InternalModule(InternalModuleTransport),
+    #[kind(kind::TYPE_ASSERTION)]
     TypeAssertion(TypeAssertionTransport),
+    #[kind(kind::SUBSCRIPT_EXPRESSION, kind::MEMBER_EXPRESSION, kind::PARENTHESIZED_EXPRESSION_TYPED, kind::PARENTHESIZED_EXPRESSION_SEQUENCE, kind::UNDEFINED, kind::IDENTIFIER, kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::TYPE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::EXPORT_KEYWORD, kind::OBJECT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD, kind::THIS, kind::SUPER, kind::NUMBER_HEX, kind::NUMBER_FLOAT_POINT, kind::NUMBER_FLOAT_LEADING_POINT, kind::NUMBER_FLOAT_SCIENTIFIC, kind::NUMBER_DECIMAL, kind::NUMBER_BINARY, kind::NUMBER_OCTAL, kind::NUMBER_BIGINT_HEX, kind::NUMBER_BIGINT_BINARY, kind::NUMBER_BIGINT_OCTAL, kind::NUMBER_BIGINT_DECIMAL, kind::STRING_DOUBLE, kind::STRING_SINGLE, kind::TEMPLATE_STRING, kind::REGEX, kind::TRUE, kind::FALSE, kind::NULL, kind::OBJECT, kind::ARRAY, kind::FUNCTION_EXPRESSION, kind::ARROW_FUNCTION, kind::GENERATOR_FUNCTION, kind::CLASS, kind::META_PROPERTY_NEW_TARGET, kind::META_PROPERTY_IMPORT_META, kind::CALL_EXPRESSION_CALL, kind::CALL_EXPRESSION_TEMPLATE_CALL, kind::CALL_EXPRESSION_MEMBER, kind::NON_NULL_EXPRESSION, kind::PRIMARY_EXPRESSION, kind::PARENTHESIZED_EXPRESSION, kind::NUMBER, kind::STRING, kind::META_PROPERTY, kind::CALL_EXPRESSION)]
     PrimaryExpression(PrimaryExpressionTransport),
+    #[kind(kind::ASSIGNMENT_EXPRESSION)]
     AssignmentExpression(AssignmentExpressionTransport),
+    #[kind(kind::AUGMENTED_ASSIGNMENT_EXPRESSION)]
     AugmentedAssignmentExpression(AugmentedAssignmentExpressionTransport),
+    #[kind(kind::AWAIT_EXPRESSION)]
     AwaitExpression(AwaitExpressionTransport),
+    #[kind(kind::UNARY_EXPRESSION)]
     UnaryExpression(UnaryExpressionTransport),
+    #[kind(kind::BINARY_EXPRESSION)]
     BinaryExpression(BinaryExpressionTransport),
+    #[kind(kind::TERNARY_EXPRESSION)]
     TernaryExpression(TernaryExpressionTransport),
+    #[kind(kind::UPDATE_EXPRESSION_POSTFIX, kind::UPDATE_EXPRESSION_PREFIX, kind::UPDATE_EXPRESSION)]
     UpdateExpression(UpdateExpressionTransport),
+    #[kind(kind::NEW_EXPRESSION)]
     NewExpression(NewExpressionTransport),
+    #[kind(kind::YIELD_EXPRESSION)]
     YieldExpression(YieldExpressionTransport),
     Verbatim(VerbatimTransport),
 }
@@ -5545,52 +6018,98 @@ impl ::sittir_core::render::Render for ExpressionTransport {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum PrimaryExpressionTransport {
+    #[kind(kind::SUBSCRIPT_EXPRESSION)]
     SubscriptExpression(SubscriptExpressionTransport),
+    #[kind(kind::MEMBER_EXPRESSION)]
     MemberExpression(MemberExpressionTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED, kind::PARENTHESIZED_EXPRESSION_SEQUENCE, kind::PARENTHESIZED_EXPRESSION)]
     ParenthesizedExpression(ParenthesizedExpressionTransport),
+    #[kind(kind::UNDEFINED)]
     Undefined,
+    #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
+    #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
+    #[kind(kind::NAMESPACE_KEYWORD)]
     NamespaceKeyword,
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
+    #[kind(kind::PUBLIC_KEYWORD)]
     PublicKeyword,
+    #[kind(kind::PRIVATE_KEYWORD)]
     PrivateKeyword,
+    #[kind(kind::PROTECTED_KEYWORD)]
     ProtectedKeyword,
+    #[kind(kind::OVERRIDE_KEYWORD)]
     OverrideKeyword,
+    #[kind(kind::READONLY_KEYWORD)]
     ReadonlyKeyword,
+    #[kind(kind::MODULE_KEYWORD)]
     ModuleKeyword,
+    #[kind(kind::ANY_KEYWORD)]
     AnyKeyword,
+    #[kind(kind::NUMBER_KEYWORD)]
     NumberKeyword,
+    #[kind(kind::BOOLEAN_KEYWORD)]
     BooleanKeyword,
+    #[kind(kind::STRING_KEYWORD)]
     StringKeyword,
+    #[kind(kind::SYMBOL_KEYWORD)]
     SymbolKeyword,
+    #[kind(kind::EXPORT_KEYWORD)]
     ExportKeyword,
+    #[kind(kind::OBJECT_KEYWORD)]
     ObjectKeyword,
+    #[kind(kind::NEW_KEYWORD)]
     NewKeyword,
+    #[kind(kind::GET_KEYWORD)]
     GetKeyword,
+    #[kind(kind::SET_KEYWORD)]
     SetKeyword,
+    #[kind(kind::ASYNC_KEYWORD)]
     AsyncKeyword,
+    #[kind(kind::STATIC_KEYWORD)]
     StaticKeyword,
+    #[kind(kind::LET_KEYWORD)]
     LetKeyword,
+    #[kind(kind::THIS)]
     This,
+    #[kind(kind::SUPER)]
     Super,
+    #[kind(kind::NUMBER_HEX, kind::NUMBER_FLOAT_POINT, kind::NUMBER_FLOAT_LEADING_POINT, kind::NUMBER_FLOAT_SCIENTIFIC, kind::NUMBER_DECIMAL, kind::NUMBER_BINARY, kind::NUMBER_OCTAL, kind::NUMBER_BIGINT_HEX, kind::NUMBER_BIGINT_BINARY, kind::NUMBER_BIGINT_OCTAL, kind::NUMBER_BIGINT_DECIMAL, kind::NUMBER, kind::NUMBER_BIGINT)]
     Number(NumberTransport),
+    #[kind(kind::STRING_DOUBLE, kind::STRING_SINGLE, kind::STRING)]
     String(StringTransport),
+    #[kind(kind::TEMPLATE_STRING)]
     TemplateString(TemplateStringTransport),
+    #[kind(kind::REGEX)]
     Regex(RegexTransport),
+    #[kind(kind::TRUE)]
     True,
+    #[kind(kind::FALSE)]
     False,
+    #[kind(kind::NULL)]
     Null,
+    #[kind(kind::OBJECT)]
     Object(ObjectTransport),
+    #[kind(kind::ARRAY)]
     Array(ArrayTransport),
+    #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(FunctionExpressionTransport),
+    #[kind(kind::ARROW_FUNCTION)]
     ArrowFunction(ArrowFunctionTransport),
+    #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(GeneratorFunctionTransport),
+    #[kind(kind::CLASS)]
     Class(ClassTransport),
+    #[kind(kind::META_PROPERTY_NEW_TARGET, kind::META_PROPERTY_IMPORT_META, kind::META_PROPERTY)]
     MetaProperty(MetaPropertyTransport),
+    #[kind(kind::CALL_EXPRESSION_CALL, kind::CALL_EXPRESSION_TEMPLATE_CALL, kind::CALL_EXPRESSION_MEMBER, kind::CALL_EXPRESSION)]
     CallExpression(CallExpressionTransport),
+    #[kind(kind::NON_NULL_EXPRESSION)]
     NonNullExpression(NonNullExpressionTransport),
     Verbatim(VerbatimTransport),
 }
@@ -6313,10 +6832,14 @@ impl ::sittir_core::render::Render for PrimaryExpressionTransport {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum CallExpressionTransport {
+    #[kind(kind::CALL_EXPRESSION_CALL)]
     CallExpressionCall(CallExpressionCallTransport),
+    #[kind(kind::CALL_EXPRESSION_TEMPLATE_CALL)]
     CallExpressionTemplateCall(CallExpressionTemplateCallTransport),
+    #[kind(kind::CALL_EXPRESSION_MEMBER)]
     CallExpressionMember(CallExpressionMemberTransport),
 }
 
@@ -6469,9 +6992,12 @@ impl ::sittir_core::render::Render for CallExpressionTransport {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum UpdateExpressionTransport {
+    #[kind(kind::UPDATE_EXPRESSION_POSTFIX)]
     UpdateExpressionPostfix(UpdateExpressionPostfixTransport),
+    #[kind(kind::UPDATE_EXPRESSION_PREFIX)]
     UpdateExpressionPrefix(UpdateExpressionPrefixTransport),
 }
 
@@ -6607,9 +7133,12 @@ impl ::sittir_core::render::Render for UpdateExpressionTransport {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum StringTransport {
+    #[kind(kind::STRING_DOUBLE)]
     StringDouble(StringDoubleTransport),
+    #[kind(kind::STRING_SINGLE)]
     StringSingle(StringSingleTransport),
 }
 
@@ -6745,15 +7274,24 @@ impl ::sittir_core::render::Render for StringTransport {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum NumberTransport {
+    #[kind(kind::NUMBER_HEX)]
     NumberHex(NumberHexTransport),
+    #[kind(kind::NUMBER_FLOAT_POINT)]
     NumberFloatPoint(NumberFloatPointTransport),
+    #[kind(kind::NUMBER_FLOAT_LEADING_POINT)]
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
+    #[kind(kind::NUMBER_FLOAT_SCIENTIFIC)]
     NumberFloatScientific(NumberFloatScientificTransport),
+    #[kind(kind::NUMBER_DECIMAL)]
     NumberDecimal(NumberDecimalTransport),
+    #[kind(kind::NUMBER_BINARY)]
     NumberBinary(NumberBinaryTransport),
+    #[kind(kind::NUMBER_OCTAL)]
     NumberOctal(NumberOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_HEX, kind::NUMBER_BIGINT_BINARY, kind::NUMBER_BIGINT_OCTAL, kind::NUMBER_BIGINT_DECIMAL, kind::NUMBER_BIGINT)]
     NumberBigint(NumberBigintTransport),
     Verbatim(VerbatimTransport),
 }
@@ -7025,9 +7563,12 @@ impl ::sittir_core::render::Render for NumberTransport {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum MetaPropertyTransport {
+    #[kind(kind::META_PROPERTY_NEW_TARGET)]
     MetaPropertyNewTarget,
+    #[kind(kind::META_PROPERTY_IMPORT_META)]
     MetaPropertyImportMeta,
 }
 
@@ -7131,9 +7672,12 @@ impl ::sittir_core::render::Render for MetaPropertyTransport {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum PatternTransport {
+    #[kind(kind::_LHS_EXPRESSION, kind::LHS_EXPRESSION)]
     LhsExpression(LhsExpressionTransport),
+    #[kind(kind::REST_PATTERN)]
     RestPattern(RestPatternTransport),
 }
 
@@ -7268,14 +7812,22 @@ impl ::sittir_core::render::Render for PatternTransport {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum TypeTransport {
+    #[kind(kind::PARENTHESIZED_TYPE, kind::PREDEFINED_TYPE, kind::NESTED_TYPE_IDENTIFIER, kind::GENERIC_TYPE, kind::OBJECT_TYPE, kind::ARRAY_TYPE, kind::TUPLE_TYPE, kind::FLOW_MAYBE_TYPE, kind::TYPE_QUERY, kind::INDEX_TYPE_QUERY, kind::THIS, kind::EXISTENTIAL_TYPE, kind::LITERAL_TYPE, kind::LOOKUP_TYPE, kind::CONDITIONAL_TYPE, kind::TEMPLATE_LITERAL_TYPE, kind::INTERSECTION_TYPE, kind::UNION_TYPE, kind::PRIMARY_TYPE, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::UNIQUE, kind::VOID_KEYWORD, kind::UNKNOWN_KEYWORD, kind::NEVER_KEYWORD, kind::OBJECT_KEYWORD, display(kind::_TYPE_IDENTIFIER))]
     PrimaryType(PrimaryTypeTransport),
+    #[kind(kind::FUNCTION_TYPE)]
     FunctionType(FunctionTypeTransport),
+    #[kind(kind::READONLY_TYPE)]
     ReadonlyType(ReadonlyTypeTransport),
+    #[kind(kind::CONSTRUCTOR_TYPE)]
     ConstructorType(ConstructorTypeTransport),
+    #[kind(kind::INFER_TYPE)]
     InferType(InferTypeTransport),
+    #[kind(kind::_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION)]
     TypeQueryMemberExpressionInTypeAnnotation(TypeQueryMemberExpressionInTypeAnnotationTransport),
+    #[kind(kind::_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION)]
     TypeQueryCallExpressionInTypeAnnotation(TypeQueryCallExpressionInTypeAnnotationTransport),
 }
 
@@ -7658,26 +8210,46 @@ impl ::sittir_core::render::Render for TypeTransport {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum PrimaryTypeTransport {
+    #[kind(kind::PARENTHESIZED_TYPE)]
     ParenthesizedType(ParenthesizedTypeTransport),
+    #[kind(kind::PREDEFINED_TYPE, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::UNIQUE, kind::VOID_KEYWORD, kind::UNKNOWN_KEYWORD, kind::NEVER_KEYWORD, kind::OBJECT_KEYWORD)]
     PredefinedType(PredefinedTypeEnum),
+    #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierTransport),
+    #[kind(kind::NESTED_TYPE_IDENTIFIER)]
     NestedTypeIdentifier(NestedTypeIdentifierTransport),
+    #[kind(kind::GENERIC_TYPE)]
     GenericType(GenericTypeTransport),
+    #[kind(kind::OBJECT_TYPE)]
     ObjectType(ObjectTypeTransport),
+    #[kind(kind::ARRAY_TYPE)]
     ArrayType(ArrayTypeTransport),
+    #[kind(kind::TUPLE_TYPE)]
     TupleType(TupleTypeTransport),
+    #[kind(kind::FLOW_MAYBE_TYPE)]
     FlowMaybeType(FlowMaybeTypeTransport),
+    #[kind(kind::TYPE_QUERY)]
     TypeQuery(TypeQueryTransport),
+    #[kind(kind::INDEX_TYPE_QUERY)]
     IndexTypeQuery(IndexTypeQueryTransport),
+    #[kind(kind::THIS, kind::_THIS_TYPE)]
     This,
+    #[kind(kind::EXISTENTIAL_TYPE)]
     ExistentialType,
+    #[kind(kind::LITERAL_TYPE)]
     LiteralType(LiteralTypeTransport),
+    #[kind(kind::LOOKUP_TYPE)]
     LookupType(LookupTypeTransport),
+    #[kind(kind::CONDITIONAL_TYPE)]
     ConditionalType(ConditionalTypeTransport),
+    #[kind(kind::TEMPLATE_LITERAL_TYPE)]
     TemplateLiteralType(TemplateLiteralTypeTransport),
+    #[kind(kind::INTERSECTION_TYPE)]
     IntersectionType(IntersectionTypeTransport),
+    #[kind(kind::UNION_TYPE)]
     UnionType(UnionTypeTransport),
 }
 
@@ -8144,12 +8716,18 @@ impl ::sittir_core::render::Render for PrimaryTypeTransport {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ClassBodyMemberTransport {
+    #[kind(kind::CLASS_BODY_MEMBER_METHOD)]
     ClassBodyMemberMethod(ClassBodyMemberMethodTransport),
+    #[kind(kind::CLASS_BODY_MEMBER_METHOD_SIG)]
     ClassBodyMemberMethodSig(ClassBodyMemberMethodSigTransport),
+    #[kind(kind::CLASS_STATIC_BLOCK)]
     ClassStaticBlock(ClassStaticBlockTransport),
+    #[kind(kind::CLASS_BODY_MEMBER_DECLARATION)]
     ClassBodyMemberDeclaration(ClassBodyMemberDeclarationTransport),
+    #[kind(kind::_EMPTY_MEMBER)]
     EmptyMember,
 }
 
@@ -8316,9 +8894,12 @@ impl ::sittir_core::render::Render for ClassBodyMemberTransport {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum EnumBodyElementTransport {
+    #[kind(kind::ENUM_BODY_ELEMENT_NAME)]
     EnumBodyElementName(EnumBodyElementNameTransport),
+    #[kind(kind::ENUM_ASSIGNMENT)]
     EnumAssignment(EnumAssignmentTransport),
 }
 
@@ -8447,9 +9028,12 @@ impl ::sittir_core::render::Render for EnumBodyElementTransport {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ExportStatementDefaultTransport {
+    #[kind(kind::EXPORT_STATEMENT_DEFAULT_FROM)]
     ExportStatementDefaultFrom(ExportStatementDefaultFromTransport),
+    #[kind(kind::EXPORT_STATEMENT_DEFAULT_DECLARATION)]
     ExportStatementDefaultDeclaration(ExportStatementDefaultDeclarationTransport),
 }
 
@@ -8585,11 +9169,16 @@ impl ::sittir_core::render::Render for ExportStatementDefaultTransport {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum NumberBigintTransport {
+    #[kind(kind::NUMBER_BIGINT_HEX)]
     NumberBigintHex(NumberBigintHexTransport),
+    #[kind(kind::NUMBER_BIGINT_BINARY)]
     NumberBigintBinary(NumberBigintBinaryTransport),
+    #[kind(kind::NUMBER_BIGINT_OCTAL)]
     NumberBigintOctal(NumberBigintOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_DECIMAL)]
     NumberBigintDecimal(NumberBigintDecimalTransport),
 }
 
@@ -8760,10 +9349,14 @@ impl ::sittir_core::render::Render for NumberBigintTransport {
 }
 
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum NamespaceExportModuleExportNameTransportSlot {
+    #[kind(kind::IDENTIFIER, kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::TYPE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::EXPORT_KEYWORD, kind::OBJECT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD)]
     Identifier(IdentifierTransport),
+    #[kind(kind::STRING_DOUBLE)]
     StringDouble(StringDoubleTransport),
+    #[kind(kind::STRING_SINGLE)]
     StringSingle(StringSingleTransport),
     Verbatim(VerbatimTransport),
 }
@@ -9030,9 +9623,12 @@ impl ::sittir_core::render::Render for NamespaceExportModuleExportNameTransportS
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ExportSpecifierExportKindTransportSlot {
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
+    #[kind(kind::TYPEOF_KEYWORD)]
     TypeofKeyword,
 }
 
@@ -9136,9 +9732,12 @@ impl ::sittir_core::render::Render for ExportSpecifierExportKindTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ImportStatementImportClauseTransportSlot {
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
+    #[kind(kind::TYPEOF_KEYWORD)]
     TypeofKeyword,
 }
 
@@ -9244,11 +9843,16 @@ impl ::sittir_core::render::Render for ImportStatementImportClauseTransportSlot 
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ImportStatementFromClauseTransportSlot {
+    #[kind(kind::IMPORT_STATEMENT_CLAUSE_FROM)]
     ImportStatementClauseFrom(ImportStatementClauseFromTransport),
+    #[kind(kind::IMPORT_REQUIRE_CLAUSE)]
     ImportRequireClause(ImportRequireClauseTransport),
+    #[kind(kind::STRING_DOUBLE)]
     StringDouble(StringDoubleTransport),
+    #[kind(kind::STRING_SINGLE)]
     StringSingle(StringSingleTransport),
 }
 
@@ -9384,9 +9988,12 @@ impl ::sittir_core::render::Render for ImportStatementFromClauseTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ImportStatementTerminatorTransportSlot {
+    #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
+    #[kind(kind::SEMI)]
     Semi,
 }
 
@@ -9495,10 +10102,14 @@ impl ::sittir_core::render::Render for ImportStatementTerminatorTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ImportClauseContentTransportSlot {
+    #[kind(kind::NAMESPACE_IMPORT)]
     NamespaceImport(NamespaceImportTransport),
+    #[kind(kind::NAMED_IMPORTS)]
     NamedImports(NamedImportsTransport),
+    #[kind(kind::IMPORT_CLAUSE_DEFAULT_IMPORT)]
     ImportClauseDefaultImport(ImportClauseDefaultImportTransport),
 }
 
@@ -9623,9 +10234,12 @@ impl ::sittir_core::render::Render for ImportClauseContentTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ImportAttributeAttributeKindTransportSlot {
+    #[kind(kind::WITH_KEYWORD)]
     WithKeyword,
+    #[kind(kind::ASSERT_KEYWORD)]
     AssertKeyword,
 }
 
@@ -9719,83 +10333,160 @@ impl ::sittir_core::render::Render for ImportAttributeAttributeKindTransportSlot
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ExpressionStatementExpressionTransportSlot {
+    #[kind(kind::AS_EXPRESSION)]
     AsExpression(AsExpressionTransport),
+    #[kind(kind::SATISFIES_EXPRESSION)]
     SatisfiesExpression(SatisfiesExpressionTransport),
+    #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionTransport),
+    #[kind(kind::INTERNAL_MODULE)]
     InternalModule(InternalModuleTransport),
+    #[kind(kind::TYPE_ASSERTION)]
     TypeAssertion(TypeAssertionTransport),
+    #[kind(kind::SUBSCRIPT_EXPRESSION)]
     SubscriptExpression(SubscriptExpressionTransport),
+    #[kind(kind::MEMBER_EXPRESSION)]
     MemberExpression(MemberExpressionTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
     ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
+    #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
+    #[kind(kind::NUMBER_HEX)]
     NumberHex(NumberHexTransport),
+    #[kind(kind::NUMBER_FLOAT_POINT)]
     NumberFloatPoint(NumberFloatPointTransport),
+    #[kind(kind::NUMBER_FLOAT_LEADING_POINT)]
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
+    #[kind(kind::NUMBER_FLOAT_SCIENTIFIC)]
     NumberFloatScientific(NumberFloatScientificTransport),
+    #[kind(kind::NUMBER_DECIMAL)]
     NumberDecimal(NumberDecimalTransport),
+    #[kind(kind::NUMBER_BINARY)]
     NumberBinary(NumberBinaryTransport),
+    #[kind(kind::NUMBER_OCTAL)]
     NumberOctal(NumberOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_HEX)]
     NumberBigintHex(NumberBigintHexTransport),
+    #[kind(kind::NUMBER_BIGINT_BINARY)]
     NumberBigintBinary(NumberBigintBinaryTransport),
+    #[kind(kind::NUMBER_BIGINT_OCTAL)]
     NumberBigintOctal(NumberBigintOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_DECIMAL)]
     NumberBigintDecimal(NumberBigintDecimalTransport),
+    #[kind(kind::STRING_DOUBLE)]
     StringDouble(StringDoubleTransport),
+    #[kind(kind::STRING_SINGLE)]
     StringSingle(StringSingleTransport),
+    #[kind(kind::TEMPLATE_STRING)]
     TemplateString(TemplateStringTransport),
+    #[kind(kind::REGEX)]
     Regex(RegexTransport),
+    #[kind(kind::OBJECT)]
     Object(ObjectTransport),
+    #[kind(kind::ARRAY)]
     Array(ArrayTransport),
+    #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(FunctionExpressionTransport),
+    #[kind(kind::ARROW_FUNCTION)]
     ArrowFunction(ArrowFunctionTransport),
+    #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(GeneratorFunctionTransport),
+    #[kind(kind::CLASS)]
     Class(ClassTransport),
+    #[kind(kind::CALL_EXPRESSION_CALL)]
     CallExpressionCall(CallExpressionCallTransport),
+    #[kind(kind::CALL_EXPRESSION_TEMPLATE_CALL)]
     CallExpressionTemplateCall(CallExpressionTemplateCallTransport),
+    #[kind(kind::CALL_EXPRESSION_MEMBER)]
     CallExpressionMember(CallExpressionMemberTransport),
+    #[kind(kind::NON_NULL_EXPRESSION)]
     NonNullExpression(NonNullExpressionTransport),
+    #[kind(kind::ASSIGNMENT_EXPRESSION)]
     AssignmentExpression(AssignmentExpressionTransport),
+    #[kind(kind::AUGMENTED_ASSIGNMENT_EXPRESSION)]
     AugmentedAssignmentExpression(AugmentedAssignmentExpressionTransport),
+    #[kind(kind::AWAIT_EXPRESSION)]
     AwaitExpression(AwaitExpressionTransport),
+    #[kind(kind::UNARY_EXPRESSION)]
     UnaryExpression(UnaryExpressionTransport),
+    #[kind(kind::BINARY_EXPRESSION)]
     BinaryExpression(BinaryExpressionTransport),
+    #[kind(kind::TERNARY_EXPRESSION)]
     TernaryExpression(TernaryExpressionTransport),
+    #[kind(kind::UPDATE_EXPRESSION_POSTFIX)]
     UpdateExpressionPostfix(UpdateExpressionPostfixTransport),
+    #[kind(kind::UPDATE_EXPRESSION_PREFIX)]
     UpdateExpressionPrefix(UpdateExpressionPrefixTransport),
+    #[kind(kind::NEW_EXPRESSION)]
     NewExpression(NewExpressionTransport),
+    #[kind(kind::YIELD_EXPRESSION)]
     YieldExpression(YieldExpressionTransport),
+    #[kind(kind::SEQUENCE_EXPRESSION)]
     SequenceExpression(SequenceExpressionTransport),
+    #[kind(kind::UNDEFINED)]
     Undefined,
+    #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
+    #[kind(kind::NAMESPACE_KEYWORD)]
     NamespaceKeyword,
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
+    #[kind(kind::PUBLIC_KEYWORD)]
     PublicKeyword,
+    #[kind(kind::PRIVATE_KEYWORD)]
     PrivateKeyword,
+    #[kind(kind::PROTECTED_KEYWORD)]
     ProtectedKeyword,
+    #[kind(kind::OVERRIDE_KEYWORD)]
     OverrideKeyword,
+    #[kind(kind::READONLY_KEYWORD)]
     ReadonlyKeyword,
+    #[kind(kind::MODULE_KEYWORD)]
     ModuleKeyword,
+    #[kind(kind::ANY_KEYWORD)]
     AnyKeyword,
+    #[kind(kind::NUMBER_KEYWORD)]
     NumberKeyword,
+    #[kind(kind::BOOLEAN_KEYWORD)]
     BooleanKeyword,
+    #[kind(kind::STRING_KEYWORD)]
     StringKeyword,
+    #[kind(kind::SYMBOL_KEYWORD)]
     SymbolKeyword,
+    #[kind(kind::EXPORT_KEYWORD)]
     ExportKeyword,
+    #[kind(kind::OBJECT_KEYWORD)]
     ObjectKeyword,
+    #[kind(kind::NEW_KEYWORD)]
     NewKeyword,
+    #[kind(kind::GET_KEYWORD)]
     GetKeyword,
+    #[kind(kind::SET_KEYWORD)]
     SetKeyword,
+    #[kind(kind::ASYNC_KEYWORD)]
     AsyncKeyword,
+    #[kind(kind::STATIC_KEYWORD)]
     StaticKeyword,
+    #[kind(kind::LET_KEYWORD)]
     LetKeyword,
+    #[kind(kind::THIS)]
     This,
+    #[kind(kind::SUPER)]
     Super,
+    #[kind(kind::TRUE)]
     True,
+    #[kind(kind::FALSE)]
     False,
+    #[kind(kind::NULL)]
     Null,
+    #[kind(kind::META_PROPERTY_NEW_TARGET)]
     MetaPropertyNewTarget,
+    #[kind(kind::META_PROPERTY_IMPORT_META)]
     MetaPropertyImportMeta,
     Verbatim(VerbatimTransport),
 }
@@ -10613,9 +11304,12 @@ impl ::sittir_core::render::Render for ExpressionStatementExpressionTransportSlo
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ExpressionStatementTerminatorTransportSlot {
+    #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
+    #[kind(kind::SEMI)]
     Semi,
 }
 
@@ -10724,9 +11418,12 @@ impl ::sittir_core::render::Render for ExpressionStatementTerminatorTransportSlo
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum VariableDeclarationTerminatorTransportSlot {
+    #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
+    #[kind(kind::SEMI)]
     Semi,
 }
 
@@ -10835,9 +11532,12 @@ impl ::sittir_core::render::Render for VariableDeclarationTerminatorTransportSlo
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum LexicalDeclarationKindTransportSlot {
+    #[kind(kind::LET_KEYWORD)]
     LetKeyword,
+    #[kind(kind::CONST_KEYWORD)]
     ConstKeyword,
 }
 
@@ -10931,9 +11631,12 @@ impl ::sittir_core::render::Render for LexicalDeclarationKindTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum LexicalDeclarationTerminatorTransportSlot {
+    #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
+    #[kind(kind::SEMI)]
     Semi,
 }
 
@@ -11042,9 +11745,12 @@ impl ::sittir_core::render::Render for LexicalDeclarationTerminatorTransportSlot
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum StatementBlockTerminatorTransportSlot {
+    #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
+    #[transport(blank)]
     Blank,
 }
 
@@ -11148,86 +11854,166 @@ impl ::sittir_core::render::Render for StatementBlockTerminatorTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ForStatementInitializerTransportSlot {
+    #[kind(kind::LEXICAL_DECLARATION)]
     LexicalDeclaration(LexicalDeclarationTransport),
+    #[kind(kind::VARIABLE_DECLARATION)]
     VariableDeclaration(VariableDeclarationTransport),
+    #[kind(kind::AS_EXPRESSION)]
     AsExpression(AsExpressionTransport),
+    #[kind(kind::SATISFIES_EXPRESSION)]
     SatisfiesExpression(SatisfiesExpressionTransport),
+    #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionTransport),
+    #[kind(kind::INTERNAL_MODULE)]
     InternalModule(InternalModuleTransport),
+    #[kind(kind::TYPE_ASSERTION)]
     TypeAssertion(TypeAssertionTransport),
+    #[kind(kind::SUBSCRIPT_EXPRESSION)]
     SubscriptExpression(SubscriptExpressionTransport),
+    #[kind(kind::MEMBER_EXPRESSION)]
     MemberExpression(MemberExpressionTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
     ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
+    #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
+    #[kind(kind::NUMBER_HEX)]
     NumberHex(NumberHexTransport),
+    #[kind(kind::NUMBER_FLOAT_POINT)]
     NumberFloatPoint(NumberFloatPointTransport),
+    #[kind(kind::NUMBER_FLOAT_LEADING_POINT)]
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
+    #[kind(kind::NUMBER_FLOAT_SCIENTIFIC)]
     NumberFloatScientific(NumberFloatScientificTransport),
+    #[kind(kind::NUMBER_DECIMAL)]
     NumberDecimal(NumberDecimalTransport),
+    #[kind(kind::NUMBER_BINARY)]
     NumberBinary(NumberBinaryTransport),
+    #[kind(kind::NUMBER_OCTAL)]
     NumberOctal(NumberOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_HEX)]
     NumberBigintHex(NumberBigintHexTransport),
+    #[kind(kind::NUMBER_BIGINT_BINARY)]
     NumberBigintBinary(NumberBigintBinaryTransport),
+    #[kind(kind::NUMBER_BIGINT_OCTAL)]
     NumberBigintOctal(NumberBigintOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_DECIMAL)]
     NumberBigintDecimal(NumberBigintDecimalTransport),
+    #[kind(kind::STRING_DOUBLE)]
     StringDouble(StringDoubleTransport),
+    #[kind(kind::STRING_SINGLE)]
     StringSingle(StringSingleTransport),
+    #[kind(kind::TEMPLATE_STRING)]
     TemplateString(TemplateStringTransport),
+    #[kind(kind::REGEX)]
     Regex(RegexTransport),
+    #[kind(kind::OBJECT)]
     Object(ObjectTransport),
+    #[kind(kind::ARRAY)]
     Array(ArrayTransport),
+    #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(FunctionExpressionTransport),
+    #[kind(kind::ARROW_FUNCTION)]
     ArrowFunction(ArrowFunctionTransport),
+    #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(GeneratorFunctionTransport),
+    #[kind(kind::CLASS)]
     Class(ClassTransport),
+    #[kind(kind::CALL_EXPRESSION_CALL)]
     CallExpressionCall(CallExpressionCallTransport),
+    #[kind(kind::CALL_EXPRESSION_TEMPLATE_CALL)]
     CallExpressionTemplateCall(CallExpressionTemplateCallTransport),
+    #[kind(kind::CALL_EXPRESSION_MEMBER)]
     CallExpressionMember(CallExpressionMemberTransport),
+    #[kind(kind::NON_NULL_EXPRESSION)]
     NonNullExpression(NonNullExpressionTransport),
+    #[kind(kind::ASSIGNMENT_EXPRESSION)]
     AssignmentExpression(AssignmentExpressionTransport),
+    #[kind(kind::AUGMENTED_ASSIGNMENT_EXPRESSION)]
     AugmentedAssignmentExpression(AugmentedAssignmentExpressionTransport),
+    #[kind(kind::AWAIT_EXPRESSION)]
     AwaitExpression(AwaitExpressionTransport),
+    #[kind(kind::UNARY_EXPRESSION)]
     UnaryExpression(UnaryExpressionTransport),
+    #[kind(kind::BINARY_EXPRESSION)]
     BinaryExpression(BinaryExpressionTransport),
+    #[kind(kind::TERNARY_EXPRESSION)]
     TernaryExpression(TernaryExpressionTransport),
+    #[kind(kind::UPDATE_EXPRESSION_POSTFIX)]
     UpdateExpressionPostfix(UpdateExpressionPostfixTransport),
+    #[kind(kind::UPDATE_EXPRESSION_PREFIX)]
     UpdateExpressionPrefix(UpdateExpressionPrefixTransport),
+    #[kind(kind::NEW_EXPRESSION)]
     NewExpression(NewExpressionTransport),
+    #[kind(kind::YIELD_EXPRESSION)]
     YieldExpression(YieldExpressionTransport),
+    #[kind(kind::SEQUENCE_EXPRESSION)]
     SequenceExpression(SequenceExpressionTransport),
+    #[kind(kind::UNDEFINED)]
     Undefined,
+    #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
+    #[kind(kind::NAMESPACE_KEYWORD)]
     NamespaceKeyword,
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
+    #[kind(kind::PUBLIC_KEYWORD)]
     PublicKeyword,
+    #[kind(kind::PRIVATE_KEYWORD)]
     PrivateKeyword,
+    #[kind(kind::PROTECTED_KEYWORD)]
     ProtectedKeyword,
+    #[kind(kind::OVERRIDE_KEYWORD)]
     OverrideKeyword,
+    #[kind(kind::READONLY_KEYWORD)]
     ReadonlyKeyword,
+    #[kind(kind::MODULE_KEYWORD)]
     ModuleKeyword,
+    #[kind(kind::ANY_KEYWORD)]
     AnyKeyword,
+    #[kind(kind::NUMBER_KEYWORD)]
     NumberKeyword,
+    #[kind(kind::BOOLEAN_KEYWORD)]
     BooleanKeyword,
+    #[kind(kind::STRING_KEYWORD)]
     StringKeyword,
+    #[kind(kind::SYMBOL_KEYWORD)]
     SymbolKeyword,
+    #[kind(kind::EXPORT_KEYWORD)]
     ExportKeyword,
+    #[kind(kind::OBJECT_KEYWORD)]
     ObjectKeyword,
+    #[kind(kind::NEW_KEYWORD)]
     NewKeyword,
+    #[kind(kind::GET_KEYWORD)]
     GetKeyword,
+    #[kind(kind::SET_KEYWORD)]
     SetKeyword,
+    #[kind(kind::ASYNC_KEYWORD)]
     AsyncKeyword,
+    #[kind(kind::STATIC_KEYWORD)]
     StaticKeyword,
+    #[kind(kind::LET_KEYWORD)]
     LetKeyword,
+    #[kind(kind::THIS)]
     This,
+    #[kind(kind::SUPER)]
     Super,
+    #[kind(kind::TRUE)]
     True,
+    #[kind(kind::FALSE)]
     False,
+    #[kind(kind::NULL)]
     Null,
+    #[kind(kind::META_PROPERTY_NEW_TARGET)]
     MetaPropertyNewTarget,
+    #[kind(kind::META_PROPERTY_IMPORT_META)]
     MetaPropertyImportMeta,
+    #[kind(kind::EMPTY_STATEMENT, kind::SEMI)]
     EmptyStatement,
     Verbatim(VerbatimTransport),
 }
@@ -12080,84 +12866,162 @@ impl ::sittir_core::render::Render for ForStatementInitializerTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ForStatementConditionTransportSlot {
+    #[kind(kind::AS_EXPRESSION)]
     AsExpression(AsExpressionTransport),
+    #[kind(kind::SATISFIES_EXPRESSION)]
     SatisfiesExpression(SatisfiesExpressionTransport),
+    #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionTransport),
+    #[kind(kind::INTERNAL_MODULE)]
     InternalModule(InternalModuleTransport),
+    #[kind(kind::TYPE_ASSERTION)]
     TypeAssertion(TypeAssertionTransport),
+    #[kind(kind::SUBSCRIPT_EXPRESSION)]
     SubscriptExpression(SubscriptExpressionTransport),
+    #[kind(kind::MEMBER_EXPRESSION)]
     MemberExpression(MemberExpressionTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
     ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
+    #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
+    #[kind(kind::NUMBER_HEX)]
     NumberHex(NumberHexTransport),
+    #[kind(kind::NUMBER_FLOAT_POINT)]
     NumberFloatPoint(NumberFloatPointTransport),
+    #[kind(kind::NUMBER_FLOAT_LEADING_POINT)]
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
+    #[kind(kind::NUMBER_FLOAT_SCIENTIFIC)]
     NumberFloatScientific(NumberFloatScientificTransport),
+    #[kind(kind::NUMBER_DECIMAL)]
     NumberDecimal(NumberDecimalTransport),
+    #[kind(kind::NUMBER_BINARY)]
     NumberBinary(NumberBinaryTransport),
+    #[kind(kind::NUMBER_OCTAL)]
     NumberOctal(NumberOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_HEX)]
     NumberBigintHex(NumberBigintHexTransport),
+    #[kind(kind::NUMBER_BIGINT_BINARY)]
     NumberBigintBinary(NumberBigintBinaryTransport),
+    #[kind(kind::NUMBER_BIGINT_OCTAL)]
     NumberBigintOctal(NumberBigintOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_DECIMAL)]
     NumberBigintDecimal(NumberBigintDecimalTransport),
+    #[kind(kind::STRING_DOUBLE)]
     StringDouble(StringDoubleTransport),
+    #[kind(kind::STRING_SINGLE)]
     StringSingle(StringSingleTransport),
+    #[kind(kind::TEMPLATE_STRING)]
     TemplateString(TemplateStringTransport),
+    #[kind(kind::REGEX)]
     Regex(RegexTransport),
+    #[kind(kind::OBJECT)]
     Object(ObjectTransport),
+    #[kind(kind::ARRAY)]
     Array(ArrayTransport),
+    #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(FunctionExpressionTransport),
+    #[kind(kind::ARROW_FUNCTION)]
     ArrowFunction(ArrowFunctionTransport),
+    #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(GeneratorFunctionTransport),
+    #[kind(kind::CLASS)]
     Class(ClassTransport),
+    #[kind(kind::CALL_EXPRESSION_CALL)]
     CallExpressionCall(CallExpressionCallTransport),
+    #[kind(kind::CALL_EXPRESSION_TEMPLATE_CALL)]
     CallExpressionTemplateCall(CallExpressionTemplateCallTransport),
+    #[kind(kind::CALL_EXPRESSION_MEMBER)]
     CallExpressionMember(CallExpressionMemberTransport),
+    #[kind(kind::NON_NULL_EXPRESSION)]
     NonNullExpression(NonNullExpressionTransport),
+    #[kind(kind::ASSIGNMENT_EXPRESSION)]
     AssignmentExpression(AssignmentExpressionTransport),
+    #[kind(kind::AUGMENTED_ASSIGNMENT_EXPRESSION)]
     AugmentedAssignmentExpression(AugmentedAssignmentExpressionTransport),
+    #[kind(kind::AWAIT_EXPRESSION)]
     AwaitExpression(AwaitExpressionTransport),
+    #[kind(kind::UNARY_EXPRESSION)]
     UnaryExpression(UnaryExpressionTransport),
+    #[kind(kind::BINARY_EXPRESSION)]
     BinaryExpression(BinaryExpressionTransport),
+    #[kind(kind::TERNARY_EXPRESSION)]
     TernaryExpression(TernaryExpressionTransport),
+    #[kind(kind::UPDATE_EXPRESSION_POSTFIX)]
     UpdateExpressionPostfix(UpdateExpressionPostfixTransport),
+    #[kind(kind::UPDATE_EXPRESSION_PREFIX)]
     UpdateExpressionPrefix(UpdateExpressionPrefixTransport),
+    #[kind(kind::NEW_EXPRESSION)]
     NewExpression(NewExpressionTransport),
+    #[kind(kind::YIELD_EXPRESSION)]
     YieldExpression(YieldExpressionTransport),
+    #[kind(kind::SEQUENCE_EXPRESSION)]
     SequenceExpression(SequenceExpressionTransport),
+    #[kind(kind::UNDEFINED)]
     Undefined,
+    #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
+    #[kind(kind::NAMESPACE_KEYWORD)]
     NamespaceKeyword,
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
+    #[kind(kind::PUBLIC_KEYWORD)]
     PublicKeyword,
+    #[kind(kind::PRIVATE_KEYWORD)]
     PrivateKeyword,
+    #[kind(kind::PROTECTED_KEYWORD)]
     ProtectedKeyword,
+    #[kind(kind::OVERRIDE_KEYWORD)]
     OverrideKeyword,
+    #[kind(kind::READONLY_KEYWORD)]
     ReadonlyKeyword,
+    #[kind(kind::MODULE_KEYWORD)]
     ModuleKeyword,
+    #[kind(kind::ANY_KEYWORD)]
     AnyKeyword,
+    #[kind(kind::NUMBER_KEYWORD)]
     NumberKeyword,
+    #[kind(kind::BOOLEAN_KEYWORD)]
     BooleanKeyword,
+    #[kind(kind::STRING_KEYWORD)]
     StringKeyword,
+    #[kind(kind::SYMBOL_KEYWORD)]
     SymbolKeyword,
+    #[kind(kind::EXPORT_KEYWORD)]
     ExportKeyword,
+    #[kind(kind::OBJECT_KEYWORD)]
     ObjectKeyword,
+    #[kind(kind::NEW_KEYWORD)]
     NewKeyword,
+    #[kind(kind::GET_KEYWORD)]
     GetKeyword,
+    #[kind(kind::SET_KEYWORD)]
     SetKeyword,
+    #[kind(kind::ASYNC_KEYWORD)]
     AsyncKeyword,
+    #[kind(kind::STATIC_KEYWORD)]
     StaticKeyword,
+    #[kind(kind::LET_KEYWORD)]
     LetKeyword,
+    #[kind(kind::THIS)]
     This,
+    #[kind(kind::SUPER)]
     Super,
+    #[kind(kind::TRUE)]
     True,
+    #[kind(kind::FALSE)]
     False,
+    #[kind(kind::NULL)]
     Null,
+    #[kind(kind::META_PROPERTY_NEW_TARGET)]
     MetaPropertyNewTarget,
+    #[kind(kind::META_PROPERTY_IMPORT_META)]
     MetaPropertyImportMeta,
+    #[kind(kind::EMPTY_STATEMENT, kind::SEMI)]
     EmptyStatement,
     Verbatim(VerbatimTransport),
 }
@@ -12988,10 +13852,14 @@ impl ::sittir_core::render::Render for ForStatementConditionTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum DoStatementTerminatorTransportSlot {
+    #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
+    #[kind(kind::SEMI)]
     Semi,
+    #[transport(blank)]
     Blank,
 }
 
@@ -13106,9 +13974,12 @@ impl ::sittir_core::render::Render for DoStatementTerminatorTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum BreakStatementTerminatorTransportSlot {
+    #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
+    #[kind(kind::SEMI)]
     Semi,
 }
 
@@ -13217,9 +14088,12 @@ impl ::sittir_core::render::Render for BreakStatementTerminatorTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ContinueStatementTerminatorTransportSlot {
+    #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
+    #[kind(kind::SEMI)]
     Semi,
 }
 
@@ -13328,9 +14202,12 @@ impl ::sittir_core::render::Render for ContinueStatementTerminatorTransportSlot 
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum DebuggerStatementTerminatorTransportSlot {
+    #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
+    #[kind(kind::SEMI)]
     Semi,
 }
 
@@ -13439,9 +14316,12 @@ impl ::sittir_core::render::Render for DebuggerStatementTerminatorTransportSlot 
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ReturnStatementTerminatorTransportSlot {
+    #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
+    #[kind(kind::SEMI)]
     Semi,
 }
 
@@ -13550,9 +14430,12 @@ impl ::sittir_core::render::Render for ReturnStatementTerminatorTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ThrowStatementTerminatorTransportSlot {
+    #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
+    #[kind(kind::SEMI)]
     Semi,
 }
 
@@ -13661,30 +14544,54 @@ impl ::sittir_core::render::Render for ThrowStatementTerminatorTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum LabeledStatementLabelTransportSlot {
+    #[kind(kind::_STATEMENT_IDENTIFIER, display)]
     StatementIdentifier(StatementIdentifierTransport),
+    #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
+    #[kind(kind::NAMESPACE_KEYWORD)]
     NamespaceKeyword,
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
+    #[kind(kind::PUBLIC_KEYWORD)]
     PublicKeyword,
+    #[kind(kind::PRIVATE_KEYWORD)]
     PrivateKeyword,
+    #[kind(kind::PROTECTED_KEYWORD)]
     ProtectedKeyword,
+    #[kind(kind::OVERRIDE_KEYWORD)]
     OverrideKeyword,
+    #[kind(kind::READONLY_KEYWORD)]
     ReadonlyKeyword,
+    #[kind(kind::MODULE_KEYWORD)]
     ModuleKeyword,
+    #[kind(kind::ANY_KEYWORD)]
     AnyKeyword,
+    #[kind(kind::NUMBER_KEYWORD)]
     NumberKeyword,
+    #[kind(kind::BOOLEAN_KEYWORD)]
     BooleanKeyword,
+    #[kind(kind::STRING_KEYWORD)]
     StringKeyword,
+    #[kind(kind::SYMBOL_KEYWORD)]
     SymbolKeyword,
+    #[kind(kind::EXPORT_KEYWORD)]
     ExportKeyword,
+    #[kind(kind::OBJECT_KEYWORD)]
     ObjectKeyword,
+    #[kind(kind::NEW_KEYWORD)]
     NewKeyword,
+    #[kind(kind::GET_KEYWORD)]
     GetKeyword,
+    #[kind(kind::SET_KEYWORD)]
     SetKeyword,
+    #[kind(kind::ASYNC_KEYWORD)]
     AsyncKeyword,
+    #[kind(kind::STATIC_KEYWORD)]
     StaticKeyword,
+    #[kind(kind::LET_KEYWORD)]
     LetKeyword,
 }
 
@@ -13941,9 +14848,12 @@ impl ::sittir_core::render::Render for LabeledStatementLabelTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum SwitchBodyCasesTransportSlot {
+    #[kind(kind::SWITCH_CASE)]
     SwitchCase(SwitchCaseTransport),
+    #[kind(kind::SWITCH_DEFAULT)]
     SwitchDefault(SwitchDefaultTransport),
 }
 
@@ -14057,83 +14967,160 @@ impl ::sittir_core::render::Render for SwitchBodyCasesTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum YieldExpressionExpressionTransportSlot {
+    #[kind(kind::YIELD_EXPRESSION_DELEGATE)]
     YieldExpressionDelegate(YieldExpressionDelegateTransport),
+    #[kind(kind::AS_EXPRESSION)]
     AsExpression(AsExpressionTransport),
+    #[kind(kind::SATISFIES_EXPRESSION)]
     SatisfiesExpression(SatisfiesExpressionTransport),
+    #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionTransport),
+    #[kind(kind::INTERNAL_MODULE)]
     InternalModule(InternalModuleTransport),
+    #[kind(kind::TYPE_ASSERTION)]
     TypeAssertion(TypeAssertionTransport),
+    #[kind(kind::SUBSCRIPT_EXPRESSION)]
     SubscriptExpression(SubscriptExpressionTransport),
+    #[kind(kind::MEMBER_EXPRESSION)]
     MemberExpression(MemberExpressionTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
     ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
+    #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
+    #[kind(kind::NUMBER_HEX)]
     NumberHex(NumberHexTransport),
+    #[kind(kind::NUMBER_FLOAT_POINT)]
     NumberFloatPoint(NumberFloatPointTransport),
+    #[kind(kind::NUMBER_FLOAT_LEADING_POINT)]
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
+    #[kind(kind::NUMBER_FLOAT_SCIENTIFIC)]
     NumberFloatScientific(NumberFloatScientificTransport),
+    #[kind(kind::NUMBER_DECIMAL)]
     NumberDecimal(NumberDecimalTransport),
+    #[kind(kind::NUMBER_BINARY)]
     NumberBinary(NumberBinaryTransport),
+    #[kind(kind::NUMBER_OCTAL)]
     NumberOctal(NumberOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_HEX)]
     NumberBigintHex(NumberBigintHexTransport),
+    #[kind(kind::NUMBER_BIGINT_BINARY)]
     NumberBigintBinary(NumberBigintBinaryTransport),
+    #[kind(kind::NUMBER_BIGINT_OCTAL)]
     NumberBigintOctal(NumberBigintOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_DECIMAL)]
     NumberBigintDecimal(NumberBigintDecimalTransport),
+    #[kind(kind::STRING_DOUBLE)]
     StringDouble(StringDoubleTransport),
+    #[kind(kind::STRING_SINGLE)]
     StringSingle(StringSingleTransport),
+    #[kind(kind::TEMPLATE_STRING)]
     TemplateString(TemplateStringTransport),
+    #[kind(kind::REGEX)]
     Regex(RegexTransport),
+    #[kind(kind::OBJECT)]
     Object(ObjectTransport),
+    #[kind(kind::ARRAY)]
     Array(ArrayTransport),
+    #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(FunctionExpressionTransport),
+    #[kind(kind::ARROW_FUNCTION)]
     ArrowFunction(ArrowFunctionTransport),
+    #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(GeneratorFunctionTransport),
+    #[kind(kind::CLASS)]
     Class(ClassTransport),
+    #[kind(kind::CALL_EXPRESSION_CALL)]
     CallExpressionCall(CallExpressionCallTransport),
+    #[kind(kind::CALL_EXPRESSION_TEMPLATE_CALL)]
     CallExpressionTemplateCall(CallExpressionTemplateCallTransport),
+    #[kind(kind::CALL_EXPRESSION_MEMBER)]
     CallExpressionMember(CallExpressionMemberTransport),
+    #[kind(kind::NON_NULL_EXPRESSION)]
     NonNullExpression(NonNullExpressionTransport),
+    #[kind(kind::ASSIGNMENT_EXPRESSION)]
     AssignmentExpression(AssignmentExpressionTransport),
+    #[kind(kind::AUGMENTED_ASSIGNMENT_EXPRESSION)]
     AugmentedAssignmentExpression(AugmentedAssignmentExpressionTransport),
+    #[kind(kind::AWAIT_EXPRESSION)]
     AwaitExpression(AwaitExpressionTransport),
+    #[kind(kind::UNARY_EXPRESSION)]
     UnaryExpression(UnaryExpressionTransport),
+    #[kind(kind::BINARY_EXPRESSION)]
     BinaryExpression(BinaryExpressionTransport),
+    #[kind(kind::TERNARY_EXPRESSION)]
     TernaryExpression(TernaryExpressionTransport),
+    #[kind(kind::UPDATE_EXPRESSION_POSTFIX)]
     UpdateExpressionPostfix(UpdateExpressionPostfixTransport),
+    #[kind(kind::UPDATE_EXPRESSION_PREFIX)]
     UpdateExpressionPrefix(UpdateExpressionPrefixTransport),
+    #[kind(kind::NEW_EXPRESSION)]
     NewExpression(NewExpressionTransport),
+    #[kind(kind::YIELD_EXPRESSION)]
     YieldExpression(YieldExpressionTransport),
+    #[kind(kind::UNDEFINED)]
     Undefined,
+    #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
+    #[kind(kind::NAMESPACE_KEYWORD)]
     NamespaceKeyword,
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
+    #[kind(kind::PUBLIC_KEYWORD)]
     PublicKeyword,
+    #[kind(kind::PRIVATE_KEYWORD)]
     PrivateKeyword,
+    #[kind(kind::PROTECTED_KEYWORD)]
     ProtectedKeyword,
+    #[kind(kind::OVERRIDE_KEYWORD)]
     OverrideKeyword,
+    #[kind(kind::READONLY_KEYWORD)]
     ReadonlyKeyword,
+    #[kind(kind::MODULE_KEYWORD)]
     ModuleKeyword,
+    #[kind(kind::ANY_KEYWORD)]
     AnyKeyword,
+    #[kind(kind::NUMBER_KEYWORD)]
     NumberKeyword,
+    #[kind(kind::BOOLEAN_KEYWORD)]
     BooleanKeyword,
+    #[kind(kind::STRING_KEYWORD)]
     StringKeyword,
+    #[kind(kind::SYMBOL_KEYWORD)]
     SymbolKeyword,
+    #[kind(kind::EXPORT_KEYWORD)]
     ExportKeyword,
+    #[kind(kind::OBJECT_KEYWORD)]
     ObjectKeyword,
+    #[kind(kind::NEW_KEYWORD)]
     NewKeyword,
+    #[kind(kind::GET_KEYWORD)]
     GetKeyword,
+    #[kind(kind::SET_KEYWORD)]
     SetKeyword,
+    #[kind(kind::ASYNC_KEYWORD)]
     AsyncKeyword,
+    #[kind(kind::STATIC_KEYWORD)]
     StaticKeyword,
+    #[kind(kind::LET_KEYWORD)]
     LetKeyword,
+    #[kind(kind::THIS)]
     This,
+    #[kind(kind::SUPER)]
     Super,
+    #[kind(kind::TRUE)]
     True,
+    #[kind(kind::FALSE)]
     False,
+    #[kind(kind::NULL)]
     Null,
+    #[kind(kind::META_PROPERTY_NEW_TARGET)]
     MetaPropertyNewTarget,
+    #[kind(kind::META_PROPERTY_IMPORT_META)]
     MetaPropertyImportMeta,
     Verbatim(VerbatimTransport),
 }
@@ -14951,33 +15938,60 @@ impl ::sittir_core::render::Render for YieldExpressionExpressionTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ObjectPropertiesTransportSlot {
+    #[kind(kind::PAIR)]
     Pair(PairTransport),
+    #[kind(kind::SPREAD_ELEMENT)]
     SpreadElement(SpreadElementTransport),
+    #[kind(kind::METHOD_DEFINITION)]
     MethodDefinition(MethodDefinitionTransport),
+    #[kind(kind::_SHORTHAND_PROPERTY_IDENTIFIER, display)]
     ShorthandPropertyIdentifier(ShorthandPropertyIdentifierTransport),
+    #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
+    #[kind(kind::NAMESPACE_KEYWORD)]
     NamespaceKeyword,
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
+    #[kind(kind::PUBLIC_KEYWORD)]
     PublicKeyword,
+    #[kind(kind::PRIVATE_KEYWORD)]
     PrivateKeyword,
+    #[kind(kind::PROTECTED_KEYWORD)]
     ProtectedKeyword,
+    #[kind(kind::OVERRIDE_KEYWORD)]
     OverrideKeyword,
+    #[kind(kind::READONLY_KEYWORD)]
     ReadonlyKeyword,
+    #[kind(kind::MODULE_KEYWORD)]
     ModuleKeyword,
+    #[kind(kind::ANY_KEYWORD)]
     AnyKeyword,
+    #[kind(kind::NUMBER_KEYWORD)]
     NumberKeyword,
+    #[kind(kind::BOOLEAN_KEYWORD)]
     BooleanKeyword,
+    #[kind(kind::STRING_KEYWORD)]
     StringKeyword,
+    #[kind(kind::SYMBOL_KEYWORD)]
     SymbolKeyword,
+    #[kind(kind::EXPORT_KEYWORD)]
     ExportKeyword,
+    #[kind(kind::OBJECT_KEYWORD)]
     ObjectKeyword,
+    #[kind(kind::NEW_KEYWORD)]
     NewKeyword,
+    #[kind(kind::GET_KEYWORD)]
     GetKeyword,
+    #[kind(kind::SET_KEYWORD)]
     SetKeyword,
+    #[kind(kind::ASYNC_KEYWORD)]
     AsyncKeyword,
+    #[kind(kind::STATIC_KEYWORD)]
     StaticKeyword,
+    #[kind(kind::LET_KEYWORD)]
     LetKeyword,
 }
 
@@ -15267,33 +16281,60 @@ impl ::sittir_core::render::Render for ObjectPropertiesTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ObjectPatternPropertiesTransportSlot {
+    #[kind(kind::PAIR_PATTERN)]
     PairPattern(PairPatternTransport),
+    #[kind(kind::REST_PATTERN)]
     RestPattern(RestPatternTransport),
+    #[kind(kind::OBJECT_ASSIGNMENT_PATTERN)]
     ObjectAssignmentPattern(ObjectAssignmentPatternTransport),
+    #[kind(kind::_SHORTHAND_PROPERTY_IDENTIFIER_PATTERN, display)]
     ShorthandPropertyIdentifierPattern(ShorthandPropertyIdentifierPatternTransport),
+    #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
+    #[kind(kind::NAMESPACE_KEYWORD)]
     NamespaceKeyword,
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
+    #[kind(kind::PUBLIC_KEYWORD)]
     PublicKeyword,
+    #[kind(kind::PRIVATE_KEYWORD)]
     PrivateKeyword,
+    #[kind(kind::PROTECTED_KEYWORD)]
     ProtectedKeyword,
+    #[kind(kind::OVERRIDE_KEYWORD)]
     OverrideKeyword,
+    #[kind(kind::READONLY_KEYWORD)]
     ReadonlyKeyword,
+    #[kind(kind::MODULE_KEYWORD)]
     ModuleKeyword,
+    #[kind(kind::ANY_KEYWORD)]
     AnyKeyword,
+    #[kind(kind::NUMBER_KEYWORD)]
     NumberKeyword,
+    #[kind(kind::BOOLEAN_KEYWORD)]
     BooleanKeyword,
+    #[kind(kind::STRING_KEYWORD)]
     StringKeyword,
+    #[kind(kind::SYMBOL_KEYWORD)]
     SymbolKeyword,
+    #[kind(kind::EXPORT_KEYWORD)]
     ExportKeyword,
+    #[kind(kind::OBJECT_KEYWORD)]
     ObjectKeyword,
+    #[kind(kind::NEW_KEYWORD)]
     NewKeyword,
+    #[kind(kind::GET_KEYWORD)]
     GetKeyword,
+    #[kind(kind::SET_KEYWORD)]
     SetKeyword,
+    #[kind(kind::ASYNC_KEYWORD)]
     AsyncKeyword,
+    #[kind(kind::STATIC_KEYWORD)]
     StaticKeyword,
+    #[kind(kind::LET_KEYWORD)]
     LetKeyword,
 }
 
@@ -15583,32 +16624,58 @@ impl ::sittir_core::render::Render for ObjectPatternPropertiesTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ObjectAssignmentPatternLeftTransportSlot {
+    #[kind(kind::_SHORTHAND_PROPERTY_IDENTIFIER_PATTERN, display)]
     ShorthandPropertyIdentifierPattern(ShorthandPropertyIdentifierPatternTransport),
+    #[kind(kind::OBJECT_PATTERN)]
     ObjectPattern(ObjectPatternTransport),
+    #[kind(kind::ARRAY_PATTERN)]
     ArrayPattern(ArrayPatternTransport),
+    #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
+    #[kind(kind::NAMESPACE_KEYWORD)]
     NamespaceKeyword,
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
+    #[kind(kind::PUBLIC_KEYWORD)]
     PublicKeyword,
+    #[kind(kind::PRIVATE_KEYWORD)]
     PrivateKeyword,
+    #[kind(kind::PROTECTED_KEYWORD)]
     ProtectedKeyword,
+    #[kind(kind::OVERRIDE_KEYWORD)]
     OverrideKeyword,
+    #[kind(kind::READONLY_KEYWORD)]
     ReadonlyKeyword,
+    #[kind(kind::MODULE_KEYWORD)]
     ModuleKeyword,
+    #[kind(kind::ANY_KEYWORD)]
     AnyKeyword,
+    #[kind(kind::NUMBER_KEYWORD)]
     NumberKeyword,
+    #[kind(kind::BOOLEAN_KEYWORD)]
     BooleanKeyword,
+    #[kind(kind::STRING_KEYWORD)]
     StringKeyword,
+    #[kind(kind::SYMBOL_KEYWORD)]
     SymbolKeyword,
+    #[kind(kind::EXPORT_KEYWORD)]
     ExportKeyword,
+    #[kind(kind::OBJECT_KEYWORD)]
     ObjectKeyword,
+    #[kind(kind::NEW_KEYWORD)]
     NewKeyword,
+    #[kind(kind::GET_KEYWORD)]
     GetKeyword,
+    #[kind(kind::SET_KEYWORD)]
     SetKeyword,
+    #[kind(kind::ASYNC_KEYWORD)]
     AsyncKeyword,
+    #[kind(kind::STATIC_KEYWORD)]
     StaticKeyword,
+    #[kind(kind::LET_KEYWORD)]
     LetKeyword,
 }
 
@@ -15887,83 +16954,160 @@ impl ::sittir_core::render::Render for ObjectAssignmentPatternLeftTransportSlot 
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ArrayElementsTransportSlot {
+    #[kind(kind::AS_EXPRESSION)]
     AsExpression(AsExpressionTransport),
+    #[kind(kind::SATISFIES_EXPRESSION)]
     SatisfiesExpression(SatisfiesExpressionTransport),
+    #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionTransport),
+    #[kind(kind::INTERNAL_MODULE)]
     InternalModule(InternalModuleTransport),
+    #[kind(kind::TYPE_ASSERTION)]
     TypeAssertion(TypeAssertionTransport),
+    #[kind(kind::SUBSCRIPT_EXPRESSION)]
     SubscriptExpression(SubscriptExpressionTransport),
+    #[kind(kind::MEMBER_EXPRESSION)]
     MemberExpression(MemberExpressionTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
     ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
+    #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
+    #[kind(kind::NUMBER_HEX)]
     NumberHex(NumberHexTransport),
+    #[kind(kind::NUMBER_FLOAT_POINT)]
     NumberFloatPoint(NumberFloatPointTransport),
+    #[kind(kind::NUMBER_FLOAT_LEADING_POINT)]
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
+    #[kind(kind::NUMBER_FLOAT_SCIENTIFIC)]
     NumberFloatScientific(NumberFloatScientificTransport),
+    #[kind(kind::NUMBER_DECIMAL)]
     NumberDecimal(NumberDecimalTransport),
+    #[kind(kind::NUMBER_BINARY)]
     NumberBinary(NumberBinaryTransport),
+    #[kind(kind::NUMBER_OCTAL)]
     NumberOctal(NumberOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_HEX)]
     NumberBigintHex(NumberBigintHexTransport),
+    #[kind(kind::NUMBER_BIGINT_BINARY)]
     NumberBigintBinary(NumberBigintBinaryTransport),
+    #[kind(kind::NUMBER_BIGINT_OCTAL)]
     NumberBigintOctal(NumberBigintOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_DECIMAL)]
     NumberBigintDecimal(NumberBigintDecimalTransport),
+    #[kind(kind::STRING_DOUBLE)]
     StringDouble(StringDoubleTransport),
+    #[kind(kind::STRING_SINGLE)]
     StringSingle(StringSingleTransport),
+    #[kind(kind::TEMPLATE_STRING)]
     TemplateString(TemplateStringTransport),
+    #[kind(kind::REGEX)]
     Regex(RegexTransport),
+    #[kind(kind::OBJECT)]
     Object(ObjectTransport),
+    #[kind(kind::ARRAY)]
     Array(ArrayTransport),
+    #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(FunctionExpressionTransport),
+    #[kind(kind::ARROW_FUNCTION)]
     ArrowFunction(ArrowFunctionTransport),
+    #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(GeneratorFunctionTransport),
+    #[kind(kind::CLASS)]
     Class(ClassTransport),
+    #[kind(kind::CALL_EXPRESSION_CALL)]
     CallExpressionCall(CallExpressionCallTransport),
+    #[kind(kind::CALL_EXPRESSION_TEMPLATE_CALL)]
     CallExpressionTemplateCall(CallExpressionTemplateCallTransport),
+    #[kind(kind::CALL_EXPRESSION_MEMBER)]
     CallExpressionMember(CallExpressionMemberTransport),
+    #[kind(kind::NON_NULL_EXPRESSION)]
     NonNullExpression(NonNullExpressionTransport),
+    #[kind(kind::ASSIGNMENT_EXPRESSION)]
     AssignmentExpression(AssignmentExpressionTransport),
+    #[kind(kind::AUGMENTED_ASSIGNMENT_EXPRESSION)]
     AugmentedAssignmentExpression(AugmentedAssignmentExpressionTransport),
+    #[kind(kind::AWAIT_EXPRESSION)]
     AwaitExpression(AwaitExpressionTransport),
+    #[kind(kind::UNARY_EXPRESSION)]
     UnaryExpression(UnaryExpressionTransport),
+    #[kind(kind::BINARY_EXPRESSION)]
     BinaryExpression(BinaryExpressionTransport),
+    #[kind(kind::TERNARY_EXPRESSION)]
     TernaryExpression(TernaryExpressionTransport),
+    #[kind(kind::UPDATE_EXPRESSION_POSTFIX)]
     UpdateExpressionPostfix(UpdateExpressionPostfixTransport),
+    #[kind(kind::UPDATE_EXPRESSION_PREFIX)]
     UpdateExpressionPrefix(UpdateExpressionPrefixTransport),
+    #[kind(kind::NEW_EXPRESSION)]
     NewExpression(NewExpressionTransport),
+    #[kind(kind::YIELD_EXPRESSION)]
     YieldExpression(YieldExpressionTransport),
+    #[kind(kind::SPREAD_ELEMENT)]
     SpreadElement(SpreadElementTransport),
+    #[kind(kind::UNDEFINED)]
     Undefined,
+    #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
+    #[kind(kind::NAMESPACE_KEYWORD)]
     NamespaceKeyword,
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
+    #[kind(kind::PUBLIC_KEYWORD)]
     PublicKeyword,
+    #[kind(kind::PRIVATE_KEYWORD)]
     PrivateKeyword,
+    #[kind(kind::PROTECTED_KEYWORD)]
     ProtectedKeyword,
+    #[kind(kind::OVERRIDE_KEYWORD)]
     OverrideKeyword,
+    #[kind(kind::READONLY_KEYWORD)]
     ReadonlyKeyword,
+    #[kind(kind::MODULE_KEYWORD)]
     ModuleKeyword,
+    #[kind(kind::ANY_KEYWORD)]
     AnyKeyword,
+    #[kind(kind::NUMBER_KEYWORD)]
     NumberKeyword,
+    #[kind(kind::BOOLEAN_KEYWORD)]
     BooleanKeyword,
+    #[kind(kind::STRING_KEYWORD)]
     StringKeyword,
+    #[kind(kind::SYMBOL_KEYWORD)]
     SymbolKeyword,
+    #[kind(kind::EXPORT_KEYWORD)]
     ExportKeyword,
+    #[kind(kind::OBJECT_KEYWORD)]
     ObjectKeyword,
+    #[kind(kind::NEW_KEYWORD)]
     NewKeyword,
+    #[kind(kind::GET_KEYWORD)]
     GetKeyword,
+    #[kind(kind::SET_KEYWORD)]
     SetKeyword,
+    #[kind(kind::ASYNC_KEYWORD)]
     AsyncKeyword,
+    #[kind(kind::STATIC_KEYWORD)]
     StaticKeyword,
+    #[kind(kind::LET_KEYWORD)]
     LetKeyword,
+    #[kind(kind::THIS)]
     This,
+    #[kind(kind::SUPER)]
     Super,
+    #[kind(kind::TRUE)]
     True,
+    #[kind(kind::FALSE)]
     False,
+    #[kind(kind::NULL)]
     Null,
+    #[kind(kind::META_PROPERTY_NEW_TARGET)]
     MetaPropertyNewTarget,
+    #[kind(kind::META_PROPERTY_IMPORT_META)]
     MetaPropertyImportMeta,
     Verbatim(VerbatimTransport),
 }
@@ -16781,10 +17925,14 @@ impl ::sittir_core::render::Render for ArrayElementsTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ArrayPatternElementsTransportSlot {
+    #[kind(kind::_LHS_EXPRESSION)]
     LhsExpression(LhsExpressionTransport),
+    #[kind(kind::REST_PATTERN)]
     RestPattern(RestPatternTransport),
+    #[kind(kind::ASSIGNMENT_PATTERN)]
     AssignmentPattern(AssignmentPatternTransport),
 }
 
@@ -16909,9 +18057,12 @@ impl ::sittir_core::render::Render for ArrayPatternElementsTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum NestedIdentifierObjectTransportSlot {
+    #[kind(kind::IDENTIFIER, kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::TYPE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::EXPORT_KEYWORD, kind::OBJECT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD)]
     Identifier(IdentifierTransport),
+    #[kind(kind::NESTED_IDENTIFIER)]
     NestedIdentifier(NestedIdentifierTransport),
     Verbatim(VerbatimTransport),
 }
@@ -17167,9 +18318,12 @@ impl ::sittir_core::render::Render for NestedIdentifierObjectTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ClassHeritageContentTransportSlot {
+    #[kind(kind::CLASS_HERITAGE_EXTENDS_CLAUSE)]
     ClassHeritageExtendsClause(ClassHeritageExtendsClauseTransport),
+    #[kind(kind::IMPLEMENTS_CLAUSE)]
     ImplementsClause(ImplementsClauseTransport),
 }
 
@@ -17283,10 +18437,14 @@ impl ::sittir_core::render::Render for ClassHeritageContentTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum FunctionExpressionReturnTypeTransportSlot {
+    #[kind(kind::TYPE_ANNOTATION)]
     TypeAnnotation(TypeAnnotationTransport),
+    #[kind(kind::ASSERTS_ANNOTATION)]
     AssertsAnnotation(AssertsAnnotationTransport),
+    #[kind(kind::TYPE_PREDICATE_ANNOTATION)]
     TypePredicateAnnotation(TypePredicateAnnotationTransport),
 }
 
@@ -17411,83 +18569,160 @@ impl ::sittir_core::render::Render for FunctionExpressionReturnTypeTransportSlot
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ArrowFunctionBodyTransportSlot {
+    #[kind(kind::AS_EXPRESSION)]
     AsExpression(AsExpressionTransport),
+    #[kind(kind::SATISFIES_EXPRESSION)]
     SatisfiesExpression(SatisfiesExpressionTransport),
+    #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionTransport),
+    #[kind(kind::INTERNAL_MODULE)]
     InternalModule(InternalModuleTransport),
+    #[kind(kind::TYPE_ASSERTION)]
     TypeAssertion(TypeAssertionTransport),
+    #[kind(kind::SUBSCRIPT_EXPRESSION)]
     SubscriptExpression(SubscriptExpressionTransport),
+    #[kind(kind::MEMBER_EXPRESSION)]
     MemberExpression(MemberExpressionTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
     ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
+    #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
+    #[kind(kind::NUMBER_HEX)]
     NumberHex(NumberHexTransport),
+    #[kind(kind::NUMBER_FLOAT_POINT)]
     NumberFloatPoint(NumberFloatPointTransport),
+    #[kind(kind::NUMBER_FLOAT_LEADING_POINT)]
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
+    #[kind(kind::NUMBER_FLOAT_SCIENTIFIC)]
     NumberFloatScientific(NumberFloatScientificTransport),
+    #[kind(kind::NUMBER_DECIMAL)]
     NumberDecimal(NumberDecimalTransport),
+    #[kind(kind::NUMBER_BINARY)]
     NumberBinary(NumberBinaryTransport),
+    #[kind(kind::NUMBER_OCTAL)]
     NumberOctal(NumberOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_HEX)]
     NumberBigintHex(NumberBigintHexTransport),
+    #[kind(kind::NUMBER_BIGINT_BINARY)]
     NumberBigintBinary(NumberBigintBinaryTransport),
+    #[kind(kind::NUMBER_BIGINT_OCTAL)]
     NumberBigintOctal(NumberBigintOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_DECIMAL)]
     NumberBigintDecimal(NumberBigintDecimalTransport),
+    #[kind(kind::STRING_DOUBLE)]
     StringDouble(StringDoubleTransport),
+    #[kind(kind::STRING_SINGLE)]
     StringSingle(StringSingleTransport),
+    #[kind(kind::TEMPLATE_STRING)]
     TemplateString(TemplateStringTransport),
+    #[kind(kind::REGEX)]
     Regex(RegexTransport),
+    #[kind(kind::OBJECT)]
     Object(ObjectTransport),
+    #[kind(kind::ARRAY)]
     Array(ArrayTransport),
+    #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(FunctionExpressionTransport),
+    #[kind(kind::ARROW_FUNCTION)]
     ArrowFunction(ArrowFunctionTransport),
+    #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(GeneratorFunctionTransport),
+    #[kind(kind::CLASS)]
     Class(ClassTransport),
+    #[kind(kind::CALL_EXPRESSION_CALL)]
     CallExpressionCall(CallExpressionCallTransport),
+    #[kind(kind::CALL_EXPRESSION_TEMPLATE_CALL)]
     CallExpressionTemplateCall(CallExpressionTemplateCallTransport),
+    #[kind(kind::CALL_EXPRESSION_MEMBER)]
     CallExpressionMember(CallExpressionMemberTransport),
+    #[kind(kind::NON_NULL_EXPRESSION)]
     NonNullExpression(NonNullExpressionTransport),
+    #[kind(kind::ASSIGNMENT_EXPRESSION)]
     AssignmentExpression(AssignmentExpressionTransport),
+    #[kind(kind::AUGMENTED_ASSIGNMENT_EXPRESSION)]
     AugmentedAssignmentExpression(AugmentedAssignmentExpressionTransport),
+    #[kind(kind::AWAIT_EXPRESSION)]
     AwaitExpression(AwaitExpressionTransport),
+    #[kind(kind::UNARY_EXPRESSION)]
     UnaryExpression(UnaryExpressionTransport),
+    #[kind(kind::BINARY_EXPRESSION)]
     BinaryExpression(BinaryExpressionTransport),
+    #[kind(kind::TERNARY_EXPRESSION)]
     TernaryExpression(TernaryExpressionTransport),
+    #[kind(kind::UPDATE_EXPRESSION_POSTFIX)]
     UpdateExpressionPostfix(UpdateExpressionPostfixTransport),
+    #[kind(kind::UPDATE_EXPRESSION_PREFIX)]
     UpdateExpressionPrefix(UpdateExpressionPrefixTransport),
+    #[kind(kind::NEW_EXPRESSION)]
     NewExpression(NewExpressionTransport),
+    #[kind(kind::YIELD_EXPRESSION)]
     YieldExpression(YieldExpressionTransport),
+    #[kind(kind::STATEMENT_BLOCK)]
     StatementBlock(StatementBlockTransport),
+    #[kind(kind::UNDEFINED)]
     Undefined,
+    #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
+    #[kind(kind::NAMESPACE_KEYWORD)]
     NamespaceKeyword,
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
+    #[kind(kind::PUBLIC_KEYWORD)]
     PublicKeyword,
+    #[kind(kind::PRIVATE_KEYWORD)]
     PrivateKeyword,
+    #[kind(kind::PROTECTED_KEYWORD)]
     ProtectedKeyword,
+    #[kind(kind::OVERRIDE_KEYWORD)]
     OverrideKeyword,
+    #[kind(kind::READONLY_KEYWORD)]
     ReadonlyKeyword,
+    #[kind(kind::MODULE_KEYWORD)]
     ModuleKeyword,
+    #[kind(kind::ANY_KEYWORD)]
     AnyKeyword,
+    #[kind(kind::NUMBER_KEYWORD)]
     NumberKeyword,
+    #[kind(kind::BOOLEAN_KEYWORD)]
     BooleanKeyword,
+    #[kind(kind::STRING_KEYWORD)]
     StringKeyword,
+    #[kind(kind::SYMBOL_KEYWORD)]
     SymbolKeyword,
+    #[kind(kind::EXPORT_KEYWORD)]
     ExportKeyword,
+    #[kind(kind::OBJECT_KEYWORD)]
     ObjectKeyword,
+    #[kind(kind::NEW_KEYWORD)]
     NewKeyword,
+    #[kind(kind::GET_KEYWORD)]
     GetKeyword,
+    #[kind(kind::SET_KEYWORD)]
     SetKeyword,
+    #[kind(kind::ASYNC_KEYWORD)]
     AsyncKeyword,
+    #[kind(kind::STATIC_KEYWORD)]
     StaticKeyword,
+    #[kind(kind::LET_KEYWORD)]
     LetKeyword,
+    #[kind(kind::THIS)]
     This,
+    #[kind(kind::SUPER)]
     Super,
+    #[kind(kind::TRUE)]
     True,
+    #[kind(kind::FALSE)]
     False,
+    #[kind(kind::NULL)]
     Null,
+    #[kind(kind::META_PROPERTY_NEW_TARGET)]
     MetaPropertyNewTarget,
+    #[kind(kind::META_PROPERTY_IMPORT_META)]
     MetaPropertyImportMeta,
     Verbatim(VerbatimTransport),
 }
@@ -18305,9 +19540,12 @@ impl ::sittir_core::render::Render for ArrowFunctionBodyTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ArrowFunctionContentTransportSlot {
+    #[kind(kind::ARROW_FUNCTION_PARAMETER)]
     ArrowFunctionParameter(ArrowFunctionParameterTransport),
+    #[kind(kind::CALL_SIGNATURE)]
     CallSignature(CallSignatureTransport),
 }
 
@@ -18421,83 +19659,160 @@ impl ::sittir_core::render::Render for ArrowFunctionContentTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum MemberExpressionObjectTransportSlot {
+    #[kind(kind::AS_EXPRESSION)]
     AsExpression(AsExpressionTransport),
+    #[kind(kind::SATISFIES_EXPRESSION)]
     SatisfiesExpression(SatisfiesExpressionTransport),
+    #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionTransport),
+    #[kind(kind::INTERNAL_MODULE)]
     InternalModule(InternalModuleTransport),
+    #[kind(kind::TYPE_ASSERTION)]
     TypeAssertion(TypeAssertionTransport),
+    #[kind(kind::SUBSCRIPT_EXPRESSION)]
     SubscriptExpression(SubscriptExpressionTransport),
+    #[kind(kind::MEMBER_EXPRESSION)]
     MemberExpression(MemberExpressionTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
     ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
+    #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
+    #[kind(kind::NUMBER_HEX)]
     NumberHex(NumberHexTransport),
+    #[kind(kind::NUMBER_FLOAT_POINT)]
     NumberFloatPoint(NumberFloatPointTransport),
+    #[kind(kind::NUMBER_FLOAT_LEADING_POINT)]
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
+    #[kind(kind::NUMBER_FLOAT_SCIENTIFIC)]
     NumberFloatScientific(NumberFloatScientificTransport),
+    #[kind(kind::NUMBER_DECIMAL)]
     NumberDecimal(NumberDecimalTransport),
+    #[kind(kind::NUMBER_BINARY)]
     NumberBinary(NumberBinaryTransport),
+    #[kind(kind::NUMBER_OCTAL)]
     NumberOctal(NumberOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_HEX)]
     NumberBigintHex(NumberBigintHexTransport),
+    #[kind(kind::NUMBER_BIGINT_BINARY)]
     NumberBigintBinary(NumberBigintBinaryTransport),
+    #[kind(kind::NUMBER_BIGINT_OCTAL)]
     NumberBigintOctal(NumberBigintOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_DECIMAL)]
     NumberBigintDecimal(NumberBigintDecimalTransport),
+    #[kind(kind::STRING_DOUBLE)]
     StringDouble(StringDoubleTransport),
+    #[kind(kind::STRING_SINGLE)]
     StringSingle(StringSingleTransport),
+    #[kind(kind::TEMPLATE_STRING)]
     TemplateString(TemplateStringTransport),
+    #[kind(kind::REGEX)]
     Regex(RegexTransport),
+    #[kind(kind::OBJECT)]
     Object(ObjectTransport),
+    #[kind(kind::ARRAY)]
     Array(ArrayTransport),
+    #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(FunctionExpressionTransport),
+    #[kind(kind::ARROW_FUNCTION)]
     ArrowFunction(ArrowFunctionTransport),
+    #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(GeneratorFunctionTransport),
+    #[kind(kind::CLASS)]
     Class(ClassTransport),
+    #[kind(kind::CALL_EXPRESSION_CALL)]
     CallExpressionCall(CallExpressionCallTransport),
+    #[kind(kind::CALL_EXPRESSION_TEMPLATE_CALL)]
     CallExpressionTemplateCall(CallExpressionTemplateCallTransport),
+    #[kind(kind::CALL_EXPRESSION_MEMBER)]
     CallExpressionMember(CallExpressionMemberTransport),
+    #[kind(kind::NON_NULL_EXPRESSION)]
     NonNullExpression(NonNullExpressionTransport),
+    #[kind(kind::ASSIGNMENT_EXPRESSION)]
     AssignmentExpression(AssignmentExpressionTransport),
+    #[kind(kind::AUGMENTED_ASSIGNMENT_EXPRESSION)]
     AugmentedAssignmentExpression(AugmentedAssignmentExpressionTransport),
+    #[kind(kind::AWAIT_EXPRESSION)]
     AwaitExpression(AwaitExpressionTransport),
+    #[kind(kind::UNARY_EXPRESSION)]
     UnaryExpression(UnaryExpressionTransport),
+    #[kind(kind::BINARY_EXPRESSION)]
     BinaryExpression(BinaryExpressionTransport),
+    #[kind(kind::TERNARY_EXPRESSION)]
     TernaryExpression(TernaryExpressionTransport),
+    #[kind(kind::UPDATE_EXPRESSION_POSTFIX)]
     UpdateExpressionPostfix(UpdateExpressionPostfixTransport),
+    #[kind(kind::UPDATE_EXPRESSION_PREFIX)]
     UpdateExpressionPrefix(UpdateExpressionPrefixTransport),
+    #[kind(kind::NEW_EXPRESSION)]
     NewExpression(NewExpressionTransport),
+    #[kind(kind::YIELD_EXPRESSION)]
     YieldExpression(YieldExpressionTransport),
+    #[kind(kind::UNDEFINED)]
     Undefined,
+    #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
+    #[kind(kind::NAMESPACE_KEYWORD)]
     NamespaceKeyword,
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
+    #[kind(kind::PUBLIC_KEYWORD)]
     PublicKeyword,
+    #[kind(kind::PRIVATE_KEYWORD)]
     PrivateKeyword,
+    #[kind(kind::PROTECTED_KEYWORD)]
     ProtectedKeyword,
+    #[kind(kind::OVERRIDE_KEYWORD)]
     OverrideKeyword,
+    #[kind(kind::READONLY_KEYWORD)]
     ReadonlyKeyword,
+    #[kind(kind::MODULE_KEYWORD)]
     ModuleKeyword,
+    #[kind(kind::ANY_KEYWORD)]
     AnyKeyword,
+    #[kind(kind::NUMBER_KEYWORD)]
     NumberKeyword,
+    #[kind(kind::BOOLEAN_KEYWORD)]
     BooleanKeyword,
+    #[kind(kind::STRING_KEYWORD)]
     StringKeyword,
+    #[kind(kind::SYMBOL_KEYWORD)]
     SymbolKeyword,
+    #[kind(kind::EXPORT_KEYWORD)]
     ExportKeyword,
+    #[kind(kind::OBJECT_KEYWORD)]
     ObjectKeyword,
+    #[kind(kind::NEW_KEYWORD)]
     NewKeyword,
+    #[kind(kind::GET_KEYWORD)]
     GetKeyword,
+    #[kind(kind::SET_KEYWORD)]
     SetKeyword,
+    #[kind(kind::ASYNC_KEYWORD)]
     AsyncKeyword,
+    #[kind(kind::STATIC_KEYWORD)]
     StaticKeyword,
+    #[kind(kind::LET_KEYWORD)]
     LetKeyword,
+    #[kind(kind::THIS)]
     This,
+    #[kind(kind::SUPER)]
     Super,
+    #[kind(kind::TRUE)]
     True,
+    #[kind(kind::FALSE)]
     False,
+    #[kind(kind::NULL)]
     Null,
+    #[kind(kind::META_PROPERTY_NEW_TARGET)]
     MetaPropertyNewTarget,
+    #[kind(kind::META_PROPERTY_IMPORT_META)]
     MetaPropertyImportMeta,
+    #[kind(kind::IMPORT, kind::IMPORT_KEYWORD)]
     Import,
     Verbatim(VerbatimTransport),
 }
@@ -19311,9 +20626,12 @@ impl ::sittir_core::render::Render for MemberExpressionObjectTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum MemberExpressionSeparatorTransportSlot {
+    #[kind(kind::DOT)]
     Dot,
+    #[kind(kind::OPTIONAL_CHAIN, kind::QMARK_DOT)]
     OptionalChain,
 }
 
@@ -19419,9 +20737,12 @@ impl ::sittir_core::render::Render for MemberExpressionSeparatorTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum MemberExpressionPropertyTransportSlot {
+    #[kind(kind::PRIVATE_PROPERTY_IDENTIFIER)]
     PrivatePropertyIdentifier(PrivatePropertyIdentifierTransport),
+    #[kind(kind::_PROPERTY_IDENTIFIER, display)]
     PropertyIdentifier(PropertyIdentifierTransport),
 }
 
@@ -19667,82 +20988,158 @@ impl ::sittir_core::render::Render for MemberExpressionPropertyTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum SubscriptExpressionObjectTransportSlot {
+    #[kind(kind::AS_EXPRESSION)]
     AsExpression(AsExpressionTransport),
+    #[kind(kind::SATISFIES_EXPRESSION)]
     SatisfiesExpression(SatisfiesExpressionTransport),
+    #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionTransport),
+    #[kind(kind::INTERNAL_MODULE)]
     InternalModule(InternalModuleTransport),
+    #[kind(kind::TYPE_ASSERTION)]
     TypeAssertion(TypeAssertionTransport),
+    #[kind(kind::SUBSCRIPT_EXPRESSION)]
     SubscriptExpression(SubscriptExpressionTransport),
+    #[kind(kind::MEMBER_EXPRESSION)]
     MemberExpression(MemberExpressionTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
     ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
+    #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
+    #[kind(kind::NUMBER_HEX)]
     NumberHex(NumberHexTransport),
+    #[kind(kind::NUMBER_FLOAT_POINT)]
     NumberFloatPoint(NumberFloatPointTransport),
+    #[kind(kind::NUMBER_FLOAT_LEADING_POINT)]
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
+    #[kind(kind::NUMBER_FLOAT_SCIENTIFIC)]
     NumberFloatScientific(NumberFloatScientificTransport),
+    #[kind(kind::NUMBER_DECIMAL)]
     NumberDecimal(NumberDecimalTransport),
+    #[kind(kind::NUMBER_BINARY)]
     NumberBinary(NumberBinaryTransport),
+    #[kind(kind::NUMBER_OCTAL)]
     NumberOctal(NumberOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_HEX)]
     NumberBigintHex(NumberBigintHexTransport),
+    #[kind(kind::NUMBER_BIGINT_BINARY)]
     NumberBigintBinary(NumberBigintBinaryTransport),
+    #[kind(kind::NUMBER_BIGINT_OCTAL)]
     NumberBigintOctal(NumberBigintOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_DECIMAL)]
     NumberBigintDecimal(NumberBigintDecimalTransport),
+    #[kind(kind::STRING_DOUBLE)]
     StringDouble(StringDoubleTransport),
+    #[kind(kind::STRING_SINGLE)]
     StringSingle(StringSingleTransport),
+    #[kind(kind::TEMPLATE_STRING)]
     TemplateString(TemplateStringTransport),
+    #[kind(kind::REGEX)]
     Regex(RegexTransport),
+    #[kind(kind::OBJECT)]
     Object(ObjectTransport),
+    #[kind(kind::ARRAY)]
     Array(ArrayTransport),
+    #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(FunctionExpressionTransport),
+    #[kind(kind::ARROW_FUNCTION)]
     ArrowFunction(ArrowFunctionTransport),
+    #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(GeneratorFunctionTransport),
+    #[kind(kind::CLASS)]
     Class(ClassTransport),
+    #[kind(kind::CALL_EXPRESSION_CALL)]
     CallExpressionCall(CallExpressionCallTransport),
+    #[kind(kind::CALL_EXPRESSION_TEMPLATE_CALL)]
     CallExpressionTemplateCall(CallExpressionTemplateCallTransport),
+    #[kind(kind::CALL_EXPRESSION_MEMBER)]
     CallExpressionMember(CallExpressionMemberTransport),
+    #[kind(kind::NON_NULL_EXPRESSION)]
     NonNullExpression(NonNullExpressionTransport),
+    #[kind(kind::ASSIGNMENT_EXPRESSION)]
     AssignmentExpression(AssignmentExpressionTransport),
+    #[kind(kind::AUGMENTED_ASSIGNMENT_EXPRESSION)]
     AugmentedAssignmentExpression(AugmentedAssignmentExpressionTransport),
+    #[kind(kind::AWAIT_EXPRESSION)]
     AwaitExpression(AwaitExpressionTransport),
+    #[kind(kind::UNARY_EXPRESSION)]
     UnaryExpression(UnaryExpressionTransport),
+    #[kind(kind::BINARY_EXPRESSION)]
     BinaryExpression(BinaryExpressionTransport),
+    #[kind(kind::TERNARY_EXPRESSION)]
     TernaryExpression(TernaryExpressionTransport),
+    #[kind(kind::UPDATE_EXPRESSION_POSTFIX)]
     UpdateExpressionPostfix(UpdateExpressionPostfixTransport),
+    #[kind(kind::UPDATE_EXPRESSION_PREFIX)]
     UpdateExpressionPrefix(UpdateExpressionPrefixTransport),
+    #[kind(kind::NEW_EXPRESSION)]
     NewExpression(NewExpressionTransport),
+    #[kind(kind::YIELD_EXPRESSION)]
     YieldExpression(YieldExpressionTransport),
+    #[kind(kind::UNDEFINED)]
     Undefined,
+    #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
+    #[kind(kind::NAMESPACE_KEYWORD)]
     NamespaceKeyword,
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
+    #[kind(kind::PUBLIC_KEYWORD)]
     PublicKeyword,
+    #[kind(kind::PRIVATE_KEYWORD)]
     PrivateKeyword,
+    #[kind(kind::PROTECTED_KEYWORD)]
     ProtectedKeyword,
+    #[kind(kind::OVERRIDE_KEYWORD)]
     OverrideKeyword,
+    #[kind(kind::READONLY_KEYWORD)]
     ReadonlyKeyword,
+    #[kind(kind::MODULE_KEYWORD)]
     ModuleKeyword,
+    #[kind(kind::ANY_KEYWORD)]
     AnyKeyword,
+    #[kind(kind::NUMBER_KEYWORD)]
     NumberKeyword,
+    #[kind(kind::BOOLEAN_KEYWORD)]
     BooleanKeyword,
+    #[kind(kind::STRING_KEYWORD)]
     StringKeyword,
+    #[kind(kind::SYMBOL_KEYWORD)]
     SymbolKeyword,
+    #[kind(kind::EXPORT_KEYWORD)]
     ExportKeyword,
+    #[kind(kind::OBJECT_KEYWORD)]
     ObjectKeyword,
+    #[kind(kind::NEW_KEYWORD)]
     NewKeyword,
+    #[kind(kind::GET_KEYWORD)]
     GetKeyword,
+    #[kind(kind::SET_KEYWORD)]
     SetKeyword,
+    #[kind(kind::ASYNC_KEYWORD)]
     AsyncKeyword,
+    #[kind(kind::STATIC_KEYWORD)]
     StaticKeyword,
+    #[kind(kind::LET_KEYWORD)]
     LetKeyword,
+    #[kind(kind::THIS)]
     This,
+    #[kind(kind::SUPER)]
     Super,
+    #[kind(kind::TRUE)]
     True,
+    #[kind(kind::FALSE)]
     False,
+    #[kind(kind::NULL)]
     Null,
+    #[kind(kind::META_PROPERTY_NEW_TARGET)]
     MetaPropertyNewTarget,
+    #[kind(kind::META_PROPERTY_IMPORT_META)]
     MetaPropertyImportMeta,
     Verbatim(VerbatimTransport),
 }
@@ -20549,36 +21946,66 @@ impl ::sittir_core::render::Render for SubscriptExpressionObjectTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum LhsExpressionContentTransportSlot {
+    #[kind(kind::MEMBER_EXPRESSION)]
     MemberExpression(MemberExpressionTransport),
+    #[kind(kind::SUBSCRIPT_EXPRESSION)]
     SubscriptExpression(SubscriptExpressionTransport),
+    #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
+    #[kind(kind::OBJECT_PATTERN)]
     ObjectPattern(ObjectPatternTransport),
+    #[kind(kind::ARRAY_PATTERN)]
     ArrayPattern(ArrayPatternTransport),
+    #[kind(kind::NON_NULL_EXPRESSION)]
     NonNullExpression(NonNullExpressionTransport),
+    #[kind(kind::UNDEFINED)]
     Undefined,
+    #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
+    #[kind(kind::NAMESPACE_KEYWORD)]
     NamespaceKeyword,
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
+    #[kind(kind::PUBLIC_KEYWORD)]
     PublicKeyword,
+    #[kind(kind::PRIVATE_KEYWORD)]
     PrivateKeyword,
+    #[kind(kind::PROTECTED_KEYWORD)]
     ProtectedKeyword,
+    #[kind(kind::OVERRIDE_KEYWORD)]
     OverrideKeyword,
+    #[kind(kind::READONLY_KEYWORD)]
     ReadonlyKeyword,
+    #[kind(kind::MODULE_KEYWORD)]
     ModuleKeyword,
+    #[kind(kind::ANY_KEYWORD)]
     AnyKeyword,
+    #[kind(kind::NUMBER_KEYWORD)]
     NumberKeyword,
+    #[kind(kind::BOOLEAN_KEYWORD)]
     BooleanKeyword,
+    #[kind(kind::STRING_KEYWORD)]
     StringKeyword,
+    #[kind(kind::SYMBOL_KEYWORD)]
     SymbolKeyword,
+    #[kind(kind::EXPORT_KEYWORD)]
     ExportKeyword,
+    #[kind(kind::OBJECT_KEYWORD)]
     ObjectKeyword,
+    #[kind(kind::NEW_KEYWORD)]
     NewKeyword,
+    #[kind(kind::GET_KEYWORD)]
     GetKeyword,
+    #[kind(kind::SET_KEYWORD)]
     SetKeyword,
+    #[kind(kind::ASYNC_KEYWORD)]
     AsyncKeyword,
+    #[kind(kind::STATIC_KEYWORD)]
     StaticKeyword,
+    #[kind(kind::LET_KEYWORD)]
     LetKeyword,
     Verbatim(VerbatimTransport),
 }
@@ -20907,10 +22334,14 @@ impl ::sittir_core::render::Render for LhsExpressionContentTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum AssignmentExpressionLeftTransportSlot {
+    #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
     ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
+    #[kind(kind::_LHS_EXPRESSION, kind::LHS_EXPRESSION)]
     LhsExpression(LhsExpressionTransport),
 }
 
@@ -21041,35 +22472,64 @@ impl ::sittir_core::render::Render for AssignmentExpressionLeftTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum AugmentedAssignmentExpressionLeftTransportSlot {
+    #[kind(kind::MEMBER_EXPRESSION)]
     MemberExpression(MemberExpressionTransport),
+    #[kind(kind::SUBSCRIPT_EXPRESSION)]
     SubscriptExpression(SubscriptExpressionTransport),
+    #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
     ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
+    #[kind(kind::NON_NULL_EXPRESSION)]
     NonNullExpression(NonNullExpressionTransport),
+    #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
+    #[kind(kind::NAMESPACE_KEYWORD)]
     NamespaceKeyword,
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
+    #[kind(kind::PUBLIC_KEYWORD)]
     PublicKeyword,
+    #[kind(kind::PRIVATE_KEYWORD)]
     PrivateKeyword,
+    #[kind(kind::PROTECTED_KEYWORD)]
     ProtectedKeyword,
+    #[kind(kind::OVERRIDE_KEYWORD)]
     OverrideKeyword,
+    #[kind(kind::READONLY_KEYWORD)]
     ReadonlyKeyword,
+    #[kind(kind::MODULE_KEYWORD)]
     ModuleKeyword,
+    #[kind(kind::ANY_KEYWORD)]
     AnyKeyword,
+    #[kind(kind::NUMBER_KEYWORD)]
     NumberKeyword,
+    #[kind(kind::BOOLEAN_KEYWORD)]
     BooleanKeyword,
+    #[kind(kind::STRING_KEYWORD)]
     StringKeyword,
+    #[kind(kind::SYMBOL_KEYWORD)]
     SymbolKeyword,
+    #[kind(kind::EXPORT_KEYWORD)]
     ExportKeyword,
+    #[kind(kind::OBJECT_KEYWORD)]
     ObjectKeyword,
+    #[kind(kind::NEW_KEYWORD)]
     NewKeyword,
+    #[kind(kind::GET_KEYWORD)]
     GetKeyword,
+    #[kind(kind::SET_KEYWORD)]
     SetKeyword,
+    #[kind(kind::ASYNC_KEYWORD)]
     AsyncKeyword,
+    #[kind(kind::STATIC_KEYWORD)]
     StaticKeyword,
+    #[kind(kind::LET_KEYWORD)]
     LetKeyword,
     Verbatim(VerbatimTransport),
 }
@@ -21391,22 +22851,38 @@ impl ::sittir_core::render::Render for AugmentedAssignmentExpressionLeftTranspor
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum AugmentedAssignmentExpressionOperatorTransportSlot {
+    #[kind(kind::PLUS_EQ)]
     PlusEq,
+    #[kind(kind::DASH_EQ)]
     DashEq,
+    #[kind(kind::STAR_EQ)]
     StarEq,
+    #[kind(kind::SLASH_EQ)]
     SlashEq,
+    #[kind(kind::PERCENT_EQ)]
     PercentEq,
+    #[kind(kind::CARET_EQ)]
     CaretEq,
+    #[kind(kind::AMP_EQ)]
     AmpEq,
+    #[kind(kind::PIPE_EQ)]
     PipeEq,
+    #[kind(kind::GT_GT_EQ)]
     GtGtEq,
+    #[kind(kind::GT_GT_GT_EQ)]
     GtGtGtEq,
+    #[kind(kind::LT_LT_EQ)]
     LtLtEq,
+    #[kind(kind::STAR_STAR_EQ)]
     StarStarEq,
+    #[kind(kind::AMP_AMP_EQ)]
     AmpAmpEq,
+    #[kind(kind::PIPE_PIPE_EQ)]
     PipePipeEq,
+    #[kind(kind::QMARK_QMARK_EQ)]
     QmarkQmarkEq,
 }
 
@@ -21565,31 +23041,56 @@ impl ::sittir_core::render::Render for AugmentedAssignmentExpressionOperatorTran
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum BinaryExpressionOperatorTransportSlot {
+    #[kind(kind::AMP_AMP)]
     AmpAmp,
+    #[kind(kind::PIPE_PIPE)]
     PipePipe,
+    #[kind(kind::GT_GT)]
     GtGt,
+    #[kind(kind::GT_GT_GT)]
     GtGtGt,
+    #[kind(kind::LT_LT)]
     LtLt,
+    #[kind(kind::AMP)]
     Amp,
+    #[kind(kind::CARET)]
     Caret,
+    #[kind(kind::PIPE)]
     Pipe,
+    #[kind(kind::PLUS)]
     Plus,
+    #[kind(kind::DASH)]
     Dash,
+    #[kind(kind::STAR)]
     Star,
+    #[kind(display(kind::SLASH))]
     Slash,
+    #[kind(kind::PERCENT)]
     Percent,
+    #[kind(kind::STAR_STAR)]
     StarStar,
+    #[kind(kind::LT)]
     Lt,
+    #[kind(kind::LT_EQ)]
     LtEq,
+    #[kind(kind::EQ_EQ)]
     EqEq,
+    #[kind(kind::EQ_EQ_EQ)]
     EqEqEq,
+    #[kind(kind::BANG_EQ)]
     BangEq,
+    #[kind(kind::BANG_EQ_EQ)]
     BangEqEq,
+    #[kind(kind::GT_EQ)]
     GtEq,
+    #[kind(kind::GT)]
     Gt,
+    #[kind(kind::QMARK_QMARK)]
     QmarkQmark,
+    #[kind(kind::INSTANCEOF_KEYWORD)]
     InstanceofKeyword,
 }
 
@@ -21793,14 +23294,22 @@ impl ::sittir_core::render::Render for BinaryExpressionOperatorTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum UnaryExpressionOperatorTransportSlot {
+    #[kind(kind::BANG)]
     Bang,
+    #[kind(kind::TILDE)]
     Tilde,
+    #[kind(kind::DASH)]
     Dash,
+    #[kind(kind::PLUS)]
     Plus,
+    #[kind(kind::TYPEOF_KEYWORD)]
     TypeofKeyword,
+    #[kind(kind::VOID_KEYWORD)]
     VoidKeyword,
+    #[kind(kind::DELETE_KEYWORD)]
     DeleteKeyword,
 }
 
@@ -21919,10 +23428,14 @@ impl ::sittir_core::render::Render for UnaryExpressionOperatorTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum TemplateStringElementsTransportSlot {
+    #[kind(kind::_TEMPLATE_CHARS, kind::UNESCAPED_DOUBLE_STRING_FRAGMENT)]
     TemplateChars(TemplateCharsTransport),
+    #[kind(kind::ESCAPE_SEQUENCE)]
     EscapeSequence(EscapeSequenceTransport),
+    #[kind(kind::TEMPLATE_SUBSTITUTION)]
     TemplateSubstitution(TemplateSubstitutionTransport),
     Verbatim(VerbatimTransport),
 }
@@ -22063,11 +23576,16 @@ impl ::sittir_core::render::Render for TemplateStringElementsTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum DecoratorExpressionTransportSlot {
+    #[kind(kind::IDENTIFIER, kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::TYPE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::EXPORT_KEYWORD, kind::OBJECT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD)]
     Identifier(IdentifierTransport),
+    #[kind(kind::DECORATOR_MEMBER_EXPRESSION)]
     DecoratorMemberExpression(DecoratorMemberExpressionTransport),
+    #[kind(kind::DECORATOR_CALL_EXPRESSION)]
     DecoratorCallExpression(DecoratorCallExpressionTransport),
+    #[kind(kind::DECORATOR_PARENTHESIZED_EXPRESSION)]
     DecoratorParenthesizedExpression(DecoratorParenthesizedExpressionTransport),
     Verbatim(VerbatimTransport),
 }
@@ -22345,9 +23863,12 @@ impl ::sittir_core::render::Render for DecoratorExpressionTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum DecoratorMemberExpressionObjectTransportSlot {
+    #[kind(kind::IDENTIFIER, kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::TYPE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::EXPORT_KEYWORD, kind::OBJECT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD)]
     Identifier(IdentifierTransport),
+    #[kind(kind::DECORATOR_MEMBER_EXPRESSION)]
     DecoratorMemberExpression(DecoratorMemberExpressionTransport),
     Verbatim(VerbatimTransport),
 }
@@ -22603,10 +24124,14 @@ impl ::sittir_core::render::Render for DecoratorMemberExpressionObjectTransportS
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum MethodDefinitionAccessorKindTransportSlot {
+    #[kind(kind::GET_KEYWORD)]
     GetKeyword,
+    #[kind(kind::SET_KEYWORD)]
     SetKeyword,
+    #[kind(kind::STAR)]
     Star,
 }
 
@@ -22705,45 +24230,84 @@ impl ::sittir_core::render::Render for MethodDefinitionAccessorKindTransportSlot
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum MethodDefinitionNameTransportSlot {
+    #[kind(kind::_PROPERTY_IDENTIFIER, display)]
     PropertyIdentifier(PropertyIdentifierTransport),
+    #[kind(kind::PRIVATE_PROPERTY_IDENTIFIER)]
     PrivatePropertyIdentifier(PrivatePropertyIdentifierTransport),
+    #[kind(kind::STRING_DOUBLE)]
     StringDouble(StringDoubleTransport),
+    #[kind(kind::STRING_SINGLE)]
     StringSingle(StringSingleTransport),
+    #[kind(kind::NUMBER_HEX)]
     NumberHex(NumberHexTransport),
+    #[kind(kind::NUMBER_FLOAT_POINT)]
     NumberFloatPoint(NumberFloatPointTransport),
+    #[kind(kind::NUMBER_FLOAT_LEADING_POINT)]
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
+    #[kind(kind::NUMBER_FLOAT_SCIENTIFIC)]
     NumberFloatScientific(NumberFloatScientificTransport),
+    #[kind(kind::NUMBER_DECIMAL)]
     NumberDecimal(NumberDecimalTransport),
+    #[kind(kind::NUMBER_BINARY)]
     NumberBinary(NumberBinaryTransport),
+    #[kind(kind::NUMBER_OCTAL)]
     NumberOctal(NumberOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_HEX)]
     NumberBigintHex(NumberBigintHexTransport),
+    #[kind(kind::NUMBER_BIGINT_BINARY)]
     NumberBigintBinary(NumberBigintBinaryTransport),
+    #[kind(kind::NUMBER_BIGINT_OCTAL)]
     NumberBigintOctal(NumberBigintOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_DECIMAL)]
     NumberBigintDecimal(NumberBigintDecimalTransport),
+    #[kind(kind::COMPUTED_PROPERTY_NAME)]
     ComputedPropertyName(ComputedPropertyNameTransport),
+    #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
+    #[kind(kind::NAMESPACE_KEYWORD)]
     NamespaceKeyword,
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
+    #[kind(kind::PUBLIC_KEYWORD)]
     PublicKeyword,
+    #[kind(kind::PRIVATE_KEYWORD)]
     PrivateKeyword,
+    #[kind(kind::PROTECTED_KEYWORD)]
     ProtectedKeyword,
+    #[kind(kind::OVERRIDE_KEYWORD)]
     OverrideKeyword,
+    #[kind(kind::READONLY_KEYWORD)]
     ReadonlyKeyword,
+    #[kind(kind::MODULE_KEYWORD)]
     ModuleKeyword,
+    #[kind(kind::ANY_KEYWORD)]
     AnyKeyword,
+    #[kind(kind::NUMBER_KEYWORD)]
     NumberKeyword,
+    #[kind(kind::BOOLEAN_KEYWORD)]
     BooleanKeyword,
+    #[kind(kind::STRING_KEYWORD)]
     StringKeyword,
+    #[kind(kind::SYMBOL_KEYWORD)]
     SymbolKeyword,
+    #[kind(kind::EXPORT_KEYWORD)]
     ExportKeyword,
+    #[kind(kind::OBJECT_KEYWORD)]
     ObjectKeyword,
+    #[kind(kind::NEW_KEYWORD)]
     NewKeyword,
+    #[kind(kind::GET_KEYWORD)]
     GetKeyword,
+    #[kind(kind::SET_KEYWORD)]
     SetKeyword,
+    #[kind(kind::ASYNC_KEYWORD)]
     AsyncKeyword,
+    #[kind(kind::STATIC_KEYWORD)]
     StaticKeyword,
+    #[kind(kind::LET_KEYWORD)]
     LetKeyword,
     Verbatim(VerbatimTransport),
 }
@@ -23175,9 +24739,12 @@ impl ::sittir_core::render::Render for MethodDefinitionNameTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum PublicFieldDefinitionOptionalityTransportSlot {
+    #[kind(display(kind::QMARK))]
     Qmark,
+    #[kind(kind::BANG)]
     Bang,
 }
 
@@ -23271,10 +24838,14 @@ impl ::sittir_core::render::Render for PublicFieldDefinitionOptionalityTransport
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum FunctionSignatureTerminatorTransportSlot {
+    #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
+    #[kind(kind::SEMI)]
     Semi,
+    #[kind(kind::_FUNCTION_SIGNATURE_AUTOMATIC_SEMICOLON)]
     FunctionSignatureAutomaticSemicolon,
 }
 
@@ -23384,10 +24955,14 @@ impl ::sittir_core::render::Render for FunctionSignatureTerminatorTransportSlot 
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum DecoratorParenthesizedExpressionExpressionTransportSlot {
+    #[kind(kind::IDENTIFIER, kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::TYPE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::EXPORT_KEYWORD, kind::OBJECT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD)]
     Identifier(IdentifierTransport),
+    #[kind(kind::DECORATOR_MEMBER_EXPRESSION)]
     DecoratorMemberExpression(DecoratorMemberExpressionTransport),
+    #[kind(kind::DECORATOR_CALL_EXPRESSION)]
     DecoratorCallExpression(DecoratorCallExpressionTransport),
     Verbatim(VerbatimTransport),
 }
@@ -23654,33 +25229,60 @@ impl ::sittir_core::render::Render for DecoratorParenthesizedExpressionExpressio
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum AsExpressionTypeAnnotationTransportSlot {
+    #[kind(kind::PARENTHESIZED_TYPE)]
     ParenthesizedType(ParenthesizedTypeTransport),
+    #[kind(kind::PREDEFINED_TYPE, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::UNIQUE, kind::VOID_KEYWORD, kind::UNKNOWN_KEYWORD, kind::NEVER_KEYWORD, kind::OBJECT_KEYWORD)]
     PredefinedType(PredefinedTypeEnum),
+    #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierTransport),
+    #[kind(kind::NESTED_TYPE_IDENTIFIER)]
     NestedTypeIdentifier(NestedTypeIdentifierTransport),
+    #[kind(kind::GENERIC_TYPE)]
     GenericType(GenericTypeTransport),
+    #[kind(kind::OBJECT_TYPE)]
     ObjectType(ObjectTypeTransport),
+    #[kind(kind::ARRAY_TYPE)]
     ArrayType(ArrayTypeTransport),
+    #[kind(kind::TUPLE_TYPE)]
     TupleType(TupleTypeTransport),
+    #[kind(kind::FLOW_MAYBE_TYPE)]
     FlowMaybeType(FlowMaybeTypeTransport),
+    #[kind(kind::TYPE_QUERY)]
     TypeQuery(TypeQueryTransport),
+    #[kind(kind::INDEX_TYPE_QUERY)]
     IndexTypeQuery(IndexTypeQueryTransport),
+    #[kind(kind::LITERAL_TYPE)]
     LiteralType(LiteralTypeTransport),
+    #[kind(kind::LOOKUP_TYPE)]
     LookupType(LookupTypeTransport),
+    #[kind(kind::CONDITIONAL_TYPE)]
     ConditionalType(ConditionalTypeTransport),
+    #[kind(kind::TEMPLATE_LITERAL_TYPE)]
     TemplateLiteralType(TemplateLiteralTypeTransport),
+    #[kind(kind::INTERSECTION_TYPE)]
     IntersectionType(IntersectionTypeTransport),
+    #[kind(kind::UNION_TYPE)]
     UnionType(UnionTypeTransport),
+    #[kind(kind::FUNCTION_TYPE)]
     FunctionType(FunctionTypeTransport),
+    #[kind(kind::READONLY_TYPE)]
     ReadonlyType(ReadonlyTypeTransport),
+    #[kind(kind::CONSTRUCTOR_TYPE)]
     ConstructorType(ConstructorTypeTransport),
+    #[kind(kind::INFER_TYPE)]
     InferType(InferTypeTransport),
+    #[kind(kind::_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION)]
     TypeQueryMemberExpressionInTypeAnnotation(TypeQueryMemberExpressionInTypeAnnotationTransport),
+    #[kind(kind::_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION)]
     TypeQueryCallExpressionInTypeAnnotation(TypeQueryCallExpressionInTypeAnnotationTransport),
+    #[kind(kind::THIS)]
     This,
+    #[kind(kind::EXISTENTIAL_TYPE)]
     ExistentialType,
+    #[kind(kind::CONST_KEYWORD)]
     ConstKeyword,
 }
 
@@ -24111,23 +25713,40 @@ impl ::sittir_core::render::Render for AsExpressionTypeAnnotationTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum AmbientDeclarationContentTransportSlot {
+    #[kind(kind::FUNCTION_DECLARATION)]
     FunctionDeclaration(FunctionDeclarationTransport),
+    #[kind(kind::GENERATOR_FUNCTION_DECLARATION)]
     GeneratorFunctionDeclaration(GeneratorFunctionDeclarationTransport),
+    #[kind(kind::CLASS_DECLARATION)]
     ClassDeclaration(ClassDeclarationTransport),
+    #[kind(kind::LEXICAL_DECLARATION)]
     LexicalDeclaration(LexicalDeclarationTransport),
+    #[kind(kind::VARIABLE_DECLARATION)]
     VariableDeclaration(VariableDeclarationTransport),
+    #[kind(kind::FUNCTION_SIGNATURE)]
     FunctionSignature(FunctionSignatureTransport),
+    #[kind(kind::ABSTRACT_CLASS_DECLARATION)]
     AbstractClassDeclaration(AbstractClassDeclarationTransport),
+    #[kind(kind::MODULE)]
     Module(ModuleTransport),
+    #[kind(kind::INTERNAL_MODULE)]
     InternalModule(InternalModuleTransport),
+    #[kind(kind::TYPE_ALIAS_DECLARATION)]
     TypeAliasDeclaration(TypeAliasDeclarationTransport),
+    #[kind(kind::ENUM_DECLARATION)]
     EnumDeclaration(EnumDeclarationTransport),
+    #[kind(kind::INTERFACE_DECLARATION)]
     InterfaceDeclaration(InterfaceDeclarationTransport),
+    #[kind(kind::IMPORT_ALIAS)]
     ImportAlias(ImportAliasTransport),
+    #[kind(kind::AMBIENT_DECLARATION)]
     AmbientDeclaration(AmbientDeclarationTransport),
+    #[kind(kind::AMBIENT_DECLARATION_GLOBAL)]
     AmbientDeclarationGlobal(AmbientDeclarationGlobalTransport),
+    #[kind(kind::AMBIENT_DECLARATION_MODULE)]
     AmbientDeclarationModule(AmbientDeclarationModuleTransport),
 }
 
@@ -24395,11 +26014,16 @@ impl ::sittir_core::render::Render for AmbientDeclarationContentTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ModuleNameTransportSlot {
+    #[kind(kind::STRING_DOUBLE)]
     StringDouble(StringDoubleTransport),
+    #[kind(kind::STRING_SINGLE)]
     StringSingle(StringSingleTransport),
+    #[kind(kind::IDENTIFIER, kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::TYPE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::EXPORT_KEYWORD, kind::OBJECT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD)]
     Identifier(IdentifierTransport),
+    #[kind(kind::NESTED_IDENTIFIER)]
     NestedIdentifier(NestedIdentifierTransport),
     Verbatim(VerbatimTransport),
 }
@@ -24677,9 +26301,12 @@ impl ::sittir_core::render::Render for ModuleNameTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ImportAliasTerminatorTransportSlot {
+    #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
+    #[kind(kind::SEMI)]
     Semi,
 }
 
@@ -24788,10 +26415,14 @@ impl ::sittir_core::render::Render for ImportAliasTerminatorTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ExtendsTypeClauseTypeTransportSlot {
+    #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierTransport),
+    #[kind(kind::NESTED_TYPE_IDENTIFIER)]
     NestedTypeIdentifier(NestedTypeIdentifierTransport),
+    #[kind(kind::GENERIC_TYPE)]
     GenericType(GenericTypeTransport),
 }
 
@@ -24916,9 +26547,12 @@ impl ::sittir_core::render::Render for ExtendsTypeClauseTypeTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum TypeAliasDeclarationTerminatorTransportSlot {
+    #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
+    #[kind(kind::SEMI)]
     Semi,
 }
 
@@ -25027,10 +26661,14 @@ impl ::sittir_core::render::Render for TypeAliasDeclarationTerminatorTransportSl
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum RequiredParameterPatternTransportSlot {
+    #[kind(kind::_LHS_EXPRESSION)]
     LhsExpression(LhsExpressionTransport),
+    #[kind(kind::REST_PATTERN)]
     RestPattern(RestPatternTransport),
+    #[kind(kind::THIS)]
     This,
 }
 
@@ -25151,10 +26789,14 @@ impl ::sittir_core::render::Render for RequiredParameterPatternTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot {
+    #[kind(kind::_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION)]
     TypeQueryMemberExpressionInTypeAnnotation(TypeQueryMemberExpressionInTypeAnnotationTransport),
+    #[kind(kind::_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION)]
     TypeQueryCallExpressionInTypeAnnotation(TypeQueryCallExpressionInTypeAnnotationTransport),
+    #[kind(kind::IMPORT, kind::IMPORT_KEYWORD)]
     Import,
 }
 
@@ -25275,9 +26917,12 @@ impl ::sittir_core::render::Render for TypeQueryMemberExpressionInTypeAnnotation
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot {
+    #[kind(kind::_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION)]
     TypeQueryMemberExpressionInTypeAnnotation(TypeQueryMemberExpressionInTypeAnnotationTransport),
+    #[kind(kind::IMPORT, kind::IMPORT_KEYWORD)]
     Import,
 }
 
@@ -25387,10 +27032,14 @@ impl ::sittir_core::render::Render for TypeQueryCallExpressionInTypeAnnotationFu
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum AssertsValueTransportSlot {
+    #[kind(kind::TYPE_PREDICATE)]
     TypePredicate(TypePredicateTransport),
+    #[kind(kind::IDENTIFIER, kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::TYPE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::EXPORT_KEYWORD, kind::OBJECT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD)]
     Identifier(IdentifierTransport),
+    #[kind(kind::THIS)]
     This,
     Verbatim(VerbatimTransport),
 }
@@ -25653,9 +27302,12 @@ impl ::sittir_core::render::Render for AssertsValueTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum TupleParameterNameTransportSlot {
+    #[kind(kind::IDENTIFIER, kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::TYPE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::EXPORT_KEYWORD, kind::OBJECT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD)]
     Identifier(IdentifierTransport),
+    #[kind(kind::REST_PATTERN)]
     RestPattern(RestPatternTransport),
     Verbatim(VerbatimTransport),
 }
@@ -25911,27 +27563,48 @@ impl ::sittir_core::render::Render for TupleParameterNameTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum TemplateTypeTypeTransportSlot {
+    #[kind(kind::PARENTHESIZED_TYPE)]
     ParenthesizedType(ParenthesizedTypeTransport),
+    #[kind(kind::PREDEFINED_TYPE, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::UNIQUE, kind::VOID_KEYWORD, kind::UNKNOWN_KEYWORD, kind::NEVER_KEYWORD, kind::OBJECT_KEYWORD)]
     PredefinedType(PredefinedTypeEnum),
+    #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierTransport),
+    #[kind(kind::NESTED_TYPE_IDENTIFIER)]
     NestedTypeIdentifier(NestedTypeIdentifierTransport),
+    #[kind(kind::GENERIC_TYPE)]
     GenericType(GenericTypeTransport),
+    #[kind(kind::OBJECT_TYPE)]
     ObjectType(ObjectTypeTransport),
+    #[kind(kind::ARRAY_TYPE)]
     ArrayType(ArrayTypeTransport),
+    #[kind(kind::TUPLE_TYPE)]
     TupleType(TupleTypeTransport),
+    #[kind(kind::FLOW_MAYBE_TYPE)]
     FlowMaybeType(FlowMaybeTypeTransport),
+    #[kind(kind::TYPE_QUERY)]
     TypeQuery(TypeQueryTransport),
+    #[kind(kind::INDEX_TYPE_QUERY)]
     IndexTypeQuery(IndexTypeQueryTransport),
+    #[kind(kind::LITERAL_TYPE)]
     LiteralType(LiteralTypeTransport),
+    #[kind(kind::LOOKUP_TYPE)]
     LookupType(LookupTypeTransport),
+    #[kind(kind::CONDITIONAL_TYPE)]
     ConditionalType(ConditionalTypeTransport),
+    #[kind(kind::TEMPLATE_LITERAL_TYPE)]
     TemplateLiteralType(TemplateLiteralTypeTransport),
+    #[kind(kind::INTERSECTION_TYPE)]
     IntersectionType(IntersectionTypeTransport),
+    #[kind(kind::UNION_TYPE)]
     UnionType(UnionTypeTransport),
+    #[kind(kind::INFER_TYPE)]
     InferType(InferTypeTransport),
+    #[kind(kind::THIS)]
     This,
+    #[kind(kind::EXISTENTIAL_TYPE)]
     ExistentialType,
 }
 
@@ -26295,9 +27968,12 @@ impl ::sittir_core::render::Render for TemplateTypeTypeTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum TemplateLiteralTypeElementsTransportSlot {
+    #[kind(kind::_TEMPLATE_CHARS, kind::UNESCAPED_DOUBLE_STRING_FRAGMENT)]
     TemplateChars(TemplateCharsTransport),
+    #[kind(kind::TEMPLATE_TYPE)]
     TemplateType(TemplateTypeTransport),
     Verbatim(VerbatimTransport),
 }
@@ -26427,9 +28103,12 @@ impl ::sittir_core::render::Render for TemplateLiteralTypeElementsTransportSlot 
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum GenericTypeNameTransportSlot {
+    #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierTransport),
+    #[kind(kind::NESTED_TYPE_IDENTIFIER)]
     NestedTypeIdentifier(NestedTypeIdentifierTransport),
 }
 
@@ -26543,20 +28222,15 @@ impl ::sittir_core::render::Render for GenericTypeNameTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum TypePredicateNameTransportSlot {
+    #[kind(kind::IDENTIFIER, kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::TYPE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::EXPORT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD)]
     Identifier(IdentifierTransport),
+    #[kind(kind::PREDEFINED_TYPE, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::UNIQUE, kind::VOID_KEYWORD, kind::UNKNOWN_KEYWORD, kind::NEVER_KEYWORD, kind::OBJECT_KEYWORD)]
+    PredefinedType(PredefinedTypeEnum),
+    #[kind(kind::THIS)]
     This,
-    AnyKeyword,
-    NumberKeyword,
-    BooleanKeyword,
-    StringKeyword,
-    SymbolKeyword,
-    Unique,
-    VoidKeyword,
-    UnknownKeyword,
-    NeverKeyword,
-    ObjectKeyword,
     Verbatim(VerbatimTransport),
 }
 
@@ -26564,51 +28238,24 @@ impl ::sittir_core::prepare::Prepare for TypePredicateNameTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
             TypePredicateNameTransportSlot::Identifier(t) => t.prepare(ctx),
+            TypePredicateNameTransportSlot::PredefinedType(t) => t.prepare(ctx),
             TypePredicateNameTransportSlot::This => Ok(()),
-            TypePredicateNameTransportSlot::AnyKeyword => Ok(()),
-            TypePredicateNameTransportSlot::NumberKeyword => Ok(()),
-            TypePredicateNameTransportSlot::BooleanKeyword => Ok(()),
-            TypePredicateNameTransportSlot::StringKeyword => Ok(()),
-            TypePredicateNameTransportSlot::SymbolKeyword => Ok(()),
-            TypePredicateNameTransportSlot::Unique => Ok(()),
-            TypePredicateNameTransportSlot::VoidKeyword => Ok(()),
-            TypePredicateNameTransportSlot::UnknownKeyword => Ok(()),
-            TypePredicateNameTransportSlot::NeverKeyword => Ok(()),
-            TypePredicateNameTransportSlot::ObjectKeyword => Ok(()),
             TypePredicateNameTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
             TypePredicateNameTransportSlot::Identifier(t) => t.source_gap(),
+            TypePredicateNameTransportSlot::PredefinedType(t) => t.source_gap(),
             TypePredicateNameTransportSlot::This => None,
-            TypePredicateNameTransportSlot::AnyKeyword => None,
-            TypePredicateNameTransportSlot::NumberKeyword => None,
-            TypePredicateNameTransportSlot::BooleanKeyword => None,
-            TypePredicateNameTransportSlot::StringKeyword => None,
-            TypePredicateNameTransportSlot::SymbolKeyword => None,
-            TypePredicateNameTransportSlot::Unique => None,
-            TypePredicateNameTransportSlot::VoidKeyword => None,
-            TypePredicateNameTransportSlot::UnknownKeyword => None,
-            TypePredicateNameTransportSlot::NeverKeyword => None,
-            TypePredicateNameTransportSlot::ObjectKeyword => None,
             TypePredicateNameTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             TypePredicateNameTransportSlot::Identifier(t) => t.gap_edges(),
+            TypePredicateNameTransportSlot::PredefinedType(t) => t.gap_edges(),
             TypePredicateNameTransportSlot::This => None,
-            TypePredicateNameTransportSlot::AnyKeyword => None,
-            TypePredicateNameTransportSlot::NumberKeyword => None,
-            TypePredicateNameTransportSlot::BooleanKeyword => None,
-            TypePredicateNameTransportSlot::StringKeyword => None,
-            TypePredicateNameTransportSlot::SymbolKeyword => None,
-            TypePredicateNameTransportSlot::Unique => None,
-            TypePredicateNameTransportSlot::VoidKeyword => None,
-            TypePredicateNameTransportSlot::UnknownKeyword => None,
-            TypePredicateNameTransportSlot::NeverKeyword => None,
-            TypePredicateNameTransportSlot::ObjectKeyword => None,
             TypePredicateNameTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -26618,17 +28265,8 @@ impl ::sittir_core::view::KindOf for TypePredicateNameTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::PredefinedType(inner) => inner.kind_in(kinds),
             Self::This => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
-            Self::AnyKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::NumberKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::BooleanKeyword => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
-            Self::StringKeyword => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
-            Self::SymbolKeyword => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
-            Self::Unique => [::sittir_core::types::KindId(143)].iter().any(|k| kinds.contains(k)),
-            Self::VoidKeyword => [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k)),
-            Self::UnknownKeyword => [::sittir_core::types::KindId(144)].iter().any(|k| kinds.contains(k)),
-            Self::NeverKeyword => [::sittir_core::types::KindId(145)].iter().any(|k| kinds.contains(k)),
-            Self::ObjectKeyword => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -26644,16 +28282,39 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypePredicateNameTransportSlot {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     119 => Ok(Self::This),
-                    38 => Ok(Self::AnyKeyword),
-                    39 => Ok(Self::NumberKeyword),
-                    40 => Ok(Self::BooleanKeyword),
-                    41 => Ok(Self::StringKeyword),
-                    42 => Ok(Self::SymbolKeyword),
-                    143 => Ok(Self::Unique),
-                    107 => Ok(Self::VoidKeyword),
-                    144 => Ok(Self::UnknownKeyword),
-                    145 => Ok(Self::NeverKeyword),
-                    44 => Ok(Self::ObjectKeyword),
+                    359 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    38 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    39 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    40 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    41 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    42 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    143 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    144 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    145 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    44 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -26719,16 +28380,39 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypePredicateNameTransportSlot {
                         text: ::sittir_core::boundary::property(env, napi_val, c"$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in TypePredicateNameTransportSlot"))?,
                     })),
                     119 => Ok(Self::This),
-                    38 => Ok(Self::AnyKeyword),
-                    39 => Ok(Self::NumberKeyword),
-                    40 => Ok(Self::BooleanKeyword),
-                    41 => Ok(Self::StringKeyword),
-                    42 => Ok(Self::SymbolKeyword),
-                    143 => Ok(Self::Unique),
-                    107 => Ok(Self::VoidKeyword),
-                    144 => Ok(Self::UnknownKeyword),
-                    145 => Ok(Self::NeverKeyword),
-                    44 => Ok(Self::ObjectKeyword),
+                    359 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    38 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    39 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    40 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    41 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    42 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    143 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    144 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    145 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    44 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -26825,88 +28509,25 @@ impl ::sittir_core::render::Render for TypePredicateNameTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             TypePredicateNameTransportSlot::Identifier(inner) => inner.render(w),
+            TypePredicateNameTransportSlot::PredefinedType(inner) => inner.render(w),
             TypePredicateNameTransportSlot::This => render_this(w),
-            TypePredicateNameTransportSlot::AnyKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_ANY_KEYWORD_BEFORE);
-                let written = render_any_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_ANY_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypePredicateNameTransportSlot::NumberKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_NUMBER_KEYWORD_BEFORE);
-                let written = render_number_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_NUMBER_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypePredicateNameTransportSlot::BooleanKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_BOOLEAN_KEYWORD_BEFORE);
-                let written = render_boolean_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_BOOLEAN_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypePredicateNameTransportSlot::StringKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_STRING_KEYWORD_BEFORE);
-                let written = render_string_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_STRING_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypePredicateNameTransportSlot::SymbolKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_SYMBOL_KEYWORD_BEFORE);
-                let written = render_symbol_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_SYMBOL_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypePredicateNameTransportSlot::Unique => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_UNIQUE_BEFORE);
-                let written = render_unique(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_UNIQUE_AFTER);
-                Ok(())
-            }
-            TypePredicateNameTransportSlot::VoidKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_VOID_KEYWORD_BEFORE);
-                let written = render_void_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_VOID_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypePredicateNameTransportSlot::UnknownKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_UNKNOWN_KEYWORD_BEFORE);
-                let written = render_unknown_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_UNKNOWN_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypePredicateNameTransportSlot::NeverKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_NEVER_KEYWORD_BEFORE);
-                let written = render_never_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_NEVER_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypePredicateNameTransportSlot::ObjectKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_OBJECT_KEYWORD_BEFORE);
-                let written = render_object_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_OBJECT_KEYWORD_AFTER);
-                Ok(())
-            }
             TypePredicateNameTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum TypeQueryMemberExpressionObjectTransportSlot {
+    #[kind(kind::IDENTIFIER, kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::TYPE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::EXPORT_KEYWORD, kind::OBJECT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD)]
     Identifier(IdentifierTransport),
+    #[kind(kind::_TYPE_QUERY_SUBSCRIPT_EXPRESSION)]
     TypeQuerySubscriptExpression(TypeQuerySubscriptExpressionTransport),
+    #[kind(kind::_TYPE_QUERY_MEMBER_EXPRESSION)]
     TypeQueryMemberExpression(TypeQueryMemberExpressionTransport),
+    #[kind(kind::_TYPE_QUERY_CALL_EXPRESSION)]
     TypeQueryCallExpression(TypeQueryCallExpressionTransport),
+    #[kind(kind::THIS)]
     This,
     Verbatim(VerbatimTransport),
 }
@@ -27191,9 +28812,12 @@ impl ::sittir_core::render::Render for TypeQueryMemberExpressionObjectTransportS
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum TypeQueryMemberExpressionContentTransportSlot {
+    #[kind(kind::DOT)]
     Dot,
+    #[kind(kind::QMARK_DOT)]
     QmarkDot,
 }
 
@@ -27299,37 +28923,44 @@ impl ::sittir_core::render::Render for TypeQueryMemberExpressionContentTransport
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum TypeQuerySubscriptExpressionIndexTransportSlot {
+    #[kind(kind::PREDEFINED_TYPE, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::UNIQUE, kind::VOID_KEYWORD, kind::UNKNOWN_KEYWORD, kind::NEVER_KEYWORD, kind::OBJECT_KEYWORD)]
+    PredefinedType(PredefinedTypeEnum),
+    #[kind(kind::STRING_DOUBLE)]
     StringDouble(StringDoubleTransport),
+    #[kind(kind::STRING_SINGLE)]
     StringSingle(StringSingleTransport),
+    #[kind(kind::NUMBER_HEX)]
     NumberHex(NumberHexTransport),
+    #[kind(kind::NUMBER_FLOAT_POINT)]
     NumberFloatPoint(NumberFloatPointTransport),
+    #[kind(kind::NUMBER_FLOAT_LEADING_POINT)]
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
+    #[kind(kind::NUMBER_FLOAT_SCIENTIFIC)]
     NumberFloatScientific(NumberFloatScientificTransport),
+    #[kind(kind::NUMBER_DECIMAL)]
     NumberDecimal(NumberDecimalTransport),
+    #[kind(kind::NUMBER_BINARY)]
     NumberBinary(NumberBinaryTransport),
+    #[kind(kind::NUMBER_OCTAL)]
     NumberOctal(NumberOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_HEX)]
     NumberBigintHex(NumberBigintHexTransport),
+    #[kind(kind::NUMBER_BIGINT_BINARY)]
     NumberBigintBinary(NumberBigintBinaryTransport),
+    #[kind(kind::NUMBER_BIGINT_OCTAL)]
     NumberBigintOctal(NumberBigintOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_DECIMAL)]
     NumberBigintDecimal(NumberBigintDecimalTransport),
-    AnyKeyword,
-    NumberKeyword,
-    BooleanKeyword,
-    StringKeyword,
-    SymbolKeyword,
-    Unique,
-    VoidKeyword,
-    UnknownKeyword,
-    NeverKeyword,
-    ObjectKeyword,
     Verbatim(VerbatimTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for TypeQuerySubscriptExpressionIndexTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
+            TypeQuerySubscriptExpressionIndexTransportSlot::PredefinedType(t) => t.prepare(ctx),
             TypeQuerySubscriptExpressionIndexTransportSlot::StringDouble(t) => t.prepare(ctx),
             TypeQuerySubscriptExpressionIndexTransportSlot::StringSingle(t) => t.prepare(ctx),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberHex(t) => t.prepare(ctx),
@@ -27343,21 +28974,12 @@ impl ::sittir_core::prepare::Prepare for TypeQuerySubscriptExpressionIndexTransp
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBigintBinary(t) => t.prepare(ctx),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBigintOctal(t) => t.prepare(ctx),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBigintDecimal(t) => t.prepare(ctx),
-            TypeQuerySubscriptExpressionIndexTransportSlot::AnyKeyword => Ok(()),
-            TypeQuerySubscriptExpressionIndexTransportSlot::NumberKeyword => Ok(()),
-            TypeQuerySubscriptExpressionIndexTransportSlot::BooleanKeyword => Ok(()),
-            TypeQuerySubscriptExpressionIndexTransportSlot::StringKeyword => Ok(()),
-            TypeQuerySubscriptExpressionIndexTransportSlot::SymbolKeyword => Ok(()),
-            TypeQuerySubscriptExpressionIndexTransportSlot::Unique => Ok(()),
-            TypeQuerySubscriptExpressionIndexTransportSlot::VoidKeyword => Ok(()),
-            TypeQuerySubscriptExpressionIndexTransportSlot::UnknownKeyword => Ok(()),
-            TypeQuerySubscriptExpressionIndexTransportSlot::NeverKeyword => Ok(()),
-            TypeQuerySubscriptExpressionIndexTransportSlot::ObjectKeyword => Ok(()),
             TypeQuerySubscriptExpressionIndexTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
+            TypeQuerySubscriptExpressionIndexTransportSlot::PredefinedType(t) => t.source_gap(),
             TypeQuerySubscriptExpressionIndexTransportSlot::StringDouble(t) => t.source_gap(),
             TypeQuerySubscriptExpressionIndexTransportSlot::StringSingle(t) => t.source_gap(),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberHex(t) => t.source_gap(),
@@ -27371,21 +28993,12 @@ impl ::sittir_core::prepare::Prepare for TypeQuerySubscriptExpressionIndexTransp
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBigintBinary(t) => t.source_gap(),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBigintOctal(t) => t.source_gap(),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBigintDecimal(t) => t.source_gap(),
-            TypeQuerySubscriptExpressionIndexTransportSlot::AnyKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::NumberKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::BooleanKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::StringKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::SymbolKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::Unique => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::VoidKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::UnknownKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::NeverKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::ObjectKeyword => None,
             TypeQuerySubscriptExpressionIndexTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
+            TypeQuerySubscriptExpressionIndexTransportSlot::PredefinedType(t) => t.gap_edges(),
             TypeQuerySubscriptExpressionIndexTransportSlot::StringDouble(t) => t.gap_edges(),
             TypeQuerySubscriptExpressionIndexTransportSlot::StringSingle(t) => t.gap_edges(),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberHex(t) => t.gap_edges(),
@@ -27399,16 +29012,6 @@ impl ::sittir_core::prepare::Prepare for TypeQuerySubscriptExpressionIndexTransp
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBigintBinary(t) => t.gap_edges(),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBigintOctal(t) => t.gap_edges(),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBigintDecimal(t) => t.gap_edges(),
-            TypeQuerySubscriptExpressionIndexTransportSlot::AnyKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::NumberKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::BooleanKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::StringKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::SymbolKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::Unique => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::VoidKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::UnknownKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::NeverKeyword => None,
-            TypeQuerySubscriptExpressionIndexTransportSlot::ObjectKeyword => None,
             TypeQuerySubscriptExpressionIndexTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -27417,6 +29020,7 @@ impl ::sittir_core::prepare::Prepare for TypeQuerySubscriptExpressionIndexTransp
 impl ::sittir_core::view::KindOf for TypeQuerySubscriptExpressionIndexTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
+            Self::PredefinedType(inner) => inner.kind_in(kinds),
             Self::StringDouble(inner) => inner.kind_in(kinds),
             Self::StringSingle(inner) => inner.kind_in(kinds),
             Self::NumberHex(inner) => inner.kind_in(kinds),
@@ -27430,16 +29034,6 @@ impl ::sittir_core::view::KindOf for TypeQuerySubscriptExpressionIndexTransportS
             Self::NumberBigintBinary(inner) => inner.kind_in(kinds),
             Self::NumberBigintOctal(inner) => inner.kind_in(kinds),
             Self::NumberBigintDecimal(inner) => inner.kind_in(kinds),
-            Self::AnyKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::NumberKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::BooleanKeyword => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
-            Self::StringKeyword => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
-            Self::SymbolKeyword => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
-            Self::Unique => [::sittir_core::types::KindId(143)].iter().any(|k| kinds.contains(k)),
-            Self::VoidKeyword => [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k)),
-            Self::UnknownKeyword => [::sittir_core::types::KindId(144)].iter().any(|k| kinds.contains(k)),
-            Self::NeverKeyword => [::sittir_core::types::KindId(145)].iter().any(|k| kinds.contains(k)),
-            Self::ObjectKeyword => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(158)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -27454,16 +29048,39 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQuerySubscriptExpressionInde
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    38 => Ok(Self::AnyKeyword),
-                    39 => Ok(Self::NumberKeyword),
-                    40 => Ok(Self::BooleanKeyword),
-                    41 => Ok(Self::StringKeyword),
-                    42 => Ok(Self::SymbolKeyword),
-                    143 => Ok(Self::Unique),
-                    107 => Ok(Self::VoidKeyword),
-                    144 => Ok(Self::UnknownKeyword),
-                    145 => Ok(Self::NeverKeyword),
-                    44 => Ok(Self::ObjectKeyword),
+                    359 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    38 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    39 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    40 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    41 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    42 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    143 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    144 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    145 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    44 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
                     414 => Ok(Self::StringDouble(
                         StringDoubleTransport::from_napi_value(env, napi_val)?
                     )),
@@ -27516,16 +29133,39 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQuerySubscriptExpressionInde
                     id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
                         text: ::sittir_core::boundary::property(env, napi_val, c"$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in TypeQuerySubscriptExpressionIndexTransportSlot"))?,
                     })),
-                    38 => Ok(Self::AnyKeyword),
-                    39 => Ok(Self::NumberKeyword),
-                    40 => Ok(Self::BooleanKeyword),
-                    41 => Ok(Self::StringKeyword),
-                    42 => Ok(Self::SymbolKeyword),
-                    143 => Ok(Self::Unique),
-                    107 => Ok(Self::VoidKeyword),
-                    144 => Ok(Self::UnknownKeyword),
-                    145 => Ok(Self::NeverKeyword),
-                    44 => Ok(Self::ObjectKeyword),
+                    359 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    38 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    39 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    40 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    41 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    42 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    143 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    144 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    145 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    44 => Ok(Self::PredefinedType(
+                        PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                    )),
                     414 => Ok(Self::StringDouble(
                         StringDoubleTransport::from_napi_value(env, napi_val)?
                     )),
@@ -27609,6 +29249,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeQuerySubscriptExpressionIn
 impl ::sittir_core::render::Render for TypeQuerySubscriptExpressionIndexTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
+            TypeQuerySubscriptExpressionIndexTransportSlot::PredefinedType(inner) => inner.render(w),
             TypeQuerySubscriptExpressionIndexTransportSlot::StringDouble(inner) => inner.render(w),
             TypeQuerySubscriptExpressionIndexTransportSlot::StringSingle(inner) => inner.render(w),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberHex(inner) => inner.render(w),
@@ -27622,86 +29263,21 @@ impl ::sittir_core::render::Render for TypeQuerySubscriptExpressionIndexTranspor
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBigintBinary(inner) => inner.render(w),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBigintOctal(inner) => inner.render(w),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBigintDecimal(inner) => inner.render(w),
-            TypeQuerySubscriptExpressionIndexTransportSlot::AnyKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_ANY_KEYWORD_BEFORE);
-                let written = render_any_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_ANY_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypeQuerySubscriptExpressionIndexTransportSlot::NumberKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_NUMBER_KEYWORD_BEFORE);
-                let written = render_number_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_NUMBER_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypeQuerySubscriptExpressionIndexTransportSlot::BooleanKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_BOOLEAN_KEYWORD_BEFORE);
-                let written = render_boolean_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_BOOLEAN_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypeQuerySubscriptExpressionIndexTransportSlot::StringKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_STRING_KEYWORD_BEFORE);
-                let written = render_string_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_STRING_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypeQuerySubscriptExpressionIndexTransportSlot::SymbolKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_SYMBOL_KEYWORD_BEFORE);
-                let written = render_symbol_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_SYMBOL_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypeQuerySubscriptExpressionIndexTransportSlot::Unique => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_UNIQUE_BEFORE);
-                let written = render_unique(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_UNIQUE_AFTER);
-                Ok(())
-            }
-            TypeQuerySubscriptExpressionIndexTransportSlot::VoidKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_VOID_KEYWORD_BEFORE);
-                let written = render_void_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_VOID_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypeQuerySubscriptExpressionIndexTransportSlot::UnknownKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_UNKNOWN_KEYWORD_BEFORE);
-                let written = render_unknown_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_UNKNOWN_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypeQuerySubscriptExpressionIndexTransportSlot::NeverKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_NEVER_KEYWORD_BEFORE);
-                let written = render_never_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_NEVER_KEYWORD_AFTER);
-                Ok(())
-            }
-            TypeQuerySubscriptExpressionIndexTransportSlot::ObjectKeyword => {
-                w.site_at(options::SITE_PREDEFINED_TYPE_OBJECT_KEYWORD_BEFORE);
-                let written = render_object_keyword(w);
-                written?;
-                w.site_at(options::SITE_PREDEFINED_TYPE_OBJECT_KEYWORD_AFTER);
-                Ok(())
-            }
             TypeQuerySubscriptExpressionIndexTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum TypeQueryCallExpressionFunctionTransportSlot {
+    #[kind(kind::IDENTIFIER, kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::TYPE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::EXPORT_KEYWORD, kind::OBJECT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD)]
     Identifier(IdentifierTransport),
+    #[kind(kind::_TYPE_QUERY_MEMBER_EXPRESSION)]
     TypeQueryMemberExpression(TypeQueryMemberExpressionTransport),
+    #[kind(kind::_TYPE_QUERY_SUBSCRIPT_EXPRESSION)]
     TypeQuerySubscriptExpression(TypeQuerySubscriptExpressionTransport),
+    #[kind(kind::IMPORT, kind::IMPORT_KEYWORD)]
     Import,
     Verbatim(VerbatimTransport),
 }
@@ -27975,13 +29551,20 @@ impl ::sittir_core::render::Render for TypeQueryCallExpressionFunctionTransportS
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum TypeQueryExpressionTransportSlot {
+    #[kind(kind::_TYPE_QUERY_SUBSCRIPT_EXPRESSION)]
     TypeQuerySubscriptExpression(TypeQuerySubscriptExpressionTransport),
+    #[kind(kind::_TYPE_QUERY_MEMBER_EXPRESSION)]
     TypeQueryMemberExpression(TypeQueryMemberExpressionTransport),
+    #[kind(kind::_TYPE_QUERY_CALL_EXPRESSION)]
     TypeQueryCallExpression(TypeQueryCallExpressionTransport),
+    #[kind(kind::_TYPE_QUERY_INSTANTIATION_EXPRESSION)]
     TypeQueryInstantiationExpression(TypeQueryInstantiationExpressionTransport),
+    #[kind(kind::IDENTIFIER, kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::TYPE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::EXPORT_KEYWORD, kind::OBJECT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD)]
     Identifier(IdentifierTransport),
+    #[kind(kind::THIS)]
     This,
     Verbatim(VerbatimTransport),
 }
@@ -28277,25 +29860,44 @@ impl ::sittir_core::render::Render for TypeQueryExpressionTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum LiteralTypeContentTransportSlot {
+    #[kind(kind::LITERAL_TYPE_NEGATIVE_NUMBER)]
     LiteralTypeNegativeNumber(LiteralTypeNegativeNumberTransport),
+    #[kind(kind::NUMBER_HEX)]
     NumberHex(NumberHexTransport),
+    #[kind(kind::NUMBER_FLOAT_POINT)]
     NumberFloatPoint(NumberFloatPointTransport),
+    #[kind(kind::NUMBER_FLOAT_LEADING_POINT)]
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
+    #[kind(kind::NUMBER_FLOAT_SCIENTIFIC)]
     NumberFloatScientific(NumberFloatScientificTransport),
+    #[kind(kind::NUMBER_DECIMAL)]
     NumberDecimal(NumberDecimalTransport),
+    #[kind(kind::NUMBER_BINARY)]
     NumberBinary(NumberBinaryTransport),
+    #[kind(kind::NUMBER_OCTAL)]
     NumberOctal(NumberOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_HEX)]
     NumberBigintHex(NumberBigintHexTransport),
+    #[kind(kind::NUMBER_BIGINT_BINARY)]
     NumberBigintBinary(NumberBigintBinaryTransport),
+    #[kind(kind::NUMBER_BIGINT_OCTAL)]
     NumberBigintOctal(NumberBigintOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_DECIMAL)]
     NumberBigintDecimal(NumberBigintDecimalTransport),
+    #[kind(kind::STRING_DOUBLE)]
     StringDouble(StringDoubleTransport),
+    #[kind(kind::STRING_SINGLE)]
     StringSingle(StringSingleTransport),
+    #[kind(kind::TRUE)]
     True,
+    #[kind(kind::FALSE)]
     False,
+    #[kind(kind::NULL)]
     Null,
+    #[kind(kind::UNDEFINED)]
     Undefined,
     Verbatim(VerbatimTransport),
 }
@@ -28579,9 +30181,12 @@ impl ::sittir_core::render::Render for LiteralTypeContentTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ObjectTypeOpeningTransportSlot {
+    #[kind(kind::LBRACE)]
     Lbrace,
+    #[kind(kind::LBRACE_PIPE)]
     LbracePipe,
 }
 
@@ -28675,9 +30280,12 @@ impl ::sittir_core::render::Render for ObjectTypeOpeningTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ObjectTypeClosingTransportSlot {
+    #[kind(kind::RBRACE)]
     Rbrace,
+    #[kind(kind::PIPE_RBRACE)]
     PipeRbrace,
 }
 
@@ -28771,9 +30379,12 @@ impl ::sittir_core::render::Render for ObjectTypeClosingTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ConstraintContentTransportSlot {
+    #[kind(kind::EXTENDS_KEYWORD)]
     ExtendsKeyword,
+    #[kind(kind::COLON)]
     Colon,
 }
 
@@ -28877,34 +30488,62 @@ impl ::sittir_core::render::Render for ConstraintContentTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum FunctionTypeReturnTypeTransportSlot {
+    #[kind(kind::PARENTHESIZED_TYPE)]
     ParenthesizedType(ParenthesizedTypeTransport),
+    #[kind(kind::PREDEFINED_TYPE, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::UNIQUE, kind::VOID_KEYWORD, kind::UNKNOWN_KEYWORD, kind::NEVER_KEYWORD, kind::OBJECT_KEYWORD)]
     PredefinedType(PredefinedTypeEnum),
+    #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierTransport),
+    #[kind(kind::NESTED_TYPE_IDENTIFIER)]
     NestedTypeIdentifier(NestedTypeIdentifierTransport),
+    #[kind(kind::GENERIC_TYPE)]
     GenericType(GenericTypeTransport),
+    #[kind(kind::OBJECT_TYPE)]
     ObjectType(ObjectTypeTransport),
+    #[kind(kind::ARRAY_TYPE)]
     ArrayType(ArrayTypeTransport),
+    #[kind(kind::TUPLE_TYPE)]
     TupleType(TupleTypeTransport),
+    #[kind(kind::FLOW_MAYBE_TYPE)]
     FlowMaybeType(FlowMaybeTypeTransport),
+    #[kind(kind::TYPE_QUERY)]
     TypeQuery(TypeQueryTransport),
+    #[kind(kind::INDEX_TYPE_QUERY)]
     IndexTypeQuery(IndexTypeQueryTransport),
+    #[kind(kind::LITERAL_TYPE)]
     LiteralType(LiteralTypeTransport),
+    #[kind(kind::LOOKUP_TYPE)]
     LookupType(LookupTypeTransport),
+    #[kind(kind::CONDITIONAL_TYPE)]
     ConditionalType(ConditionalTypeTransport),
+    #[kind(kind::TEMPLATE_LITERAL_TYPE)]
     TemplateLiteralType(TemplateLiteralTypeTransport),
+    #[kind(kind::INTERSECTION_TYPE)]
     IntersectionType(IntersectionTypeTransport),
+    #[kind(kind::UNION_TYPE)]
     UnionType(UnionTypeTransport),
+    #[kind(kind::FUNCTION_TYPE)]
     FunctionType(FunctionTypeTransport),
+    #[kind(kind::READONLY_TYPE)]
     ReadonlyType(ReadonlyTypeTransport),
+    #[kind(kind::CONSTRUCTOR_TYPE)]
     ConstructorType(ConstructorTypeTransport),
+    #[kind(kind::INFER_TYPE)]
     InferType(InferTypeTransport),
+    #[kind(kind::_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION)]
     TypeQueryMemberExpressionInTypeAnnotation(TypeQueryMemberExpressionInTypeAnnotationTransport),
+    #[kind(kind::_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION)]
     TypeQueryCallExpressionInTypeAnnotation(TypeQueryCallExpressionInTypeAnnotationTransport),
+    #[kind(kind::ASSERTS)]
     Asserts(AssertsTransport),
+    #[kind(kind::TYPE_PREDICATE)]
     TypePredicate(TypePredicateTransport),
+    #[kind(kind::THIS)]
     This,
+    #[kind(kind::EXISTENTIAL_TYPE)]
     ExistentialType,
 }
 
@@ -29345,9 +30984,12 @@ impl ::sittir_core::render::Render for FunctionTypeReturnTypeTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum FormalParametersElementsItemTransportSlot {
+    #[kind(kind::REQUIRED_PARAMETER)]
     RequiredParameter(RequiredParameterTransport),
+    #[kind(kind::OPTIONAL_PARAMETER)]
     OptionalParameter(OptionalParameterTransport),
 }
 
@@ -29461,36 +31103,66 @@ impl ::sittir_core::render::Render for FormalParametersElementsItemTransportSlot
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum TupleTypeMembersItemTransportSlot {
+    #[kind(kind::TUPLE_PARAMETER)]
     TupleParameter(TupleParameterTransport),
+    #[kind(kind::OPTIONAL_TUPLE_PARAMETER)]
     OptionalTupleParameter(OptionalTupleParameterTransport),
+    #[kind(kind::OPTIONAL_TYPE)]
     OptionalType(OptionalTypeTransport),
+    #[kind(kind::REST_TYPE)]
     RestType(RestTypeTransport),
+    #[kind(kind::PARENTHESIZED_TYPE)]
     ParenthesizedType(ParenthesizedTypeTransport),
+    #[kind(kind::PREDEFINED_TYPE, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::UNIQUE, kind::VOID_KEYWORD, kind::UNKNOWN_KEYWORD, kind::NEVER_KEYWORD, kind::OBJECT_KEYWORD)]
     PredefinedType(PredefinedTypeEnum),
+    #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierTransport),
+    #[kind(kind::NESTED_TYPE_IDENTIFIER)]
     NestedTypeIdentifier(NestedTypeIdentifierTransport),
+    #[kind(kind::GENERIC_TYPE)]
     GenericType(GenericTypeTransport),
+    #[kind(kind::OBJECT_TYPE)]
     ObjectType(ObjectTypeTransport),
+    #[kind(kind::ARRAY_TYPE)]
     ArrayType(ArrayTypeTransport),
+    #[kind(kind::TUPLE_TYPE)]
     TupleType(TupleTypeTransport),
+    #[kind(kind::FLOW_MAYBE_TYPE)]
     FlowMaybeType(FlowMaybeTypeTransport),
+    #[kind(kind::TYPE_QUERY)]
     TypeQuery(TypeQueryTransport),
+    #[kind(kind::INDEX_TYPE_QUERY)]
     IndexTypeQuery(IndexTypeQueryTransport),
+    #[kind(kind::LITERAL_TYPE)]
     LiteralType(LiteralTypeTransport),
+    #[kind(kind::LOOKUP_TYPE)]
     LookupType(LookupTypeTransport),
+    #[kind(kind::CONDITIONAL_TYPE)]
     ConditionalType(ConditionalTypeTransport),
+    #[kind(kind::TEMPLATE_LITERAL_TYPE)]
     TemplateLiteralType(TemplateLiteralTypeTransport),
+    #[kind(kind::INTERSECTION_TYPE)]
     IntersectionType(IntersectionTypeTransport),
+    #[kind(kind::UNION_TYPE)]
     UnionType(UnionTypeTransport),
+    #[kind(kind::FUNCTION_TYPE)]
     FunctionType(FunctionTypeTransport),
+    #[kind(kind::READONLY_TYPE)]
     ReadonlyType(ReadonlyTypeTransport),
+    #[kind(kind::CONSTRUCTOR_TYPE)]
     ConstructorType(ConstructorTypeTransport),
+    #[kind(kind::INFER_TYPE)]
     InferType(InferTypeTransport),
+    #[kind(kind::_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION)]
     TypeQueryMemberExpressionInTypeAnnotation(TypeQueryMemberExpressionInTypeAnnotationTransport),
+    #[kind(kind::_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION)]
     TypeQueryCallExpressionInTypeAnnotation(TypeQueryCallExpressionInTypeAnnotationTransport),
+    #[kind(kind::THIS)]
     This,
+    #[kind(kind::EXISTENTIAL_TYPE)]
     ExistentialType,
 }
 
@@ -29953,9 +31625,12 @@ impl ::sittir_core::render::Render for TupleTypeMembersItemTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ImportClauseGroupContentTransportSlot {
+    #[kind(kind::NAMESPACE_IMPORT)]
     NamespaceImport(NamespaceImportTransport),
+    #[kind(kind::NAMED_IMPORTS)]
     NamedImports(NamedImportsTransport),
 }
 
@@ -30069,10 +31744,14 @@ impl ::sittir_core::render::Render for ImportClauseGroupContentTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum CatchClauseGroupParameterTransportSlot {
+    #[kind(kind::IDENTIFIER, kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::TYPE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::EXPORT_KEYWORD, kind::OBJECT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD)]
     Identifier(IdentifierTransport),
+    #[kind(kind::OBJECT_PATTERN)]
     ObjectPattern(ObjectPatternTransport),
+    #[kind(kind::ARRAY_PATTERN)]
     ArrayPattern(ArrayPatternTransport),
     Verbatim(VerbatimTransport),
 }
@@ -30339,10 +32018,14 @@ impl ::sittir_core::render::Render for CatchClauseGroupParameterTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum AmbientDeclarationModuleTerminatorTransportSlot {
+    #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
+    #[kind(kind::SEMI)]
     Semi,
+    #[transport(blank)]
     Blank,
 }
 
@@ -30457,18 +32140,30 @@ impl ::sittir_core::render::Render for AmbientDeclarationModuleTerminatorTranspo
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ObjectTypeContentItemTransportSlot {
+    #[kind(kind::EXPORT_STATEMENT_DEFAULT_FROM)]
     ExportStatementDefaultFrom(ExportStatementDefaultFromTransport),
+    #[kind(kind::EXPORT_STATEMENT_DEFAULT_DECLARATION)]
     ExportStatementDefaultDeclaration(ExportStatementDefaultDeclarationTransport),
+    #[kind(kind::EXPORT_STATEMENT_TYPE_EXPORT)]
     ExportStatementTypeExport(ExportStatementTypeExportTransport),
+    #[kind(kind::EXPORT_STATEMENT_EQUALS_EXPORT)]
     ExportStatementEqualsExport(ExportStatementEqualsExportTransport),
+    #[kind(kind::EXPORT_STATEMENT_NAMESPACE_EXPORT)]
     ExportStatementNamespaceExport(ExportStatementNamespaceExportTransport),
+    #[kind(kind::PROPERTY_SIGNATURE)]
     PropertySignature(PropertySignatureTransport),
+    #[kind(kind::CALL_SIGNATURE)]
     CallSignature(CallSignatureTransport),
+    #[kind(kind::CONSTRUCT_SIGNATURE)]
     ConstructSignature(ConstructSignatureTransport),
+    #[kind(kind::INDEX_SIGNATURE_COLON)]
     IndexSignatureColon(IndexSignatureColonTransport),
+    #[kind(kind::INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE)]
     IndexSignatureMappedTypeClause(IndexSignatureMappedTypeClauseTransport),
+    #[kind(kind::METHOD_SIGNATURE)]
     MethodSignature(MethodSignatureTransport),
 }
 
@@ -30681,9 +32376,12 @@ impl ::sittir_core::render::Render for ObjectTypeContentItemTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ExportStatementNamespaceExportTerminatorTransportSlot {
+    #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
+    #[kind(kind::SEMI)]
     Semi,
 }
 
@@ -30792,9 +32490,12 @@ impl ::sittir_core::render::Render for ExportStatementNamespaceExportTerminatorT
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ExportStatementTypeExportTerminatorTransportSlot {
+    #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
+    #[kind(kind::SEMI)]
     Semi,
 }
 
@@ -30903,9 +32604,12 @@ impl ::sittir_core::render::Render for ExportStatementTypeExportTerminatorTransp
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ExportStatementEqualsExportTerminatorTransportSlot {
+    #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
+    #[kind(kind::SEMI)]
     Semi,
 }
 
@@ -31014,9 +32718,12 @@ impl ::sittir_core::render::Render for ExportStatementEqualsExportTerminatorTran
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum LiteralTypeNegativeNumberOperatorTransportSlot {
+    #[kind(kind::DASH)]
     Dash,
+    #[kind(kind::PLUS)]
     Plus,
 }
 
@@ -31110,83 +32817,160 @@ impl ::sittir_core::render::Render for LiteralTypeNegativeNumberOperatorTranspor
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum BinaryExpressionInLeftTransportSlot {
+    #[kind(kind::AS_EXPRESSION)]
     AsExpression(AsExpressionTransport),
+    #[kind(kind::SATISFIES_EXPRESSION)]
     SatisfiesExpression(SatisfiesExpressionTransport),
+    #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionTransport),
+    #[kind(kind::INTERNAL_MODULE)]
     InternalModule(InternalModuleTransport),
+    #[kind(kind::TYPE_ASSERTION)]
     TypeAssertion(TypeAssertionTransport),
+    #[kind(kind::SUBSCRIPT_EXPRESSION)]
     SubscriptExpression(SubscriptExpressionTransport),
+    #[kind(kind::MEMBER_EXPRESSION)]
     MemberExpression(MemberExpressionTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
     ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
+    #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
+    #[kind(kind::NUMBER_HEX)]
     NumberHex(NumberHexTransport),
+    #[kind(kind::NUMBER_FLOAT_POINT)]
     NumberFloatPoint(NumberFloatPointTransport),
+    #[kind(kind::NUMBER_FLOAT_LEADING_POINT)]
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
+    #[kind(kind::NUMBER_FLOAT_SCIENTIFIC)]
     NumberFloatScientific(NumberFloatScientificTransport),
+    #[kind(kind::NUMBER_DECIMAL)]
     NumberDecimal(NumberDecimalTransport),
+    #[kind(kind::NUMBER_BINARY)]
     NumberBinary(NumberBinaryTransport),
+    #[kind(kind::NUMBER_OCTAL)]
     NumberOctal(NumberOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_HEX)]
     NumberBigintHex(NumberBigintHexTransport),
+    #[kind(kind::NUMBER_BIGINT_BINARY)]
     NumberBigintBinary(NumberBigintBinaryTransport),
+    #[kind(kind::NUMBER_BIGINT_OCTAL)]
     NumberBigintOctal(NumberBigintOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_DECIMAL)]
     NumberBigintDecimal(NumberBigintDecimalTransport),
+    #[kind(kind::STRING_DOUBLE)]
     StringDouble(StringDoubleTransport),
+    #[kind(kind::STRING_SINGLE)]
     StringSingle(StringSingleTransport),
+    #[kind(kind::TEMPLATE_STRING)]
     TemplateString(TemplateStringTransport),
+    #[kind(kind::REGEX)]
     Regex(RegexTransport),
+    #[kind(kind::OBJECT)]
     Object(ObjectTransport),
+    #[kind(kind::ARRAY)]
     Array(ArrayTransport),
+    #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(FunctionExpressionTransport),
+    #[kind(kind::ARROW_FUNCTION)]
     ArrowFunction(ArrowFunctionTransport),
+    #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(GeneratorFunctionTransport),
+    #[kind(kind::CLASS)]
     Class(ClassTransport),
+    #[kind(kind::CALL_EXPRESSION_CALL)]
     CallExpressionCall(CallExpressionCallTransport),
+    #[kind(kind::CALL_EXPRESSION_TEMPLATE_CALL)]
     CallExpressionTemplateCall(CallExpressionTemplateCallTransport),
+    #[kind(kind::CALL_EXPRESSION_MEMBER)]
     CallExpressionMember(CallExpressionMemberTransport),
+    #[kind(kind::NON_NULL_EXPRESSION)]
     NonNullExpression(NonNullExpressionTransport),
+    #[kind(kind::ASSIGNMENT_EXPRESSION)]
     AssignmentExpression(AssignmentExpressionTransport),
+    #[kind(kind::AUGMENTED_ASSIGNMENT_EXPRESSION)]
     AugmentedAssignmentExpression(AugmentedAssignmentExpressionTransport),
+    #[kind(kind::AWAIT_EXPRESSION)]
     AwaitExpression(AwaitExpressionTransport),
+    #[kind(kind::UNARY_EXPRESSION)]
     UnaryExpression(UnaryExpressionTransport),
+    #[kind(kind::BINARY_EXPRESSION)]
     BinaryExpression(BinaryExpressionTransport),
+    #[kind(kind::TERNARY_EXPRESSION)]
     TernaryExpression(TernaryExpressionTransport),
+    #[kind(kind::UPDATE_EXPRESSION_POSTFIX)]
     UpdateExpressionPostfix(UpdateExpressionPostfixTransport),
+    #[kind(kind::UPDATE_EXPRESSION_PREFIX)]
     UpdateExpressionPrefix(UpdateExpressionPrefixTransport),
+    #[kind(kind::NEW_EXPRESSION)]
     NewExpression(NewExpressionTransport),
+    #[kind(kind::YIELD_EXPRESSION)]
     YieldExpression(YieldExpressionTransport),
+    #[kind(kind::PRIVATE_PROPERTY_IDENTIFIER)]
     PrivatePropertyIdentifier(PrivatePropertyIdentifierTransport),
+    #[kind(kind::UNDEFINED)]
     Undefined,
+    #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
+    #[kind(kind::NAMESPACE_KEYWORD)]
     NamespaceKeyword,
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
+    #[kind(kind::PUBLIC_KEYWORD)]
     PublicKeyword,
+    #[kind(kind::PRIVATE_KEYWORD)]
     PrivateKeyword,
+    #[kind(kind::PROTECTED_KEYWORD)]
     ProtectedKeyword,
+    #[kind(kind::OVERRIDE_KEYWORD)]
     OverrideKeyword,
+    #[kind(kind::READONLY_KEYWORD)]
     ReadonlyKeyword,
+    #[kind(kind::MODULE_KEYWORD)]
     ModuleKeyword,
+    #[kind(kind::ANY_KEYWORD)]
     AnyKeyword,
+    #[kind(kind::NUMBER_KEYWORD)]
     NumberKeyword,
+    #[kind(kind::BOOLEAN_KEYWORD)]
     BooleanKeyword,
+    #[kind(kind::STRING_KEYWORD)]
     StringKeyword,
+    #[kind(kind::SYMBOL_KEYWORD)]
     SymbolKeyword,
+    #[kind(kind::EXPORT_KEYWORD)]
     ExportKeyword,
+    #[kind(kind::OBJECT_KEYWORD)]
     ObjectKeyword,
+    #[kind(kind::NEW_KEYWORD)]
     NewKeyword,
+    #[kind(kind::GET_KEYWORD)]
     GetKeyword,
+    #[kind(kind::SET_KEYWORD)]
     SetKeyword,
+    #[kind(kind::ASYNC_KEYWORD)]
     AsyncKeyword,
+    #[kind(kind::STATIC_KEYWORD)]
     StaticKeyword,
+    #[kind(kind::LET_KEYWORD)]
     LetKeyword,
+    #[kind(kind::THIS)]
     This,
+    #[kind(kind::SUPER)]
     Super,
+    #[kind(kind::TRUE)]
     True,
+    #[kind(kind::FALSE)]
     False,
+    #[kind(kind::NULL)]
     Null,
+    #[kind(kind::META_PROPERTY_NEW_TARGET)]
     MetaPropertyNewTarget,
+    #[kind(kind::META_PROPERTY_IMPORT_META)]
     MetaPropertyImportMeta,
     Verbatim(VerbatimTransport),
 }
@@ -32004,10 +33788,14 @@ impl ::sittir_core::render::Render for BinaryExpressionInLeftTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ClassBodyMemberMethodTerminatorTransportSlot {
+    #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
+    #[kind(kind::SEMI)]
     Semi,
+    #[transport(blank)]
     Blank,
 }
 
@@ -32122,9 +33910,12 @@ impl ::sittir_core::render::Render for ClassBodyMemberMethodTerminatorTransportS
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ClassBodyMemberMethodSigTerminatorTransportSlot {
+    #[kind(kind::_FUNCTION_SIGNATURE_AUTOMATIC_SEMICOLON)]
     FunctionSignatureAutomaticSemicolon,
+    #[kind(kind::COMMA)]
     Comma,
 }
 
@@ -32223,12 +34014,18 @@ impl ::sittir_core::render::Render for ClassBodyMemberMethodSigTerminatorTranspo
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ClassBodyMemberDeclarationMemberTransportSlot {
+    #[kind(kind::ABSTRACT_METHOD_SIGNATURE)]
     AbstractMethodSignature(AbstractMethodSignatureTransport),
+    #[kind(kind::INDEX_SIGNATURE_COLON)]
     IndexSignatureColon(IndexSignatureColonTransport),
+    #[kind(kind::INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE)]
     IndexSignatureMappedTypeClause(IndexSignatureMappedTypeClauseTransport),
+    #[kind(kind::METHOD_SIGNATURE)]
     MethodSignature(MethodSignatureTransport),
+    #[kind(kind::PUBLIC_FIELD_DEFINITION)]
     PublicFieldDefinition(PublicFieldDefinitionTransport),
 }
 
@@ -32375,10 +34172,14 @@ impl ::sittir_core::render::Render for ClassBodyMemberDeclarationMemberTransport
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ClassBodyMemberDeclarationTerminatorTransportSlot {
+    #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
+    #[kind(kind::SEMI)]
     Semi,
+    #[kind(kind::COMMA)]
     Comma,
 }
 
@@ -32493,30 +34294,54 @@ impl ::sittir_core::render::Render for ClassBodyMemberDeclarationTerminatorTrans
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum IndexSignatureColonNameTransportSlot {
+    #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
+    #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
+    #[kind(kind::NAMESPACE_KEYWORD)]
     NamespaceKeyword,
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
+    #[kind(kind::PUBLIC_KEYWORD)]
     PublicKeyword,
+    #[kind(kind::PRIVATE_KEYWORD)]
     PrivateKeyword,
+    #[kind(kind::PROTECTED_KEYWORD)]
     ProtectedKeyword,
+    #[kind(kind::OVERRIDE_KEYWORD)]
     OverrideKeyword,
+    #[kind(kind::READONLY_KEYWORD)]
     ReadonlyKeyword,
+    #[kind(kind::MODULE_KEYWORD)]
     ModuleKeyword,
+    #[kind(kind::ANY_KEYWORD)]
     AnyKeyword,
+    #[kind(kind::NUMBER_KEYWORD)]
     NumberKeyword,
+    #[kind(kind::BOOLEAN_KEYWORD)]
     BooleanKeyword,
+    #[kind(kind::STRING_KEYWORD)]
     StringKeyword,
+    #[kind(kind::SYMBOL_KEYWORD)]
     SymbolKeyword,
+    #[kind(kind::EXPORT_KEYWORD)]
     ExportKeyword,
+    #[kind(kind::OBJECT_KEYWORD)]
     ObjectKeyword,
+    #[kind(kind::NEW_KEYWORD)]
     NewKeyword,
+    #[kind(kind::GET_KEYWORD)]
     GetKeyword,
+    #[kind(kind::SET_KEYWORD)]
     SetKeyword,
+    #[kind(kind::ASYNC_KEYWORD)]
     AsyncKeyword,
+    #[kind(kind::STATIC_KEYWORD)]
     StaticKeyword,
+    #[kind(kind::LET_KEYWORD)]
     LetKeyword,
     Verbatim(VerbatimTransport),
 }
@@ -32783,11 +34608,16 @@ impl ::sittir_core::render::Render for IndexSignatureColonNameTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum IndexSignatureColonTypeTransportSlot {
+    #[kind(kind::TYPE_ANNOTATION)]
     TypeAnnotation(TypeAnnotationTransport),
+    #[kind(kind::OMITTING_TYPE_ANNOTATION)]
     OmittingTypeAnnotation(OmittingTypeAnnotationTransport),
+    #[kind(kind::ADDING_TYPE_ANNOTATION)]
     AddingTypeAnnotation(AddingTypeAnnotationTransport),
+    #[kind(kind::OPTING_TYPE_ANNOTATION)]
     OptingTypeAnnotation(OptingTypeAnnotationTransport),
 }
 
@@ -32923,9 +34753,12 @@ impl ::sittir_core::render::Render for IndexSignatureColonTypeTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ImportSpecifierNameImportKindTransportSlot {
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
+    #[kind(kind::TYPEOF_KEYWORD)]
     TypeofKeyword,
 }
 
@@ -33029,9 +34862,12 @@ impl ::sittir_core::render::Render for ImportSpecifierNameImportKindTransportSlo
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ImportSpecifierNameNameTransportSlot {
+    #[kind(kind::IDENTIFIER, kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::EXPORT_KEYWORD, kind::OBJECT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD)]
     Identifier(IdentifierTransport),
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
     Verbatim(VerbatimTransport),
 }
@@ -33282,9 +35118,12 @@ impl ::sittir_core::render::Render for ImportSpecifierNameNameTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ImportSpecifierAsImportKindTransportSlot {
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
+    #[kind(kind::TYPEOF_KEYWORD)]
     TypeofKeyword,
 }
 
@@ -33388,11 +35227,16 @@ impl ::sittir_core::render::Render for ImportSpecifierAsImportKindTransportSlot 
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ImportSpecifierAsNameTransportSlot {
+    #[kind(kind::IDENTIFIER, kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::EXPORT_KEYWORD, kind::OBJECT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD)]
     Identifier(IdentifierTransport),
+    #[kind(kind::STRING_DOUBLE)]
     StringDouble(StringDoubleTransport),
+    #[kind(kind::STRING_SINGLE)]
     StringSingle(StringSingleTransport),
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
     Verbatim(VerbatimTransport),
 }
@@ -33665,9 +35509,12 @@ impl ::sittir_core::render::Render for ImportSpecifierAsNameTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ImportSpecifierAsAliasTransportSlot {
+    #[kind(kind::IDENTIFIER, kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::EXPORT_KEYWORD, kind::OBJECT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD)]
     Identifier(IdentifierTransport),
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
     Verbatim(VerbatimTransport),
 }
@@ -33918,68 +35765,130 @@ impl ::sittir_core::render::Render for ImportSpecifierAsAliasTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum CallExpressionTemplateCallFunctionTransportSlot {
+    #[kind(kind::SUBSCRIPT_EXPRESSION)]
     SubscriptExpression(SubscriptExpressionTransport),
+    #[kind(kind::MEMBER_EXPRESSION)]
     MemberExpression(MemberExpressionTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
     ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
+    #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
+    #[kind(kind::NUMBER_HEX)]
     NumberHex(NumberHexTransport),
+    #[kind(kind::NUMBER_FLOAT_POINT)]
     NumberFloatPoint(NumberFloatPointTransport),
+    #[kind(kind::NUMBER_FLOAT_LEADING_POINT)]
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
+    #[kind(kind::NUMBER_FLOAT_SCIENTIFIC)]
     NumberFloatScientific(NumberFloatScientificTransport),
+    #[kind(kind::NUMBER_DECIMAL)]
     NumberDecimal(NumberDecimalTransport),
+    #[kind(kind::NUMBER_BINARY)]
     NumberBinary(NumberBinaryTransport),
+    #[kind(kind::NUMBER_OCTAL)]
     NumberOctal(NumberOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_HEX)]
     NumberBigintHex(NumberBigintHexTransport),
+    #[kind(kind::NUMBER_BIGINT_BINARY)]
     NumberBigintBinary(NumberBigintBinaryTransport),
+    #[kind(kind::NUMBER_BIGINT_OCTAL)]
     NumberBigintOctal(NumberBigintOctalTransport),
+    #[kind(kind::NUMBER_BIGINT_DECIMAL)]
     NumberBigintDecimal(NumberBigintDecimalTransport),
+    #[kind(kind::STRING_DOUBLE)]
     StringDouble(StringDoubleTransport),
+    #[kind(kind::STRING_SINGLE)]
     StringSingle(StringSingleTransport),
+    #[kind(kind::TEMPLATE_STRING)]
     TemplateString(TemplateStringTransport),
+    #[kind(kind::REGEX)]
     Regex(RegexTransport),
+    #[kind(kind::OBJECT)]
     Object(ObjectTransport),
+    #[kind(kind::ARRAY)]
     Array(ArrayTransport),
+    #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(FunctionExpressionTransport),
+    #[kind(kind::ARROW_FUNCTION)]
     ArrowFunction(ArrowFunctionTransport),
+    #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(GeneratorFunctionTransport),
+    #[kind(kind::CLASS)]
     Class(ClassTransport),
+    #[kind(kind::CALL_EXPRESSION_CALL)]
     CallExpressionCall(CallExpressionCallTransport),
+    #[kind(kind::CALL_EXPRESSION_TEMPLATE_CALL)]
     CallExpressionTemplateCall(CallExpressionTemplateCallTransport),
+    #[kind(kind::CALL_EXPRESSION_MEMBER)]
     CallExpressionMember(CallExpressionMemberTransport),
+    #[kind(kind::NON_NULL_EXPRESSION)]
     NonNullExpression(NonNullExpressionTransport),
+    #[kind(kind::NEW_EXPRESSION)]
     NewExpression(NewExpressionTransport),
+    #[kind(kind::UNDEFINED)]
     Undefined,
+    #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
+    #[kind(kind::NAMESPACE_KEYWORD)]
     NamespaceKeyword,
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
+    #[kind(kind::PUBLIC_KEYWORD)]
     PublicKeyword,
+    #[kind(kind::PRIVATE_KEYWORD)]
     PrivateKeyword,
+    #[kind(kind::PROTECTED_KEYWORD)]
     ProtectedKeyword,
+    #[kind(kind::OVERRIDE_KEYWORD)]
     OverrideKeyword,
+    #[kind(kind::READONLY_KEYWORD)]
     ReadonlyKeyword,
+    #[kind(kind::MODULE_KEYWORD)]
     ModuleKeyword,
+    #[kind(kind::ANY_KEYWORD)]
     AnyKeyword,
+    #[kind(kind::NUMBER_KEYWORD)]
     NumberKeyword,
+    #[kind(kind::BOOLEAN_KEYWORD)]
     BooleanKeyword,
+    #[kind(kind::STRING_KEYWORD)]
     StringKeyword,
+    #[kind(kind::SYMBOL_KEYWORD)]
     SymbolKeyword,
+    #[kind(kind::EXPORT_KEYWORD)]
     ExportKeyword,
+    #[kind(kind::OBJECT_KEYWORD)]
     ObjectKeyword,
+    #[kind(kind::NEW_KEYWORD)]
     NewKeyword,
+    #[kind(kind::GET_KEYWORD)]
     GetKeyword,
+    #[kind(kind::SET_KEYWORD)]
     SetKeyword,
+    #[kind(kind::ASYNC_KEYWORD)]
     AsyncKeyword,
+    #[kind(kind::STATIC_KEYWORD)]
     StaticKeyword,
+    #[kind(kind::LET_KEYWORD)]
     LetKeyword,
+    #[kind(kind::THIS)]
     This,
+    #[kind(kind::SUPER)]
     Super,
+    #[kind(kind::TRUE)]
     True,
+    #[kind(kind::FALSE)]
     False,
+    #[kind(kind::NULL)]
     Null,
+    #[kind(kind::META_PROPERTY_NEW_TARGET)]
     MetaPropertyNewTarget,
+    #[kind(kind::META_PROPERTY_IMPORT_META)]
     MetaPropertyImportMeta,
     Verbatim(VerbatimTransport),
 }
@@ -34632,9 +36541,12 @@ impl ::sittir_core::render::Render for CallExpressionTemplateCallFunctionTranspo
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum StringDoubleElementsTransportSlot {
+    #[kind(kind::UNESCAPED_DOUBLE_STRING_FRAGMENT)]
     UnescapedDoubleStringFragment(UnescapedDoubleStringFragmentTransport),
+    #[kind(kind::ESCAPE_SEQUENCE)]
     EscapeSequence(EscapeSequenceTransport),
     Verbatim(VerbatimTransport),
 }
@@ -34758,9 +36670,12 @@ impl ::sittir_core::render::Render for StringDoubleElementsTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum StringSingleElementsTransportSlot {
+    #[kind(kind::UNESCAPED_SINGLE_STRING_FRAGMENT, kind::UNESCAPED_DOUBLE_STRING_FRAGMENT)]
     UnescapedSingleStringFragment(UnescapedSingleStringFragmentTransport),
+    #[kind(kind::ESCAPE_SEQUENCE)]
     EscapeSequence(EscapeSequenceTransport),
     Verbatim(VerbatimTransport),
 }
@@ -34890,9 +36805,12 @@ impl ::sittir_core::render::Render for StringSingleElementsTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum UpdateExpressionPostfixOperatorTransportSlot {
+    #[kind(kind::PLUS_PLUS)]
     PlusPlus,
+    #[kind(kind::DASH_DASH)]
     DashDash,
 }
 
@@ -34986,9 +36904,12 @@ impl ::sittir_core::render::Render for UpdateExpressionPostfixOperatorTransportS
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ImportClauseDefaultImportIdentifierTransportSlot {
+    #[kind(kind::IDENTIFIER, kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::EXPORT_KEYWORD, kind::OBJECT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD)]
     Identifier(IdentifierTransport),
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
     Verbatim(VerbatimTransport),
 }
@@ -35234,11 +37155,16 @@ impl ::sittir_core::render::Render for ImportClauseDefaultImportIdentifierTransp
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ExportStatementDefaultFromContentTransportSlot {
+    #[kind(kind::EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM)]
     ExportStatementDefaultFromStarFrom(ExportStatementDefaultFromStarFromTransport),
+    #[kind(kind::EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM)]
     ExportStatementDefaultFromNsFrom(ExportStatementDefaultFromNsFromTransport),
+    #[kind(kind::EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM)]
     ExportStatementDefaultFromClauseFrom(ExportStatementDefaultFromClauseFromTransport),
+    #[kind(kind::EXPORT_CLAUSE)]
     ExportClause(ExportClauseTransport),
 }
 
@@ -35374,9 +37300,12 @@ impl ::sittir_core::render::Render for ExportStatementDefaultFromContentTranspor
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ExportStatementDefaultFromAutomaticSemicolonTransportSlot {
+    #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
+    #[kind(kind::SEMI)]
     Semi,
 }
 
@@ -35485,22 +37414,38 @@ impl ::sittir_core::render::Render for ExportStatementDefaultFromAutomaticSemico
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ExportStatementDefaultDeclarationContentTransportSlot {
+    #[kind(kind::FUNCTION_DECLARATION)]
     FunctionDeclaration(FunctionDeclarationTransport),
+    #[kind(kind::GENERATOR_FUNCTION_DECLARATION)]
     GeneratorFunctionDeclaration(GeneratorFunctionDeclarationTransport),
+    #[kind(kind::CLASS_DECLARATION)]
     ClassDeclaration(ClassDeclarationTransport),
+    #[kind(kind::LEXICAL_DECLARATION)]
     LexicalDeclaration(LexicalDeclarationTransport),
+    #[kind(kind::VARIABLE_DECLARATION)]
     VariableDeclaration(VariableDeclarationTransport),
+    #[kind(kind::FUNCTION_SIGNATURE)]
     FunctionSignature(FunctionSignatureTransport),
+    #[kind(kind::ABSTRACT_CLASS_DECLARATION)]
     AbstractClassDeclaration(AbstractClassDeclarationTransport),
+    #[kind(kind::MODULE)]
     Module(ModuleTransport),
+    #[kind(kind::INTERNAL_MODULE)]
     InternalModule(InternalModuleTransport),
+    #[kind(kind::TYPE_ALIAS_DECLARATION)]
     TypeAliasDeclaration(TypeAliasDeclarationTransport),
+    #[kind(kind::ENUM_DECLARATION)]
     EnumDeclaration(EnumDeclarationTransport),
+    #[kind(kind::INTERFACE_DECLARATION)]
     InterfaceDeclaration(InterfaceDeclarationTransport),
+    #[kind(kind::IMPORT_ALIAS)]
     ImportAlias(ImportAliasTransport),
+    #[kind(kind::AMBIENT_DECLARATION)]
     AmbientDeclaration(AmbientDeclarationTransport),
+    #[kind(kind::EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW)]
     ExportStatementDefaultDeclarationDefaultKw(ExportStatementDefaultDeclarationDefaultKwTransport),
 }
 
@@ -35757,22 +37702,38 @@ impl ::sittir_core::render::Render for ExportStatementDefaultDeclarationContentT
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ExportStatementDefaultDeclarationDefaultKwContentTransportSlot {
+    #[kind(kind::FUNCTION_DECLARATION)]
     FunctionDeclaration(FunctionDeclarationTransport),
+    #[kind(kind::GENERATOR_FUNCTION_DECLARATION)]
     GeneratorFunctionDeclaration(GeneratorFunctionDeclarationTransport),
+    #[kind(kind::CLASS_DECLARATION)]
     ClassDeclaration(ClassDeclarationTransport),
+    #[kind(kind::LEXICAL_DECLARATION)]
     LexicalDeclaration(LexicalDeclarationTransport),
+    #[kind(kind::VARIABLE_DECLARATION)]
     VariableDeclaration(VariableDeclarationTransport),
+    #[kind(kind::FUNCTION_SIGNATURE)]
     FunctionSignature(FunctionSignatureTransport),
+    #[kind(kind::ABSTRACT_CLASS_DECLARATION)]
     AbstractClassDeclaration(AbstractClassDeclarationTransport),
+    #[kind(kind::MODULE)]
     Module(ModuleTransport),
+    #[kind(kind::INTERNAL_MODULE)]
     InternalModule(InternalModuleTransport),
+    #[kind(kind::TYPE_ALIAS_DECLARATION)]
     TypeAliasDeclaration(TypeAliasDeclarationTransport),
+    #[kind(kind::ENUM_DECLARATION)]
     EnumDeclaration(EnumDeclarationTransport),
+    #[kind(kind::INTERFACE_DECLARATION)]
     InterfaceDeclaration(InterfaceDeclarationTransport),
+    #[kind(kind::IMPORT_ALIAS)]
     ImportAlias(ImportAliasTransport),
+    #[kind(kind::AMBIENT_DECLARATION)]
     AmbientDeclaration(AmbientDeclarationTransport),
+    #[kind(kind::EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE)]
     ExportStatementDefaultDeclarationDefaultKwValue(ExportStatementDefaultDeclarationDefaultKwValueTransport),
 }
 
@@ -36029,9 +37990,12 @@ impl ::sittir_core::render::Render for ExportStatementDefaultDeclarationDefaultK
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot {
+    #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
+    #[kind(kind::SEMI)]
     Semi,
 }
 
@@ -36140,10 +38104,14 @@ impl ::sittir_core::render::Render for ExportStatementDefaultDeclarationDefaultK
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ForHeaderLhsLeftTransportSlot {
+    #[kind(kind::_LHS_EXPRESSION, kind::LHS_EXPRESSION)]
     LhsExpression(LhsExpressionTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
     ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
+    #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
 }
 
@@ -36274,9 +38242,12 @@ impl ::sittir_core::render::Render for ForHeaderLhsLeftTransportSlot {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ForHeaderLhsOperatorTransportSlot {
+    #[kind(kind::IN_KEYWORD)]
     InKeyword,
+    #[kind(kind::OF_KEYWORD)]
     OfKeyword,
 }
 
@@ -36372,13 +38343,16 @@ impl ::sittir_core::render::Render for ForHeaderLhsOperatorTransportSlot {
 
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::PROGRAM, gap(0) = statements)]
 pub struct ProgramTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_hash_bang_line"))]
+    #[slot(field = field::HASH_BANG_LINE)]
     pub hash_bang_line: Option<::sittir_core::SlotValue<HashBangLineTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements"))]
+    #[slot(field = field::STATEMENTS)]
     pub statements: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_separator_space"))]
     pub statements_separator_space: Option<u16>,
@@ -36448,11 +38422,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ProgramTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::HASH_BANG_LINE, interior = "^#!(?<content>.*)$")]
 pub struct HashBangLineTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[slot(capture = "content")]
     pub content: String,
 }
 
@@ -36509,11 +38485,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<HashBangLineTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::NAMESPACE_EXPORT, layout = [kind::STAR, kind::AS_KEYWORD])]
 pub struct NamespaceExportTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_module_export_name"))]
+    #[slot]
     pub module_export_name: ::sittir_core::SlotValue<NamespaceExportModuleExportNameTransportSlot>,
 }
 
@@ -36573,11 +38551,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NamespaceExportTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::EXPORT_CLAUSE, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], gap(1) = export_specifiers)]
 pub struct ExportClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifiers"))]
+    #[slot]
     pub export_specifiers: Option<::sittir_core::SlotValue<ExportSpecifiersTransport>>,
 }
 
@@ -36637,15 +38617,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportClauseTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::EXPORT_SPECIFIER, layout = [kind::AS_KEYWORD])]
 pub struct ExportSpecifierTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_kind"))]
+    #[slot(field = field::EXPORT_KIND)]
     pub export_kind: Option<::sittir_core::SlotValue<ExportSpecifierExportKindTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<NamespaceExportModuleExportNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
+    #[slot(field = field::ALIAS)]
     pub alias: Option<::sittir_core::SlotValue<NamespaceExportModuleExportNameTransportSlot>>,
 }
 
@@ -36706,8 +38690,10 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportSpecifierTransport> {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ImportTransport {
+    #[kind(kind::IMPORT)]
     Import,
 }
 
@@ -36775,17 +38761,22 @@ impl ::sittir_core::render::Render for ImportTransport {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::IMPORT_STATEMENT, layout = [kind::IMPORT_KEYWORD])]
 pub struct ImportStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_clause"))]
+    #[slot(field = field::IMPORT_CLAUSE)]
     pub import_clause: Option<::sittir_core::SlotValue<ImportStatementImportClauseTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_clause"))]
+    #[slot(field = field::FROM_CLAUSE)]
     pub from_clause: ::sittir_core::SlotValue<ImportStatementFromClauseTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_attribute"))]
+    #[slot(field = field::IMPORT_ATTRIBUTE)]
     pub import_attribute: Option<::sittir_core::SlotValue<ImportAttributeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    #[slot(field = field::TERMINATOR)]
     pub terminator: Option<::sittir_core::SlotValue<ImportStatementTerminatorTransportSlot>>,
 }
 
@@ -36849,11 +38840,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportStatementTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::IMPORT_CLAUSE)]
 pub struct ImportClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[slot]
     pub content: ::sittir_core::SlotValue<ImportClauseContentTransportSlot>,
 }
 
@@ -36910,11 +38903,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportClauseTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::NAMESPACE_IMPORT, layout = [kind::STAR, kind::AS_KEYWORD])]
 pub struct NamespaceImportTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
 }
 
@@ -36974,11 +38969,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NamespaceImportTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::NAMED_IMPORTS, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], gap(1) = import_specifiers)]
 pub struct NamedImportsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifiers"))]
+    #[slot]
     pub import_specifiers: Option<::sittir_core::SlotValue<ImportSpecifiersTransport>>,
 }
 
@@ -37038,13 +39035,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedImportsTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::IMPORT_ATTRIBUTE)]
 pub struct ImportAttributeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute_kind"))]
+    #[slot(field = field::ATTRIBUTE_KIND)]
     pub attribute_kind: ::sittir_core::SlotValue<ImportAttributeAttributeKindTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
+    #[slot(field = field::OBJECT)]
     pub object: ::sittir_core::SlotValue<ObjectTransport>,
 }
 
@@ -37105,13 +39105,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportAttributeTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::EXPRESSION_STATEMENT)]
 pub struct ExpressionStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    #[slot(field = field::EXPRESSION)]
     pub expression: ::sittir_core::SlotValue<ExpressionStatementExpressionTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    #[slot(field = field::TERMINATOR)]
     pub terminator: Option<::sittir_core::SlotValue<ExpressionStatementTerminatorTransportSlot>>,
 }
 
@@ -37173,13 +39176,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExpressionStatementTransport> 
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::VARIABLE_DECLARATION, layout = [kind::VAR_KEYWORD])]
 pub struct VariableDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators"))]
+    #[slot(field = field::DECLARATORS, separator = kind::COMMA)]
     pub declarators: Vec<::sittir_core::SlotValue<VariableDeclaratorTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    #[slot(field = field::TERMINATOR)]
     pub terminator: Option<::sittir_core::SlotValue<VariableDeclarationTerminatorTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_separator_space_before"))]
     pub declarators_separator_space_before: Option<u16>,
@@ -37249,15 +39255,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<VariableDeclarationTransport> 
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::LEXICAL_DECLARATION)]
 pub struct LexicalDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_kind"))]
+    #[slot(field = field::KIND)]
     pub kind: ::sittir_core::SlotValue<LexicalDeclarationKindTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators"))]
+    #[slot(field = field::DECLARATORS, separator = kind::COMMA)]
     pub declarators: Vec<::sittir_core::SlotValue<VariableDeclaratorTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    #[slot(field = field::TERMINATOR)]
     pub terminator: Option<::sittir_core::SlotValue<LexicalDeclarationTerminatorTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_separator_space_before"))]
     pub declarators_separator_space_before: Option<u16>,
@@ -37328,13 +39338,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LexicalDeclarationTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::STATEMENT_BLOCK, layout = [kind::LBRACE, kind::RBRACE], gap(1) = statements)]
 pub struct StatementBlockTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements"))]
+    #[slot(field = field::STATEMENTS)]
     pub statements: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    #[slot(field = field::TERMINATOR)]
     pub terminator: Option<::sittir_core::SlotValue<StatementBlockTerminatorTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_separator_space"))]
     pub statements_separator_space: Option<u16>,
@@ -37401,11 +39414,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StatementBlockTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::ELSE_CLAUSE, layout = [kind::ELSE_KEYWORD])]
 pub struct ElseClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<StatementTransport>>,
 }
 
@@ -37465,15 +39480,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ElseClauseTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::IF_STATEMENT, layout = [kind::IF_KEYWORD])]
 pub struct IfStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
+    #[slot(field = field::CONDITION)]
     pub condition: ::sittir_core::SlotValue<ParenthesizedExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_consequence"))]
+    #[slot(field = field::CONSEQUENCE)]
     pub consequence: ::sittir_core::SlotValue<Box<StatementTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
+    #[slot(field = field::ALTERNATIVE)]
     pub alternative: Option<::sittir_core::SlotValue<Box<ElseClauseTransport>>>,
 }
 
@@ -37535,13 +39554,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IfStatementTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::SWITCH_STATEMENT, layout = [kind::SWITCH_KEYWORD])]
 pub struct SwitchStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
+    #[slot(field = field::VALUE)]
     pub value: ::sittir_core::SlotValue<ParenthesizedExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<SwitchBodyTransport>,
 }
 
@@ -37602,17 +39624,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SwitchStatementTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::FOR_STATEMENT, layout = [kind::FOR_KEYWORD, kind::LPAREN, kind::SEMI, kind::RPAREN])]
 pub struct ForStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_initializer"))]
+    #[slot(field = field::INITIALIZER)]
     pub initializer: ::sittir_core::SlotValue<ForStatementInitializerTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
+    #[slot(field = field::CONDITION, separator = kind::SEMI)]
     pub condition: ::sittir_core::SlotValue<ForStatementConditionTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_increment"))]
+    #[slot(field = field::INCREMENT)]
     pub increment: Option<::sittir_core::SlotValue<ExpressionStatementExpressionTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<StatementTransport>>,
 }
 
@@ -37675,15 +39702,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ForStatementTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::FOR_IN_STATEMENT, layout = [kind::FOR_KEYWORD])]
 pub struct ForInStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_await"))]
+    #[slot(field = field::AWAIT, presence = kind::AWAIT_KEYWORD)]
     pub await_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<StatementTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_header"))]
+    #[slot]
     pub for_header: ::sittir_core::SlotValue<ForHeaderTransport>,
 }
 
@@ -37745,13 +39776,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ForInStatementTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::WHILE_STATEMENT, layout = [kind::WHILE_KEYWORD])]
 pub struct WhileStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
+    #[slot(field = field::CONDITION)]
     pub condition: ::sittir_core::SlotValue<ParenthesizedExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<StatementTransport>>,
 }
 
@@ -37812,15 +39846,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<WhileStatementTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::DO_STATEMENT, layout = [kind::DO_KEYWORD, kind::WHILE_KEYWORD])]
 pub struct DoStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<StatementTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
+    #[slot(field = field::CONDITION)]
     pub condition: ::sittir_core::SlotValue<ParenthesizedExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    #[slot(field = field::TERMINATOR)]
     pub terminator: Option<::sittir_core::SlotValue<DoStatementTerminatorTransportSlot>>,
 }
 
@@ -37883,15 +39921,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DoStatementTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::TRY_STATEMENT, layout = [kind::TRY_KEYWORD])]
 pub struct TryStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_handler"))]
+    #[slot(field = field::HANDLER)]
     pub handler: Option<::sittir_core::SlotValue<CatchClauseTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_finalizer"))]
+    #[slot(field = field::FINALIZER)]
     pub finalizer: Option<::sittir_core::SlotValue<FinallyClauseTransport>>,
 }
 
@@ -37953,13 +39995,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TryStatementTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::WITH_STATEMENT, layout = [kind::WITH_KEYWORD])]
 pub struct WithStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
+    #[slot(field = field::OBJECT)]
     pub object: ::sittir_core::SlotValue<ParenthesizedExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<StatementTransport>>,
 }
 
@@ -38020,13 +40065,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<WithStatementTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::BREAK_STATEMENT, layout = [kind::BREAK_KEYWORD])]
 pub struct BreakStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
+    #[slot(field = field::LABEL)]
     pub label: Option<::sittir_core::SlotValue<StatementIdentifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    #[slot(field = field::TERMINATOR)]
     pub terminator: Option<::sittir_core::SlotValue<BreakStatementTerminatorTransportSlot>>,
 }
 
@@ -38088,13 +40136,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BreakStatementTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::CONTINUE_STATEMENT, layout = [kind::CONTINUE_KEYWORD])]
 pub struct ContinueStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
+    #[slot(field = field::LABEL)]
     pub label: Option<::sittir_core::SlotValue<StatementIdentifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    #[slot(field = field::TERMINATOR)]
     pub terminator: Option<::sittir_core::SlotValue<ContinueStatementTerminatorTransportSlot>>,
 }
 
@@ -38156,11 +40207,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ContinueStatementTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::DEBUGGER_STATEMENT, layout = [kind::DEBUGGER_KEYWORD])]
 pub struct DebuggerStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    #[slot(field = field::TERMINATOR)]
     pub terminator: Option<::sittir_core::SlotValue<DebuggerStatementTerminatorTransportSlot>>,
 }
 
@@ -38221,13 +40274,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DebuggerStatementTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::RETURN_STATEMENT, layout = [kind::RETURN_KEYWORD])]
 pub struct ReturnStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    #[slot(field = field::EXPRESSION)]
     pub expression: Option<::sittir_core::SlotValue<ExpressionStatementExpressionTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    #[slot(field = field::TERMINATOR)]
     pub terminator: Option<::sittir_core::SlotValue<ReturnStatementTerminatorTransportSlot>>,
 }
 
@@ -38289,13 +40345,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ReturnStatementTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::THROW_STATEMENT, layout = [kind::THROW_KEYWORD])]
 pub struct ThrowStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    #[slot(field = field::EXPRESSION)]
     pub expression: ::sittir_core::SlotValue<ExpressionStatementExpressionTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    #[slot(field = field::TERMINATOR)]
     pub terminator: Option<::sittir_core::SlotValue<ThrowStatementTerminatorTransportSlot>>,
 }
 
@@ -38356,8 +40415,10 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ThrowStatementTransport> {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum EmptyStatementTransport {
+    #[kind(kind::EMPTY_STATEMENT)]
     EmptyStatement,
 }
 
@@ -38425,13 +40486,16 @@ impl ::sittir_core::render::Render for EmptyStatementTransport {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::LABELED_STATEMENT, layout = [kind::COLON])]
 pub struct LabeledStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
+    #[slot(field = field::LABEL)]
     pub label: ::sittir_core::SlotValue<LabeledStatementLabelTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<StatementTransport>>,
 }
 
@@ -38492,11 +40556,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LabeledStatementTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::SWITCH_BODY, layout = [kind::LBRACE, kind::RBRACE], gap(1) = cases)]
 pub struct SwitchBodyTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_cases"))]
+    #[slot(field = field::CASES)]
     pub cases: Option<Vec<::sittir_core::SlotValue<SwitchBodyCasesTransportSlot>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_cases_separator_space"))]
     pub cases_separator_space: Option<u16>,
@@ -38561,13 +40627,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SwitchBodyTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::SWITCH_CASE, layout = [kind::CASE_KEYWORD, kind::COLON])]
 pub struct SwitchCaseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
+    #[slot(field = field::VALUE)]
     pub value: ::sittir_core::SlotValue<ExpressionStatementExpressionTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body_separator_space"))]
     pub body_separator_space: Option<u16>,
@@ -38633,11 +40702,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SwitchCaseTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::SWITCH_DEFAULT, layout = [kind::DEFAULT_KEYWORD, kind::COLON])]
 pub struct SwitchDefaultTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body_separator_space"))]
     pub body_separator_space: Option<u16>,
@@ -38702,13 +40773,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SwitchDefaultTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::CATCH_CLAUSE, layout = [kind::CATCH_KEYWORD])]
 pub struct CatchClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_catch_clause_group"))]
+    #[slot]
     pub catch_clause_group: Option<::sittir_core::SlotValue<CatchClauseGroupTransport>>,
 }
 
@@ -38769,11 +40843,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CatchClauseTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::FINALLY_CLAUSE, layout = [kind::FINALLY_KEYWORD])]
 pub struct FinallyClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
 }
 
@@ -38833,11 +40909,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FinallyClauseTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::YIELD_EXPRESSION, layout = [kind::YIELD_KEYWORD])]
 pub struct YieldExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    #[slot(field = field::EXPRESSION)]
     pub expression: Option<::sittir_core::SlotValue<Box<YieldExpressionExpressionTransportSlot>>>,
 }
 
@@ -38897,11 +40975,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<YieldExpressionTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::OBJECT, layout = [kind::LBRACE, kind::RBRACE], gap(1) = properties)]
 pub struct ObjectTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties"))]
+    #[slot(field = field::PROPERTIES, separator = kind::COMMA)]
     pub properties: Option<Vec<Option<::sittir_core::SlotValue<ObjectPropertiesTransportSlot>>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties_separator_space_before"))]
     pub properties_separator_space_before: Option<u16>,
@@ -38969,11 +41049,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ObjectTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::OBJECT_PATTERN, layout = [kind::LBRACE, kind::RBRACE], gap(1) = properties)]
 pub struct ObjectPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties"))]
+    #[slot(field = field::PROPERTIES, separator = kind::COMMA)]
     pub properties: Option<Vec<Option<::sittir_core::SlotValue<ObjectPatternPropertiesTransportSlot>>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties_separator_space_before"))]
     pub properties_separator_space_before: Option<u16>,
@@ -39041,13 +41123,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ObjectPatternTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::ASSIGNMENT_PATTERN, layout = [kind::EQ])]
 pub struct AssignmentPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
+    #[slot(field = field::LEFT)]
     pub left: ::sittir_core::SlotValue<PatternTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
+    #[slot(field = field::RIGHT)]
     pub right: ::sittir_core::SlotValue<ExpressionTransport>,
 }
 
@@ -39108,13 +41193,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AssignmentPatternTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::OBJECT_ASSIGNMENT_PATTERN, layout = [kind::EQ])]
 pub struct ObjectAssignmentPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
+    #[slot(field = field::LEFT)]
     pub left: ::sittir_core::SlotValue<ObjectAssignmentPatternLeftTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
+    #[slot(field = field::RIGHT)]
     pub right: ::sittir_core::SlotValue<ExpressionTransport>,
 }
 
@@ -39175,11 +41263,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ObjectAssignmentPatternTranspo
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::ARRAY, layout = [kind::LBRACK, kind::RBRACK], gap(1) = elements)]
 pub struct ArrayTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    #[slot(field = field::ELEMENTS, separator = kind::COMMA)]
     pub elements: Option<Vec<Option<::sittir_core::SlotValue<ArrayElementsTransportSlot>>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_separator_space_before"))]
     pub elements_separator_space_before: Option<u16>,
@@ -39247,11 +41337,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ArrayTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::ARRAY_PATTERN, layout = [kind::LBRACK, kind::RBRACK], gap(1) = elements)]
 pub struct ArrayPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    #[slot(field = field::ELEMENTS, separator = kind::COMMA)]
     pub elements: Option<Vec<Option<::sittir_core::SlotValue<ArrayPatternElementsTransportSlot>>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_separator_space_before"))]
     pub elements_separator_space_before: Option<u16>,
@@ -39319,13 +41411,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ArrayPatternTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::NESTED_IDENTIFIER, layout = [kind::DOT])]
 pub struct NestedIdentifierTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
+    #[slot(field = field::OBJECT)]
     pub object: ::sittir_core::SlotValue<Box<NestedIdentifierObjectTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_property"))]
+    #[slot(field = field::PROPERTY)]
     pub property: ::sittir_core::SlotValue<PropertyIdentifierTransport>,
 }
 
@@ -39386,19 +41481,25 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NestedIdentifierTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::CLASS, layout = [kind::CLASS_KEYWORD])]
 pub struct ClassTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
+    #[slot(field = field::DECORATOR)]
     pub decorator: Option<Vec<::sittir_core::SlotValue<DecoratorTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: Option<::sittir_core::SlotValue<TypeIdentifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
+    #[slot(field = field::TYPE_PARAMETERS)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_heritage"))]
+    #[slot(field = field::HERITAGE)]
     pub heritage: Option<::sittir_core::SlotValue<ClassHeritageTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<ClassBodyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
     pub decorator_separator_space: Option<u16>,
@@ -39467,21 +41568,28 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::CLASS_DECLARATION, layout = [kind::CLASS_KEYWORD])]
 pub struct ClassDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
+    #[slot(field = field::DECORATOR)]
     pub decorator: Option<Vec<::sittir_core::SlotValue<DecoratorTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
+    #[slot(field = field::TYPE_PARAMETERS)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_heritage"))]
+    #[slot(field = field::HERITAGE)]
     pub heritage: Option<::sittir_core::SlotValue<ClassHeritageTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<ClassBodyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    #[slot(field = field::TERMINATOR)]
     pub terminator: Option<::sittir_core::SlotValue<StatementBlockTerminatorTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
     pub decorator_separator_space: Option<u16>,
@@ -39552,11 +41660,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassDeclarationTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::CLASS_HERITAGE)]
 pub struct ClassHeritageTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[slot]
     pub content: ::sittir_core::SlotValue<ClassHeritageContentTransportSlot>,
 }
 
@@ -39613,21 +41723,28 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassHeritageTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::FUNCTION_EXPRESSION, layout = [kind::FUNCTION_KEYWORD])]
 pub struct FunctionExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async"))]
+    #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
     pub async_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: Option<::sittir_core::SlotValue<IdentifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
+    #[slot(field = field::TYPE_PARAMETERS)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
+    #[slot(field = field::PARAMETERS)]
     pub parameters: ::sittir_core::SlotValue<FormalParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
+    #[slot(field = field::RETURN_TYPE)]
     pub return_type: Option<::sittir_core::SlotValue<FunctionExpressionReturnTypeTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
 }
 
@@ -39692,23 +41809,31 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionExpressionTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::FUNCTION_DECLARATION, layout = [kind::FUNCTION_KEYWORD])]
 pub struct FunctionDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async"))]
+    #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
     pub async_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
+    #[slot(field = field::TYPE_PARAMETERS)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
+    #[slot(field = field::PARAMETERS)]
     pub parameters: ::sittir_core::SlotValue<FormalParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
+    #[slot(field = field::RETURN_TYPE)]
     pub return_type: Option<::sittir_core::SlotValue<FunctionExpressionReturnTypeTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    #[slot(field = field::TERMINATOR)]
     pub terminator: Option<::sittir_core::SlotValue<StatementBlockTerminatorTransportSlot>>,
 }
 
@@ -39775,21 +41900,28 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionDeclarationTransport> 
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::GENERATOR_FUNCTION, layout = [kind::FUNCTION_KEYWORD, kind::STAR])]
 pub struct GeneratorFunctionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async"))]
+    #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
     pub async_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: Option<::sittir_core::SlotValue<IdentifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
+    #[slot(field = field::TYPE_PARAMETERS)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
+    #[slot(field = field::PARAMETERS)]
     pub parameters: ::sittir_core::SlotValue<FormalParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
+    #[slot(field = field::RETURN_TYPE)]
     pub return_type: Option<::sittir_core::SlotValue<FunctionExpressionReturnTypeTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
 }
 
@@ -39854,23 +41986,31 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GeneratorFunctionTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::GENERATOR_FUNCTION_DECLARATION, layout = [kind::FUNCTION_KEYWORD, kind::STAR])]
 pub struct GeneratorFunctionDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async"))]
+    #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
     pub async_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
+    #[slot(field = field::TYPE_PARAMETERS)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
+    #[slot(field = field::PARAMETERS)]
     pub parameters: ::sittir_core::SlotValue<FormalParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
+    #[slot(field = field::RETURN_TYPE)]
     pub return_type: Option<::sittir_core::SlotValue<FunctionExpressionReturnTypeTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    #[slot(field = field::TERMINATOR)]
     pub terminator: Option<::sittir_core::SlotValue<StatementBlockTerminatorTransportSlot>>,
 }
 
@@ -39937,15 +42077,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GeneratorFunctionDeclarationTr
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::ARROW_FUNCTION, layout = [kind::EQ_GT])]
 pub struct ArrowFunctionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async"))]
+    #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
     pub async_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<ArrowFunctionBodyTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[slot]
     pub content: ::sittir_core::SlotValue<ArrowFunctionContentTransportSlot>,
 }
 
@@ -40006,8 +42150,10 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ArrowFunctionTransport> {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum OptionalChainTransport {
+    #[kind(kind::OPTIONAL_CHAIN)]
     OptionalChain,
 }
 
@@ -40075,15 +42221,19 @@ impl ::sittir_core::render::Render for OptionalChainTransport {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::NEW_EXPRESSION, layout = [kind::NEW_KEYWORD])]
 pub struct NewExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_constructor"))]
+    #[slot(field = field::CONSTRUCTOR)]
     pub constructor: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
+    #[slot(field = field::TYPE_ARGUMENTS)]
     pub type_arguments: Option<::sittir_core::SlotValue<TypeArgumentsTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
+    #[slot(field = field::ARGUMENTS)]
     pub arguments: Option<::sittir_core::SlotValue<ArgumentsTransport>>,
 }
 
@@ -40145,11 +42295,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NewExpressionTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::AWAIT_EXPRESSION, layout = [kind::AWAIT_KEYWORD])]
 pub struct AwaitExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    #[slot(field = field::EXPRESSION)]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
@@ -40209,15 +42361,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AwaitExpressionTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::MEMBER_EXPRESSION)]
 pub struct MemberExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
+    #[slot(field = field::OBJECT)]
     pub object: ::sittir_core::SlotValue<Box<MemberExpressionObjectTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_separator"))]
+    #[slot(field = field::SEPARATOR)]
     pub separator: ::sittir_core::SlotValue<MemberExpressionSeparatorTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_property"))]
+    #[slot(field = field::PROPERTY)]
     pub property: ::sittir_core::SlotValue<MemberExpressionPropertyTransportSlot>,
 }
 
@@ -40279,15 +42435,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MemberExpressionTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::SUBSCRIPT_EXPRESSION, layout = [kind::LBRACK, kind::RBRACK])]
 pub struct SubscriptExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
+    #[slot(field = field::OBJECT)]
     pub object: ::sittir_core::SlotValue<Box<SubscriptExpressionObjectTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_chain"))]
+    #[slot(field = field::OPTIONAL_CHAIN, presence = kind::OPTIONAL_CHAIN)]
     pub optional_chain: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index"))]
+    #[slot(field = field::INDEX)]
     pub index: ::sittir_core::SlotValue<Box<ExpressionStatementExpressionTransportSlot>>,
 }
 
@@ -40349,11 +42509,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SubscriptExpressionTransport> 
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::_LHS_EXPRESSION, layout = [kind::IDENTIFIER])]
 pub struct LhsExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[slot]
     pub content: ::sittir_core::SlotValue<Box<LhsExpressionContentTransportSlot>>,
 }
 
@@ -40410,15 +42572,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LhsExpressionTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::ASSIGNMENT_EXPRESSION, layout = [kind::EQ])]
 pub struct AssignmentExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_using"))]
+    #[slot(field = field::USING, presence = kind::USING_KEYWORD)]
     pub using: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
+    #[slot(field = field::LEFT)]
     pub left: ::sittir_core::SlotValue<Box<AssignmentExpressionLeftTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
+    #[slot(field = field::RIGHT)]
     pub right: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
@@ -40480,15 +42646,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AssignmentExpressionTransport>
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::AUGMENTED_ASSIGNMENT_EXPRESSION)]
 pub struct AugmentedAssignmentExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
+    #[slot(field = field::LEFT)]
     pub left: ::sittir_core::SlotValue<Box<AugmentedAssignmentExpressionLeftTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
+    #[slot(field = field::OPERATOR)]
     pub operator: ::sittir_core::SlotValue<AugmentedAssignmentExpressionOperatorTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
+    #[slot(field = field::RIGHT)]
     pub right: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
@@ -40550,11 +42720,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AugmentedAssignmentExpressionT
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::SPREAD_ELEMENT, layout = [kind::DOT_DOT_DOT])]
 pub struct SpreadElementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    #[slot(field = field::EXPRESSION)]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
 }
 
@@ -40614,15 +42786,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SpreadElementTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::TERNARY_EXPRESSION, layout = [kind::QMARK, kind::COLON])]
 pub struct TernaryExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
+    #[slot(field = field::CONDITION)]
     pub condition: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_consequence"))]
+    #[slot(field = field::CONSEQUENCE)]
     pub consequence: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
+    #[slot(field = field::ALTERNATIVE)]
     pub alternative: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
@@ -40684,17 +42860,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TernaryExpressionTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::BINARY_EXPRESSION)]
 pub struct BinaryExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
+    #[slot(field = field::LEFT)]
     pub left: Option<::sittir_core::SlotValue<Box<ExpressionTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
+    #[slot(field = field::OPERATOR)]
     pub operator: Option<::sittir_core::SlotValue<BinaryExpressionOperatorTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
+    #[slot(field = field::RIGHT)]
     pub right: Option<::sittir_core::SlotValue<Box<ExpressionTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_binary_expression_in"))]
+    #[slot]
     pub binary_expression_in: Option<::sittir_core::SlotValue<Box<BinaryExpressionInTransport>>>,
 }
 
@@ -40754,13 +42935,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BinaryExpressionTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::UNARY_EXPRESSION)]
 pub struct UnaryExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
+    #[slot(field = field::OPERATOR)]
     pub operator: ::sittir_core::SlotValue<UnaryExpressionOperatorTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
+    #[slot(field = field::ARGUMENT)]
     pub argument: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
@@ -40821,11 +43005,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<UnaryExpressionTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::SEQUENCE_EXPRESSION)]
 pub struct SequenceExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    #[slot(field = field::EXPRESSION, separator = kind::COMMA)]
     pub expression: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_separator_space_before"))]
     pub expression_separator_space_before: Option<u16>,
@@ -40892,7 +43078,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SequenceExpressionTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::UNESCAPED_DOUBLE_STRING_FRAGMENT, text)]
 pub struct UnescapedDoubleStringFragmentTransport {
     pub layout: Option<TransportLayout>,
     pub text: String,
@@ -41003,7 +43190,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<UnescapedDoubleStringFragmentT
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::UNESCAPED_SINGLE_STRING_FRAGMENT, text)]
 pub struct UnescapedSingleStringFragmentTransport {
     pub layout: Option<TransportLayout>,
     pub text: String,
@@ -41115,11 +43303,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<UnescapedSingleStringFragmentT
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::ESCAPE_SEQUENCE, interior = "^\\\\(?<content>(?:(?:[^xu0-7])|(?:[0-7]{1,3})|(?:x[0-9a-fA-F]{2})|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:[\\r?][\\n\\u2028\\u2029])))$")]
 pub struct EscapeSequenceTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[slot(capture = "content")]
     pub content: String,
 }
 
@@ -41176,11 +43366,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<EscapeSequenceTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::TEMPLATE_STRING, layout = [kind::BQUOTE])]
 pub struct TemplateStringTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    #[slot(field = field::ELEMENTS)]
     pub elements: Option<Vec<::sittir_core::SlotValue<TemplateStringElementsTransportSlot, true>>>,
 }
 
@@ -41240,11 +43432,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TemplateStringTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::TEMPLATE_SUBSTITUTION, layout = [kind::DOLLAR_LBRACE, kind::RBRACE])]
 pub struct TemplateSubstitutionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    #[slot(field = field::EXPRESSION)]
     pub expression: ::sittir_core::SlotValue<ExpressionStatementExpressionTransportSlot>,
 }
 
@@ -41304,13 +43498,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TemplateSubstitutionTransport>
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::REGEX, layout = [kind::SLASH])]
 pub struct RegexTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
+    #[slot(field = field::PATTERN)]
     pub pattern: ::sittir_core::SlotValue<RegexPatternTransport, true>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_flags"))]
+    #[slot(field = field::FLAGS)]
     pub flags: Option<::sittir_core::SlotValue<RegexFlagsTransport, true>>,
 }
 
@@ -41370,7 +43567,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RegexTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::REGEX_PATTERN, text)]
 pub struct RegexPatternTransport {
     pub layout: Option<TransportLayout>,
     pub text: String,
@@ -41481,7 +43679,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RegexPatternTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::REGEX_FLAGS, text)]
 pub struct RegexFlagsTransport {
     pub layout: Option<TransportLayout>,
     pub text: String,
@@ -41592,7 +43791,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RegexFlagsTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::IDENTIFIER, text)]
 pub struct IdentifierTransport {
     pub layout: Option<TransportLayout>,
     pub text: String,
@@ -41704,11 +43904,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IdentifierTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::PRIVATE_PROPERTY_IDENTIFIER, interior = "^#(?<content>(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()\\[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()\\[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$")]
 pub struct PrivatePropertyIdentifierTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[slot(capture = "content")]
     pub content: String,
 }
 
@@ -41764,8 +43966,10 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PrivatePropertyIdentifierTrans
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ThisTransport {
+    #[kind(kind::THIS)]
     This,
 }
 
@@ -41832,8 +44036,10 @@ impl ::sittir_core::render::Render for ThisTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum SuperTransport {
+    #[kind(kind::SUPER)]
     Super,
 }
 
@@ -41900,8 +44106,10 @@ impl ::sittir_core::render::Render for SuperTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum TrueTransport {
+    #[kind(kind::TRUE)]
     True,
 }
 
@@ -41968,8 +44176,10 @@ impl ::sittir_core::render::Render for TrueTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum FalseTransport {
+    #[kind(kind::FALSE)]
     False,
 }
 
@@ -42036,8 +44246,10 @@ impl ::sittir_core::render::Render for FalseTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum NullTransport {
+    #[kind(kind::NULL)]
     Null,
 }
 
@@ -42104,8 +44316,10 @@ impl ::sittir_core::render::Render for NullTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum UndefinedTransport {
+    #[kind(kind::UNDEFINED)]
     Undefined,
 }
 
@@ -42173,11 +44387,13 @@ impl ::sittir_core::render::Render for UndefinedTransport {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::ARGUMENTS, layout = [kind::LPAREN, kind::RPAREN], gap(1) = elements)]
 pub struct ArgumentsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    #[slot(field = field::ELEMENTS, separator = kind::COMMA)]
     pub elements: Option<Vec<Option<::sittir_core::SlotValue<ArrayElementsTransportSlot>>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_separator_space_before"))]
     pub elements_separator_space_before: Option<u16>,
@@ -42245,11 +44461,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ArgumentsTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::DECORATOR, layout = [kind::AT])]
 pub struct DecoratorTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    #[slot(field = field::EXPRESSION)]
     pub expression: ::sittir_core::SlotValue<DecoratorExpressionTransportSlot>,
 }
 
@@ -42309,13 +44527,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DecoratorTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::DECORATOR_MEMBER_EXPRESSION, layout = [kind::DOT])]
 pub struct DecoratorMemberExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
+    #[slot(field = field::OBJECT)]
     pub object: ::sittir_core::SlotValue<Box<DecoratorMemberExpressionObjectTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_property"))]
+    #[slot(field = field::PROPERTY)]
     pub property: ::sittir_core::SlotValue<PropertyIdentifierTransport>,
 }
 
@@ -42376,15 +44597,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DecoratorMemberExpressionTrans
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::DECORATOR_CALL_EXPRESSION)]
 pub struct DecoratorCallExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function"))]
+    #[slot(field = field::FUNCTION)]
     pub function: ::sittir_core::SlotValue<DecoratorMemberExpressionObjectTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
+    #[slot(field = field::TYPE_ARGUMENTS)]
     pub type_arguments: Option<::sittir_core::SlotValue<TypeArgumentsTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
+    #[slot(field = field::ARGUMENTS)]
     pub arguments: ::sittir_core::SlotValue<ArgumentsTransport>,
 }
 
@@ -42446,11 +44671,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DecoratorCallExpressionTranspo
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::CLASS_BODY, layout = [kind::LBRACE, kind::RBRACE], gap(1) = members)]
 pub struct ClassBodyTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_members"))]
+    #[slot(field = field::MEMBERS)]
     pub members: Option<Vec<::sittir_core::SlotValue<ClassBodyMemberTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_members_separator_space"))]
     pub members_separator_space: Option<u16>,
@@ -42515,11 +44742,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassBodyTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::FORMAL_PARAMETERS, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], gap(1) = elements)]
 pub struct FormalParametersTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    #[slot(field = field::ELEMENTS)]
     pub elements: Option<::sittir_core::SlotValue<FormalParametersElementsTransport>>,
 }
 
@@ -42579,13 +44808,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FormalParametersTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::CLASS_STATIC_BLOCK, layout = [kind::STATIC_KEYWORD])]
 pub struct ClassStaticBlockTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    #[slot(field = field::TERMINATOR)]
     pub terminator: Option<::sittir_core::SlotValue<StatementBlockTerminatorTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
 }
 
@@ -42647,11 +44879,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassStaticBlockTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::REST_PATTERN, layout = [kind::DOT_DOT_DOT, kind::IDENTIFIER])]
 pub struct RestPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lhs_expression"))]
+    #[slot]
     pub lhs_expression: ::sittir_core::SlotValue<LhsExpressionContentTransportSlot>,
 }
 
@@ -42711,33 +44945,46 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RestPatternTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::METHOD_DEFINITION)]
 pub struct MethodDefinitionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier"))]
+    #[slot(field = field::ACCESSIBILITY_MODIFIER)]
     pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_static"))]
+    #[slot(field = field::STATIC, presence = kind::STATIC_KEYWORD)]
     pub static_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_override"))]
+    #[slot(field = field::OVERRIDE, presence = kind::OVERRIDE_MODIFIER)]
     pub override_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_readonly"))]
+    #[slot(field = field::READONLY, presence = kind::READONLY_KEYWORD)]
     pub readonly: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async"))]
+    #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
     pub async_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind"))]
+    #[slot(field = field::ACCESSOR_KIND)]
     pub accessor_kind: Option<::sittir_core::SlotValue<MethodDefinitionAccessorKindTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<MethodDefinitionNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional"))]
+    #[slot(field = field::OPTIONAL, presence = kind::QMARK)]
     pub optional: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
+    #[slot(field = field::TYPE_PARAMETERS)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
+    #[slot(field = field::PARAMETERS)]
     pub parameters: ::sittir_core::SlotValue<FormalParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
+    #[slot(field = field::RETURN_TYPE)]
     pub return_type: Option<::sittir_core::SlotValue<FunctionExpressionReturnTypeTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
 }
 
@@ -42808,13 +45055,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MethodDefinitionTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::PAIR, layout = [kind::COLON])]
 pub struct PairTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_key"))]
+    #[slot(field = field::KEY)]
     pub key: ::sittir_core::SlotValue<MethodDefinitionNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
+    #[slot(field = field::VALUE)]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
 }
 
@@ -42875,13 +45125,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PairTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::PAIR_PATTERN, layout = [kind::COLON])]
 pub struct PairPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_key"))]
+    #[slot(field = field::KEY)]
     pub key: ::sittir_core::SlotValue<MethodDefinitionNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
+    #[slot(field = field::VALUE)]
     pub value: ::sittir_core::SlotValue<ArrayPatternElementsTransportSlot>,
 }
 
@@ -42942,11 +45195,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PairPatternTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::COMPUTED_PROPERTY_NAME, layout = [kind::LBRACK, kind::RBRACK])]
 pub struct ComputedPropertyNameTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    #[slot(field = field::EXPRESSION)]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
 }
 
@@ -43006,33 +45261,46 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ComputedPropertyNameTransport>
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::PUBLIC_FIELD_DEFINITION, layout = [kind::EQ])]
 pub struct PublicFieldDefinitionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
+    #[slot(field = field::DECORATOR)]
     pub decorator: Option<Vec<::sittir_core::SlotValue<DecoratorTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declare"))]
+    #[slot(field = field::DECLARE, presence = kind::DECLARE_KEYWORD)]
     pub declare: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier"))]
+    #[slot(field = field::ACCESSIBILITY_MODIFIER)]
     pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_static"))]
+    #[slot(field = field::STATIC, presence = kind::STATIC_KEYWORD)]
     pub static_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_override"))]
+    #[slot(field = field::OVERRIDE, presence = kind::OVERRIDE_MODIFIER)]
     pub override_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_readonly"))]
+    #[slot(field = field::READONLY, presence = kind::READONLY_KEYWORD)]
     pub readonly: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract"))]
+    #[slot(field = field::ABSTRACT, presence = kind::ABSTRACT_KEYWORD)]
     pub abstract_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor"))]
+    #[slot(field = field::ACCESSOR, presence = kind::ACCESSOR_KEYWORD)]
     pub accessor: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<MethodDefinitionNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optionality"))]
+    #[slot(field = field::OPTIONALITY)]
     pub optionality: Option<::sittir_core::SlotValue<PublicFieldDefinitionOptionalityTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: Option<::sittir_core::SlotValue<TypeAnnotationTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
+    #[slot(field = field::VALUE)]
     pub value: Option<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
     pub decorator_separator_space: Option<u16>,
@@ -43108,11 +45376,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PublicFieldDefinitionTransport
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::NON_NULL_EXPRESSION, layout = [kind::BANG])]
 pub struct NonNullExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    #[slot(field = field::EXPRESSION)]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
@@ -43172,31 +45442,43 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NonNullExpressionTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::METHOD_SIGNATURE)]
 pub struct MethodSignatureTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier"))]
+    #[slot(field = field::ACCESSIBILITY_MODIFIER)]
     pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_static"))]
+    #[slot(field = field::STATIC, presence = kind::STATIC_KEYWORD)]
     pub static_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_override"))]
+    #[slot(field = field::OVERRIDE, presence = kind::OVERRIDE_MODIFIER)]
     pub override_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_readonly"))]
+    #[slot(field = field::READONLY, presence = kind::READONLY_KEYWORD)]
     pub readonly: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async"))]
+    #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
     pub async_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind"))]
+    #[slot(field = field::ACCESSOR_KIND)]
     pub accessor_kind: Option<::sittir_core::SlotValue<MethodDefinitionAccessorKindTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<MethodDefinitionNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional"))]
+    #[slot(field = field::OPTIONAL, presence = kind::QMARK)]
     pub optional: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
+    #[slot(field = field::TYPE_PARAMETERS)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
+    #[slot(field = field::PARAMETERS)]
     pub parameters: ::sittir_core::SlotValue<FormalParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
+    #[slot(field = field::RETURN_TYPE)]
     pub return_type: Option<::sittir_core::SlotValue<FunctionExpressionReturnTypeTransportSlot>>,
 }
 
@@ -43266,25 +45548,34 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MethodSignatureTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::ABSTRACT_METHOD_SIGNATURE, layout = [kind::ABSTRACT_KEYWORD])]
 pub struct AbstractMethodSignatureTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier"))]
+    #[slot(field = field::ACCESSIBILITY_MODIFIER)]
     pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_override"))]
+    #[slot(field = field::OVERRIDE, presence = kind::OVERRIDE_MODIFIER)]
     pub override_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind"))]
+    #[slot(field = field::ACCESSOR_KIND)]
     pub accessor_kind: Option<::sittir_core::SlotValue<MethodDefinitionAccessorKindTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<MethodDefinitionNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional"))]
+    #[slot(field = field::OPTIONAL, presence = kind::QMARK)]
     pub optional: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
+    #[slot(field = field::TYPE_PARAMETERS)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
+    #[slot(field = field::PARAMETERS)]
     pub parameters: ::sittir_core::SlotValue<FormalParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
+    #[slot(field = field::RETURN_TYPE)]
     pub return_type: Option<::sittir_core::SlotValue<FunctionExpressionReturnTypeTransportSlot>>,
 }
 
@@ -43351,21 +45642,28 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AbstractMethodSignatureTranspo
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::FUNCTION_SIGNATURE, layout = [kind::FUNCTION_KEYWORD])]
 pub struct FunctionSignatureTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async"))]
+    #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
     pub async_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
+    #[slot(field = field::TYPE_PARAMETERS)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
+    #[slot(field = field::PARAMETERS)]
     pub parameters: ::sittir_core::SlotValue<FormalParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
+    #[slot(field = field::RETURN_TYPE)]
     pub return_type: Option<::sittir_core::SlotValue<FunctionExpressionReturnTypeTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    #[slot(field = field::TERMINATOR)]
     pub terminator: Option<::sittir_core::SlotValue<FunctionSignatureTerminatorTransportSlot>>,
 }
 
@@ -43431,11 +45729,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionSignatureTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::DECORATOR_PARENTHESIZED_EXPRESSION, layout = [kind::LPAREN, kind::RPAREN])]
 pub struct DecoratorParenthesizedExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    #[slot(field = field::EXPRESSION)]
     pub expression: ::sittir_core::SlotValue<DecoratorParenthesizedExpressionExpressionTransportSlot>,
 }
 
@@ -43495,13 +45795,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DecoratorParenthesizedExpressi
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::TYPE_ASSERTION)]
 pub struct TypeAssertionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
+    #[slot(field = field::TYPE_ARGUMENTS)]
     pub type_arguments: ::sittir_core::SlotValue<TypeArgumentsTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    #[slot(field = field::EXPRESSION)]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
@@ -43562,13 +45865,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeAssertionTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::AS_EXPRESSION, layout = [kind::AS_KEYWORD])]
 pub struct AsExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    #[slot(field = field::EXPRESSION)]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_annotation"))]
+    #[slot(field = field::TYPE_ANNOTATION)]
     pub type_annotation: ::sittir_core::SlotValue<AsExpressionTypeAnnotationTransportSlot>,
 }
 
@@ -43629,13 +45935,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AsExpressionTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::SATISFIES_EXPRESSION, layout = [kind::SATISFIES_KEYWORD])]
 pub struct SatisfiesExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    #[slot(field = field::EXPRESSION)]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_annotation"))]
+    #[slot(field = field::TYPE_ANNOTATION)]
     pub type_annotation: ::sittir_core::SlotValue<TypeTransport>,
 }
 
@@ -43696,13 +46005,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SatisfiesExpressionTransport> 
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::INSTANTIATION_EXPRESSION)]
 pub struct InstantiationExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    #[slot(field = field::EXPRESSION)]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
+    #[slot(field = field::TYPE_ARGUMENTS)]
     pub type_arguments: ::sittir_core::SlotValue<TypeArgumentsTransport>,
 }
 
@@ -43763,13 +46075,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<InstantiationExpressionTranspo
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::IMPORT_REQUIRE_CLAUSE, layout = [kind::EQ, kind::REQUIRE_KEYWORD, kind::LPAREN, kind::RPAREN])]
 pub struct ImportRequireClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
+    #[slot(field = field::SOURCE)]
     pub source: ::sittir_core::SlotValue<StringTransport>,
 }
 
@@ -43830,11 +46145,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportRequireClauseTransport> 
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::EXTENDS_CLAUSE, layout = [kind::EXTENDS_KEYWORD])]
 pub struct ExtendsClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause_single"))]
+    #[slot(separator = kind::COMMA)]
     pub extends_clause_single: Vec<::sittir_core::SlotValue<ExtendsClauseSingleTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause_single_separator_space_before"))]
     pub extends_clause_single_separator_space_before: Option<u16>,
@@ -43902,13 +46219,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExtendsClauseTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::_EXTENDS_CLAUSE_SINGLE)]
 pub struct ExtendsClauseSingleTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
+    #[slot(field = field::VALUE)]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
+    #[slot(field = field::TYPE_ARGUMENTS)]
     pub type_arguments: Option<::sittir_core::SlotValue<TypeArgumentsTransport>>,
 }
 
@@ -43969,11 +46289,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExtendsClauseSingleTransport> 
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::IMPLEMENTS_CLAUSE, layout = [kind::IMPLEMENTS_KEYWORD])]
 pub struct ImplementsClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE, separator = kind::COMMA)]
     pub type_: Vec<::sittir_core::SlotValue<TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_before"))]
     pub type_separator_space_before: Option<u16>,
@@ -44041,11 +46363,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImplementsClauseTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::AMBIENT_DECLARATION, layout = [kind::DECLARE_KEYWORD])]
 pub struct AmbientDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[slot]
     pub content: ::sittir_core::SlotValue<Box<AmbientDeclarationContentTransportSlot>>,
 }
 
@@ -44105,19 +46429,25 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AmbientDeclarationTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::ABSTRACT_CLASS_DECLARATION, layout = [kind::ABSTRACT_KEYWORD, kind::CLASS_KEYWORD])]
 pub struct AbstractClassDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
+    #[slot(field = field::DECORATOR)]
     pub decorator: Option<Vec<::sittir_core::SlotValue<DecoratorTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
+    #[slot(field = field::TYPE_PARAMETERS)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_heritage"))]
+    #[slot(field = field::HERITAGE)]
     pub heritage: Option<::sittir_core::SlotValue<ClassHeritageTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<ClassBodyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
     pub decorator_separator_space: Option<u16>,
@@ -44186,13 +46516,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AbstractClassDeclarationTransp
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::MODULE, layout = [kind::MODULE_KEYWORD])]
 pub struct ModuleTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<ModuleNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: Option<::sittir_core::SlotValue<StatementBlockTransport>>,
 }
 
@@ -44253,13 +46586,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ModuleTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::INTERNAL_MODULE, layout = [kind::NAMESPACE_KEYWORD])]
 pub struct InternalModuleTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<ModuleNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: Option<::sittir_core::SlotValue<StatementBlockTransport>>,
 }
 
@@ -44320,15 +46656,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<InternalModuleTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::IMPORT_ALIAS, layout = [kind::IMPORT_KEYWORD, kind::EQ])]
 pub struct ImportAliasTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
+    #[slot(field = field::VALUE)]
     pub value: ::sittir_core::SlotValue<NestedIdentifierObjectTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    #[slot(field = field::TERMINATOR)]
     pub terminator: Option<::sittir_core::SlotValue<ImportAliasTerminatorTransportSlot>>,
 }
 
@@ -44391,13 +46731,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportAliasTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::NESTED_TYPE_IDENTIFIER, layout = [kind::DOT])]
 pub struct NestedTypeIdentifierTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_module"))]
+    #[slot(field = field::MODULE)]
     pub module: ::sittir_core::SlotValue<NestedIdentifierObjectTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierTransport>,
 }
 
@@ -44458,17 +46801,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NestedTypeIdentifierTransport>
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::INTERFACE_DECLARATION, layout = [kind::INTERFACE_KEYWORD])]
 pub struct InterfaceDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
+    #[slot(field = field::TYPE_PARAMETERS)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_type_clause"))]
+    #[slot(field = field::EXTENDS_TYPE_CLAUSE)]
     pub extends_type_clause: Option<::sittir_core::SlotValue<ExtendsTypeClauseTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<InterfaceBodyTransport>,
 }
 
@@ -44531,11 +46879,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<InterfaceDeclarationTransport>
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::EXTENDS_TYPE_CLAUSE, layout = [kind::EXTENDS_KEYWORD])]
 pub struct ExtendsTypeClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE, separator = kind::COMMA)]
     pub type_: Vec<::sittir_core::SlotValue<ExtendsTypeClauseTypeTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_before"))]
     pub type_separator_space_before: Option<u16>,
@@ -44603,15 +46953,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExtendsTypeClauseTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::ENUM_DECLARATION, layout = [kind::ENUM_KEYWORD])]
 pub struct EnumDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_const"))]
+    #[slot(field = field::CONST, presence = kind::CONST_KEYWORD)]
     pub const_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<EnumBodyTransport>,
 }
 
@@ -44673,11 +47027,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<EnumDeclarationTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::ENUM_BODY, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], gap(1) = elements)]
 pub struct EnumBodyTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    #[slot(field = field::ELEMENTS)]
     pub elements: Option<::sittir_core::SlotValue<EnumBodyElementsTransport>>,
 }
 
@@ -44737,13 +47093,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<EnumBodyTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::ENUM_ASSIGNMENT, layout = [kind::EQ])]
 pub struct EnumAssignmentTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<MethodDefinitionNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
+    #[slot(field = field::VALUE)]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
 }
 
@@ -44804,17 +47163,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<EnumAssignmentTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::TYPE_ALIAS_DECLARATION, layout = [kind::TYPE_KEYWORD, kind::EQ])]
 pub struct TypeAliasDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
+    #[slot(field = field::TYPE_PARAMETERS)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
+    #[slot(field = field::VALUE)]
     pub value: ::sittir_core::SlotValue<TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    #[slot(field = field::TERMINATOR)]
     pub terminator: Option<::sittir_core::SlotValue<TypeAliasDeclarationTerminatorTransportSlot>>,
 }
 
@@ -44877,10 +47241,14 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeAliasDeclarationTransport>
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, ::sittir_core::Transport)]
+#[transport(kind = kind::ACCESSIBILITY_MODIFIER, spelled)]
 pub enum AccessibilityModifierEnum {
+    #[kind(kind::PUBLIC_KEYWORD)]
     PublicKw,
+    #[kind(kind::PRIVATE_KEYWORD)]
     PrivateKw,
+    #[kind(kind::PROTECTED_KEYWORD)]
     ProtectedKw,
 }
 
@@ -44937,8 +47305,10 @@ impl ::sittir_core::render::Render for AccessibilityModifierEnum {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum OverrideModifierTransport {
+    #[kind(kind::OVERRIDE_MODIFIER)]
     OverrideModifier,
 }
 
@@ -45006,23 +47376,31 @@ impl ::sittir_core::render::Render for OverrideModifierTransport {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::REQUIRED_PARAMETER, layout = [kind::EQ])]
 pub struct RequiredParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
+    #[slot(field = field::DECORATOR)]
     pub decorator: Option<Vec<::sittir_core::SlotValue<DecoratorTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_override"))]
+    #[slot(field = field::OVERRIDE, presence = kind::OVERRIDE_MODIFIER)]
     pub override_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_readonly"))]
+    #[slot(field = field::READONLY, presence = kind::READONLY_KEYWORD)]
     pub readonly: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
+    #[slot(field = field::PATTERN)]
     pub pattern: ::sittir_core::SlotValue<RequiredParameterPatternTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: Option<::sittir_core::SlotValue<TypeAnnotationTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
+    #[slot(field = field::VALUE)]
     pub value: Option<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier"))]
+    #[slot]
     pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
     pub decorator_separator_space: Option<u16>,
@@ -45093,23 +47471,31 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RequiredParameterTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::OPTIONAL_PARAMETER, layout = [kind::QMARK, kind::EQ])]
 pub struct OptionalParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
+    #[slot(field = field::DECORATOR)]
     pub decorator: Option<Vec<::sittir_core::SlotValue<DecoratorTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_override"))]
+    #[slot(field = field::OVERRIDE, presence = kind::OVERRIDE_MODIFIER)]
     pub override_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_readonly"))]
+    #[slot(field = field::READONLY, presence = kind::READONLY_KEYWORD)]
     pub readonly: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
+    #[slot(field = field::PATTERN)]
     pub pattern: ::sittir_core::SlotValue<RequiredParameterPatternTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: Option<::sittir_core::SlotValue<TypeAnnotationTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
+    #[slot(field = field::VALUE)]
     pub value: Option<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier"))]
+    #[slot]
     pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
     pub decorator_separator_space: Option<u16>,
@@ -45180,11 +47566,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<OptionalParameterTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::OMITTING_TYPE_ANNOTATION, layout = [kind::DASH_QMARK_COLON])]
 pub struct OmittingTypeAnnotationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
 }
 
@@ -45244,11 +47632,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<OmittingTypeAnnotationTranspor
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::ADDING_TYPE_ANNOTATION, layout = [kind::PLUS_QMARK_COLON])]
 pub struct AddingTypeAnnotationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
 }
 
@@ -45308,11 +47698,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AddingTypeAnnotationTransport>
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::OPTING_TYPE_ANNOTATION, layout = [kind::QMARK_COLON])]
 pub struct OptingTypeAnnotationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
 }
 
@@ -45372,11 +47764,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<OptingTypeAnnotationTransport>
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::TYPE_ANNOTATION, layout = [kind::COLON])]
 pub struct TypeAnnotationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
 }
 
@@ -45436,13 +47830,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeAnnotationTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION, layout = [kind::DOT])]
 pub struct TypeQueryMemberExpressionInTypeAnnotationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
+    #[slot(field = field::OBJECT)]
     pub object: ::sittir_core::SlotValue<Box<TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_property"))]
+    #[slot(field = field::PROPERTY)]
     pub property: ::sittir_core::SlotValue<MemberExpressionPropertyTransportSlot>,
 }
 
@@ -45503,13 +47900,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeQueryMemberExpressionInTyp
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION)]
 pub struct TypeQueryCallExpressionInTypeAnnotationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function"))]
+    #[slot(field = field::FUNCTION)]
     pub function: ::sittir_core::SlotValue<Box<TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
+    #[slot(field = field::ARGUMENTS)]
     pub arguments: ::sittir_core::SlotValue<ArgumentsTransport>,
 }
 
@@ -45570,11 +47970,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeQueryCallExpressionInTypeA
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::ASSERTS, layout = [kind::ASSERTS_KEYWORD])]
 pub struct AssertsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
+    #[slot(field = field::VALUE)]
     pub value: ::sittir_core::SlotValue<Box<AssertsValueTransportSlot>>,
 }
 
@@ -45634,11 +48036,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AssertsTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::ASSERTS_ANNOTATION, layout = [kind::COLON])]
 pub struct AssertsAnnotationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_asserts"))]
+    #[slot]
     pub asserts: ::sittir_core::SlotValue<AssertsTransport>,
 }
 
@@ -45698,13 +48102,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AssertsAnnotationTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::TUPLE_PARAMETER)]
 pub struct TupleParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<TupleParameterNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<TypeAnnotationTransport>,
 }
 
@@ -45765,13 +48172,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TupleParameterTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::OPTIONAL_TUPLE_PARAMETER, layout = [kind::QMARK])]
 pub struct OptionalTupleParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<TypeAnnotationTransport>,
 }
 
@@ -45832,11 +48242,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<OptionalTupleParameterTranspor
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::OPTIONAL_TYPE, layout = [kind::QMARK])]
 pub struct OptionalTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
 }
 
@@ -45896,11 +48308,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<OptionalTypeTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::REST_TYPE, layout = [kind::DOT_DOT_DOT])]
 pub struct RestTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
 }
 
@@ -45960,17 +48374,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RestTypeTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::CONSTRUCTOR_TYPE, layout = [kind::NEW_KEYWORD, kind::EQ_GT])]
 pub struct ConstructorTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract"))]
+    #[slot(field = field::ABSTRACT, presence = kind::ABSTRACT_KEYWORD)]
     pub abstract_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
+    #[slot(field = field::TYPE_PARAMETERS)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
+    #[slot(field = field::PARAMETERS)]
     pub parameters: ::sittir_core::SlotValue<FormalParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<Box<TypeTransport>>,
 }
 
@@ -46033,11 +48452,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ConstructorTypeTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::TEMPLATE_TYPE, layout = [kind::DOLLAR_LBRACE, kind::RBRACE])]
 pub struct TemplateTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<TemplateTypeTypeTransportSlot>,
 }
 
@@ -46097,11 +48518,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TemplateTypeTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::TEMPLATE_LITERAL_TYPE, layout = [kind::BQUOTE])]
 pub struct TemplateLiteralTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    #[slot(field = field::ELEMENTS)]
     pub elements: Option<Vec<::sittir_core::SlotValue<TemplateLiteralTypeElementsTransportSlot, true>>>,
 }
 
@@ -46161,13 +48584,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TemplateLiteralTypeTransport> 
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::INFER_TYPE, layout = [kind::INFER_KEYWORD, kind::EXTENDS_KEYWORD])]
 pub struct InferTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: Option<::sittir_core::SlotValue<Box<TypeTransport>>>,
 }
 
@@ -46228,17 +48654,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<InferTypeTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::CONDITIONAL_TYPE, layout = [kind::EXTENDS_KEYWORD, kind::QMARK, kind::COLON])]
 pub struct ConditionalTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
+    #[slot(field = field::LEFT)]
     pub left: ::sittir_core::SlotValue<Box<TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
+    #[slot(field = field::RIGHT)]
     pub right: ::sittir_core::SlotValue<Box<TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_consequence"))]
+    #[slot(field = field::CONSEQUENCE)]
     pub consequence: ::sittir_core::SlotValue<Box<TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
+    #[slot(field = field::ALTERNATIVE)]
     pub alternative: ::sittir_core::SlotValue<Box<TypeTransport>>,
 }
 
@@ -46301,13 +48732,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ConditionalTypeTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::GENERIC_TYPE)]
 pub struct GenericTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<GenericTypeNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
+    #[slot(field = field::TYPE_ARGUMENTS)]
     pub type_arguments: ::sittir_core::SlotValue<TypeArgumentsTransport>,
 }
 
@@ -46368,13 +48802,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GenericTypeTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::TYPE_PREDICATE, layout = [kind::IS_KEYWORD])]
 pub struct TypePredicateTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<TypePredicateNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<Box<TypeTransport>>,
 }
 
@@ -46435,11 +48872,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypePredicateTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::TYPE_PREDICATE_ANNOTATION, layout = [kind::COLON])]
 pub struct TypePredicateAnnotationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_predicate"))]
+    #[slot]
     pub type_predicate: ::sittir_core::SlotValue<TypePredicateTransport>,
 }
 
@@ -46499,15 +48938,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypePredicateAnnotationTranspo
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::_TYPE_QUERY_MEMBER_EXPRESSION, layout = [kind::DOT, kind::QMARK_DOT])]
 pub struct TypeQueryMemberExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
+    #[slot(field = field::OBJECT)]
     pub object: ::sittir_core::SlotValue<Box<TypeQueryMemberExpressionObjectTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_property"))]
+    #[slot(field = field::PROPERTY)]
     pub property: ::sittir_core::SlotValue<MemberExpressionPropertyTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[slot]
     pub content: ::sittir_core::SlotValue<TypeQueryMemberExpressionContentTransportSlot>,
 }
 
@@ -46569,15 +49012,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeQueryMemberExpressionTrans
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::_TYPE_QUERY_SUBSCRIPT_EXPRESSION, layout = [kind::LBRACK, kind::RBRACK])]
 pub struct TypeQuerySubscriptExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
+    #[slot(field = field::OBJECT)]
     pub object: ::sittir_core::SlotValue<Box<TypeQueryMemberExpressionObjectTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_chain"))]
+    #[slot(field = field::OPTIONAL_CHAIN, presence = kind::_OPTIONAL_CHAIN_MARKER)]
     pub optional_chain: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index"))]
+    #[slot(field = field::INDEX)]
     pub index: ::sittir_core::SlotValue<TypeQuerySubscriptExpressionIndexTransportSlot>,
 }
 
@@ -46639,13 +49086,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeQuerySubscriptExpressionTr
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::_TYPE_QUERY_CALL_EXPRESSION)]
 pub struct TypeQueryCallExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function"))]
+    #[slot(field = field::FUNCTION)]
     pub function: ::sittir_core::SlotValue<Box<TypeQueryCallExpressionFunctionTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
+    #[slot(field = field::ARGUMENTS)]
     pub arguments: ::sittir_core::SlotValue<ArgumentsTransport>,
 }
 
@@ -46706,13 +49156,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeQueryCallExpressionTranspo
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::_TYPE_QUERY_INSTANTIATION_EXPRESSION)]
 pub struct TypeQueryInstantiationExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function"))]
+    #[slot(field = field::FUNCTION)]
     pub function: ::sittir_core::SlotValue<TypeQueryCallExpressionFunctionTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
+    #[slot(field = field::TYPE_ARGUMENTS)]
     pub type_arguments: ::sittir_core::SlotValue<TypeArgumentsTransport>,
 }
 
@@ -46773,11 +49226,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeQueryInstantiationExpressi
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::TYPE_QUERY, layout = [kind::TYPEOF_KEYWORD])]
 pub struct TypeQueryTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    #[slot(field = field::EXPRESSION)]
     pub expression: ::sittir_core::SlotValue<TypeQueryExpressionTransportSlot>,
 }
 
@@ -46837,11 +49292,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeQueryTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::INDEX_TYPE_QUERY, layout = [kind::KEYOF_KEYWORD])]
 pub struct IndexTypeQueryTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<Box<PrimaryTypeTransport>>,
 }
 
@@ -46901,13 +49358,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IndexTypeQueryTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::LOOKUP_TYPE, layout = [kind::LBRACK, kind::RBRACK])]
 pub struct LookupTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<Box<PrimaryTypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index_type"))]
+    #[slot(field = field::INDEX_TYPE)]
     pub index_type: ::sittir_core::SlotValue<Box<TypeTransport>>,
 }
 
@@ -46968,15 +49428,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LookupTypeTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::MAPPED_TYPE_CLAUSE, layout = [kind::IN_KEYWORD, kind::AS_KEYWORD])]
 pub struct MappedTypeClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
+    #[slot(field = field::ALIAS)]
     pub alias: Option<::sittir_core::SlotValue<TypeTransport>>,
 }
 
@@ -47038,11 +49502,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MappedTypeClauseTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::LITERAL_TYPE)]
 pub struct LiteralTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[slot]
     pub content: ::sittir_core::SlotValue<LiteralTypeContentTransportSlot>,
 }
 
@@ -47098,8 +49564,10 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LiteralTypeTransport> {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ExistentialTypeTransport {
+    #[kind(kind::EXISTENTIAL_TYPE)]
     ExistentialType,
 }
 
@@ -47167,11 +49635,13 @@ impl ::sittir_core::render::Render for ExistentialTypeTransport {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::FLOW_MAYBE_TYPE, layout = [kind::QMARK])]
 pub struct FlowMaybeTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<Box<PrimaryTypeTransport>>,
 }
 
@@ -47231,11 +49701,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FlowMaybeTypeTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::PARENTHESIZED_TYPE, layout = [kind::LPAREN, kind::RPAREN])]
 pub struct ParenthesizedTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<Box<TypeTransport>>,
 }
 
@@ -47294,17 +49766,28 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ParenthesizedTypeTransport> {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, ::sittir_core::Transport)]
+#[transport(kind = kind::PREDEFINED_TYPE, spelled)]
 pub enum PredefinedTypeEnum {
+    #[kind(kind::ANY_KEYWORD)]
     AnyKw,
+    #[kind(kind::NUMBER_KEYWORD)]
     NumberKw,
+    #[kind(kind::BOOLEAN_KEYWORD)]
     BooleanKw,
+    #[kind(kind::STRING_KEYWORD)]
     StringKw,
+    #[kind(kind::SYMBOL_KEYWORD)]
     SymbolKw,
+    #[kind(kind::UNIQUE)]
     V75_6e_69_71_75_65_20_73_79_6d_62_6f_6c,
+    #[kind(kind::VOID_KEYWORD)]
     VoidKw,
+    #[kind(kind::UNKNOWN_KEYWORD)]
     UnknownKw,
+    #[kind(kind::NEVER_KEYWORD)]
     NeverKw,
+    #[kind(kind::OBJECT_KEYWORD)]
     ObjectKw,
 }
 
@@ -47383,11 +49866,13 @@ impl ::sittir_core::render::Render for PredefinedTypeEnum {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::TYPE_ARGUMENTS, min_depth = 2, layout = [kind::LT, kind::GT])]
 pub struct TypeArgumentsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_types"))]
+    #[slot]
     pub types: ::sittir_core::SlotValue<TypesTransport>,
 }
 
@@ -47447,15 +49932,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeArgumentsTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::OBJECT_TYPE)]
 pub struct ObjectTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_opening"))]
+    #[slot(field = field::OPENING)]
     pub opening: ::sittir_core::SlotValue<ObjectTypeOpeningTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_members"))]
+    #[slot(field = field::MEMBERS)]
     pub members: Option<::sittir_core::SlotValue<ObjectTypeContentTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_closing"))]
+    #[slot(field = field::CLOSING)]
     pub closing: ::sittir_core::SlotValue<ObjectTypeClosingTransportSlot>,
 }
 
@@ -47517,15 +50006,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ObjectTypeTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::CALL_SIGNATURE)]
 pub struct CallSignatureTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
+    #[slot(field = field::TYPE_PARAMETERS)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
+    #[slot(field = field::PARAMETERS)]
     pub parameters: ::sittir_core::SlotValue<FormalParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
+    #[slot(field = field::RETURN_TYPE)]
     pub return_type: Option<::sittir_core::SlotValue<FunctionExpressionReturnTypeTransportSlot>>,
 }
 
@@ -47587,23 +50080,31 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CallSignatureTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::PROPERTY_SIGNATURE)]
 pub struct PropertySignatureTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier"))]
+    #[slot(field = field::ACCESSIBILITY_MODIFIER)]
     pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_static"))]
+    #[slot(field = field::STATIC, presence = kind::STATIC_KEYWORD)]
     pub static_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_override"))]
+    #[slot(field = field::OVERRIDE, presence = kind::OVERRIDE_MODIFIER)]
     pub override_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_readonly"))]
+    #[slot(field = field::READONLY, presence = kind::READONLY_KEYWORD)]
     pub readonly: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<MethodDefinitionNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional"))]
+    #[slot(field = field::OPTIONAL, presence = kind::QMARK)]
     pub optional: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: Option<::sittir_core::SlotValue<TypeAnnotationTransport>>,
 }
 
@@ -47669,11 +50170,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PropertySignatureTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::TYPE_PARAMETERS, min_depth = 2, layout = [kind::LT, kind::GT])]
 pub struct TypeParametersTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    #[slot(field = field::ELEMENTS)]
     pub elements: ::sittir_core::SlotValue<TypeParametersElementsTransport>,
 }
 
@@ -47733,17 +50236,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeParametersTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::TYPE_PARAMETER)]
 pub struct TypeParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_const"))]
+    #[slot(field = field::CONST, presence = kind::CONST_KEYWORD)]
     pub const_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_constraint"))]
+    #[slot(field = field::CONSTRAINT)]
     pub constraint: Option<::sittir_core::SlotValue<ConstraintTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
+    #[slot(field = field::VALUE)]
     pub value: Option<::sittir_core::SlotValue<DefaultTypeTransport>>,
 }
 
@@ -47806,11 +50314,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeParameterTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::DEFAULT_TYPE, layout = [kind::EQ])]
 pub struct DefaultTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
 }
 
@@ -47870,13 +50380,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DefaultTypeTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::CONSTRAINT, layout = [kind::EXTENDS_KEYWORD, kind::COLON])]
 pub struct ConstraintTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[slot]
     pub content: ::sittir_core::SlotValue<ConstraintContentTransportSlot>,
 }
 
@@ -47937,17 +50450,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ConstraintTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::CONSTRUCT_SIGNATURE, layout = [kind::NEW_KEYWORD])]
 pub struct ConstructSignatureTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract"))]
+    #[slot(field = field::ABSTRACT, presence = kind::ABSTRACT_KEYWORD)]
     pub abstract_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
+    #[slot(field = field::TYPE_PARAMETERS)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
+    #[slot(field = field::PARAMETERS)]
     pub parameters: ::sittir_core::SlotValue<FormalParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: Option<::sittir_core::SlotValue<TypeAnnotationTransport>>,
 }
 
@@ -48010,11 +50528,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ConstructSignatureTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::ARRAY_TYPE, layout = [kind::LBRACK, kind::RBRACK])]
 pub struct ArrayTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<Box<PrimaryTypeTransport>>,
 }
 
@@ -48074,11 +50594,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ArrayTypeTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::TUPLE_TYPE, min_depth = 2, layout = [kind::LBRACK, kind::RBRACK], gap(1) = tuple_type_members)]
 pub struct TupleTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_members"))]
+    #[slot]
     pub tuple_type_members: Option<::sittir_core::SlotValue<TupleTypeMembersTransport>>,
 }
 
@@ -48138,11 +50660,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TupleTypeTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::READONLY_TYPE, layout = [kind::READONLY_KEYWORD])]
 pub struct ReadonlyTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<Box<TypeTransport>>,
 }
 
@@ -48202,13 +50726,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ReadonlyTypeTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::UNION_TYPE, layout = [kind::PIPE])]
 pub struct UnionTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
+    #[slot(field = field::LEFT)]
     pub left: Option<::sittir_core::SlotValue<Box<TypeTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
+    #[slot(field = field::RIGHT)]
     pub right: ::sittir_core::SlotValue<Box<TypeTransport>>,
 }
 
@@ -48269,13 +50796,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<UnionTypeTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::INTERSECTION_TYPE, layout = [kind::AMP])]
 pub struct IntersectionTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
+    #[slot(field = field::LEFT)]
     pub left: Option<::sittir_core::SlotValue<Box<TypeTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
+    #[slot(field = field::RIGHT)]
     pub right: ::sittir_core::SlotValue<Box<TypeTransport>>,
 }
 
@@ -48336,15 +50866,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IntersectionTypeTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::FUNCTION_TYPE, layout = [kind::EQ_GT])]
 pub struct FunctionTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
+    #[slot(field = field::TYPE_PARAMETERS)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
+    #[slot(field = field::PARAMETERS)]
     pub parameters: ::sittir_core::SlotValue<FormalParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
+    #[slot(field = field::RETURN_TYPE)]
     pub return_type: ::sittir_core::SlotValue<Box<FunctionTypeReturnTypeTransportSlot>>,
 }
 
@@ -48406,13 +50940,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionTypeTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::EXPORT_SPECIFIERS, list, item = item)]
 pub struct ExportSpecifiersTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
+    #[slot(field = field::ITEM, separator = kind::COMMA)]
     pub item: Vec<::sittir_core::SlotValue<ExportSpecifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_before"))]
     pub item_separator_space_before: Option<u16>,
@@ -48481,13 +51018,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportSpecifiersTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::IMPORT_SPECIFIERS, list, item = item)]
 pub struct ImportSpecifiersTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
+    #[slot(field = field::ITEM, separator = kind::COMMA)]
     pub item: Vec<::sittir_core::SlotValue<ImportSpecifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_before"))]
     pub item_separator_space_before: Option<u16>,
@@ -48556,13 +51096,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportSpecifiersTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::FORMAL_PARAMETERS_ELEMENTS, list, item = item)]
 pub struct FormalParametersElementsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
+    #[slot(field = field::ITEM, separator = kind::COMMA)]
     pub item: Vec<::sittir_core::SlotValue<FormalParametersElementsItemTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_before"))]
     pub item_separator_space_before: Option<u16>,
@@ -48631,11 +51174,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FormalParametersElementsTransp
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::ENUM_BODY_ELEMENT_NAME)]
 pub struct EnumBodyElementNameTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<MethodDefinitionNameTransportSlot>,
 }
 
@@ -48692,13 +51237,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<EnumBodyElementNameTransport> 
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::ENUM_BODY_ELEMENTS, list, item = item)]
 pub struct EnumBodyElementsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
+    #[slot(field = field::ITEM, separator = kind::COMMA)]
     pub item: Vec<::sittir_core::SlotValue<EnumBodyElementTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_before"))]
     pub item_separator_space_before: Option<u16>,
@@ -48767,13 +51315,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<EnumBodyElementsTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::TYPES, list, item = item)]
 pub struct TypesTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
+    #[slot(field = field::ITEM, separator = kind::COMMA)]
     pub item: Vec<::sittir_core::SlotValue<TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_before"))]
     pub item_separator_space_before: Option<u16>,
@@ -48842,13 +51393,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypesTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::TYPE_PARAMETERS_ELEMENTS, list, item = item)]
 pub struct TypeParametersElementsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
+    #[slot(field = field::ITEM, separator = kind::COMMA)]
     pub item: Vec<::sittir_core::SlotValue<TypeParameterTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_before"))]
     pub item_separator_space_before: Option<u16>,
@@ -48917,13 +51471,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeParametersElementsTranspor
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::TUPLE_TYPE_MEMBERS, list, item = item)]
 pub struct TupleTypeMembersTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
+    #[slot(field = field::ITEM, separator = kind::COMMA)]
     pub item: Vec<::sittir_core::SlotValue<TupleTypeMembersItemTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_before"))]
     pub item_separator_space_before: Option<u16>,
@@ -48992,11 +51549,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TupleTypeMembersTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::IMPORT_CLAUSE_GROUP, layout = [kind::COMMA])]
 pub struct ImportClauseGroupTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[slot]
     pub content: ::sittir_core::SlotValue<ImportClauseGroupContentTransportSlot>,
 }
 
@@ -49056,13 +51615,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportClauseGroupTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::CATCH_CLAUSE_GROUP, layout = [kind::LPAREN, kind::RPAREN])]
 pub struct CatchClauseGroupTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameter"))]
+    #[slot(field = field::PARAMETER)]
     pub parameter: ::sittir_core::SlotValue<CatchClauseGroupParameterTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: Option<::sittir_core::SlotValue<TypeAnnotationTransport>>,
 }
 
@@ -49123,11 +51685,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CatchClauseGroupTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::AMBIENT_DECLARATION_GLOBAL, layout = [kind::GLOBAL_KEYWORD])]
 pub struct AmbientDeclarationGlobalTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
 }
 
@@ -49187,15 +51751,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AmbientDeclarationGlobalTransp
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::AMBIENT_DECLARATION_MODULE, layout = [kind::MODULE_KEYWORD, kind::DOT, kind::COLON])]
 pub struct AmbientDeclarationModuleTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<PropertyIdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    #[slot(field = field::TERMINATOR)]
     pub terminator: Option<::sittir_core::SlotValue<AmbientDeclarationModuleTerminatorTransportSlot>>,
 }
 
@@ -49258,15 +51826,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AmbientDeclarationModuleTransp
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::OBJECT_TYPE_CONTENT, list, item = item)]
 pub struct ObjectTypeContentTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
+    #[slot(field = field::ITEM, separator = [kind::COMMA, kind::SEMI])]
     pub item: Vec<::sittir_core::SlotValue<ObjectTypeContentItemTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    #[flank(leading = 0, trailing = 0)]
     pub delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_separator"))]
+    #[separator_kind(candidates = [kind::COMMA, kind::SEMI], default = kind::SEMI)]
     pub separator_kind: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_before"))]
     pub item_separator_space_before: Option<u16>,
@@ -49335,13 +51907,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ObjectTypeContentTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::EXPORT_STATEMENT_NAMESPACE_EXPORT, layout = [kind::EXPORT_KEYWORD, kind::AS_KEYWORD, kind::NAMESPACE_KEYWORD])]
 pub struct ExportStatementNamespaceExportTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    #[slot(field = field::TERMINATOR)]
     pub terminator: Option<::sittir_core::SlotValue<ExportStatementNamespaceExportTerminatorTransportSlot>>,
 }
 
@@ -49403,15 +51978,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementNamespaceExport
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::EXPORT_STATEMENT_TYPE_EXPORT, layout = [kind::EXPORT_KEYWORD, kind::TYPE_KEYWORD, kind::FROM_KEYWORD])]
 pub struct ExportStatementTypeExportTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause"))]
+    #[slot(field = field::EXPORT_CLAUSE)]
     pub export_clause: ::sittir_core::SlotValue<ExportClauseTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
+    #[slot(field = field::SOURCE)]
     pub source: Option<::sittir_core::SlotValue<StringTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    #[slot(field = field::TERMINATOR)]
     pub terminator: Option<::sittir_core::SlotValue<ExportStatementTypeExportTerminatorTransportSlot>>,
 }
 
@@ -49474,13 +52053,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementTypeExportTrans
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::EXPORT_STATEMENT_EQUALS_EXPORT, layout = [kind::EXPORT_KEYWORD, kind::EQ])]
 pub struct ExportStatementEqualsExportTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    #[slot(field = field::EXPRESSION)]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    #[slot(field = field::TERMINATOR)]
     pub terminator: Option<::sittir_core::SlotValue<ExportStatementEqualsExportTerminatorTransportSlot>>,
 }
 
@@ -49542,11 +52124,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementEqualsExportTra
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::COMMENT_LINE, interior = "^//(?<content>(?:[^\\r\\n\\u2028\\u2029]*))$")]
 pub struct CommentLineTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[slot(capture = "content")]
     pub content: String,
 }
 
@@ -49603,11 +52187,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CommentLineTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::COMMENT_BLOCK, interior = "^/\\*(?<content>(?:([^*]|\\*+[^*\\/])*\\**))\\*/$")]
 pub struct CommentBlockTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[slot(capture = "content")]
     pub content: String,
 }
 
@@ -49664,13 +52250,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CommentBlockTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::LITERAL_TYPE_NEGATIVE_NUMBER)]
 pub struct LiteralTypeNegativeNumberTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
+    #[slot(field = field::OPERATOR)]
     pub operator: ::sittir_core::SlotValue<LiteralTypeNegativeNumberOperatorTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
+    #[slot(field = field::ARGUMENT)]
     pub argument: ::sittir_core::SlotValue<NumberTransport>,
 }
 
@@ -49731,13 +52320,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LiteralTypeNegativeNumberTrans
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::NUMBER_HEX, interior = "^(?<prefix>0x|0X)(?<content>(?:[\\da-fA-F](_?[\\da-fA-F])*))$")]
 pub struct NumberHexTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_prefix"))]
+    #[slot(capture = "prefix")]
     pub prefix: String,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[slot(capture = "content")]
     pub content: String,
 }
 
@@ -49795,19 +52387,25 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NumberHexTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::NUMBER_FLOAT_POINT, interior = "^(?<integer>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?))\\.(?<fraction>(?:\\d(_?\\d)*))?(?:(?<marker>e|E)?(?<sign>-|\\+)?(?<exponent>(?:\\d(_?\\d)*))?)?$")]
 pub struct NumberFloatPointTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_integer"))]
+    #[slot(capture = "integer")]
     pub integer: String,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_fraction"))]
+    #[slot(capture = "fraction")]
     pub fraction: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_marker"))]
+    #[slot(capture = "marker")]
     pub marker: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_sign"))]
+    #[slot(capture = "sign")]
     pub sign: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_exponent"))]
+    #[slot(capture = "exponent")]
     pub exponent: Option<String>,
 }
 
@@ -49868,17 +52466,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NumberFloatPointTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::NUMBER_FLOAT_LEADING_POINT, interior = "^\\.(?<fraction>(?:\\d(_?\\d)*))(?:(?<marker>e|E)?(?<sign>-|\\+)?(?<exponent>(?:\\d(_?\\d)*))?)?$")]
 pub struct NumberFloatLeadingPointTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_fraction"))]
+    #[slot(capture = "fraction")]
     pub fraction: String,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_marker"))]
+    #[slot(capture = "marker")]
     pub marker: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_sign"))]
+    #[slot(capture = "sign")]
     pub sign: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_exponent"))]
+    #[slot(capture = "exponent")]
     pub exponent: Option<String>,
 }
 
@@ -49938,17 +52541,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NumberFloatLeadingPointTranspo
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::NUMBER_FLOAT_SCIENTIFIC, interior = "^(?<integer>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?))(?<marker>e|E)(?<sign>-|\\+)?(?<exponent>(?:\\d(_?\\d)*))$")]
 pub struct NumberFloatScientificTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_integer"))]
+    #[slot(capture = "integer")]
     pub integer: String,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_marker"))]
+    #[slot(capture = "marker")]
     pub marker: String,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_sign"))]
+    #[slot(capture = "sign")]
     pub sign: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_exponent"))]
+    #[slot(capture = "exponent")]
     pub exponent: String,
 }
 
@@ -50007,7 +52615,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NumberFloatScientificTransport
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::NUMBER_DECIMAL, text)]
 pub struct NumberDecimalTransport {
     pub layout: Option<TransportLayout>,
     pub text: String,
@@ -50119,13 +52728,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NumberDecimalTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::NUMBER_BINARY, interior = "^(?<prefix>0b|0B)(?<content>(?:[0-1](_?[0-1])*))$")]
 pub struct NumberBinaryTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_prefix"))]
+    #[slot(capture = "prefix")]
     pub prefix: String,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[slot(capture = "content")]
     pub content: String,
 }
 
@@ -50183,13 +52795,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NumberBinaryTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::NUMBER_OCTAL, interior = "^(?<prefix>0o|0O)(?<content>(?:[0-7](_?[0-7])*))$")]
 pub struct NumberOctalTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_prefix"))]
+    #[slot(capture = "prefix")]
     pub prefix: String,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[slot(capture = "content")]
     pub content: String,
 }
 
@@ -50247,11 +52862,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NumberOctalTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::NUMBER_BIGINT_HEX, interior = "^(?<content>(?:0x|0X)(?:[\\da-fA-F](_?[\\da-fA-F])*))n$")]
 pub struct NumberBigintHexTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[slot(capture = "content")]
     pub content: String,
 }
 
@@ -50308,11 +52925,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NumberBigintHexTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::NUMBER_BIGINT_BINARY, interior = "^(?<content>(?:0b|0B)(?:[0-1](_?[0-1])*))n$")]
 pub struct NumberBigintBinaryTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[slot(capture = "content")]
     pub content: String,
 }
 
@@ -50369,11 +52988,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NumberBigintBinaryTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::NUMBER_BIGINT_OCTAL, interior = "^(?<content>(?:0o|0O)(?:[0-7](_?[0-7])*))n$")]
 pub struct NumberBigintOctalTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[slot(capture = "content")]
     pub content: String,
 }
 
@@ -50430,11 +53051,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NumberBigintOctalTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::NUMBER_BIGINT_DECIMAL, interior = "^(?<content>(?:\\d(_?\\d)*))n$")]
 pub struct NumberBigintDecimalTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[slot(capture = "content")]
     pub content: String,
 }
 
@@ -50491,13 +53114,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NumberBigintDecimalTransport> 
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::BINARY_EXPRESSION_IN, layout = [kind::IN_KEYWORD])]
 pub struct BinaryExpressionInTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
+    #[slot(field = field::LEFT)]
     pub left: ::sittir_core::SlotValue<Box<BinaryExpressionInLeftTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
+    #[slot(field = field::RIGHT)]
     pub right: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
@@ -50557,8 +53183,10 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BinaryExpressionInTransport> {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum EmptyMemberTransport {
+    #[kind(kind::_EMPTY_MEMBER)]
     EmptyMember,
 }
 
@@ -50626,15 +53254,19 @@ impl ::sittir_core::render::Render for EmptyMemberTransport {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::CLASS_BODY_MEMBER_METHOD)]
 pub struct ClassBodyMemberMethodTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
+    #[slot(field = field::DECORATOR)]
     pub decorator: Option<Vec<::sittir_core::SlotValue<DecoratorTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    #[slot(field = field::TERMINATOR)]
     pub terminator: Option<::sittir_core::SlotValue<ClassBodyMemberMethodTerminatorTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_method_definition"))]
+    #[slot]
     pub method_definition: ::sittir_core::SlotValue<MethodDefinitionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
     pub decorator_separator_space: Option<u16>,
@@ -50702,13 +53334,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassBodyMemberMethodTransport
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::CLASS_BODY_MEMBER_METHOD_SIG)]
 pub struct ClassBodyMemberMethodSigTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    #[slot(field = field::TERMINATOR)]
     pub terminator: ::sittir_core::SlotValue<ClassBodyMemberMethodSigTerminatorTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_method_signature"))]
+    #[slot]
     pub method_signature: ::sittir_core::SlotValue<MethodSignatureTransport>,
 }
 
@@ -50769,13 +53404,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassBodyMemberMethodSigTransp
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::CLASS_BODY_MEMBER_DECLARATION)]
 pub struct ClassBodyMemberDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_member"))]
+    #[slot(field = field::MEMBER)]
     pub member: ::sittir_core::SlotValue<ClassBodyMemberDeclarationMemberTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    #[slot(field = field::TERMINATOR)]
     pub terminator: Option<::sittir_core::SlotValue<ClassBodyMemberDeclarationTerminatorTransportSlot>>,
 }
 
@@ -50837,19 +53475,25 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassBodyMemberDeclarationTran
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::INDEX_SIGNATURE_COLON, layout = [kind::LBRACK, kind::COLON, kind::RBRACK])]
 pub struct IndexSignatureColonTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_sign"))]
+    #[slot(field = field::SIGN)]
     pub sign: Option<::sittir_core::SlotValue<LiteralTypeNegativeNumberOperatorTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_readonly"))]
+    #[slot(field = field::READONLY, presence = kind::READONLY_KEYWORD)]
     pub readonly: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<IndexSignatureColonNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index_type"))]
+    #[slot(field = field::INDEX_TYPE)]
     pub index_type: ::sittir_core::SlotValue<TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<IndexSignatureColonTypeTransportSlot>,
 }
 
@@ -50913,17 +53557,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IndexSignatureColonTransport> 
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE, layout = [kind::LBRACK, kind::RBRACK])]
 pub struct IndexSignatureMappedTypeClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_sign"))]
+    #[slot(field = field::SIGN)]
     pub sign: Option<::sittir_core::SlotValue<LiteralTypeNegativeNumberOperatorTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_readonly"))]
+    #[slot(field = field::READONLY, presence = kind::READONLY_KEYWORD)]
     pub readonly: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<IndexSignatureColonTypeTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mapped_type_clause"))]
+    #[slot]
     pub mapped_type_clause: ::sittir_core::SlotValue<MappedTypeClauseTransport>,
 }
 
@@ -50986,13 +53635,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IndexSignatureMappedTypeClause
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::IMPORT_STATEMENT_CLAUSE_FROM, layout = [kind::FROM_KEYWORD])]
 pub struct ImportStatementClauseFromTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
+    #[slot(field = field::SOURCE)]
     pub source: ::sittir_core::SlotValue<StringTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_clause"))]
+    #[slot]
     pub import_clause: ::sittir_core::SlotValue<ImportClauseTransport>,
 }
 
@@ -51053,11 +53705,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportStatementClauseFromTrans
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::YIELD_EXPRESSION_DELEGATE, layout = [kind::STAR])]
 pub struct YieldExpressionDelegateTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    #[slot]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
@@ -51116,8 +53770,10 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<YieldExpressionDelegateTranspo
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum OptionalChainMarkerTransport {
+    #[kind(kind::_OPTIONAL_CHAIN_MARKER)]
     OptionalChainMarker,
 }
 
@@ -51185,13 +53841,16 @@ impl ::sittir_core::render::Render for OptionalChainMarkerTransport {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::IMPORT_SPECIFIER_NAME)]
 pub struct ImportSpecifierNameTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_kind"))]
+    #[slot(field = field::IMPORT_KIND)]
     pub import_kind: Option<::sittir_core::SlotValue<ImportSpecifierNameImportKindTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<ImportSpecifierNameNameTransportSlot>,
 }
 
@@ -51252,15 +53911,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportSpecifierNameTransport> 
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::IMPORT_SPECIFIER_AS, layout = [kind::AS_KEYWORD])]
 pub struct ImportSpecifierAsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_kind"))]
+    #[slot(field = field::IMPORT_KIND)]
     pub import_kind: Option<::sittir_core::SlotValue<ImportSpecifierAsImportKindTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<ImportSpecifierAsNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
+    #[slot(field = field::ALIAS)]
     pub alias: ::sittir_core::SlotValue<ImportSpecifierAsAliasTransportSlot>,
 }
 
@@ -51322,13 +53985,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportSpecifierAsTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::PARENTHESIZED_EXPRESSION_TYPED, layout = [kind::LPAREN, kind::RPAREN])]
 pub struct ParenthesizedExpressionTypedTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: Option<::sittir_core::SlotValue<TypeAnnotationTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    #[slot]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
@@ -51389,11 +54055,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ParenthesizedExpressionTypedTr
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::PARENTHESIZED_EXPRESSION_SEQUENCE, layout = [kind::LPAREN, kind::RPAREN])]
 pub struct ParenthesizedExpressionSequenceTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_sequence_expression"))]
+    #[slot]
     pub sequence_expression: ::sittir_core::SlotValue<SequenceExpressionTransport>,
 }
 
@@ -51453,15 +54121,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ParenthesizedExpressionSequenc
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::CALL_EXPRESSION_CALL)]
 pub struct CallExpressionCallTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function"))]
+    #[slot(field = field::FUNCTION)]
     pub function: ::sittir_core::SlotValue<Box<MemberExpressionObjectTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
+    #[slot(field = field::TYPE_ARGUMENTS)]
     pub type_arguments: Option<::sittir_core::SlotValue<TypeArgumentsTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
+    #[slot(field = field::ARGUMENTS)]
     pub arguments: ::sittir_core::SlotValue<ArgumentsTransport>,
 }
 
@@ -51523,13 +54195,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CallExpressionCallTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::CALL_EXPRESSION_TEMPLATE_CALL)]
 pub struct CallExpressionTemplateCallTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function"))]
+    #[slot(field = field::FUNCTION)]
     pub function: ::sittir_core::SlotValue<Box<CallExpressionTemplateCallFunctionTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
+    #[slot(field = field::ARGUMENTS)]
     pub arguments: ::sittir_core::SlotValue<TemplateStringTransport>,
 }
 
@@ -51590,15 +54265,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CallExpressionTemplateCallTran
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::CALL_EXPRESSION_MEMBER, layout = [kind::QMARK_DOT])]
 pub struct CallExpressionMemberTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function"))]
+    #[slot(field = field::FUNCTION)]
     pub function: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
+    #[slot(field = field::TYPE_ARGUMENTS)]
     pub type_arguments: Option<::sittir_core::SlotValue<TypeArgumentsTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
+    #[slot(field = field::ARGUMENTS)]
     pub arguments: ::sittir_core::SlotValue<ArgumentsTransport>,
 }
 
@@ -51660,11 +54339,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CallExpressionMemberTransport>
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::STRING_DOUBLE, layout = [kind::DQUOTE])]
 pub struct StringDoubleTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    #[slot(field = field::ELEMENTS)]
     pub elements: Option<Vec<::sittir_core::SlotValue<StringDoubleElementsTransportSlot, true>>>,
 }
 
@@ -51724,11 +54405,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StringDoubleTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::STRING_SINGLE, layout = [kind::SQUOTE])]
 pub struct StringSingleTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    #[slot(field = field::ELEMENTS)]
     pub elements: Option<Vec<::sittir_core::SlotValue<StringSingleElementsTransportSlot, true>>>,
 }
 
@@ -51788,13 +54471,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StringSingleTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::UPDATE_EXPRESSION_POSTFIX)]
 pub struct UpdateExpressionPostfixTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
+    #[slot(field = field::ARGUMENT)]
     pub argument: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
+    #[slot(field = field::OPERATOR)]
     pub operator: ::sittir_core::SlotValue<UpdateExpressionPostfixOperatorTransportSlot>,
 }
 
@@ -51855,13 +54541,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<UpdateExpressionPostfixTranspo
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::UPDATE_EXPRESSION_PREFIX)]
 pub struct UpdateExpressionPrefixTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
+    #[slot(field = field::OPERATOR)]
     pub operator: ::sittir_core::SlotValue<UpdateExpressionPostfixOperatorTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
+    #[slot(field = field::ARGUMENT)]
     pub argument: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
@@ -51922,11 +54611,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<UpdateExpressionPrefixTranspor
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::ARROW_FUNCTION_PARAMETER)]
 pub struct ArrowFunctionParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameter"))]
+    #[slot(field = field::PARAMETER)]
     pub parameter: ::sittir_core::SlotValue<IndexSignatureColonNameTransportSlot>,
 }
 
@@ -51983,13 +54674,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ArrowFunctionParameterTranspor
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::CLASS_HERITAGE_EXTENDS_CLAUSE)]
 pub struct ClassHeritageExtendsClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause"))]
+    #[slot(field = field::EXTENDS_CLAUSE)]
     pub extends_clause: ::sittir_core::SlotValue<ExtendsClauseTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_implements_clause"))]
+    #[slot]
     pub implements_clause: Option<::sittir_core::SlotValue<ImplementsClauseTransport>>,
 }
 
@@ -52050,13 +54744,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassHeritageExtendsClauseTran
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::IMPORT_CLAUSE_DEFAULT_IMPORT, layout = [kind::IDENTIFIER])]
 pub struct ImportClauseDefaultImportTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]
+    #[slot]
     pub identifier: ::sittir_core::SlotValue<ImportClauseDefaultImportIdentifierTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_clause_group"))]
+    #[slot]
     pub import_clause_group: Option<::sittir_core::SlotValue<ImportClauseGroupTransport>>,
 }
 
@@ -52117,13 +54814,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportClauseDefaultImportTrans
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::EXPORT_STATEMENT_DEFAULT_FROM, layout = [kind::EXPORT_KEYWORD, kind::_AUTOMATIC_SEMICOLON, kind::SEMI])]
 pub struct ExportStatementDefaultFromTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[slot]
     pub content: ::sittir_core::SlotValue<ExportStatementDefaultFromContentTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_automatic_semicolon"))]
+    #[slot]
     pub automatic_semicolon: Option<::sittir_core::SlotValue<ExportStatementDefaultFromAutomaticSemicolonTransportSlot>>,
 }
 
@@ -52184,13 +54884,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultFromTran
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::EXPORT_STATEMENT_DEFAULT_DECLARATION, layout = [kind::EXPORT_KEYWORD])]
 pub struct ExportStatementDefaultDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
+    #[slot(field = field::DECORATOR)]
     pub decorator: Option<Vec<::sittir_core::SlotValue<DecoratorTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[slot]
     pub content: ::sittir_core::SlotValue<ExportStatementDefaultDeclarationContentTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
     pub decorator_separator_space: Option<u16>,
@@ -52256,11 +54959,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultDeclarat
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM, layout = [kind::STAR, kind::FROM_KEYWORD])]
 pub struct ExportStatementDefaultFromStarFromTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
+    #[slot(field = field::SOURCE)]
     pub source: ::sittir_core::SlotValue<StringTransport>,
 }
 
@@ -52320,13 +55025,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultFromStar
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM, layout = [kind::FROM_KEYWORD])]
 pub struct ExportStatementDefaultFromNsFromTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
+    #[slot(field = field::SOURCE)]
     pub source: ::sittir_core::SlotValue<StringTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_namespace_export"))]
+    #[slot]
     pub namespace_export: ::sittir_core::SlotValue<NamespaceExportTransport>,
 }
 
@@ -52387,13 +55095,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultFromNsFr
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM, layout = [kind::FROM_KEYWORD])]
 pub struct ExportStatementDefaultFromClauseFromTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
+    #[slot(field = field::SOURCE)]
     pub source: ::sittir_core::SlotValue<StringTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause"))]
+    #[slot]
     pub export_clause: ::sittir_core::SlotValue<ExportClauseTransport>,
 }
 
@@ -52454,11 +55165,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultFromClau
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW, layout = [kind::DEFAULT_KEYWORD])]
 pub struct ExportStatementDefaultDeclarationDefaultKwTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    #[slot]
     pub content: ::sittir_core::SlotValue<ExportStatementDefaultDeclarationDefaultKwContentTransportSlot>,
 }
 
@@ -52518,13 +55231,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultDeclarat
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE, layout = [kind::_AUTOMATIC_SEMICOLON, kind::SEMI])]
 pub struct ExportStatementDefaultDeclarationDefaultKwValueTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
+    #[slot(field = field::VALUE)]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_automatic_semicolon"))]
+    #[slot]
     pub automatic_semicolon: Option<::sittir_core::SlotValue<ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot>>,
 }
 
@@ -52585,15 +55301,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultDeclarat
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::VARIABLE_DECLARATOR_PLAIN, layout = [kind::EQ])]
 pub struct VariableDeclaratorPlainTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<CatchClauseGroupParameterTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: Option<::sittir_core::SlotValue<TypeAnnotationTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
+    #[slot(field = field::VALUE)]
     pub value: Option<::sittir_core::SlotValue<ExpressionTransport>>,
 }
 
@@ -52655,13 +55375,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<VariableDeclaratorPlainTranspo
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::VARIABLE_DECLARATOR_DEFINITE, layout = [kind::BANG])]
 pub struct VariableDeclaratorDefiniteTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<TypeAnnotationTransport>,
 }
 
@@ -52721,8 +55444,10 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<VariableDeclaratorDefiniteTran
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum MetaPropertyNewTargetTransport {
+    #[kind(kind::META_PROPERTY_NEW_TARGET)]
     MetaPropertyNewTarget,
 }
 
@@ -52789,8 +55514,10 @@ impl ::sittir_core::render::Render for MetaPropertyNewTargetTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum MetaPropertyImportMetaTransport {
+    #[kind(kind::META_PROPERTY_IMPORT_META)]
     MetaPropertyImportMeta,
 }
 
@@ -52858,15 +55585,19 @@ impl ::sittir_core::render::Render for MetaPropertyImportMetaTransport {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::FOR_HEADER_LHS, layout = [kind::LPAREN, kind::RPAREN])]
 pub struct ForHeaderLhsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
+    #[slot(field = field::LEFT)]
     pub left: ::sittir_core::SlotValue<ForHeaderLhsLeftTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
+    #[slot(field = field::OPERATOR)]
     pub operator: ::sittir_core::SlotValue<ForHeaderLhsOperatorTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
+    #[slot(field = field::RIGHT)]
     pub right: ::sittir_core::SlotValue<ExpressionStatementExpressionTransportSlot>,
 }
 
@@ -52928,17 +55659,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ForHeaderLhsTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::FOR_HEADER_VAR_KIND, layout = [kind::LPAREN, kind::VAR_KEYWORD, kind::EQ, kind::RPAREN])]
 pub struct ForHeaderVarKindTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
+    #[slot(field = field::LEFT)]
     pub left: ::sittir_core::SlotValue<CatchClauseGroupParameterTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
+    #[slot(field = field::VALUE)]
     pub value: Option<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
+    #[slot(field = field::OPERATOR)]
     pub operator: ::sittir_core::SlotValue<ForHeaderLhsOperatorTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
+    #[slot(field = field::RIGHT)]
     pub right: ::sittir_core::SlotValue<ExpressionStatementExpressionTransportSlot>,
 }
 
@@ -53001,19 +55737,25 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ForHeaderVarKindTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::FOR_HEADER_LET_CONST_KIND, layout = [kind::LPAREN, kind::RPAREN])]
 pub struct ForHeaderLetConstKindTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_kind"))]
+    #[slot(field = field::KIND)]
     pub kind: ::sittir_core::SlotValue<LexicalDeclarationKindTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
+    #[slot(field = field::LEFT)]
     pub left: ::sittir_core::SlotValue<CatchClauseGroupParameterTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    #[slot(field = field::TERMINATOR)]
     pub terminator: Option<::sittir_core::SlotValue<StatementBlockTerminatorTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
+    #[slot(field = field::OPERATOR)]
     pub operator: ::sittir_core::SlotValue<ForHeaderLhsOperatorTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
+    #[slot(field = field::RIGHT)]
     pub right: ::sittir_core::SlotValue<ExpressionStatementExpressionTransportSlot>,
 }
 
@@ -53077,7 +55819,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ForHeaderLetConstKindTransport
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::HTML_COMMENT, text)]
 pub struct HtmlCommentTransport {
     pub layout: Option<TransportLayout>,
     pub text: String,
@@ -53188,7 +55931,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<HtmlCommentTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::JSX_TEXT, text)]
 pub struct JsxTextTransport {
     pub layout: Option<TransportLayout>,
     pub text: String,
@@ -53299,7 +56043,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<JsxTextTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::_TEMPLATE_CHARS, text)]
 pub struct TemplateCharsTransport {
     pub layout: Option<TransportLayout>,
     pub text: String,
@@ -53410,8 +56155,10 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TemplateCharsTransport> {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum AutomaticSemicolonTransport {
+    #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
 }
 
@@ -53478,8 +56225,10 @@ impl ::sittir_core::render::Render for AutomaticSemicolonTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum FunctionSignatureAutomaticSemicolonTransport {
+    #[kind(kind::_FUNCTION_SIGNATURE_AUTOMATIC_SEMICOLON)]
     FunctionSignatureAutomaticSemicolon,
 }
 
@@ -53546,8 +56295,10 @@ impl ::sittir_core::render::Render for FunctionSignatureAutomaticSemicolonTransp
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum TightTransport {
+    #[kind(kind::_TIGHT)]
     Tight,
 }
 
@@ -53614,8 +56365,10 @@ impl ::sittir_core::render::Render for TightTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum SpaceTransport {
+    #[kind(kind::_SPACE)]
     Space,
 }
 
@@ -53682,8 +56435,10 @@ impl ::sittir_core::render::Render for SpaceTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum TabTransport {
+    #[kind(kind::_TAB)]
     Tab,
 }
 
@@ -53750,8 +56505,10 @@ impl ::sittir_core::render::Render for TabTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum NewlineTransport {
+    #[kind(kind::_NEWLINE)]
     Newline,
 }
 
@@ -53818,8 +56575,10 @@ impl ::sittir_core::render::Render for NewlineTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum BlanklineTransport {
+    #[kind(kind::_BLANKLINE)]
     Blankline,
 }
 
@@ -53886,8 +56645,10 @@ impl ::sittir_core::render::Render for BlanklineTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum DoubleBlanklineTransport {
+    #[kind(kind::_DOUBLE_BLANKLINE)]
     DoubleBlankline,
 }
 
@@ -53954,8 +56715,10 @@ impl ::sittir_core::render::Render for DoubleBlanklineTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum IndentTransport {
+    #[kind(kind::_INDENT)]
     Indent,
 }
 
@@ -54022,8 +56785,10 @@ impl ::sittir_core::render::Render for IndentTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum DedentTransport {
+    #[kind(kind::_DEDENT)]
     Dedent,
 }
 
@@ -54090,7 +56855,8 @@ impl ::sittir_core::render::Render for DedentTransport {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::_TERNARY_QMARK, text)]
 pub struct TernaryQmarkTransport {
     pub layout: Option<TransportLayout>,
     pub text: String,
@@ -54201,7 +56967,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TernaryQmarkTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::__ERROR_RECOVERY, text)]
 pub struct ErrorRecoveryTransport {
     pub layout: Option<TransportLayout>,
     pub text: String,
@@ -54307,7 +57074,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ErrorRecoveryTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::_STATEMENT_IDENTIFIER, display, envelope, content = content)]
 pub struct StatementIdentifierTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -54368,7 +57136,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StatementIdentifierTransport> 
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::_SHORTHAND_PROPERTY_IDENTIFIER, display, envelope, content = content)]
 pub struct ShorthandPropertyIdentifierTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -54429,7 +57198,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ShorthandPropertyIdentifierTra
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::_SHORTHAND_PROPERTY_IDENTIFIER_PATTERN, display, envelope, content = content)]
 pub struct ShorthandPropertyIdentifierPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -54490,7 +57260,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ShorthandPropertyIdentifierPat
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::_PROPERTY_IDENTIFIER, display, envelope, content = content)]
 pub struct PropertyIdentifierTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -54551,7 +57322,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PropertyIdentifierTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::_TYPE_IDENTIFIER, display, envelope, content = content)]
 pub struct TypeIdentifierTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -54612,7 +57384,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeIdentifierTransport> {
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::_INTERFACE_BODY, display, envelope, content = content)]
 pub struct InterfaceBodyTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_layout"))]
     pub layout: Option<TransportLayout>,
@@ -54672,8 +57445,10 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<InterfaceBodyTransport> {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum StarTransport {
+    #[kind(kind::STAR)]
     Star,
 }
 
@@ -54740,8 +57515,10 @@ impl ::sittir_core::render::Render for StarTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum AsKeywordTransport {
+    #[kind(kind::AS_KEYWORD)]
     AsKeyword,
 }
 
@@ -54808,8 +57585,10 @@ impl ::sittir_core::render::Render for AsKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum LbraceTransport {
+    #[kind(kind::LBRACE)]
     Lbrace,
 }
 
@@ -54876,8 +57655,10 @@ impl ::sittir_core::render::Render for LbraceTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum RbraceTransport {
+    #[kind(kind::RBRACE)]
     Rbrace,
 }
 
@@ -54944,8 +57725,10 @@ impl ::sittir_core::render::Render for RbraceTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum TypeKeywordTransport {
+    #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
 }
 
@@ -55012,8 +57795,10 @@ impl ::sittir_core::render::Render for TypeKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum TypeofKeywordTransport {
+    #[kind(kind::TYPEOF_KEYWORD)]
     TypeofKeyword,
 }
 
@@ -55080,8 +57865,10 @@ impl ::sittir_core::render::Render for TypeofKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ImportKeywordTransport {
+    #[kind(kind::IMPORT_KEYWORD)]
     ImportKeyword,
 }
 
@@ -55148,8 +57935,10 @@ impl ::sittir_core::render::Render for ImportKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum SemiTransport {
+    #[kind(kind::SEMI)]
     Semi,
 }
 
@@ -55216,8 +58005,10 @@ impl ::sittir_core::render::Render for SemiTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum WithKeywordTransport {
+    #[kind(kind::WITH_KEYWORD)]
     WithKeyword,
 }
 
@@ -55284,8 +58075,10 @@ impl ::sittir_core::render::Render for WithKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum AssertKeywordTransport {
+    #[kind(kind::ASSERT_KEYWORD)]
     AssertKeyword,
 }
 
@@ -55352,8 +58145,10 @@ impl ::sittir_core::render::Render for AssertKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum VarKeywordTransport {
+    #[kind(kind::VAR_KEYWORD)]
     VarKeyword,
 }
 
@@ -55420,8 +58215,10 @@ impl ::sittir_core::render::Render for VarKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum LetKeywordTransport {
+    #[kind(kind::LET_KEYWORD)]
     LetKeyword,
 }
 
@@ -55488,8 +58285,10 @@ impl ::sittir_core::render::Render for LetKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ConstKeywordTransport {
+    #[kind(kind::CONST_KEYWORD)]
     ConstKeyword,
 }
 
@@ -55556,8 +58355,10 @@ impl ::sittir_core::render::Render for ConstKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ElseKeywordTransport {
+    #[kind(kind::ELSE_KEYWORD)]
     ElseKeyword,
 }
 
@@ -55624,8 +58425,10 @@ impl ::sittir_core::render::Render for ElseKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum IfKeywordTransport {
+    #[kind(kind::IF_KEYWORD)]
     IfKeyword,
 }
 
@@ -55692,8 +58495,10 @@ impl ::sittir_core::render::Render for IfKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum SwitchKeywordTransport {
+    #[kind(kind::SWITCH_KEYWORD)]
     SwitchKeyword,
 }
 
@@ -55760,8 +58565,10 @@ impl ::sittir_core::render::Render for SwitchKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ForKeywordTransport {
+    #[kind(kind::FOR_KEYWORD)]
     ForKeyword,
 }
 
@@ -55828,8 +58635,10 @@ impl ::sittir_core::render::Render for ForKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum LparenTransport {
+    #[kind(kind::LPAREN)]
     Lparen,
 }
 
@@ -55896,8 +58705,10 @@ impl ::sittir_core::render::Render for LparenTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum RparenTransport {
+    #[kind(kind::RPAREN)]
     Rparen,
 }
 
@@ -55964,8 +58775,10 @@ impl ::sittir_core::render::Render for RparenTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum AwaitKeywordTransport {
+    #[kind(kind::AWAIT_KEYWORD)]
     AwaitKeyword,
 }
 
@@ -56032,8 +58845,10 @@ impl ::sittir_core::render::Render for AwaitKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum WhileKeywordTransport {
+    #[kind(kind::WHILE_KEYWORD)]
     WhileKeyword,
 }
 
@@ -56100,8 +58915,10 @@ impl ::sittir_core::render::Render for WhileKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum DoKeywordTransport {
+    #[kind(kind::DO_KEYWORD)]
     DoKeyword,
 }
 
@@ -56168,8 +58985,10 @@ impl ::sittir_core::render::Render for DoKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum TryKeywordTransport {
+    #[kind(kind::TRY_KEYWORD)]
     TryKeyword,
 }
 
@@ -56236,8 +59055,10 @@ impl ::sittir_core::render::Render for TryKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum BreakKeywordTransport {
+    #[kind(kind::BREAK_KEYWORD)]
     BreakKeyword,
 }
 
@@ -56304,8 +59125,10 @@ impl ::sittir_core::render::Render for BreakKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ContinueKeywordTransport {
+    #[kind(kind::CONTINUE_KEYWORD)]
     ContinueKeyword,
 }
 
@@ -56372,8 +59195,10 @@ impl ::sittir_core::render::Render for ContinueKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum DebuggerKeywordTransport {
+    #[kind(kind::DEBUGGER_KEYWORD)]
     DebuggerKeyword,
 }
 
@@ -56440,8 +59265,10 @@ impl ::sittir_core::render::Render for DebuggerKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ReturnKeywordTransport {
+    #[kind(kind::RETURN_KEYWORD)]
     ReturnKeyword,
 }
 
@@ -56508,8 +59335,10 @@ impl ::sittir_core::render::Render for ReturnKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ThrowKeywordTransport {
+    #[kind(kind::THROW_KEYWORD)]
     ThrowKeyword,
 }
 
@@ -56576,8 +59405,10 @@ impl ::sittir_core::render::Render for ThrowKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum DeclareKeywordTransport {
+    #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
 }
 
@@ -56644,8 +59475,10 @@ impl ::sittir_core::render::Render for DeclareKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum NamespaceKeywordTransport {
+    #[kind(kind::NAMESPACE_KEYWORD)]
     NamespaceKeyword,
 }
 
@@ -56712,8 +59545,10 @@ impl ::sittir_core::render::Render for NamespaceKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum PublicKeywordTransport {
+    #[kind(kind::PUBLIC_KEYWORD)]
     PublicKeyword,
 }
 
@@ -56780,8 +59615,10 @@ impl ::sittir_core::render::Render for PublicKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum PrivateKeywordTransport {
+    #[kind(kind::PRIVATE_KEYWORD)]
     PrivateKeyword,
 }
 
@@ -56848,8 +59685,10 @@ impl ::sittir_core::render::Render for PrivateKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ProtectedKeywordTransport {
+    #[kind(kind::PROTECTED_KEYWORD)]
     ProtectedKeyword,
 }
 
@@ -56916,8 +59755,10 @@ impl ::sittir_core::render::Render for ProtectedKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum OverrideKeywordTransport {
+    #[kind(kind::OVERRIDE_KEYWORD)]
     OverrideKeyword,
 }
 
@@ -56984,8 +59825,10 @@ impl ::sittir_core::render::Render for OverrideKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ReadonlyKeywordTransport {
+    #[kind(kind::READONLY_KEYWORD)]
     ReadonlyKeyword,
 }
 
@@ -57052,8 +59895,10 @@ impl ::sittir_core::render::Render for ReadonlyKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ModuleKeywordTransport {
+    #[kind(kind::MODULE_KEYWORD)]
     ModuleKeyword,
 }
 
@@ -57120,8 +59965,10 @@ impl ::sittir_core::render::Render for ModuleKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum AnyKeywordTransport {
+    #[kind(kind::ANY_KEYWORD)]
     AnyKeyword,
 }
 
@@ -57188,8 +60035,10 @@ impl ::sittir_core::render::Render for AnyKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum NumberKeywordTransport {
+    #[kind(kind::NUMBER_KEYWORD)]
     NumberKeyword,
 }
 
@@ -57256,8 +60105,10 @@ impl ::sittir_core::render::Render for NumberKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum BooleanKeywordTransport {
+    #[kind(kind::BOOLEAN_KEYWORD)]
     BooleanKeyword,
 }
 
@@ -57324,8 +60175,10 @@ impl ::sittir_core::render::Render for BooleanKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum StringKeywordTransport {
+    #[kind(kind::STRING_KEYWORD)]
     StringKeyword,
 }
 
@@ -57392,8 +60245,10 @@ impl ::sittir_core::render::Render for StringKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum SymbolKeywordTransport {
+    #[kind(kind::SYMBOL_KEYWORD)]
     SymbolKeyword,
 }
 
@@ -57460,8 +60315,10 @@ impl ::sittir_core::render::Render for SymbolKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ExportKeywordTransport {
+    #[kind(kind::EXPORT_KEYWORD)]
     ExportKeyword,
 }
 
@@ -57528,8 +60385,10 @@ impl ::sittir_core::render::Render for ExportKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ObjectKeywordTransport {
+    #[kind(kind::OBJECT_KEYWORD)]
     ObjectKeyword,
 }
 
@@ -57596,8 +60455,10 @@ impl ::sittir_core::render::Render for ObjectKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum NewKeywordTransport {
+    #[kind(kind::NEW_KEYWORD)]
     NewKeyword,
 }
 
@@ -57664,8 +60525,10 @@ impl ::sittir_core::render::Render for NewKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum GetKeywordTransport {
+    #[kind(kind::GET_KEYWORD)]
     GetKeyword,
 }
 
@@ -57732,8 +60595,10 @@ impl ::sittir_core::render::Render for GetKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum SetKeywordTransport {
+    #[kind(kind::SET_KEYWORD)]
     SetKeyword,
 }
 
@@ -57800,8 +60665,10 @@ impl ::sittir_core::render::Render for SetKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum AsyncKeywordTransport {
+    #[kind(kind::ASYNC_KEYWORD)]
     AsyncKeyword,
 }
 
@@ -57868,8 +60735,10 @@ impl ::sittir_core::render::Render for AsyncKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum StaticKeywordTransport {
+    #[kind(kind::STATIC_KEYWORD)]
     StaticKeyword,
 }
 
@@ -57936,8 +60805,10 @@ impl ::sittir_core::render::Render for StaticKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ColonTransport {
+    #[kind(kind::COLON)]
     Colon,
 }
 
@@ -58004,8 +60875,10 @@ impl ::sittir_core::render::Render for ColonTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum CaseKeywordTransport {
+    #[kind(kind::CASE_KEYWORD)]
     CaseKeyword,
 }
 
@@ -58072,8 +60945,10 @@ impl ::sittir_core::render::Render for CaseKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum DefaultKeywordTransport {
+    #[kind(kind::DEFAULT_KEYWORD)]
     DefaultKeyword,
 }
 
@@ -58140,8 +61015,10 @@ impl ::sittir_core::render::Render for DefaultKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum CatchKeywordTransport {
+    #[kind(kind::CATCH_KEYWORD)]
     CatchKeyword,
 }
 
@@ -58208,8 +61085,10 @@ impl ::sittir_core::render::Render for CatchKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum FinallyKeywordTransport {
+    #[kind(kind::FINALLY_KEYWORD)]
     FinallyKeyword,
 }
 
@@ -58276,8 +61155,10 @@ impl ::sittir_core::render::Render for FinallyKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum YieldKeywordTransport {
+    #[kind(kind::YIELD_KEYWORD)]
     YieldKeyword,
 }
 
@@ -58344,8 +61225,10 @@ impl ::sittir_core::render::Render for YieldKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum EqTransport {
+    #[kind(kind::EQ)]
     Eq,
 }
 
@@ -58412,8 +61295,10 @@ impl ::sittir_core::render::Render for EqTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum LbrackTransport {
+    #[kind(kind::LBRACK)]
     Lbrack,
 }
 
@@ -58480,8 +61365,10 @@ impl ::sittir_core::render::Render for LbrackTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum RbrackTransport {
+    #[kind(kind::RBRACK)]
     Rbrack,
 }
 
@@ -58548,8 +61435,10 @@ impl ::sittir_core::render::Render for RbrackTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum DotTransport {
+    #[kind(kind::DOT)]
     Dot,
 }
 
@@ -58616,8 +61505,10 @@ impl ::sittir_core::render::Render for DotTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ClassKeywordTransport {
+    #[kind(kind::CLASS_KEYWORD)]
     ClassKeyword,
 }
 
@@ -58684,8 +61575,10 @@ impl ::sittir_core::render::Render for ClassKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum FunctionKeywordTransport {
+    #[kind(kind::FUNCTION_KEYWORD)]
     FunctionKeyword,
 }
 
@@ -58752,8 +61645,10 @@ impl ::sittir_core::render::Render for FunctionKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum EqGtTransport {
+    #[kind(kind::EQ_GT)]
     EqGt,
 }
 
@@ -58820,8 +61715,10 @@ impl ::sittir_core::render::Render for EqGtTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum QmarkDotTransport {
+    #[kind(kind::QMARK_DOT)]
     QmarkDot,
 }
 
@@ -58888,8 +61785,10 @@ impl ::sittir_core::render::Render for QmarkDotTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum UsingKeywordTransport {
+    #[kind(kind::USING_KEYWORD)]
     UsingKeyword,
 }
 
@@ -58956,8 +61855,10 @@ impl ::sittir_core::render::Render for UsingKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum PlusEqTransport {
+    #[kind(kind::PLUS_EQ)]
     PlusEq,
 }
 
@@ -59024,8 +61925,10 @@ impl ::sittir_core::render::Render for PlusEqTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum DashEqTransport {
+    #[kind(kind::DASH_EQ)]
     DashEq,
 }
 
@@ -59092,8 +61995,10 @@ impl ::sittir_core::render::Render for DashEqTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum StarEqTransport {
+    #[kind(kind::STAR_EQ)]
     StarEq,
 }
 
@@ -59160,8 +62065,10 @@ impl ::sittir_core::render::Render for StarEqTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum SlashEqTransport {
+    #[kind(kind::SLASH_EQ)]
     SlashEq,
 }
 
@@ -59228,8 +62135,10 @@ impl ::sittir_core::render::Render for SlashEqTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum PercentEqTransport {
+    #[kind(kind::PERCENT_EQ)]
     PercentEq,
 }
 
@@ -59296,8 +62205,10 @@ impl ::sittir_core::render::Render for PercentEqTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum CaretEqTransport {
+    #[kind(kind::CARET_EQ)]
     CaretEq,
 }
 
@@ -59364,8 +62275,10 @@ impl ::sittir_core::render::Render for CaretEqTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum AmpEqTransport {
+    #[kind(kind::AMP_EQ)]
     AmpEq,
 }
 
@@ -59432,8 +62345,10 @@ impl ::sittir_core::render::Render for AmpEqTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum PipeEqTransport {
+    #[kind(kind::PIPE_EQ)]
     PipeEq,
 }
 
@@ -59500,8 +62415,10 @@ impl ::sittir_core::render::Render for PipeEqTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum GtGtEqTransport {
+    #[kind(kind::GT_GT_EQ)]
     GtGtEq,
 }
 
@@ -59568,8 +62485,10 @@ impl ::sittir_core::render::Render for GtGtEqTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum GtGtGtEqTransport {
+    #[kind(kind::GT_GT_GT_EQ)]
     GtGtGtEq,
 }
 
@@ -59636,8 +62555,10 @@ impl ::sittir_core::render::Render for GtGtGtEqTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum LtLtEqTransport {
+    #[kind(kind::LT_LT_EQ)]
     LtLtEq,
 }
 
@@ -59704,8 +62625,10 @@ impl ::sittir_core::render::Render for LtLtEqTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum StarStarEqTransport {
+    #[kind(kind::STAR_STAR_EQ)]
     StarStarEq,
 }
 
@@ -59772,8 +62695,10 @@ impl ::sittir_core::render::Render for StarStarEqTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum AmpAmpEqTransport {
+    #[kind(kind::AMP_AMP_EQ)]
     AmpAmpEq,
 }
 
@@ -59840,8 +62765,10 @@ impl ::sittir_core::render::Render for AmpAmpEqTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum PipePipeEqTransport {
+    #[kind(kind::PIPE_PIPE_EQ)]
     PipePipeEq,
 }
 
@@ -59908,8 +62835,10 @@ impl ::sittir_core::render::Render for PipePipeEqTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum QmarkQmarkEqTransport {
+    #[kind(kind::QMARK_QMARK_EQ)]
     QmarkQmarkEq,
 }
 
@@ -59976,8 +62905,10 @@ impl ::sittir_core::render::Render for QmarkQmarkEqTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum DotDotDotTransport {
+    #[kind(kind::DOT_DOT_DOT)]
     DotDotDot,
 }
 
@@ -60044,8 +62975,10 @@ impl ::sittir_core::render::Render for DotDotDotTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum QmarkTransport {
+    #[kind(display(kind::QMARK))]
     Qmark,
 }
 
@@ -60112,8 +63045,10 @@ impl ::sittir_core::render::Render for QmarkTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum AmpAmpTransport {
+    #[kind(kind::AMP_AMP)]
     AmpAmp,
 }
 
@@ -60180,8 +63115,10 @@ impl ::sittir_core::render::Render for AmpAmpTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum PipePipeTransport {
+    #[kind(kind::PIPE_PIPE)]
     PipePipe,
 }
 
@@ -60248,8 +63185,10 @@ impl ::sittir_core::render::Render for PipePipeTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum GtGtTransport {
+    #[kind(kind::GT_GT)]
     GtGt,
 }
 
@@ -60316,8 +63255,10 @@ impl ::sittir_core::render::Render for GtGtTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum GtGtGtTransport {
+    #[kind(kind::GT_GT_GT)]
     GtGtGt,
 }
 
@@ -60384,8 +63325,10 @@ impl ::sittir_core::render::Render for GtGtGtTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum LtLtTransport {
+    #[kind(kind::LT_LT)]
     LtLt,
 }
 
@@ -60452,8 +63395,10 @@ impl ::sittir_core::render::Render for LtLtTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum AmpTransport {
+    #[kind(kind::AMP)]
     Amp,
 }
 
@@ -60520,8 +63465,10 @@ impl ::sittir_core::render::Render for AmpTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum CaretTransport {
+    #[kind(kind::CARET)]
     Caret,
 }
 
@@ -60588,8 +63535,10 @@ impl ::sittir_core::render::Render for CaretTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum PipeTransport {
+    #[kind(kind::PIPE)]
     Pipe,
 }
 
@@ -60656,8 +63605,10 @@ impl ::sittir_core::render::Render for PipeTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum PlusTransport {
+    #[kind(kind::PLUS)]
     Plus,
 }
 
@@ -60724,8 +63675,10 @@ impl ::sittir_core::render::Render for PlusTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum DashTransport {
+    #[kind(kind::DASH)]
     Dash,
 }
 
@@ -60792,8 +63745,10 @@ impl ::sittir_core::render::Render for DashTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum SlashTransport {
+    #[kind(display(kind::SLASH))]
     Slash,
 }
 
@@ -60860,8 +63815,10 @@ impl ::sittir_core::render::Render for SlashTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum PercentTransport {
+    #[kind(kind::PERCENT)]
     Percent,
 }
 
@@ -60928,8 +63885,10 @@ impl ::sittir_core::render::Render for PercentTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum StarStarTransport {
+    #[kind(kind::STAR_STAR)]
     StarStar,
 }
 
@@ -60996,8 +63955,10 @@ impl ::sittir_core::render::Render for StarStarTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum LtTransport {
+    #[kind(kind::LT)]
     Lt,
 }
 
@@ -61064,8 +64025,10 @@ impl ::sittir_core::render::Render for LtTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum LtEqTransport {
+    #[kind(kind::LT_EQ)]
     LtEq,
 }
 
@@ -61132,8 +64095,10 @@ impl ::sittir_core::render::Render for LtEqTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum EqEqTransport {
+    #[kind(kind::EQ_EQ)]
     EqEq,
 }
 
@@ -61200,8 +64165,10 @@ impl ::sittir_core::render::Render for EqEqTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum EqEqEqTransport {
+    #[kind(kind::EQ_EQ_EQ)]
     EqEqEq,
 }
 
@@ -61268,8 +64235,10 @@ impl ::sittir_core::render::Render for EqEqEqTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum BangEqTransport {
+    #[kind(kind::BANG_EQ)]
     BangEq,
 }
 
@@ -61336,8 +64305,10 @@ impl ::sittir_core::render::Render for BangEqTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum BangEqEqTransport {
+    #[kind(kind::BANG_EQ_EQ)]
     BangEqEq,
 }
 
@@ -61404,8 +64375,10 @@ impl ::sittir_core::render::Render for BangEqEqTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum GtEqTransport {
+    #[kind(kind::GT_EQ)]
     GtEq,
 }
 
@@ -61472,8 +64445,10 @@ impl ::sittir_core::render::Render for GtEqTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum GtTransport {
+    #[kind(kind::GT)]
     Gt,
 }
 
@@ -61540,8 +64515,10 @@ impl ::sittir_core::render::Render for GtTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum QmarkQmarkTransport {
+    #[kind(kind::QMARK_QMARK)]
     QmarkQmark,
 }
 
@@ -61608,8 +64585,10 @@ impl ::sittir_core::render::Render for QmarkQmarkTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum InstanceofKeywordTransport {
+    #[kind(kind::INSTANCEOF_KEYWORD)]
     InstanceofKeyword,
 }
 
@@ -61676,8 +64655,10 @@ impl ::sittir_core::render::Render for InstanceofKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum BangTransport {
+    #[kind(kind::BANG)]
     Bang,
 }
 
@@ -61744,8 +64725,10 @@ impl ::sittir_core::render::Render for BangTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum TildeTransport {
+    #[kind(kind::TILDE)]
     Tilde,
 }
 
@@ -61812,8 +64795,10 @@ impl ::sittir_core::render::Render for TildeTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum VoidKeywordTransport {
+    #[kind(kind::VOID_KEYWORD)]
     VoidKeyword,
 }
 
@@ -61880,8 +64865,10 @@ impl ::sittir_core::render::Render for VoidKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum DeleteKeywordTransport {
+    #[kind(kind::DELETE_KEYWORD)]
     DeleteKeyword,
 }
 
@@ -61948,8 +64935,10 @@ impl ::sittir_core::render::Render for DeleteKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum BquoteTransport {
+    #[kind(display(kind::BQUOTE))]
     Bquote,
 }
 
@@ -62016,8 +65005,10 @@ impl ::sittir_core::render::Render for BquoteTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum DollarLbraceTransport {
+    #[kind(kind::DOLLAR_LBRACE)]
     DollarLbrace,
 }
 
@@ -62084,8 +65075,10 @@ impl ::sittir_core::render::Render for DollarLbraceTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum AtTransport {
+    #[kind(kind::AT)]
     At,
 }
 
@@ -62152,8 +65145,10 @@ impl ::sittir_core::render::Render for AtTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum AbstractKeywordTransport {
+    #[kind(kind::ABSTRACT_KEYWORD)]
     AbstractKeyword,
 }
 
@@ -62220,8 +65215,10 @@ impl ::sittir_core::render::Render for AbstractKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum AccessorKeywordTransport {
+    #[kind(kind::ACCESSOR_KEYWORD)]
     AccessorKeyword,
 }
 
@@ -62288,8 +65285,10 @@ impl ::sittir_core::render::Render for AccessorKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum SatisfiesKeywordTransport {
+    #[kind(kind::SATISFIES_KEYWORD)]
     SatisfiesKeyword,
 }
 
@@ -62356,8 +65355,10 @@ impl ::sittir_core::render::Render for SatisfiesKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum RequireKeywordTransport {
+    #[kind(kind::REQUIRE_KEYWORD)]
     RequireKeyword,
 }
 
@@ -62424,8 +65425,10 @@ impl ::sittir_core::render::Render for RequireKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ExtendsKeywordTransport {
+    #[kind(kind::EXTENDS_KEYWORD)]
     ExtendsKeyword,
 }
 
@@ -62492,8 +65495,10 @@ impl ::sittir_core::render::Render for ExtendsKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ImplementsKeywordTransport {
+    #[kind(kind::IMPLEMENTS_KEYWORD)]
     ImplementsKeyword,
 }
 
@@ -62560,8 +65565,10 @@ impl ::sittir_core::render::Render for ImplementsKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum InterfaceKeywordTransport {
+    #[kind(kind::INTERFACE_KEYWORD)]
     InterfaceKeyword,
 }
 
@@ -62628,8 +65635,10 @@ impl ::sittir_core::render::Render for InterfaceKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum EnumKeywordTransport {
+    #[kind(kind::ENUM_KEYWORD)]
     EnumKeyword,
 }
 
@@ -62696,8 +65705,10 @@ impl ::sittir_core::render::Render for EnumKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum DashQmarkColonTransport {
+    #[kind(kind::DASH_QMARK_COLON)]
     DashQmarkColon,
 }
 
@@ -62764,8 +65775,10 @@ impl ::sittir_core::render::Render for DashQmarkColonTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum PlusQmarkColonTransport {
+    #[kind(kind::PLUS_QMARK_COLON)]
     PlusQmarkColon,
 }
 
@@ -62832,8 +65845,10 @@ impl ::sittir_core::render::Render for PlusQmarkColonTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum QmarkColonTransport {
+    #[kind(kind::QMARK_COLON)]
     QmarkColon,
 }
 
@@ -62900,8 +65915,10 @@ impl ::sittir_core::render::Render for QmarkColonTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum AssertsKeywordTransport {
+    #[kind(kind::ASSERTS_KEYWORD)]
     AssertsKeyword,
 }
 
@@ -62968,8 +65985,10 @@ impl ::sittir_core::render::Render for AssertsKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum InferKeywordTransport {
+    #[kind(kind::INFER_KEYWORD)]
     InferKeyword,
 }
 
@@ -63036,8 +66055,10 @@ impl ::sittir_core::render::Render for InferKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum IsKeywordTransport {
+    #[kind(kind::IS_KEYWORD)]
     IsKeyword,
 }
 
@@ -63104,8 +66125,10 @@ impl ::sittir_core::render::Render for IsKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum KeyofKeywordTransport {
+    #[kind(kind::KEYOF_KEYWORD)]
     KeyofKeyword,
 }
 
@@ -63172,8 +66195,10 @@ impl ::sittir_core::render::Render for KeyofKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum InKeywordTransport {
+    #[kind(kind::IN_KEYWORD)]
     InKeyword,
 }
 
@@ -63240,8 +66265,10 @@ impl ::sittir_core::render::Render for InKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum UniqueTransport {
+    #[kind(kind::UNIQUE)]
     Unique,
 }
 
@@ -63308,8 +66335,10 @@ impl ::sittir_core::render::Render for UniqueTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum UnknownKeywordTransport {
+    #[kind(kind::UNKNOWN_KEYWORD)]
     UnknownKeyword,
 }
 
@@ -63376,8 +66405,10 @@ impl ::sittir_core::render::Render for UnknownKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum NeverKeywordTransport {
+    #[kind(kind::NEVER_KEYWORD)]
     NeverKeyword,
 }
 
@@ -63444,8 +66475,10 @@ impl ::sittir_core::render::Render for NeverKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum LbracePipeTransport {
+    #[kind(kind::LBRACE_PIPE)]
     LbracePipe,
 }
 
@@ -63512,8 +66545,10 @@ impl ::sittir_core::render::Render for LbracePipeTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum PipeRbraceTransport {
+    #[kind(kind::PIPE_RBRACE)]
     PipeRbrace,
 }
 
@@ -63580,8 +66615,10 @@ impl ::sittir_core::render::Render for PipeRbraceTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum CommaTransport {
+    #[kind(kind::COMMA)]
     Comma,
 }
 
@@ -63648,8 +66685,10 @@ impl ::sittir_core::render::Render for CommaTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum GlobalKeywordTransport {
+    #[kind(kind::GLOBAL_KEYWORD)]
     GlobalKeyword,
 }
 
@@ -63716,8 +66755,10 @@ impl ::sittir_core::render::Render for GlobalKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum FromKeywordTransport {
+    #[kind(kind::FROM_KEYWORD)]
     FromKeyword,
 }
 
@@ -63784,8 +66825,10 @@ impl ::sittir_core::render::Render for FromKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum DquoteTransport {
+    #[kind(display(kind::DQUOTE))]
     Dquote,
 }
 
@@ -63852,8 +66895,10 @@ impl ::sittir_core::render::Render for DquoteTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum SquoteTransport {
+    #[kind(display(kind::SQUOTE))]
     Squote,
 }
 
@@ -63920,8 +66965,10 @@ impl ::sittir_core::render::Render for SquoteTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum PlusPlusTransport {
+    #[kind(kind::PLUS_PLUS)]
     PlusPlus,
 }
 
@@ -63988,8 +67035,10 @@ impl ::sittir_core::render::Render for PlusPlusTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum DashDashTransport {
+    #[kind(kind::DASH_DASH)]
     DashDash,
 }
 
@@ -64056,8 +67105,10 @@ impl ::sittir_core::render::Render for DashDashTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum TargetKeywordTransport {
+    #[kind(kind::TARGET_KEYWORD)]
     TargetKeyword,
 }
 
@@ -64124,8 +67175,10 @@ impl ::sittir_core::render::Render for TargetKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum MetaKeywordTransport {
+    #[kind(kind::META_KEYWORD)]
     MetaKeyword,
 }
 
@@ -64192,8 +67245,10 @@ impl ::sittir_core::render::Render for MetaKeywordTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum OfKeywordTransport {
+    #[kind(kind::OF_KEYWORD)]
     OfKeyword,
 }
 

@@ -1,6 +1,6 @@
 import { NATIVE_TARGETS, grammarDisplayName, nativeBinaryName, type GrammarName } from '../grammars.ts';
 
-export const NATIVE_RENDER_TRANSPORT_ABI = 17;
+export const NATIVE_RENDER_TRANSPORT_ABI = 18;
 
 export interface NativeCrateFile {
 	readonly path: string;
@@ -194,6 +194,10 @@ impl EngineGrammar for ${v.Name}Grammar {
 
     fn render_module_hash(self) -> &'static str {
         RENDER_MODULE_HASH
+    }
+
+    fn kind_name(self, kind: sittir_core::types::KindId) -> &'static str {
+        render::kind_ids::kind_name_from_id(kind)
     }
 }
 

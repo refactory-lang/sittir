@@ -85,7 +85,7 @@ import { baseRulesOf } from './shared.ts';
 import { enrichWhitespace, type EnrichedWhitespace } from './whitespace.ts';
 import { WHITESPACE_SUPERTYPE } from './primitives/spacing.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
-import { distributeTokenForms, factorSharedOptional } from './transform/token-forms.ts';
+import { distributeLeafEnum, distributeTokenForms, factorSharedOptional } from './transform/token-forms.ts';
 import { ENRICH_AUTOMATIC_VARIANTS_KEY, isSupertypeOwner, stampAutomaticVariants } from './automatic-variants.ts';
 import { armNameOf, undisplayedKindAddress } from './arm-names.ts';
 
@@ -179,7 +179,7 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 	for (const name of Object.keys(enrichedRules)) {
 		const rule = enrichedRules[name];
 		if (!rule) continue;
-		const factored = factorSharedOptional(rule as unknown as RuntimeRule) as unknown as Rule;
+		const factored = factorSharedOptional(distributeLeafEnum(rule as unknown as RuntimeRule)) as unknown as Rule;
 		if (factored !== rule) enrichedRules[name] = factored;
 	}
 	const tokenFormParents: string[] = [];

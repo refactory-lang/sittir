@@ -2835,6 +2835,10 @@ The enum's literal arms with nested choices flattened, the list its `values` rea
 choice onto a display arrives as a choice inside a choice.
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.immediate`
+
+Whether the enum forbids preceding whitespace: true when it has members and every member token carries the grammar's `immediate` stamp. A choice has no stamp of its own, so a leaf enum the grammar wrote as one immediate token over a spelling choice and one the distribution turned into a choice of immediate tokens answer alike, and a slot whose only scalar source is the enum keeps its adjacency flag.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::enumLiteralMembersOf`
 
 The literal members of a choice as `AssembledEnum` reads them: nested choices flattened, one member per arm.

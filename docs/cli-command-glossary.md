@@ -768,6 +768,22 @@ Time reading every node's leading trivia after a deep parse of a file (one line-
 pnpm exec tsx packages/cli/src/cli.ts tool trivia-timing [options]
 ```
 
+### `tool typed-read-parity`
+
+Compare the typed reader with today's read and wrap on every corpus entry; exits 1 on any refusal, difference or entry today's pipeline cannot decode
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
+- `--all-grammars` — Run every stable grammar
+- `--json` — Print rows and summary as JSON
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool typed-read-parity [options]
+```
+
 ### `tool uncovered-content`
 
 List corpus nodes whose non-whitespace text no child covers, with the hidden grammar producer; exits 1 if any

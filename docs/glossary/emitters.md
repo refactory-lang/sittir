@@ -2897,6 +2897,14 @@ A row's member is named from its model kind (`modelKindOfEntry`, so a renamed ro
 // see `utils.ts::modelSlots`.)
 ```
 
+### `packages/codegen/src/emitters/kind-id-rust.ts::KindConstant`
+
+One `kind_ids.rs` constant: its name and the kind id it holds.
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::kindConstants`
+
+The constants of a grammar's kind table, one per kind row, plus one for each alias parse id that has no row of its own: the parser symbol an alias site is read under (`let_chain`, `lhs_expression`), named from its parse name so the reader names every id it matches by constant. An alias whose name another kind already holds is a diagnostic.
+
 ### `packages/codegen/src/emitters/kind-id-rust.ts::innerGapRows`
 
 The `inner_gap_key` rows: every compound's `innerGaps`, under the compound's
@@ -7327,11 +7335,11 @@ The content type of an AssembledAlias with one slot: the slot's storage type, ex
  */
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::aliasEnvelopesOf`
+### `packages/codegen/src/emitters/shared.ts::aliasEnvelopesOf`
 
 The model's alias envelopes (`AssembledAlias`): the kinds whose read node `wrapNode` keys by its display kind (`_ALIAS_ENVELOPES`).
 
-### `packages/codegen/src/emitters/wrap.ts::aliasEnvelopeIds`
+### `packages/codegen/src/emitters/shared.ts::aliasEnvelopeIds`
 
 The sorted, distinct alias kind ids of `envelopes`: the members of `_ALIAS_ENVELOPES`, and the alias half of `rebuildWrapperKindIds`.
 
@@ -13587,9 +13595,9 @@ The name a slot has in `$slotOrder`: its storage key without the leading `_`. Th
 
 Removes the `occurrence`-th entry named `slot` from a node's `$slotOrder` draft. The reader records one entry per child in child order, so a delimiter at a given position in the raw slot value is the entry whose index among that slot's remaining entries equals the number of values kept before it. A missing draft (`$slotOrder` is stamped only when a node has two or more slots) makes it a no-op.
 
-### `packages/codegen/src/emitters/wrap.ts::fieldTaggedLiteralTexts`
+### `packages/codegen/src/emitters/shared.ts::fieldTaggedLiteralTexts`
 
-The literal texts a compound's render rule places directly under each field, keyed by field name: a `STRING` reached through `CHOICE`/`SEQ` inside `field(name, …)`. Tree-sitter tags such a token with the field (the `,` in python's `for_in_clause.right`, the `;` in typescript's `for_statement.condition`), so the reader puts it in the field's storage beside the field's real content. The token is punctuation the render template already emits, so `separatorIdsExprOf` adds these texts to the slot's drop set and `dropWireDelimiters` strips them, for singular slots as well as `many` ones, along with their `$slotOrder` entries (`_dropOrderEntry`). Lexed-interior compounds are skipped: their interior is one token, not fields.
+The literal texts a compound's render rule places directly under each field, keyed by field name: a `STRING` reached through `CHOICE`/`SEQ` inside `field(name, …)`. Tree-sitter tags such a token with the field (the `,` in python's `for_in_clause.right`, the `;` in typescript's `for_statement.condition`), so the reader puts it in the field's storage beside the field's real content. The token is punctuation the render template already emits, so `slotDropTexts` adds these texts to the slot's drop set and `dropWireDelimiters` strips them, for singular slots as well as `many` ones, along with their `$slotOrder` entries (`_dropOrderEntry`). Lexed-interior compounds are skipped: their interior is one token, not fields.
 
 ### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.aliasIdentityLines`
 
@@ -16750,7 +16758,7 @@ The per-grammar runtime glue shared by every grammar package, emitted into `pack
 
 ### `packages/codegen/src/emitters/native-crate.ts::NATIVE_RENDER_TRANSPORT_ABI`
 
-The version of the wire between the JS packages and a native build: the render transport shape JS sends, the read shape the native reader sends back (`$type` / `$displayType`, which children and tokens arrive, when `$text` is present, which of `$handle` / `$parentHandle` / `$treeHandle` a node carries, and the error regions a parse returns beside its root), and the read calls' names and arguments (a read takes a level count; a descendant walk takes the address it starts from, kinds, a resume path, a limit, a plan and a depth, and returns its start's own handle with each batch; a plan is evaluated over a list of addresses in one call). It is the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into each crate's generated `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. The render-module hash covers only the render templates, so a reader change with unchanged templates passes the hash check; bump this whenever any of these changes, and regenerate every grammar.
+The version of the wire between the JS packages and a native build: the render transport shape JS sends, the read shape the native reader sends back (`$type` / `$displayType`, which children and tokens arrive, when `$text` is present, which of `$handle` / `$parentHandle` / `$treeHandle` a node carries, and the error regions a parse returns beside its root), and the read calls' names and arguments (a read takes a level count; a descendant walk takes the address it starts from, kinds, a resume path, a limit, a plan and a depth, and returns its start's own handle with each batch; a plan is evaluated over a list of addresses in one call; the typed-read refusal call takes a tree id, and the typed-read parity call takes a tree id and today's read of it). It is the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into each crate's generated `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. The render-module hash covers only the render templates, so a reader change with unchanged templates passes the hash check; bump this whenever any of these changes, and regenerate every grammar.
 
 ### `packages/codegen/src/emitters/types.ts::emitNodeSurfaceInterfaces`
 
@@ -16879,3 +16887,171 @@ The same lines for a separated list node that is the list itself: its own stored
 ### `packages/codegen/src/emitters/wrap.ts::fieldAccessorBodies`
 
 The reader body of each slot of a wrap: the expression its accessor returns, built from the stored value. The accessor lines of a wrap and the wrap's own uses of a slot's reader take it from here.
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::kindConstName`
+
+The Rust constant a kind has in `kind_ids.rs`: the screaming-snake name of its member and kind. `kind_ids.rs` and every generated attribute that names a kind take the name from here, so a kind has one spelling in native code.
+
+### `packages/codegen/src/emitters/field-id-rust.ts::fieldConstName`
+
+The Rust constant a parser field has in `field_ids.rs`: the field name in upper case. Fields stay under their module (`field_ids::NAME`) because a field and a kind can share a name.
+
+### `packages/codegen/src/emitters/field-id-rust.ts::emitFieldIdRust`
+
+The source of `render/field_ids.rs`: one `FieldId` constant per entry of the parser's field table, in id order. The ids are `parser.c`'s own, so a generated attribute names a field by constant and the native reader compares ids without looking a name up.
+
+### `packages/codegen/src/emitters/shared.ts::slotDropTexts`
+
+The literal texts a slot's drop set holds: the separators `slotSeparatorTexts` derives and the tokens the parser tags with the slot's own field (`fieldTaggedLiteralTexts`). The wrap strips them as wire delimiters, and the reader declares them as the slot's separators, so one set answers both.
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::isScalarStorage`
+
+Whether a slot stores what it holds as a scalar (a presence flag, a bit flag or a kind id) over a non-empty set of kinds. `scalarChildRows` and the reader's `scalar` slot attribute both ask it, so a child a slot stores as a unit variant is one fact.
+
+### `packages/codegen/src/emitters/transport-projection.ts::ReadNames`
+
+The constants a read attribute names: `kind(id)` gives `kind::X` for a kind id and `field(name)` gives `field::X` for a parser field. Both throw when the id or the field has no generated constant, so a missing fact fails at generation.
+
+### `packages/codegen/src/emitters/transport-projection.ts::readNames`
+
+Builds `ReadNames` from the kind entries and the parser's field table. The first entry of an id names it, as `kind_ids.rs` does.
+
+### `packages/codegen/src/emitters/transport-projection.ts::ReadFactsCtx`
+
+What the read facts are computed from: the node map, the kind entries, the names, and the kinds that own a list view (whose read reaches their items).
+
+### `packages/codegen/src/emitters/transport-projection.ts::oneOrList`
+
+A path, or a bracketed list of paths when there are several.
+
+### `packages/codegen/src/emitters/transport-projection.ts::literalIds`
+
+The kind ids of literal texts, as separators and keywords are declared by id. A text with no parser symbol throws and names what asked.
+
+### `packages/codegen/src/emitters/transport-projection.ts::layoutTokenIds`
+
+The tokens a kind's own rule writes and no slot takes, as the ids the parser shows for them: an unfielded string (its aliased id when the site aliases it), an unfielded literal symbol, an external, and a fixed-text leaf that no printed slot holds, fielded or not. Tokens inside a printed slot's field belong to the slot. The reader skips these tokens where it routes children. A string with no stamped id (one the grammar writes twice, or inside a `token(…)`) is resolved by the parser's symbol for its text only at a site `TEXT_RESOLVED_LAYOUT_SITES` lists; any other unstamped string, and a fixed symbol with no kind id, is a diagnostic naming the kind and the token, so nothing drops silently. The indent and dedent render markers are not tokens and are skipped.
+
+### `packages/codegen/src/emitters/layout-text-sites.ts::TEXT_RESOLVED_LAYOUT_SITES`
+
+Per grammar, the exact (kind, text) sites whose layout token has no stamped kind id and takes the parser's symbol for its text, which is the public symbol the reader compares. It is a ceiling that only shrinks: a new unstamped site fails codegen, and a listed site that becomes stamped fails it too.
+
+### `packages/codegen/src/emitters/layout-text-sites.ts::isTextResolvedLayoutSite`
+
+Whether a (grammar, kind, text) site is listed. `layoutTokenIds` refuses a listed site that is stamped now, so the list is exact.
+
+### `packages/codegen/src/emitters/transport-projection.ts::listItemSlot`
+
+The item slot of a separated list that has a delimiter flank or a separator, or `undefined`. It names the slot the reader's flags and separator kind are computed over.
+
+### `packages/codegen/src/emitters/transport-projection.ts::transportArgs`
+
+The `#[transport(…)]` arguments of a struct: an alias envelope reads by its display id, a text leaf as its text (with the fixed text it reads when its span is empty), a token interior by its pattern, and every other kind by its own id with its minimum depth, layout tokens, inner gaps and list marker. Each fact comes from the derivation the wrap already uses.
+
+### `packages/codegen/src/emitters/transport-projection.ts::takesUntagged`
+
+Whether a slot takes children that carry no field: when it has no field route or names kinds as well.
+
+### `packages/codegen/src/emitters/transport-projection.ts::slotArgs`
+
+The `#[slot(…)]` arguments of one slot: its field routes, `untagged` when it also takes untagged kinds, the keyword a presence slot reads, its separators (a list's item slot also takes the list's separator candidates), and `scalar` for a text slot stored as a unit. Empty means a bare `#[slot]`.
+
+### `packages/codegen/src/emitters/transport-projection.ts::captureArgs`
+
+The `capture` argument of a token interior's slot: the named group of the interior's pattern it reads.
+
+### `packages/codegen/src/emitters/transport-projection.ts::flankArgs`
+
+The flanks a list leaves optional, each with the number of mandatory flank tokens on the other side: the arguments `_hasSeparatorFlank` checks. `undefined` when no flank is optional.
+
+### `packages/codegen/src/emitters/transport-projection.ts::separatorKindArgs`
+
+The kinds a list's separator can be and the one its declaration falls back to: the arguments `_separatorKindOf` reads. `undefined` for a list with no separator. The candidate ids come from one derivation shared with the item slot's `separator =`.
+
+### `packages/codegen/src/emitters/transport-projection.ts::enumKindArgs`
+
+The `#[transport(…)]` arguments of an enum kind: its own id, and `spelled` so its node reads as the member its spelling tokens display.
+
+### `packages/codegen/src/emitters/transport-projection.ts::variantKindArgs`
+
+The `#[kind(…)]` arguments of a variant: the ids it claims, and `display` when they are display ids. An alias envelope's id, and an anonymous token the parser folds into another symbol, are printed `display(kind)` because the parser shows them only by their public symbol. The raw symbols the parser folds into a named target are printed `folded(kind)`: the choice matches them after every exact claim, so a sibling variant that claims the raw symbol itself keeps it. An enum's members take their ids from the arms its decoder holds, so the reader and the decoder read one list.
+
+### `packages/codegen/src/emitters/transport-projection.ts::assertOneUntaggedSlot`
+
+Refuses a kind with two slots that take an untagged child of the same kind, naming the kind, both slots and the shared kind: the reader could not choose between them.
+
+### `packages/codegen/src/emitters/transport-projection.ts::presenceKeywordId`
+
+The kind id of the keyword a presence slot reads: the id the parser shows for the slot's value (its aliased id when the site aliases the keyword), else a hidden marker keyword's own literal id, else the fixed-literal kind the slot references, else the parser symbol of its text. `slotArgs` names it as `presence`, and the diagnostic that checks untagged slots takes the slot's admitted id from it, so one lookup answers both.
+
+### `packages/codegen/src/emitters/render-module.ts::ReadPrint`
+
+What the transport printers share while they state the read facts: the facts' context, the template bodies by kind, the kind ids each printed type admits, and the choices that carry a blank arm. One value is threaded through every printer so a type's ids are recorded where they are printed and checked after all of them are.
+
+### `packages/codegen/src/emitters/render-module.ts::readPrintOf`
+
+Builds the `ReadPrint` of one emit: the names are the kind and field constants, and the list owners are the kinds whose read reaches their items.
+
+### `packages/codegen/src/emitters/render-module.ts::admit`
+
+Records ids a printed type admits, so a slot typed by it can be checked against the other slots of its struct.
+
+### `packages/codegen/src/emitters/render-module.ts::variantKindLines`
+
+The `#[kind(…)]` line of one choice variant. An alias envelope reads by its display id alone; any other id the decode claims for it is recorded for the pin check, not printed. A variant the decode gives no id gets no line and is never read.
+
+### `packages/codegen/src/emitters/transport-projection.ts::foldedTokens`
+
+The raw string-literal symbols the parser folds into a kind's public symbol (`ts_symbol_map`), from the stamped fold table, restricted to kind rows that carry their literal text: a token the grammar writes twice gets a second raw symbol the parser reports under the first one's id, and the typed reader admits it as that kind. A folded raw symbol with no literal text is a lexical symbol of its own and is not admitted.
+
+### `packages/codegen/src/emitters/transport-projection.ts::isAnonymousToken`
+
+Whether a kind id is an anonymous token row, the kind of claim that is printed `display(kind)` when the parser folds it.
+
+### `packages/codegen/src/emitters/transport-projection.ts::separatorCandidateIds`
+
+The kind ids of a list's separator candidates, resolved from the model's candidate names; a candidate with no kind row gives none.
+
+### `packages/codegen/src/emitters/envelope-claims.ts::EnvelopeClaims`
+
+The display id an envelope variant shows as, and the further kind ids the decode claims for it.
+
+### `packages/codegen/src/emitters/envelope-claims.ts::ENVELOPE_EXTRA_IDS`
+
+The display id and the kind ids, per grammar and envelope variant, that the decode claims for the variant beyond its display id. The reader does not accept them. The pin is a ceiling: it lists the ids that exist today so none is added unnoticed.
+
+### `packages/codegen/src/emitters/envelope-claims.ts::assertEnvelopeExtrasPinned`
+
+Fails the build when a variant claims an id outside its pin (a new claimed id is a decision, never a raised pin) or a pinned variant of an enum the grammar emits is no longer an envelope variant, or no longer claims a pinned id (the pin is lowered or removed to match). A pin for an enum the model does not print at all is not checked.
+
+### `packages/codegen/src/emitters/render-module.ts::alternatesOf`
+
+The alternate ids a slot's fixed-literal variant folds into its stored id: the wrap folds them before the wire, so the decode never meets them, and the reader, which reads the parser's own id, lists them on the variant.
+
+### `packages/codegen/src/emitters/render-module.ts::fixedLiteralIds`
+
+The ids a fixed-literal transport takes: its accepted ids, or its own id. The decode and the reader's attribute both list them.
+
+### `packages/codegen/src/emitters/render-module.ts::structSlotsOf`
+
+The slots a struct has fields for, in order: the slot model's named and unnamed slots, then the named slots of each hidden helper node an unnamed slot hoists, all optional. The printer and the check that follows it walk the same list.
+
+### `packages/codegen/src/emitters/render-module.ts::slotReadAttr`
+
+The `#[slot]` attribute of one field: a capture for each slot of a token interior, else the routes, presence keyword, separators and scalar mark `slotArgs` computes. An alias envelope's content has none: it is not a parser field, and the derive's envelope mode names it by `content = …`.
+
+### `packages/codegen/src/emitters/render-module.ts::readsItsSlots`
+
+Whether a kind's reader routes children to its slots: a leaf, an alias envelope and a token interior read otherwise.
+
+### `packages/codegen/src/emitters/render-module.ts::slotTransportTypeName`
+
+The type a slot's carrier wraps: the kind's transport, the supertype's enum, the slot's own choice, or `AnyTransport`. The field type and the untagged-slot check name the type once.
+
+### `packages/codegen/src/emitters/render-module.ts::assertReadableTransports`
+
+The checks that need every type printed. Two slots of a kind that take an untagged child of one kind are refused, naming the kind and both slots. A slot's registration as a blank option must agree with its choice having a blank arm, since a choice is shared by every slot with the same variants.
+
+### `packages/codegen/src/emitters/render-module.ts::isCompoundOf`
+
+Whether a kind prints a layout field and its slots: a branch, an envelope, a list, an alias, or a polymorph that is not a supertype.

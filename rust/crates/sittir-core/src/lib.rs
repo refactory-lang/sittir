@@ -19,6 +19,7 @@ pub mod napi_engine;
 pub mod options;
 pub mod prepare;
 pub mod query;
+pub mod read;
 pub mod read_untyped_node;
 pub mod render;
 pub mod slot;
@@ -31,6 +32,8 @@ pub mod view;
 // runtime migration design, callers reach this as `sittir_core::KindId`
 // rather than the longer `sittir_core::types::KindId`.
 pub use types::KindId;
+// The derive that expands a transport declaration into its typed reader.
+pub use sittir_transport_macros::Transport;
 // Flat re-export for the typed render sink: the sink a render writes into,
 // the trait a rendered value implements against it, and the one-writer
 // one-render root call.

@@ -338,6 +338,11 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 			await writeFile(kindIdsPath, result.kindIds);
 			console.log(`    ${kindIdsPath}`);
 		}
+		if (result.fieldIds) {
+			const fieldIdsPath = `${renderModuleSrcDir(grammar)}/field_ids.rs`;
+			await writeFile(fieldIdsPath, result.fieldIds);
+			console.log(`    ${fieldIdsPath}`);
+		}
 		console.log(`  → Rust render module regenerated for ${grammar}:`);
 		console.log(`    ${emit.hashRs.path}`);
 		console.log(`    ${emit.hashTs.path}`);

@@ -9,60 +9,60 @@ export const triviaFacts = Object.freeze({
 	kindName: (type: AnyUntypedNode['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
 	kinds: new Set<string>(['_blankline', '_double_blankline', '_newline', '_space', '_tab', 'comment']),
 	innerGaps: INNER_GAPS,
-	rebuildWrappers: new Set<number>([52, 59, 60, 61, 62]),
+	rebuildWrappers: new Set<number>([54, 61, 62, 63, 64]),
 	listKinds: new Set<number>([]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:\s+))+)$/u,
-		kindIdByText: Object.freeze({ ' ': 25, '\t': 26, '\n': 27, '\n\n': 28, '\n\n\n': 29 })
+		kindIdByText: Object.freeze({ ' ': 26, '\t': 27, '\n': 28, '\n\n': 29, '\n\n\n': 30 })
 	})
 } satisfies TriviaFacts);
 
 export const querySlots: QuerySlots = Object.freeze({
 	1: [['content', { fields: ['content'], kinds: [] }]],
 	11: [['content', { fields: ['content'], kinds: [] }]],
-	32: [['definitions', { fields: ['definitions'], kinds: [] }]],
-	38: [['name', { fields: ['name'], kinds: [] }]],
-	39: [['stringContent', { fields: ['string_content'], kinds: [] }]],
-	40: [['stringContent', { fields: [], kinds: ['string_content'] }]],
-	41: [['contents', { fields: [], kinds: ['string_content_text', 'escape_sequence'] }]],
-	42: [['elements', { fields: ['elements'], kinds: [] }]],
-	43: [
+	33: [['definitions', { fields: ['definitions'], kinds: [] }]],
+	39: [['name', { fields: ['name'], kinds: [] }]],
+	40: [['stringContent', { fields: ['string_content'], kinds: [] }]],
+	41: [['stringContent', { fields: [], kinds: ['string_content'] }]],
+	42: [['contents', { fields: [], kinds: ['string_content_text', 'escape_sequence'] }]],
+	43: [['elements', { fields: ['elements'], kinds: [] }]],
+	44: [
 		['definitions', { fields: ['definitions'], kinds: [] }],
 		['elements', { fields: ['elements'], kinds: [] }]
 	],
-	44: [
-		['groupingGroups', { fields: [], kinds: ['grouping_group'] }],
-		['elements', { fields: ['elements'], kinds: [] }]
-	],
 	45: [
-		['name', { fields: ['name'], kinds: [] }],
+		['groupingGroups', { fields: [], kinds: ['grouping_group'] }],
 		['elements', { fields: ['elements'], kinds: [] }]
 	],
 	46: [
 		['name', { fields: ['name'], kinds: [] }],
 		['elements', { fields: ['elements'], kinds: [] }]
 	],
-	49: [
+	47: [
+		['name', { fields: ['name'], kinds: [] }],
+		['elements', { fields: ['elements'], kinds: [] }]
+	],
+	50: [
 		['name', { fields: ['name'], kinds: [] }],
 		['definition', { fields: ['definition'], kinds: [] }]
 	],
-	50: [['identifier', { fields: ['identifier'], kinds: [] }]],
-	51: [
+	51: [['identifier', { fields: ['identifier'], kinds: [] }]],
+	52: [
 		['prefix', { fields: ['prefix'], kinds: [] }],
 		['name', { fields: ['name'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }],
 		['parameters', { fields: ['parameters'], kinds: [] }]
 	],
-	52: [['quantifier', { fields: ['quantifier'], kinds: [] }]],
-	54: [
-		['left', { fields: ['left'], kinds: [] }],
-		['right', { fields: ['right'], kinds: [] }]
-	],
-	55: [
-		['left', { fields: ['left'], kinds: [] }],
-		['right', { fields: ['right'], kinds: [] }]
-	],
+	54: [['quantifier', { fields: ['quantifier'], kinds: [] }]],
 	56: [
+		['left', { fields: ['left'], kinds: [] }],
+		['right', { fields: ['right'], kinds: [] }]
+	],
+	57: [
+		['left', { fields: ['left'], kinds: [] }],
+		['right', { fields: ['right'], kinds: [] }]
+	],
+	58: [
 		[
 			'groupExpression',
 			{
@@ -82,22 +82,22 @@ export const querySlots: QuerySlots = Object.freeze({
 		],
 		['anchor', { fields: [], kinds: ['anchor'] }]
 	],
-	59: [
+	61: [
 		['name', { fields: ['name'], kinds: [] }],
 		['namedNodeGroup', { fields: [], kinds: ['named_node_group_children', 'named_node_group_anchored_last'] }],
 		['elements', { fields: ['elements'], kinds: [] }]
 	],
-	60: [
+	62: [
 		['supertype', { fields: ['supertype'], kinds: [] }],
 		['name', { fields: ['name'], kinds: [] }],
 		['namedNodeGroup', { fields: [], kinds: ['named_node_group_children', 'named_node_group_anchored_last'] }],
 		['elements', { fields: ['elements'], kinds: [] }]
 	],
-	61: [
+	63: [
 		['anchor', { fields: [], kinds: ['anchor'] }],
 		['namedNodeExpressions', { fields: ['named_node_expressions'], kinds: [] }]
 	],
-	62: [
+	64: [
 		['anchor', { fields: [], kinds: ['anchor'] }],
 		['namedNodeExpressions', { fields: ['named_node_expressions'], kinds: [] }],
 		['last', { fields: ['last'], kinds: [] }]

@@ -28,7 +28,7 @@ use sittir_core::engine::EngineGrammar;
 use render::{render_transport_parts, RenderRoot, RENDER_MODULE_HASH};
 
 #[cfg(feature = "napi-bindings")]
-const NATIVE_RENDER_TRANSPORT_ABI: u32 = 17;
+const NATIVE_RENDER_TRANSPORT_ABI: u32 = 18;
 
 #[derive(Clone, Copy, Default)]
 pub struct PythonGrammar;
@@ -44,6 +44,10 @@ impl EngineGrammar for PythonGrammar {
 
     fn render_module_hash(self) -> &'static str {
         RENDER_MODULE_HASH
+    }
+
+    fn kind_name(self, kind: sittir_core::types::KindId) -> &'static str {
+        render::kind_ids::kind_name_from_id(kind)
     }
 }
 

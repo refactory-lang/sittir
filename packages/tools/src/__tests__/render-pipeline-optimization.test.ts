@@ -397,6 +397,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 					}
 				}
 			},
+			fieldIds: { name: 1 },
 			sourceArtifact: 'parser.wasm'
 		};
 
@@ -427,25 +428,9 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 
 	it('marks unguarded required template fields as hard-required', () => {
 		const files = emittedTemplates({ function_item: concat(slot('name'), text(' ')) });
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeMinimalNodeMap);
 
-		const generatedIdTables: GeneratedIdTables = {
-			kindIds: {
-				function_item: {
-					id: 42,
-					parser: {
-						cSymbol: 'sym_function_item',
-						parserName: 'function_item',
-						anon: false,
-						aux: false,
-						alias: false,
-						hidden: false
-					}
-				}
-			},
-			sourceArtifact: 'parser.wasm'
-		};
-
-		const emitted = emitRenderModule('rust', files, makeMinimalNodeMap(), generatedIdTables);
+		const emitted = emitRenderModule('rust', files, nodeMap, generatedIdTables);
 
 		// Per-kind render logic is in transport.rs (bridge.rs retired in PR-E2).
 		expect(emitted.transportRs.contents).toContain('render_function_item(');

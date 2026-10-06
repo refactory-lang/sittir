@@ -71,6 +71,8 @@ export interface NativeEngineLike<TTransport = unknown> {
 	readUntypedNode(handle: number, childIndex: number, depth?: number): string;
 	readRoot(treeId: number, depth?: number): string;
 	lineGapsOf(handle: number, span?: number[], kind?: number): string;
+	typedReadRefusal?(treeId: number): string | null;
+	typedReadParity?(treeId: number, today: TTransport): string | null;
 	descendants(
 		from: string,
 		kinds: number[] | undefined | null,
@@ -308,6 +310,14 @@ export function createNativeEngine<
 				diagnostics: {
 					buildProfile: engine.buildProfile,
 					lineGapsOf,
+					typedReadRefusal(treeId: number): string | null {
+						if (engine.typedReadRefusal === undefined) throw new Error('typedReadRefusal: this native binary has no typed reader');
+						return engine.typedReadRefusal(treeId);
+					},
+					typedReadParity(treeId: number, today: unknown): string | null {
+						if (engine.typedReadParity === undefined) throw new Error('typedReadParity: this native binary has no typed reader');
+						return engine.typedReadParity(treeId, today as TTransport);
+					},
 					parseAndRead(source: string, parseOptions?: ParseOptions) {
 						const json = engine.parseAndRead(source, depthOf(parseOptions));
 						const parsed = JSON.parse(json) as NativeParseResult;
@@ -397,6 +407,8 @@ export function nativeLanguageEngine<API extends LanguageAPI, IndentChar extends
 		},
 		buildProfile: engine.diagnostics.buildProfile,
 		lineGapsOf: (handle) => engine.diagnostics.lineGapsOf(handle),
+		typedReadRefusal: (treeId) => engine.diagnostics.typedReadRefusal(treeId),
+		typedReadParity: (treeId, today) => engine.diagnostics.typedReadParity(treeId, today),
 		dispose() {
 			engine.dispose();
 		}

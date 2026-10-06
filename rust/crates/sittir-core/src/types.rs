@@ -84,6 +84,11 @@ impl From<KindId> for u16 {
     }
 }
 
+/// A parser field id: the index of a field name in `parser.c`'s field table,
+/// the value `TreeCursor::field_id` returns for a child tagged with it.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct FieldId(pub u16);
+
 /// Leading, trailing and inner trivia (comments) for an `UntypedNode`. A read computes
 /// it from the node's siblings; `$trivia()` attaches it on the TS side.
 /// Carried across the wire for native render support. Mirrors

@@ -10144,3 +10144,7 @@ The choice counterpart of `factorChoiceArms` for arms of different lengths: when
 ### `packages/codegen/src/compiler/collect-slots.ts::retargetAliasedLiteral`
 
 A literal that is itself the slot (a STRING stamped `nonterminal: true` with `aliasedTo`) reads as the alias's kind: its value takes the alias target as `resolvedKind` and `parseKind`, so the slot is named for the node the parser produces (`lazy`, `class_character`) rather than for the literal's own token. A literal that is an arm of a choice keeps its literal kind; the choice's union slot is built from the arms and is unchanged.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::foldedSymbols`
+
+The raw symbols a parser folds onto another public symbol: the entries of `ts_symbol_map` whose two sides differ. A token the grammar writes twice gets a second raw symbol that the parser reports under the first one's id. The fold census test pins each grammar's count.

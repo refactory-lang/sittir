@@ -84,6 +84,7 @@ function makeBranchWithListFieldNodeMap() {
 
 const GENERATED_ID_TABLES: GeneratedIdTables = {
 	kindIds: {
+		branch_with_list_field: 5,
 		member_list: 1,
 		member: 2,
 		comma: {
@@ -111,6 +112,7 @@ const GENERATED_ID_TABLES: GeneratedIdTables = {
 			}
 		}
 	},
+	fieldIds: { items: 1 },
 	sourceArtifact: 'test'
 };
 

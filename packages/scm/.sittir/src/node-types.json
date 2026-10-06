@@ -635,6 +635,11 @@
     }
   },
   {
+    "type": "predicate_type",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "program",
     "named": true,
     "root": true,
@@ -766,10 +771,6 @@
   },
   {
     "type": "identifier",
-    "named": true
-  },
-  {
-    "type": "predicate_type",
     "named": true
   },
   {

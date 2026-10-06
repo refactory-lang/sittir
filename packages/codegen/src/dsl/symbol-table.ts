@@ -458,6 +458,7 @@ export type GeneratedIdTable =
 export interface GeneratedIdTables {
 	readonly kindIds?: GeneratedIdTable;
 	readonly fieldIds?: GeneratedIdTable;
+	readonly folds?: ReadonlyMap<number, readonly number[]>;
 	readonly sourceArtifact: string;
 }
 
@@ -529,6 +530,15 @@ export function collectGeneratedKindEntries(tables: GeneratedIdTables | undefine
 			visibleExternal: entry.parser?.visibleExternal || undefined,
 			lexicalRank: entry.parser?.lexicalRank
 		}));
+}
+
+export function generatedFieldIds(
+	tables: GeneratedIdTables | undefined
+): readonly { readonly name: string; readonly id: number }[] {
+	return toEntries(tables?.fieldIds)
+		.filter((row): row is readonly [string, GeneratedIdEntry & { readonly id: number }] => row[1].id !== undefined)
+		.map(([name, entry]) => ({ name, id: entry.id }))
+		.sort((a, b) => a.id - b.id);
 }
 
 export interface KindEntryLike {

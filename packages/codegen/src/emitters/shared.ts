@@ -1,7 +1,7 @@
 import { BLANK_KIND_ID } from '../compiler/model/site-preferences.ts';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { kindTypeName } from '../compiler/model/casing.ts';
-import { SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap } from '../compiler/types.ts';
 import {
 	AssembledAlias,
@@ -1366,4 +1366,41 @@ export function looseElementType(elementType: string, slot: AssembledNonterminal
 	const { leafKinds, branchKinds } = classifyKindsForResolver(expanded, nodeMap);
 	const admitsText = leafKinds.length === 1 || leafKinds.some((kind) => !isAffixedLeaf(nodeMap.nodes.get(kind)));
 	return admitsText && branchKinds.length === 0 ? `${elementType} | string` : elementType;
+}
+
+export function aliasEnvelopesOf(nodeMap: NodeMap): AssembledAlias[] {
+	return [...nodeMap.nodes.values()].filter((node) => node instanceof AssembledAlias);
+}
+
+export function aliasEnvelopeIds(envelopes: readonly AssembledAlias[]): number[] {
+	return [...new Set(envelopes.map((node) => node.aliasTypeId))].sort((a, b) => a - b);
+}
+
+export function fieldTaggedLiteralTexts(node: AssembledNode): ReadonlyMap<string, readonly string[]> {
+	const out = new Map<string, string[]>();
+	const walk = (rule: RenderRule, field: string | undefined): void => {
+		const own = (rule as { fieldName?: string }).fieldName ?? field;
+		switch (rule.type) {
+			case STRING:
+				if (own !== undefined && own !== (rule as { fieldName?: string }).fieldName) {
+					const list = out.get(own) ?? [];
+					if (!list.includes(rule.value)) list.push(rule.value);
+					out.set(own, list);
+				}
+				return;
+			case SEQ:
+			case CHOICE:
+				for (const member of rule.members) walk(member, own);
+				return;
+			default:
+				return;
+		}
+	};
+	if (node instanceof AbstractAssembledCompound && !node.lexedInterior) walk(node.renderRule, undefined);
+	return out;
+}
+
+export function slotDropTexts(slot: AssembledNonterminal, owner: AssembledNode | undefined, elided: boolean): string[] {
+	const tagged = owner !== undefined && slot.fieldName !== undefined ? (fieldTaggedLiteralTexts(owner).get(slot.fieldName) ?? []) : [];
+	return [...new Set([...slotSeparatorTexts(slot, elided), ...tagged])];
 }

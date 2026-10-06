@@ -21,6 +21,7 @@ debug-transport = []
 
 [dependencies]
 regex = "1"
+sittir-transport-macros = { path = "../sittir-transport-macros" }
 serde = { workspace = true }
 serde_json = { workspace = true }
 tree-sitter = { workspace = true }

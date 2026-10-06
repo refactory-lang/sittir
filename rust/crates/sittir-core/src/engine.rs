@@ -26,6 +26,8 @@ use std::sync::Arc;
 pub trait EngineGrammar: Copy + ReadModel {
     fn configure_parser(self, parser: &mut tree_sitter::Parser) -> Result<(), String>;
     fn render_module_hash(self) -> &'static str;
+    /// The name of a kind of this grammar, for messages that name one.
+    fn kind_name(self, kind: KindId) -> &'static str;
 }
 
 // ─── NodeCoord ────────────────────────────────────────────────────────────────────────────
@@ -185,6 +187,13 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// This tree's identity — the tag carried by every handle it mints.
     pub fn tree_id(&self) -> u32 {
         self.tree_id
+    }
+
+    /// The whole tree read into the grammar's typed transports, `depth`
+    /// levels down, or the refusal that stopped the read.
+    pub fn typed_read<R: crate::read::ReadRoot>(&self, depth: crate::read::Depth) -> Result<R, crate::read::ReadError> {
+        let ctx = crate::read::ReadCtx::new(&self.source, self.tree_id);
+        R::read_root(&mut self.tree.walk(), &ctx, depth)
     }
 
     /// Push a node coordinate into the node table, returning its tagged handle.
@@ -724,6 +733,10 @@ mod tests {
         }
 
         fn render_module_hash(self) -> &'static str {
+            "test"
+        }
+
+        fn kind_name(self, _kind: KindId) -> &'static str {
             "test"
         }
     }

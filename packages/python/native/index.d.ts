@@ -113,6 +113,22 @@ export declare class SittirEngine {
    */
   readRoot(treeId: number, depth?: number | undefined | null): string
   /**
+   * Transitional, while today's read and the typed read both exist:
+   * the refusal the typed reader meets reading tree `treeId` whole,
+   * or `null` when it reads it.
+   */
+  typedReadRefusal(treeId: number): string | null
+  /**
+   * Transitional, while today's read and the typed read both exist:
+   * compare the typed read of tree `treeId` with `today`, the detached
+   * root today's read and wrap give it. `null` when they agree;
+   * otherwise the refusal, a `normalized: <Kind>.<slot>` line for
+   * each slot the typed read fills with its empty value where today's
+   * read leaves it absent, and the first
+   * other place the two differ.
+   */
+  typedReadParity(treeId: number, today: object): string | null
+  /**
    * Render a typed transport object (napi-native, numeric `$type`).
    *
    * `treeId` names the parse whose detected format applies. It is

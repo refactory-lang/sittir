@@ -3,6 +3,7 @@ import { tracePhaseRules, traceAssembleNodes } from './trace.ts';
 import { compileGrammar, assertCompilation, type Compilation } from './compile.ts';
 
 import { emitKindIdRust } from '../emitters/kind-id-rust.ts';
+import { emitFieldIdRust } from '../emitters/field-id-rust.ts';
 import { emitConfig } from '../emitters/config.ts';
 import { grammarPackage, isStableGrammar, type GrammarPackage } from '../grammars.ts';
 import { emitIndex } from '../emitters/index-file.ts';
@@ -49,6 +50,7 @@ export interface GeneratedFiles {
 	nodeModel: string;
 	is: string;
 	kindIds: string;
+	fieldIds: string;
 	nodeMap: NodeMap;
 	generatedIdTables?: GeneratedIdTables;
 	renderModule?: RenderModuleBundle;
@@ -173,6 +175,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			nodeModel,
 			is: emitted.is,
 			kindIds: generatedIdTables ? emitKindIdRust({ grammar: cfg.grammar, nodeMap, generatedIdTables }) : '',
+			fieldIds: generatedIdTables ? emitFieldIdRust(cfg.grammar, generatedIdTables) : '',
 			nodeMap,
 			generatedIdTables,
 			renderModule: emitted.renderModule,

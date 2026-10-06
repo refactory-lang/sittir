@@ -48,7 +48,8 @@ function makeNodeMap() {
 describe('supertype transport arm precedence', () => {
 	it('routes an enum member id to the enum variant even when a pattern subtype also wears it', () => {
 		const generatedIdTables: GeneratedIdTables = {
-			kindIds: { identifier: 1, u8: 28, bool: 2, _t: 50, param: 60 },
+			kindIds: { identifier: 1, u8: 28, bool: 2, _t: 50, _prim: 51, param: 60 },
+			fieldIds: { type: 1 },
 			sourceArtifact: 'test'
 		};
 		const emitted = emitRenderModule(

@@ -156,11 +156,11 @@ function _vg<G extends object>(guard: G, variants: object): G {
 	return Object.freeze(Object.defineProperties(guard, Object.getOwnPropertyDescriptors(variants)));
 }
 
-const _supertype_definition_ids = new Set<number>([59, 60, 46, 45, 44, 51, 43, 49]);
-const _supertype_namedNode_ids = new Set<number>([59, 60]);
-const _supertype_listElement_ids = new Set<number>([38, 52]);
-const _supertype_namedNodeGroup_ids = new Set<number>([61, 62]);
-const _supertype_whitespace_ids = new Set<number>([24, 25, 26, 27, 28, 29, 30, 31]);
+const _supertype_definition_ids = new Set<number>([61, 62, 47, 46, 45, 52, 44, 50]);
+const _supertype_namedNode_ids = new Set<number>([61, 62]);
+const _supertype_listElement_ids = new Set<number>([39, 54]);
+const _supertype_namedNodeGroup_ids = new Set<number>([63, 64]);
+const _supertype_whitespace_ids = new Set<number>([25, 26, 27, 28, 29, 30, 31, 32]);
 
 const _supertype_namedNode_guard = _vg(_sg(_supertype_namedNode_ids), {
 	plain: _g(TSKindId.NamedNodePlain),

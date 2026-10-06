@@ -475,6 +475,7 @@ pub const _STATEMENT_IDENTIFIER: KindId = KindId(465);
 pub const _THIS_TYPE: KindId = KindId(466);
 pub const _TYPE_IDENTIFIER: KindId = KindId(467);
 pub const ERROR: KindId = KindId(65535);
+pub const LHS_EXPRESSION: KindId = KindId(461);
 const _: () = assert!(ERROR.0 == KindId::ERROR.0);
 
 /// Map a `KindId` back to its grammar kind string for diagnostics.
