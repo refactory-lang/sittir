@@ -44,6 +44,7 @@ import {
 	type ValidatorSkip,
 	loadIrSurface,
 	buildFactoryNodeFromReference,
+	wrapForReparse,
 	loadScopedFactoryMap,
 	importGrammarModule,
 	loadNativeEngine
@@ -773,7 +774,16 @@ export async function validateFactoryStorage(
 				} catch (e) {
 					buildErrors.push({ kind, message: `factory threw: ${(e as Error)?.message ?? String(e)}` });
 				}
-				if (builtTree === null) {
+				const hostless =
+					wrapForReparse('', kind, grammar, renderReparseContext.kindToSupertypes, {
+						adoptedVariantKinds: renderReparseContext.adoptedVariantKinds,
+						targetKind: node1?.type ?? kind,
+						root: renderReparseContext.root
+					}) === null;
+				if (hostless) {
+					render.total--;
+					render.excluded.push({ entry: entry.name, kind, reason: 'no-reparse-wrapper', input: inputSource });
+				} else if (builtTree === null) {
 					render.errors.push(renderFailure(buildErrors[0]?.message ?? 'no node built'));
 				} else if (carriesSource(builtTree)) {
 					render.errors.push(renderFailure('built node carries source identity'));
