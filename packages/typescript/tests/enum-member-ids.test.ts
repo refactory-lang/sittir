@@ -2,17 +2,14 @@
 // more than one token alike.
 import { describe, expect, it } from 'vitest';
 import typescript from '../src/index.ts';
-import { readNode } from '../src/wrap.ts';
 import { createEngine } from '@sittir/common';
-import type { TreeHandle } from '@sittir/common/utils';
 
 const ts = await createEngine(typescript);
 
 type Stored = Record<string, unknown>;
 
 function read(source: string): unknown {
-	const { tree } = (ts.diagnostics as unknown as { parseAndRead(source: string): { tree: TreeHandle } }).parseAndRead(source);
-	return readNode(tree, undefined, undefined, 12);
+	return ts.parse(source, { deep: true });
 }
 
 function storedOfKind(node: unknown, kind: number): Stored | undefined {

@@ -2,14 +2,11 @@
 // starts with.
 import { describe, expect, it } from 'vitest';
 import python from '../src/index.ts';
-import { readNode } from '../src/wrap.ts';
 import { createEngine } from '@sittir/common';
-import type { TreeHandle } from '@sittir/common/utils';
 
 const py = await createEngine(python);
 
 function operatorsOf(source: string): unknown {
-	const { tree } = (py.diagnostics as unknown as { parseAndRead(source: string): { tree: TreeHandle } }).parseAndRead(source);
 	const found: unknown[] = [];
 	const walk = (node: unknown): void => {
 		if (node === null || typeof node !== 'object') return;
@@ -18,7 +15,7 @@ function operatorsOf(source: string): unknown {
 		if ('_operators' in stored) found.push(stored._operators);
 		for (const key of Object.keys(stored)) if (key.startsWith('_')) walk(stored[key]);
 	};
-	walk(readNode(tree, undefined, undefined, 12));
+	walk(py.parse(source, { deep: true }));
 	return found;
 }
 
