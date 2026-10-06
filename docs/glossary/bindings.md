@@ -1,6 +1,6 @@
 # `packages/codegen/src/bindings` — Function Glossary
 
-The bindings facts and the derivation over them. The facts are what a grammar's `bindings.scm` states, read by the bindings inventory and committed as `packages/<grammar>/.sittir/bindings.json`. The derivation turns them, with the grammar's slot model, into the vocabulary's kinds, members, refinements and routes. Codegen reads only the committed artifact, so no generation depends on the scm parser.
+The bindings facts and the derivation over them. The facts are what a grammar's `bindings.scm` states, as the bindings inventory reads them. The derivation turns them, with the grammar's slot model, into the vocabulary's kinds, members, refinements and routes.
 
 ### `packages/codegen/src/bindings/facts.ts::BindingFacts`
 
@@ -13,22 +13,6 @@ A claim's `#…?` predicate: its operator, the capture it tests (`null` for a pr
 ### `packages/codegen/src/bindings/facts.ts::KNOWN_PREDICATE_OPERATORS`
 
 The predicate operators the derivation knows. A claim's predicate with another operator is a derivation diagnostic (`Derivation.unknownPredicates`), never silently dropped.
-
-### `packages/codegen/src/bindings/facts.ts::BINDING_FACTS_VERSION`
-
-The version of the facts schema and of the derivation over them. It is bumped whenever either changes what it produces, so an artifact written before the change is refused even when its `bindings.scm` has not changed.
-
-### `packages/codegen/src/bindings/facts.ts::bindingsHash`
-
-The freshness key of an artifact: the SHA-256 of `BINDING_FACTS_VERSION` and the `bindings.scm` text together.
-
-### `packages/codegen/src/bindings/facts.ts::verifiedBindingFacts`
-
-An artifact's facts, when its `bindingsHash` matches the current `bindings.scm` and version. Otherwise it throws `StaleBindingFactsError`, whose message names the command that regenerates the artifact.
-
-### `packages/codegen/src/bindings/facts.ts::readBindingFacts`
-
-A grammar's committed facts, read from `.sittir/bindings.json` and checked by `verifiedBindingFacts` against its `bindings.scm`. A missing artifact is refused the same way as a stale one.
 
 ### `packages/codegen/src/bindings/derive.ts::unknownPredicates`
 

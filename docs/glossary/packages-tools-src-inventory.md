@@ -1,6 +1,6 @@
 # `packages/tools/src/inventory` — Function Glossary
 
-The bindings inventory: `sittir tool bindings-inventory`. It reads each grammar's `packages/<grammar>/bindings.scm` through `@sittir/scm` and each grammar's slot model, checks that the bindings compile against the grammar's parser, and derives the vocabulary the bindings imply through codegen's derivation (`packages/codegen/src/bindings/`): its kinds, members, refinements and the members the language context types. `--write-facts` writes the facts it reads to each grammar's committed `.sittir/bindings.json`, the artifact codegen reads. The vocabulary under `packages/types/src/vocabulary/` is authored; `--check` reports where it and the derivation disagree, and each disagreement is fixed on the side that is wrong, a feature extending the vocabulary or a binding dropping a claim.
+The bindings inventory: `sittir tool bindings-inventory`. It reads each grammar's `packages/<grammar>/bindings.scm` through `@sittir/scm` and each grammar's slot model, checks that the bindings compile against the grammar's parser, and derives the vocabulary the bindings imply through codegen's derivation (`packages/codegen/src/bindings/`): its kinds, members, refinements and the members the language context types. The vocabulary under `packages/types/src/vocabulary/` is authored; `--check` reports where it and the derivation disagree, and each disagreement is fixed on the side that is wrong, a feature extending the vocabulary or a binding dropping a claim.
 
 ---
 
@@ -81,10 +81,6 @@ that can be worked through.
 ### `packages/tools/src/inventory/bindings.ts::predicateFact`
 
 A pattern's `#…?` predicate as a fact: its operator (the name between `#` and `?`), the capture it tests when its first parameter is one (a property predicate such as `#is-not? local` tests none, so its capture is `null` and every parameter is an argument), and its arguments, each a capture or text (a string's value, or a bare identifier). A directive (`#…!`, `#set!`) is not a predicate and gives none. Every operator is kept, known or not; the derivation reports the ones it does not know.
-
-### `packages/tools/src/inventory/index.ts::writeBindingFacts`
-
-`--write-facts`: reads each grammar's `bindings.scm` and writes its facts, with `bindingsHash` of the text, to `packages/<grammar>/.sittir/bindings.json`, or to the path `destination` gives for the grammar.
 
 ### `packages/tools/src/inventory/model.ts::loadSlotModel`
 
