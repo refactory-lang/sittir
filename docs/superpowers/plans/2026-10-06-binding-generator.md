@@ -65,12 +65,13 @@ Stage 3 drives the count to zero for each cause on the side that owns it. Rust i
 - The form and subtype routing for kinds with no bare factory moves from `packages/tools/src/validate/common.ts` into codegen as a fact both read. The `ir-render-parse` lane then builds through the moved rule.
 - Gate: the inventory's report is byte-identical, and the `ir-render-parse` rows are equal.
 
-## Stage 3: conformance down to the read-dispatch rows (rust first)
+## Stage 3: conformance to zero (rust first)
 
-The causes the probe reports, each on the side that owns it. The `kind` rows (96) are not this stage's: they are read-dispatch work and stage 5's gate.
+The causes the probe reports, each on the side that owns it:
 
 | cause | count | stage-3 change |
 | --- | --- | --- |
+| kind | 96 | A primitive type token read as `type.primitive` where the slot admits its const string. The enum-read rule is a routing fact, defined once in the shared route resolution: a token that is a value of a claimed enum reads as the enum's kind where the slot admits that enum, and as its const string otherwise. The conformance count reads through it. |
 | predicate | 13 | A member that admits a kind admits all its claims (vocabulary). |
 | unmapped | 12 | Each unmapped grammar kind gets a claim (bindings): onto an existing vocabulary kind, or onto a kind a feature adds to the vocabulary when none fits. |
 | untyped reader | 6 | The readers typed `unknown` get types (codegen typed surface). |
@@ -79,7 +80,8 @@ The causes the probe reports, each on the side that owns it. The `kind` rows (96
 | absent | 1 | Requiredness carries through containers (vocabulary projection). |
 
 - `sittir tool portable-conformance <grammar>` (the probe's tools, promoted) reports the count and causes.
-- Gate: rust's count is its 96 `kind` rows alone. Typescript's and python's are recorded as their ratchet baselines.
+- The enum-read rule has unit tests: `i32` in an expression slot reads as `'i32'`, and in a type slot as `type.primitive`; `bool` in a slot that admits both reads as the enum.
+- Gate: rust's count is 0. Typescript's and python's are recorded as their ratchet baselines.
 
 ## Stage 4: type maps beside the low-level ones
 
@@ -91,11 +93,11 @@ The causes the probe reports, each on the side that owns it. The `kind` rows (96
 
 - A generated `portable.ts` per zero-conformance grammar:
   - node literal factories, with `$type` as the only data member and every member a closure;
-  - the dispatch: placed claims through the enclosing kinds a parent passes down, predicate claims on the captured node's text, the slot deciding an enum value;
+  - the dispatch: placed claims through the enclosing kinds a parent passes down, predicate claims on the captured node's text, an enum value read by stage 3's enum-read rule;
   - a varying leaf's `$value`, and a fixed literal as its const string.
 - `createEngine(lang, { api: 'portable' })` is accepted. `parse` reads portable nodes, and `render` renders one by dispatching on `$type`. The engine reaches a portable node's low-level node through a module-private symbol, never a public member.
 - Gate:
-  - rust's conformance count is 0. The 96 `kind` rows are a primitive type token read as `type.primitive` where the slot admits the const string; the dispatch reads such a token as the enum's value only where the slot admits that enum, and as its const string elsewhere;
+  - the dispatch reads an enum token by calling stage 3's enum-read rule, the same function the conformance count uses; no second rule;
   - a read lane: every node of the corpus reads through the portable engine with no throw, and every member call returns;
   - rendering a parsed portable root equals the low-level render.
 
