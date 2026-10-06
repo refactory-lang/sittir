@@ -1,4 +1,3 @@
-// Generated from the grammars' bindings.scm. Do not edit.
 import type * as V from './index.ts';
 /** The typemap: one key per top-level namespace, projecting to that namespace's kind-set for a grammar, and the slots whose type the grammar states. */
 export interface GrammarContext {

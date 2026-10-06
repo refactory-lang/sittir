@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest';
-import { mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -8,11 +8,11 @@ import {
 	VOCABULARY_DIR,
 	compileBindings,
 	deriveVocabulary,
-	emitVocabulary,
-	inventoryGrammars
+	inventoryGrammars,
+	vocabularyDisagreements
 } from '../../src/inventory/index.ts';
 import { type Derivation, levelMembers } from '../../src/inventory/derive.ts';
-import { indexFile, renderVocabularyFile, vocabularyFiles } from '../../src/inventory/emit.ts';
+import { readVocabulary } from '../../src/inventory/vocabulary.ts';
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 const CEILING = JSON.parse(
@@ -20,6 +20,7 @@ const CEILING = JSON.parse(
 ) as {
 	readonly unmapped: number;
 	readonly compiling: readonly string[];
+	readonly vocabularyDisagreements: readonly string[];
 };
 
 describe('bindingIssues', () => {
@@ -177,86 +178,49 @@ describe('deriveVocabulary', () => {
 	});
 });
 
-describe('the committed vocabulary', () => {
-	it('is what the bindings emit', async () => {
-		const out = mkdtempSync(join(tmpdir(), 'vocabulary-'));
-		try {
-			await emitVocabulary(await deriveVocabulary(), out);
-			const emitted = readdirSync(out);
-			expect(readdirSync(VOCABULARY_DIR).filter((file) => !emitted.includes(file))).toEqual(['utils.ts']);
-			for (const file of emitted) {
-				expect(readFileSync(join(VOCABULARY_DIR, file), 'utf8'), file).toBe(readFileSync(join(out, file), 'utf8'));
-			}
-		} finally {
-			rmSync(out, { recursive: true, force: true });
-		}
+describe('the authored vocabulary', () => {
+	it('disagrees with the bindings only where the ceiling records', async () => {
+		expect(vocabularyDisagreements(await deriveVocabulary(), readVocabulary(VOCABULARY_DIR))).toEqual(CEILING.vocabularyDisagreements);
 	}, 120_000);
 
-	it('renders its doc comments as block comments and its notes as line comments', () => {
-		const context = readFileSync(join(VOCABULARY_DIR, 'context.ts'), 'utf8');
-		expect(context).toContain(
-			"\n/** The typemap: one key per top-level namespace, projecting to that namespace's kind-set for a grammar, and the slots whose type the grammar states. */\n"
-		);
-		expect(context).toMatch(/^\/\/ Generated from the grammars' bindings\.scm\. Do not edit\.$/m);
+	it('is authored: no file says it is generated', () => {
 		for (const file of readdirSync(VOCABULARY_DIR)) {
-			expect(readFileSync(join(VOCABULARY_DIR, file), 'utf8'), file).not.toContain('///');
+			expect(readFileSync(join(VOCABULARY_DIR, file), 'utf8'), file).not.toMatch(/^\/\/ Generated/m);
 		}
 	});
 });
 
-describe('vocabularyFiles', () => {
-	it('builds through the loose surface only', () => {
-		const emitter = readFileSync(fileURLToPath(new URL('../../src/inventory/emit.ts', import.meta.url)), 'utf8');
-		expect(emitter).not.toContain('.strict');
+describe('readVocabulary', () => {
+	const dir = mkdtempSync(join(tmpdir(), 'vocabulary-'));
+	mkdirSync(dir, { recursive: true });
+	writeFileSync(
+		join(dir, 'decl.ts'),
+		[
+			'export interface Declaration<G> {',
+			"\treadonly $kind: 'declaration';",
+			'\treadonly name: string;',
+			'}',
+			'export namespace Declaration {',
+			'\texport interface Function<G>',
+			'\t\textends SubKindOf<V.Declaration<G>> {',
+			"\t\treadonly $kind: 'declaration.function';",
+			'\t\treadonly body?: string;',
+			'\t}',
+			'}',
+			''
+		].join('\n')
+	);
+	const vocabulary = readVocabulary(dir);
+	rmSync(dir, { recursive: true, force: true });
+
+	it('keys each interface by its kind, with its parent from a multi-line extends', () => {
+		expect(vocabulary.kinds.get('declaration.function')).toMatchObject({ name: 'Declaration.Function', parent: 'declaration' });
 	});
-	it('renders a namespace through the typescript factories', async () => {
-		const files = vocabularyFiles(await deriveVocabulary());
-		expect(files.map((f) => f.name)).toContain('context');
-		const comment = files.find((f) => f.name === 'comment');
-		expect(comment).toBeDefined();
-		if (!comment) return;
-		const source = renderVocabularyFile(comment);
-		expect(source).toContain('export interface Comment<G extends GrammarContext>');
-		expect(source).toContain("import type { GrammarContext } from './context.ts';");
-	});
-	it('spells a sub-kind as its parent narrowed by SubKindOf, importing the helpers it uses', async () => {
-		const files = vocabularyFiles(await deriveVocabulary());
-		const modifier = files.find((f) => f.name === 'modifier');
-		expect(modifier).toBeDefined();
-		if (!modifier) return;
-		const source = renderVocabularyFile(modifier);
-		expect(source).toContain('extends SubKindOf<V.Modifier<G>>');
-		expect(source).not.toContain('Simplify');
-		expect(source).toContain("import type { SubKindOf } from './utils.ts';");
-		expect(source).toContain("readonly $kind: 'modifier.extern';");
-		expect(source).not.toContain('extends V.');
-	});
-	it('types a member of one role as that role, and any other member as its context entry', async () => {
-		const files = vocabularyFiles(await deriveVocabulary());
-		const argument = files.find((f) => f.name === 'argument');
-		expect(argument).toBeDefined();
-		if (!argument) return;
-		const source = renderVocabularyFile(argument);
-		expect(source).toMatch(/readonly name: G\['identifier'\]\s/);
-		expect(source).toMatch(/readonly value: G\['slots'\]\['argument'\]\['value'\]\s/);
-	});
-	it('declares every context entry in SlotTable and fills it in BaseContext with roles, refs or string', async () => {
-		const files = vocabularyFiles(await deriveVocabulary());
-		const context = files.find((f) => f.name === 'context');
-		expect(context).toBeDefined();
-		if (!context) return;
-		const source = renderVocabularyFile(context);
-		expect(source).toContain('readonly slots: SlotTable;');
-		expect(source).toMatch(/export interface SlotTable \{\s+readonly 'argument': \{\s+readonly value: unknown;/);
-		const base = source.slice(source.indexOf('export interface BaseContext'));
-		expect(base).toMatch(/readonly 'argument': \{\s+readonly value: BaseContext\['expression'\] \|/);
-		expect(base).not.toMatch(/readonly \w+:\s*'[^']*';/);
-	});
-	it('builds the index of the namespace files through the typescript factories', async () => {
-		const files = vocabularyFiles(await deriveVocabulary());
-		const source = renderVocabularyFile(indexFile(files));
-		expect(source).toContain("export * from './comment.ts';\nexport * from './declaration.ts';");
-		expect(source).toContain("export type { GrammarContext, BaseContext, SlotTable, Unmapped } from './context.ts';");
-		expect(source).not.toMatch(/\.ts';\n\nexport \*/);
+
+	it('gives a kind its inherited members, each marked optional or required', () => {
+		expect(Object.fromEntries(vocabulary.members('declaration.function'))).toEqual({
+			body: { optional: true },
+			name: { optional: false }
+		});
 	});
 });

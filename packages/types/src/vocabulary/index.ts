@@ -1,4 +1,3 @@
-// Generated from the grammars' bindings.scm. Do not edit.
 export * from './argument.ts';
 export * from './attribute.ts';
 export * from './clause.ts';

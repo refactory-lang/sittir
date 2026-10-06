@@ -1,11 +1,10 @@
-import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 import { bindingIssues, compileQuery, readBindings } from './bindings.ts';
 import { loadSlotModel } from './model.ts';
-import { type Derivation, type GrammarInput, type LayoutSlot, derive } from './derive.ts';
-import { indexFile, renderVocabularyFile, vocabularyFiles } from './emit.ts';
+import { type Derivation, type GrammarInput, type LayoutSlot, camel, derive } from './derive.ts';
+import { type Vocabulary, readVocabulary } from './vocabulary.ts';
 import { allGrammars, grammarPackageDir, type GrammarName } from '@sittir/codegen/grammars';
 import { evaluateGrammar, load, type RawGrammar } from '../codegen-surface.ts';
 
@@ -17,7 +16,6 @@ export function inventoryGrammars(): readonly GrammarName[] {
 
 export interface BindingsInventoryOptions {
 	readonly grammars?: readonly string[];
-	readonly emit?: string | true;
 	readonly check?: boolean;
 	readonly members?: boolean;
 }
@@ -84,17 +82,21 @@ export async function deriveVocabulary(grammars: readonly string[] = inventoryGr
 	return derive(await loadInputs(grammars));
 }
 
-export async function emitVocabulary(d: Derivation, outDir: string): Promise<string[]> {
-	mkdirSync(outDir, { recursive: true });
-	const files = vocabularyFiles(d);
-	const written: string[] = [];
-	for (const file of [...files, indexFile(files)]) {
-		const path = join(outDir, `${file.name}.ts`);
-		writeFileSync(path, renderVocabularyFile(file));
-		written.push(path);
+export function vocabularyDisagreements(d: Derivation, vocabulary: Vocabulary): string[] {
+	const out: string[] = [];
+	for (const v of d.allvocab) {
+		if (!vocabulary.kinds.has(v)) out.push(`${v}: claimed, but no vocabulary interface has this kind`);
 	}
-	execFileSync('pnpm', ['exec', 'oxfmt', ...written], { cwd: ROOT, stdio: 'pipe' });
-	return written;
+	const undeclared = (v: string, member: string, how: string): void => {
+		if (vocabulary.kinds.has(v) && !vocabulary.members(v).has(member)) out.push(`${v}.${member}: ${how}, but its interface does not declare it`);
+	};
+	for (const [v, members] of d.members) {
+		for (const member of members.keys()) undeclared(v, member, 'routed');
+	}
+	for (const [v, refinement] of d.refinements) {
+		for (const field of refinement.literals.keys()) undeclared(v, camel(field), 'pinned');
+	}
+	return out.sort();
 }
 
 export function summarize(d: Derivation): string {
@@ -154,10 +156,12 @@ export async function run(opts: BindingsInventoryOptions): Promise<number> {
 	const d = await deriveVocabulary(grammars);
 	process.stdout.write(`${summarize(d)}\n`);
 	if (opts.members) process.stdout.write(`${membersTable(d)}\n`);
-	if (opts.emit !== undefined) {
-		const outDir = opts.emit === true ? VOCABULARY_DIR : opts.emit;
-		const written = await emitVocabulary(d, outDir);
-		process.stdout.write(`emitted ${written.length} files into ${outDir}\n`);
+	if (opts.check) {
+		const disagreements = vocabularyDisagreements(d, readVocabulary(VOCABULARY_DIR));
+		if (disagreements.length > 0) code = 1;
+		process.stdout.write(
+			`bindings and vocabulary: ${disagreements.length === 0 ? 'agree' : `${disagreements.length} disagreements\n  ${disagreements.join('\n  ')}`}\n`
+		);
 	}
 	if (d.cycles.length > 0 || d.untargeted.length > 0 || d.uncaptured.length > 0) code = 1;
 	return code;
