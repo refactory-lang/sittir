@@ -32,6 +32,7 @@ import {
 	assertOneUntaggedSlot,
 	enumKindArgs,
 	flankArgs,
+	layoutTokenIds,
 	readNames,
 	slotArgs,
 	transportArgs,
@@ -622,7 +623,8 @@ describe('transport read facts', () => {
 			names: readNames(model.kindEntries, generatedFieldIds(model.generatedIdTables)),
 			listOwners: new Set(listViewOwners(model.nodeMap).map((node) => node.kind)),
 			envelopeIds: new Set(aliasEnvelopeIds(aliasEnvelopesOf(model.nodeMap))),
-			folds: model.generatedIdTables.folds ?? new Map()
+			folds: model.generatedIdTables.folds ?? new Map(),
+			grammar: 'rust'
 		};
 	}, 120_000);
 
@@ -641,6 +643,19 @@ describe('transport read facts', () => {
 
 	it('lists the tokens a kind writes itself as its layout', () => {
 		expect(args('FunctionItemTransport')).toBe('kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT]');
+	});
+
+	it('resolves an unstamped layout token by text only at a listed site', () => {
+		const n = node('UseBoundsTransport');
+		expect(() => transportArgs(n, ownId(n), ctx, n.slots)).not.toThrow();
+		expect(() => transportArgs(n, ownId(n), { ...ctx, grammar: 'unlisted' }, n.slots)).toThrow(
+			/'use_bounds' layout token "<" has no stamped kind id and is not a listed text-resolved site/
+		);
+	});
+
+	it('refuses a listed site that is stamped now, so the list is exact', () => {
+		const stamped = { kind: 'use_bounds', lexedInterior: false, renderRule: { type: 'STRING', value: '<', resolvedKindId: 43 } };
+		expect(() => layoutTokenIds(stamped as unknown as AbstractAssembledCompound, ctx, [])).toThrow(/'use_bounds' layout token "<" is stamped now; remove it/);
 	});
 
 	it('gives a list owner its minimum depth, its tokens and its inner gap', () => {

@@ -1167,7 +1167,8 @@ function readPrintOf(
 			names: readNames(kindEntries, generatedFieldIds(generatedIdTables)),
 			listOwners: new Set(listViewOwners(nodeMap).map((node) => node.kind)),
 			envelopeIds: new Set(aliasEnvelopeIds(aliasEnvelopesOf(nodeMap))),
-			folds: generatedIdTables.folds ?? new Map()
+			folds: generatedIdTables.folds ?? new Map(),
+			grammar
 		},
 		admitted: new Map(),
 		blankChoices: new Set()

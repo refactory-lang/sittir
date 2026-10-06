@@ -16930,7 +16930,15 @@ The kind ids of literal texts, as separators and keywords are declared by id. A 
 
 ### `packages/codegen/src/emitters/transport-projection.ts::layoutTokenIds`
 
-The tokens a kind's own rule writes and no slot takes, as the ids the parser shows for them: an unfielded string (its aliased id when the site aliases it), an unfielded literal symbol, an external, and a fixed-text leaf that no printed slot holds, fielded or not. Tokens inside a printed slot's field belong to the slot. The reader skips these tokens where it routes children. A string written inside a `token(…)` has no stamped id at link, so its id is the parser's symbol for that text.
+The tokens a kind's own rule writes and no slot takes, as the ids the parser shows for them: an unfielded string (its aliased id when the site aliases it), an unfielded literal symbol, an external, and a fixed-text leaf that no printed slot holds, fielded or not. Tokens inside a printed slot's field belong to the slot. The reader skips these tokens where it routes children. A string with no stamped id (one the grammar writes twice, or inside a `token(…)`) is resolved by the parser's symbol for its text only at a site `TEXT_RESOLVED_LAYOUT_SITES` lists; any other unstamped string, and a fixed symbol with no kind id, is a diagnostic naming the kind and the token, so nothing drops silently. The indent and dedent render markers are not tokens and are skipped.
+
+### `packages/codegen/src/emitters/layout-text-sites.ts::TEXT_RESOLVED_LAYOUT_SITES`
+
+Per grammar, the exact (kind, text) sites whose layout token has no stamped kind id and takes the parser's symbol for its text, which is the public symbol the reader compares. It is a ceiling that only shrinks: a new unstamped site fails codegen, and a listed site that becomes stamped fails it too.
+
+### `packages/codegen/src/emitters/layout-text-sites.ts::isTextResolvedLayoutSite`
+
+Whether a (grammar, kind, text) site is listed. `layoutTokenIds` refuses a listed site that is stamped now, so the list is exact.
 
 ### `packages/codegen/src/emitters/transport-projection.ts::listItemSlot`
 

@@ -12,6 +12,8 @@ import {
 	storageTargetOf
 } from '../compiler/model/node-map.ts';
 import { findKindEntry, findKindEntryForLiteral, type KindEnumEntry } from './kind-discriminant.ts';
+import { isTextResolvedLayoutSite } from './layout-text-sites.ts';
+import { DEDENT_TEXT, INDENT_TEXT } from '../dsl/primitives/spacing.ts';
 import { isScalarStorage, kindConstants } from './kind-id-rust.ts';
 import { fieldConstName } from './field-id-rust.ts';
 import { queryRoutesOf } from './client-utils.ts';
@@ -175,6 +177,7 @@ export interface ReadFactsCtx {
 	readonly listOwners: ReadonlySet<string>;
 	readonly envelopeIds: ReadonlySet<number>;
 	readonly folds: ReadonlyMap<number, readonly number[]>;
+	readonly grammar: string;
 }
 
 function oneOrList(paths: readonly string[]): string {
@@ -189,12 +192,28 @@ function literalIds(texts: readonly string[], ctx: ReadFactsCtx, what: string): 
 	});
 }
 
+const RENDER_MARKERS: ReadonlySet<string> = new Set([INDENT_TEXT, DEDENT_TEXT]);
+
 export function layoutTokenIds(node: AbstractAssembledCompound, ctx: ReadFactsCtx, slots: readonly AssembledNonterminal[]): number[] {
 	const slotFields = new Set(slots.map((slot) => slot.fieldName));
 	const slotKinds = new Set(slots.flatMap(slotKindNames));
 	const ids: number[] = [];
-	const add = (id: number | undefined): void => {
-		if (id !== undefined && !ids.includes(id)) ids.push(id);
+	const add = (id: number): void => {
+		if (!ids.includes(id)) ids.push(id);
+	};
+	const listedSeen = new Set<string>();
+	const textResolved = new Set<string>();
+	const layoutString = (rule: { readonly value: string; readonly aliasedToId?: number; readonly resolvedKindId?: number }): number => {
+		const listed = isTextResolvedLayoutSite(ctx.grammar, node.kind, rule.value);
+		if (listed) listedSeen.add(rule.value);
+		const stamped = rule.aliasedToId ?? rule.resolvedKindId;
+		if (stamped !== undefined) return stamped;
+		const id = listed ? findKindEntryForLiteral(ctx.kindEntries, rule.value)?.id : undefined;
+		if (id === undefined) {
+			throw new Error(`transport.rs: '${node.kind}' layout token ${JSON.stringify(rule.value)} has no stamped kind id and is not a listed text-resolved site`);
+		}
+		textResolved.add(rule.value);
+		return id;
 	};
 	const externals = new Set((ctx.nodeMap.externals ?? []).flatMap((entry) => (entry.type === SYMBOL ? [entry.name] : [])));
 	const walk = (rule: RenderRule): void => {
@@ -202,14 +221,19 @@ export function layoutTokenIds(node: AbstractAssembledCompound, ctx: ReadFactsCt
 		if (field !== undefined && slotFields.has(field)) return;
 		switch (rule.type) {
 			case STRING:
-				add(rule.aliasedToId ?? rule.resolvedKindId ?? findKindEntryForLiteral(ctx.kindEntries, rule.value)?.id);
+				if (RENDER_MARKERS.has(rule.value)) return;
+				add(layoutString(rule));
 				return;
 			case SYMBOL: {
 				if (rule.nonterminal !== false) return;
 				const referenced = ctx.nodeMap.nodes.get(rule.name);
 				const fixedLeaf = referenced !== undefined && isFixedTextLeaf(referenced);
 				const fixed = field === undefined ? rule.literal !== undefined || externals.has(rule.name) || (fixedLeaf && !slotKinds.has(rule.name)) : fixedLeaf;
-				if (fixed) add(rule.aliasedToId ?? rule.kindId);
+				if (fixed) {
+					const id = rule.aliasedToId ?? rule.kindId;
+					if (id === undefined) throw new Error(`transport.rs: '${node.kind}' layout symbol '${rule.name}' has no stamped kind id`);
+					add(id);
+				}
 				return;
 			}
 			default: {
@@ -220,6 +244,9 @@ export function layoutTokenIds(node: AbstractAssembledCompound, ctx: ReadFactsCt
 		}
 	};
 	if (!node.lexedInterior) walk(node.renderRule);
+	for (const text of listedSeen) {
+		if (!textResolved.has(text)) throw new Error(`transport.rs: '${node.kind}' layout token ${JSON.stringify(text)} is stamped now; remove it from layout-text-sites.ts`);
+	}
 	return ids;
 }
 
@@ -277,8 +304,8 @@ export function presenceKeywordId(
 	if (marker !== undefined && isFixedTextLeaf(marker) && marker.resolvedKindId !== undefined && isParserHiddenKind(marker.kind, ctx.kindEntries)) {
 		return marker.resolvedKindId;
 	}
-	const keyword = shape.kind === undefined ? findKindEntryForLiteral(ctx.kindEntries, shape.text) : findKindEntry(ctx.kindEntries, shape.kind.kind);
-	if (keyword === undefined) throw new Error(`transport read facts: ${owner.kind}.${slot.name}'s keyword has no parser symbol`);
+	const keyword = shape.kind === undefined ? undefined : findKindEntry(ctx.kindEntries, shape.kind.kind);
+	if (keyword === undefined) throw new Error(`transport read facts: ${owner.kind}.${slot.name}'s keyword has no stamped parser symbol`);
 	return keyword.id;
 }
 
