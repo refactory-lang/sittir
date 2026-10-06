@@ -17,7 +17,7 @@ The trivia and snapshot steps build on the one-reader step of `docs/superpowers/
 | Task | Detailed | Lands in |
 | --- | --- | --- |
 | 1. Points and the line table | now | the trivia step's PR, first commit |
-| 2. Index offsets from a start node | now | the one-reader step, beside its query change |
+| 2. Index offsets from a start node | now | the typed-reader plan's Task 17, as its first step |
 | 3. The closing gap in the model | now | the trivia step's PR |
 | 4–8. The trivia step | outline | the trivia step's PR |
 | 9–13. The snapshot step | outline | the snapshot step's PR |
