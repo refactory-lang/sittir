@@ -378,3 +378,193 @@ fn a_text_leaf_that_spans_nothing_reads_as_its_fixed_text() {
     let inserted: Inserted = read_nth(&tree, source, ts::_AUTOMATIC_SEMICOLON, 0, Depth::ONE).unwrap();
     assert_eq!(inserted.text, ";");
 }
+
+use sittir_python::render::kind_ids as py;
+use sittir_typescript::render::field_ids as ts_field;
+
+#[derive(Debug, Clone, Copy, PartialEq, Transport)]
+#[transport(kind = kind::_PRIMITIVE_TYPE, spelled)]
+enum Primitive {
+    #[kind(kind::U8_KEYWORD)]
+    U8,
+    #[kind(kind::BOOL_KEYWORD)]
+    Bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Transport)]
+#[transport(choice)]
+enum Type {
+    #[kind(kind::NEVER_TYPE)]
+    Never,
+    #[kind(kind::_PRIMITIVE_TYPE, kind::U8_KEYWORD, kind::BOOL_KEYWORD)]
+    Primitive(Primitive),
+}
+
+#[derive(Debug, Clone, PartialEq, Transport)]
+#[transport(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT])]
+struct Typed {
+    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[slot(field = field::NAME)]
+    name: SlotValue<Ident>,
+    #[slot(field = field::PARAMETERS)]
+    parameters: SlotValue<Params>,
+    #[slot(field = field::RETURN_TYPE)]
+    return_type: Option<SlotValue<Type>>,
+    #[slot(field = field::BODY)]
+    body: SlotValue<Box<Block>>,
+}
+
+fn typed_function(source: &str) -> Result<Typed, ReadError> {
+    read_nth(&parse_rust(source), source, kind::FUNCTION_ITEM, 0, Depth::All)
+}
+
+#[test]
+fn a_unit_variant_stores_its_kind_and_an_enum_kind_reads_the_member_its_token_is() {
+    assert_eq!(typed_function("fn f() -> ! {}").unwrap().return_type, Some(SlotValue::Transport(Type::Never)));
+    assert_eq!(typed_function("fn f() -> u8 {}").unwrap().return_type, Some(SlotValue::Transport(Type::Primitive(Primitive::U8))));
+    assert_eq!(typed_function("fn f() -> bool {}").unwrap().return_type, Some(SlotValue::Transport(Type::Primitive(Primitive::Bool))));
+}
+
+#[test]
+fn an_enum_kind_whose_token_is_none_of_its_members_is_refused() {
+    let err = typed_function("fn f() -> u16 {}").unwrap_err();
+    assert!(matches!(err, ReadError::Unspelled { kind: refused, .. } if refused == kind::_PRIMITIVE_TYPE), "{err:?}");
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Transport)]
+#[transport(kind = ts::PREDEFINED_TYPE, spelled)]
+enum Predefined {
+    #[kind(ts::SYMBOL_KEYWORD)]
+    Symbol,
+    #[kind(ts::UNIQUE)]
+    UniqueSymbol,
+}
+
+#[test]
+fn a_member_spelled_by_two_tokens_reads_as_the_id_both_display() {
+    for (source, member) in [("declare const x: unique symbol;", Predefined::UniqueSymbol), ("declare const x: symbol;", Predefined::Symbol)] {
+        let tree = parse(&sittir_typescript::language(), source);
+        assert_eq!(read_nth::<Predefined>(&tree, source, ts::PREDEFINED_TYPE, 0, Depth::All).unwrap(), member, "{source}");
+    }
+}
+
+/// Members `is` and `not` but not `is not`, whose node holds one token of each.
+#[derive(Debug, Clone, Copy, PartialEq, Transport)]
+#[transport(kind = py::_IS_NOT, spelled)]
+enum IsOrNot {
+    #[kind(py::IS_KEYWORD)]
+    Is,
+    #[kind(py::NOT_KEYWORD)]
+    Not,
+}
+
+#[test]
+fn a_node_whose_tokens_display_different_ids_is_none_of_its_members() {
+    // read by its first token, `is not` would be `is`
+    let source = "a is not b\n";
+    let tree = parse(&sittir_python::language(), source);
+    let err = read_nth::<IsOrNot>(&tree, source, py::_IS_NOT, 0, Depth::All).unwrap_err();
+    assert!(matches!(err, ReadError::Unspelled { kind: refused, .. } if refused == py::_IS_NOT), "{err:?}");
+}
+
+#[test]
+fn a_unit_variant_owns_no_trivia_so_a_comment_after_it_trails_the_owner_before() {
+    // `!` is stored as a unit: the comment trails `()`, past the two children `->` and `!`
+    let f = typed_function("fn f() -> ! /* c */ {}").unwrap();
+    assert_eq!(trivia_spans(&f.parameters.transport().unwrap().layout, "trailing"), vec![(12, 19, true, 2)]);
+}
+
+#[derive(Debug, Clone, PartialEq, Transport)]
+#[transport(kind = ts::IDENTIFIER, text)]
+struct TsIdent {
+    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    text: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Transport)]
+#[transport(kind = ts::NUMBER_DECIMAL, text)]
+struct TsNumber {
+    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    text: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Transport)]
+#[transport(kind = ts::VARIABLE_DECLARATOR_PLAIN, layout = [ts::EQ])]
+struct Declarator {
+    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[slot(field = ts_field::NAME)]
+    name: SlotValue<TsIdent>,
+    #[slot(field = ts_field::VALUE)]
+    value: Option<SlotValue<TsNumber>>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Transport)]
+#[transport(choice)]
+enum DeclarationKind {
+    #[kind(ts::LET_KEYWORD)]
+    Let,
+    #[kind(ts::CONST_KEYWORD)]
+    Const,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Transport)]
+#[transport(choice)]
+enum Terminator {
+    #[kind(ts::_AUTOMATIC_SEMICOLON)]
+    Inserted,
+    #[kind(ts::SEMI)]
+    Semi,
+}
+
+#[derive(Debug, Clone, PartialEq, Transport)]
+#[transport(kind = ts::LEXICAL_DECLARATION)]
+struct Declaration {
+    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[slot(field = ts_field::KIND)]
+    kind: SlotValue<DeclarationKind>,
+    #[slot(field = ts_field::DECLARATORS)]
+    declarators: Vec<SlotValue<Declarator>>,
+    #[slot(field = ts_field::TERMINATOR)]
+    terminator: Option<SlotValue<Terminator>>,
+}
+
+#[test]
+fn a_zero_width_terminator_is_a_unit_and_owns_nothing() {
+    // the comment sits before the zero-width terminator, inside the declaration
+    let source = "let x = 1 // c\nlet y = 2;";
+    let tree = parse(&sittir_typescript::language(), source);
+    let first: Declaration = read_nth(&tree, source, ts::LEXICAL_DECLARATION, 0, Depth::All).unwrap();
+    let second: Declaration = read_nth(&tree, source, ts::LEXICAL_DECLARATION, 1, Depth::All).unwrap();
+    assert_eq!(first.terminator, Some(SlotValue::Transport(Terminator::Inserted)));
+    assert_eq!(second.terminator, Some(SlotValue::Transport(Terminator::Semi)));
+    let declarator = first.declarators[0].transport().unwrap();
+    assert_eq!(trivia_spans(&declarator.layout, "trailing"), vec![(10, 14, true, 0)]);
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Transport)]
+#[transport(choice)]
+enum BlockTerminator {
+    #[kind(ts::_AUTOMATIC_SEMICOLON)]
+    Inserted,
+    #[transport(blank)]
+    Blank,
+}
+
+#[derive(Debug, Clone, PartialEq, Transport)]
+#[transport(kind = ts::STATEMENT_BLOCK, layout = [ts::LBRACE, ts::RBRACE])]
+struct StatementBlock {
+    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    #[slot(field = ts_field::TERMINATOR)]
+    terminator: Option<SlotValue<BlockTerminator>>,
+}
+
+#[test]
+fn an_absent_slot_with_a_blank_arm_reads_as_its_blank() {
+    // the parser inserts no terminator after the `if` block, and one after the `else` block
+    let source = "if (a) { } else { }";
+    let tree = parse(&sittir_typescript::language(), source);
+    let consequence: StatementBlock = read_nth(&tree, source, ts::STATEMENT_BLOCK, 0, Depth::All).unwrap();
+    let alternative: StatementBlock = read_nth(&tree, source, ts::STATEMENT_BLOCK, 1, Depth::All).unwrap();
+    assert_eq!(consequence.terminator, Some(SlotValue::Transport(BlockTerminator::Blank)));
+    assert_eq!(alternative.terminator, Some(SlotValue::Transport(BlockTerminator::Inserted)));
+}

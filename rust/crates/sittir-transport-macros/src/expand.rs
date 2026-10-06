@@ -4,15 +4,184 @@
 use crate::attrs::{self, FlankAttrs, KindAttrs, SeparatorKindAttrs, SlotAttrs};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
-use syn::{Data, DataStruct, DeriveInput, Fields, GenericArgument, Ident, LitStr, Path, PathArguments, Type};
+use syn::{Data, DataEnum, DataStruct, DeriveInput, Fields, GenericArgument, Ident, LitStr, Path, PathArguments, Type};
 
 pub fn derive(input: &DeriveInput) -> syn::Result<TokenStream> {
     let attrs = attrs::kind_attrs(&input.attrs)?;
     match &input.data {
         Data::Struct(data) => structure(&input.ident, &attrs, data),
-        Data::Enum(_) => Err(syn::Error::new_spanned(&input.ident, "a choice or an enum kind is not supported yet")),
+        Data::Enum(data) if attrs.choice => choice(&input.ident, data),
+        Data::Enum(data) => members(&input.ident, &attrs, data),
         Data::Union(_) => Err(syn::Error::new_spanned(&input.ident, "a transport is a struct or an enum")),
     }
+}
+
+fn choice(ident: &Ident, data: &DataEnum) -> syn::Result<TokenStream> {
+    let mut by_display = Vec::new();
+    let mut by_grammar = Vec::new();
+    let mut by_alias = Vec::new();
+    let mut scalars = Vec::new();
+    let mut reads = Vec::new();
+    let mut sides = Vec::new();
+    let mut blank = None;
+    for (i, variant) in data.variants.iter().enumerate() {
+        let name = &variant.ident;
+        if attrs::kind_attrs(&variant.attrs)?.blank {
+            if !matches!(variant.fields, Fields::Unit) {
+                return Err(syn::Error::new_spanned(variant, "a blank variant is a unit"));
+            }
+            blank = Some(quote! {
+                fn blank() -> ::core::option::Option<Self> {
+                    ::core::option::Option::Some(Self::#name)
+                }
+            });
+            continue;
+        }
+        let Some(kinds) = attrs::variant_kinds(&variant.attrs)? else { continue };
+        let i = i as u16;
+        let ids = &kinds.kinds;
+        if kinds.display {
+            by_display.push(quote!(if [#(#ids),*].contains(&display) { return ::core::option::Option::Some(#i); }));
+        } else {
+            by_grammar.push(quote!(if [#(#ids),*].contains(&grammar) { return ::core::option::Option::Some(#i); }));
+            by_alias.push(quote!(if [#(#ids),*].contains(&display) { return ::core::option::Option::Some(#i); }));
+        }
+        match &variant.fields {
+            Fields::Unit => {
+                scalars.push(quote!(::core::option::Option::Some(#i) => true,));
+                reads.push(quote!(::core::option::Option::Some(#i) => ::core::result::Result::Ok(Self::#name),));
+            }
+            Fields::Unnamed(payload) if payload.unnamed.len() == 1 => {
+                let ty = &payload.unnamed[0].ty;
+                scalars.push(quote!(::core::option::Option::Some(#i) => <#ty as __rt::ReadTransport>::scalar(grammar, display),));
+                reads.push(quote! {
+                    ::core::option::Option::Some(#i) => ::core::result::Result::Ok(Self::#name(
+                        <#ty as __rt::ReadTransport>::read(cursor, ctx, depth, sides)?,
+                    )),
+                });
+                sides.push(quote!(::core::option::Option::Some(#i) => <#ty as __rt::ReadTransport>::sides_of(cursor, ctx, row),));
+            }
+            _ => return Err(syn::Error::new_spanned(variant, "a choice's variant is a unit or holds one transport")),
+        }
+    }
+    Ok(quote! {
+        const _: () = {
+            use ::sittir_core::read as __rt;
+            use ::sittir_core::types::KindId as __Kind;
+            fn __variant(grammar: __Kind, display: __Kind) -> ::core::option::Option<u16> {
+                #(#by_display)*
+                #(#by_grammar)*
+                #(#by_alias)*
+                ::core::option::Option::None
+            }
+            impl __rt::ReadTransport for #ident {
+                fn admits(grammar: __Kind, display: __Kind) -> bool {
+                    __variant(grammar, display).is_some()
+                }
+                fn takes_tagged(grammar: __Kind, display: __Kind, _named: bool) -> bool {
+                    __variant(grammar, display).is_some()
+                }
+                fn scalar(grammar: __Kind, display: __Kind) -> bool {
+                    match __variant(grammar, display) {
+                        #(#scalars)*
+                        _ => false,
+                    }
+                }
+                #blank
+                #[allow(unused_variables)]
+                fn read(
+                    cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                    ctx: &__rt::ReadCtx<'_>,
+                    depth: __rt::Depth,
+                    sides: __rt::Sides,
+                ) -> ::core::result::Result<Self, __rt::ReadError> {
+                    let node = cursor.node();
+                    let (grammar, display) = (__Kind(node.grammar_id()), __Kind(node.kind_id()));
+                    match __variant(grammar, display) {
+                        #(#reads)*
+                        _ => ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: grammar, row: __rt::row_of(cursor) }),
+                    }
+                }
+                #[allow(unused_variables)]
+                fn sides_of(
+                    cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                    ctx: &__rt::ReadCtx<'_>,
+                    row: u32,
+                ) -> ::core::result::Result<__rt::Sides, __rt::ReadError> {
+                    let node = cursor.node();
+                    match __variant(__Kind(node.grammar_id()), __Kind(node.kind_id())) {
+                        #(#sides)*
+                        _ => ::core::result::Result::Ok(__rt::Sides::default()),
+                    }
+                }
+            }
+        };
+    })
+}
+
+fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<TokenStream> {
+    let kind = attrs
+        .kind
+        .as_ref()
+        .ok_or_else(|| syn::Error::new_spanned(ident, "an enum kind names its kind: `#[transport(kind = …)]`"))?;
+    let mut by_kind = Vec::new();
+    for variant in &data.variants {
+        if !matches!(variant.fields, Fields::Unit) {
+            return Err(syn::Error::new_spanned(variant, "an enum kind's members are units"));
+        }
+        let kinds = attrs::variant_kinds(&variant.attrs)?
+            .ok_or_else(|| syn::Error::new_spanned(variant, "an enum kind's member names its token: `#[kind(…)]`"))?;
+        let (name, ids) = (&variant.ident, &kinds.kinds);
+        by_kind.push(quote!(if [#(#ids),*].contains(&grammar) { return ::core::option::Option::Some(#ident::#name); }));
+    }
+    let spelled = attrs.spelled.then(|| {
+        quote! {
+            if let ::core::option::Option::Some(member) = __rt::spelled_id(&__rt::survey(cursor)).and_then(__member) {
+                return ::core::result::Result::Ok(member);
+            }
+        }
+    });
+    Ok(quote! {
+        const _: () = {
+            use ::sittir_core::read as __rt;
+            use ::sittir_core::types::KindId as __Kind;
+            fn __member(grammar: __Kind) -> ::core::option::Option<#ident> {
+                #(#by_kind)*
+                ::core::option::Option::None
+            }
+            impl __rt::ReadTransport for #ident {
+                fn admits(grammar: __Kind, display: __Kind) -> bool {
+                    grammar == #kind || display == #kind || __member(grammar).is_some()
+                }
+                fn takes_tagged(grammar: __Kind, display: __Kind, _named: bool) -> bool {
+                    <Self as __rt::ReadTransport>::admits(grammar, display)
+                }
+                fn scalar(grammar: __Kind, _display: __Kind) -> bool {
+                    __member(grammar).is_some()
+                }
+                fn read(
+                    cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                    _ctx: &__rt::ReadCtx<'_>,
+                    _depth: __rt::Depth,
+                    _sides: __rt::Sides,
+                ) -> ::core::result::Result<Self, __rt::ReadError> {
+                    let node = cursor.node();
+                    if let ::core::option::Option::Some(member) = __member(__Kind(node.grammar_id())) {
+                        return ::core::result::Result::Ok(member);
+                    }
+                    #spelled
+                    ::core::result::Result::Err(__rt::ReadError::Unspelled { kind: __Kind(node.grammar_id()), row: __rt::row_of(cursor) })
+                }
+                fn sides_of(
+                    _cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                    _ctx: &__rt::ReadCtx<'_>,
+                    _row: u32,
+                ) -> ::core::result::Result<__rt::Sides, __rt::ReadError> {
+                    ::core::result::Result::Ok(__rt::Sides::default())
+                }
+            }
+        };
+    })
 }
 
 enum Role {

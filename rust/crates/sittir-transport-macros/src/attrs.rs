@@ -38,7 +38,6 @@ pub struct SlotAttrs {
 }
 
 /// `#[kind(…)]` on a variant: the ids it claims, display ids when marked.
-#[allow(dead_code)]
 pub struct VariantKinds {
     pub kinds: Vec<Path>,
     pub display: bool,
@@ -127,7 +126,6 @@ pub fn slot_attrs(attrs: &[Attribute]) -> syn::Result<Option<SlotAttrs>> {
     Ok(Some(out))
 }
 
-#[allow(dead_code)]
 pub fn variant_kinds(attrs: &[Attribute]) -> syn::Result<Option<VariantKinds>> {
     let Some(attr) = attrs.iter().find(|a| a.path().is_ident("kind")) else { return Ok(None) };
     let mut out = VariantKinds { kinds: Vec::new(), display: false };
