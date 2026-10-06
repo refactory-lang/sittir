@@ -713,20 +713,29 @@
       ]
     },
     "predicate_type": {
-      "type": "IMMEDIATE_TOKEN",
-      "content": {
-        "type": "CHOICE",
-        "members": [
-          {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "IMMEDIATE_TOKEN",
+          "content": {
             "type": "STRING",
             "value": "?"
           },
-          {
+          "annotations": {
+            "variantOf": "predicate_type"
+          }
+        },
+        {
+          "type": "IMMEDIATE_TOKEN",
+          "content": {
             "type": "STRING",
             "value": "!"
+          },
+          "annotations": {
+            "variantOf": "predicate_type"
           }
-        ]
-      }
+        }
+      ]
     },
     "list_element_quantifier": {
       "type": "FIELD",

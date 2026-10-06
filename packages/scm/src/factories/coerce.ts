@@ -177,14 +177,14 @@ const _KEYWORD_BRANCH_BY_TEXT: Record<string, string | undefined> = {};
 const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyUntypedNode | number) | undefined> = {};
 const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set(['capture', 'negated_field']);
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
-	2, 3, 4, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 23, 24, 25, 26, 27, 28, 29, 30, 31, 36, 58
+	2, 3, 4, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28, 29, 30, 31, 32, 37, 53, 60
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	capture: new Set([6]),
-	string: new Set([41]),
-	immediate_string: new Set([41]),
+	string: new Set([42]),
+	immediate_string: new Set([42]),
 	negated_field: new Set([5]),
-	list_element_quantifier: new Set([2, 3, 4, 36])
+	list_element_quantifier: new Set([2, 3, 4, 37])
 };
 const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
 	2: ['quantifier'],

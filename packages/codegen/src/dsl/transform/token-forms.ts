@@ -81,6 +81,13 @@ function dropAt(rule: RuntimeRule, path: readonly number[]): RuntimeRule {
 	return rebuilt(rule, { content: dropAt(contentOf(rule), rest) });
 }
 
+export function distributeLeafEnum(rule: RuntimeRule): RuntimeRule {
+	if (!isTokenWrapper(rule)) return rule;
+	const body = contentOf(rule);
+	if (!isChoiceType(typeOf(body)) || classifyTokenChoice(body) !== 'spelling') return rule;
+	return { type: 'CHOICE', members: membersOf(body).map((arm) => ({ ...rule, content: arm })) } as unknown as RuntimeRule;
+}
+
 export function factorSharedOptional(rule: RuntimeRule): RuntimeRule {
 	const typed = rule as Typed;
 	let out = rule;

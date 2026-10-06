@@ -2154,6 +2154,10 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
 		return enumLiteralMembersOf(this.rule);
 	}
 
+	override get immediate(): boolean {
+		return this.literalMembers.length > 0 && this.literalMembers.every((member) => member.immediate === true);
+	}
+
 	get values(): string[] {
 		return enumValuesOf(this.rule);
 	}
