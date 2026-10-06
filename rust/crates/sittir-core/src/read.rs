@@ -8,9 +8,11 @@
 //! each one reaches the reader through a generated attribute.
 
 use crate::engine::encode_handle;
+use crate::layout::TransportLayout;
 use crate::slot::{NodeCoordinate, SlotValue};
-use crate::trivia::TriviaEntry;
+use crate::trivia::{TransportTrivia, TriviaEntry};
 use crate::types::{FieldId, KindId, Span};
+use std::collections::BTreeMap;
 use std::num::NonZeroU32;
 use std::sync::OnceLock;
 use tree_sitter::{Node, TreeCursor};
@@ -719,6 +721,108 @@ pub fn separator_kind(children: &[Child], routes: &[Route], candidates: &[KindId
         .map(|(child, _)| child.grammar.0)
 }
 
+/// Where the placement rule puts the extras among one node's children: the
+/// sides each child receives, and the node's own entries when no child owns
+/// any.
+#[derive(Debug, Default)]
+pub struct Placement {
+    pub sides: Vec<Sides>,
+    pub own_leading: Vec<Entry>,
+    pub own_trailing: Vec<Entry>,
+    pub inner: BTreeMap<String, Vec<Entry>>,
+    rows: Vec<u32>,
+}
+
+impl Placement {
+    /// The sides of child `i`, taken out.
+    pub fn take(&mut self, i: usize) -> Sides {
+        std::mem::take(&mut self.sides[i])
+    }
+
+    /// The sides of the child at `row`, taken out.
+    pub fn take_row(&mut self, row: u32) -> Option<Sides> {
+        let i = self.rows.iter().position(|&r| r == row)?;
+        Some(self.take(i))
+    }
+
+    /// The node's layout: what its parent placed, then its own entries.
+    /// `None` when it holds no entry, as today's read stores no trivia then.
+    pub fn into_layout<T>(self, sides: Sides) -> Option<TransportLayout<T>> {
+        let leading: Vec<TriviaEntry<T>> = sides.leading.into_iter().chain(self.own_leading).map(Entry::into_trivia).collect();
+        let trailing: Vec<TriviaEntry<T>> = sides.trailing.into_iter().chain(self.own_trailing).map(Entry::into_trivia).collect();
+        let inner: BTreeMap<String, Vec<TriviaEntry<T>>> = self
+            .inner
+            .into_iter()
+            .map(|(key, entries)| (key, entries.into_iter().map(Entry::into_trivia).collect()))
+            .collect();
+        if leading.is_empty() && trailing.is_empty() && inner.is_empty() {
+            return None;
+        }
+        let some = |entries: Vec<TriviaEntry<T>>| (!entries.is_empty()).then_some(entries);
+        Some(TransportLayout {
+            trivia: Some(TransportTrivia { leading: some(leading), trailing: some(trailing), inner: (!inner.is_empty()).then_some(inner) }),
+            edges: None,
+            gap: None,
+            flank: None,
+        })
+    }
+}
+
+/// Place every extra among a node's children (see the rule at
+/// `read_untyped_node::node_trivia`, which this reproduces). `owner_self` is
+/// whether the node itself owns trivia; `gap` names the inner gap at a count
+/// of preceding non-trivia children.
+pub fn place(ctx: &ReadCtx<'_>, children: &[Child], routes: &[Route], owner_self: bool, gap: fn(u16) -> Option<&'static str>) -> Placement {
+    let owner = |i: usize| {
+        let child = &children[i];
+        child.named && !child.trivia && child.width() > 0 && !matches!(routes[i], Route::Slot { scalar: true, .. })
+    };
+    let entry = |child: &Child, same_line: bool, tokens_between: u16| Entry { coord: ctx.coordinate_of(child), same_line, tokens_between };
+    let mut placement = Placement {
+        sides: (0..children.len()).map(|i| Sides { owner: owner(i), ..Sides::default() }).collect(),
+        rows: children.iter().map(|child| child.row).collect(),
+        ..Placement::default()
+    };
+    let owners: Vec<usize> = (0..children.len()).filter(|&i| owner(i)).collect();
+    if owners.is_empty() {
+        let mut preceding: u16 = 0;
+        let mut named_before = false;
+        for child in children {
+            if !child.trivia {
+                preceding += 1;
+                named_before |= child.named;
+            } else if let Some(key) = gap(preceding) {
+                placement.inner.entry(key.to_string()).or_default().push(entry(child, false, 0));
+            } else if owner_self {
+                let side = if named_before { &mut placement.own_trailing } else { &mut placement.own_leading };
+                side.push(entry(child, true, 0));
+            }
+        }
+        return placement;
+    }
+    for (k, &o) in owners.iter().enumerate() {
+        let previous = k.checked_sub(1).map(|j| owners[j]);
+        let next = owners.get(k + 1).copied();
+        for child in &children[previous.map_or(0, |p| p + 1)..o] {
+            let trails_previous = previous.is_some_and(|p| children[p].end_row == child.start_row);
+            if child.trivia && !trails_previous {
+                placement.sides[o].leading.push(entry(child, child.end_row == children[o].start_row, 0));
+            }
+        }
+        let mut tokens: u16 = 0;
+        for child in &children[o + 1..next.unwrap_or(children.len())] {
+            if !child.trivia {
+                tokens += 1;
+            } else if children[o].end_row == child.start_row {
+                placement.sides[o].trailing.push(entry(child, true, tokens));
+            } else if next.is_none() {
+                placement.sides[o].trailing.push(entry(child, false, 0));
+            }
+        }
+    }
+    placement
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -854,5 +958,114 @@ mod tests {
     fn a_presence_slot_reads_true_or_absent() {
         assert_eq!(<Option<bool> as ReadSlot>::finish(true, site()), Ok(Some(true)));
         assert_eq!(<Option<bool> as ReadSlot>::finish(false, site()), Ok(None));
+    }
+
+    fn child(row: u32, named: bool, trivia: bool, (start_row, end_row): (usize, usize), (start, end): (u32, u32)) -> Child {
+        Child { row, grammar: KindId(if trivia { 900 } else if named { 100 } else { 50 }), display: KindId(0), field: None, named, trivia, start, end, start_row, end_row }
+    }
+    fn owner_routes(children: &[Child]) -> Vec<Route> {
+        children.iter().map(|c| if c.trivia { Route::Trivia } else if c.named { Route::Slot { slot: 0, scalar: false } } else { Route::Layout }).collect()
+    }
+    fn no_gap(_: u16) -> Option<&'static str> {
+        None
+    }
+    fn spans(entries: &[Entry]) -> Vec<(u32, bool, u16)> {
+        entries.iter().map(|e| (e.coord.span.start, e.same_line, e.tokens_between)).collect()
+    }
+
+    #[test]
+    fn an_extra_on_an_owners_last_row_trails_it_past_the_tokens_between() {
+        // `a, // c` then on the next row `b`
+        let children = [
+            child(1, true, false, (0, 0), (0, 1)),   // a
+            child(2, false, false, (0, 0), (1, 2)),  // ,
+            child(3, false, true, (0, 0), (3, 7)),   // // c
+            child(4, true, false, (1, 1), (8, 9)),   // b
+        ];
+        let ctx = ReadCtx::new("", 0);
+        let placement = place(&ctx, &children, &owner_routes(&children), true, no_gap);
+        assert_eq!(spans(&placement.sides[0].trailing), vec![(3, true, 1)]);
+        assert!(placement.sides[3].leading.is_empty());
+    }
+
+    #[test]
+    fn an_extra_on_its_own_row_leads_the_next_owner() {
+        // `a` / `// c` / `b`
+        let children = [
+            child(1, true, false, (0, 0), (0, 1)),
+            child(2, false, true, (1, 1), (2, 6)),
+            child(3, true, false, (2, 2), (7, 8)),
+        ];
+        let placement = place(&ReadCtx::new("", 0), &children, &owner_routes(&children), true, no_gap);
+        assert!(placement.sides[0].trailing.is_empty());
+        assert_eq!(spans(&placement.sides[2].leading), vec![(2, false, 0)]);
+    }
+
+    #[test]
+    fn an_extra_after_the_last_owner_trails_it() {
+        let children = [child(1, true, false, (0, 0), (0, 1)), child(2, false, true, (1, 1), (2, 6))];
+        let placement = place(&ReadCtx::new("", 0), &children, &owner_routes(&children), true, no_gap);
+        assert_eq!(spans(&placement.sides[0].trailing), vec![(2, false, 0)]);
+    }
+
+    #[test]
+    fn a_unit_variant_a_token_and_a_zero_width_node_own_nothing() {
+        // `x // c`: x stored as a unit variant, then a zero-width named node, then the extra
+        let children = [
+            child(1, true, false, (0, 0), (0, 1)),
+            child(2, true, false, (0, 0), (1, 1)),
+            child(3, false, true, (0, 0), (2, 6)),
+        ];
+        let routes = [Route::Slot { slot: 0, scalar: true }, Route::Slot { slot: 1, scalar: false }, Route::Trivia];
+        let placement = place(&ReadCtx::new("", 0), &children, &routes, true, no_gap);
+        assert!(!placement.sides[0].owner && !placement.sides[1].owner);
+        // no owner child: rule 4, a named child precedes, so the node's own trailing
+        assert_eq!(spans(&placement.own_trailing), vec![(2, true, 0)]);
+    }
+
+    #[test]
+    fn with_no_owner_child_an_extra_takes_the_inner_gap_its_kind_names() {
+        // `{ /* c */ }`: `{`, extra, `}`
+        let children = [
+            child(1, false, false, (0, 0), (0, 1)),
+            child(2, false, true, (0, 0), (2, 9)),
+            child(3, false, false, (0, 0), (10, 11)),
+        ];
+        fn gap(preceding: u16) -> Option<&'static str> {
+            (preceding == 1).then_some("statements")
+        }
+        let placement = place(&ReadCtx::new("", 0), &children, &owner_routes(&children), true, gap);
+        assert_eq!(spans(&placement.inner["statements"]), vec![(2, false, 0)]);
+        assert!(placement.own_leading.is_empty() && placement.own_trailing.is_empty());
+    }
+
+    #[test]
+    fn a_node_that_owns_nothing_keeps_no_extra_of_its_own() {
+        let children = [child(1, false, true, (0, 0), (0, 4))];
+        let placement = place(&ReadCtx::new("", 0), &children, &owner_routes(&children), false, no_gap);
+        assert!(placement.own_leading.is_empty() && placement.own_trailing.is_empty() && placement.inner.is_empty());
+    }
+
+    #[test]
+    fn an_error_child_is_placed_as_trivia() {
+        // an ERROR is surveyed with `trivia: true`; it leads the next owner like an extra
+        let children = [child(1, true, true, (0, 0), (0, 3)), child(2, true, false, (1, 1), (4, 5))];
+        let placement = place(&ReadCtx::new("", 0), &children, &owner_routes(&children), true, no_gap);
+        assert_eq!(spans(&placement.sides[1].leading), vec![(0, false, 0)]);
+    }
+
+    #[test]
+    fn the_parents_entries_come_before_the_nodes_own() {
+        let children = [child(1, true, false, (0, 0), (0, 1)), child(2, false, true, (0, 0), (2, 6))];
+        let routes = [Route::Slot { slot: 0, scalar: true }, Route::Trivia];
+        let placement = place(&ReadCtx::new("", 0), &children, &routes, true, no_gap);
+        let parent = Sides {
+            owner: true,
+            leading: vec![],
+            trailing: vec![Entry { coord: NodeCoordinate::new(0, Span { start: 40, end: 44 }), same_line: true, tokens_between: 0 }],
+        };
+        let layout = placement.into_layout::<()>(parent).expect("entries");
+        let trailing = layout.trivia.unwrap().trailing.unwrap();
+        assert_eq!(trailing.iter().map(|e| e.value.coord().unwrap().span.start).collect::<Vec<_>>(), vec![40, 2]);
     }
 }
