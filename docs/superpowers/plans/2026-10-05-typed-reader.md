@@ -4458,11 +4458,12 @@ Every read goes through the typed reader, and the wrap attaches members only. "T
    - `dropWireDelimiters`, `_hasSeparatorFlank`, `_separatorKindOf`;
    - stub hydration (`hydrateSelf`, `hydrateChild`), the `_ROUTES_<Kind>` tables and `_LIST_OWNER_KINDS`.
 5. **One form for an empty list.** The maintainer ruled that an empty list slot is `[]`, never absent and never `undefined`, for `repeat` and `optional(repeat1)` alike, in reads, factories and fixtures. 1a keeps today's split so that its parity holds: an empty `optional(repeat1)` reads as absent (`min = 1`). 1c ends the split:
+   - 1c starts with a census of the list slots whose value can be absent today: every stored list key the generated types mark `?`, by grammar, kind and slot. Item 8's gate checks each fixture and factory move against it.
    - The reader reads every empty list as `[]`. `min = 1` stays only on a list that must not be empty (`repeat1`), whose empty read is a missing child.
    - An optional list's transport field becomes `Vec<T>`, the arity § The transport declaration states, so the codec refuses a list that crosses absent.
    - A factory's input may omit a list, and the factory stores `[]`, so a built node has the one form too.
-   - No stored list key or list accessor has `?` or `undefined` in its TypeScript type. Today the key has it (`ClassDeclaration`'s `_decorator?:`) and the accessor does not (`decorators(): readonly Decorator[]`). A hole in an elided list (typescript's `[a, , b]`) stays an `undefined` item: it is a position in the list, not the slot.
-   - The parity harness's normalization rows, the text leaves today's read returns without slots, retire with it: an empty list then has one form.
+   - No list slot is optional: its stored key and its accessor have no `?` and no `| undefined` on the list itself. Today the key has it (`ClassDeclaration`'s `_decorator?:`) and the accessor does not (`decorators(): readonly Decorator[]`). The item type may still admit `undefined`, for a hole in an elided list (typescript's `[a, , b]`): a hole is a position in the list, not an absent slot.
+   - The parity harness goes with today's reader (item 6), and with it its normalization rows: the text leaves today's read returns without slots. The typed reader is then the only read. Such a node's empty list is `[]`, and its absent blank option is its blank arm, as the blank-option rule already reads it (typescript's `{}` and its `terminator`).
 6. **Removed from native code:**
    - `read_untyped_node.rs` (`UntypedNode` reading, `ReadDepth`, `HandleMint`, `ReadModel`, the stub and leaf readers, the per-node trivia read);
    - `UntypedNode`, `FieldValue` and `NodeHandle`;
@@ -4474,7 +4475,7 @@ Every read goes through the typed reader, and the wrap attaches members only. "T
 7. **Removed from `@sittir/common`:** `modelSlots`, the storage coercions and the stub machinery (`isStub`, `hydrateStub`).
 8. **Gates:**
    - rendered bytes and validation rows unchanged. The detached render of a node today's read holds as text, `{}` among them, keeps its text now that its typed transport carries an empty list;
-   - item 5's fixture and factory moves, listed: each one is a list slot that held nothing and now holds `[]`. Any other move stops the work;
+   - item 5's fixture and factory moves, each at a slot on item 5's census, from nothing to `[]`. A move at any other slot, or of any other shape, stops the work;
    - read parity (verification 3) by the validators that today read through the wrap, now reading through the typed reader with members attached;
    - depth (4), identity (6), unrouted children (7) and trivia ownership (8, `sittir tool trivia-placement`);
    - members on first access (5), with two `measure-heap.mts` populations:
