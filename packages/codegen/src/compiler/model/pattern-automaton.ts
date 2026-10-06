@@ -497,6 +497,17 @@ export function crossesLine(dfa: PatternDfa): boolean {
 	);
 }
 
+export function requiresNonSpace(dfa: PatternDfa): boolean {
+	const spaceOnly = reachableFrom(dfa, [0], (set) => !set.minus(SPACE.complement()).isEmpty());
+	return ![...spaceOnly].some((at) => dfa.states[at]!.accepting);
+}
+
+export function endsWithLineBreak(dfa: PatternDfa): boolean {
+	if (dfa.states[0]!.accepting) return false;
+	const into = dfa.states.flatMap((state) => state.edges.filter((edge) => dfa.states[edge.to]!.accepting));
+	return into.length > 0 && into.every((edge) => LINE_TERMINATORS.covers(edge.set));
+}
+
 export function admitsInside(dfa: PatternDfa, literal: string): boolean {
 	const live = coaccessible(dfa);
 	return [...reachableFrom(dfa, [0], () => true)].some((start) => {

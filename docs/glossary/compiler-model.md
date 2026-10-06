@@ -5248,6 +5248,18 @@ A compound can be built with no argument when every config slot (the slots no re
 
 A list that must hold at least one element is never built with no argument, whatever its element slot's multiplicity says; otherwise the compound rule applies.
 
+### `packages/codegen/src/compiler/model/trivia.ts::continuationTriviaKinds`
+
+The trivia kinds that are a line continuation. A kind is one when its default arm is a pattern whose every text ends at a line break (`endsWithLineBreak`) and cannot be all space (`requiresNonSpace`), and then every arm of that kind is one: python's `line_continuation` is layout in both arms, `newline` (`\` then a line break) and `nul` (`\` then NUL). Both facts are read off the pattern's automaton, so no kind name or text is matched. Whitespace trivia is merged into its gap as a seam; a continuation is the same kind of fact (layout the source carried between two tokens) with a backslash in it, so the render module answers its text as a seam too; the writer then extends the held trivia seam with it (several continuations in a row, or one after a space entry, keep all of their text), and a root edge leaves a held continuation standing since it already ends the line. Without that, an own-line trailing entry was joined by a line break written before its backslash, which ended the statement.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::endsWithLineBreak`
+
+Whether every text the pattern accepts ends with a line terminator: the start state does not accept and every edge into an accepting state is a line terminator. An accepting state may have edges out (`(?:x\n)+`): it is only entered by a line terminator, so every accepted text still ends in one.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::requiresNonSpace`
+
+Whether every text the pattern accepts holds a character that is not whitespace: no accepting state is reachable along whitespace edges alone.
+
 ### `packages/codegen/src/compiler/model/delimited.ts::stampDelimited`
 
 Stamps `delimited` on every compound whose render sequence opens and closes with a token (a literal or a leaf) around free text that can hold the closing delimiter: python `string`, rust `raw_string_literal` and `block_comment`, typescript `comment_block`. A content arm is hazardous when it is variable text (it reaches a pattern leaf, no node reference) and can start with a character that starts the closing delimiter. A kind with no hazardous arm gets nothing, so a composite around node content (`parenthesized_expression`) or one whose arms cannot hold the delimiter (rust `string_literal`, whose content pattern rejects `"`) is not checked. A closing delimiter that can start with a word character (`for`, an identifier) is skipped: a word delimiter is separated by a seam, so content cannot glue to it.

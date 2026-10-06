@@ -1,17 +1,6 @@
 {
     "backend": "native",
-    "commit": "3b1de72",
-    "baselineCounterChange": {
-        "reason": "builtRenderParse excludes kinds with no reparse host before the build outcome; the pinned population shrinks by the delimited kinds that previously failed",
-        "grammars": {
-            "python": {
-                "builtRenderParse": {
-                    "from": { "total": 1303, "pass": 1161 },
-                    "to": { "total": 1246, "pass": 1242 }
-                }
-            }
-        }
-    },
+    "commit": "61f2a5d",
     "grammars": {
         "python": {
             "hoistedKindCount": 45,
@@ -25,15 +14,10 @@
             "supertypeKindCount": 15,
             "validators": {
                 "builtRenderParse": {
-                    "astMatchPass": 1242,
-                    "failingKinds": [
-                        "factory: expression_statement",
-                        "factory: module",
-                        "ir: expression_statement",
-                        "ir: module"
-                    ],
+                    "astMatchPass": 1246,
+                    "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1242,
+                    "pass": 1246,
                     "total": 1246
                 },
                 "coverage": {
@@ -255,8 +239,8 @@
         }
     },
     "totals": {
-        "fail": 7,
-        "pass": 16755,
+        "fail": 3,
+        "pass": 16759,
         "total": 16762
     }
 }

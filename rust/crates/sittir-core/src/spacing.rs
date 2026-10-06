@@ -464,7 +464,8 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// edges it meets there, and which a later mark never replaces. Only a
     /// line-terminated entry's break still floors it, since without that
     /// break what follows would read as the entry's text; a break the line
-    /// already ended satisfies one line break of the edge.
+    /// already ended satisfies one line break of the edge. A line continuation
+    /// held at that gap already ends the line, so it stands.
     fn root_edge(&mut self, arm: u16, strength: u8) {
         let Some(table) = self.table else {
             return;
@@ -474,7 +475,12 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             text.remove(0);
         }
         let floor = self.line_end_held == Some(crate::render::LineHold::Terminated) && self.seam.is_some() && self.seam_text.contains('\n');
-        if !(floor && self.seam.is_some_and(|held| held >= seam_rank(&text))) {
+        let continuation_held = self.seam.is_some()
+            && self.seam_strength == SEAM_TRIVIA
+            && self.seam_text.ends_with('\n')
+            && self.seam_text.chars().any(|c| !c.is_whitespace())
+            && text.matches('\n').count() <= 1;
+        if !continuation_held && !(floor && self.seam.is_some_and(|held| held >= seam_rank(&text))) {
             self.seam = Some(seam_rank(&text));
             self.seam_strength = strength;
             self.seam_is_flank = false;
@@ -616,7 +622,15 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     }
 
     fn trivia_seam(&mut self, text: &str) {
-        self.merge_seam_with(text, SEAM_TRIVIA);
+        let continues = self.seam.is_some()
+            && self.seam_strength == SEAM_TRIVIA
+            && !text.starts_with(char::is_whitespace);
+        if continues {
+            self.seam_text.push_str(text);
+            self.seam = Some(seam_rank(&self.seam_text));
+        } else {
+            self.merge_seam_with(text, SEAM_TRIVIA);
+        }
         self.seam_is_token = true;
     }
 
@@ -1012,6 +1026,30 @@ mod sink_tests {
                 w.text("}").unwrap();
             }),
             "{\n\n}"
+        );
+    }
+
+    #[test]
+    fn a_trivia_seam_that_starts_with_a_visible_character_extends_the_held_one() {
+        assert_eq!(
+            run(|w| {
+                w.text("a").unwrap();
+                w.seam(" ");
+                w.trivia_seam(" ");
+                w.trivia_seam("\\\n");
+                w.trivia_seam("\\\n");
+                w.text("b").unwrap();
+            }),
+            "a \\\n\\\nb"
+        );
+        assert_eq!(
+            run(|w| {
+                w.text("a").unwrap();
+                w.seam(" ");
+                w.trivia_seam("\\\n");
+                w.text("b").unwrap();
+            }),
+            "a\\\nb"
         );
     }
 

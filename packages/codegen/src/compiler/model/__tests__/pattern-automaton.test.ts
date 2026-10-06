@@ -5,7 +5,7 @@ import { allGrammars, grammarPackage, sittirDirOf } from '../../../grammars.ts';
 import { compileGrammar } from '../../compile.ts';
 import { loadGeneratedIdTables } from '../../generated-metadata.ts';
 import { anchoredLeafRegex } from '../leaf-pattern.ts';
-import { admitsInside, dfaAccepts, leadingChars, opensLineEnd, patternDfa, shortestAccepted, type PatternDfa } from '../pattern-automaton.ts';
+import { admitsInside, dfaAccepts, endsWithLineBreak, leadingChars, opensLineEnd, patternDfa, requiresNonSpace, shortestAccepted, type PatternDfa } from '../pattern-automaton.ts';
 import { lineTerminated, lineTerminatedKinds, triviaKinds } from '../trivia.ts';
 
 type NodeMap = Awaited<ReturnType<typeof compileGrammar>>['nodeMap'];
@@ -138,6 +138,25 @@ describe('pattern automaton', () => {
 			expect([...lineTerminatedKinds(await nodeMapOf(grammar))].sort(), grammar).toEqual(kinds);
 		}
 	}, 120_000);
+});
+
+describe('endsWithLineBreak and requiresNonSpace', () => {
+	const dfa = (pattern: string) => patternDfa(pattern)!;
+
+	it('finds a pattern whose every text ends at a line break', () => {
+		expect(endsWithLineBreak(dfa('\\\\(?:\\r)?\\n'))).toBe(true);
+		expect(endsWithLineBreak(dfa('#.*'))).toBe(false);
+		expect(endsWithLineBreak(dfa('\\n'))).toBe(true);
+		expect(endsWithLineBreak(dfa('a\\nb'))).toBe(false);
+		expect(endsWithLineBreak(dfa('(?:x\\n)+'))).toBe(true);
+		expect(endsWithLineBreak(dfa('(?:x\\n)+x?'))).toBe(false);
+	});
+
+	it('tells a pattern that needs a visible character from one that can be all space', () => {
+		expect(requiresNonSpace(dfa('\\\\(?:\\r)?\\n'))).toBe(true);
+		expect(requiresNonSpace(dfa('\\n'))).toBe(false);
+		expect(requiresNonSpace(dfa('[ \\t]*'))).toBe(false);
+	});
 });
 
 describe('admitsInside', () => {
