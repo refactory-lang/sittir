@@ -449,7 +449,7 @@ Whether a repo-relative path is a codegen source that takes part in generation: 
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::landsOnItsOwnCadence`
 
-`test-fixtures.json` and `test-fixtures.left-out.json`: generated, tracked, and committed with a validation run instead of with the source change that produced them. They are left out of the file hashes and out of the trusted-commit comparison alike.
+`test-fixtures.json` and `test-fixtures.left-out.json`: generated, tracked, and committed with a validation run instead of with the source change that produced them. They are left out of the file hashes and out of the trusted-commit comparison alike. `.sittir/bindings.json` is left out the same way: the bindings inventory writes it, not generation, and its own key against `bindings.scm` decides whether it is fresh (`readBindingFacts`).
 
 ### `packages/codegen/src/scripts/native-binary-freshness.ts::module`
 

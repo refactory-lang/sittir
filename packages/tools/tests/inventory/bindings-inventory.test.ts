@@ -11,7 +11,7 @@ import {
 	inventoryGrammars,
 	vocabularyDisagreements
 } from '../../src/inventory/index.ts';
-import { type Derivation, levelMembers } from '../../src/inventory/derive.ts';
+import { type Derivation, levelMembers } from '@sittir/codegen/bindings';
 import { readVocabulary } from '../../src/inventory/vocabulary.ts';
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));

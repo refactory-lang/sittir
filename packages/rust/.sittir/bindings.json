@@ -1,0 +1,2417 @@
+{
+	"bindingsHash": "d7af698f993bb63b30b56087936024c5b24f149651199e3c9a120c4731f3130f",
+	"facts": {
+		"claims": [
+			{
+				"vocab": "module",
+				"kind": "source_file",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.function",
+				"kind": "function_item",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.function.signature",
+				"kind": "function_signature_item",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.method.signature",
+				"kind": "function_signature_item",
+				"predicates": [],
+				"toplevel": false,
+				"within": [
+					"declaration_list",
+					"trait_item"
+				],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.method",
+				"kind": "function_item",
+				"predicates": [],
+				"toplevel": false,
+				"within": [
+					"declaration_list",
+					"impl_item_body"
+				],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.method.static",
+				"kind": "function_item",
+				"predicates": [],
+				"toplevel": false,
+				"within": [
+					"declaration_list",
+					"impl_item_body"
+				],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.extension",
+				"kind": "impl_item_body",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.extension",
+				"kind": "impl_item_semi",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.extension.conformance",
+				"kind": "impl_item_body",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.interface.trait",
+				"kind": "trait_item",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.method",
+				"kind": "function_item",
+				"predicates": [],
+				"toplevel": false,
+				"within": [
+					"declaration_list",
+					"trait_item"
+				],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.struct",
+				"kind": "struct_item",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.enum",
+				"kind": "enum_item",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.enum_member",
+				"kind": "enum_variant",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.enum_member.tuple",
+				"kind": "enum_variant",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.enum_member.struct",
+				"kind": "enum_variant",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.union",
+				"kind": "union_item",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.type_alias",
+				"kind": "type_item",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.type_alias.associated",
+				"kind": "associated_type",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.module",
+				"kind": "mod_item",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.module.foreign",
+				"kind": "foreign_mod_item",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "statement.import.crate",
+				"kind": "extern_crate_declaration",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.constant",
+				"kind": "const_item",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.variable.static",
+				"kind": "static_item",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.variable",
+				"kind": "let_declaration",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.field",
+				"kind": "field_declaration",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.macro",
+				"kind": "macro_definition",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.parameter",
+				"kind": "parameter",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.parameter.self",
+				"kind": "self_parameter",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.parameter.variadic",
+				"kind": "variadic_parameter",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.parameter",
+				"kind": "_",
+				"predicates": [],
+				"toplevel": false,
+				"within": [
+					"closure_parameters"
+				],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.type_parameter",
+				"kind": "type_parameter",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.type_parameter.const",
+				"kind": "const_parameter",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "declaration.type_parameter.lifetime",
+				"kind": "lifetime_parameter",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "statement.block",
+				"kind": "block",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "statement.if",
+				"kind": "if_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "statement.loop",
+				"kind": "loop_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "statement.loop.while",
+				"kind": "while_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "statement.loop.for",
+				"kind": "for_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "statement.return",
+				"kind": "return_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "statement.match",
+				"kind": "match_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "statement.import",
+				"kind": "use_declaration",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "statement.expression",
+				"kind": "expression_statement",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "statement.empty",
+				"kind": "empty_statement",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "statement.break",
+				"kind": "break_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "statement.continue",
+				"kind": "continue_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "clause.where",
+				"kind": "where_clause",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "clause.where.predicate",
+				"kind": "where_predicate",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "clause.else",
+				"kind": "else_clause",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "clause.let",
+				"kind": "let_condition",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "clause.let.chain",
+				"kind": "let_chain",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "clause.match.arm",
+				"kind": "match_arm",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "clause.match.arm.last",
+				"kind": "last_match_arm",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "clause.import.as",
+				"kind": "use_as_clause",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "clause.import.list",
+				"kind": "use_list",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "clause.import.list.scoped",
+				"kind": "scoped_use_list",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "clause.import.wildcard",
+				"kind": "use_wildcard",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "clause.macro.rule",
+				"kind": "macro_rule",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "clause.bounds",
+				"kind": "trait_bounds",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "clause.bounds.higher_ranked",
+				"kind": "higher_ranked_trait_bound",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "clause.bounds.removed",
+				"kind": "removed_trait_bound",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "clause.bounds.use",
+				"kind": "use_bounds",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "clause.lifetimes",
+				"kind": "for_lifetimes",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "element.struct.field",
+				"kind": "field_initializer",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "element.struct.field.shorthand",
+				"kind": "shorthand_field_initializer",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "element.struct.base",
+				"kind": "base_field_initializer",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "element.type_binding",
+				"kind": "type_binding",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "element.macro.token_tree",
+				"kind": "token_tree",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "element.macro.token_tree.delimited",
+				"kind": "delim_token_tree",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "element.macro.token_tree.pattern",
+				"kind": "token_tree_pattern",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "element.macro.token_binding",
+				"kind": "token_binding_pattern",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "element.macro.token_repetition",
+				"kind": "token_repetition",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "element.macro.token_repetition.pattern",
+				"kind": "token_repetition_pattern",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "element.macro.fragment",
+				"kind": "fragment_specifier",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.call",
+				"kind": "call_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.call.member",
+				"kind": "call_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.call.path",
+				"kind": "call_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.call.macro",
+				"kind": "macro_invocation",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.binary",
+				"kind": "binary_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.binary.arithmetic.add",
+				"kind": "binary_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": "+"
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.binary.arithmetic.subtract",
+				"kind": "binary_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": "-"
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.binary.arithmetic.multiply",
+				"kind": "binary_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": "*"
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.binary.arithmetic.divide",
+				"kind": "binary_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": "/"
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.binary.arithmetic.modulo",
+				"kind": "binary_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": "%"
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.binary.comparison.equal",
+				"kind": "binary_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": "=="
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.binary.comparison.not_equal",
+				"kind": "binary_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": "!="
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.binary.comparison.less",
+				"kind": "binary_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": "<"
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.binary.comparison.greater",
+				"kind": "binary_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": ">"
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.binary.comparison.less_equal",
+				"kind": "binary_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": "<="
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.binary.comparison.greater_equal",
+				"kind": "binary_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": ">="
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.binary.bitwise.and",
+				"kind": "binary_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": "&"
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.binary.bitwise.or",
+				"kind": "binary_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": "|"
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.binary.bitwise.xor",
+				"kind": "binary_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": "^"
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.binary.shift.left",
+				"kind": "binary_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": "<<"
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.binary.shift.right",
+				"kind": "binary_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": ">>"
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.binary.logical.and",
+				"kind": "binary_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": "&&"
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.binary.logical.or",
+				"kind": "binary_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": "||"
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.unary",
+				"kind": "unary_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.unary.negation",
+				"kind": "unary_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": [
+					"-"
+				]
+			},
+			{
+				"vocab": "expression.unary.not",
+				"kind": "unary_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": [
+					"!"
+				]
+			},
+			{
+				"vocab": "expression.unary.deref",
+				"kind": "unary_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": [
+					"*"
+				]
+			},
+			{
+				"vocab": "expression.reference",
+				"kind": "reference_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.try",
+				"kind": "try_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.assignment.compound",
+				"kind": "compound_assignment_expr",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.assignment.compound.add",
+				"kind": "compound_assignment_expr",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": "+="
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.assignment.compound.subtract",
+				"kind": "compound_assignment_expr",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": "-="
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.assignment.compound.multiply",
+				"kind": "compound_assignment_expr",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": "*="
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.assignment.compound.divide",
+				"kind": "compound_assignment_expr",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": "/="
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.assignment.compound.modulo",
+				"kind": "compound_assignment_expr",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": "%="
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.assignment.compound.bitwise_and",
+				"kind": "compound_assignment_expr",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": "&="
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.assignment.compound.bitwise_or",
+				"kind": "compound_assignment_expr",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": "|="
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.assignment.compound.bitwise_xor",
+				"kind": "compound_assignment_expr",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": "^="
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.assignment.compound.shift_left",
+				"kind": "compound_assignment_expr",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": "<<="
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.assignment.compound.shift_right",
+				"kind": "compound_assignment_expr",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {
+					"operator": ">>="
+				},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.assignment",
+				"kind": "assignment_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.member",
+				"kind": "field_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.subscript",
+				"kind": "index_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.lambda",
+				"kind": "closure_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.await",
+				"kind": "await_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.yield",
+				"kind": "yield_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.range",
+				"kind": "range_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.cast.as",
+				"kind": "type_cast_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.parenthesized",
+				"kind": "parenthesized_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.collection.tuple",
+				"kind": "tuple_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.collection.list",
+				"kind": "array_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.collection.struct",
+				"kind": "struct_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.unit",
+				"kind": "unit_expression",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.block.unsafe",
+				"kind": "unsafe_block",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.block.async",
+				"kind": "async_block",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.block.const",
+				"kind": "const_block",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.block.try",
+				"kind": "try_block",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.block.gen",
+				"kind": "gen_block",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "expression.instantiation",
+				"kind": "generic_function",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "identifier.scoped",
+				"kind": "scoped_identifier",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "pattern.match",
+				"kind": "match_pattern",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "pattern.tuple",
+				"kind": "tuple_pattern",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "pattern.tuple.struct",
+				"kind": "tuple_struct_pattern",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "pattern.struct",
+				"kind": "struct_pattern",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "pattern.struct.field",
+				"kind": "field_pattern",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "pattern.struct.rest",
+				"kind": "remaining_field_pattern",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "pattern.slice",
+				"kind": "slice_pattern",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "pattern.or",
+				"kind": "or_pattern",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "pattern.range",
+				"kind": "range_pattern",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "pattern.reference",
+				"kind": "ref_pattern",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "pattern.reference.value",
+				"kind": "reference_pattern",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "pattern.mutable",
+				"kind": "mut_pattern",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "pattern.captured",
+				"kind": "captured_pattern",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "pattern.generic",
+				"kind": "generic_pattern",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "pattern.wildcard",
+				"kind": "wildcard_pattern",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "type.primitive",
+				"kind": "primitive_type",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "type.generic",
+				"kind": "generic_type",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "type.generic.turbofish",
+				"kind": "generic_type_with_turbofish",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "element.type_argument",
+				"kind": "type_argument",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "type.reference",
+				"kind": "reference_type",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "type.pointer",
+				"kind": "pointer_type",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "type.array",
+				"kind": "array_type",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "type.tuple",
+				"kind": "tuple_type",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "type.unit",
+				"kind": "unit_type",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "type.primitive.never",
+				"kind": "never_type",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "type.function",
+				"kind": "function_type",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "type.abstract",
+				"kind": "abstract_type",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "type.dynamic",
+				"kind": "dynamic_type",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "type.bounded",
+				"kind": "bounded_type",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "type.qualified",
+				"kind": "qualified_type",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "type.bracketed",
+				"kind": "bracketed_type",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "type.path",
+				"kind": "scoped_type_identifier",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "type.path.expression",
+				"kind": "scoped_type_identifier_in_expression_position",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "type.named.prelude",
+				"kind": "type_identifier",
+				"predicates": [
+					{
+						"operator": "match",
+						"capture": "type.named.prelude",
+						"arguments": [
+							{
+								"text": "^(Option|Result|String|Vec|Box)$"
+							}
+						]
+					}
+				],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "literal.string",
+				"kind": "string_literal",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "literal.string.raw",
+				"kind": "raw_string_literal",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "literal.char",
+				"kind": "char_literal",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "literal.string.escape",
+				"kind": "escape_sequence",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "literal.number.integer",
+				"kind": "integer_literal",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "literal.number.integer.hex",
+				"kind": "integer_literal_hex",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "literal.number.float",
+				"kind": "float_literal",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "literal.number.negative",
+				"kind": "negative_literal",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "literal.boolean",
+				"kind": "boolean_literal",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "literal.boolean.true",
+				"kind": "boolean_literal",
+				"predicates": [
+					{
+						"operator": "eq",
+						"capture": "literal.boolean.true",
+						"arguments": [
+							{
+								"text": "true"
+							}
+						]
+					}
+				],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "literal.boolean.false",
+				"kind": "boolean_literal",
+				"predicates": [
+					{
+						"operator": "eq",
+						"capture": "literal.boolean.false",
+						"arguments": [
+							{
+								"text": "false"
+							}
+						]
+					}
+				],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "identifier",
+				"kind": "identifier",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "identifier.type",
+				"kind": "type_identifier",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "identifier.field",
+				"kind": "field_identifier",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "identifier.metavariable",
+				"kind": "metavariable",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "identifier.lifetime",
+				"kind": "lifetime",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "identifier.label",
+				"kind": "label",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "identifier.self",
+				"kind": "self",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "identifier.super",
+				"kind": "super",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "identifier.crate",
+				"kind": "crate",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "modifier.visibility",
+				"kind": "visibility_modifier",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "modifier.visibility.pub",
+				"kind": "visibility_modifier_pub",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "modifier.extern",
+				"kind": "extern_modifier",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "attribute",
+				"kind": "attribute_item",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "attribute.inner",
+				"kind": "inner_attribute_item",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "attribute.content",
+				"kind": "attribute",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "comment.line",
+				"kind": "line_comment",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "comment.block",
+				"kind": "block_comment",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "comment.line.doc",
+				"kind": "line_comment",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "comment.line.doc.inner",
+				"kind": "line_comment",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "comment.block.doc",
+				"kind": "block_comment",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			},
+			{
+				"vocab": "comment.block.doc.inner",
+				"kind": "block_comment",
+				"predicates": [],
+				"toplevel": true,
+				"within": [],
+				"fieldLiterals": {},
+				"tokens": []
+			}
+		],
+		"members": [
+			{
+				"route": "presence",
+				"owner": "function_item",
+				"name": "async",
+				"token": "async",
+				"via": [
+					"function_modifiers"
+				]
+			},
+			{
+				"route": "presence",
+				"owner": "function_item",
+				"name": "const",
+				"token": "const",
+				"via": [
+					"function_modifiers"
+				]
+			},
+			{
+				"route": "presence",
+				"owner": "function_item",
+				"name": "unsafe",
+				"token": "unsafe",
+				"via": [
+					"function_modifiers"
+				]
+			},
+			{
+				"route": "presence",
+				"owner": "function_item",
+				"name": "default",
+				"token": "default",
+				"via": [
+					"function_modifiers"
+				]
+			},
+			{
+				"route": "nested",
+				"owner": "function_item",
+				"name": "extern",
+				"parent": "function_modifiers",
+				"multiple": false,
+				"via": [
+					"function_modifiers"
+				],
+				"field": null,
+				"kind": "extern_modifier",
+				"after": null
+			},
+			{
+				"route": "nested",
+				"owner": "impl_item_body",
+				"name": "receiver",
+				"parent": "attributed_parameter",
+				"multiple": false,
+				"via": [
+					"attributed_parameter",
+					"parameters_elements",
+					"parameters",
+					"function_item",
+					"declaration_list"
+				],
+				"field": null,
+				"kind": "self_parameter",
+				"after": null
+			},
+			{
+				"route": "nested",
+				"owner": "impl_item_body",
+				"name": "implements",
+				"parent": "_",
+				"multiple": false,
+				"via": [
+					"_"
+				],
+				"field": "trait",
+				"kind": null,
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "trait_item",
+				"name": "extends",
+				"field": "bounds",
+				"kind": null,
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "type_item",
+				"name": "value",
+				"field": "type",
+				"kind": null,
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "let_declaration",
+				"name": "name",
+				"field": "pattern",
+				"kind": null,
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "parameter",
+				"name": "name",
+				"field": "name",
+				"kind": null,
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "parameter",
+				"name": "mutable",
+				"field": null,
+				"kind": "mutable_specifier",
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "self_parameter",
+				"name": "mutable",
+				"field": null,
+				"kind": "mutable_specifier",
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "type_parameter",
+				"name": "constraint",
+				"field": "bounds",
+				"kind": null,
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "type_parameter",
+				"name": "default",
+				"field": "default_type",
+				"kind": null,
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "for_expression",
+				"name": "left",
+				"field": "pattern",
+				"kind": null,
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "for_expression",
+				"name": "right",
+				"field": "value",
+				"kind": null,
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "return_expression",
+				"name": "expression",
+				"field": null,
+				"kind": null,
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "match_expression",
+				"name": "subject",
+				"field": "value",
+				"kind": null,
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "call_expression",
+				"name": "function",
+				"field": "function",
+				"kind": "field_expression",
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "call_expression",
+				"name": "function",
+				"field": "function",
+				"kind": "scoped_identifier",
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "macro_invocation",
+				"name": "function",
+				"field": "macro",
+				"kind": null,
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "macro_invocation",
+				"name": "arguments",
+				"field": "arguments",
+				"kind": "delim_token_tree",
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "unary_expression",
+				"name": "argument",
+				"field": null,
+				"kind": null,
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "unary_expression",
+				"name": "argument",
+				"field": null,
+				"kind": null,
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "unary_expression",
+				"name": "argument",
+				"field": null,
+				"kind": null,
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "unary_expression",
+				"name": "argument",
+				"field": null,
+				"kind": null,
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "reference_expression",
+				"name": "argument",
+				"field": "value",
+				"kind": null,
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "try_expression",
+				"name": "argument",
+				"field": null,
+				"kind": null,
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "field_expression",
+				"name": "object",
+				"field": "value",
+				"kind": null,
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "field_expression",
+				"name": "property",
+				"field": "field",
+				"kind": null,
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "index_expression",
+				"name": "object",
+				"field": null,
+				"kind": null,
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "index_expression",
+				"name": "index",
+				"field": null,
+				"kind": null,
+				"after": {
+					"field": null,
+					"kind": null,
+					"after": null
+				}
+			},
+			{
+				"route": "rename",
+				"owner": "closure_expression",
+				"name": "body",
+				"field": "body",
+				"kind": null,
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "await_expression",
+				"name": "expression",
+				"field": null,
+				"kind": null,
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "type_argument",
+				"name": "constraint",
+				"field": null,
+				"kind": "trait_bounds",
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "string_literal",
+				"name": "content",
+				"field": null,
+				"kind": "string_content",
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "raw_string_literal",
+				"name": "content",
+				"field": "string_content",
+				"kind": "string_content",
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "attribute_item",
+				"name": "content",
+				"field": null,
+				"kind": "attribute",
+				"after": null
+			},
+			{
+				"route": "rename",
+				"owner": "inner_attribute_item",
+				"name": "content",
+				"field": null,
+				"kind": "attribute",
+				"after": null
+			}
+		],
+		"containers": [
+			{
+				"kind": "attributed_enum_variant",
+				"element": {
+					"field": null,
+					"kind": null,
+					"after": {
+						"field": null,
+						"kind": "attribute_item",
+						"after": null
+					}
+				},
+				"captures": [
+					{
+						"name": "attributes",
+						"token": null,
+						"multiple": true,
+						"field": null,
+						"kind": "attribute_item",
+						"after": null
+					}
+				],
+				"dropped": [],
+				"reason": null,
+				"pattern": {
+					"line": 28,
+					"source": "(attributed_enum_variant (attribute_item)* @attributes (_) @element)"
+				}
+			},
+			{
+				"kind": "attributed_field_declaration",
+				"element": {
+					"field": null,
+					"kind": null,
+					"after": {
+						"field": null,
+						"kind": "attribute_item",
+						"after": null
+					}
+				},
+				"captures": [
+					{
+						"name": "attributes",
+						"token": null,
+						"multiple": true,
+						"field": null,
+						"kind": "attribute_item",
+						"after": null
+					}
+				],
+				"dropped": [],
+				"reason": null,
+				"pattern": {
+					"line": 39,
+					"source": "(attributed_field_declaration (attribute_item)* @attributes (_) @element)"
+				}
+			},
+			{
+				"kind": "attributed_parameter",
+				"element": {
+					"field": null,
+					"kind": null,
+					"after": {
+						"field": null,
+						"kind": "attribute_item",
+						"after": null
+					}
+				},
+				"captures": [],
+				"dropped": [
+					{
+						"field": null,
+						"kind": "attribute_item",
+						"after": null
+					}
+				],
+				"reason": "the element admits the _type supertype, so an attributes capture would reach only some of the kinds it holds",
+				"pattern": {
+					"line": 47,
+					"source": "((attributed_parameter (attribute_item)? @dropped (_) @element) (#set! reason \"the element admits the _type supertype, so an attributes capture would reach only some of the kinds it holds\"))"
+				}
+			},
+			{
+				"kind": "attributed_type_parameter",
+				"element": {
+					"field": null,
+					"kind": null,
+					"after": {
+						"field": null,
+						"kind": "attribute_item",
+						"after": null
+					}
+				},
+				"captures": [
+					{
+						"name": "attributes",
+						"token": null,
+						"multiple": true,
+						"field": null,
+						"kind": "attribute_item",
+						"after": null
+					}
+				],
+				"dropped": [],
+				"reason": null,
+				"pattern": {
+					"line": 51,
+					"source": "(attributed_type_parameter (attribute_item)* @attributes (_) @element)"
+				}
+			},
+			{
+				"kind": "attributed_argument",
+				"element": {
+					"field": null,
+					"kind": null,
+					"after": {
+						"field": null,
+						"kind": "attribute_item",
+						"after": null
+					}
+				},
+				"captures": [],
+				"dropped": [
+					{
+						"field": null,
+						"kind": "attribute_item",
+						"after": null
+					}
+				],
+				"reason": "the element is the _expression supertype, so an attributes capture would have no direct target",
+				"pattern": {
+					"line": 88,
+					"source": "((attributed_argument (attribute_item)* @dropped (_) @element) (#set! reason \"the element is the _expression supertype, so an attributes capture would have no direct target\"))"
+				}
+			}
+		],
+		"templates": [],
+		"unclaimed": [
+			{
+				"kind": "shebang",
+				"reason": "interpreter line, not an item"
+			},
+			{
+				"kind": "string_open",
+				"reason": "string delimiter, not content"
+			},
+			{
+				"kind": "raw_string_literal_start",
+				"reason": "string delimiter, not content"
+			},
+			{
+				"kind": "raw_string_literal_end",
+				"reason": "string delimiter, not content"
+			}
+		]
+	}
+}

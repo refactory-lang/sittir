@@ -1,27 +1,7 @@
+import type { ModelNode, SlotModel } from '@sittir/codegen/bindings';
 import { readNodeModelFile } from '../validate/common.ts';
 
-export interface ModelSlot {
-	readonly name: string;
-	readonly propertyName: string;
-	readonly required: boolean;
-	readonly multiple: boolean;
-	readonly storage: string;
-	readonly kinds: readonly string[];
-	readonly terminals: readonly string[];
-}
 
-export interface ModelNode {
-	readonly kind: string;
-	readonly modelType: string;
-	readonly slots: readonly ModelSlot[];
-	readonly subtypes: readonly string[];
-	readonly elementKinds: readonly string[];
-	readonly enumValues: readonly string[];
-	readonly text: string | null;
-	readonly pattern: string | null;
-}
-
-export type SlotModel = ReadonlyMap<string, ModelNode>;
 
 interface RawValue {
 	readonly kind?: string;
