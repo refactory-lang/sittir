@@ -56,6 +56,7 @@ export interface SitePreference {
 	readonly seat?: SeatedChild;
 	readonly path?: readonly PreferenceSegment[];
 	readonly edgeLiterals?: readonly string[];
+	readonly edgeArm?: { readonly parent: string; readonly token: string };
 }
 
 export interface SiteCandidate {
@@ -120,7 +121,8 @@ function resolveSitePreferences(config: SitePreferencesConfig, requireHit: boole
 				...(site.origin === undefined ? {} : { origin: site.origin }),
 				...(site.seat === undefined ? {} : { seat: site.seat }),
 				...(site.path === undefined ? {} : { path: site.path }),
-				...(site.edgeLiterals === undefined ? {} : { edgeLiterals: site.edgeLiterals })
+				...(site.edgeLiterals === undefined ? {} : { edgeLiterals: site.edgeLiterals }),
+				...(site.edgeArm === undefined ? {} : { edgeArm: site.edgeArm })
 			});
 		}
 	}

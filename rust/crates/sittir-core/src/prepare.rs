@@ -19,12 +19,35 @@ pub struct RenderContext<'a> {
 /// Fill a transport's unset base edges from its kind's edge row; an edge the wire already set keeps its arm.
 pub fn prepare_edges<T: Edged + ?Sized>(t: &mut T, ctx: &RenderContext<'_>) {
     let kind = t.kind_id();
+    let (before_arm, after_arm) = t.edge_arm_kinds(ctx);
     let edges = t.edges_mut();
     if edges.before.is_none() {
-        edges.before = ctx.options.edge_arm(kind, Side::Before, None).map(EdgeArm::from);
+        edges.before = ctx.options.edge_arm(kind, Side::Before, None, before_arm).map(EdgeArm::from);
     }
     if edges.after.is_none() {
-        edges.after = ctx.options.edge_arm(kind, Side::After, None).map(EdgeArm::from);
+        edges.after = ctx.options.edge_arm(kind, Side::After, None, after_arm).map(EdgeArm::from);
+    }
+}
+
+/// A slot that holds the token an edge's arm is chosen by: the arm among
+/// `arms` the value is (a built value by its kind, a coordinate by the kind of
+/// the node it names), or `None` when it holds none of them.
+pub trait ArmOf {
+    fn arm_among(&self, ctx: &RenderContext<'_>, arms: &[crate::options::ArmSite]) -> Option<KindId>;
+}
+
+impl<T: crate::view::KindOf, const ADJACENT: bool> ArmOf for SlotValue<T, ADJACENT> {
+    fn arm_among(&self, ctx: &RenderContext<'_>, arms: &[crate::options::ArmSite]) -> Option<KindId> {
+        match self {
+            SlotValue::Coord(coord) => coord.kind_in(ctx.sources).filter(|kind| arms.iter().any(|a| a.arm == kind.0)),
+            SlotValue::Transport(t) => arms.iter().map(|a| KindId(a.arm)).find(|kind| t.kind_in(&[*kind])),
+        }
+    }
+}
+
+impl<X: ArmOf> ArmOf for Option<X> {
+    fn arm_among(&self, ctx: &RenderContext<'_>, arms: &[crate::options::ArmSite]) -> Option<KindId> {
+        self.as_ref().and_then(|slot| slot.arm_among(ctx, arms))
     }
 }
 
@@ -565,7 +588,7 @@ mod tests {
     fn flank_edges(source: &str, from: crate::slot::FlankSource, span: Span, before: bool, after: bool) -> crate::options::Edges {
         use crate::options::{EdgeSite, SiteSpec};
         use crate::slot::SourceFlank;
-        static EDGES: [EdgeSite; 1] = [EdgeSite { before: 0, after: 1 }];
+        static EDGES: [EdgeSite; 1] = [EdgeSite { before: 0, after: 1, before_arms: &[], after_arms: &[] }];
         static EDGE_ROWS: [u16; 1] = [0];
         static SITES: [SiteSpec; 2] = [SiteSpec { default_arm: TIGHT, strength: 2 }, SiteSpec { default_arm: TIGHT, strength: 2 }];
         let sources = Sources(HashMap::from([(3, Arc::from(source))]));

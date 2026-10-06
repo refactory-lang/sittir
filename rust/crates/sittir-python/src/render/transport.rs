@@ -4439,8 +4439,18 @@ impl ::sittir_core::view::KindOf for SplatPatternOperatorTransportSlot {
 impl ::sittir_core::render::Render for SplatPatternOperatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            SplatPatternOperatorTransportSlot::Star => render_star(w),
-            SplatPatternOperatorTransportSlot::StarStar => render_star_star(w),
+            SplatPatternOperatorTransportSlot::Star => {
+                w.site_at(options::SITE_SPLAT_PATTERN_STAR_BEFORE);
+                let written = render_star(w);
+                written?;
+                Ok(())
+            }
+            SplatPatternOperatorTransportSlot::StarStar => {
+                w.site_at(options::SITE_SPLAT_PATTERN_STAR_STAR_BEFORE);
+                let written = render_star_star(w);
+                written?;
+                Ok(())
+            }
         }
     }
 }
@@ -4965,9 +4975,24 @@ impl ::sittir_core::view::KindOf for UnaryOperatorOperatorTransportSlot {
 impl ::sittir_core::render::Render for UnaryOperatorOperatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            UnaryOperatorOperatorTransportSlot::Plus => render_plus(w),
-            UnaryOperatorOperatorTransportSlot::Dash => render_dash(w),
-            UnaryOperatorOperatorTransportSlot::Tilde => render_tilde(w),
+            UnaryOperatorOperatorTransportSlot::Plus => {
+                w.site_at(options::SITE_UNARY_OPERATOR_PLUS_BEFORE);
+                let written = render_plus(w);
+                written?;
+                Ok(())
+            }
+            UnaryOperatorOperatorTransportSlot::Dash => {
+                w.site_at(options::SITE_UNARY_OPERATOR_DASH_BEFORE);
+                let written = render_dash(w);
+                written?;
+                Ok(())
+            }
+            UnaryOperatorOperatorTransportSlot::Tilde => {
+                w.site_at(options::SITE_UNARY_OPERATOR_TILDE_BEFORE);
+                let written = render_tilde(w);
+                written?;
+                Ok(())
+            }
         }
     }
 }
@@ -6698,6 +6723,52 @@ impl ::sittir_core::render::Render for TypeContentTransportSlot {
             TypeContentTransportSlot::None => render_none(w),
             TypeContentTransportSlot::Ellipsis => render_ellipsis(w),
             TypeContentTransportSlot::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum SplatTypeOperatorTransportSlot {
+    #[kind(display(kind::STAR))]
+    Star,
+    #[kind(kind::STAR_STAR)]
+    StarStar,
+}
+
+impl ::sittir_core::prepare::Prepare for SplatTypeOperatorTransportSlot {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            SplatTypeOperatorTransportSlot::Star => Ok(()),
+            SplatTypeOperatorTransportSlot::StarStar => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for SplatTypeOperatorTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Star => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
+            Self::StarStar => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for SplatTypeOperatorTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            SplatTypeOperatorTransportSlot::Star => {
+                w.site_at(options::SITE_SPLAT_TYPE_STAR_BEFORE);
+                let written = render_star(w);
+                written?;
+                Ok(())
+            }
+            SplatTypeOperatorTransportSlot::StarStar => {
+                w.site_at(options::SITE_SPLAT_TYPE_STAR_STAR_BEFORE);
+                let written = render_star_star(w);
+                written?;
+                Ok(())
+            }
         }
     }
 }
@@ -9146,17 +9217,72 @@ impl ::sittir_core::view::KindOf for ComparisonOperatorComparatorOperatorsTransp
 impl ::sittir_core::render::Render for ComparisonOperatorComparatorOperatorsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ComparisonOperatorComparatorOperatorsTransportSlot::Lt => render_lt(w),
-            ComparisonOperatorComparatorOperatorsTransportSlot::LtEq => render_lt_eq(w),
-            ComparisonOperatorComparatorOperatorsTransportSlot::EqEq => render_eq_eq(w),
-            ComparisonOperatorComparatorOperatorsTransportSlot::BangEq => render_bang_eq(w),
-            ComparisonOperatorComparatorOperatorsTransportSlot::GtEq => render_gt_eq(w),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Gt => render_gt(w),
-            ComparisonOperatorComparatorOperatorsTransportSlot::LtGt => render_lt_gt(w),
-            ComparisonOperatorComparatorOperatorsTransportSlot::InKeyword => render_in_keyword(w),
-            ComparisonOperatorComparatorOperatorsTransportSlot::NotIn => render_not_in(w),
-            ComparisonOperatorComparatorOperatorsTransportSlot::IsKeyword => render_is_keyword(w),
-            ComparisonOperatorComparatorOperatorsTransportSlot::IsNot => render_is_not(w),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Lt => {
+                w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_LT_BEFORE);
+                let written = render_lt(w);
+                written?;
+                Ok(())
+            }
+            ComparisonOperatorComparatorOperatorsTransportSlot::LtEq => {
+                w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_LT_EQ_BEFORE);
+                let written = render_lt_eq(w);
+                written?;
+                Ok(())
+            }
+            ComparisonOperatorComparatorOperatorsTransportSlot::EqEq => {
+                w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_EQ_EQ_BEFORE);
+                let written = render_eq_eq(w);
+                written?;
+                Ok(())
+            }
+            ComparisonOperatorComparatorOperatorsTransportSlot::BangEq => {
+                w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_BANG_EQ_BEFORE);
+                let written = render_bang_eq(w);
+                written?;
+                Ok(())
+            }
+            ComparisonOperatorComparatorOperatorsTransportSlot::GtEq => {
+                w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_GT_EQ_BEFORE);
+                let written = render_gt_eq(w);
+                written?;
+                Ok(())
+            }
+            ComparisonOperatorComparatorOperatorsTransportSlot::Gt => {
+                w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_GT_BEFORE);
+                let written = render_gt(w);
+                written?;
+                Ok(())
+            }
+            ComparisonOperatorComparatorOperatorsTransportSlot::LtGt => {
+                w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_LT_GT_BEFORE);
+                let written = render_lt_gt(w);
+                written?;
+                Ok(())
+            }
+            ComparisonOperatorComparatorOperatorsTransportSlot::InKeyword => {
+                w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_IN_KEYWORD_BEFORE);
+                let written = render_in_keyword(w);
+                written?;
+                Ok(())
+            }
+            ComparisonOperatorComparatorOperatorsTransportSlot::NotIn => {
+                w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_NOT_IN_BEFORE);
+                let written = render_not_in(w);
+                written?;
+                Ok(())
+            }
+            ComparisonOperatorComparatorOperatorsTransportSlot::IsKeyword => {
+                w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_IS_KEYWORD_BEFORE);
+                let written = render_is_keyword(w);
+                written?;
+                Ok(())
+            }
+            ComparisonOperatorComparatorOperatorsTransportSlot::IsNot => {
+                w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_IS_NOT_BEFORE);
+                let written = render_is_not(w);
+                written?;
+                Ok(())
+            }
         }
     }
 }
@@ -11974,6 +12100,10 @@ impl ::sittir_core::options::Edged for SplatPatternTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(189) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+    fn edge_arm_kinds(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> (Option<::sittir_core::types::KindId>, Option<::sittir_core::types::KindId>) {
+        use ::sittir_core::prepare::ArmOf;
+        (self.operator.arm_among(ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(189), ::sittir_core::options::Side::Before)), None)
+    }
 }
 
 impl ::sittir_core::render::Render for SplatPatternTransport {
@@ -12721,6 +12851,10 @@ impl ::sittir_core::options::Edged for UnaryOperatorTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(209) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+    fn edge_arm_kinds(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> (Option<::sittir_core::types::KindId>, Option<::sittir_core::types::KindId>) {
+        use ::sittir_core::prepare::ArmOf;
+        (self.operator.arm_among(ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(209), ::sittir_core::options::Side::Before)), None)
+    }
 }
 
 impl ::sittir_core::render::Render for UnaryOperatorTransport {
@@ -13375,7 +13509,7 @@ pub struct SplatTypeTransport {
     pub layout: Option<TransportLayout>,
     #[wire(key = "_operator")]
     #[slot(field = field::OPERATOR)]
-    pub operator: ::sittir_core::SlotValue<SplatPatternOperatorTransportSlot>,
+    pub operator: ::sittir_core::SlotValue<SplatTypeOperatorTransportSlot>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -13391,6 +13525,10 @@ impl ::sittir_core::options::Edged for SplatTypeTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(226) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+    fn edge_arm_kinds(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> (Option<::sittir_core::types::KindId>, Option<::sittir_core::types::KindId>) {
+        use ::sittir_core::prepare::ArmOf;
+        (self.operator.arm_among(ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(226), ::sittir_core::options::Side::Before)), None)
+    }
 }
 
 impl ::sittir_core::render::Render for SplatTypeTransport {
@@ -17543,6 +17681,10 @@ impl ::sittir_core::options::Edged for ComparisonOperatorComparatorTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(296) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+    fn edge_arm_kinds(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> (Option<::sittir_core::types::KindId>, Option<::sittir_core::types::KindId>) {
+        use ::sittir_core::prepare::ArmOf;
+        (self.operators.arm_among(ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(296), ::sittir_core::options::Side::Before)), None)
+    }
 }
 
 impl ::sittir_core::render::Render for ComparisonOperatorComparatorTransport {

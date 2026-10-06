@@ -373,3 +373,41 @@ describe('a kind edge over a choice of tokens cascades only a unanimous face', (
 		).toEqual(['range_before=space/preference']);
 	});
 });
+
+describe('a kind edge over a choice of tokens has one arm site per token', () => {
+	const kindEntries = [
+		{ kind: 'dot_dot', anon: true, symbolName: '..', literalText: '..', member: 'DotDot', id: 3 },
+		{ kind: 'dot_dot_eq', anon: true, symbolName: '..=', literalText: '..=', member: 'DotDotEq', id: 4 }
+	] as unknown as KindEntryLike[];
+	const inputs = [
+		{ kind: 'range', slot: 'range', address: 'range_before', label: 'range_before', edgeLiterals: ['dot_dot', 'dot_dot_eq'] },
+		{ kind: 'range', slot: 'dot_dot', address: 'dot_dot_before', label: 'dot_dot_before', edgeArm: { parent: 'range_before', token: 'dot_dot' } },
+		{ kind: 'range', slot: 'dot_dot_eq', address: 'dot_dot_eq_before', label: 'dot_dot_eq_before', edgeArm: { parent: 'range_before', token: 'dot_dot_eq' } }
+	];
+	const sites = addressSites(inputs, kindEntries, makeSiteKindsNodeMap(inputs));
+	const resolve = (rows: { path: string; arm: string }[]) =>
+		[...resolveBindings(rows, [], sites, NO_SUPERTYPES, false)].map(([i, v]) => `${sites[i]!.address}=${v.arm}/${v.origin}`).sort();
+
+	it('gives an arm site the path of its token and the kind edge as its parent', () => {
+		const arm = sites.find((site) => site.address === 'dot_dot_before')!;
+		expect(arm.path.map((segment) => segment.kind)).toEqual(['kind-match', 'literal', 'name']);
+		expect(arm.parentPath?.map((segment) => segment.kind)).toEqual(['kind-match', 'name']);
+	});
+	it('lets a face on one token resolve that arm alone', () => {
+		expect(resolve([{ path: '_/".."/before', arm: 'tight' }])).toEqual(['dot_dot_before=tight/literal-default']);
+	});
+	it('lets the kind’s own address set the edge and every arm', () => {
+		expect(resolve([{ path: 'range/before', arm: 'space' }])).toEqual([
+			'dot_dot_before=space/preference',
+			'dot_dot_eq_before=space/preference',
+			'range_before=space/preference'
+		]);
+	});
+	it('lets an arm’s own row win over the kind’s', () => {
+		expect(resolve([{ path: 'range/before', arm: 'space' }, { path: 'range/".."/before', arm: 'tight' }])).toEqual([
+			'dot_dot_before=tight/preference',
+			'dot_dot_eq_before=space/preference',
+			'range_before=space/preference'
+		]);
+	});
+});

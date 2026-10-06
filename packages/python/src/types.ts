@@ -6287,6 +6287,8 @@ export namespace SplatPattern {
 			readonly after?: SpacingArm;
 			readonly before?: SpacingArm;
 			readonly operator?: { readonly after?: SpacingArm };
+			readonly star?: { readonly before?: SpacingArm };
+			readonly starStar?: { readonly before?: SpacingArm };
 			readonly underscore?: { readonly before?: SpacingArm };
 		};
 	}
@@ -6455,7 +6457,10 @@ export namespace UnaryOperator {
 		readonly __optionsHint__?: {
 			readonly after?: SpacingArm;
 			readonly before?: SpacingArm;
+			readonly dash?: { readonly before?: SpacingArm };
 			readonly operator?: { readonly after?: SpacingArm };
+			readonly plus?: { readonly before?: SpacingArm };
+			readonly tilde?: { readonly before?: SpacingArm };
 		};
 	}
 }
@@ -6584,6 +6589,8 @@ export namespace SplatType {
 			readonly after?: SpacingArm;
 			readonly before?: SpacingArm;
 			readonly operator?: { readonly after?: SpacingArm };
+			readonly star?: { readonly before?: SpacingArm };
+			readonly starStar?: { readonly before?: SpacingArm };
 		};
 	}
 }
@@ -7520,8 +7527,19 @@ export namespace SuiteBlock {
 export namespace ComparisonOperatorComparator {
 	export interface Hints {
 		readonly __optionsHint__?: {
+			readonly IsNot?: { readonly before?: SpacingArm };
+			readonly NotIn?: { readonly before?: SpacingArm };
 			readonly after?: SpacingArm;
+			readonly bangEq?: { readonly before?: SpacingArm };
 			readonly before?: SpacingArm;
+			readonly eqEq?: { readonly before?: SpacingArm };
+			readonly gt?: { readonly before?: SpacingArm };
+			readonly gtEq?: { readonly before?: SpacingArm };
+			readonly inKeyword?: { readonly before?: SpacingArm };
+			readonly isKeyword?: { readonly before?: SpacingArm };
+			readonly lt?: { readonly before?: SpacingArm };
+			readonly ltEq?: { readonly before?: SpacingArm };
+			readonly ltGt?: { readonly before?: SpacingArm };
 			readonly operators?: { readonly after?: SpacingArm };
 		};
 	}

@@ -18,11 +18,13 @@ export interface SiteAddressInput {
 	readonly label: string;
 	readonly path?: readonly PreferenceSegment[];
 	readonly edgeLiterals?: readonly string[];
+	readonly edgeArm?: { readonly parent: string; readonly token: string };
 }
 
 export type AddressedSite<T extends SiteAddressInput = SiteAddressInput> = T & {
 	readonly path: readonly PreferenceSegment[];
 	readonly cascadePaths?: readonly (readonly PreferenceSegment[])[];
+	readonly parentPath?: readonly PreferenceSegment[];
 };
 
 export function addressSites<T extends SiteAddressInput>(
@@ -33,7 +35,9 @@ export function addressSites<T extends SiteAddressInput>(
 	return sites
 		.map((site) => {
 			const cascadePaths = cascadePathsOf(site, kindEntries, nodeMap);
-			return { ...site, path: pathOf(site, kindEntries, nodeMap), ...(cascadePaths === undefined ? {} : { cascadePaths }) };
+			const path = pathOf(site, kindEntries, nodeMap);
+			const parentPath = site.edgeArm === undefined ? undefined : [path[0]!, path[path.length - 1]!];
+			return { ...site, path, ...(cascadePaths === undefined ? {} : { cascadePaths }), ...(parentPath === undefined ? {} : { parentPath }) };
 		})
 		.sort((a, b) => comparePreferencePaths(a.path, b.path));
 }
@@ -123,8 +127,9 @@ export function matchAddressWith<T extends SiteAddressInput>(
 	const out: AddressHit<T>[] = [];
 	const cascades = isWildcardHead(address);
 	for (const site of sites) {
-		if (isPrefixOf(address, site.path, membersOf)) out.push({ site, cascade: false });
-		else if (cascades && site.cascadePaths !== undefined) {
+		if (isPrefixOf(address, site.path, membersOf) || (site.parentPath !== undefined && isPrefixOf(address, site.parentPath, membersOf))) {
+			out.push({ site, cascade: false });
+		} else if (cascades && site.cascadePaths !== undefined) {
 			const token = site.cascadePaths.findIndex((path) => isPrefixOf(address, path, membersOf));
 			if (token >= 0) out.push({ site, cascade: true, token });
 		}

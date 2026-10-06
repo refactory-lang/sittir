@@ -12185,8 +12185,10 @@ export namespace ImportAttribute {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
+			readonly assertKeyword?: { readonly before?: WhitespaceArm };
 			readonly attributeKind?: { readonly after?: WhitespaceArm };
 			readonly before?: WhitespaceArm;
+			readonly withKeyword?: { readonly before?: WhitespaceArm };
 		};
 	}
 }
@@ -12226,6 +12228,7 @@ export namespace LexicalDeclaration {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
+			readonly constKeyword?: { readonly before?: WhitespaceArm };
 			readonly declarators?: {
 				readonly end?: WhitespaceArm;
 				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
@@ -12234,6 +12237,7 @@ export namespace LexicalDeclaration {
 				readonly variableDeclaratorPlain?: { readonly after?: WhitespaceArm };
 			};
 			readonly kind?: { readonly after?: WhitespaceArm };
+			readonly letKeyword?: { readonly before?: WhitespaceArm };
 			readonly semi?: { readonly before?: WhitespaceArm };
 			readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 		};
@@ -12936,8 +12940,15 @@ export namespace UnaryExpression {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
+			readonly bang?: { readonly before?: WhitespaceArm };
 			readonly before?: WhitespaceArm;
+			readonly dash?: { readonly before?: WhitespaceArm };
+			readonly deleteKeyword?: { readonly before?: WhitespaceArm };
 			readonly operator?: { readonly after?: WhitespaceArm };
+			readonly plus?: { readonly before?: WhitespaceArm };
+			readonly tilde?: { readonly before?: WhitespaceArm };
+			readonly typeofKeyword?: { readonly before?: WhitespaceArm };
+			readonly voidKeyword?: { readonly before?: WhitespaceArm };
 		};
 	}
 }
@@ -13855,7 +13866,11 @@ export namespace ObjectType {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
 			readonly closing?: { readonly before?: WhitespaceArm };
+			readonly lbrace?: { readonly before?: WhitespaceArm };
+			readonly lbracePipe?: { readonly before?: WhitespaceArm };
 			readonly opening?: { readonly after?: WhitespaceArm };
+			readonly pipeRbrace?: { readonly after?: WhitespaceArm };
+			readonly rbrace?: { readonly after?: WhitespaceArm };
 		};
 	}
 }
@@ -13916,8 +13931,8 @@ export namespace Constraint {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly colon?: { readonly after?: WhitespaceArm };
-			readonly extendsKeyword?: { readonly after?: WhitespaceArm };
+			readonly colon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly extendsKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
 }
@@ -14278,7 +14293,9 @@ export namespace LiteralTypeNegativeNumber {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
+			readonly dash?: { readonly before?: WhitespaceArm };
 			readonly operator?: { readonly after?: WhitespaceArm };
+			readonly plus?: { readonly before?: WhitespaceArm };
 		};
 	}
 }
@@ -14462,7 +14479,9 @@ export namespace UpdateExpressionPostfix {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
+			readonly dashDash?: { readonly after?: WhitespaceArm };
 			readonly operator?: { readonly before?: WhitespaceArm };
+			readonly plusPlus?: { readonly after?: WhitespaceArm };
 		};
 	}
 }
@@ -14472,7 +14491,9 @@ export namespace UpdateExpressionPrefix {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
+			readonly dashDash?: { readonly before?: WhitespaceArm };
 			readonly operator?: { readonly after?: WhitespaceArm };
+			readonly plusPlus?: { readonly before?: WhitespaceArm };
 		};
 	}
 }

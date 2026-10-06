@@ -4696,9 +4696,24 @@ impl ::sittir_core::view::KindOf for TokenRepetitionPatternOperatorTransportSlot
 impl ::sittir_core::render::Render for TokenRepetitionPatternOperatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            TokenRepetitionPatternOperatorTransportSlot::Plus => render_plus(w),
-            TokenRepetitionPatternOperatorTransportSlot::Star => render_star(w),
-            TokenRepetitionPatternOperatorTransportSlot::Qmark => render_qmark(w),
+            TokenRepetitionPatternOperatorTransportSlot::Plus => {
+                let written = render_plus(w);
+                written?;
+                w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_PLUS_AFTER);
+                Ok(())
+            }
+            TokenRepetitionPatternOperatorTransportSlot::Star => {
+                let written = render_star(w);
+                written?;
+                w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_STAR_AFTER);
+                Ok(())
+            }
+            TokenRepetitionPatternOperatorTransportSlot::Qmark => {
+                let written = render_qmark(w);
+                written?;
+                w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_QMARK_AFTER);
+                Ok(())
+            }
         }
     }
 }
@@ -4775,6 +4790,62 @@ impl ::sittir_core::render::Render for TokenRepetitionTokensTransportSlot {
             TokenRepetitionTokensTransportSlot::TokenRepetition(inner) => inner.as_ref().render(w),
             TokenRepetitionTokensTransportSlot::Metavariable(inner) => inner.render(w),
             TokenRepetitionTokensTransportSlot::NonSpecialToken(inner) => inner.as_ref().render(w),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum TokenRepetitionOperatorTransportSlot {
+    #[kind(kind::PLUS)]
+    Plus,
+    #[kind(kind::STAR)]
+    Star,
+    #[kind(kind::QMARK)]
+    Qmark,
+}
+
+impl ::sittir_core::prepare::Prepare for TokenRepetitionOperatorTransportSlot {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            TokenRepetitionOperatorTransportSlot::Plus => Ok(()),
+            TokenRepetitionOperatorTransportSlot::Star => Ok(()),
+            TokenRepetitionOperatorTransportSlot::Qmark => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for TokenRepetitionOperatorTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Plus => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
+            Self::Star => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
+            Self::Qmark => [::sittir_core::types::KindId(10)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for TokenRepetitionOperatorTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            TokenRepetitionOperatorTransportSlot::Plus => {
+                let written = render_plus(w);
+                written?;
+                w.site_at(options::SITE_TOKEN_REPETITION_PLUS_AFTER);
+                Ok(())
+            }
+            TokenRepetitionOperatorTransportSlot::Star => {
+                let written = render_star(w);
+                written?;
+                w.site_at(options::SITE_TOKEN_REPETITION_STAR_AFTER);
+                Ok(())
+            }
+            TokenRepetitionOperatorTransportSlot::Qmark => {
+                let written = render_qmark(w);
+                written?;
+                w.site_at(options::SITE_TOKEN_REPETITION_QMARK_AFTER);
+                Ok(())
+            }
         }
     }
 }
@@ -8142,9 +8213,24 @@ impl ::sittir_core::view::KindOf for UnaryExpressionOperatorTransportSlot {
 impl ::sittir_core::render::Render for UnaryExpressionOperatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            UnaryExpressionOperatorTransportSlot::Dash => render_dash(w),
-            UnaryExpressionOperatorTransportSlot::Star => render_star(w),
-            UnaryExpressionOperatorTransportSlot::Bang => render_bang(w),
+            UnaryExpressionOperatorTransportSlot::Dash => {
+                w.site_at(options::SITE_UNARY_EXPRESSION_DASH_BEFORE);
+                let written = render_dash(w);
+                written?;
+                Ok(())
+            }
+            UnaryExpressionOperatorTransportSlot::Star => {
+                w.site_at(options::SITE_UNARY_EXPRESSION_STAR_BEFORE);
+                let written = render_star(w);
+                written?;
+                Ok(())
+            }
+            UnaryExpressionOperatorTransportSlot::Bang => {
+                w.site_at(options::SITE_UNARY_EXPRESSION_BANG_BEFORE);
+                let written = render_bang(w);
+                written?;
+                Ok(())
+            }
         }
     }
 }
@@ -13899,12 +13985,14 @@ impl ::sittir_core::render::Render for RangePatternPrefixContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             RangePatternPrefixContentTransportSlot::DotDotEq => {
+                w.site_at(options::SITE_RANGE_PATTERN_PREFIX_DOT_DOT_EQ_BEFORE);
                 let written = render_dot_dot_eq(w);
                 written?;
                 w.site_at(options::SITE_RANGE_PATTERN_PREFIX_DOT_DOT_EQ_AFTER);
                 Ok(())
             }
             RangePatternPrefixContentTransportSlot::DotDot => {
+                w.site_at(options::SITE_RANGE_PATTERN_PREFIX_DOT_DOT_BEFORE);
                 let written = render_dot_dot(w);
                 written?;
                 w.site_at(options::SITE_RANGE_PATTERN_PREFIX_DOT_DOT_AFTER);
@@ -13949,18 +14037,21 @@ impl ::sittir_core::render::Render for RangePatternWithLeftWithRightContentTrans
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             RangePatternWithLeftWithRightContentTransportSlot::DotDotDot => {
+                w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_DOT_BEFORE);
                 let written = render_dot_dot_dot(w);
                 written?;
                 w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_DOT_AFTER);
                 Ok(())
             }
             RangePatternWithLeftWithRightContentTransportSlot::DotDotEq => {
+                w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_EQ_BEFORE);
                 let written = render_dot_dot_eq(w);
                 written?;
                 w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_EQ_AFTER);
                 Ok(())
             }
             RangePatternWithLeftWithRightContentTransportSlot::DotDot => {
+                w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_BEFORE);
                 let written = render_dot_dot(w);
                 written?;
                 w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_AFTER);
@@ -14816,6 +14907,10 @@ impl ::sittir_core::options::Edged for TokenRepetitionPatternTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(185) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+    fn edge_arm_kinds(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> (Option<::sittir_core::types::KindId>, Option<::sittir_core::types::KindId>) {
+        use ::sittir_core::prepare::ArmOf;
+        (None, self.operator.arm_among(ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(185), ::sittir_core::options::Side::After)))
+    }
 }
 
 impl ::sittir_core::render::Render for TokenRepetitionPatternTransport {
@@ -14944,7 +15039,7 @@ pub struct TokenRepetitionTransport {
     pub separator: Option<::sittir_core::SlotValue<TokenRepetitionPatternTextTransport>>,
     #[wire(key = "_operator")]
     #[slot(field = field::OPERATOR)]
-    pub operator: ::sittir_core::SlotValue<TokenRepetitionPatternOperatorTransportSlot>,
+    pub operator: ::sittir_core::SlotValue<TokenRepetitionOperatorTransportSlot>,
     #[wire(key = "_tokens_separator_space")]
     pub tokens_separator_space: Option<u16>,
 }
@@ -14959,6 +15054,10 @@ impl ::sittir_core::options::Edged for TokenRepetitionTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(188) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+    fn edge_arm_kinds(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> (Option<::sittir_core::types::KindId>, Option<::sittir_core::types::KindId>) {
+        use ::sittir_core::prepare::ArmOf;
+        (None, self.operator.arm_among(ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(188), ::sittir_core::options::Side::After)))
+    }
 }
 
 impl ::sittir_core::render::Render for TokenRepetitionTransport {
@@ -18286,6 +18385,10 @@ impl ::sittir_core::options::Edged for UnaryExpressionTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(267) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+    fn edge_arm_kinds(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> (Option<::sittir_core::types::KindId>, Option<::sittir_core::types::KindId>) {
+        use ::sittir_core::prepare::ArmOf;
+        (self.operator.arm_among(ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(267), ::sittir_core::options::Side::Before)), None)
+    }
 }
 
 impl ::sittir_core::render::Render for UnaryExpressionTransport {
@@ -26192,6 +26295,10 @@ impl ::sittir_core::options::Edged for RangePatternPrefixTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(419) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+    fn edge_arm_kinds(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> (Option<::sittir_core::types::KindId>, Option<::sittir_core::types::KindId>) {
+        use ::sittir_core::prepare::ArmOf;
+        (self.content.arm_among(ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(419), ::sittir_core::options::Side::Before)), None)
+    }
 }
 
 impl ::sittir_core::render::Render for RangePatternPrefixTransport {
@@ -26241,6 +26348,10 @@ impl ::sittir_core::options::Edged for RangePatternWithLeftWithRightTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(420) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+    fn edge_arm_kinds(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> (Option<::sittir_core::types::KindId>, Option<::sittir_core::types::KindId>) {
+        use ::sittir_core::prepare::ArmOf;
+        (self.content.arm_among(ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(420), ::sittir_core::options::Side::Before)), None)
+    }
 }
 
 impl ::sittir_core::render::Render for RangePatternWithLeftWithRightTransport {

@@ -97,6 +97,7 @@ import {
 	seatTableName,
 	seatedTableNames,
 	edgeSitesOf,
+	type EdgeSiteRow,
 	isKindEdge,
 	planRenderOptions,
 	renderOptionsRs,
@@ -1266,10 +1267,11 @@ function renderTransportSupport(
 		emitPerSlotChildEnum(entry, kidByKind, nodeMap, fixed, kindEntries, plan, read)
 	);
 	const perSlotEnumLines: string[] = choices.emitted.flatMap(({ lines }) => lines);
+	const bodyOf = new Map(structs.map((struct) => [struct.kind, struct.body]));
 	const structLines = nodes.flatMap((node) =>
 		isFixedTextLeaf(node)
 			? renderFixedLiteralTransport(rustTransportStructName(node), fixedLiteralOf(fixed, node.kind), read)
-			: renderTransportStruct(node, nodeMap, choices.names, kindEntries, plan, read)
+			: renderTransportStruct(node, nodeMap, choices.names, kindEntries, plan, read, bodyOf.get(node.kind))
 	);
 	assertReadableTransports(nodes, nodeMap, choices.names, read);
 	assertEnvelopeExtrasPinned(read.grammar, read.envelopeExtras, read.printedEnums);
@@ -2535,6 +2537,46 @@ function edgeRowKindsOf(plan: RenderPlan, kindEntries: readonly KindEntryLike[])
 	return kinds;
 }
 
+interface EdgeArmSlots {
+	readonly before?: string;
+	readonly after?: string;
+}
+
+const edgeRowsCache = new WeakMap<RenderPlan, ReadonlyMap<number, EdgeSiteRow>>();
+
+function edgeRowsOf(plan: RenderPlan, kindEntries: readonly KindEntryLike[]): ReadonlyMap<number, EdgeSiteRow> {
+	const cached = edgeRowsCache.get(plan);
+	if (cached !== undefined) return cached;
+	const rows = new Map(edgeSitesOf(plan, kindEntries).map((row) => [row.kind, row]));
+	edgeRowsCache.set(plan, rows);
+	return rows;
+}
+
+function edgeArmSlotsOf(
+	plan: RenderPlan,
+	node: AssembledNode,
+	body: Body | undefined,
+	kindEntries: readonly KindEntryLike[]
+): EdgeArmSlots | undefined {
+	const id = edgeKindId(kindEntries, node.display.name);
+	const row = id === undefined ? undefined : edgeRowsOf(plan, kindEntries).get(id);
+	if (body === undefined || row === undefined || (row.beforeArms.length === 0 && row.afterArms.length === 0)) return undefined;
+	const edge = kindEdgeWriterOf(plan, node, kindEntries);
+	const out: { before?: string; after?: string } = {};
+	body.forEach((member, i) => {
+		const written = member.kind === 'seam' ? edge(member.field) : undefined;
+		if (written === undefined) return;
+		const arms = written.side === 'before' ? row.beforeArms : row.afterArms;
+		if (arms.length === 0) return;
+		const slot = body[written.side === 'before' ? i + 1 : i - 1];
+		if (slot?.kind !== 'slot') {
+			throw new Error(`kind '${node.display.name}' has edge arm sites on its ${written.side} edge, but the member beside that edge is not a slot to read the arm from`);
+		}
+		out[written.side] = slot.name;
+	});
+	return out;
+}
+
 function edgeIdOf(plan: RenderPlan, node: AssembledNode, kindEntries: readonly KindEntryLike[]): number {
 	const kind = node.display.name;
 	const id = edgeKindId(kindEntries, kind);
@@ -2923,12 +2965,25 @@ function prepareStructImpl(
 	];
 }
 
-function edgedImplLines(typeName: string, kindId: number): string[] {
+function edgedImplLines(typeName: string, kindId: number, armSlots?: EdgeArmSlots): string[] {
+	const id = `::sittir_core::types::KindId(${kindId})`;
+	const arm = (side: 'before' | 'after', slot: string | undefined): string =>
+		slot === undefined
+			? 'None'
+			: `self.${rustFieldIdent(slot)}.arm_among(ctx, ctx.options.edge_arm_sites(${id}, ::sittir_core::options::Side::${side === 'before' ? 'Before' : 'After'}))`;
 	return [
 		`impl ::sittir_core::options::Edged for ${typeName} {`,
-		`    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(${kindId}) }`,
+		`    fn kind_id(&self) -> ::sittir_core::types::KindId { ${id} }`,
 		`    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }`,
 		`    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }`,
+		...(armSlots === undefined
+			? []
+			: [
+					`    fn edge_arm_kinds(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> (Option<::sittir_core::types::KindId>, Option<::sittir_core::types::KindId>) {`,
+					`        use ::sittir_core::prepare::ArmOf;`,
+					`        (${arm('before', armSlots.before)}, ${arm('after', armSlots.after)})`,
+					`    }`
+				]),
 		`}`,
 		''
 	];
@@ -2979,13 +3034,14 @@ function renderTransportStruct(
 	choices: ChoiceNames,
 	kindEntries: readonly KindEnumEntry[],
 	plan: RenderPlan,
-	read: ReadPrint
+	read: ReadPrint,
+	templateBody: Body | undefined
 ): string[] {
 	if (node instanceof AssembledEnum) {
 		return renderEnumType(node, kindEntries, plan, read);
 	}
 	const slotModel = renderSlotModelOf(node);
-	return renderTransportDataStruct(rustTransportStructName(node), node, slotModel, nodeMap, choices, plan, kindEntries, read);
+	return renderTransportDataStruct(rustTransportStructName(node), node, slotModel, nodeMap, choices, plan, kindEntries, read, templateBody);
 }
 
 function isCompoundOf(node: AssembledNode): boolean {
@@ -3006,7 +3062,8 @@ function renderTransportDataStruct(
 	choices: ChoiceNames,
 	plan: RenderPlan,
 	kindEntries: readonly KindEnumEntry[],
-	read: ReadPrint
+	read: ReadPrint,
+	templateBody?: Body
 ): string[] {
 	const isLeafNode = node.modelType === 'pattern';
 	const lines: string[] = [];
@@ -3066,7 +3123,7 @@ function renderTransportDataStruct(
 	lines.push(...kindOfImplLines(structName, [], undefined, ownId === undefined ? [] : [ownId]));
 	const ownKind = ownId === undefined ? 'None' : `Some(::sittir_core::types::KindId(${ownId}))`;
 	const edgedId = edgeKindId(kindEntries, node.display.name);
-	if (edgedId !== undefined) lines.push(...edgedImplLines(structName, edgedId));
+	if (edgedId !== undefined) lines.push(...edgedImplLines(structName, edgedId, edgeArmSlotsOf(plan, node, templateBody, kindEntries)));
 	lines.push(`impl ::sittir_core::render::Render for ${structName} {`);
 	lines.push(
 		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
