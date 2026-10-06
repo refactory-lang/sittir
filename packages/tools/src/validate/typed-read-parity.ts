@@ -4,7 +4,7 @@ import { STORED_TRIVIA, toDetachedTransportData, treeTokenOf } from '@sittir/com
 import type { AnyUntypedNode } from '@sittir/types';
 import { loadCorpusEntries, loadLanguageForGrammar, loadNativeEngine, type TSNode, type TSTree } from './common.ts';
 
-export type TypedReadParityOutcome = 'refused' | 'differs' | 'today-failed';
+export type TypedReadParityOutcome = 'refused' | 'differs' | 'today-failed' | 'stale-listed';
 
 export interface TypedReadParityRow {
 	readonly entry: string;
@@ -34,6 +34,7 @@ export interface TypedReadParitySummary {
 	readonly refused: number;
 	readonly differs: number;
 	readonly todayFailed: number;
+	readonly staleListed: number;
 	readonly emptySlots: number;
 }
 
@@ -91,6 +92,11 @@ function countShownPins(node: TSNode, counts: Map<string, number>, byShown: Map<
 
 export function emptySlotKey(entry: string, kind: string, slot: string): string {
 	return `${entry}\t${kind}\t${slot}`;
+}
+
+export function staleListedRows(listed: readonly string[], observed: readonly EmptySlotRow[]): string[] {
+	const seen = new Set(observed.map(({ entry, kind, slot }) => emptySlotKey(entry, kind, slot)));
+	return listed.filter((key) => !seen.has(key));
 }
 
 export const LISTED_EMPTY_SLOTS: Readonly<Record<string, readonly string[]>> = {
@@ -155,6 +161,13 @@ export async function computeTypedReadParity(grammar: string): Promise<TypedRead
 			rows.push({ entry: entry.name, outcome: 'differs', report: [...notes, difference].filter((part) => part !== '').join('\n') });
 		}
 	}
+	for (const key of staleListedRows([...listed], emptySlots)) {
+		rows.push({
+			entry: key.split('\t')[0] ?? key,
+			outcome: 'stale-listed',
+			report: `listed row no longer occurs: remove it from LISTED_EMPTY_SLOTS: ${key.replaceAll('\t', ' | ')}`
+		});
+	}
 	const count = (outcome: TypedReadParityOutcome): number => rows.filter((row) => row.outcome === outcome).length;
 	return {
 		rows,
@@ -163,7 +176,7 @@ export async function computeTypedReadParity(grammar: string): Promise<TypedRead
 			const [variant = '', display = '', id = ''] = key.split('\t');
 			return { variant, display: Number(display), id: Number(id), shown };
 		}),
-		summary: { grammar, entries: entries.length, agreed, refused: count('refused'), differs: count('differs'), todayFailed: count('today-failed'), emptySlots: emptySlots.length }
+		summary: { grammar, entries: entries.length, agreed, refused: count('refused'), differs: count('differs'), todayFailed: count('today-failed'), staleListed: count('stale-listed'), emptySlots: emptySlots.length }
 	};
 }
 
@@ -187,5 +200,5 @@ export async function run(opts: TypedReadParityOptions): Promise<number> {
 			console.log(`# ${summary.grammar}: ${JSON.stringify(summary)}`);
 		}
 	}
-	return censuses.some(({ summary }) => summary.refused + summary.differs + summary.todayFailed > 0) ? 1 : 0;
+	return censuses.some(({ summary }) => summary.refused + summary.differs + summary.todayFailed + summary.staleListed > 0) ? 1 : 0;
 }
