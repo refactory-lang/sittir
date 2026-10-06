@@ -224,8 +224,7 @@ function delimitedHost(
 	hosts: ReparseHostsConfig | undefined,
 	triviaKinds: ReadonlySet<string>
 ): string {
-	if (hosts === undefined) return '$r';
-	const table = { hosts: hosts.hosts, priority: hosts.priority ?? REPARSE_HOST_PRIORITY, gated: hosts.gated ?? [] };
+	const table = { hosts: hosts?.hosts ?? {}, priority: hosts?.priority ?? REPARSE_HOST_PRIORITY, gated: hosts?.gated ?? [] };
 	const host = hostTemplateFor(kind, table, kindToSupertypes(nodeMap), { root: nodeMap.root });
 	if (host !== undefined) return host;
 	if (triviaKinds.has(kind)) return '$r';

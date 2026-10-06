@@ -79,17 +79,19 @@ class DelimitedFacts {
 		return childRules(rule).length > 0 ? childRules(rule).flatMap((child) => this.alternatives(child, seen)) : [rule];
 	}
 
-	isVariableText(rule: RenderRule, seen = new Set<string>()): boolean {
-		if (rule.type === STRING) return false;
-		if (rule.type === PATTERN) return true;
+	variableLeaves(rule: RenderRule, seen = new Set<string>()): number {
+		if (rule.type === STRING) return 0;
+		if (rule.type === PATTERN) return 1;
 		if (rule.type === SYMBOL) {
 			const node = this.nodes.get(rule.name);
-			if (node instanceof AssembledPattern) return true;
-			if (!(node instanceof AbstractAssembledCompound) || seen.has(rule.name)) return false;
+			if (node instanceof AssembledPattern) return 1;
+			if (!(node instanceof AbstractAssembledCompound) || seen.has(rule.name)) return 0;
 			seen.add(rule.name);
-			return this.isVariableText(node.renderRule, seen);
+			return this.variableLeaves(node.renderRule, seen);
 		}
-		return childRules(rule).some((child) => this.isVariableText(child, seen));
+		return rule.type === CHOICE
+			? Math.max(0, ...rule.members.map((member) => this.variableLeaves(member, new Set(seen))))
+			: childRules(rule).reduce((total, child) => total + this.variableLeaves(child, seen), 0);
 	}
 
 	isText(rule: RenderRule, seen = new Set<string>()): boolean {
@@ -141,7 +143,7 @@ function delimitedOf(
 	const arms = rule.members.slice(1, -1).flatMap((member) => facts.alternatives(member));
 	const armLeaders = arms.map((arm) => facts.leadersOfRule(arm));
 	const hazardous = arms.map(
-		(arm, i) => facts.isText(arm) && facts.isVariableText(arm) && !armLeaders[i]!.minus(closing.complement()).isEmpty()
+		(arm, i) => facts.isText(arm) && facts.variableLeaves(arm) === 1 && !armLeaders[i]!.minus(closing.complement()).isEmpty()
 	);
 	if (!hazardous.some(Boolean)) return undefined;
 	const excluded = armLeaders.reduce(

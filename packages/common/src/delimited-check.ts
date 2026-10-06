@@ -24,7 +24,7 @@ interface Spanned {
 
 type Facet = { readonly $descendants: { ofType(kind: number): Iterable<Spanned> }; readonly $children: Iterable<Spanned> };
 
-const pairings = new Set<string>();
+const pairings = new WeakMap<DelimitedSpec, Set<string>>();
 
 function textOf(node: unknown): string | undefined {
 	const text = (node as { $text?: unknown } | null)?.$text;
@@ -82,8 +82,9 @@ function refusal(spec: DelimitedSpec, content: string, open: string, close: stri
  * Refuses a delimited composite whose content would not read back inside its own delimiters.
  *
  * Content free of the characters that can end or reshape the composite is accepted on its own;
- * anything else, and every delimiter pair a parser has not yet confirmed, is parsed back through
- * the engine in scope. Without an engine only already-confirmed pairs and clean content pass.
+ * anything else, and every delimiter pair of a kind whose delimiters vary, is parsed back through
+ * the engine in scope. Without an engine a varying pair is always refused, and fixed delimiters
+ * with clean content pass.
  */
 export function checkDelimited(
 	handle: EngineHandle | undefined,
@@ -101,12 +102,16 @@ export function checkDelimited(
 	const engine = handle !== undefined && isLive(handle.current) ? (handle.current as LiveEngine & { parse(source: string): Parsed }) : undefined;
 	const body = texts.join('');
 	const varying = spec.open === undefined || spec.close === undefined;
-	const pairKey = `${spec.id}\u0000${openText}\u0000${closeText}`;
-	if (varying && !pairings.has(pairKey)) {
+	if (varying) {
 		if (engine === undefined) throw refusal(spec, body, openText, closeText, 'its delimiters need an engine to be checked');
-		const why = parseBack(engine, spec, openText + closeText, []);
-		if (why !== undefined) throw refusal(spec, body, openText, closeText, `the delimiters do not pair: ${why}`);
-		pairings.add(pairKey);
+		const confirmed = pairings.get(spec) ?? new Set<string>();
+		pairings.set(spec, confirmed);
+		const pairKey = `${openText}\u0000${closeText}`;
+		if (!confirmed.has(pairKey)) {
+			const why = parseBack(engine, spec, openText + closeText, []);
+			if (why !== undefined) throw refusal(spec, body, openText, closeText, `the delimiters do not pair: ${why}`);
+			confirmed.add(pairKey);
+		}
 	}
 	if (clean) return;
 	if (engine === undefined) throw refusal(spec, body, openText, closeText, 'this content needs an engine to be checked');

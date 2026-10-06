@@ -34,16 +34,14 @@ describe('a string whose content or delimiters would not read back as one string
 		expect(py.render(read).toString()).toBe(`x = 'a"b'\n`);
 	});
 
-	it('needs an engine to confirm a delimiter pair, and takes clean content once one has', () => {
+	it('refuses a varying delimiter pair without an engine, whatever an engine confirmed before', () => {
 		const raw = (start: string, content: string, end: string) =>
 			buildString({
 				stringStart: buildStringStart(start),
 				content: [buildStringContent(buildStringFragment(content))],
 				stringEnd: buildStringEnd(end)
 			});
-		expect(() => raw('b"', 'abc', '"')).toThrow(/its delimiters need an engine/);
-		quoted('b"', 'abc', '"');
-		expect(raw('b"', 'abc', '"').$render).toBeDefined();
-		expect(() => raw('b"', 'a"c', '"')).toThrow(/this content needs an engine/);
+		quoted('"', 'abc', '"');
+		expect(() => raw('"', 'abc', '"')).toThrow(/its delimiters need an engine/);
 	});
 });

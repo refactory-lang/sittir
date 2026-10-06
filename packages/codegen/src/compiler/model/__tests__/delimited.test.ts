@@ -3,6 +3,7 @@ import { grammarPackage } from '../../../grammars.ts';
 import { compileGrammar } from '../../compile.ts';
 import { loadGeneratedIdTables } from '../../generated-metadata.ts';
 import { AbstractAssembledCompound } from '../node-map.ts';
+import { FactoryEmitter } from '../../../emitters/factories.ts';
 
 const COMPILE_TIMEOUT = 120_000;
 
@@ -36,5 +37,10 @@ describe('the delimited fact', () => {
 	it('leaves a kind whose closing delimiter is a word alone', async () => {
 		expect((await delimitedKinds('rust')).has('impl_item_negative_clause')).toBe(false);
 		expect((await delimitedKinds('typescript')).has('namespace_import')).toBe(false);
+	}, COMPILE_TIMEOUT);
+
+	it('fails generation, naming the kind, when a non-trivia delimited kind has no host', async () => {
+		const { nodeMap } = await compileGrammar({ package: grammarPackage('python'), generatedIdTables: await loadGeneratedIdTables('python') });
+		expect(() => new FactoryEmitter({ grammar: 'python', nodeMap, triviaKinds: ['comment'] })).toThrow(/^string: its delimiters need a parse-back host/);
 	}, COMPILE_TIMEOUT);
 });
