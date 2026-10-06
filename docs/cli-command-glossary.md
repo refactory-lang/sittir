@@ -769,7 +769,7 @@ pnpm exec tsx packages/cli/src/cli.ts tool trivia-timing [options]
 
 ### `tool typed-read-parity`
 
-Compare the typed reader with today's read and wrap on every corpus entry; exits 1 on any refusal, difference or entry today's pipeline cannot decode
+Compare the typed reader with today's read and wrap on every corpus entry, and send each typed read to JavaScript and back; exits 1 on any refusal, difference, failed round trip, stale listed row or entry today's pipeline cannot decode
 
 **Options**
 

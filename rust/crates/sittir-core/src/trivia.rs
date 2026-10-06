@@ -317,24 +317,79 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNap
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T> ::napi::bindgen_prelude::ToNapiValue for TransportTrivia<T> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        unsafe { ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ()) }
+impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for TransportTrivia<T> {
+    /// `{ leading?, trailing?, inner? }`, each only when present. An inner
+    /// gap's name is data, so its key is too: the gaps object is defined, not
+    /// assigned, so any name (`__proto__` included) stays an own property.
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        use crate::boundary::{object_with, set};
+        let obj = unsafe { object_with(env, &[])? };
+        if let Some(leading) = val.leading {
+            unsafe { set(env, obj, c"leading", Vec::to_napi_value(env, leading)?)? };
+        }
+        if let Some(trailing) = val.trailing {
+            unsafe { set(env, obj, c"trailing", Vec::to_napi_value(env, trailing)?)? };
+        }
+        if let Some(inner) = val.inner {
+            let mut fields = Vec::with_capacity(inner.len());
+            for (name, entries) in inner {
+                let name = ::std::ffi::CString::new(name).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                fields.push((name, unsafe { Vec::to_napi_value(env, entries)? }));
+            }
+            let fields: Vec<_> = fields.iter().map(|(name, entries)| (name.as_c_str(), *entries)).collect();
+            let gaps = unsafe { object_with(env, &fields)? };
+            unsafe { set(env, obj, c"inner", gaps)? };
+        }
+        Ok(obj)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T> ::napi::bindgen_prelude::TypeName for TransportTrivia<T> {
-    fn type_name() -> &'static str {
-        "TransportTrivia"
-    }
-    fn value_type() -> ::napi::ValueType {
-        ::napi::ValueType::Object
+impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for TriviaEntry<T> {
+    /// The value's own form, carrying `$sameLine` and `$tokensBetween` when
+    /// they are not their defaults; a value whose form is a string or a kind
+    /// id carries them in `{ $text }` or `{ $type }`, the objects the decoder
+    /// reads back.
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        use crate::boundary::{object_with, set};
+        let value = unsafe { SlotValue::to_napi_value(env, val.value)? };
+        if !val.same_line && val.tokens_between == 0 {
+            return Ok(value);
+        }
+        let obj = match unsafe { crate::slot::transport_value_type(env, value)? } {
+            ::napi::ValueType::Object => value,
+            ::napi::ValueType::String => unsafe { object_with(env, &[(c"$text", value)])? },
+            _ => unsafe { object_with(env, &[(c"$type", value)])? },
+        };
+        if val.same_line {
+            unsafe { set(env, obj, c"$sameLine", bool::to_napi_value(env, true)?)? };
+        }
+        if val.tokens_between != 0 {
+            unsafe { set(env, obj, c"$tokensBetween", u32::to_napi_value(env, u32::from(val.tokens_between))?)? };
+        }
+        Ok(obj)
     }
 }
 
+/// `{ $type, $text }`, both required.
 #[cfg(feature = "napi-bindings")]
-impl<T> ::napi::bindgen_prelude::ValidateNapiValue for TransportTrivia<T> {}
+impl ::napi::bindgen_prelude::FromNapiValue for TriviaText {
+    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
+        let obj = unsafe { crate::boundary::object(env, napi_val)? };
+        let kind: u16 = unsafe { crate::boundary::required(env, obj, c"$type", "TriviaText")? };
+        Ok(Self { kind: KindId(kind), text: unsafe { crate::boundary::required(env, obj, c"$text", "TriviaText")? } })
+    }
+}
+
+/// `{ $type, $text }`.
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for TriviaText {
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        unsafe {
+            crate::boundary::object_with(env, &[
+                (c"$type", u16::to_napi_value(env, val.kind.0)?),
+                (c"$text", String::to_napi_value(env, val.text)?),
+            ])
+        }
+    }
+}

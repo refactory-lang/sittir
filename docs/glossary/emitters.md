@@ -3334,6 +3334,8 @@ the per-kind bodies are what the render functions and the validators'
 sidecar are both read from — the assembled node map, and the parser's
 kind-id tables. The tables are required: every transport decodes by kind id,
 so the parser is generated before the render module is emitted.
+`transport.rs` imports `sittir_core::VerbatimTransport`, so every verbatim
+variant the module names holds the core's type.
 
 
 #### body
@@ -3354,8 +3356,8 @@ so the parser is generated before the render module is emitted.
 
 ```text
 // --- transport.rs ---
-// AnyTransport enum + FromNapiValue + per-kind transport structs +
-// typed dispatch + transport bridge helpers.
+// AnyTransport enum + per-kind transport structs + typed dispatch +
+// transport bridge helpers.
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::pruneUnreferencedBridges`
@@ -3378,8 +3380,7 @@ so the parser is generated before the render module is emitted.
 ### `packages/codegen/src/emitters/render-module.ts::commonRustUseImports`
 
 The `use` block at the top of `transport.rs`: the views (`View`,
-`ListView`, `NO_ITEMS`), the transport support types and, under the
-`napi-bindings` feature, the `napi` attribute macro. `fmt::Write` is
+`ListView`, `NO_ITEMS`) and the transport support types. `fmt::Write` is
 deliberately not imported; the kind bodies write through `Formatter`'s
 inherent `write_fmt`, and the render root spells the trait call in full.
 
@@ -3427,93 +3428,6 @@ as variants.
 literal, a unit arm per fixed-literal kind, and `Verbatim`. Shared by both
 `AnyTransport` emitters.
 
-### `packages/codegen/src/emitters/render-module.ts::nodeTransportHasRequiredField`
-
-```text
-/**
- * Returns true when a node's emitted `FromNapiValue` will NOT silently match
- * any bare JS string by coercing it to an object. Used to sort string-fallback
- * dispatch arms so "greedy" all-optional structs come LAST.
- *
- * Two categories return true (i.e. are safe to try first):
- *
- * 1. Leaf nodes (`pattern` / `keyword` / `token` / `enum`): use
- *    `renderLeafTransportNapiImpls` which reads `text` directly from the JS
- *    string value — they correctly decode a bare string and produce a
- *    non-empty `text` field.
- *
- * 2. Branch / group / polymorph nodes with at least one transport-required
- *    (non-Option, `isTransportRequired`) grammar field: `#[napi(object)]`-derived `FromNapiValue` coerces the JS
- *    string to a boxed String object via `napi_coerce_to_object`; all property
- *    lookups return `undefined`. A required field (`String`, not `Option<String>`)
- *    cannot be `undefined` → deserialization fails → the arm is correctly skipped.
- *
- * All-optional branch/group/polymorph nodes are the "greedy" case: every field
- * becomes `None` when coerced from a string, so `FromNapiValue` silently
- * succeeds regardless of the input — these must come LAST.
- */
-```
-
-```text
-/**
- * Emit a per-supertype transport enum, its `Debug + Clone` body,
- * a custom `FromNapiValue` impl that reads `$type` as u16 and dispatches
- * to the appropriate concrete variant, a stub `ToNapiValue`, and a
- * `<supertype>_transport_to_any` bridge helper (per-slot enum → AnyTransport).
- *
- * Pattern mirrors `renderAnyTransportWithNapiFromValue` — variant arms come
- * from `supertypeNode.subtypes` resolved through `kindIdByKind`.
- * DRY: same `kindEntries` source as `AnyTransport` dispatch.
- *
- * `Box<T>` is used for non-leaf subtypes inside the enum variants to break
- * potential size-cycle recursion (e.g. `ExpressionTransport::BinaryExpression`
- * contains `ExpressionTransport` fields). Leaf/keyword/token/enum subtypes
- * are small (text only) and inlined without `Box`.
- *
- * @param supertypeNode - the assembled supertype node
- * @param kindIdByKind  - Map<kind, u16 id> from `buildKindIdByKind(kindEntries)`
- * @param nodeMap       - for typeName + modelType lookups
- */
-```
-
-#### body
-
-```text
-// Leaf types use renderLeafTransportNapiImpls — always safe on bare strings.
-```
-
-#### body
-
-```text
-// For structural nodes (branch / group / polymorph): safe if any grammar
-// slot is required (non-optional). All-optional nodes are the greedy ones.
-```
-
-### `packages/codegen/src/emitters/render-module.ts::isLeafLikeNode`
-
-```text
-/**
- * SCC-driven Box decision for a per-slot or supertype enum variant.
- *
- * The eventual rule is: Box variant `V` (a kind name) in enum `E`
- * (owned by `enumOwnerKind`) iff `V` is not leaf-like AND `V` and
- * `enumOwnerKind` are in the same SCC of the singular transport-
- * reference graph. The `computeTransportSCC` pass populates
- * `nodeMap.scc` with the analysis; consumers call `scc.sameSCC(...)`.
- *
- * **Live status (sittir-12):** the SCC analysis IS computed end-to-end
- * and exposed via `nodeMap.scc`, but `boxedInEnum` still falls back to
- * the conservative `Box-all-non-leaf` rule. Enabling SCC-based unboxing
- * for rust deep read-render-parse used to trigger a V8 stack overflow
- * inside napi-rs's `String::from_napi_value` error path (it
- * JSON.stringify's the deeply-nested object for diagnostic context).
- * That error path is no longer reachable: every hand-emitted
- * `FromNapiValue` impl now dispatches on `napi_typeof` first (see
- * `renderTransportValueTypeHelper`), so no typed read is ever attempted
- * on a mismatched shape. Flipping the SCC predicate can be retried.
- */
-```
-
 ### `packages/codegen/src/emitters/render-module.ts::renderTransportValueTypeHelper`
 
 ```text
@@ -3533,97 +3447,13 @@ literal, a unit arm per fixed-literal kind, and `Verbatim`. Shared by both
  */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::wirePropertyRead`
-
-The expression a hand-emitted `FromNapiValue` reads one property of its
-wire object with: `sittir_core::boundary::property` on `napi_val`, the key
-as a C-string literal, `?` applied, so it yields `Option<T>` (`None` when
-the property is undefined). napi resolves a static key to V8's interned
-string, as it does for a derived napi object's fields, where
-`Object::get(&str)` creates a new key string on every read; every
-transport decoder reads its keys this way. `rustType` adds a turbofish
-where the expression's use does not fix the type.
-
-### `packages/codegen/src/emitters/render-module.ts::emitTransportEnumFromNapiValueBody`
-
-The `from_napi_value` body shared by supertype, per-slot and trivia
-transport enums: a strict shape dispatch on `napi_typeof`. A number is a
-raw u16 kind id; an object carries a numeric `$type`; when
-`admitsVerbatim`, a string is `Verbatim(VerbatimTransport { text })`; every
-other shape is an error naming the shapes the enum accepts. It is a
-dispatch, not a trial: no arm probes a second decoder when the first
-fails.
-
-`kindIdArms` are the shared `match kind_id` arms and must end with a
-catch-all `other =>` arm so the match is exhaustive over u16.
-`admitsVerbatim` is true only when the enum has a `Verbatim` variant —
-i.e. a member of the slot is pattern-modeled — so a bare string in any
-other slot is refused rather than guessed at.
-
-An enum that admits verbatim text also decodes an ERROR object
-(`$type` = `KindId::ERROR`) as `Verbatim` over its `$text`. The reader
-seats every ERROR as trivia and gives it its whole span as text, so the
-trivia and `AnyTransport` enums (which always admit verbatim) render it
-back as the source it wraps. The arm comes before the text and kind-id
-arms because no grammar kind shares its id.
-
-`textArms` are matched first in the object branch, after `$text` is read into `text`. `renderTriviaTransportSupport` passes the kinded-text arms there.
-
-### `packages/codegen/src/emitters/render-module.ts::AliasLeafTrial`
-
-One decode trial of an alias wrapper's leaf expansion: the member's type and
-its variant. A fixed-literal member is never a trial: a unit is told by its
-kind id alone, so it has no value to try a decode on.
-
-### `packages/codegen/src/emitters/render-module.ts::emitAliasUnwrapRecurseArm`
-
-```text
-/**
- * Emit one `match` arm that unwraps an alias-mint wrapper node and
- * re-dispatches `Self::from_napi_value` on its single kind-keyed child.
- *
- * A mint arm (`alias($._hidden_rule, $.visible_name)`) makes an otherwise-
- * inlined hidden rule VISIBLE at one specific reference site, so runtime
- * nodes arrive under the alias occurrence's own id (`alias_sym_*`) rather
- * than any of the concrete kinds the hidden rule resolves to. The
- * grammar-agnostic reader stores such a node's single unlabeled child under
- * a kind-keyed slot (`{ $type: <aliasId>, _<childKind>: <child> }` —
- * read_untyped_node.rs kind-named-slot routing), so no variant struct can decode the
- * wrapper directly (decode trials would probe the wrong object). This arm
- * unwraps the kind-keyed slot and re-dispatches `Self` on the concrete
- * child, which carries its own `$type`.
- *
- * Shared by `emitSupertypeTransportEnum` (cross-supertype self-alias ids)
- * and `emitPerSlotChildEnum` (per-slot alias-canonicalized wrapper ids,
- * e.g. python's `_case_pattern_group1` / id 293) — same wrapper shape,
- * same unwrap, only the enclosing enum's name and error text differ.
- * A fixed-literal member is never a trial (`AliasLeafTrial`).
- *
- * @param aliasId - the wrapper's own kind_id (the alias occurrence's `alias_sym_*`).
- * @param enumName - the enclosing enum's Rust name (for the error message only).
- * @param errorLabel - short label distinguishing the caller's alias-id class
- *   in the error text (e.g. `'self-alias'`, `'alias-wrapper'`).
- */
-```
-
-#### body
-
-```text
-// Leaf-collapsed alias occurrences ({$type: <aliasId>, $text} — the
-// reader scalar-collapses leaf content, so there is NO kind-keyed child
-// to unwrap) dispatch the SAME object through the alias expansion's own
-// leaf variants. Text-validated enum variants must come first in this
-// list; a mis-typed leaf dispatch is benign for RENDER (a leaf renders
-// its own $text either way), but the enum's membership check is exact.
-```
-
 ### `packages/codegen/src/emitters/render-module.ts::emitSupertypeRenderHelper`
 
 Emits `render_<supertype>(t: &<Supertype>Transport, w: &mut dyn RenderSink) -> RenderResult`
 as a bounded match over the enum variants, each arm delegating to the
 subtype payload's `.render(w)` so its own trivia-wrapped impl fires; a
-fixed-literal subtype's unit arm calls its kind's render function. Boxed
-(in-cycle) variants reach the inner struct through `.as_ref()`. Arm count
+fixed-literal subtype's unit arm calls its kind's render function. A boxed
+payload (`boxedInEnum`, given the emission's pins) is reached through `.as_ref()`. Arm count
 is bounded by the supertype's subtype count, not the grammar.
 
 ### `packages/codegen/src/emitters/render-module.ts::admitsVerbatimCollapse`
@@ -3809,15 +3639,15 @@ and between the owner's seam sites when it has any (`literalSeamedArm`).
  * children slot. The enum has one variant per concrete child kind: a payload
  * variant wrapping the kind's transport struct (boxed for non-leaf kinds), or,
  * for a fixed-literal kind, a unit variant named by the kind. When a
- * member is pattern-modeled the enum also admits `Verbatim(VerbatimTransport)`
- * — a bare string in that slot is text with no kind of its own — with a
- * prepare arm, a render arm and the string shape in its `from_napi_value`.
+ * member is pattern-modeled the enum also admits `Verbatim(VerbatimTransport)`,
+ * marked `#[transport(verbatim)]` — a bare string in that slot is text with no
+ * kind of its own — with a prepare arm and a render arm.
  *
  * Mirrors `emitSupertypeTransportEnum` but is derived from the specific child
  * kinds in a slot rather than grammar supertype membership.
  *
  * @param entry - the per-slot enum descriptor (typeName + child kinds)
- * @param kindIdByKind - map from kind to numeric parser symbol id (for FromNapiValue)
+ * @param kindIdByKind - map from kind to numeric parser symbol id (for the variants' claims)
  * @param nodeMap - for transport struct names and modelType lookups
  */
 ```
@@ -3832,19 +3662,9 @@ and between the owner's seam sites when it has any (`literalSeamedArm`).
 #### body
 
 ```text
-// SCC-driven Box rule for this per-slot enum's variants. The owner kind
-// is the parent node that hosts the slot; a variant is boxed iff it and
-// the owner share an SCC in the singular-reference graph. Leaf-like
-// variants always stay inline (see `boxedInEnum`).
-```
-
-#### body
-
-```text
-// Build the kind_id match arms shared between the raw-u16 input shape
-// and the object-with-$type input shape. Unit arms come first, from
-// `unitKindIdsOf`; each other accepted kind_id maps to a typed variant —
-// pattern/enum inline, branch/group/polymorph boxed.
+// Claim each accepted kind id once. Unit claims come first, from
+// `unitKindIdsOf`, then the blank id, then each payload variant's
+// accepted ids; an id already claimed stays with its first claimant.
 ```
 
 #### body
@@ -3855,47 +3675,6 @@ and between the owner's seam sites when it has any (`literalSeamedArm`).
 // redirects, per reference site). The name chain remains only for
 // kinds with no value in hand (supertype-expanded arms) or id-less
 // values.
-```
-
-#### body
-
-```text
-// Alias-canonicalized wrapper ids (narrow scope): one of this slot's
-// raw storage kinds (`entry.kinds`, pre-expansion) is a hidden
-// supertype that got flattened into `validKinds` above (per
-// `expandConcreteTransportKinds` — every supertype-modelType kind has
-// `concreteTransportTypeName === null`, so it's never its own
-// variant). When a value at this reference site was ALSO wrapped by
-// an enrich-minted `alias($._hidden_supertype, $.visible_name)` (the
-// `parseAliases` fact — `aliasTargetToSourceMapOf`, node-map.ts), the
-// alias occurrence's own wire id (e.g. python's
-// `_case_pattern_group1` / id 293, wrapping a matched
-// `union_pattern`) has no variant to land on directly — it must
-// unwrap its single kind-keyed child and re-dispatch, same as a
-// supertype's cross-supertype self-alias id. Scoped tightly to
-// exactly this shape (flattened-supertype storage target already
-// covered by this same enum); NOT a general alias-name fallback.
-// The storage target may sit ANYWHERE in the slot's supertype closure,
-// not only in the raw kind list — typescript's `_property_name` slot
-// reaches `_property_identifier` one supertype deeper, and the alias
-// occurrence's wire id (`alias_sym_property_identifier`) still needs
-// an arm here. The closure's own `subtypeParseNames` facts (the
-// per-subtype alias names link stamped on each supertype) join the
-// grammar-wide parseAliases map — that is where a NESTED supertype's
-// alias spelling lives.
-```
-
-#### body
-
-```text
-// Leaf trials: the alias storage's own concrete expansion, restricted
-// to leaf variants THIS enum carries (see emitAliasUnwrapRecurseArm).
-```
-
-#### body
-
-```text
-// Box<EnumName> napi-trait impls. See note on `renderBoxedEnumNapiImpls`.
 ```
 
 #### body
@@ -3935,9 +3714,14 @@ choice's seams sit inside the arm in the render rule, and the template
 collapses the choice to one slot, so the enum is where they are written;
 the parent never sees them.
 
-The unit arms' kind ids are computed once (`unitKindIdsOf`) and feed both
-the napi decode's unit arms and, for an enum that backs a prepare-filled
-slot, its `from_kind_id` (`fromKindIdImpl`).
+Each payload is written by `choicePayloadType`, boxed when it is pinned over the payload ceiling, and its render arm reaches a boxed payload through `.as_ref()`.
+
+The unit variants' kind ids are computed once (`unitKindIdsOf`) and feed both
+their `#[kind]` claims and, for an enum that backs a prepare-filled slot, its
+`from_kind_id` (`fromKindIdImpl`). Each claim prints as the variant's
+`#[kind]` line (`variantKindLines`), which is what the derive's codec decodes
+from. An id no variant claims, such as the wire id of an alias that wraps a
+flattened supertype, is refused by the codec.
 
 A slot with a blank arm (`hasBlankArm`) gets a `Blank` variant: it decodes from the blank id, renders nothing, and is no kind.
 
@@ -3970,109 +3754,21 @@ build that arm from the option's resolved kind id.
 
 A slot with a blank arm maps the blank id to the enum's `Blank` variant, so an option that resolves to the blank fills the slot with a value that renders nothing.
 
-### `packages/codegen/src/emitters/render-module.ts::renderAnyTransportWithNapiFromValue`
+### `packages/codegen/src/emitters/render-module.ts::renderAnyTransport`
 
-```text
-/**
- * Emit `AnyTransport` with a custom `FromNapiValue` impl that reads `$type`
- * as a numeric `u16` KindId directly from the JS object properties (no serde,
- * no JSON intermediate). Phase B of the KindID runtime migration.
- *
- * Per the spec: the `AnyTransport` enum body itself has no serde derives —
- * only `Debug + Clone`. The custom `FromNapiValue` impl reads `$type` as `u16`
- * and dispatches to the per-kind struct's `FromNapiValue` (generated by
- * `#[napi(object)]`). A fixed-literal kind is a unit variant named by its kind
- * (`collectFixedLiterals`): its arm decodes from the kind's id alone, and its
- * render arm calls the kind's render function.
- *
- * Unknown kind IDs produce a napi error with the numeric ID in the message
- * so that diagnostics can surface useful context.
- *
- * DRY constraint: the match arms come from the same `kindEntries` list that
- * `emitKindIdRust` uses for `kind_ids.rs` constants — both consumers read
- * from the same source so dispatch and constants stay in sync.
- *
- * @param payloadNodes — the projection's nodes that are not fixed literals
- * @param fixed — the grammar's fixed-literal kinds
- * @param nodeMap — for `kindIdMemberName` lookups (typeName derivation)
- * @param kindEntries — entries from the symbol catalog; used for ID→variant dispatch
- */
-```
+`AnyTransport`: one payload variant per node that is not a fixed literal, one
+unit variant per fixed-literal kind (`collectFixedLiterals`), and `Verbatim`.
+Each kind id is claimed once: node claims first, then each literal's own id
+(`FixedLiteral.ownId`), and an id that alias-collapsed kinds share goes to its
+first claimant. Each claim prints as the variant's `#[kind]` line
+(`variantKindLines`), which is what the derive's codec decodes from.
 
-#### body
+`Verbatim` carries no `#[transport(verbatim)]`: `AnyTransport` admits every
+typed node, so no bare string can pick a variant. A value with no kind id
+belongs to the enclosing `SlotValue` carrier as verbatim text.
 
-```text
-// Node-arm id index — the shared `buildKindIdByKind` construction (DRY:
-// this was previously an inline duplicate of that helper). Literal arms
-// do NOT resolve through this map — see the literal-first note below.
-```
-
-#### body
-
-```text
-// Enum declaration — no serde Deserialize; napi FromNapiValue added below.
-```
-
-#### body
-
-```text
-// Custom FromNapiValue impl — reads $type as u16 from the JS object,
-// then dispatches to the per-kind struct's FromNapiValue. This eliminates
-// the serde/JSON intermediate entirely. Gated behind napi-bindings feature
-// so templates.rs compiles without the napi/napi-derive crates available.
-```
-
-#### body
-
-```text
-// One match arm per node — each arm delegates to the per-kind struct's
-// FromNapiValue (generated by #[napi(object)]) over the same napi_val.
-// T016: Deduplicate match arms — alias-collapsed kinds that share the same
-// KindId emit only the first arm. The second would be unreachable.
-```
-
-```text
-// no parser symbol — skip
-```
-
-```text
-// skip duplicate KindId
-```
-
-#### body
-
-```text
-// One match arm per fixed-literal kind — unit variants, no payload, keyed
-// by the kind's own id (`FixedLiteral.ownId`). The text is a compile-time
-// constant; JS does not need to send it. Use the same emittedNodeIds set
-// to skip KindIds already claimed by node arms.
-```
-
-#### body
-
-```text
-// AnyTransport is kind_id-only: it admits the universe of typed nodes, so
-// no bare-string fast-path can pick the "right" variant. A value with no
-// kind_id belongs to the enclosing `SlotValue` carrier as verbatim text;
-// by the time we reach AnyTransport, a missing kind_id is a real error.
-```
-
-#### body
-
-```text
-// Stub ToNapiValue for AnyTransport — transport is receive-only (JS→Rust);
-// ToNapiValue is required by #[napi(object)] field bounds on containing structs
-// but is never called at runtime. Returns JS null as a safe placeholder.
-```
-
-#### body
-
-```text
-// Box<AnyTransport>: FromNapiValue + ToNapiValue — required because
-// #[napi(object)] per-kind transport structs have Box<AnyTransport> fields
-// for single-value heterogeneous slots (Box breaks recursive size cycles).
-// napi-rs does not provide a blanket impl for Box<T>.
-```
+The ids come from the same `kindEntries` that `kind_ids.rs` is emitted from
+(`buildKindIdByKind`), so the claims and the constants agree.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderTriviaTransportSupport`
 
@@ -4085,6 +3781,14 @@ attached). Typed variants are needed because a factory-constructed comment
 carries the same wrapped wire shape as any other node and renders through
 its own template.
 
+`TriviaTransport` derives `Transport` as `#[transport(choice, codec_only)]`:
+the derive expands its codec and its variant lookup but no typed reader,
+since the layout reader reads trivia. Each kind variant claims its kind's id
+in a `#[kind]` line. `Verbatim` is marked `#[transport(verbatim)]`. `Text` is
+marked `#[transport(text)]` and names the compound trivia kinds whose `$text`
+objects it takes; a grammar whose extras hold no compound kind leaves `Text`
+unmarked, and nothing decodes into it.
+
 `TriviaTransport` implements `TriviaSeam` for the whitespace trivia kinds (`whitespaceTriviaKinds`): such an entry is merged into the gap it sits in and replaces that gap's spacing, instead of rendering as a line of its own. Its seam text is the kind's fixed text: JS names a whitespace entry by its exact spelling, so the kind determines the text.
 
 `TransportLayout` is an alias for `sittir_core::layout::TransportLayout<TriviaTransport>`, the layout every struct transport carries; its trivia is a `sittir_core::trivia::TransportTrivia<TriviaTransport>`.
@@ -4093,16 +3797,6 @@ same-line facts) and where each entry renders are the core module's, the
 same for every grammar.
 
 It also emits a `Text` variant (`sittir_core::trivia::TriviaText`): a detached read entry that carries its stamped kind and captured text. It writes that kind's edges around the text, like a rendered node of the kind. It is decoded from an object with `$text` whose kind is a compound trivia kind; a leaf trivia kind stores `$text` itself and keeps its own transport. A trivia entry needs no line-end handling of its own: each variant's render tells the sink its kind (`TransportLayout::render` for a typed variant, the kind's render function for a unit, `TriviaText`'s own render for `Text`), and the sink holds the line end from the grammar's `KIND_FLAGS` table (`renderOptionsRs`), as it does for any node.
-
-### `packages/codegen/src/emitters/render-module.ts::renderVerbatimTransport`
-
-`VerbatimTransport { text }`, emitted once per grammar: text that is a
-slot's content with no kind of its own — a bare string in a slot whose
-members all render from their own text, where the variant tag is
-render-invisible and picking one would be a guess. It renders its text and
-is inert under `Prepare`. Only an enum with a pattern-modeled member
-carries a `Verbatim` arm; `AnyTransport`'s own `from_napi_value` never
-accepts a bare string, because the root of a render is never free text.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderVerbatimTransportStruct`
 
@@ -4125,33 +3819,6 @@ accepts a bare string, because the root of a render is never free text.
  * bare strings and rendered as `""`). Verbatim removes the ambiguity.
  */
 ```
-
-### `packages/codegen/src/emitters/render-module.ts::renderLeafTransportNapiImpls`
-
-Manual napi `FromNapiValue` + `ToNapiValue` impls for a leaf transport
-struct: a pattern leaf, whose text the kind does not fix. A fixed-text
-leaf is a unit enum decoded from its kind id (`fixedLiteralNapiImpls`).
-Two cfg-gated `FromNapiValue` variants are emitted:
-
-- `#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]`
-  dispatches on `napi_typeof` (never probing `String::from_napi_value` on a
-  non-string; see `sittir_core::slot::transport_value_type`): a bare
-  string is the text; a number is a value-less leaf sent as its kind id and
-  takes `defaultTextLiteral` (`kindIdText`, a pattern's fixed literal
-  text), or, for a kind whose text the kind id does not determine, fails
-  naming the id it was sent and that id's kind (`kind_name_from_id`) — a
-  content-bearing leaf never renders a kind id as empty text; anything else
-  is read as an object carrying `$text`
-  and the node's `$_layout`. The struct is built from `text` and the layout.
-- `#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]`
-  reads the full object: `$text` and `$_layout`.
-
-A coordinate never reaches these impls: the slot's `SlotValue` carrier
-takes an object carrying `$treeHandle` before the leaf type is asked.
-
-`ToNapiValue` is a no-op stub in both modes. Transport is receive-only
-(JS→Rust); the stub satisfies `#[napi(object)]` field bounds on parent
-branch structs that embed these leaf types.
 
 ### `packages/codegen/src/emitters/render-module.ts::FixedLiteral`
 
@@ -4184,13 +3851,6 @@ text (regex `lazy`) belongs to that node.
 
 A kind's registry entry. A kind with no entry, or a slot that stores the
 kind under another spelling, fails codegen.
-
-### `packages/codegen/src/emitters/render-module.ts::unitDecodeArm`
-
-A kind-id match arm that builds a unit variant: the id straight to the
-variant, with no decode. Every enum that admits a fixed literal (`AnyTransport`,
-a supertype enum, a choice, `TriviaTransport`) writes its unit arms through
-it.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderFixedLiteralFn`
 
@@ -4225,50 +3885,28 @@ here.
 The fixed literal's own type, the one a slot typed by the kind holds: the
 one-variant enum `<Kind>Transport { <Variant> }`. Its `KindOf` answers its
 own id, its `Prepare` is inert, it renders through `renderFixedLiteralFn`'s
-function, and it decodes from its kind id (`fixedLiteralNapiImpls`).
-
-### `packages/codegen/src/emitters/render-module.ts::KindIdArm`
-
-One variant of a type decoded by kind id, with every id that decodes to it.
-
-### `packages/codegen/src/emitters/render-module.ts::kindIdNapiImpls`
-
-The napi impls of a type that crosses as a kind id: `FromNapiValue` matches a
-`u16` against each arm's ids and fails on any other id, naming the type;
-`ToNapiValue` is receive-only. A fixed literal (one arm) and an enum kind (one
-arm per member) both decode through it, so no value whose text its kind fixes
-is decoded from text at render time.
+function, and the derive decodes it from the ids its `#[kind]` line claims
+(`fixedLiteralIds`).
 
 ### `packages/codegen/src/emitters/render-module.ts::enumMemberId`
 
 An enum member's kind id (`AssembledEnum.resolvedByText`). A member with none
 is a codegen error, since the transport has no other way to decode it.
 
-### `packages/codegen/src/emitters/render-module.ts::fixedLiteralNapiImpls`
-
-The napi decode for a fixed literal's own type (`kindIdNapiImpls` with one
-arm): a `u16` kind id, nothing else. Its accepted ids (its own and every id its values are stored under)
-build the unit; any other id fails naming the type. A fixed literal crosses
-as its kind id, the least it can be stored as, so nothing about it is
-decoded at run time: no text, no presence flag (a presence slot is a
-boolean of its own) and no object. `ToNapiValue` is receive-only.
-
 ### `packages/codegen/src/emitters/render-module.ts::renderLayoutField`
 
-The `#[napi(js_name = "$_layout")]`-attributed `layout` field
-(`LAYOUT_FIELD`) a compound transport struct (`#[napi(object)]`) carries
-besides its slots. A compound declares no text field — its content is its
-slots, and a node that arrives with storage renders from that storage.
+The `layout` field (`LAYOUT_FIELD`) a compound transport struct carries
+besides its slots, keyed `#[wire(key = "$_layout")]` (`wireKeyAttr`). A
+compound declares no text field — its content is its slots, and a node that
+arrives with storage renders from that storage.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderLeafTransportPlainFields`
 
-Plain struct fields for a pattern leaf's transport struct: the `layout`
-field (`LAYOUT_FIELD`), then `text: String`, the leaf's own content. Unlike
-branch structs, these do not carry `#[napi(object)]` on the struct itself,
-so individual field `cfg_attr(napi(...))` attributes would have no
-proc-macro to consume them; `FromNapiValue` is emitted manually below the
-struct definition (`renderLeafTransportNapiImpls`), reading the
-`$`-prefixed JS property names explicitly.
+A text leaf's transport fields: the layout field (`renderLayoutField`), then
+`text: String` keyed `$text`, the leaf's own content. The struct's
+`#[transport(…, text …)]` (`transportArgs`) has the derive expand the text
+leaf codec: a bare string is its text, a number its fixed text, and an object
+its `$text` and its layout.
 
 ### `packages/codegen/src/emitters/render-module.ts::TransportSlotShape`
 
@@ -4380,46 +4018,9 @@ reachable kinds share an SCC with `parentKind` boxes its value.
 
 A slot with a blank arm is always typed by its per-slot enum (`transportSlotShapeOf` classifies it as a choice), even when its one token would otherwise give it that token's transport type, because the field must hold the blank.
 
-### `packages/codegen/src/emitters/render-module.ts::renderBoxedEnumNapiImpls`
-
-```text
-/**
- * Emit `FromNapiValue` / `ToNapiValue` impls for `Box<EnumName>`. napi-rs's
- * derive does not auto-generate Box-wrapping impls for custom enums, but
- * `Box-at-back-edge` slot typing makes `Box<EnumName>` show up as a field
- * type wherever an enum-typed slot closes a singular size cycle. Without
- * these impls the generated transport structs (which derive `#[napi(object)]`)
- * fail to compile with "trait FromNapiValue is not implemented for Box<…>".
- *
- * Pattern mirrors the existing `Box<AnyTransport>` impls.
- */
-```
-
 ### `packages/codegen/src/emitters/render-module.ts::concreteTransportTypeName`
 
-```text
-/**
- * Rust type name for a concrete transport struct given a grammar kind.
- * Returns `null` when the kind maps to a supertype or multi node — those are
- * NOT emitted as transport structs/enums in Phase 1 (Phase 2 will add them).
- * The caller must fall back to `Box<AnyTransport>` on `null`.
- *
- * @param kind - Grammar kind string (e.g. `"identifier"`, `"_expression"`).
- * @param nodeMap - For typeName + modelType lookup.
- */
-```
-
-#### body
-
-```text
-// Supertype and multi nodes are not emitted as transport structs.
-```
-
-#### body
-
-```text
-// Unknown kind — conservative fallback.
-```
+The transport type a slot's concrete kind is held as: `rustTransportStructName` of its node, so a per-slot choice names a payload as every other printer does. `null` for a supertype, which a per-slot choice expands to its members, and for a kind with no node.
 
 ### `packages/codegen/src/emitters/render-module.ts::perSlotEnumName`
 
@@ -4511,8 +4112,8 @@ sides use. An arm missing either side is left out.
  * with a closed, statically-known variant set.
  * Emits for multi-member enums:
  * - `#[derive(Debug, Clone, Copy)] pub enum XxxEnum { ... }`
- * - `impl FromNapiValue` — `kindIdNapiImpls`: a member's `u16` kind id,
- *   nothing else.
+ * - a `#[kind(…)]` line per member: the derive's codec decodes a member's
+ *   kind id and nothing else, and encodes a member as its first claimed id
  * - `impl Render` — writes the static literal text per variant; a variant
  *   whose arm has a seam pair (`armSeamPairsOf`) writes its before site, the
  *   text, then its after site, each read from the resolved options with
@@ -4527,12 +4128,6 @@ sides use. An arm missing either side is left out.
 
 ```text
 // --- Rust enum declaration ---
-```
-
-#### body
-
-```text
-// --- impl FromNapiValue ---
 ```
 
 #### body
@@ -5667,6 +5262,14 @@ The leading options of a `spread` builder whose node has registered slots;
 undefined for any other node. The factory surface, the `from()` coercer, the
 test emitter and the argument rows all read it here, so whether a builder
 takes leading options is one fact.
+
+### `packages/codegen/src/emitters/boxed-payloads.ts::PAYLOAD_CEILING_BYTES`
+
+The payload ceiling: a choice the reader reads holds every payload larger than this boxed (`BOXED_PAYLOADS`), so a choice is no larger than the ceiling plus its tag. It is the largest of 512, 256 and 128 bytes at which, in both profiles, the typed read needs no more stack than today's read at 200 nested levels and per level (`typed_read_nesting.rs`); it is 256. The typed read's fixed root cost stays above today's at every ceiling, so a shallow source needs more stack than today's; that cost is reported, not gated.
+
+### `packages/codegen/src/emitters/boxed-payloads.ts::BOXED_PAYLOADS`
+
+Per grammar, the transport types a choice holds boxed: every payload type over `PAYLOAD_CEILING_BYTES`. The lists are measured, not chosen, and read once, by `grammarRenderInputs`: `size-census.py --pins <ceiling>` (in the shared-arena stack probes) prints them and says whether this file holds them. The build refuses a list that is wrong either way: the generated assertions (`payloadCeilingAssertions`) fail on an unpinned payload over the ceiling and a pinned one within it, and the printer refuses a pin no choice holds. A payload's size depends only on what it holds by value, and a cycle through a choice is already boxed at the field that closes it, so pinning settles from the leaves up in a few rounds.
 
 ### `packages/codegen/src/emitters/bundle-hash.ts::computeBundleHash`
 
@@ -8589,9 +8192,10 @@ The one field every struct transport carries besides its content:
 `$_layout` → `layout: Option<TransportLayout>`, the node's layout
 (`sittir_core::layout::TransportLayout`): the trivia it owns, its base
 edges, and the source evidence a rebuilt node keeps, its gap toward the list
-item before it and, for a list, its flanks. It is an `Option` because a
-compound transport derives `napi(object)`, which reads a non-`Option` field
-as required, and a node with no layout sends no `$_layout`. The generated
+item before it and, for a list, its flanks. Its `wireKey` is the key
+`wireKeyAttr` prints. It is an `Option` because the derive's codec reads a
+non-`Option` field as required, and a node with no layout sends no
+`$_layout`. The generated
 code reads it through `sittir_core::layout::Layout`, so an absent layout
 reads as an empty one.
 
@@ -8604,6 +8208,12 @@ gap writes at its seat's strength, and a stamp without a strength writes at
 the strength the kind's edge site gives that arm. A transport carries no
 coordinate fields: a coordinate is the `Coord` arm of the slot's `SlotValue`
 carrier, never a field on the transport.
+
+### `packages/codegen/src/emitters/render-module.ts::wireKeyAttr`
+
+The `#[wire(key = "…")]` line above a transport field: the property the
+derive's codec reads the field from and writes it under. Every field key
+prints through it.
 
 ### `packages/codegen/src/emitters/render-module.ts::LITERAL_TO_VARIANT_NAME`
 
@@ -14024,11 +13634,9 @@ A slot accessor reads through `hydrateSlot` (one child) or `hydrateSlots` (a lis
 ```text
 // Cross-supertype self-alias ids: a mint arm (`alias($._hidden_supertype,
 // $.visible)`) records its storage→parse pair on the REFERENCING
-// supertype's `subtypeParseNames`, but the id must also be accepted by the
-// STORAGE supertype's OWN enum — a delegated decode
-// (`ExpressionTransport` 432-arm → `ExpressionExceptRangeTransport`) hands
-// the same napi value down, so the inner enum sees the alias id too.
-// Collect globally (the pair never lives on the storage supertype itself).
+// supertype's `subtypeParseNames`, and the STORAGE supertype's own enum
+// withholds the id from its members too (`claimSupertypeIds`). Collect
+// globally (the pair never lives on the storage supertype itself).
 ```
 
 #### body
@@ -14076,117 +13684,29 @@ filtered once here.
 
 ### `packages/codegen/src/emitters/render-module.ts::boxedInEnum`
 
-#### body
+Whether a choice holds a payload boxed: when the payload's transport type is among the pins the emission was given (`RenderOptionsInputs.boxedPayloads`, the grammar's `BOXED_PAYLOADS` through `grammarRenderInputs`). The pins hold every payload type over `PAYLOAD_CEILING_BYTES`, and the generated assertions (`payloadCeilingAssertions`) keep them exact, so a choice is no larger than the ceiling plus its tag. Every choice the reader reads boxes the same types, so a payload passes between choices, a supertype's bridge to `AnyTransport` included, as it is.
 
-```text
-// All transport enum variants are now inline. Box decisions moved to
-// the slot-field level (see `rustTransportSlotType` — singular slots
-// whose admit-set intersects parentKind's SCC get `Box<T>` at the
-// source of the back-edge). This keeps enums uniformly small in stack
-// frames and pushes the heap-indirection cost to the exact field that
-// creates the size cycle, not every variant of the enum.
-```
+### `packages/codegen/src/emitters/render-module.ts::choicePayloadType`
 
-### `packages/codegen/src/emitters/render-module.ts::aliasLeafTrialOrder`
+The type a choice variant holds its payload as: the payload's transport type, boxed when `boxedInEnum` says so. It records the payload in `ReadPrint.choicePayloads`, so every payload a choice holds is checked against the ceiling.
 
-```text
-/** Leaf modelTypes an alias occurrence can scalar-collapse into — the trial
- *  set for {@link emitAliasUnwrapRecurseArm}, text-validated enums first. */
-```
+### `packages/codegen/src/emitters/render-module.ts::payloadCeilingAssertions`
 
-### `packages/codegen/src/emitters/render-module.ts::supertypeClosureOf`
-
-```text
-/** The supertype closure of `kinds`: every kind reachable by walking
- *  supertype subtype lists transitively (the kinds themselves included). */
-```
+One `const` assertion per payload any choice holds, each one way: a pinned payload must be over `PAYLOAD_CEILING_BYTES`, an unpinned one at most that. A payload that grows past the ceiling fails the build asking to be pinned; a pinned one that shrinks under it fails asking to be unpinned. Each assertion is its own item, so one build reports every payload on the wrong side. A pin no choice holds is refused while printing, asking to be removed. The checks are for the pins the emission was given: the `<= N` assertion on every unpinned payload is what makes an emission that forgets the pins fail the Rust build, naming each payload over the ceiling. `renderTransportSupport` prints them after every choice.
 
 ### `packages/codegen/src/emitters/render-module.ts::emitSupertypeTransportEnum`
 
-#### body
-
-```text
-// SCC-driven Box rule. Box only when the variant kind and the
-// supertype's owner kind are in the same SCC of the singular-
-// reference graph (see `boxedInEnum` docstring). Leaf-like
-// variants (pattern / keyword / token / enum) are always inline.
-```
-
-#### body
-
-```text
-// Self-alias / reserved-supertype kind_id: parser sent the supertype's
-// own kind_id rather than a concrete variant's. We don't know which
-// variant — try each in turn. Pattern/keyword/token/enum leaves have
-// safe FromNapiValue impls; branches/groups are skipped here unless
-// leafOnly=false because their impls can match coerced inputs greedily.
-```
-
 A supertype whose concrete expansion (`supertypeAdmitsVerbatim`) holds a
-pattern-modeled kind admits `Verbatim(VerbatimTransport)` beside its
-members: a prepare arm, a bridge arm to `AnyTransport::Verbatim`, the
-string shape in `from_napi_value`, and a render arm in the supertype's
-render helper.
+pattern-modeled kind admits `Verbatim(VerbatimTransport)`, marked
+`#[transport(verbatim)]`, beside its members: a prepare arm, a bridge arm to
+`AnyTransport::Verbatim`, and a render arm in the supertype's render helper.
 
-A fixed-literal member is a unit variant named by its kind: its claim arm
-(`unitDecodeArm`) and bridge arm build the unit, its `KindOf` arm answers the
-kind's own id, and it takes no part in the decode trials, which try values
-on payload members only.
+Each payload is written by `choicePayloadType`, boxed when it is pinned over the payload ceiling. The bridge to `AnyTransport` passes a payload as it is, a box included, since both choices box the same types; a boxed supertype payload is unboxed to call its own bridge.
 
-#### body
-
-```text
-// Enum declaration — Debug + Clone only; no serde, no napi object derive.
-```
-
-#### body
-
-```text
-// Build kind_id match arms shared between the raw-u16 input shape and
-// the object-with-$type input shape. Self-alias and suppressed-supertype
-// kind_ids fall back to emitDecodeTrials (we don't statically know which
-// variant the parser meant).
-```
-
-#### body
-
-```text
-// Parse-aliases of THIS supertype itself: a mint arm
-// (`alias($._expression_except_range, $.expression_group1)`) makes
-// the hidden supertype VISIBLE at that position, so runtime nodes
-// arrive under the alias occurrence's own id (`alias_sym_*`). The
-// grammar-agnostic reader stores such a node's single unlabeled
-// child under a kind-keyed slot (`{ $type: <aliasId>,
-// _<childKind>: <child> }` — read_untyped_node.rs kind-named-slot routing),
-// so no variant struct can decode the wrapper directly (decode
-// trials would probe the wrong object). Unwrap the kind-keyed slot
-// and re-dispatch Self on the concrete child, which carries its own
-// `$type`.
-```
-
-#### body
-
-```text
-// Owner-kind / supertype-membership ids stay name-resolved (spec §2.3
-// keep-list); enum member ids are stamped facts. Aliased arm:
-// `parseNames.get(subKind)` also accepts the parse name's id — the
-// alias occurrence's own runtime symbol (`alias_sym_*`), the id
-// tree-sitter actually emits at that arm's position.
-```
-
-#### body
-
-```text
-// Stub ToNapiValue — supertype transport is receive-only (JS → Rust).
-```
-
-#### body
-
-```text
-// Box<EnumName> napi-trait impls. Required because `Box-at-back-edge`
-// slot typing in rustTransportSlotType emits `Box<EnumName>` as a struct
-// field type whenever an enum-typed slot closes a singular size cycle.
-```
+Each member's claims (`claimSupertypeIds`) print as its `#[kind]` line
+(`variantKindLines`), which is what the derive's codec decodes from. A
+fixed-literal member is a unit variant named by its kind: its bridge arm
+builds the unit and its `KindOf` arm answers the kind's own id.
 
 #### body
 
@@ -14211,6 +13731,23 @@ on payload members only.
 // render helper (declared later by emitSupertypeRenderHelper; forward fn
 // references are fine at Rust module scope).
 ```
+
+### `packages/codegen/src/emitters/render-module.ts::claimSupertypeIds`
+
+The kind ids each member of a supertype's enum claims, by variant. The
+supertype's own id, its suppressed kinds' ids and its self-alias ids are
+withheld before any member claims, so no variant claims them and the
+derive's codec refuses them. A self-alias id is a parse alias that makes the
+hidden supertype visible (`alias($._expression_except_range,
+$.expression_group1)`): its nodes arrive under the alias occurrence's own id
+with their child under a kind-keyed slot, which no member decodes.
+
+Members then claim in stored-kind-id-first order (`kindIdStoredFirst`):
+every member's own ids, then every member's accepted ids. An aliased arm's
+accepted ids include its parse name's id (`parseNames.get(subKind)`), the
+id tree-sitter emits at that arm's position. An id goes to its first
+claimant. Owner-kind and supertype-membership ids stay name-resolved; enum
+member ids are stamped facts.
 
 ### `packages/codegen/src/emitters/render-module.ts::supertypeAdmitsVerbatim`
 
@@ -14432,16 +13969,6 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
 #### body
 
 ```text
-// Branch/envelope/polymorph/list use #[napi(object)] for derived
-// FromNapiValue. Leaf (pattern) transport structs opt out of
-// #[napi(object)] and instead get manual cfg-gated FromNapiValue impls
-// below — so JS can send a plain string in release mode (no debug-transport)
-// and the full metadata object in debug mode.
-```
-
-#### body
-
-```text
 // 'list' shares 'branch's transport struct field emission — see
 // isSlotBearingCompound's doc comment, shared.ts.
 ```
@@ -14449,10 +13976,9 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
 #### body
 
 ```text
-// Per cleanup-rules §E1: named and unnamed slots emit symmetric per-slot
-// transport fields. JS factories write `_<storageName>` keys for every
-// slot regardless of named-ness, so the napi struct must declare a field
-// per slot with the matching `js_name` to deserialize.
+// Named and unnamed slots emit symmetric per-slot transport fields. JS
+// factories write `_<storageName>` keys for every slot regardless of
+// named-ness, so the struct declares a field per slot keyed by that name.
 ```
 
 #### body
@@ -14468,7 +13994,7 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
 // the CST native reader exposes the inner grammar fields there
 // (tree-sitter places `value` directly on `const_item`, not nested
 // inside `_const_item_optional1`). Adding the direct fields lets
-// napi deserialization read the CST path without a nested helper
+// the codec read the CST path without a nested helper
 // object. The render fn then tries the direct field first, falling
 // back to the helper for factory-built transports.
 //
@@ -14534,20 +14060,12 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
 #### body
 
 ```text
-// Task 4's wire capture (wrap.ts's `emitSeparatedListWrap`) emits
+// The separated list's wire capture (wrap.ts's `emitSeparatedListWrap`) emits
 // `_delimiter`/`_separator` sibling wire keys
 // ONLY when the corresponding grammar-level mode/rule actually needs
 // per-instance capture (design's "Field shape and wire capture"
 // section) — mirror that same gating here so the struct never
 // declares a field the wire can't populate.
-```
-
-#### body
-
-```text
-// Leaf (pattern) structs have manual cfg-gated FromNapiValue impls
-// (below). The napi field attributes are not emitted because there is no
-// #[napi(object)] on the struct to act as the consuming proc-macro.
 ```
 
 #### body
@@ -14565,30 +14083,13 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
 #### body
 
 ```text
-// For a leaf (pattern) struct: emit manual cfg-gated napi impls.
-// These replace the #[napi(object)]-derived FromNapiValue so that:
-//   - release (not debug-transport): JS sends a plain string → read as String
-//   - debug  (    debug-transport): JS sends full metadata object → read fields
-// ToNapiValue is a stub in both modes — transport structs are receive-only.
-```
-
-#### body
-
-```text
 // Tokens are anonymous (named=false); patterns and keywords are named (named=true).
 ```
 
-#### body
-
-```text
-// Emit Box<StructName> napi impls so the `Box-at-back-edge` slot-field
-// typing in rustTransportSlotType can produce `Box<ConcreteTransport>`
-// without compile-time "trait FromNapiValue is not implemented" errors.
-// napi-rs's derive doesn't auto-generate Box wrappers; we forward
-// manually to the inner struct's impls (which the #[napi(object)] derive
-// or the manual leaf impls above provide). Dead Box impls for structs
-// never actually boxed get DCE'd by the compiler.
-```
+Every field prints its wire key (`wireKeyAttr`): `$_layout` for the layout,
+`_<storageName>` for a slot, `_delimiter` and `_separator` for a list's
+captured flank and separator, and each spacing site's own key. The derive
+expands the struct's codec from those keys.
 
 Every struct passes its own kind id to `TransportLayout::render` (`None` when the kind has no parser id), so the sink holds a line end after a line-terminated kind (`RenderSink::end_line_after`). A leaf whose kind entry is anonymous renders in the token role (`ownsTrivia`), so its transport leaves held trailing entries held and doesn't seat them ahead of itself.
 
@@ -14628,9 +14129,8 @@ optional.
 
 ```text
 // Generator-owned UntypedNode stores raw fields as `_<storageName>` top-level
-// keys. Keep the JS/native render boundary dumb by teaching the generated
-// napi structs to read the same storage keys directly. Symmetric for named
-// and unnamed slots (cleanup-rules §E1).
+// keys, and each slot's field is keyed the same (`wireKeyAttr`), so the
+// boundary reads storage keys directly. Named and unnamed slots alike.
 ```
 
 The field's type is `rustTransportSlotType` of the slot's
@@ -16062,6 +15562,12 @@ before and after edge, either absent when the kind owns no seam on that side.
  *  in hand would (tests on fixture node maps). */
 ```
 
+`boxedPayloads` is the grammar's payload pins (`BOXED_PAYLOADS`), a fact beside the node map like the render rules. The real pipeline fills it through `grammarRenderInputs`; a fixture emission that passes none boxes nothing and refuses nothing.
+
+### `packages/codegen/src/emitters/render-module.ts::grammarRenderInputs`
+
+The render inputs a grammar's real emission passes: the caller's facts plus the grammar's payload pins. It is the one read of `BOXED_PAYLOADS`; `emit.ts` and the render-module test's real-model helper both call it.
+
 ### `packages/codegen/src/emitters/render-module.ts::PlannedRenderOptions`
 
 ```text
@@ -16746,7 +16252,7 @@ The per-grammar runtime glue shared by every grammar package, emitted into `pack
 
 ### `packages/codegen/src/emitters/native-crate.ts::NATIVE_RENDER_TRANSPORT_ABI`
 
-The version of the wire between the JS packages and a native build: the render transport shape JS sends, the read shape the native reader sends back (`$type` / `$displayType`, which children and tokens arrive, when `$text` is present, which of `$handle` / `$parentHandle` / `$treeHandle` a node carries, and the error regions a parse returns beside its root), and the read calls' names and arguments (a read takes a level count; a descendant walk takes the address it starts from, kinds, a resume path, a limit, a plan and a depth, and returns its start's own handle with each batch; a plan is evaluated over a list of addresses in one call; the typed-read refusal call takes a tree id, and the typed-read parity call takes a tree id and today's read of it). It is the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into each crate's generated `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. The render-module hash covers only the render templates, so a reader change with unchanged templates passes the hash check; bump this whenever any of these changes, and regenerate every grammar.
+The version of the wire between the JS packages and a native build: the render transport shape JS sends, the read shape the native reader sends back (`$type` / `$displayType`, which children and tokens arrive, when `$text` is present, which of `$handle` / `$parentHandle` / `$treeHandle` a node carries, and the error regions a parse returns beside its root), and the read calls' names and arguments (a read takes a level count; a descendant walk takes the address it starts from, kinds, a resume path, a limit, a plan and a depth, and returns its start's own handle with each batch; a plan is evaluated over a list of addresses in one call; the typed-read refusal call takes a tree id, the typed-read parity call takes a tree id and today's read of it, and the typed-read round-trip call takes a tree id). It is the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into each crate's generated `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. The render-module hash covers only the render templates, so a reader change with unchanged templates passes the hash check; bump this whenever any of these changes, and regenerate every grammar.
 
 ### `packages/codegen/src/emitters/types.ts::emitNodeSurfaceInterfaces`
 
@@ -16974,7 +16480,7 @@ The kind id of the keyword a presence slot reads: the id the parser shows for th
 
 ### `packages/codegen/src/emitters/render-module.ts::ReadPrint`
 
-What the transport printers share while they state the read facts: the facts' context, the template bodies by kind, the kind ids each printed type admits, and the choices that carry a blank arm. One value is threaded through every printer so a type's ids are recorded where they are printed and checked after all of them are.
+What the transport printers share while they state the read facts: the facts' context, the template bodies by kind, the kind ids each printed type admits, the choices that carry a blank arm, and the payload types the choices hold (`choicePayloads`), which the ceiling assertions check. One value is threaded through every printer so a type's ids are recorded where they are printed and checked after all of them are.
 
 ### `packages/codegen/src/emitters/render-module.ts::readPrintOf`
 
@@ -16986,7 +16492,11 @@ Records ids a printed type admits, so a slot typed by it can be checked against 
 
 ### `packages/codegen/src/emitters/render-module.ts::variantKindLines`
 
-The `#[kind(…)]` line of one choice variant. An alias envelope reads by its display id alone; any other id the decode claims for it is recorded for the pin check, not printed. A variant the decode gives no id gets no line and is never read.
+The `#[kind(…)]` line of one choice variant. An alias envelope reads by its
+display id alone; the other ids the decode claims for it are recorded for the
+pin check and printed in `decodes(…)`, ids the derive's codec decodes as the
+variant and its reader ignores. A variant the decode gives no id gets no line
+and is never read.
 
 ### `packages/codegen/src/emitters/transport-projection.ts::foldedTokens`
 

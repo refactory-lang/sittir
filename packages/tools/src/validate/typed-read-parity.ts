@@ -4,7 +4,7 @@ import { STORED_TRIVIA, toDetachedTransportData, treeTokenOf } from '@sittir/com
 import type { AnyUntypedNode } from '@sittir/types';
 import { loadCorpusEntries, loadLanguageForGrammar, loadNativeEngine, type TSNode, type TSTree } from './common.ts';
 
-export type TypedReadParityOutcome = 'refused' | 'differs' | 'today-failed' | 'stale-listed';
+export type TypedReadParityOutcome = 'refused' | 'differs' | 'round-trip' | 'today-failed' | 'stale-listed';
 
 export interface TypedReadParityRow {
 	readonly entry: string;
@@ -33,6 +33,7 @@ export interface TypedReadParitySummary {
 	readonly agreed: number;
 	readonly refused: number;
 	readonly differs: number;
+	readonly roundTrip: number;
 	readonly todayFailed: number;
 	readonly staleListed: number;
 	readonly emptySlots: number;
@@ -145,6 +146,8 @@ export async function computeTypedReadParity(grammar: string): Promise<TypedRead
 			rows.push({ entry: entry.name, outcome: 'refused', report: refusal });
 			continue;
 		}
+		const roundTrip = engine.diagnostics.typedReadRoundTrip(treeId);
+		if (roundTrip !== null) rows.push({ entry: entry.name, outcome: 'round-trip', report: roundTrip });
 		let report: string | null;
 		try {
 			report = engine.diagnostics.typedReadParity(treeId, withoutLayoutEvidence(toDetachedTransportData(root as AnyUntypedNode, STORED_TRIVIA)));
@@ -155,8 +158,9 @@ export async function computeTypedReadParity(grammar: string): Promise<TypedRead
 		const { emptySlots: found, difference } = report === null ? { emptySlots: [], difference: '' } : parseReport(entry.name, report);
 		const unlisted = found.filter(({ entry: name, kind, slot }) => !listed.has(emptySlotKey(name, kind, slot)));
 		emptySlots.push(...found);
-		if (difference === '' && unlisted.length === 0) agreed++;
-		else {
+		if (difference === '' && unlisted.length === 0) {
+			if (roundTrip === null) agreed++;
+		} else {
 			const notes = unlisted.map(({ kind, slot }) => `empty slot not in the listed rows: ${kind}.${slot}`);
 			rows.push({ entry: entry.name, outcome: 'differs', report: [...notes, difference].filter((part) => part !== '').join('\n') });
 		}
@@ -176,7 +180,7 @@ export async function computeTypedReadParity(grammar: string): Promise<TypedRead
 			const [variant = '', display = '', id = ''] = key.split('\t');
 			return { variant, display: Number(display), id: Number(id), shown };
 		}),
-		summary: { grammar, entries: entries.length, agreed, refused: count('refused'), differs: count('differs'), todayFailed: count('today-failed'), staleListed: count('stale-listed'), emptySlots: emptySlots.length }
+		summary: { grammar, entries: entries.length, agreed, refused: count('refused'), differs: count('differs'), roundTrip: count('round-trip'), todayFailed: count('today-failed'), staleListed: count('stale-listed'), emptySlots: emptySlots.length }
 	};
 }
 
@@ -200,5 +204,5 @@ export async function run(opts: TypedReadParityOptions): Promise<number> {
 			console.log(`# ${summary.grammar}: ${JSON.stringify(summary)}`);
 		}
 	}
-	return censuses.some(({ summary }) => summary.refused + summary.differs + summary.todayFailed + summary.staleListed > 0) ? 1 : 0;
+	return censuses.some(({ summary }) => summary.refused + summary.differs + summary.roundTrip + summary.todayFailed + summary.staleListed > 0) ? 1 : 0;
 }

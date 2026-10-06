@@ -26,6 +26,7 @@ pub mod slot;
 pub mod spacing;
 pub mod trivia;
 pub mod types;
+pub mod verbatim;
 pub mod view;
 
 // Flat re-export for the runtime kind discriminant — per the KindID
@@ -34,6 +35,31 @@ pub mod view;
 pub use types::KindId;
 // The derive that expands a transport declaration into its typed reader.
 pub use sittir_transport_macros::Transport;
+
+#[cfg(feature = "napi-bindings")]
+#[doc(hidden)]
+pub use ::napi as __napi;
+
+/// The items of a derived transport's wire codec, kept only when this crate
+/// is built with napi bindings, so a crate that derives `Transport` needs no
+/// napi dependency or feature of its own.
+#[cfg(feature = "napi-bindings")]
+#[doc(hidden)]
+#[macro_export]
+macro_rules! napi_codec {
+    ($($item:item)*) => { $($item)* };
+}
+
+/// The items of a derived transport's wire codec, dropped: this crate is
+/// built without napi bindings.
+#[cfg(not(feature = "napi-bindings"))]
+#[doc(hidden)]
+#[macro_export]
+macro_rules! napi_codec {
+    ($($item:item)*) => {};
+}
+
+pub use verbatim::VerbatimTransport;
 // Flat re-export for the typed render sink: the sink a render writes into,
 // the trait a rendered value implements against it, and the one-writer
 // one-render root call.

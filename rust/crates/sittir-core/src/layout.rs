@@ -155,27 +155,24 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNap
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T> ::napi::bindgen_prelude::ToNapiValue for TransportLayout<T> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        unsafe { ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ()) }
+impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for TransportLayout<T> {
+    /// `{ trivia?, gap?, flank? }`, each only when present. The edges are the
+    /// prepare walk's and never cross.
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        use crate::boundary::{object_with, set};
+        let obj = unsafe { object_with(env, &[])? };
+        if let Some(trivia) = val.trivia {
+            unsafe { set(env, obj, c"trivia", TransportTrivia::to_napi_value(env, trivia)?)? };
+        }
+        if let Some(gap) = val.gap {
+            unsafe { set(env, obj, c"gap", SourceGap::to_napi_value(env, gap)?)? };
+        }
+        if let Some(flank) = val.flank {
+            unsafe { set(env, obj, c"flank", SourceFlank::to_napi_value(env, flank)?)? };
+        }
+        Ok(obj)
     }
 }
-
-#[cfg(feature = "napi-bindings")]
-impl<T> ::napi::bindgen_prelude::TypeName for TransportLayout<T> {
-    fn type_name() -> &'static str {
-        "TransportLayout"
-    }
-    fn value_type() -> ::napi::ValueType {
-        ::napi::ValueType::Object
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl<T> ::napi::bindgen_prelude::ValidateNapiValue for TransportLayout<T> {}
 
 #[cfg(test)]
 mod tests {

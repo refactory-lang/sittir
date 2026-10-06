@@ -1,6 +1,6 @@
 import { NATIVE_TARGETS, grammarDisplayName, nativeBinaryName, type GrammarName } from '../grammars.ts';
 
-export const NATIVE_RENDER_TRANSPORT_ABI = 18;
+export const NATIVE_RENDER_TRANSPORT_ABI = 19;
 
 export interface NativeCrateFile {
 	readonly path: string;
@@ -29,7 +29,6 @@ crate-type = ["cdylib", "rlib"]
 [features]
 default = ["napi-bindings"]
 napi-bindings = ["dep:napi", "dep:napi-derive", "sittir-core/napi-bindings"]
-debug-transport = ["sittir-core/debug-transport"]
 
 [dependencies]
 sittir-core = { path = "../sittir-core" }

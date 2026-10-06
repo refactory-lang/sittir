@@ -28,8 +28,6 @@
 //! (Constitution Principle X exception, documented in data-model.md §1).
 
 use indexmap::IndexMap;
-#[cfg(feature = "napi-bindings")]
-use napi_derive::napi;
 use serde::{
     de::{SeqAccess, Visitor},
     ser::{SerializeMap, SerializeSeq},
@@ -853,16 +851,36 @@ impl<T> napi::bindgen_prelude::TypeName for OneOrMany<T> {
 }
 
 /// Byte-range for an `UntypedNode` within its source string. `start`/`end`
-/// are UTF-8 byte offsets (ast-grep / tree-sitter convention).
-/// `#[napi(object)]` (gated on napi-bindings feature) adds
-/// `FromNapiValue` / `ToNapiValue` so transport structs can include
-/// `Option<Span>` fields. Feature gate prevents napi C-symbol leakage
-/// into sittir-core test binaries.
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+/// are UTF-8 byte offsets (ast-grep / tree-sitter convention). It crosses
+/// the boundary as `{ start, end }`, read and written by the codec below,
+/// which every coordinate and gap uses.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Span {
     pub start: u32,
     pub end: u32,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl napi::bindgen_prelude::FromNapiValue for Span {
+    unsafe fn from_napi_value(env: napi::sys::napi_env, napi_val: napi::sys::napi_value) -> napi::Result<Self> {
+        let obj = unsafe { crate::boundary::object(env, napi_val)? };
+        Ok(Self {
+            start: unsafe { crate::boundary::required(env, obj, c"start", "Span")? },
+            end: unsafe { crate::boundary::required(env, obj, c"end", "Span")? },
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl napi::bindgen_prelude::ToNapiValue for Span {
+    unsafe fn to_napi_value(env: napi::sys::napi_env, val: Self) -> napi::Result<napi::sys::napi_value> {
+        unsafe {
+            crate::boundary::object_with(env, &[
+                (c"start", u32::to_napi_value(env, val.start)?),
+                (c"end", u32::to_napi_value(env, val.end)?),
+            ])
+        }
+    }
 }
 
 /// Leading / trailing delimiters for a format region. Mirrors

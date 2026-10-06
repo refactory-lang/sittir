@@ -13,7 +13,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { classifySlot, buildSupertypeTransportSet, deriveChildrenKinds, type SlotClass } from '../transport-common.ts';
 import { TEXT_RESOLVED_LAYOUT_SITES } from '../layout-text-sites.ts';
-import { emitRenderModule, rustTransportStructName, transportSlotShapeOf } from '../render-module.ts';
+import { emitRenderModule, grammarRenderInputs, payloadCeilingAssertions, rustTransportStructName, transportSlotShapeOf } from '../render-module.ts';
+import { BOXED_PAYLOADS, PAYLOAD_CEILING_BYTES } from '../boxed-payloads.ts';
 import { collectCatalogKinds, collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
 import { seamRenderRules, spaceRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
 import { link } from '../../compiler/link.ts';
@@ -176,11 +177,13 @@ function modelFor(grammar: 'rust' | 'typescript' | 'scm') {
 async function getTransportRsForGrammar(grammar: 'rust' | 'typescript' | 'scm'): Promise<string> {
 	const { raw, nodeMap, kindEntries, generatedIdTables, templates, renderRules } = await modelFor(grammar);
 	if (grammar === 'rust') _rustKindEntries = kindEntries;
-	const emit = emitRenderModule(grammar, templates, nodeMap, generatedIdTables, {
-		renderRules,
-		visibleExternals: raw.visibleExternals,
-		options: raw.options
-	});
+	const emit = emitRenderModule(
+		grammar,
+		templates,
+		nodeMap,
+		generatedIdTables,
+		grammarRenderInputs(grammar, { renderRules, visibleExternals: raw.visibleExternals, options: raw.options })
+	);
 	if (grammar === 'rust') _rustOptionsRs = emit.optionsRs.contents;
 	return emit.transportRs.contents;
 }
@@ -310,15 +313,9 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 		expect(fnBody).not.toContain('render_block');
 	});
 
-	it('leaf transport napi impls accept strings and structured objects', async () => {
-		// napi typeof-dispatch transport fix: leaf FromNapiValue impls now
-		// branch on `transport_value_type(env, napi_val)?` up front instead of
-		// speculatively trying `String::from_napi_value` and catching failures —
-		// calling `String::from_napi_value` on a non-string input had a bad
-		// failure path (JSON.stringify on Object inputs).
+	it('a leaf transport crosses its text under `$text`', async () => {
 		const src = await getTypescriptTransportRs();
-		expect(src).toContain('::napi::ValueType::String => String::from_napi_value(env, napi_val)?,');
-		expect(src).toContain('::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()');
+		expect(extractStructBody(src, 'IdentifierTransport')).toMatch(/    #\[wire\(key = "\$text"\)\]\n    pub text: String,/);
 	});
 
 	it('a presence slot holding a keyword kind crosses as a boolean and renders the kind', async () => {
@@ -332,12 +329,7 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 
 	it('a fixed-text kind decodes its numeric kind id into its unit, which writes the kind text', async () => {
 		const src = await getTypescriptTransportRs();
-		const from = src.indexOf('impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {');
-		expect(from).toBeGreaterThan(-1);
-		const decoder = src.slice(from, src.indexOf('\n}\n', from));
-		expect(decoder).toContain('match u16::from_napi_value(env, napi_val)? {');
-		expect(decoder).toMatch(/^ {12}\d+ => Ok\(Self::Plus\),$/m);
-		expect(decoder).not.toContain('ValueType');
+		expect(src).toContain('#[transport(choice)]\npub enum PlusTransport {\n    #[kind(kind::PLUS)]\n    Plus,\n}');
 		expect(src).toMatch(
 			/fn render_plus\(w: &mut dyn ::sittir_core::render::RenderSink\) -> ::sittir_core::render::RenderResult \{\n    TransportLayout::render\(None, Some\(::sittir_core::types::KindId\(\d+\)\), ::sittir_core::layout::TriviaRole::Token, w, \|w\| w\.text\("\+"\)\)/
 		);
@@ -361,17 +353,17 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 it('variant pairing: function_type_fn_form renders through fn_form (not trait_form)', async () => {
 	const transport = await getRustTemplatesRs();
 	expect(transport).toContain('pub enum FunctionTypeContentTransportSlot {');
-	expect(transport).toContain('FunctionTypeContentTransportSlot::FunctionTypeFnForm(inner) => inner.render(w),');
-	expect(transport).toContain('FunctionTypeContentTransportSlot::FunctionTypeTraitForm(inner) => inner.render(w),');
+	expect(transport).toMatch(/FunctionTypeContentTransportSlot::FunctionTypeFnForm\(inner\) => inner(?:\.as_ref\(\))?\.render\(w\),/);
+	expect(transport).toMatch(/FunctionTypeContentTransportSlot::FunctionTypeTraitForm\(inner\) => inner(?:\.as_ref\(\))?\.render\(w\),/);
 });
 
 describe('render options on transports', () => {
 	it('a separated-list transport carries its own spacing and flank fields, named by the site key', async () => {
 		const src = await getTypescriptTransportRs();
 		const body = extractStructBody(src, 'FormalParametersElementsTransport');
-		expect(body).toContain('napi(js_name = "_item_separator_space_before")');
+		expect(body).toContain('wire(key = "_item_separator_space_before")');
 		expect(body).toContain('pub item_separator_space_before: Option<u16>,');
-		expect(body).toContain('napi(js_name = "_item_separator_space_after")');
+		expect(body).toContain('wire(key = "_item_separator_space_after")');
 		expect(body).toContain('pub item_separator_space_after: Option<u16>,');
 		expect(body).toContain('pub delimiter: Option<u8>,');
 		expect(src).not.toContain('ListSpacing');
@@ -412,7 +404,7 @@ describe('render options on transports', () => {
 	it('a token seam has no transport field and is written from the resolved options at its site', async () => {
 		const src = await getTypescriptTransportRs();
 		const body = extractStructBody(src, 'ArgumentsTransport');
-		expect(body).not.toContain('napi(js_name = "_lparen_after")');
+		expect(body).not.toContain('wire(key = "_lparen_after")');
 		expect(body).not.toContain('pub lparen_after: Option<u16>,');
 		expect(body).not.toMatch(/pub \w+_(start|end): Option<u16>,/);
 		const fillImpl = src.slice(src.indexOf('impl ::sittir_core::prepare::Prepare for ArgumentsTransport {'));
@@ -456,7 +448,7 @@ describe('render options on transports', () => {
 		const src = await getTypescriptTransportRs();
 		for (const name of ['ArgumentsTransport', 'StatementBlockTransport']) {
 			const body = extractStructBody(src, name);
-			expect(body).toContain('napi(js_name = "$_layout")');
+			expect(body).toContain('wire(key = "$_layout")');
 			expect(body).toContain('pub layout: Option<TransportLayout>,');
 			expect(src).toContain(`impl ::sittir_core::options::Edged for ${name} {`);
 			const prepare = src.slice(src.indexOf(`impl ::sittir_core::prepare::Prepare for ${name} {`));
@@ -479,15 +471,12 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		// `_reserved_identifier`; the node's storage is the keyword itself, so an
 		// expression slot decodes the keyword's id straight to its own transport.
 		const transportRs = await getRustTemplatesRs();
-		const from = transportRs.indexOf('impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {');
+		const from = transportRs.indexOf('pub enum ExpressionTransport {');
 		expect(from).toBeGreaterThan(-1);
 		const body = transportRs.slice(from, transportRs.indexOf('\n}\n', from));
-		const tokenId = _rustKindEntries?.find(
-			(entry) => entry.literalText === 'default' || entry.symbolName === 'default'
-		)?.id;
-		expect(tokenId).toBeDefined();
 		expect(_rustKindEntries?.some((entry) => entry.kind === '_reserved_identifier')).toBe(false);
-		expect(body).toContain(`${tokenId} => Ok(Self::DefaultKeyword),`);
+		expect(body).toContain('\n    #[kind(kind::DEFAULT_KEYWORD)]\n    DefaultKeyword,');
+		expect(body).toContain('\n    #[transport(verbatim)]\n    Verbatim(VerbatimTransport),');
 	});
 
 	it('gives each source-adjacent list gap its source class before the list site and the seats fill it', async () => {
@@ -573,7 +562,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 
 	it('admits verbatim text only where a slot admits a pattern kind', async () => {
 		const transportRs = await getRustTemplatesRs();
-		expect(transportRs).toContain('pub struct VerbatimTransport {');
+		expect(transportRs).toContain('use ::sittir_core::VerbatimTransport;');
 		// FunctionItem.name admits identifier and metavariable, both pattern-modeled.
 		expect(transportRs).toMatch(/pub enum FunctionItemNameTransportSlot \{[^}]*Verbatim\(VerbatimTransport\),/s);
 		// EnumVariant.body admits two field lists and no pattern kind.
@@ -758,11 +747,11 @@ describe('transport attributes', () => {
 			.filter(hasBlankArm);
 		const blankChoices = [...src.matchAll(/pub enum (\w+) \{[^}]*\n    #\[transport\(blank\)\]\n    Blank,/g)].map((m) => m[1]!);
 		const heldByBlankChoices = [...src.matchAll(/pub \w+: Option<::sittir_core::SlotValue<(\w+)>>,/g)].filter((m) => blankChoices.includes(m[1]!));
-		const blankIdArms = [...src.matchAll(/ 0 => (?:Ok|Some)\(Self::Blank\)/g)];
+		const blankIdArms = [...src.matchAll(/ 0 => Some\(Self::Blank\)/g)];
 		expect(blankOptions).toHaveLength(9);
 		expect(heldByBlankChoices).toHaveLength(blankOptions.length);
 		expect(blankChoices).toHaveLength(4);
-		expect(blankIdArms).toHaveLength(3 * blankChoices.length);
+		expect(blankIdArms).toHaveLength(blankChoices.length);
 	});
 });
 
@@ -794,4 +783,65 @@ describe('the listed text-resolved layout sites are exact', () => {
 			expect(missing.map((key) => key.replace('\t', ' ')), 'listed sites that no longer exist; remove them from layout-text-sites.ts').toEqual([]);
 		}, 120_000);
 	}
+});
+
+describe('the wire codec facts', () => {
+	it('keys every field and prints no napi codec of its own', async () => {
+		const src = await getRustTemplatesRs();
+		for (const gone of ['napi(object)', 'FromNapiValue', 'ToNapiValue', 'debug-transport', 'decodes as none of its members', 'pub struct VerbatimTransport']) {
+			expect(src).not.toContain(gone);
+		}
+		expect(src).toContain('use ::sittir_core::VerbatimTransport;');
+		const item = extractStructBody(src, 'FunctionItemTransport');
+		expect(item).toMatch(/    #\[wire\(key = "\$_layout"\)\]\n    pub layout: Option<TransportLayout>,/);
+		expect(item).toMatch(/    #\[wire\(key = "_name"\)\]\n    #\[slot\(field = field::NAME\)\]\n    pub name: /);
+		expect(extractStructBody(src, 'IdentifierTransport')).toMatch(/    #\[wire\(key = "\$text"\)\]\n    pub text: String,/);
+	});
+
+	it('marks the verbatim arm of a choice that takes bare text, and only there', async () => {
+		const src = await getRustTemplatesRs();
+		expect(src).toMatch(/    #\[transport\(verbatim\)\]\n    Verbatim\(VerbatimTransport\),/);
+		const any = src.slice(src.indexOf('pub enum AnyTransport {'));
+		const anyBody = any.slice(0, any.indexOf('\n}'));
+		expect(anyBody).toMatch(/\n    Verbatim\(VerbatimTransport\),/);
+		expect(anyBody).not.toContain('#[transport(verbatim)]');
+	});
+
+	it("states an envelope's wire ids", async () => {
+		const src = await getTypescriptTransportRs();
+		const member = src.slice(src.indexOf('pub enum MemberExpressionPropertyTransportSlot {'));
+		expect(member).toMatch(/    #\[kind\(kind::_PROPERTY_IDENTIFIER, display, decodes\(kind::\w+(?:, kind::\w+){21}\)\)\]\n    PropertyIdentifier\(/);
+	});
+
+	it('derives the codec alone for trivia', async () => {
+		const src = await getRustTemplatesRs();
+		expect(src).toMatch(/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Transport\)\]\n#\[transport\(choice, codec_only\)\]\npub enum TriviaTransport \{/);
+		expect(src).toMatch(/    #\[transport\(text\)\]\n    #\[kind\([^\n]*\)\]\n    Text\(::sittir_core::trivia::TriviaText\),/);
+		expect(src).toMatch(/    #\[transport\(verbatim\)\]\n    Verbatim\(VerbatimTransport\),\n    #\[transport\(text\)\]/);
+	});
+});
+
+describe('the payload ceiling', () => {
+	it('boxes each pinned payload in every choice the reader reads, and nowhere unboxed', async () => {
+		const src = await getRustTemplatesRs();
+		expect(BOXED_PAYLOADS.rust!.length).toBeGreaterThan(0);
+		for (const name of BOXED_PAYLOADS.rust!) {
+			expect(src).toMatch(new RegExp(`\\n    \\w+\\(Box<${name}>\\),`));
+			expect(src.replace(/\npub enum TriviaTransport \{[^}]*\}/, '')).not.toMatch(new RegExp(`\\n    \\w+\\(${name}\\),`));
+		}
+	});
+
+	it('asserts every payload against the ceiling, each one way', async () => {
+		const src = await getRustTemplatesRs();
+		const assertions = [...src.matchAll(/^const _: \(\) = assert!\(::core::mem::size_of::<(\w+)>\(\) (<=|>) (\d+), "/gm)];
+		const over = assertions.filter((m) => m[2] === '>').map((m) => m[1]).sort();
+		expect(over).toEqual([...BOXED_PAYLOADS.rust!].sort());
+		expect(assertions.every((m) => Number(m[3]) === PAYLOAD_CEILING_BYTES)).toBe(true);
+		expect(new Set(assertions.map((m) => m[1])).size).toBe(assertions.length);
+	});
+
+	it('refuses a pin no choice holds', () => {
+		const [stale] = BOXED_PAYLOADS.rust!;
+		expect(() => payloadCeilingAssertions(BOXED_PAYLOADS.rust!, new Set())).toThrow(`${stale} is pinned in boxed-payloads.ts but no choice holds it`);
+	});
 });

@@ -76,8 +76,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for SourceGap {
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for SourceGap {
-    unsafe fn to_napi_value(env: ::napi::sys::napi_env, _val: Self) -> ::napi::Result<::napi::sys::napi_value> {
-        unsafe { ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ()) }
+    /// `{ $text }` for a gap carrying its bytes, `{ $treeHandle, $span }` for
+    /// one naming its tree: the objects the decoder reads back.
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        use crate::boundary::object_with;
+        unsafe {
+            match val {
+                Self::Text(text) => object_with(env, &[(c"$text", String::to_napi_value(env, text)?)]),
+                Self::Range { handle, span } => object_with(env, &[
+                    (c"$treeHandle", f64::to_napi_value(env, handle as f64)?),
+                    (c"$span", Span::to_napi_value(env, span)?),
+                ]),
+            }
+        }
     }
 }
 
@@ -138,8 +149,24 @@ impl ::napi::bindgen_prelude::FromNapiValue for SourceFlank {
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for SourceFlank {
-    unsafe fn to_napi_value(env: ::napi::sys::napi_env, _val: Self) -> ::napi::Result<::napi::sys::napi_value> {
-        unsafe { ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ()) }
+    /// Its source (`$text` or `$treeHandle`) and `$span`, then `$before` and
+    /// `$after` only when set, since the decoder reads an absent flag as false.
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        use crate::boundary::{object_with, set};
+        let source = unsafe {
+            match val.source {
+                FlankSource::Text(text) => (c"$text", String::to_napi_value(env, text)?),
+                FlankSource::Tree(handle) => (c"$treeHandle", f64::to_napi_value(env, handle as f64)?),
+            }
+        };
+        let obj = unsafe { object_with(env, &[source, (c"$span", Span::to_napi_value(env, val.span)?)])? };
+        if val.before {
+            unsafe { set(env, obj, c"$before", bool::to_napi_value(env, true)?)? };
+        }
+        if val.after {
+            unsafe { set(env, obj, c"$after", bool::to_napi_value(env, true)?)? };
+        }
+        Ok(obj)
     }
 }
 
@@ -370,15 +397,43 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue, const ADJACENT: bool>
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T, const ADJACENT: bool> ::napi::bindgen_prelude::ToNapiValue for SlotValue<T, ADJACENT> {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason(
-            "SlotValue is receive-only".to_owned(),
-        ))
+impl<T: ::napi::bindgen_prelude::ToNapiValue, const ADJACENT: bool> ::napi::bindgen_prelude::ToNapiValue
+    for SlotValue<T, ADJACENT>
+{
+    /// A transport writes itself; a coordinate writes the object the decoder
+    /// reads back as one.
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        match val {
+            Self::Transport(transport) => unsafe { T::to_napi_value(env, transport) },
+            Self::Coord(coord) => unsafe { coordinate_to_napi(env, coord) },
+        }
     }
+}
+
+/// `{ $treeHandle, $span, $type?, $textOnly?, $_layout?: { gap } }`, the
+/// object `SlotValue`'s decoder reads as a coordinate. Its edges are the
+/// prepare walk's and never cross.
+#[cfg(feature = "napi-bindings")]
+unsafe fn coordinate_to_napi(env: ::napi::sys::napi_env, coord: NodeCoordinate) -> ::napi::Result<::napi::sys::napi_value> {
+    use crate::boundary::{object_with, set};
+    use ::napi::bindgen_prelude::ToNapiValue;
+    let obj = unsafe {
+        object_with(env, &[
+            (c"$treeHandle", f64::to_napi_value(env, coord.handle as f64)?),
+            (c"$span", Span::to_napi_value(env, coord.span)?),
+        ])?
+    };
+    if let Some(kind) = coord.kind {
+        unsafe { set(env, obj, c"$type", u32::to_napi_value(env, u32::from(kind.0))?)? };
+    }
+    if coord.text_only {
+        unsafe { set(env, obj, c"$textOnly", bool::to_napi_value(env, true)?)? };
+    }
+    if let Some(gap) = coord.gap {
+        let layout = unsafe { object_with(env, &[(c"gap", SourceGap::to_napi_value(env, gap)?)])? };
+        unsafe { set(env, obj, c"$_layout", layout)? };
+    }
+    Ok(obj)
 }
 
 #[cfg(test)]
