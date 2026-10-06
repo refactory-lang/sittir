@@ -46,11 +46,12 @@ vi.mock('../src/run.ts', () => ({
 		errors: [],
 		astMismatches: [],
 		skips: [],
-		excluded: []
+		excluded: [],
+		render: { total: 6, pass: 6, astMatchPass: 6, errors: [], astMismatches: [], excluded: [] }
 	}),
 	formatFromReport: vi.fn().mockReturnValue('from: pass=5 total=5'),
 	formatReadRenderParseReport: vi.fn().mockReturnValue('rt: pass=8 total=8'),
-	formatFactoryRenderParseReport: vi.fn().mockReturnValue('factory: pass=7 total=7')
+	formatFactoryStorageReport: vi.fn().mockReturnValue('factory: pass=7 total=7')
 }));
 
 // Mock cachedNativeEngineProfile so debug-profile-skip tests can control it
@@ -91,9 +92,9 @@ vi.mock('../src/history.ts', () => ({
 			readRenderParseShallowPass: 4,
 			readRenderParseShallowTotal: 6,
 			readRenderParseShallowAstMatchPass: 3,
-			factoryRenderParsePass: 3,
-			factoryRenderParseTotal: 4,
-			factoryRenderParseAstMatchPass: 3
+			factoryStoragePass: 3,
+			factoryStorageTotal: 4,
+			factoryStorageAstMatchPass: 3
 		} satisfies ValidationRun
 	]),
 	appendHistory: vi.fn(),
@@ -213,7 +214,8 @@ describe('@sittir/validator cli surface — runCountsCli behavior', () => {
 		expect(allOutput).toMatch(/rust\/native:/);
 		expect(allOutput).toMatch(/read-render-parsePass=/);
 		expect(allOutput).toMatch(/read-render-parse-shallowPass=/);
-		expect(allOutput).toMatch(/factory-render-parsePass=/);
+		expect(allOutput).toMatch(/factory-storagePass=/);
+	expect(allOutput).toMatch(/built-render-parsePass=12 {4}built-render-parseTotal=12/);
 		logSpy.mockRestore();
 	});
 
@@ -233,7 +235,9 @@ describe('@sittir/validator cli surface — runCountsCli behavior', () => {
 				backend: 'native',
 				readRenderParsePass: 8,
 				readRenderParseShallowPass: 6,
-				factoryRenderParsePass: 7
+				factoryStoragePass: 7,
+				builtRenderParsePass: 12,
+				builtRenderParseTotal: 12
 			})
 		);
 		logSpy.mockRestore();

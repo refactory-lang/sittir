@@ -6,11 +6,11 @@
  * build graph.
  */
 
-import { validateFactoryRenderParse } from '../validate/factory-render-parse.ts';
+import { validateFactoryStorage } from '../validate/factory-storage.ts';
 
 import { resolveGrammars } from '../commands.ts';
 for (const grammar of resolveGrammars(process.argv.slice(2))) {
-	const result = await validateFactoryRenderParse(grammar, 'native');
+	const result = await validateFactoryStorage(grammar, 'native');
 	console.log(
 		`\n=== ${grammar} === total=${result.total} pass=${result.pass} fail=${result.fail} skip=${result.skip} astMatch=${result.astMatchPass}`
 	);

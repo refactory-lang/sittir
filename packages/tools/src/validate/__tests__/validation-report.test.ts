@@ -90,7 +90,7 @@ describe('classifySClass', () => {
 		['read-render-parse-error', 'render: expected u16 kind_id, string, or object with $type', 'S2'],
 		['read-render-parse-ast-mismatch', 'childCount 7 ≠ 6 [...,automatic_semicolon]', 'S7'],
 		['read-render-parse-error', 'render: Missing field `_content`', 'S6'],
-		['factory-render-parse-ast-mismatch', 'root._line_continuation: missing on factory output', 'S6'],
+		['factory-storage-ast-mismatch', 'root._line_continuation: missing on factory output', 'S6'],
 		[
 			'from-error',
 			'native coords unresolved for alias target — comparing against a mismatched WASM id would be unsound',

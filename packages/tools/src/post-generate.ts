@@ -103,7 +103,7 @@ export async function emitParityFixtures(grammar: string): Promise<void> {
 
 /**
  * Run the corpus round-trip validator probes (read-projection, read-render-parse,
- * factory-render-parse, from).
+ * factory-storage, from).
  *
  * Returns the total render-parse / from() failure count so the orchestrator can
  * set `process.exitCode`.
@@ -113,8 +113,8 @@ export async function runRoundtripProbes(grammar: string): Promise<number> {
 
 	const { validateReadProjection, formatReadProjectionReport } = await import('./validate/read-projection.ts');
 	const { validateReadRenderParse, formatReadRenderParseReport } = await import('./validate/read-render-parse.ts');
-	const { validateFactoryRenderParse, formatFactoryRenderParseReport } =
-		await import('./validate/factory-render-parse.ts');
+	const { validateFactoryStorage, formatFactoryStorageReport } =
+		await import('./validate/factory-storage.ts');
 	const { validateFrom, formatFromReport } = await import('./validate/from.ts');
 
 	// read projection (structural) — upstream of render/factory. A regression
@@ -128,13 +128,14 @@ export async function runRoundtripProbes(grammar: string): Promise<number> {
 	});
 	console.log(formatReadRenderParseReport(readRenderParseResult));
 
-	// Factory render-parse (corpus → readUntypedNode → factory() → render → re-parse)
-	const factoryRenderParseResult = await validateFactoryRenderParse(grammar, 'native');
-	console.log(formatFactoryRenderParseReport(factoryRenderParseResult));
+	// Factory storage (corpus → read → factory() → storage compare), and the built node rendered and reparsed
+	const factoryStorageResult = await validateFactoryStorage(grammar, 'native');
+	console.log(formatFactoryStorageReport(factoryStorageResult));
 
 	// from() correctness (structural comparison: from() vs factory())
 	const fromResult = await validateFrom(grammar, 'native');
 	console.log(formatFromReport(fromResult));
 
-	return readRenderParseResult.fail + factoryRenderParseResult.fail + fromResult.fail;
+	const { render } = factoryStorageResult;
+	return readRenderParseResult.fail + factoryStorageResult.fail + render.errors.length + render.astMismatches.length + fromResult.fail;
 }

@@ -282,7 +282,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	// Without fromMap/factoryMap, every kind fails `kind in fromMap && kind
 	// in factoryMap` below and total stays 0 — silently reporting a passing
 	// "0/0" run instead of the real load failure. Short-circuit and surface
-	// it, matching validateFactoryRenderParse's importFailure guard.
+	// it, matching validateFactoryStorage's importFailure guard.
 	if (errors.length > 0) {
 		return {
 			grammar,

@@ -687,7 +687,7 @@ shrinks.
 - `string_content` (declared `'alias-shape'`, unverified: no detector): upstream's arms `_string_content` and
   `_not_escape_sequence` are hidden, so the repeated `elements` slot never sees a node and the reader throws;
   the rule aliases them to the visible `string_fragment` / `not_escape_sequence`. Without it read-render-parse,
-  factory-render-parse and ir-render-parse all regress. missing detector: 'alias-shape' ← a repeated slot whose
+  factory-storage and ir-storage all regress. missing detector: 'alias-shape' ← a repeated slot whose
   every arm is a hidden terminal.
 - `_simple_pattern` (declared `'alias-shape'`, unverified: no detector): without it `from` loses a case.
   missing detector: 'alias-shape' ← an alias spanning part of a seq, or a restructure that changes the parse.

@@ -1,5 +1,5 @@
 /**
- * profile/factory — factory-render-parse error bucketing with optional
+ * profile/factory — factory-storage error bucketing with optional
  * AST-mismatch detail.
  *
  * Merges the diagnostic ideas from three scratch scripts:
@@ -30,7 +30,7 @@ interface FactoryError {
 	rendered?: string;
 }
 
-interface FactoryRenderParseResult {
+interface FactoryStorageResult {
 	grammar: string;
 	total: number;
 	pass: number;
@@ -53,7 +53,7 @@ const VALIDATOR_PATHS: Record<string, string> = {
 };
 
 interface ValidatorModules {
-	runFactory: (grammar: GrammarName, backend?: string) => Promise<FactoryRenderParseResult>;
+	runFactory: (grammar: GrammarName, backend?: string) => Promise<FactoryStorageResult>;
 }
 
 async function loadValidatorModules(): Promise<ValidatorModules> {
@@ -87,14 +87,14 @@ function classifyMessage(msg: string): string {
 // Per-grammar profiling
 // ---------------------------------------------------------------------------
 
-/** Run factory-render-parse for one grammar. */
-async function runFactoryOnce(grammar: GrammarName): Promise<FactoryRenderParseResult> {
+/** Run factory-storage for one grammar. */
+async function runFactoryOnce(grammar: GrammarName): Promise<FactoryStorageResult> {
 	const { runFactory } = await loadValidatorModules();
 	return await runFactory(grammar, 'native');
 }
 
 /** Print the bucketed error report for one grammar. */
-function reportGrammar(result: FactoryRenderParseResult, showAst: boolean): void {
+function reportGrammar(result: FactoryStorageResult, showAst: boolean): void {
 	const { grammar, total, pass, fail, skip, astMatchPass, errors, astMismatches } = result;
 	process.stdout.write(
 		`\n=== ${grammar} === total=${total} pass=${pass} fail=${fail} skip=${skip} astMatch=${astMatchPass}\n`
