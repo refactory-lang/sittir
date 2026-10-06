@@ -166,6 +166,9 @@ describe('post-evaluate invariant', () => {
 				// `expectTestFailures:` — read by emitTests (emitters/test.ts)
 				// for describe.skip emission.
 				'expectTestFailures',
+				// Parse-back host templates from `reparseHosts:` — emitted as data
+				// for the validator and the delimiter check.
+				'reparseHosts',
 				// `rules:` entries' reauthored / vocabulary declarations and the
 				// bare bodies — read by the rule-cause diagnostics.
 				'ruleCauses',

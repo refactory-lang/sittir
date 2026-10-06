@@ -32,6 +32,7 @@ import {
 	importGrammarModule,
 	nodeToConfig,
 	loadNodeModel,
+	loadScopedFactoryMap,
 	type FactoryEntry,
 	type TSNode,
 	type TSTree,
@@ -283,6 +284,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	// in factoryMap` below and total stays 0 — silently reporting a passing
 	// "0/0" run instead of the real load failure. Short-circuit and surface
 	// it, matching validateFactoryStorage's importFailure guard.
+	if (errors.length === 0) factoryMap = await loadScopedFactoryMap(grammar, factoryMap);
 	if (errors.length > 0) {
 		return {
 			grammar,

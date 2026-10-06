@@ -2,7 +2,19 @@ import { nativeShownKindId } from './shown-kind.ts';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { createEngine, detachCoordinates, dumpMetrics, sliceSpan } from '@sittir/common';
+import {
+	NO_REPARSE_HOSTS,
+	applyHost,
+	createEngine,
+	detachCoordinates,
+	dumpMetrics,
+	hostTemplateFor,
+	sliceSpan,
+	type HostOptions,
+	type HostedText,
+	type ReparseHosts
+} from '@sittir/common';
+import { inEngine, type EngineHandle } from '@sittir/common/utils';
 import { carryRead, carrySource, holdTree, readDerivedSides, readTrivia, spanOf, treeTokenOf, type TriviaView } from '@sittir/common/utils';
 import {
 	isStub,
@@ -500,129 +512,16 @@ export function buildKindToSupertypes(
 	return result;
 }
 
-const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = {
-	rust: {
-		_expression: (r) => `fn _f() { let _ = ${r}; }`,
-		_type: (r) => `type _X = ${r};`,
-		_pattern: (r) => `fn _f() { let ${r} = (); }`,
-		_declaration_statement: (r) => r,
-		_literal: (r) => `fn _f() { let _ = ${r}; }`,
-		_literal_pattern: (r) => `fn _f() { let ${r} = (); }`,
-		parameters: (r) => `fn _f${r} {}`,
-		parameter: (r) => `fn _f(${r}) {}`,
-		arguments: (r) => `f${r};`,
-		type_parameters: (r) => `fn _f${r}() {}`,
-		type_parameter: (r) => `fn _f<${r}>() {}`,
-		mut_pattern: (r) => `fn _f(x: i32) { match x { ${r} => () } }`,
-		generic_type_with_turbofish: (r) => `type _X = ${r}::Item;`,
-		scoped_type_identifier_in_expression_position: (r) => `fn _f() { let _ = ${r} { val: 1 }; }`,
-		delim_token_tree: (r) => `fn _f() { mac! ${r} }`,
-		token_tree: (r) => `macro_rules! _m { () => ${r} }`,
-		visibility_modifier: (r) => `${r} fn _f() {}`
-	},
-	typescript: {
-		expression: (r) => `let _ = ${r};`,
-		type: (r) => `type _X = ${r};`,
-		pattern: (r) => `let ${r} = null;`,
-		declaration: (r) => r,
-		statement: (r) => r,
-		formal_parameters: (r) => `function _f${r} {}`,
-		required_parameter: (r) => `function _f(${r}) {}`,
-		arguments: (r) => `_f${r};`,
-		type_parameters: (r) => `function _f${r}() {}`,
-		variable_declarator: (r) => `let ${r};`,
-		type_annotation: (r) => `let _${r};`,
-		class_body: (r) => `class _C ${r}`,
-		property_signature: (r) => `interface _I { ${r} }`,
-		index_signature: (r) => `type _T = { ${r} }`,
-		interface_body: (r) => `interface _I ${r}`,
-		decorator_member_expression: (r) => `@${r}\nclass _W {}`,
-		decorator_call_expression: (r) => `@${r}\nclass _W {}`,
-		decorator_parenthesized_expression: (r) => `@${r}\nclass _W {}`,
-		rest_pattern: (r) => `const [${r}] = [];`,
-		lhs_expression: (r) => `(${r} = null);`
-	},
-	python: {
-		expression: (r) => `_ = (${r})`,
-		type: (r) => `_: ${r} = None`,
-		pattern: (r) => `for ${r} in _: pass`,
-		simple_statement: (r) => r,
-		compound_statement: (r) => r,
-		expression_statement: (r) => r,
-		assignment: (r) => r,
-		function_definition: (r) => r,
-		parameters: (r) => `def _f${r}:\n    pass`,
-		parameters_elements: (r) => `def _f(${r}):\n    pass`,
-		argument_list: (r) => `_f${r}`,
-		dotted_name: (r) => `import ${r}`,
-		list_splat: (r) => `_f(${r})`,
-		list_splat_pattern: (r) => `${r} = (1,)`,
-		attribute: (r) => `[${r}]`,
-		subscript: (r) => `[${r}]`,
-		parenthesized_expression: (r) => `f(${r})`
-	}
-};
+export type WrapForReparseResult = HostedText;
 
-export interface WrapForReparseResult {
-	readonly text: string;
-	readonly offset: number;
-}
+const reparseHostsCache = new Map<string, ReparseHosts>();
 
-function applyWrapperTemplate(rendered: string, wrapper: (r: string) => string): WrapForReparseResult {
-	const text = wrapper(rendered);
-	const SENTINEL = '\u0001SITTIR_SENTINEL\u0001';
-	const sentinelText = wrapper(SENTINEL);
-	const offset = sentinelText.indexOf(SENTINEL);
-	return { text, offset: offset >= 0 ? offset : 0 };
-}
-
-function selectAndApplySupertypeWrapper(
-	kind: string,
-	wrappers: Record<string, (r: string) => string>,
-	kindToSupertypes: Map<string, string[]>,
-	rendered: string
-): WrapForReparseResult | null {
-	const WRAPPER_PRIORITY = [
-		'declaration',
-		'statement',
-		'_declaration_statement',
-		'_simple_statement',
-		'_compound_statement',
-		'expression',
-		'type',
-		'pattern',
-		'_expression',
-		'_type',
-		'_literal',
-		'_literal_pattern',
-		'_pattern'
-	];
-	const reachable = new Set<string>();
-	const visited = new Set<string>([kind]);
-	const queue = [...(kindToSupertypes.get(kind) ?? [])];
-	while (queue.length > 0) {
-		const st = queue.shift()!;
-		if (visited.has(st)) continue;
-		visited.add(st);
-		if (wrappers[st]) reachable.add(st);
-		for (const parent of kindToSupertypes.get(st) ?? []) {
-			if (!visited.has(parent)) queue.push(parent);
-		}
-	}
-	if (reachable.size === 0) return null;
-	for (const name of WRAPPER_PRIORITY) {
-		if (reachable.has(name)) return applyWrapperTemplate(rendered, wrappers[name]!);
-	}
-	const first = [...reachable][0]!;
-	return applyWrapperTemplate(rendered, wrappers[first]!);
-}
-
-export const VARIANT_ADOPTION_GATED_WRAPPERS: Record<string, readonly string[]> = {
-	rust: ['visibility_modifier']
-};
-
-function reparseWrappersOf(grammar: string, root: string | undefined): Record<string, (r: string) => string> {
-	return { ...(root === undefined ? {} : { [root]: (r: string) => r }), ...REPARSE_WRAPPERS[grammar] };
+export async function loadReparseHosts(grammar: string): Promise<ReparseHosts> {
+	const cached = reparseHostsCache.get(grammar);
+	if (cached !== undefined) return cached;
+	const loaded = ((await importGrammarModule(grammar, 'reparse-hosts.ts'))?.REPARSE_HOSTS as ReparseHosts | undefined) ?? NO_REPARSE_HOSTS;
+	reparseHostsCache.set(grammar, loaded);
+	return loaded;
 }
 
 export function wrapForReparse(
@@ -630,30 +529,12 @@ export function wrapForReparse(
 	kind: string,
 	grammar: string,
 	kindToSupertypes: Map<string, string[]>,
-	opts?: { adoptedVariantKinds?: ReadonlySet<string>; targetKind?: string; root?: string }
+	opts?: HostOptions
 ): WrapForReparseResult | null {
-	const wrappers = reparseWrappersOf(grammar, opts?.root);
-	const visibleKind = wrappers[kind] !== undefined ? kind : (opts?.targetKind ?? kind);
-	const direct = wrappers[kind] ?? wrappers[visibleKind];
-	if (direct) {
-		const gateKey = wrappers[kind] ? kind : visibleKind;
-		const gated = VARIANT_ADOPTION_GATED_WRAPPERS[grammar]?.includes(gateKey) ?? false;
-		const adopted = opts?.adoptedVariantKinds?.has(gateKey) ?? false;
-		if (gated && !adopted) {
-			return selectAndApplySupertypeWrapper(visibleKind, wrappers, kindToSupertypes, rendered);
-		}
-		return applyWrapperTemplate(rendered, direct);
-	}
-	if (opts?.targetKind && opts.targetKind !== kind) {
-		const targetWrapper = wrappers[opts.targetKind];
-		if (targetWrapper) return applyWrapperTemplate(rendered, targetWrapper);
-	}
-	const bySource = selectAndApplySupertypeWrapper(visibleKind, wrappers, kindToSupertypes, rendered);
-	if (bySource !== null) return bySource;
-	if (opts?.targetKind && opts.targetKind !== visibleKind) {
-		return selectAndApplySupertypeWrapper(opts.targetKind, wrappers, kindToSupertypes, rendered);
-	}
-	return null;
+	const hosts = reparseHostsCache.get(grammar);
+	if (hosts === undefined) throw new Error(`reparse hosts for '${grammar}' are not loaded; await loadReparseHosts('${grammar}') first`);
+	const template = hostTemplateFor(kind, hosts, kindToSupertypes, opts);
+	return template === undefined ? null : applyHost(template, rendered);
 }
 
 export function upstreamWasmPath(grammar: string): string | undefined {
@@ -1068,6 +949,34 @@ export interface IrSurface {
 	readonly entries: Record<string, IrEntry>;
 	readonly seats: SeatTable;
 	readonly modelTypes: Record<string, string>;
+	readonly scope?: EngineHandle;
+}
+
+const factoryScopes = new Map<string, Promise<EngineHandle>>();
+
+export function factoryScope(grammar: string): Promise<EngineHandle> {
+	let scope = factoryScopes.get(grammar);
+	if (scope === undefined) {
+		scope = loadNativeEngine(grammar).then((engine) => ({ current: engine }));
+		factoryScopes.set(grammar, scope);
+	}
+	return scope;
+}
+
+export function scopedBuilders<T extends object>(value: T, scope: EngineHandle): T {
+	return new Proxy(value, {
+		apply: (target, self, args) => inEngine(scope, () => Reflect.apply(target as unknown as (...a: unknown[]) => unknown, self, args)),
+		get: (target, key, receiver) => {
+			const member = Reflect.get(target, key, receiver);
+			return typeof member === 'function' || (typeof member === 'object' && member !== null && key !== 'prototype')
+				? scopedBuilders(member, scope)
+				: member;
+		}
+	});
+}
+
+export async function loadScopedFactoryMap<T extends Record<string, unknown>>(grammar: string, map: T): Promise<T> {
+	return scopedBuilders(map, await factoryScope(grammar));
 }
 
 export async function loadIrSurface(grammar: string): Promise<IrSurface | undefined> {
@@ -1075,11 +984,12 @@ export async function loadIrSurface(grammar: string): Promise<IrSurface | undefi
 	if (mod?.ir === undefined) return undefined;
 	const model = await loadNodeModel(grammar);
 	const entries: Record<string, IrEntry> = {};
+	const scope = await factoryScope(grammar);
 	for (const [kind, irKey] of Object.entries(model.irKeys)) {
 		const entry = mod.ir[irKey];
 		if (entry !== null && (typeof entry === 'object' || typeof entry === 'function')) entries[kind] = entry as IrEntry;
 	}
-	return { entries, seats: model.seats, modelTypes: model.modelTypes };
+	return { entries, seats: model.seats, modelTypes: model.modelTypes, scope };
 }
 
 export async function loadKindNames(grammar: string): Promise<ReadonlyMap<number, string> | undefined> {
@@ -2117,5 +2027,6 @@ export function buildFactoryNodeFromReference(
 		tree: opts.tree,
 		hydrateChild: opts.hydrateChild
 	} as NodeToConfigOpts;
-	return buildWithFactory(referenceData, kind, factory, configOpts);
+	const build = () => buildWithFactory(referenceData, kind, factory, configOpts);
+	return surface?.scope === undefined ? build() : inEngine(surface.scope, build);
 }

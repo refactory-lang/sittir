@@ -27,6 +27,7 @@ import type {
 } from '../types/rule.ts';
 import { subtypeParseNamesOf } from '../types/rule.ts';
 import { declaresWhitespace, whitespaceSymbolsOf } from './model/whitespace-arms.ts';
+import { stampDelimited } from './model/delimited.ts';
 import { stampFullForms } from './model/full-form.ts';
 import { stampTriviaInterior } from './model/trivia.ts';
 import { WHITESPACE_SUPERTYPE } from '../dsl/primitives/spacing.ts';
@@ -291,6 +292,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	collectAnonymousNodes(normalized.normalizedRules, nodes, wordMatcherRegex, kindEntries, ctx.diagnostics);
 	stampWhitespaceBuilders(nodes);
 	stampFullForms(nodes, wordMatcherRegex);
+	stampDelimited(nodes, wordMatcherRegex);
 	resolveCollidingNames(nodes, ctx);
 	resolveIrKeys(nodes);
 	stampFactoryInline(nodes, ctx, stampSupertypeClosures(nodes));

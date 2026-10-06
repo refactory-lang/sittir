@@ -12,8 +12,10 @@ import type {
 	NumericLiteral,
 	WidenNumeric
 } from '@sittir/types';
+import type { DelimitedSpec } from '@sittir/common/utils';
 import {
 	currentHandle,
+	checkDelimited,
 	listSlotWith,
 	LIST_ITEMS,
 	LIST_READ,
@@ -93,6 +95,15 @@ export const _slotRe_buildNumberBigintHex_content = /^(?:(?:0x|0X)(?:[\da-fA-F](
 export const _slotRe_buildNumberBigintBinary_content = /^(?:(?:0b|0B)(?:[0-1](_?[0-1])*))$/u;
 export const _slotRe_buildNumberBigintOctal_content = /^(?:(?:0o|0O)(?:[0-7](_?[0-7])*))$/u;
 export const _slotRe_buildNumberBigintDecimal_content = /^(?:(?:\d(_?\d)*))$/u;
+const _delimited_buildCommentBlock: DelimitedSpec = {
+	kind: 'comment_block',
+	id: TSKindId.CommentBlock as const,
+	excluded: /[\u{a}\u{d}\u{2a}\u{2028}-\u{2029}]/u,
+	open: '/*',
+	close: '*/',
+	host: '$r',
+	nodeKinds: []
+};
 
 export function buildProgram(): T.EmptyProgram;
 export function buildProgram(config?: Partial<T.Program.Config>): T.Program.Bound;
@@ -8466,6 +8477,7 @@ export function buildCommentBlock(input: string, affix: boolean = true): T.Comme
 		},
 		$engine: handle && (() => handle.current)
 	};
+	checkDelimited(handle, node, _delimited_buildCommentBlock, [_content]);
 	return node as unknown as T.CommentBlock.Bound;
 }
 

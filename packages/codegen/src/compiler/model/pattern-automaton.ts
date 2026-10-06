@@ -508,6 +508,39 @@ export function endsWithLineBreak(dfa: PatternDfa): boolean {
 	return into.length > 0 && into.every((edge) => LINE_TERMINATORS.covers(edge.set));
 }
 
+export function admitsInside(dfa: PatternDfa, literal: string): boolean {
+	const live = coaccessible(dfa);
+	return [...reachableFrom(dfa, [0], () => true)].some((start) => {
+		let at = start;
+		for (const char of literal) {
+			const edge = dfa.states[at]!.edges.find(({ set }) => set.has(char.codePointAt(0)!));
+			if (edge === undefined) return false;
+			at = edge.to;
+		}
+		return dfa.states[at]!.edges.some((edge) => live.has(edge.to));
+	});
+}
+
+export function leadingChars(dfa: PatternDfa): CharSet {
+	const live = coaccessible(dfa);
+	return CharSet.of(dfa.states[0]!.edges.filter((edge) => live.has(edge.to)).flatMap((edge) => edge.set.ranges));
+}
+
+export function shortestAccepted(dfa: PatternDfa): string | undefined {
+	const paths = new Map<number, string>([[0, '']]);
+	const queue = [0];
+	for (let head = 0; head < queue.length; head++) {
+		const at = queue[head]!;
+		if (dfa.states[at]!.accepting) return paths.get(at);
+		for (const edge of dfa.states[at]!.edges) {
+			if (paths.has(edge.to) || edge.set.isEmpty()) continue;
+			paths.set(edge.to, paths.get(at)! + String.fromCodePoint(edge.set.ranges[0]![0]));
+			queue.push(edge.to);
+		}
+	}
+	return undefined;
+}
+
 export function absorbsRestOfLine(dfa: PatternDfa): boolean {
 	const reached = reachableFrom(dfa, [0], () => true);
 	const rest = LINE_TERMINATORS.complement();

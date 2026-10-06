@@ -6,6 +6,7 @@ import { RuleWalker } from '../rule-walker.ts';
 import { transform as transformFn } from '../transform/transform.ts';
 import { isPreference, type PreferencePlaceholder } from '../primitives/preference.ts';
 import { BINDINGS_KEY, INDENT_KEY, type OptionsConfig } from './options-block.ts';
+import type { ReparseHostsConfig } from './reparse-hosts.ts';
 import type { IsPreferencePath } from '../primitives/preference-path.ts';
 import {
 	parseFlankAddress,
@@ -75,6 +76,7 @@ export interface WireContext {
 	readonly whitespaceCollisions?: readonly WhitespaceCollision[];
 	readonly expectDiagnostics?: Partial<Record<string, readonly string[]>>;
 	readonly expectTestFailures?: Partial<Record<string, string>>;
+	readonly reparseHosts?: ReparseHostsConfig;
 	readonly options?: OptionsConfig;
 	currentRuleKind: string | null;
 	readonly authoredRuleNames: ReadonlySet<string>;
@@ -470,6 +472,7 @@ export type WireConfig<B extends GrammarJson, NewRules extends string = string> 
 	readonly visibleExternals?: VisibleExternalsConfig;
 	readonly expectDiagnostics?: Partial<Record<string, readonly string[]>>;
 	readonly expectTestFailures?: Partial<Record<string, string>>;
+	readonly reparseHosts?: ReparseHostsConfig;
 };
 
 type ConflictsFn = (this: unknown, $: unknown, previous?: unknown[][]) => unknown[][];
@@ -523,6 +526,7 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 		whitespaceCollisions,
 		expectDiagnostics: cfg.expectDiagnostics,
 		expectTestFailures: cfg.expectTestFailures,
+		reparseHosts: cfg.reparseHosts,
 		options: cfg.options,
 		currentRuleKind: null,
 		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {})),
