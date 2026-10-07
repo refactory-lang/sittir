@@ -35,6 +35,10 @@ Comments, source-gap spelling, CRLF and line-ending preservation, spacing around
 
 The 16 directly related issues are **#619, #608, #587, #582, #568, #477, #372, #434, #675, #584, #585, #547, #474, #631, #357 and #427**. Their inventory rows are marked `Deferred`. The inventory still contains all 92 issues; category counts are unchanged. These deferrals also apply to investigation here when an issue remains reserved for another migration. The trivia option in #644 is deferred while its structural-comparison design remains classified separately.
 
+## Layout design ruling
+
+The line-ending discussion established the general [reference preference inheritance contract](../superpowers/specs/2026-09-09-preference-address-design.md#amendment-references-inherit-preferences-2026-10-07). The proposed newline choice and blank-line composition remain design work; they are not included among the verified fixes. This ruling does not resume the deferred trivia backlog.
+
 ## Coverage and limits
 
 The two fixes have focused red/green regressions and real regeneration coverage. Backlog classification is not a full reproduction run for every issue. Linux-specific #695 requires Linux verification. Historical issue bodies sometimes disagree with current titles or implementation, so their counts need refresh before remediation. Held PR #683 remains separate.

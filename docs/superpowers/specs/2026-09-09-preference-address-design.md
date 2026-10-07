@@ -492,3 +492,35 @@ mapped type resolves each property when it is read. The usage
 (kind, slot, site, exactly as the trie does) type-checks against the derived
 type, and a missing token, a non-whitespace arm and an unknown kind are
 refused.
+
+## Amendment: references inherit preferences (2026-10-07)
+
+**Maintainer ruling: references inherit the preferences of their targets.**
+This is the contract for subsequent implementation; propagation through
+composed, tokenized layout rules has not yet been verified or implemented.
+
+A reference keeps the target preference's identity, admitted arms, declared
+default and runtime option resolution. The target owns those facts; a caller
+reads them through the reference instead of copying them or redeclaring them.
+Inheritance is transitive. Multiple references to the same preferred choice
+use the same resolved selection unless an explicit use-site declaration
+applies under the existing site-specificity rule.
+
+Inlining, tokenization and repetition must preserve this preference identity
+in the render model. Parser lowering may expand terminal expressions, but it
+must not erase the facts needed to resolve the reference during rendering.
+No layout-specific preference propagation mechanism is introduced.
+
+For the proposed line-ending model, `newline` owns the CR/LF/CRLF choice and
+its global preference. `blankline` references it twice; `double_blankline`
+references it three times. Neither declares its own line-ending preference.
+The parser accepts admitted spellings at grammar-build time; rendering selects
+the preferred spelling at runtime. Parser repetition must preserve CRLF as one
+logical break, so terminal lowering cannot turn one CRLF into two independent
+CR and LF choices.
+
+The owning model must represent the referenced choice and repetition before
+emitters project them. The current fixed-string layout vocabulary and
+projection do not yet implement this composition. Tests for implementation
+must cover direct and transitive references, repeated references, explicit
+site overrides, token lowering, all three spellings and CRLF break counting.
