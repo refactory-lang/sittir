@@ -138,7 +138,8 @@ const BLOCKING_SHAPE_CODES: ReadonlySet<string> = new Set([
 	'union-slot-mixed-row',
 	'union-slot-unaddressable',
 	'union-slot-routed-repeated',
-	'separator-pattern'
+	'separator-pattern',
+	'delimited-closer-unguarded'
 ]);
 
 export function isExpectedDiagnostic(

@@ -27,7 +27,7 @@ import type {
 } from '../types/rule.ts';
 import { subtypeParseNamesOf } from '../types/rule.ts';
 import { declaresWhitespace, layoutSymbolsOf } from './model/layout-kinds.ts';
-import { stampDelimited } from './model/delimited.ts';
+import { delimitedLeafVerdicts, stampDelimited } from './model/delimited.ts';
 import { stampFullForms } from './model/full-form.ts';
 import { stampTriviaInterior } from './model/trivia.ts';
 import { LAYOUT_SUPERTYPE } from '../dsl/primitives/spacing.ts';
@@ -293,6 +293,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	stampWhitespaceBuilders(nodes);
 	stampFullForms(nodes, wordMatcherRegex);
 	stampDelimited(nodes, wordMatcherRegex);
+	recordUnguardedDelimiters(nodes, ctx);
 	resolveCollidingNames(nodes, ctx);
 	resolveIrKeys(nodes);
 	stampFactoryInline(nodes, ctx, stampSupertypeClosures(nodes));
@@ -1157,6 +1158,23 @@ export { nameNode } from './model/node-map.ts';
 
 function computeSignatures(_nodes: Map<string, AssembledNode>): SignaturePool {
 	return { signatures: new Map() };
+}
+
+function recordUnguardedDelimiters(nodes: ReadonlyMap<string, AssembledNode>, ctx: AssembleCtx): void {
+	const grammar = ctx.grammar;
+	const facts = { word: grammar.word, reserved: grammar.reserved, externals: new Set(ruleListParts(grammar.externals ?? []).names) };
+	for (const verdict of delimitedLeafVerdicts(nodes, grammar.wordMatcher, facts)) {
+		if (verdict.safety !== 'unguarded') continue;
+		ctx.assembleDiagnostics.assembleWarnings.record({
+			code: 'delimited-closer-unguarded',
+			ownerKind: verdict.kind,
+			message:
+				`[assemble] kind '${verdict.kind}': its text leaf '${verdict.leaf}' is an external token whose guard admits the closing ` +
+				`delimiter ${JSON.stringify(verdict.closer)}, and the composite is not delimiter-checked. A built value can close the ` +
+				`composite early. Give the leaf a guard that rejects the closer, or make it a regular token.`,
+			details: { leaf: verdict.leaf, closer: verdict.closer }
+		});
+	}
 }
 
 function stampGrammarRoot(nodeMap: AssembledNodeMap): void {

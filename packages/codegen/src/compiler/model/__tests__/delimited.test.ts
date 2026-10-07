@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { grammarPackage } from '../../../grammars.ts';
 import { compileGrammar } from '../../compile.ts';
 import { loadGeneratedIdTables } from '../../generated-metadata.ts';
+import { ruleListParts } from '../../../dsl/rule-patterns.ts';
+import { delimitedLeafVerdicts } from '../delimited.ts';
 import { AbstractAssembledCompound } from '../node-map.ts';
 import { FactoryEmitter } from '../../../emitters/factories.ts';
 
@@ -42,5 +44,20 @@ describe('the delimited fact', () => {
 	it('fails generation, naming the kind, when a non-trivia delimited kind has no host', async () => {
 		const { nodeMap } = await compileGrammar({ package: grammarPackage('python'), generatedIdTables: await loadGeneratedIdTables('python') });
 		expect(() => new FactoryEmitter({ grammar: 'python', nodeMap, triviaKinds: ['comment'] })).toThrow(/^string: its delimiters need a parse-back host/);
+	}, COMPILE_TIMEOUT);
+});
+
+describe('the verdict of a skipped delimited composite', () => {
+	it('judges a regular token safe and the same leaf as an external unguarded', async () => {
+		const { nodeMap } = await compileGrammar({ package: grammarPackage('rust'), generatedIdTables: await loadGeneratedIdTables('rust') });
+		const externals = new Set(ruleListParts(nodeMap.externals ?? []).names);
+		const verdicts = (declared: ReadonlySet<string>) =>
+			delimitedLeafVerdicts(nodeMap.nodes, nodeMap.wordMatcher, { word: nodeMap.word, reserved: nodeMap.reserved, externals: declared });
+		const regular = verdicts(externals).filter((verdict) => verdict.safety === 'regular-token');
+		expect(regular.length).toBeGreaterThan(0);
+		const flipped = verdicts(new Set([...externals, ...regular.map((verdict) => verdict.leaf)]));
+		for (const verdict of regular) {
+			expect(flipped.find((other) => other.kind === verdict.kind && other.leaf === verdict.leaf)?.safety).toBe('unguarded');
+		}
 	}, COMPILE_TIMEOUT);
 });
