@@ -5290,11 +5290,11 @@ Stamps `delimited` on every compound whose render sequence opens and closes with
 
 ### `packages/codegen/src/compiler/model/delimited.ts::delimitedLeafVerdicts`
 
-One verdict per text leaf of every delimited composite the stamp skips (it opens and closes with a token around free text, and no arm is hazardous or the closer is word-shaped). A composite is judged by its own free-text arms only: a leaf reached through another node's rule belongs to that node and is judged there. The verdict says why the skipped composite is safe for that leaf, in this order:
+One verdict per text leaf of every delimited composite the stamp skips (it opens and closes with a token around free text, and no arm is hazardous or the closer is word-shaped). A composite is judged by its free-text arms only: an arm that holds node content is left to that node, while a referenced compound that is wholly text counts as the composite's own text, so its leaves are judged here as well as at that compound if it is itself delimited. The verdict says why the skipped composite is safe for that leaf, in this order:
 
 * `guard-excludes-closer`: the leaf's pattern cannot hold the closer inside a longer text (`admitsInside` is false).
-* `reserved-word`: the closer is word-shaped, the leaf is the grammar's word token, and a declared `reserved` set holds the closer, so the lexer never produces the closer as the leaf.
-* `regular-token`: the leaf is a regular lexer token, which the lexer ends at the longest match, so it cannot swallow the closer.
+* `reserved-word`: the closer is word-shaped, the leaf is the grammar's word token, and the grammar's `global` reserved set holds the closer (contextual sets do not apply to every use of the leaf), so the lexer never produces the closer as the leaf.
+* `regular-token`: the leaf is a regular lexer token: the lexer does not stop it at an interior closer, so the closer cannot end the composite early.
 * `unguarded`: none of the above, so the leaf is an external (scanner) token whose guard admits the closer. Assembly records `delimited-closer-unguarded` on the composite for each; the code is blocking and its ceiling is zero.
 
 A closer that is a leaf rather than a literal has no closer text, so only the last two reasons apply to it. The census below is derived: `delimited-census.test.ts` recomputes each row and requires it in this table, so a row that moves fails the test until the table is regenerated from the verdicts.
@@ -5309,7 +5309,7 @@ A closer that is a leaf rather than a literal has no closer text, so only the la
 
 ### `packages/codegen/src/compiler/model/delimited.ts::DelimitedGrammarFacts`
 
-The grammar-wide facts a leaf verdict reads beyond the node map: the `word` rule's name, the declared `reserved` sets, and the names of the grammar's externals.
+The grammar-wide facts a leaf verdict reads beyond the node map: the `word` rule's name, the `global` reserved set, and the names of the grammar's externals.
 
 ### `packages/codegen/src/compiler/assemble.ts::recordUnguardedDelimiters`
 

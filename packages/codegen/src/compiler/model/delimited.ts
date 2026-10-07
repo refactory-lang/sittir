@@ -192,13 +192,11 @@ function delimitedVerdictOf(
 
 function reservedTexts(reserved: ReservedWordsets | undefined, nodes: ReadonlyMap<string, AssembledNode>): ReadonlySet<string> {
 	const texts = new Set<string>();
-	for (const set of Object.values(reserved ?? {})) {
-		for (const entry of set) {
-			if (entry.type === STRING) texts.add(entry.value);
-			else if (entry.type === SYMBOL) {
-				const node = nodes.get(entry.name);
-				if (node !== undefined && isFixedTextLeaf(node)) texts.add(node.text);
-			}
+	for (const entry of reserved?.global ?? []) {
+		if (entry.type === STRING) texts.add(entry.value);
+		else if (entry.type === SYMBOL) {
+			const node = nodes.get(entry.name);
+			if (node !== undefined && isFixedTextLeaf(node)) texts.add(node.text);
 		}
 	}
 	return texts;

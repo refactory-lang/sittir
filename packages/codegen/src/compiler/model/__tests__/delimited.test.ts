@@ -3,8 +3,10 @@ import { grammarPackage } from '../../../grammars.ts';
 import { compileGrammar } from '../../compile.ts';
 import { loadGeneratedIdTables } from '../../generated-metadata.ts';
 import { ruleListParts } from '../../../dsl/rule-patterns.ts';
+import { recordUnguardedDelimiters } from '../../assemble.ts';
+import { fromAssembleWarning } from '../../diagnostics/grammar-diagnostics.ts';
 import { delimitedLeafVerdicts } from '../delimited.ts';
-import { AbstractAssembledCompound } from '../node-map.ts';
+import { AbstractAssembledCompound, AssembleDiagnosticsCollector } from '../node-map.ts';
 import { FactoryEmitter } from '../../../emitters/factories.ts';
 
 const COMPILE_TIMEOUT = 120_000;
@@ -59,5 +61,31 @@ describe('the verdict of a skipped delimited composite', () => {
 		for (const verdict of regular) {
 			expect(flipped.find((other) => other.kind === verdict.kind && other.leaf === verdict.leaf)?.safety).toBe('unguarded');
 		}
+	}, COMPILE_TIMEOUT);
+
+	it('records the blocking delimited-closer-unguarded for an external leaf and none for a regular one', async () => {
+		const { nodeMap } = await compileGrammar({ package: grammarPackage('rust'), generatedIdTables: await loadGeneratedIdTables('rust') });
+		const declared = ruleListParts(nodeMap.externals ?? []).names;
+		const grammar = (externals: readonly string[]) => ({
+			word: nodeMap.word ?? null,
+			reserved: nodeMap.reserved,
+			wordMatcher: nodeMap.wordMatcher,
+			externals: externals.map((name) => ({ type: 'SYMBOL' as const, name }))
+		});
+		const run = (externals: readonly string[]) => {
+			const assembleDiagnostics = new AssembleDiagnosticsCollector();
+			recordUnguardedDelimiters(nodeMap.nodes, { grammar: grammar(externals), assembleDiagnostics });
+			return assembleDiagnostics.assembleWarnings.all;
+		};
+		expect(run(declared)).toEqual([]);
+		const regular = delimitedLeafVerdicts(nodeMap.nodes, nodeMap.wordMatcher, {
+			word: nodeMap.word,
+			reserved: nodeMap.reserved,
+			externals: new Set(declared)
+		}).filter((verdict) => verdict.safety === 'regular-token');
+		const warnings = run([...declared, ...regular.map((verdict) => verdict.leaf)]);
+		expect(warnings.map((warning) => warning.code)).toEqual(warnings.map(() => 'delimited-closer-unguarded'));
+		expect(warnings.map((warning) => warning.ownerKind).sort()).toEqual([...new Set(regular.map((verdict) => verdict.kind))].sort());
+		for (const warning of warnings) expect(fromAssembleWarning('rust', warning)).toMatchObject({ canProceed: false, severity: 'error' });
 	}, COMPILE_TIMEOUT);
 });
