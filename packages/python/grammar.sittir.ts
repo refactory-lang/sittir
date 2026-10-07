@@ -10,6 +10,7 @@
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import base from './base.ts';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
+import type { AuthoringRule } from '../codegen/src/grammar-shapes/grammar-json.ts';
 import { transform } from '../codegen/src/dsl/transform/transform.ts';
 import {
 	role,
@@ -29,7 +30,7 @@ const comprehensionClauses = rule('comprehension_clauses', ($) =>
 	field('content', repeat1(choice($.for_in_clause, $.if_clause)))
 );
 
-function tupleElements(element) {
+function tupleElements(element: AuthoringRule) {
 	return seq(seq(element, ','), repeat(seq(element, ',')), optional(element));
 }
 
