@@ -17,7 +17,7 @@ import { querySlots, triviaFacts } from './utils.js';
 import { coerceToComment } from './factories/coerce.js';
 import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ProgramRoot } from './render-engine.js';
-import { wrapNode, type ProgramTree } from './wrap.js';
+import { wrapNode, hydrateChild, type ProgramTree } from './wrap.js';
 
 export interface ScmAPI extends LanguageAPI {
 	readonly name: 'scm';
@@ -42,5 +42,6 @@ export const hooks: LanguageHooks<ScmAPI> = Object.freeze<LanguageHooks<ScmAPI>>
 	trivia: Object.freeze({ ...triviaFacts, comment: coerceToComment }),
 	querySlots,
 	createNative: (options) => nativeLanguageEngine<ScmAPI, IndentChar>(createRenderEngine(options)),
-	wrap: (root, tree) => wrapNode(root as ProgramRoot & ParsedRoot, tree as TreeHandle)
+	wrap: (root, tree) => wrapNode(root as ProgramRoot & ParsedRoot, tree as TreeHandle),
+	hydrate: (node, tree) => hydrateChild(node, tree as TreeHandle)
 });

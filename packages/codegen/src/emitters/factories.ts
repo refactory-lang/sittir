@@ -1530,6 +1530,8 @@ function emitFieldCarryingFactory(
 	if (spreadFacts?.multiple && spreadFacts.nonEmpty) {
 		lines.push(`  _assertNonEmpty(children, '${node.kind}.children');`);
 	}
+	const plan = seatPlanOf(node, nodeMap, kindEntries);
+	const owner = plan.viewPlan?.owner;
 	for (const f of slotsToEmit) {
 		const shape = numericSlotShape(f);
 		const source =
@@ -1538,7 +1540,8 @@ function emitFieldCarryingFactory(
 				: shape === undefined
 					? valueSourceFor(f)
 					: `numberText(${numberTextArgs(shape)}, ${valueSourceFor(f)})`;
-		lines.push(`  const ${f.storageKey} = ${source};`);
+		const stored = owner?.storage === f.storageKey ? `hydrateListStorage(${source})` : source;
+		lines.push(`  const ${f.storageKey} = ${stored};`);
 		const guard = leafReConsts.get(slotGuardKey(node.kind, f.name));
 		const requiredUnfilled = isRequired(f) && !registeredSet.has(f) && !slotFilledWhenOmitted(f, nodeMap);
 		if (guard !== undefined) {
@@ -1547,8 +1550,6 @@ function emitFieldCarryingFactory(
 			);
 		}
 	}
-	const plan = seatPlanOf(node, nodeMap, kindEntries);
-	const owner = plan.viewPlan?.owner;
 	const view = plan.viewPlan === undefined || owner === undefined ? undefined : ownerViewParts(plan.viewPlan, owner.storage, owner.accessor, 'factory');
 	const groups = groupSeatParts(plan, (slot) => `() => ${slotsToEmit.find((f) => f.propertyName === slot)!.storageKey}`);
 	const spelled = spelledGroupSlots(plan);
@@ -2176,7 +2177,7 @@ export function seatedSetterImports(nodeMap: NodeMap, kindEntries: readonly Kind
 		if (plan.elements.length > 0) names.add('elementsWith');
 		if (plan.groups.length > 0) for (const name of ['seatWith', 'groupField', 'STORED_SLOT_READERS']) names.add(name);
 		if (plan.viewPlan !== undefined) {
-			const names_ = plan.viewPlan.owner === undefined ? ['LIST_ITEMS', 'LIST_READ', 'LIST_METHODS', 'listIterator', 'listItems', 'storedElements', 'defineListIndices'] : ['LIST_ITEMS', 'LIST_READ', 'LIST_METHODS', 'listIterator', 'listItems', 'ownerView', 'ownerElements', 'listOption', 'refuseReadStub'];
+			const names_ = plan.viewPlan.owner === undefined ? ['LIST_ITEMS', 'LIST_READ', 'LIST_METHODS', 'listIterator', 'listItems', 'storedElements', 'defineListIndices'] : ['LIST_ITEMS', 'LIST_READ', 'LIST_METHODS', 'listIterator', 'listItems', 'ownerView', 'ownerElements', 'listOption', 'refuseReadStub', 'hydrateListStorage'];
 			for (const name of names_) names.add(name);
 		}
 	}

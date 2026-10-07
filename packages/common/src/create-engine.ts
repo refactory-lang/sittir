@@ -126,7 +126,11 @@ function assembleEngine<API extends LanguageAPI>(
 		options: options?.render,
 		trivia: hooks.trivia
 	});
-	const handle: EngineHandle = { current: identity, lineGapsOf: (address) => native.lineGapsOf(address) };
+	const handle: EngineHandle = {
+		current: identity,
+		lineGapsOf: (address) => native.lineGapsOf(address),
+		hydrate: hooks.hydrate
+	};
 	const build = scopedBuild(hooks.build, handle);
 	const renderNative = (target: Parameters<typeof native.render>[0], renderOptions: object | undefined): Rendered => {
 		const rendered = native.render(target, renderOptions);

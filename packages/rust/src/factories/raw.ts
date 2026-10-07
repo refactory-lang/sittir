@@ -18,6 +18,7 @@ import {
 	ownerElements,
 	listOption,
 	refuseReadStub,
+	hydrateListStorage,
 	seatWith,
 	groupField,
 	STORED_SLOT_READERS,
@@ -990,7 +991,9 @@ export function buildEnumVariantList(...args: unknown[]) {
 			);
 }
 function _buildEnumVariantList(value?: Admit<T.EnumVariantListElements>): T.EnumVariantList.Bound {
-	const _elements = rejectBareText(value, 'EnumVariantList.elements', 'a built EnumVariantListElements');
+	const _elements = hydrateListStorage(
+		rejectBareText(value, 'EnumVariantList.elements', 'a built EnumVariantListElements')
+	);
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), {
@@ -1118,7 +1121,9 @@ export function buildFieldDeclarationList(...args: unknown[]) {
 			);
 }
 function _buildFieldDeclarationList(value?: Admit<T.FieldDeclarationListElements>): T.FieldDeclarationList.Bound {
-	const _elements = rejectBareText(value, 'FieldDeclarationList.elements', 'a built FieldDeclarationListElements');
+	const _elements = hydrateListStorage(
+		rejectBareText(value, 'FieldDeclarationList.elements', 'a built FieldDeclarationListElements')
+	);
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), {
@@ -1246,10 +1251,8 @@ export function buildOrderedFieldDeclarationList(...args: unknown[]) {
 function _buildOrderedFieldDeclarationList(
 	value?: Admit<T.OrderedFieldDeclarationListElements>
 ): T.OrderedFieldDeclarationList.Bound {
-	const _attributes = rejectBareText(
-		value,
-		'OrderedFieldDeclarationList.attributes',
-		'a built OrderedFieldDeclarationListElements'
+	const _attributes = hydrateListStorage(
+		rejectBareText(value, 'OrderedFieldDeclarationList.attributes', 'a built OrderedFieldDeclarationListElements')
 	);
 	const listView = ownerView(_attributes, '_item');
 	if (listView.stored === undefined) refuseReadStub('_attributes');
@@ -1811,7 +1814,9 @@ export function buildWhereClause(...args: unknown[]) {
 			);
 }
 function _buildWhereClause(value?: Admit<T.WherePredicates>): T.WhereClause.Bound {
-	const _where_predicates = rejectBareText(value, 'WhereClause.wherePredicates', 'a built WherePredicates');
+	const _where_predicates = hydrateListStorage(
+		rejectBareText(value, 'WhereClause.wherePredicates', 'a built WherePredicates')
+	);
 	const listView = ownerView(_where_predicates, '_item');
 	if (listView.stored === undefined) refuseReadStub('_where_predicates');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -2168,7 +2173,9 @@ export function buildTypeParameters(...args: unknown[]) {
 			);
 }
 function _buildTypeParameters(value: Admit<T.TypeParametersElements>): T.TypeParameters.Bound {
-	const _elements = rejectBareText(value, 'TypeParameters.elements', 'a built TypeParametersElements');
+	const _elements = hydrateListStorage(
+		rejectBareText(value, 'TypeParameters.elements', 'a built TypeParametersElements')
+	);
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), {
@@ -2615,7 +2622,7 @@ export function buildUseList(...args: unknown[]) {
 		: _buildUseList((buildUseClauses as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildUseList>[0]);
 }
 function _buildUseList(value?: Admit<T.UseClauses>): T.UseList.Bound {
-	const _use_clauses = rejectBareText(value, 'UseList.useClauses', 'a built UseClauses');
+	const _use_clauses = hydrateListStorage(rejectBareText(value, 'UseList.useClauses', 'a built UseClauses'));
 	const listView = ownerView(_use_clauses, '_item');
 	if (listView.stored === undefined) refuseReadStub('_use_clauses');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -2829,7 +2836,7 @@ export function buildParameters(...args: unknown[]) {
 			);
 }
 function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bound {
-	const _elements = rejectBareText(value, 'Parameters.elements', 'a built ParametersElements');
+	const _elements = hydrateListStorage(rejectBareText(value, 'Parameters.elements', 'a built ParametersElements'));
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), {
@@ -3213,7 +3220,7 @@ export function buildForLifetimes(...args: unknown[]) {
 			);
 }
 function _buildForLifetimes(value: Admit<T.Lifetimes>): T.ForLifetimes.Bound {
-	const _lifetimes = rejectBareText(value, 'ForLifetimes.lifetimes', 'a built Lifetimes');
+	const _lifetimes = hydrateListStorage(rejectBareText(value, 'ForLifetimes.lifetimes', 'a built Lifetimes'));
 	const listView = ownerView(_lifetimes, '_item');
 	if (listView.stored === undefined) refuseReadStub('_lifetimes');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -3345,7 +3352,7 @@ export function buildTupleType(...args: unknown[]) {
 		: _buildTupleType((buildTypes as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildTupleType>[0]);
 }
 function _buildTupleType(value: Admit<T.Types>): T.TupleType.Bound {
-	const _types = rejectBareText(value, 'TupleType.types', 'a built Types');
+	const _types = hydrateListStorage(rejectBareText(value, 'TupleType.types', 'a built Types'));
 	const listView = ownerView(_types, '_item');
 	if (listView.stored === undefined) refuseReadStub('_types');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -3591,7 +3598,7 @@ export function buildUseBounds(...args: unknown[]) {
 			);
 }
 function _buildUseBounds(value?: Admit<T.UseBoundsElements>): T.UseBounds.Bound {
-	const _bounds = rejectBareText(value, 'UseBounds.bounds', 'a built UseBoundsElements');
+	const _bounds = hydrateListStorage(rejectBareText(value, 'UseBounds.bounds', 'a built UseBoundsElements'));
 	const listView = ownerView(_bounds, '_item');
 	if (listView.stored === undefined) refuseReadStub('_bounds');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -3662,7 +3669,9 @@ export function buildTypeArguments(...args: unknown[]) {
 			);
 }
 function _buildTypeArguments(value: Admit<T.TypeArgumentsElements>): T.TypeArguments.Bound {
-	const _elements = rejectBareText(value, 'TypeArguments.elements', 'a built TypeArgumentsElements');
+	const _elements = hydrateListStorage(
+		rejectBareText(value, 'TypeArguments.elements', 'a built TypeArgumentsElements')
+	);
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), {
@@ -4534,7 +4543,7 @@ export function buildArguments(...args: unknown[]) {
 			);
 }
 function _buildArguments(value?: Admit<T.ArgumentsElements>): T.Arguments.Bound {
-	const _elements = rejectBareText(value, 'Arguments.elements', 'a built ArgumentsElements');
+	const _elements = hydrateListStorage(rejectBareText(value, 'Arguments.elements', 'a built ArgumentsElements'));
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), {
@@ -4727,10 +4736,8 @@ export function buildFieldInitializerList(...args: unknown[]) {
 			);
 }
 function _buildFieldInitializerList(value?: Admit<T.FieldInitializerListElements>): T.FieldInitializerList.Bound {
-	const _initializers = rejectBareText(
-		value,
-		'FieldInitializerList.initializers',
-		'a built FieldInitializerListElements'
+	const _initializers = hydrateListStorage(
+		rejectBareText(value, 'FieldInitializerList.initializers', 'a built FieldInitializerListElements')
 	);
 	const listView = ownerView(_initializers, '_item');
 	if (listView.stored === undefined) refuseReadStub('_initializers');
@@ -5851,7 +5858,7 @@ export function buildTuplePattern(...args: unknown[]) {
 			);
 }
 function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePattern.Bound {
-	const _elements = rejectBareText(value, 'TuplePattern.elements', 'a built TuplePatternElements');
+	const _elements = hydrateListStorage(rejectBareText(value, 'TuplePattern.elements', 'a built TuplePatternElements'));
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -5915,7 +5922,7 @@ export function buildSlicePattern(...args: unknown[]) {
 			);
 }
 function _buildSlicePattern(value?: Admit<T.Patterns>): T.SlicePattern.Bound {
-	const _patterns = rejectBareText(value, 'SlicePattern.patterns', 'a built Patterns');
+	const _patterns = hydrateListStorage(rejectBareText(value, 'SlicePattern.patterns', 'a built Patterns'));
 	const listView = ownerView(_patterns, '_item');
 	if (listView.stored === undefined) refuseReadStub('_patterns');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);

@@ -17,7 +17,7 @@ import { querySlots, triviaFacts } from './utils.js';
 import { coerceToComment } from './factories/coerce.js';
 import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ModuleRoot } from './render-engine.js';
-import { wrapNode, type ModuleTree } from './wrap.js';
+import { wrapNode, hydrateChild, type ModuleTree } from './wrap.js';
 
 export interface PythonAPI extends LanguageAPI {
 	readonly name: 'python';
@@ -42,5 +42,6 @@ export const hooks: LanguageHooks<PythonAPI> = Object.freeze<LanguageHooks<Pytho
 	trivia: Object.freeze({ ...triviaFacts, comment: coerceToComment }),
 	querySlots,
 	createNative: (options) => nativeLanguageEngine<PythonAPI, IndentChar>(createRenderEngine(options)),
-	wrap: (root, tree) => wrapNode(root as ModuleRoot & ParsedRoot, tree as TreeHandle)
+	wrap: (root, tree) => wrapNode(root as ModuleRoot & ParsedRoot, tree as TreeHandle),
+	hydrate: (node, tree) => hydrateChild(node, tree as TreeHandle)
 });

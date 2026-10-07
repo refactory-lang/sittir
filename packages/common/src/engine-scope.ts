@@ -1,5 +1,14 @@
-import type { AnyUntypedNode, EngineIdentity, LineGapAddress, LineGaps, Rendered } from '@sittir/types';
+import type {
+	AnyUntypedNode,
+	EngineIdentity,
+	LanguageAPI,
+	LanguageHooks,
+	LineGapAddress,
+	LineGaps,
+	Rendered
+} from '@sittir/types';
 import { treeOf } from './tree-token.ts';
+import { isStub } from './readUntypedNode.ts';
 
 export interface LiveEngine extends EngineIdentity {
 	render(node: AnyUntypedNode | number, options?: object): Rendered;
@@ -9,6 +18,7 @@ export interface LiveEngine extends EngineIdentity {
 export interface EngineHandle {
 	current: LiveEngine | EngineIdentity;
 	lineGapsOf?: (address: LineGapAddress) => LineGaps;
+	hydrate?: LanguageHooks<LanguageAPI>['hydrate'];
 }
 
 export function sameLanguage(a: EngineIdentity, b: EngineIdentity): boolean {
@@ -47,6 +57,17 @@ const treeHandles = new WeakMap<object, EngineHandle>();
 
 export function bindTree(tree: object, handle: EngineHandle): void {
 	treeHandles.set(tree, handle);
+}
+
+export function hydrateListStorage(value: unknown): unknown {
+	if (!isStub(value)) return value;
+	const tree = treeOf(value);
+	if (tree === undefined) return value;
+	const handle = treeHandles.get(tree);
+	if (handle === undefined || !isLive(handle.current)) return value;
+	const caller = currentHandle();
+	if (caller !== undefined && !sameLanguage(caller.current, handle.current)) return value;
+	return handle.hydrate?.(value, tree) ?? value;
 }
 
 export function inTreeEngine<T>(tree: object, fn: () => T): T {

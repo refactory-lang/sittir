@@ -104,6 +104,8 @@ The options a language's native engine is created with: the format record and th
 
 What a language's `load()` resolves to: the builder table, guards, kind ids, trivia facts and the render module hash as data, plus `createNative` to create a native engine and `wrap` to turn a read root and its tree into the language's root node.
 
+The optional `hydrate` hook reuses the grammar's `hydrateChild` for a shallow child read from its own tree. Generated languages supply it so factories can consume parsed list stubs without duplicating the grammar's depth or envelope normalization.
+
 ### `packages/types/src/engine-api.ts::NativeLanguageEngine`
 
 One native engine instance: renders a node lazily, resolving the call's render options over the ones it was created with; applies edits to source text; parses and reads a source; reports whether a tree handle belongs to it; and releases its native state on `dispose`.

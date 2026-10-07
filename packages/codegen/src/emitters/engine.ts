@@ -140,7 +140,7 @@ import type { IndentChar, Options } from './options.js';
 import { querySlots, triviaFacts } from './utils.js';
 ${triviaImports(config)}import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ${rootTypeName}Root } from './render-engine.js';
-import { wrapNode, type ${rootTreeTypeName} } from './wrap.js';
+import { wrapNode, hydrateChild, type ${rootTreeTypeName} } from './wrap.js';
 
 export interface ${api} extends LanguageAPI {
 	readonly name: '${grammar}';
@@ -165,7 +165,8 @@ export const hooks: LanguageHooks<${api}> = Object.freeze<LanguageHooks<${api}>>
 	trivia: ${triviaHook(config)},
 	querySlots,
 	createNative: (options) => nativeLanguageEngine<${api}, IndentChar>(createRenderEngine(options)),
-	wrap: (root, tree) => wrapNode(root as ${rootTypeName}Root & ParsedRoot, tree as TreeHandle)
+	wrap: (root, tree) => wrapNode(root as ${rootTypeName}Root & ParsedRoot, tree as TreeHandle),
+	hydrate: (node, tree) => hydrateChild(node, tree as TreeHandle)
 });
 `;
 }

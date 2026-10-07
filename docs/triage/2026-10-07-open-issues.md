@@ -1,8 +1,8 @@
 # Open issue triage — 2026-10-07
 
-Inventory: 92 open issues in `refactory-lang/sittir`. Priority follows the requested order: reproducible correctness bugs first. P1 means the next correctness or migration dependency batch; P2 means follow-up investigation or scoped design; P3 means deferred or latent work. These are local triage priorities, not applied GitHub labels. `Deferred` overrides the previous priority for work excluded from the current batch.
+Initial inventory: 92 open issues in `refactory-lang/sittir`. Priority follows the requested order: reproducible correctness bugs first. P1 means the next correctness or migration dependency batch; P2 means follow-up investigation or scoped design; P3 means deferred or latent work. These are local triage priorities, not applied GitHub labels. `Deferred` overrides the previous priority for work excluded from the current batch.
 
-This report classifies issue bodies and current context. #706, #692 and the remaining lone-array case of #626 have been reproduced and remediated in this branch. One mechanism in #572 has also been fixed; that issue retains separate open cases. Other entries identify the next action; they are not claims that the reported behavior still reproduces. No issues were closed during triage.
+This report classifies issue bodies and current context. #706, #692 and the remaining lone-array case of #626 have been reproduced and remediated in this branch. One mechanism in #572 has also been fixed; that issue retains separate open cases. Other entries identify the next action; they are not claims that the reported behavior still reproduces. #626 and #627 were closed on 2026-10-07 at the maintainer's request. #493 was subsequently reproduced on a genuine shallow list stub and remediated; its GitHub issue remains open pending PR completion.
 
 ## Verified remediation
 
@@ -10,6 +10,7 @@ This report classifies issue bodies and current context. #706, #692 and the rema
 - **#692:** regeneration refreshes all stable grammars with native builds disabled before invoking the canonical generation/build command for each grammar. Three subprocess tests cover ordering, generation failure and native failure; all failed before the fix. Full `pnpm regen:all` then passed for Python, regex, Rust, SCM and TypeScript with no generated changes. The canonical second pass repeats generation to retain native build, typedef cleanup and fixture sequencing in one implementation.
 - **#626:** current `modifier` config arrays already coerce correctly. The remaining lone-array input was treated as one element, causing text/enum arrays to route to `extern_modifier` and empty arrays to render `extern`. The shared repeat-slot resolver now unwraps the array before per-element coercion; generated `LooseArgs` derives a readonly array form from the same loose element types and cardinality. Six regression tests cover text, enums, readonly input, non-empty rejection, config equivalence and held-node reconstruction.
 - **#572 (partial):** assembly weakened every `nonEmptyArray` value to `array` when a slot was named `content`, even for an explicitly authored `repeat1`. Removing this name-based heuristic preserves the grammar fact and its derived builder guard, strict argument type, required parent config and native transport. Python comprehension clauses and string content, plus SCM string content, now retain their non-empty cardinality. Three compiler regressions and six Python regressions verify rejection and valid empty string/root behavior. The separate lexically impossible empty match-block arm and remaining no-argument surface questions are still open.
+- **#493:** a shallow native list stub already holds its reading tree, but raw strict and loose factories refused it. Generated language hooks now expose the existing `hydrateChild`; a shared tree-binding helper resolves the list owner's storage before construction. The getter, list size, index entries and render use that single resolved value. Five runtime regressions cover strict and loose construction, orphan refusal, another engine of the same language and a disposed reading engine.
 
 ## Validation
 
@@ -22,7 +23,9 @@ This report classifies issue bodies and current context. #706, #692 and the rema
 - #626: canonical five-grammar regeneration, codegen and Rust package type checks passed. Generated changes are confined to argument types and repeat coercers. The cache/repeat regressions (11 tests) and sequencing regressions (3 tests) also passed after regeneration.
 - Partial #572: canonical five-grammar regeneration and codegen/Python type checks passed; compiler suite 76 files, 710 passed and one skipped; emitter suite 71 files, 582 passed; all Python/SCM tests passed (59 files, 650 tests), including six new Python runtime regressions. One prior emitter expectation encoded the weakened `repeat1` cardinality and now checks a required transport field.
 
-Both the #626 and partial #572 validator reruns match the committed native baseline, including its three existing round-trip misses:
+- #493: 98 files, 800 tests passed (all emitter and common runtime tests plus focused Rust list/repeat regressions). The two strict/loose shallow-stub regressions failed before the fix. Five final regression cases and their dedicated TypeScript check passed; canonical five-grammar regeneration and types/common/codegen/Rust package checks passed. Changed-source lint and diff checks passed.
+
+The #626, partial #572 and #493 validator reruns match the committed native baseline, including its three existing round-trip misses:
 
 | Grammar | From | Coverage | Round-trip | AST match | Factory storage |
 |---|---:|---:|---:|---:|---:|
@@ -38,9 +41,8 @@ The maintainer requested skipping trivia-related work for now. Start with these 
 
 1. **#572 — remaining required-slot cases:** investigate the match-block parser constraint and loose no-argument surface; content-slot cardinality is fixed.
 2. **#550 — single-element tuples:** preserve the syntax-bearing comma and the selected grammar arm.
-3. **#493 — parsed list binding:** reproduce list-view sizing when a builder consumes a parsed list stub.
 
-#627's exact samples from its maintainer audit now pass `default-diff --no-attribute`: the multiline Python docstring, `a ${b} c` and `x` TypeScript templates, and `^[\w.+-]+@[\w-]+\.[\w.]+$` email regex each have zero rebuild failures, differing gaps and token mismatches. The original TypeScript/regex failing files were not committed, so the issue remains open pending an input that still reproduces.
+#627's exact samples from its maintainer audit now pass `default-diff --no-attribute`: the multiline Python docstring, `a ${b} c` and `x` TypeScript templates, and `^[\w.+-]+@[\w-]+\.[\w.]+$` email regex each have zero rebuild failures, differing gaps and token mismatches. The original TypeScript/regex failing files were not committed, so closure is based on the documented audit samples, rather than a newly authored fix. A new reproducing input would justify reopening.
 
 Keep #675, #677, #678 and #685 reserved for typed-reader 1c; do not create competing implementations. Trivia-related portions of mixed issues are deferred even when their other cases remain eligible.
 
@@ -48,7 +50,7 @@ Keep #675, #677, #678 and #685 reserved for typed-reader 1c; do not create compe
 
 Comments, source-gap spelling, CRLF and line-ending preservation, spacing around punctuation, trivia authoring, and related performance/diagnostic work are excluded from the current remediation batch. Syntax-bearing punctuation such as a tuple's required comma remains eligible.
 
-The 16 directly related issues are **#619, #608, #587, #582, #568, #477, #372, #434, #675, #584, #585, #547, #474, #631, #357 and #427**. Their inventory rows are marked `Deferred`. The inventory still contains all 92 issues; category counts are unchanged. These deferrals also apply to investigation here when an issue remains reserved for another migration. The trivia option in #644 is deferred while its structural-comparison design remains classified separately.
+The 16 directly related issues are **#619, #608, #587, #582, #568, #477, #372, #434, #675, #584, #585, #547, #474, #631, #357 and #427**. Their inventory rows are marked `Deferred`. The inventory retains all 92 issues from the initial snapshot, including the two subsequently closed issues. These deferrals also apply to investigation here when an issue remains reserved for another migration. The trivia option in #644 is deferred while its structural-comparison design remains classified separately.
 
 ## Layout design ruling
 
@@ -62,8 +64,9 @@ The fixes have focused red/green regressions and regeneration coverage. Backlog 
 
 | Group | Count |
 |---|---:|
-| Remediated | 3 |
-| Correctness queue | 23 |
+| Remediated | 4 |
+| Closed after reproduction refresh | 1 |
+| Correctness queue | 21 |
 | Typed-reader migration and performance | 14 |
 | Platform verification | 1 |
 | Design and feature work | 31 |
@@ -77,13 +80,19 @@ The fixes have focused red/green regressions and regeneration coverage. Backlog 
 |---|---|---|
 | [#706 — fix(query): scope compiled predicate cache by grammar/querySlots](https://github.com/refactory-lang/sittir/issues/706) | P1 | Fixed query plan reuse across distinct grammar slot tables; five regression tests pass. |
 | [#692 — regen:all fails when a generated Cargo feature changes](https://github.com/refactory-lang/sittir/issues/692) | P1 | Fixed regeneration ordering so every Cargo manifest is refreshed before any native build; three regression tests and real five-grammar regeneration pass. |
-| [#626 — Loose builders: a forwarded envelope's repeat slot is not coerced per element (functionModifiers({ modifiers: ['async'] }) throws)](https://github.com/refactory-lang/sittir/issues/626) | P1 | Current config spelling already works; fixed remaining lone-array coercion and generated readonly array argument types. Six regressions and related emitter/runtime/type checks pass. |
+| [#626 — Loose builders: a forwarded envelope's repeat slot is not coerced per element (functionModifiers({ modifiers: ['async'] }) throws)](https://github.com/refactory-lang/sittir/issues/626) | P1 | Closed at maintainer request. Current config spelling already works; fixed remaining lone-array coercion and generated readonly array argument types. Six regressions and related emitter/runtime/type checks pass. |
+| [#493 — A node built from a parsed list stub cannot size its list view: bind the reading tree at build](https://github.com/refactory-lang/sittir/issues/493) | P2 | Fixed genuine shallow-stub construction by reusing the reading engine's grammar hydration; five regressions pass. Issue remains open pending PR completion. |
+
+## Closed after reproduction refresh
+
+| Issue | Priority | Disposition / next action |
+|---|---|---|
+| [#627 — Corpus rebuild failures: builders reject real source](https://github.com/refactory-lang/sittir/issues/627) | P2 | Closed at maintainer request. Documented audit samples now rebuild with zero failures/differences; original TypeScript/regex files were not committed. Reopen for a new reproducing input. |
 
 ## Correctness queue
 
 | Issue | Priority | Disposition / next action |
 |---|---|---|
-| [#627 — Corpus rebuild failures: builders reject real source (python docstring string_fragment, ts template string, regex email)](https://github.com/refactory-lang/sittir/issues/627) | P2 | All documented audit samples now rebuild with zero failures/differences. Need the original uncommitted TypeScript/regex files or another reproducing input before further remediation. |
 | [#619 — Render glues an item to a preceding bare ';' token that has no source identity](https://github.com/refactory-lang/sittir/issues/619) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Reproduce bare-semicolon loss together with #477 before changing punctuation placement. |
 | [#608 — Rule 1 exact spelling: emit the source gap's own text where no whitespace member spells it (CRLF included)](https://github.com/refactory-lang/sittir/issues/608) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Pin byte-exact CRLF and multi-space gaps before changing source-gap handling. |
 | [#587 — Source emitter drops the blank line after a line comment (Newline run)](https://github.com/refactory-lang/sittir/issues/587) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Reproduce the line-comment/newline run and identify the responsible emitter. |
@@ -91,7 +100,6 @@ The fixes have focused red/green regressions and regeneration coverage. Backlog 
 | [#568 — A parent rebuilt with $with rewrites the gaps between its untouched children](https://github.com/refactory-lang/sittir/issues/568) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Pin untouched sibling gap ownership and occurrence identity. |
 | [#550 — One-element tuple pattern and tuple type: the grammar accepts `(x)` as the kind, so a built one renders without its comma](https://github.com/refactory-lang/sittir/issues/550) | P1 | Reproduce single-element variant selection and retain the actual grammar arm semantics. |
 | [#529 — Loose statementBlock({ statements }) input type exceeds the checker's stack depth on export statements](https://github.com/refactory-lang/sittir/issues/529) | P2 | Pin the failing loose-input recursion under the workspace TypeScript version. |
-| [#493 — A node built from a parsed list stub cannot size its list view: bind the reading tree at build](https://github.com/refactory-lang/sittir/issues/493) | P2 | Reproduce parsed list-stub tree binding and length handling. |
 | [#477 — Tree-bound render: list gaps around a collapsed kind-id token fall to the list default](https://github.com/refactory-lang/sittir/issues/477) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Pin punctuation coordinates together with #619. |
 | [#372 — python: a comment after an opening bracket beside a scalar-stored leaf renders before the bracket (CPython rejects it)](https://github.com/refactory-lang/sittir/issues/372) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Validate bracket-comment output with CPython as well as tree-sitter. |
 | [#145 — Published @sittir/{rust,typescript,python} packages have no path to native rendering outside this monorepo](https://github.com/refactory-lang/sittir/issues/145) | P1 | Recheck current published native packaging before acting on the older remediation plan. |
