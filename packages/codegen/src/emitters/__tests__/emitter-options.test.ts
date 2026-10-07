@@ -36,7 +36,7 @@ describe('renderOptionsModule', () => {
 	];
 
 	it('derives Options from the kinds\' hint namespaces and the label roots; no address tables', () => {
-		const spacingType = 'TSKindId.tight | TSKindId.space | TSKindId.newline';
+		const whitespaceType = 'TSKindId.tight | TSKindId.space | TSKindId.newline';
 		const delimiter: SitePreference = {
 			kind: 'formal_parameters',
 			slot: 'elements',
@@ -47,20 +47,20 @@ describe('renderOptionsModule', () => {
 			source: 'delimiter'
 		};
 		const sites = [terminator('return_statement'), spacing('formal_parameters', 'elements', 'comma_separator_space_after'), delimiter];
-		const arms = { spacingType, whitespaceType: spacingType };
+		const aliases = { whitespaceType, layoutType: whitespaceType };
 		const addresses = deriveAddressTables(sites, kindEntries, makeSiteKindsNodeMap(sites), armType, new Map());
-		const hints = hintEmitterOf(addresses, kindEntries, arms, new Set(['formal_parameters']));
-		expect(hints.roots.find((r) => r.name === 'formal_parameters')?.hint).toBe('{ readonly elements?: { readonly delimiter?: Delimiter.Trailing; readonly separator?: { readonly comma?: { readonly after?: SpacingArm } } } }');
+		const hints = hintEmitterOf(addresses, kindEntries, aliases, new Set(['formal_parameters']));
+		expect(hints.roots.find((r) => r.name === 'formal_parameters')?.hint).toBe('{ readonly elements?: { readonly delimiter?: Delimiter.Trailing; readonly separator?: { readonly comma?: { readonly after?: WhitespaceKindId } } } }');
 		expect(hints.roots.filter((r) => r.label).map((r) => [r.name, r.key])).toEqual([['return_statement', 'returnStatement']]);
-		const src = renderOptionsModule({ arms, hints });
+		const src = renderOptionsModule({ layoutKindAliases: aliases, hints });
 		expect(src).toContain("import type { DerivedOptions } from '@sittir/types';");
-		expect(src).toContain("import type { TSKindId, SpacingArm, WhitespaceArm } from './types.js';");
-		expect(src).toContain('export type { SpacingArm, WhitespaceArm };');
+		expect(src).toContain("import type { TSKindId, WhitespaceKindId, LayoutKindId } from './types.js';");
+		expect(src).toContain('export type { WhitespaceKindId, LayoutKindId };');
 		expect(src).toContain('export interface LabelOptions {\n\treadonly returnStatement?: { readonly terminator?: { readonly statementTerminator?: TSKindId.automatic_semicolon | TSKindId.semi } };\n}');
 		expect(src).toContain('export type IndentChar = never;');
 		expect(src).toContain('export type Options = DerivedOptions<T.OptionsHintMap, IndentChar> & LabelOptions;');
 		expect(src).not.toMatch(/AddressRoot|AddressBranch|AddressLeaf|AddressedOptions|export const/);
-		expect(renderOptionsModule({ arms, hints, indentChars: [' ', '\t'] })).toContain('export type IndentChar = " " | "\\t";');
+		expect(renderOptionsModule({ layoutKindAliases: aliases, hints, indentChars: [' ', '\t'] })).toContain('export type IndentChar = " " | "\\t";');
 	});
 
 	it('spells every key camel-cased, including literal tokens and list kinds', () => {
@@ -72,12 +72,12 @@ describe('renderOptionsModule', () => {
 	});
 
 	it('types a site that admits indent and dedent by the wider union', () => {
-		const spacingType = 'TSKindId.tight | TSKindId.space | TSKindId.newline';
-		const whitespaceType = `${spacingType} | TSKindId.indent | TSKindId.dedent`;
+		const whitespaceType = 'TSKindId.tight | TSKindId.space | TSKindId.newline';
+		const layoutType = `${whitespaceType} | TSKindId.indent | TSKindId.dedent`;
 		const WHITESPACE = ['tight', 'space', 'newline', 'indent', 'dedent'].map((k) => ({ value: k, kind: k }));
 		const edge: SitePreference = { kind: 'block', slot: 'block', address: 'block_before', label: 'block_before', arms: WHITESPACE, defaultArm: 'tight', source: 'spacing', side: 'seam' };
-		const hints = hintEmitterOf(deriveAddressTables([edge], kindEntries, makeSiteKindsNodeMap([edge]), armType, new Map()), kindEntries, { spacingType, whitespaceType }, new Set(['block']));
-		expect(hints.roots.map((r) => [r.key, r.hint])).toEqual([['block', '{ readonly before?: WhitespaceArm }']]);
+		const hints = hintEmitterOf(deriveAddressTables([edge], kindEntries, makeSiteKindsNodeMap([edge]), armType, new Map()), kindEntries, { whitespaceType, layoutType }, new Set(['block']));
+		expect(hints.roots.map((r) => [r.key, r.hint])).toEqual([['block', '{ readonly before?: LayoutKindId }']]);
 	});
 });
 

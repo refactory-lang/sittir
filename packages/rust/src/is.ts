@@ -1093,7 +1093,7 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BlockComment };
 	};
-	whitespace<T extends { readonly $type: string | number } | number>(
+	layout<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is NarrowTo<
 		T,
@@ -1189,7 +1189,7 @@ const _supertype_integerLiteral_ids = new Set<number>([141, 142, 143, 144]);
 const _supertype_charLiteral_ids = new Set<number>([147, 148, 149, 150, 145, 146]);
 const _supertype_escapeSequence_ids = new Set<number>([151, 152, 153, 154]);
 const _supertype_comment_ids = new Set<number>([337, 340]);
-const _supertype_whitespace_ids = new Set<number>([168, 169, 170, 171, 172, 173, 174, 175]);
+const _supertype_layout_ids = new Set<number>([168, 169, 170, 171, 172, 173, 174, 175]);
 const _supertype_charLiteralEscaped_ids = new Set<number>([147, 148, 149, 150]);
 
 const _supertype_macroDefinition_guard = _vg(_sg(_supertype_macroDefinition_ids), {
@@ -1498,6 +1498,6 @@ export const is = Object.freeze({
 	charLiteral: _supertype_charLiteral_guard,
 	escapeSequence: _supertype_escapeSequence_guard,
 	comment: _supertype_comment_guard,
-	whitespace: _sg(_supertype_whitespace_ids),
+	layout: _sg(_supertype_layout_ids),
 	charLiteralEscaped: _supertype_charLiteralEscaped_guard
 }) as unknown as IsGuards;

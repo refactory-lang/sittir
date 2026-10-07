@@ -2,7 +2,7 @@ import { CHOICE, STRING, SYMBOL } from '../types/rule-types.ts';
 import { DEDENT_TEXT, INDENT_TEXT, isDepthText } from './primitives/spacing.ts';
 import type { Rule } from '../types/rule.ts';
 import { nodelessExtrasRun, ruleListParts, rulesEqual, type RuleListEntry } from './rule-patterns.ts';
-import { WHITESPACE_SUPERTYPE } from './primitives/spacing.ts';
+import { LAYOUT_SUPERTYPE } from './primitives/spacing.ts';
 
 export interface WhitespaceBody {
 	readonly type: typeof STRING;
@@ -70,7 +70,7 @@ export function enrichWhitespace(
 	);
 	const rule: Rule = { type: CHOICE, members: members.map((member) => ({ type: SYMBOL, name: member.name })) };
 	const minted: readonly (readonly [string, Rule])[] = [
-		[WHITESPACE_SUPERTYPE, rule],
+		[LAYOUT_SUPERTYPE, rule],
 		...members.filter((member) => !upstream.has(member.name)).map((member) => [member.name, member.body] as const)
 	];
 	return {

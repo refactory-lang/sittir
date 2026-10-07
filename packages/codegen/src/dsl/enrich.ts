@@ -83,7 +83,7 @@ import {
 } from './rule-patterns.ts';
 import { baseRulesOf } from './shared.ts';
 import { enrichWhitespace, type EnrichedWhitespace } from './whitespace.ts';
-import { WHITESPACE_SUPERTYPE } from './primitives/spacing.ts';
+import { LAYOUT_SUPERTYPE } from './primitives/spacing.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import { distributeLeafEnum, distributeTokenForms, factorSharedOptional } from './transform/token-forms.ts';
 import { ENRICH_AUTOMATIC_VARIANTS_KEY, isSupertypeOwner, stampAutomaticVariants } from './automatic-variants.ts';
@@ -234,13 +234,13 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 	for (const name of textTokens.mintedNames) ruleOrigins.set(name, { kind: 'text', owners: textTokens.owners[name]! });
 	const whitespace = enrichWhitespace(ctx.externals, ctx.extras, mergedRules);
 	for (const { name } of whitespace.collisions) delete mergedRules[name];
-	mergedRules[WHITESPACE_SUPERTYPE] = whitespace.rule;
-	ruleOrigins.set(WHITESPACE_SUPERTYPE, { kind: 'whitespace' });
+	mergedRules[LAYOUT_SUPERTYPE] = whitespace.rule;
+	ruleOrigins.set(LAYOUT_SUPERTYPE, { kind: 'whitespace' });
 	const result: unknown = hasWrapper
 		? { ...base, grammar: { ...base.grammar, rules: mergedRules } }
 		: { ...(base as unknown as object), rules: mergedRules };
 	const resultGrammar = (hasWrapper ? (result as { grammar: Record<string, unknown> }).grammar : result) as Record<string, unknown>;
-	appendGrammarNames(resultGrammar, 'supertypes', [...tokenFormParents, WHITESPACE_SUPERTYPE, ...elementSupertypes], (name) => name);
+	appendGrammarNames(resultGrammar, 'supertypes', [...tokenFormParents, LAYOUT_SUPERTYPE, ...elementSupertypes], (name) => name);
 	appendGrammarNames(resultGrammar, 'externals', whitespace.addedExternals, (name) => ({ type: SYMBOL, name }));
 	replaceExtras(resultGrammar, tokenFormArms(mergedRules, tokenFormParents));
 	Object.defineProperty(result, ENRICH_WHITESPACE_KEY, {

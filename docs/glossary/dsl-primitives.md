@@ -480,23 +480,24 @@ The name suffix a variant mints under its patched rule: the names of the enclosi
 
 The kind that owns a variant, stamped as its `variantOf`: the patched rule for a top-level variant, and for a variant nested under other variants the node the enclosing variants mint (`polymorphVisibleName` of the patched rule and the enclosing names). It reads the same `nestedUnder` as `variantMintName`, so a nested arm's name and its owner always agree.
 
-### `packages/codegen/src/dsl/primitives/spacing.ts::WHITESPACE_SUPERTYPE`
+### `packages/codegen/src/dsl/primitives/spacing.ts::LAYOUT_SUPERTYPE`
 
-`_whitespace`, the hidden supertype enrich mints for every grammar
-(`enrichWhitespace`) listing the whitespace kinds it renders: the members
+`_layout`, the hidden supertype enrich mints for every grammar
+(`enrichWhitespace`) listing the layout kinds it renders: the members
 its extras admit, each a never-scanned external with a kind id unless the
 upstream grammar already scans one of that name, and `tight`, which renders
 nothing, always. The model reads the arms of every spacing site from it
-(`whitespace-arms.ts`); nothing outside `dsl/whitespace.ts` lists whitespace
+(`layout-kinds.ts`); nothing outside `dsl/whitespace.ts` lists layout
 kinds by name. The supertype is protected from unreachable-rule pruning
 like any other.
 
-### `packages/codegen/src/dsl/primitives/spacing.ts::DEPTH_ARMS`
+### `packages/codegen/src/dsl/primitives/spacing.ts::DEPTH_KINDS`
 
-`indent` and `dedent`, the two whitespace members that move depth rather
-than lay out a run: a separator gap admits every member but these
-(`spacingArmsOf`), while an array flank, a kind edge or a token seam of an
-indenting grammar admits them too (`whitespaceArmsOf`).
+`indent` and `dedent`, the two layout kinds that move depth rather than
+write a whitespace run: a separator gap admits only the whitespace kinds,
+every member but these (`whitespaceKindsOf`), while an array flank, a kind
+edge or a token seam of an indenting grammar admits every layout kind
+(`layoutKindsOf`).
 
 ### `packages/codegen/src/dsl/primitives/spacing.ts::INDENT_TEXT`
 

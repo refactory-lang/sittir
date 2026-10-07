@@ -693,7 +693,7 @@ The `kind-shape-mismatch` record for a kind whose rule is not the shape its mode
  *       (`ctx.aliasSourceKinds`), and
  *   (d) hidden variant-child kinds from `polymorphVariants` that the slot
  *       walker never reaches when the parent is a supertype
- *       (`ctx.variantChildKinds`) — except the arms of the `_whitespace`
+ *       (`ctx.variantChildKinds`) — except the arms of the `_layout`
  *       supertype: a whitespace kind is chosen through an options address,
  *       never authored, so it has no IR builder, coercion or factory entry.
  *
@@ -3323,7 +3323,7 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  *  name) or declared supertype (each of those is its own
  *  reachability root — an external/extra can be referenced only
  *  indirectly, e.g. through a dialect-only production, and the
- *  `_whitespace` supertype by nothing at all). Dialect filtering: a rule that exists in the
+ *  `_layout` supertype by nothing at all). Dialect filtering: a rule that exists in the
  *  raw grammar but only serves a variant the current dialect never reaches
  *  is deleted here, before any later pass's raw-rule collectors run, so
  *  those collectors only ever see the pruned (reachable) set. */
@@ -3613,7 +3613,7 @@ under construction, and the named-arm fact from
 declared-supertype override:
 - `'enum'` and not a declared supertype: the members become an enum rule
   (`normalizeEnumMembers` when all are strings, else a choice of literal
-  symbols). A declared supertype (`_whitespace`, a
+  symbols). A declared supertype (`_layout`, a
   choice over fixed-text tokens) stays a supertype.
 - `'named-arms'` and not a declared supertype: the rule unchanged.
 - `'supertype'`, or a declared supertype: a `SupertypeRule` when at least one
@@ -5860,7 +5860,7 @@ Ctx for `collectReferences`: the rule catalog whose roots give `fromRuleId`.
 /** Ctx for {@link buildRuleCatalog}: the provenance map, and `roots`, the
  *  names the grammar's machinery references outside rule bodies (evaluate
  *  passes its declared supertypes) that keep a hidden rule alive even when
- *  no visible rule reaches it — `_whitespace` has no reference anywhere. */
+ *  no visible rule reaches it — `_layout` has no reference anywhere. */
 ```
 
 `sourceKindOf` maps a renamed kind to the source rule it came from. The catalog mints that kind's ids under
@@ -7765,7 +7765,7 @@ including an absent-case `bare` whose hoist did not fire — leaves an empty
 rule behind. The roots besides visible rules with a body are one set, shared by
 the orphan prune and the rule catalog: the grammar's own roots
 (`grammarRootNames`: the start rule and the rules the extras name, as
-tree-sitter keeps them), the declared supertypes (`_whitespace` is referenced
+tree-sitter keeps them), the declared supertypes (`_layout` is referenced
 by nothing but `supertypes:`), and the grammar's `protectedRuleNames`: wire's
 deposit names and the `renderAs` / `visibleExternals` names (`protectedWireRuleNames`). `transpile/prune-grammar-json.ts` calls
 the same prune: rules nothing reaches must vanish from the sittir-evaluated
@@ -9537,11 +9537,11 @@ invariant violation and throws: an undefined name is a failed prediction, record
 
 ### `packages/codegen/src/compiler/assemble.ts::stampWhitespaceBuilders`
 
-Gives every member of the grammar's `_whitespace` supertype (`whitespaceSymbolsOf`) its builder name, so each is built by `ir.whitespace.<member>()` and returns its kind id. The members are hidden literal kinds, which would otherwise have no builder; a member that assembles as anything but a literal kind stops codegen. A grammar that declares no `_whitespace` (`declaresWhitespace`) has none to stamp. Which of them a trivia position accepts is a separate fact (`whitespaceTriviaKinds`).
+Gives every member of the grammar's `_layout` supertype (`layoutSymbolsOf`) its builder name, so each is built by `ir.layout.<member>()` and returns its kind id. The members are hidden literal kinds, which would otherwise have no builder; a member that assembles as anything but a literal kind stops codegen. A grammar that declares no `_layout` (`declaresWhitespace`) has none to stamp. Which of them a trivia position accepts is a separate fact (`whitespaceTriviaKinds`).
 
 ### `packages/codegen/src/compiler/assemble.ts::assertWhitespaceAdmitted`
 
-Every literal member of the assembled node map's `_whitespace` must be admitted (`admitsWhitespaceMember`) by its stamped `nodelessExtrasRun`; assemble checks it once the map is built. Enrich chose the members from the extras it saw; the stamp is the final grammar's extras. A member the stamp does not admit means the two extras have diverged — for instance a rule the extras name that did not survive to the final grammar — and codegen stops naming the member.
+Every literal member of the assembled node map's `_layout` must be admitted (`admitsWhitespaceMember`) by its stamped `nodelessExtrasRun`; assemble checks it once the map is built. Enrich chose the members from the extras it saw; the stamp is the final grammar's extras. A member the stamp does not admit means the two extras have diverged — for instance a rule the extras name that did not survive to the final grammar — and codegen stops naming the member.
 
 ### `packages/codegen/src/compiler/assemble.ts::resolveCollidingNames`
 

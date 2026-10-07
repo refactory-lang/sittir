@@ -900,7 +900,7 @@
         }
       }
     },
-    "_whitespace": {
+    "_layout": {
       "type": "CHOICE",
       "members": [
         {
@@ -1305,7 +1305,7 @@
   "inline": [],
   "supertypes": [
     "definition",
-    "_whitespace",
+    "_layout",
     "_list_element",
     "named_node",
     "named_node_group"

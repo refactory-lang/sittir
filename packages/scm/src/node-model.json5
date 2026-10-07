@@ -5,10 +5,10 @@
   "word": null,
   "supertypes": [
     "_group_expression",
+    "_layout",
     "_list_element",
     "_named_node_expression",
     "_node_identifier",
-    "_whitespace",
     "definition",
     "named_node",
     "named_node_group"
@@ -518,6 +518,24 @@
       "factoryShape": "constant"
     },
     {
+      "kind": "_layout",
+      "modelType": "supertype",
+      "typeName": "Layout",
+      "irKey": "layout",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "_blankline",
+        "_dedent",
+        "_double_blankline",
+        "_indent",
+        "_newline",
+        "_space",
+        "_tab",
+        "_tight"
+      ]
+    },
+    {
       "kind": "_list_element",
       "modelType": "supertype",
       "typeName": "ListElement",
@@ -604,24 +622,6 @@
       "text": "",
       "oneSurface": true,
       "factoryShape": "constant"
-    },
-    {
-      "kind": "_whitespace",
-      "modelType": "supertype",
-      "typeName": "Whitespace",
-      "irKey": "whitespace",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
-        "_blankline",
-        "_dedent",
-        "_double_blankline",
-        "_indent",
-        "_newline",
-        "_space",
-        "_tab",
-        "_tight"
-      ]
     },
     {
       "kind": "anchor",

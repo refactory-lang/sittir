@@ -283,7 +283,7 @@ export const literalPattern: {
 	negative: F.negativeLiteral
 };
 
-export const whitespace: {
+export const layout: {
 	readonly tight: typeof F.buildTight;
 	readonly space: typeof F.buildSpace;
 	readonly tab: typeof F.buildTab;
@@ -508,7 +508,7 @@ export const ir: {
 	readonly pattern: typeof pattern;
 	readonly literal: typeof literal;
 	readonly literalPattern: typeof literalPattern;
-	readonly whitespace: typeof whitespace;
+	readonly layout: typeof layout;
 	readonly comment: typeof comment;
 	readonly declarationStatement: typeof declarationStatement;
 	readonly synonym: typeof synonym;
@@ -722,7 +722,7 @@ export const ir: {
 	pattern,
 	literal,
 	literalPattern,
-	whitespace,
+	layout,
 	comment,
 	declarationStatement,
 	synonym

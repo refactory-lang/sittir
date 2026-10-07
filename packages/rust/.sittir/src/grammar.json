@@ -10331,7 +10331,7 @@
       "type": "PATTERN",
       "value": ".*"
     },
-    "_whitespace": {
+    "_layout": {
       "type": "CHOICE",
       "members": [
         {
@@ -14690,7 +14690,7 @@
     "char_literal",
     "char_literal_escaped",
     "escape_sequence",
-    "_whitespace",
+    "_layout",
     "comment",
     "_statement",
     "reference_expression",

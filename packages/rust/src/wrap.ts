@@ -1130,7 +1130,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'union_keyword',
 		'gen_keyword'
 	]),
-	_whitespace: new Set([
+	_layout: new Set([
 		'_tight',
 		'tight',
 		'_space',

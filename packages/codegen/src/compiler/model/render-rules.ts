@@ -12,7 +12,7 @@ import { lineTerminatedKinds, triviaKinds } from './trivia.ts';
 import { addressSites, resolveBindings, type PreferenceOrigin } from './site-addresses.ts';
 import type { PreferenceSegment } from '../../dsl/primitives/preference-path.ts';
 import { readOptionsBlock, type OptionsConfig } from '../../dsl/wire/options-block.ts';
-import { defaultWhitespaceArmOf, lineBreakingArms, rootEdgeArms, spacingArmsOf, whitespaceArmsOf, whitespaceSymbolsOf } from './whitespace-arms.ts';
+import { defaultWhitespaceKindOf, lineBreakingKinds, rootEdgeKinds, whitespaceKindsOf, layoutKindsOf, layoutSymbolsOf } from './layout-kinds.ts';
 import { displayNameOf, displayNameOfEntry, displayedKinds } from './display-name.ts';
 import {
 	EMPTY_SEPARATOR_TOKEN,
@@ -23,8 +23,8 @@ import {
 	spacingLabel,
 	type FlankSide,
 	type SeparatorSide,
-	type SpacingArm,
-	type WhitespaceArm
+	type Whitespace,
+	type Layout
 } from '../../dsl/primitives/spacing.ts';
 
 export type SpacingSide = 'before' | 'after' | 'gap' | 'seam' | FlankSide;
@@ -33,10 +33,10 @@ export interface SpacingPart {
 	readonly fieldName: string;
 	readonly label: string;
 	readonly side: SpacingSide;
-	readonly defaultArm: WhitespaceArm;
+	readonly defaultArm: Layout;
 	readonly origin?: SeamOrigin;
 	readonly edgeLiterals?: readonly string[];
-	readonly arms: readonly WhitespaceArm[];
+	readonly arms: readonly Layout[];
 }
 
 export interface Flanks {
@@ -50,7 +50,7 @@ export function whitespaceTextOf(
 	nodeMap: NodeMap
 ): ReadonlyMap<string, string> {
 	const out = new Map<string, string>();
-	for (const [arm, symbol] of whitespaceSymbolsOf(nodeMap)) {
+	for (const [arm, symbol] of layoutSymbolsOf(nodeMap)) {
 		const r = visibleExternals?.[symbol] as { type?: unknown; value?: unknown } | undefined;
 		if (r?.type === STRING && typeof r.value === 'string') out.set(arm, r.value);
 	}
@@ -64,7 +64,7 @@ export interface SpacedSeparator {
 }
 
 export interface EdgeArmDefault {
-	readonly arm: WhitespaceArm;
+	readonly arm: Layout;
 	readonly origin: SeamOrigin;
 }
 
@@ -107,8 +107,8 @@ export interface RuleSpacingSite {
 	readonly address: string;
 	readonly label: string;
 	readonly side: SpacingSide;
-	readonly defaultArm: WhitespaceArm;
-	readonly arms: readonly WhitespaceArm[];
+	readonly defaultArm: Layout;
+	readonly arms: readonly Layout[];
 	readonly origin?: SeamOrigin;
 	readonly seat?: SeatedChild;
 	readonly path?: readonly PreferenceSegment[];
@@ -241,20 +241,20 @@ export interface DeclaredArm {
 class DefaultResolver {
 	readonly #nodeMap: NodeMap;
 	readonly #declared: ReadonlyMap<string, DeclaredArm>;
-	readonly #defaultArm: WhitespaceArm;
+	readonly #defaultArm: Layout;
 
 	constructor(nodeMap: NodeMap, declared?: ReadonlyMap<string, DeclaredArm>) {
 		this.#nodeMap = nodeMap;
 		this.#declared = declared ?? new Map();
-		this.#defaultArm = defaultWhitespaceArmOf(nodeMap);
+		this.#defaultArm = defaultWhitespaceKindOf(nodeMap);
 	}
 
-	#resolve(kind: string, address: string): { readonly arm: WhitespaceArm; readonly origin: SeamOrigin } {
+	#resolve(kind: string, address: string): { readonly arm: Layout; readonly origin: SeamOrigin } {
 		const hit = this.#declared.get(declaredKey(kind, address));
-		return hit === undefined ? { arm: this.#defaultArm, origin: 'fallback' } : { arm: hit.arm as WhitespaceArm, origin: hit.origin };
+		return hit === undefined ? { arm: this.#defaultArm, origin: 'fallback' } : { arm: hit.arm as Layout, origin: hit.origin };
 	}
 
-	resolveSeparator(kind: string, slot: string, label: string): SpacingArm {
+	resolveSeparator(kind: string, slot: string, label: string): Whitespace {
 		return this.#resolve(kind, siteKey(slot, label)).arm;
 	}
 
@@ -263,7 +263,7 @@ class DefaultResolver {
 		address: string,
 		seams: Pick<SeamArms, 'arms' | 'defaultArm'>,
 		wordShaped: boolean = false
-	): { readonly label: string; readonly arm: WhitespaceArm; readonly origin: SeamOrigin } {
+	): { readonly label: string; readonly arm: Layout; readonly origin: SeamOrigin } {
 		const { arms } = seams;
 		const declared = this.#resolve(kind, address);
 		const resolved = declared.origin === 'fallback' && seams.defaultArm !== undefined ? { ...declared, arm: seams.defaultArm } : declared;
@@ -272,17 +272,17 @@ class DefaultResolver {
 		return { label: address, arm, origin };
 	}
 
-	resolveFlank(kind: string, side: FlankSide): { readonly label: string; readonly arm: WhitespaceArm } {
+	resolveFlank(kind: string, side: FlankSide): { readonly label: string; readonly arm: Layout } {
 		const address = flankAddress(displayNameOf(kind, this.#nodeMap), side);
 		return { label: address, arm: this.#resolve(kind, address).arm };
 	}
 }
 
-type Symbols = Partial<Record<WhitespaceArm, string>>;
+type Symbols = Partial<Record<Layout, string>>;
 
-function whitespaceSymbols(nodeMap: NodeMap, arms: readonly WhitespaceArm[]): Symbols | undefined {
+function whitespaceSymbols(nodeMap: NodeMap, arms: readonly Layout[]): Symbols | undefined {
 	if (arms.length === 0) return undefined;
-	const symbolOf = whitespaceSymbolsOf(nodeMap);
+	const symbolOf = layoutSymbolsOf(nodeMap);
 	const out: Symbols = {};
 	for (const arm of arms) {
 		const name = symbolOf.get(arm);
@@ -295,10 +295,10 @@ function whitespaceSymbols(nodeMap: NodeMap, arms: readonly WhitespaceArm[]): Sy
 function flankSymbols(config: RenderRulesConfig): Symbols | undefined {
 	const text = config.whitespaceText;
 	if (text === undefined || !text.has('indent') || !text.has('dedent')) return undefined;
-	return whitespaceSymbols(config.nodeMap, whitespaceArmsOf(config.nodeMap));
+	return whitespaceSymbols(config.nodeMap, layoutKindsOf(config.nodeMap));
 }
 
-function whitespaceChoice(part: SpacingPart, arms: readonly WhitespaceArm[], symbols: Symbols): RenderRule {
+function whitespaceChoice(part: SpacingPart, arms: readonly Layout[], symbols: Symbols): RenderRule {
 	return {
 		type: CHOICE,
 		nonterminal: true,
@@ -332,10 +332,10 @@ function isWhitespaceChoice(rule: RenderRule): boolean {
 
 const isSpacingChoice = isWhitespaceChoice;
 
-function armOf(member: Bag): WhitespaceArm {
+function armOf(member: Bag): Layout {
 	const arm = member.annotations?.arm;
 	if (arm === undefined) throw new Error(`render rules: whitespace choice member '${member.name}' carries no arm`);
-	return arm as WhitespaceArm;
+	return arm as Layout;
 }
 
 function partOf(choice: RenderRule, side: SpacingSide): SpacingPart {
@@ -377,7 +377,7 @@ export function spacedSeparatorOf(rule: RenderRule): SpacedSeparator | undefined
 	return { before: partOf(before, 'before'), token, after: partOf(after, 'after') };
 }
 
-function withFlanks(rule: RenderRule, gap: Gap, resolver: DefaultResolver, symbols: Symbols, arms: readonly WhitespaceArm[]): RenderRule {
+function withFlanks(rule: RenderRule, gap: Gap, resolver: DefaultResolver, symbols: Symbols, arms: readonly Layout[]): RenderRule {
 	const part = (side: FlankSide): RenderRule => {
 		const { label, arm } = resolver.resolveFlank(gap.kind, side);
 		return whitespaceChoice({ fieldName: `${gap.slot}_${side}`, label, side, defaultArm: arm, arms }, arms, symbols);
@@ -385,7 +385,7 @@ function withFlanks(rule: RenderRule, gap: Gap, resolver: DefaultResolver, symbo
 	return { type: SEQ, nonterminal: true, members: [part('start'), rule, part('end')] } as unknown as RenderRule;
 }
 
-function withSpacedSeparator(rule: RenderRule, gap: Gap, resolver: DefaultResolver, symbols: Symbols, arms: readonly SpacingArm[]): RenderRule {
+function withSpacedSeparator(rule: RenderRule, gap: Gap, resolver: DefaultResolver, symbols: Symbols, arms: readonly Whitespace[]): RenderRule {
 	const parts = labelsOf(gap).map(({ label, side }) =>
 		whitespaceChoice({ fieldName: siteKey(gap.slot, label), label, side, defaultArm: resolver.resolveSeparator(gap.kind, gap.slot, label), arms }, arms, symbols)
 	);
@@ -399,8 +399,8 @@ function withSpacedSeparator(rule: RenderRule, gap: Gap, resolver: DefaultResolv
 
 export function spaceRenderRules(config: RenderRulesConfig, declared?: ReadonlyMap<string, DeclaredArm>): RenderRules {
 	const rules = config.nodeMap.normalizedRules ?? {};
-	const spacingArms = spacingArmsOf(config.nodeMap);
-	const symbols = whitespaceSymbols(config.nodeMap, spacingArms);
+	const whitespaceKinds = whitespaceKindsOf(config.nodeMap);
+	const symbols = whitespaceSymbols(config.nodeMap, whitespaceKinds);
 	if (symbols === undefined) return { rules };
 	const gaps = collectGaps(config, rules);
 	const flankSyms = flankSymbols(config);
@@ -410,8 +410,8 @@ export function spaceRenderRules(config: RenderRulesConfig, declared?: ReadonlyM
 		const id = bag(r).id;
 		const gap = id === undefined ? undefined : gaps.get(id);
 		if (gap === undefined) return r;
-		const spaced = withSpacedSeparator(r, gap, resolver, symbols, spacingArms);
-		return flanked.get(gap.kind) === gap ? withFlanks(spaced, gap, resolver, flankSyms!, whitespaceArmsOf(config.nodeMap)) : spaced;
+		const spaced = withSpacedSeparator(r, gap, resolver, symbols, whitespaceKinds);
+		return flanked.get(gap.kind) === gap ? withFlanks(spaced, gap, resolver, flankSyms!, layoutKindsOf(config.nodeMap)) : spaced;
 	};
 	const out: Record<string, RenderRule> = {};
 	for (const [kind, rule] of Object.entries(rules)) out[kind] = visit(walker.map(rule, visit));
@@ -455,7 +455,7 @@ export function isSeamChoice(rule: RenderRule): boolean {
 
 export function seamChoiceDefault(
 	rule: RenderRule
-): { readonly label: string; readonly origin: SeamOrigin | undefined; readonly arm: WhitespaceArm } | undefined {
+): { readonly label: string; readonly origin: SeamOrigin | undefined; readonly arm: Layout } | undefined {
 	const label = bag(bag(rule).members![0]!).annotations?.preference;
 	if (label === undefined) return undefined;
 	for (const member of bag(rule).members ?? []) {
@@ -614,9 +614,9 @@ function inlinedRuleNames(rules: Readonly<Record<string, RenderRule>>): Readonly
 }
 
 interface SeamArms {
-	readonly arms: readonly WhitespaceArm[];
+	readonly arms: readonly Layout[];
 	readonly symbols: Symbols;
-	readonly defaultArm?: WhitespaceArm;
+	readonly defaultArm?: Layout;
 }
 
 function seamChoice(
@@ -797,9 +797,9 @@ function withKindEdges(
 	edgeArms: Map<string, EdgeArmDefault>
 ): RenderRule {
 	const r = bag(rule);
-	const root = config.nodeMap.nodes.get(kind)?.grammarRoot === true ? rootEdgeArms(config.nodeMap) : undefined;
+	const root = config.nodeMap.nodes.get(kind)?.grammarRoot === true ? rootEdgeKinds(config.nodeMap) : undefined;
 	if (root === undefined && (r.type !== SEQ || r.members === undefined)) return rule;
-	const breaking = lineTerminatedKinds(config.nodeMap).has(kind) ? lineBreakingArms(config.nodeMap) : undefined;
+	const breaking = lineTerminatedKinds(config.nodeMap).has(kind) ? lineBreakingKinds(config.nodeMap) : undefined;
 	const breakingSeams: SeamArms | undefined = breaking && {
 		...seams,
 		arms: seams.arms.filter((arm) => breaking.arms.includes(arm)),
@@ -848,12 +848,12 @@ export function seamRenderRules(
 	config: RenderRulesConfig,
 	declared?: ReadonlyMap<string, DeclaredArm>
 ): RenderRules {
-	const spacingArms = spacingArmsOf(config.nodeMap);
-	const symbols = whitespaceSymbols(config.nodeMap, spacingArms);
+	const whitespaceKinds = whitespaceKindsOf(config.nodeMap);
+	const symbols = whitespaceSymbols(config.nodeMap, whitespaceKinds);
 	if (symbols === undefined) return spaced;
 	const inlined = inlinedRuleNames(spaced.rules);
 	const flankSyms = flankSymbols(config);
-	const seams: SeamArms = flankSyms === undefined ? { arms: spacingArms, symbols } : { arms: whitespaceArmsOf(config.nodeMap), symbols: flankSyms };
+	const seams: SeamArms = flankSyms === undefined ? { arms: whitespaceKinds, symbols } : { arms: layoutKindsOf(config.nodeMap), symbols: flankSyms };
 	const immediateConfig: RenderRulesConfig = { ...config, normalizedRules: spaced.rules };
 	const tokenInterior = (kind: string): boolean => config.nodeMap.nodes.get(kind)?.triviaInterior === true;
 	const build = (): RenderRules => {
@@ -1060,7 +1060,7 @@ function seatedSites(
 				address,
 				label: edge.label,
 				side: edge.side,
-				defaultArm: arm === undefined ? edge.defaultArm : (arm as WhitespaceArm),
+				defaultArm: arm === undefined ? edge.defaultArm : (arm as Layout),
 				arms: edge.arms,
 				seat: { kind: child, field: edge.address },
 				path: [

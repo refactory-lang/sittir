@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readOptionsBlock } from '../options-block.ts';
 import { preference } from '../../primitives/preference.ts';
-import { indentUnitOf } from '../../../compiler/model/whitespace-arms.ts';
+import { indentUnitOf } from '../../../compiler/model/layout-kinds.ts';
 import { AssembledKeyword, AssembledSupertype } from '../../../compiler/model/node-map.ts';
 import type { AssembledNode } from '../../../compiler/model/node-map.ts';
 import { makeNodeMapWith } from '../../../__tests__/helpers/node-map-fixtures.ts';
@@ -14,9 +14,9 @@ function whitespaceMap() {
 		['_space', new AssembledKeyword('_space', { type: STRING, value: ' ' })],
 		['_tab', new AssembledKeyword('_tab', { type: STRING, value: '\t' })],
 		[
-			'_whitespace',
+			'_layout',
 			new AssembledSupertype(
-				'_whitespace',
+				'_layout',
 				{ type: CHOICE, members: [{ type: SYMBOL, name: '_space' }, { type: SYMBOL, name: '_tab' }] },
 				[{ name: '_space' }, { name: '_tab' }]
 			)

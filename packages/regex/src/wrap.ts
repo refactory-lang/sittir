@@ -379,7 +379,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 	]),
 	inline_flags_group: new Set(['inline_flags_group_enable', 'inline_flags_group_toggle', 'inline_flags_group_disable']),
 	_character_escape: new Set(['control_escape', 'control_letter_escape', 'identity_escape']),
-	_whitespace: new Set([
+	_layout: new Set([
 		'_tight',
 		'tight',
 		'_newline',

@@ -8,13 +8,13 @@
     "_expression_within_for_in_clause",
     "_expressions",
     "_f_expression",
+    "_layout",
     "_left_hand_side",
     "_named_expression_lhs",
     "_right_hand_side",
     "_simple_statement",
     "_statement",
     "_suite",
-    "_whitespace",
     "assignment",
     "escape_sequence",
     "expression",
@@ -2563,6 +2563,22 @@
       "text": "is not"
     },
     {
+      "kind": "_layout",
+      "modelType": "supertype",
+      "typeName": "Layout",
+      "irKey": "layout",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "_blankline",
+        "_double_blankline",
+        "_newline",
+        "_space",
+        "_tab",
+        "_tight"
+      ]
+    },
+    {
       "kind": "_left_hand_side",
       "modelType": "supertype",
       "typeName": "LeftHandSide",
@@ -3017,22 +3033,6 @@
       "text": "",
       "oneSurface": true,
       "factoryShape": "constant"
-    },
-    {
-      "kind": "_whitespace",
-      "modelType": "supertype",
-      "typeName": "Whitespace",
-      "irKey": "whitespace",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
-        "_blankline",
-        "_double_blankline",
-        "_newline",
-        "_space",
-        "_tab",
-        "_tight"
-      ]
     },
     {
       "kind": "aliased_import",

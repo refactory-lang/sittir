@@ -45,7 +45,7 @@ describe('grammar composition goes through sittirGrammar, which enriches and wir
 });
 
 describe('a bootstrapped grammar hand-writes no rule', () => {
-	it('the template grammar compiles the upstream rules as is, with the whitespace supertype minted by enrich', async () => {
+	it('the template grammar compiles the upstream rules as is, with the layout supertype minted by enrich', async () => {
 		const template = grammarPackageFiles({
 			name: 'regex',
 			Name: 'Regex',
@@ -64,7 +64,7 @@ describe('a bootstrapped grammar hand-writes no rule', () => {
 			expect(raw.stages).toBeUndefined();
 			expect(raw.ruleCauses ?? {}).toEqual({});
 			expect(raw.undeclaredRules ?? []).toEqual([]);
-			expect(raw.supertypes).toContain('_whitespace');
+			expect(raw.supertypes).toContain('_layout');
 		} finally {
 			rmSync(dir, { recursive: true, force: true });
 		}

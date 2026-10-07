@@ -10,6 +10,7 @@
     "_expression",
     "_expression_ending_with_block",
     "_expression_except_range",
+    "_layout",
     "_literal",
     "_literal_pattern",
     "_non_delim_token",
@@ -20,7 +21,6 @@
     "_tokens",
     "_type",
     "_use_clause",
-    "_whitespace",
     "array_expression",
     "char_literal",
     "char_literal_escaped",
@@ -4223,6 +4223,24 @@
       "factoryShape": "constant"
     },
     {
+      "kind": "_layout",
+      "modelType": "supertype",
+      "typeName": "Layout",
+      "irKey": "layout",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "_blankline",
+        "_dedent",
+        "_double_blankline",
+        "_indent",
+        "_newline",
+        "_space",
+        "_tab",
+        "_tight"
+      ]
+    },
+    {
       "kind": "_let_chain",
       "modelType": "branch",
       "typeName": "LetChain",
@@ -4656,24 +4674,6 @@
         "use_list",
         "use_wildcard",
         "usize_keyword"
-      ]
-    },
-    {
-      "kind": "_whitespace",
-      "modelType": "supertype",
-      "typeName": "Whitespace",
-      "irKey": "whitespace",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
-        "_blankline",
-        "_dedent",
-        "_double_blankline",
-        "_indent",
-        "_newline",
-        "_space",
-        "_tab",
-        "_tight"
       ]
     },
     {

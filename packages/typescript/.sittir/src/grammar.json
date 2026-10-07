@@ -13727,7 +13727,7 @@
         }
       ]
     },
-    "_whitespace": {
+    "_layout": {
       "type": "CHOICE",
       "members": [
         {
@@ -17869,7 +17869,7 @@
     "comment",
     "number",
     "number_bigint",
-    "_whitespace",
+    "_layout",
     "_class_body_member",
     "_enum_body_element",
     "index_signature",

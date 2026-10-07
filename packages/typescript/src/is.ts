@@ -1121,7 +1121,7 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EnumAssignment };
 	};
-	whitespace<T extends { readonly $type: string | number } | number>(
+	layout<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is NarrowTo<
 		T,
@@ -1217,7 +1217,7 @@ const _supertype_primaryType_ids = new Set<number>([
 const _supertype_indexSignature_ids = new Set<number>([402, 403]);
 const _supertype_classBodyMember_ids = new Set<number>([399, 400, 282, 401, 398]);
 const _supertype_enumBodyElement_ids = new Set<number>([380, 316]);
-const _supertype_whitespace_ids = new Set<number>([180, 181, 182, 183, 184, 185, 186, 187]);
+const _supertype_layout_ids = new Set<number>([180, 181, 182, 183, 184, 185, 186, 187]);
 const _supertype_exportStatementDefault_ids = new Set<number>([421, 422]);
 const _supertype_numberBigint_ids = new Set<number>([161, 162, 163, 164]);
 
@@ -1538,7 +1538,7 @@ export const is = Object.freeze({
 	indexSignature: _supertype_indexSignature_guard,
 	classBodyMember: _supertype_classBodyMember_guard,
 	enumBodyElement: _supertype_enumBodyElement_guard,
-	whitespace: _sg(_supertype_whitespace_ids),
+	layout: _sg(_supertype_layout_ids),
 	exportStatementDefault: _supertype_exportStatementDefault_guard,
 	numberBigint: _supertype_numberBigint_guard
 }) as unknown as IsGuards;

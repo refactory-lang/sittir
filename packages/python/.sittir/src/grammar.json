@@ -6918,7 +6918,7 @@
         }
       }
     },
-    "_whitespace": {
+    "_layout": {
       "type": "CHOICE",
       "members": [
         {
@@ -8888,7 +8888,7 @@
     "integer_decimal",
     "float",
     "line_continuation",
-    "_whitespace",
+    "_layout",
     "_statement",
     "assignment",
     "with_clause",

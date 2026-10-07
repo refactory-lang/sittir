@@ -169,7 +169,7 @@ describe('trivia model facts', () => {
 		expect(whitespaceTriviaKinds(nodeMap)).toContain('_space');
 	}, 60_000);
 
-	it("fails when '_whitespace' lists a member the stamped extras run does not admit", async () => {
+	it("fails when '_layout' lists a member the stamped extras run does not admit", async () => {
 		const rust = await nodeMapOf('rust');
 		expect(() => assertWhitespaceAdmitted(rust)).not.toThrow();
 		expect(() => assertWhitespaceAdmitted({ ...rust, nodelessExtrasRun: /^(?:\t)+$/ })).toThrow(/lists '_space'/);

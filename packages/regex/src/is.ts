@@ -89,7 +89,7 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.InlineFlagsGroupDisable };
 	};
-	whitespace<T extends { readonly $type: string | number } | number>(
+	layout<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is NarrowTo<T, TSKindId.Tight | TSKindId.Newline | TSKindId.Blankline | TSKindId.DoubleBlankline>;
 }
@@ -106,7 +106,7 @@ function _vg<G extends object>(guard: G, variants: object): G {
 }
 
 const _supertype_inlineFlagsGroup_ids = new Set<number>([83, 84, 85]);
-const _supertype_whitespace_ids = new Set<number>([47, 48, 49, 50]);
+const _supertype_layout_ids = new Set<number>([47, 48, 49, 50]);
 
 const _supertype_inlineFlagsGroup_guard = _vg(_sg(_supertype_inlineFlagsGroup_ids), {
 	enable: _g(TSKindId.InlineFlagsGroupEnable),
@@ -138,5 +138,5 @@ export const is = Object.freeze({
 	unicodePropertyName: _g(TSKindId.UnicodePropertyName),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
 	inlineFlagsGroup: _supertype_inlineFlagsGroup_guard,
-	whitespace: _sg(_supertype_whitespace_ids)
+	layout: _sg(_supertype_layout_ids)
 }) as unknown as IsGuards;

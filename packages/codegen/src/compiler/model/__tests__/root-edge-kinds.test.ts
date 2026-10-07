@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { compileGrammar } from '../../compile.ts';
 import { loadGeneratedIdTables } from '../../generated-metadata.ts';
 import { grammarPackage } from '../../../grammars.ts';
-import { rootEdgeArms, whitespaceSymbolsOf } from '../whitespace-arms.ts';
+import { rootEdgeKinds, layoutSymbolsOf } from '../layout-kinds.ts';
 import { NEWLINE_MEMBER, TIGHT_MEMBER } from '../../../dsl/whitespace.ts';
 import type { NodeMap } from '../../types.ts';
 
@@ -13,7 +13,7 @@ async function nodeMapOf(grammar: string): Promise<NodeMap> {
 }
 
 function memberOf(nodeMap: NodeMap, arm: string): string | undefined {
-	return whitespaceSymbolsOf(nodeMap).get(arm);
+	return layoutSymbolsOf(nodeMap).get(arm);
 }
 
 describe('the grammar root ends in a line break exactly when the grammar declares file types', () => {
@@ -28,7 +28,7 @@ describe('the grammar root ends in a line break exactly when the grammar declare
 			`${grammar}: the root starts tight and ends ${after === NEWLINE_MEMBER ? 'in a line break' : 'tight'}`,
 			async () => {
 				const nodeMap = await nodeMapOf(grammar);
-				const edges = rootEdgeArms(nodeMap);
+				const edges = rootEdgeKinds(nodeMap);
 				expect(nodeMap.fileTypes.length > 0).toBe(after === NEWLINE_MEMBER);
 				expect(memberOf(nodeMap, edges.before)).toBe(TIGHT_MEMBER);
 				expect(memberOf(nodeMap, edges.after)).toBe(after);
@@ -41,7 +41,7 @@ describe('the grammar root ends in a line break exactly when the grammar declare
 		'a grammar without file types ends tight even when its vocabulary has a line break',
 		async () => {
 			const nodeMap = await nodeMapOf('rust');
-			const edges = rootEdgeArms({ ...nodeMap, fileTypes: [] });
+			const edges = rootEdgeKinds({ ...nodeMap, fileTypes: [] });
 			expect(memberOf(nodeMap, edges.after)).toBe(TIGHT_MEMBER);
 		},
 		COMPILE_TIMEOUT

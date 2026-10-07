@@ -922,7 +922,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'match_keyword'
 	]),
 	line_continuation: new Set(['line_continuation_newline', 'line_continuation_nul']),
-	_whitespace: new Set([
+	_layout: new Set([
 		'_tight',
 		'tight',
 		'_space',

@@ -574,8 +574,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 	}
 }
 
-export type SpacingArm = TSKindId.Tight | TSKindId.Newline | TSKindId.Blankline | TSKindId.DoubleBlankline;
-export type WhitespaceArm = TSKindId.Tight | TSKindId.Newline | TSKindId.Blankline | TSKindId.DoubleBlankline;
+export type WhitespaceKindId = TSKindId.Tight | TSKindId.Newline | TSKindId.Blankline | TSKindId.DoubleBlankline;
+export type LayoutKindId = TSKindId.Tight | TSKindId.Newline | TSKindId.Blankline | TSKindId.DoubleBlankline;
 
 // Scoped enums per supertype
 export enum ClassAtomKind {
@@ -601,7 +601,7 @@ export enum CharacterEscapeKind {
 	IdentityEscape = 'identity_escape'
 }
 
-export enum WhitespaceKind {
+export enum LayoutKind {
 	Tight = '_tight',
 	Newline = '_newline',
 	Blankline = '_blankline',
@@ -1098,7 +1098,7 @@ export type DoubleBlankline = TSKindId.DoubleBlankline;
 // Supertype unions
 export type InlineFlagsGroup = InlineFlagsGroupEnable | InlineFlagsGroupToggle | InlineFlagsGroupDisable;
 
-export type Whitespace = Tight | Newline | Blankline | DoubleBlankline;
+export type Layout = Tight | Newline | Blankline | DoubleBlankline;
 
 export namespace InlineFlagsGroup {
 	export type Kind = 'inline_flags_group';
@@ -1106,10 +1106,10 @@ export namespace InlineFlagsGroup {
 	export type Parsed = SupertypeSurface<InlineFlagsGroup, ParsedByKindId>;
 }
 
-export namespace Whitespace {
-	export type Kind = '_whitespace';
-	export type Bound = SupertypeSurface<Whitespace, BoundByKindId>;
-	export type Parsed = SupertypeSurface<Whitespace, ParsedByKindId>;
+export namespace Layout {
+	export type Kind = '_layout';
+	export type Bound = SupertypeSurface<Layout, BoundByKindId>;
+	export type Parsed = SupertypeSurface<Layout, ParsedByKindId>;
 }
 
 // Token type aliases (only tokens referenced in field/child unions)
@@ -1148,7 +1148,7 @@ export interface OptionsHintMap {
 
 export namespace Pattern {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		readonly __optionsHint__?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 	}
 }
 
@@ -1156,7 +1156,9 @@ export namespace Alternation {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly terms?: {
-				readonly separator?: { readonly pipe?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly separator?: {
+					readonly pipe?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
 			};
 		};
 	}
@@ -1165,7 +1167,10 @@ export namespace Alternation {
 export namespace Term {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly termGroup?: { readonly separator?: SpacingArm; readonly termGroup?: { readonly after?: SpacingArm } };
+			readonly termGroup?: {
+				readonly separator?: WhitespaceKindId;
+				readonly termGroup?: { readonly after?: WhitespaceKindId };
+			};
 		};
 	}
 }
@@ -1173,12 +1178,12 @@ export namespace Term {
 export namespace LookaheadAssertion {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly bang?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly before?: SpacingArm;
-			readonly eq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly lparenQmark?: { readonly after?: SpacingArm };
-			readonly rparen?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly bang?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly before?: WhitespaceKindId;
+			readonly eq?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly lparenQmark?: { readonly after?: WhitespaceKindId };
+			readonly rparen?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -1186,12 +1191,12 @@ export namespace LookaheadAssertion {
 export namespace LookbehindAssertion {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly bang?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly before?: SpacingArm;
-			readonly eq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly lparenQmarkLt?: { readonly after?: SpacingArm };
-			readonly rparen?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly bang?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly before?: WhitespaceKindId;
+			readonly eq?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly lparenQmarkLt?: { readonly after?: WhitespaceKindId };
+			readonly rparen?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -1199,13 +1204,13 @@ export namespace LookbehindAssertion {
 export namespace CharacterClass {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly caret?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly lbrack?: { readonly after?: SpacingArm };
-			readonly leading?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly rbrack?: { readonly before?: SpacingArm };
-			readonly trailing?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly caret?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly lbrack?: { readonly after?: WhitespaceKindId };
+			readonly leading?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly rbrack?: { readonly before?: WhitespaceKindId };
+			readonly trailing?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -1213,10 +1218,10 @@ export namespace CharacterClass {
 export namespace PosixCharacterClass {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly colonRbrack?: { readonly before?: SpacingArm };
-			readonly lbrackColon?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly colonRbrack?: { readonly before?: WhitespaceKindId };
+			readonly lbrackColon?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -1224,9 +1229,9 @@ export namespace PosixCharacterClass {
 export namespace ClassRange {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly dash?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly dash?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -1234,10 +1239,10 @@ export namespace ClassRange {
 export namespace AnonymousCapturingGroup {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lparen?: { readonly after?: SpacingArm };
-			readonly rparen?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lparen?: { readonly after?: WhitespaceKindId };
+			readonly rparen?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -1245,12 +1250,12 @@ export namespace AnonymousCapturingGroup {
 export namespace NamedCapturingGroup {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly gt?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly lparenQmarkPLt?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly lparenQmarkLt?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly rparen?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly gt?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly lparenQmarkPLt?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly lparenQmarkLt?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly rparen?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -1258,10 +1263,10 @@ export namespace NamedCapturingGroup {
 export namespace NonCapturingGroup {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lparenQmarkColon?: { readonly after?: SpacingArm };
-			readonly rparen?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lparenQmarkColon?: { readonly after?: WhitespaceKindId };
+			readonly rparen?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -1269,10 +1274,10 @@ export namespace NonCapturingGroup {
 export namespace CountQuantifier {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lbrace?: { readonly after?: SpacingArm };
-			readonly rbrace?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lbrace?: { readonly after?: WhitespaceKindId };
+			readonly rbrace?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -1280,11 +1285,11 @@ export namespace CountQuantifier {
 export namespace BackreferenceEscape {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly bslashk?: { readonly after?: SpacingArm };
-			readonly gt?: { readonly before?: SpacingArm };
-			readonly lt?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly bslashk?: { readonly after?: WhitespaceKindId };
+			readonly gt?: { readonly before?: WhitespaceKindId };
+			readonly lt?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -1292,30 +1297,30 @@ export namespace BackreferenceEscape {
 export namespace NamedGroupBackreference {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lparenQmarkPEq?: { readonly after?: SpacingArm };
-			readonly rparen?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lparenQmarkPEq?: { readonly after?: WhitespaceKindId };
+			readonly rparen?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
 
 export namespace UnicodePropertyValueExpression {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		readonly __optionsHint__?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 	}
 }
 
 export namespace TermGroup {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly anyCharacter?: { readonly after?: SpacingArm };
-			readonly before?: SpacingArm;
-			readonly boundaryAssertion?: { readonly after?: SpacingArm };
-			readonly caret?: { readonly after?: SpacingArm };
-			readonly endAssertion?: { readonly after?: SpacingArm };
-			readonly nonBoundaryAssertion?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly anyCharacter?: { readonly after?: WhitespaceKindId };
+			readonly before?: WhitespaceKindId;
+			readonly boundaryAssertion?: { readonly after?: WhitespaceKindId };
+			readonly caret?: { readonly after?: WhitespaceKindId };
+			readonly endAssertion?: { readonly after?: WhitespaceKindId };
+			readonly nonBoundaryAssertion?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -1323,26 +1328,26 @@ export namespace TermGroup {
 export namespace CountQuantifierGroup {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly comma?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly comma?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
 
 export namespace CountQuantifierArm {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		readonly __optionsHint__?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 	}
 }
 
 export namespace CharacterClassEscapeArm {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lbrace?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly rbrace?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lbrace?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly rbrace?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -1350,9 +1355,9 @@ export namespace CharacterClassEscapeArm {
 export namespace UnicodePropertyValueExpressionGroup {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly eq?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly eq?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -1360,11 +1365,11 @@ export namespace UnicodePropertyValueExpressionGroup {
 export namespace InlineFlagsGroupEnable {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly lparenQmark?: { readonly after?: SpacingArm };
-			readonly rparen?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly lparenQmark?: { readonly after?: WhitespaceKindId };
+			readonly rparen?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -1372,12 +1377,12 @@ export namespace InlineFlagsGroupEnable {
 export namespace InlineFlagsGroupToggle {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly dash?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly lparenQmark?: { readonly after?: SpacingArm };
-			readonly rparen?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly dash?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly lparenQmark?: { readonly after?: WhitespaceKindId };
+			readonly rparen?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -1385,31 +1390,31 @@ export namespace InlineFlagsGroupToggle {
 export namespace InlineFlagsGroupDisable {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly dash?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly lparenQmark?: { readonly after?: SpacingArm };
-			readonly rparen?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly dash?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly lparenQmark?: { readonly after?: WhitespaceKindId };
+			readonly rparen?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
 
 export namespace ZeroOrMore {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly star?: { readonly after?: SpacingArm } };
+		readonly __optionsHint__?: { readonly star?: { readonly after?: WhitespaceKindId } };
 	}
 }
 
 export namespace OneOrMore {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly plus?: { readonly after?: SpacingArm } };
+		readonly __optionsHint__?: { readonly plus?: { readonly after?: WhitespaceKindId } };
 	}
 }
 
 export namespace Optional {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly qmark?: { readonly after?: SpacingArm } };
+		readonly __optionsHint__?: { readonly qmark?: { readonly after?: WhitespaceKindId } };
 	}
 }
 

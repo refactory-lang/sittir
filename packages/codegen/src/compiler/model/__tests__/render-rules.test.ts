@@ -37,7 +37,7 @@ function nodeMapOf(
 	for (const kind of Object.keys(rules)) nodes.set(kind, stub(kind));
 	const whitespace = ['_tight', '_space', '_newline', '_blankline', '_indent', '_dedent'];
 	if (opts.whitespace !== false) for (const w of whitespace) nodes.set(w, stub(w));
-	const supertypes = { _whitespace: opts.whitespace === false ? [] : whitespace, ...opts.supertypes };
+	const supertypes = { _layout: opts.whitespace === false ? [] : whitespace, ...opts.supertypes };
 	for (const [supertype, members] of Object.entries(supertypes)) {
 		nodes.set(
 			supertype,
@@ -86,8 +86,8 @@ describe('spaceRenderRules', () => {
 		expect(choice.members[1]!.annotations).toEqual({ preference: 'comma_separator_space_before', arm: 'space', default: true });
 	});
 
-	it('defaults a gap to tight when the whitespace supertype has no space member', () => {
-		const nodeMap = nodeMapOf({ list: commaList() }, { r1: 'items' }, { supertypes: { _whitespace: ['_tight', '_newline', '_blankline'] } });
+	it('defaults a gap to tight when the layout supertype has no space member', () => {
+		const nodeMap = nodeMapOf({ list: commaList() }, { r1: 'items' }, { supertypes: { _layout: ['_tight', '_newline', '_blankline'] } });
 		const spaced = spacedSeparatorOf(spaceRenderRules({ nodeMap, kindEntries }).rules.list!)!;
 		expect(spaced.before?.defaultArm).toBe('tight');
 		expect(spaced.before?.arms).toEqual(['tight', 'newline', 'blankline']);
@@ -145,7 +145,7 @@ describe('spaceRenderRules', () => {
 		expect(spacedSeparatorOf(out.rules.list!)).toBeUndefined();
 	});
 
-	it('returns the rules untouched when the whitespace supertype is empty', () => {
+	it('returns the rules untouched when the layout supertype is empty', () => {
 		const rules = { list: commaList() };
 		const out = spaceRenderRules({ nodeMap: nodeMapOf(rules, { r1: 'items' }, { whitespace: false }), kindEntries });
 		expect(out.rules).toBe(rules);
@@ -603,7 +603,7 @@ describe('seamRenderRules', () => {
 		expect(() => run(token)).toThrow(/'lparen_before' on call is 'indent', not one of tight, space, newline/);
 	});
 
-	it('returns the rules untouched when the whitespace supertype is empty', () => {
+	it('returns the rules untouched when the layout supertype is empty', () => {
 		const rules = { call: seq(sym('x'), str('(')) };
 		const config = { nodeMap: nodeMapOf(rules, {}, { whitespace: false }), kindEntries };
 		expect(seamRenderRules(spaceRenderRules(config), config).rules).toBe(rules);

@@ -1,5 +1,5 @@
-export const WHITESPACE_SUPERTYPE = '_whitespace';
-export const DEPTH_ARMS = ['indent', 'dedent'] as const;
+export const LAYOUT_SUPERTYPE = '_layout';
+export const DEPTH_KINDS = ['indent', 'dedent'] as const;
 export const INDENT_TEXT = '\u{FDD0}\n';
 export const DEDENT_TEXT = '\u{FDD1}\n';
 export const DEPTH_BREAK = '\n';
@@ -9,8 +9,8 @@ export function isDepthText(text: string): boolean {
 export function depthBreakOf(text: string): string {
 	return isDepthText(text) ? DEPTH_BREAK : text;
 }
-export type SpacingArm = string;
-export type WhitespaceArm = string;
+export type Whitespace = string;
+export type Layout = string;
 export const EMPTY_SEPARATOR_TOKEN = 'empty';
 export const DELIMITER_LABEL = 'delimiter';
 export const DELIMITER_ARMS = ['Delimiter.None', 'Delimiter.Leading', 'Delimiter.Trailing', 'Delimiter.Both'] as const;
