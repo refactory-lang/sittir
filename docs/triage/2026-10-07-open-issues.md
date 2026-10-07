@@ -37,7 +37,7 @@ The 16 directly related issues are **#619, #608, #587, #582, #568, #477, #372, #
 
 ## Layout design ruling
 
-The line-ending discussion established the general [reference preference inheritance contract](../superpowers/specs/2026-09-09-preference-address-design.md#amendment-references-inherit-preferences-2026-10-07). The proposed newline choice and blank-line composition remain design work; they are not included among the verified fixes. This ruling does not resume the deferred trivia backlog.
+The line-ending discussion established the general [reference preference inheritance contract](../superpowers/specs/2026-09-09-preference-address-design.md#amendment-references-inherit-preferences-2026-10-07). The proposed newline choice and blank-line composition remain design work; they are not included among the verified fixes. The CRLF/layout portion is linked to [#608](https://github.com/refactory-lang/sittir/issues/608), whose broader exact source-gap preservation remains open. This ruling does not resume the deferred trivia backlog.
 
 ## Coverage and limits
 

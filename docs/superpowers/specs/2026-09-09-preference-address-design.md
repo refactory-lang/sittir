@@ -524,3 +524,5 @@ emitters project them. The current fixed-string layout vocabulary and
 projection do not yet implement this composition. Tests for implementation
 must cover direct and transitive references, repeated references, explicit
 site overrides, token lowering, all three spellings and CRLF break counting.
+
+Related issue: [#608 — exact source-gap spelling, including CRLF](https://github.com/refactory-lang/sittir/issues/608). This contract informs its line-ending model; it does not implement preservation of arbitrary source-gap bytes.
