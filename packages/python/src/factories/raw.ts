@@ -3916,7 +3916,7 @@ export function buildListComprehension(config: T.ListComprehension.Config): T.Li
 		'a built Expression'
 	);
 	const _comprehension_clauses = rejectBareText(
-		orDefault(config.comprehensionClauses, () => buildComprehensionClauses()),
+		config.comprehensionClauses,
 		'ListComprehension.comprehensionClauses',
 		'a built ComprehensionClauses'
 	);
@@ -3950,7 +3950,7 @@ export function buildDictionaryComprehension(
 ): T.DictionaryComprehension.Bound {
 	const _body = rejectBareText(config.body, 'DictionaryComprehension.body', 'a built Pair');
 	const _comprehension_clauses = rejectBareText(
-		orDefault(config.comprehensionClauses, () => buildComprehensionClauses()),
+		config.comprehensionClauses,
 		'DictionaryComprehension.comprehensionClauses',
 		'a built ComprehensionClauses'
 	);
@@ -3986,7 +3986,7 @@ export function buildSetComprehension(config: T.SetComprehension.Config): T.SetC
 		'a built Expression'
 	);
 	const _comprehension_clauses = rejectBareText(
-		orDefault(config.comprehensionClauses, () => buildComprehensionClauses()),
+		config.comprehensionClauses,
 		'SetComprehension.comprehensionClauses',
 		'a built ComprehensionClauses'
 	);
@@ -4022,7 +4022,7 @@ export function buildGeneratorExpression(config: T.GeneratorExpression.Config): 
 		'a built Expression'
 	);
 	const _comprehension_clauses = rejectBareText(
-		orDefault(config.comprehensionClauses, () => buildComprehensionClauses()),
+		config.comprehensionClauses,
 		'GeneratorExpression.comprehensionClauses',
 		'a built ComprehensionClauses'
 	);
@@ -4316,8 +4316,11 @@ export function buildString(config: T.String.Config): T.String.Bound {
 }
 
 export function buildStringContent(
-	...children: Admit<(T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment)[]>
+	...children: NonEmptyArray<
+		Admit<T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment>
+	>
 ): T.StringContent.Bound {
+	_assertNonEmpty(children, 'string_content.children');
 	const _content = rejectBareText(
 		children,
 		'StringContent.content',
@@ -4331,7 +4334,9 @@ export function buildStringContent(
 		_content,
 		$with: {
 			contents: (
-				...vs: Admit<T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment>[]
+				...vs: NonEmptyArray<
+					Admit<T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment>
+				>
 			) => rebuilt(node, handle, () => buildStringContent(...restItems('contents', vs)))
 		},
 		contents: () => _content,
@@ -5744,8 +5749,9 @@ function _buildParenthesizedImportList(value: Admit<T.ImportList>): T.Parenthesi
 }
 
 export function buildComprehensionClauses(
-	...children: Admit<(T.ForInClause | T.IfClause)[]>
+	...children: NonEmptyArray<Admit<T.ForInClause | T.IfClause>>
 ): T.ComprehensionClauses.Bound {
+	_assertNonEmpty(children, 'comprehension_clauses.children');
 	const _content = rejectBareText(children, 'ComprehensionClauses.content', 'a built ForInClause / IfClause');
 	const handle = currentHandle();
 	const node = {
@@ -5754,7 +5760,7 @@ export function buildComprehensionClauses(
 		$named: true as const,
 		_content,
 		$with: {
-			contents: (...vs: Admit<T.ForInClause | T.IfClause>[]) =>
+			contents: (...vs: NonEmptyArray<Admit<T.ForInClause | T.IfClause>>) =>
 				rebuilt(node, handle, () => buildComprehensionClauses(...restItems('contents', vs)))
 		},
 		contents: () => _content,

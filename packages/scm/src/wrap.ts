@@ -920,7 +920,7 @@ export function wrapStringContent(data: T.StringContent, tree: TreeHandle): T.St
 		...data,
 		$type: TSKindId.StringContent as const,
 		_content: storeExpanded(
-			normalizeRepeatedWrapSlot(data._content, false, 'content', {
+			normalizeRepeatedWrapSlot(data._content, true, 'content', {
 				tree,
 				nodeType: data.$type,
 				slotName: 'content',
@@ -933,7 +933,7 @@ export function wrapStringContent(data: T.StringContent, tree: TreeHandle): T.St
 			return hydrateSlots<T.StringContentText | T.EscapeSequence>(this, '_content', tree);
 		},
 		$with: {
-			contents: (...v: NonNullable<T.StringContent['_content']>[number][]) =>
+			contents: (...v: NonEmptyArray<NonNullable<T.StringContent['_content']>[number]>) =>
 				rebuilt(node, handle, () => wrapStringContent({ ...$edited(data), _content: restItems('contents', v) }, tree))
 		},
 		$render: () => renderText(handle, node),

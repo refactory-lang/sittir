@@ -1735,9 +1735,9 @@
       "content": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": true,
-        "nonEmpty": false
+        "nonEmpty": true
       }
     },
     "interpolation": {
@@ -1995,9 +1995,9 @@
       "content": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": true,
-        "nonEmpty": false
+        "nonEmpty": true
       }
     },
     "integer_hex": {
@@ -5678,9 +5678,9 @@
           "name": "content",
           "propertyName": "contents",
           "paramName": "contents",
-          "required": false,
+          "required": true,
           "multiple": true,
-          "nonEmpty": false,
+          "nonEmpty": true,
           "storage": "verbatim",
           "kinds": [
             "for_in_clause",
@@ -5689,13 +5689,13 @@
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "for_in_clause",
               "parseKind": "for_in_clause"
             },
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "if_clause",
               "parseKind": "if_clause"
             }
@@ -14230,9 +14230,9 @@
           "name": "content",
           "propertyName": "contents",
           "paramName": "contents",
-          "required": false,
+          "required": true,
           "multiple": true,
-          "nonEmpty": false,
+          "nonEmpty": true,
           "storage": "mixedEnum",
           "kinds": [
             "escape_interpolation",
@@ -14243,25 +14243,25 @@
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "escape_interpolation",
               "parseKind": "escape_interpolation"
             },
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "escape_sequence",
               "parseKind": "escape_sequence"
             },
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "not_escape_sequence",
               "parseKind": "not_escape_sequence"
             },
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "string_fragment",
               "parseKind": "string_fragment"
             }

@@ -1215,19 +1215,6 @@ The classification left after every structural check: an all-text subtree is `'p
 // not itself guaranteed ≥1 occurrences at the individual-field level.
 ```
 
-### `packages/codegen/src/compiler/collect-slots.ts::inlinedFromSlotName`
-
-```text
-/** The fallback slot name for a rule whose whole content was spliced in
- *  from another rule's body (`RuleBase.inlinedFrom`, leading underscores
- *  stripped) — `undefined` when the rule was never inlined, so callers
- *  chain it with `?? 'content'` for the final generic fallback. Named
- *  after the rule it came from rather than the uninformative `content` for
- *  every `buildSlot` unnamed-choice / no-nameable-kind case, matching
- *  `node-map.ts`'s `projectSlotNaming` fallback for the same fact.
- */
-```
-
 ### `packages/codegen/src/compiler/collect-slots.ts::buildSlot`
 
 ```text
@@ -1236,6 +1223,9 @@ The classification left after every structural check: an all-text subtree is `'p
  *
  * `kindForName` is the synthesized branch kind (the rule's owning kind),
  * used only to label the unnamed-choice warning.
+ * Slot values retain the grammar-derived multiplicity, including for
+ * `content` fields. Slot naming is owned by AssembledNonterminal and
+ * cannot weaken a required repeat to a zero-or-more repeat.
  */
 ```
 
@@ -1278,13 +1268,9 @@ The classification left after every structural check: an all-text subtree is `'p
 #### body
 
 ```text
-// Unnamed choice → `inlinedFromSlotName(rule) ?? 'content'`: an
-// inlined-body choice is named after the rule it was spliced from
-// instead of the generic `content`. Warn unless this is a registered
-// polymorph (polymorph metadata drives the TYPE surface only; render
-// just renders `content`) — or a sanctioned union slot (for a
-// qualifying union the `content` name is the intended model, not a
-// missing-name smell).
+// Warn on a choice without a field name or shared arm field, unless
+// it is a sanctioned union slot. AssembledNonterminal owns the naming
+// projection, including the inlined-rule fallback and generic content.
 ```
 
 #### body
@@ -1300,8 +1286,8 @@ The classification left after every structural check: an all-text subtree is `'p
 ```text
 // Any OTHER nonterminal slot (per `classifyByType`) with no
 // fieldName and no nameable kind — `pattern` / `enum` / aliased
-// leaf → `inlinedFromSlotName(rule) ?? 'content'`, same fallback as
-// an unnamed choice. `buildSlot` is only reached for nonterminal
+// leaf uses AssembledNonterminal's naming projection, as an unnamed
+// choice does. `buildSlot` is only reached for nonterminal
 // positions, so we must NOT elide based on rule.type: patterns and
 // enums are structural slots (the catalog classifies them
 // nonterminal). Eliding here dropped real slots (e.g.

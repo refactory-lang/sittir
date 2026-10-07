@@ -14598,7 +14598,7 @@ pub struct StringContentTransport {
     pub layout: Option<TransportLayout>,
     #[wire(key = "_content")]
     #[slot]
-    pub content: Option<Vec<::sittir_core::SlotValue<StringContentContentTransportSlot, true>>>,
+    pub content: Vec<::sittir_core::SlotValue<StringContentContentTransportSlot, true>>,
 }
 
 impl ::sittir_core::view::KindOf for StringContentTransport {
@@ -16161,7 +16161,7 @@ pub struct ComprehensionClausesTransport {
     pub layout: Option<TransportLayout>,
     #[wire(key = "_content")]
     #[slot(field = field::CONTENT)]
-    pub content: Option<Vec<::sittir_core::SlotValue<ComprehensionClausesContentTransportSlot>>>,
+    pub content: Vec<::sittir_core::SlotValue<ComprehensionClausesContentTransportSlot>>,
     #[wire(key = "_content_separator_space")]
     pub content_separator_space: Option<u16>,
 }
@@ -16187,9 +16187,9 @@ impl ::sittir_core::render::Render for ComprehensionClausesTransport {
 impl ::sittir_core::prepare::Prepare for ComprehensionClausesTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        if let Some(gap_items) = self.content.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_COMPREHENSION_CLAUSES_CONTENT_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.content.iter_mut().map(Some), "", options::allowed(options::SITE_COMPREHENSION_CLAUSES_CONTENT_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.content_separator_space.get_or_insert(ctx.options.spacing[options::SITE_COMPREHENSION_CLAUSES_CONTENT_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.content.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_COMPREHENSION_CLAUSES_CONTENT, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.content.iter_mut().map(Some), options::SEATS_COMPREHENSION_CLAUSES_CONTENT, ctx);
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -23657,7 +23657,7 @@ fn render_string(node: &StringTransport, w: &mut dyn ::sittir_core::render::Rend
 
 fn render_string_content(node: &StringContentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = ListView {
-        items: node.content.as_deref().unwrap_or(&[]),
+        items: &node.content,
         template: "{}",
         token: "",
         before: 0,
@@ -24040,7 +24040,7 @@ fn render_parenthesized_import_list(node: &ParenthesizedImportListTransport, w: 
 
 fn render_comprehension_clauses(node: &ComprehensionClausesTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = ListView {
-        items: node.content.as_deref().unwrap_or(&[]),
+        items: &node.content,
         template: "{}",
         token: "",
         before: 0,

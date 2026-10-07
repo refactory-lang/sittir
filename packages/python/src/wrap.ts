@@ -8263,7 +8263,7 @@ export function wrapStringContent(data: T.StringContent, tree: TreeHandle): T.St
 						readTerminalFromOther<
 							T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment
 						>(data, [TSKindId.NotEscapeSequence]),
-					false,
+					true,
 					'content',
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _UntypedNode).$span }
 				),
@@ -8281,7 +8281,7 @@ export function wrapStringContent(data: T.StringContent, tree: TreeHandle): T.St
 			);
 		},
 		$with: {
-			contents: (...v: NonNullable<T.StringContent['_content']>[number][]) =>
+			contents: (...v: NonEmptyArray<NonNullable<T.StringContent['_content']>[number]>) =>
 				rebuilt(node, handle, () => wrapStringContent({ ...$edited(data), _content: restItems('contents', v) }, tree))
 		},
 		$render: () => renderText(handle, node),
@@ -9936,7 +9936,7 @@ export function wrapComprehensionClauses(
 		...data,
 		$type: TSKindId.ComprehensionClauses as const,
 		_content: storeExpanded(
-			normalizeRepeatedWrapSlot(data._content, false, 'content', {
+			normalizeRepeatedWrapSlot(data._content, true, 'content', {
 				tree,
 				nodeType: data.$type,
 				slotName: 'content',
@@ -9949,7 +9949,7 @@ export function wrapComprehensionClauses(
 			return hydrateSlots<T.ForInClause | T.IfClause>(this, '_content', tree);
 		},
 		$with: {
-			contents: (...v: NonNullable<T.ComprehensionClauses['_content']>[number][]) =>
+			contents: (...v: NonEmptyArray<NonNullable<T.ComprehensionClauses['_content']>[number]>) =>
 				rebuilt(node, handle, () =>
 					wrapComprehensionClauses({ ...$edited(data), _content: restItems('contents', v) }, tree)
 				)

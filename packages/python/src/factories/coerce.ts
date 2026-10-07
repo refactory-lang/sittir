@@ -4985,8 +4985,11 @@ export function coerceToListComprehension(
 		return input as unknown as ReturnType<typeof F.buildListComprehension>;
 	return F.buildListComprehension({
 		body: _requireField('list_comprehension', 'body', resolveListComprehension_body(input.body)),
-		comprehensionClauses:
-			resolveListComprehension_comprehensionClauses(input.comprehensionClauses) ?? F.buildComprehensionClauses()
+		comprehensionClauses: _requireField(
+			'list_comprehension',
+			'comprehensionClauses',
+			resolveListComprehension_comprehensionClauses(input.comprehensionClauses)
+		)
 	});
 }
 
@@ -5009,8 +5012,11 @@ export function coerceToDictionaryComprehension(
 		return input as unknown as ReturnType<typeof F.buildDictionaryComprehension>;
 	return F.buildDictionaryComprehension({
 		body: _requireField('dictionary_comprehension', 'body', resolveDictionaryComprehension_body(input.body)),
-		comprehensionClauses:
-			resolveDictionaryComprehension_comprehensionClauses(input.comprehensionClauses) ?? F.buildComprehensionClauses()
+		comprehensionClauses: _requireField(
+			'dictionary_comprehension',
+			'comprehensionClauses',
+			resolveDictionaryComprehension_comprehensionClauses(input.comprehensionClauses)
+		)
 	});
 }
 
@@ -5034,8 +5040,11 @@ export function coerceToSetComprehension(input: T.SetComprehension.Loose): Retur
 		return input as unknown as ReturnType<typeof F.buildSetComprehension>;
 	return F.buildSetComprehension({
 		body: _requireField('set_comprehension', 'body', resolveSetComprehension_body(input.body)),
-		comprehensionClauses:
-			resolveSetComprehension_comprehensionClauses(input.comprehensionClauses) ?? F.buildComprehensionClauses()
+		comprehensionClauses: _requireField(
+			'set_comprehension',
+			'comprehensionClauses',
+			resolveSetComprehension_comprehensionClauses(input.comprehensionClauses)
+		)
 	});
 }
 
@@ -5061,8 +5070,11 @@ export function coerceToGeneratorExpression(
 		return input as unknown as ReturnType<typeof F.buildGeneratorExpression>;
 	return F.buildGeneratorExpression({
 		body: _requireField('generator_expression', 'body', resolveGeneratorExpression_body(input.body)),
-		comprehensionClauses:
-			resolveGeneratorExpression_comprehensionClauses(input.comprehensionClauses) ?? F.buildComprehensionClauses()
+		comprehensionClauses: _requireField(
+			'generator_expression',
+			'comprehensionClauses',
+			resolveGeneratorExpression_comprehensionClauses(input.comprehensionClauses)
+		)
 	});
 }
 

@@ -4403,23 +4403,23 @@ export interface String {
 
 export interface StringContent {
 	readonly $type: TSKindId.StringContent;
-	readonly _content?: readonly (EscapeInterpolation | EscapeSequence | TSKindId.NotEscapeSequence | StringFragment)[];
+	readonly _content: NonEmptyArray<EscapeInterpolation | EscapeSequence | TSKindId.NotEscapeSequence | StringFragment>;
 	readonly __inputHints__?: {
-		readonly content?: readonly (
+		readonly content: NonEmptyArray<
 			| KindEnum<'\\', TSKindId.NotEscapeSequence | TSKindId.Bslash>
 			| EscapeInterpolation
 			| EscapeSequence
 			| StringFragment
-		)[];
+		>;
 	};
 	readonly __slotHints__?: {
 		readonly contents: SlotHint<
-			(T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment)[],
+			NonEmptyArray<T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment>,
 			false,
 			true
 		>;
 	};
-	contents(): readonly (EscapeInterpolation | EscapeSequence | TSKindId.NotEscapeSequence | StringFragment)[];
+	contents(): NonEmptyArray<EscapeInterpolation | EscapeSequence | TSKindId.NotEscapeSequence | StringFragment>;
 }
 
 export interface Interpolation {
@@ -4785,11 +4785,11 @@ export interface ParenthesizedImportList {
 
 export interface ComprehensionClauses {
 	readonly $type: TSKindId.ComprehensionClauses;
-	readonly _content?: readonly (ForInClause | IfClause)[];
+	readonly _content: NonEmptyArray<ForInClause | IfClause>;
 	readonly __slotHints__?: {
-		readonly contents: SlotHint<(T.ForInClause | T.IfClause)[], false, true>;
+		readonly contents: SlotHint<NonEmptyArray<T.ForInClause | T.IfClause>, false, true>;
 	};
-	contents(): readonly (ForInClause | IfClause)[];
+	contents(): NonEmptyArray<ForInClause | IfClause>;
 }
 
 export interface IntegerHex {
@@ -13106,7 +13106,9 @@ export namespace StringContent {
 	export type Loose = LooseFor<TSKindId.StringContent>;
 	export type LooseConfig = LooseConfigFor<TSKindId.StringContent>;
 	export type BuildArgs = [
-		...children: Admit<(T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment)[]>
+		...children: NonEmptyArray<
+			Admit<T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment>
+		>
 	];
 	export type LooseArgs =
 		| [
@@ -13128,7 +13130,7 @@ export namespace StringContent {
 		  ]
 		| [
 				children: Readonly<
-					(
+					NonEmptyArray<
 						| LooseValue<
 								T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment,
 								T.LeafScalarMap,
@@ -13141,7 +13143,7 @@ export namespace StringContent {
 								T.LeafStringMap,
 								T.NamespaceMap
 						  >
-					)[]
+					>
 				>
 		  ];
 	export type Kind = TSKindId.StringContent;
@@ -13963,7 +13965,7 @@ export namespace ComprehensionClauses {
 	}
 	export type Loose = LooseFor<TSKindId.ComprehensionClauses>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ComprehensionClauses>;
-	export type BuildArgs = [...children: Admit<(T.ForInClause | T.IfClause)[]>];
+	export type BuildArgs = [...children: NonEmptyArray<Admit<T.ForInClause | T.IfClause>>];
 	export type LooseArgs =
 		| [
 				...children: (
@@ -13971,7 +13973,11 @@ export namespace ComprehensionClauses {
 					| LooseValue<T.ForInClause | T.IfClause, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				)[]
 		  ]
-		| [children: Readonly<LooseValue<T.ForInClause | T.IfClause, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]>];
+		| [
+				children: Readonly<
+					NonEmptyArray<LooseValue<T.ForInClause | T.IfClause, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+				>
+		  ];
 	export type Kind = TSKindId.ComprehensionClauses;
 }
 export namespace IntegerHex {

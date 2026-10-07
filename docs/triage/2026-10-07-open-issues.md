@@ -2,13 +2,14 @@
 
 Inventory: 92 open issues in `refactory-lang/sittir`. Priority follows the requested order: reproducible correctness bugs first. P1 means the next correctness or migration dependency batch; P2 means follow-up investigation or scoped design; P3 means deferred or latent work. These are local triage priorities, not applied GitHub labels. `Deferred` overrides the previous priority for work excluded from the current batch.
 
-This report classifies issue bodies and current context. #706, #692 and the remaining lone-array case of #626 have been reproduced and remediated in this branch. Other entries identify the next action; they are not claims that the reported behavior still reproduces. No issues were closed during triage.
+This report classifies issue bodies and current context. #706, #692 and the remaining lone-array case of #626 have been reproduced and remediated in this branch. One mechanism in #572 has also been fixed; that issue retains separate open cases. Other entries identify the next action; they are not claims that the reported behavior still reproduces. No issues were closed during triage.
 
 ## Verified remediation
 
 - **#706:** query compilation now caches by immutable query-slot table, condition callback and numeric kind. This is the compilation dependency: distinct grammar tables cannot share plans, while contexts sharing the same table can. Five tests cover both grammar orders, validation isolation and legitimate shared compilation. Three of the tests failed before the fix.
 - **#692:** regeneration refreshes all stable grammars with native builds disabled before invoking the canonical generation/build command for each grammar. Three subprocess tests cover ordering, generation failure and native failure; all failed before the fix. Full `pnpm regen:all` then passed for Python, regex, Rust, SCM and TypeScript with no generated changes. The canonical second pass repeats generation to retain native build, typedef cleanup and fixture sequencing in one implementation.
 - **#626:** current `modifier` config arrays already coerce correctly. The remaining lone-array input was treated as one element, causing text/enum arrays to route to `extern_modifier` and empty arrays to render `extern`. The shared repeat-slot resolver now unwraps the array before per-element coercion; generated `LooseArgs` derives a readonly array form from the same loose element types and cardinality. Six regression tests cover text, enums, readonly input, non-empty rejection, config equivalence and held-node reconstruction.
+- **#572 (partial):** assembly weakened every `nonEmptyArray` value to `array` when a slot was named `content`, even for an explicitly authored `repeat1`. Removing this name-based heuristic preserves the grammar fact and its derived builder guard, strict argument type, required parent config and native transport. Python comprehension clauses and string content, plus SCM string content, now retain their non-empty cardinality. Three compiler regressions and six Python regressions verify rejection and valid empty string/root behavior. The separate lexically impossible empty match-block arm and remaining no-argument surface questions are still open.
 
 ## Validation
 
@@ -19,8 +20,9 @@ This report classifies issue bodies and current context. #706, #692 and the rema
 - Changed source/test lint and `git diff --check`: passed. New tests and regeneration script formatting: passed.
 - #626: all codegen emitter tests plus focused Rust repeat/keyword/forwarding tests passed (75 files, 594 tests). The new regression file also passed a dedicated TypeScript check, including rejection of an empty array for the non-empty slot.
 - #626: canonical five-grammar regeneration, codegen and Rust package type checks passed. Generated changes are confined to argument types and repeat coercers. The cache/repeat regressions (11 tests) and sequencing regressions (3 tests) also passed after regeneration.
+- Partial #572: canonical five-grammar regeneration and codegen/Python type checks passed; compiler suite 76 files, 710 passed and one skipped; emitter suite 71 files, 582 passed; all Python/SCM tests passed (59 files, 650 tests), including six new Python runtime regressions. One prior emitter expectation encoded the weakened `repeat1` cardinality and now checks a required transport field.
 
-The #626 validator rerun matches the committed native baseline, including its three existing round-trip misses:
+Both the #626 and partial #572 validator reruns match the committed native baseline, including its three existing round-trip misses:
 
 | Grammar | From | Coverage | Round-trip | AST match | Factory storage |
 |---|---:|---:|---:|---:|---:|
@@ -34,7 +36,7 @@ The #626 validator rerun matches the committed native baseline, including its th
 
 The maintainer requested skipping trivia-related work for now. Start with these non-trivia correctness cases:
 
-1. **#572 — required slots and rest arguments:** distinguish invalid empty arguments from valid empty root builders.
+1. **#572 — remaining required-slot cases:** investigate the match-block parser constraint and loose no-argument surface; content-slot cardinality is fixed.
 2. **#550 — single-element tuples:** preserve the syntax-bearing comma and the selected grammar arm.
 3. **#493 — parsed list binding:** reproduce list-view sizing when a builder consumes a parsed list stub.
 
@@ -93,7 +95,7 @@ The fixes have focused red/green regressions and regeneration coverage. Backlog 
 | [#477 — Tree-bound render: list gaps around a collapsed kind-id token fall to the list default](https://github.com/refactory-lang/sittir/issues/477) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Pin punctuation coordinates together with #619. |
 | [#372 — python: a comment after an opening bracket beside a scalar-stored leaf renders before the bracket (CPython rejects it)](https://github.com/refactory-lang/sittir/issues/372) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Validate bracket-comment output with CPython as well as tree-sitter. |
 | [#145 — Published @sittir/{rust,typescript,python} packages have no path to native rendering outside this monorepo](https://github.com/refactory-lang/sittir/issues/145) | P1 | Recheck current published native packaging before acting on the older remediation plan. |
-| [#572 — Builders accept less than the model requires: empty match block, no-arg empty renders, plain-array rest params](https://github.com/refactory-lang/sittir/issues/572) | P1 | Distinguish invalid empty arguments from valid empty root builders in rest typing. |
+| [#572 — Builders accept less than the model requires: empty match block, no-arg empty renders, plain-array rest params](https://github.com/refactory-lang/sittir/issues/572) | P1 | Partially fixed: content slots preserve repeat1 cardinality; required comprehension/string content rejects empty construction. Match-block parser constraint and remaining no-argument surfaces stay open. |
 | [#705 — DSL: field(name, literal) inside a rules: body mints _kw_<name> with no rule slot](https://github.com/refactory-lang/sittir/issues/705) | P2 | Reproduce rules-body literals; support them in the owning model or issue a precise diagnostic. |
 | [#691 — clippy -D warnings fails on master's lints](https://github.com/refactory-lang/sittir/issues/691) | P2 | Run current Clippy and fix the owning source or generator without blanket allowances. |
 | [#576 — Authored-rule pattern fold captures an inline body into a rule referenced only under an alias](https://github.com/refactory-lang/sittir/issues/576) | P2 | Reproduce alias-only references without evaluating rule callbacks multiple times. |

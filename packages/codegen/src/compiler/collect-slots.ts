@@ -234,48 +234,16 @@ function buildSlot(
 			: undefined;
 	const mult = armLifted ?? slotMultiplicity(rule, inherited);
 
-	let baseName: string | undefined = (rule as { fieldName?: string }).fieldName;
-
-	if (baseName === undefined) {
-		switch (rule.type) {
-			case SYMBOL: {
-				baseName = rule.name.replace(/^_+/, '') || rule.name;
-				break;
-			}
-			case SUPERTYPE: {
-				baseName = rule.name.replace(/^_+/, '') || rule.name;
-				break;
-			}
-			case CHOICE: {
-				const sharedArm = sharedArmFieldName(rule);
-				if (sharedArm !== undefined) {
-					baseName = sharedArm;
-					break;
-				}
-				if (rule.type === CHOICE && !sanctionedUnion) {
-					unnamedChoiceWarner(rule.id ?? kindForName);
-				}
-				baseName = inlinedFromSlotName(rule) ?? 'content';
-				break;
-			}
-			default:
-				baseName = inlinedFromSlotName(rule) ?? 'content';
-				break;
-		}
+	if (rule.type === CHOICE && rule.fieldName === undefined && sharedArmFieldName(rule) === undefined && !sanctionedUnion) {
+		unnamedChoiceWarner(rule.id ?? kindForName);
 	}
 
 	const rawValues = retargetAliasedLiteral(
 		rule,
 		deriveValuesForRule(rule, { ...deriveCtx, stampArmFieldNamesAsParseName: sanctionedUnion }, mult)
 	);
-	let dedupedValues = dedupeValues(rawValues);
+	const dedupedValues = dedupeValues(rawValues);
 	if (dedupedValues.length === 0) return null;
-
-	if (baseName === 'content') {
-		dedupedValues = dedupedValues.map((v) =>
-			v.multiplicity === 'nonEmptyArray' ? { ...v, multiplicity: 'array' as const } : v
-		);
-	}
 
 	const isMultiSlot = dedupedValues.some((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
 
@@ -525,8 +493,4 @@ function retargetAliasedLiteral(rule: SimplifiedRule, values: NodeOrTerminal[]):
 				}
 			: v
 	);
-}
-
-function inlinedFromSlotName(rule: { readonly inlinedFrom?: string }): string | undefined {
-	return rule.inlinedFrom === undefined ? undefined : rule.inlinedFrom.replace(/^_+/, '') || undefined;
 }

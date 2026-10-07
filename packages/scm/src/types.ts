@@ -578,11 +578,11 @@ export interface ImmediateString {
 
 export interface StringContent {
 	readonly $type: TSKindId.StringContent;
-	readonly _content?: readonly (StringContentText | EscapeSequence)[];
+	readonly _content: NonEmptyArray<StringContentText | EscapeSequence>;
 	readonly __slotHints__?: {
-		readonly contents: SlotHint<(T.StringContentText | T.EscapeSequence)[], false, true>;
+		readonly contents: SlotHint<NonEmptyArray<T.StringContentText | T.EscapeSequence>, false, true>;
 	};
-	contents(): readonly (StringContentText | EscapeSequence)[];
+	contents(): NonEmptyArray<StringContentText | EscapeSequence>;
 }
 
 export interface Parameters {
@@ -1826,7 +1826,7 @@ export namespace StringContent {
 	}
 	export type Loose = LooseFor<TSKindId.StringContent>;
 	export type LooseConfig = LooseConfigFor<TSKindId.StringContent>;
-	export type BuildArgs = [...children: Admit<(T.StringContentText | T.EscapeSequence)[]>];
+	export type BuildArgs = [...children: NonEmptyArray<Admit<T.StringContentText | T.EscapeSequence>>];
 	export type LooseArgs =
 		| [
 				...children: (
@@ -1836,7 +1836,9 @@ export namespace StringContent {
 		  ]
 		| [
 				children: Readonly<
-					LooseValue<T.StringContentText | T.EscapeSequence, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+					NonEmptyArray<
+						LooseValue<T.StringContentText | T.EscapeSequence, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+					>
 				>
 		  ];
 	export type Kind = TSKindId.StringContent;

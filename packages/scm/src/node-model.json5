@@ -133,9 +133,9 @@
       "content": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": true,
-        "nonEmpty": false
+        "nonEmpty": true
       }
     },
     "parameters": {
@@ -2270,9 +2270,9 @@
           "name": "content",
           "propertyName": "contents",
           "paramName": "contents",
-          "required": false,
+          "required": true,
           "multiple": true,
-          "nonEmpty": false,
+          "nonEmpty": true,
           "storage": "verbatim",
           "kinds": [
             "string_content_text",
@@ -2281,13 +2281,13 @@
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "string_content_text",
               "parseKind": "string_content_text"
             },
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "escape_sequence",
               "parseKind": "escape_sequence"
             }

@@ -88,13 +88,25 @@ describe('immediate_string', () => {
 
 describe('string_content', () => {
 	it('factory produces correct type', () => {
-		const node = ir.stringContent();
+		const node = ir.stringContent({
+			$type: TSKindId.StringContentText,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
 		expect(node.$type).toBe(TSKindId.StringContent);
 		expect(node.$source).toBe(2);
 	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.stringContent();
-		expect(() => node.$render!()).not.toThrow();
+	it('render produces non-empty string', () => {
+		const node = ir.stringContent({
+			$type: TSKindId.StringContentText,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('test');
 	});
 });
 
