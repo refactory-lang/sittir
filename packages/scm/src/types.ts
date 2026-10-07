@@ -1740,9 +1740,9 @@ export namespace Program {
 	export type Loose = LooseFor<TSKindId.Program>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Program>;
 	export type BuildArgs = [...children: Admit<T.Definition[]>];
-	export type LooseArgs = [
-		...children: (T.Program.Loose | LooseValue<T.Definition, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
-	];
+	export type LooseArgs =
+		| [...children: (T.Program.Loose | LooseValue<T.Definition, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]]
+		| [children: Readonly<LooseValue<T.Definition, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]>];
 	export type Kind = TSKindId.Program;
 }
 export namespace EscapeSequence {
@@ -1827,12 +1827,18 @@ export namespace StringContent {
 	export type Loose = LooseFor<TSKindId.StringContent>;
 	export type LooseConfig = LooseConfigFor<TSKindId.StringContent>;
 	export type BuildArgs = [...children: Admit<(T.StringContentText | T.EscapeSequence)[]>];
-	export type LooseArgs = [
-		...children: (
-			| T.StringContent.Loose
-			| LooseValue<T.StringContentText | T.EscapeSequence, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	];
+	export type LooseArgs =
+		| [
+				...children: (
+					| T.StringContent.Loose
+					| LooseValue<T.StringContentText | T.EscapeSequence, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ]
+		| [
+				children: Readonly<
+					LooseValue<T.StringContentText | T.EscapeSequence, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+				>
+		  ];
 	export type Kind = TSKindId.StringContent;
 }
 export namespace Parameters {
@@ -1849,12 +1855,20 @@ export namespace Parameters {
 	export type Loose = LooseFor<TSKindId.Parameters>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Parameters>;
 	export type BuildArgs = [...children: NonEmptyArray<Admit<T.Capture | T.String | T.Identifier>>];
-	export type LooseArgs = [
-		...children: (
-			| T.Parameters.Loose
-			| LooseValue<T.Capture | T.String | T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	];
+	export type LooseArgs =
+		| [
+				...children: (
+					| T.Parameters.Loose
+					| LooseValue<T.Capture | T.String | T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ]
+		| [
+				children: Readonly<
+					NonEmptyArray<
+						LooseValue<T.Capture | T.String | T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+					>
+				>
+		  ];
 	export type Kind = TSKindId.Parameters;
 }
 export namespace Comment {

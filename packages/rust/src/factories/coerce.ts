@@ -3598,6 +3598,7 @@ export function coerceToDeclarationList(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('declarations' in head)) return input;
 		const v = (head as Record<string, unknown>)['declarations'];
 		return Array.isArray(v) ? v : [v];
@@ -4170,6 +4171,7 @@ export function coerceToFunctionModifiers(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('modifier' in head)) return input;
 		const v = (head as Record<string, unknown>)['modifier'];
 		return Array.isArray(v) ? v : [v];
@@ -4422,6 +4424,7 @@ export function coerceToTraitBounds(...input: T.TraitBounds.LooseArgs): ReturnTy
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('bounds' in head)) return input;
 		const v = (head as Record<string, unknown>)['bounds'];
 		return Array.isArray(v) ? v : [v];
@@ -7019,6 +7022,7 @@ export function coerceToClosureParameters(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('parameters' in head)) return input;
 		const v = (head as Record<string, unknown>)['parameters'];
 		return Array.isArray(v) ? v : [v];
@@ -10816,6 +10820,7 @@ export function coerceToTokenTreePatternParen(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('tokenPatterns' in head)) return input;
 		const v = (head as Record<string, unknown>)['tokenPatterns'];
 		return Array.isArray(v) ? v : [v];
@@ -10837,6 +10842,7 @@ export function coerceToTokenTreePatternBracket(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('tokenPatterns' in head)) return input;
 		const v = (head as Record<string, unknown>)['tokenPatterns'];
 		return Array.isArray(v) ? v : [v];
@@ -10858,6 +10864,7 @@ export function coerceToTokenTreePatternBrace(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('tokenPatterns' in head)) return input;
 		const v = (head as Record<string, unknown>)['tokenPatterns'];
 		return Array.isArray(v) ? v : [v];
@@ -10875,6 +10882,7 @@ export function coerceToTokenTreeParen(...input: T.TokenTreeParen.LooseArgs): Re
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('tokens' in head)) return input;
 		const v = (head as Record<string, unknown>)['tokens'];
 		return Array.isArray(v) ? v : [v];
@@ -10898,6 +10906,7 @@ export function coerceToTokenTreeBracket(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('tokens' in head)) return input;
 		const v = (head as Record<string, unknown>)['tokens'];
 		return Array.isArray(v) ? v : [v];
@@ -10917,6 +10926,7 @@ export function coerceToTokenTreeBrace(...input: T.TokenTreeBrace.LooseArgs): Re
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('tokens' in head)) return input;
 		const v = (head as Record<string, unknown>)['tokens'];
 		return Array.isArray(v) ? v : [v];
@@ -10940,6 +10950,7 @@ export function coerceToDelimTokenTreeParen(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('delimTokens' in head)) return input;
 		const v = (head as Record<string, unknown>)['delimTokens'];
 		return Array.isArray(v) ? v : [v];
@@ -10962,6 +10973,7 @@ export function coerceToDelimTokenTreeBracket(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('delimTokens' in head)) return input;
 		const v = (head as Record<string, unknown>)['delimTokens'];
 		return Array.isArray(v) ? v : [v];
@@ -10984,6 +10996,7 @@ export function coerceToDelimTokenTreeBrace(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('delimTokens' in head)) return input;
 		const v = (head as Record<string, unknown>)['delimTokens'];
 		return Array.isArray(v) ? v : [v];

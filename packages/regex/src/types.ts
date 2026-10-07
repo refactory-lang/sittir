@@ -2172,9 +2172,9 @@ export namespace Alternation {
 	export type Loose = LooseFor<TSKindId.Alternation>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Alternation>;
 	export type BuildArgs = [...children: NonEmptyArray<Admit<T.Term>>];
-	export type LooseArgs = [
-		...children: (T.Alternation.Loose | LooseValue<T.Term, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
-	];
+	export type LooseArgs =
+		| [...children: (T.Alternation.Loose | LooseValue<T.Term, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]]
+		| [children: Readonly<NonEmptyArray<LooseValue<T.Term, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>>];
 	export type Kind = TSKindId.Alternation;
 }
 export namespace Term {
@@ -2191,9 +2191,9 @@ export namespace Term {
 	export type Loose = LooseFor<TSKindId.Term>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Term>;
 	export type BuildArgs = [...children: NonEmptyArray<Admit<T.TermGroup>>];
-	export type LooseArgs = [
-		...children: (T.Term.Loose | LooseValue<T.TermGroup, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
-	];
+	export type LooseArgs =
+		| [...children: (T.Term.Loose | LooseValue<T.TermGroup, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]]
+		| [children: Readonly<NonEmptyArray<LooseValue<T.TermGroup, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>>];
 	export type Kind = TSKindId.Term;
 }
 export namespace LookaroundAssertion {

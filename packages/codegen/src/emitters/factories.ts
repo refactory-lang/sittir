@@ -878,6 +878,9 @@ function fieldCarryingBuiltTypeSurface(
 		surface.leadingOptions === undefined
 			? paramsToTuple(params)
 			: `${paramsToTuple(params)} | ${paramsToTuple(withLeadingOptions(surface.leadingOptions.type, params))}`;
+	const arrayArgs = spreadFacts?.multiple
+		? ` | ${rowsOf(paramText({ ...surface.param, rest: false }, `Readonly<${surface.param.looseType}>`))}`
+		: '';
 	return {
 		...(spreadTarget === null && !surface.param.rest ? { row: rowParamOf(node, surface, nodeMap, kindEntries) } : {}),
 		mainType: `T.${node.typeName}`,
@@ -887,7 +890,7 @@ function fieldCarryingBuiltTypeSurface(
 			spreadTarget === null
 				? (forwardedConstruction(node, surface, nodeMap, kindEntries)?.rows.join(' | ') ?? rowsOf(surface.rowParams))
 				: `${rowsOf(surface.rowParams)}${spreadArgs('BuildArgs')}`,
-		looseArgs: `${rowsOf(surface.rowLooseParams)}${spreadArgs('LooseArgs')}`,
+		looseArgs: `${rowsOf(surface.rowLooseParams)}${arrayArgs}${spreadArgs('LooseArgs')}`,
 		maxArgs: spreadTarget === null ? surface.arity : undefined
 	};
 }
@@ -1170,15 +1173,15 @@ function resolveConfigFactorySurface(
 	if (spreadFacts) {
 		const elementType = constructionChildElementType({ children: [spreadFacts.slot] }, nodeMap, kindEntries);
 		if (spreadFacts.multiple) {
-			const rowLooseElement = [`T.${node.typeName}.Loose`, ...new Set([elementType, coercedChildElementType(spreadFacts.slot, nodeMap)].map(looseValueOf))].join(' | ');
+			const looseElement = [...new Set([elementType, coercedChildElementType(spreadFacts.slot, nodeMap)].map(looseValueOf))].join(' | ');
 			const { nonEmpty } = spreadFacts;
 			const param: FactoryParam = {
 				label: 'children',
 				optional: false,
 				rest: true,
 				strictType: elementsTypeOf(nonEmpty, nonEmpty ? admitNodes(elementType) : elementType),
-				looseType: elementsTypeOf(nonEmpty, looseValueOf(elementType)),
-				rowLooseType: `(${rowLooseElement})[]`,
+				looseType: elementsTypeOf(nonEmpty, looseElement),
+				rowLooseType: `(T.${node.typeName}.Loose | ${looseElement})[]`,
 				...(nonEmpty ? {} : { admitsNodes: true as const })
 			};
 			return {

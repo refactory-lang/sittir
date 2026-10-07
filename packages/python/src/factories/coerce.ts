@@ -2089,6 +2089,7 @@ export function coerceToModule(...input: T.Module.LooseArgs): ReturnType<typeof 
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('statements' in head)) return input;
 		const v = (head as Record<string, unknown>)['statements'];
 		return Array.isArray(v) ? v : [v];
@@ -2343,6 +2344,7 @@ export function coerceToAssertStatement(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('expression' in head)) return input;
 		const v = (head as Record<string, unknown>)['expression'];
 		return Array.isArray(v) ? v : [v];
@@ -3067,6 +3069,7 @@ export function coerceToGlobalStatement(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('names' in head)) return input;
 		const v = (head as Record<string, unknown>)['names'];
 		return Array.isArray(v) ? v : [v];
@@ -3092,6 +3095,7 @@ export function coerceToNonlocalStatement(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('names' in head)) return input;
 		const v = (head as Record<string, unknown>)['names'];
 		return Array.isArray(v) ? v : [v];
@@ -3335,6 +3339,7 @@ export function coerceToBlock(...input: T.Block.LooseArgs): ReturnType<typeof F.
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('statements' in head)) return input;
 		const v = (head as Record<string, unknown>)['statements'];
 		return Array.isArray(v) ? v : [v];
@@ -3430,6 +3435,7 @@ export function coerceToDottedName(...input: T.DottedName.LooseArgs): ReturnType
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('names' in head)) return input;
 		const v = (head as Record<string, unknown>)['names'];
 		return Array.isArray(v) ? v : [v];
@@ -3580,6 +3586,7 @@ export function coerceToUnionPattern(...input: T.UnionPattern.LooseArgs): Return
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('patterns' in head)) return input;
 		const v = (head as Record<string, unknown>)['patterns'];
 		return Array.isArray(v) ? v : [v];
@@ -5296,6 +5303,7 @@ export function coerceToConcatenatedString(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('string' in head)) return input;
 		const v = (head as Record<string, unknown>)['string'];
 		return Array.isArray(v) ? v : [v];
@@ -5349,6 +5357,7 @@ export function coerceToStringContent(...input: T.StringContent.LooseArgs): Retu
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('content' in head)) return input;
 		const v = (head as Record<string, unknown>)['content'];
 		return Array.isArray(v) ? v : [v];
@@ -5427,6 +5436,7 @@ export function coerceToFormatSpecifier(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('elements' in head)) return input;
 		const v = (head as Record<string, unknown>)['elements'];
 		return Array.isArray(v) ? v : [v];
@@ -6432,6 +6442,7 @@ export function coerceToComprehensionClauses(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('content' in head)) return input;
 		const v = (head as Record<string, unknown>)['content'];
 		return Array.isArray(v) ? v : [v];
@@ -6975,6 +6986,7 @@ export function coerceToExceptClauseExceptionList(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('value' in head)) return input;
 		const v = (head as Record<string, unknown>)['value'];
 		return Array.isArray(v) ? v : [v];
@@ -7245,6 +7257,7 @@ export function coerceToMatchBlockBlock(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('alternative' in head)) return input;
 		const v = (head as Record<string, unknown>)['alternative'];
 		return Array.isArray(v) ? v : [v];

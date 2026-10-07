@@ -606,6 +606,7 @@ function emitRestParamFromResolver(
 					`  const _elems: readonly unknown[] = (() => {`,
 					`    if (${source}.length !== 1) return ${source};`,
 					`    const head: unknown = ${source}[0];`,
+					`    if (Array.isArray(head)) return head;`,
 					`    if (typeof head !== 'object' || head === null || isNode(head) || !(${JSON.stringify(unwrapConfigKey)} in head)) return ${source};`,
 					`    const v = (head as Record<string, unknown>)[${JSON.stringify(unwrapConfigKey)}];`,
 					`    return Array.isArray(v) ? v : [v];`,
