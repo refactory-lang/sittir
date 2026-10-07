@@ -5284,9 +5284,36 @@ Whether every text the pattern accepts holds a character that is not whitespace:
 
 ### `packages/codegen/src/compiler/model/delimited.ts::stampDelimited`
 
-Stamps `delimited` on every compound whose render sequence opens and closes with a token (a literal or a leaf) around free text that can hold the closing delimiter: python `string`, rust `raw_string_literal` and `block_comment`, typescript `comment_block`. A content arm is hazardous when it is variable text (it reaches a pattern leaf, no node reference) and can start with a character that starts the closing delimiter. A kind with no hazardous arm gets nothing, so a composite around node content (`parenthesized_expression`) or one whose arms cannot hold the delimiter (rust `string_literal`, whose content pattern rejects `"`) is not checked. A closing delimiter that can start with a word character (`for`, an identifier) is skipped: a word delimiter is separated by a seam, so content cannot glue to it.
+Stamps `delimited` on every compound whose render sequence opens and closes with a token (a literal or a leaf) around free text that can hold the closing delimiter: python `string`, rust `raw_string_literal` and `block_comment`, typescript `comment_block`. A content arm is hazardous when it is variable text (it reaches a pattern leaf, no node reference) and can start with a character that starts the closing delimiter. A kind with no hazardous arm gets nothing, so a composite around node content (`parenthesized_expression`) or one whose arms cannot hold the delimiter (rust `string_literal`, whose content pattern rejects `"`) is not checked. A closing delimiter that can start with a word character (`for`, an identifier) is skipped: a word delimiter is separated by a seam, so content cannot glue to it. Every skipped composite is judged leaf by leaf (`delimitedLeafVerdicts`).
 
 `excluded` is the closing delimiter's leading characters, the leading characters of every arm that is not hazardous (python's `{`, `}` and `\` for the escape and interpolation arms), and the line terminators. Content free of them cannot end the composite or open another arm. `varying` is true when either end is a leaf, so its text differs between builds and the pair must be confirmed by a parse. `nodeKinds` are the node arms a parse-back may legitimately show among the children.
+
+### `packages/codegen/src/compiler/model/delimited.ts::delimitedLeafVerdicts`
+
+One verdict per text leaf of every delimited composite the stamp skips (it opens and closes with a token around free text, and no arm is hazardous or the closer is word-shaped). A composite is judged by its free-text arms only: an arm that holds node content is left to that node, while a referenced compound that is wholly text counts as the composite's own text, so its leaves are judged here as well as at that compound if it is itself delimited. The verdict says why the skipped composite is safe for that leaf, in this order:
+
+* `guard-excludes-closer`: the leaf's pattern cannot hold the closer inside a longer text (`admitsInside` is false).
+* `reserved-word`: the closer is word-shaped, the leaf is the grammar's word token, and the grammar's `global` reserved set holds the closer (contextual sets do not apply to every use of the leaf), so the lexer never produces the closer as the leaf.
+* `regular-token`: the leaf is a regular lexer token: the lexer does not stop it at an interior closer, so the closer cannot end the composite early.
+* `unguarded`: none of the above, so the leaf is an external (scanner) token whose guard admits the closer. Assembly records `delimited-closer-unguarded` on the composite for each; the code is blocking and its ceiling is zero.
+
+A closer that is a leaf rather than a literal has no closer text, so only the last two reasons apply to it. The census below is derived: `delimited-census.test.ts` recomputes each row and requires it in this table, so a row that moves fails the test until the table is regenerated from the verdicts.
+
+| grammar | guard-excludes-closer | reserved-word | regular-token | unguarded |
+| --- | --- | --- | --- | --- |
+| python | 3 | 0 | 0 | 0 |
+| regex | 16 | 0 | 0 | 0 |
+| rust | 25 | 0 | 1 | 0 |
+| scm | 7 | 0 | 1 | 0 |
+| typescript | 12 | 0 | 2 | 0 |
+
+### `packages/codegen/src/compiler/model/delimited.ts::DelimitedGrammarFacts`
+
+The grammar-wide facts a leaf verdict reads beyond the node map: the `word` rule's name, the `global` reserved set, and the names of the grammar's externals.
+
+### `packages/codegen/src/compiler/assemble.ts::recordUnguardedDelimiters`
+
+Records `delimited-closer-unguarded` on a skipped delimited composite for each `unguarded` leaf verdict, naming the leaf and the closer.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::Delimited`
 
