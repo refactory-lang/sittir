@@ -160,7 +160,7 @@ Keeps the entries of a batch whose slots satisfy a `where` condition: entries ar
 
 ### `packages/common/src/query.ts::compileFor`
 
-The plan a `where` callback records for elements of one kind, cached per callback and kind. The callback runs against that kind's recorder, so each slot it reads compiles to that kind's parser routes for the slot; a kind lacking a slot the callback reads is refused there.
+The plan a `where` callback records for elements of one kind, cached per immutable `querySlots` table, callback and kind. The callback runs against that kind's recorder, so each slot it reads compiles to that kind's parser routes for the slot; a kind lacking a slot the callback reads is refused there. Contexts sharing a table share plans, while equal numeric kind ids in different grammars never reuse each other's routes or validation.
 
 ### `packages/common/src/query.ts::recorder`
 
