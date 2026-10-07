@@ -1,6 +1,6 @@
 # Open issue triage — 2026-10-07
 
-Inventory: 92 open issues in `refactory-lang/sittir`. Priority follows the requested order: reproducible correctness bugs first. P1 means the next correctness or migration dependency batch; P2 means follow-up investigation or scoped design; P3 means deferred or latent work. These are local triage priorities, not applied GitHub labels.
+Inventory: 92 open issues in `refactory-lang/sittir`. Priority follows the requested order: reproducible correctness bugs first. P1 means the next correctness or migration dependency batch; P2 means follow-up investigation or scoped design; P3 means deferred or latent work. These are local triage priorities, not applied GitHub labels. `Deferred` overrides the previous priority for work excluded from the current batch.
 
 This report classifies issue bodies and current context. Only #706 and #692 have been reproduced and remediated in this branch. Other entries identify the next action; they are not claims that the reported behavior still reproduces. No issues were closed during triage.
 
@@ -19,7 +19,21 @@ This report classifies issue bodies and current context. Only #706 and #692 have
 
 ## Next correctness batch
 
-Start with #608 and the related trivia/source-gap cluster (#582, #568, #427), then the punctuation cluster (#619, #477). Refresh #627 against the recent Python fragment changes. #626 needs reproduction against the current `modifier` spelling because config-object unwrapping is already emitted. Keep #675, #677, #678 and #685 reserved for typed-reader 1c; do not create competing implementations.
+The maintainer requested skipping trivia-related work for now. Start with these non-trivia correctness cases:
+
+1. **#626 — loose-builder coercion:** reproduce against the current `modifier` spelling and accepted array inputs; config-object unwrapping is already emitted.
+2. **#627 — corpus builder rejection:** refresh non-trivia string/template/regex failures against recent Python fragment changes and split independent mechanisms.
+3. **#572 — required slots and rest arguments:** distinguish invalid empty arguments from valid empty root builders.
+4. **#550 — single-element tuples:** preserve the syntax-bearing comma and the selected grammar arm.
+5. **#493 — parsed list binding:** reproduce list-view sizing when a builder consumes a parsed list stub.
+
+Keep #675, #677, #678 and #685 reserved for typed-reader 1c; do not create competing implementations. Trivia-related portions of mixed issues are deferred even when their other cases remain eligible.
+
+## Deferred trivia scope
+
+Comments, source-gap spelling, CRLF and line-ending preservation, spacing around punctuation, trivia authoring, and related performance/diagnostic work are excluded from the current remediation batch. Syntax-bearing punctuation such as a tuple's required comma remains eligible.
+
+The 16 directly related issues are **#619, #608, #587, #582, #568, #477, #372, #434, #675, #584, #585, #547, #474, #631, #357 and #427**. Their inventory rows are marked `Deferred`. The inventory still contains all 92 issues; category counts are unchanged. These deferrals also apply to investigation here when an issue remains reserved for another migration. The trivia option in #644 is deferred while its structural-comparison design remains classified separately.
 
 ## Coverage and limits
 
@@ -51,16 +65,16 @@ The two fixes have focused red/green regressions and real regeneration coverage.
 |---|---|---|
 | [#626 — Loose builders: a forwarded envelope's repeat slot is not coerced per element (functionModifiers({ modifiers: ['async'] }) throws)](https://github.com/refactory-lang/sittir/issues/626) | P1 | Reproduce against the current modifier key and bare arrays; current generated config unwrapping is already present. |
 | [#627 — Corpus rebuild failures: builders reject real source (python docstring string_fragment, ts template string, regex email)](https://github.com/refactory-lang/sittir/issues/627) | P1 | Refresh exact failing corpus cases after the Python fragment changes; split independent mechanisms. |
-| [#619 — Render glues an item to a preceding bare ';' token that has no source identity](https://github.com/refactory-lang/sittir/issues/619) | P1 | Reproduce bare-semicolon loss together with #477 before changing punctuation placement. |
-| [#608 — Rule 1 exact spelling: emit the source gap's own text where no whitespace member spells it (CRLF included)](https://github.com/refactory-lang/sittir/issues/608) | P1 | Pin byte-exact CRLF and multi-space gaps before changing source-gap handling. |
-| [#587 — Source emitter drops the blank line after a line comment (Newline run)](https://github.com/refactory-lang/sittir/issues/587) | P2 | Reproduce the line-comment/newline run and identify the responsible emitter. |
-| [#582 — A parsed node with a leading comment renders from its template, not its source bytes](https://github.com/refactory-lang/sittir/issues/582) | P1 | Reproduce untouched commented subnodes together with #427 and #568. |
-| [#568 — A parent rebuilt with $with rewrites the gaps between its untouched children](https://github.com/refactory-lang/sittir/issues/568) | P1 | Pin untouched sibling gap ownership and occurrence identity. |
+| [#619 — Render glues an item to a preceding bare ';' token that has no source identity](https://github.com/refactory-lang/sittir/issues/619) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Reproduce bare-semicolon loss together with #477 before changing punctuation placement. |
+| [#608 — Rule 1 exact spelling: emit the source gap's own text where no whitespace member spells it (CRLF included)](https://github.com/refactory-lang/sittir/issues/608) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Pin byte-exact CRLF and multi-space gaps before changing source-gap handling. |
+| [#587 — Source emitter drops the blank line after a line comment (Newline run)](https://github.com/refactory-lang/sittir/issues/587) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Reproduce the line-comment/newline run and identify the responsible emitter. |
+| [#582 — A parsed node with a leading comment renders from its template, not its source bytes](https://github.com/refactory-lang/sittir/issues/582) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Reproduce untouched commented subnodes together with #427 and #568. |
+| [#568 — A parent rebuilt with $with rewrites the gaps between its untouched children](https://github.com/refactory-lang/sittir/issues/568) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Pin untouched sibling gap ownership and occurrence identity. |
 | [#550 — One-element tuple pattern and tuple type: the grammar accepts `(x)` as the kind, so a built one renders without its comma](https://github.com/refactory-lang/sittir/issues/550) | P1 | Reproduce single-element variant selection and retain the actual grammar arm semantics. |
 | [#529 — Loose statementBlock({ statements }) input type exceeds the checker's stack depth on export statements](https://github.com/refactory-lang/sittir/issues/529) | P2 | Pin the failing loose-input recursion under the workspace TypeScript version. |
 | [#493 — A node built from a parsed list stub cannot size its list view: bind the reading tree at build](https://github.com/refactory-lang/sittir/issues/493) | P2 | Reproduce parsed list-stub tree binding and length handling. |
-| [#477 — Tree-bound render: list gaps around a collapsed kind-id token fall to the list default](https://github.com/refactory-lang/sittir/issues/477) | P1 | Pin punctuation coordinates together with #619. |
-| [#372 — python: a comment after an opening bracket beside a scalar-stored leaf renders before the bracket (CPython rejects it)](https://github.com/refactory-lang/sittir/issues/372) | P1 | Validate bracket-comment output with CPython as well as tree-sitter. |
+| [#477 — Tree-bound render: list gaps around a collapsed kind-id token fall to the list default](https://github.com/refactory-lang/sittir/issues/477) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Pin punctuation coordinates together with #619. |
+| [#372 — python: a comment after an opening bracket beside a scalar-stored leaf renders before the bracket (CPython rejects it)](https://github.com/refactory-lang/sittir/issues/372) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Validate bracket-comment output with CPython as well as tree-sitter. |
 | [#145 — Published @sittir/{rust,typescript,python} packages have no path to native rendering outside this monorepo](https://github.com/refactory-lang/sittir/issues/145) | P1 | Recheck current published native packaging before acting on the older remediation plan. |
 | [#572 — Builders accept less than the model requires: empty match block, no-arg empty renders, plain-array rest params](https://github.com/refactory-lang/sittir/issues/572) | P1 | Distinguish invalid empty arguments from valid empty root builders in rest typing. |
 | [#705 — DSL: field(name, literal) inside a rules: body mints _kw_<name> with no rule slot](https://github.com/refactory-lang/sittir/issues/705) | P2 | Reproduce rules-body literals; support them in the owning model or issue a precise diagnostic. |
@@ -69,7 +83,7 @@ The two fixes have focused red/green regressions and real regeneration coverage.
 | [#523 — tools buildNodeMap does not run site-preference registration, so option-carried slots look caller-supplied](https://github.com/refactory-lang/sittir/issues/523) | P2 | Ensure diagnostics consume the same final resolved model as emission. |
 | [#518 — regex: two hoisted kinds have no parent seat (count_quantifier_group, unicode_property_value_expression_group)](https://github.com/refactory-lang/sittir/issues/518) | P2 | Reproduce the two unseated regex groups in the current grammar. |
 | [#512 — Typed patch paths do not see the fields enrich adds to repeats](https://github.com/refactory-lang/sittir/issues/512) | P2 | Reproduce typed/runtime enrich behavior on SCM repeat paths. |
-| [#434 — Line-break-terminated kinds' after edges offer arms the held line end always overrides](https://github.com/refactory-lang/sittir/issues/434) | P2 | Measure the public held line-ending options and their effect. |
+| [#434 — Line-break-terminated kinds' after edges offer arms the held line end always overrides](https://github.com/refactory-lang/sittir/issues/434) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Measure the public held line-ending options and their effect. |
 | [#369 — Floored shape debt raised by the upstream grammars](https://github.com/refactory-lang/sittir/issues/369) | P2 | Refresh diagnostic families and fix failures at the earliest phase retaining the facts. |
 | [#170 — typescript nodes.test.ts: three kinds still skipped via expectTestFailures](https://github.com/refactory-lang/sittir/issues/170) | P2 | Recheck the current three TypeScript skips; the older issue body counts differ. |
 | [#577 — Circular types when a list kind is a member of its own element union](https://github.com/refactory-lang/sittir/issues/577) | P2 | Pin recursive list-kind LooseArgs; fix namespace or widening recursion without dropping admitted values. |
@@ -78,7 +92,7 @@ The two fixes have focused red/green regressions and real regeneration coverage.
 
 | Issue | Priority | Disposition / next action |
 |---|---|---|
-| [#675 — Typed reader: an enum-kind node can own trivia its read then discards](https://github.com/refactory-lang/sittir/issues/675) | P1 | Reserved for typed-reader 1c: preserve enum trivia during the migration. |
+| [#675 — Typed reader: an enum-kind node can own trivia its read then discards](https://github.com/refactory-lang/sittir/issues/675) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Reserved for typed-reader 1c: preserve enum trivia during the migration. |
 | [#677 — Typed reader: two slots on one field route to the first, and a struct slot accepts a child of any named kind](https://github.com/refactory-lang/sittir/issues/677) | P1 | Reserved for typed-reader 1c: shared field and kind admission. |
 | [#678 — Typed reader: read_at trusts its caller's parent type, and the envelope-pin report only prints counts](https://github.com/refactory-lang/sittir/issues/678) | P1 | Reserved for typed-reader 1c: parent-type and envelope gates. |
 | [#685 — Choices print from_kind_id beside the claims the derive already reads](https://github.com/refactory-lang/sittir/issues/685) | P2 | Reserved for typed-reader 1c: one source for ID construction and claims. |
@@ -91,7 +105,7 @@ The two fixes have focused red/green regressions and real regeneration coverage.
 | [#476 — Grammar-agnostic native reader; all storage projection in the wrap layer](https://github.com/refactory-lang/sittir/issues/476) | P2 | Reconcile earlier grammar-agnostic reader direction with the active migration. |
 | [#610 — Nodes share a const prototype per kind](https://github.com/refactory-lang/sittir/issues/610) | P2 | Refresh partially shipped shared-prototype work and coordinate remaining migration pieces. |
 | [#611 — List indices are accessors](https://github.com/refactory-lang/sittir/issues/611) | P3 | Specify shared versus data index semantics before lazy implementation. |
-| [#584 — Batch the line-gap query per parent (lineGapsOfChildren)](https://github.com/refactory-lang/sittir/issues/584) | P3 | Measure batch trivia queries at actual consumers. |
+| [#584 — Batch the line-gap query per parent (lineGapsOfChildren)](https://github.com/refactory-lang/sittir/issues/584) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Measure batch trivia queries at actual consumers. |
 
 ## Platform verification
 
@@ -113,14 +127,14 @@ The two fixes have focused red/green regressions and real regeneration coverage.
 | [#595 — Inventory: text leaves are string members, not unmapped kinds](https://github.com/refactory-lang/sittir/issues/595) | P2 | Choose one source for text-leaf facts. |
 | [#594 — Codegen: emit the portable/low-level map from bindings.scm](https://github.com/refactory-lang/sittir/issues/594) | P2 | Coordinate codegen work with held PR #683. |
 | [#593 — Bindings: every claim names its members, written over a generated seed](https://github.com/refactory-lang/sittir/issues/593) | P2 | Seed exhaustive captures from the owning representation. |
-| [#585 — Built import and export-from statements are followed by a blank line, so an import block renders apart](https://github.com/refactory-lang/sittir/issues/585) | P2 | Coordinate import-neighbor layout with #386. |
+| [#585 — Built import and export-from statements are followed by a blank line, so an import block renders apart](https://github.com/refactory-lang/sittir/issues/585) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Coordinate import-neighbor layout with #386. |
 | [#580 — examples/: assessment and cleanup plan (gates, dormant template examples, superseded dogfoods, stale guide)](https://github.com/refactory-lang/sittir/issues/580) | P2 | Refresh the examples inventory; the root currently has an examples type-check command. |
 | [#571 — Route a negative number in a slot to the grammar's unary expression](https://github.com/refactory-lang/sittir/issues/571) | P2 | Specify unary-sign facts for negative zero and bigint. |
-| [#547 — Multi-kind slots accept fully spelled text; the fixed affix picks the kind (trivia first)](https://github.com/refactory-lang/sittir/issues/547) | P2 | Design disjoint affix census diagnostics. |
+| [#547 — Multi-kind slots accept fully spelled text; the fixed affix picks the kind (trivia first)](https://github.com/refactory-lang/sittir/issues/547) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Design disjoint affix census diagnostics. |
 | [#514 — Element supertype for repeat choices whose arms are already kinds](https://github.com/refactory-lang/sittir/issues/514) | P2 | Specify choice-element supertype changes and parser cost. |
 | [#511 — Seat the variant kinds of a repeated union list (element seats)](https://github.com/refactory-lang/sittir/issues/511) | P2 | Represent element seats as structural facts in one place. |
 | [#497 — Optional slot accessors: attach the accessor only when the value is set (property narrows)](https://github.com/refactory-lang/sittir/issues/497) | P2 | Agree on the optional-accessor public contract. |
-| [#474 — Trivia API: author a closing comment on a non-empty list](https://github.com/refactory-lang/sittir/issues/474) | P2 | Agree on explicit authoring of closing comments. |
+| [#474 — Trivia API: author a closing comment on a non-empty list](https://github.com/refactory-lang/sittir/issues/474) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Agree on explicit authoring of closing comments. |
 | [#437 — Edit lifecycle: $with drafts, $commit() commits through tree-sitter; spans translate lazily](https://github.com/refactory-lang/sittir/issues/437) | P2 | Coordinate draft/commit behavior and tree versions. |
 | [#436 — Tree inferred options table: tree.inferOptions(), tree_id threading, and engine.fromTree](https://github.com/refactory-lang/sittir/issues/436) | P2 | Define inference options, tree identity and styleFrom contracts. |
 | [#406 — Spacing and depth sentinels (Tight/Indent/Dedent) are emitted as KeywordNs with no text](https://github.com/refactory-lang/sittir/issues/406) | P2 | Choose the public sentinel namespace. |
@@ -139,7 +153,7 @@ The two fixes have focused red/green regressions and real regeneration coverage.
 
 | Issue | Priority | Disposition / next action |
 |---|---|---|
-| [#631 — Ratchet test: per-grammar ceiling on default-diff differing gaps](https://github.com/refactory-lang/sittir/issues/631) | P2 | Define default generated-diff ceilings per grammar. |
+| [#631 — Ratchet test: per-grammar ceiling on default-diff differing gaps](https://github.com/refactory-lang/sittir/issues/631) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Define default generated-diff ceilings per grammar. |
 | [#603 — Inventory: member kinds are tagged tokens, not prefixed strings](https://github.com/refactory-lang/sittir/issues/603) | P2 | Use tagged token inventory instead of prefix inference, with a byte gate. |
 | [#601 — Bindings: each bindings.scm renders back byte-identical through @sittir/scm](https://github.com/refactory-lang/sittir/issues/601) | P2 | Derive bindings for parse/render under a byte gate. |
 | [#400 — One internal loader for white-box grammar access in tools](https://github.com/refactory-lang/sittir/issues/400) | P2 | Consolidate tool loading in one typed internal loader. |
@@ -160,7 +174,7 @@ The two fixes have focused red/green regressions and real regeneration coverage.
 | [#519 — typescript: class_body_member_method_sig.terminator has no default arm](https://github.com/refactory-lang/sittir/issues/519) | P2 | Specify class-method ASI, comma and default behavior. |
 | [#408 — A read tree with a MISSING node renders wrong or fails on rebuild](https://github.com/refactory-lang/sittir/issues/408) | P1 | Pin MISSING-node read/rebuild behavior as an explicit contract. |
 | [#394 — options: a kind-edge preference on a polymorph leaks onto its arm kinds' own sites](https://github.com/refactory-lang/sittir/issues/394) | P3 | No live polymorphic preference instances are reported; add a synthetic contract case first. |
-| [#357 — Trivia: interior gaps for slotless leaves (the merged-literal token split)](https://github.com/refactory-lang/sittir/issues/357) | P3 | No current slotless-gap corpus case is reported; specify token-boundary retention. |
+| [#357 — Trivia: interior gaps for slotless leaves (the merged-literal token split)](https://github.com/refactory-lang/sittir/issues/357) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: No current slotless-gap corpus case is reported; specify token-boundary retention. |
 | [#302 — Loose surface: a slot admitting only one of the two boolean kinds types `boolean` but refuses the other value at runtime](https://github.com/refactory-lang/sittir/issues/302) | P3 | No current single-boolean slot case is reported; start with a synthetic pair guard. |
-| [#427 — Items carrying trivia don't fold, so a same-order $with canonicalizes their gaps](https://github.com/refactory-lang/sittir/issues/427) | P1 | Specify parsed trivia folding and source gaps together with #582 and #568. |
+| [#427 — Items carrying trivia don't fold, so a same-order $with canonicalizes their gaps](https://github.com/refactory-lang/sittir/issues/427) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Specify parsed trivia folding and source gaps together with #582 and #568. |
 | [#486 — regex: `lazy` has a factory but no model slot reaches it](https://github.com/refactory-lang/sittir/issues/486) | P3 | Specify the public surface for lazy dead-kind choices. |
