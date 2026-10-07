@@ -21,10 +21,10 @@ export const triviaFacts = Object.freeze({
 	innerGaps: INNER_GAPS,
 	rebuildWrappers: new Set<number>([
 		90, 91, 92, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269,
-		282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 333, 334, 335
+		283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 335, 336, 337
 	]),
 	listKinds: new Set<number>([
-		135, 180, 192, 193, 217, 242, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 270, 274, 275, 288, 289
+		135, 180, 192, 193, 217, 242, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 270, 271, 275, 276, 289, 290
 	]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:[\s\f\uFEFF\u2060\u200B]|\r?\n))+)$/u,
@@ -472,7 +472,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	192: [['items', { fields: ['item'], kinds: [] }]],
 	193: [['items', { fields: ['item'], kinds: [] }]],
-	196: [['patterns', { fields: [], kinds: ['patterns'] }]],
+	196: [['elements', { fields: ['elements'], kinds: [] }]],
 	197: [['patterns', { fields: [], kinds: ['patterns'] }]],
 	198: [
 		['name', { fields: ['name'], kinds: [] }],
@@ -822,49 +822,50 @@ export const querySlots: QuerySlots = Object.freeze({
 		]
 	],
 	270: [['items', { fields: ['item'], kinds: [] }]],
-	271: [
+	271: [['items', { fields: ['item'], kinds: [] }]],
+	272: [
 		['value', { fields: ['value'], kinds: [] }],
 		['alias', { fields: ['alias'], kinds: [] }]
 	],
-	272: [['listPatternCasePatterns', { fields: [], kinds: ['list_pattern_case_patterns'] }]],
 	273: [['listPatternCasePatterns', { fields: [], kinds: ['list_pattern_case_patterns'] }]],
-	274: [['arguments', { fields: ['argument'], kinds: [] }]],
+	274: [['listPatternCasePatterns', { fields: [], kinds: ['list_pattern_case_patterns'] }]],
 	275: [['arguments', { fields: ['argument'], kinds: [] }]],
-	276: [
+	276: [['arguments', { fields: ['argument'], kinds: [] }]],
+	277: [
 		['chevron', { fields: [], kinds: ['chevron'] }],
 		['printChevronArguments', { fields: [], kinds: ['print_chevron_arguments', 'comma'] }]
 	],
-	277: [['printArguments', { fields: [], kinds: ['print_arguments'] }]],
-	279: [['importList', { fields: [], kinds: ['import_list'] }]],
-	280: [['contents', { fields: ['content'], kinds: [] }]],
-	282: [
+	278: [['printArguments', { fields: [], kinds: ['print_arguments'] }]],
+	280: [['importList', { fields: [], kinds: ['import_list'] }]],
+	281: [['contents', { fields: ['content'], kinds: [] }]],
+	283: [
 		['sign', { fields: ['sign'], kinds: [] }],
 		['value', { fields: ['value'], kinds: [] }]
 	],
-	283: [['values', { fields: ['value'], kinds: [] }]],
-	284: [['content', { fields: [], kinds: ['except_clause_exception_as', 'except_clause_exception_list'] }]],
-	285: [
+	284: [['values', { fields: ['value'], kinds: [] }]],
+	285: [['content', { fields: [], kinds: ['except_clause_exception_as', 'except_clause_exception_list'] }]],
+	286: [
 		['left', { fields: ['left'], kinds: [] }],
 		['right', { fields: ['right'], kinds: [] }]
 	],
-	286: [
+	287: [
 		['left', { fields: ['left'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }]
 	],
-	287: [
+	288: [
 		['left', { fields: ['left'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }],
 		['right', { fields: ['right'], kinds: [] }]
 	],
-	288: [['items', { fields: ['item'], kinds: [] }]],
 	289: [['items', { fields: ['item'], kinds: [] }]],
-	290: [['withItems', { fields: ['with_items'], kinds: [] }]],
-	291: [['alternatives', { fields: ['alternative'], kinds: [] }]],
-	292: [['newline', { fields: [], kinds: ['newline'] }]],
-	293: [['elements', { fields: ['elements'], kinds: [] }]],
-	294: [['block', { fields: [], kinds: ['block'] }]],
-	295: [['newline', { fields: [], kinds: ['newline'] }]],
-	296: [
+	290: [['items', { fields: ['item'], kinds: [] }]],
+	291: [['withItems', { fields: ['with_items'], kinds: [] }]],
+	292: [['alternatives', { fields: ['alternative'], kinds: [] }]],
+	293: [['newline', { fields: [], kinds: ['newline'] }]],
+	294: [['elements', { fields: ['elements'], kinds: [] }]],
+	295: [['block', { fields: [], kinds: ['block'] }]],
+	296: [['newline', { fields: [], kinds: ['newline'] }]],
+	297: [
 		['operators', { fields: ['operators'], kinds: [] }],
 		[
 			'primaryExpression',
@@ -913,7 +914,7 @@ export const querySlots: QuerySlots = Object.freeze({
 			}
 		]
 	],
-	297: [
+	298: [
 		[
 			'expression',
 			{
@@ -968,9 +969,9 @@ export const querySlots: QuerySlots = Object.freeze({
 			}
 		]
 	],
-	333: [['content', { fields: ['content'], kinds: [] }]],
-	334: [['content', { fields: ['content'], kinds: [] }]],
-	335: [['content', { fields: ['content'], kinds: [] }]]
+	335: [['content', { fields: ['content'], kinds: [] }]],
+	336: [['content', { fields: ['content'], kinds: [] }]],
+	337: [['content', { fields: ['content'], kinds: [] }]]
 });
 
 export const { isNode } = bindRuntime<PythonTypeMap>();

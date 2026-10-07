@@ -25,6 +25,8 @@ This report classifies issue bodies and current context. #706, #692 and the rema
 
 - #493: 98 files, 800 tests passed (all emitter and common runtime tests plus focused Rust list/repeat regressions). The two strict/loose shallow-stub regressions failed before the fix. Five final regression cases and their dedicated TypeScript check passed; canonical five-grammar regeneration and types/common/codegen/Rust package checks passed. Changed-source lint and diff checks passed.
 
+- Python-only #550, in a separate PR stacked on #707: canonical five-grammar regeneration passed; compiler, DSL, emitter, common runtime, Python, Rust, upstream-witness and hand-rule suites passed (348 files, 3,381 tests, seven expected failures and one skipped). Six Python tuple-pattern regressions cover singleton construction, empty/multi-element parsed forms and rejection of the comma-less tuple pattern. Codegen/Python/Rust and regression TypeScript checks, changed-source lint, Principle #14 and diff checks passed. The tuple construction is local to Python; the user-endorsed `semantic-gap` cause reuses the existing witness-form derivation. No new tuple DSL helpers are introduced.
+
 The #626, partial #572 and #493 validator reruns match the committed native baseline, including its three existing round-trip misses:
 
 | Grammar | From | Coverage | Round-trip | AST match | Factory storage |
@@ -35,12 +37,18 @@ The #626, partial #572 and #493 validator reruns match the committed native base
 | SCM | 26/26 | 21/21 | 19/19 | 19 | 123/123 |
 | TypeScript | 186/186 | 202/202 | 113/115 | 113 | 1303/1303 |
 
+The separate Python #550 remediation rerun preserves every row above, except
+Python coverage rises to **147/147** for the new tuple-pattern element kind.
+Python built-render-parse remains 1246/1246 (AST match 1246), and Rust remains
+1733/1733 (AST match 1733). Rust's five valid parenthesized corpus cases remain
+accepted; no Rust parser, factory or generated artifact changes are included.
+
 ## Next correctness batch
 
 The maintainer requested skipping trivia-related work for now. Start with these non-trivia correctness cases:
 
 1. **#572 — remaining required-slot cases:** investigate the match-block parser constraint and loose no-argument surface; content-slot cardinality is fixed.
-2. **#550 — single-element tuples:** confirmed in all three current builders: Rust tuple type `(u8)`, Rust tuple pattern `(x)` and Python tuple pattern `(x)`. `rustc` rejects assigning `(1u8,)` to the built `(u8)` alias but accepts `(u8,)`; Python binds `(x) = (1,)` to the whole tuple, whereas `(x,)` binds its element. Author disjoint terminated-list and parenthesized-single arms, with built lists selecting the tuple arm and parsed `(x)` preserving its existing semantics. This remains open; no comma-forcing patch was applied.
+2. **#550 — Python single-element tuple patterns:** the maintainer scoped this remediation to Python and requested a separate PR stacked on #707. The override now authors a terminated element list: a built singleton renders `(x,)`, while `(x)` is rejected as a tuple pattern. Empty and multi-element tuples remain supported; no parenthesized tuple arm is added. The shared terminated-list construction also serves Python tuple expressions. Rust retains its existing rules and accepted syntax. The broader issue remains open; the separate PR addresses its Python case.
 
 #627's exact samples from its maintainer audit now pass `default-diff --no-attribute`: the multiline Python docstring, `a ${b} c` and `x` TypeScript templates, and `^[\w.+-]+@[\w-]+\.[\w.]+$` email regex each have zero rebuild failures, differing gaps and token mismatches. The original TypeScript/regex failing files were not committed, so closure is based on the documented audit samples, rather than a newly authored fix. A new reproducing input would justify reopening.
 
@@ -98,7 +106,7 @@ The fixes have focused red/green regressions and regeneration coverage. Backlog 
 | [#587 — Source emitter drops the blank line after a line comment (Newline run)](https://github.com/refactory-lang/sittir/issues/587) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Reproduce the line-comment/newline run and identify the responsible emitter. |
 | [#582 — A parsed node with a leading comment renders from its template, not its source bytes](https://github.com/refactory-lang/sittir/issues/582) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Reproduce untouched commented subnodes together with #427 and #568. |
 | [#568 — A parent rebuilt with $with rewrites the gaps between its untouched children](https://github.com/refactory-lang/sittir/issues/568) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Pin untouched sibling gap ownership and occurrence identity. |
-| [#550 — One-element tuple pattern and tuple type: the grammar accepts `(x)` as the kind, so a built one renders without its comma](https://github.com/refactory-lang/sittir/issues/550) | P1 | Confirmed all three builders omit the required tuple comma; rustc/Python distinguish the semantics. Next: disjoint tuple-list and parenthesized-single variants, preserving existing parsed source. |
+| [#550 — One-element tuple pattern and tuple type: the grammar accepts `(x)` as the kind, so a built one renders without its comma](https://github.com/refactory-lang/sittir/issues/550) | P1 | Python-only remediation in a separate PR stacked on #707: terminated tuple-pattern elements require the singleton comma; `(x)` is excluded from this kind. No parenthesized arm; Rust is unchanged. |
 | [#529 — Loose statementBlock({ statements }) input type exceeds the checker's stack depth on export statements](https://github.com/refactory-lang/sittir/issues/529) | P2 | Pin the failing loose-input recursion under the workspace TypeScript version. |
 | [#477 — Tree-bound render: list gaps around a collapsed kind-id token fall to the list default](https://github.com/refactory-lang/sittir/issues/477) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Pin punctuation coordinates together with #619. |
 | [#372 — python: a comment after an opening bracket beside a scalar-stored leaf renders before the bracket (CPython rejects it)](https://github.com/refactory-lang/sittir/issues/372) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Validate bracket-comment output with CPython as well as tree-sitter. |

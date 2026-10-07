@@ -3989,11 +3989,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "patterns",
+					"test": "elements",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "patterns"
+							"name": "elements"
 						}
 					]
 				}
@@ -4010,6 +4010,12 @@
 		{
 			"kind": "seam",
 			"field": "tuple_pattern_after"
+		}
+	],
+	"tuple_pattern_elements": [
+		{
+			"kind": "slot",
+			"name": "item"
 		}
 	],
 	"type": [

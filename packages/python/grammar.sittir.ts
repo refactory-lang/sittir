@@ -10,6 +10,7 @@
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import base from './base.ts';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
+import { transform } from '../codegen/src/dsl/transform/transform.ts';
 import {
 	role,
 	field,
@@ -27,6 +28,11 @@ import {
 const comprehensionClauses = rule('comprehension_clauses', ($) =>
 	field('content', repeat1(choice($.for_in_clause, $.if_clause)))
 );
+
+function tupleElements(element) {
+	return seq(seq(element, ','), repeat(seq(element, ',')), optional(element));
+}
+
 export default sittirGrammar(base, {
 	resolutions,
 	name: 'python',
@@ -377,11 +383,14 @@ export default sittirGrammar(base, {
 		]
 	},
 	rules: {
+		_tuple_pattern_elements: vocabulary(($) => tupleElements(field('item', $.pattern))),
+		tuple_pattern: reauthored(
+			'semantic-gap',
+			{ text: '(x) = y\n', form: ['(', { symbol: 'pattern' }, ')'], kind: 'tuple_pattern', meaning: 'Binds the entire value, rather than unpacking a one-element tuple (#550).' },
+			($, original) => transform(original, { 1: field('elements', optional(alias($._tuple_pattern_elements, $.tuple_pattern_elements))) })
+		),
 		// See docs/python-grammar-sittir-glossary.md::tuple
-		_tuple_elements: vocabulary(($) => {
-			const element = () => field('item', choice($.expression, $.yield, $.list_splat, $.parenthesized_list_splat));
-			return seq(seq(element(), ','), repeat(seq(element(), ',')), optional(element()));
-		}),
+		_tuple_elements: vocabulary(($) => tupleElements(field('item', choice($.expression, $.yield, $.list_splat, $.parenthesized_list_splat)))),
 		tuple: reauthored(
 			'accepts-other-kind',
 			{ text: '(a)', form: ['(', { symbol: 'expression' }, ')'], kind: 'parenthesized_expression' },

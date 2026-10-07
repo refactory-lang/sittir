@@ -565,7 +565,7 @@ the upstream rule of the witness's kind both derive the witness form
 (`derivesForm`): the two rules overlap on it. Anything less is
 `rule-cause-mismatch`, naming which rule fails to derive it. Which of the two
 the parser picks is not checked here: upstream's parser is the ground truth for
-which rule wins, and a test parses every declared witness text with it.
+which rule wins, and a test parses every declared witness text with it. The same form derivation verifies `semantic-gap` witnesses against their one upstream kind; this cause requires a stated language meaning and semantic construction regressions, because the grammar alone cannot prove that meaning.
 
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::derivesForm`
 
@@ -585,7 +585,7 @@ never against the rewritten rules.
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::isWitnessVerified`
 
 Whether a rule's declaration is one the gate verifies by witness: today,
-`reauthored('accepts-other-kind', …)` alone. The hand-written rule ratchet
+`reauthored('accepts-other-kind', …)` and `reauthored('semantic-gap', …)`. The latter additionally requires the witness kind to equal the unchanged upstream parser kind and a nonempty language meaning; semantic construction regressions provide evidence beyond the grammar-form check. The hand-written rule ratchet
 reads it to tell a verified correction from debt.
 
 ### `packages/codegen/src/__tests__/hand-rule-ratchet.test.ts::CEILINGS`
@@ -606,9 +606,17 @@ list, makes the list kind a member of its own element union, which the
 widening types cannot express without a cycle. The hidden list rule is the
 hand-written entry that avoids it, and it goes when that cycle is solved.
 
+The Python-only #550 comma-required tuple correction adds the named vocabulary
+rule `_tuple_pattern_elements`. It keeps parentheses on the container and commas
+on an independent list, avoiding recursive self-kind coercion and incorrect
+separator capture. This follows the existing Python `_tuple_elements` case.
+The corresponding hand-rule ceiling is Python 15 (was 14); Rust stays at 8.
+No diagnostic or corpus-failure ceiling changes. This helper can retire
+when authored rule bodies participate in the same list lifting as enriched
+upstream rules without collapsing the container into its own element union.
+
 A rule reauthored under a witness-verified cause (`isWitnessVerified`) is not
-counted. It corrects an upstream rule that is wrong, the gate and the upstream
-parser prove the claim, and no derivation can retire it: it is not debt.
+counted. It corrects an upstream rule that is wrong, the gate checks the grammar form and the upstream parser checks the accepted kind. A semantic-gap claim additionally needs construction regressions to establish its language meaning, and no derivation can retire it: it is not debt.
 
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::authoredRuleNames`
 

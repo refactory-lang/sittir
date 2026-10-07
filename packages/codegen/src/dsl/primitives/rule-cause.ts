@@ -1,4 +1,4 @@
-export type RuleCause = 'alias-shape' | 'ambiguity' | 'accepts-other-kind';
+export type RuleCause = 'alias-shape' | 'ambiguity' | 'accepts-other-kind' | 'semantic-gap';
 
 export type WitnessFormItem = string | { readonly symbol: string };
 
@@ -6,6 +6,10 @@ export interface OtherKindWitness {
 	readonly text: string;
 	readonly form: readonly WitnessFormItem[];
 	readonly kind: string;
+}
+
+export interface SemanticGapWitness extends OtherKindWitness {
+	readonly meaning: string;
 }
 
 export type RuleCauseDeclaration =
@@ -19,9 +23,24 @@ function tag<F extends (...args: never[]) => unknown>(body: F, declaration: Rule
 	return body;
 }
 
-export function reauthored<F extends (...args: never[]) => unknown>(cause: 'accepts-other-kind', witness: OtherKindWitness, body: F): F;
-export function reauthored<F extends (...args: never[]) => unknown>(cause: Exclude<RuleCause, 'accepts-other-kind'>, body: F): F;
-export function reauthored<F extends (...args: never[]) => unknown>(cause: RuleCause, ...rest: [F] | [OtherKindWitness, F]): F {
+export function reauthored<F extends (...args: never[]) => unknown>(
+	cause: 'accepts-other-kind',
+	witness: OtherKindWitness,
+	body: F
+): F;
+export function reauthored<F extends (...args: never[]) => unknown>(
+	cause: 'semantic-gap',
+	witness: SemanticGapWitness,
+	body: F
+): F;
+export function reauthored<F extends (...args: never[]) => unknown>(
+	cause: Exclude<RuleCause, 'accepts-other-kind' | 'semantic-gap'>,
+	body: F
+): F;
+export function reauthored<F extends (...args: never[]) => unknown>(
+	cause: RuleCause,
+	...rest: [F] | [OtherKindWitness, F]
+): F {
 	if (rest.length === 1) return tag(rest[0], { kind: 'reauthored', cause });
 	return tag(rest[1], { kind: 'reauthored', cause, witness: rest[0] });
 }

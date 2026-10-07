@@ -2451,7 +2451,7 @@ function _buildPatterns(
 }
 
 export function buildTuplePattern(): T.EmptyTuplePattern;
-export function buildTuplePattern(value?: Admit<T.Patterns>): ReturnType<typeof _buildTuplePattern>;
+export function buildTuplePattern(value?: Admit<T.TuplePatternElements>): ReturnType<typeof _buildTuplePattern>;
 export function buildTuplePattern(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.Pattern>>
@@ -2465,35 +2465,35 @@ export function buildTuplePattern(...args: unknown[]) {
 		args.length === 1 &&
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.Patterns as const);
+		(args[0] as { $type?: unknown }).$type === (TSKindId.TuplePatternElements as const);
 	return prebuilt
 		? _buildTuplePattern(args[0] as Parameters<typeof _buildTuplePattern>[0])
 		: _buildTuplePattern(
-				(buildPatterns as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildTuplePattern>[0]
+				(buildTuplePatternElements as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildTuplePattern>[0]
 			);
 }
-function _buildTuplePattern(value?: Admit<T.Patterns>): T.TuplePattern.Bound {
-	const _patterns = hydrateListStorage(rejectBareText(value, 'TuplePattern.patterns', 'a built Patterns'));
-	const listView = ownerView(_patterns, '_item');
-	if (listView.stored === undefined) refuseReadStub('_patterns');
+function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePattern.Bound {
+	const _elements = hydrateListStorage(rejectBareText(value, 'TuplePattern.elements', 'a built TuplePatternElements'));
+	const listView = ownerView(_elements, '_item');
+	if (listView.stored === undefined) refuseReadStub('_elements');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TuplePattern as const,
 		$source: 2 as const,
 		$named: true as const,
-		_patterns,
+		_elements,
 		$with: {
-			patterns: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
-						{ kind: TSKindId.Patterns as const, optional: true, make: buildPatterns },
-						(value?: Admit<T.Patterns>) => _buildTuplePattern(value)
+						{ kind: TSKindId.TuplePatternElements as const, optional: true, make: buildTuplePatternElements },
+						(value?: Admit<T.TuplePatternElements>) => _buildTuplePattern(value)
 					)
 				)
 		},
-		patterns: () => _patterns,
+		elements: () => _elements,
 		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
 		...LIST_METHODS,
@@ -5206,6 +5206,67 @@ export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bo
 	return node as unknown as T.FormatSpecifierText.Bound;
 }
 
+export function buildTuplePatternElements(
+	...elements: NonEmptyArray<Admit<T.Pattern>>
+): ReturnType<typeof _buildTuplePatternElements>;
+export function buildTuplePatternElements(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: NonEmptyArray<Admit<T.Pattern>>
+): ReturnType<typeof _buildTuplePatternElements>;
+export function buildTuplePatternElements(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.Pattern>)[]
+) {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.Pattern>>;
+	return _buildTuplePatternElements(elements, options);
+}
+function _buildTuplePatternElements(
+	elements: NonEmptyArray<Admit<T.Pattern>>,
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
+): T.TuplePatternElements.Bound {
+	_assertNonEmpty(elements, 'tuple_pattern_elements.elements');
+	const _item = elements;
+	const _delimiter = options.delimiter;
+	const listedStored = storedElements(_item);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TuplePatternElements as const,
+		$source: 2 as const,
+		$named: true as const,
+		_item,
+		_delimiter,
+		$with: {
+			items: (...vs: NonEmptyArray<Admit<T.Pattern>>) =>
+				rebuilt(node, handle, () => buildTuplePatternElements(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildTuplePatternElements({ ...options, delimiter: v }, ...elements))
+		},
+		items: () => _item,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? undefined,
+		$render: () => renderText(handle, node),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.TuplePatternElements.Bound;
+}
+
 export function buildTupleElements(
 	...elements: NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>
 ): ReturnType<typeof _buildTupleElements>;
@@ -7378,6 +7439,7 @@ export type FluentKindMap = {
 	dictionary_elements: T.DictionaryElements.Bound;
 	slice_group: T.SliceGroup.Bound;
 	format_specifier_text: T.FormatSpecifierText;
+	tuple_pattern_elements: T.TuplePatternElements.Bound;
 	tuple_elements: T.TupleElements.Bound;
 	except_clause_exception_as: T.ExceptClauseExceptionAs.Bound;
 	case_tuple_pattern: T.CaseTuplePattern.Bound;
@@ -7576,6 +7638,7 @@ export const _factoryMap = {
 	dictionary_elements: buildDictionaryElements,
 	slice_group: buildSliceGroup,
 	format_specifier_text: buildFormatSpecifierText,
+	tuple_pattern_elements: buildTuplePatternElements,
 	tuple_elements: buildTupleElements,
 	except_clause_exception_as: buildExceptClauseExceptionAs,
 	case_tuple_pattern: buildCaseTuplePattern,

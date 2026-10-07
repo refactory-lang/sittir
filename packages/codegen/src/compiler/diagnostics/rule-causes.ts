@@ -1,7 +1,29 @@
 import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
-import type { OtherKindWitness, RuleCause, RuleCauseDeclaration, WitnessFormItem } from '../../dsl/primitives/rule-cause.ts';
+import type {
+	OtherKindWitness,
+	RuleCause,
+	RuleCauseDeclaration,
+	WitnessFormItem
+} from '../../dsl/primitives/rule-cause.ts';
 import type { Rule } from '../../types/rule.ts';
-import { ALIAS, CHOICE, DEDENT, FIELD, IMMEDIATE_TOKEN, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN } from '../../types/rule-types.ts';
+import {
+	ALIAS,
+	CHOICE,
+	DEDENT,
+	FIELD,
+	IMMEDIATE_TOKEN,
+	INDENT,
+	NEWLINE,
+	OPTIONAL,
+	PATTERN,
+	REPEAT,
+	REPEAT1,
+	SEQ,
+	STRING,
+	SUPERTYPE,
+	SYMBOL,
+	TOKEN
+} from '../../types/rule-types.ts';
 import { assertNever } from '../../polymorph-variant.ts';
 import type { RawGrammar } from '../types.ts';
 import type { StageDiagnosis } from '../stage.ts';
@@ -18,7 +40,8 @@ export const PROVOKING_CODES: Readonly<Record<RuleCause, readonly string[]>> = {
 		'multi-slot-nested-seq'
 	],
 	ambiguity: [],
-	'accepts-other-kind': []
+	'accepts-other-kind': [],
+	'semantic-gap': []
 };
 
 type UpstreamRules = Readonly<Record<string, Rule<'evaluate'>>>;
@@ -40,7 +63,10 @@ export interface RuleCausesInput {
 }
 
 export function isWitnessVerified(declaration: RuleCauseDeclaration): boolean {
-	return declaration.kind === 'reauthored' && declaration.cause === 'accepts-other-kind';
+	return (
+		declaration.kind === 'reauthored' &&
+		(declaration.cause === 'accepts-other-kind' || declaration.cause === 'semantic-gap')
+	);
 }
 
 export function authoredRuleNames(raw: Pick<RawGrammar, 'ruleCauses' | 'undeclaredRules'>): string[] {
@@ -113,7 +139,10 @@ function derivesForm(rules: UpstreamRules, rule: Rule<'evaluate'>, form: readonl
 				return reached;
 			}
 			case SEQ:
-				return node.members.reduce<number[]>((starts, member) => [...new Set(starts.flatMap((start) => ends(member, start)))], [at]);
+				return node.members.reduce<number[]>(
+					(starts, member) => [...new Set(starts.flatMap((start) => ends(member, start)))],
+					[at]
+				);
 			case CHOICE:
 				return [...new Set(node.members.flatMap((member) => ends(member, at)))];
 			case OPTIONAL:
@@ -123,7 +152,9 @@ function derivesForm(rules: UpstreamRules, rule: Rule<'evaluate'>, form: readonl
 				const reached = new Set<number>(node.type === REPEAT ? [at] : []);
 				let frontier = [at];
 				while (frontier.length > 0) {
-					frontier = [...new Set(frontier.flatMap((start) => ends(node.content, start)))].filter((end) => !reached.has(end));
+					frontier = [...new Set(frontier.flatMap((start) => ends(node.content, start)))].filter(
+						(end) => !reached.has(end)
+					);
 					for (const end of frontier) reached.add(end);
 				}
 				return [...reached];
@@ -154,21 +185,28 @@ function judgeOtherKindWitness(
 	grammar: string,
 	name: string,
 	witness: OtherKindWitness | undefined,
-	upstreamRules: UpstreamRules
+	upstreamRules: UpstreamRules,
+	cause: 'accepts-other-kind' | 'semantic-gap' = 'accepts-other-kind'
 ): GrammarDiagnostic | undefined {
 	const mismatch = (reason: string): GrammarDiagnostic =>
 		blocking(
 			grammar,
 			'rule-cause-mismatch',
 			name,
-			`rules: '${name}' is declared reauthored('accepts-other-kind') but ${reason}. The cause holds only when the upstream rule and the other kind's upstream rule both derive the witness form`,
-			{ cause: 'accepts-other-kind', witness }
+			`rules: '${name}' is declared reauthored('${cause}') but ${reason}. The upstream rules named by the witness must derive its form`,
+			{ cause, witness }
 		);
 	if (witness === undefined) return mismatch('declares no witness');
-	for (const rule of [name, witness.kind]) {
+	if (cause === 'semantic-gap') {
+		if (witness.kind !== name) return mismatch('the witness kind must name the unchanged upstream parser kind');
+		if (!('meaning' in witness) || typeof witness.meaning !== 'string' || witness.meaning.trim().length === 0)
+			return mismatch('declares no language meaning for the witness');
+	}
+	for (const rule of new Set([name, witness.kind])) {
 		const body = upstreamRules[rule];
 		if (body === undefined) return mismatch(`upstream declares no rule '${rule}'`);
-		if (!derivesForm(upstreamRules, body, witness.form)) return mismatch(`upstream '${rule}' does not derive the witness form of '${witness.text}'`);
+		if (!derivesForm(upstreamRules, body, witness.form))
+			return mismatch(`upstream '${rule}' does not derive the witness form of '${witness.text}'`);
 	}
 	return undefined;
 }
@@ -186,7 +224,9 @@ function judgeReauthored(
 			grammar,
 			'rule-cause-mismatch',
 			name,
-			`rules: '${name}' is declared reauthored('${cause}'), which is not a cause. Declare one of: ${Object.keys(PROVOKING_CODES)
+			`rules: '${name}' is declared reauthored('${cause}'), which is not a cause. Declare one of: ${Object.keys(
+				PROVOKING_CODES
+			)
 				.map((known) => `'${known}'`)
 				.join(', ')}`,
 			{ cause }
@@ -201,8 +241,11 @@ function judgeReauthored(
 			{ cause }
 		);
 	}
-	if (cause === 'accepts-other-kind') return judgeOtherKindWitness(grammar, name, declaration.witness, upstreamRules);
-	const provoking = [...new Set(enriched.diagnostics.filter((d) => d.ownerKind === name && ANY_PROVOKING.has(d.code)).map((d) => d.code))].sort();
+	if (cause === 'accepts-other-kind' || cause === 'semantic-gap')
+		return judgeOtherKindWitness(grammar, name, declaration.witness, upstreamRules, cause);
+	const provoking = [
+		...new Set(enriched.diagnostics.filter((d) => d.ownerKind === name && ANY_PROVOKING.has(d.code)).map((d) => d.code))
+	].sort();
 	if (provoking.length === 0) {
 		return blocking(
 			grammar,
@@ -229,5 +272,14 @@ function blocking(
 	message: string,
 	details?: Record<string, unknown>
 ): GrammarDiagnostic {
-	return { scope: 'grammar', grammar, code, severity: 'error', ownerKind, message, canProceed: false, ...(details ? { details } : {}) };
+	return {
+		scope: 'grammar',
+		grammar,
+		code,
+		severity: 'error',
+		ownerKind,
+		message,
+		canProceed: false,
+		...(details ? { details } : {})
+	};
 }
