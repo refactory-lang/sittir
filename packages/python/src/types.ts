@@ -11139,10 +11139,9 @@ export namespace AssertStatement {
 	export type BuildArgs = [...children: NonEmptyArray<Admit<T.Expression>>];
 	export type LooseArgs =
 		| [
-				...children: (
-					| T.AssertStatement.Loose
-					| LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
+				...children: NonEmptyArray<
+					T.AssertStatement.Loose | LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				>
 		  ]
 		| [children: Readonly<NonEmptyArray<LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>>];
 	export type Kind = TSKindId.AssertStatement;
@@ -11572,11 +11571,11 @@ export namespace GlobalStatement {
 	export type BuildArgs = [...children: NonEmptyArray<Admit<T.Identifier>>];
 	export type LooseArgs =
 		| [
-				...children: (
+				...children: NonEmptyArray<
 					| T.GlobalStatement.Loose
 					| LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 					| LooseValue<T.Identifier | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
+				>
 		  ]
 		| [
 				children: Readonly<
@@ -11604,11 +11603,11 @@ export namespace NonlocalStatement {
 	export type BuildArgs = [...children: NonEmptyArray<Admit<T.Identifier>>];
 	export type LooseArgs =
 		| [
-				...children: (
+				...children: NonEmptyArray<
 					| T.NonlocalStatement.Loose
 					| LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 					| LooseValue<T.Identifier | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
+				>
 		  ]
 		| [
 				children: Readonly<
@@ -11831,11 +11830,11 @@ export namespace DottedName {
 	export type BuildArgs = [...children: NonEmptyArray<Admit<T.Identifier>>];
 	export type LooseArgs =
 		| [
-				...children: (
+				...children: NonEmptyArray<
 					| T.DottedName.Loose
 					| LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 					| LooseValue<T.Identifier | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
+				>
 		  ]
 		| [
 				children: Readonly<
@@ -11952,7 +11951,7 @@ export namespace UnionPattern {
 	];
 	export type LooseArgs =
 		| [
-				...children: (
+				...children: NonEmptyArray<
 					| T.UnionPattern.Loose
 					| LooseValue<
 							| T.ClassPattern
@@ -11994,7 +11993,7 @@ export namespace UnionPattern {
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >
-				)[]
+				>
 		  ]
 		| [
 				children: Readonly<
@@ -13125,10 +13124,9 @@ export namespace ConcatenatedString {
 	export type BuildArgs = [...children: NonEmptyArray<Admit<T.String>>];
 	export type LooseArgs =
 		| [
-				...children: (
-					| T.ConcatenatedString.Loose
-					| LooseValue<T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
+				...children: NonEmptyArray<
+					T.ConcatenatedString.Loose | LooseValue<T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				>
 		  ]
 		| [children: Readonly<NonEmptyArray<LooseValue<T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>>];
 	export type Kind = TSKindId.ConcatenatedString;
@@ -13170,7 +13168,7 @@ export namespace StringContent {
 	];
 	export type LooseArgs =
 		| [
-				...children: (
+				...children: NonEmptyArray<
 					| T.StringContent.Loose
 					| LooseValue<
 							T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment,
@@ -13184,7 +13182,7 @@ export namespace StringContent {
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >
-				)[]
+				>
 		  ]
 		| [
 				children: Readonly<
@@ -14066,10 +14064,10 @@ export namespace ComprehensionClauses {
 	export type BuildArgs = [...children: NonEmptyArray<Admit<T.ForInClause | T.IfClause>>];
 	export type LooseArgs =
 		| [
-				...children: (
+				...children: NonEmptyArray<
 					| T.ComprehensionClauses.Loose
 					| LooseValue<T.ForInClause | T.IfClause, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
+				>
 		  ]
 		| [
 				children: Readonly<
@@ -14411,10 +14409,9 @@ export namespace ExceptClauseExceptionList {
 	export type BuildArgs = [...children: NonEmptyArray<Admit<T.Expression>>];
 	export type LooseArgs =
 		| [
-				...children: (
-					| T.ExceptClauseExceptionList.Loose
-					| LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
+				...children: NonEmptyArray<
+					T.ExceptClauseExceptionList.Loose | LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				>
 		  ]
 		| [children: Readonly<NonEmptyArray<LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>>];
 	export type Kind = TSKindId.ExceptClauseExceptionList;

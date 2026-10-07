@@ -19376,17 +19376,17 @@ export namespace VariableDeclaration {
 		| [options: ListOptions<T.VariableDeclaration.Options>, ...children: NonEmptyArray<Admit<T.VariableDeclarator>>];
 	export type LooseArgs =
 		| [
-				...children: (
+				...children: NonEmptyArray<
 					| T.VariableDeclaration.Loose
 					| LooseValue<T.VariableDeclarator, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
+				>
 		  ]
 		| [
 				options: ListOptions<T.VariableDeclaration.Options>,
-				...children: (
+				...children: NonEmptyArray<
 					| T.VariableDeclaration.Loose
 					| LooseValue<T.VariableDeclarator, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
+				>
 		  ]
 		| [
 				children: Readonly<
@@ -20797,10 +20797,9 @@ export namespace SequenceExpression {
 	export type BuildArgs = [...children: NonEmptyArray<Admit<T.Expression>>];
 	export type LooseArgs =
 		| [
-				...children: (
-					| T.SequenceExpression.Loose
-					| LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
+				...children: NonEmptyArray<
+					T.SequenceExpression.Loose | LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				>
 		  ]
 		| [children: Readonly<NonEmptyArray<LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>>];
 	export type Kind = TSKindId.SequenceExpression;
@@ -21380,10 +21379,9 @@ export namespace ExtendsClause {
 	export type BuildArgs = [...children: NonEmptyArray<Admit<T.ExtendsClauseSingle>>];
 	export type LooseArgs =
 		| [
-				...children: (
-					| T.ExtendsClause.Loose
-					| LooseValue<T.ExtendsClauseSingle, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
+				...children: NonEmptyArray<
+					T.ExtendsClause.Loose | LooseValue<T.ExtendsClauseSingle, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				>
 		  ]
 		| [
 				children: Readonly<
@@ -21425,11 +21423,11 @@ export namespace ImplementsClause {
 	export type BuildArgs = [...children: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>];
 	export type LooseArgs =
 		| [
-				...children: (
+				...children: NonEmptyArray<
 					| T.ImplementsClause.Loose
 					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 					| LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
+				>
 		  ]
 		| [
 				children: Readonly<
@@ -21581,7 +21579,7 @@ export namespace ExtendsTypeClause {
 	];
 	export type LooseArgs =
 		| [
-				...children: (
+				...children: NonEmptyArray<
 					| T.ExtendsTypeClause.Loose
 					| LooseValue<
 							(T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types,
@@ -21595,7 +21593,7 @@ export namespace ExtendsTypeClause {
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >
-				)[]
+				>
 		  ]
 		| [
 				children: Readonly<

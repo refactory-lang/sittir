@@ -20422,7 +20422,7 @@ export namespace FunctionModifiers {
 	];
 	export type LooseArgs =
 		| [
-				...children: (
+				...children: NonEmptyArray<
 					| T.FunctionModifiers.Loose
 					| LooseValue<
 							| TSKindId.AsyncKeyword
@@ -20440,7 +20440,7 @@ export namespace FunctionModifiers {
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >
-				)[]
+				>
 		  ]
 		| [
 				children: Readonly<
@@ -20552,7 +20552,7 @@ export namespace TraitBounds {
 	];
 	export type LooseArgs =
 		| [
-				...children: (
+				...children: NonEmptyArray<
 					| T.TraitBounds.Loose
 					| LooseValue<
 							(T.Type | T.Lifetime | T.HigherRankedTraitBound) | T.TypeIdentifier.Types,
@@ -20561,7 +20561,7 @@ export namespace TraitBounds {
 							T.NamespaceMap
 					  >
 					| LooseValue<T.Type | T.Lifetime | T.HigherRankedTraitBound, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
+				>
 		  ]
 		| [
 				children: Readonly<
