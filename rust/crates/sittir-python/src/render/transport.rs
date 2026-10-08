@@ -15675,7 +15675,7 @@ impl ::sittir_core::options::Edged for FormatSpecifierTextTransport {
 
 impl ::sittir_core::render::Render for FormatSpecifierTextTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(89)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(89)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(89)); w.text(&self.text) })
     }
 }
 
@@ -17007,7 +17007,7 @@ impl ::sittir_core::options::Edged for LineContinuationNewlineTransport {
 
 impl ::sittir_core::render::Render for LineContinuationNewlineTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(106)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(106)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(106)); w.text(&self.text) })
     }
 }
 
@@ -17880,7 +17880,7 @@ impl ::sittir_core::options::Edged for StringFragmentTransport {
 
 impl ::sittir_core::render::Render for StringFragmentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(119)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(119)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(119)); w.text(&self.text) })
     }
 }
 
@@ -17920,7 +17920,7 @@ impl ::sittir_core::options::Edged for EscapeInterpolationTransport {
 
 impl ::sittir_core::render::Render for EscapeInterpolationTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(120)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(120)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(120)); w.text(&self.text) })
     }
 }
 
@@ -17960,7 +17960,7 @@ impl ::sittir_core::options::Edged for StringEndTransport {
 
 impl ::sittir_core::render::Render for StringEndTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(121)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(121)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(121)); w.text(&self.text) })
     }
 }
 
@@ -23971,7 +23971,7 @@ fn render_slice_group(node: &SliceGroupTransport, w: &mut dyn ::sittir_core::ren
 }
 
 fn render_format_specifier_text(t: &FormatSpecifierTextTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.adjacent();
+    w.leaf_kind(::sittir_core::types::KindId(89));
     w.text(&t.text)
 }
 
@@ -24302,6 +24302,7 @@ fn render_escape_sequence_named(node: &EscapeSequenceNamedTransport, w: &mut dyn
 }
 
 fn render_line_continuation_newline(t: &LineContinuationNewlineTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.leaf_kind(::sittir_core::types::KindId(106));
     w.text(&t.text)
 }
 
@@ -24513,17 +24514,17 @@ fn render_string_start(t: &StringStartTransport, w: &mut dyn ::sittir_core::rend
 }
 
 fn render_string_fragment(t: &StringFragmentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.adjacent();
+    w.leaf_kind(::sittir_core::types::KindId(119));
     w.text(&t.text)
 }
 
 fn render_escape_interpolation(t: &EscapeInterpolationTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.adjacent();
+    w.leaf_kind(::sittir_core::types::KindId(120));
     w.text(&t.text)
 }
 
 fn render_string_end(t: &StringEndTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.adjacent();
+    w.leaf_kind(::sittir_core::types::KindId(121));
     w.text(&t.text)
 }
 

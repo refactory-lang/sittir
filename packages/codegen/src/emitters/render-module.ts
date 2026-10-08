@@ -1,6 +1,7 @@
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
 import { isFixedTextLeaf, isTerminalNode } from '../compiler/model/node-map.ts';
+import { leafEdgesOf } from '../compiler/model/layout-kinds.ts';
 import { STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import { wordCharAsciiTable } from '../util/word-matcher.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -725,7 +726,7 @@ function renderTypedKindFn(
 		case 'keyword':
 		case 'punctuation':
 		case 'enum':
-			return renderTypedLeafFn(node);
+			return renderTypedLeafFn(node, nodeMap, kindIdByKind.get(node.kind));
 		default:
 			return [];
 	}
@@ -782,19 +783,27 @@ function isImmediateLeaf(node: AssembledNode): boolean {
 	return node instanceof AssembledLeaf && node.immediate;
 }
 
-function leafRenderExpr(node: AssembledNode, on: string): string {
-	const write = leafTextWrite(node, on);
-	return isImmediateLeaf(node) ? `{ w.adjacent(); ${write} }` : write;
+function leafEdgesCall(node: AssembledNode, nodeMap: NodeMap, kindId: number | undefined): string | undefined {
+	if (node instanceof AssembledLeaf && kindId !== undefined && leafEdgesOf(node, nodeMap) !== undefined) {
+		return `w.leaf_kind(::sittir_core::types::KindId(${kindId}));`;
+	}
+	return isImmediateLeaf(node) ? 'w.adjacent();' : undefined;
 }
 
-function renderTypedLeafFn(node: AssembledNode): string[] {
+function leafRenderExpr(node: AssembledNode, on: string, nodeMap: NodeMap, kindId: number | undefined): string {
+	const write = leafTextWrite(node, on);
+	const edges = leafEdgesCall(node, nodeMap, kindId);
+	return edges === undefined ? write : `{ ${edges} ${write} }`;
+}
+
+function renderTypedLeafFn(node: AssembledNode, nodeMap: NodeMap, kindId: number | undefined): string[] {
 	const fnName = rustTypedRenderFnName(node.typeName);
 	const typeName = rustTransportStructName(node);
 	const body = node instanceof AssembledEnum ? `t.render(w)` : leafTextWrite(node, 't');
-	const adjacent = isImmediateLeaf(node) ? [`    w.adjacent();`] : [];
+	const edges = leafEdgesCall(node, nodeMap, kindId);
 	return [
 		`fn ${fnName}(t: &${typeName}, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,
-		...adjacent,
+		...(edges === undefined ? [] : [`    ${edges}`]),
 		`    ${body}`,
 		`}`,
 		``
@@ -1078,6 +1087,7 @@ const EMPTY_PLAN: RenderPlan = {
 	dedentId: 0,
 	whitespaceText: [],
 	kindFlags: [],
+			leafEdges: [],
 	indentChars: [],
 	indent: ''
 };
@@ -3134,7 +3144,7 @@ function renderTransportDataStruct(
 	lines.push(
 		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
 	);
-	const body = isLeafNode ? leafRenderExpr(node, 'self') : `${rustTypedRenderFnName(node.typeName)}(self, w)`;
+	const body = isLeafNode ? leafRenderExpr(node, 'self', nodeMap, ownId) : `${rustTypedRenderFnName(node.typeName)}(self, w)`;
 	const owner = !isLeafNode || ownsTrivia(kindEntries, node.kind);
 	lines.push(`        ${layoutRenderCall('self.layout.as_ref()', ownKind, owner, body)}`);
 	lines.push(`    }`);

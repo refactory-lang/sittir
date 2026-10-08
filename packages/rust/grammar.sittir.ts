@@ -693,8 +693,8 @@ export default sittirGrammar(base, {
 	},
 	renderAs: (_$) => ({
 		float_literal: /[0-9][0-9_]*(?:\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?/,
-		string_content: /[^"\\]+/,
-		raw_string_literal_content: /[\s\S]*/,
+		string_content: token.immediate(/[^"\\]+/),
+		raw_string_literal_content: token.immediate(/[\s\S]*/),
 		_outer_block_doc_comment_marker: token.immediate('*'),
 		_inner_block_doc_comment_marker: token.immediate('!'),
 		_raw_string_literal_start: /[bc]?r#*"/,

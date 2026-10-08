@@ -3,6 +3,8 @@ import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
 import type { KindEntryLike } from '../dsl/symbol-table.ts';
 import { findEntryForKindName } from '../dsl/symbol-table.ts';
 import { Delimiter } from '@sittir/common/utils';
+import { AssembledLeaf } from '../compiler/model/node-map.ts';
+import { leafEdgesOf } from '../compiler/model/layout-kinds.ts';
 import { BLANK_ARM, BLANK_KIND_ID, type PreferenceArm, type SitePreference, type SpacingSide } from '../compiler/model/site-preferences.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { displayNameOf } from '../compiler/model/display-name.ts';
@@ -86,6 +88,7 @@ export interface RenderOptionsPlan {
 	readonly dedentId: number;
 	readonly whitespaceText: readonly { readonly id: number; readonly text: string }[];
 	readonly kindFlags: readonly { readonly id: number; readonly flags: number }[];
+	readonly leafEdges: readonly { readonly id: number; readonly flags: number }[];
 	readonly indentChars: readonly string[];
 	readonly indent: string;
 }
@@ -135,6 +138,17 @@ function kindFlagsOf(kindEntries: readonly IdEntry[], nodeMap: NodeMap): { reado
 		if (bits !== 0) flags.set(entry.id, (flags.get(entry.id) ?? 0) | bits);
 	}
 	return [...flags].map(([id, bits]) => ({ id, flags: bits })).sort((a, b) => a.id - b.id);
+}
+
+function leafEdgesTable(kindEntries: readonly IdEntry[], nodeMap: NodeMap): { readonly id: number; readonly flags: number }[] {
+	const rows = new Map<number, number>();
+	for (const node of nodeMap.nodes.values()) {
+		if (!(node instanceof AssembledLeaf)) continue;
+		const id = findEntryForKindName(kindEntries, node.kind)?.id;
+		const edges = leafEdgesOf(node, nodeMap);
+		if (id !== undefined && edges !== undefined) rows.set(id, edges.leading | (edges.trailing << 8));
+	}
+	return [...rows].map(([id, flags]) => ({ id, flags })).sort((a, b) => a.id - b.id);
 }
 
 export function planRenderOptions(
@@ -230,6 +244,7 @@ export function planRenderOptions(
 			.map(([kind, text]) => ({ id: idOf(kindEntries, kind, 'visibleExternals'), text }))
 			.sort((a, b) => a.id - b.id),
 		kindFlags: kindFlagsOf(kindEntries, nodeMap),
+		leafEdges: leafEdgesTable(kindEntries, nodeMap),
 		indentChars: indentChars(nodeMap),
 		indent: indentUnitOf(nodeMap, declaredIndent, grammar)
 	};
@@ -519,10 +534,10 @@ function siteOrNone(site: number | undefined): string {
 	return site === undefined ? NO_SITE : String(site);
 }
 
-function denseFlags(name: string, rows: readonly { readonly id: number; readonly flags: number }[]): string[] {
+function denseFlags(name: string, rows: readonly { readonly id: number; readonly flags: number }[], cell: 'u8' | 'u16' = 'u8'): string[] {
 	const byId = new Map(rows.map((row) => [row.id, row.flags]));
 	const cells = Array.from({ length: denseWidth(name, byId.keys()) }, (_, id) => String(byId.get(id) ?? 0));
-	const L = [`pub static ${name}: &[u8] = &[`];
+	const L = [`pub static ${name}: &[${cell}] = &[`];
 	for (let i = 0; i < cells.length; i += 32) L.push(`    ${cells.slice(i, i + 32).join(', ')},`);
 	L.push('];', '');
 	return L;
@@ -567,6 +582,8 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push(...denseTable('EDGE_ROWS', new Map(edgeRows.map((e, row) => [e.kind, row]))));
 	L.push('/// Per kind id, its flags: KIND_ANON (the parser\'s anonymous token), KIND_LINE_TERMINATED, KIND_LINE_BREAK_TERMINATED, KIND_ROOT.');
 	L.push(...denseFlags('KIND_FLAGS', plan.kindFlags));
+	L.push('/// Per kind id, the layout kinds its leaf pattern takes before it (low byte) and after it (high byte); 0 where the kind has no stamp.');
+	L.push(...denseFlags('LEAF_EDGES', plan.leafEdges, 'u16').map((line) => line.replace('pub static', 'pub const')));
 	L.push('/// (kind, `<slot>_delimiter` key, allowed bitflag union, default bitflag), in site order.');
 	L.push('pub static DELIMITER_SITES: &[(&str, &str, u8, u8)] = &[');
 	for (const s of plan.delimiterSites) L.push(`    (${q(s.kind)}, ${q(`${s.slot}_delimiter`)}, ${s.allowed}, ${s.defaultBits}),`);
@@ -589,7 +606,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('/// Every layout kind (each `_layout` member, the depth movers among them where the grammar has them), the domain of `spacing_text`.');
 	L.push(`pub const LAYOUT_KINDS: &[u16] = &[${plan.whitespaceText.map((w) => w.id).join(', ')}];`, '');
 	L.push(
-		'pub const WHITESPACE: ::sittir_core::render::WhitespaceTable = ::sittir_core::render::WhitespaceTable { text_of: spacing_text, indent: INDENT_KIND, dedent: DEDENT_KIND };',
+		'pub const WHITESPACE: ::sittir_core::render::WhitespaceTable = ::sittir_core::render::WhitespaceTable { text_of: spacing_text, indent: INDENT_KIND, dedent: DEDENT_KIND, leaf_edges: LEAF_EDGES };',
 		''
 	);
 	L.push('/// Per spacing site, in vector order: the arm its table holds by default and the strength that default carries.');

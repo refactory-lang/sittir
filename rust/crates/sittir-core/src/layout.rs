@@ -276,7 +276,7 @@ mod tests {
                 ""
             }
         }
-        const TABLE: crate::render::WhitespaceTable = crate::render::WhitespaceTable { text_of, indent: 0, dedent: 0 };
+        const TABLE: crate::render::WhitespaceTable = crate::render::WhitespaceTable { text_of, indent: 0, dedent: 0 , leaf_edges: &[]};
         let tight = Some(EdgeArm { arm: TIGHT, strength: Some(SEAM_TRIVIA), dedent: None });
         let edged = |text, edges| MockTransport {
             text,

@@ -11825,7 +11825,7 @@ impl ::sittir_core::render::Render for StringLiteralElementsTransportSlot {
             StringLiteralElementsTransportSlot::EscapeSequenceUnicodeBraced(inner) => { w.adjacent(); inner.render(w) },
             StringLiteralElementsTransportSlot::EscapeSequenceHex(inner) => { w.adjacent(); inner.render(w) },
             StringLiteralElementsTransportSlot::StringContent(inner) => inner.render(w),
-            StringLiteralElementsTransportSlot::Verbatim(inner) => inner.render(w),
+            StringLiteralElementsTransportSlot::Verbatim(inner) => { w.adjacent(); inner.render(w) },
         }
     }
 }
@@ -20920,7 +20920,7 @@ pub struct StringLiteralTransport {
     pub string_open: ::sittir_core::SlotValue<StringOpenTransport>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
-    pub elements: Option<Vec<::sittir_core::SlotValue<StringLiteralElementsTransportSlot>>>,
+    pub elements: Option<Vec<::sittir_core::SlotValue<StringLiteralElementsTransportSlot, true>>>,
 }
 
 impl ::sittir_core::view::KindOf for StringLiteralTransport {
@@ -20969,7 +20969,7 @@ pub struct RawStringLiteralTransport {
     pub raw_string_literal_start: ::sittir_core::SlotValue<RawStringLiteralStartTransport>,
     #[wire(key = "_string_content")]
     #[slot(field = field::STRING_CONTENT)]
-    pub string_content: ::sittir_core::SlotValue<RawStringLiteralContentTransport>,
+    pub string_content: ::sittir_core::SlotValue<RawStringLiteralContentTransport, true>,
     #[wire(key = "_raw_string_literal_end")]
     #[slot(field = field::RAW_STRING_LITERAL_END)]
     pub raw_string_literal_end: ::sittir_core::SlotValue<RawStringLiteralEndTransport, true>,
@@ -22571,7 +22571,7 @@ impl ::sittir_core::options::Edged for TokenRepetitionPatternTextTransport {
 
 impl ::sittir_core::render::Render for TokenRepetitionPatternTextTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(132)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(132)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(132)); w.text(&self.text) })
     }
 }
 
@@ -25301,7 +25301,7 @@ impl ::sittir_core::options::Edged for LineCommentExtraSlashesTransport {
 
 impl ::sittir_core::render::Render for LineCommentExtraSlashesTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(399)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(399)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(399)); w.text(&self.text) })
     }
 }
 
@@ -25425,7 +25425,7 @@ impl ::sittir_core::options::Edged for LineCommentRegularTransport {
 
 impl ::sittir_core::render::Render for LineCommentRegularTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(156)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(156)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(156)); w.text(&self.text) })
     }
 }
 
@@ -25549,7 +25549,7 @@ impl ::sittir_core::options::Edged for BlockCommentRegularTransport {
 
 impl ::sittir_core::render::Render for BlockCommentRegularTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(404)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(404)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(404)); w.text(&self.text) })
     }
 }
 
@@ -27142,7 +27142,7 @@ impl ::sittir_core::options::Edged for StringContentTransport {
 
 impl ::sittir_core::render::Render for StringContentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(158)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(158)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(158)); w.text(&self.text) })
     }
 }
 
@@ -27182,7 +27182,7 @@ impl ::sittir_core::options::Edged for RawStringLiteralContentTransport {
 
 impl ::sittir_core::render::Render for RawStringLiteralContentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(160)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(160)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(160)); w.text(&self.text) })
     }
 }
 
@@ -27312,7 +27312,7 @@ impl ::sittir_core::options::Edged for RawStringLiteralEndTransport {
 
 impl ::sittir_core::render::Render for RawStringLiteralEndTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(161)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(161)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(161)); w.text(&self.text) })
     }
 }
 
@@ -27352,7 +27352,7 @@ impl ::sittir_core::options::Edged for DocCommentTransport {
 
 impl ::sittir_core::render::Render for DocCommentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(166)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(166)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(166)); w.text(&self.text) })
     }
 }
 
@@ -27392,7 +27392,7 @@ impl ::sittir_core::options::Edged for BlockCommentContentTransport {
 
 impl ::sittir_core::render::Render for BlockCommentContentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(165)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(165)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(165)); w.text(&self.text) })
     }
 }
 
@@ -35878,6 +35878,7 @@ fn render_use_wildcard_group(node: &UseWildcardGroupTransport, w: &mut dyn ::sit
 }
 
 fn render_token_repetition_pattern_text(t: &TokenRepetitionPatternTextTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.leaf_kind(::sittir_core::types::KindId(132));
     w.text(&t.text)
 }
 
@@ -36538,6 +36539,7 @@ fn render_match_arm_block_ending(node: &MatchArmBlockEndingTransport, w: &mut dy
 }
 
 fn render_line_comment_extra_slashes(t: &LineCommentExtraSlashesTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.leaf_kind(::sittir_core::types::KindId(399));
     w.text(&t.text)
 }
 
@@ -36556,7 +36558,7 @@ fn render_line_comment_doc_inner(node: &LineCommentDocInnerTransport, w: &mut dy
 }
 
 fn render_line_comment_regular(t: &LineCommentRegularTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.adjacent();
+    w.leaf_kind(::sittir_core::types::KindId(156));
     w.text(&t.text)
 }
 
@@ -36575,7 +36577,7 @@ fn render_block_comment_doc_inner(node: &BlockCommentDocInnerTransport, w: &mut 
 }
 
 fn render_block_comment_regular(t: &BlockCommentRegularTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.adjacent();
+    w.leaf_kind(::sittir_core::types::KindId(404));
     w.text(&t.text)
 }
 
@@ -37120,10 +37122,12 @@ fn render_float_literal(t: &FloatLiteralTransport, w: &mut dyn ::sittir_core::re
 }
 
 fn render_string_content(t: &StringContentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.leaf_kind(::sittir_core::types::KindId(158));
     w.text(&t.text)
 }
 
 fn render_raw_string_literal_content(t: &RawStringLiteralContentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.leaf_kind(::sittir_core::types::KindId(160));
     w.text(&t.text)
 }
 
@@ -37132,17 +37136,17 @@ fn render_raw_string_literal_start(t: &RawStringLiteralStartTransport, w: &mut d
 }
 
 fn render_raw_string_literal_end(t: &RawStringLiteralEndTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.adjacent();
+    w.leaf_kind(::sittir_core::types::KindId(161));
     w.text(&t.text)
 }
 
 fn render_doc_comment(t: &DocCommentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.adjacent();
+    w.leaf_kind(::sittir_core::types::KindId(166));
     w.text(&t.text)
 }
 
 fn render_block_comment_content(t: &BlockCommentContentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.adjacent();
+    w.leaf_kind(::sittir_core::types::KindId(165));
     w.text(&t.text)
 }
 

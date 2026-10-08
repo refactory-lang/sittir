@@ -21287,7 +21287,7 @@ impl ::sittir_core::options::Edged for UnescapedDoubleStringFragmentTransport {
 
 impl ::sittir_core::render::Render for UnescapedDoubleStringFragmentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(109)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(109)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(109)); w.text(&self.text) })
     }
 }
 
@@ -21327,7 +21327,7 @@ impl ::sittir_core::options::Edged for UnescapedSingleStringFragmentTransport {
 
 impl ::sittir_core::render::Render for UnescapedSingleStringFragmentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(110)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(110)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(110)); w.text(&self.text) })
     }
 }
 
@@ -21548,7 +21548,7 @@ impl ::sittir_core::options::Edged for RegexPatternTransport {
 
 impl ::sittir_core::render::Render for RegexPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(116)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(116)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(116)); w.text(&self.text) })
     }
 }
 
@@ -21588,7 +21588,7 @@ impl ::sittir_core::options::Edged for RegexFlagsTransport {
 
 impl ::sittir_core::render::Render for RegexFlagsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(117)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(117)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(117)); w.text(&self.text) })
     }
 }
 
@@ -29821,7 +29821,7 @@ impl ::sittir_core::options::Edged for JsxTextTransport {
 
 impl ::sittir_core::render::Render for JsxTextTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(177)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(177)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(177)); w.text(&self.text) })
     }
 }
 
@@ -29861,7 +29861,7 @@ impl ::sittir_core::options::Edged for TemplateCharsTransport {
 
 impl ::sittir_core::render::Render for TemplateCharsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(174)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(174)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(174)); w.text(&self.text) })
     }
 }
 
@@ -37413,12 +37413,12 @@ fn render_sequence_expression(node: &SequenceExpressionTransport, w: &mut dyn ::
 }
 
 fn render_unescaped_double_string_fragment(t: &UnescapedDoubleStringFragmentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.adjacent();
+    w.leaf_kind(::sittir_core::types::KindId(109));
     w.text(&t.text)
 }
 
 fn render_unescaped_single_string_fragment(t: &UnescapedSingleStringFragmentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.adjacent();
+    w.leaf_kind(::sittir_core::types::KindId(110));
     w.text(&t.text)
 }
 
@@ -37474,12 +37474,12 @@ fn render_regex(node: &RegexTransport, w: &mut dyn ::sittir_core::render::Render
 }
 
 fn render_regex_pattern(t: &RegexPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.adjacent();
+    w.leaf_kind(::sittir_core::types::KindId(116));
     w.text(&t.text)
 }
 
 fn render_regex_flags(t: &RegexFlagsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.adjacent();
+    w.leaf_kind(::sittir_core::types::KindId(117));
     w.text(&t.text)
 }
 
@@ -39893,11 +39893,12 @@ fn render_html_comment(t: &HtmlCommentTransport, w: &mut dyn ::sittir_core::rend
 }
 
 fn render_jsx_text(t: &JsxTextTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.leaf_kind(::sittir_core::types::KindId(177));
     w.text(&t.text)
 }
 
 fn render_template_chars(t: &TemplateCharsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.adjacent();
+    w.leaf_kind(::sittir_core::types::KindId(174));
     w.text(&t.text)
 }
 

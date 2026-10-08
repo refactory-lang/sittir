@@ -20,6 +20,8 @@
 //! Wrap the destination ONCE at the root render call. Wrapping per
 //! nesting level instead monomorphizes recursive render paths into an
 //! infinitely growing wrapper type (E0275) — don't.
+use crate::layout_kinds::LayoutKinds;
+
 
 /// Per-grammar word-character class. An ASCII table plus a fallback for
 /// `char >= 0x80` (Unicode identifiers). A full regex engine is not needed
@@ -163,6 +165,9 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     deferring: Option<String>,
     deferred: Vec<DeferredRun>,
     line_end_held: Option<crate::render::LineHold>,
+    leaf_trailing: Option<u8>,
+    leaf_lexed: bool,
+    trailing_accepts: u8,
 }
 
 /// A trailing run rendered ahead of where it is written: its text, and the
@@ -214,6 +219,9 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             deferring: None,
             deferred: Vec::new(),
             line_end_held: None,
+            leaf_trailing: None,
+            leaf_lexed: false,
+            trailing_accepts: LayoutKinds::ALL.0,
         }
     }
 
@@ -380,6 +388,20 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         Ok(())
     }
 
+    /// The text just written closes a leaf: layout after it must be a kind
+    /// its trailing edge takes. A line break that ends the leaf's own text
+    /// is content, owing the next text no indentation, when the trailing edge
+    /// takes no line break or the leaf takes no layout before it (a piece of
+    /// lexed content such as a string fragment).
+    fn end_leaf(&mut self) {
+        let trailing = self.leaf_trailing.take().unwrap_or(LayoutKinds::ALL.0);
+        let lexed = std::mem::replace(&mut self.leaf_lexed, false);
+        self.trailing_accepts = trailing;
+        if lexed || !LayoutKinds(trailing).has(LayoutKinds::NEWLINE) {
+            self.indent_pending = false;
+        }
+    }
+
     /// Writes a held seam payload, if any, as ordinary text and clears the
     /// held rank. The payload's own buffer is kept (not dropped) so a
     /// following seam has a ready allocation to merge into.
@@ -398,7 +420,8 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         // is untouched (`literal_whitespace_is_never_coalesced`) because
         // this only ever drops a *seam's own* payload, never text.
         let redundant = self.last.is_none() || (rank == 1 && self.last == Some('\n'));
-        if !token && !root && redundant {
+        let refused = !token && !root && !LayoutKinds(self.trailing_accepts).has(LayoutKinds::of_text(&self.seam_text));
+        if !token && !root && (redundant || refused) {
             self.seam_text.clear();
             return Ok(());
         }
@@ -560,11 +583,37 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
 impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_, W> {
     fn text(&mut self, s: &str) -> crate::render::RenderResult {
         self.write_chunk(s)?;
+        if !s.is_empty() {
+            self.end_leaf();
+        }
         Ok(())
+    }
+
+    fn leaf_kind(&mut self, kind: crate::types::KindId) {
+        if let Some((leading, trailing)) = self.table.and_then(|table| table.leaf_edges_of(kind)) {
+            self.leaf_edges(leading, trailing);
+        }
     }
 
     fn adjacent(&mut self) {
         self.adjacent_next = true;
+    }
+
+    /// The next text is a leaf whose pattern takes layout text only of the
+    /// kinds in `leading` before it and `trailing` after it. A held seam of
+    /// another kind is not written; the word-collision space is a space, so
+    /// it is written only where the leading edge takes one.
+    fn leaf_edges(&mut self, leading: u8, trailing: u8) {
+        let leading = LayoutKinds(leading);
+        self.adjacent_next = !leading.has(LayoutKinds::SPACE);
+        if !self.seam_is_token && !self.seam_is_root && !self.seam_is_flank && self.seam.is_some()
+            && !leading.has(LayoutKinds::of_text(&self.seam_text))
+        {
+            self.seam = None;
+            self.seam_text.clear();
+        }
+        self.leaf_trailing = Some(trailing);
+        self.leaf_lexed = leading.0 & !LayoutKinds::TIGHT.0 == 0;
     }
 
     /// A site's arm: 0 is no arm — nothing is written and nothing changes —
@@ -671,7 +720,11 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         if !token {
             self.write_deferred(text)?;
         }
+        if let Some(kind) = crate::render::RenderSink::kind_of(self, coord) {
+            crate::render::RenderSink::leaf_kind(self, kind);
+        }
         self.write_chunk(text)?;
+        self.end_leaf();
         Ok(())
     }
 
@@ -949,7 +1002,7 @@ mod sink_tests {
     const TABLE: WhitespaceTable = WhitespaceTable {
         text_of,
         indent: INDENT,
-        dedent: DEDENT,
+        dedent: DEDENT, leaf_edges: &[]
     };
 
     fn run(f: impl FnOnce(&mut SpacingWriter<'_, String>)) -> String {
@@ -1360,7 +1413,7 @@ mod strength_tests {
             _ => "",
         }
     }
-    const TABLE: WhitespaceTable = WhitespaceTable { text_of, indent: 0, dedent: 0 };
+    const TABLE: WhitespaceTable = WhitespaceTable { text_of, indent: 0, dedent: 0 , leaf_edges: &[]};
 
     fn render(f: impl FnOnce(&mut SpacingWriter<'_, String>)) -> String {
         let mut out = String::new();

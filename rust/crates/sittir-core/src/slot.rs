@@ -524,7 +524,7 @@ mod tests {
         const EDGE_TABLE: WhitespaceTable = WhitespaceTable {
             text_of,
             indent: 0,
-            dedent: 0,
+            dedent: 0, leaf_edges: &[]
         };
         static EDGES: [EdgeSite; 1] = [EdgeSite { before: 0, after: NO_SITE, before_arms: &[], after_arms: &[] }];
         static EDGE_ROWS: [u16; 10] = [NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 0];
@@ -667,7 +667,7 @@ mod tests {
     const TABLE: WhitespaceTable = WhitespaceTable {
         text_of,
         indent: 0,
-        dedent: 0,
+        dedent: 0, leaf_edges: &[]
     };
 
     fn rendered(value: &dyn Render) -> String {

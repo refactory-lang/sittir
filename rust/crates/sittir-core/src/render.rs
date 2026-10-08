@@ -47,6 +47,16 @@ pub struct WhitespaceTable {
     pub text_of: fn(u16) -> &'static str,
     pub indent: u16,
     pub dedent: u16,
+    /// Per kind id, the layout kinds its leaf pattern takes before it (low
+    /// byte) and after it (high byte); 0 for a kind with no stamp.
+    pub leaf_edges: &'static [u16],
+}
+
+impl WhitespaceTable {
+    /// The layout kinds a leaf of `kind` takes before and after it, when it is stamped.
+    pub fn leaf_edges_of(&self, kind: KindId) -> Option<(u8, u8)> {
+        self.leaf_edges.get(kind.0 as usize).copied().filter(|packed| *packed != 0).map(|packed| (packed as u8, (packed >> 8) as u8))
+    }
 }
 
 /// The live trees a render may slice, keyed by the tag a handle carries.
@@ -127,6 +137,19 @@ pub enum LineHold {
 pub trait RenderSink {
     fn text(&mut self, s: &str) -> RenderResult;
     fn adjacent(&mut self);
+    /// The next text is a leaf whose pattern takes layout text only of the
+    /// `LayoutKinds` bits in `leading` before it and `trailing` after it.
+    /// The next text is a leaf of `kind`: its edge stamp, when it carries one
+    /// (`ResolvedOptions::leaf_edges_of`), applies as `leaf_edges` does.
+    fn leaf_kind(&mut self, kind: KindId) {
+        let _ = kind;
+    }
+    fn leaf_edges(&mut self, leading: u8, trailing: u8) {
+        let _ = trailing;
+        if leading & crate::layout_kinds::LayoutKinds::SPACE.0 == 0 {
+            self.adjacent();
+        }
+    }
     fn site(&mut self, kind: u16);
     /// A site's arm with the strength its table row gives it; `site` is the
     /// declared-strength form. The default keeps a sink that knows nothing of

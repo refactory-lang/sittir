@@ -2029,7 +2029,7 @@ impl ::sittir_core::options::Edged for ClassCharacterTransport {
 
 impl ::sittir_core::render::Render for ClassCharacterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(20)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(20)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(20)); w.text(&self.text) })
     }
 }
 
@@ -4403,6 +4403,7 @@ fn render_class_range(node: &ClassRangeTransport, w: &mut dyn ::sittir_core::ren
 }
 
 fn render_class_character(t: &ClassCharacterTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.leaf_kind(::sittir_core::types::KindId(20));
     w.text(&t.text)
 }
 
