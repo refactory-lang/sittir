@@ -108,7 +108,7 @@ fn apply_trivia(s: &str, format: &FormatRecord) -> String {
     };
     // Sort descending by offset so earlier positions are not invalidated.
     let mut sorted: Vec<&FormatTrivia> = trivia.iter().collect();
-    sorted.sort_by(|a, b| b.offset.cmp(&a.offset));
+    sorted.sort_by_key(|item| std::cmp::Reverse(item.offset));
 
     let mut result = s.to_string();
     for item in sorted {

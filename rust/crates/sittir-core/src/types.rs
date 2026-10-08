@@ -684,6 +684,10 @@ impl<'de> Deserialize<'de> for FieldValue {
 
 #[derive(Deserialize)]
 #[serde(untagged)]
+#[allow(
+    clippy::large_enum_variant,
+    reason = "Transient legacy deserialization: boxing adds an allocation immediately discarded by its consumers"
+)]
 enum FieldValueItem {
     Node(UntypedNode),
     Text(String),

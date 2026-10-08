@@ -894,11 +894,12 @@ function buildTypedTemplateBody(
 			continue;
 		}
 		if (f.view === 'list' || f.multiple) {
-			const items = !f.hasTransportField
+			const itemValue = !f.hasTransportField
 				? 'NO_ITEMS'
 				: f.required
-					? `&node.${rIdent}`
+					? `node.${rIdent}`
 					: `node.${rIdent}.as_deref().unwrap_or(&[])`;
+			const items = f.hasTransportField && f.required ? `&${itemValue}` : itemValue;
 			const fieldSepLiteral = f.separator !== undefined ? JSON.stringify(f.separator) : sepLiteral;
 			const separatedList = node instanceof AssembledList ? node : undefined;
 			const leadingExpr =
@@ -914,7 +915,7 @@ function buildTypedTemplateBody(
 						? 'true'
 						: 'false';
 			const trailingExpr = separatedList?.singleElementNeedsTrailing
-				? `(${items}).len() == 1 || ${trailingOption}`
+				? `${itemValue}.len() == 1 || ${trailingOption}`
 				: trailingOption;
 			const separatorSite = separatedList === undefined ? undefined : separatorSiteOf(plan, separatedList);
 			const fallback =
@@ -1366,6 +1367,9 @@ function commonRustUseImports(): string {
 	const lines: string[] = [];
 	lines.push(
 		'#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]'
+	);
+	lines.push(
+		'#![allow(clippy::large_enum_variant, reason = "Choice payload sizes are checked by the generated pinned ceiling assertions")]'
 	);
 	lines.push('');
 	lines.push('use ::sittir_core::view::{KindOf, KindTest, View, ListView, NO_ITEMS};');

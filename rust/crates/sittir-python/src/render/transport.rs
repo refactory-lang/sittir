@@ -6,6 +6,7 @@
 // bridge helpers.
 
 #![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]
+#![allow(clippy::large_enum_variant, reason = "Choice payload sizes are checked by the generated pinned ceiling assertions")]
 
 use ::sittir_core::view::{KindOf, KindTest, View, ListView, NO_ITEMS};
 use ::sittir_core::render::Render;
@@ -22908,7 +22909,7 @@ fn render_expression_list(node: &ExpressionListTransport, w: &mut dyn ::sittir_c
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
-        trailing: (&node.item).len() == 1 || node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        trailing: node.item.len() == 1 || node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         head: None,
         tail: None,
     };
@@ -23300,7 +23301,7 @@ fn render_pattern_list(node: &PatternListTransport, w: &mut dyn ::sittir_core::r
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
-        trailing: (&node.item).len() == 1 || node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        trailing: node.item.len() == 1 || node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         head: None,
         tail: None,
     };
@@ -23982,7 +23983,7 @@ fn render_tuple_pattern_elements(node: &TuplePatternElementsTransport, w: &mut d
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
-        trailing: (&node.item).len() == 1 || node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        trailing: node.item.len() == 1 || node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         head: None,
         tail: None,
     };
@@ -23998,7 +23999,7 @@ fn render_tuple_elements(node: &TupleElementsTransport, w: &mut dyn ::sittir_cor
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
-        trailing: (&node.item).len() == 1 || node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        trailing: node.item.len() == 1 || node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         head: None,
         tail: None,
     };
