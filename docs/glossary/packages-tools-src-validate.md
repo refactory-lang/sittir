@@ -765,27 +765,9 @@ The upstream `tree-sitter-<grammar>` package's own wasm, resolved from the gramm
 
 A native node is a kind when its `$type` or its shown kind id (`$displayType` when present) names it; numeric ids resolve through the grammar's `kindNameFromId`.
 
-### `packages/tools/src/validate/common.ts::grammarModulePath`
-
-The absolute path of a generated file under a discovered grammar's
-`packages/<grammar>/src/` (`wrap.ts`, `types.ts`, `ir.ts`,
-`node-model.json5`, `factories/raw.ts`, `factories/coerce.ts`), or
-`undefined` when the name is not a grammar or the file has not been
-generated. Every validator loads a grammar's generated modules through it,
-so a newly bootstrapped grammar validates by name with no list to extend.
-
-### `packages/tools/src/validate/common.ts::importGrammarModule`
-
-Imports a grammar's generated module (`grammarModulePath`) through its
-`file://` URL (`pathToFileURL`), the form ESM `import()` accepts on every
-platform, and returns `undefined` when the file is absent so each caller
-keeps its own missing-module behaviour. The only way the validators and
-`emit-factory-source` import generated modules; `node-model.json5` is data
-and is read with `readFileSync` on the path.
-
 ### `packages/tools/src/validate/common.ts::wrapExportOf`
 
-One export of a grammar's generated wrap module, loaded by dynamic import: `readNode`, `wrapNode` or `hydrateChild`. A module that fails to load is reported on stderr and yields null, as does a missing export.
+One export of a grammar's generated wrap module, loaded through the typed internal loader: `readNode`, `wrapNode` or `hydrateChild`. The selected export determines the return type. A module that fails to load is reported on stderr and yields null, as does a missing export.
 
 ### `packages/tools/src/validate/common.ts::hydrateChildOf`
 
@@ -1886,3 +1868,15 @@ The grammar's raw factory map with every builder run inside the validators' nati
 ### `packages/tools/src/validate/common.ts::loadReparseHosts`
 
 Loads the grammar's generated `reparse-hosts.ts` once; `wrapForReparse` reads it.
+
+### `packages/tools/src/validate/factory-storage.ts::loadFactoryKindNameFromId`
+
+Loads canonical `KIND_NAMES` for factory dispatch, preserving distinct wrap identities that can share a parser display label (Python `block` and `_match_block`, for example). A thrown types-module import is logged and returned as an `importFailure`; silently continuing without a resolver would reject every candidate and report an empty 0/0 success.
+
+### `packages/tools/src/validate/factory-storage.ts::loadFactoryModuleForGrammar`
+
+Loads the generated raw factory map through the typed internal loader, scopes builders to the existing engine, then reads validator-only calling conventions and slot metadata from the pure-data node model. It returns partial artifacts and an import-failure record if loading throws; absent optional artifacts retain the existing empty result. Canonical factory identity loading uses `loadFactoryKindNameFromId` so types-module failures stay visible to the validator.
+
+### `packages/tools/src/validate/factory-storage.ts::buildFactoryUntypedNode`
+
+Dispatches materialized reference data through the existing factory calling convention, using the walked source kind so alias-source factories preserve their declared identities. Slot metadata, field aliases and CST hints pass through to `buildFactoryNodeFromReference`. A missing factory returns null; a thrown factory records the kind, corpus entry and source in the errors list and returns null so comparison can be skipped.

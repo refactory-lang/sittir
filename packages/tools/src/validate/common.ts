@@ -1,7 +1,7 @@
 import { nativeShownKindId } from './shown-kind.ts';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
 import {
 	NO_REPARSE_HOSTS,
 	applyHost,
@@ -15,7 +15,16 @@ import {
 	type ReparseHosts
 } from '@sittir/common';
 import { inEngine, type EngineHandle } from '@sittir/common/utils';
-import { carryRead, carrySource, holdTree, readDerivedSides, readTrivia, spanOf, treeTokenOf, type TriviaView } from '@sittir/common/utils';
+import {
+	carryRead,
+	carrySource,
+	holdTree,
+	readDerivedSides,
+	readTrivia,
+	spanOf,
+	treeTokenOf,
+	type TriviaView
+} from '@sittir/common/utils';
 import {
 	isStub,
 	readUntypedNode,
@@ -34,6 +43,13 @@ import type { TriviaSides } from '@sittir/common';
 import type { TreeHandle } from '@sittir/common/utils';
 import { load } from '../codegen-surface.ts';
 import { languageByName } from '../languages.ts';
+import {
+	grammarModulePath,
+	importGrammarModule,
+	type FactoryEntry,
+	type GrammarModules,
+	type HydrateChild
+} from '../grammar-internals.ts';
 import { grammarPackageDir, grammarRequire, isGrammar, upstreamPackage } from '@sittir/codegen/grammars';
 import { CORPUS_ROOT, localCorpusPath, upstreamCorpusDir } from '../corpus/layout.ts';
 import type {
@@ -111,17 +127,6 @@ export function parseCorpus(content: string, grammar?: string): CorpusEntry[] {
 		entries.push({ name: nameLine.trim(), source });
 	});
 	return entries;
-}
-
-export function grammarModulePath(grammar: string, file: string): string | undefined {
-	if (!isGrammar(grammar)) return undefined;
-	const path = join(grammarPackageDir(grammar), 'src', file);
-	return existsSync(path) ? path : undefined;
-}
-
-export async function importGrammarModule(grammar: string, file: string): Promise<Record<string, any> | undefined> {
-	const path = grammarModulePath(grammar, file);
-	return path === undefined ? undefined : ((await import(pathToFileURL(path).href)) as Record<string, any>);
 }
 
 export function loadCorpusEntries(grammar: string): CorpusEntry[] {
@@ -292,7 +297,11 @@ export async function buildReadHandle(
 	return treeHandle(tree, source, kindIdFromName);
 }
 
-export function readUntypedNodeAt(handle: TreeHandle, node: AnyTreeNode, nativeCoords: NativeNodeCoords | null): AnyUntypedNode {
+export function readUntypedNodeAt(
+	handle: TreeHandle,
+	node: AnyTreeNode,
+	nativeCoords: NativeNodeCoords | null
+): AnyUntypedNode {
 	if (nativeCoords && handle.read) {
 		if (nativeCoords.embeddedData !== undefined) {
 			return nativeCoords.embeddedData;
@@ -519,7 +528,7 @@ const reparseHostsCache = new Map<string, ReparseHosts>();
 export async function loadReparseHosts(grammar: string): Promise<ReparseHosts> {
 	const cached = reparseHostsCache.get(grammar);
 	if (cached !== undefined) return cached;
-	const loaded = ((await importGrammarModule(grammar, 'reparse-hosts.ts'))?.REPARSE_HOSTS as ReparseHosts | undefined) ?? NO_REPARSE_HOSTS;
+	const loaded = (await importGrammarModule(grammar, 'reparse-hosts.ts'))?.REPARSE_HOSTS ?? NO_REPARSE_HOSTS;
 	reparseHostsCache.set(grammar, loaded);
 	return loaded;
 }
@@ -532,7 +541,8 @@ export function wrapForReparse(
 	opts?: HostOptions
 ): WrapForReparseResult | null {
 	const hosts = reparseHostsCache.get(grammar);
-	if (hosts === undefined) throw new Error(`reparse hosts for '${grammar}' are not loaded; await loadReparseHosts('${grammar}') first`);
+	if (hosts === undefined)
+		throw new Error(`reparse hosts for '${grammar}' are not loaded; await loadReparseHosts('${grammar}') first`);
 	const template = hostTemplateFor(kind, hosts, kindToSupertypes, opts);
 	return template === undefined ? null : applyHost(template, rendered);
 }
@@ -547,11 +557,14 @@ export function upstreamWasmPath(grammar: string): string | undefined {
 	}
 }
 
-async function wrapExportOf<F>(grammar: string, name: 'readNode' | 'wrapNode' | 'hydrateChild'): Promise<F | null> {
+async function wrapExportOf<K extends keyof GrammarModules['wrap.ts']>(
+	grammar: string,
+	name: K
+): Promise<GrammarModules['wrap.ts'][K] | null> {
 	try {
 		const mod = await importGrammarModule(grammar, 'wrap.ts');
 		if (!mod) return null;
-		return (mod[name] as F | undefined) ?? null;
+		return mod[name] ?? null;
 	} catch (e) {
 		console.error(`[validators] failed to load wrap module for ${grammar}: ${(e as Error).message}`);
 		return null;
@@ -813,10 +826,7 @@ export function walkWrappedTree(
 	recurse(root);
 }
 
-export function materialize(
-	root: unknown,
-	onAccessorThrow?: (rec: AccessorThrowRecord) => void
-): AnyUntypedNode {
+export function materialize(root: unknown, onAccessorThrow?: (rec: AccessorThrowRecord) => void): AnyUntypedNode {
 	return materializeValue(root, onAccessorThrow) as AnyUntypedNode;
 }
 
@@ -965,7 +975,8 @@ export function factoryScope(grammar: string): Promise<EngineHandle> {
 
 export function scopedBuilders<T extends object>(value: T, scope: EngineHandle): T {
 	return new Proxy(value, {
-		apply: (target, self, args) => inEngine(scope, () => Reflect.apply(target as unknown as (...a: unknown[]) => unknown, self, args)),
+		apply: (target, self, args) =>
+			inEngine(scope, () => Reflect.apply(target as unknown as (...a: unknown[]) => unknown, self, args)),
 		get: (target, key, receiver) => {
 			const member = Reflect.get(target, key, receiver);
 			return typeof member === 'function' || (typeof member === 'object' && member !== null && key !== 'prototype')
@@ -980,7 +991,7 @@ export async function loadScopedFactoryMap<T extends Record<string, unknown>>(gr
 }
 
 export async function loadIrSurface(grammar: string): Promise<IrSurface | undefined> {
-	const mod = (await importGrammarModule(grammar, 'ir.ts')) as { ir?: Record<string, unknown> } | undefined;
+	const mod = await importGrammarModule(grammar, 'ir.ts');
 	if (mod?.ir === undefined) return undefined;
 	const model = await loadNodeModel(grammar);
 	const entries: Record<string, IrEntry> = {};
@@ -996,7 +1007,7 @@ export async function loadKindNames(grammar: string): Promise<ReadonlyMap<number
 	try {
 		const typesModule = await importGrammarModule(grammar, 'types.ts');
 		if (!typesModule) return undefined;
-		return typesModule.KIND_DISPLAY_NAMES as ReadonlyMap<number, string> | undefined;
+		return typesModule.KIND_DISPLAY_NAMES;
 	} catch {
 		return undefined;
 	}
@@ -1008,7 +1019,7 @@ export async function loadStorageKindNameFromId(
 	try {
 		const typesModule = await importGrammarModule(grammar, 'types.ts');
 		if (!typesModule) return undefined;
-		const kindNames = typesModule.KIND_NAMES as ReadonlyMap<number, string> | undefined;
+		const kindNames = typesModule.KIND_NAMES;
 		return kindNames ? (id: number) => kindNames.get(id) : undefined;
 	} catch {
 		return undefined;
@@ -1029,11 +1040,11 @@ export async function loadKindNameFromId(grammar: string): Promise<((id: number)
 	try {
 		const typesModule = await importGrammarModule(grammar, 'types.ts');
 		if (!typesModule) return undefined;
-		const kindNames = typesModule.KIND_DISPLAY_NAMES as ReadonlyMap<number, string> | undefined;
+		const kindNames = typesModule.KIND_DISPLAY_NAMES;
 		if (kindNames) {
 			return (id: number) => kindNames.get(id);
 		}
-		const rawFn = typesModule.kindNameFromId as ((id: number) => string) | undefined;
+		const rawFn = typesModule.kindNameFromId;
 		if (!rawFn) return undefined;
 		return (id: number) => {
 			try {
@@ -1053,7 +1064,7 @@ export async function loadCanonicalKindNameFromId(
 	try {
 		const typesModule = await importGrammarModule(grammar, 'types.ts');
 		if (!typesModule) return undefined;
-		const kindNames = typesModule.KIND_NAMES as ReadonlyMap<number, string> | undefined;
+		const kindNames = typesModule.KIND_NAMES;
 		if (!kindNames) return undefined;
 		return (id: number) => kindNames.get(id);
 	} catch {
@@ -1065,7 +1076,7 @@ export async function loadKindIdFromName(grammar: string): Promise<((name: strin
 	try {
 		const typesModule = await importGrammarModule(grammar, 'types.ts');
 		if (!typesModule) return undefined;
-		return typesModule.kindIdFromName as ((name: string) => number) | undefined;
+		return typesModule.kindIdFromName;
 	} catch {
 		return undefined;
 	}
@@ -1088,14 +1099,13 @@ export async function loadLanguageForGrammar(grammar: string): Promise<{
 	}
 
 	const baseWasm = upstreamWasmPath(grammar);
-	if (baseWasm === undefined) throw new Error(`no parser wasm for grammar '${grammar}': neither .sittir/parser.wasm nor an upstream package`);
+	if (baseWasm === undefined)
+		throw new Error(`no parser wasm for grammar '${grammar}': neither .sittir/parser.wasm nor an upstream package`);
 	const lang = await Language.load(baseWasm);
 	return { Parser, Language, lang, isOverride: false };
 }
 
-export type FactoryEntry = ((...args: any[]) => unknown) | number | object;
-
-export type HydrateChild = (entry: unknown, tree: TreeHandle) => unknown;
+export type { FactoryEntry, HydrateChild } from '../grammar-internals.ts';
 
 export interface NodeToConfigOpts {
 	readonly shownKind?: string;
@@ -1346,7 +1356,9 @@ function projectArmSlot(
 		return setRoute(seat.mount, undefined);
 	const childShape = opts.factoryShapes?.[seat.kind] ?? 'config';
 	if (typeof value === 'string' || modelType === 'pattern' || childShape === 'text') {
-		const args = [typeof value === 'string' ? value : readNodeText(hydrateForConfig(value as ReadNodeLike, opts), opts)];
+		const args = [
+			typeof value === 'string' ? value : readNodeText(hydrateForConfig(value as ReadNodeLike, opts), opts)
+		];
 		out[key] = args;
 		return setRoute(seat.mount, args);
 	}
@@ -2009,7 +2021,8 @@ export function buildFactoryNodeFromReference(
 	artifacts: FactoryDispatchArtifacts,
 	opts: FactoryDispatchOpts = {}
 ): unknown | null {
-	const { factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, surface, omitOptionDefaults } = artifacts;
+	const { factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, surface, omitOptionDefaults } =
+		artifacts;
 	const factory = factoryMap[kind];
 	if (!factory) return null;
 	const configOpts = {

@@ -14,6 +14,7 @@ import { sliceSpan } from '@sittir/common';
 import { hydrateStub, isStub, spanOf } from '@sittir/common/utils';
 import type { TokenInterior, TreeHandle } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
+import { importGrammarModule, requireGrammarModule, type GrammarModules } from '../grammar-internals.ts';
 import {
 	loadStorageKindNameFromId,
 	separatedListFactoryOptions,
@@ -29,7 +30,6 @@ import {
 	collectKinds,
 	emitValidatorMetrics,
 	getChildFactoryArgs,
-	importGrammarModule,
 	nodeToConfig,
 	loadNodeModel,
 	loadScopedFactoryMap,
@@ -188,12 +188,6 @@ export interface FromValidationResult {
 	trivia: ValidatorSkip[];
 }
 
-async function importGenerated(grammar: string, file: string): Promise<Record<string, any>> {
-	const mod = await importGrammarModule(grammar, file);
-	if (mod === undefined) throw new Error(`grammar '${grammar}' has no generated src/${file}`);
-	return mod;
-}
-
 function insideExtra(node: TSNode | null): boolean {
 	return node !== null && (node.isExtra || insideExtra(node.parent));
 }
@@ -215,9 +209,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	// readUntypedNode's resolveKindId falls back to the zero sentinel instead of
 	// propagating a TypeError for form kinds not in the numeric catalog.
 	const rawKindIdFromName = await loadKindIdFromName(grammar);
-	const tokenInteriors = (await importGrammarModule(grammar, 'consts.ts'))?.TOKEN_INTERIORS as
-		| Readonly<Record<string, TokenInterior>>
-		| undefined;
+	const tokenInteriors = (await importGrammarModule(grammar, 'consts.ts'))?.TOKEN_INTERIORS;
 	const interiorOf = (kind: string): TokenInterior | undefined => tokenInteriors?.[kind];
 	const kindIdFromName = rawKindIdFromName
 		? (name: string): number | undefined => {
@@ -242,11 +234,11 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	let factoryFields: Record<string, readonly string[]> = {};
 	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
-	let readNode: ((tree: unknown, handle?: number, childIndex?: number) => unknown) | undefined;
-	let wrapNode: ((data: AnyUntypedNode, tree: unknown) => unknown) | undefined;
+	let readNode: GrammarModules['wrap.ts']['readNode'] | undefined;
+	let wrapNode: GrammarModules['wrap.ts']['wrapNode'] | undefined;
 	const errors: FromValidationError[] = [];
 	try {
-		const fromModule = await importGenerated(grammar, 'factories/coerce.ts');
+		const fromModule = await requireGrammarModule(grammar, 'factories/coerce.ts');
 		fromMap = fromModule._fromMap ?? {};
 	} catch (e) {
 		errors.push({
@@ -256,7 +248,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 		});
 	}
 	try {
-		const factoryModule = await importGenerated(grammar, 'factories/raw.ts');
+		const factoryModule = await requireGrammarModule(grammar, 'factories/raw.ts');
 		factoryMap = factoryModule._factoryMap ?? {};
 		// Validator-only metadata (shapes, field-alias, factoryFields,
 		// factorySlots) lives in node-model.json5.
@@ -273,7 +265,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 		});
 	}
 	try {
-		const wrapModule = await importGenerated(grammar, 'wrap.ts');
+		const wrapModule = await requireGrammarModule(grammar, 'wrap.ts');
 		readNode = wrapModule.readNode;
 		wrapNode = wrapModule.wrapNode;
 	} catch {
@@ -326,7 +318,8 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 					leafShape === 'constant'
 						? (factoryMap[kind] as AnyUntypedNode)
 						: (factoryMap[kind]! as (t: string) => AnyUntypedNode)(text);
-				const diffs = kindIdDiffs(fromResult, factoryResult) ?? structuralDiff(fromResult, factoryResult, kindNameFromId);
+				const diffs =
+					kindIdDiffs(fromResult, factoryResult) ?? structuralDiff(fromResult, factoryResult, kindNameFromId);
 				if (diffs.length > 0) {
 					divergentCount++;
 					errors.push({
@@ -461,7 +454,10 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 				readTypeName !== undefined && readTypeName in fromMap && readTypeName in factoryMap ? readTypeName : kind;
 			const readKindId = kindIdFromName?.(readKind);
 			const aliasRead =
-				typeof readData.$text === 'string' && typeof readData.$type === 'number' && readKindId !== undefined && readData.$type !== readKindId;
+				typeof readData.$text === 'string' &&
+				typeof readData.$type === 'number' &&
+				readKindId !== undefined &&
+				readData.$type !== readKindId;
 			try {
 				if (aliasRead && fromMap[readKind]!(readData) !== readData) {
 					errors.push({

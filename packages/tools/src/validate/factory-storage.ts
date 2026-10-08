@@ -24,6 +24,7 @@ import type { AnyUntypedNode } from '@sittir/types';
 import { sourceOf, spanOf } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { load } from '../codegen-surface.ts';
+import { importGrammarModule, type FactoryEntry } from '../grammar-internals.ts';
 import { deriveRuleKinds } from './render-bodies.ts';
 
 const { loadRawEntries } = await load('nodeTypesLoader');
@@ -46,7 +47,6 @@ import {
 	buildFactoryNodeFromReference,
 	wrapForReparse,
 	loadScopedFactoryMap,
-	importGrammarModule,
 	loadNativeEngine
 } from './common.ts';
 import { nativeShownKindId } from './shown-kind.ts';
@@ -117,7 +117,17 @@ function namedChildKinds(node: TSNode): string[] {
  * independently-constructed factory node and the node a real parse+read
  * produced. Never part of the structural comparison.
  */
-const IGNORED_NODE_KEYS = new Set(['$handle', '$parentHandle', '$treeHandle', '$childIndex', '$span', '$source', '$named', '$with', '$variant']);
+const IGNORED_NODE_KEYS = new Set([
+	'$handle',
+	'$parentHandle',
+	'$treeHandle',
+	'$childIndex',
+	'$span',
+	'$source',
+	'$named',
+	'$with',
+	'$variant'
+]);
 
 function isComparableNode(v: unknown): v is Record<string, unknown> {
 	return typeof v === 'object' && v !== null && '$type' in (v as Record<string, unknown>);
@@ -304,21 +314,35 @@ export interface FactoryStorageResult {
 	render: BuiltRenderResult;
 }
 
-const SOURCE_KEYS: ReadonlySet<string> = new Set(['$handle', '$parentHandle', '$treeHandle', '$childIndex', '$span', '$source']);
+const SOURCE_KEYS: ReadonlySet<string> = new Set([
+	'$handle',
+	'$parentHandle',
+	'$treeHandle',
+	'$childIndex',
+	'$span',
+	'$source'
+]);
 
 /**
  * `node` with every node under it built through `build` from its leaves up,
  * so none keeps the identity of the read it came from. A node `build` has no
  * factory for is kept as its data, without the keys that name its source.
  */
-function rebuildChildren(node: Record<string, unknown>, build: (node: Record<string, unknown>) => unknown): Record<string, unknown> {
+function rebuildChildren(
+	node: Record<string, unknown>,
+	build: (node: Record<string, unknown>) => unknown
+): Record<string, unknown> {
 	const rebuild = (value: unknown): unknown => {
 		if (Array.isArray(value)) return value.map(rebuild);
 		if (typeof value !== 'object' || value === null) return value;
 		const data = rebuildChildren(value as Record<string, unknown>, build);
 		return isComparableNode(value) ? (build(data) ?? data) : data;
 	};
-	return Object.fromEntries(Object.entries(node).filter(([key]) => !SOURCE_KEYS.has(key)).map(([key, value]) => [key, rebuild(value)]));
+	return Object.fromEntries(
+		Object.entries(node)
+			.filter(([key]) => !SOURCE_KEYS.has(key))
+			.map(([key, value]) => [key, rebuild(value)])
+	);
 }
 
 /** Whether `value` or any node under it carries the identity of a parsed source node. */
@@ -329,21 +353,22 @@ function carriesSource(value: unknown): boolean {
 	return Object.values(value).some(carriesSource);
 }
 
-/**
- * Dynamically import the generated `_factoryMap` and validator-only metadata
- * for a grammar. `_factoryShapes[kind]` encodes the calling convention
- * (`config` / `children` / `text`) produced at codegen time from the node
- * model type — it is never inferred at runtime.
- *
- * @param grammar - Grammar name (rust / typescript / python).
- * @returns Resolved factory artifacts and an `importFailure` record if loading
- *   fails, or `null` for `importFailure` on success.
- * @remarks Validator-only metadata lives in `node-model.json5` (PR-K) and is
- *   loaded via `loadNodeModel`, separately from the factory functions so the
- *   pure-data file stays tree-shakeable.
- */
+async function loadFactoryKindNameFromId(grammar: string): Promise<{
+	kindNameFromId: ((id: number) => string | undefined) | undefined;
+	importFailure: { message: string } | null;
+}> {
+	try {
+		const kindNames = (await importGrammarModule(grammar, 'types.ts'))?.KIND_NAMES;
+		return { kindNameFromId: kindNames ? (id: number) => kindNames.get(id) : undefined, importFailure: null };
+	} catch (error) {
+		const message = `[validate-factory-roundtrip] failed to load ${grammar} src/types.ts: ${error instanceof Error ? error.message : error}`;
+		console.error(message);
+		return { kindNameFromId: undefined, importFailure: { message } };
+	}
+}
+
 async function loadFactoryModuleForGrammar(grammar: string): Promise<{
-	factoryMap: Record<string, (config?: any) => unknown>;
+	factoryMap: Record<string, FactoryEntry>;
 	factoryShapes: Record<string, FactoryShape>;
 	fieldAliasMap: Record<string, Record<string, string>>;
 	factoryFields: Record<string, readonly string[]>;
@@ -351,7 +376,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	kindNameFromId: ((id: number) => string | undefined) | undefined;
 	importFailure: { message: string } | null;
 }> {
-	let factoryMap: Record<string, (config?: any) => unknown> = {};
+	let factoryMap: Record<string, FactoryEntry> = {};
 	let factoryShapes: Record<string, FactoryShape> = {};
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
 	let factoryFields: Record<string, readonly string[]> = {};
@@ -378,30 +403,9 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 		fieldAliasMap = mapData.fieldAliasMap;
 		factoryFields = mapData.factoryFields;
 		factorySlots = mapData.factorySlots;
-		try {
-			const typesModule = await importGrammarModule(grammar, 'types.ts');
-			// KIND_NAMES (not KIND_DISPLAY_NAMES): this validator's `kind`
-			// resolution feeds factoryMap/factoryShapes/factoryFields lookups,
-			// which are keyed by the canonical (wrap-dispatch) catalog name —
-			// the same identity `wrapNode` stamps. KIND_DISPLAY_NAMES is
-			// tree-sitter's raw parse label, which collapses distinct
-			// canonical kinds sharing one display name (python's `block`
-			// (160) and `_match_block` (135) both display as "block") onto
-			// the wrong factory, producing a false `$type` mismatch even
-			// though the wrapped reference and a correctly-selected factory
-			// would agree.
-			const kindNamesMap = typesModule?.KIND_NAMES as ReadonlyMap<number, string> | undefined;
-			if (kindNamesMap) {
-				kindNameFromId = (id: number) => kindNamesMap.get(id);
-			}
-		} catch (e) {
-			// Without kindNameFromId every walked candidate is rejected (its
-			// numeric $type can't be resolved to a kind name), so the validator
-			// would silently report an empty 0/0 pass. Route this into the same
-			// failure path as a factory-module load failure instead of
-			// continuing with a resolver that can never succeed.
-			const message = `[validate-factory-roundtrip] failed to load ${grammar} src/types.ts: ${(e as Error)?.message ?? e}`;
-			console.error(message);
+		const identity = await loadFactoryKindNameFromId(grammar);
+		kindNameFromId = identity.kindNameFromId;
+		if (identity.importFailure) {
 			return {
 				factoryMap,
 				factoryShapes,
@@ -409,7 +413,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 				factoryFields,
 				factorySlots,
 				kindNameFromId,
-				importFailure: { message }
+				importFailure: identity.importFailure
 			};
 		}
 		return {
@@ -478,37 +482,13 @@ function recordFactoryModuleLoadFailure(
 	}
 }
 
-/**
- * Dispatch `referenceData` through the appropriate factory call convention
- * and return the resulting `UntypedNode`. Factory lookup uses the walked
- * (source) kind so that alias-source factories are preferred over
- * alias-target factories, keeping the output `$type` aligned with our
- * declared interfaces. Errors thrown by the factory are pushed to `errors`
- * and `null` is returned so the caller can skip the comparison step.
- *
- * @param referenceData - Fully materialized UntypedNode from the wrapped read tree.
- * @param renderedKind - The walked (source) kind — used for factory + shape lookup.
- * @param cstNodeKindHint - CST node-kind fallback when the wrapper node itself discriminates the variant.
- * @param firstNamedChildKindHint - First CST named-child fallback for legacy callers.
- * @param namedChildKindHints - Ordered CST named-child fallback candidates.
- * @param factoryMap - Map from kind to factory function.
- * @param factoryShapes - Codegen-produced calling-convention map per kind.
- * @param fieldAliasMap - Camel→snake alias map used by `nodeToConfig`.
- * @param factoryFields - Declared field list per kind used by `nodeToConfig`.
- * @param factorySlots - Declared slot metadata per kind used by `nodeToConfig`.
- * @param surface - The `ir` surface when the run builds through it.
- * @param entryName - Corpus entry name, used when recording errors.
- * @param inputSource - Original source text, used when recording errors.
- * @param errors - Mutable error list to append to on factory throw.
- * @returns The factory-produced `AnyUntypedNode`, or `null` if the factory threw.
- */
 function buildFactoryUntypedNode(
 	referenceData: AnyUntypedNode,
 	renderedKind: string,
 	cstNodeKindHint: string | undefined,
 	firstNamedChildKindHint: string | undefined,
 	namedChildKindHints: readonly string[],
-	factoryMap: Record<string, (config?: any) => unknown>,
+	factoryMap: Record<string, FactoryEntry>,
 	factoryShapes: Record<string, FactoryShape>,
 	fieldAliasMap: Record<string, Record<string, string>>,
 	factoryFields: Record<string, readonly string[]>,
@@ -557,15 +537,8 @@ export async function validateFactoryStorage(
 	loadRawEntries(grammar);
 	const ruleKinds = deriveRuleKinds(grammar);
 
-	const {
-		factoryMap,
-		factoryShapes,
-		fieldAliasMap,
-		factoryFields,
-		factorySlots,
-		kindNameFromId,
-		importFailure
-	} = await loadFactoryModuleForGrammar(grammar);
+	const { factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, kindNameFromId, importFailure } =
+		await loadFactoryModuleForGrammar(grammar);
 
 	const readNode = await readNodeOf(grammar);
 	const surface = options.surface === 'ir' ? await loadIrSurface(grammar) : undefined;
@@ -755,7 +728,10 @@ export async function validateFactoryStorage(
 				let builtTree: AnyUntypedNode | null = null;
 				try {
 					builtTree = buildFactoryUntypedNode(
-						rebuildChildren(referenceData as unknown as Record<string, unknown>, buildInner) as unknown as AnyUntypedNode,
+						rebuildChildren(
+							referenceData as unknown as Record<string, unknown>,
+							buildInner
+						) as unknown as AnyUntypedNode,
 						kind,
 						node1?.type,
 						cstNamedChildKinds[0],

@@ -12,6 +12,22 @@ A union of names matches the first overload and yields `Language` of a union of 
 
 Each grammar package's exported API type, keyed by the grammar's name. It is the one type-level list of grammars in tools; `languages.test.ts` pins its keys to the grammars found on disk (`allGrammars()`), and `bootstrap-grammar` adds the row for a new grammar.
 
+### `packages/tools/src/grammar-internals.ts::GrammarModules`
+
+The generated artifacts tools need beyond the public language descriptor and engine, keyed by their generated filenames. Selecting a filename determines the module's export types. Raw factory maps include functions, constants and objects; named raw exports remain `unknown` until narrowed by their caller. Runtime factories retain their existing calling conventions. Public builders and parse/read operations use `languageByName`, `language.load()` and `createEngine`.
+
+### `packages/tools/src/grammar-internals.ts::grammarModulePath`
+
+The absolute path of a generated source artifact under a discovered grammar package, or `undefined` for an unknown grammar or missing file. Accepted filenames come from the internal module contract plus `node-model.json5` and the builder bundle source. The node model remains pure data and is read separately. Type-checking tools can inspect the source at this same path without importing it.
+
+### `packages/tools/src/grammar-internals.ts::importGrammarModule`
+
+Imports a generated module through its `pathToFileURL` URL, which ESM accepts across platforms. The result has the export type selected by the filename. A missing file returns `undefined`, preserving callers' optional-artifact behavior; import errors propagate to the validator's existing failure reporting.
+
+### `packages/tools/src/grammar-internals.ts::requireGrammarModule`
+
+The required-artifact form of `importGrammarModule`. Missing artifacts throw an error naming the grammar and generated filename, so validators record a load failure instead of treating an empty map as a successful run. It shares path resolution and importing with the optional loader.
+
 ### `packages/tools/src/codegen-surface.ts::evaluateGrammar`
 
 Evaluates a grammar package by name through codegen's `evaluatePackage`, so every probe and diagnostic tool builds its model with the package's real file types and entry choice; `base` selects the upstream `grammar.js` where a tool offers to show it before overrides. `buildSimplifiedGrammar`, the refs, stages and grammar-diagnostics tools start here, and none resolves an entry path or passes file types itself. Full node-map loaders use the canonical compiler instead of rebuilding its phases.

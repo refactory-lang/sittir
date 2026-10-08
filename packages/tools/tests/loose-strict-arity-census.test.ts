@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
 import ts from 'typescript6';
+import { grammarModulePath } from '../src/grammar-internals.ts';
 
-const root = resolve(import.meta.dirname, '../../..');
 const grammars = ['rust', 'typescript', 'python'] as const;
 
-const parse = (grammar: string, file: string): ts.SourceFile => {
-	const path = resolve(root, `packages/${grammar}/src/factories/${file}.ts`);
+const parse = (grammar: string, file: 'raw' | 'coerce' | 'bundle'): ts.SourceFile => {
+	const path = grammarModulePath(grammar, `factories/${file}.ts`);
+	if (path === undefined) throw new Error(`Missing ${file} factories for ${grammar}`);
 	return ts.createSourceFile(path, readFileSync(path, 'utf8'), ts.ScriptTarget.Latest, true);
 };
 
@@ -40,7 +40,11 @@ const widest = (overloads: readonly ts.FunctionDeclaration[]): number =>
 			declaration.parameters.reduce(
 				(count, parameter) =>
 					count +
-					(parameter.dotDotDotToken === undefined ? 1 : parameter.type === undefined ? Number.POSITIVE_INFINITY : spanOfRest(parameter.type)),
+					(parameter.dotDotDotToken === undefined
+						? 1
+						: parameter.type === undefined
+							? Number.POSITIVE_INFINITY
+							: spanOfRest(parameter.type)),
 				0
 			)
 		)
@@ -49,7 +53,9 @@ const widest = (overloads: readonly ts.FunctionDeclaration[]): number =>
 const stampOf = (stamp: ts.Expression | undefined, source: ts.SourceFile): number | undefined => {
 	if (stamp === undefined || !ts.isObjectLiteralExpression(stamp)) return undefined;
 	const max = stamp.properties.find((property) => property.name?.getText(source) === 'max');
-	return max !== undefined && ts.isPropertyAssignment(max) && ts.isNumericLiteral(max.initializer) ? Number(max.initializer.text) : undefined;
+	return max !== undefined && ts.isPropertyAssignment(max) && ts.isNumericLiteral(max.initializer)
+		? Number(max.initializer.text)
+		: undefined;
 };
 
 describe.each(grammars)('%s: a loose builder takes exactly the arguments its strict builder takes', (grammar) => {

@@ -26,7 +26,7 @@
 import { describe, expect, it } from 'vitest';
 import { probeTrace } from '../../src/probe/kind.ts';
 import { loadNativeEngine } from '../../src/validate/common.ts';
-import { coerceToObjectTypeContent } from '../../../typescript/src/factories/coerce.ts';
+import { requireGrammarModule } from '../../src/grammar-internals.ts';
 
 describe('separatedList wrap capture — real typescript grammar integration', () => {
 	it('captures a present trailing comma with no leading comma', async () => {
@@ -99,7 +99,10 @@ describe('separatedList from() reconstruction — preserves original separator f
 		expect(((wrapped._delimiter ?? 0) & 2) !== 0).toBe(true);
 		expect(wrapped._separator).toBeDefined();
 
-		const reconstructed = coerceToObjectTypeContent(wrapped as never);
+		const { _fromMap } = await requireGrammarModule('typescript', 'factories/coerce.ts');
+		const coerce = _fromMap.object_type_content;
+		if (coerce === undefined) throw new Error('Missing object_type_content coercion');
+		const reconstructed = coerce(wrapped);
 		expect((((reconstructed as unknown as { _delimiter?: number })._delimiter ?? 0) & 2) !== 0).toBe(true);
 		expect((reconstructed as unknown as { _separator: number })._separator).toBe(wrapped._separator);
 		const rendered = (await loadNativeEngine('typescript')).render(reconstructed as never).toString();
