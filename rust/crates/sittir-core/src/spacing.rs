@@ -928,7 +928,7 @@ mod word_matcher_tests {
 #[cfg(test)]
 mod sink_tests {
     use super::*;
-    use crate::render::{Render, RenderSink, WhitespaceTable};
+    use crate::render::{RenderSink, WhitespaceTable};
 
     const TIGHT: u16 = 1;
     const SPACE: u16 = 2;
@@ -1365,7 +1365,7 @@ mod strength_tests {
     fn render(f: impl FnOnce(&mut SpacingWriter<'_, String>)) -> String {
         let mut out = String::new();
         let word = WordMatcher::default_ident();
-        let mut w = SpacingWriter::new(&mut out, &word).with_table(&TABLE);
+        let mut w = SpacingWriter::new(&mut out, word).with_table(&TABLE);
         f(&mut w);
         w.finish().unwrap();
         out

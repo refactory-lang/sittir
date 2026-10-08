@@ -308,7 +308,7 @@ fn anonymous_leaf_children_scalarize_on_the_wire() {
         .and_then(|items| items.first())
         .expect("child");
     assert_eq!(child.type_, KindId(55));
-    assert_eq!(child.named, false);
+    assert!(!child.named);
 }
 
 #[test]

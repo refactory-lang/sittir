@@ -339,7 +339,7 @@ fn seated_gaps_fill_the_preceding_elements_after_edge_and_never_the_last() {
     let table: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 0, 1];
     let opts = ResolvedOptions { spacing: arms(&[70, 80]), ..ResolvedOptions::default() };
     let sources = Sources(HashMap::new());
-    let mut items = vec![seatable(3), None, seatable(4), seatable(5), seatable(3)];
+    let mut items = [seatable(3), None, seatable(4), seatable(5), seatable(3)];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
     assert_eq!(after_of(&items[0]), Some(70));
     assert_eq!(after_of(&items[2]), Some(80));
@@ -352,7 +352,7 @@ fn a_seated_gap_carries_its_own_sites_strength() {
     let table: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 0];
     let opts = ResolvedOptions { spacing: vec![SeamArm { arm: 70, strength: 0, dedent: false }], ..ResolvedOptions::default() };
     let sources = Sources(HashMap::new());
-    let mut items = vec![seatable(3), seatable(3)];
+    let mut items = [seatable(3), seatable(3)];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
     let Some(SlotValue::Transport(first)) = &items[0] else { panic!() };
     assert_eq!(first.edges.after, Some(stamped(70, 0)));
@@ -363,7 +363,7 @@ fn a_seated_gap_is_not_written_after_the_last_present_element() {
     let table: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 0];
     let opts = ResolvedOptions { spacing: arms(&[70]), ..ResolvedOptions::default() };
     let sources = Sources(HashMap::new());
-    let mut items = vec![seatable(3), seatable(3), None, None];
+    let mut items = [seatable(3), seatable(3), None, None];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
     assert_eq!(after_of(&items[0]), Some(70));
     assert_eq!(after_of(&items[1]), None);
@@ -374,7 +374,7 @@ fn a_seated_gap_keeps_an_after_edge_the_element_already_carries() {
     let table: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 0];
     let opts = ResolvedOptions { spacing: arms(&[70]), ..ResolvedOptions::default() };
     let sources = Sources(HashMap::new());
-    let mut items = vec![
+    let mut items = [
         Some(SlotValue::Transport(Seatable { kind: 3, edges: Edges { before: None, after: Some(wire(1)) } })),
         seatable(3),
     ];
@@ -388,7 +388,7 @@ fn a_wrapper_not_itself_seated_seats_the_node_it_wraps_and_keeps_its_own_edges()
     let opts = ResolvedOptions { spacing: arms(&[70]), ..ResolvedOptions::default() };
     let sources = Sources(HashMap::new());
     let wrapped = || SlotValue::<Wrapper>::Transport(Wrapper { edges: Edges::default(), content: Seatable { kind: 3, edges: Edges::default() } });
-    let mut items = vec![wrapped(), wrapped()];
+    let mut items = [wrapped(), wrapped()];
     fill_seated_gaps(items.iter_mut().map(Some), table, &ctx(&opts, &sources));
     let SlotValue::Transport(first) = &items[0] else { panic!() };
     assert_eq!(first.content.edges.after.map(|e| e.arm), Some(70));
@@ -423,7 +423,7 @@ fn a_coordinate_followed_by_a_rebuilt_element_takes_its_seat() {
     let table: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 0];
     let opts = ResolvedOptions { spacing: arms(&[70]), ..ResolvedOptions::default() };
     let sources = source_tree();
-    let mut items = vec![parsed(3, 0, 6), seatable(3)];
+    let mut items = [parsed(3, 0, 6), seatable(3)];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
     assert_eq!(coord_after_of(&items[0]), Some(70));
 }
@@ -433,7 +433,7 @@ fn a_coordinate_followed_by_one_out_of_source_order_takes_its_seat() {
     let table: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 0];
     let opts = ResolvedOptions { spacing: arms(&[70]), ..ResolvedOptions::default() };
     let sources = source_tree();
-    let mut items = vec![parsed(3, 8, 17), parsed(3, 0, 6)];
+    let mut items = [parsed(3, 8, 17), parsed(3, 0, 6)];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
     assert_eq!(coord_after_of(&items[0]), Some(70));
     assert_eq!(coord_after_of(&items[1]), None);
@@ -447,7 +447,7 @@ fn a_coordinate_whose_gap_the_source_already_filled_keeps_it() {
     let mut first = NodeCoordinate::new(encode_handle(7, 0), Span { start: 0, end: 6 });
     first.kind = Some(KindId(3));
     first.edges = Some(sittir_core::slot::CoordinateEdges { before: None, after: Some(SeamArm { arm: 9, strength: 3, dedent: false }) });
-    let mut items = vec![Some(SlotValue::Coord(first)), parsed(3, 8, 17)];
+    let mut items = [Some(SlotValue::Coord(first)), parsed(3, 8, 17)];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
     assert_eq!(coord_after_of(&items[0]), Some(9));
 }
@@ -457,7 +457,7 @@ fn a_coordinate_followed_by_the_next_in_source_order_with_no_source_gap_takes_it
     let table: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 0];
     let opts = ResolvedOptions { spacing: arms(&[70]), ..ResolvedOptions::default() };
     let sources = source_tree();
-    let mut items = vec![parsed(3, 0, 6), parsed(3, 8, 17)];
+    let mut items = [parsed(3, 0, 6), parsed(3, 8, 17)];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
     assert_eq!(coord_after_of(&items[0]), Some(70));
 }
@@ -467,7 +467,7 @@ fn a_coordinate_followed_by_a_rebuilt_element_takes_its_seat_before_a_later_coor
     let table: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 0];
     let opts = ResolvedOptions { spacing: arms(&[70]), ..ResolvedOptions::default() };
     let sources = source_tree();
-    let mut items = vec![parsed(3, 0, 6), seatable(3), parsed(3, 8, 17)];
+    let mut items = [parsed(3, 0, 6), seatable(3), parsed(3, 8, 17)];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
     assert_eq!(coord_after_of(&items[0]), Some(70));
 }

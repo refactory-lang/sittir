@@ -632,7 +632,7 @@ struct TypeIdent {
 #[transport(choice)]
 enum NamedType {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
-    TypeIdentifier(TypeIdent),
+    TypeIdentifier(Box<TypeIdent>),
     #[kind(kind::NEVER_TYPE)]
     Never,
 }
