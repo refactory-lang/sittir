@@ -155,7 +155,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 });
                 read_table[at] = quote!(#read_fn);
                 boxed_table[at] = quote!(#boxed_fn);
-                sides.push(quote!(::core::option::Option::Some(#i) => <#ty as __rt::ReadTransport>::sides_of(cursor, ctx, row),));
+                sides.push(quote!(::core::option::Option::Some(#i) => <#ty as __rt::ReadTransport>::sides_of(cursor, ctx, index),));
             }
             _ => return Err(syn::Error::new_spanned(variant, "a choice's variant is a unit or holds one transport")),
         }
@@ -213,7 +213,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 _depth: __rt::Depth,
                 _sides: __rt::Sides,
             ) -> ::core::result::Result<T, __rt::ReadError> {
-                ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: __Kind(cursor.node().grammar_id()), row: __rt::row_of(cursor) })
+                ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: __Kind(cursor.node().grammar_id()), index: __rt::index_of(cursor) })
             }
             #(#variant_fns)*
             const __READS: &[__Read<#ident>] = &[#(#read_table),*];
@@ -249,7 +249,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     let (grammar, display) = (__Kind(node.grammar_id()), __Kind(node.kind_id()));
                     match __variant(grammar, display) {
                         ::core::option::Option::Some(i) => __READS[i as usize](cursor, ctx, depth, sides),
-                        ::core::option::Option::None => ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: grammar, row: __rt::row_of(cursor) }),
+                        ::core::option::Option::None => ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: grammar, index: __rt::index_of(cursor) }),
                     }
                 }
                 #[allow(unused_variables)]
@@ -263,14 +263,14 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     let (grammar, display) = (__Kind(node.grammar_id()), __Kind(node.kind_id()));
                     match __variant(grammar, display) {
                         ::core::option::Option::Some(i) => __READS_BOXED[i as usize](cursor, ctx, depth, sides),
-                        ::core::option::Option::None => ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: grammar, row: __rt::row_of(cursor) }),
+                        ::core::option::Option::None => ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: grammar, index: __rt::index_of(cursor) }),
                     }
                 }
                 #[allow(unused_variables)]
                 fn sides_of(
                     cursor: &mut ::tree_sitter::TreeCursor<'_>,
                     ctx: &__rt::ReadCtx<'_>,
-                    row: u32,
+                    index: u32,
                 ) -> ::core::result::Result<__rt::Sides, __rt::ReadError> {
                     let node = cursor.node();
                     match __variant(__Kind(node.grammar_id()), __Kind(node.kind_id())) {
@@ -340,7 +340,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
                         return ::core::result::Result::Ok(member);
                     }
                     #spelled
-                    ::core::result::Result::Err(__rt::ReadError::Unspelled { kind: __Kind(node.grammar_id()), row: __rt::row_of(cursor) })
+                    ::core::result::Result::Err(__rt::ReadError::Unspelled { kind: __Kind(node.grammar_id()), index: __rt::index_of(cursor) })
                 }
                 fn sides_of(
                     _cursor: &mut ::tree_sitter::TreeCursor<'_>,
@@ -512,7 +512,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
                 fn sides_of(
                     cursor: &mut ::tree_sitter::TreeCursor<'_>,
                     ctx: &__rt::ReadCtx<'_>,
-                    row: u32,
+                    index: u32,
                 ) -> ::core::result::Result<__rt::Sides, __rt::ReadError> {
                     #sides_of
                 }
@@ -527,7 +527,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
 fn pass(min_depth: u32) -> TokenStream {
     quote! {
         let depth = depth.at_least(#min_depth);
-        let row = __rt::row_of(cursor);
+        let index = __rt::index_of(cursor);
         let children = __rt::survey(cursor);
         let routes = children
             .iter()
@@ -537,7 +537,7 @@ fn pass(min_depth: u32) -> TokenStream {
     }
 }
 
-/// The sides the placement gives the child at `row`, the node's own pass run
+/// The sides the placement gives the child at `index`, the node's own pass run
 /// up to its placement.
 fn sides_of_body() -> TokenStream {
     quote! {
@@ -547,7 +547,7 @@ fn sides_of_body() -> TokenStream {
             .map(__route)
             .collect::<::core::result::Result<::std::vec::Vec<__rt::Route>, __rt::ReadError>>()?;
         let mut placement = __rt::place(ctx, &children, &routes, false, __gap);
-        ::core::result::Result::Ok(placement.take_row(row).unwrap_or_default())
+        ::core::result::Result::Ok(placement.take_index(index).unwrap_or_default())
     }
 }
 
@@ -615,7 +615,7 @@ fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr) -> syn::
                 .as_ref()
                 .ok_or_else(|| syn::Error::new_spanned(field.ident, "a token interior's slot names its capture"))?;
             let (name, ty) = (field.ident, field.ty);
-            inits.push(quote!(#name: __rt::capture::<#ty>(&captures, #capture, __rt::SlotSite { kind: __KIND, slot: #capture, row })?,));
+            inits.push(quote!(#name: __rt::capture::<#ty>(&captures, #capture, __rt::SlotSite { kind: __KIND, slot: #capture, index })?,));
         }
     }
     let pass = pass(0);
@@ -629,7 +629,7 @@ fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr) -> syn::
             #pass
             let captures = __INTERIOR
                 .captures(ctx.text(&cursor.node()))
-                .ok_or(__rt::ReadError::Interior { kind: __KIND, row })?;
+                .ok_or(__rt::ReadError::Interior { kind: __KIND, index })?;
             ::core::result::Result::Ok(Self { #(#inits)* })
         },
         sides_of: sides_of_body(),
@@ -663,11 +663,11 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
     let (hidden, restore) = if attrs.wraps_hidden {
         (
             quote! {
-                let own = __rt::row_of(cursor);
+                let own = __rt::index_of(cursor);
                 let wrapped = __rt::survey(cursor).into_iter().find(|child| !child.trivia).ok_or(
-                    __rt::ReadError::Unadmitted { kind: __Kind(cursor.node().grammar_id()), row: own },
+                    __rt::ReadError::Unadmitted { kind: __Kind(cursor.node().grammar_id()), index: own },
                 )?;
-                cursor.goto_descendant(wrapped.row as usize);
+                cursor.goto_descendant(wrapped.index as usize);
             },
             quote!(cursor.goto_descendant(own as usize);),
         )
@@ -685,7 +685,7 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                 .or_else(|| sides.into_layout());
             ::core::result::Result::Ok(Self { #(#inits)* })
         },
-        sides_of: quote!(<#inner as __rt::ReadTransport>::sides_of(cursor, ctx, row)),
+        sides_of: quote!(<#inner as __rt::ReadTransport>::sides_of(cursor, ctx, index)),
     })
 }
 
@@ -788,7 +788,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
     let labels: Vec<LitStr> = names.iter().map(|name| LitStr::new(&name.to_string(), name.span())).collect();
     let mut inits = common_inits(fields, "");
     for (((name, ty), acc), label) in names.iter().zip(&tys).zip(&accs).zip(&labels) {
-        inits.push(quote!(#name: <#ty as __rt::ReadSlot>::finish(#acc, __rt::SlotSite { kind: __KIND, slot: #label, row })?,));
+        inits.push(quote!(#name: <#ty as __rt::ReadSlot>::finish(#acc, __rt::SlotSite { kind: __KIND, slot: #label, index })?,));
     }
     inits.extend(list_inits(attrs, fields, &slots)?);
     let pass = pass(attrs.min_depth.unwrap_or(0));
@@ -809,7 +809,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                 if __LAYOUT.contains(&child.display) {
                     return ::core::result::Result::Ok(__rt::Route::Layout);
                 }
-                ::core::result::Result::Err(__rt::ReadError::Unrouted { kind: __KIND, child: child.grammar, row: child.row })
+                ::core::result::Result::Err(__rt::ReadError::Unrouted { kind: __KIND, child: child.grammar, index: child.index })
             }
         },
         read: quote! {
@@ -825,7 +825,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                             ctx,
                             depth,
                             placement.take(i),
-                            __rt::SlotSite { kind: __KIND, slot: #labels, row },
+                            __rt::SlotSite { kind: __KIND, slot: #labels, index },
                         )?,)*
                         #(__rt::Route::Separator { slot: #idxs, tagged } => <#tys as __rt::ReadSlot>::separator(&mut #accs, tagged),)*
                         _ => {}

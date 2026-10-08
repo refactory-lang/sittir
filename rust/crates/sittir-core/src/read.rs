@@ -1,9 +1,9 @@
 //! The typed reader's runtime: what every `#[derive(Transport)]` expansion
 //! calls. A read walks one `TreeCursor` created at the tree's root, so the
-//! cursor's descendant index is a node's row in the whole tree. A node's
+//! cursor's descendant index is a node's index in the whole tree. A node's
 //! children are surveyed once, routed to slots, placed as trivia, and then
 //! read in a second pass, each with the sides the placement gave it. A child
-//! past the read's depth is a coordinate: its tree and row, its span and its
+//! past the read's depth is a coordinate: its tree and index, its span and its
 //! kind. A child no route takes refuses the read. No grammar fact lives here:
 //! each one reaches the reader through a generated attribute.
 
@@ -61,22 +61,22 @@ impl<'s> ReadCtx<'s> {
         Self { source, tree_id }
     }
 
-    /// The coordinate of a surveyed child: its tree and row, its span and its
+    /// The coordinate of a surveyed child: its tree and index, its span and its
     /// grammar kind.
     pub fn coordinate_of(&self, child: &Child) -> NodeCoordinate {
         NodeCoordinate {
             kind: Some(child.grammar),
-            ..NodeCoordinate::new(encode_handle(self.tree_id, child.row), Span { start: child.start, end: child.end })
+            ..NodeCoordinate::new(encode_handle(self.tree_id, child.index), Span { start: child.start, end: child.end })
         }
     }
 
-    /// The coordinate of the node at `row`.
-    pub fn coordinate(&self, node: &Node<'_>, row: u32) -> NodeCoordinate {
+    /// The coordinate of the node at `index`.
+    pub fn coordinate(&self, node: &Node<'_>, index: u32) -> NodeCoordinate {
         let range = node.byte_range();
         NodeCoordinate {
             kind: Some(KindId(node.grammar_id())),
             ..NodeCoordinate::new(
-                encode_handle(self.tree_id, row),
+                encode_handle(self.tree_id, index),
                 Span { start: range.start as u32, end: range.end as u32 },
             )
         }
@@ -88,16 +88,16 @@ impl<'s> ReadCtx<'s> {
     }
 }
 
-/// The row of the node the cursor is on: its descendant index from the
+/// The index of the node the cursor is on: its descendant index from the
 /// tree's root, which `TreeCursor::goto_descendant` reaches again.
-pub fn row_of(cursor: &TreeCursor<'_>) -> u32 {
+pub fn index_of(cursor: &TreeCursor<'_>) -> u32 {
     cursor.descendant_index() as u32
 }
 
 /// What the first pass learns about one child.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Child {
-    pub row: u32,
+    pub index: u32,
     pub grammar: KindId,
     pub display: KindId,
     pub field: Option<FieldId>,
@@ -155,7 +155,7 @@ pub fn survey(cursor: &mut TreeCursor<'_>) -> Vec<Child> {
             let node = cursor.node();
             let end = node.end_position();
             children.push(Child {
-                row: row_of(cursor),
+                index: index_of(cursor),
                 grammar: KindId(node.grammar_id()),
                 display: KindId(node.kind_id()),
                 field: cursor.field_id().map(|field| FieldId(field.get())),
@@ -190,48 +190,48 @@ pub enum Route {
     Layout,
 }
 
-/// Why a read failed. Each names the node's kind and its row.
+/// Why a read failed. Each names the node's kind and its index.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ReadError {
     /// A child the kind's model has no route for: a model gap, not data.
-    Unrouted { kind: KindId, child: KindId, row: u32 },
+    Unrouted { kind: KindId, child: KindId, index: u32 },
     /// A required slot no child filled.
-    Missing { kind: KindId, slot: &'static str, row: u32 },
+    Missing { kind: KindId, slot: &'static str, index: u32 },
     /// A second child for a slot that holds one.
-    Overfull { kind: KindId, slot: &'static str, row: u32 },
+    Overfull { kind: KindId, slot: &'static str, index: u32 },
     /// A node whose kind no member of the type it was read into takes.
-    Unadmitted { kind: KindId, row: u32 },
+    Unadmitted { kind: KindId, index: u32 },
     /// A token whose text does not match its kind's interior.
-    Interior { kind: KindId, row: u32 },
+    Interior { kind: KindId, index: u32 },
     /// An enum kind whose spelling tokens display none of its members' ids.
-    Unspelled { kind: KindId, row: u32 },
+    Unspelled { kind: KindId, index: u32 },
 }
 
 impl ReadError {
     /// The error as a sentence, kinds named by `name`.
     pub fn describe(&self, name: &dyn Fn(KindId) -> &'static str) -> String {
         match *self {
-            ReadError::Unrouted { kind, child, row } => format!(
-                "{} (kind {}) has no route for its child {} (kind {}) at row {row}",
+            ReadError::Unrouted { kind, child, index } => format!(
+                "{} (kind {}) has no route for its child {} (kind {}) at index {index}",
                 name(kind),
                 kind.0,
                 name(child),
                 child.0
             ),
-            ReadError::Missing { kind, slot, row } => {
-                format!("{} (kind {}) at row {row} has no child for its required slot `{slot}`", name(kind), kind.0)
+            ReadError::Missing { kind, slot, index } => {
+                format!("{} (kind {}) at index {index} has no child for its required slot `{slot}`", name(kind), kind.0)
             }
-            ReadError::Overfull { kind, slot, row } => {
-                format!("{} (kind {}) at row {row} has a second child for its slot `{slot}`", name(kind), kind.0)
+            ReadError::Overfull { kind, slot, index } => {
+                format!("{} (kind {}) at index {index} has a second child for its slot `{slot}`", name(kind), kind.0)
             }
-            ReadError::Unadmitted { kind, row } => {
-                format!("{} (kind {}) at row {row} is no member of the type it was read into", name(kind), kind.0)
+            ReadError::Unadmitted { kind, index } => {
+                format!("{} (kind {}) at index {index} is no member of the type it was read into", name(kind), kind.0)
             }
-            ReadError::Interior { kind, row } => {
-                format!("{} (kind {}) at row {row} does not match its token interior", name(kind), kind.0)
+            ReadError::Interior { kind, index } => {
+                format!("{} (kind {}) at index {index} does not match its token interior", name(kind), kind.0)
             }
-            ReadError::Unspelled { kind, row } => {
-                format!("{} (kind {}) at row {row}: its tokens display none of its members' ids", name(kind), kind.0)
+            ReadError::Unspelled { kind, index } => {
+                format!("{} (kind {}) at index {index}: its tokens display none of its members' ids", name(kind), kind.0)
             }
         }
     }
@@ -242,7 +242,7 @@ impl ReadError {
 pub struct SlotSite {
     pub kind: KindId,
     pub slot: &'static str,
-    pub row: u32,
+    pub index: u32,
 }
 
 /// One extra the placement rule gave a node: its coordinate, whether it
@@ -315,9 +315,9 @@ pub trait ReadTransport: Sized {
     fn read_boxed(cursor: &mut TreeCursor<'_>, ctx: &ReadCtx<'_>, depth: Depth, sides: Sides) -> Result<Box<Self>, ReadError> {
         Self::read(cursor, ctx, depth, sides).map(Box::new)
     }
-    /// The sides the placement rule gives the child at `row` among the
+    /// The sides the placement rule gives the child at `index` among the
     /// children of the node the cursor is on.
-    fn sides_of(cursor: &mut TreeCursor<'_>, ctx: &ReadCtx<'_>, row: u32) -> Result<Sides, ReadError>;
+    fn sides_of(cursor: &mut TreeCursor<'_>, ctx: &ReadCtx<'_>, index: u32) -> Result<Sides, ReadError>;
 }
 
 impl<T: ReadTransport> ReadTransport for Box<T> {
@@ -336,8 +336,8 @@ impl<T: ReadTransport> ReadTransport for Box<T> {
     fn read(cursor: &mut TreeCursor<'_>, ctx: &ReadCtx<'_>, depth: Depth, sides: Sides) -> Result<Self, ReadError> {
         T::read_boxed(cursor, ctx, depth, sides)
     }
-    fn sides_of(cursor: &mut TreeCursor<'_>, ctx: &ReadCtx<'_>, row: u32) -> Result<Sides, ReadError> {
-        T::sides_of(cursor, ctx, row)
+    fn sides_of(cursor: &mut TreeCursor<'_>, ctx: &ReadCtx<'_>, index: u32) -> Result<Sides, ReadError> {
+        T::sides_of(cursor, ctx, index)
     }
 }
 
@@ -367,7 +367,7 @@ pub fn read_value<T: ReadTransport, const A: bool>(
     match depth.below() {
         Some(below) => Ok(SlotValue::Transport(T::read(cursor, ctx, below, sides)?)),
         None if cursor.node().named_child_count() == 0 => Ok(SlotValue::Transport(T::read(cursor, ctx, Depth::ONE, sides)?)),
-        None => Ok(SlotValue::Coord(ctx.coordinate(&cursor.node(), row_of(cursor)))),
+        None => Ok(SlotValue::Coord(ctx.coordinate(&cursor.node(), index_of(cursor)))),
     }
 }
 
@@ -397,14 +397,14 @@ pub trait ReadSlot: Sized {
 
 fn take_one<V>(acc: &mut Option<V>, at: SlotSite, value: impl FnOnce() -> Result<V, ReadError>) -> Result<(), ReadError> {
     if acc.is_some() {
-        return Err(ReadError::Overfull { kind: at.kind, slot: at.slot, row: at.row });
+        return Err(ReadError::Overfull { kind: at.kind, slot: at.slot, index: at.index });
     }
     *acc = Some(value()?);
     Ok(())
 }
 
 fn missing(at: SlotSite) -> ReadError {
-    ReadError::Missing { kind: at.kind, slot: at.slot, row: at.row }
+    ReadError::Missing { kind: at.kind, slot: at.slot, index: at.index }
 }
 
 macro_rules! slot_value_kinds {
@@ -563,7 +563,7 @@ impl<T: ReadTransport, const A: bool> ReadSlot for Option<Vec<Option<SlotValue<T
 }
 
 /// A presence slot: `true` when its keyword is among the children, absent
-/// otherwise. The keyword stays an owner of trivia, as today's model rows
+/// otherwise. The keyword stays an owner of trivia, as today's model indexes
 /// have no entry for presence slots.
 impl ReadSlot for Option<bool> {
     type Acc = bool;
@@ -581,7 +581,7 @@ impl ReadSlot for Option<bool> {
     }
     fn take(acc: &mut bool, _: &mut TreeCursor<'_>, _: &ReadCtx<'_>, _: Depth, _: Sides, at: SlotSite) -> Result<(), ReadError> {
         if *acc {
-            return Err(ReadError::Overfull { kind: at.kind, slot: at.slot, row: at.row });
+            return Err(ReadError::Overfull { kind: at.kind, slot: at.slot, index: at.index });
         }
         *acc = true;
         Ok(())
@@ -733,19 +733,19 @@ pub fn separator_kind(children: &[Child], routes: &[Route], candidates: &[KindId
         .map(|(child, _)| child.display.0)
 }
 
-/// Read the node at `row` into `T`, with the sides its parent's placement
+/// Read the node at `index` into `T`, with the sides its parent's placement
 /// gives it. `P` reads the parent's routes. The cursor was created at the
 /// tree's root.
 pub fn read_at<T: ReadTransport, P: ReadTransport>(
     cursor: &mut TreeCursor<'_>,
     ctx: &ReadCtx<'_>,
-    row: u32,
+    index: u32,
     depth: Depth,
 ) -> Result<T, ReadError> {
-    cursor.goto_descendant(row as usize);
+    cursor.goto_descendant(index as usize);
     let sides = if cursor.goto_parent() {
-        let sides = P::sides_of(cursor, ctx, row)?;
-        cursor.goto_descendant(row as usize);
+        let sides = P::sides_of(cursor, ctx, index)?;
+        cursor.goto_descendant(index as usize);
         sides
     } else {
         Sides::root()
@@ -762,7 +762,7 @@ pub struct Placement {
     pub own_leading: Vec<Entry>,
     pub own_trailing: Vec<Entry>,
     pub inner: BTreeMap<String, Vec<Entry>>,
-    rows: Vec<u32>,
+    indexes: Vec<u32>,
 }
 
 impl Placement {
@@ -771,9 +771,9 @@ impl Placement {
         std::mem::take(&mut self.sides[i])
     }
 
-    /// The sides of the child at `row`, taken out.
-    pub fn take_row(&mut self, row: u32) -> Option<Sides> {
-        let i = self.rows.iter().position(|&r| r == row)?;
+    /// The sides of the child at `index`, taken out.
+    pub fn take_index(&mut self, index: u32) -> Option<Sides> {
+        let i = self.indexes.iter().position(|&r| r == index)?;
         Some(self.take(i))
     }
 
@@ -812,7 +812,7 @@ pub fn place(ctx: &ReadCtx<'_>, children: &[Child], routes: &[Route], owner_self
     let entry = |child: &Child, same_line: bool, tokens_between: u16| Entry { coord: ctx.coordinate_of(child), same_line, tokens_between };
     let mut placement = Placement {
         sides: (0..children.len()).map(|i| Sides { owner: owner(i), ..Sides::default() }).collect(),
-        rows: children.iter().map(|child| child.row).collect(),
+        indexes: children.iter().map(|child| child.index).collect(),
         ..Placement::default()
     };
     let owners: Vec<usize> = (0..children.len()).filter(|&i| owner(i)).collect();
@@ -877,15 +877,15 @@ mod tests {
     #[test]
     fn a_refusal_names_the_kind_the_child_and_the_row() {
         let name = |k: KindId| if k.0 == 208 { "function_item" } else { "block" };
-        let refusal = ReadError::Unrouted { kind: KindId(208), child: KindId(313), row: 451 };
+        let refusal = ReadError::Unrouted { kind: KindId(208), child: KindId(313), index: 451 };
         assert_eq!(
             refusal.describe(&name),
-            "function_item (kind 208) has no route for its child block (kind 313) at row 451"
+            "function_item (kind 208) has no route for its child block (kind 313) at index 451"
         );
     }
 
     fn site() -> SlotSite {
-        SlotSite { kind: KindId(1), slot: "items", row: 0 }
+        SlotSite { kind: KindId(1), slot: "items", index: 0 }
     }
 
     /// A transport for the slot tests: kind 5, with a blank arm when `BLANK`.
@@ -913,7 +913,7 @@ mod tests {
     type Plain = Probe<false>;
 
     fn token(start: u32, end: u32, trivia: bool) -> Child {
-        Child { row: 0, grammar: KindId(9), display: KindId(9), field: None, named: false, trivia, start, end, start_row: 0, end_row: 0 }
+        Child { index: 0, grammar: KindId(9), display: KindId(9), field: None, named: false, trivia, start, end, start_row: 0, end_row: 0 }
     }
 
     #[test]
@@ -971,7 +971,7 @@ mod tests {
     fn a_required_slot_with_no_child_is_missing() {
         assert_eq!(
             <SlotValue<Plain> as ReadSlot>::finish(None, site()),
-            Err(ReadError::Missing { kind: KindId(1), slot: "items", row: 0 })
+            Err(ReadError::Missing { kind: KindId(1), slot: "items", index: 0 })
         );
     }
 
@@ -992,8 +992,8 @@ mod tests {
         assert_eq!(<Option<bool> as ReadSlot>::finish(false, site()), Ok(None));
     }
 
-    fn child(row: u32, named: bool, trivia: bool, (start_row, end_row): (usize, usize), (start, end): (u32, u32)) -> Child {
-        Child { row, grammar: KindId(if trivia { 900 } else if named { 100 } else { 50 }), display: KindId(0), field: None, named, trivia, start, end, start_row, end_row }
+    fn child(index: u32, named: bool, trivia: bool, (start_row, end_row): (usize, usize), (start, end): (u32, u32)) -> Child {
+        Child { index, grammar: KindId(if trivia { 900 } else if named { 100 } else { 50 }), display: KindId(0), field: None, named, trivia, start, end, start_row, end_row }
     }
     fn owner_routes(children: &[Child]) -> Vec<Route> {
         children.iter().map(|c| if c.trivia { Route::Trivia } else if c.named { Route::Slot { slot: 0, scalar: false } } else { Route::Layout }).collect()

@@ -89,17 +89,18 @@ impl Default for ReadDepth {
 }
 
 /// Mints the handle a bounded read gives a child it expands, so the stubs
-/// under that child name a coordinate that can be re-read.
+/// under that child name a coordinate that can be re-read. `index` is the
+/// child's descendant index in its tree.
 pub trait HandleMint {
-    fn mint(&mut self, parent: u64, child_index: u16) -> Option<u64>;
+    fn mint(&mut self, parent: u64, index: u32) -> Option<u64>;
 }
 
-/// A read with no node table to mint into. The stubs under a child it
+/// A read with no tree to mint handles for. The stubs under a child it
 /// expands carry no handle.
 pub struct NoMint;
 
 impl HandleMint for NoMint {
-    fn mint(&mut self, _parent: u64, _child_index: u16) -> Option<u64> {
+    fn mint(&mut self, _parent: u64, _index: u32) -> Option<u64> {
         None
     }
 }
@@ -777,12 +778,15 @@ fn read_slots(
     let mut children_acc: Vec<UntypedNode> = Vec::new();
     let mut slot_order_acc: Vec<String> = Vec::new();
 
+    let mut next_index = node_handle.map(|handle| crate::engine::decode_handle(handle).1 + 1);
     let child_count = node.child_count() as u32;
     for i in 0..child_count {
         let child = match node.child(i) {
             Some(c) => c,
             None => continue,
         };
+        let child_index = next_index;
+        next_index = next_index.map(|at| at + child.descendant_count() as u32);
         if is_trivia(&child) {
             continue;
         }
@@ -819,7 +823,7 @@ fn read_slots(
                     ..read_ts_node(child, source, None, tree_handle, ReadDepth::Deep, model, mint)
                 },
                 Some(below) => {
-                    let handle = node_handle.and_then(|parent| mint.mint(parent, i as u16));
+                    let handle = node_handle.zip(child_index).and_then(|(parent, index)| mint.mint(parent, index));
                     UntypedNode {
                         handle: tree_handle.map(NodeHandle::Tree),
                         child_index: Some(i as u16),

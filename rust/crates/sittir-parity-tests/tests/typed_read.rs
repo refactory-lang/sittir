@@ -261,8 +261,8 @@ fn read<T: ReadTransport>(tree: &tree_sitter::Tree, source: &str, depth: Depth) 
 fn find(tree: &tree_sitter::Tree, kind: KindId, nth: usize) -> tree_sitter::TreeCursor<'_> {
     let mut cursor = tree.walk();
     let mut seen = 0;
-    for row in 0..tree.root_node().descendant_count() {
-        cursor.goto_descendant(row);
+    for index in 0..tree.root_node().descendant_count() {
+        cursor.goto_descendant(index);
         if cursor.node().grammar_id() == kind.0 {
             if seen == nth {
                 return cursor;
@@ -321,10 +321,10 @@ fn a_child_no_route_takes_refuses_the_read_naming_kind_child_and_row() {
     let source = "fn f() {}";
     let tree = parse_rust(source);
     let refused = read_nth::<FunctionWithoutBody>(&tree, source, kind::FUNCTION_ITEM, 0, Depth::All).unwrap_err();
-    let ReadError::Unrouted { kind: parent, child, row } = refused else { panic!("{refused:?}") };
+    let ReadError::Unrouted { kind: parent, child, index } = refused else { panic!("{refused:?}") };
     assert_eq!((parent, child), (kind::FUNCTION_ITEM, kind::BLOCK));
     let mut at = tree.walk();
-    at.goto_descendant(row as usize);
+    at.goto_descendant(index as usize);
     assert_eq!(at.node().grammar_id(), kind::BLOCK.0);
 }
 
@@ -727,8 +727,8 @@ fn a_row_read_equals_the_same_node_in_a_whole_read_trivia_included() {
     let ctx = ReadCtx::new(source, 7);
     let whole: File = read(&tree, source, Depth::All).unwrap();
     let shallow: File = read(&tree, source, Depth::ONE).unwrap();
-    let row = sittir_core::decode_handle(shallow.statements.as_ref().unwrap()[0].coord().unwrap().handle).1;
-    let outer: Function = sittir_core::read::read_at::<Function, File>(&mut tree.walk(), &ctx, row, Depth::All).unwrap();
+    let index = sittir_core::decode_handle(shallow.statements.as_ref().unwrap()[0].coord().unwrap().handle).1;
+    let outer: Function = sittir_core::read::read_at::<Function, File>(&mut tree.walk(), &ctx, index, Depth::All).unwrap();
     assert_eq!(&outer, function(&whole, 0));
     assert_eq!(trivia_spans(&outer.layout, "leading"), vec![(0, 7, false, 0)]);
 

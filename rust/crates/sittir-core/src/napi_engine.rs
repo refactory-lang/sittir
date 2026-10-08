@@ -241,7 +241,7 @@ macro_rules! napi_engine {
             ) -> ::napi::Result<String> {
                 let tree_id = self.claim_tree_id(&env)?;
                 let depth = $crate::napi_engine::depth_from_wire(depth)?;
-                let mut parsed = self
+                let parsed = self
                     .engine
                     .parse(source, tree_id)
                     .map_err(::napi::Error::from_reason)?;
@@ -296,8 +296,8 @@ macro_rules! napi_engine {
                 })?;
                 let depth = $crate::napi_engine::depth_from_wire(depth)?;
                 LIVE_TREES.with(|trees| {
-                    let mut trees = trees.borrow_mut();
-                    let parsed = trees.get_mut(&tree_id).ok_or_else(|| {
+                    let trees = trees.borrow();
+                    let parsed = trees.get(&tree_id).ok_or_else(|| {
                         ::napi::Error::from_reason(format!(
                             "handle {handle} names tree {tree_id}, which is not live \
                              (never parsed on this thread, or already released)"
@@ -336,8 +336,8 @@ macro_rules! napi_engine {
                     .collect::<::napi::Result<Vec<u16>>>()?;
                 let (tree_id, _) = $crate::engine::decode_handle(from.tree_handle());
                 LIVE_TREES.with(|trees| {
-                    let mut trees = trees.borrow_mut();
-                    let parsed = trees.get_mut(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                    let trees = trees.borrow();
+                    let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
                     let batch = parsed
                         .descendants(from, &kinds, plan.as_ref(), resume.as_deref(), limit.max(1), depth)
                         .map_err(::napi::Error::from_reason)?;
@@ -376,8 +376,8 @@ macro_rules! napi_engine {
                 })?;
                 let depth = $crate::napi_engine::depth_from_wire(depth)?;
                 LIVE_TREES.with(|trees| {
-                    let mut trees = trees.borrow_mut();
-                    let parsed = trees.get_mut(&tree_id).ok_or_else(|| {
+                    let trees = trees.borrow();
+                    let parsed = trees.get(&tree_id).ok_or_else(|| {
                         ::napi::Error::from_reason(format!(
                             "tree {tree_id} is not live (never parsed on this thread, or already released)"
                         ))

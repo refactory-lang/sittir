@@ -156,11 +156,12 @@ fn child_index_set_on_non_root_nodes() {
     assert_eq!(node.handle, Some(NodeHandle::Own(0)));
 }
 
-/// Records every handle a read asks for and mints them from 100 up.
-struct RecordingMint(Vec<(u64, u16)>);
+/// Records every handle a read asks for, as the parent and the child's
+/// descendant index, and mints them from 100 up.
+struct RecordingMint(Vec<(u64, u32)>);
 impl HandleMint for RecordingMint {
-    fn mint(&mut self, parent: u64, child_index: u16) -> Option<u64> {
-        self.0.push((parent, child_index));
+    fn mint(&mut self, parent: u64, index: u32) -> Option<u64> {
+        self.0.push((parent, index));
         Some(99 + self.0.len() as u64)
     }
 }
@@ -182,7 +183,7 @@ fn a_two_level_read_expands_each_child_and_leaves_its_children_as_stubs_under_a_
     let two = ReadDepth::Levels(NonZeroU32::new(2).expect("two"));
     let root = read_untyped_node(&tree, source, None, Some(0), two, &Plain, &mut mint);
 
-    assert_eq!(mint.0, vec![(0, 0)]);
+    assert_eq!(mint.0, vec![(0, 1)]);
     let statement = sole_slot(&root);
     assert!(statement.fields.is_some(), "the child is expanded");
     assert_eq!(

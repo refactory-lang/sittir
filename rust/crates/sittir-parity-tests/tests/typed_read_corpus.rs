@@ -46,9 +46,9 @@ fn every_statement_read_at_its_row_equals_the_statement_in_the_whole_read() {
         let shallow = root(&tree, &source, Depth::ONE).statements.unwrap();
         assert_eq!(whole.len(), shallow.len());
         for (i, (whole, shallow)) in whole.iter().zip(&shallow).enumerate() {
-            let row = sittir_core::decode_handle(shallow.coord().unwrap().handle).1;
-            let at: StatementTransport = read_at::<StatementTransport, AnyTransport>(&mut tree.walk(), &ctx, row, Depth::All).unwrap();
-            assert_eq!(Some(&at), whole.transport(), "{name}: statement {i} at row {row}");
+            let index = sittir_core::decode_handle(shallow.coord().unwrap().handle).1;
+            let at: StatementTransport = read_at::<StatementTransport, AnyTransport>(&mut tree.walk(), &ctx, index, Depth::All).unwrap();
+            assert_eq!(Some(&at), whole.transport(), "{name}: statement {i} at index {index}");
         }
     }
 }
@@ -58,7 +58,7 @@ fn a_list_owner_read_at_one_level_brings_its_list() {
     let source = "fn f(a: u8, b: u8) {}";
     let tree = parse(source);
     let ctx = ReadCtx::new(source, 1);
-    let row = {
+    let index = {
         let mut cursor = tree.walk();
         (0..tree.root_node().descendant_count())
             .find(|&r| {
@@ -67,7 +67,7 @@ fn a_list_owner_read_at_one_level_brings_its_list() {
             })
             .unwrap() as u32
     };
-    let parameters: ParametersTransport = read_at::<_, AnyTransport>(&mut tree.walk(), &ctx, row, Depth::ONE).unwrap();
+    let parameters: ParametersTransport = read_at::<_, AnyTransport>(&mut tree.walk(), &ctx, index, Depth::ONE).unwrap();
     let list = parameters.elements.unwrap();
     let list = list.transport().expect("min_depth reads the list");
     assert_eq!(list.item.len(), 2);
