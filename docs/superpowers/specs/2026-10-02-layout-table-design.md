@@ -683,7 +683,7 @@ Three findings for the design:
 
 ### Detection
 
-One native walk over a parsed tree, run at parse. It returns its result to the client as an options object in the language's `render` options shape, and keeps nothing in the native option chain. Per statement list kind, it detects:
+One native walk over a parsed tree, run when `styleFrom` is called. It returns its result to the client as an options object in the language's `render` options shape, and keeps nothing in the native option chain. Per statement list kind, it detects:
 
 - **Within-run gaps.** `(_)/after` is the dominant gap inside runs over all kinds. `(K)/after` is detected for a kind whose own dominant gap differs from it and that has at least as many votes as the smallest kind the corpora show a pattern for (question 20).
 - **Boundaries.** `(K)/run/after` is the dominant gap where a run of K ends. `(J)/run/before` is detected only where the before-attribution is uniform across J's predecessors and is not already explained by those predecessors' `after`. `(_)/run/after` and `(_)/run/before` are detected from the rest.
@@ -698,14 +698,15 @@ Precedence (ruled by the maintainer 2026-10-08) follows the acceptance that an e
 3. the detected options;
 4. the grammar's declared defaults.
 
-**Detected options are applied once, at parse (ruled by the maintainer 2026-10-08; parse as the single trigger is recommended).** The native engine has no detected layer, and the client does no tracking.
+**Detected options are applied once, when `styleFrom` is called (ruled by the maintainer 2026-10-08).** `styleFrom` is the public entry; the detection behind it (`inferOptions`) stays internal. The native engine has no detected layer, and the client does no tracking.
 
-- **When:** parsing a source runs detection on its tree. The client lays the keys `createEngine` was given over the detected options and hands the result to the native engine as its options, replacing what the engine held. That is the only point where detected options are applied. Nothing re-selects or clears them afterwards: not rendering a node of another tree, not an edit, not disposing the tree.
+- **When:** a call to `styleFrom` runs detection on the tree it is given. The client lays the keys `createEngine` was given over the detected options and hands the result to the native engine as its options, replacing what the engine held. That is the only point where detected options are applied.
+- **Parse runs no detection and changes no options.** Neither does rendering, editing or disposing a tree.
 - **Renders** go through the native resolve as today: per-call options over the engine's options, then the grammar's defaults.
-- **Why parse:** it is the one point where a tree and its source are both in hand, and it matches the usual sequence of parse, edit, render, next file. Each file renders in its own detected style as long as it is rendered before the next parse.
-- **The consequence:** a node of an earlier tree, rendered after a later parse, takes the later tree's style. So does a node built after a parse. Per-call options, or keys given to `createEngine`, are how a caller pins a style regardless.
+- **Consequence:** nothing changes an engine's style unless `styleFrom` is called. A caller who wants a file's own style calls it once on that file's tree; until then, and for every engine that never calls it, the `createEngine` options and the grammar's defaults apply.
 - **What the native engine needs:** a way to replace its options after construction. Today they are resolved once in the constructor.
-- **Cost:** the detection walk runs once per parse. Stage 4 measures it against parse time.
+- **Cost:** detection is paid only on a `styleFrom` call. Stage 4 measures it.
+- **Open, an API shape for the maintainer:** this `styleFrom` acts on an engine and takes a tree, as `engine.styleFrom(tree)`. The tree-inferred options work ruled a different form: `styleFrom(language, ...paths)` and `rust.styleFrom(...paths)`, which read files, need no engine and return an options object. The two need reconciling. One way: keep the file form, returning options, and add the engine form, which applies them. Both would run the same internal detection.
 
 This reverses the render-options design, which put a tree layer above the engine's options in the native chain, and the reversal is ruled. An engine configured with `indent: '\t'` now renders a parsed four-space file with tabs; before, it followed the file. Nothing in the native chain or the table depends on a render naming its tree for options. The typed reader's `$_layout.at` names a node's tree for its own reasons (folding an untouched node to its source).
 
@@ -725,7 +726,7 @@ Two pieces run outside this note: the line-ending plan, after 1c-i, and the `sea
 1. **The output trait,** text output only, byte-identical. The generated root dispatch goes through one core function. The prototype's table module is renamed (`table.rs`), because master's `layout.rs` now holds `TransportLayout`.
 2. **The `prepare` change:** the list view resolves a separator's arm by its site.
 3. **Context sets:** python's `layout: { newline, inline }` and typescript's `_inline_layout` with its `gap(…)` positions, declared in `grammar.sittir.ts` and compiled into `seam(kinds)`; the writer's context stack; the parse-table check for typescript. Gate 6. This step does not wait for the generator to read `bindings.scm`.
-4. **Detection:** the native walk at parse returning an options object, applied once under the `createEngine` keys by the native engine replacing its options, and indentation as one fact. This stage already delivers the detected line ending and indent unit, with no table.
+4. **Detection:** the native walk behind `styleFrom` returning an options object, applied once under the `createEngine` keys by the native engine replacing its options, and indentation as one fact. This stage already delivers the detected line ending and indent unit, with no table.
 5. **The table output:** rows carry valid sets; there are list calls and a pass interface.
 6. **The run-pattern rule over the table.** This is the first stage that delivers statement-gap patterns: an inserted statement takes the file's gap, and the before-and-after check above is its gate.
 7. **`width` and the group rule,** then the conditional trailing separator.
