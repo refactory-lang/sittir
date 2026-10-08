@@ -1,0 +1,30 @@
+--- width 80
+[ 36]         if !source.is_char_boundary(
+[ 32]             e.start_pos as usize
+[ 59]         ) || !source.is_char_boundary(e.end_pos as usize) {
+[ 23]             return Err(
+[ 19] pub fn apply_edits(
+[ 17]     source: &str,
+[ 24]     mut edits: Vec<Edit>
+[ 34] ) -> Result<String, SpliceError> {
+[ 65]     // Pre-validate every edit up-front so we fail atomically (no
+--- width 80, (arguments)/"("/after set to its default (tight)
+[107]         if !source.is_char_boundary(e.start_pos as usize) || !source.is_char_boundary(e.end_pos as usize) {
+[ 53]             return Err(SpliceError::NonCharBoundary {
+[ 35]                 start: e.start_pos,
+[ 31]                 end: e.end_pos,
+[ 19] pub fn apply_edits(
+[ 17]     source: &str,
+[ 24]     mut edits: Vec<Edit>
+[ 34] ) -> Result<String, SpliceError> {
+[ 65]     // Pre-validate every edit up-front so we fail atomically (no
+--- width 80, (arguments_elements) separator after set to newline
+[ 36]         if !source.is_char_boundary(
+[ 32]             e.start_pos as usize
+[ 59]         ) || !source.is_char_boundary(e.end_pos as usize) {
+[ 23]             return Err(
+[ 19] pub fn apply_edits(
+[ 17]     source: &str,
+[ 24]     mut edits: Vec<Edit>
+[ 34] ) -> Result<String, SpliceError> {
+[ 65]     // Pre-validate every edit up-front so we fail atomically (no

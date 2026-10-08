@@ -1,0 +1,1292 @@
+diff --git a/rust/crates/sittir-python/src/render/options.rs b/rust/crates/sittir-python/src/render/options.rs
+index af741ba3a..73be97a5e 100644
+--- a/rust/crates/sittir-python/src/render/options.rs
++++ b/rust/crates/sittir-python/src/render/options.rs
+@@ -3693,6 +3693,7 @@ pub fn defaults() -> ResolvedOptions {
+         edge_rows: EDGE_ROWS,
+         kind_flags: KIND_FLAGS,
+         sites: SITE_SPECS,
++        site_flags: ::sittir_core::options::bracket_site_flags(SPACING_SITES.iter().map(|s| s.2)),
+         indent: "    ".to_string(),
+         ..ResolvedOptions::default()
+     }
+diff --git a/rust/crates/sittir-python/src/render/transport.rs b/rust/crates/sittir-python/src/render/transport.rs
+index 68e63f055..de1ffee74 100644
+--- a/rust/crates/sittir-python/src/render/transport.rs
++++ b/rust/crates/sittir-python/src/render/transport.rs
+@@ -50101,6 +50101,7 @@ fn render_module(node: &ModuleTransport, w: &mut dyn ::sittir_core::render::Rend
+         after: node.statements_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -50185,6 +50186,7 @@ fn render_import_list(node: &ImportListTransport, w: &mut dyn ::sittir_core::ren
+         after: node.name_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: None,
+         tail: None,
+     };
+@@ -50234,6 +50236,7 @@ fn render_assert_statement(node: &AssertStatementTransport, w: &mut dyn ::sittir
+         after: node.expression_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -50322,6 +50325,7 @@ fn render_if_statement(node: &IfStatementTransport, w: &mut dyn ::sittir_core::r
+         after: node.alternative_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -50463,6 +50467,7 @@ fn render_try_statement(node: &TryStatementTransport, w: &mut dyn ::sittir_core:
+         after: node.except_clauses_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -50622,6 +50627,7 @@ fn render_global_statement(node: &GlobalStatementTransport, w: &mut dyn ::sittir
+         after: node.names_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -50642,6 +50648,7 @@ fn render_nonlocal_statement(node: &NonlocalStatementTransport, w: &mut dyn ::si
+         after: node.names_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -50663,6 +50670,7 @@ fn render_exec_statement(node: &ExecStatementTransport, w: &mut dyn ::sittir_cor
+         after: node.in_clause_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -50761,6 +50769,7 @@ fn render_decorated_definition(node: &DecoratedDefinitionTransport, w: &mut dyn
+         after: node.decorator_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -50793,6 +50802,7 @@ fn render_block(node: &BlockTransport, w: &mut dyn ::sittir_core::render::Render
+         after: node.statements_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -50823,6 +50833,7 @@ fn render_dotted_name(node: &DottedNameTransport, w: &mut dyn ::sittir_core::ren
+         after: node.names_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -50864,6 +50875,7 @@ fn render_union_pattern(node: &UnionPatternTransport, w: &mut dyn ::sittir_core:
+         after: node.patterns_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -50964,6 +50976,7 @@ fn render_parameters_elements(node: &ParametersElementsTransport, w: &mut dyn ::
+         after: node.parameter_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: None,
+         tail: None,
+     };
+@@ -50980,6 +50993,7 @@ fn render_patterns(node: &PatternsTransport, w: &mut dyn ::sittir_core::render::
+         after: node.pattern_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: None,
+         tail: None,
+     };
+@@ -51135,6 +51149,7 @@ fn render_comparison_operator(node: &ComparisonOperatorTransport, w: &mut dyn ::
+         after: node.comparators_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -51500,6 +51515,7 @@ fn render_collection_elements(node: &CollectionElementsTransport, w: &mut dyn ::
+         after: node.element_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: None,
+         tail: None,
+     };
+@@ -51519,6 +51535,7 @@ fn render_for_in_clause(node: &ForInClauseTransport, w: &mut dyn ::sittir_core::
+         after: node.right_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -51580,6 +51597,7 @@ fn render_concatenated_string(node: &ConcatenatedStringTransport, w: &mut dyn ::
+         after: node.string_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -51598,6 +51616,7 @@ fn render_string(node: &StringTransport, w: &mut dyn ::sittir_core::render::Rend
+         after: 0,
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -51620,6 +51639,7 @@ fn render_string_content(node: &StringContentTransport, w: &mut dyn ::sittir_cor
+         after: 0,
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -51663,6 +51683,7 @@ fn render_format_specifier(node: &FormatSpecifierTransport, w: &mut dyn ::sittir
+         after: 0,
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -51729,6 +51750,7 @@ fn render_simple_statements_elements(node: &SimpleStatementsElementsTransport, w
+         after: node.simple_statement_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: None,
+         tail: None,
+     };
+@@ -51745,6 +51767,7 @@ fn render_subjects(node: &SubjectsTransport, w: &mut dyn ::sittir_core::render::
+         after: node.subject_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: None,
+         tail: None,
+     };
+@@ -51761,6 +51784,7 @@ fn render_case_patterns(node: &CasePatternsTransport, w: &mut dyn ::sittir_core:
+         after: node.case_pattern_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: None,
+         tail: None,
+     };
+@@ -51777,6 +51801,7 @@ fn render_with_clause_with_items(node: &WithClauseWithItemsTransport, w: &mut dy
+         after: node.with_item_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: None,
+         tail: None,
+     };
+@@ -51793,6 +51818,7 @@ fn render_types(node: &TypesTransport, w: &mut dyn ::sittir_core::render::Render
+         after: node.type_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: None,
+         tail: None,
+     };
+@@ -51809,6 +51835,7 @@ fn render_argument_list_elements(node: &ArgumentListElementsTransport, w: &mut d
+         after: node.element_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: None,
+         tail: None,
+     };
+@@ -51825,6 +51852,7 @@ fn render_expression_list_expressions(node: &ExpressionListExpressionsTransport,
+         after: node.expression_separator_space_after.unwrap_or(0),
+         leading: true,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: None,
+         tail: None,
+     };
+@@ -51841,6 +51869,7 @@ fn render_list_pattern_case_patterns(node: &ListPatternCasePatternsTransport, w:
+         after: node.case_pattern_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: None,
+         tail: None,
+     };
+@@ -51857,6 +51886,7 @@ fn render_dict_pattern_elements(node: &DictPatternElementsTransport, w: &mut dyn
+         after: node.element_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: None,
+         tail: None,
+     };
+@@ -51873,6 +51903,7 @@ fn render_pattern_list_patterns(node: &PatternListPatternsTransport, w: &mut dyn
+         after: node.pattern_separator_space_after.unwrap_or(0),
+         leading: true,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: None,
+         tail: None,
+     };
+@@ -51889,6 +51920,7 @@ fn render_subscripts(node: &SubscriptsTransport, w: &mut dyn ::sittir_core::rend
+         after: node.subscript_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: None,
+         tail: None,
+     };
+@@ -51905,6 +51937,7 @@ fn render_dictionary_elements(node: &DictionaryElementsTransport, w: &mut dyn ::
+         after: node.element_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: None,
+         tail: None,
+     };
+@@ -51977,6 +52010,7 @@ fn render_print_arguments(node: &PrintArgumentsTransport, w: &mut dyn ::sittir_c
+         after: node.argument_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: None,
+         tail: None,
+     };
+@@ -51993,6 +52027,7 @@ fn render_print_chevron_arguments(node: &PrintChevronArgumentsTransport, w: &mut
+         after: node.argument_separator_space_after.unwrap_or(0),
+         leading: true,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: None,
+         tail: None,
+     };
+@@ -52048,6 +52083,7 @@ fn render_comprehension_clauses(node: &ComprehensionClausesTransport, w: &mut dy
+         after: node.content_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -52255,6 +52291,7 @@ fn render_except_clause_exception_list(node: &ExceptClauseExceptionListTransport
+         after: node.value_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -52321,6 +52358,7 @@ fn render_expression_statement_tuple(node: &ExpressionStatementTupleTransport, w
+         after: node.expression_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: None,
+         tail: None,
+     };
+@@ -52337,6 +52375,7 @@ fn render_with_clause_bare(node: &WithClauseBareTransport, w: &mut dyn ::sittir_
+         after: node.with_item_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: None,
+         tail: None,
+     };
+@@ -52365,6 +52404,7 @@ fn render_match_block_block(node: &MatchBlockBlockTransport, w: &mut dyn ::sitti
+         after: node.alternative_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -53047,9 +53087,8 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
+ /// second place the root seam policy could drift.
+ pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {
+     let mut s = String::new();
+-    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);
+-    transport.render(&mut w)?;
+-    w.finish()?;
++    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);
++    w.render_root(transport)?;
+     Ok(s)
+ }
+ 
+diff --git a/rust/crates/sittir-regex/src/render/options.rs b/rust/crates/sittir-regex/src/render/options.rs
+index 63bdabdc2..e16e0aa6e 100644
+--- a/rust/crates/sittir-regex/src/render/options.rs
++++ b/rust/crates/sittir-regex/src/render/options.rs
+@@ -451,6 +451,7 @@ pub fn defaults() -> ResolvedOptions {
+         edge_rows: EDGE_ROWS,
+         kind_flags: KIND_FLAGS,
+         sites: SITE_SPECS,
++        site_flags: ::sittir_core::options::bracket_site_flags(SPACING_SITES.iter().map(|s| s.2)),
+         ..ResolvedOptions::default()
+     }
+ }
+diff --git a/rust/crates/sittir-regex/src/render/transport.rs b/rust/crates/sittir-regex/src/render/transport.rs
+index 62a7fd559..001c6dda8 100644
+--- a/rust/crates/sittir-regex/src/render/transport.rs
++++ b/rust/crates/sittir-regex/src/render/transport.rs
+@@ -10289,6 +10289,7 @@ fn render_alternation(node: &AlternationTransport, w: &mut dyn ::sittir_core::re
+         after: node.terms_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -10305,6 +10306,7 @@ fn render_term(node: &TermTransport, w: &mut dyn ::sittir_core::render::RenderSi
+         after: node.term_group_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -10381,6 +10383,7 @@ fn render_character_class(node: &CharacterClassTransport, w: &mut dyn ::sittir_c
+         after: 0,
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -10882,9 +10885,8 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
+ /// second place the root seam policy could drift.
+ pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {
+     let mut s = String::new();
+-    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);
+-    transport.render(&mut w)?;
+-    w.finish()?;
++    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);
++    w.render_root(transport)?;
+     Ok(s)
+ }
+ 
+diff --git a/rust/crates/sittir-rust/src/render/options.rs b/rust/crates/sittir-rust/src/render/options.rs
+index 58387f388..db3a1f660 100644
+--- a/rust/crates/sittir-rust/src/render/options.rs
++++ b/rust/crates/sittir-rust/src/render/options.rs
+@@ -6324,6 +6324,7 @@ pub fn defaults() -> ResolvedOptions {
+         edge_rows: EDGE_ROWS,
+         kind_flags: KIND_FLAGS,
+         sites: SITE_SPECS,
++        site_flags: ::sittir_core::options::bracket_site_flags(SPACING_SITES.iter().map(|s| s.2)),
+         indent: "    ".to_string(),
+         ..ResolvedOptions::default()
+     }
+diff --git a/rust/crates/sittir-rust/src/render/transport.rs b/rust/crates/sittir-rust/src/render/transport.rs
+index fba60e6ee..af36f694a 100644
+--- a/rust/crates/sittir-rust/src/render/transport.rs
++++ b/rust/crates/sittir-rust/src/render/transport.rs
+@@ -77608,6 +77608,7 @@ fn render_source_file(node: &SourceFileTransport, w: &mut dyn ::sittir_core::ren
+         after: node.statements_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_SOURCE_FILE_STATEMENTS_START),
+         tail: Some(options::SITE_SOURCE_FILE_STATEMENTS_END),
+     };
+@@ -77668,6 +77669,7 @@ fn render_token_repetition_pattern(node: &TokenRepetitionPatternTransport, w: &m
+         after: node.token_patterns_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_START),
+         tail: Some(options::SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_END),
+     };
+@@ -77703,6 +77705,7 @@ fn render_token_repetition(node: &TokenRepetitionTransport, w: &mut dyn ::sittir
+         after: node.tokens_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_TOKEN_REPETITION_TOKENS_START),
+         tail: Some(options::SITE_TOKEN_REPETITION_TOKENS_END),
+     };
+@@ -77781,6 +77784,7 @@ fn render_declaration_list(node: &DeclarationListTransport, w: &mut dyn ::sittir
+         after: node.declarations_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_DECLARATION_LIST_DECLARATIONS_START),
+         tail: Some(options::SITE_DECLARATION_LIST_DECLARATIONS_END),
+     };
+@@ -78092,6 +78096,7 @@ fn render_function_modifiers(node: &FunctionModifiersTransport, w: &mut dyn ::si
+         after: node.modifier_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_FUNCTION_MODIFIERS_MODIFIER_START),
+         tail: Some(options::SITE_FUNCTION_MODIFIERS_MODIFIER_END),
+     };
+@@ -78175,6 +78180,7 @@ fn render_trait_bounds(node: &TraitBoundsTransport, w: &mut dyn ::sittir_core::r
+         after: node.bounds_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_TRAIT_BOUNDS_BOUNDS_START),
+         tail: Some(options::SITE_TRAIT_BOUNDS_BOUNDS_END),
+     };
+@@ -78901,6 +78907,7 @@ fn render_tuple_expression(node: &TupleExpressionTransport, w: &mut dyn ::sittir
+         after: node.attributes_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_TUPLE_EXPRESSION_ATTRIBUTES_START),
+         tail: Some(options::SITE_TUPLE_EXPRESSION_ATTRIBUTES_END),
+     };
+@@ -78952,6 +78959,7 @@ fn render_shorthand_field_initializer(node: &ShorthandFieldInitializerTransport,
+         after: node.attributes_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES_START),
+         tail: Some(options::SITE_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES_END),
+     };
+@@ -78972,6 +78980,7 @@ fn render_field_initializer(node: &FieldInitializerTransport, w: &mut dyn ::sitt
+         after: node.attribute_item_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_FIELD_INITIALIZER_ATTRIBUTE_ITEM_START),
+         tail: Some(options::SITE_FIELD_INITIALIZER_ATTRIBUTE_ITEM_END),
+     };
+@@ -79037,6 +79046,7 @@ fn render_let_chain(node: &LetChainTransport, w: &mut dyn ::sittir_core::render:
+         after: node.right_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -79092,6 +79102,7 @@ fn render_last_match_arm(node: &LastMatchArmTransport, w: &mut dyn ::sittir_core
+         after: node.attributes_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_LAST_MATCH_ARM_ATTRIBUTES_START),
+         tail: Some(options::SITE_LAST_MATCH_ARM_ATTRIBUTES_END),
+     };
+@@ -79210,6 +79221,7 @@ fn render_closure_parameters(node: &ClosureParametersTransport, w: &mut dyn ::si
+         after: node.parameters_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_CLOSURE_PARAMETERS_PARAMETERS_START),
+         tail: Some(options::SITE_CLOSURE_PARAMETERS_PARAMETERS_END),
+     };
+@@ -79359,6 +79371,7 @@ fn render_block(node: &BlockTransport, w: &mut dyn ::sittir_core::render::Render
+         after: node.statements_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_BLOCK_STATEMENTS_START),
+         tail: Some(options::SITE_BLOCK_STATEMENTS_END),
+     };
+@@ -79523,6 +79536,7 @@ fn render_string_literal(node: &StringLiteralTransport, w: &mut dyn ::sittir_cor
+         after: 0,
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -79627,6 +79641,7 @@ fn render_macro_rules(node: &MacroRulesTransport, w: &mut dyn ::sittir_core::ren
+         after: node.macro_rule_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: Some(options::SITE_MACRO_RULES_MACRO_RULE_START),
+         tail: Some(options::SITE_MACRO_RULES_MACRO_RULE_END),
+     };
+@@ -79645,6 +79660,7 @@ fn render_enum_variant_list_elements(node: &EnumVariantListElementsTransport, w:
+         after: node.element_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: Some(options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT_START),
+         tail: Some(options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT_END),
+     };
+@@ -79663,6 +79679,7 @@ fn render_field_declaration_list_elements(node: &FieldDeclarationListElementsTra
+         after: node.element_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: Some(options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_START),
+         tail: Some(options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_END),
+     };
+@@ -79681,6 +79698,7 @@ fn render_ordered_field_declaration_list_elements(node: &OrderedFieldDeclaration
+         after: node.element_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: Some(options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_START),
+         tail: Some(options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_END),
+     };
+@@ -79699,6 +79717,7 @@ fn render_where_predicates(node: &WherePredicatesTransport, w: &mut dyn ::sittir
+         after: node.where_predicate_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: Some(options::SITE_WHERE_PREDICATES_WHERE_PREDICATE_START),
+         tail: Some(options::SITE_WHERE_PREDICATES_WHERE_PREDICATE_END),
+     };
+@@ -79717,6 +79736,7 @@ fn render_type_parameters_elements(node: &TypeParametersElementsTransport, w: &m
+         after: node.element_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: Some(options::SITE_TYPE_PARAMETERS_ELEMENTS_ELEMENT_START),
+         tail: Some(options::SITE_TYPE_PARAMETERS_ELEMENTS_ELEMENT_END),
+     };
+@@ -79735,6 +79755,7 @@ fn render_use_clauses(node: &UseClausesTransport, w: &mut dyn ::sittir_core::ren
+         after: node.use_clause_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: Some(options::SITE_USE_CLAUSES_USE_CLAUSE_START),
+         tail: Some(options::SITE_USE_CLAUSES_USE_CLAUSE_END),
+     };
+@@ -79753,6 +79774,7 @@ fn render_parameters_elements(node: &ParametersElementsTransport, w: &mut dyn ::
+         after: node.element_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: Some(options::SITE_PARAMETERS_ELEMENTS_ELEMENT_START),
+         tail: Some(options::SITE_PARAMETERS_ELEMENTS_ELEMENT_END),
+     };
+@@ -79771,6 +79793,7 @@ fn render_lifetimes(node: &LifetimesTransport, w: &mut dyn ::sittir_core::render
+         after: node.lifetime_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: Some(options::SITE_LIFETIMES_LIFETIME_START),
+         tail: Some(options::SITE_LIFETIMES_LIFETIME_END),
+     };
+@@ -79789,6 +79812,7 @@ fn render_use_bounds_elements(node: &UseBoundsElementsTransport, w: &mut dyn ::s
+         after: node.element_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: Some(options::SITE_USE_BOUNDS_ELEMENTS_ELEMENT_START),
+         tail: Some(options::SITE_USE_BOUNDS_ELEMENTS_ELEMENT_END),
+     };
+@@ -79807,6 +79831,7 @@ fn render_type_arguments_elements(node: &TypeArgumentsElementsTransport, w: &mut
+         after: node.element_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: Some(options::SITE_TYPE_ARGUMENTS_ELEMENTS_ELEMENT_START),
+         tail: Some(options::SITE_TYPE_ARGUMENTS_ELEMENTS_ELEMENT_END),
+     };
+@@ -79825,6 +79850,7 @@ fn render_arguments_elements(node: &ArgumentsElementsTransport, w: &mut dyn ::si
+         after: node.element_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: Some(options::SITE_ARGUMENTS_ELEMENTS_ELEMENT_START),
+         tail: Some(options::SITE_ARGUMENTS_ELEMENTS_ELEMENT_END),
+     };
+@@ -79843,6 +79869,7 @@ fn render_field_initializer_list_elements(node: &FieldInitializerListElementsTra
+         after: node.element_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: Some(options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_START),
+         tail: Some(options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_END),
+     };
+@@ -79861,6 +79888,7 @@ fn render_tuple_pattern_elements(node: &TuplePatternElementsTransport, w: &mut d
+         after: node.element_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: Some(options::SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_START),
+         tail: Some(options::SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_END),
+     };
+@@ -79879,6 +79907,7 @@ fn render_patterns(node: &PatternsTransport, w: &mut dyn ::sittir_core::render::
+         after: node.pattern_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: Some(options::SITE_PATTERNS_PATTERN_START),
+         tail: Some(options::SITE_PATTERNS_PATTERN_END),
+     };
+@@ -79897,6 +79926,7 @@ fn render_struct_pattern_elements(node: &StructPatternElementsTransport, w: &mut
+         after: node.element_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: Some(options::SITE_STRUCT_PATTERN_ELEMENTS_ELEMENT_START),
+         tail: Some(options::SITE_STRUCT_PATTERN_ELEMENTS_ELEMENT_END),
+     };
+@@ -79933,6 +79963,7 @@ fn render_tuple_type_elements(node: &TupleTypeElementsTransport, w: &mut dyn ::s
+         after: node.type_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: Some(options::SITE_TUPLE_TYPE_ELEMENTS_TYPE_START),
+         tail: Some(options::SITE_TUPLE_TYPE_ELEMENTS_TYPE_END),
+     };
+@@ -79951,6 +79982,7 @@ fn render_tuple_expression_elements(node: &TupleExpressionElementsTransport, w:
+         after: node.element_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: (&node.element).len() == 1 || node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: Some(options::SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_START),
+         tail: Some(options::SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_END),
+     };
+@@ -80130,6 +80162,7 @@ fn render_array_expression_semi(node: &ArrayExpressionSemiTransport, w: &mut dyn
+         after: node.attributes_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_ARRAY_EXPRESSION_SEMI_ATTRIBUTES_START),
+         tail: Some(options::SITE_ARRAY_EXPRESSION_SEMI_ATTRIBUTES_END),
+     };
+@@ -80160,6 +80193,7 @@ fn render_array_expression_list(node: &ArrayExpressionListTransport, w: &mut dyn
+         after: node.attributes_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_ARRAY_EXPRESSION_LIST_ATTRIBUTES_START),
+         tail: Some(options::SITE_ARRAY_EXPRESSION_LIST_ATTRIBUTES_END),
+     };
+@@ -80577,6 +80611,7 @@ fn render_match_arm_with_comma(node: &MatchArmWithCommaTransport, w: &mut dyn ::
+         after: node.attributes_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_MATCH_ARM_WITH_COMMA_ATTRIBUTES_START),
+         tail: Some(options::SITE_MATCH_ARM_WITH_COMMA_ATTRIBUTES_END),
+     };
+@@ -80604,6 +80639,7 @@ fn render_match_arm_block_ending(node: &MatchArmBlockEndingTransport, w: &mut dy
+         after: node.attributes_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES_START),
+         tail: Some(options::SITE_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES_END),
+     };
+@@ -80671,6 +80707,7 @@ fn render_token_tree_pattern_paren(node: &TokenTreePatternParenTransport, w: &mu
+         after: node.token_patterns_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_START),
+         tail: Some(options::SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_END),
+     };
+@@ -80694,6 +80731,7 @@ fn render_token_tree_pattern_bracket(node: &TokenTreePatternBracketTransport, w:
+         after: node.token_patterns_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_START),
+         tail: Some(options::SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_END),
+     };
+@@ -80717,6 +80755,7 @@ fn render_token_tree_pattern_brace(node: &TokenTreePatternBraceTransport, w: &mu
+         after: node.token_patterns_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_START),
+         tail: Some(options::SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_END),
+     };
+@@ -80740,6 +80779,7 @@ fn render_token_tree_paren(node: &TokenTreeParenTransport, w: &mut dyn ::sittir_
+         after: node.tokens_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_TOKEN_TREE_PAREN_TOKENS_START),
+         tail: Some(options::SITE_TOKEN_TREE_PAREN_TOKENS_END),
+     };
+@@ -80763,6 +80803,7 @@ fn render_token_tree_bracket(node: &TokenTreeBracketTransport, w: &mut dyn ::sit
+         after: node.tokens_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_TOKEN_TREE_BRACKET_TOKENS_START),
+         tail: Some(options::SITE_TOKEN_TREE_BRACKET_TOKENS_END),
+     };
+@@ -80786,6 +80827,7 @@ fn render_token_tree_brace(node: &TokenTreeBraceTransport, w: &mut dyn ::sittir_
+         after: node.tokens_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_TOKEN_TREE_BRACE_TOKENS_START),
+         tail: Some(options::SITE_TOKEN_TREE_BRACE_TOKENS_END),
+     };
+@@ -80809,6 +80851,7 @@ fn render_delim_token_tree_paren(node: &DelimTokenTreeParenTransport, w: &mut dy
+         after: node.delim_tokens_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_START),
+         tail: Some(options::SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_END),
+     };
+@@ -80832,6 +80875,7 @@ fn render_delim_token_tree_bracket(node: &DelimTokenTreeBracketTransport, w: &mu
+         after: node.delim_tokens_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_START),
+         tail: Some(options::SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_END),
+     };
+@@ -80855,6 +80899,7 @@ fn render_delim_token_tree_brace(node: &DelimTokenTreeBraceTransport, w: &mut dy
+         after: node.delim_tokens_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_START),
+         tail: Some(options::SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_END),
+     };
+@@ -81073,6 +81118,7 @@ fn render_attributed_field_declaration(node: &AttributedFieldDeclarationTranspor
+         after: node.attribute_item_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTE_ITEM_START),
+         tail: Some(options::SITE_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTE_ITEM_END),
+     };
+@@ -81093,6 +81139,7 @@ fn render_attributed_enum_variant(node: &AttributedEnumVariantTransport, w: &mut
+         after: node.attribute_item_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTE_ITEM_START),
+         tail: Some(options::SITE_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTE_ITEM_END),
+     };
+@@ -81123,6 +81170,7 @@ fn render_attributed_type_parameter(node: &AttributedTypeParameterTransport, w:
+         after: node.attribute_item_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTE_ITEM_START),
+         tail: Some(options::SITE_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTE_ITEM_END),
+     };
+@@ -81143,6 +81191,7 @@ fn render_attributed_argument(node: &AttributedArgumentTransport, w: &mut dyn ::
+         after: node.attribute_item_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_ATTRIBUTED_ARGUMENT_ATTRIBUTE_ITEM_START),
+         tail: Some(options::SITE_ATTRIBUTED_ARGUMENT_ATTRIBUTE_ITEM_END),
+     };
+@@ -81163,6 +81212,7 @@ fn render_attributed_ordered_field(node: &AttributedOrderedFieldTransport, w: &m
+         after: node.attribute_item_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTE_ITEM_START),
+         tail: Some(options::SITE_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTE_ITEM_END),
+     };
+@@ -81196,6 +81246,7 @@ fn render_match_block_arms(node: &MatchBlockArmsTransport, w: &mut dyn ::sittir_
+         after: node.match_arm_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_MATCH_BLOCK_ARMS_MATCH_ARM_START),
+         tail: Some(options::SITE_MATCH_BLOCK_ARMS_MATCH_ARM_END),
+     };
+@@ -82178,9 +82229,8 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
+ /// second place the root seam policy could drift.
+ pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {
+     let mut s = String::new();
+-    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);
+-    transport.render(&mut w)?;
+-    w.finish()?;
++    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);
++    w.render_root(transport)?;
+     Ok(s)
+ }
+ 
+diff --git a/rust/crates/sittir-scm/src/render/options.rs b/rust/crates/sittir-scm/src/render/options.rs
+index 0501d03a2..0110e781d 100644
+--- a/rust/crates/sittir-scm/src/render/options.rs
++++ b/rust/crates/sittir-scm/src/render/options.rs
+@@ -657,6 +657,7 @@ pub fn defaults() -> ResolvedOptions {
+         edge_rows: EDGE_ROWS,
+         kind_flags: KIND_FLAGS,
+         sites: SITE_SPECS,
++        site_flags: ::sittir_core::options::bracket_site_flags(SPACING_SITES.iter().map(|s| s.2)),
+         indent: "    ".to_string(),
+         ..ResolvedOptions::default()
+     }
+diff --git a/rust/crates/sittir-scm/src/render/transport.rs b/rust/crates/sittir-scm/src/render/transport.rs
+index 58b6b7084..5050bf334 100644
+--- a/rust/crates/sittir-scm/src/render/transport.rs
++++ b/rust/crates/sittir-scm/src/render/transport.rs
+@@ -9133,6 +9133,7 @@ fn render_program(node: &ProgramTransport, w: &mut dyn ::sittir_core::render::Re
+         after: node.definitions_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_PROGRAM_DEFINITIONS_START),
+         tail: Some(options::SITE_PROGRAM_DEFINITIONS_END),
+     };
+@@ -9202,6 +9203,7 @@ fn render_string_content(node: &StringContentTransport, w: &mut dyn ::sittir_cor
+         after: 0,
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -9218,6 +9220,7 @@ fn render_parameters(node: &ParametersTransport, w: &mut dyn ::sittir_core::rend
+         after: node.elements_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_PARAMETERS_ELEMENTS_START),
+         tail: Some(options::SITE_PARAMETERS_ELEMENTS_END),
+     };
+@@ -9244,6 +9247,7 @@ fn render_list(node: &ListTransport, w: &mut dyn ::sittir_core::render::RenderSi
+         after: node.definitions_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -9255,6 +9259,7 @@ fn render_list(node: &ListTransport, w: &mut dyn ::sittir_core::render::RenderSi
+         after: node.elements_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -9279,6 +9284,7 @@ fn render_grouping(node: &GroupingTransport, w: &mut dyn ::sittir_core::render::
+         after: node.elements_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -9290,6 +9296,7 @@ fn render_grouping(node: &GroupingTransport, w: &mut dyn ::sittir_core::render::
+         after: node.grouping_group_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -9314,6 +9321,7 @@ fn render_missing_node(node: &MissingNodeTransport, w: &mut dyn ::sittir_core::r
+         after: node.elements_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_MISSING_NODE_ELEMENTS_START),
+         tail: Some(options::SITE_MISSING_NODE_ELEMENTS_END),
+     };
+@@ -9343,6 +9351,7 @@ fn render_anonymous_node(node: &AnonymousNodeTransport, w: &mut dyn ::sittir_cor
+         after: node.elements_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_ANONYMOUS_NODE_ELEMENTS_START),
+         tail: Some(options::SITE_ANONYMOUS_NODE_ELEMENTS_END),
+     };
+@@ -9466,6 +9475,7 @@ fn render_named_node_plain(node: &NamedNodePlainTransport, w: &mut dyn ::sittir_
+         after: node.elements_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_NAMED_NODE_PLAIN_ELEMENTS_START),
+         tail: Some(options::SITE_NAMED_NODE_PLAIN_ELEMENTS_END),
+     };
+@@ -9494,6 +9504,7 @@ fn render_named_node_supertyped(node: &NamedNodeSupertypedTransport, w: &mut dyn
+         after: node.elements_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_START),
+         tail: Some(options::SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_END),
+     };
+@@ -9527,6 +9538,7 @@ fn render_named_node_group_children(node: &NamedNodeGroupChildrenTransport, w: &
+         after: node.named_node_expressions_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_START),
+         tail: Some(options::SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_END),
+     };
+@@ -9551,6 +9563,7 @@ fn render_named_node_group_anchored_last(node: &NamedNodeGroupAnchoredLastTransp
+         after: node.named_node_expressions_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_START),
+         tail: Some(options::SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_END),
+     };
+@@ -9709,9 +9722,8 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
+ /// second place the root seam policy could drift.
+ pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {
+     let mut s = String::new();
+-    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);
+-    transport.render(&mut w)?;
+-    w.finish()?;
++    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);
++    w.render_root(transport)?;
+     Ok(s)
+ }
+ 
+diff --git a/rust/crates/sittir-typescript/src/render/options.rs b/rust/crates/sittir-typescript/src/render/options.rs
+index 385ac2784..37e57edfe 100644
+--- a/rust/crates/sittir-typescript/src/render/options.rs
++++ b/rust/crates/sittir-typescript/src/render/options.rs
+@@ -5448,6 +5448,7 @@ pub fn defaults() -> ResolvedOptions {
+         edge_rows: EDGE_ROWS,
+         kind_flags: KIND_FLAGS,
+         sites: SITE_SPECS,
++        site_flags: ::sittir_core::options::bracket_site_flags(SPACING_SITES.iter().map(|s| s.2)),
+         indent: "  ".to_string(),
+         ..ResolvedOptions::default()
+     }
+diff --git a/rust/crates/sittir-typescript/src/render/transport.rs b/rust/crates/sittir-typescript/src/render/transport.rs
+index 27a580043..dc1d49d95 100644
+--- a/rust/crates/sittir-typescript/src/render/transport.rs
++++ b/rust/crates/sittir-typescript/src/render/transport.rs
+@@ -99257,6 +99257,7 @@ fn render_program(node: &ProgramTransport, w: &mut dyn ::sittir_core::render::Re
+         after: node.statements_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_PROGRAM_STATEMENTS_START),
+         tail: Some(options::SITE_PROGRAM_STATEMENTS_END),
+     };
+@@ -99402,6 +99403,7 @@ fn render_variable_declaration(node: &VariableDeclarationTransport, w: &mut dyn
+         after: node.declarators_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_VARIABLE_DECLARATION_DECLARATORS_START),
+         tail: Some(options::SITE_VARIABLE_DECLARATION_DECLARATORS_END),
+     };
+@@ -99424,6 +99426,7 @@ fn render_lexical_declaration(node: &LexicalDeclarationTransport, w: &mut dyn ::
+         after: node.declarators_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_LEXICAL_DECLARATION_DECLARATORS_START),
+         tail: Some(options::SITE_LEXICAL_DECLARATION_DECLARATORS_END),
+     };
+@@ -99448,6 +99451,7 @@ fn render_statement_block(node: &StatementBlockTransport, w: &mut dyn ::sittir_c
+         after: node.statements_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_STATEMENT_BLOCK_STATEMENTS_START),
+         tail: Some(options::SITE_STATEMENT_BLOCK_STATEMENTS_END),
+     };
+@@ -99690,6 +99694,7 @@ fn render_switch_body(node: &SwitchBodyTransport, w: &mut dyn ::sittir_core::ren
+         after: node.cases_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_SWITCH_BODY_CASES_START),
+         tail: Some(options::SITE_SWITCH_BODY_CASES_END),
+     };
+@@ -99713,6 +99718,7 @@ fn render_switch_case(node: &SwitchCaseTransport, w: &mut dyn ::sittir_core::ren
+         after: node.body_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_SWITCH_CASE_BODY_START),
+         tail: Some(options::SITE_SWITCH_CASE_BODY_END),
+     };
+@@ -99738,6 +99744,7 @@ fn render_switch_default(node: &SwitchDefaultTransport, w: &mut dyn ::sittir_cor
+         after: node.body_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_SWITCH_DEFAULT_BODY_START),
+         tail: Some(options::SITE_SWITCH_DEFAULT_BODY_END),
+     };
+@@ -99794,6 +99801,7 @@ fn render_object(node: &ObjectTransport, w: &mut dyn ::sittir_core::render::Rend
+         after: node.properties_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_OBJECT_PROPERTIES_START),
+         tail: Some(options::SITE_OBJECT_PROPERTIES_END),
+     };
+@@ -99817,6 +99825,7 @@ fn render_object_pattern(node: &ObjectPatternTransport, w: &mut dyn ::sittir_cor
+         after: node.properties_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_OBJECT_PATTERN_PROPERTIES_START),
+         tail: Some(options::SITE_OBJECT_PATTERN_PROPERTIES_END),
+     };
+@@ -99866,6 +99875,7 @@ fn render_array(node: &ArrayTransport, w: &mut dyn ::sittir_core::render::Render
+         after: node.elements_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_ARRAY_ELEMENTS_START),
+         tail: Some(options::SITE_ARRAY_ELEMENTS_END),
+     };
+@@ -99889,6 +99899,7 @@ fn render_array_pattern(node: &ArrayPatternTransport, w: &mut dyn ::sittir_core:
+         after: node.elements_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_ARRAY_PATTERN_ELEMENTS_START),
+         tail: Some(options::SITE_ARRAY_PATTERN_ELEMENTS_END),
+     };
+@@ -99926,6 +99937,7 @@ fn render_class(node: &ClassTransport, w: &mut dyn ::sittir_core::render::Render
+         after: node.decorator_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_CLASS_DECORATOR_START),
+         tail: Some(options::SITE_CLASS_DECORATOR_END),
+     };
+@@ -99956,6 +99968,7 @@ fn render_class_declaration(node: &ClassDeclarationTransport, w: &mut dyn ::sitt
+         after: node.decorator_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_CLASS_DECLARATION_DECORATOR_START),
+         tail: Some(options::SITE_CLASS_DECLARATION_DECORATOR_END),
+     };
+@@ -100281,6 +100294,7 @@ fn render_sequence_expression(node: &SequenceExpressionTransport, w: &mut dyn ::
+         after: node.expression_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_SEQUENCE_EXPRESSION_EXPRESSION_START),
+         tail: Some(options::SITE_SEQUENCE_EXPRESSION_EXPRESSION_END),
+     };
+@@ -100317,6 +100331,7 @@ fn render_template_string(node: &TemplateStringTransport, w: &mut dyn ::sittir_c
+         after: 0,
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -100406,6 +100421,7 @@ fn render_arguments(node: &ArgumentsTransport, w: &mut dyn ::sittir_core::render
+         after: node.elements_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_ARGUMENTS_ELEMENTS_START),
+         tail: Some(options::SITE_ARGUMENTS_ELEMENTS_END),
+     };
+@@ -100464,6 +100480,7 @@ fn render_class_body(node: &ClassBodyTransport, w: &mut dyn ::sittir_core::rende
+         after: node.members_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_CLASS_BODY_MEMBERS_START),
+         tail: Some(options::SITE_CLASS_BODY_MEMBERS_END),
+     };
+@@ -100629,6 +100646,7 @@ fn render_public_field_definition(node: &PublicFieldDefinitionTransport, w: &mut
+         after: node.decorator_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_START),
+         tail: Some(options::SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_END),
+     };
+@@ -100906,6 +100924,7 @@ fn render_extends_clause(node: &ExtendsClauseTransport, w: &mut dyn ::sittir_cor
+         after: node.extends_clause_single_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_START),
+         tail: Some(options::SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_END),
+     };
+@@ -100936,6 +100955,7 @@ fn render_implements_clause(node: &ImplementsClauseTransport, w: &mut dyn ::sitt
+         after: node.type_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_IMPLEMENTS_CLAUSE_TYPE_START),
+         tail: Some(options::SITE_IMPLEMENTS_CLAUSE_TYPE_END),
+     };
+@@ -100967,6 +100987,7 @@ fn render_abstract_class_declaration(node: &AbstractClassDeclarationTransport, w
+         after: node.decorator_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_ABSTRACT_CLASS_DECLARATION_DECORATOR_START),
+         tail: Some(options::SITE_ABSTRACT_CLASS_DECLARATION_DECORATOR_END),
+     };
+@@ -101068,6 +101089,7 @@ fn render_extends_type_clause(node: &ExtendsTypeClauseTransport, w: &mut dyn ::s
+         after: node.type_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_EXTENDS_TYPE_CLAUSE_TYPE_START),
+         tail: Some(options::SITE_EXTENDS_TYPE_CLAUSE_TYPE_END),
+     };
+@@ -101160,6 +101182,7 @@ fn render_required_parameter(node: &RequiredParameterTransport, w: &mut dyn ::si
+         after: node.decorator_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_REQUIRED_PARAMETER_DECORATOR_START),
+         tail: Some(options::SITE_REQUIRED_PARAMETER_DECORATOR_END),
+     };
+@@ -101199,6 +101222,7 @@ fn render_optional_parameter(node: &OptionalParameterTransport, w: &mut dyn ::si
+         after: node.decorator_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_OPTIONAL_PARAMETER_DECORATOR_START),
+         tail: Some(options::SITE_OPTIONAL_PARAMETER_DECORATOR_END),
+     };
+@@ -101401,6 +101425,7 @@ fn render_template_literal_type(node: &TemplateLiteralTypeTransport, w: &mut dyn
+         after: 0,
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -101861,6 +101886,7 @@ fn render_export_specifiers(node: &ExportSpecifiersTransport, w: &mut dyn ::sitt
+         after: node.export_specifier_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: Some(options::SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_START),
+         tail: Some(options::SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_END),
+     };
+@@ -101879,6 +101905,7 @@ fn render_import_specifiers(node: &ImportSpecifiersTransport, w: &mut dyn ::sitt
+         after: node.import_specifier_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: Some(options::SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_START),
+         tail: Some(options::SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_END),
+     };
+@@ -101897,6 +101924,7 @@ fn render_formal_parameters_elements(node: &FormalParametersElementsTransport, w
+         after: node.formal_parameter_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: Some(options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_START),
+         tail: Some(options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_END),
+     };
+@@ -101921,6 +101949,7 @@ fn render_enum_body_elements(node: &EnumBodyElementsTransport, w: &mut dyn ::sit
+         after: node.element_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: Some(options::SITE_ENUM_BODY_ELEMENTS_ELEMENT_START),
+         tail: Some(options::SITE_ENUM_BODY_ELEMENTS_ELEMENT_END),
+     };
+@@ -101939,6 +101968,7 @@ fn render_types(node: &TypesTransport, w: &mut dyn ::sittir_core::render::Render
+         after: node.type_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: Some(options::SITE_TYPES_TYPE_START),
+         tail: Some(options::SITE_TYPES_TYPE_END),
+     };
+@@ -101957,6 +101987,7 @@ fn render_type_parameters_elements(node: &TypeParametersElementsTransport, w: &m
+         after: node.type_parameter_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: Some(options::SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER_START),
+         tail: Some(options::SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER_END),
+     };
+@@ -101975,6 +102006,7 @@ fn render_tuple_type_members(node: &TupleTypeMembersTransport, w: &mut dyn ::sit
+         after: node.tuple_type_member_separator_space_after.unwrap_or(0),
+         leading: false,
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: Some(options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_START),
+         tail: Some(options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_END),
+     };
+@@ -102052,6 +102084,7 @@ fn render_object_type_content(node: &ObjectTypeContentTransport, w: &mut dyn ::s
+         after: node.members_separator_space_after.unwrap_or(0),
+         leading: node.delimiter.map(|d| d & 1 != 0).unwrap_or(false),
+         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
++        when_broken: node.delimiter.map(|d| d & 4 != 0).unwrap_or(false),
+         head: Some(options::SITE_OBJECT_TYPE_CONTENT_MEMBERS_START),
+         tail: Some(options::SITE_OBJECT_TYPE_CONTENT_MEMBERS_END),
+     };
+@@ -102307,6 +102340,7 @@ fn render_class_body_member_method(node: &ClassBodyMemberMethodTransport, w: &mu
+         after: node.decorator_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_CLASS_BODY_MEMBER_METHOD_DECORATOR_START),
+         tail: Some(options::SITE_CLASS_BODY_MEMBER_METHOD_DECORATOR_END),
+     };
+@@ -102523,6 +102557,7 @@ fn render_string_double(node: &StringDoubleTransport, w: &mut dyn ::sittir_core:
+         after: 0,
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -102543,6 +102578,7 @@ fn render_string_single(node: &StringSingleTransport, w: &mut dyn ::sittir_core:
+         after: 0,
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -102625,6 +102661,7 @@ fn render_export_statement_default_declaration(node: &ExportStatementDefaultDecl
+         after: node.decorator_separator_space.unwrap_or(0),
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_START),
+         tail: Some(options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_END),
+     };
+@@ -103753,9 +103790,8 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
+ /// second place the root seam policy could drift.
+ pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {
+     let mut s = String::new();
+-    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);
+-    transport.render(&mut w)?;
+-    w.finish()?;
++    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);
++    w.render_root(transport)?;
+     Ok(s)
+ }
+ 

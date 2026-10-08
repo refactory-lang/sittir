@@ -1,0 +1,13 @@
+{
+	"typescript": {
+		"runtime": ["automatic_semicolon", "function_signature_automatic_semicolon"],
+		"external": ["_automatic_semicolon", "_function_signature_automatic_semicolon"],
+		"watch": ["automatic_semicolon", "function_signature_automatic_semicolon", "jsx_text"]
+	},
+	"python": {
+		"runtime": ["newline", "_indent", "_dedent"],
+		"external": ["_newline", "_indent", "_dedent"],
+		"watch": ["newline", "_indent", "_dedent"]
+	},
+	"rust": { "runtime": [], "external": [], "watch": [] }
+}

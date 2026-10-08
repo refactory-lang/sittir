@@ -1,0 +1,1735 @@
+diff --git a/rust/crates/sittir-core/src/layout.rs b/rust/crates/sittir-core/src/layout.rs
+new file mode 100644
+index 000000000..5b68f8d79
+--- /dev/null
++++ b/rust/crates/sittir-core/src/layout.rs
+@@ -0,0 +1,663 @@
++//! PROTOTYPE (throwaway, for measurements): a transient layout table filled by
++//! `SpacingWriter` during one render, adjusted by a breaking rule, and
++//! flattened to text.
++
++use std::fmt;
++
++pub const NO_LIST: u32 = u32::MAX;
++pub const NO_ROW: u32 = u32::MAX;
++
++/// Row kinds and marks.
++pub const SEAM: u8 = 1;
++/// The writer owed indentation before this row (it starts a line).
++pub const STARTS_LINE: u8 = 2;
++/// Written only when its list is broken (a conditional trailing separator).
++pub const CONDITIONAL: u8 = 4;
++/// Set by the pass: this seam is a line break.
++pub const BREAK: u8 = 8;
++/// The row's flat bytes contain a line break.
++pub const HAS_NEWLINE: u8 = 16;
++/// A space the writer put between two word characters.
++pub const LEXICAL: u8 = 32;
++
++/// A seam's place in its list (`fact & ROLE_MASK`).
++pub const ROLE_MASK: u8 = 7;
++pub const ROLE_NONE: u8 = 0;
++pub const ROLE_HEAD: u8 = 1;
++pub const ROLE_BEFORE: u8 = 2;
++pub const ROLE_AFTER: u8 = 3;
++pub const ROLE_TAIL: u8 = 4;
++
++/// Why a seam is not adjustable (`fact >> 3`), as bits; 0 means nothing at the
++/// gap itself forbids it.
++pub const WHY_SET: u8 = 1;
++pub const WHY_SOURCE: u8 = 2;
++pub const WHY_FIXED: u8 = 4;
++pub const WHY_ROOT: u8 = 8;
++
++/// Site flags (`ResolvedOptions::site_flags`).
++pub const SITE_AFTER_OPEN_BRACKET: u8 = 1;
++pub const SITE_BEFORE_CLOSE_BRACKET: u8 = 2;
++
++/// List flags.
++pub const LIST_SEPARATED: u8 = 1;
++pub const LIST_OPENS_AT_BRACKET: u8 = 2;
++pub const LIST_CLOSES_AT_BRACKET: u8 = 4;
++pub const LIST_HOLDS_BREAK: u8 = 8;
++pub const LIST_BROKEN: u8 = 16;
++pub const LIST_SHIFTED: u8 = 32;
++
++#[derive(Clone, Copy, Debug)]
++pub struct Row {
++    /// One past this row's bytes in `text`; it starts where the previous row ends.
++    pub end: u32,
++    /// Seam: the list whose gap this is. Conditional text: the list it waits on.
++    pub list: u32,
++    /// The writer's depth when the row was written.
++    pub depth: u16,
++    pub kind: u8,
++    /// Seam: role in its list and why it is not adjustable.
++    pub fact: u8,
++}
++
++#[derive(Clone, Copy, Debug)]
++pub struct List {
++    pub parent: u32,
++    pub head: u32,
++    pub tail: u32,
++    pub flags: u8,
++}
++
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub enum Breaking {
++    Group,
++    Fill,
++    /// Group breaking that leaves a single-item list on its line when the item
++    /// ends in a list that can break instead.
++    Hug,
++}
++
++#[derive(Clone, Default)]
++pub struct GapNote {
++    list: u32,
++    role: u8,
++    why: u8,
++    brackets: u8,
++    heads: Vec<u32>,
++    tails: Vec<u32>,
++}
++
++pub struct Layout {
++    pub text: String,
++    pub rows: Vec<Row>,
++    pub lists: Vec<List>,
++    open: Vec<u32>,
++    gap: GapNote,
++    line_start: bool,
++    in_seam: bool,
++    conditional: u32,
++    pub limit: u32,
++    pub rule: Breaking,
++    pub tab: u32,
++}
++
++#[derive(Debug, Default, Clone, Copy)]
++pub struct LayoutStats {
++    pub text_bytes: usize,
++    pub rows: usize,
++    pub seam_rows: usize,
++    pub lists: usize,
++    pub breakable_lists: usize,
++    pub broken_lists: usize,
++    pub table_bytes: usize,
++    pub out_bytes: usize,
++}
++
++/// PROTOTYPE: `SITTIR_LAYOUT_UNSAFE` drops the bracket requirement, to show
++/// what it protects.
++fn needed_flags() -> u8 {
++    static UNSAFE: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
++    if *UNSAFE.get_or_init(|| std::env::var_os("SITTIR_LAYOUT_UNSAFE").is_some()) {
++        LIST_SEPARATED
++    } else {
++        LIST_SEPARATED | LIST_OPENS_AT_BRACKET | LIST_CLOSES_AT_BRACKET
++    }
++}
++
++impl Layout {
++    pub fn new(limit: u32, rule: Breaking, tab: u32) -> Self {
++        Self {
++            text: String::new(),
++            rows: Vec::new(),
++            lists: Vec::new(),
++            open: Vec::new(),
++            gap: GapNote { list: NO_LIST, ..GapNote::default() },
++            line_start: false,
++            in_seam: false,
++            conditional: NO_LIST,
++            limit,
++            rule,
++            tab,
++        }
++    }
++
++    /// Bytes from the writer's `emit`: a piece of text, or the bytes of the
++    /// seam being flushed.
++    pub fn bytes(&mut self, s: &str, depth: usize) {
++        self.text.push_str(s);
++        if self.in_seam {
++            return;
++        }
++        let end = self.text.len() as u32;
++        let newline = if s.contains('\n') { HAS_NEWLINE } else { 0 };
++        let merge = !self.line_start && self.conditional == NO_LIST;
++        match self.rows.last_mut() {
++            Some(last) if merge && last.kind & (SEAM | CONDITIONAL) == 0 => {
++                last.end = end;
++                last.kind |= newline;
++            }
++            _ => {
++                let starts = if std::mem::take(&mut self.line_start) { STARTS_LINE } else { 0 };
++                let conditional = if self.conditional == NO_LIST { 0 } else { CONDITIONAL };
++                self.rows.push(Row { end, list: self.conditional, depth: depth as u16, kind: starts | conditional | newline, fact: 0 });
++            }
++        }
++    }
++
++    pub fn lexical_space(&mut self, depth: usize) {
++        self.text.push(' ');
++        let conditional = if self.conditional == NO_LIST { 0 } else { CONDITIONAL };
++        self.rows.push(Row { end: self.text.len() as u32, list: self.conditional, depth: depth as u16, kind: SEAM | LEXICAL | conditional, fact: 0 });
++    }
++
++    pub fn owe_indent(&mut self) {
++        self.line_start = true;
++    }
++
++    pub fn seam_begin(&mut self) -> usize {
++        self.in_seam = true;
++        self.text.len()
++    }
++
++    /// The gap's seam was flushed (`marked`), or there was none: record its
++    /// row when it holds a mark or a list role.
++    pub fn seam_end(&mut self, start: usize, marked: bool, depth: usize) {
++        self.in_seam = false;
++        let gap = std::mem::replace(&mut self.gap, GapNote { list: NO_LIST, ..GapNote::default() });
++        if !marked && gap.role == ROLE_NONE && gap.heads.is_empty() && gap.tails.is_empty() {
++            return;
++        }
++        let end = self.text.len() as u32;
++        let newline = if self.text[start..].contains('\n') { HAS_NEWLINE } else { 0 };
++        let starts = if std::mem::take(&mut self.line_start) { STARTS_LINE } else { 0 };
++        let conditional = if self.conditional == NO_LIST { 0 } else { CONDITIONAL };
++        let index = self.rows.len() as u32;
++        let (list, role) = if self.conditional != NO_LIST { (self.conditional, ROLE_BEFORE) } else { (gap.list, gap.role) };
++        self.rows.push(Row { end, list, depth: depth as u16, kind: SEAM | starts | conditional | newline, fact: role | (gap.why << 3) });
++        for &l in &gap.heads {
++            let entry = &mut self.lists[l as usize];
++            entry.head = index;
++            if gap.brackets & SITE_AFTER_OPEN_BRACKET != 0 {
++                entry.flags |= LIST_OPENS_AT_BRACKET;
++            }
++        }
++        for &l in &gap.tails {
++            let entry = &mut self.lists[l as usize];
++            entry.tail = index;
++            if gap.brackets & SITE_BEFORE_CLOSE_BRACKET != 0 {
++                entry.flags |= LIST_CLOSES_AT_BRACKET;
++            }
++        }
++        if newline != 0 && list != NO_LIST && (role == ROLE_BEFORE || role == ROLE_AFTER) && conditional == 0 {
++            self.lists[list as usize].flags |= LIST_HOLDS_BREAK;
++        }
++    }
++
++    pub fn note(&mut self, why: u8) {
++        self.gap.why |= why;
++    }
++
++    pub fn note_site(&mut self, flags: u8, set: bool) {
++        self.gap.brackets |= flags;
++        if set {
++            self.gap.why |= WHY_SET;
++        }
++    }
++
++    pub fn list_open(&mut self, separated: bool) {
++        let index = self.lists.len() as u32;
++        let parent = self.open.last().copied().unwrap_or(NO_LIST);
++        self.lists.push(List { parent, head: NO_ROW, tail: NO_ROW, flags: if separated { LIST_SEPARATED } else { 0 } });
++        self.open.push(index);
++        self.gap.heads.push(index);
++        if self.gap.role == ROLE_NONE {
++            self.gap.role = ROLE_HEAD;
++            self.gap.list = index;
++        }
++    }
++
++    pub fn list_gap(&mut self, role: u8) {
++        if let Some(&list) = self.open.last() {
++            self.gap.role = role;
++            self.gap.list = list;
++        }
++    }
++
++    pub fn list_close(&mut self) {
++        if let Some(list) = self.open.pop() {
++            self.gap.tails.push(list);
++            self.gap.role = ROLE_TAIL;
++            self.gap.list = list;
++        }
++    }
++
++    pub fn current_list(&self) -> u32 {
++        self.open.last().copied().unwrap_or(NO_LIST)
++    }
++
++    pub fn take_gap(&mut self) -> GapNote {
++        std::mem::replace(&mut self.gap, GapNote { list: NO_LIST, ..GapNote::default() })
++    }
++
++    pub fn put_gap(&mut self, gap: GapNote) {
++        self.gap = gap;
++    }
++
++    pub fn set_conditional(&mut self, list: u32) {
++        self.conditional = list;
++    }
++
++    fn start_of(&self, row: usize) -> usize {
++        if row == 0 { 0 } else { self.rows[row - 1].end as usize }
++    }
++
++    fn bytes_of(&self, row: usize) -> &str {
++        &self.text[self.start_of(row)..self.rows[row].end as usize]
++    }
++
++    fn columns(&self, s: &str) -> u32 {
++        if s.is_ascii() {
++            let tabs = s.bytes().filter(|&b| b == b'\t').count() as u32;
++            s.len() as u32 + tabs * (self.tab.saturating_sub(1))
++        } else {
++            s.chars().map(|c| if c == '\t' { self.tab } else { 1 }).sum()
++        }
++    }
++
++    /// Whether nothing at the row itself, or at its list, forbids turning it
++    /// into a line break.
++    pub fn adjustable(&self, row: usize) -> bool {
++        let r = &self.rows[row];
++        if r.kind & SEAM == 0 || r.kind & (HAS_NEWLINE | CONDITIONAL | LEXICAL) != 0 || r.list == NO_LIST {
++            return false;
++        }
++        let role = r.fact & ROLE_MASK;
++        if !(role == ROLE_HEAD || role == ROLE_AFTER || role == ROLE_TAIL) || r.fact >> 3 != 0 {
++            return false;
++        }
++        let need = needed_flags();
++        self.lists[r.list as usize].flags & need == need
++    }
++
++    /// A list the pass may break as a whole: bracketed, separated, and each
++    /// flank either adjustable or already a line break.
++    fn breakable(&self, list: usize) -> bool {
++        let l = &self.lists[list];
++        let need = needed_flags();
++        if l.flags & need != need || l.head == NO_ROW || l.tail == NO_ROW {
++            return false;
++        }
++        let flank = |row: u32| self.adjustable(row as usize) || self.rows[row as usize].kind & HAS_NEWLINE != 0;
++        flank(l.head) && flank(l.tail)
++    }
++
++    fn indent_width(&self, depth: u32, indent: &str) -> u32 {
++        depth * self.columns(indent)
++    }
++
++    /// Group breaking: a list stays on its line when it and what follows it,
++    /// up to the next place the line can end, fit; otherwise every adjustable
++    /// seam of the list becomes a line break.
++    fn lay_out_group(&mut self, indent: &str) {
++        self.mark_broken_as_written();
++        let mut col: u32 = 0;
++        let mut shift: u32 = 0;
++        let mut owed = false;
++        for i in 0..self.rows.len() {
++            let row = self.rows[i];
++            if row.kind & CONDITIONAL != 0 && self.lists[row.list as usize].flags & LIST_BROKEN == 0 {
++                continue;
++            }
++            if row.kind & SEAM != 0 && row.kind & CONDITIONAL == 0 && row.list != NO_LIST {
++                let l = row.list as usize;
++                if self.lists[l].head == i as u32 && self.lists[l].flags & LIST_BROKEN == 0 && self.breakable(l) && !self.fits(i, col) {
++                    match self.hugged(l, i, col) {
++                        Some(inner) => self.lists[inner].flags |= LIST_BROKEN,
++                        None => self.lists[l].flags |= LIST_BROKEN,
++                    }
++                }
++                if self.lists[l].flags & LIST_BROKEN != 0 && self.breakable(l) && self.adjustable(i) {
++                    self.rows[i].kind |= BREAK;
++                    let role = row.fact & ROLE_MASK;
++                    if role == ROLE_HEAD {
++                        self.lists[l].flags |= LIST_SHIFTED;
++                        shift += 1;
++                    }
++                    if role == ROLE_TAIL && self.lists[l].flags & LIST_SHIFTED != 0 {
++                        shift -= 1;
++                    }
++                    col = 0;
++                    owed = true;
++                    continue;
++                }
++                if row.fact & ROLE_MASK == ROLE_TAIL && self.lists[l].flags & LIST_SHIFTED != 0 {
++                    shift -= 1;
++                }
++            }
++            let starts = row.kind & STARTS_LINE != 0 || (owed && row.kind & LEXICAL == 0);
++            if owed && row.kind & LEXICAL != 0 {
++                continue;
++            }
++            if starts {
++                col = self.indent_width(row.depth as u32 + shift, indent);
++                owed = false;
++            }
++            let bytes = self.bytes_of(i);
++            if row.kind & HAS_NEWLINE != 0 {
++                col = self.columns(&bytes[bytes.rfind('\n').map_or(0, |at| at + 1)..]);
++            } else {
++                col += self.columns(bytes);
++            }
++        }
++    }
++
++    /// The list a single-item list hands its break to: its item ends in a
++    /// breakable list whose closing bracket is the last text before this
++    /// list's tail gap, and the line up to that inner list's head fits.
++    fn hugged(&self, list: usize, head: usize, col: u32) -> Option<usize> {
++        if self.rule != Breaking::Hug {
++            return None;
++        }
++        let tail = self.lists[list].tail as usize;
++        let single = !(head + 1..tail).any(|i| {
++            let row = &self.rows[i];
++            row.kind & SEAM != 0 && row.kind & CONDITIONAL == 0 && row.list == list as u32 && row.fact & ROLE_MASK == ROLE_AFTER
++        });
++        if !single {
++            return None;
++        }
++        let mut close = tail;
++        while close > head + 1 && self.rows[close - 1].kind & CONDITIONAL != 0 {
++            close -= 1;
++        }
++        if close < head + 3 || self.rows[close - 1].kind & SEAM != 0 {
++            return None;
++        }
++        let inner_tail = close - 2;
++        let row = &self.rows[inner_tail];
++        if row.kind & SEAM == 0 || row.list == NO_LIST || row.fact & ROLE_MASK != ROLE_TAIL {
++            return None;
++        }
++        let inner = row.list as usize;
++        if self.lists[inner].tail != inner_tail as u32 || !self.breakable(inner) || self.lists[inner].parent != list as u32 {
++            return None;
++        }
++        let inner_head = self.lists[inner].head as usize;
++        let mut used = col;
++        for i in head..inner_head {
++            let row = &self.rows[i];
++            if row.kind & CONDITIONAL != 0 {
++                continue;
++            }
++            if row.kind & HAS_NEWLINE != 0 {
++                return None;
++            }
++            used += self.columns(self.bytes_of(i));
++        }
++        (used <= self.limit).then_some(inner)
++    }
++
++    /// A list is broken as written when a gap between its items holds a line
++    /// break, or when a flank that sits at its bracket does.
++    fn mark_broken_as_written(&mut self) {
++        for l in 0..self.lists.len() {
++            let list = self.lists[l];
++            let flank = |row: u32, at_bracket: u8| row != NO_ROW && list.flags & at_bracket != 0 && self.rows[row as usize].kind & HAS_NEWLINE != 0;
++            if list.flags & LIST_HOLDS_BREAK != 0 || flank(list.head, LIST_OPENS_AT_BRACKET) || flank(list.tail, LIST_CLOSES_AT_BRACKET) {
++                self.lists[l].flags |= LIST_BROKEN;
++            }
++        }
++    }
++
++    /// Whether the list whose head gap is row `head` fits on the line that
++    /// stands at `col`: its rows flat, then what follows it up to the next
++    /// place the line can end. A line break inside the list ends the
++    /// measurement there.
++    fn fits(&self, head: usize, col: u32) -> bool {
++        let list = self.rows[head].list;
++        let tail = self.lists[list as usize].tail as usize;
++        let mut used = col;
++        let mut i = head;
++        while i < self.rows.len() {
++            let row = &self.rows[i];
++            if row.kind & CONDITIONAL != 0 {
++                i += 1;
++                continue;
++            }
++            if i > tail && row.kind & SEAM != 0 && row.list != NO_LIST {
++                let l = row.list as usize;
++                let opens = self.lists[l].head == i as u32 && self.breakable(l);
++                let ends = self.lists[l].flags & LIST_BROKEN != 0 && self.adjustable(i);
++                if opens || ends {
++                    return used <= self.limit;
++                }
++            }
++            let bytes = self.bytes_of(i);
++            if row.kind & HAS_NEWLINE != 0 {
++                used += self.columns(&bytes[..bytes.find('\n').unwrap_or(bytes.len())]);
++                return used <= self.limit;
++            }
++            used += self.columns(bytes);
++            if used > self.limit {
++                return false;
++            }
++            i += 1;
++        }
++        used <= self.limit
++    }
++
++    /// Fill breaking: a separator gap becomes a line break only when the item
++    /// after it would cross the limit.
++    fn lay_out_fill(&mut self, indent: &str) {
++        self.mark_broken_as_written();
++        let mut col: u32 = 0;
++        let mut shift: u32 = 0;
++        let mut owed = false;
++        for i in 0..self.rows.len() {
++            let row = self.rows[i];
++            if row.kind & CONDITIONAL != 0 {
++                continue;
++            }
++            if row.kind & SEAM != 0 && row.list != NO_LIST {
++                let l = row.list as usize;
++                let role = row.fact & ROLE_MASK;
++                if role == ROLE_AFTER && self.adjustable(i) && !self.item_fits(i, col) {
++                    self.rows[i].kind |= BREAK;
++                    if self.lists[l].flags & LIST_SHIFTED == 0 {
++                        self.lists[l].flags |= LIST_SHIFTED;
++                        shift += 1;
++                    }
++                    col = 0;
++                    owed = true;
++                    continue;
++                }
++                if role == ROLE_TAIL && self.lists[l].flags & LIST_SHIFTED != 0 {
++                    shift -= 1;
++                }
++            }
++            if owed && row.kind & LEXICAL != 0 {
++                continue;
++            }
++            if row.kind & STARTS_LINE != 0 || owed {
++                col = self.indent_width(row.depth as u32 + shift, indent);
++                owed = false;
++            }
++            let bytes = self.bytes_of(i);
++            if row.kind & HAS_NEWLINE != 0 {
++                col = self.columns(&bytes[bytes.rfind('\n').map_or(0, |at| at + 1)..]);
++            } else {
++                col += self.columns(bytes);
++            }
++        }
++    }
++
++    /// Whether the item after separator gap `gap` fits on the line at `col`:
++    /// its rows up to the next gap of the same list, and after the last item
++    /// what follows the list up to the next place the line can end.
++    fn item_fits(&self, gap: usize, col: u32) -> bool {
++        let list = self.rows[gap].list;
++        let tail = self.lists[list as usize].tail as usize;
++        let mut used = col;
++        let mut i = gap;
++        while i < self.rows.len() {
++            let row = &self.rows[i];
++            if row.kind & CONDITIONAL != 0 {
++                i += 1;
++                continue;
++            }
++            if i > gap && row.kind & SEAM != 0 && row.list != NO_LIST {
++                let l = row.list as usize;
++                let next_gap = row.list == list && row.fact & ROLE_MASK == ROLE_AFTER;
++                let past = i > tail && self.adjustable(i);
++                let _ = l;
++                if next_gap || past {
++                    return used <= self.limit;
++                }
++            }
++            let bytes = self.bytes_of(i);
++            if row.kind & HAS_NEWLINE != 0 {
++                used += self.columns(&bytes[..bytes.find('\n').unwrap_or(bytes.len())]);
++                return used <= self.limit;
++            }
++            used += self.columns(bytes);
++            if used > self.limit {
++                return false;
++            }
++            i += 1;
++        }
++        used <= self.limit
++    }
++
++    /// Lay the table out and write its text.
++    pub fn finish(mut self, out: &mut (impl fmt::Write + ?Sized), indent: &str) -> Result<LayoutStats, fmt::Error> {
++        match self.rule {
++            Breaking::Group | Breaking::Hug => self.lay_out_group(indent),
++            Breaking::Fill => self.lay_out_fill(indent),
++        }
++        let mut written = 0usize;
++        let mut shift: u32 = 0;
++        let mut owed = false;
++        let mut active = vec![false; self.lists.len()];
++        let mut start = 0usize;
++        for i in 0..self.rows.len() {
++            let row = self.rows[i];
++            let end = row.end as usize;
++            let bytes = &self.text[start..end];
++            start = end;
++            if row.kind & CONDITIONAL != 0 && self.lists[row.list as usize].flags & LIST_BROKEN == 0 {
++                continue;
++            }
++            if row.kind & SEAM != 0 && row.kind & CONDITIONAL == 0 && row.list != NO_LIST {
++                let l = row.list as usize;
++                let role = row.fact & ROLE_MASK;
++                if row.kind & BREAK != 0 {
++                    if self.lists[l].flags & LIST_SHIFTED != 0 && !active[l] && role != ROLE_TAIL {
++                        active[l] = true;
++                        shift += 1;
++                    }
++                    if role == ROLE_TAIL && active[l] {
++                        active[l] = false;
++                        shift -= 1;
++                    }
++                    out.write_str("\n")?;
++                    written += 1;
++                    owed = true;
++                    continue;
++                }
++                if role == ROLE_TAIL && active[l] {
++                    active[l] = false;
++                    shift -= 1;
++                }
++            }
++            if owed && row.kind & LEXICAL != 0 {
++                continue;
++            }
++            if row.kind & STARTS_LINE != 0 || owed {
++                for _ in 0..(row.depth as u32 + shift) {
++                    out.write_str(indent)?;
++                    written += indent.len();
++                }
++                owed = false;
++            }
++            out.write_str(bytes)?;
++            written += bytes.len();
++        }
++        let need = LIST_SEPARATED | LIST_OPENS_AT_BRACKET | LIST_CLOSES_AT_BRACKET;
++        if std::env::var_os("SITTIR_LAYOUT_DUMP").is_some() && self.rows.len() < 80 {
++            let mut start = 0usize;
++            for (i, row) in self.rows.iter().enumerate() {
++                let bytes = &self.text[start..row.end as usize];
++                start = row.end as usize;
++                let kind = if row.kind & LEXICAL != 0 { "lexical" } else if row.kind & SEAM != 0 { "seam" } else { "text" };
++                let role = ["", "head", "before", "after", "tail"][(row.fact & ROLE_MASK) as usize];
++                let list = if row.list == NO_LIST { String::new() } else { format!("L{}", row.list) };
++                let why = row.fact >> 3;
++                let adjustable = if row.kind & SEAM == 0 { "" } else if self.adjustable(i) { "yes" } else if row.list == NO_LIST { "no: not a list gap" } else if why & WHY_SET != 0 { "no: set" } else if why & WHY_SOURCE != 0 { "no: from source" } else if why & (WHY_FIXED | WHY_ROOT) != 0 { "no: fixed" } else if row.kind & HAS_NEWLINE != 0 { "no: already a line break" } else if row.fact & ROLE_MASK == ROLE_BEFORE { "no: before a separator" } else { "no: its list is not bracketed and separated" };
++                eprintln!("DUMP {i:>3} | {kind:<7} | {bytes:<12?} | {:>5} | {list:<3} | {role:<6} | {adjustable:<40} | {}{}{}", row.depth, if row.kind & STARTS_LINE != 0 { "starts-line " } else { "" }, if row.kind & CONDITIONAL != 0 { "conditional " } else { "" }, if row.kind & BREAK != 0 { "BROKEN" } else { "" });
++            }
++            for (l, list) in self.lists.iter().enumerate() {
++                eprintln!("DUMPL L{l} parent={} head={} tail={} separated={} opens_at_bracket={} closes_at_bracket={} broken={}", if list.parent == NO_LIST { "-".to_string() } else { format!("L{}", list.parent) }, list.head, list.tail, list.flags & LIST_SEPARATED != 0, list.flags & LIST_OPENS_AT_BRACKET != 0, list.flags & LIST_CLOSES_AT_BRACKET != 0, list.flags & LIST_BROKEN != 0);
++            }
++        }
++        if std::env::var_os("SITTIR_LAYOUT_ROWS").is_some() {
++            let mut start = 0u32;
++            let (mut text, mut seam_list, mut seam_empty, mut seam_space, mut seam_break, mut lexical, mut adjustable, mut broken) = (0, 0, 0, 0, 0, 0, 0, 0);
++            for (i, row) in self.rows.iter().enumerate() {
++                let len = row.end - start;
++                start = row.end;
++                if row.kind & SEAM == 0 {
++                    text += 1;
++                    continue;
++                }
++                if row.kind & LEXICAL != 0 {
++                    lexical += 1;
++                } else if row.fact & ROLE_MASK != ROLE_NONE {
++                    seam_list += 1;
++                } else if len == 0 {
++                    seam_empty += 1;
++                } else if row.kind & HAS_NEWLINE != 0 {
++                    seam_break += 1;
++                } else {
++                    seam_space += 1;
++                }
++                if self.adjustable(i) {
++                    adjustable += 1;
++                }
++                if row.kind & BREAK != 0 {
++                    broken += 1;
++                }
++            }
++            eprintln!("ROWS text={text} list_seams={seam_list} other_empty={seam_empty} other_space={seam_space} other_break={seam_break} lexical={lexical} adjustable={adjustable} broken_seams={broken}");
++        }
++        Ok(LayoutStats {
++            text_bytes: self.text.len(),
++            rows: self.rows.len(),
++            seam_rows: self.rows.iter().filter(|r| r.kind & SEAM != 0).count(),
++            lists: self.lists.len(),
++            breakable_lists: self.lists.iter().filter(|l| l.flags & need == need).count(),
++            broken_lists: self.lists.iter().filter(|l| l.flags & LIST_BROKEN != 0).count(),
++            table_bytes: self.text.capacity() + self.rows.capacity() * std::mem::size_of::<Row>() + self.lists.capacity() * std::mem::size_of::<List>(),
++            out_bytes: written,
++        })
++    }
++}
+diff --git a/rust/crates/sittir-core/src/lib.rs b/rust/crates/sittir-core/src/lib.rs
+index 28af13048..442abf1a0 100644
+--- a/rust/crates/sittir-core/src/lib.rs
++++ b/rust/crates/sittir-core/src/lib.rs
+@@ -13,6 +13,8 @@ pub mod boundary;
+ pub mod classify;
+ pub mod engine;
+ pub mod format;
++pub mod layout;
++pub mod oracle;
+ pub mod macros;
+ #[cfg(feature = "napi-bindings")]
+ pub mod napi_engine;
+diff --git a/rust/crates/sittir-core/src/napi_engine.rs b/rust/crates/sittir-core/src/napi_engine.rs
+index 0d3cb7095..dcd21ec55 100644
+--- a/rust/crates/sittir-core/src/napi_engine.rs
++++ b/rust/crates/sittir-core/src/napi_engine.rs
+@@ -114,11 +114,16 @@ macro_rules! napi_engine {
+                     .map_err(|e| {
+                         ::napi::Error::from_reason(format!("parse engine format failed: {e}"))
+                     })?;
++                let mut defaults = $defaults();
++                defaults.site_flags = <$options>::bracket_site_flags(defaults.spacing.len());
++                $crate::oracle::register(|parser| {
++                    $crate::engine::EngineGrammar::configure_parser(<$grammar as ::std::default::Default>::default(), parser).is_ok()
++                });
+                 let table = match opts {
+                     Some(opts) => {
+-                        opts.resolve(&$defaults()).map_err(::napi::Error::from_reason)?
++                        opts.resolve(&defaults).map_err(::napi::Error::from_reason)?
+                     }
+-                    None => $defaults(),
++                    None => defaults,
+                 };
+                 Ok(Self {
+                     engine: $crate::engine::Engine::new(
+diff --git a/rust/crates/sittir-core/src/options.rs b/rust/crates/sittir-core/src/options.rs
+index 124c7db30..8da579f77 100644
+--- a/rust/crates/sittir-core/src/options.rs
++++ b/rust/crates/sittir-core/src/options.rs
+@@ -31,6 +31,28 @@ pub struct ResolvedOptions {
+     pub sites: &'static [SiteSpec],
+     /// Per kind id, the kind's flags (`KIND_ANON`, `KIND_LINE_TERMINATED`, `KIND_LINE_BREAK_TERMINATED`, `KIND_ROOT`).
+     pub kind_flags: &'static [u8],
++    /// PROTOTYPE: per spacing site, whether an options object set it.
++    pub set: Vec<bool>,
++    /// PROTOTYPE: per spacing site, `layout::SITE_AFTER_OPEN_BRACKET` / `SITE_BEFORE_CLOSE_BRACKET`.
++    pub site_flags: Vec<u8>,
++    /// PROTOTYPE: the line width a root render lays lists out to.
++    pub width: Option<u32>,
++    /// PROTOTYPE: 0 group, 1 fill.
++    pub breaking: u8,
++    /// PROTOTYPE: the columns a tab counts as.
++    pub tab_width: u32,
++}
++
++/// PROTOTYPE: the bracket-inner seams, read off the site labels. The real
++/// table is emitted from the model.
++pub fn bracket_site_flags<'a>(labels: impl Iterator<Item = &'a str>) -> Vec<u8> {
++    labels
++        .map(|label| match label {
++            "lparen_after" | "lbrace_after" | "lbrack_after" => crate::layout::SITE_AFTER_OPEN_BRACKET,
++            "rparen_before" | "rbrace_before" | "rbrack_before" => crate::layout::SITE_BEFORE_CLOSE_BRACKET,
++            _ => 0,
++        })
++        .collect()
+ }
+ 
+ /// The parser's anonymous kind: a token, never an owner of trivia.
+@@ -129,6 +151,10 @@ impl ResolvedOptions {
+     /// it, so it must win a seam merge the default would lose.
+     pub fn set_arm(&mut self, site: usize, arm: u16) {
+         self.spacing[site] = crate::slot::SeamArm { arm, strength: crate::spacing::SEAM_DECLARED };
++        if self.set.len() < self.spacing.len() {
++            self.set.resize(self.spacing.len(), false);
++        }
++        self.set[site] = true;
+     }
+ 
+     /// What one side of a kind's edge writes: the stamp when one is set (at its
+@@ -162,6 +188,13 @@ impl ResolvedOptions {
+         self.kind_flags.get(kind.0 as usize).is_some_and(|flags| flags & flag != 0)
+     }
+ 
++    /// PROTOTYPE (seam oracle): the spacing site of a kind's edge.
++    pub fn edge_site(&self, kind: crate::types::KindId, side: Side) -> Option<u16> {
++        let row = self.edge_row(kind)?;
++        let site = match side { Side::Before => row.before, Side::After => row.after };
++        (site != NO_SITE).then_some(site)
++    }
++
+     fn edge_row(&self, kind: crate::types::KindId) -> Option<&EdgeSite> {
+         match self.edge_rows.get(kind.0 as usize) {
+             Some(&row) if row != NO_SITE => Some(&self.edges[row as usize]),
+@@ -180,6 +213,11 @@ impl Default for ResolvedOptions {
+             edge_rows: &[],
+             sites: &[],
+             kind_flags: &[],
++            set: Vec::new(),
++            site_flags: Vec::new(),
++            width: None,
++            breaking: 0,
++            tab_width: 1,
+         }
+     }
+ }
+@@ -239,6 +277,9 @@ pub trait OptionObject: Sized {
+ /// trie and applied over a base table by `resolve`.
+ #[derive(Debug, Clone, Default, PartialEq, Eq)]
+ pub struct Options<S> {
++    pub width: Option<u32>,
++    pub breaking: Option<String>,
++    pub tab_width: Option<u32>,
+     pub indent: Option<String>,
+     pub spacing: Vec<(SiteRef, u32)>,
+     pub delimiter: Vec<(SiteRef, u32)>,
+@@ -246,8 +287,41 @@ pub struct Options<S> {
+ }
+ 
+ impl<S: OptionSites> Options<S> {
++    /// VALIDATION VARIANT: the bracket-inner seams, read off the site paths of
++    /// the address trie, so no generated file changes.
++    pub fn bracket_site_flags(sites: usize) -> Vec<u8> {
++        fn walk(nodes: &'static [AddressNode], flags: &mut Vec<u8>) {
++            for node in nodes {
++                match node {
++                    AddressNode::Branch { children, .. } => walk(children, flags),
++                    AddressNode::Spacing { sites, .. } => {
++                        for site in sites.iter() {
++                            let opens = ["/\"(\"/after", "/\"[\"/after", "/\"{\"/after"].iter().any(|tail| site.path.ends_with(tail));
++                            let closes = ["/\")\"/before", "/\"]\"/before", "/\"}\"/before"].iter().any(|tail| site.path.ends_with(tail));
++                            if let Some(flag) = flags.get_mut(site.site) {
++                                if opens {
++                                    *flag |= crate::layout::SITE_AFTER_OPEN_BRACKET;
++                                }
++                                if closes {
++                                    *flag |= crate::layout::SITE_BEFORE_CLOSE_BRACKET;
++                                }
++                            }
++                        }
++                    }
++                    AddressNode::Delimiter { .. } => {}
++                }
++            }
++        }
++        let mut flags = vec![0u8; sites];
++        walk(S::TABLES.addresses, &mut flags);
++        flags
++    }
++
+     pub fn read<O: OptionObject>(obj: &O) -> Result<Self, String> {
+         let mut options = Self {
++            width: obj.number("width")?,
++            breaking: obj.string("breaking")?,
++            tab_width: obj.number("tabWidth")?,
+             indent: if S::TABLES.indent_chars.is_empty() { None } else { obj.string("indent")? },
+             spacing: Vec::new(),
+             delimiter: Vec::new(),
+@@ -262,6 +336,9 @@ impl<S: OptionSites> Options<S> {
+             if at.is_empty() && key == "indent" && !S::TABLES.indent_chars.is_empty() {
+                 continue;
+             }
++            if at.is_empty() && (key == "width" || key == "breaking" || key == "tabWidth") {
++                continue;
++            }
+             let Some(node) = nodes.iter().find(|n| n.key() == key) else {
+                 return Err(if at.is_empty() {
+                     format!("options: unknown key {key}")
+@@ -295,6 +372,20 @@ impl<S: OptionSites> Options<S> {
+     pub fn resolve(&self, base: &ResolvedOptions) -> Result<ResolvedOptions, String> {
+         let tables = S::TABLES;
+         let mut table = base.clone();
++        if let Some(width) = self.width {
++            table.width = Some(width);
++        }
++        if let Some(rule) = &self.breaking {
++            table.breaking = match rule.as_str() {
++                "group" => 0,
++                "fill" => 1,
++                "hug" => 2,
++                other => return Err(format!("options: breaking {other:?} is not one of \"group\", \"fill\"")),
++            };
++        }
++        if let Some(tab) = self.tab_width {
++            table.tab_width = tab;
++        }
+         if let Some(indent) = &self.indent {
+             if indent.is_empty() || !indent.chars().all(|c| tables.indent_chars.contains(c)) {
+                 return Err(format!(
+diff --git a/rust/crates/sittir-core/src/oracle.rs b/rust/crates/sittir-core/src/oracle.rs
+new file mode 100644
+index 000000000..0f662ce56
+--- /dev/null
++++ b/rust/crates/sittir-core/src/oracle.rs
+@@ -0,0 +1,290 @@
++//! PROTOTYPE (seam oracle), throwaway measurement for the width design note.
++//!
++//! With `SITTIR_SEAM_ORACLE=<dir>` set, every render keeps a copy of its
++//! output and a record of each gap it resolved (the spacing sites whose marks
++//! met there, the list role, the bracket flags). `finish` hands that record
++//! here: the output is parsed with the grammar's parser, with the parse log
++//! on, and for each gap the parse states in which the token after it was
++//! lexed are looked up, with the watched symbols valid in them
++//! (`SITTIR_SEAM_WATCH`, comma separated). One JSON line per gap is appended
++//! to `<dir>/<grammar>.jsonl`.
++
++use std::cell::RefCell;
++use std::collections::HashMap;
++use std::io::Write as _;
++use std::rc::Rc;
++use std::sync::atomic::{AtomicU64, Ordering};
++use std::sync::{Mutex, OnceLock};
++
++pub type Configure = fn(&mut tree_sitter::Parser) -> bool;
++
++static CONFIGURE: Mutex<Option<Configure>> = Mutex::new(None);
++static SEQ: AtomicU64 = AtomicU64::new(0);
++
++pub fn wanted() -> bool {
++    static WANTED: OnceLock<bool> = OnceLock::new();
++    *WANTED.get_or_init(|| std::env::var_os("SITTIR_SEAM_ORACLE").is_some())
++}
++
++fn watch() -> &'static [String] {
++    static WATCH: OnceLock<Vec<String>> = OnceLock::new();
++    WATCH.get_or_init(|| {
++        std::env::var("SITTIR_SEAM_WATCH")
++            .unwrap_or_else(|_| "_newline,_indent,_dedent,_automatic_semicolon,_function_signature_automatic_semicolon".to_string())
++            .split(',')
++            .filter(|s| !s.is_empty())
++            .map(str::to_string)
++            .collect()
++    })
++}
++
++pub fn register(configure: Configure) {
++    if let Ok(mut slot) = CONFIGURE.lock() {
++        *slot = Some(configure);
++    }
++}
++
++#[derive(Default)]
++pub struct Probe {
++    pub text: String,
++    pub gaps: Vec<ProbeGap>,
++    pub root: bool,
++    pending_sites: Vec<u32>,
++    pending_roles: Vec<(u8, u32, bool)>,
++    pending_flags: u8,
++    lists: Vec<bool>,
++    open: Vec<u32>,
++}
++
++pub struct ProbeGap {
++    pub at: u32,
++    pub ws: String,
++    pub sites: Vec<u32>,
++    pub roles: Vec<(u8, u32, bool)>,
++    pub flags: u8,
++}
++
++pub const ROLE_HEAD: u8 = 1;
++pub const ROLE_BEFORE: u8 = 2;
++pub const ROLE_AFTER: u8 = 3;
++pub const ROLE_TAIL: u8 = 4;
++
++impl Probe {
++    pub fn site(&mut self, site: u32, flags: u8) {
++        self.pending_sites.push(site);
++        self.pending_flags |= flags;
++    }
++
++    pub fn list_open(&mut self, separated: bool) {
++        let id = self.lists.len() as u32;
++        self.lists.push(separated);
++        self.open.push(id);
++        self.pending_roles.push((ROLE_HEAD, id, separated));
++    }
++
++    pub fn list_gap(&mut self, after: bool) {
++        if let Some(&id) = self.open.last() {
++            let separated = self.lists[id as usize];
++            self.pending_roles.push((if after { ROLE_AFTER } else { ROLE_BEFORE }, id, separated));
++        }
++    }
++
++    pub fn list_close(&mut self) {
++        if let Some(id) = self.open.pop() {
++            let separated = self.lists[id as usize];
++            self.pending_roles.push((ROLE_TAIL, id, separated));
++        }
++    }
++
++    pub fn close_gap(&mut self, at: usize) {
++        if self.pending_sites.is_empty() && self.pending_roles.is_empty() {
++            self.pending_flags = 0;
++            return;
++        }
++        self.gaps.push(ProbeGap {
++            at: at as u32,
++            ws: self.text[at..].to_string(),
++            sites: std::mem::take(&mut self.pending_sites),
++            roles: std::mem::take(&mut self.pending_roles),
++            flags: std::mem::replace(&mut self.pending_flags, 0),
++        });
++    }
++}
++
++fn line_starts(text: &str) -> Vec<usize> {
++    let mut starts = vec![0];
++    for (i, b) in text.bytes().enumerate() {
++        if b == b'\n' {
++            starts.push(i + 1);
++        }
++    }
++    starts
++}
++
++fn leaves<'t>(tree: &'t tree_sitter::Tree) -> Vec<tree_sitter::Node<'t>> {
++    let mut out = Vec::new();
++    let mut cursor = tree.walk();
++    loop {
++        let node = cursor.node();
++        if node.child_count() == 0 {
++            if node.end_byte() > node.start_byte() {
++                out.push(node);
++            }
++        } else if cursor.goto_first_child() {
++            continue;
++        }
++        loop {
++            if cursor.goto_next_sibling() {
++                break;
++            }
++            if !cursor.goto_parent() {
++                return out;
++            }
++        }
++    }
++}
++
++fn chain<'t>(leaf: tree_sitter::Node<'t>) -> Vec<tree_sitter::Node<'t>> {
++    let mut out = vec![leaf];
++    let mut node = leaf;
++    while let Some(parent) = node.parent() {
++        out.push(parent);
++        node = parent;
++    }
++    out
++}
++
++fn label(node: tree_sitter::Node<'_>) -> String {
++    if node.is_named() {
++        node.kind().to_string()
++    } else {
++        format!("\"{}\"", node.kind())
++    }
++}
++
++pub fn observe(probe: Probe) {
++    let Some(dir) = std::env::var_os("SITTIR_SEAM_ORACLE") else { return };
++    let Some(configure) = CONFIGURE.lock().ok().and_then(|slot| *slot) else { return };
++    let mut parser = tree_sitter::Parser::new();
++    if !configure(&mut parser) {
++        return;
++    }
++    let Some(language) = parser.language().map(|language| (*language).clone()) else { return };
++    let grammar = language.name().unwrap_or("grammar").to_string();
++    let starts = line_starts(&probe.text);
++    let states: Rc<RefCell<HashMap<usize, Vec<u16>>>> = Rc::new(RefCell::new(HashMap::new()));
++    {
++        let states = Rc::clone(&states);
++        let starts = starts.clone();
++        parser.set_logger(Some(Box::new(move |kind, message: &str| {
++            if kind != tree_sitter::LogType::Parse {
++                return;
++            }
++            let Some(rest) = message.strip_prefix("process version:") else { return };
++            let field = |name: &str| -> Option<usize> {
++                let i = rest.find(name)? + name.len();
++                rest[i..].split(|c: char| !c.is_ascii_digit()).next()?.parse().ok()
++            };
++            let (Some(state), Some(row), Some(col)) = (field("state:"), field("row:"), field("col:")) else { return };
++            let Some(&line) = starts.get(row) else { return };
++            states.borrow_mut().entry(line + col).or_default().push(state as u16);
++        })));
++    }
++    let Some(tree) = parser.parse(&probe.text, None) else { return };
++    parser.set_logger(None);
++    let states = states.borrow();
++    let root = tree.root_node();
++    let err = root.has_error();
++    let leaves = leaves(&tree);
++    // Lexical bracket depth after each leaf: anonymous bracket tokens only.
++    let mut depth_after: Vec<i32> = Vec::with_capacity(leaves.len());
++    let mut depth = 0i32;
++    for leaf in &leaves {
++        if !leaf.is_named() {
++            match leaf.kind() {
++                "(" | "[" | "{" => depth += 1,
++                ")" | "]" | "}" => depth -= 1,
++                _ => {}
++            }
++        }
++        depth_after.push(depth);
++    }
++    let seq = SEQ.fetch_add(1, Ordering::Relaxed);
++    let mut valid_cache: HashMap<u16, Vec<String>> = HashMap::new();
++    let mut valid_in = |state: u16| -> Vec<String> {
++        valid_cache
++            .entry(state)
++            .or_insert_with(|| {
++                let mut names = Vec::new();
++                if let Some(mut it) = language.lookahead_iterator(state) {
++                    for name in it.iter_names() {
++                        if watch().iter().any(|w| w == name) && !names.iter().any(|n: &String| n == name) {
++                            names.push(name.to_string());
++                        }
++                    }
++                }
++                names
++            })
++            .clone()
++    };
++    let mut lines = String::new();
++    for gap in &probe.gaps {
++        let at = gap.at as usize;
++        let here: Vec<u16> = states.get(&at).cloned().unwrap_or_default();
++        let mut any: Vec<String> = Vec::new();
++        for &s in &here {
++            for name in valid_in(s) {
++                if !any.contains(&name) {
++                    any.push(name);
++                }
++            }
++        }
++        let first = here.first().map(|&s| valid_in(s)).unwrap_or_default();
++        let prev_index = leaves.partition_point(|leaf| leaf.end_byte() <= at).checked_sub(1);
++        let prev = prev_index.map(|i| leaves[i]);
++        let lexical_depth = prev_index.map(|i| depth_after[i]).unwrap_or(0);
++        let next_index = leaves.partition_point(|leaf| leaf.start_byte() < at);
++        let next = leaves.get(next_index).copied();
++        let (mut lca, mut left, mut right) = (String::new(), String::new(), String::new());
++        let (mut ends, mut begins) = (Vec::new(), Vec::new());
++        if let (Some(prev), Some(next)) = (prev, next) {
++            let up = chain(prev);
++            let down = chain(next);
++            if let Some(j) = down.iter().position(|n| n.start_byte() <= prev.start_byte() && n.end_byte() >= prev.end_byte()) {
++                let common = down[j];
++                lca = label(common);
++                let below_left: Vec<_> = up.iter().take_while(|n| n.id() != common.id()).copied().collect();
++                let below_right: Vec<_> = down[..j].to_vec();
++                left = below_left.last().map(|n| label(*n)).unwrap_or_default();
++                right = below_right.last().map(|n| label(*n)).unwrap_or_default();
++                ends = below_left.iter().map(|n| label(*n)).collect();
++                begins = below_right.iter().map(|n| label(*n)).collect();
++            }
++        }
++        let line = serde_json::json!({
++            "r": seq,
++            "root": probe.root,
++            "err": err,
++            "at": gap.at,
++            "ws": gap.ws,
++            "sites": gap.sites,
++            "roles": gap.roles,
++            "flags": gap.flags,
++            "depth": lexical_depth,
++            "states": here,
++            "any": any,
++            "first": first,
++            "lca": lca,
++            "left": left,
++            "right": right,
++            "ends": ends,
++            "begins": begins,
++        });
++        lines.push_str(&line.to_string());
++        lines.push('\n');
++    }
++    let path = std::path::Path::new(&dir).join(format!("{grammar}.jsonl"));
++    if let Ok(mut file) = std::fs::OpenOptions::new().create(true).append(true).open(path) {
++        let _ = file.write_all(lines.as_bytes());
++    }
++}
+diff --git a/rust/crates/sittir-core/src/render.rs b/rust/crates/sittir-core/src/render.rs
+index 025c1fcd4..88319f061 100644
+--- a/rust/crates/sittir-core/src/render.rs
++++ b/rust/crates/sittir-core/src/render.rs
+@@ -171,6 +171,23 @@ pub trait RenderSink {
+             self.end_line_after(kind);
+         }
+     }
++    /// PROTOTYPE: a list's items begin; the gap now pending is its head.
++    fn list_open(&mut self, separated: bool) {
++        let _ = separated;
++    }
++    /// PROTOTYPE: the gap now pending lies before (`after == false`) or after
++    /// a separator of the innermost open list.
++    fn list_gap(&mut self, after: bool) {
++        let _ = after;
++    }
++    /// PROTOTYPE: the innermost open list's items have ended; the gap now
++    /// pending is its tail.
++    fn list_close(&mut self) {}
++    /// PROTOTYPE: a trailing separator written only when the list is broken.
++    fn list_trailing(&mut self, before: u16, token: &str, after: u16) -> RenderResult {
++        let _ = (before, token, after);
++        Ok(())
++    }
+     fn indent(&mut self);
+     /// Shallows the depth and merges `seam` after it. A dedent that arrives
+     /// while the indent before it has had no text written cancels that
+diff --git a/rust/crates/sittir-core/src/spacing.rs b/rust/crates/sittir-core/src/spacing.rs
+index ce5fda9d5..94d7dc79f 100644
+--- a/rust/crates/sittir-core/src/spacing.rs
++++ b/rust/crates/sittir-core/src/spacing.rs
+@@ -133,12 +133,68 @@ pub fn seam_rank(text: &str) -> SeamRank {
+     }
+ }
+ 
++/// PROTOTYPE: whether a writer fills a layout table. A type parameter, so the
++/// writer that fills none compiles to the code it is without the table.
++pub trait Record {
++    const ON: bool;
++    fn layout(&mut self) -> Option<&mut crate::layout::Layout>;
++    fn take(&mut self) -> Option<Box<crate::layout::Layout>>;
++    fn switch_on(&mut self, layout: crate::layout::Layout) {
++        let _ = layout;
++    }
++}
++
++pub struct NoRecord;
++
++impl Record for NoRecord {
++    const ON: bool = false;
++    #[inline(always)]
++    fn layout(&mut self) -> Option<&mut crate::layout::Layout> {
++        None
++    }
++    #[inline(always)]
++    fn take(&mut self) -> Option<Box<crate::layout::Layout>> {
++        None
++    }
++}
++
++/// VALIDATION VARIANT: the table switched on at run time, so generated code
++/// that names the writer needs no change.
++pub struct Switch(Option<Box<crate::layout::Layout>>);
++
++impl Record for Switch {
++    const ON: bool = true;
++    #[inline(always)]
++    fn layout(&mut self) -> Option<&mut crate::layout::Layout> {
++        self.0.as_deref_mut()
++    }
++    fn take(&mut self) -> Option<Box<crate::layout::Layout>> {
++        self.0.take()
++    }
++    fn switch_on(&mut self, layout: crate::layout::Layout) {
++        self.0 = Some(Box::new(layout));
++    }
++}
++
++pub struct Recording(Option<Box<crate::layout::Layout>>);
++
++impl Record for Recording {
++    const ON: bool = true;
++    #[inline(always)]
++    fn layout(&mut self) -> Option<&mut crate::layout::Layout> {
++        self.0.as_deref_mut()
++    }
++    fn take(&mut self) -> Option<Box<crate::layout::Layout>> {
++        self.0.take()
++    }
++}
++
+ /// Streaming writer inserting lexically-required spaces at write seams.
+ /// See the module doc. Every whitespace decision reaches the writer as a
+ /// `RenderSink` call, never as a character in the text stream.
+ ///
+ /// a seam following `"fn "` has `last = ' '` (not word-class) → no insert.
+-pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
++pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized, R: Record = Switch> {
+     inner: &'a mut W,
+     last: Option<char>,
+     adjacent_next: bool,
+@@ -159,6 +215,53 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
+     deferring: Option<String>,
+     deferred: Vec<DeferredRun>,
+     line_end_held: Option<crate::render::LineHold>,
++    /// PROTOTYPE: the layout table of a render with a width set.
++    layout: R,
++    started: Option<std::time::Instant>,
++    /// PROTOTYPE (seam oracle): the gaps this render resolved, for `crate::oracle`.
++    probe: Option<Box<crate::oracle::Probe>>,
++}
++
++/// PROTOTYPE: whether `SITTIR_LAYOUT_STATS` asks for per-render figures on stderr.
++fn stats_wanted() -> bool {
++    static WANTED: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
++    *WANTED.get_or_init(|| std::env::var_os("SITTIR_LAYOUT_STATS").is_some())
++}
++
++/// PROTOTYPE (seam oracle): `SITTIR_FORCE_LINE_SITE=<site>` writes a line
++/// break at every gap that site's mark reaches, to see which sites tolerate one.
++fn forced_line_site() -> Option<usize> {
++    static FORCED: std::sync::OnceLock<Option<usize>> = std::sync::OnceLock::new();
++    *FORCED.get_or_init(|| std::env::var("SITTIR_FORCE_LINE_SITE").ok().and_then(|v| v.parse().ok()))
++}
++
++/// PROTOTYPE (seam oracle): `SITTIR_FORCE_LINE_SITES=<file>` forces a line
++/// break at every site listed in the file (one id per line), all at once.
++fn forced_line_sites() -> &'static [bool] {
++    static FORCED: std::sync::OnceLock<Vec<bool>> = std::sync::OnceLock::new();
++    FORCED.get_or_init(|| {
++        let mut sites = Vec::new();
++        if let Some(text) = std::env::var_os("SITTIR_FORCE_LINE_SITES").and_then(|path| std::fs::read_to_string(path).ok()) {
++            for id in text.lines().filter_map(|line| line.trim().parse::<usize>().ok()) {
++                if sites.len() <= id {
++                    sites.resize(id + 1, false);
++                }
++                sites[id] = true;
++            }
++        }
++        sites
++    })
++}
++
++fn line_forced_at(site: usize) -> bool {
++    forced_line_site() == Some(site) || forced_line_sites().get(site).copied().unwrap_or(false)
++}
++
++/// PROTOTYPE: `SITTIR_LAYOUT_WIDTH` forces the table on every render, to
++/// compare its flattened bytes with the direct writer's.
++fn forced_width() -> Option<u32> {
++    static FORCED: std::sync::OnceLock<Option<u32>> = std::sync::OnceLock::new();
++    *FORCED.get_or_init(|| std::env::var("SITTIR_LAYOUT_WIDTH").ok().and_then(|v| v.parse().ok()))
+ }
+ 
+ /// A trailing run rendered ahead of where it is written: its text, and the
+@@ -186,7 +289,7 @@ struct HeldContext {
+     line_end_held: Option<crate::render::LineHold>,
+ }
+ 
+-impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
++impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W, Switch> {
+     pub fn new(inner: &'a mut W, word: &'a WordMatcher) -> Self {
+         Self {
+             inner,
+@@ -209,18 +312,102 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
+             deferring: None,
+             deferred: Vec::new(),
+             line_end_held: None,
++            layout: Switch(None),
++            started: stats_wanted().then(std::time::Instant::now),
++            probe: crate::oracle::wanted().then(Box::default),
++        }
++    }
++
++    /// PROTOTYPE: the same writer, filling `layout` instead of writing through.
++    pub fn recording(self, layout: crate::layout::Layout) -> SpacingWriter<'a, W, Recording> {
++        SpacingWriter {
++            inner: self.inner,
++            last: self.last,
++            adjacent_next: self.adjacent_next,
++            word: self.word,
++            table: self.table,
++            indent: self.indent,
++            depth: self.depth,
++            indent_pending: self.indent_pending,
++            indent_armed: self.indent_armed,
++            seam: self.seam,
++            seam_strength: self.seam_strength,
++            seam_text: self.seam_text,
++            seam_is_token: self.seam_is_token,
++            seam_is_flank: self.seam_is_flank,
++            seam_is_root: self.seam_is_root,
++            sources: self.sources,
++            options: self.options,
++            deferring: self.deferring,
++            deferred: self.deferred,
++            line_end_held: self.line_end_held,
++            layout: Recording(Some(Box::new(layout))),
++            started: self.started,
++            probe: self.probe,
+         }
+     }
+ 
++    /// PROTOTYPE: one render and its `finish`, through a layout table when the
++    /// attached options set a width.
++    pub fn render_root(self, value: &dyn crate::render::Render) -> crate::render::RenderResult {
++        let forced = forced_width();
++        match self.options.and_then(|options| options.width.or(forced).map(|width| (width, options))) {
++            Some((width, options)) => {
++                let rule = match options.breaking { 1 => crate::layout::Breaking::Fill, 2 => crate::layout::Breaking::Hug, _ => crate::layout::Breaking::Group };
++                let mut w = self.recording(crate::layout::Layout::new(width, rule, options.tab_width));
++                value.render(&mut w)?;
++                w.finish()?;
++            }
++            None => {
++                let mut w = self;
++                value.render(&mut w)?;
++                w.finish()?;
++            }
++        }
++        Ok(())
++    }
++}
++
++impl<'a, W: std::fmt::Write + ?Sized, R: Record> SpacingWriter<'a, W, R> {
+     /// The resolved options [`crate::render::RenderSink::site_at`] and
+     /// [`crate::render::RenderSink::edge`] read. A render that writes option
+     /// sites must attach them; a writer with none attached is a debug-mode
+     /// bug, like a missing whitespace table.
+     pub fn with_options(mut self, options: &'a crate::options::ResolvedOptions) -> Self {
+         self.options = Some(options);
++        if let Some(width) = options.width.or(forced_width()) {
++            let rule = match options.breaking { 1 => crate::layout::Breaking::Fill, 2 => crate::layout::Breaking::Hug, _ => crate::layout::Breaking::Group };
++            self.layout.switch_on(crate::layout::Layout::new(width, rule, options.tab_width));
++        }
+         self
+     }
+ 
++    /// PROTOTYPE: a clone of the spacing state `hold_context` would take.
++    fn peek_context(&self) -> HeldContext {
++        HeldContext {
++            last: self.last,
++            adjacent_next: self.adjacent_next,
++            indent_pending: self.indent_pending,
++            indent_armed: self.indent_armed,
++            seam: self.seam,
++            seam_strength: self.seam_strength,
++            seam_text: self.seam_text.clone(),
++            seam_is_token: self.seam_is_token,
++            seam_is_flank: self.seam_is_flank,
++            seam_is_root: self.seam_is_root,
++            line_end_held: self.line_end_held,
++        }
++    }
++
++    /// PROTOTYPE: note a fact about the pending gap on the layout table.
++    fn note_gap(&mut self, why: u8) {
++        if self.deferring.is_none() {
++            if let Some(layout) = self.layout.layout() {
++                layout.note(why);
++            }
++        }
++    }
++
+     /// The text written once per depth level after every newline.
+     pub fn with_indent(mut self, indent: &'a str) -> Self {
+         self.indent = indent;
+@@ -251,8 +438,14 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
+             return Ok(());
+         }
+         self.indent_pending = false;
+-        for _ in 0..self.depth {
+-            self.emit(self.indent)?;
++        if self.deferring.is_none() && self.layout.layout().is_some() {
++            if let Some(layout) = self.layout.layout() {
++                layout.owe_indent();
++            }
++        } else {
++            for _ in 0..self.depth {
++                self.emit(self.indent)?;
++            }
+         }
+         if self.depth > 0 {
+             self.last = self.indent.chars().next_back();
+@@ -271,7 +464,18 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
+                 buffer.push_str(s);
+                 Ok(())
+             }
+-            None => self.inner.write_str(s),
++            None => match self.layout.layout() {
++                Some(layout) => {
++                    layout.bytes(s, self.depth);
++                    Ok(())
++                }
++                None => {
++                    if let Some(probe) = self.probe.as_deref_mut() {
++                        probe.text.push_str(s);
++                    }
++                    self.inner.write_str(s)
++                }
++            },
+         }
+     }
+ 
+@@ -333,6 +537,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
+         if let Some(DeferredRun { end: Some((strength, text)), line_end, .. }) = last {
+             let text = if self.at_line_start() { text.strip_prefix('\n').unwrap_or(&text) } else { &text };
+             if !next.starts_with('\n') && !text.is_empty() {
++                self.note_gap(crate::layout::WHY_SOURCE);
+                 self.merge_seam_with(text, strength);
+                 if let Some(hold) = line_end {
+                     crate::render::RenderSink::hold_line_end(self, hold);
+@@ -363,7 +568,10 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
+                 // nested generics is never such a pair and stays tight.
+                 let symbol_seam = self.word.is_literal_merge_pair(last, first);
+                 if word_seam || symbol_seam {
+-                    self.emit(" ")?;
++                    match self.layout.layout().filter(|_| self.deferring.is_none()) {
++                        Some(layout) => layout.lexical_space(self.depth),
++                        None => self.emit(" ")?,
++                    }
+                 }
+             }
+         }
+@@ -379,8 +587,31 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
+     /// held rank. The payload's own buffer is kept (not dropped) so a
+     /// following seam has a ready allocation to merge into.
+     fn flush_seam(&mut self) -> std::fmt::Result {
++        let at = match self.probe.as_deref() {
++            Some(probe) if self.deferring.is_none() && self.layout.layout().is_none() => Some(probe.text.len()),
++            _ => None,
++        };
++        let result = self.flush_seam_inner();
++        if let (Some(at), Some(probe)) = (at, self.probe.as_deref_mut()) {
++            probe.close_gap(at);
++        }
++        result
++    }
++
++    fn flush_seam_inner(&mut self) -> std::fmt::Result {
+         self.line_end_held = None;
++        let table = self.layout.layout().is_some() && self.deferring.is_none();
++        if table && self.at_line_start() {
++            self.note_gap(crate::layout::WHY_FIXED);
++        }
+         let Some(rank) = self.seam.take() else {
++            if table {
++                let depth = self.depth;
++                if let Some(layout) = self.layout.layout() {
++                    let at = layout.seam_begin();
++                    layout.seam_end(at, false, depth);
++                }
++            }
+             return Ok(());
+         };
+         let token = std::mem::replace(&mut self.seam_is_token, false);
+@@ -395,10 +626,24 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
+         let redundant = self.last.is_none() || (rank == 1 && self.last == Some('\n'));
+         if !token && !root && redundant {
+             self.seam_text.clear();
++            if table {
++                let depth = self.depth;
++                if let Some(layout) = self.layout.layout() {
++                    let at = layout.seam_begin();
++                    layout.seam_end(at, false, depth);
++                }
++            }
+             return Ok(());
+         }
+         let text = std::mem::take(&mut self.seam_text);
++        let start = if table { self.layout.layout().map(|layout| layout.seam_begin()) } else { None };
+         let result = self.write_text(&text);
++        if let Some(start) = start {
++            let depth = self.depth;
++            if let Some(layout) = self.layout.layout() {
++                layout.seam_end(start, true, depth);
++            }
++        }
+         self.seam_text = text;
+         result
+     }
+@@ -427,6 +672,20 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
+             return;
+         };
+         let crate::slot::SeamArm { arm, strength } = options.site_arm(site);
++        if self.deferring.is_none() {
++            if let Some(probe) = self.probe.as_deref_mut() {
++                probe.site(site as u32, options.site_flags.get(site).copied().unwrap_or(0));
++            }
++        }
++        if line_forced_at(site) {
++            self.merge_mark("\n", SEAM_TRIVIA, flank);
++            return;
++        }
++        if self.deferring.is_none() {
++            if let Some(layout) = self.layout.layout() {
++                layout.note_site(options.site_flags.get(site).copied().unwrap_or(0), options.set.get(site).copied().unwrap_or(false));
++            }
++        }
+         self.site_mark(arm, strength, flank);
+     }
+ 
+@@ -477,6 +736,10 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
+             self.seam_text = text;
+         }
+         self.seam_is_root = true;
++        if let Some(probe) = self.probe.as_deref_mut() {
++            probe.root = true;
++        }
++        self.note_gap(crate::layout::WHY_ROOT);
+     }
+ 
+     fn merge_mark(&mut self, text: &str, strength: u8, flank: bool) {
+@@ -542,11 +805,29 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
+         self.seam_is_root = false;
+         self.seam_text.clear();
+         debug_assert_eq!(self.depth, 0, "a render must dedent every indent it opens");
++        let walked = self.started.map(|at| at.elapsed());
++        let mut stats = None;
++        if let Some(layout) = self.layout.take() {
++            stats = Some(layout.finish(&mut *self.inner, self.indent)?);
++        }
++        if let (Some(at), Some(walked)) = (self.started, walked) {
++            let total = at.elapsed();
++            match stats {
++                Some(s) => eprintln!(
++                    "LAYOUT on walk_ns={} finish_ns={} total_ns={} out={} text={} rows={} seams={} lists={} breakable={} broken={} table_bytes={}",
++                    walked.as_nanos(), (total - walked).as_nanos(), total.as_nanos(), s.out_bytes, s.text_bytes, s.rows, s.seam_rows, s.lists, s.breakable_lists, s.broken_lists, s.table_bytes
++                ),
++                None => eprintln!("LAYOUT off total_ns={}", total.as_nanos()),
++            }
++        }
++        if let Some(probe) = self.probe.take() {
++            crate::oracle::observe(*probe);
++        }
+         Ok(())
+     }
+ }
+ 
+-impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_, W> {
++impl<W: std::fmt::Write + ?Sized, R: Record> crate::render::RenderSink for SpacingWriter<'_, W, R> {
+     fn text(&mut self, s: &str) -> crate::render::RenderResult {
+         self.write_chunk(s)?;
+         Ok(())
+@@ -576,6 +857,15 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
+         let Some(crate::slot::SeamArm { arm, strength }) = options.edge_arm(kind, side, stamped) else {
+             return;
+         };
++        if self.deferring.is_none() {
++            if let (Some(probe), Some(site)) = (self.probe.as_deref_mut(), options.edge_site(kind, side)) {
++                probe.site(site as u32, 0);
++            }
++        }
++        if options.edge_site(kind, side).is_some_and(|site| line_forced_at(usize::from(site))) && !options.kind_has(kind, crate::options::KIND_ROOT) {
++            self.merge_mark("\n", SEAM_TRIVIA, false);
++            return;
++        }
+         if options.kind_has(kind, crate::options::KIND_ROOT) {
+             self.root_edge(arm, strength);
+         } else {
+@@ -592,19 +882,88 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
+     }
+ 
+     fn seam(&mut self, text: &str) {
++        self.note_gap(crate::layout::WHY_FIXED);
+         self.merge_seam(text);
+     }
+ 
+     fn token_seam(&mut self, text: &str) {
++        self.note_gap(crate::layout::WHY_SOURCE);
+         self.merge_seam(text);
+         self.seam_is_token = true;
+     }
+ 
+     fn trivia_seam(&mut self, text: &str) {
++        self.note_gap(crate::layout::WHY_SOURCE);
+         self.merge_seam_with(text, SEAM_TRIVIA);
+         self.seam_is_token = true;
+     }
+ 
++    fn list_open(&mut self, separated: bool) {
++        if self.deferring.is_none() {
++            if let Some(probe) = self.probe.as_deref_mut() {
++                probe.list_open(separated);
++            }
++        }
++        if self.deferring.is_none() {
++            if let Some(layout) = self.layout.layout() {
++                layout.list_open(separated);
++            }
++        }
++    }
++
++    fn list_gap(&mut self, after: bool) {
++        if self.deferring.is_none() {
++            if let Some(probe) = self.probe.as_deref_mut() {
++                probe.list_gap(after);
++            }
++        }
++        if self.deferring.is_none() {
++            if let Some(layout) = self.layout.layout() {
++                layout.list_gap(if after { crate::layout::ROLE_AFTER } else { crate::layout::ROLE_BEFORE });
++            }
++        }
++    }
++
++    fn list_close(&mut self) {
++        if self.deferring.is_none() {
++            if let Some(probe) = self.probe.as_deref_mut() {
++                probe.list_close();
++            }
++        }
++        if self.deferring.is_none() {
++            if let Some(layout) = self.layout.layout() {
++                layout.list_close();
++            }
++        }
++    }
++
++    fn list_trailing(&mut self, before: u16, token: &str, after: u16) -> crate::render::RenderResult {
++        if self.layout.layout().is_none() || self.deferring.is_some() {
++            let broken = self.table.is_some_and(|table| (table.text_of)(after).contains('\n'));
++            if broken {
++                self.site_mark(before, SEAM_DECLARED, false);
++                self.write_chunk(token)?;
++            }
++            return Ok(());
++        }
++        let held = self.peek_context();
++        let gap = self.layout.layout().map(|layout| {
++            let list = layout.current_list();
++            let gap = layout.take_gap();
++            layout.set_conditional(list);
++            gap
++        });
++        self.site_mark(before, SEAM_DECLARED, false);
++        let result = self.write_chunk(token);
++        if let (Some(layout), Some(gap)) = (self.layout.layout(), gap) {
++            layout.set_conditional(crate::layout::NO_LIST);
++            layout.put_gap(gap);
++        }
++        self.restore_context(held);
++        result?;
++        Ok(())
++    }
++
+     fn kind_of(&self, coord: &crate::slot::NodeCoordinate) -> Option<crate::types::KindId> {
+         coord.kind.or_else(|| self.sources.and_then(|sources| sources.kind_of(coord)))
+     }
+diff --git a/rust/crates/sittir-core/src/view.rs b/rust/crates/sittir-core/src/view.rs
+index 5b53654ba..64874b807 100644
+--- a/rust/crates/sittir-core/src/view.rs
++++ b/rust/crates/sittir-core/src/view.rs
+@@ -263,6 +263,7 @@ impl<E: Slot> Render for ListView<'_, E> {
+         }
+         let (prefix, suffix) = split_template(self.template);
+         write_literal(prefix, w)?;
++        w.list_open(!self.token.is_empty());
+         if let Some(head) = self.head {
+             w.flank_at(head);
+         }
+@@ -273,8 +274,10 @@ impl<E: Slot> Render for ListView<'_, E> {
+         for (i, item) in self.items.iter().enumerate() {
+             if i > 0 {
+                 w.site(self.before);
++                w.list_gap(false);
+                 w.text(self.token)?;
+                 w.site(self.after);
++                w.list_gap(true);
+             }
+             item.write_slot("", "", w)?;
+         }
+@@ -285,6 +288,7 @@ impl<E: Slot> Render for ListView<'_, E> {
+         if let Some(tail) = self.tail {
+             w.flank_at(tail);
+         }
++        w.list_close();
+         write_literal(suffix, w)
+     }
+ }
