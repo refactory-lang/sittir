@@ -115,7 +115,7 @@ The causes the probe reports, each on the side that owns it:
 
 ## Stage 7: build
 
-- Build entries per vocabulary kind under `build.<path>`, with the same short aliases as stage 3. Where one path maps to several grammar kinds, the build picks the kind from the input's shape (which members are present, and the kinds of their values), then builds through the low-level API and its mount routing. There is no default arm and no inference from text. Kinds whose shapes cannot be told apart are stage-4 conformance items, cleared by a distinguishing member in the bindings.
+- Build entries per vocabulary kind under `build.<path>`, with the same short aliases as stage 3. Where one path maps to several grammar kinds, the build picks the kind from the input's shape (which members are present, and the kinds of their values), then builds through the low-level API and its mount routing. There is no default arm and no inference from text. Kinds whose shapes cannot be told apart are stage-4 conformance items, cleared by giving each its own vocabulary path (`expression.update.prefix` / `.postfix`, `comment.block` / `comment.line`), so the input's `$kind` picks the call.
 - Refinement builders, one per refinement path:
   - a literal or token refinement presets the literal (`build.expression.binary.add` fills `operator: '+'`);
   - a child-kind refinement narrows the slot's type to that child kind;
