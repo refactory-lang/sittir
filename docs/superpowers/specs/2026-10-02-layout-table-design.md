@@ -250,7 +250,7 @@ A site is free only if its seam is free wherever the site occurs. Three things f
 
 ### Exceptions the parser cannot supply, and where they are declared
 
-*Superseded on 2026-10-08: legality is declared as captures in `bindings.scm`, never in the `options` block; see [the context set's source](#the-gaps-valid-set-replaces-per-site-admission) and question 19. The cases below stand; where they are declared does not.*
+*Superseded on 2026-10-08: legality is declared in `grammar.sittir.ts`, never in the `options` block; see [the context set's source](#the-gaps-valid-set-replaces-per-site-admission) and question 19. The cases below stand; where they are declared does not.*
 
 Three declarations, all per grammar. Their names are open (question 13).
 
@@ -559,48 +559,53 @@ A gap's valid set is the intersection of two sets:
 
 The leaf edge sets cover what [Which arms a site admits](#which-arms-a-site-admits) found by forcing breaks: rust's three lexical sites (`#!` then a newline, `1.` then a newline) are leaf-edge facts. The context set has no source in `grammar.json`, because the scanner decides it, so it needs a declared one.
 
-**The context set's source (ruled by the maintainer 2026-10-08: query captures in `bindings.scm`; the capture names below are a proposal).**
+**The context set's source (ruled by the maintainer 2026-10-08: declared in `grammar.sittir.ts`, never as an options row).** Legality is a grammar fact, not a preference, the way immediacy is `token.immediate` and `renderAs`. It takes two forms:
 
-Legality is a grammar fact, not a preference, so it is never an options row. It is declared as query captures in each grammar's `bindings.scm`, beside the vocabulary claims, and reaches codegen the way the claims will: through the generated `grammar.bindings.ts`. The generator reading `bindings.scm` is the bootstrap work, where the generator runs sittir's own scm package. Two forms:
+- **Newline's choices in a context: python's pairs.** Python allows a break almost everywhere in an expression; what changes with the context is how the break is spelled. Inside a pair it is the plain `_newline`. Outside every pair it is the escaped break `line_continuation` (`\\` then a newline, already an extra of the grammar). That is a choice for one member, not a narrower set:
 
-- **Newline's spelling in a context: python's pairs.** Python allows a break almost everywhere in an expression; what changes with the context is how the break is spelled. Inside a pair it is the plain newline. Outside every pair it is the escaped break `line_continuation` (`\` then a newline, already an extra of the grammar). `@layout.break.<kind>` on a node says that inside it a break is spelled with that layout kind. The innermost capture wins:
-
-  ```scheme
-  ; ── layout ─────────────────────────────────────────────────────────────────────
-  (module) @layout.break.line_continuation
-  (_ "(" ")") @layout.break.newline
-  (_ "[" "]") @layout.break.newline
-  (_ "{" "}") @layout.break.newline
+  ```ts
+  layout: {
+  	newline: { outside: $.line_continuation, within: [['(', ')'], ['[', ']'], ['{', '}']] }
+  }
   ```
 
-  The statement gaps are untouched: the break between statements is the scanner's own newline token, which passes one fixed kind.
-- **No break at all: typescript's restricted positions, python's f-string field, regex.** No spelling of a break is legal there, so the gap draws from a narrower supertype. Enrich mints `_inline_layout` (`_tight`, `_space`, `_tab`) beside `_layout`.
-  - `@layout.nobreak` on a node covers its whole content.
-  - `@layout.nobreak.after` and `@layout.nobreak.before` on a token cover the one gap after or before it.
+  The statement gaps are untouched: the break between statements is the scanner's own `_newline` token, which passes one fixed kind.
+- **A narrower supertype: typescript's no-break positions.** After `return`, `throw`, `break` and `continue`, and before a postfix `++` or `--` and before `=>`, no spelling of a break is legal, so the gap draws from a narrower supertype. Enrich mints `_inline_layout` (`_tight`, `_space`, `_tab`) beside `_layout`. A sittir-side marker names the supertype for the gap before a member; in tree-sitter's run of the grammar it is identity, as `role(…)` is:
 
-  ```scheme
-  ; typescript
-  (throw_statement "throw" @layout.nobreak.after)
-  (return_statement "return" @layout.nobreak.after)
-  (break_statement "break" @layout.nobreak.after)
-  (continue_statement "continue" @layout.nobreak.after)
-  (update_expression argument: (_) ["++" "--"] @layout.nobreak.before)
-  (arrow_function "=>" @layout.nobreak.before)
-  ; python
-  (interpolation) @layout.nobreak
-  ; regex
-  (pattern) @layout.nobreak
+  ```ts
+  return_statement: ($, original) => seq('return', gap($._inline_layout, optional($._expressions)), $._semicolon)
   ```
 
-  Typescript's positions are also derived from tree-sitter's parse table, where that is sound (sites after a token). Codegen fails with a diagnostic naming each position where the derivation and the captures differ, so the captures are the checked source and the derivation is their test.
+  A kind whose whole content takes no break (python's f-string `interpolation`, regex's root) names `_inline_layout` for every gap inside it, with `layout: { inline: [$.interpolation] }` beside python's `newline` entry. The parse-table derivation computes typescript's positions too. Codegen fails with a diagnostic naming each position where the derivation and the declaration differ, so the declaration is the checked source and the derivation is its test.
 
-**How the captures compile onto each seam's `kinds`.** The generator resolves each pattern against the grammar, statically, to the kinds and token positions it can match. `grammar.bindings.ts` carries the result:
-
-- **A `nobreak` position:** the emitter writes `_inline_layout`'s members as the constant `kinds` of the seam at that gap. A `nobreak` node does the same for every seam inside it, through its descendants' rules where they occur only inside it, else through the writer's context, as below.
-- **A `break` context:** a seam's `kinds` holds the `newline` flag, meaning "a break may go here". Which layout kind spells it is the innermost captured context's:
-  - **At compile time** where every occurrence of the seam's kind lies in one context. Python's `argument_list` is itself a `(_ "(" ")")` node, for example.
-  - **At render time** where a kind occurs in both: `parameters_elements` under `def` and `lambda`, `import_list`, `pattern_list`, `expression_list`. The emitter marks the context kinds; the writer keeps a stack of contexts as it enters and leaves them and spells the `newline` flag with the top one.
+**How it compiles onto each seam's `kinds`.**
+- **A narrower supertype:** the emitter writes the supertype's members as the constant `kinds` of the seam at that gap, or of every seam inside an `inline` kind.
+- **A newline choice:** `kinds` holds the `newline` flag, meaning "a break may go here". Which member spells it is the context's choice:
+  - **At compile time** where every occurrence of the seam's kind lies in one context. Python's `argument_list` is itself delimited by a pair, for example.
+  - **At render time** where a kind occurs both bracketed and bare: `parameters_elements` under `def` and `lambda`, `import_list`, `pattern_list`, `expression_list`. The emitter marks the pair tokens; the writer keeps a stack of contexts and spells the `newline` flag with the top one.
 - **The table and the width rule** see one "a break is legal" flag either way. In python the first rule breaks only lists at a pair (question 14), so it never writes a continuation.
+
+**Later, not scoped: the same facts as `bindings.scm` captures.** Once the generator reads `bindings.scm` (the bootstrap work, where the generator runs sittir's own scm package), the declarations above can move beside the vocabulary claims, as query captures that reach codegen through a generated `grammar.bindings.ts`. They would compile onto `kinds` exactly as above. Proposed names:
+
+- `@layout.break.<kind>` on a node: inside it, a break is spelled with that layout kind, and the innermost capture wins.
+- `@layout.nobreak` on a node: no break anywhere inside it.
+- `@layout.nobreak.after` and `@layout.nobreak.before` on a token: no break in the one gap after or before it.
+
+```scheme
+; python
+(module) @layout.break.line_continuation
+(_ "(" ")") @layout.break.newline
+(_ "[" "]") @layout.break.newline
+(_ "{" "}") @layout.break.newline
+(interpolation) @layout.nobreak
+; typescript
+(throw_statement "throw" @layout.nobreak.after)
+(return_statement "return" @layout.nobreak.after)
+(update_expression argument: (_) ["++" "--"] @layout.nobreak.before)
+(arrow_function "=>" @layout.nobreak.before)
+; regex
+(pattern) @layout.nobreak
+```
 
 What this changes in the table: a seam row carries its gap's valid set in place of the "admits a line break" bit.
 
@@ -715,7 +720,7 @@ Two pieces run outside this note: the line-ending plan, after 1c-i, and the `sea
 
 1. **The output trait,** text output only, byte-identical. The generated root dispatch goes through one core function. The prototype's table module is renamed (`table.rs`), because master's `layout.rs` now holds `TransportLayout`.
 2. **The `prepare` change:** the list view resolves a separator's arm by its site.
-3. **Context sets:** the `@layout.break.*` and `@layout.nobreak*` captures in each `bindings.scm`, read through the generated `grammar.bindings.ts` (after the generator can read `bindings.scm`), compiled into `seam(kinds)`; the writer's context stack; the parse-table check for typescript. Gate 6.
+3. **Context sets:** python's `layout: { newline, inline }` and typescript's `_inline_layout` with its `gap(…)` positions, declared in `grammar.sittir.ts` and compiled into `seam(kinds)`; the writer's context stack; the parse-table check for typescript. Gate 6. This step does not wait for the generator to read `bindings.scm`.
 4. **Detection:** the native walk returning an options object, the client's merge (per-call > engine-set keys > detected > defaults) and indentation as one fact. This stage already delivers the detected line ending and indent unit, with no table.
 5. **The table output:** rows carry valid sets; there are list calls and a pass interface.
 6. **The run-pattern rule over the table.** This is the first stage that delivers statement-gap patterns: an inserted statement takes the file's gap, and the before-and-after check above is its gate.
@@ -728,8 +733,8 @@ Stages 3 and 4 do not depend on each other. Stage 6 needs 1, 2, 4 and 5.
 
 ## Open questions for the maintainer
 
-1. **Bracket pairs: declared per grammar, or fixed in codegen?** (Revised 2026-10-08: legality is declared as captures in `bindings.scm`, never in `options`; see question 19.)
-   Recommend declared, as `bindings.scm` captures. In python the pairs are the `@layout.break.newline` contexts (question 19). In every grammar they also choose the lists the first rule breaks (question 14), which is the same declaration read by the rule, not a second one. Regex declares none.
+1. **Bracket pairs: declared per grammar, or fixed in codegen?** (Revised 2026-10-08: legality is declared in `grammar.sittir.ts`, never in `options`; see question 19.)
+   Recommend declared, in `grammar.sittir.ts`. In python the pairs are the contexts of newline's choice (question 19). In every grammar they also choose the lists the first rule breaks (question 14), which is the same declaration read by the rule, not a second one. Regex declares none.
 
 2. **An edited parsed list whose source gaps were inline: may width break it?**
    Recommend no, as ruled: what was read from source keeps its layout, and width applies to what was built. The alternative, treating a source-read arm that equals the default as a default, would let it break; it needs no stamp from `prepare`, but it cannot tell "the source says inline" from "nothing is known".
@@ -771,7 +776,7 @@ Added with the reframing:
     - Until then only declared exceptions restrict: regex, python's f-string field, typescript's `throw`, rust's three sites.
 
 13. **The three declarations: names and places.** (Superseded by question 19.)
-    The line-sensitive tokens keep `role(…)`. The bracket pairs and "does not admit a line break" become question 19's captures in `bindings.scm`: `@layout.break.*` for python's pairs, and `@layout.nobreak*` for typescript's no-break positions, python's f-string field and regex's root. Neither goes in the `options` block.
+    The line-sensitive tokens keep `role(…)`. The bracket pairs and "does not admit a line break" become question 19's two forms in `grammar.sittir.ts`: newline's choices for python's pairs, and the `_inline_layout` supertype for typescript's no-break positions, python's f-string field and regex's root. Neither goes in the `options` block.
 
 14. **Which lists the first rule breaks, now that rust admits a break everywhere.**
     Recommend lists at a declared pair in every grammar, as measured. Admission says where a break is safe, not where it reads well: rust's trait bounds and `let` chains are free too, and a list broken at `+` or `&&` wants a different layout. Rust can add `<` and `>` to its pairs at no risk.
@@ -793,12 +798,11 @@ Added on 2026-10-08:
 18. **Do occurrence stamps survive for statement lists?** Ruled (maintainer, 2026-10-08): statement-list stamps go, as recommended.
     `prepare` today keeps a kept source gap's class on the node. Under detection a statement gap is spelled from the detected option. Recommend that statement-list gaps stop being stamped and the run-pattern rule decides them; other lists keep their stamps until a rule covers them. The acceptance holds either way; what differs is a source gap that departs from the file's own pattern, which detection then evens out.
 
-19. **The context set's form.** Ruled (maintainer, 2026-10-08): query captures in `bindings.scm`, reaching codegen through the generated `grammar.bindings.ts`; not `grammar.sittir.ts` and not `options`. Proposed capture names, open:
-    - `@layout.break.<kind>` on a node: inside it, a break is spelled with that layout kind, the innermost capture winning. Python: `(module) @layout.break.line_continuation` and `(_ "(" ")") @layout.break.newline`, with the same for `[]` and `{}`.
-    - `@layout.nobreak` on a node: no break anywhere inside it. Python's `interpolation`, regex's `pattern`.
-    - `@layout.nobreak.after` and `@layout.nobreak.before` on a token: no break in the one gap after or before it. Typescript: `(throw_statement "throw" @layout.nobreak.after)`.
+19. **The context set's form.** Ruled (maintainer, 2026-10-08): declared in `grammar.sittir.ts`, as newline's choices in a context or as a specific supertype; never in `options`. Not scoped yet: the move to `bindings.scm` captures, which waits for the generator to read `bindings.scm`.
+    - Python's pairs take newline's choices: `layout: { newline: { outside: $.line_continuation, within: [pairs] } }`, with the writer's context stack where a kind occurs both bracketed and bare. Its f-string field is `layout: { inline: [$.interpolation] }`.
+    - Typescript's no-break positions take the minted `_inline_layout` supertype through the `gap($._inline_layout, member)` marker, derived from the parse table and checked against the declaration.
 
-    A `nobreak` gap compiles to `_inline_layout`'s members as a constant `kinds`. A `break` context is spelled at compile time where a kind always lies in one context, and through the writer's context stack where it does not. Typescript's positions stay derived from the parse table and checked against the captures. This replaces question 13's three declarations; the line-sensitive tokens keep their `role(…)`.
+    A supertype compiles to a constant `kinds`; a newline choice is spelled at compile time where the context is fixed, else through the writer's context stack. This replaces question 13's three declarations; the line-sensitive tokens keep their `role(…)`.
 
 20. **Detection thresholds.** Ruled (maintainer, 2026-10-08): as recommended.
     Recommend the majority, with the declared default on a tie, and a kind-specific `after` or `before` only where it differs from the list's `(_)` value with support of at least three gaps. The number is a starting point to tune against the census; the detected options record which keys were detected and which defaulted.
