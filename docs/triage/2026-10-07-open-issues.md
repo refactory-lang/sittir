@@ -59,7 +59,7 @@ The maintainer requested skipping trivia-related work for now. Start with these 
 
 #627's exact samples from its maintainer audit now pass `default-diff --no-attribute`: the multiline Python docstring, `a ${b} c` and `x` TypeScript templates, and `^[\w.+-]+@[\w-]+\.[\w.]+$` email regex each have zero rebuild failures, differing gaps and token mismatches. The original TypeScript/regex failing files were not committed, so closure is based on the documented audit samples, rather than a newly authored fix. A new reproducing input would justify reopening.
 
-Keep #675, #677, #678 and #685 reserved for typed-reader 1c; do not create competing implementations. Trivia-related portions of mixed issues are deferred even when their other cases remain eligible.
+Keep #675, #677, #678 and #685 reserved for the active typed-reader migration; do not create competing implementations. Trivia-related portions of mixed issues are deferred even when their other cases remain eligible.
 
 ## Deferred trivia scope
 
@@ -134,16 +134,16 @@ The fixes have focused red/green regressions and regeneration coverage. Backlog 
 
 | Issue | Priority | Disposition / next action |
 |---|---|---|
-| [#675 — Typed reader: an enum-kind node can own trivia its read then discards](https://github.com/refactory-lang/sittir/issues/675) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Reserved for typed-reader 1c: preserve enum trivia during the migration. |
-| [#677 — Typed reader: two slots on one field route to the first, and a struct slot accepts a child of any named kind](https://github.com/refactory-lang/sittir/issues/677) | P1 | Reserved for typed-reader 1c: shared field and kind admission. |
-| [#678 — Typed reader: read_at trusts its caller's parent type, and the envelope-pin report only prints counts](https://github.com/refactory-lang/sittir/issues/678) | P1 | Reserved for typed-reader 1c: parent-type and envelope gates. |
-| [#685 — Choices print from_kind_id beside the claims the derive already reads](https://github.com/refactory-lang/sittir/issues/685) | P2 | Reserved for typed-reader 1c: one source for ID construction and claims. |
-| [#669 — Today's read drops a node's slots, blank arm included, when its children tile its span](https://github.com/refactory-lang/sittir/issues/669) | P1 | Coordinate old-reader removal and empty-byte parity with 1c. |
+| [#675 — Typed reader: an enum-kind node can own trivia its read then discards](https://github.com/refactory-lang/sittir/issues/675) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Reserved for the active typed-reader migration: preserve enum trivia during the migration. |
+| [#677 — Typed reader: two slots on one field route to the first, and a struct slot accepts a child of any named kind](https://github.com/refactory-lang/sittir/issues/677) | P1 | Reserved for the active typed-reader migration: shared field and kind admission. |
+| [#678 — Typed reader: read_at trusts its caller's parent type, and the envelope-pin report only prints counts](https://github.com/refactory-lang/sittir/issues/678) | P1 | Reserved for the active typed-reader migration: parent-type and envelope gates. |
+| [#685 — Choices print from_kind_id beside the claims the derive already reads](https://github.com/refactory-lang/sittir/issues/685) | P2 | Reserved for the active typed-reader migration: one source for ID construction and claims. |
+| [#669 — Today's read drops a node's slots, blank arm included, when its children tile its span](https://github.com/refactory-lang/sittir/issues/669) | P1 | Coordinate old-reader removal and empty-byte parity with the active typed-reader migration. |
 | [#655 — native/index.d.ts names undeclared transport types (2,732 errors checked alone)](https://github.com/refactory-lang/sittir/issues/655) | P1 | Wait for derived codec facts; avoid a second filtered native declaration source. |
-| [#672 — Typed read: dev-profile root stack cost is 375 KiB against today's 39 KiB](https://github.com/refactory-lang/sittir/issues/672) | P2 | Reconcile the older root-stack proposal with accepted 1a work and #690. |
+| [#672 — Typed read: dev-profile root stack cost is 375 KiB against today's 39 KiB](https://github.com/refactory-lang/sittir/issues/672) | P2 | Reconcile the older root-stack proposal with the accepted typed-reader implementation and #690. |
 | [#690 — struct readers' debug frames](https://github.com/refactory-lang/sittir/issues/690) | P2 | Outline and measure structured reader frames against the current implementation. |
 | [#639 — python deep read: wrap phase rose ~0.5 µs/node after routing moved from the reader to the wrap](https://github.com/refactory-lang/sittir/issues/639) | P3 | Profile Python wrapping after the active reader migration. |
-| [#491 — Per-kind read depth: a stamped fact wrap passes to the depth-parameterized native read](https://github.com/refactory-lang/sittir/issues/491) | P2 | Reconcile depth stamping with typed-reader 1c before parallel implementation. |
+| [#491 — Per-kind read depth: a stamped fact wrap passes to the depth-parameterized native read](https://github.com/refactory-lang/sittir/issues/491) | P2 | Reconcile depth stamping with the active typed-reader migration before parallel implementation. |
 | [#476 — Grammar-agnostic native reader; all storage projection in the wrap layer](https://github.com/refactory-lang/sittir/issues/476) | P2 | Reconcile earlier grammar-agnostic reader direction with the active migration. |
 | [#610 — Nodes share a const prototype per kind](https://github.com/refactory-lang/sittir/issues/610) | P2 | Refresh partially shipped shared-prototype work and coordinate remaining migration pieces. |
 | [#611 — List indices are accessors](https://github.com/refactory-lang/sittir/issues/611) | P3 | Specify shared versus data index semantics before lazy implementation. |
