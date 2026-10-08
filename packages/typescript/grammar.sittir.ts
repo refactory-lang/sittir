@@ -558,12 +558,6 @@ export default sittirGrammar(base, {
 		_function_signature_automatic_semicolon: string('\n'),
 	}),
 
-	expectTestFailures: {
-		debugger_statement: '#170 — _resolveOneLeaf cannot resolve the _semicolon stub',
-		import_require_clause: '#170 — Missing field _content on ImportRequireClauseTransport._source',
-		object_type_content: '#170 (#172-adjacent) — Missing field _content through export-arm transport',
-		string: '#170 — StringContentTransportSlot rejects stub ($type property missing)'
-	},
 	expectDiagnostics: {
 		'unclassifiable-shape': ['binary_expression', 'public_field_definition'],
 		'union-slot-mixed-row': ['binary_expression'],

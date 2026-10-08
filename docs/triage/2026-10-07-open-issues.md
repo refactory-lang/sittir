@@ -12,6 +12,7 @@ This report classifies issue bodies and current context. #706, #692 and the rema
 - **#572 (partial):** assembly weakened every `nonEmptyArray` value to `array` when a slot was named `content`, even for an explicitly authored `repeat1`. Removing this name-based heuristic preserves the grammar fact and its derived builder guard, strict argument type, required parent config and native transport. Python comprehension clauses and string content, plus SCM string content, now retain their non-empty cardinality. Three compiler regressions and six Python regressions verify rejection and valid empty string/root behavior. The separate lexically impossible empty match-block arm and remaining no-argument surface questions are still open.
 - **#572 (loose rest arguments):** the shared field-carrying factory emitter now derives the loose rest row through `elementsTypeOf(nonEmpty, ...)`, using the same assembled cardinality as its strict parameter and lone-array row. Twenty kinds across all five grammars now refuse a zero-argument loose call at compile time, matching their existing runtime guard. Sixteen cross-language type assertions cover empty calls, empty readonly arrays and valid scalar/readonly inputs; three Python runtime controls cover refusal, valid construction and legitimate empty roots/lists. Parser and runtime artifacts are unchanged. The attempted match-block `repeat1` patch was excluded after an identity audit found a regression for a comment before the first case; #572 remains open for that dependency and other unrefreshed candidates.
 - **#493:** a shallow native list stub already holds its reading tree, but raw strict and loose factories refused it. Generated language hooks now expose the existing `hydrateChild`; a shared tree-binding helper resolves the list owner's storage before construction. The getter, list size, index entries and render use that single resolved value. Five runtime regressions cover strict and loose construction, orphan refusal, another engine of the same language and a disposed reading engine.
+- **#170:** all six construction/render tests for `debugger_statement`, `import_require_clause` and `object_type_content` pass after removing their authored exclusions and regenerating TypeScript. Their historical defects no longer reproduce. Removed the stale `string` entry, which produces no suite, and the obsolete glossary entry. This restores the existing assertions without a production-code change.
 
 ## Validation
 
@@ -29,6 +30,7 @@ This report classifies issue bodies and current context. #706, #692 and the rema
 - Python-only #550, in a separate PR stacked on #707: canonical five-grammar regeneration passed; compiler, DSL, emitter, common runtime, Python, Rust, upstream-witness and hand-rule suites passed (348 files, 3,381 tests, seven expected failures and one skipped). Six Python tuple-pattern regressions cover singleton construction, empty/multi-element parsed forms and rejection of the comma-less tuple pattern. Codegen/Python/Rust and regression TypeScript checks, changed-source lint, Principle #14 and diff checks passed. The tuple construction is local to Python; the user-endorsed `semantic-gap` cause reuses the existing witness-form derivation. No new tuple DSL helpers are introduced.
 
 - Additional #572 loose-rest fix: canonical five-grammar regeneration, all grammar/codegen package checks and 16 cross-language type assertions pass. Compiler, DSL, emitter, common and all grammar runtime suites plus grammar ratchets pass (413 files, 4,277 tests, seven expected failures and seven skips). The all-grammar raw counts match the Python #550 rerun below; native baseline passes remain 16,760 with three existing misses. Python native fixtures preserve all 2,790 identities. Source lint, formatting and diff checks pass.
+- #170: canonical TypeScript regeneration and package type check pass. The full TypeScript suite, all five generated node suites and grammar ratchets pass (51 files, 1,550 tests, no skips). All five native count rows match the additional #572 run, including the three existing round-trip misses; TypeScript preserves its 2,079 render and 2,079 round-trip fixture identities. Principle #14 and diff checks pass. The grammar source's formatting failure also exists at the starting revision; this deletion does not repair that unrelated debt.
 
 The #626, partial #572 and #493 validator reruns match the committed native baseline, including its three existing round-trip misses:
 
@@ -75,9 +77,9 @@ The fixes have focused red/green regressions and regeneration coverage. Backlog 
 
 | Group | Count |
 |---|---:|
-| Remediated | 4 |
+| Remediated | 5 |
 | Closed after reproduction refresh | 1 |
-| Correctness queue | 21 |
+| Correctness queue | 20 |
 | Typed-reader migration and performance | 14 |
 | Platform verification | 1 |
 | Design and feature work | 31 |
@@ -93,6 +95,7 @@ The fixes have focused red/green regressions and regeneration coverage. Backlog 
 | [#692 — regen:all fails when a generated Cargo feature changes](https://github.com/refactory-lang/sittir/issues/692) | P1 | Fixed regeneration ordering so every Cargo manifest is refreshed before any native build; three regression tests and real five-grammar regeneration pass. |
 | [#626 — Loose builders: a forwarded envelope's repeat slot is not coerced per element (functionModifiers({ modifiers: ['async'] }) throws)](https://github.com/refactory-lang/sittir/issues/626) | P1 | Closed at maintainer request. Current config spelling already works; fixed remaining lone-array coercion and generated readonly array argument types. Six regressions and related emitter/runtime/type checks pass. |
 | [#493 — A node built from a parsed list stub cannot size its list view: bind the reading tree at build](https://github.com/refactory-lang/sittir/issues/493) | P2 | Fixed genuine shallow-stub construction by reusing the reading engine's grammar hydration; five regressions pass. Issue remains open pending PR completion. |
+| [#170 — typescript nodes.test.ts: three kinds still skipped via expectTestFailures](https://github.com/refactory-lang/sittir/issues/170) | P2 | Removed obsolete exclusions after all six enabled tests passed on the current stack; removed the stale `string` exclusion too. |
 
 ## Closed after reproduction refresh
 
@@ -123,7 +126,6 @@ The fixes have focused red/green regressions and regeneration coverage. Backlog 
 | [#512 — Typed patch paths do not see the fields enrich adds to repeats](https://github.com/refactory-lang/sittir/issues/512) | P2 | Reproduce typed/runtime enrich behavior on SCM repeat paths. |
 | [#434 — Line-break-terminated kinds' after edges offer arms the held line end always overrides](https://github.com/refactory-lang/sittir/issues/434) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Measure the public held line-ending options and their effect. |
 | [#369 — Floored shape debt raised by the upstream grammars](https://github.com/refactory-lang/sittir/issues/369) | P2 | Refresh diagnostic families and fix failures at the earliest phase retaining the facts. |
-| [#170 — typescript nodes.test.ts: three kinds still skipped via expectTestFailures](https://github.com/refactory-lang/sittir/issues/170) | P2 | Recheck the current three TypeScript skips; the older issue body counts differ. |
 | [#577 — Circular types when a list kind is a member of its own element union](https://github.com/refactory-lang/sittir/issues/577) | P2 | Pin recursive list-kind LooseArgs; fix namespace or widening recursion without dropping admitted values. |
 
 ## Typed-reader migration and performance
