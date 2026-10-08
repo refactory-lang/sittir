@@ -48,7 +48,11 @@ Captures the active hooks of one operation and composes them in registration ord
 
 ### `packages/common/src/create-engine.ts::interceptedRender`
 
-A lazy output handle whose text is produced through render middleware. The hook receives the resolved node and engine render options overlaid by per-call options. The native output handle is created at the original render boundary, preserving the transport snapshot taken there; its text stays lazy. `next` materializes that handle. Disposing the outer handle disposes both handles, including an inner handle that was never materialized. The outer handle caches successful transformed text once, so `toString`, `print` and `save` share the same bytes; a short circuit never materializes the native output. Disposal retains the existing output refusal.
+A lazy output handle whose text is produced through render middleware. The hook receives the resolved node and engine render options overlaid by per-call options. The native output handle is created at the original render boundary, preserving the transport snapshot taken there; its text stays lazy. `next` materializes that handle through the supplied continuation, which also measures native rendering when metrics are enabled. Capture alone does not format text or record metrics; a short circuit bypasses both. Disposing the outer handle disposes both handles, including an inner handle that was never materialized. The outer handle caches successful transformed text once, so `toString`, `print` and `save` share the same bytes; a short circuit never materializes the native output. Disposal retains the existing output refusal.
+
+### `packages/common/src/create-engine.ts::materializeNative`
+
+Produces text from an already captured native handle and, when enabled, records the native materialization duration and input/output sizes. Render middleware reaches it through `next`; the direct path retains its existing immediate measurement when metrics are enabled.
 
 ### `packages/common/src/create-engine.ts::createEngine`
 

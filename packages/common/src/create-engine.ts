@@ -125,8 +125,13 @@ function scopedBuild<B, Node>(
 	return scope(build, []) as B;
 }
 
-function interceptedRender<Call>(call: Call, chain: Middleware<Call, string>, rendered: Rendered): Rendered {
-	const output = createRenderHandle(() => chain(call, () => rendered.toString()));
+function interceptedRender<Call>(
+	call: Call,
+	chain: Middleware<Call, string>,
+	rendered: Rendered,
+	materialize: () => string
+): Rendered {
+	const output = createRenderHandle(() => chain(call, materialize));
 	return {
 		...output,
 		[Symbol.dispose]() {
@@ -177,15 +182,14 @@ function assembleEngine<API extends LanguageAPI>(
 	const parseChain = interceptorChain(interceptors.map((hook) => hook.parse?.bind(hook)));
 	const renderChain = interceptorChain(interceptors.map((hook) => hook.render?.bind(hook)));
 	const build = scopedBuild(hooks.build, handle, buildChain);
-	const renderNative = (target: Parameters<typeof native.render>[0], renderOptions: object | undefined): Rendered => {
-		const rendered = native.render(target, renderOptions);
-		if (!metricsEnabled) return rendered;
+	const materializeNative = (target: Parameters<typeof native.render>[0], rendered: Rendered): string => {
+		if (!metricsEnabled) return rendered.toString();
 		const kind =
 			typeof target === 'number' ? String(target) : (hooks.trivia.kindName(target.$type) ?? String(target.$type));
 		const before = performance.now();
 		const text = rendered.toString();
 		recordFfi(language.name, kind, JSON.stringify(target).length, performance.now() - before, text.length);
-		return rendered;
+		return text;
 	};
 	const readAndBind = (source: string, parseOptions?: ParseOptions) => {
 		const read = native.parseAndRead(source, parseOptions);
@@ -254,12 +258,16 @@ function assembleEngine<API extends LanguageAPI>(
 			if (stamp !== undefined && !sameLanguage(stamp, identity)) {
 				throw new Error(`cannot render a ${stamp.language.name} node through a ${language.name} engine`);
 			}
-			if (renderChain === undefined) return renderNative(target, renderOptions);
+			const rendered = native.render(target, renderOptions);
+			if (renderChain === undefined) {
+				if (metricsEnabled) materializeNative(target, rendered);
+				return rendered;
+			}
 			const call: Parameters<NonNullable<Interceptor<API>['render']>>[0] = {
 				node: target,
 				options: { ...options?.render, ...renderOptions }
 			};
-			return interceptedRender(call, renderChain, renderNative(target, renderOptions));
+			return interceptedRender(call, renderChain, rendered, () => materializeNative(target, rendered));
 		},
 		create(): Pending {
 			throw unimplementedVerb('create');
