@@ -325,6 +325,15 @@ fn a_function_reads_into_its_slots_with_its_layout_tokens_skipped() {
 }
 
 #[test]
+fn a_block_doc_comment_reads_whole_with_its_named_marker_skipped_as_layout() {
+    for source in ["/** x */\nfn f() {}\n", "/*! x */\n"] {
+        let tree = parse_rust(source);
+        let comment = read_nth::<sittir_rust::render::transport::BlockCommentTransport>(&tree, source, kind::BLOCK_COMMENT, 0, Depth::All);
+        assert!(comment.is_ok(), "{source:?}: {comment:?}");
+    }
+}
+
+#[test]
 fn a_child_no_route_takes_refuses_the_read_naming_kind_child_and_row() {
     let source = "fn f() {}";
     let tree = parse_rust(source);

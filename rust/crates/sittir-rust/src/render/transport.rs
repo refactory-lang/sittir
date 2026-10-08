@@ -25443,7 +25443,7 @@ impl ::sittir_core::prepare::Prepare for LineCommentRegularTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::BLOCK_COMMENT_DOC_OUTER, layout = [kind::STAR])]
+#[transport(kind = kind::BLOCK_COMMENT_DOC_OUTER, layout = [kind::_OUTER_DOC_COMMENT_MARKER])]
 pub struct BlockCommentDocOuterTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -25485,7 +25485,7 @@ impl ::sittir_core::prepare::Prepare for BlockCommentDocOuterTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::BLOCK_COMMENT_DOC_INNER, layout = [kind::BANG])]
+#[transport(kind = kind::BLOCK_COMMENT_DOC_INNER, layout = [kind::_INNER_DOC_COMMENT_MARKER])]
 pub struct BlockCommentDocInnerTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,

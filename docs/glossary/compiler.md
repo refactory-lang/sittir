@@ -7221,7 +7221,8 @@ The parser catalog rows (`kindEntries`) a link pass reads before `LinkCtx` exist
  * One walk, two catalog jobs: rewrite catalog-known literals at FIELD
  * positions into link-minted SYMBOLs, and stamp parser-issued kindIds onto
  * every value-bearing leaf (`kindId` on SYMBOL and named ALIAS,
- * `resolvedKindId` on STRING/PATTERN) so downstream phases consume stamped
+ * `resolvedKindId` on STRING/PATTERN, and `aliasedToId` on a SYMBOL or
+ * STRING that carries `aliasedTo`) so downstream phases consume stamped
  * facts instead of re-resolving names/texts per site. Leaves that resolve
  * nothing are collected into `misses` — the link-time phantom-kind
  * diagnostic. `syntactic` is false inside a lexed interior (below a
@@ -8338,6 +8339,7 @@ parser rule; only the sittir-side rule the model reads changes.
  *  `aliasedTo` (the alias name), when the rule carries one and isn't
  *  already stamped. A miss (no named entry, or an anonymous one) is
  *  recorded in `misses.aliasTargets`, never silently left unset. Runs
+ *  on a STRING literal that carries an alias (a renderAs stamp), and
  *  first inside `stampSymbolRefKindIds`, before `kindId` resolution —
  *  the two ids are independent: `aliasedToId` is the DISPLAY symbol,
  *  `kindId` is always this occurrence's own (storage) identity. */
@@ -8861,9 +8863,15 @@ It applies only the lifts `validateGroupsConfig` keeps and returns the issues of
  * and replace every occurrence of:
  *   - `SYMBOL(x)` (bare)
  *   - `FIELD(name, SYMBOL(x))` (field-wrapped)
- *   - `FIELD(name, ALIAS(SYMBOL(x)))` (alias-wrapped — any depth)
  * with `STRING(lit)` at the same position. Pure transform — input rule
- * map not mutated.
+ * map not mutated. An alias site over a renderAs external arrives here
+ * already folded to `SYMBOL(<alias name>)` (link renames the external
+ * to the alias it is only ever seen through, renderAs key included), so
+ * it is stamped as a bare or field-wrapped symbol.
+ *
+ * `kindEntries` decides what the literal displays as: a literal standing
+ * in for a parser-visible symbol carries that symbol as `aliasedTo`,
+ * because the parser still issues a node of that kind at the site.
  *
  * Symbol resolution is transitive: when `x` itself is not in `renderAs`
  * but `rules[x]` is a `StringRule<'link'>` whose value matches a renderAs literal,
@@ -8940,16 +8948,38 @@ It applies only the lifts `validateGroupsConfig` keeps and returns the issues of
 // throw.
 ```
 
+### `packages/codegen/src/compiler/link.ts::RenderAsStampCtx`
+
+```text
+/** What `rewriteRuleForStamp` substitutes (`symToLit`, `blankStamps`)
+ *  and the kind catalog `literalRuleForStamp` reads a symbol's parser
+ *  visibility from. */
+```
+
+### `packages/codegen/src/compiler/link.ts::literalRuleForStamp`
+
+```text
+/** The literal a renderAs stamp puts in `symbol`'s place: `STRING(value)`,
+ *  wrapped in an immediate TOKEN when the stamp is immediate, carrying
+ *  `aliasedTo: symbol` unless the parser hides that kind. The alias is
+ *  the node the parser issues at the site (rust's block doc comment
+ *  markers are named `inner_doc_comment_marker`/`outer_doc_comment_marker`
+ *  nodes spelled `!`/`*`); without it the literal would resolve by its
+ *  text to the anonymous `!`/`*` token, and the reader would find a
+ *  child its kind has no route for. `canonicalizeRuleLiterals` stamps
+ *  the alias's `aliasedToId`, which `layoutTokenIds` prefers. */
+```
+
 ### `packages/codegen/src/compiler/link.ts::rewriteRuleForStamp`
 
 ```text
-/** A non-inline SYMBOL is a real occurrence node the tree keeps, never a
- *  spliceable reference, so `symToLit`/`blankStamps` substitution never
- *  applies to it — both the bare-SYMBOL and the FIELD-wrapping-a-SYMBOL
- *  cases return unchanged unless the ref is `inline === true`. ALIAS is
- *  returned untouched (link's ALIAS wrapper is opaque to this rewrite;
- *  `unwrapAliasForCheck` only sees through TOKEN, never ALIAS, when
- *  checking a FIELD's inner shape for the same reason).
+/** Substitutes `ctx.symToLit` literals and `ctx.blankStamps` blanks for
+ *  the symbols they stamp, bare or field-wrapped. The literal comes from
+ *  `literalRuleForStamp`, so a symbol the parser issues keeps its kind
+ *  as the literal's alias: the field wrapper is dropped, the node the
+ *  parser puts there is not. ALIAS is returned untouched
+ *  (`unwrapAliasForCheck` only sees through TOKEN, never ALIAS, when
+ *  checking a FIELD's inner shape).
  */
 ```
 
@@ -8965,7 +8995,7 @@ It applies only the lifts `validateGroupsConfig` keeps and returns the issues of
 ```text
 // The field wrapper is dropped with the ref (a renderAs literal
 // is a mandatory inline literal, never a slot); the literal
-// takes the field's identity.
+// takes the field's identity and the ref's kind as its alias.
 ```
 
 #### body

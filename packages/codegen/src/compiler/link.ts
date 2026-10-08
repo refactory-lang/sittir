@@ -213,7 +213,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 
 	const renderAs = (raw.renderAs ?? {}) as Record<string, Rule<'link'>>;
 	if (Object.keys(renderAs).length > 0) {
-		const stamped = stampStaticRenderAs(rules, renderAs);
+		const stamped = stampStaticRenderAs(rules, renderAs, kindEntries);
 		for (const key of Object.keys(rules)) {
 			if (!(key in stamped)) delete rules[key];
 		}
@@ -390,7 +390,7 @@ function canonicalizeCatalogLiteralRefsInMap(rules: Map<string, Rule<'link'>>, c
 	}
 }
 
-function stampAliasTargetId(rule: SymbolRule<'link'>, ctx: StampKindIdsCtx): SymbolRule<'link'> {
+function stampAliasTargetId<R extends { readonly aliasedTo?: string; readonly aliasedToId?: number }>(rule: R, ctx: StampKindIdsCtx): R {
 	if (rule.aliasedTo === undefined || rule.aliasedToId !== undefined) return rule;
 	const targetEntry = findEntryForKindName(ctx.kindEntries, rule.aliasedTo);
 	if (targetEntry === undefined || targetEntry.anon === true) {
@@ -506,24 +506,29 @@ export function canonicalizeRuleLiterals(
 			if (allowLiteralRewrite) {
 				const entry = findEntryForLiteralText(kindEntries, rule.value);
 				if (entry && (syntactic || entry.anon === true)) {
-					return {
-						type: SYMBOL,
-						name: entry.kind,
-						literal: rule.value,
-						inline: isParserHiddenKind(entry.kind, kindEntries),
-						kindId: entry.parseId ?? entry.id,
-						metadata: makeRuleMetadata({ symbolSource: 'link' }),
-						...(rule.annotations === undefined ? {} : { annotations: rule.annotations })
-					};
+					return stampAliasTargetId(
+						{
+							type: SYMBOL,
+							name: entry.kind,
+							literal: rule.value,
+							inline: isParserHiddenKind(entry.kind, kindEntries),
+							kindId: entry.parseId ?? entry.id,
+							metadata: makeRuleMetadata({ symbolSource: 'link' }),
+							...(rule.aliasedTo === undefined ? {} : { aliasedTo: rule.aliasedTo }),
+							...(rule.annotations === undefined ? {} : { annotations: rule.annotations })
+						} satisfies SymbolRule<'link'>,
+						{ kindEntries, misses, aliasBodies }
+					);
 				}
 			}
 			if (kindEntries.length === 0) return rule;
+			const aliased = stampAliasTargetId(rule, { kindEntries, misses, aliasBodies });
 			const literalEntry = findEntryForLiteralText(kindEntries, rule.value);
 			if (literalEntry === undefined) {
 				if (syntactic) misses.literals.add(rule.value);
-				return rule;
+				return aliased;
 			}
-			return { ...rule, resolvedKindId: literalEntry.id };
+			return { ...aliased, resolvedKindId: literalEntry.id };
 		}
 		case PATTERN: {
 			if (!syntactic || kindEntries.length === 0) return rule;
@@ -2348,7 +2353,8 @@ interface RenderAsLiteralStamp {
 
 export function stampStaticRenderAs(
 	rules: Record<string, Rule<'link'>>,
-	renderAs: Record<string, Rule<'link'>>
+	renderAs: Record<string, Rule<'link'>>,
+	kindEntries: readonly GeneratedKindEntry[]
 ): Record<string, Rule<'link'>> {
 	const renderStamps: Record<string, RenderAsLiteralStamp> = {};
 	const blankStamps = new Set<string>();
@@ -2376,24 +2382,29 @@ export function stampStaticRenderAs(
 	const out: Record<string, Rule<'link'>> = {};
 	for (const [name, rule] of Object.entries(rules)) {
 		if (blankStamps.has(name)) continue;
-		out[name] = rewriteRuleForStamp(rule, symToLit, blankStamps);
+		out[name] = rewriteRuleForStamp(rule, { symToLit, blankStamps, kindEntries });
 	}
 	return out;
 }
-function literalRuleForStamp(stamp: RenderAsLiteralStamp, id: RuleId | undefined): Rule<'link'> {
-	return stamp.immediate
-		? withId({ type: TOKEN, content: { type: STRING, value: stamp.value }, immediate: true }, id)
-		: withId({ type: STRING, value: stamp.value }, id);
+interface RenderAsStampCtx {
+	readonly symToLit: Record<string, RenderAsLiteralStamp>;
+	readonly blankStamps: ReadonlySet<string>;
+	readonly kindEntries: readonly GeneratedKindEntry[];
 }
-function rewriteRuleForStamp(
-	rule: Rule<'link'>,
-	symToLit: Record<string, RenderAsLiteralStamp>,
-	blankStamps: ReadonlySet<string>
-): Rule<'link'> {
+function literalRuleForStamp(stamp: RenderAsLiteralStamp, symbol: string, id: RuleId | undefined, ctx: RenderAsStampCtx): Rule<'link'> {
+	const literal: StringRule<'link'> = {
+		type: STRING,
+		value: stamp.value,
+		...(isParserHiddenKind(symbol, ctx.kindEntries) ? {} : { aliasedTo: symbol })
+	};
+	return stamp.immediate ? withId({ type: TOKEN, content: literal, immediate: true }, id) : withId(literal, id);
+}
+function rewriteRuleForStamp(rule: Rule<'link'>, ctx: RenderAsStampCtx): Rule<'link'> {
+	const { symToLit, blankStamps } = ctx;
 	switch (rule.type) {
 		case SYMBOL: {
 			const stamp = symToLit[rule.name];
-			if (stamp !== undefined) return literalRuleForStamp(stamp, rule.id);
+			if (stamp !== undefined) return literalRuleForStamp(stamp, rule.name, rule.id, ctx);
 			if (blankStamps.has(rule.name)) return withId({ type: CHOICE, members: [] }, rule.id);
 			return rule;
 		}
@@ -2402,10 +2413,10 @@ function rewriteRuleForStamp(
 			const inner = unwrapAliasForCheck(rule.content);
 			if (inner.type === SYMBOL) {
 				const stamp = symToLit[inner.name];
-				if (stamp !== undefined) return literalRuleForStamp(stamp, rule.id ?? inner.id);
+				if (stamp !== undefined) return literalRuleForStamp(stamp, inner.name, rule.id ?? inner.id, ctx);
 				if (blankStamps.has(inner.name)) return withId({ type: CHOICE, members: [] }, rule.id);
 			}
-			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) };
+			return { ...rule, content: rewriteRuleForStamp(rule.content, ctx) };
 		}
 
 		case ALIAS:
@@ -2415,13 +2426,13 @@ function rewriteRuleForStamp(
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
-			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) } as Rule<'link'>;
+			return { ...rule, content: rewriteRuleForStamp(rule.content, ctx) } as Rule<'link'>;
 
 		case SEQ:
-			return { ...rule, members: rule.members.map((m) => rewriteRuleForStamp(m, symToLit, blankStamps)) };
+			return { ...rule, members: rule.members.map((m) => rewriteRuleForStamp(m, ctx)) };
 
 		case CHOICE: {
-			const members = rule.members.map((m) => rewriteRuleForStamp(m, symToLit, blankStamps));
+			const members = rule.members.map((m) => rewriteRuleForStamp(m, ctx));
 			const nonBlank = members.filter((m) => !isBlank(m));
 			const hadBlank = nonBlank.length < members.length;
 			if (!hadBlank) return { ...rule, members };
