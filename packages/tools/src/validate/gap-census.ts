@@ -56,6 +56,7 @@ export interface GapCensusSummary {
 	readonly unrendered: number;
 	readonly gaps: number;
 	readonly commented: number;
+	readonly skipped: number;
 	readonly uncovered: number;
 	readonly unmatched: number;
 	readonly rebuildFailed: number;
@@ -107,11 +108,13 @@ const WHITESPACE_ONLY = /^\s*$/;
 interface GapScan {
 	readonly gaps: readonly ListGap[];
 	readonly commented: number;
+	readonly skipped: number;
 }
 
 export function scanListGaps(root: TSNode, source: string): GapScan {
 	const gaps: ListGap[] = [];
 	let commented = 0;
+	let skipped = 0;
 	const visit = (node: TSNode): void => {
 		const runs = new Map<string, { item: TSNode; index: number }[]>();
 		node.children.forEach((child, index) => {
@@ -127,17 +130,19 @@ export function scanListGaps(root: TSNode, source: string): GapScan {
 				const [left, right] = [run[pair]!, run[pair + 1]!];
 				const between = node.children.slice(left.index + 1, right.index);
 				const separators = between.filter(isSeparatorToken);
-				if (between.some((child) => !isSeparatorToken(child)) || separators.length > 1) {
-					commented += 1;
-					continue;
-				}
 				const text = source.slice(left.item.endIndex, right.item.startIndex);
 				const separator = separators[0]?.text ?? '';
 				const at = separator === '' ? text.length : text.indexOf(separator);
 				const lead = text.slice(0, at);
 				const trail = separator === '' ? '' : text.slice(at + separator.length);
-				if (!WHITESPACE_ONLY.test(lead) || !WHITESPACE_ONLY.test(trail)) {
-					commented += 1;
+				const spelled =
+					!between.some((child) => !isSeparatorToken(child)) &&
+					separators.length <= 1 &&
+					WHITESPACE_ONLY.test(lead) &&
+					WHITESPACE_ONLY.test(trail);
+				if (!spelled) {
+					if (between.some((child) => child.isExtra && child.isNamed)) commented += 1;
+					else skipped += 1;
 					continue;
 				}
 				gaps.push({ key: `${left.item.endIndex}:${right.item.startIndex}`, parent: node.type, field, separator, lead, trail });
@@ -146,7 +151,7 @@ export function scanListGaps(root: TSNode, source: string): GapScan {
 		for (const child of node.children) visit(child);
 	};
 	visit(root);
-	return { gaps, commented };
+	return { gaps, commented, skipped };
 }
 
 function emptyByShape(): Record<LossyShape, number> {
@@ -231,6 +236,7 @@ export interface EntryMeasure {
 	readonly status: 'measured' | 'unparsed' | 'unrendered';
 	readonly gaps: number;
 	readonly commented: number;
+	readonly skipped: number;
 	readonly exact: number;
 	readonly unmatched: number;
 	readonly lossy: readonly LossyRow[];
@@ -241,7 +247,7 @@ export interface EntryMeasure {
 
 export type GapMeter = (name: string, source: string) => EntryMeasure;
 
-const UNMEASURED: Omit<EntryMeasure, 'status'> = { gaps: 0, commented: 0, exact: 0, unmatched: 0, lossy: [], uncovered: [], rebuildFailures: [], locateFailures: 0 };
+const UNMEASURED: Omit<EntryMeasure, 'status'> = { gaps: 0, commented: 0, skipped: 0, exact: 0, unmatched: 0, lossy: [], uncovered: [], rebuildFailures: [], locateFailures: 0 };
 
 export async function createGapMeter(grammar: string): Promise<GapMeter> {
 	const engine = await loadNativeEngine(grammar);
@@ -252,8 +258,17 @@ export async function createGapMeter(grammar: string): Promise<GapMeter> {
 	parser.setLanguage(lang);
 	return (name, source) => {
 		const parsed = parser.parse(source);
-		if (parsed === null || parsed.rootNode.hasError) return { ...UNMEASURED, status: 'unparsed' };
-		const scan = scanListGaps(parsed.rootNode, source);
+		if (parsed === null) return { ...UNMEASURED, status: 'unparsed' };
+		if (parsed.rootNode.hasError) {
+			parsed.delete();
+			return { ...UNMEASURED, status: 'unparsed' };
+		}
+		let scan: GapScan;
+		try {
+			scan = scanListGaps(parsed.rootNode, source);
+		} finally {
+			parsed.delete();
+		}
 		const byOffsets = new Map(scan.gaps.map((gap) => [gap.key, gap]));
 		const spans = sourceSpans(source);
 		const textOf = spanSlicer(source);
@@ -303,7 +318,7 @@ export async function createGapMeter(grammar: string): Promise<GapMeter> {
 			}
 		}
 		const uncovered = scan.gaps.filter((gap) => !seen.has(gap.key)).map((gap) => `${gap.parent}.${gap.field}`);
-		return { status: 'measured', gaps: scan.gaps.length, commented: scan.commented, exact, unmatched, lossy, uncovered, rebuildFailures, locateFailures };
+		return { status: 'measured', gaps: scan.gaps.length, commented: scan.commented, skipped: scan.skipped, exact, unmatched, lossy, uncovered, rebuildFailures, locateFailures };
 	};
 }
 
@@ -381,14 +396,14 @@ export async function computeGapCensus(grammar: string, sources?: readonly Corpu
 	const lossy: LossyRow[] = [];
 	const uncoveredBy: Record<string, number> = {};
 	const byShape = emptyByShape();
-	const total = { unparsed: 0, unrendered: 0, gaps: 0, commented: 0, exact: 0, unmatched: 0, uncovered: 0, rebuildFailed: 0, locateFailed: 0 };
+	const total = { unparsed: 0, unrendered: 0, gaps: 0, commented: 0, skipped: 0, exact: 0, unmatched: 0, uncovered: 0, rebuildFailed: 0, locateFailed: 0 };
 	for (const entry of entries) {
 		const measure = meter(entry.name, entry.source);
 		if (measure.status !== 'measured') {
 			total[measure.status] += 1;
 			continue;
 		}
-		for (const key of ['gaps', 'commented', 'exact', 'unmatched'] as const) total[key] += measure[key];
+		for (const key of ['gaps', 'commented', 'skipped', 'exact', 'unmatched'] as const) total[key] += measure[key];
 		total.uncovered += measure.uncovered.length;
 		total.rebuildFailed += measure.rebuildFailures.length;
 		total.locateFailed += measure.locateFailures;

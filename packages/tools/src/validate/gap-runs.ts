@@ -137,10 +137,17 @@ export async function computeRunCensus(grammar: string, sources?: readonly Corpu
 	for (const entry of entries) {
 		const parsed = parser.parse(entry.source);
 		if (parsed === null || parsed.rootNode.hasError) {
+			parsed?.delete();
 			unparsed += 1;
 			continue;
 		}
-		const { pairs, commented } = statementPairs(parsed.rootNode, entry.source);
+		let scanned: ReturnType<typeof statementPairs>;
+		try {
+			scanned = statementPairs(parsed.rootNode, entry.source);
+		} finally {
+			parsed.delete();
+		}
+		const { pairs, commented } = scanned;
 		for (const [name, count] of commented) listOf(name).commented += count;
 		for (const pair of pairs) {
 			const list = listOf(pair.list);
