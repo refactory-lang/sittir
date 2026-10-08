@@ -26,10 +26,14 @@ No stage touches `packages/common/src/transport-data.ts` or the native reader; t
 
 The generator runs inside the codegen pass that writes `types.ts`, and reading `bindings.scm` needs the scm parser. No generation may depend on the workspace `@sittir/scm`, so that a change which breaks `@sittir/scm` can never break regenerating the fix.
 
-- **A generated, committed rows module,** `packages/<grammar>/grammar.bindings.ts`, beside the authored bindings overlay: the claim rows read from `bindings.scm` (path, kind, refinement literals, child kinds and predicates, member routes), with a hash of `bindings.scm`.
-- The inventory reads `bindings.scm` through `@sittir/scm` and writes the module.
+- **One generated, committed module per grammar,** `packages/<grammar>/grammar.bindings.ts`, holding:
+  - the bindings overlay (patches, renames, splits, merges, aliases);
+  - the claim rows read from `bindings.scm` (path, kind, refinement literals, child kinds and predicates, member routes), in base names;
+  - a hash of `bindings.scm` and the vocabulary sources it was derived against.
+- The inventory reads `bindings.scm` through `@sittir/scm` and writes the module. The overlay's derivation (the bound-name rule, the container-member overrides) is a pure function in `packages/codegen/src/bindings/`, beside the claims derivation, so the module has one writer.
+- With the overlay on, codegen binds the rows' base names through the node model's stamped provenance (`renamedFrom`); with it off, it reads them as they are.
 - `grammar.sittir.ts` passes the rows to the grammar, and codegen reads them off the evaluated grammar; there is no JSON artifact. The module is erasable syntax only, since tree-sitter's run of the grammar evaluates it too.
-- Codegen refuses stale rows (a hash that does not match `bindings.scm`) with a diagnostic naming the command that regenerates them.
+- Codegen refuses a stale module (a hash that does not match `bindings.scm` and the vocabulary sources, compared over their bytes with no scm parse) with a diagnostic naming the command that regenerates it. The base grammar is covered by the generated-output freshness check.
 - The facts schema and the derivation live in codegen, and the inventory calls them, so there is one derivation.
 - Codegen stays out of the scm engine's bootstrap: regenerating `@sittir/scm` reads its own committed artifact.
 - Not a pinned scm reader in codegen: that would be a second reader and a second derivation.
