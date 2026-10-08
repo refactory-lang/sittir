@@ -236,7 +236,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
             by_decodes.push(quote!(if [#(#ids),*].contains(&__Kind(id)) { return ::core::result::Result::Ok(#value); }));
         }
         if variant.blank {
-            blank = quote!(if id == 0 { return ::core::result::Result::Ok(#ident::#name); });
+            blank = quote!(if id == ::sittir_core::options::BLANK_ARM { return ::core::result::Result::Ok(#ident::#name); });
         }
         if variant.verbatim {
             let ty = variant.payload.ok_or_else(|| syn::Error::new_spanned(name, "a verbatim variant holds its text"))?;
@@ -257,7 +257,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
         }
         encodes.push(match (variant.payload, variant.blank, &variant.first) {
             (Some(ty), _, _) => quote!(Self::#name(payload) => unsafe { <#ty as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, payload) },),
-            (None, true, _) => quote!(Self::#name => unsafe { <u16 as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, 0) },),
+            (None, true, _) => quote!(Self::#name => unsafe { <u16 as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, ::sittir_core::options::BLANK_ARM) },),
             (None, false, Some(first)) => quote!(Self::#name => unsafe { <u16 as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, (#first).0) },),
             (None, false, None) => return Err(syn::Error::new_spanned(name, "a unit variant names the kind it writes: `#[kind(…)]`")),
         });
@@ -434,7 +434,7 @@ mod tests {
         });
         assert!(has(&out, "match __variant(__Kind(id), __Kind(id)) { ::core::option::Option::Some(0u16) => return"));
         assert!(has(&out, "if [kind::GET_KEYWORD, kind::SET_KEYWORD].contains(&__Kind(id))"));
-        assert!(has(&out, "if id == 0 { return ::core::result::Result::Ok(PropertyTransportSlot::Blank); }"));
+        assert!(has(&out, "if id == ::sittir_core::options::BLANK_ARM { return ::core::result::Result::Ok(PropertyTransportSlot::Blank); }"));
         assert!(has(&out, r#"::std::format!("unknown kind id {id} in {}", "PropertyTransportSlot")"#));
         assert!(!has(&out, "if let ::core::result::Result::Ok("));
     }
@@ -451,7 +451,7 @@ mod tests {
             }
         });
         assert!(has(&out, "Self::AutomaticSemicolon => unsafe { <u16 as ::sittir_core::__napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, (kind::_AUTOMATIC_SEMICOLON).0) },"));
-        assert!(has(&out, "Self::Blank => unsafe { <u16 as ::sittir_core::__napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, 0) },"));
+        assert!(has(&out, "Self::Blank => unsafe { <u16 as ::sittir_core::__napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, ::sittir_core::options::BLANK_ARM) },"));
     }
 
     #[test]

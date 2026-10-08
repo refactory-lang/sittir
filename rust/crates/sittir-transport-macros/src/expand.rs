@@ -60,7 +60,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     ::core::option::Option::Some(Self::#name)
                 }
             });
-            builds.push(quote!(if id == 0 { return ::core::option::Option::Some(Self::#name); }));
+            builds.push(quote!(if id == ::sittir_core::options::BLANK_ARM { return ::core::option::Option::Some(Self::#name); }));
             wire.push(codec::WireVariant { blank: true, ..unread(None) });
             continue;
         }
@@ -983,7 +983,7 @@ mod tests {
                 pub fn from_kind_id(id: u16) -> ::core::option::Option<Self> {
                     if [kind::_AUTOMATIC_SEMICOLON].iter().any(|k| k.0 == id) { return ::core::option::Option::Some(Self::AutomaticSemicolon); }
                     if [kind::SEMI, kind::SEMI_ALIAS].iter().any(|k| k.0 == id) { return ::core::option::Option::Some(Self::Semi); }
-                    if id == 0 { return ::core::option::Option::Some(Self::Blank); }
+                    if id == ::sittir_core::options::BLANK_ARM { return ::core::option::Option::Some(Self::Blank); }
                     ::core::option::Option::None
                 }
             }"
