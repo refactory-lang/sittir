@@ -609,7 +609,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('        kind_flags: KIND_FLAGS,');
 	L.push('        sites: SITE_SPECS,');
 	if (plan.indent !== '') L.push(`        indent: ${rustStringLiteral(plan.indent)}.to_string(),`);
-	L.push('        ..ResolvedOptions::default()');
+	else L.push('        ..ResolvedOptions::default()');
 	L.push('    }');
 	L.push('}', '');
 	L.push('pub fn delimiter_allowed(site: usize) -> u8 {', '    DELIMITER_SITES[site].2', '}', '');

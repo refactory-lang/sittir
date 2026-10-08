@@ -26,7 +26,7 @@ pub struct ArmSite {
 /// The cell of a kind-indexed site table for a kind that owns no site there.
 pub const NO_SITE: u16 = u16::MAX;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct ResolvedOptions {
     /// Per spacing site, in generated site order: the resolved arm and the strength it writes at.
     pub spacing: Vec<crate::slot::SeamArm>,
@@ -209,20 +209,6 @@ impl ResolvedOptions {
         match self.edge_rows.get(kind.0 as usize) {
             Some(&row) if row != NO_SITE => Some(&self.edges[row as usize]),
             _ => None,
-        }
-    }
-}
-
-impl Default for ResolvedOptions {
-    fn default() -> Self {
-        Self {
-            spacing: Vec::new(),
-            delimiter: Vec::new(),
-            indent: String::new(),
-            edges: &[],
-            edge_rows: &[],
-            sites: &[],
-            kind_flags: &[],
         }
     }
 }

@@ -3885,7 +3885,6 @@ pub fn defaults() -> ResolvedOptions {
         kind_flags: KIND_FLAGS,
         sites: SITE_SPECS,
         indent: "    ".to_string(),
-        ..ResolvedOptions::default()
     }
 }
 

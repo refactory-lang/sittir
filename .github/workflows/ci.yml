@@ -269,7 +269,7 @@ jobs:
           path: metrics-native.json
           if-no-files-found: warn
 
-  # Rust workspace compile check. It needs no other job's output, so it
+  # Rust workspace compile and lint checks. They need no other job's output, so the job
   # starts immediately; `napi-build` and `scope-boundaries` wait on it.
   rust:
     name: cargo check --workspace
@@ -278,10 +278,14 @@ jobs:
       - uses: actions/checkout@v6
       - name: Install Rust toolchain (stable)
         uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
       - name: Cache cargo registry + target
         uses: Swatinem/rust-cache@v2
       - name: cargo check --workspace
         run: cargo check --workspace
+      - name: Clippy (warnings denied)
+        run: cargo clippy --workspace --all-targets --no-default-features -- -D warnings
 
   # Generated output drift: regenerating every grammar must reproduce every
   # committed generated file (parser, TypeScript and Rust outputs, manifests,
