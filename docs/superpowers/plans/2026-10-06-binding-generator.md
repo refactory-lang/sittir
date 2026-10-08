@@ -59,8 +59,8 @@ Stage 4 drives the count to zero for each cause on the side that owns it. Rust i
 
 ## Stage 2: one route resolution
 
-- `derive` produces routes: read entries most specific first, member routes, container unwraps, and their build inverses. The inventory folds routes into member types; the generator prints them.
-- The form and subtype routing for kinds with no bare factory moves from `packages/tools/src/validate/common.ts` into codegen as a fact both read. The `ir-render-parse` lane then builds through the moved rule.
+- `resolveRoutes(input)` in `packages/codegen/src/bindings/routes.ts` produces, per kind, as data: read entries (most specific first: placed-and-predicate claims, then predicate claims, then placed claims, then literals, ties in file order), member routes (slot, presence through a token, nested through a selector), container unwraps and build inverses (member to parameter path, with pins). `derive`'s member loop folds member types from these routes instead of re-walking slots, and slot matching uses `derive`'s field matching only.
+- The low-level build's routing (the seat table and its mounts, already codegen output) is unchanged: the validation lanes build through the low-level API, whose references carry the concrete kind.
 - Gate: the inventory's report is byte-identical, and the `ir-render-parse` rows are equal.
 
 ## Stage 3: namespaces, `kinds` and `is`
@@ -115,11 +115,12 @@ The causes the probe reports, each on the side that owns it:
 
 ## Stage 7: build
 
-- Build entries per vocabulary kind, through `call(factory, input)` and the stage-2 routing for kinds with no bare factory, under `build.<path>` with the same short aliases as stage 3.
+- Build entries per vocabulary kind under `build.<path>`, with the same short aliases as stage 3. Where one path maps to several grammar kinds, the build picks the kind from the input's shape (which members are present, and the kinds of their values), then builds through the low-level API and its mount routing. There is no default arm and no inference from text. Kinds whose shapes cannot be told apart are stage-4 conformance items, cleared by a distinguishing member in the bindings.
 - Refinement builders, one per refinement path:
   - a literal or token refinement presets the literal (`build.expression.binary.add` fills `operator: '+'`);
   - a child-kind refinement narrows the slot's type to that child kind;
   - a text refinement (`#match?`, `#eq?`) narrows the type and runs the predicate as a guard when the node is built, always on like a leaf guard, refusing text it rejects.
+  - a template predicate (a pattern with holes, such as a dunder name) builds from its holes; any other `#match?` checks the given text against the pattern and refuses a mismatch.
 - The portable `build` is typed per kind from the vocabulary; the low-level generic build is keyed by `$type`.
 - A portable round-trip lane joins `validate:native`: parse with the portable engine, build every node again from its members, render, and parse-equal over the corpus.
 - Gate: the existing rows are equal; the new lane's row is recorded as its baseline.
