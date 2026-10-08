@@ -524,7 +524,7 @@ This section folds in what was ruled on 2026-10-08, the writer change ruled the 
     - an inserted statement takes the pattern's gap;
     - an explicit option overrides a detected one;
     - a source gap that departs from the file's own pattern is evened out to the pattern (statement-list gaps are no longer stamped, question 18).
-- **Detection stays internal.** There is no public `inferOptions`. The public way in stays `styleFrom` and the descriptor's `createEngine`. The tree-inferred options work (the per-tree table, the inference walk, a render naming its tree, indentation as one fact) is absorbed into this design. Its per-site table resolved at `prepare` is dropped: every detected option is an end-step option.
+- **Detection stays internal.** There is no public `inferOptions`. The public way in stays `styleFrom` and the descriptor's `createEngine`. The tree-inferred options work's inference walk and "indentation as one fact" are absorbed into this design. Its per-site table resolved at `prepare` is dropped, and so is its tree layer in the native resolution: a detected option reaches the engine as an ordinary option (see [Detection](#detection)).
 - **Where each detected option applies.**
   - The line ending and the indent unit apply to every render, a fragment included, and need no table.
     - The line ending is applied by a `LineEndings` write adapter at the end of the render (`docs/superpowers/plans/2026-10-08-line-endings.md`, approved, executed after the typed reader's 1c-i).
@@ -678,7 +678,7 @@ Three findings for the design:
 
 ### Detection
 
-One walk over the parsed tree, kept on the tree's entry, computed on first use and dropped when the entry's source changes, as the tree-inferred options work designed. Per statement list kind, it detects:
+One native walk over a parsed tree. It returns its result to the client as an options object in the language's `render` options shape, and keeps nothing in the native option chain. The client caches the object on its tree and drops it when the tree's source changes. Per statement list kind, it detects:
 
 - **Within-run gaps.** `(_)/after` is the dominant gap inside runs over all kinds. `(K)/after` is detected for a kind whose own dominant gap differs from it and that has at least as many votes as the smallest kind the corpora show a pattern for (question 20).
 - **Boundaries.** `(K)/run/after` is the dominant gap where a run of K ends. `(J)/run/before` is detected only where the before-attribution is uniform across J's predecessors and is not already explained by those predecessors' `after`. `(_)/run/after` and `(_)/run/before` are detected from the rest.
@@ -690,10 +690,15 @@ Precedence (ruled by the maintainer 2026-10-08) follows the acceptance that an e
 
 1. per-call options;
 2. the keys the engine's options set;
-3. the tree's detected options;
+3. the detected options;
 4. the grammar's declared defaults.
 
-This reverses the render-options design, which put the tree layer above the engine's options, and the reversal is ruled. An engine configured with `indent: '\t'` now renders a parsed four-space file with tabs; before, it followed the file. Only the keys the engine actually set count: a key it leaves unset falls through to detection. The resolver already knows which keys an options object named, the same per-site bit [Explicitly set wins](#explicitly-set-wins) records. A render names its tree; the typed reader's `$_layout.at` makes that direct.
+**The merge is the client's.** The native engine has no detected layer: to it a detected option is an option like any other, and it receives one resolved options value.
+- **Where:** the render-options assembly in `@sittir/common`, the code behind `createEngine` and `engine.render(node, options)`.
+- **How:** the client takes the detected options of the tree the node belongs to, drops every key the engine's options set, and lays the per-call options over the rest. It passes that as the per-call options, which the native resolve already lays over the engine's options and then the grammar's defaults. The four-level order then needs no native change. The keys the engine set are the keys of the options object `createEngine` was given.
+- **Which tree:** a parsed node's own tree; for a built node, the one tree its parsed parts share; otherwise none. The client knows this from its own nodes.
+
+This reverses the render-options design, which put a tree layer above the engine's options in the native chain, and the reversal is ruled. An engine configured with `indent: '\t'` now renders a parsed four-space file with tabs; before, it followed the file. Nothing in the native chain or the table depends on a render naming its tree for options. The typed reader's `$_layout.at` names a node's tree for its own reasons (folding an untouched node to its source).
 
 Before and after, to measure in the stage that delivers patterns, for each of the three grammars:
 
@@ -711,7 +716,7 @@ Two pieces run outside this note: the line-ending plan, after 1c-i, and the `sea
 1. **The output trait,** text output only, byte-identical. The generated root dispatch goes through one core function. The prototype's table module is renamed (`table.rs`), because master's `layout.rs` now holds `TransportLayout`.
 2. **The `prepare` change:** the list view resolves a separator's arm by its site.
 3. **Context sets:** the `@layout.break.*` and `@layout.nobreak*` captures in each `bindings.scm`, read through the generated `grammar.bindings.ts` (after the generator can read `bindings.scm`), compiled into `seam(kinds)`; the writer's context stack; the parse-table check for typescript. Gate 6.
-4. **Detection:** the walk, the tree's detected options, a render naming its tree, and indentation as one fact. This stage already delivers the detected line ending and indent unit, with no table.
+4. **Detection:** the native walk returning an options object, the client's merge (per-call > engine-set keys > detected > defaults) and indentation as one fact. This stage already delivers the detected line ending and indent unit, with no table.
 5. **The table output:** rows carry valid sets; there are list calls and a pass interface.
 6. **The run-pattern rule over the table.** This is the first stage that delivers statement-gap patterns: an inserted statement takes the file's gap, and the before-and-after check above is its gate.
 7. **`width` and the group rule,** then the conditional trailing separator.
