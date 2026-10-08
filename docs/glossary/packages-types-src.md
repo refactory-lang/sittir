@@ -170,7 +170,7 @@ An engine's options, grouped by concern: the builder surface, the render options
 
 ### `packages/types/src/engine-api.ts::Interceptor`
 
-Middleware around an engine's operations. Each hook receives the call and a `next` that runs the rest of the chain; it may observe, change the result, or refuse by throwing. A `file` hook that doesn't call `next` blocks that write.
+Middleware around an engine's operations. Each hook receives the call and a `next` that runs the rest of the chain; it may observe, change the result, or refuse by throwing. `createEngine` activates build, parse and render hooks in registration order, with the first outermost. Build includes nested variants and strict/coerce flavours inside engine scope; parse includes wrapping and error handling. Render hooks run lazily on first text materialization, see merged engine/per-call options, and their transformed text is shared by `toString`, `print` and `save`. Diagnostic reads bypass parse middleware. File verbs remain unimplemented, so the `file` hook is reserved for their future write pipeline; it does not run today.
 
 ### `packages/types/src/engine-api.ts::Project`
 
