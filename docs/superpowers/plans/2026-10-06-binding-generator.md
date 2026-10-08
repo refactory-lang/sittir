@@ -24,19 +24,12 @@ No stage touches `packages/common/src/transport-data.ts` or the native reader; t
 
 ## How codegen gets the bindings facts (decided)
 
-The generator runs inside the codegen pass that writes `types.ts`, and reading `bindings.scm` needs the scm parser. No generation may depend on the workspace `@sittir/scm`, so that a change which breaks `@sittir/scm` can never break regenerating the fix.
+`bindings.scm` is the one source. It reaches codegen two ways, split by whether the parser sees the fact:
 
-- **One generated, committed module per grammar,** `packages/<grammar>/grammar.bindings.ts`, holding:
-  - the bindings overlay (patches, renames, splits, merges, aliases);
-  - the claim rows read from `bindings.scm` (path, kind, refinement literals, child kinds and predicates, member routes), in base names;
-  - a hash of `bindings.scm` and the vocabulary sources it was derived against.
-- The inventory reads `bindings.scm` through `@sittir/scm` and writes the module. The overlay's derivation (the bound-name rule, the container-member overrides) is a pure function in `packages/codegen/src/bindings/`, beside the claims derivation, so the module has one writer.
-- With the overlay on, codegen binds the rows' base names through the node model's stamped provenance (`renamedFrom`); with it off, it reads them as they are.
-- `grammar.sittir.ts` passes the rows to the grammar, and codegen reads them off the evaluated grammar; there is no JSON artifact. The module is erasable syntax only, since tree-sitter's run of the grammar evaluates it too.
-- Codegen refuses a stale module (a hash that does not match `bindings.scm` and the vocabulary sources, compared over their bytes with no scm parse) with a diagnostic naming the command that regenerates it. The base grammar is covered by the generated-output freshness check.
-- The facts schema and the derivation live in codegen, and the inventory calls them, so there is one derivation.
-- Codegen stays out of the scm engine's bootstrap: regenerating `@sittir/scm` reads its own committed artifact.
-- Not a pinned scm reader in codegen: that would be a second reader and a second derivation.
+- **Parser-aware changes go through a generated module.** The overlay (patches, renames, splits, merges, aliases) changes the grammar tree-sitter compiles, so it is written into a generated, committed `packages/<grammar>/grammar.bindings.ts`, which `grammar.sittir.ts` imports. The module carries a hash of `bindings.scm` and the vocabulary sources it was derived against. Codegen refuses a stale one, comparing bytes with no scm parse, with a diagnostic naming the command that regenerates it. The overlay's derivation is a pure function in `packages/codegen/src/bindings/`, and the inventory is its one writer.
+- **Everything else is interpreted directly.** The claims (paths, kinds, refinements, predicates, member routes), the namespaces and the routes are read from `bindings.scm` at codegen time, through a pinned `@sittir/scm`: the generator runs sittir's own scm package from one pinned commit, not the workspace copy, so a change that breaks `@sittir/scm` can never break regenerating the fix. The inventory reads through the same pinned reader, so there is one reader and one derivation.
+- With the overlay on, codegen binds the claims' base names through the node model's stamped provenance (`renamedFrom`); with it off, it reads them as they are.
+- Codegen stays out of the scm engine's bootstrap: regenerating `@sittir/scm` itself uses the pinned copy, never the one being regenerated.
 
 ## The rejected members: the rule
 
@@ -58,11 +51,11 @@ Stage 4 drives the count to zero for each cause on the side that owns it. Rust i
 
 ## Stage 1: bindings facts reach codegen
 
-- The facts schema and the derivation move into `packages/codegen/src/bindings/`, as pure functions of the facts and the slot model. `readBindings` stays in the inventory, since it parses `bindings.scm` through `@sittir/scm`, and the inventory writes `grammar.bindings.ts`. Codegen reads the rows only off the evaluated grammar, and refuses rows whose hash does not match `bindings.scm`, naming the command that regenerates them.
+- The facts schema and the derivation move into `packages/codegen/src/bindings/`, as pure functions of the facts and the slot model. The scm reader (`readBindings`) runs on the pinned `@sittir/scm`, called by codegen for the claims and by the inventory for the overlay module it writes. Codegen refuses an overlay module whose hash does not match `bindings.scm` and the vocabulary sources, naming the command that regenerates it.
 - The facts keep two things they drop today:
   - a predicate claim's predicate (operator, capture, argument), so a read entry can test it and a build entry can pin it;
   - a presence member's token text, so a capture named otherwise than its token (`"async" @isAsync`) still has a route.
-- Gate: the inventory's report is byte-identical; `grammar.bindings.ts` is committed for rust, typescript and python; unit tests pin the two new facts (`#eq? @name "__init__"`, `"async" @isAsync`) and the stale-rows refusal.
+- Gate: the inventory's report is byte-identical; `grammar.bindings.ts` (the overlay) is committed for rust, typescript and python; codegen reads the claims through the pinned reader; unit tests pin the two new facts (`#eq? @name "__init__"`, `"async" @isAsync`) and the stale-overlay refusal.
 
 ## Stage 2: one route resolution
 
