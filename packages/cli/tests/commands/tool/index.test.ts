@@ -21,6 +21,7 @@ const EXPECTED = [
 	'exercise',
 	'fetch-corpus',
 	'field-provenance',
+	'gap-census',
 	'grammar-diagnostics',
 	'hoisted-census',
 	'inspect-refs',
