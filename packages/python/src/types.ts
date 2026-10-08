@@ -377,72 +377,74 @@ export enum TSKindId {
 	Subscripts = 267,
 	DictionaryElements = 268,
 	SliceGroup = 269,
-	TupleElements = 270,
-	ExceptClauseExceptionAs = 271,
-	CaseTuplePattern = 272,
-	CaseListPattern = 273,
-	PrintArguments = 274,
-	PrintChevronArguments = 275,
-	PrintStatementChevron = 276,
-	PrintStatementPlain = 277,
-	WildcardPattern = 278,
-	ParenthesizedImportList = 279,
-	ComprehensionClauses = 280,
-	IntegerDecimal = 281,
-	SimplePatternNegative = 282,
-	ExceptClauseExceptionList = 283,
-	ExceptClauseException = 284,
-	AssignmentEq = 285,
-	AssignmentType = 286,
-	AssignmentTyped = 287,
-	ExpressionStatementTuple = 288,
-	WithClauseBare = 289,
-	WithClauseParen = 290,
-	MatchBlockBlock = 291,
-	MatchBlockEmpty = 292,
-	SuiteInline = 293,
-	SuiteBlock = 294,
-	SuiteEmpty = 295,
-	ComparisonOperatorComparator = 296,
-	YieldFromClause = 297,
-	ModuleRepeat1 = 298,
-	ImportPrefixRepeat1 = 299,
-	_ImportListRepeat1 = 300,
-	AssertStatementRepeat1 = 301,
-	IfStatementRepeat1 = 302,
-	TryStatementRepeat1 = 303,
-	GlobalStatementRepeat1 = 304,
-	DecoratedDefinitionRepeat1 = 305,
-	ExpressionListRepeat1 = 306,
-	DottedNameRepeat1 = 307,
-	UnionPatternRepeat1 = 308,
-	_ParametersRepeat1 = 309,
-	_PatternsRepeat1 = 310,
-	ComparisonOperatorRepeat1 = 311,
-	_CollectionElementsRepeat1 = 312,
-	ForInClauseRepeat1 = 313,
-	ConcatenatedStringRepeat1 = 314,
-	StringRepeat1 = 315,
-	StringContentRepeat1 = 316,
-	FormatSpecifierRepeat1 = 317,
-	SimpleStatementsElementsRepeat1 = 318,
-	SubjectsRepeat1 = 319,
-	CasePatternsRepeat1 = 320,
-	WithClauseWithItemsRepeat1 = 321,
-	_ExecStatementOptional1Repeat1 = 322,
-	TypesRepeat1 = 323,
-	ArgumentListElementsRepeat1 = 324,
-	DictPatternElementsRepeat1 = 325,
-	SubscriptsRepeat1 = 326,
-	DictionaryElementsRepeat1 = 327,
-	_TupleElementsRepeat1 = 328,
-	_PrintArgumentsRepeat1 = 329,
-	ComprehensionClausesRepeat1 = 330,
-	ExceptClauseExceptionListRepeat1 = 331,
-	MatchBlockBlockRepeat1 = 332,
-	AsPatternTarget = 333,
-	FormatExpression = 334,
-	Names = 335,
+	TuplePatternElements = 270,
+	TupleElements = 271,
+	ExceptClauseExceptionAs = 272,
+	CaseTuplePattern = 273,
+	CaseListPattern = 274,
+	PrintArguments = 275,
+	PrintChevronArguments = 276,
+	PrintStatementChevron = 277,
+	PrintStatementPlain = 278,
+	WildcardPattern = 279,
+	ParenthesizedImportList = 280,
+	ComprehensionClauses = 281,
+	IntegerDecimal = 282,
+	SimplePatternNegative = 283,
+	ExceptClauseExceptionList = 284,
+	ExceptClauseException = 285,
+	AssignmentEq = 286,
+	AssignmentType = 287,
+	AssignmentTyped = 288,
+	ExpressionStatementTuple = 289,
+	WithClauseBare = 290,
+	WithClauseParen = 291,
+	MatchBlockBlock = 292,
+	MatchBlockEmpty = 293,
+	SuiteInline = 294,
+	SuiteBlock = 295,
+	SuiteEmpty = 296,
+	ComparisonOperatorComparator = 297,
+	YieldFromClause = 298,
+	ModuleRepeat1 = 299,
+	ImportPrefixRepeat1 = 300,
+	_ImportListRepeat1 = 301,
+	AssertStatementRepeat1 = 302,
+	IfStatementRepeat1 = 303,
+	TryStatementRepeat1 = 304,
+	GlobalStatementRepeat1 = 305,
+	DecoratedDefinitionRepeat1 = 306,
+	ExpressionListRepeat1 = 307,
+	DottedNameRepeat1 = 308,
+	UnionPatternRepeat1 = 309,
+	_ParametersRepeat1 = 310,
+	_PatternsRepeat1 = 311,
+	ComparisonOperatorRepeat1 = 312,
+	_CollectionElementsRepeat1 = 313,
+	ForInClauseRepeat1 = 314,
+	ConcatenatedStringRepeat1 = 315,
+	StringRepeat1 = 316,
+	StringContentRepeat1 = 317,
+	FormatSpecifierRepeat1 = 318,
+	SimpleStatementsElementsRepeat1 = 319,
+	SubjectsRepeat1 = 320,
+	CasePatternsRepeat1 = 321,
+	WithClauseWithItemsRepeat1 = 322,
+	_ExecStatementOptional1Repeat1 = 323,
+	TypesRepeat1 = 324,
+	ArgumentListElementsRepeat1 = 325,
+	DictPatternElementsRepeat1 = 326,
+	SubscriptsRepeat1 = 327,
+	DictionaryElementsRepeat1 = 328,
+	_TuplePatternElementsRepeat1 = 329,
+	_TupleElementsRepeat1 = 330,
+	_PrintArgumentsRepeat1 = 331,
+	ComprehensionClausesRepeat1 = 332,
+	ExceptClauseExceptionListRepeat1 = 333,
+	MatchBlockBlockRepeat1 = 334,
+	AsPatternTarget = 335,
+	FormatExpression = 336,
+	Names = 337,
 	Error = 65535
 }
 Object.freeze(TSKindId);
@@ -579,7 +581,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[127, 'module'],
 	[128, '_statement'],
 	[129, '_simple_statements'],
-	[337, '_simple_statements'],
+	[339, '_simple_statements'],
 	[130, 'import_statement'],
 	[131, 'import_prefix'],
 	[132, 'relative_import'],
@@ -634,7 +636,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[181, 'dotted_name'],
 	[182, 'case_pattern'],
 	[183, '_simple_pattern'],
-	[336, '_simple_pattern'],
+	[338, '_simple_pattern'],
 	[184, 'case_as_pattern'],
 	[185, 'union_pattern'],
 	[186, 'dict_pattern'],
@@ -721,72 +723,74 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[267, 'subscripts'],
 	[268, 'dictionary_elements'],
 	[269, 'slice_group'],
-	[270, 'tuple_elements'],
-	[271, 'except_clause_exception_as'],
-	[272, 'case_tuple_pattern'],
-	[273, 'case_list_pattern'],
-	[274, 'print_arguments'],
-	[275, 'print_chevron_arguments'],
-	[276, 'print_statement_chevron'],
-	[277, 'print_statement_plain'],
-	[278, 'wildcard_pattern'],
-	[279, 'parenthesized_import_list'],
-	[280, 'comprehension_clauses'],
-	[281, 'integer_decimal'],
-	[282, 'simple_pattern_negative'],
-	[283, 'except_clause_exception_list'],
-	[284, 'except_clause_exception'],
-	[285, 'assignment_eq'],
-	[286, 'assignment_type'],
-	[287, 'assignment_typed'],
-	[288, 'expression_statement_tuple'],
-	[289, 'with_clause_bare'],
-	[290, 'with_clause_paren'],
-	[291, 'match_block_block'],
-	[292, 'match_block_empty'],
-	[293, 'suite_inline'],
-	[294, 'suite_block'],
-	[295, 'suite_empty'],
-	[296, 'comparison_operator_comparator'],
-	[297, 'yield_from_clause'],
-	[298, 'module_repeat1'],
-	[299, 'import_prefix_repeat1'],
-	[300, '_import_list_repeat1'],
-	[301, 'assert_statement_repeat1'],
-	[302, 'if_statement_repeat1'],
-	[303, 'try_statement_repeat1'],
-	[304, 'global_statement_repeat1'],
-	[305, 'decorated_definition_repeat1'],
-	[306, 'expression_list_repeat1'],
-	[307, 'dotted_name_repeat1'],
-	[308, 'union_pattern_repeat1'],
-	[309, '_parameters_repeat1'],
-	[310, '_patterns_repeat1'],
-	[311, 'comparison_operator_repeat1'],
-	[312, '_collection_elements_repeat1'],
-	[313, 'for_in_clause_repeat1'],
-	[314, 'concatenated_string_repeat1'],
-	[315, 'string_repeat1'],
-	[316, 'string_content_repeat1'],
-	[317, 'format_specifier_repeat1'],
-	[318, 'simple_statements_elements_repeat1'],
-	[319, 'subjects_repeat1'],
-	[320, 'case_patterns_repeat1'],
-	[321, 'with_clause_with_items_repeat1'],
-	[322, '_exec_statement_optional1_repeat1'],
-	[323, 'types_repeat1'],
-	[324, 'argument_list_elements_repeat1'],
-	[325, 'dict_pattern_elements_repeat1'],
-	[326, 'subscripts_repeat1'],
-	[327, 'dictionary_elements_repeat1'],
-	[328, '_tuple_elements_repeat1'],
-	[329, '_print_arguments_repeat1'],
-	[330, 'comprehension_clauses_repeat1'],
-	[331, 'except_clause_exception_list_repeat1'],
-	[332, 'match_block_block_repeat1'],
-	[333, 'as_pattern_target'],
-	[334, 'format_expression'],
-	[335, 'names'],
+	[270, 'tuple_pattern_elements'],
+	[271, 'tuple_elements'],
+	[272, 'except_clause_exception_as'],
+	[273, 'case_tuple_pattern'],
+	[274, 'case_list_pattern'],
+	[275, 'print_arguments'],
+	[276, 'print_chevron_arguments'],
+	[277, 'print_statement_chevron'],
+	[278, 'print_statement_plain'],
+	[279, 'wildcard_pattern'],
+	[280, 'parenthesized_import_list'],
+	[281, 'comprehension_clauses'],
+	[282, 'integer_decimal'],
+	[283, 'simple_pattern_negative'],
+	[284, 'except_clause_exception_list'],
+	[285, 'except_clause_exception'],
+	[286, 'assignment_eq'],
+	[287, 'assignment_type'],
+	[288, 'assignment_typed'],
+	[289, 'expression_statement_tuple'],
+	[290, 'with_clause_bare'],
+	[291, 'with_clause_paren'],
+	[292, 'match_block_block'],
+	[293, 'match_block_empty'],
+	[294, 'suite_inline'],
+	[295, 'suite_block'],
+	[296, 'suite_empty'],
+	[297, 'comparison_operator_comparator'],
+	[298, 'yield_from_clause'],
+	[299, 'module_repeat1'],
+	[300, 'import_prefix_repeat1'],
+	[301, '_import_list_repeat1'],
+	[302, 'assert_statement_repeat1'],
+	[303, 'if_statement_repeat1'],
+	[304, 'try_statement_repeat1'],
+	[305, 'global_statement_repeat1'],
+	[306, 'decorated_definition_repeat1'],
+	[307, 'expression_list_repeat1'],
+	[308, 'dotted_name_repeat1'],
+	[309, 'union_pattern_repeat1'],
+	[310, '_parameters_repeat1'],
+	[311, '_patterns_repeat1'],
+	[312, 'comparison_operator_repeat1'],
+	[313, '_collection_elements_repeat1'],
+	[314, 'for_in_clause_repeat1'],
+	[315, 'concatenated_string_repeat1'],
+	[316, 'string_repeat1'],
+	[317, 'string_content_repeat1'],
+	[318, 'format_specifier_repeat1'],
+	[319, 'simple_statements_elements_repeat1'],
+	[320, 'subjects_repeat1'],
+	[321, 'case_patterns_repeat1'],
+	[322, 'with_clause_with_items_repeat1'],
+	[323, '_exec_statement_optional1_repeat1'],
+	[324, 'types_repeat1'],
+	[325, 'argument_list_elements_repeat1'],
+	[326, 'dict_pattern_elements_repeat1'],
+	[327, 'subscripts_repeat1'],
+	[328, 'dictionary_elements_repeat1'],
+	[329, '_tuple_pattern_elements_repeat1'],
+	[330, '_tuple_elements_repeat1'],
+	[331, '_print_arguments_repeat1'],
+	[332, 'comprehension_clauses_repeat1'],
+	[333, 'except_clause_exception_list_repeat1'],
+	[334, 'match_block_block_repeat1'],
+	[335, 'as_pattern_target'],
+	[336, 'format_expression'],
+	[337, 'names'],
 	[65535, 'ERROR']
 ]);
 
@@ -921,7 +925,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[127, 'module'],
 	[128, '_statement'],
 	[129, '_simple_statements'],
-	[337, 'simple_statements'],
+	[339, 'simple_statements'],
 	[130, 'import_statement'],
 	[131, 'import_prefix'],
 	[132, 'relative_import'],
@@ -976,7 +980,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[181, 'dotted_name'],
 	[182, 'case_pattern'],
 	[183, '_simple_pattern'],
-	[336, 'simple_pattern'],
+	[338, 'simple_pattern'],
 	[184, 'case_as_pattern'],
 	[185, 'union_pattern'],
 	[186, 'dict_pattern'],
@@ -1063,72 +1067,74 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[267, 'subscripts'],
 	[268, 'dictionary_elements'],
 	[269, 'slice_group'],
-	[270, 'tuple_elements'],
-	[271, 'except_clause_exception_as'],
-	[272, 'case_tuple_pattern'],
-	[273, 'case_list_pattern'],
-	[274, 'print_arguments'],
-	[275, 'print_chevron_arguments'],
-	[276, 'print_statement_chevron'],
-	[277, 'print_statement_plain'],
-	[278, 'wildcard_pattern'],
-	[279, 'parenthesized_import_list'],
-	[280, 'comprehension_clauses'],
-	[281, 'integer_decimal'],
-	[282, 'simple_pattern_negative'],
-	[283, 'except_clause_exception_list'],
-	[284, 'except_clause_exception'],
-	[285, 'assignment_eq'],
-	[286, 'assignment_type'],
-	[287, 'assignment_typed'],
-	[288, 'expression_statement_tuple'],
-	[289, 'with_clause_bare'],
-	[290, 'with_clause_paren'],
-	[291, 'match_block_block'],
-	[292, 'match_block_empty'],
-	[293, 'suite_inline'],
-	[294, 'suite_block'],
-	[295, 'suite_empty'],
-	[296, 'comparison_operator_comparator'],
-	[297, 'yield_from_clause'],
-	[298, 'module_repeat1'],
-	[299, 'import_prefix_repeat1'],
-	[300, '_import_list_repeat1'],
-	[301, 'assert_statement_repeat1'],
-	[302, 'if_statement_repeat1'],
-	[303, 'try_statement_repeat1'],
-	[304, 'global_statement_repeat1'],
-	[305, 'decorated_definition_repeat1'],
-	[306, 'expression_list_repeat1'],
-	[307, 'dotted_name_repeat1'],
-	[308, 'union_pattern_repeat1'],
-	[309, '_parameters_repeat1'],
-	[310, '_patterns_repeat1'],
-	[311, 'comparison_operator_repeat1'],
-	[312, '_collection_elements_repeat1'],
-	[313, 'for_in_clause_repeat1'],
-	[314, 'concatenated_string_repeat1'],
-	[315, 'string_repeat1'],
-	[316, 'string_content_repeat1'],
-	[317, 'format_specifier_repeat1'],
-	[318, 'simple_statements_elements_repeat1'],
-	[319, 'subjects_repeat1'],
-	[320, 'case_patterns_repeat1'],
-	[321, 'with_clause_with_items_repeat1'],
-	[322, '_exec_statement_optional1_repeat1'],
-	[323, 'types_repeat1'],
-	[324, 'argument_list_elements_repeat1'],
-	[325, 'dict_pattern_elements_repeat1'],
-	[326, 'subscripts_repeat1'],
-	[327, 'dictionary_elements_repeat1'],
-	[328, '_tuple_elements_repeat1'],
-	[329, '_print_arguments_repeat1'],
-	[330, 'comprehension_clauses_repeat1'],
-	[331, 'except_clause_exception_list_repeat1'],
-	[332, 'match_block_block_repeat1'],
-	[333, 'as_pattern_target'],
-	[334, 'format_expression'],
-	[335, 'names'],
+	[270, 'tuple_pattern_elements'],
+	[271, 'tuple_elements'],
+	[272, 'except_clause_exception_as'],
+	[273, 'case_tuple_pattern'],
+	[274, 'case_list_pattern'],
+	[275, 'print_arguments'],
+	[276, 'print_chevron_arguments'],
+	[277, 'print_statement_chevron'],
+	[278, 'print_statement_plain'],
+	[279, 'wildcard_pattern'],
+	[280, 'parenthesized_import_list'],
+	[281, 'comprehension_clauses'],
+	[282, 'integer_decimal'],
+	[283, 'simple_pattern_negative'],
+	[284, 'except_clause_exception_list'],
+	[285, 'except_clause_exception'],
+	[286, 'assignment_eq'],
+	[287, 'assignment_type'],
+	[288, 'assignment_typed'],
+	[289, 'expression_statement_tuple'],
+	[290, 'with_clause_bare'],
+	[291, 'with_clause_paren'],
+	[292, 'match_block_block'],
+	[293, 'match_block_empty'],
+	[294, 'suite_inline'],
+	[295, 'suite_block'],
+	[296, 'suite_empty'],
+	[297, 'comparison_operator_comparator'],
+	[298, 'yield_from_clause'],
+	[299, 'module_repeat1'],
+	[300, 'import_prefix_repeat1'],
+	[301, '_import_list_repeat1'],
+	[302, 'assert_statement_repeat1'],
+	[303, 'if_statement_repeat1'],
+	[304, 'try_statement_repeat1'],
+	[305, 'global_statement_repeat1'],
+	[306, 'decorated_definition_repeat1'],
+	[307, 'expression_list_repeat1'],
+	[308, 'dotted_name_repeat1'],
+	[309, 'union_pattern_repeat1'],
+	[310, '_parameters_repeat1'],
+	[311, '_patterns_repeat1'],
+	[312, 'comparison_operator_repeat1'],
+	[313, '_collection_elements_repeat1'],
+	[314, 'for_in_clause_repeat1'],
+	[315, 'concatenated_string_repeat1'],
+	[316, 'string_repeat1'],
+	[317, 'string_content_repeat1'],
+	[318, 'format_specifier_repeat1'],
+	[319, 'simple_statements_elements_repeat1'],
+	[320, 'subjects_repeat1'],
+	[321, 'case_patterns_repeat1'],
+	[322, 'with_clause_with_items_repeat1'],
+	[323, '_exec_statement_optional1_repeat1'],
+	[324, 'types_repeat1'],
+	[325, 'argument_list_elements_repeat1'],
+	[326, 'dict_pattern_elements_repeat1'],
+	[327, 'subscripts_repeat1'],
+	[328, 'dictionary_elements_repeat1'],
+	[329, '_tuple_pattern_elements_repeat1'],
+	[330, '_tuple_elements_repeat1'],
+	[331, '_print_arguments_repeat1'],
+	[332, 'comprehension_clauses_repeat1'],
+	[333, 'except_clause_exception_list_repeat1'],
+	[334, 'match_block_block_repeat1'],
+	[335, 'as_pattern_target'],
+	[336, 'format_expression'],
+	[337, 'names'],
 	[65535, 'ERROR']
 ]);
 
@@ -1675,6 +1681,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.DictionaryElements;
 		case 'slice_group':
 			return TSKindId.SliceGroup;
+		case 'tuple_pattern_elements':
+			return TSKindId.TuplePatternElements;
 		case 'tuple_elements':
 			return TSKindId.TupleElements;
 		case 'except_clause_exception_as':
@@ -1791,6 +1799,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.SubscriptsRepeat1;
 		case 'dictionary_elements_repeat1':
 			return TSKindId.DictionaryElementsRepeat1;
+		case '_tuple_pattern_elements_repeat1':
+			return TSKindId._TuplePatternElementsRepeat1;
 		case '_tuple_elements_repeat1':
 			return TSKindId._TupleElementsRepeat1;
 		case '_print_arguments_repeat1':
@@ -3421,18 +3431,18 @@ export interface Patterns {
 
 export interface TuplePattern {
 	readonly $type: TSKindId.TuplePattern;
-	readonly _patterns?: Patterns;
+	readonly _elements?: TuplePatternElements;
 	readonly __looseHints__?: {
-		readonly patterns?: readonly Pattern[];
+		readonly elements?: readonly Pattern[];
 	};
 	readonly __slotHints__?: {
-		readonly patterns: SlotHint<T.Patterns, true>;
+		readonly elements: SlotHint<T.TuplePatternElements, true>;
 		readonly $listView: ListViewHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		readonly $listSlots: {
-			readonly patterns: ListSlotHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly elements: ListSlotHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	patterns(): Patterns | undefined;
+	elements(): TuplePatternElements | undefined;
 }
 
 export interface ListPattern {
@@ -4622,6 +4632,17 @@ export interface SliceGroup {
 	expression(): Expression | undefined;
 }
 
+export interface TuplePatternElements {
+	readonly $type: TSKindId.TuplePatternElements;
+	readonly _item: NonEmptyArray<Pattern>;
+	readonly __slotHints__?: {
+		readonly items: SlotHint<NonEmptyArray<T.Pattern>, false, true>;
+		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+	};
+	items(): NonEmptyArray<Pattern>;
+}
+
 export interface TupleElements {
 	readonly $type: TSKindId.TupleElements;
 	readonly _item: NonEmptyArray<Expression | Yield | ListSplat | ParenthesizedListSplat>;
@@ -5631,6 +5652,7 @@ export interface OptionsHintMap {
 	subscripts: Subscripts.Hints;
 	dictionaryElements: DictionaryElements.Hints;
 	sliceGroup: SliceGroup.Hints;
+	tuplePatternElements: TuplePatternElements.Hints;
 	tupleElements: TupleElements.Hints;
 	exceptClauseExceptionAs: ExceptClauseExceptionAs.Hints;
 	caseTuplePattern: CaseTuplePattern.Hints;
@@ -7233,6 +7255,24 @@ export namespace SliceGroup {
 	}
 }
 
+export namespace TuplePatternElements {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly item?: {
+				readonly attribute?: { readonly after?: WhitespaceKindId };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly listPattern?: { readonly after?: WhitespaceKindId };
+				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
+				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly tuplePattern?: { readonly after?: WhitespaceKindId };
+			};
+		};
+	}
+}
+
 export namespace TupleElements {
 	export interface Hints {
 		readonly __optionsHint__?: {
@@ -8455,7 +8495,7 @@ export interface TuplePatternNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	TuplePattern.Bound,
-	'patterns',
+	'elements',
 	TSKindId.TuplePattern,
 	TuplePattern.Parsed,
 	EmptyTuplePattern
@@ -9303,6 +9343,20 @@ export interface SliceGroupNs extends NodeNs<
 	readonly BuildArgs: SliceGroup.BuildArgs;
 	readonly LooseArgs: SliceGroup.LooseArgs;
 }
+export interface TuplePatternElementsNs extends NodeNs<
+	TuplePatternElements,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	TuplePatternElements.Bound,
+	'item',
+	TSKindId.TuplePatternElements,
+	TuplePatternElements.Parsed,
+	never
+> {
+	readonly BuildArgs: TuplePatternElements.BuildArgs;
+	readonly LooseArgs: TuplePatternElements.LooseArgs;
+}
 export interface TupleElementsNs extends NodeNs<
 	TupleElements,
 	LeafScalarMap,
@@ -10104,6 +10158,7 @@ export interface NamespaceMap {
 	[TSKindId.Subscripts]: SubscriptsNs;
 	[TSKindId.DictionaryElements]: DictionaryElementsNs;
 	[TSKindId.SliceGroup]: SliceGroupNs;
+	[TSKindId.TuplePatternElements]: TuplePatternElementsNs;
 	[TSKindId.TupleElements]: TupleElementsNs;
 	[TSKindId.ExceptClauseExceptionAs]: ExceptClauseExceptionAsNs;
 	[TSKindId.CaseTuplePattern]: CaseTuplePatternNs;
@@ -10308,6 +10363,7 @@ export interface BoundByKindId {
 	[TSKindId.Subscripts]: Subscripts.Bound;
 	[TSKindId.DictionaryElements]: DictionaryElements.Bound;
 	[TSKindId.SliceGroup]: SliceGroup.Bound;
+	[TSKindId.TuplePatternElements]: TuplePatternElements.Bound;
 	[TSKindId.TupleElements]: TupleElements.Bound;
 	[TSKindId.ExceptClauseExceptionAs]: ExceptClauseExceptionAs.Bound;
 	[TSKindId.CaseTuplePattern]: CaseTuplePattern.Bound;
@@ -10487,6 +10543,7 @@ export interface ParsedByKindId {
 	[TSKindId.Subscripts]: Subscripts.Parsed;
 	[TSKindId.DictionaryElements]: DictionaryElements.Parsed;
 	[TSKindId.SliceGroup]: SliceGroup.Parsed;
+	[TSKindId.TuplePatternElements]: TuplePatternElements.Parsed;
 	[TSKindId.TupleElements]: TupleElements.Parsed;
 	[TSKindId.ExceptClauseExceptionAs]: ExceptClauseExceptionAs.Parsed;
 	[TSKindId.CaseTuplePattern]: CaseTuplePattern.Parsed;
@@ -10774,6 +10831,7 @@ export interface IrKeyOf {
 	[TSKindId.Subscripts]: 'subscripts';
 	[TSKindId.DictionaryElements]: 'dictionaryElements';
 	[TSKindId.SliceGroup]: 'sliceGroup';
+	[TSKindId.TuplePatternElements]: 'tuplePatternElements';
 	[TSKindId.TupleElements]: 'tupleElements';
 	[TSKindId.ExceptClauseExceptionAs]: 'exceptClauseExceptionAs';
 	[TSKindId.CaseTuplePattern]: 'caseTuplePattern';
@@ -11081,10 +11139,9 @@ export namespace AssertStatement {
 	export type BuildArgs = [...children: NonEmptyArray<Admit<T.Expression>>];
 	export type LooseArgs =
 		| [
-				...children: (
-					| T.AssertStatement.Loose
-					| LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
+				...children: NonEmptyArray<
+					T.AssertStatement.Loose | LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				>
 		  ]
 		| [children: Readonly<NonEmptyArray<LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>>];
 	export type Kind = TSKindId.AssertStatement;
@@ -11514,11 +11571,11 @@ export namespace GlobalStatement {
 	export type BuildArgs = [...children: NonEmptyArray<Admit<T.Identifier>>];
 	export type LooseArgs =
 		| [
-				...children: (
+				...children: NonEmptyArray<
 					| T.GlobalStatement.Loose
 					| LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 					| LooseValue<T.Identifier | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
+				>
 		  ]
 		| [
 				children: Readonly<
@@ -11546,11 +11603,11 @@ export namespace NonlocalStatement {
 	export type BuildArgs = [...children: NonEmptyArray<Admit<T.Identifier>>];
 	export type LooseArgs =
 		| [
-				...children: (
+				...children: NonEmptyArray<
 					| T.NonlocalStatement.Loose
 					| LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 					| LooseValue<T.Identifier | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
+				>
 		  ]
 		| [
 				children: Readonly<
@@ -11773,11 +11830,11 @@ export namespace DottedName {
 	export type BuildArgs = [...children: NonEmptyArray<Admit<T.Identifier>>];
 	export type LooseArgs =
 		| [
-				...children: (
+				...children: NonEmptyArray<
 					| T.DottedName.Loose
 					| LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 					| LooseValue<T.Identifier | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
+				>
 		  ]
 		| [
 				children: Readonly<
@@ -11894,7 +11951,7 @@ export namespace UnionPattern {
 	];
 	export type LooseArgs =
 		| [
-				...children: (
+				...children: NonEmptyArray<
 					| T.UnionPattern.Loose
 					| LooseValue<
 							| T.ClassPattern
@@ -11936,7 +11993,7 @@ export namespace UnionPattern {
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >
-				)[]
+				>
 		  ]
 		| [
 				children: Readonly<
@@ -12185,8 +12242,8 @@ export namespace TuplePattern {
 	}
 	export type Loose = LooseFor<TSKindId.TuplePattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TuplePattern>;
-	export type BuildArgs = [value?: Admit<T.Patterns>] | T.Patterns.BuildArgs;
-	export type LooseArgs = [value?: T.TuplePattern.Loose] | T.Patterns.LooseArgs;
+	export type BuildArgs = [value?: Admit<T.TuplePatternElements>] | T.TuplePatternElements.BuildArgs;
+	export type LooseArgs = [value?: T.TuplePattern.Loose] | T.TuplePatternElements.LooseArgs;
 	export type Kind = TSKindId.TuplePattern;
 }
 export namespace ListPattern {
@@ -13067,10 +13124,9 @@ export namespace ConcatenatedString {
 	export type BuildArgs = [...children: NonEmptyArray<Admit<T.String>>];
 	export type LooseArgs =
 		| [
-				...children: (
-					| T.ConcatenatedString.Loose
-					| LooseValue<T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
+				...children: NonEmptyArray<
+					T.ConcatenatedString.Loose | LooseValue<T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				>
 		  ]
 		| [children: Readonly<NonEmptyArray<LooseValue<T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>>];
 	export type Kind = TSKindId.ConcatenatedString;
@@ -13112,7 +13168,7 @@ export namespace StringContent {
 	];
 	export type LooseArgs =
 		| [
-				...children: (
+				...children: NonEmptyArray<
 					| T.StringContent.Loose
 					| LooseValue<
 							T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment,
@@ -13126,7 +13182,7 @@ export namespace StringContent {
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >
-				)[]
+				>
 		  ]
 		| [
 				children: Readonly<
@@ -13699,6 +13755,46 @@ export namespace SliceGroup {
 	export type LooseArgs = [value?: T.SliceGroup.Loose];
 	export type Kind = TSKindId.SliceGroup;
 }
+export namespace TuplePatternElements {
+	export type Config = ConfigFor<TSKindId.TuplePatternElements>;
+	export interface Bound extends BoundOf<T.TuplePatternElements, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TuplePatternElements['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+		readonly _delimiter: Delimiter | undefined;
+	}
+	export interface Parsed extends ParsedOf<T.TuplePatternElements, ParsedByKindId>, NodeMethodsOf, HoldsTree {
+		readonly $type: T.TuplePatternElements['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly _delimiter: Delimiter | undefined;
+	}
+	export type Loose = LooseFor<TSKindId.TuplePatternElements>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TuplePatternElements>;
+	export type BuildArgs =
+		| [element: Admit<T.Pattern>, ...elements: Admit<T.Pattern>[]]
+		| [
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+				element: Admit<T.Pattern>,
+				...elements: Admit<T.Pattern>[]
+		  ];
+	export type LooseArgs =
+		| [
+				element: T.TuplePatternElements.Loose | LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.TuplePatternElements.Loose
+					| LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ]
+		| [
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+				element: T.TuplePatternElements.Loose | LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.TuplePatternElements.Loose
+					| LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ];
+	export type Kind = TSKindId.TuplePatternElements;
+}
 export namespace TupleElements {
 	export type Config = ConfigFor<TSKindId.TupleElements>;
 	export interface Bound extends BoundOf<T.TupleElements, BoundByKindId>, NodeMethodsOf {
@@ -13968,10 +14064,10 @@ export namespace ComprehensionClauses {
 	export type BuildArgs = [...children: NonEmptyArray<Admit<T.ForInClause | T.IfClause>>];
 	export type LooseArgs =
 		| [
-				...children: (
+				...children: NonEmptyArray<
 					| T.ComprehensionClauses.Loose
 					| LooseValue<T.ForInClause | T.IfClause, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
+				>
 		  ]
 		| [
 				children: Readonly<
@@ -14313,10 +14409,9 @@ export namespace ExceptClauseExceptionList {
 	export type BuildArgs = [...children: NonEmptyArray<Admit<T.Expression>>];
 	export type LooseArgs =
 		| [
-				...children: (
-					| T.ExceptClauseExceptionList.Loose
-					| LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
+				...children: NonEmptyArray<
+					T.ExceptClauseExceptionList.Loose | LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				>
 		  ]
 		| [children: Readonly<NonEmptyArray<LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>>];
 	export type Kind = TSKindId.ExceptClauseExceptionList;

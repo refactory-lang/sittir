@@ -1,7 +1,7 @@
 {
   "name": "python",
   "root": "module",
-  "nodeCount": 306,
+  "nodeCount": 307,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -1061,7 +1061,7 @@
       }
     },
     "tuple_pattern": {
-      "patterns": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1894,6 +1894,15 @@
         "required": false,
         "multiple": false,
         "nonEmpty": false
+      }
+    },
+    "tuple_pattern_elements": {
+      "item": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
       }
     },
     "tuple_elements": {
@@ -10884,6 +10893,7 @@
         "print_keyword",
         "subscript",
         "tuple_pattern",
+        "tuple_pattern_elements",
         "type_keyword",
         "typed_default_parameter",
         "typed_parameter"
@@ -11209,6 +11219,7 @@
         "print_keyword",
         "subscript",
         "tuple_pattern",
+        "tuple_pattern_elements",
         "type_keyword"
       ]
     },
@@ -12237,6 +12248,7 @@
         "print_keyword",
         "subscript",
         "tuple_pattern",
+        "tuple_pattern_elements",
         "type_keyword",
         "typed_default_parameter",
         "typed_parameter"
@@ -12278,6 +12290,7 @@
         "print_keyword",
         "subscript",
         "tuple_pattern",
+        "tuple_pattern_elements",
         "type_keyword",
         "typed_default_parameter",
         "typed_parameter"
@@ -12597,6 +12610,7 @@
         "print_keyword",
         "subscript",
         "tuple_pattern",
+        "tuple_pattern_elements",
         "type_keyword"
       ]
     },
@@ -12632,6 +12646,7 @@
         "print_keyword",
         "subscript",
         "tuple_pattern",
+        "tuple_pattern_elements",
         "type_keyword"
       ]
     },
@@ -15053,30 +15068,30 @@
       "hidden": false,
       "slots": [
         {
-          "name": "patterns",
-          "propertyName": "patterns",
-          "paramName": "patterns",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "patterns"
+            "tuple_pattern_elements"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "patterns",
-              "parseKind": "patterns"
+              "name": "tuple_pattern_elements",
+              "parseKind": "tuple_pattern_elements"
             }
           ]
         }
       ],
       "factoryShape": "forwarded",
-      "forwardsTo": "patterns",
+      "forwardsTo": "tuple_pattern_elements",
       "factoryFields": [
-        "patterns"
+        "elements"
       ],
       "bareAccepts": [
         "async_keyword",
@@ -15091,6 +15106,43 @@
         "print_keyword",
         "subscript",
         "tuple_pattern",
+        "tuple_pattern_elements",
+        "type_keyword"
+      ]
+    },
+    {
+      "kind": "tuple_pattern_elements",
+      "modelType": "list",
+      "typeName": "TuplePatternElements",
+      "factoryName": "tuplePatternElements",
+      "irKey": "tuplePatternElements",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
+      "elementKinds": [
+        "pattern"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "item"
+      ],
+      "bareAccepts": [
+        "async_keyword",
+        "attribute",
+        "await_keyword",
+        "exec_keyword",
+        "identifier",
+        "list_pattern",
+        "list_splat_pattern",
+        "match_keyword",
+        "patterns",
+        "print_keyword",
+        "subscript",
+        "tuple_pattern",
+        "tuple_pattern_elements",
         "type_keyword"
       ]
     },

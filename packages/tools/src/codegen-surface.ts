@@ -197,19 +197,10 @@ export async function buildSimplifiedGrammar(grammar: string): Promise<Simplifie
 	return invoke('normalize', 'normalizeGrammar', linked);
 }
 
-/** Run evaluate → link → normalize → assemble for one grammar, returning its NodeMap. */
 export async function buildNodeMap(grammar: string): Promise<AssembledNodeMap> {
-	const normalized = await buildSimplifiedGrammar(grammar);
-	// `assemble()` takes the caller-owned AssembleCtx (§2: the grammar container
-	// folds into the ctx) — `load` (not `invoke`) because we need BOTH `assemble`
-	// and `AssembleCtx` from the module, matching the pattern in
-	// tools/src/probe/variant-derivation.ts.
-	const { assemble, AssembleCtx } = await load('assemble');
-	const generatedIdTables = await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar);
-	return assemble(AssembleCtx.from(normalized, generatedIdTables));
+	return compileNodeMap(grammar);
 }
 
-/** The node map the emitters see: `compileGrammar`'s, with every slot reference hydrated. */
 export async function compileNodeMap(grammar: string): Promise<AssembledNodeMap> {
 	const { compileGrammar } = await load('compile');
 	const { nodeMap } = await compileGrammar({

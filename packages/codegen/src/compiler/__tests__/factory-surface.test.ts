@@ -164,7 +164,18 @@ describe('terminated separated lists', () => {
 		expect(needsTrailing('types')).toBe(false);
 	});
 
-	it('the factory accepts one element; the requirement is the render template\'s', () => {
-		expect(emitFactories({ grammar: 'rust', nodeMap, reparseHosts: REPARSE_HOSTS, triviaKinds: ['block_comment', 'line_comment'] })).not.toContain('requires a trailing delimiter');
+	it('Python tuple pattern lists require the singleton comma', () => {
+		expect(needsTrailing('tuple_pattern_elements', pythonNodeMap)).toBe(true);
+	});
+
+	it("the factory accepts one element; the requirement is the render template's", () => {
+		expect(
+			emitFactories({
+				grammar: 'rust',
+				nodeMap,
+				reparseHosts: REPARSE_HOSTS,
+				triviaKinds: ['block_comment', 'line_comment']
+			})
+		).not.toContain('requires a trailing delimiter');
 	});
 });

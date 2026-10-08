@@ -1,12 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { evaluateGrammar, invoke } from '../codegen-surface.ts';
 import { loadWebTreeSitter, upstreamWasmPath } from '../validate/common.ts';
+import type { RuleCause } from '../../../codegen/src/dsl/primitives/rule-cause.ts';
 
 interface WitnessCase {
 	readonly grammar: string;
 	readonly rule: string;
 	readonly text: string;
 	readonly kind: string;
+	readonly cause: RuleCause;
 }
 
 const cases: WitnessCase[] = [];
@@ -14,7 +16,13 @@ for (const grammar of await invoke('grammars', 'allGrammars')) {
 	const { ruleCauses = {} } = await evaluateGrammar(grammar);
 	for (const [rule, declaration] of Object.entries(ruleCauses)) {
 		if (declaration.kind !== 'reauthored' || declaration.witness === undefined) continue;
-		cases.push({ grammar, rule, text: declaration.witness.text, kind: declaration.witness.kind });
+		cases.push({
+			grammar,
+			rule,
+			text: declaration.witness.text,
+			kind: declaration.witness.kind,
+			cause: declaration.cause
+		});
 	}
 }
 
@@ -35,15 +43,15 @@ async function upstreamKindsOf(grammar: string, text: string): Promise<{ kinds: 
 	return { kinds, hasError: tree.rootNode.hasError };
 }
 
-describe('a rule reauthored because upstream accepts a form that is always another kind', () => {
+describe('reauthoring grammar witnesses', () => {
 	it('is declared by at least one grammar, so the cases below check something', () => {
 		expect(cases.map(({ grammar, rule }) => `${grammar}:${rule}`)).toContain('python:tuple');
 	});
 
-	it.each(cases)('$grammar $rule: upstream parses $text as $kind and never as $rule', async ({ grammar, rule, text, kind }) => {
+	it.each(cases)('$grammar $rule: upstream parses $text as $kind', async ({ grammar, rule, text, kind, cause }) => {
 		const { kinds, hasError } = await upstreamKindsOf(grammar, text);
 		expect(hasError).toBe(false);
 		expect(kinds.has(kind)).toBe(true);
-		expect(kinds.has(rule)).toBe(false);
+		if (cause === 'accepts-other-kind') expect(kinds.has(rule)).toBe(false);
 	});
 });

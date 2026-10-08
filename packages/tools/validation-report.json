@@ -4947,7 +4947,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "patterns",
+    "kind": "tuple_pattern_elements",
     "count": 4,
     "entries": [
       "Default Tuple Arguments",
@@ -4959,7 +4959,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "patterns"
+    "label": "tuple_pattern_elements"
   },
   {
     "source": "validator",
@@ -7393,7 +7393,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "patterns",
+    "kind": "tuple_pattern_elements",
     "count": 4,
     "entries": [
       "Default Tuple Arguments",
@@ -7405,7 +7405,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "patterns"
+    "label": "tuple_pattern_elements"
   },
   {
     "source": "validator",
@@ -9770,7 +9770,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "factory: patterns",
+    "kind": "factory: tuple_pattern_elements",
     "count": 4,
     "entries": [
       "Default Tuple Arguments",
@@ -9782,7 +9782,7 @@
     "code": "built-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "factory: patterns"
+    "label": "factory: tuple_pattern_elements"
   },
   {
     "source": "validator",
@@ -11988,7 +11988,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "ir: patterns",
+    "kind": "ir: tuple_pattern_elements",
     "count": 4,
     "entries": [
       "Default Tuple Arguments",
@@ -12000,7 +12000,7 @@
     "code": "built-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "ir: patterns"
+    "label": "ir: tuple_pattern_elements"
   },
   {
     "source": "validator",

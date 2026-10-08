@@ -714,3 +714,24 @@ shrinks.
 - `print_statement` (declared `'alias-shape'`, unverified: no detector): kept: an emitter is coupled to the
   re-authored shape (without it `emitFieldCarryingFactory` throws on the
   optional-delimiter `argument` field of `print_statement_arm1`). missing detector: 'alias-shape' ← an alias spanning part of a seq, or a restructure that changes the parse.
+
+### `tuple_pattern` (`packages/python/grammar.sittir.ts`)
+
+The `semantic-gap` override uses `transform(original, …)` to replace only the optional middle of the upstream sequence. A singleton pattern requires its comma and builds as `(x,)`. The parser rejects `(x) = y`, per the maintainer's #550 decision; it still accepts empty and multi-element tuple patterns. The upstream witness records that `(x) = y` binds the whole value, rather than unpacking a tuple. Tuple expressions reuse the same element construction in `_tuple_elements`, with their existing separate `parenthesized_expression` kind.
+
+### `tupleElements` (`packages/python/grammar.sittir.ts`)
+
+The grammar-local terminated element construction shared by tuple expressions
+and tuple patterns. Its first element requires a comma, subsequent elements
+can end with commas, and its optional last element can omit the comma. The
+existing linker derives the singleton trailing-comma requirement from this
+shape; no new tuple DSL or inference is needed.
+
+### `_tuple_pattern_elements`
+
+The dedicated terminated list behind `tuple_pattern`, exposed as
+`tuple_pattern_elements`. The tuple owns parentheses while this list owns its
+commas, following `_tuple_elements` for tuple expressions. This preserves
+separator capture and factory/read parity; making `tuple_pattern` the list
+itself both confuses its parentheses with separators and introduces recursive
+same-kind coercion ambiguity.
