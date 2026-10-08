@@ -105,6 +105,7 @@ The fixes have focused red/green regressions and regeneration coverage. Backlog 
 | Issue | Priority | Disposition / next action |
 |---|---|---|
 | [#627 — Corpus rebuild failures: builders reject real source](https://github.com/refactory-lang/sittir/issues/627) | P2 | Closed at maintainer request. Documented audit samples now rebuild with zero failures/differences; original TypeScript/regex files were not committed. Reopen for a new reproducing input. |
+| [#577 — Circular types when a list kind is a member of its own element union](https://github.com/refactory-lang/sittir/issues/577) | P2 | Historical cycle is resolved by shallow node admission and lazy namespace argument rows. An isolated emitted recursive-list fixture compiles on TypeScript 6 and 7 with own-kind built/parsed nodes, nested loose configs, setters, and map-wide rows. Python's shipped helper rule on master passes its baseline and remains unchanged. The failed inline rewrite was an abandoned experiment; #716 was closed as not planned. |
 
 ## Correctness queue
 
@@ -128,7 +129,7 @@ The fixes have focused red/green regressions and regeneration coverage. Backlog 
 | [#512 — Typed patch paths do not see the fields enrich adds to repeats](https://github.com/refactory-lang/sittir/issues/512) | P2 | Reproduce typed/runtime enrich behavior on SCM repeat paths. |
 | [#434 — Line-break-terminated kinds' after edges offer arms the held line end always overrides](https://github.com/refactory-lang/sittir/issues/434) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Measure the public held line-ending options and their effect. |
 | [#369 — Floored shape debt raised by the upstream grammars](https://github.com/refactory-lang/sittir/issues/369) | P2 | Refresh diagnostic families and fix failures at the earliest phase retaining the facts. |
-| [#577 — Circular types when a list kind is a member of its own element union](https://github.com/refactory-lang/sittir/issues/577) | P2 | Refresh the inline Python tuple reproduction: current `NodeNs` already carries argument rows as interface members (`81d3236c4`) and shallow `Admit` has retired `NodeLookup`. The grammar still uses `_tuple_elements`, so these changes alone do not prove the self-containing list case passes. This namespace-resolution cycle is related to, but distinct from, #529's structural comparison depth. |
+
 
 ## Typed-reader migration and performance
 
