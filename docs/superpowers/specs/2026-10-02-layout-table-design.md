@@ -710,11 +710,14 @@ Precedence (ruled by the maintainer 2026-10-08) follows the acceptance that an e
 - **What the native engine needs:** a way to replace its options after construction. Today they are resolved once in the constructor.
 - **Cost:** detection is paid only on a `styleFrom` call. Stage 4 measures it.
 - **The shape (ruled by the maintainer 2026-10-08): `engine.styleFrom(...sources)`**, the one entry point.
-  - **Sources:** each is a tree the engine parsed, or a file path.
-  - **File I/O:** done by the client, not the native engine. `@sittir/common` reads each path with Node's `fs` (`readFile`), refuses a path whose extension is not in the descriptor's `fileTypes`, parses the text with the engine's own parser, and disposes those trees after detection, also when one fails. Trees the caller passed are left alone. Taking paths is what makes the call `async`. For a grammar with no file types, the type of `styleFrom` admits trees only.
+  - **Sources:** `styleFrom(...sources: (Tree | SourcePath<G>)[])`. Each is a tree the engine parsed, or a file path.
+    - **Path type:** `SourcePath<G>` is `` `${string}.${FileType}` ``, built from the descriptor's `fileTypes`. For a grammar with no file types it is `never`, so `styleFrom` takes trees only; the type is the whole gate.
+    - **Computed paths:** `engine.isSourcePath(p): p is SourcePath<G>` narrows paths from globs, `readdir` or a command line to the same type.
+  - **File I/O:** done by the client, not the native engine. `@sittir/common` reads each path with Node's `fs` (`readFile`), parses the text with the engine's own parser, and disposes those trees after detection, also when one fails. Trees the caller passed are left alone. Taking paths is what makes the call `async`.
+  - **No run-time extension check.** An untyped caller who passes a file of another language gets a tree that parses with errors. Detection then finds few or no patterns, so most keys come back `defaulted`; nothing throws.
   - **More than one source:** detection's raw votes are summed across sources before the fold, so the result is never a majority of per-file majorities.
   - **Applying:** the `createEngine` keys win, and one native call replaces the engine's options.
-  - **Return value:** the applied options, with each key marked `detected` or `defaulted`. That is the record the tree-inferred options work said `styleFrom` reports. Proposed, not ruled: a key the `createEngine` options set is marked `set`.
+  - **Return value:** the applied options, with each key marked `detected`, `defaulted`, or `set` where the `createEngine` options set it (ruled by the maintainer 2026-10-08). That is the record the tree-inferred options work said `styleFrom` reports.
   - **What it retires:** the engine-less `styleFrom(language, ...paths)` and `rust.styleFrom(...paths)` that the tree-inferred options work ruled, and the source-text `styleFromSource` beside them. Source text is parsed with `engine.parse` and passed as a tree.
 
 This reverses the render-options design, which put a tree layer above the engine's options in the native chain, and the reversal is ruled. An engine configured with `indent: '\t'` now renders a parsed four-space file with tabs; before, it followed the file. Nothing in the native chain or the table depends on a render naming its tree for options. The typed reader's `$_layout.at` names a node's tree for its own reasons (folding an untouched node to its source).
