@@ -698,10 +698,20 @@ Precedence (ruled by the maintainer 2026-10-08) follows the acceptance that an e
 3. the detected options;
 4. the grammar's declared defaults.
 
-**The merge is the client's.** The native engine has no detected layer: to it a detected option is an option like any other, and it receives one resolved options value.
-- **Where:** the render-options assembly in `@sittir/common`, the code behind `createEngine` and `engine.render(node, options)`.
-- **How:** the client takes the detected options of the tree the node belongs to, drops every key the engine's options set, and lays the per-call options over the rest. It passes that as the per-call options, which the native resolve already lays over the engine's options and then the grammar's defaults. The four-level order then needs no native change. The keys the engine set are the keys of the options object `createEngine` was given.
-- **Which tree:** a parsed node's own tree; for a built node, the one tree its parsed parts share; otherwise none. The client knows this from its own nodes.
+**Detected options are applied when a tree is selected, not on each render (ruled by the maintainer 2026-10-08).** The native engine has no detected layer. The client keeps one *selected tree* per engine, and the engine's options are the keys `createEngine` was given, laid over the selected tree's detected options. The client computes that value once, when the selection changes, and hands it to the native engine as its options. A render then goes through the native resolve as today: per-call options over the engine's options, then the grammar's defaults. Nothing is assembled per call.
+
+- **What selects a tree:**
+  - parsing a source selects its tree;
+  - rendering a node of a different tree selects that tree first (a parsed node's own tree; for a built node, the one tree its parsed parts share);
+  - a change to the selected tree's source (an edit committed, a reparse) detects again and applies again.
+- **What clears the selection:**
+  - disposing the selected tree;
+  - rendering a node that names no tree (a built node with no parsed parts, or with parts of several trees).
+
+  The engine's options are then the keys `createEngine` was given, alone. Proposed, not ruled: keeping the selection instead would make a built node's render depend on which tree was parsed or rendered last, which the tree-inferred options work ruled out.
+- **What another selection does:** it replaces the applied options whole. The new value is the `createEngine` keys over the new tree's detected options; nothing of the previous tree's detected options remains.
+- **Cost:** one comparison of tree ids per render, and one options call into the native engine when the selection changes. Rendering two trees' nodes alternately pays that call at each switch.
+- **What the native engine needs:** a way to replace its options after construction. Today they are resolved once in the constructor.
 
 This reverses the render-options design, which put a tree layer above the engine's options in the native chain, and the reversal is ruled. An engine configured with `indent: '\t'` now renders a parsed four-space file with tabs; before, it followed the file. Nothing in the native chain or the table depends on a render naming its tree for options. The typed reader's `$_layout.at` names a node's tree for its own reasons (folding an untouched node to its source).
 
@@ -721,7 +731,7 @@ Two pieces run outside this note: the line-ending plan, after 1c-i, and the `sea
 1. **The output trait,** text output only, byte-identical. The generated root dispatch goes through one core function. The prototype's table module is renamed (`table.rs`), because master's `layout.rs` now holds `TransportLayout`.
 2. **The `prepare` change:** the list view resolves a separator's arm by its site.
 3. **Context sets:** python's `layout: { newline, inline }` and typescript's `_inline_layout` with its `gap(…)` positions, declared in `grammar.sittir.ts` and compiled into `seam(kinds)`; the writer's context stack; the parse-table check for typescript. Gate 6. This step does not wait for the generator to read `bindings.scm`.
-4. **Detection:** the native walk returning an options object, the client's merge (per-call > engine-set keys > detected > defaults) and indentation as one fact. This stage already delivers the detected line ending and indent unit, with no table.
+4. **Detection:** the native walk returning an options object, the client's tree selection that applies it under the `createEngine` keys, the native engine replacing its options on selection, and indentation as one fact. This stage already delivers the detected line ending and indent unit, with no table.
 5. **The table output:** rows carry valid sets; there are list calls and a pass interface.
 6. **The run-pattern rule over the table.** This is the first stage that delivers statement-gap patterns: an inserted statement takes the file's gap, and the before-and-after check above is its gate.
 7. **`width` and the group rule,** then the conditional trailing separator.
