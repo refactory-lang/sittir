@@ -41,6 +41,12 @@ export {
 	type TriviaPlacementCensus
 } from './validate/trivia-placement.ts';
 export {
+	run as gapCensus,
+	computeGapCensus,
+	type GapCensusOptions,
+	type GapCensus
+} from './validate/gap-census.ts';
+export {
 	run as typedReadParity,
 	computeTypedReadParity,
 	type TypedReadParityOptions,

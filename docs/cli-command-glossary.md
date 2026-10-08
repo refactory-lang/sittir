@@ -750,6 +750,23 @@ Report the owner and position the reader gives every corpus extra; exits 1 if an
 pnpm exec tsx packages/cli/src/cli.ts tool trivia-placement [options]
 ```
 
+### `tool gap-census`
+
+Census the source gaps between adjacent list items: exact versus the nearest member below, with the lossy ones grouped by shape
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
+- `--all-grammars` — Run every stable grammar
+- `--examples <n>` — Examples to print per lossy shape (default: `3`)
+- `--json` — Print every lossy row and the summary as JSON
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool gap-census [options]
+```
+
 ### `tool trivia-timing`
 
 Time reading every node's leading trivia after a deep parse of a file (one line-gap query per node)
