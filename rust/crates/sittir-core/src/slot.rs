@@ -238,6 +238,12 @@ impl NodeCoordinate {
         decode_handle(self.handle).0
     }
 
+    /// The node's descendant index in its tree — the position the handle
+    /// carries.
+    pub fn index(&self) -> u32 {
+        decode_handle(self.handle).1
+    }
+
     /// The bytes this coordinate names, or why the table cannot give them.
     pub fn resolve<'s>(&self, sources: &'s dyn SourceTable) -> Result<&'s str, CoordinateError> {
         let tree_id = self.tree_id();
@@ -373,21 +379,8 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue, const ADJACENT: bool>
     ) -> ::napi::Result<Self> {
         let value_type = unsafe { transport_value_type(env, napi_val)? };
         if value_type == ::napi::ValueType::Object {
-            use crate::boundary::property;
-            if let Some(handle) = unsafe { property::<f64>(env, napi_val, c"$treeHandle")? } {
-                let handle = crate::napi_engine::checked_index(handle, "$treeHandle")?;
-                let span: Span = unsafe { property(env, napi_val, c"$span")? }.ok_or_else(|| {
-                    ::napi::Error::from_reason(format!(
-                        "coordinate with $treeHandle {handle} carries no $span"
-                    ))
-                })?;
-                let kind = unsafe { property::<u32>(env, napi_val, c"$type")? }.map(|id| crate::types::KindId(id as u16));
-                let text_only = unsafe { property::<bool>(env, napi_val, c"$textOnly")? }.unwrap_or(false);
-                let gap = match unsafe { property::<::napi::bindgen_prelude::Object>(env, napi_val, c"$_layout")? } {
-                    Some(layout) => unsafe { property::<SourceGap>(env, ::napi::JsValue::raw(&layout), c"gap")? },
-                    None => None,
-                };
-                return Ok(Self::Coord(NodeCoordinate { kind, text_only, gap, ..NodeCoordinate::new(handle, span) }));
+            if let Some(coord) = unsafe { coordinate_from_napi(env, napi_val)? } {
+                return Ok(Self::Coord(coord));
             }
         }
         Ok(Self::Transport(unsafe {
@@ -410,11 +403,35 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue, const ADJACENT: bool> ::napi::bind
     }
 }
 
-/// `{ $treeHandle, $span, $type?, $textOnly?, $_layout?: { gap } }`, the
-/// object `SlotValue`'s decoder reads as a coordinate. Its edges are the
-/// prepare walk's and never cross.
+/// The coordinate the object `napi_val` spells, `{ $treeHandle, $span,
+/// $type?, $textOnly?, $_layout?: { gap } }`, or `None` when it carries no
+/// `$treeHandle`. A `$treeHandle` without a `$span` is refused.
+///
+/// # Safety
+/// `napi_val` must be a live object in `env`.
 #[cfg(feature = "napi-bindings")]
-unsafe fn coordinate_to_napi(env: ::napi::sys::napi_env, coord: NodeCoordinate) -> ::napi::Result<::napi::sys::napi_value> {
+pub(crate) unsafe fn coordinate_from_napi(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Option<NodeCoordinate>> {
+    use crate::boundary::property;
+    let Some(handle) = (unsafe { property::<f64>(env, napi_val, c"$treeHandle")? }) else {
+        return Ok(None);
+    };
+    let handle = crate::napi_engine::checked_index(handle, "$treeHandle")?;
+    let span: Span = unsafe { property(env, napi_val, c"$span")? }
+        .ok_or_else(|| ::napi::Error::from_reason(format!("coordinate with $treeHandle {handle} carries no $span")))?;
+    let kind = unsafe { property::<u32>(env, napi_val, c"$type")? }.map(|id| crate::types::KindId(id as u16));
+    let text_only = unsafe { property::<bool>(env, napi_val, c"$textOnly")? }.unwrap_or(false);
+    let gap = match unsafe { property::<::napi::bindgen_prelude::Object>(env, napi_val, c"$_layout")? } {
+        Some(layout) => unsafe { property::<SourceGap>(env, ::napi::JsValue::raw(&layout), c"gap")? },
+        None => None,
+    };
+    Ok(Some(NodeCoordinate { kind, text_only, gap, ..NodeCoordinate::new(handle, span) }))
+}
+
+/// `{ $treeHandle, $span, $type?, $textOnly?, $_layout?: { gap } }`, the
+/// object `coordinate_from_napi` reads back. Its edges are the prepare walk's
+/// and never cross.
+#[cfg(feature = "napi-bindings")]
+pub(crate) unsafe fn coordinate_to_napi(env: ::napi::sys::napi_env, coord: NodeCoordinate) -> ::napi::Result<::napi::sys::napi_value> {
     use crate::boundary::{object_with, set};
     use ::napi::bindgen_prelude::ToNapiValue;
     let obj = unsafe {

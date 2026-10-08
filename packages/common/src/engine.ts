@@ -68,6 +68,21 @@ function depthOf(options: ParseOptions | undefined): number | undefined {
 
 export interface NativeEngineLike<TTransport = unknown> {
 	parseAndRead(source: string, depth?: number): string;
+	/**
+	 * Parse `source` and keep its tree.
+	 *
+	 * @returns JSON `{ treeId, format, errors }`: the id {@link read} and `disposeTree` take, the
+	 *   format the parse detected, and the parse's error regions.
+	 */
+	parse(source: string): string;
+	/**
+	 * Read the node at descendant `index` of tree `treeId` into its transport, `depth` levels down
+	 * (one when absent, `Infinity` for every level); index 0 is the root.
+	 *
+	 * @throws when the tree is not live, `index` is past its last node, or the grammar's model has no
+	 *   route for a child, naming the kind, the child and the index.
+	 */
+	read(treeId: number, index: number, depth?: number): object;
 	readUntypedNode(handle: number, childIndex: number, depth?: number): string;
 	readRoot(treeId: number, depth?: number): string;
 	lineGapsOf(handle: number, span?: number[], kind?: number): string;

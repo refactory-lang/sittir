@@ -1,16 +1,18 @@
 //! `TransportLayout` — what a transport carries beside its slots.
 //!
-//! A node's layout is the trivia it owns, its base edges, and the evidence a
-//! rebuilt node keeps of the source it was read from: the gap toward the list
-//! item before it and, for a list, its source flanks. The wire sends it as
+//! A node's layout is the trivia it owns, its base edges, the evidence a
+//! rebuilt node keeps of the source it was read from (the gap toward the list
+//! item before it and, for a list, its source flanks) and, for a read node,
+//! its own coordinate. The wire sends it as
 //! `$_layout`, absent when the node has none, and never sends the edges: the
-//! prepare walk fills them. A transport stores it as an `Option` and reads it
-//! through `Layout`, so an absent layout reads as an empty one.
+//! prepare walk fills them. A transport stores it boxed in an `Option`, so it
+//! costs a payload one pointer, and reads it through `Layout`, so an absent
+//! layout reads as an empty one.
 
 use crate::options::{Edges, Side};
 use crate::prepare::{Prepare, RenderContext};
 use crate::render::{CoordinateError, Render, RenderResult, RenderSink};
-use crate::slot::{SourceFlank, SourceGap};
+use crate::slot::{NodeCoordinate, SourceFlank, SourceGap};
 use crate::trivia::{TransportTrivia, TriviaSeam};
 use crate::types::KindId;
 
@@ -20,6 +22,11 @@ pub struct TransportLayout<T> {
     pub edges: Option<Edges>,
     pub gap: Option<SourceGap>,
     pub flank: Option<SourceFlank>,
+    /// Where a read node came from: its own coordinate. The reader writes it
+    /// for every transport it reads; a built node has none. Nothing renders
+    /// from it: JavaScript crosses an untouched node as this coordinate, and an
+    /// edited one without it.
+    pub at: Option<NodeCoordinate>,
 }
 
 impl<T> Default for TransportLayout<T> {
@@ -29,6 +36,7 @@ impl<T> Default for TransportLayout<T> {
             edges: None,
             gap: None,
             flank: None,
+            at: None,
         }
     }
 }
@@ -55,7 +63,7 @@ pub trait Layout {
     fn take_flank(&mut self) -> Option<SourceFlank>;
 }
 
-impl<T> Layout for Option<TransportLayout<T>> {
+impl<T> Layout for Option<Box<TransportLayout<T>>> {
     type Trivia = T;
 
     fn trivia(&self) -> Option<&TransportTrivia<T>> {
@@ -135,6 +143,20 @@ impl<T: Prepare> Prepare for TransportLayout<T> {
 }
 
 #[cfg(feature = "napi-bindings")]
+impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNapiValue for Box<TransportLayout<T>> {
+    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
+        Ok(Box::new(unsafe { TransportLayout::from_napi_value(env, napi_val)? }))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for Box<TransportLayout<T>> {
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        unsafe { TransportLayout::to_napi_value(env, *val) }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
 impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNapiValue
     for TransportLayout<T>
 {
@@ -149,6 +171,13 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNap
                 edges: None,
                 gap: property(env, napi_val, c"gap")?,
                 flank: property(env, napi_val, c"flank")?,
+                at: match property::<::napi::bindgen_prelude::Object>(env, napi_val, c"at")? {
+                    Some(at) => Some(
+                        crate::slot::coordinate_from_napi(env, ::napi::JsValue::raw(&at))?
+                            .ok_or_else(|| ::napi::Error::from_reason("$_layout.at carries no $treeHandle"))?,
+                    ),
+                    None => None,
+                },
             })
         }
     }
@@ -156,8 +185,8 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNap
 
 #[cfg(feature = "napi-bindings")]
 impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for TransportLayout<T> {
-    /// `{ trivia?, gap?, flank? }`, each only when present. The edges are the
-    /// prepare walk's and never cross.
+    /// `{ trivia?, gap?, flank?, at? }`, each only when present. The edges are
+    /// the prepare walk's and never cross.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         use crate::boundary::{object_with, set};
         let obj = unsafe { object_with(env, &[])? };
@@ -169,6 +198,9 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
         }
         if let Some(flank) = val.flank {
             unsafe { set(env, obj, c"flank", SourceFlank::to_napi_value(env, flank)?)? };
+        }
+        if let Some(at) = val.at {
+            unsafe { set(env, obj, c"at", crate::slot::coordinate_to_napi(env, at)?)? };
         }
         Ok(obj)
     }
@@ -204,12 +236,12 @@ mod tests {
 
     struct MockTransport {
         text: &'static str,
-        layout: Option<TransportLayout<MockTrivia>>,
+        layout: Option<Box<TransportLayout<MockTrivia>>>,
     }
 
     impl Render for MockTransport {
         fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
-            TransportLayout::render(self.layout.as_ref(), Some(crate::types::KindId(9)), TriviaRole::Owner, w, |w| {
+            TransportLayout::render(self.layout.as_deref(), Some(crate::types::KindId(9)), TriviaRole::Owner, w, |w| {
                 w.text(self.text)
             })
         }
@@ -231,14 +263,14 @@ mod tests {
     fn owner(text: &'static str, leading: &[&str], trailing: &[&str], same_line: bool) -> MockTransport {
         MockTransport {
             text,
-            layout: Some(TransportLayout {
+            layout: Some(Box::new(TransportLayout {
                 trivia: Some(TransportTrivia {
                     leading: entries(leading, false),
                     trailing: entries(trailing, same_line),
                     inner: None,
                 }),
                 ..Default::default()
-            }),
+            })),
         }
     }
 
@@ -280,7 +312,7 @@ mod tests {
         let tight = Some(EdgeArm { arm: TIGHT, strength: Some(SEAM_TRIVIA), dedent: None });
         let edged = |text, edges| MockTransport {
             text,
-            layout: Some(TransportLayout { edges: Some(edges), ..Default::default() }),
+            layout: Some(Box::new(TransportLayout { edges: Some(edges), ..Default::default() })),
         };
         let first = edged("a", Edges { before: None, after: tight });
         let second = edged("b", Edges { before: tight, after: None });
@@ -411,7 +443,7 @@ mod tests {
         impl Render for Token {
             fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
                 let token = &self.0;
-                TransportLayout::render(token.layout.as_ref(), None, TriviaRole::Token, w, |w| w.text(token.text))
+                TransportLayout::render(token.layout.as_deref(), None, TriviaRole::Token, w, |w| w.text(token.text))
             }
         }
         let left = owner("a", &[], &["/* x */"], true);

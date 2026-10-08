@@ -25,10 +25,10 @@ pub fn language() -> tree_sitter::Language {
 use sittir_core::engine::EngineGrammar;
 
 #[cfg(feature = "napi-bindings")]
-use render::{render_transport_parts, RenderRoot, RENDER_MODULE_HASH};
+use render::{render_transport_parts, AnyTransport, RenderRoot, RENDER_MODULE_HASH};
 
 #[cfg(feature = "napi-bindings")]
-const NATIVE_RENDER_TRANSPORT_ABI: u32 = 19;
+const NATIVE_RENDER_TRANSPORT_ABI: u32 = 20;
 
 #[derive(Clone, Copy, Default)]
 pub struct RustGrammar;
@@ -72,6 +72,7 @@ impl sittir_core::read_untyped_node::ReadModel for RustGrammar {
 sittir_core::napi_engine!(
     RustGrammar,
     RenderRoot,
+    AnyTransport,
     render::options::Options,
     render_transport_parts,
     NATIVE_RENDER_TRANSPORT_ABI,

@@ -18,8 +18,8 @@ struct Ceilings {
 }
 
 const CEILINGS: &[Ceilings] = &[
-    Ceilings { os: "macos", arch: "aarch64", release: true, bytes_per_level: 1434.0, root_kib: 40 },
-    Ceilings { os: "macos", arch: "aarch64", release: false, bytes_per_level: 5216.0, root_kib: 168 },
+    Ceilings { os: "macos", arch: "aarch64", release: true, bytes_per_level: 1229.0, root_kib: 23 },
+    Ceilings { os: "macos", arch: "aarch64", release: false, bytes_per_level: 4301.0, root_kib: 151 },
     Ceilings { os: "linux", arch: "x86_64", release: false, bytes_per_level: 5632.0, root_kib: 400 },
 ];
 

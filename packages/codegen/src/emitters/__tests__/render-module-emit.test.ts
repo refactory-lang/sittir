@@ -450,7 +450,7 @@ describe('render options on transports', () => {
 		for (const name of ['ArgumentsTransport', 'StatementBlockTransport']) {
 			const body = extractStructBody(src, name);
 			expect(body).toContain('wire(key = "$_layout")');
-			expect(body).toContain('pub layout: Option<TransportLayout>,');
+			expect(body).toContain('pub layout: Option<Box<TransportLayout>>,');
 			expect(src).toContain(`impl ::sittir_core::options::Edged for ${name} {`);
 			const prepare = src.slice(src.indexOf(`impl ::sittir_core::prepare::Prepare for ${name} {`));
 			expect(prepare.slice(0, prepare.indexOf('\n}\n'))).toContain('::sittir_core::prepare::prepare_edges(self, ctx);');
@@ -535,7 +535,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		]) {
 			expect(transportRs).not.toContain(`pub ${field}:`);
 		}
-		expect(transportRs).toContain('pub layout: Option<TransportLayout>');
+		expect(transportRs).toContain('pub layout: Option<Box<TransportLayout>>');
 		expect(transportRs).not.toContain('pub transport_text: Option<String>');
 	});
 
@@ -744,11 +744,9 @@ describe('transport attributes', () => {
 			.filter(hasBlankArm);
 		const blankChoices = [...src.matchAll(/pub enum (\w+) \{[^}]*\n    #\[transport\(blank\)\]\n    Blank,/g)].map((m) => m[1]!);
 		const heldByBlankChoices = [...src.matchAll(/pub \w+: Option<::sittir_core::SlotValue<(\w+)>>,/g)].filter((m) => blankChoices.includes(m[1]!));
-		const blankIdArms = [...src.matchAll(/ 0 => Some\(Self::Blank\)/g)];
 		expect(blankOptions).toHaveLength(9);
 		expect(heldByBlankChoices).toHaveLength(blankOptions.length);
 		expect(blankChoices).toHaveLength(4);
-		expect(blankIdArms).toHaveLength(blankChoices.length);
 	});
 });
 
@@ -789,7 +787,7 @@ describe('the wire codec facts', () => {
 		}
 		expect(src).toContain('use ::sittir_core::VerbatimTransport;');
 		const item = extractStructBody(src, 'FunctionItemTransport');
-		expect(item).toMatch(/    #\[wire\(key = "\$_layout"\)\]\n    pub layout: Option<TransportLayout>,/);
+		expect(item).toMatch(/    #\[wire\(key = "\$_layout"\)\]\n    pub layout: Option<Box<TransportLayout>>,/);
 		expect(item).toMatch(/    #\[wire\(key = "_name"\)\]\n    #\[slot\(field = field::NAME\)\]\n    pub name: /);
 		expect(extractStructBody(src, 'IdentifierTransport')).toMatch(/    #\[wire\(key = "\$text"\)\]\n    pub text: String,/);
 	});

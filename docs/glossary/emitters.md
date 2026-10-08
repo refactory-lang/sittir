@@ -3735,19 +3735,16 @@ the parent never sees them.
 
 Each payload is written by `choicePayloadType`, boxed when it is pinned over the payload ceiling, and its render arm reaches a boxed payload through `.as_ref()`.
 
-The unit variants' kind ids are computed once (`unitKindIdsOf`) and feed both
-their `#[kind]` claims and, for an enum that backs a prepare-filled slot, its
-`from_kind_id` (`fromKindIdImpl`). Each claim prints as the variant's
-`#[kind]` line (`variantKindLines`), which is what the derive's codec decodes
-from. An id no variant claims, such as the wire id of an alias that wraps a
+The unit variants' kind ids are computed once (`unitKindIdsOf`) and become
+their `#[kind]` claims. Each claim prints as the variant's `#[kind]` line
+(`variantKindLines`), which is what the derive's codec decodes from, and from
+which the derive builds `from_kind_id` for an enum whose arms are all units
+or blank: a prepare-filled slot fills from its option's resolved kind id
+through it, so a slot whose enum has a payload arm fails to compile there.
+An id no variant claims, such as the wire id of an alias that wraps a
 flattened supertype, is refused by the codec.
 
 A slot with a blank arm (`hasBlankArm`) gets a `Blank` variant: it decodes from the blank id, renders nothing, and is no kind.
-
-### `packages/codegen/src/emitters/render-module.ts::UnitKindIds`
-
-A choice's unit arms as kind id → variant pairs (`ids`), and whether every
-literal the slot stores resolved a kind id (`allResolved`).
 
 ### `packages/codegen/src/emitters/render-module.ts::unitKindIdsOf`
 
@@ -3756,22 +3753,6 @@ each stored literal's resolved id (`resolveLiteralKindId`), then each
 fixed-text kind's ids accepted at this slot (the same `acceptedIdsOf` the
 payload arms use, which also checks the ids are routable). Two units sharing
 an id are one pair, not a failure.
-
-### `packages/codegen/src/emitters/render-module.ts::prepareFilledSlotOf`
-
-The prepare-filled slot (`isPrepareFilled`) a per-slot enum backs, found by
-the enum's owner kind and field name; `undefined` for any other enum.
-
-### `packages/codegen/src/emitters/render-module.ts::fromKindIdImpl`
-
-The `from_kind_id(u16) -> Option<Self>` constructor emitted on a per-slot
-enum that backs a prepare-filled slot: one arm per unit kind id
-(`unitKindIdsOf`), `None` for any other id. Every arm of such an enum must
-be a unit a kind id can build; an enum with a payload arm, or a literal that
-did not resolve (`allResolved`), fails codegen, since `prepare` could not
-build that arm from the option's resolved kind id.
-
-A slot with a blank arm maps the blank id to the enum's `Blank` variant, so an option that resolves to the blank fills the slot with a value that renders nothing.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderAnyTransport`
 

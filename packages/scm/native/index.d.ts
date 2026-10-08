@@ -38,6 +38,20 @@ export declare class SittirEngine {
    */
   parseAndRead(source: string, depth?: number | undefined | null): string
   /**
+   * Parse `source` and keep its tree. As JSON `{ treeId, format,
+   * errors }`: the id `read` and `disposeTree` take, the format the
+   * parse detected, and its error regions.
+   */
+  parse(source: string): string
+  /**
+   * The node at `index` of tree `treeId` read into its transport,
+   * `depth` levels down (one when absent, `Infinity` for all); index 0
+   * is the root. Refuses a tree that is not live, an index past its
+   * last node, and a node the model has no route for, naming the
+   * kind, the child and the index.
+   */
+  read(treeId: number, index: number, depth?: number | undefined | null): object
+  /**
    * Hydrate one child of the node named by `handle`.
    *
    * The handle names its own tree, so a handle from a tree that has

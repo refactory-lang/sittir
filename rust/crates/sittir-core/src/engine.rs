@@ -157,10 +157,24 @@ impl<G: EngineGrammar> ParsedTree<G> {
         self.tree_id
     }
 
-    /// The whole tree read into the grammar's typed transports, `depth`
-    /// levels down, or the refusal that stopped the read.
-    pub fn typed_read<R: crate::read::ReadRoot>(&self, depth: crate::read::Depth) -> Result<R, crate::read::ReadError> {
+    /// The parsed tree-sitter tree.
+    pub fn tree(&self) -> &tree_sitter::Tree {
+        &self.tree
+    }
+
+    /// The node at `index` read into `T`, `depth` levels down, with the sides
+    /// its parent's placement gives it; index 0 is the root.
+    pub fn read<T: crate::read::ReadTransport>(&self, index: u32, depth: crate::read::Depth) -> Result<T, crate::read::ReadError> {
         let ctx = crate::read::ReadCtx::new(&self.source, self.tree_id);
+        crate::read::read_at::<T, T>(&mut self.tree.walk(), &ctx, index, depth)
+    }
+
+    /// The whole tree read into the grammar's typed transports, `depth`
+    /// levels down, or the refusal that stopped the read. Without `at`, no
+    /// layout names its node, as in today's read.
+    pub fn typed_read<R: crate::read::ReadRoot>(&self, depth: crate::read::Depth, at: bool) -> Result<R, crate::read::ReadError> {
+        let ctx = crate::read::ReadCtx::new(&self.source, self.tree_id);
+        let ctx = if at { ctx } else { ctx.without_at() };
         R::read_root(&mut self.tree.walk(), &ctx, depth)
     }
 

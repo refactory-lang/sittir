@@ -34,6 +34,8 @@
 ///
 /// - `$grammar` — the crate's [`EngineGrammar`](crate::engine::EngineGrammar) adapter.
 /// - `$render_root` — the generated transport root type accepted by `render`.
+/// - `$any` — the grammar's any-transport: what `read` reads a node into, and
+///   the parent type it reads any parent's routes with.
 /// - `$options` — the grammar's `sittir_core::options::Options<Sites>` (`render::options::Options`), read through its address trie; the shape `EngineOptions.options` and `render`/`render_to_file` accept.
 /// - `$render_parts` — `fn(&$render_root) -> Result<(Source, String), _>`.
 /// - `$abi` — the render transport ABI version this crate was generated against.
@@ -42,7 +44,7 @@
 /// - `$layout_kinds` — every layout kind of the grammar (each `_layout` member, the depth movers among them where the grammar has them), the domain of `$whitespace`.
 #[macro_export]
 macro_rules! napi_engine {
-    ($grammar:ty, $render_root:ty, $options:ty, $render_parts:path, $abi:expr, $defaults:path, $whitespace:path, $layout_kinds:path) => {
+    ($grammar:ty, $render_root:ty, $any:ty, $options:ty, $render_parts:path, $abi:expr, $defaults:path, $whitespace:path, $layout_kinds:path) => {
         #[::napi_derive::napi(object, object_to_js = false)]
         pub struct EngineOptions {
             pub format: Option<String>,
@@ -273,6 +275,49 @@ macro_rules! napi_engine {
                 }
             }
 
+            /// Parse `source` and keep its tree. As JSON `{ treeId, format,
+            /// errors }`: the id `read` and `disposeTree` take, the format the
+            /// parse detected, and its error regions.
+            #[::napi_derive::napi]
+            pub fn parse(&mut self, env: ::napi::Env, source: String) -> ::napi::Result<String> {
+                let tree_id = self.claim_tree_id(&env)?;
+                let parsed = self.engine.parse(source, tree_id).map_err(::napi::Error::from_reason)?;
+                let json = ::serde_json::json!({
+                    "treeId": tree_id,
+                    "format": parsed.format(),
+                    "errors": parsed.error_regions(),
+                })
+                .to_string();
+                LIVE_TREES.with(|trees| trees.borrow_mut().insert(tree_id, parsed));
+                self.last_tree_id = Some(tree_id);
+                Ok(json)
+            }
+
+            /// The node at `index` of tree `treeId` read into its transport,
+            /// `depth` levels down (one when absent, `Infinity` for all); index 0
+            /// is the root. Refuses a tree that is not live, an index past its
+            /// last node, and a node the model has no route for, naming the
+            /// kind, the child and the index.
+            #[::napi_derive::napi(ts_return_type = "object")]
+            pub fn read(&self, tree_id: f64, index: f64, depth: Option<f64>) -> ::napi::Result<$any> {
+                let tree_id = u32::try_from($crate::napi_engine::checked_index(tree_id, "treeId")?)
+                    .map_err(|_| ::napi::Error::from_reason(format!("treeId {tree_id} names no tree")))?;
+                let index = u32::try_from($crate::napi_engine::checked_index(index, "index")?)
+                    .map_err(|_| ::napi::Error::from_reason(format!("index {index} names no node")))?;
+                let depth = $crate::napi_engine::typed_depth_from_wire(depth)?;
+                LIVE_TREES.with(|trees| {
+                    let trees = trees.borrow();
+                    let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                    if $crate::engine::node_at_index(parsed.tree(), index).is_none() {
+                        return Err(::napi::Error::from_reason(format!("index {index} names no node of tree {tree_id}")));
+                    }
+                    let grammar = <$grammar as ::std::default::Default>::default();
+                    ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.read::<$any>(index, depth)))
+                        .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(payload, "read panicked")))?
+                        .map_err(|refusal| ::napi::Error::from_reason(refusal.describe(&|kind| $crate::engine::EngineGrammar::kind_name(grammar, kind))))
+                })
+            }
+
             /// Hydrate one child of the node named by `handle`.
             ///
             /// The handle names its own tree, so a handle from a tree that has
@@ -399,7 +444,7 @@ macro_rules! napi_engine {
             /// or `null` when it reads it.
             #[::napi_derive::napi]
             pub fn typed_read_refusal(&self, tree_id: f64) -> ::napi::Result<Option<String>> {
-                self.with_typed_read(tree_id, $crate::read::Depth::All, |typed: ::std::result::Result<$render_root, $crate::read::ReadError>, name| {
+                self.with_typed_read(tree_id, $crate::read::Depth::All, false, |typed: ::std::result::Result<$render_root, $crate::read::ReadError>, name| {
                     Ok(typed.err().map(|refusal| refusal.describe(name)))
                 })
             }
@@ -413,7 +458,7 @@ macro_rules! napi_engine {
             /// other place the two differ.
             #[::napi_derive::napi(ts_args_type = "treeId: number, today: object")]
             pub fn typed_read_parity(&self, tree_id: f64, today: $render_root) -> ::napi::Result<Option<String>> {
-                self.with_typed_read(tree_id, $crate::read::Depth::All, |typed: ::std::result::Result<$render_root, $crate::read::ReadError>, name| {
+                self.with_typed_read(tree_id, $crate::read::Depth::All, false, |typed: ::std::result::Result<$render_root, $crate::read::ReadError>, name| {
                     Ok(match typed {
                         Err(refusal) => Some(format!("refused: {}", refusal.describe(name))),
                         Ok(typed) if typed == today => None,
@@ -431,7 +476,7 @@ macro_rules! napi_engine {
             #[::napi_derive::napi]
             pub fn typed_read_round_trip(&self, env: ::napi::Env, tree_id: f64) -> ::napi::Result<Option<String>> {
                 for (depth, label) in [($crate::read::Depth::ONE, "one level"), ($crate::read::Depth::All, "whole")] {
-                    let typed = self.with_typed_read(tree_id, depth, |typed: ::std::result::Result<$render_root, $crate::read::ReadError>, name| {
+                    let typed = self.with_typed_read(tree_id, depth, true, |typed: ::std::result::Result<$render_root, $crate::read::ReadError>, name| {
                         Ok(typed.map_err(|refusal| refusal.describe(name)))
                     })?;
                     let typed = match typed {
@@ -537,6 +582,7 @@ macro_rules! napi_engine {
                 &self,
                 tree_id: f64,
                 depth: $crate::read::Depth,
+                at: bool,
                 then: impl FnOnce(
                     ::std::result::Result<$render_root, $crate::read::ReadError>,
                     &dyn Fn($crate::types::KindId) -> &'static str,
@@ -549,7 +595,7 @@ macro_rules! napi_engine {
                     let trees = trees.borrow();
                     let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
                     let typed = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| {
-                        parsed.typed_read::<$render_root>(depth)
+                        parsed.typed_read::<$render_root>(depth, at)
                     }))
                     .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(payload, "typed_read panicked")))?;
                     let grammar = <$grammar as ::std::default::Default>::default();
@@ -723,6 +769,16 @@ fn enclosing_kind(dump: &[String], at: usize) -> &str {
 }
 
 /// The refusal for an address into a tree this thread does not hold.
+/// The typed read's depth from its wire form: absent is one level,
+/// `Infinity` every level, and a whole number `n` at least 1 is `n` levels;
+/// anything else is refused with `depth_from_wire`'s message.
+pub fn typed_depth_from_wire(depth: Option<f64>) -> napi::Result<crate::read::Depth> {
+    Ok(match depth_from_wire(depth)? {
+        crate::ReadDepth::Deep => crate::read::Depth::All,
+        crate::ReadDepth::Levels(levels) => crate::read::Depth::Levels(levels),
+    })
+}
+
 pub fn tree_not_live(tree_id: u32) -> napi::Error {
     napi::Error::from_reason(format!(
         "tree {tree_id} is not live (never parsed on this thread, or already released)"

@@ -24,7 +24,7 @@ use ::sittir_core::VerbatimTransport;
 #[transport(choice)]
 pub enum AnyTransport {
     #[kind(kind::PATTERN)]
-    Pattern(Box<PatternTransport>),
+    Pattern(PatternTransport),
     #[kind(kind::ALTERNATION)]
     Alternation(AlternationTransport),
     #[kind(kind::TERM)]
@@ -32,15 +32,15 @@ pub enum AnyTransport {
     #[kind(kind::LOOKAROUND_ASSERTION)]
     LookaroundAssertion(LookaroundAssertionTransport),
     #[kind(kind::_LOOKAHEAD_ASSERTION)]
-    LookaheadAssertion(Box<LookaheadAssertionTransport>),
+    LookaheadAssertion(LookaheadAssertionTransport),
     #[kind(kind::_LOOKBEHIND_ASSERTION)]
-    LookbehindAssertion(Box<LookbehindAssertionTransport>),
+    LookbehindAssertion(LookbehindAssertionTransport),
     #[kind(kind::PATTERN_CHARACTER)]
     PatternCharacter(PatternCharacterTransport),
     #[kind(kind::CHARACTER_CLASS)]
     CharacterClass(CharacterClassTransport),
     #[kind(kind::POSIX_CHARACTER_CLASS)]
-    PosixCharacterClass(Box<PosixCharacterClassTransport>),
+    PosixCharacterClass(PosixCharacterClassTransport),
     #[kind(kind::POSIX_CLASS_NAME)]
     PosixClassName(PosixClassNameTransport),
     #[kind(kind::CLASS_RANGE)]
@@ -48,11 +48,11 @@ pub enum AnyTransport {
     #[kind(kind::CLASS_CHARACTER)]
     ClassCharacter(ClassCharacterTransport),
     #[kind(kind::ANONYMOUS_CAPTURING_GROUP)]
-    AnonymousCapturingGroup(Box<AnonymousCapturingGroupTransport>),
+    AnonymousCapturingGroup(AnonymousCapturingGroupTransport),
     #[kind(kind::NAMED_CAPTURING_GROUP)]
-    NamedCapturingGroup(Box<NamedCapturingGroupTransport>),
+    NamedCapturingGroup(NamedCapturingGroupTransport),
     #[kind(kind::NON_CAPTURING_GROUP)]
-    NonCapturingGroup(Box<NonCapturingGroupTransport>),
+    NonCapturingGroup(NonCapturingGroupTransport),
     #[kind(kind::FLAGS)]
     Flags(FlagsTransport),
     #[kind(kind::ZERO_OR_MORE)]
@@ -62,19 +62,19 @@ pub enum AnyTransport {
     #[kind(kind::OPTIONAL)]
     Optional(OptionalTransport),
     #[kind(kind::COUNT_QUANTIFIER)]
-    CountQuantifier(Box<CountQuantifierTransport>),
+    CountQuantifier(CountQuantifierTransport),
     #[kind(kind::BACKREFERENCE_ESCAPE)]
-    BackreferenceEscape(Box<BackreferenceEscapeTransport>),
+    BackreferenceEscape(BackreferenceEscapeTransport),
     #[kind(kind::NAMED_GROUP_BACKREFERENCE)]
-    NamedGroupBackreference(Box<NamedGroupBackreferenceTransport>),
+    NamedGroupBackreference(NamedGroupBackreferenceTransport),
     #[kind(kind::DECIMAL_ESCAPE)]
     DecimalEscape(DecimalEscapeTransport),
     #[kind(kind::CHARACTER_CLASS_ESCAPE)]
-    CharacterClassEscape(Box<CharacterClassEscapeTransport>),
+    CharacterClassEscape(CharacterClassEscapeTransport),
     #[kind(kind::UNICODE_CHARACTER_ESCAPE)]
     UnicodeCharacterEscape(UnicodeCharacterEscapeTransport),
     #[kind(kind::UNICODE_PROPERTY_VALUE_EXPRESSION)]
-    UnicodePropertyValueExpression(Box<UnicodePropertyValueExpressionTransport>),
+    UnicodePropertyValueExpression(UnicodePropertyValueExpressionTransport),
     #[kind(kind::UNICODE_PROPERTY_VALUE)]
     UnicodePropertyValue(UnicodePropertyValueTransport),
     #[kind(kind::CONTROL_ESCAPE)]
@@ -90,27 +90,27 @@ pub enum AnyTransport {
     #[kind(kind::TERM_GROUP)]
     TermGroup(Box<TermGroupTransport>),
     #[kind(kind::COUNT_QUANTIFIER_GROUP)]
-    CountQuantifierGroup(Box<CountQuantifierGroupTransport>),
+    CountQuantifierGroup(CountQuantifierGroupTransport),
     #[kind(kind::COUNT_QUANTIFIER_ARM)]
-    CountQuantifierArm(Box<CountQuantifierArmTransport>),
+    CountQuantifierArm(CountQuantifierArmTransport),
     #[kind(kind::CHARACTER_CLASS_ESCAPE_ARM)]
-    CharacterClassEscapeArm(Box<CharacterClassEscapeArmTransport>),
+    CharacterClassEscapeArm(CharacterClassEscapeArmTransport),
     #[kind(kind::UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP)]
-    UnicodePropertyValueExpressionGroup(Box<UnicodePropertyValueExpressionGroupTransport>),
+    UnicodePropertyValueExpressionGroup(UnicodePropertyValueExpressionGroupTransport),
     #[kind(kind::CHARACTER_CLASS_ESCAPE_TEXT1)]
     CharacterClassEscapeText1(CharacterClassEscapeText1Transport),
     #[kind(kind::CHARACTER_CLASS_ESCAPE_TEXT2)]
     CharacterClassEscapeText2(CharacterClassEscapeText2Transport),
     #[kind(kind::INLINE_FLAGS_GROUP_ENABLE)]
-    InlineFlagsGroupEnable(Box<InlineFlagsGroupEnableTransport>),
+    InlineFlagsGroupEnable(InlineFlagsGroupEnableTransport),
     #[kind(kind::INLINE_FLAGS_GROUP_TOGGLE)]
-    InlineFlagsGroupToggle(Box<InlineFlagsGroupToggleTransport>),
+    InlineFlagsGroupToggle(InlineFlagsGroupToggleTransport),
     #[kind(kind::INLINE_FLAGS_GROUP_DISABLE)]
-    InlineFlagsGroupDisable(Box<InlineFlagsGroupDisableTransport>),
+    InlineFlagsGroupDisable(InlineFlagsGroupDisableTransport),
     #[kind(kind::_LAZY, display)]
     Lazy(LazyTransport),
     #[kind(kind::_UNICODE_PROPERTY_NAME, display)]
-    UnicodePropertyName(Box<UnicodePropertyNameTransport>),
+    UnicodePropertyName(UnicodePropertyNameTransport),
     #[kind(kind::ANY_CHARACTER)]
     AnyCharacter,
     #[kind(kind::START_ASSERTION)]
@@ -567,9 +567,9 @@ impl ::sittir_core::render::Render for PatternContentTransportSlot {
 #[transport(choice)]
 pub enum LookaroundAssertionContentTransportSlot {
     #[kind(kind::_LOOKAHEAD_ASSERTION)]
-    LookaheadAssertion(Box<LookaheadAssertionTransport>),
+    LookaheadAssertion(LookaheadAssertionTransport),
     #[kind(kind::_LOOKBEHIND_ASSERTION)]
-    LookbehindAssertion(Box<LookbehindAssertionTransport>),
+    LookbehindAssertion(LookbehindAssertionTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for LookaroundAssertionContentTransportSlot {
@@ -605,8 +605,8 @@ impl ::sittir_core::view::KindOf for LookaroundAssertionContentTransportSlot {
 impl ::sittir_core::render::Render for LookaroundAssertionContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            LookaroundAssertionContentTransportSlot::LookaheadAssertion(inner) => inner.as_ref().render(w),
-            LookaroundAssertionContentTransportSlot::LookbehindAssertion(inner) => inner.as_ref().render(w),
+            LookaroundAssertionContentTransportSlot::LookaheadAssertion(inner) => inner.render(w),
+            LookaroundAssertionContentTransportSlot::LookbehindAssertion(inner) => inner.render(w),
         }
     }
 }
@@ -713,7 +713,7 @@ pub enum CharacterClassClassAtomsTransportSlot {
     #[kind(kind::CLASS_CHARACTER, kind::DASH)]
     ClassCharacter(ClassCharacterTransport),
     #[kind(kind::CHARACTER_CLASS_ESCAPE)]
-    CharacterClassEscape(Box<CharacterClassEscapeTransport>),
+    CharacterClassEscape(CharacterClassEscapeTransport),
     #[kind(kind::CONTROL_ESCAPE)]
     ControlEscape(ControlEscapeTransport),
     #[kind(kind::CONTROL_LETTER_ESCAPE)]
@@ -721,7 +721,7 @@ pub enum CharacterClassClassAtomsTransportSlot {
     #[kind(kind::IDENTITY_ESCAPE, folded(kind::BSLASH_DASH))]
     IdentityEscape(IdentityEscapeTransport),
     #[kind(kind::POSIX_CHARACTER_CLASS)]
-    PosixCharacterClass(Box<PosixCharacterClassTransport>),
+    PosixCharacterClass(PosixCharacterClassTransport),
     #[kind(kind::CLASS_RANGE)]
     ClassRange(Box<ClassRangeTransport>),
     #[kind(kind::BSLASH_DASH)]
@@ -792,11 +792,11 @@ impl ::sittir_core::render::Render for CharacterClassClassAtomsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             CharacterClassClassAtomsTransportSlot::ClassCharacter(inner) => inner.render(w),
-            CharacterClassClassAtomsTransportSlot::CharacterClassEscape(inner) => inner.as_ref().render(w),
+            CharacterClassClassAtomsTransportSlot::CharacterClassEscape(inner) => inner.render(w),
             CharacterClassClassAtomsTransportSlot::ControlEscape(inner) => inner.render(w),
             CharacterClassClassAtomsTransportSlot::ControlLetterEscape(inner) => inner.render(w),
             CharacterClassClassAtomsTransportSlot::IdentityEscape(inner) => inner.render(w),
-            CharacterClassClassAtomsTransportSlot::PosixCharacterClass(inner) => inner.as_ref().render(w),
+            CharacterClassClassAtomsTransportSlot::PosixCharacterClass(inner) => inner.render(w),
             CharacterClassClassAtomsTransportSlot::ClassRange(inner) => inner.as_ref().render(w),
             CharacterClassClassAtomsTransportSlot::BslashDash => render_bslash_dash(w),
             CharacterClassClassAtomsTransportSlot::Verbatim(inner) => inner.render(w),
@@ -810,7 +810,7 @@ pub enum ClassRangeStartTransportSlot {
     #[kind(kind::CLASS_CHARACTER)]
     ClassCharacter(ClassCharacterTransport),
     #[kind(kind::CHARACTER_CLASS_ESCAPE)]
-    CharacterClassEscape(Box<CharacterClassEscapeTransport>),
+    CharacterClassEscape(CharacterClassEscapeTransport),
     #[kind(kind::CONTROL_ESCAPE)]
     ControlEscape(ControlEscapeTransport),
     #[kind(kind::DASH)]
@@ -865,7 +865,7 @@ impl ::sittir_core::render::Render for ClassRangeStartTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             ClassRangeStartTransportSlot::ClassCharacter(inner) => inner.render(w),
-            ClassRangeStartTransportSlot::CharacterClassEscape(inner) => inner.as_ref().render(w),
+            ClassRangeStartTransportSlot::CharacterClassEscape(inner) => inner.render(w),
             ClassRangeStartTransportSlot::ControlEscape(inner) => inner.render(w),
             ClassRangeStartTransportSlot::Dash => {
                 w.site_at(options::SITE_CLASS_RANGE_DASH_BEFORE);
@@ -931,7 +931,7 @@ impl ::sittir_core::render::Render for NamedCapturingGroupContentTransportSlot {
 #[transport(choice)]
 pub enum CountQuantifierContentTransportSlot {
     #[kind(kind::COUNT_QUANTIFIER_ARM)]
-    CountQuantifierArm(Box<CountQuantifierArmTransport>),
+    CountQuantifierArm(CountQuantifierArmTransport),
     #[kind(kind::DECIMAL_DIGITS)]
     DecimalDigits(DecimalDigitsTransport),
     #[transport(verbatim)]
@@ -975,7 +975,7 @@ impl ::sittir_core::view::KindOf for CountQuantifierContentTransportSlot {
 impl ::sittir_core::render::Render for CountQuantifierContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            CountQuantifierContentTransportSlot::CountQuantifierArm(inner) => inner.as_ref().render(w),
+            CountQuantifierContentTransportSlot::CountQuantifierArm(inner) => inner.render(w),
             CountQuantifierContentTransportSlot::DecimalDigits(inner) => inner.render(w),
             CountQuantifierContentTransportSlot::Verbatim(inner) => inner.render(w),
         }
@@ -988,7 +988,7 @@ pub enum CharacterClassEscapeContentTransportSlot {
     #[kind(kind::CHARACTER_CLASS_ESCAPE_TEXT1)]
     CharacterClassEscapeText1(CharacterClassEscapeText1Transport),
     #[kind(kind::CHARACTER_CLASS_ESCAPE_ARM)]
-    CharacterClassEscapeArm(Box<CharacterClassEscapeArmTransport>),
+    CharacterClassEscapeArm(CharacterClassEscapeArmTransport),
     #[kind(kind::UNICODE_CHARACTER_ESCAPE)]
     UnicodeCharacterEscape(UnicodeCharacterEscapeTransport),
     #[transport(verbatim)]
@@ -1037,7 +1037,7 @@ impl ::sittir_core::render::Render for CharacterClassEscapeContentTransportSlot 
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             CharacterClassEscapeContentTransportSlot::CharacterClassEscapeText1(inner) => inner.render(w),
-            CharacterClassEscapeContentTransportSlot::CharacterClassEscapeArm(inner) => inner.as_ref().render(w),
+            CharacterClassEscapeContentTransportSlot::CharacterClassEscapeArm(inner) => inner.render(w),
             CharacterClassEscapeContentTransportSlot::UnicodeCharacterEscape(inner) => inner.render(w),
             CharacterClassEscapeContentTransportSlot::Verbatim(inner) => inner.render(w),
         }
@@ -1054,7 +1054,7 @@ pub enum TermGroupQuantifierTransportSlot {
     #[kind(kind::OPTIONAL)]
     Optional(OptionalTransport),
     #[kind(kind::COUNT_QUANTIFIER)]
-    CountQuantifier(Box<CountQuantifierTransport>),
+    CountQuantifier(CountQuantifierTransport),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -1107,7 +1107,7 @@ impl ::sittir_core::render::Render for TermGroupQuantifierTransportSlot {
             TermGroupQuantifierTransportSlot::ZeroOrMore(inner) => inner.render(w),
             TermGroupQuantifierTransportSlot::OneOrMore(inner) => inner.render(w),
             TermGroupQuantifierTransportSlot::Optional(inner) => inner.render(w),
-            TermGroupQuantifierTransportSlot::CountQuantifier(inner) => inner.as_ref().render(w),
+            TermGroupQuantifierTransportSlot::CountQuantifier(inner) => inner.render(w),
             TermGroupQuantifierTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -1123,11 +1123,11 @@ pub enum TermGroupContentTransportSlot {
     #[kind(kind::CHARACTER_CLASS)]
     CharacterClass(CharacterClassTransport),
     #[kind(kind::POSIX_CHARACTER_CLASS)]
-    PosixCharacterClass(Box<PosixCharacterClassTransport>),
+    PosixCharacterClass(PosixCharacterClassTransport),
     #[kind(kind::DECIMAL_ESCAPE)]
     DecimalEscape(DecimalEscapeTransport),
     #[kind(kind::CHARACTER_CLASS_ESCAPE)]
-    CharacterClassEscape(Box<CharacterClassEscapeTransport>),
+    CharacterClassEscape(CharacterClassEscapeTransport),
     #[kind(kind::CONTROL_ESCAPE)]
     ControlEscape(ControlEscapeTransport),
     #[kind(kind::CONTROL_LETTER_ESCAPE)]
@@ -1135,21 +1135,21 @@ pub enum TermGroupContentTransportSlot {
     #[kind(kind::IDENTITY_ESCAPE, kind::BSLASH_DASH, folded(kind::BSLASH_DASH))]
     IdentityEscape(IdentityEscapeTransport),
     #[kind(kind::BACKREFERENCE_ESCAPE)]
-    BackreferenceEscape(Box<BackreferenceEscapeTransport>),
+    BackreferenceEscape(BackreferenceEscapeTransport),
     #[kind(kind::NAMED_GROUP_BACKREFERENCE)]
-    NamedGroupBackreference(Box<NamedGroupBackreferenceTransport>),
+    NamedGroupBackreference(NamedGroupBackreferenceTransport),
     #[kind(kind::ANONYMOUS_CAPTURING_GROUP)]
-    AnonymousCapturingGroup(Box<AnonymousCapturingGroupTransport>),
+    AnonymousCapturingGroup(AnonymousCapturingGroupTransport),
     #[kind(kind::NAMED_CAPTURING_GROUP)]
-    NamedCapturingGroup(Box<NamedCapturingGroupTransport>),
+    NamedCapturingGroup(NamedCapturingGroupTransport),
     #[kind(kind::NON_CAPTURING_GROUP)]
-    NonCapturingGroup(Box<NonCapturingGroupTransport>),
+    NonCapturingGroup(NonCapturingGroupTransport),
     #[kind(kind::INLINE_FLAGS_GROUP_ENABLE)]
-    InlineFlagsGroupEnable(Box<InlineFlagsGroupEnableTransport>),
+    InlineFlagsGroupEnable(InlineFlagsGroupEnableTransport),
     #[kind(kind::INLINE_FLAGS_GROUP_TOGGLE)]
-    InlineFlagsGroupToggle(Box<InlineFlagsGroupToggleTransport>),
+    InlineFlagsGroupToggle(InlineFlagsGroupToggleTransport),
     #[kind(kind::INLINE_FLAGS_GROUP_DISABLE)]
-    InlineFlagsGroupDisable(Box<InlineFlagsGroupDisableTransport>),
+    InlineFlagsGroupDisable(InlineFlagsGroupDisableTransport),
     #[kind(kind::START_ASSERTION, kind::CARET)]
     StartAssertion,
     #[kind(kind::END_ASSERTION)]
@@ -1284,20 +1284,20 @@ impl ::sittir_core::render::Render for TermGroupContentTransportSlot {
             TermGroupContentTransportSlot::LookaroundAssertion(inner) => inner.render(w),
             TermGroupContentTransportSlot::PatternCharacter(inner) => inner.render(w),
             TermGroupContentTransportSlot::CharacterClass(inner) => inner.render(w),
-            TermGroupContentTransportSlot::PosixCharacterClass(inner) => inner.as_ref().render(w),
+            TermGroupContentTransportSlot::PosixCharacterClass(inner) => inner.render(w),
             TermGroupContentTransportSlot::DecimalEscape(inner) => inner.render(w),
-            TermGroupContentTransportSlot::CharacterClassEscape(inner) => inner.as_ref().render(w),
+            TermGroupContentTransportSlot::CharacterClassEscape(inner) => inner.render(w),
             TermGroupContentTransportSlot::ControlEscape(inner) => inner.render(w),
             TermGroupContentTransportSlot::ControlLetterEscape(inner) => inner.render(w),
             TermGroupContentTransportSlot::IdentityEscape(inner) => inner.render(w),
-            TermGroupContentTransportSlot::BackreferenceEscape(inner) => inner.as_ref().render(w),
-            TermGroupContentTransportSlot::NamedGroupBackreference(inner) => inner.as_ref().render(w),
-            TermGroupContentTransportSlot::AnonymousCapturingGroup(inner) => inner.as_ref().render(w),
-            TermGroupContentTransportSlot::NamedCapturingGroup(inner) => inner.as_ref().render(w),
-            TermGroupContentTransportSlot::NonCapturingGroup(inner) => inner.as_ref().render(w),
-            TermGroupContentTransportSlot::InlineFlagsGroupEnable(inner) => inner.as_ref().render(w),
-            TermGroupContentTransportSlot::InlineFlagsGroupToggle(inner) => inner.as_ref().render(w),
-            TermGroupContentTransportSlot::InlineFlagsGroupDisable(inner) => inner.as_ref().render(w),
+            TermGroupContentTransportSlot::BackreferenceEscape(inner) => inner.render(w),
+            TermGroupContentTransportSlot::NamedGroupBackreference(inner) => inner.render(w),
+            TermGroupContentTransportSlot::AnonymousCapturingGroup(inner) => inner.render(w),
+            TermGroupContentTransportSlot::NamedCapturingGroup(inner) => inner.render(w),
+            TermGroupContentTransportSlot::NonCapturingGroup(inner) => inner.render(w),
+            TermGroupContentTransportSlot::InlineFlagsGroupEnable(inner) => inner.render(w),
+            TermGroupContentTransportSlot::InlineFlagsGroupToggle(inner) => inner.render(w),
+            TermGroupContentTransportSlot::InlineFlagsGroupDisable(inner) => inner.render(w),
             TermGroupContentTransportSlot::StartAssertion => {
                 let written = render_start_assertion(w);
                 written?;
@@ -1369,7 +1369,7 @@ impl ::sittir_core::render::Render for LazyContentTransportSlot {
 #[transport(kind = kind::PATTERN)]
 pub struct PatternTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<PatternContentTransportSlot>,
@@ -1389,7 +1389,7 @@ impl ::sittir_core::options::Edged for PatternTransport {
 
 impl ::sittir_core::render::Render for PatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(51)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_pattern(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(51)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_pattern(self, w))
     }
 }
 
@@ -1418,7 +1418,7 @@ impl ::sittir_core::prepare::Prepare for PatternTransport {
 #[transport(kind = kind::ALTERNATION)]
 pub struct AlternationTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_terms")]
     #[slot(field = field::TERMS, separator = kind::PIPE)]
     pub terms: Vec<Option<::sittir_core::SlotValue<TermTransport>>>,
@@ -1442,7 +1442,7 @@ impl ::sittir_core::options::Edged for AlternationTransport {
 
 impl ::sittir_core::render::Render for AlternationTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(52)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_alternation(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(52)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_alternation(self, w))
     }
 }
 
@@ -1467,7 +1467,7 @@ impl ::sittir_core::prepare::Prepare for AlternationTransport {
 #[transport(kind = kind::TERM)]
 pub struct TermTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_term_group")]
     #[slot]
     pub term_group: Vec<::sittir_core::SlotValue<TermGroupTransport>>,
@@ -1489,7 +1489,7 @@ impl ::sittir_core::options::Edged for TermTransport {
 
 impl ::sittir_core::render::Render for TermTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(53)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_term(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(53)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_term(self, w))
     }
 }
 
@@ -1639,7 +1639,7 @@ impl ::sittir_core::render::Render for NonBoundaryAssertionTransport {
 #[transport(kind = kind::LOOKAROUND_ASSERTION)]
 pub struct LookaroundAssertionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<LookaroundAssertionContentTransportSlot>,
@@ -1659,7 +1659,7 @@ impl ::sittir_core::options::Edged for LookaroundAssertionTransport {
 
 impl ::sittir_core::render::Render for LookaroundAssertionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(55)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lookaround_assertion(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(55)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lookaround_assertion(self, w))
     }
 }
 
@@ -1681,7 +1681,7 @@ impl ::sittir_core::prepare::Prepare for LookaroundAssertionTransport {
 #[transport(kind = kind::_LOOKAHEAD_ASSERTION, layout = [kind::LPAREN_QMARK, kind::EQ, kind::BANG, kind::RPAREN])]
 pub struct LookaheadAssertionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<LookaheadAssertionContentTransportSlot>,
@@ -1704,7 +1704,7 @@ impl ::sittir_core::options::Edged for LookaheadAssertionTransport {
 
 impl ::sittir_core::render::Render for LookaheadAssertionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(56)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lookahead_assertion(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(56)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lookahead_assertion(self, w))
     }
 }
 
@@ -1730,7 +1730,7 @@ impl ::sittir_core::prepare::Prepare for LookaheadAssertionTransport {
 #[transport(kind = kind::_LOOKBEHIND_ASSERTION, layout = [kind::LPAREN_QMARK_LT, kind::EQ, kind::BANG, kind::RPAREN])]
 pub struct LookbehindAssertionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<LookbehindAssertionContentTransportSlot>,
@@ -1753,7 +1753,7 @@ impl ::sittir_core::options::Edged for LookbehindAssertionTransport {
 
 impl ::sittir_core::render::Render for LookbehindAssertionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(57)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lookbehind_assertion(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(57)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lookbehind_assertion(self, w))
     }
 }
 
@@ -1779,7 +1779,7 @@ impl ::sittir_core::prepare::Prepare for LookbehindAssertionTransport {
 #[transport(kind = kind::PATTERN_CHARACTER, text)]
 pub struct PatternCharacterTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -1798,7 +1798,7 @@ impl ::sittir_core::options::Edged for PatternCharacterTransport {
 
 impl ::sittir_core::render::Render for PatternCharacterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(12)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(12)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -1819,7 +1819,7 @@ impl ::sittir_core::prepare::Prepare for PatternCharacterTransport {
 #[transport(kind = kind::CHARACTER_CLASS, layout = [kind::LBRACK, kind::RBRACK], gap(1) = negation)]
 pub struct CharacterClassTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_leading")]
     #[slot(field = field::LEADING, presence = kind::CLASS_CHARACTER)]
     pub leading: Option<bool>,
@@ -1848,7 +1848,7 @@ impl ::sittir_core::options::Edged for CharacterClassTransport {
 
 impl ::sittir_core::render::Render for CharacterClassTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(58)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_character_class(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(58)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_character_class(self, w))
     }
 }
 
@@ -1876,7 +1876,7 @@ impl ::sittir_core::prepare::Prepare for CharacterClassTransport {
 #[transport(kind = kind::POSIX_CHARACTER_CLASS, layout = [kind::LBRACK_COLON, kind::COLON_RBRACK])]
 pub struct PosixCharacterClassTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_posix_class_name")]
     #[slot(field = field::POSIX_CLASS_NAME)]
     pub posix_class_name: ::sittir_core::SlotValue<PosixClassNameTransport>,
@@ -1896,7 +1896,7 @@ impl ::sittir_core::options::Edged for PosixCharacterClassTransport {
 
 impl ::sittir_core::render::Render for PosixCharacterClassTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(59)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_posix_character_class(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(59)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_posix_character_class(self, w))
     }
 }
 
@@ -1921,7 +1921,7 @@ impl ::sittir_core::prepare::Prepare for PosixCharacterClassTransport {
 #[transport(kind = kind::POSIX_CLASS_NAME, text)]
 pub struct PosixClassNameTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -1940,7 +1940,7 @@ impl ::sittir_core::options::Edged for PosixClassNameTransport {
 
 impl ::sittir_core::render::Render for PosixClassNameTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(60)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(60)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -1961,7 +1961,7 @@ impl ::sittir_core::prepare::Prepare for PosixClassNameTransport {
 #[transport(kind = kind::CLASS_RANGE, layout = [kind::DASH])]
 pub struct ClassRangeTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_start")]
     #[slot(field = field::START)]
     pub start: ::sittir_core::SlotValue<ClassRangeStartTransportSlot>,
@@ -1984,7 +1984,7 @@ impl ::sittir_core::options::Edged for ClassRangeTransport {
 
 impl ::sittir_core::render::Render for ClassRangeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(61)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_class_range(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(61)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_class_range(self, w))
     }
 }
 
@@ -2010,7 +2010,7 @@ impl ::sittir_core::prepare::Prepare for ClassRangeTransport {
 #[transport(kind = kind::CLASS_CHARACTER, text)]
 pub struct ClassCharacterTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -2029,7 +2029,7 @@ impl ::sittir_core::options::Edged for ClassCharacterTransport {
 
 impl ::sittir_core::render::Render for ClassCharacterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(20)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(20)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -2050,7 +2050,7 @@ impl ::sittir_core::prepare::Prepare for ClassCharacterTransport {
 #[transport(kind = kind::ANONYMOUS_CAPTURING_GROUP, layout = [kind::LPAREN, kind::RPAREN])]
 pub struct AnonymousCapturingGroupTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN)]
     pub pattern: ::sittir_core::SlotValue<PatternTransport>,
@@ -2070,7 +2070,7 @@ impl ::sittir_core::options::Edged for AnonymousCapturingGroupTransport {
 
 impl ::sittir_core::render::Render for AnonymousCapturingGroupTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(62)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_anonymous_capturing_group(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(62)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_anonymous_capturing_group(self, w))
     }
 }
 
@@ -2095,7 +2095,7 @@ impl ::sittir_core::prepare::Prepare for AnonymousCapturingGroupTransport {
 #[transport(kind = kind::NAMED_CAPTURING_GROUP, layout = [kind::LPAREN_QMARK_LT, kind::LPAREN_QMARK_P_LT, kind::GT, kind::RPAREN])]
 pub struct NamedCapturingGroupTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_group_name")]
     #[slot(field = field::GROUP_NAME)]
     pub group_name: ::sittir_core::SlotValue<GroupNameTransport>,
@@ -2125,7 +2125,7 @@ impl ::sittir_core::options::Edged for NamedCapturingGroupTransport {
 
 impl ::sittir_core::render::Render for NamedCapturingGroupTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(63)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_named_capturing_group(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(63)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_named_capturing_group(self, w))
     }
 }
 
@@ -2152,7 +2152,7 @@ impl ::sittir_core::prepare::Prepare for NamedCapturingGroupTransport {
 #[transport(kind = kind::NON_CAPTURING_GROUP, layout = [kind::LPAREN_QMARK_COLON, kind::RPAREN])]
 pub struct NonCapturingGroupTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN)]
     pub pattern: ::sittir_core::SlotValue<PatternTransport>,
@@ -2172,7 +2172,7 @@ impl ::sittir_core::options::Edged for NonCapturingGroupTransport {
 
 impl ::sittir_core::render::Render for NonCapturingGroupTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(64)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_non_capturing_group(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(64)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_non_capturing_group(self, w))
     }
 }
 
@@ -2197,7 +2197,7 @@ impl ::sittir_core::prepare::Prepare for NonCapturingGroupTransport {
 #[transport(kind = kind::FLAGS, text)]
 pub struct FlagsTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -2216,7 +2216,7 @@ impl ::sittir_core::options::Edged for FlagsTransport {
 
 impl ::sittir_core::render::Render for FlagsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(66)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(66)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -2237,7 +2237,7 @@ impl ::sittir_core::prepare::Prepare for FlagsTransport {
 #[transport(kind = kind::ZERO_OR_MORE, text)]
 pub struct ZeroOrMoreTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -2256,7 +2256,7 @@ impl ::sittir_core::options::Edged for ZeroOrMoreTransport {
 
 impl ::sittir_core::render::Render for ZeroOrMoreTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(67)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(67)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -2277,7 +2277,7 @@ impl ::sittir_core::prepare::Prepare for ZeroOrMoreTransport {
 #[transport(kind = kind::ONE_OR_MORE, text)]
 pub struct OneOrMoreTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -2296,7 +2296,7 @@ impl ::sittir_core::options::Edged for OneOrMoreTransport {
 
 impl ::sittir_core::render::Render for OneOrMoreTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(68)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(68)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -2317,7 +2317,7 @@ impl ::sittir_core::prepare::Prepare for OneOrMoreTransport {
 #[transport(kind = kind::OPTIONAL, text)]
 pub struct OptionalTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -2336,7 +2336,7 @@ impl ::sittir_core::options::Edged for OptionalTransport {
 
 impl ::sittir_core::render::Render for OptionalTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(69)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(69)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -2357,7 +2357,7 @@ impl ::sittir_core::prepare::Prepare for OptionalTransport {
 #[transport(kind = kind::COUNT_QUANTIFIER, layout = [kind::LBRACE, kind::RBRACE, kind::_LAZY])]
 pub struct CountQuantifierTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<CountQuantifierContentTransportSlot>,
@@ -2380,7 +2380,7 @@ impl ::sittir_core::options::Edged for CountQuantifierTransport {
 
 impl ::sittir_core::render::Render for CountQuantifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(70)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_count_quantifier(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(70)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_count_quantifier(self, w))
     }
 }
 
@@ -2406,7 +2406,7 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierTransport {
 #[transport(kind = kind::BACKREFERENCE_ESCAPE, layout = [kind::BSLASHK, kind::LT, kind::GT])]
 pub struct BackreferenceEscapeTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_group_name")]
     #[slot(field = field::GROUP_NAME)]
     pub group_name: ::sittir_core::SlotValue<GroupNameTransport>,
@@ -2426,7 +2426,7 @@ impl ::sittir_core::options::Edged for BackreferenceEscapeTransport {
 
 impl ::sittir_core::render::Render for BackreferenceEscapeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(71)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_backreference_escape(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(71)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_backreference_escape(self, w))
     }
 }
 
@@ -2451,7 +2451,7 @@ impl ::sittir_core::prepare::Prepare for BackreferenceEscapeTransport {
 #[transport(kind = kind::NAMED_GROUP_BACKREFERENCE, layout = [kind::LPAREN_QMARK_P_EQ, kind::RPAREN])]
 pub struct NamedGroupBackreferenceTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_group_name")]
     #[slot(field = field::GROUP_NAME)]
     pub group_name: ::sittir_core::SlotValue<GroupNameTransport>,
@@ -2471,7 +2471,7 @@ impl ::sittir_core::options::Edged for NamedGroupBackreferenceTransport {
 
 impl ::sittir_core::render::Render for NamedGroupBackreferenceTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(72)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_named_group_backreference(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(72)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_named_group_backreference(self, w))
     }
 }
 
@@ -2496,7 +2496,7 @@ impl ::sittir_core::prepare::Prepare for NamedGroupBackreferenceTransport {
 #[transport(kind = kind::DECIMAL_ESCAPE, text)]
 pub struct DecimalEscapeTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -2515,7 +2515,7 @@ impl ::sittir_core::options::Edged for DecimalEscapeTransport {
 
 impl ::sittir_core::render::Render for DecimalEscapeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(34)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(34)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -2536,7 +2536,7 @@ impl ::sittir_core::prepare::Prepare for DecimalEscapeTransport {
 #[transport(kind = kind::CHARACTER_CLASS_ESCAPE)]
 pub struct CharacterClassEscapeTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<CharacterClassEscapeContentTransportSlot>,
@@ -2556,7 +2556,7 @@ impl ::sittir_core::options::Edged for CharacterClassEscapeTransport {
 
 impl ::sittir_core::render::Render for CharacterClassEscapeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(73)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_character_class_escape(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(73)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_character_class_escape(self, w))
     }
 }
 
@@ -2578,7 +2578,7 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeTransport {
 #[transport(kind = kind::UNICODE_CHARACTER_ESCAPE, text)]
 pub struct UnicodeCharacterEscapeTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -2597,7 +2597,7 @@ impl ::sittir_core::options::Edged for UnicodeCharacterEscapeTransport {
 
 impl ::sittir_core::render::Render for UnicodeCharacterEscapeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(74)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(74)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -2618,7 +2618,7 @@ impl ::sittir_core::prepare::Prepare for UnicodeCharacterEscapeTransport {
 #[transport(kind = kind::UNICODE_PROPERTY_VALUE_EXPRESSION)]
 pub struct UnicodePropertyValueExpressionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_unicode_property_value_expression_group")]
     #[slot]
     pub unicode_property_value_expression_group: Option<::sittir_core::SlotValue<UnicodePropertyValueExpressionGroupTransport>>,
@@ -2641,7 +2641,7 @@ impl ::sittir_core::options::Edged for UnicodePropertyValueExpressionTransport {
 
 impl ::sittir_core::render::Render for UnicodePropertyValueExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(75)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_unicode_property_value_expression(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(75)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_unicode_property_value_expression(self, w))
     }
 }
 
@@ -2667,7 +2667,7 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyValueExpressionTransport
 #[transport(kind = kind::UNICODE_PROPERTY_VALUE, text)]
 pub struct UnicodePropertyValueTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -2686,7 +2686,7 @@ impl ::sittir_core::options::Edged for UnicodePropertyValueTransport {
 
 impl ::sittir_core::render::Render for UnicodePropertyValueTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(35)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(35)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -2707,7 +2707,7 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyValueTransport {
 #[transport(kind = kind::CONTROL_ESCAPE, text)]
 pub struct ControlEscapeTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -2726,7 +2726,7 @@ impl ::sittir_core::options::Edged for ControlEscapeTransport {
 
 impl ::sittir_core::render::Render for ControlEscapeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(76)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(76)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -2747,7 +2747,7 @@ impl ::sittir_core::prepare::Prepare for ControlEscapeTransport {
 #[transport(kind = kind::CONTROL_LETTER_ESCAPE, text)]
 pub struct ControlLetterEscapeTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -2766,7 +2766,7 @@ impl ::sittir_core::options::Edged for ControlLetterEscapeTransport {
 
 impl ::sittir_core::render::Render for ControlLetterEscapeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(36)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(36)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -2787,7 +2787,7 @@ impl ::sittir_core::prepare::Prepare for ControlLetterEscapeTransport {
 #[transport(kind = kind::IDENTITY_ESCAPE, folded = [kind::BSLASH_DASH], interior = "^\\\\(?<content>(?:[^kdDsSpPwWbfnrtv0-9]))$")]
 pub struct IdentityEscapeTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     pub content: String,
@@ -2807,7 +2807,7 @@ impl ::sittir_core::options::Edged for IdentityEscapeTransport {
 
 impl ::sittir_core::render::Render for IdentityEscapeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(37)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_identity_escape(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(37)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_identity_escape(self, w))
     }
 }
 
@@ -2829,7 +2829,7 @@ impl ::sittir_core::prepare::Prepare for IdentityEscapeTransport {
 #[transport(kind = kind::GROUP_NAME, text)]
 pub struct GroupNameTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -2848,7 +2848,7 @@ impl ::sittir_core::options::Edged for GroupNameTransport {
 
 impl ::sittir_core::render::Render for GroupNameTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(38)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(38)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -2869,7 +2869,7 @@ impl ::sittir_core::prepare::Prepare for GroupNameTransport {
 #[transport(kind = kind::DECIMAL_DIGITS, text)]
 pub struct DecimalDigitsTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -2888,7 +2888,7 @@ impl ::sittir_core::options::Edged for DecimalDigitsTransport {
 
 impl ::sittir_core::render::Render for DecimalDigitsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(39)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(39)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -2909,7 +2909,7 @@ impl ::sittir_core::prepare::Prepare for DecimalDigitsTransport {
 #[transport(kind = kind::TERM_GROUP)]
 pub struct TermGroupTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_quantifier")]
     #[slot(field = field::QUANTIFIER)]
     pub quantifier: Option<::sittir_core::SlotValue<TermGroupQuantifierTransportSlot>>,
@@ -2932,7 +2932,7 @@ impl ::sittir_core::options::Edged for TermGroupTransport {
 
 impl ::sittir_core::render::Render for TermGroupTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(77)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_term_group(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(77)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_term_group(self, w))
     }
 }
 
@@ -2958,7 +2958,7 @@ impl ::sittir_core::prepare::Prepare for TermGroupTransport {
 #[transport(kind = kind::COUNT_QUANTIFIER_GROUP, layout = [kind::COMMA])]
 pub struct CountQuantifierGroupTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_decimal_digits")]
     #[slot]
     pub decimal_digits: Option<::sittir_core::SlotValue<DecimalDigitsTransport>>,
@@ -2978,7 +2978,7 @@ impl ::sittir_core::options::Edged for CountQuantifierGroupTransport {
 
 impl ::sittir_core::render::Render for CountQuantifierGroupTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(78)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_count_quantifier_group(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(78)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_count_quantifier_group(self, w))
     }
 }
 
@@ -3003,7 +3003,7 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierGroupTransport {
 #[transport(kind = kind::COUNT_QUANTIFIER_ARM)]
 pub struct CountQuantifierArmTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_decimal_digits")]
     #[slot]
     pub decimal_digits: ::sittir_core::SlotValue<DecimalDigitsTransport>,
@@ -3026,7 +3026,7 @@ impl ::sittir_core::options::Edged for CountQuantifierArmTransport {
 
 impl ::sittir_core::render::Render for CountQuantifierArmTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(79)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_count_quantifier_arm(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(79)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_count_quantifier_arm(self, w))
     }
 }
 
@@ -3052,7 +3052,7 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierArmTransport {
 #[transport(kind = kind::CHARACTER_CLASS_ESCAPE_ARM, layout = [kind::LBRACE, kind::RBRACE])]
 pub struct CharacterClassEscapeArmTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_unicode_property_value_expression")]
     #[slot(field = field::UNICODE_PROPERTY_VALUE_EXPRESSION)]
     pub unicode_property_value_expression: ::sittir_core::SlotValue<UnicodePropertyValueExpressionTransport>,
@@ -3075,7 +3075,7 @@ impl ::sittir_core::options::Edged for CharacterClassEscapeArmTransport {
 
 impl ::sittir_core::render::Render for CharacterClassEscapeArmTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(80)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_character_class_escape_arm(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(80)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_character_class_escape_arm(self, w))
     }
 }
 
@@ -3101,7 +3101,7 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeArmTransport {
 #[transport(kind = kind::UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP, layout = [kind::EQ])]
 pub struct UnicodePropertyValueExpressionGroupTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_unicode_property_name")]
     #[slot]
     pub unicode_property_name: ::sittir_core::SlotValue<UnicodePropertyNameTransport>,
@@ -3121,7 +3121,7 @@ impl ::sittir_core::options::Edged for UnicodePropertyValueExpressionGroupTransp
 
 impl ::sittir_core::render::Render for UnicodePropertyValueExpressionGroupTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(81)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_unicode_property_value_expression_group(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(81)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_unicode_property_value_expression_group(self, w))
     }
 }
 
@@ -3146,7 +3146,7 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyValueExpressionGroupTran
 #[transport(kind = kind::CHARACTER_CLASS_ESCAPE_TEXT1, text)]
 pub struct CharacterClassEscapeText1Transport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -3165,7 +3165,7 @@ impl ::sittir_core::options::Edged for CharacterClassEscapeText1Transport {
 
 impl ::sittir_core::render::Render for CharacterClassEscapeText1Transport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(41)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(41)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -3186,7 +3186,7 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeText1Transport {
 #[transport(kind = kind::CHARACTER_CLASS_ESCAPE_TEXT2, text)]
 pub struct CharacterClassEscapeText2Transport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -3205,7 +3205,7 @@ impl ::sittir_core::options::Edged for CharacterClassEscapeText2Transport {
 
 impl ::sittir_core::render::Render for CharacterClassEscapeText2Transport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(42)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(42)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -3251,7 +3251,7 @@ impl ::sittir_core::render::Render for NegationTransport {
 #[transport(kind = kind::INLINE_FLAGS_GROUP_ENABLE, layout = [kind::LPAREN_QMARK, kind::COLON, kind::RPAREN])]
 pub struct InlineFlagsGroupEnableTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_enabled")]
     #[slot(field = field::ENABLED)]
     pub enabled: ::sittir_core::SlotValue<FlagsTransport>,
@@ -3274,7 +3274,7 @@ impl ::sittir_core::options::Edged for InlineFlagsGroupEnableTransport {
 
 impl ::sittir_core::render::Render for InlineFlagsGroupEnableTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(83)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_inline_flags_group_enable(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(83)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_inline_flags_group_enable(self, w))
     }
 }
 
@@ -3300,7 +3300,7 @@ impl ::sittir_core::prepare::Prepare for InlineFlagsGroupEnableTransport {
 #[transport(kind = kind::INLINE_FLAGS_GROUP_TOGGLE, layout = [kind::LPAREN_QMARK, kind::DASH, kind::COLON, kind::RPAREN])]
 pub struct InlineFlagsGroupToggleTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_enabled")]
     #[slot(field = field::ENABLED)]
     pub enabled: ::sittir_core::SlotValue<FlagsTransport>,
@@ -3326,7 +3326,7 @@ impl ::sittir_core::options::Edged for InlineFlagsGroupToggleTransport {
 
 impl ::sittir_core::render::Render for InlineFlagsGroupToggleTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(84)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_inline_flags_group_toggle(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(84)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_inline_flags_group_toggle(self, w))
     }
 }
 
@@ -3353,7 +3353,7 @@ impl ::sittir_core::prepare::Prepare for InlineFlagsGroupToggleTransport {
 #[transport(kind = kind::INLINE_FLAGS_GROUP_DISABLE, layout = [kind::LPAREN_QMARK, kind::DASH, kind::COLON, kind::RPAREN])]
 pub struct InlineFlagsGroupDisableTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_disabled")]
     #[slot(field = field::DISABLED)]
     pub disabled: ::sittir_core::SlotValue<FlagsTransport>,
@@ -3376,7 +3376,7 @@ impl ::sittir_core::options::Edged for InlineFlagsGroupDisableTransport {
 
 impl ::sittir_core::render::Render for InlineFlagsGroupDisableTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(85)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_inline_flags_group_disable(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(85)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_inline_flags_group_disable(self, w))
     }
 }
 
@@ -3502,7 +3502,7 @@ impl ::sittir_core::render::Render for DoubleBlanklineTransport {
 #[transport(kind = kind::_LAZY, display, envelope, content = content)]
 pub struct LazyTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     pub content: ::sittir_core::SlotValue<LazyContentTransportSlot>,
 }
@@ -3521,7 +3521,7 @@ impl ::sittir_core::options::Edged for LazyTransport {
 
 impl ::sittir_core::render::Render for LazyTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(89)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lazy(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(89)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lazy(self, w))
     }
 }
 
@@ -3543,7 +3543,7 @@ impl ::sittir_core::prepare::Prepare for LazyTransport {
 #[transport(kind = kind::_UNICODE_PROPERTY_NAME, display, envelope, content = content)]
 pub struct UnicodePropertyNameTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     pub content: ::sittir_core::SlotValue<UnicodePropertyValueTransport>,
 }
@@ -3562,7 +3562,7 @@ impl ::sittir_core::options::Edged for UnicodePropertyNameTransport {
 
 impl ::sittir_core::render::Render for UnicodePropertyNameTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(90)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_unicode_property_name(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(90)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_unicode_property_name(self, w))
     }
 }
 
@@ -5061,46 +5061,46 @@ pub fn render_transport_parts(
 }
 
 const _: () = assert!(::core::mem::size_of::<AlternationTransport>() <= 256, "AlternationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AnonymousCapturingGroupTransport>() > 256, "AnonymousCapturingGroupTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<BackreferenceEscapeTransport>() > 256, "BackreferenceEscapeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CharacterClassEscapeArmTransport>() > 256, "CharacterClassEscapeArmTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<AnonymousCapturingGroupTransport>() <= 256, "AnonymousCapturingGroupTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<BackreferenceEscapeTransport>() <= 256, "BackreferenceEscapeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CharacterClassEscapeArmTransport>() <= 256, "CharacterClassEscapeArmTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<CharacterClassEscapeText1Transport>() <= 256, "CharacterClassEscapeText1Transport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<CharacterClassEscapeText2Transport>() <= 256, "CharacterClassEscapeText2Transport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CharacterClassEscapeTransport>() > 256, "CharacterClassEscapeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CharacterClassEscapeTransport>() <= 256, "CharacterClassEscapeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<CharacterClassTransport>() <= 256, "CharacterClassTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ClassCharacterTransport>() <= 256, "ClassCharacterTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ClassRangeTransport>() > 256, "ClassRangeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ControlEscapeTransport>() <= 256, "ControlEscapeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ControlLetterEscapeTransport>() <= 256, "ControlLetterEscapeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CountQuantifierArmTransport>() > 256, "CountQuantifierArmTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CountQuantifierGroupTransport>() > 256, "CountQuantifierGroupTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CountQuantifierTransport>() > 256, "CountQuantifierTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CountQuantifierArmTransport>() <= 256, "CountQuantifierArmTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CountQuantifierGroupTransport>() <= 256, "CountQuantifierGroupTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CountQuantifierTransport>() <= 256, "CountQuantifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DecimalDigitsTransport>() <= 256, "DecimalDigitsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DecimalEscapeTransport>() <= 256, "DecimalEscapeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FlagsTransport>() <= 256, "FlagsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<GroupNameTransport>() <= 256, "GroupNameTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<IdentityEscapeTransport>() <= 256, "IdentityEscapeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<InlineFlagsGroupDisableTransport>() > 256, "InlineFlagsGroupDisableTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<InlineFlagsGroupEnableTransport>() > 256, "InlineFlagsGroupEnableTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<InlineFlagsGroupToggleTransport>() > 256, "InlineFlagsGroupToggleTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<InlineFlagsGroupDisableTransport>() <= 256, "InlineFlagsGroupDisableTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<InlineFlagsGroupEnableTransport>() <= 256, "InlineFlagsGroupEnableTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<InlineFlagsGroupToggleTransport>() <= 256, "InlineFlagsGroupToggleTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<LazyTransport>() <= 256, "LazyTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LookaheadAssertionTransport>() > 256, "LookaheadAssertionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<LookaheadAssertionTransport>() <= 256, "LookaheadAssertionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<LookaroundAssertionTransport>() <= 256, "LookaroundAssertionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LookbehindAssertionTransport>() > 256, "LookbehindAssertionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<NamedCapturingGroupTransport>() > 256, "NamedCapturingGroupTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<NamedGroupBackreferenceTransport>() > 256, "NamedGroupBackreferenceTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<NonCapturingGroupTransport>() > 256, "NonCapturingGroupTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<LookbehindAssertionTransport>() <= 256, "LookbehindAssertionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<NamedCapturingGroupTransport>() <= 256, "NamedCapturingGroupTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<NamedGroupBackreferenceTransport>() <= 256, "NamedGroupBackreferenceTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<NonCapturingGroupTransport>() <= 256, "NonCapturingGroupTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<OneOrMoreTransport>() <= 256, "OneOrMoreTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<OptionalTransport>() <= 256, "OptionalTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<PatternCharacterTransport>() <= 256, "PatternCharacterTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<PatternTransport>() > 256, "PatternTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<PosixCharacterClassTransport>() > 256, "PosixCharacterClassTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<PatternTransport>() <= 256, "PatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<PosixCharacterClassTransport>() <= 256, "PosixCharacterClassTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<PosixClassNameTransport>() <= 256, "PosixClassNameTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TermGroupTransport>() > 256, "TermGroupTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TermTransport>() <= 256, "TermTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<UnicodeCharacterEscapeTransport>() <= 256, "UnicodeCharacterEscapeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<UnicodePropertyNameTransport>() > 256, "UnicodePropertyNameTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueExpressionGroupTransport>() > 256, "UnicodePropertyValueExpressionGroupTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueExpressionTransport>() > 256, "UnicodePropertyValueExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<UnicodePropertyNameTransport>() <= 256, "UnicodePropertyNameTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueExpressionGroupTransport>() <= 256, "UnicodePropertyValueExpressionGroupTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueExpressionTransport>() <= 256, "UnicodePropertyValueExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueTransport>() <= 256, "UnicodePropertyValueTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ZeroOrMoreTransport>() <= 256, "ZeroOrMoreTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");

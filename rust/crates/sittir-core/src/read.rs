@@ -48,17 +48,31 @@ impl Depth {
     }
 }
 
-/// What every read of one tree shares: the source its spans index into and
-/// the id its coordinates carry.
+/// What every read of one tree shares: the source its spans index into, the
+/// id its coordinates carry, and whether each transport it reads names its own
+/// node (`TransportLayout::at`).
 #[derive(Debug, Clone, Copy)]
 pub struct ReadCtx<'s> {
     pub source: &'s str,
     pub tree_id: u32,
+    pub at: bool,
 }
 
 impl<'s> ReadCtx<'s> {
     pub fn new(source: &'s str, tree_id: u32) -> Self {
-        Self { source, tree_id }
+        Self { source, tree_id, at: true }
+    }
+
+    /// The same read, writing no transport's own coordinate: what the
+    /// comparisons against today's read use, since today's read has none.
+    pub fn without_at(self) -> Self {
+        Self { at: false, ..self }
+    }
+
+    /// The coordinate of the node the cursor is on, when this read writes
+    /// each transport's own.
+    pub fn at_of(&self, cursor: &TreeCursor<'_>) -> Option<NodeCoordinate> {
+        self.at.then(|| self.coordinate(&cursor.node(), index_of(cursor)))
     }
 
     /// The coordinate of a surveyed child: its tree and index, its span and its
@@ -282,9 +296,10 @@ impl Sides {
     }
 
     /// The layout of a node that read none of its own: the extras its parent
-    /// placed on it, or `None` when it placed none.
-    pub fn into_layout<T>(self) -> Option<TransportLayout<T>> {
-        Placement::default().into_layout(self)
+    /// placed on it and the node's own coordinate, or `None` when it has
+    /// neither.
+    pub fn into_layout<T>(self, at: Option<NodeCoordinate>) -> Option<Box<TransportLayout<T>>> {
+        Placement::default().into_layout(self, at)
     }
 }
 
@@ -352,6 +367,20 @@ pub trait HasLayout<L> {
 impl<L, T: HasLayout<L>> HasLayout<L> for Box<T> {
     fn take_layout(&mut self) -> L {
         (**self).take_layout()
+    }
+}
+
+/// An envelope's layout: the one its content was read with, else the extras
+/// its parent placed on it, naming the envelope's own node either way (`at`,
+/// taken where the envelope stands, since a content read through a hidden
+/// child names that child).
+pub fn envelope_layout<T>(taken: Option<Box<TransportLayout<T>>>, sides: Sides, at: Option<NodeCoordinate>) -> Option<Box<TransportLayout<T>>> {
+    match taken {
+        Some(mut layout) => {
+            layout.at = at;
+            Some(layout)
+        }
+        None => sides.into_layout(at),
     }
 }
 
@@ -744,6 +773,10 @@ pub fn read_at<T: ReadTransport, P: ReadTransport>(
 ) -> Result<T, ReadError> {
     cursor.goto_descendant(index as usize);
     let sides = if cursor.goto_parent() {
+        let parent = cursor.node();
+        if !P::admits(KindId(parent.grammar_id()), KindId(parent.kind_id())) {
+            return Err(ReadError::Unadmitted { kind: KindId(parent.grammar_id()), index: index_of(cursor) });
+        }
         let sides = P::sides_of(cursor, ctx, index)?;
         cursor.goto_descendant(index as usize);
         sides
@@ -777,9 +810,11 @@ impl Placement {
         Some(self.take(i))
     }
 
-    /// The node's layout: what its parent placed, then its own entries.
-    /// `None` when it holds no entry, as today's read stores no trivia then.
-    pub fn into_layout<T>(self, sides: Sides) -> Option<TransportLayout<T>> {
+    /// The node's layout: what its parent placed, then its own entries, and
+    /// the node's own coordinate. `None` only when it holds no entry and no
+    /// coordinate; with no entry it carries no trivia, as today's read stores
+    /// none then.
+    pub fn into_layout<T>(self, sides: Sides, at: Option<NodeCoordinate>) -> Option<Box<TransportLayout<T>>> {
         let leading: Vec<TriviaEntry<T>> = sides.leading.into_iter().chain(self.own_leading).map(Entry::into_trivia).collect();
         let trailing: Vec<TriviaEntry<T>> = sides.trailing.into_iter().chain(self.own_trailing).map(Entry::into_trivia).collect();
         let inner: BTreeMap<String, Vec<TriviaEntry<T>>> = self
@@ -787,16 +822,18 @@ impl Placement {
             .into_iter()
             .map(|(key, entries)| (key, entries.into_iter().map(Entry::into_trivia).collect()))
             .collect();
-        if leading.is_empty() && trailing.is_empty() && inner.is_empty() {
+        let held = !(leading.is_empty() && trailing.is_empty() && inner.is_empty());
+        if !held && at.is_none() {
             return None;
         }
         let some = |entries: Vec<TriviaEntry<T>>| (!entries.is_empty()).then_some(entries);
-        Some(TransportLayout {
-            trivia: Some(TransportTrivia { leading: some(leading), trailing: some(trailing), inner: (!inner.is_empty()).then_some(inner) }),
+        Some(Box::new(TransportLayout {
+            trivia: held.then(|| TransportTrivia { leading: some(leading), trailing: some(trailing), inner: (!inner.is_empty()).then_some(inner) }),
             edges: None,
             gap: None,
             flank: None,
-        })
+            at,
+        }))
     }
 }
 
@@ -1096,7 +1133,7 @@ mod tests {
             leading: vec![],
             trailing: vec![Entry { coord: NodeCoordinate::new(0, Span { start: 40, end: 44 }), same_line: true, tokens_between: 0 }],
         };
-        let layout = placement.into_layout::<()>(parent).expect("entries");
+        let layout = placement.into_layout::<()>(parent, None).expect("entries");
         let trailing = layout.trivia.unwrap().trailing.unwrap();
         assert_eq!(trailing.iter().map(|e| e.value.coord().unwrap().span.start).collect::<Vec<_>>(), vec![40, 2]);
     }

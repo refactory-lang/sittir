@@ -24,21 +24,21 @@ use ::sittir_core::VerbatimTransport;
 #[transport(choice)]
 pub enum AnyTransport {
     #[kind(kind::SOURCE_FILE)]
-    SourceFile(Box<SourceFileTransport>),
+    SourceFile(SourceFileTransport),
     #[kind(kind::EXPRESSION_STATEMENT)]
-    ExpressionStatement(Box<ExpressionStatementTransport>),
+    ExpressionStatement(ExpressionStatementTransport),
     #[kind(kind::MACRO_RULE)]
-    MacroRule(Box<MacroRuleTransport>),
+    MacroRule(MacroRuleTransport),
     #[kind(kind::TOKEN_BINDING_PATTERN)]
-    TokenBindingPattern(Box<TokenBindingPatternTransport>),
+    TokenBindingPattern(TokenBindingPatternTransport),
     #[kind(kind::TOKEN_REPETITION_PATTERN)]
-    TokenRepetitionPattern(Box<TokenRepetitionPatternTransport>),
+    TokenRepetitionPattern(TokenRepetitionPatternTransport),
     #[kind(kind::FRAGMENT_SPECIFIER)]
     FragmentSpecifier(FragmentSpecifierEnum),
     #[kind(kind::TOKEN_REPETITION)]
-    TokenRepetition(Box<TokenRepetitionTransport>),
+    TokenRepetition(TokenRepetitionTransport),
     #[kind(kind::_NON_SPECIAL_TOKEN)]
-    NonSpecialToken(Box<NonSpecialTokenTransport>),
+    NonSpecialToken(NonSpecialTokenTransport),
     #[kind(kind::ATTRIBUTE_ITEM)]
     AttributeItem(Box<AttributeItemTransport>),
     #[kind(kind::INNER_ATTRIBUTE_ITEM)]
@@ -52,15 +52,15 @@ pub enum AnyTransport {
     #[kind(kind::ENUM_ITEM)]
     EnumItem(Box<EnumItemTransport>),
     #[kind(kind::ENUM_VARIANT_LIST)]
-    EnumVariantList(Box<EnumVariantListTransport>),
+    EnumVariantList(EnumVariantListTransport),
     #[kind(kind::ENUM_VARIANT)]
     EnumVariant(Box<EnumVariantTransport>),
     #[kind(kind::FIELD_DECLARATION_LIST)]
-    FieldDeclarationList(Box<FieldDeclarationListTransport>),
+    FieldDeclarationList(FieldDeclarationListTransport),
     #[kind(kind::FIELD_DECLARATION)]
     FieldDeclaration(Box<FieldDeclarationTransport>),
     #[kind(kind::ORDERED_FIELD_DECLARATION_LIST)]
-    OrderedFieldDeclarationList(Box<OrderedFieldDeclarationListTransport>),
+    OrderedFieldDeclarationList(OrderedFieldDeclarationListTransport),
     #[kind(kind::EXTERN_CRATE_DECLARATION)]
     ExternCrateDeclaration(Box<ExternCrateDeclarationTransport>),
     #[kind(kind::CONST_ITEM)]
@@ -76,165 +76,165 @@ pub enum AnyTransport {
     #[kind(kind::FUNCTION_MODIFIERS)]
     FunctionModifiers(FunctionModifiersTransport),
     #[kind(kind::WHERE_CLAUSE)]
-    WhereClause(Box<WhereClauseTransport>),
+    WhereClause(WhereClauseTransport),
     #[kind(kind::WHERE_PREDICATE)]
-    WherePredicate(Box<WherePredicateTransport>),
+    WherePredicate(WherePredicateTransport),
     #[kind(kind::TRAIT_ITEM)]
     TraitItem(Box<TraitItemTransport>),
     #[kind(kind::ASSOCIATED_TYPE)]
-    AssociatedType(Box<AssociatedTypeTransport>),
+    AssociatedType(AssociatedTypeTransport),
     #[kind(kind::TRAIT_BOUNDS)]
     TraitBounds(TraitBoundsTransport),
     #[kind(kind::HIGHER_RANKED_TRAIT_BOUND)]
-    HigherRankedTraitBound(Box<HigherRankedTraitBoundTransport>),
+    HigherRankedTraitBound(HigherRankedTraitBoundTransport),
     #[kind(kind::REMOVED_TRAIT_BOUND)]
     RemovedTraitBound(RemovedTraitBoundTransport),
     #[kind(kind::TYPE_PARAMETERS)]
-    TypeParameters(Box<TypeParametersTransport>),
+    TypeParameters(TypeParametersTransport),
     #[kind(kind::CONST_PARAMETER)]
     ConstParameter(Box<ConstParameterTransport>),
     #[kind(kind::TYPE_PARAMETER)]
     TypeParameter(Box<TypeParameterTransport>),
     #[kind(kind::LIFETIME_PARAMETER)]
-    LifetimeParameter(Box<LifetimeParameterTransport>),
+    LifetimeParameter(LifetimeParameterTransport),
     #[kind(kind::LET_DECLARATION)]
     LetDeclaration(Box<LetDeclarationTransport>),
     #[kind(kind::USE_DECLARATION)]
     UseDeclaration(Box<UseDeclarationTransport>),
     #[kind(kind::SCOPED_USE_LIST)]
-    ScopedUseList(Box<ScopedUseListTransport>),
+    ScopedUseList(ScopedUseListTransport),
     #[kind(kind::USE_LIST)]
-    UseList(Box<UseListTransport>),
+    UseList(UseListTransport),
     #[kind(kind::USE_AS_CLAUSE)]
-    UseAsClause(Box<UseAsClauseTransport>),
+    UseAsClause(UseAsClauseTransport),
     #[kind(kind::USE_WILDCARD)]
-    UseWildcard(Box<UseWildcardTransport>),
+    UseWildcard(UseWildcardTransport),
     #[kind(kind::PARAMETERS)]
-    Parameters(Box<ParametersTransport>),
+    Parameters(ParametersTransport),
     #[kind(kind::SELF_PARAMETER)]
-    SelfParameter(Box<SelfParameterTransport>),
+    SelfParameter(SelfParameterTransport),
     #[kind(kind::VARIADIC_PARAMETER)]
-    VariadicParameter(Box<VariadicParameterTransport>),
+    VariadicParameter(VariadicParameterTransport),
     #[kind(kind::PARAMETER)]
     Parameter(Box<ParameterTransport>),
     #[kind(kind::EXTERN_MODIFIER)]
-    ExternModifier(Box<ExternModifierTransport>),
+    ExternModifier(ExternModifierTransport),
     #[kind(kind::VISIBILITY_MODIFIER)]
     VisibilityModifier(VisibilityModifierTransport),
     #[kind(kind::BRACKETED_TYPE)]
     BracketedType(BracketedTypeTransport),
     #[kind(kind::QUALIFIED_TYPE)]
-    QualifiedType(Box<QualifiedTypeTransport>),
+    QualifiedType(QualifiedTypeTransport),
     #[kind(kind::LIFETIME)]
-    Lifetime(Box<LifetimeTransport>),
+    Lifetime(LifetimeTransport),
     #[kind(kind::ARRAY_TYPE)]
-    ArrayType(Box<ArrayTypeTransport>),
+    ArrayType(ArrayTypeTransport),
     #[kind(kind::FOR_LIFETIMES)]
-    ForLifetimes(Box<ForLifetimesTransport>),
+    ForLifetimes(ForLifetimesTransport),
     #[kind(kind::FUNCTION_TYPE)]
-    FunctionType(Box<FunctionTypeTransport>),
+    FunctionType(FunctionTypeTransport),
     #[kind(kind::TUPLE_TYPE)]
-    TupleType(Box<TupleTypeTransport>),
+    TupleType(TupleTypeTransport),
     #[kind(kind::GENERIC_FUNCTION)]
-    GenericFunction(Box<GenericFunctionTransport>),
+    GenericFunction(GenericFunctionTransport),
     #[kind(kind::GENERIC_TYPE)]
-    GenericType(Box<GenericTypeTransport>),
+    GenericType(GenericTypeTransport),
     #[kind(kind::GENERIC_TYPE_WITH_TURBOFISH)]
-    GenericTypeWithTurbofish(Box<GenericTypeWithTurbofishTransport>),
+    GenericTypeWithTurbofish(GenericTypeWithTurbofishTransport),
     #[kind(kind::BOUNDED_TYPE)]
-    BoundedType(Box<BoundedTypeTransport>),
+    BoundedType(BoundedTypeTransport),
     #[kind(kind::USE_BOUNDS)]
-    UseBounds(Box<UseBoundsTransport>),
+    UseBounds(UseBoundsTransport),
     #[kind(kind::TYPE_ARGUMENTS)]
-    TypeArguments(Box<TypeArgumentsTransport>),
+    TypeArguments(TypeArgumentsTransport),
     #[kind(kind::TYPE_BINDING)]
     TypeBinding(Box<TypeBindingTransport>),
     #[kind(kind::REFERENCE_TYPE)]
-    ReferenceType(Box<ReferenceTypeTransport>),
+    ReferenceType(ReferenceTypeTransport),
     #[kind(kind::ABSTRACT_TYPE)]
-    AbstractType(Box<AbstractTypeTransport>),
+    AbstractType(AbstractTypeTransport),
     #[kind(kind::DYNAMIC_TYPE)]
     DynamicType(DynamicTypeTransport),
     #[kind(kind::MACRO_INVOCATION)]
-    MacroInvocation(Box<MacroInvocationTransport>),
+    MacroInvocation(MacroInvocationTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
-    ScopedIdentifier(Box<ScopedIdentifierTransport>),
+    ScopedIdentifier(ScopedIdentifierTransport),
     #[kind(kind::SCOPED_TYPE_IDENTIFIER_IN_EXPRESSION_POSITION)]
-    ScopedTypeIdentifierInExpressionPosition(Box<ScopedTypeIdentifierInExpressionPositionTransport>),
+    ScopedTypeIdentifierInExpressionPosition(ScopedTypeIdentifierInExpressionPositionTransport),
     #[kind(kind::SCOPED_TYPE_IDENTIFIER)]
-    ScopedTypeIdentifier(Box<ScopedTypeIdentifierTransport>),
+    ScopedTypeIdentifier(ScopedTypeIdentifierTransport),
     #[kind(kind::UNARY_EXPRESSION)]
-    UnaryExpression(Box<UnaryExpressionTransport>),
+    UnaryExpression(UnaryExpressionTransport),
     #[kind(kind::TRY_EXPRESSION)]
     TryExpression(TryExpressionTransport),
     #[kind(kind::BINARY_EXPRESSION)]
-    BinaryExpression(Box<BinaryExpressionTransport>),
+    BinaryExpression(BinaryExpressionTransport),
     #[kind(kind::ASSIGNMENT_EXPRESSION)]
-    AssignmentExpression(Box<AssignmentExpressionTransport>),
+    AssignmentExpression(AssignmentExpressionTransport),
     #[kind(kind::COMPOUND_ASSIGNMENT_EXPR)]
-    CompoundAssignmentExpr(Box<CompoundAssignmentExprTransport>),
+    CompoundAssignmentExpr(CompoundAssignmentExprTransport),
     #[kind(kind::TYPE_CAST_EXPRESSION)]
-    TypeCastExpression(Box<TypeCastExpressionTransport>),
+    TypeCastExpression(TypeCastExpressionTransport),
     #[kind(kind::RETURN_EXPRESSION)]
     ReturnExpression(ReturnExpressionTransport),
     #[kind(kind::YIELD_EXPRESSION)]
     YieldExpression(YieldExpressionTransport),
     #[kind(kind::CALL_EXPRESSION)]
-    CallExpression(Box<CallExpressionTransport>),
+    CallExpression(CallExpressionTransport),
     #[kind(kind::ARGUMENTS)]
-    Arguments(Box<ArgumentsTransport>),
+    Arguments(ArgumentsTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION)]
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     #[kind(kind::TUPLE_EXPRESSION)]
-    TupleExpression(Box<TupleExpressionTransport>),
+    TupleExpression(TupleExpressionTransport),
     #[kind(kind::STRUCT_EXPRESSION)]
-    StructExpression(Box<StructExpressionTransport>),
+    StructExpression(StructExpressionTransport),
     #[kind(kind::FIELD_INITIALIZER_LIST)]
-    FieldInitializerList(Box<FieldInitializerListTransport>),
+    FieldInitializerList(FieldInitializerListTransport),
     #[kind(kind::SHORTHAND_FIELD_INITIALIZER)]
-    ShorthandFieldInitializer(Box<ShorthandFieldInitializerTransport>),
+    ShorthandFieldInitializer(ShorthandFieldInitializerTransport),
     #[kind(kind::FIELD_INITIALIZER)]
     FieldInitializer(Box<FieldInitializerTransport>),
     #[kind(kind::BASE_FIELD_INITIALIZER)]
-    BaseFieldInitializer(Box<BaseFieldInitializerTransport>),
+    BaseFieldInitializer(BaseFieldInitializerTransport),
     #[kind(kind::IF_EXPRESSION)]
-    IfExpression(Box<IfExpressionTransport>),
+    IfExpression(IfExpressionTransport),
     #[kind(kind::LET_CONDITION)]
-    LetCondition(Box<LetConditionTransport>),
+    LetCondition(LetConditionTransport),
     #[kind(kind::_LET_CHAIN)]
     LetChain(LetChainTransport),
     #[kind(kind::ELSE_CLAUSE)]
     ElseClause(ElseClauseTransport),
     #[kind(kind::MATCH_EXPRESSION)]
-    MatchExpression(Box<MatchExpressionTransport>),
+    MatchExpression(MatchExpressionTransport),
     #[kind(kind::MATCH_BLOCK)]
     MatchBlock(MatchBlockTransport),
     #[kind(kind::LAST_MATCH_ARM)]
-    LastMatchArm(Box<LastMatchArmTransport>),
+    LastMatchArm(LastMatchArmTransport),
     #[kind(kind::MATCH_PATTERN)]
-    MatchPattern(Box<MatchPatternTransport>),
+    MatchPattern(MatchPatternTransport),
     #[kind(kind::WHILE_EXPRESSION)]
-    WhileExpression(Box<WhileExpressionTransport>),
+    WhileExpression(WhileExpressionTransport),
     #[kind(kind::LOOP_EXPRESSION)]
-    LoopExpression(Box<LoopExpressionTransport>),
+    LoopExpression(LoopExpressionTransport),
     #[kind(kind::FOR_EXPRESSION)]
-    ForExpression(Box<ForExpressionTransport>),
+    ForExpression(ForExpressionTransport),
     #[kind(kind::CONST_BLOCK)]
     ConstBlock(ConstBlockTransport),
     #[kind(kind::CLOSURE_PARAMETERS)]
     ClosureParameters(ClosureParametersTransport),
     #[kind(kind::LABEL)]
-    Label(Box<LabelTransport>),
+    Label(LabelTransport),
     #[kind(kind::BREAK_EXPRESSION)]
-    BreakExpression(Box<BreakExpressionTransport>),
+    BreakExpression(BreakExpressionTransport),
     #[kind(kind::CONTINUE_EXPRESSION)]
-    ContinueExpression(Box<ContinueExpressionTransport>),
+    ContinueExpression(ContinueExpressionTransport),
     #[kind(kind::INDEX_EXPRESSION)]
-    IndexExpression(Box<IndexExpressionTransport>),
+    IndexExpression(IndexExpressionTransport),
     #[kind(kind::AWAIT_EXPRESSION)]
     AwaitExpression(AwaitExpressionTransport),
     #[kind(kind::FIELD_EXPRESSION)]
-    FieldExpression(Box<FieldExpressionTransport>),
+    FieldExpression(FieldExpressionTransport),
     #[kind(kind::UNSAFE_BLOCK)]
     UnsafeBlock(UnsafeBlockTransport),
     #[kind(kind::ASYNC_BLOCK)]
@@ -244,37 +244,37 @@ pub enum AnyTransport {
     #[kind(kind::TRY_BLOCK)]
     TryBlock(TryBlockTransport),
     #[kind(kind::BLOCK)]
-    Block(Box<BlockTransport>),
+    Block(BlockTransport),
     #[kind(kind::GENERIC_PATTERN)]
-    GenericPattern(Box<GenericPatternTransport>),
+    GenericPattern(GenericPatternTransport),
     #[kind(kind::TUPLE_PATTERN)]
-    TuplePattern(Box<TuplePatternTransport>),
+    TuplePattern(TuplePatternTransport),
     #[kind(kind::SLICE_PATTERN)]
-    SlicePattern(Box<SlicePatternTransport>),
+    SlicePattern(SlicePatternTransport),
     #[kind(kind::TUPLE_STRUCT_PATTERN)]
-    TupleStructPattern(Box<TupleStructPatternTransport>),
+    TupleStructPattern(TupleStructPatternTransport),
     #[kind(kind::STRUCT_PATTERN)]
-    StructPattern(Box<StructPatternTransport>),
+    StructPattern(StructPatternTransport),
     #[kind(kind::MUT_PATTERN)]
     MutPattern(MutPatternTransport),
     #[kind(kind::REF_PATTERN)]
     RefPattern(RefPatternTransport),
     #[kind(kind::CAPTURED_PATTERN)]
-    CapturedPattern(Box<CapturedPatternTransport>),
+    CapturedPattern(CapturedPatternTransport),
     #[kind(kind::REFERENCE_PATTERN)]
     ReferencePattern(ReferencePatternTransport),
     #[kind(kind::NEGATIVE_LITERAL)]
-    NegativeLiteral(Box<NegativeLiteralTransport>),
+    NegativeLiteral(NegativeLiteralTransport),
     #[kind(kind::STRING_LITERAL)]
-    StringLiteral(Box<StringLiteralTransport>),
+    StringLiteral(StringLiteralTransport),
     #[kind(kind::RAW_STRING_LITERAL)]
-    RawStringLiteral(Box<RawStringLiteralTransport>),
+    RawStringLiteral(RawStringLiteralTransport),
     #[kind(kind::BOOLEAN_LITERAL)]
     BooleanLiteral(BooleanLiteralEnum),
     #[kind(kind::LINE_COMMENT)]
-    LineComment(Box<LineCommentTransport>),
+    LineComment(LineCommentTransport),
     #[kind(kind::BLOCK_COMMENT)]
-    BlockComment(Box<BlockCommentTransport>),
+    BlockComment(BlockCommentTransport),
     #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
     #[kind(kind::SHEBANG)]
@@ -320,7 +320,7 @@ pub enum AnyTransport {
     #[kind(kind::STRUCT_PATTERN_ELEMENTS)]
     StructPatternElements(StructPatternElementsTransport),
     #[kind(kind::USE_WILDCARD_GROUP)]
-    UseWildcardGroup(Box<UseWildcardGroupTransport>),
+    UseWildcardGroup(UseWildcardGroupTransport),
     #[kind(kind::TOKEN_REPETITION_PATTERN_TEXT)]
     TokenRepetitionPatternText(TokenRepetitionPatternTextTransport),
     #[kind(kind::STRING_OPEN)]
@@ -358,15 +358,15 @@ pub enum AnyTransport {
     #[kind(kind::ESCAPE_SEQUENCE_HEX)]
     EscapeSequenceHex(EscapeSequenceHexTransport),
     #[kind(kind::ARRAY_EXPRESSION_SEMI)]
-    ArrayExpressionSemi(Box<ArrayExpressionSemiTransport>),
+    ArrayExpressionSemi(ArrayExpressionSemiTransport),
     #[kind(kind::ARRAY_EXPRESSION_LIST)]
-    ArrayExpressionList(Box<ArrayExpressionListTransport>),
+    ArrayExpressionList(ArrayExpressionListTransport),
     #[kind(kind::ATTRIBUTE_INPUT)]
     AttributeInput(Box<AttributeInputTransport>),
     #[kind(kind::CLOSURE_EXPRESSION_BLOCK)]
-    ClosureExpressionBlock(Box<ClosureExpressionBlockTransport>),
+    ClosureExpressionBlock(ClosureExpressionBlockTransport),
     #[kind(kind::CLOSURE_EXPRESSION_EXPR)]
-    ClosureExpressionExpr(Box<ClosureExpressionExprTransport>),
+    ClosureExpressionExpr(ClosureExpressionExprTransport),
     #[kind(kind::REFERENCE_EXPRESSION_RAW_CONST)]
     ReferenceExpressionRawConst(ReferenceExpressionRawConstTransport),
     #[kind(kind::REFERENCE_EXPRESSION_RAW_MUT)]
@@ -384,21 +384,21 @@ pub enum AnyTransport {
     #[kind(kind::IMPL_ITEM_SEMI)]
     ImplItemSemi(Box<ImplItemSemiTransport>),
     #[kind(kind::VISIBILITY_MODIFIER_PUB_SCOPE_IN_PATH)]
-    VisibilityModifierPubScopeInPath(Box<VisibilityModifierPubScopeInPathTransport>),
+    VisibilityModifierPubScopeInPath(VisibilityModifierPubScopeInPathTransport),
     #[kind(kind::VISIBILITY_MODIFIER_PUB_SCOPE)]
     VisibilityModifierPubScope(VisibilityModifierPubScopeTransport),
     #[kind(kind::VISIBILITY_MODIFIER_PUB)]
-    VisibilityModifierPub(Box<VisibilityModifierPubTransport>),
+    VisibilityModifierPub(VisibilityModifierPubTransport),
     #[kind(kind::FUNCTION_TYPE_TRAIT_FORM)]
     FunctionTypeTraitForm(FunctionTypeTraitFormTransport),
     #[kind(kind::FUNCTION_TYPE_FN_FORM)]
-    FunctionTypeFnForm(Box<FunctionTypeFnFormTransport>),
+    FunctionTypeFnForm(FunctionTypeFnFormTransport),
     #[kind(kind::MOD_ITEM_EXTERNAL)]
-    ModItemExternal(Box<ModItemExternalTransport>),
+    ModItemExternal(ModItemExternalTransport),
     #[kind(kind::MOD_ITEM_INLINE)]
     ModItemInline(Box<ModItemInlineTransport>),
     #[kind(kind::OR_PATTERN_BINARY)]
-    OrPatternBinary(Box<OrPatternBinaryTransport>),
+    OrPatternBinary(OrPatternBinaryTransport),
     #[kind(kind::OR_PATTERN_PREFIX)]
     OrPatternPrefix(OrPatternPrefixTransport),
     #[kind(kind::POINTER_TYPE_CONST)]
@@ -406,7 +406,7 @@ pub enum AnyTransport {
     #[kind(kind::POINTER_TYPE_MUT)]
     PointerTypeMut(PointerTypeMutTransport),
     #[kind(kind::RANGE_EXPRESSION_BINARY)]
-    RangeExpressionBinary(Box<RangeExpressionBinaryTransport>),
+    RangeExpressionBinary(RangeExpressionBinaryTransport),
     #[kind(kind::RANGE_EXPRESSION_POSTFIX)]
     RangeExpressionPostfix(RangeExpressionPostfixTransport),
     #[kind(kind::RANGE_EXPRESSION_PREFIX)]
@@ -414,9 +414,9 @@ pub enum AnyTransport {
     #[kind(kind::RANGE_EXPRESSION_BARE)]
     RangeExpressionBare(RangeExpressionBareTransport),
     #[kind(kind::EXPRESSION_STATEMENT_WITH_SEMI)]
-    ExpressionStatementWithSemi(Box<ExpressionStatementWithSemiTransport>),
+    ExpressionStatementWithSemi(ExpressionStatementWithSemiTransport),
     #[kind(kind::FOREIGN_MOD_ITEM_SEMI)]
-    ForeignModItemSemi(Box<ForeignModItemSemiTransport>),
+    ForeignModItemSemi(ForeignModItemSemiTransport),
     #[kind(kind::FOREIGN_MOD_ITEM_BODY)]
     ForeignModItemBody(Box<ForeignModItemBodyTransport>),
     #[kind(kind::MATCH_ARM_WITH_COMMA)]
@@ -426,15 +426,15 @@ pub enum AnyTransport {
     #[kind(kind::LINE_COMMENT_EXTRA_SLASHES)]
     LineCommentExtraSlashes(LineCommentExtraSlashesTransport),
     #[kind(kind::LINE_COMMENT_DOC_OUTER)]
-    LineCommentDocOuter(Box<LineCommentDocOuterTransport>),
+    LineCommentDocOuter(LineCommentDocOuterTransport),
     #[kind(kind::LINE_COMMENT_DOC_INNER)]
-    LineCommentDocInner(Box<LineCommentDocInnerTransport>),
+    LineCommentDocInner(LineCommentDocInnerTransport),
     #[kind(kind::LINE_COMMENT_REGULAR)]
     LineCommentRegular(LineCommentRegularTransport),
     #[kind(kind::BLOCK_COMMENT_DOC_OUTER)]
-    BlockCommentDocOuter(Box<BlockCommentDocOuterTransport>),
+    BlockCommentDocOuter(BlockCommentDocOuterTransport),
     #[kind(kind::BLOCK_COMMENT_DOC_INNER)]
-    BlockCommentDocInner(Box<BlockCommentDocInnerTransport>),
+    BlockCommentDocInner(BlockCommentDocInnerTransport),
     #[kind(kind::BLOCK_COMMENT_REGULAR)]
     BlockCommentRegular(BlockCommentRegularTransport),
     #[kind(kind::TOKEN_TREE_PATTERN_PAREN)]
@@ -456,21 +456,21 @@ pub enum AnyTransport {
     #[kind(kind::DELIM_TOKEN_TREE_BRACE)]
     DelimTokenTreeBrace(DelimTokenTreeBraceTransport),
     #[kind(kind::FIELD_PATTERN_SHORTHAND)]
-    FieldPatternShorthand(Box<FieldPatternShorthandTransport>),
+    FieldPatternShorthand(FieldPatternShorthandTransport),
     #[kind(kind::FIELD_PATTERN_NAMED)]
-    FieldPatternNamed(Box<FieldPatternNamedTransport>),
+    FieldPatternNamed(FieldPatternNamedTransport),
     #[kind(kind::MACRO_DEFINITION_PAREN)]
-    MacroDefinitionParen(Box<MacroDefinitionParenTransport>),
+    MacroDefinitionParen(MacroDefinitionParenTransport),
     #[kind(kind::MACRO_DEFINITION_BRACKET)]
-    MacroDefinitionBracket(Box<MacroDefinitionBracketTransport>),
+    MacroDefinitionBracket(MacroDefinitionBracketTransport),
     #[kind(kind::MACRO_DEFINITION_BRACE)]
-    MacroDefinitionBrace(Box<MacroDefinitionBraceTransport>),
+    MacroDefinitionBrace(MacroDefinitionBraceTransport),
     #[kind(kind::RANGE_PATTERN_PREFIX)]
-    RangePatternPrefix(Box<RangePatternPrefixTransport>),
+    RangePatternPrefix(RangePatternPrefixTransport),
     #[kind(kind::RANGE_PATTERN_WITH_LEFT_WITH_RIGHT)]
-    RangePatternWithLeftWithRight(Box<RangePatternWithLeftWithRightTransport>),
+    RangePatternWithLeftWithRight(RangePatternWithLeftWithRightTransport),
     #[kind(kind::RANGE_PATTERN_WITH_LEFT)]
-    RangePatternWithLeft(Box<RangePatternWithLeftTransport>),
+    RangePatternWithLeft(RangePatternWithLeftTransport),
     #[kind(kind::STRUCT_ITEM_BRACE)]
     StructItemBrace(Box<StructItemBraceTransport>),
     #[kind(kind::STRUCT_ITEM_TUPLE)]
@@ -484,7 +484,7 @@ pub enum AnyTransport {
     #[kind(kind::_ATTRIBUTED_PARAMETER)]
     AttributedParameter(Box<AttributedParameterTransport>),
     #[kind(kind::_ATTRIBUTED_TYPE_PARAMETER)]
-    AttributedTypeParameter(Box<AttributedTypeParameterTransport>),
+    AttributedTypeParameter(AttributedTypeParameterTransport),
     #[kind(kind::_ATTRIBUTED_ARGUMENT)]
     AttributedArgument(Box<AttributedArgumentTransport>),
     #[kind(kind::_ATTRIBUTED_ORDERED_FIELD)]
@@ -510,11 +510,11 @@ pub enum AnyTransport {
     #[kind(kind::_ERROR_SENTINEL)]
     ErrorSentinel(ErrorSentinelTransport),
     #[kind(kind::_TYPE_IDENTIFIER, display)]
-    TypeIdentifier(Box<TypeIdentifierTransport>),
+    TypeIdentifier(TypeIdentifierTransport),
     #[kind(kind::_FIELD_IDENTIFIER, display)]
-    FieldIdentifier(Box<FieldIdentifierTransport>),
+    FieldIdentifier(FieldIdentifierTransport),
     #[kind(kind::_SHORTHAND_FIELD_IDENTIFIER, display)]
-    ShorthandFieldIdentifier(Box<ShorthandFieldIdentifierTransport>),
+    ShorthandFieldIdentifier(ShorthandFieldIdentifierTransport),
     #[kind(kind::EMPTY_STATEMENT)]
     EmptyStatement,
     #[kind(kind::UNIT_TYPE)]
@@ -2142,11 +2142,11 @@ pub type TransportLayout = ::sittir_core::layout::TransportLayout<TriviaTranspor
 #[transport(choice)]
 pub enum StatementTransport {
     #[kind(kind::EXPRESSION_STATEMENT)]
-    ExpressionStatement(Box<ExpressionStatementTransport>),
+    ExpressionStatement(ExpressionStatementTransport),
     #[kind(kind::CONST_ITEM, kind::MACRO_INVOCATION, kind::MACRO_DEFINITION_PAREN, kind::MACRO_DEFINITION_BRACKET, kind::MACRO_DEFINITION_BRACE, kind::ATTRIBUTE_ITEM, kind::INNER_ATTRIBUTE_ITEM, kind::MOD_ITEM_EXTERNAL, kind::MOD_ITEM_INLINE, kind::FOREIGN_MOD_ITEM_SEMI, kind::FOREIGN_MOD_ITEM_BODY, kind::STRUCT_ITEM_BRACE, kind::STRUCT_ITEM_TUPLE, kind::STRUCT_ITEM_UNIT, kind::UNION_ITEM, kind::ENUM_ITEM, kind::TYPE_ITEM, kind::FUNCTION_ITEM, kind::FUNCTION_SIGNATURE_ITEM, kind::IMPL_ITEM_BODY, kind::IMPL_ITEM_SEMI, kind::TRAIT_ITEM, kind::ASSOCIATED_TYPE, kind::LET_DECLARATION, kind::USE_DECLARATION, kind::EXTERN_CRATE_DECLARATION, kind::STATIC_ITEM, kind::MACRO_DEFINITION, kind::MOD_ITEM, kind::FOREIGN_MOD_ITEM, kind::STRUCT_ITEM, kind::IMPL_ITEM)]
-    DeclarationStatement(DeclarationStatementTransport),
+    DeclarationStatement(Box<DeclarationStatementTransport>),
     ConstItem(Box<ConstItemTransport>),
-    MacroInvocation(Box<MacroInvocationTransport>),
+    MacroInvocation(MacroInvocationTransport),
     MacroDefinition(MacroDefinitionTransport),
     #[kind(kind::EMPTY_STATEMENT)]
     EmptyStatement,
@@ -2162,7 +2162,7 @@ pub enum StatementTransport {
     FunctionSignatureItem(Box<FunctionSignatureItemTransport>),
     ImplItem(ImplItemTransport),
     TraitItem(Box<TraitItemTransport>),
-    AssociatedType(Box<AssociatedTypeTransport>),
+    AssociatedType(AssociatedTypeTransport),
     LetDeclaration(Box<LetDeclarationTransport>),
     UseDeclaration(Box<UseDeclarationTransport>),
     ExternCrateDeclaration(Box<ExternCrateDeclarationTransport>),
@@ -2295,7 +2295,7 @@ pub enum DeclarationStatementTransport {
     #[kind(kind::CONST_ITEM)]
     ConstItem(Box<ConstItemTransport>),
     #[kind(kind::MACRO_INVOCATION)]
-    MacroInvocation(Box<MacroInvocationTransport>),
+    MacroInvocation(MacroInvocationTransport),
     #[kind(kind::MACRO_DEFINITION_PAREN, kind::MACRO_DEFINITION_BRACKET, kind::MACRO_DEFINITION_BRACE, kind::MACRO_DEFINITION)]
     MacroDefinition(MacroDefinitionTransport),
     #[kind(kind::EMPTY_STATEMENT)]
@@ -2325,7 +2325,7 @@ pub enum DeclarationStatementTransport {
     #[kind(kind::TRAIT_ITEM)]
     TraitItem(Box<TraitItemTransport>),
     #[kind(kind::ASSOCIATED_TYPE)]
-    AssociatedType(Box<AssociatedTypeTransport>),
+    AssociatedType(AssociatedTypeTransport),
     #[kind(kind::LET_DECLARATION)]
     LetDeclaration(Box<LetDeclarationTransport>),
     #[kind(kind::USE_DECLARATION)]
@@ -2478,11 +2478,11 @@ impl ::sittir_core::render::Render for DeclarationStatementTransport {
 #[transport(choice)]
 pub enum MacroDefinitionTransport {
     #[kind(kind::MACRO_DEFINITION_PAREN)]
-    MacroDefinitionParen(Box<MacroDefinitionParenTransport>),
+    MacroDefinitionParen(MacroDefinitionParenTransport),
     #[kind(kind::MACRO_DEFINITION_BRACKET)]
-    MacroDefinitionBracket(Box<MacroDefinitionBracketTransport>),
+    MacroDefinitionBracket(MacroDefinitionBracketTransport),
     #[kind(kind::MACRO_DEFINITION_BRACE)]
-    MacroDefinitionBrace(Box<MacroDefinitionBraceTransport>),
+    MacroDefinitionBrace(MacroDefinitionBraceTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for MacroDefinitionTransport {
@@ -2639,7 +2639,7 @@ impl ::sittir_core::render::Render for TokenTreeTransport {
 #[transport(choice)]
 pub enum ModItemTransport {
     #[kind(kind::MOD_ITEM_EXTERNAL)]
-    ModItemExternal(Box<ModItemExternalTransport>),
+    ModItemExternal(ModItemExternalTransport),
     #[kind(kind::MOD_ITEM_INLINE)]
     ModItemInline(Box<ModItemInlineTransport>),
 }
@@ -2691,7 +2691,7 @@ impl ::sittir_core::render::Render for ModItemTransport {
 #[transport(choice)]
 pub enum ForeignModItemTransport {
     #[kind(kind::FOREIGN_MOD_ITEM_SEMI)]
-    ForeignModItemSemi(Box<ForeignModItemSemiTransport>),
+    ForeignModItemSemi(ForeignModItemSemiTransport),
     #[kind(kind::FOREIGN_MOD_ITEM_BODY)]
     ForeignModItemBody(Box<ForeignModItemBodyTransport>),
 }
@@ -2854,35 +2854,35 @@ impl ::sittir_core::render::Render for ImplItemTransport {
 #[transport(choice)]
 pub enum TypeTransport {
     #[kind(kind::ABSTRACT_TYPE)]
-    AbstractType(Box<AbstractTypeTransport>),
+    AbstractType(AbstractTypeTransport),
     #[kind(kind::REFERENCE_TYPE)]
-    ReferenceType(Box<ReferenceTypeTransport>),
+    ReferenceType(ReferenceTypeTransport),
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
     #[kind(kind::POINTER_TYPE_CONST, kind::POINTER_TYPE_MUT, kind::POINTER_TYPE)]
     PointerType(PointerTypeTransport),
     #[kind(kind::GENERIC_TYPE)]
-    GenericType(Box<GenericTypeTransport>),
+    GenericType(GenericTypeTransport),
     #[kind(kind::SCOPED_TYPE_IDENTIFIER)]
-    ScopedTypeIdentifier(Box<ScopedTypeIdentifierTransport>),
+    ScopedTypeIdentifier(ScopedTypeIdentifierTransport),
     #[kind(kind::TUPLE_TYPE)]
-    TupleType(Box<TupleTypeTransport>),
+    TupleType(TupleTypeTransport),
     #[kind(kind::UNIT_TYPE)]
     UnitType,
     #[kind(kind::ARRAY_TYPE)]
-    ArrayType(Box<ArrayTypeTransport>),
+    ArrayType(ArrayTypeTransport),
     #[kind(kind::FUNCTION_TYPE)]
-    FunctionType(Box<FunctionTypeTransport>),
+    FunctionType(FunctionTypeTransport),
     #[kind(kind::_TYPE_IDENTIFIER, display)]
-    TypeIdentifier(Box<TypeIdentifierTransport>),
+    TypeIdentifier(TypeIdentifierTransport),
     #[kind(kind::MACRO_INVOCATION)]
-    MacroInvocation(Box<MacroInvocationTransport>),
+    MacroInvocation(MacroInvocationTransport),
     #[kind(kind::NEVER_TYPE)]
     NeverType,
     #[kind(kind::DYNAMIC_TYPE)]
     DynamicType(DynamicTypeTransport),
     #[kind(kind::BOUNDED_TYPE)]
-    BoundedType(Box<BoundedTypeTransport>),
+    BoundedType(BoundedTypeTransport),
     #[kind(kind::REMOVED_TRAIT_BOUND)]
     RemovedTraitBound(RemovedTraitBoundTransport),
     #[kind(kind::_PRIMITIVE_TYPE, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD)]
@@ -3041,29 +3041,29 @@ impl ::sittir_core::render::Render for PointerTypeTransport {
 #[transport(choice)]
 pub enum ExpressionTransport {
     #[kind(kind::UNARY_EXPRESSION)]
-    UnaryExpression(Box<UnaryExpressionTransport>),
+    UnaryExpression(UnaryExpressionTransport),
     #[kind(kind::REFERENCE_EXPRESSION_RAW_CONST, kind::REFERENCE_EXPRESSION_RAW_MUT, kind::REFERENCE_EXPRESSION_MUT, kind::REFERENCE_EXPRESSION_BARE, kind::REFERENCE_EXPRESSION)]
     ReferenceExpression(ReferenceExpressionTransport),
     #[kind(kind::TRY_EXPRESSION)]
     TryExpression(TryExpressionTransport),
     #[kind(kind::BINARY_EXPRESSION)]
-    BinaryExpression(Box<BinaryExpressionTransport>),
+    BinaryExpression(BinaryExpressionTransport),
     #[kind(kind::ASSIGNMENT_EXPRESSION)]
-    AssignmentExpression(Box<AssignmentExpressionTransport>),
+    AssignmentExpression(AssignmentExpressionTransport),
     #[kind(kind::COMPOUND_ASSIGNMENT_EXPR)]
-    CompoundAssignmentExpr(Box<CompoundAssignmentExprTransport>),
+    CompoundAssignmentExpr(CompoundAssignmentExprTransport),
     #[kind(kind::TYPE_CAST_EXPRESSION)]
-    TypeCastExpression(Box<TypeCastExpressionTransport>),
+    TypeCastExpression(TypeCastExpressionTransport),
     #[kind(kind::CALL_EXPRESSION)]
-    CallExpression(Box<CallExpressionTransport>),
+    CallExpression(CallExpressionTransport),
     #[kind(kind::RETURN_EXPRESSION)]
     ReturnExpression(ReturnExpressionTransport),
     #[kind(kind::YIELD_EXPRESSION)]
     YieldExpression(YieldExpressionTransport),
     #[kind(kind::STRING_LITERAL)]
-    StringLiteral(Box<StringLiteralTransport>),
+    StringLiteral(StringLiteralTransport),
     #[kind(kind::RAW_STRING_LITERAL)]
-    RawStringLiteral(Box<RawStringLiteralTransport>),
+    RawStringLiteral(RawStringLiteralTransport),
     #[kind(kind::CHAR_LITERAL_ESCAPED_SIMPLE, kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED, kind::CHAR_LITERAL_ESCAPED_UNICODE_BRACED, kind::CHAR_LITERAL_ESCAPED_HEX, kind::CHAR_LITERAL_PLAIN, kind::CHAR_LITERAL_EMPTY, kind::CHAR_LITERAL, kind::CHAR_LITERAL_ESCAPED)]
     CharLiteral(CharLiteralTransport),
     #[kind(kind::BOOLEAN_LITERAL, kind::TRUE_KEYWORD, kind::FALSE_KEYWORD)]
@@ -3117,27 +3117,27 @@ pub enum ExpressionTransport {
     #[kind(kind::SELF)]
     Self_,
     #[kind(kind::SCOPED_IDENTIFIER)]
-    ScopedIdentifier(Box<ScopedIdentifierTransport>),
+    ScopedIdentifier(ScopedIdentifierTransport),
     #[kind(kind::GENERIC_FUNCTION)]
-    GenericFunction(Box<GenericFunctionTransport>),
+    GenericFunction(GenericFunctionTransport),
     #[kind(kind::AWAIT_EXPRESSION)]
     AwaitExpression(AwaitExpressionTransport),
     #[kind(kind::FIELD_EXPRESSION)]
-    FieldExpression(Box<FieldExpressionTransport>),
+    FieldExpression(FieldExpressionTransport),
     #[kind(kind::ARRAY_EXPRESSION_SEMI, kind::ARRAY_EXPRESSION_LIST, kind::ARRAY_EXPRESSION)]
     ArrayExpression(ArrayExpressionTransport),
     #[kind(kind::TUPLE_EXPRESSION)]
-    TupleExpression(Box<TupleExpressionTransport>),
+    TupleExpression(TupleExpressionTransport),
     #[kind(kind::MACRO_INVOCATION)]
-    MacroInvocation(Box<MacroInvocationTransport>),
+    MacroInvocation(MacroInvocationTransport),
     #[kind(kind::UNIT_EXPRESSION)]
     UnitExpression,
     #[kind(kind::BREAK_EXPRESSION)]
-    BreakExpression(Box<BreakExpressionTransport>),
+    BreakExpression(BreakExpressionTransport),
     #[kind(kind::CONTINUE_EXPRESSION)]
-    ContinueExpression(Box<ContinueExpressionTransport>),
+    ContinueExpression(ContinueExpressionTransport),
     #[kind(kind::INDEX_EXPRESSION)]
-    IndexExpression(Box<IndexExpressionTransport>),
+    IndexExpression(IndexExpressionTransport),
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
     #[kind(kind::CLOSURE_EXPRESSION_BLOCK, kind::CLOSURE_EXPRESSION_EXPR, kind::CLOSURE_EXPRESSION)]
@@ -3145,7 +3145,7 @@ pub enum ExpressionTransport {
     #[kind(kind::PARENTHESIZED_EXPRESSION)]
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     #[kind(kind::STRUCT_EXPRESSION)]
-    StructExpression(Box<StructExpressionTransport>),
+    StructExpression(StructExpressionTransport),
     #[kind(kind::UNSAFE_BLOCK)]
     UnsafeBlock(UnsafeBlockTransport),
     #[kind(kind::ASYNC_BLOCK)]
@@ -3155,17 +3155,17 @@ pub enum ExpressionTransport {
     #[kind(kind::TRY_BLOCK)]
     TryBlock(TryBlockTransport),
     #[kind(kind::BLOCK)]
-    Block(Box<BlockTransport>),
+    Block(BlockTransport),
     #[kind(kind::IF_EXPRESSION)]
-    IfExpression(Box<IfExpressionTransport>),
+    IfExpression(IfExpressionTransport),
     #[kind(kind::MATCH_EXPRESSION)]
-    MatchExpression(Box<MatchExpressionTransport>),
+    MatchExpression(MatchExpressionTransport),
     #[kind(kind::WHILE_EXPRESSION)]
-    WhileExpression(Box<WhileExpressionTransport>),
+    WhileExpression(WhileExpressionTransport),
     #[kind(kind::LOOP_EXPRESSION)]
-    LoopExpression(Box<LoopExpressionTransport>),
+    LoopExpression(LoopExpressionTransport),
     #[kind(kind::FOR_EXPRESSION)]
-    ForExpression(Box<ForExpressionTransport>),
+    ForExpression(ForExpressionTransport),
     #[kind(kind::CONST_BLOCK)]
     ConstBlock(ConstBlockTransport),
     #[kind(kind::RANGE_EXPRESSION_BINARY, kind::RANGE_EXPRESSION_POSTFIX, kind::RANGE_EXPRESSION_PREFIX, kind::RANGE_EXPRESSION_BARE, kind::RANGE_EXPRESSION)]
@@ -3521,7 +3521,7 @@ impl ::sittir_core::render::Render for DelimTokenTreeTransport {
 #[transport(choice)]
 pub enum RangeExpressionTransport {
     #[kind(kind::RANGE_EXPRESSION_BINARY)]
-    RangeExpressionBinary(Box<RangeExpressionBinaryTransport>),
+    RangeExpressionBinary(RangeExpressionBinaryTransport),
     #[kind(kind::RANGE_EXPRESSION_POSTFIX)]
     RangeExpressionPostfix(RangeExpressionPostfixTransport),
     #[kind(kind::RANGE_EXPRESSION_PREFIX)]
@@ -3653,9 +3653,9 @@ impl ::sittir_core::render::Render for ReferenceExpressionTransport {
 #[transport(choice)]
 pub enum ArrayExpressionTransport {
     #[kind(kind::ARRAY_EXPRESSION_SEMI)]
-    ArrayExpressionSemi(Box<ArrayExpressionSemiTransport>),
+    ArrayExpressionSemi(ArrayExpressionSemiTransport),
     #[kind(kind::ARRAY_EXPRESSION_LIST)]
-    ArrayExpressionList(Box<ArrayExpressionListTransport>),
+    ArrayExpressionList(ArrayExpressionListTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for ArrayExpressionTransport {
@@ -3750,9 +3750,9 @@ impl ::sittir_core::render::Render for MatchArmTransport {
 #[transport(choice)]
 pub enum ClosureExpressionTransport {
     #[kind(kind::CLOSURE_EXPRESSION_BLOCK)]
-    ClosureExpressionBlock(Box<ClosureExpressionBlockTransport>),
+    ClosureExpressionBlock(ClosureExpressionBlockTransport),
     #[kind(kind::CLOSURE_EXPRESSION_EXPR)]
-    ClosureExpressionExpr(Box<ClosureExpressionExprTransport>),
+    ClosureExpressionExpr(ClosureExpressionExprTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for ClosureExpressionTransport {
@@ -3840,15 +3840,15 @@ pub enum PatternTransport {
     #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
-    ScopedIdentifier(Box<ScopedIdentifierTransport>),
+    ScopedIdentifier(ScopedIdentifierTransport),
     #[kind(kind::GENERIC_PATTERN)]
-    GenericPattern(Box<GenericPatternTransport>),
+    GenericPattern(GenericPatternTransport),
     #[kind(kind::TUPLE_PATTERN)]
-    TuplePattern(Box<TuplePatternTransport>),
+    TuplePattern(TuplePatternTransport),
     #[kind(kind::TUPLE_STRUCT_PATTERN)]
-    TupleStructPattern(Box<TupleStructPatternTransport>),
+    TupleStructPattern(TupleStructPatternTransport),
     #[kind(kind::STRUCT_PATTERN)]
-    StructPattern(Box<StructPatternTransport>),
+    StructPattern(StructPatternTransport),
     #[kind(kind::DEFAULT_KEYWORD)]
     DefaultKeyword,
     #[kind(kind::UNION_KEYWORD)]
@@ -3858,9 +3858,9 @@ pub enum PatternTransport {
     #[kind(kind::REF_PATTERN)]
     RefPattern(RefPatternTransport),
     #[kind(kind::SLICE_PATTERN)]
-    SlicePattern(Box<SlicePatternTransport>),
+    SlicePattern(SlicePatternTransport),
     #[kind(kind::CAPTURED_PATTERN)]
-    CapturedPattern(Box<CapturedPatternTransport>),
+    CapturedPattern(CapturedPatternTransport),
     #[kind(kind::REFERENCE_PATTERN)]
     ReferencePattern(ReferencePatternTransport),
     #[kind(kind::REMAINING_FIELD_PATTERN)]
@@ -3874,7 +3874,7 @@ pub enum PatternTransport {
     #[kind(kind::CONST_BLOCK)]
     ConstBlock(ConstBlockTransport),
     #[kind(kind::MACRO_INVOCATION)]
-    MacroInvocation(Box<MacroInvocationTransport>),
+    MacroInvocation(MacroInvocationTransport),
     #[kind(kind::_WILDCARD_PATTERN)]
     WildcardPattern,
     #[transport(verbatim)]
@@ -4069,9 +4069,9 @@ impl ::sittir_core::render::Render for PatternTransport {
 #[transport(choice)]
 pub enum RangePatternTransport {
     #[kind(kind::RANGE_PATTERN_WITH_LEFT)]
-    RangePatternWithLeft(Box<RangePatternWithLeftTransport>),
+    RangePatternWithLeft(RangePatternWithLeftTransport),
     #[kind(kind::RANGE_PATTERN_PREFIX)]
-    RangePatternPrefix(Box<RangePatternPrefixTransport>),
+    RangePatternPrefix(RangePatternPrefixTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for RangePatternTransport {
@@ -4121,7 +4121,7 @@ impl ::sittir_core::render::Render for RangePatternTransport {
 #[transport(choice)]
 pub enum OrPatternTransport {
     #[kind(kind::OR_PATTERN_BINARY)]
-    OrPatternBinary(Box<OrPatternBinaryTransport>),
+    OrPatternBinary(OrPatternBinaryTransport),
     #[kind(kind::OR_PATTERN_PREFIX)]
     OrPatternPrefix(OrPatternPrefixTransport),
 }
@@ -4173,9 +4173,9 @@ impl ::sittir_core::render::Render for OrPatternTransport {
 #[transport(choice)]
 pub enum LiteralPatternTransport {
     #[kind(kind::STRING_LITERAL)]
-    StringLiteral(Box<StringLiteralTransport>),
+    StringLiteral(StringLiteralTransport),
     #[kind(kind::RAW_STRING_LITERAL)]
-    RawStringLiteral(Box<RawStringLiteralTransport>),
+    RawStringLiteral(RawStringLiteralTransport),
     #[kind(kind::CHAR_LITERAL_ESCAPED_SIMPLE, kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED, kind::CHAR_LITERAL_ESCAPED_UNICODE_BRACED, kind::CHAR_LITERAL_ESCAPED_HEX, kind::CHAR_LITERAL_PLAIN, kind::CHAR_LITERAL_EMPTY, kind::CHAR_LITERAL, kind::CHAR_LITERAL_ESCAPED)]
     CharLiteral(CharLiteralTransport),
     #[kind(kind::BOOLEAN_LITERAL, kind::TRUE_KEYWORD, kind::FALSE_KEYWORD)]
@@ -4185,7 +4185,7 @@ pub enum LiteralPatternTransport {
     #[kind(kind::FLOAT_LITERAL)]
     FloatLiteral(FloatLiteralTransport),
     #[kind(kind::NEGATIVE_LITERAL)]
-    NegativeLiteral(Box<NegativeLiteralTransport>),
+    NegativeLiteral(NegativeLiteralTransport),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -4466,7 +4466,7 @@ impl ::sittir_core::render::Render for CharLiteralEscapedTransport {
 #[transport(choice)]
 pub enum ExpressionStatementContentTransportSlot {
     #[kind(kind::EXPRESSION_STATEMENT_WITH_SEMI)]
-    ExpressionStatementWithSemi(Box<ExpressionStatementWithSemiTransport>),
+    ExpressionStatementWithSemi(ExpressionStatementWithSemiTransport),
     #[kind(kind::UNSAFE_BLOCK)]
     UnsafeBlock(UnsafeBlockTransport),
     #[kind(kind::ASYNC_BLOCK)]
@@ -4476,17 +4476,17 @@ pub enum ExpressionStatementContentTransportSlot {
     #[kind(kind::TRY_BLOCK)]
     TryBlock(TryBlockTransport),
     #[kind(kind::BLOCK)]
-    Block(Box<BlockTransport>),
+    Block(BlockTransport),
     #[kind(kind::IF_EXPRESSION)]
-    IfExpression(Box<IfExpressionTransport>),
+    IfExpression(IfExpressionTransport),
     #[kind(kind::MATCH_EXPRESSION)]
-    MatchExpression(Box<MatchExpressionTransport>),
+    MatchExpression(MatchExpressionTransport),
     #[kind(kind::WHILE_EXPRESSION)]
-    WhileExpression(Box<WhileExpressionTransport>),
+    WhileExpression(WhileExpressionTransport),
     #[kind(kind::LOOP_EXPRESSION)]
-    LoopExpression(Box<LoopExpressionTransport>),
+    LoopExpression(LoopExpressionTransport),
     #[kind(kind::FOR_EXPRESSION)]
-    ForExpression(Box<ForExpressionTransport>),
+    ForExpression(ForExpressionTransport),
     #[kind(kind::CONST_BLOCK)]
     ConstBlock(ConstBlockTransport),
 }
@@ -4564,17 +4564,17 @@ impl ::sittir_core::view::KindOf for ExpressionStatementContentTransportSlot {
 impl ::sittir_core::render::Render for ExpressionStatementContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ExpressionStatementContentTransportSlot::ExpressionStatementWithSemi(inner) => inner.as_ref().render(w),
+            ExpressionStatementContentTransportSlot::ExpressionStatementWithSemi(inner) => inner.render(w),
             ExpressionStatementContentTransportSlot::UnsafeBlock(inner) => inner.render(w),
             ExpressionStatementContentTransportSlot::AsyncBlock(inner) => inner.render(w),
             ExpressionStatementContentTransportSlot::GenBlock(inner) => inner.render(w),
             ExpressionStatementContentTransportSlot::TryBlock(inner) => inner.render(w),
-            ExpressionStatementContentTransportSlot::Block(inner) => inner.as_ref().render(w),
-            ExpressionStatementContentTransportSlot::IfExpression(inner) => inner.as_ref().render(w),
-            ExpressionStatementContentTransportSlot::MatchExpression(inner) => inner.as_ref().render(w),
-            ExpressionStatementContentTransportSlot::WhileExpression(inner) => inner.as_ref().render(w),
-            ExpressionStatementContentTransportSlot::LoopExpression(inner) => inner.as_ref().render(w),
-            ExpressionStatementContentTransportSlot::ForExpression(inner) => inner.as_ref().render(w),
+            ExpressionStatementContentTransportSlot::Block(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::IfExpression(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::MatchExpression(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::WhileExpression(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::LoopExpression(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::ForExpression(inner) => inner.render(w),
             ExpressionStatementContentTransportSlot::ConstBlock(inner) => inner.render(w),
         }
     }
@@ -4590,13 +4590,13 @@ pub enum TokenRepetitionPatternTokenPatternsTransportSlot {
     #[kind(kind::TOKEN_TREE_PATTERN_BRACE)]
     TokenTreePatternBrace(TokenTreePatternBraceTransport),
     #[kind(kind::TOKEN_REPETITION_PATTERN)]
-    TokenRepetitionPattern(Box<TokenRepetitionPatternTransport>),
+    TokenRepetitionPattern(TokenRepetitionPatternTransport),
     #[kind(kind::TOKEN_BINDING_PATTERN)]
-    TokenBindingPattern(Box<TokenBindingPatternTransport>),
+    TokenBindingPattern(TokenBindingPatternTransport),
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
     #[kind(kind::_NON_SPECIAL_TOKEN)]
-    NonSpecialToken(Box<NonSpecialTokenTransport>),
+    NonSpecialToken(NonSpecialTokenTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for TokenRepetitionPatternTokenPatternsTransportSlot {
@@ -4655,10 +4655,10 @@ impl ::sittir_core::render::Render for TokenRepetitionPatternTokenPatternsTransp
             TokenRepetitionPatternTokenPatternsTransportSlot::TokenTreePatternParen(inner) => inner.render(w),
             TokenRepetitionPatternTokenPatternsTransportSlot::TokenTreePatternBracket(inner) => inner.render(w),
             TokenRepetitionPatternTokenPatternsTransportSlot::TokenTreePatternBrace(inner) => inner.render(w),
-            TokenRepetitionPatternTokenPatternsTransportSlot::TokenRepetitionPattern(inner) => inner.as_ref().render(w),
-            TokenRepetitionPatternTokenPatternsTransportSlot::TokenBindingPattern(inner) => inner.as_ref().render(w),
+            TokenRepetitionPatternTokenPatternsTransportSlot::TokenRepetitionPattern(inner) => inner.render(w),
+            TokenRepetitionPatternTokenPatternsTransportSlot::TokenBindingPattern(inner) => inner.render(w),
             TokenRepetitionPatternTokenPatternsTransportSlot::Metavariable(inner) => inner.render(w),
-            TokenRepetitionPatternTokenPatternsTransportSlot::NonSpecialToken(inner) => inner.as_ref().render(w),
+            TokenRepetitionPatternTokenPatternsTransportSlot::NonSpecialToken(inner) => inner.render(w),
         }
     }
 }
@@ -4729,11 +4729,11 @@ pub enum TokenRepetitionTokensTransportSlot {
     #[kind(kind::TOKEN_TREE_BRACE)]
     TokenTreeBrace(TokenTreeBraceTransport),
     #[kind(kind::TOKEN_REPETITION)]
-    TokenRepetition(Box<TokenRepetitionTransport>),
+    TokenRepetition(TokenRepetitionTransport),
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
     #[kind(kind::_NON_SPECIAL_TOKEN)]
-    NonSpecialToken(Box<NonSpecialTokenTransport>),
+    NonSpecialToken(NonSpecialTokenTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for TokenRepetitionTokensTransportSlot {
@@ -4788,9 +4788,9 @@ impl ::sittir_core::render::Render for TokenRepetitionTokensTransportSlot {
             TokenRepetitionTokensTransportSlot::TokenTreeParen(inner) => inner.render(w),
             TokenRepetitionTokensTransportSlot::TokenTreeBracket(inner) => inner.render(w),
             TokenRepetitionTokensTransportSlot::TokenTreeBrace(inner) => inner.render(w),
-            TokenRepetitionTokensTransportSlot::TokenRepetition(inner) => inner.as_ref().render(w),
+            TokenRepetitionTokensTransportSlot::TokenRepetition(inner) => inner.render(w),
             TokenRepetitionTokensTransportSlot::Metavariable(inner) => inner.render(w),
-            TokenRepetitionTokensTransportSlot::NonSpecialToken(inner) => inner.as_ref().render(w),
+            TokenRepetitionTokensTransportSlot::NonSpecialToken(inner) => inner.render(w),
         }
     }
 }
@@ -4855,9 +4855,9 @@ impl ::sittir_core::render::Render for TokenRepetitionOperatorTransportSlot {
 #[transport(choice)]
 pub enum NonSpecialTokenContentTransportSlot {
     #[kind(kind::STRING_LITERAL)]
-    StringLiteral(Box<StringLiteralTransport>),
+    StringLiteral(StringLiteralTransport),
     #[kind(kind::RAW_STRING_LITERAL)]
-    RawStringLiteral(Box<RawStringLiteralTransport>),
+    RawStringLiteral(RawStringLiteralTransport),
     #[kind(kind::CHAR_LITERAL_ESCAPED_SIMPLE)]
     CharLiteralEscapedSimple(CharLiteralEscapedSimpleTransport),
     #[kind(kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED)]
@@ -5019,8 +5019,8 @@ impl ::sittir_core::view::KindOf for NonSpecialTokenContentTransportSlot {
 impl ::sittir_core::render::Render for NonSpecialTokenContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            NonSpecialTokenContentTransportSlot::StringLiteral(inner) => inner.as_ref().render(w),
-            NonSpecialTokenContentTransportSlot::RawStringLiteral(inner) => inner.as_ref().render(w),
+            NonSpecialTokenContentTransportSlot::StringLiteral(inner) => inner.render(w),
+            NonSpecialTokenContentTransportSlot::RawStringLiteral(inner) => inner.render(w),
             NonSpecialTokenContentTransportSlot::CharLiteralEscapedSimple(inner) => inner.render(w),
             NonSpecialTokenContentTransportSlot::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
             NonSpecialTokenContentTransportSlot::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
@@ -5054,7 +5054,7 @@ pub enum AttributePathTransportSlot {
     #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
-    ScopedIdentifier(Box<ScopedIdentifierTransport>),
+    ScopedIdentifier(ScopedIdentifierTransport),
     #[kind(kind::SELF)]
     Self_,
     #[kind(kind::U8_KEYWORD)]
@@ -5240,7 +5240,7 @@ impl ::sittir_core::render::Render for AttributePathTransportSlot {
         match self {
             AttributePathTransportSlot::Metavariable(inner) => inner.render(w),
             AttributePathTransportSlot::Identifier(inner) => inner.render(w),
-            AttributePathTransportSlot::ScopedIdentifier(inner) => inner.as_ref().render(w),
+            AttributePathTransportSlot::ScopedIdentifier(inner) => inner.render(w),
             AttributePathTransportSlot::Self_ => render_self(w),
             AttributePathTransportSlot::U8Keyword => render_u8_keyword(w),
             AttributePathTransportSlot::I8Keyword => render_i8_keyword(w),
@@ -5273,9 +5273,9 @@ impl ::sittir_core::render::Render for AttributePathTransportSlot {
 #[transport(choice)]
 pub enum EnumVariantBodyTransportSlot {
     #[kind(kind::FIELD_DECLARATION_LIST)]
-    FieldDeclarationList(Box<FieldDeclarationListTransport>),
+    FieldDeclarationList(FieldDeclarationListTransport),
     #[kind(kind::ORDERED_FIELD_DECLARATION_LIST)]
-    OrderedFieldDeclarationList(Box<OrderedFieldDeclarationListTransport>),
+    OrderedFieldDeclarationList(OrderedFieldDeclarationListTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for EnumVariantBodyTransportSlot {
@@ -5311,8 +5311,8 @@ impl ::sittir_core::view::KindOf for EnumVariantBodyTransportSlot {
 impl ::sittir_core::render::Render for EnumVariantBodyTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            EnumVariantBodyTransportSlot::FieldDeclarationList(inner) => inner.as_ref().render(w),
-            EnumVariantBodyTransportSlot::OrderedFieldDeclarationList(inner) => inner.as_ref().render(w),
+            EnumVariantBodyTransportSlot::FieldDeclarationList(inner) => inner.render(w),
+            EnumVariantBodyTransportSlot::OrderedFieldDeclarationList(inner) => inner.render(w),
         }
     }
 }
@@ -5376,7 +5376,7 @@ impl ::sittir_core::render::Render for FunctionItemNameTransportSlot {
 #[transport(choice)]
 pub enum FunctionModifiersModifierTransportSlot {
     #[kind(kind::EXTERN_MODIFIER)]
-    ExternModifier(Box<ExternModifierTransport>),
+    ExternModifier(ExternModifierTransport),
     #[kind(kind::ASYNC_KEYWORD)]
     AsyncKeyword,
     #[kind(kind::DEFAULT_KEYWORD)]
@@ -5432,7 +5432,7 @@ impl ::sittir_core::view::KindOf for FunctionModifiersModifierTransportSlot {
 impl ::sittir_core::render::Render for FunctionModifiersModifierTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            FunctionModifiersModifierTransportSlot::ExternModifier(inner) => inner.as_ref().render(w),
+            FunctionModifiersModifierTransportSlot::ExternModifier(inner) => inner.render(w),
             FunctionModifiersModifierTransportSlot::AsyncKeyword => render_async_keyword(w),
             FunctionModifiersModifierTransportSlot::DefaultKeyword => render_default_keyword(w),
             FunctionModifiersModifierTransportSlot::ConstKeyword => render_const_keyword(w),
@@ -5445,25 +5445,25 @@ impl ::sittir_core::render::Render for FunctionModifiersModifierTransportSlot {
 #[transport(choice)]
 pub enum WherePredicateLeftTransportSlot {
     #[kind(kind::LIFETIME)]
-    Lifetime(Box<LifetimeTransport>),
+    Lifetime(LifetimeTransport),
     #[kind(kind::_TYPE_IDENTIFIER, display)]
-    TypeIdentifier(Box<TypeIdentifierTransport>),
+    TypeIdentifier(TypeIdentifierTransport),
     #[kind(kind::SCOPED_TYPE_IDENTIFIER)]
-    ScopedTypeIdentifier(Box<ScopedTypeIdentifierTransport>),
+    ScopedTypeIdentifier(ScopedTypeIdentifierTransport),
     #[kind(kind::GENERIC_TYPE)]
-    GenericType(Box<GenericTypeTransport>),
+    GenericType(GenericTypeTransport),
     #[kind(kind::REFERENCE_TYPE)]
-    ReferenceType(Box<ReferenceTypeTransport>),
+    ReferenceType(ReferenceTypeTransport),
     #[kind(kind::POINTER_TYPE_CONST)]
     PointerTypeConst(PointerTypeConstTransport),
     #[kind(kind::POINTER_TYPE_MUT)]
     PointerTypeMut(PointerTypeMutTransport),
     #[kind(kind::TUPLE_TYPE)]
-    TupleType(Box<TupleTypeTransport>),
+    TupleType(TupleTypeTransport),
     #[kind(kind::ARRAY_TYPE)]
-    ArrayType(Box<ArrayTypeTransport>),
+    ArrayType(ArrayTypeTransport),
     #[kind(kind::HIGHER_RANKED_TRAIT_BOUND)]
-    HigherRankedTraitBound(Box<HigherRankedTraitBoundTransport>),
+    HigherRankedTraitBound(HigherRankedTraitBoundTransport),
     #[kind(kind::_PRIMITIVE_TYPE, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD)]
     PrimitiveType(PrimitiveTypeEnum),
 }
@@ -5537,16 +5537,16 @@ impl ::sittir_core::view::KindOf for WherePredicateLeftTransportSlot {
 impl ::sittir_core::render::Render for WherePredicateLeftTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            WherePredicateLeftTransportSlot::Lifetime(inner) => inner.as_ref().render(w),
-            WherePredicateLeftTransportSlot::TypeIdentifier(inner) => inner.as_ref().render(w),
-            WherePredicateLeftTransportSlot::ScopedTypeIdentifier(inner) => inner.as_ref().render(w),
-            WherePredicateLeftTransportSlot::GenericType(inner) => inner.as_ref().render(w),
-            WherePredicateLeftTransportSlot::ReferenceType(inner) => inner.as_ref().render(w),
+            WherePredicateLeftTransportSlot::Lifetime(inner) => inner.render(w),
+            WherePredicateLeftTransportSlot::TypeIdentifier(inner) => inner.render(w),
+            WherePredicateLeftTransportSlot::ScopedTypeIdentifier(inner) => inner.render(w),
+            WherePredicateLeftTransportSlot::GenericType(inner) => inner.render(w),
+            WherePredicateLeftTransportSlot::ReferenceType(inner) => inner.render(w),
             WherePredicateLeftTransportSlot::PointerTypeConst(inner) => inner.render(w),
             WherePredicateLeftTransportSlot::PointerTypeMut(inner) => inner.render(w),
-            WherePredicateLeftTransportSlot::TupleType(inner) => inner.as_ref().render(w),
-            WherePredicateLeftTransportSlot::ArrayType(inner) => inner.as_ref().render(w),
-            WherePredicateLeftTransportSlot::HigherRankedTraitBound(inner) => inner.as_ref().render(w),
+            WherePredicateLeftTransportSlot::TupleType(inner) => inner.render(w),
+            WherePredicateLeftTransportSlot::ArrayType(inner) => inner.render(w),
+            WherePredicateLeftTransportSlot::HigherRankedTraitBound(inner) => inner.render(w),
             WherePredicateLeftTransportSlot::PrimitiveType(inner) => inner.render(w),
         }
     }
@@ -5556,9 +5556,9 @@ impl ::sittir_core::render::Render for WherePredicateLeftTransportSlot {
 #[transport(choice)]
 pub enum TraitBoundsBoundsTransportSlot {
     #[kind(kind::ABSTRACT_TYPE)]
-    AbstractType(Box<AbstractTypeTransport>),
+    AbstractType(AbstractTypeTransport),
     #[kind(kind::REFERENCE_TYPE)]
-    ReferenceType(Box<ReferenceTypeTransport>),
+    ReferenceType(ReferenceTypeTransport),
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
     #[kind(kind::POINTER_TYPE_CONST)]
@@ -5566,31 +5566,31 @@ pub enum TraitBoundsBoundsTransportSlot {
     #[kind(kind::POINTER_TYPE_MUT)]
     PointerTypeMut(PointerTypeMutTransport),
     #[kind(kind::GENERIC_TYPE)]
-    GenericType(Box<GenericTypeTransport>),
+    GenericType(GenericTypeTransport),
     #[kind(kind::SCOPED_TYPE_IDENTIFIER)]
-    ScopedTypeIdentifier(Box<ScopedTypeIdentifierTransport>),
+    ScopedTypeIdentifier(ScopedTypeIdentifierTransport),
     #[kind(kind::TUPLE_TYPE)]
-    TupleType(Box<TupleTypeTransport>),
+    TupleType(TupleTypeTransport),
     #[kind(kind::ARRAY_TYPE)]
-    ArrayType(Box<ArrayTypeTransport>),
+    ArrayType(ArrayTypeTransport),
     #[kind(kind::FUNCTION_TYPE)]
-    FunctionType(Box<FunctionTypeTransport>),
+    FunctionType(FunctionTypeTransport),
     #[kind(kind::_TYPE_IDENTIFIER, display)]
-    TypeIdentifier(Box<TypeIdentifierTransport>),
+    TypeIdentifier(TypeIdentifierTransport),
     #[kind(kind::MACRO_INVOCATION)]
-    MacroInvocation(Box<MacroInvocationTransport>),
+    MacroInvocation(MacroInvocationTransport),
     #[kind(kind::DYNAMIC_TYPE)]
     DynamicType(DynamicTypeTransport),
     #[kind(kind::BOUNDED_TYPE)]
-    BoundedType(Box<BoundedTypeTransport>),
+    BoundedType(BoundedTypeTransport),
     #[kind(kind::REMOVED_TRAIT_BOUND)]
     RemovedTraitBound(RemovedTraitBoundTransport),
     #[kind(kind::_PRIMITIVE_TYPE, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD)]
     PrimitiveType(PrimitiveTypeEnum),
     #[kind(kind::LIFETIME)]
-    Lifetime(Box<LifetimeTransport>),
+    Lifetime(LifetimeTransport),
     #[kind(kind::HIGHER_RANKED_TRAIT_BOUND)]
-    HigherRankedTraitBound(Box<HigherRankedTraitBoundTransport>),
+    HigherRankedTraitBound(HigherRankedTraitBoundTransport),
     #[kind(kind::UNIT_TYPE)]
     UnitType,
     #[kind(kind::NEVER_TYPE)]
@@ -5702,24 +5702,24 @@ impl ::sittir_core::view::KindOf for TraitBoundsBoundsTransportSlot {
 impl ::sittir_core::render::Render for TraitBoundsBoundsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            TraitBoundsBoundsTransportSlot::AbstractType(inner) => inner.as_ref().render(w),
-            TraitBoundsBoundsTransportSlot::ReferenceType(inner) => inner.as_ref().render(w),
+            TraitBoundsBoundsTransportSlot::AbstractType(inner) => inner.render(w),
+            TraitBoundsBoundsTransportSlot::ReferenceType(inner) => inner.render(w),
             TraitBoundsBoundsTransportSlot::Metavariable(inner) => inner.render(w),
             TraitBoundsBoundsTransportSlot::PointerTypeConst(inner) => inner.render(w),
             TraitBoundsBoundsTransportSlot::PointerTypeMut(inner) => inner.render(w),
-            TraitBoundsBoundsTransportSlot::GenericType(inner) => inner.as_ref().render(w),
-            TraitBoundsBoundsTransportSlot::ScopedTypeIdentifier(inner) => inner.as_ref().render(w),
-            TraitBoundsBoundsTransportSlot::TupleType(inner) => inner.as_ref().render(w),
-            TraitBoundsBoundsTransportSlot::ArrayType(inner) => inner.as_ref().render(w),
-            TraitBoundsBoundsTransportSlot::FunctionType(inner) => inner.as_ref().render(w),
-            TraitBoundsBoundsTransportSlot::TypeIdentifier(inner) => inner.as_ref().render(w),
-            TraitBoundsBoundsTransportSlot::MacroInvocation(inner) => inner.as_ref().render(w),
+            TraitBoundsBoundsTransportSlot::GenericType(inner) => inner.render(w),
+            TraitBoundsBoundsTransportSlot::ScopedTypeIdentifier(inner) => inner.render(w),
+            TraitBoundsBoundsTransportSlot::TupleType(inner) => inner.render(w),
+            TraitBoundsBoundsTransportSlot::ArrayType(inner) => inner.render(w),
+            TraitBoundsBoundsTransportSlot::FunctionType(inner) => inner.render(w),
+            TraitBoundsBoundsTransportSlot::TypeIdentifier(inner) => inner.render(w),
+            TraitBoundsBoundsTransportSlot::MacroInvocation(inner) => inner.render(w),
             TraitBoundsBoundsTransportSlot::DynamicType(inner) => inner.render(w),
-            TraitBoundsBoundsTransportSlot::BoundedType(inner) => inner.as_ref().render(w),
+            TraitBoundsBoundsTransportSlot::BoundedType(inner) => inner.render(w),
             TraitBoundsBoundsTransportSlot::RemovedTraitBound(inner) => inner.render(w),
             TraitBoundsBoundsTransportSlot::PrimitiveType(inner) => inner.render(w),
-            TraitBoundsBoundsTransportSlot::Lifetime(inner) => inner.as_ref().render(w),
-            TraitBoundsBoundsTransportSlot::HigherRankedTraitBound(inner) => inner.as_ref().render(w),
+            TraitBoundsBoundsTransportSlot::Lifetime(inner) => inner.render(w),
+            TraitBoundsBoundsTransportSlot::HigherRankedTraitBound(inner) => inner.render(w),
             TraitBoundsBoundsTransportSlot::UnitType => render_unit_type(w),
             TraitBoundsBoundsTransportSlot::NeverType => render_never_type(w),
         }
@@ -5730,13 +5730,13 @@ impl ::sittir_core::render::Render for TraitBoundsBoundsTransportSlot {
 #[transport(choice)]
 pub enum ConstParameterValueTransportSlot {
     #[kind(kind::BLOCK)]
-    Block(Box<BlockTransport>),
+    Block(BlockTransport),
     #[kind(kind::IDENTIFIER, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD, kind::DEFAULT_KEYWORD, kind::UNION_KEYWORD, kind::GEN_KEYWORD)]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING_LITERAL)]
-    StringLiteral(Box<StringLiteralTransport>),
+    StringLiteral(StringLiteralTransport),
     #[kind(kind::RAW_STRING_LITERAL)]
-    RawStringLiteral(Box<RawStringLiteralTransport>),
+    RawStringLiteral(RawStringLiteralTransport),
     #[kind(kind::CHAR_LITERAL_ESCAPED_SIMPLE)]
     CharLiteralEscapedSimple(CharLiteralEscapedSimpleTransport),
     #[kind(kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED)]
@@ -5762,7 +5762,7 @@ pub enum ConstParameterValueTransportSlot {
     #[kind(kind::FLOAT_LITERAL)]
     FloatLiteral(FloatLiteralTransport),
     #[kind(kind::NEGATIVE_LITERAL)]
-    NegativeLiteral(Box<NegativeLiteralTransport>),
+    NegativeLiteral(NegativeLiteralTransport),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -5864,10 +5864,10 @@ impl ::sittir_core::view::KindOf for ConstParameterValueTransportSlot {
 impl ::sittir_core::render::Render for ConstParameterValueTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ConstParameterValueTransportSlot::Block(inner) => inner.as_ref().render(w),
+            ConstParameterValueTransportSlot::Block(inner) => inner.render(w),
             ConstParameterValueTransportSlot::Identifier(inner) => inner.render(w),
-            ConstParameterValueTransportSlot::StringLiteral(inner) => inner.as_ref().render(w),
-            ConstParameterValueTransportSlot::RawStringLiteral(inner) => inner.as_ref().render(w),
+            ConstParameterValueTransportSlot::StringLiteral(inner) => inner.render(w),
+            ConstParameterValueTransportSlot::RawStringLiteral(inner) => inner.render(w),
             ConstParameterValueTransportSlot::CharLiteralEscapedSimple(inner) => inner.render(w),
             ConstParameterValueTransportSlot::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
             ConstParameterValueTransportSlot::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
@@ -5880,7 +5880,7 @@ impl ::sittir_core::render::Render for ConstParameterValueTransportSlot {
             ConstParameterValueTransportSlot::IntegerLiteralBinary(inner) => inner.render(w),
             ConstParameterValueTransportSlot::IntegerLiteralOctal(inner) => inner.render(w),
             ConstParameterValueTransportSlot::FloatLiteral(inner) => inner.render(w),
-            ConstParameterValueTransportSlot::NegativeLiteral(inner) => inner.as_ref().render(w),
+            ConstParameterValueTransportSlot::NegativeLiteral(inner) => inner.render(w),
             ConstParameterValueTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -5894,15 +5894,15 @@ pub enum UseDeclarationArgumentTransportSlot {
     #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
-    ScopedIdentifier(Box<ScopedIdentifierTransport>),
+    ScopedIdentifier(ScopedIdentifierTransport),
     #[kind(kind::USE_AS_CLAUSE)]
-    UseAsClause(Box<UseAsClauseTransport>),
+    UseAsClause(UseAsClauseTransport),
     #[kind(kind::USE_LIST)]
-    UseList(Box<UseListTransport>),
+    UseList(UseListTransport),
     #[kind(kind::SCOPED_USE_LIST)]
-    ScopedUseList(Box<ScopedUseListTransport>),
+    ScopedUseList(ScopedUseListTransport),
     #[kind(kind::USE_WILDCARD)]
-    UseWildcard(Box<UseWildcardTransport>),
+    UseWildcard(UseWildcardTransport),
     #[kind(kind::SELF)]
     Self_,
     #[kind(kind::U8_KEYWORD)]
@@ -6104,11 +6104,11 @@ impl ::sittir_core::render::Render for UseDeclarationArgumentTransportSlot {
         match self {
             UseDeclarationArgumentTransportSlot::Metavariable(inner) => inner.render(w),
             UseDeclarationArgumentTransportSlot::Identifier(inner) => inner.render(w),
-            UseDeclarationArgumentTransportSlot::ScopedIdentifier(inner) => inner.as_ref().render(w),
-            UseDeclarationArgumentTransportSlot::UseAsClause(inner) => inner.as_ref().render(w),
-            UseDeclarationArgumentTransportSlot::UseList(inner) => inner.as_ref().render(w),
-            UseDeclarationArgumentTransportSlot::ScopedUseList(inner) => inner.as_ref().render(w),
-            UseDeclarationArgumentTransportSlot::UseWildcard(inner) => inner.as_ref().render(w),
+            UseDeclarationArgumentTransportSlot::ScopedIdentifier(inner) => inner.render(w),
+            UseDeclarationArgumentTransportSlot::UseAsClause(inner) => inner.render(w),
+            UseDeclarationArgumentTransportSlot::UseList(inner) => inner.render(w),
+            UseDeclarationArgumentTransportSlot::ScopedUseList(inner) => inner.render(w),
+            UseDeclarationArgumentTransportSlot::UseWildcard(inner) => inner.render(w),
             UseDeclarationArgumentTransportSlot::Self_ => render_self(w),
             UseDeclarationArgumentTransportSlot::U8Keyword => render_u8_keyword(w),
             UseDeclarationArgumentTransportSlot::I8Keyword => render_i8_keyword(w),
@@ -6141,9 +6141,9 @@ impl ::sittir_core::render::Render for UseDeclarationArgumentTransportSlot {
 #[transport(choice)]
 pub enum ParameterNameTransportSlot {
     #[kind(kind::STRING_LITERAL)]
-    StringLiteral(Box<StringLiteralTransport>),
+    StringLiteral(StringLiteralTransport),
     #[kind(kind::RAW_STRING_LITERAL)]
-    RawStringLiteral(Box<RawStringLiteralTransport>),
+    RawStringLiteral(RawStringLiteralTransport),
     #[kind(kind::CHAR_LITERAL_ESCAPED_SIMPLE)]
     CharLiteralEscapedSimple(CharLiteralEscapedSimpleTransport),
     #[kind(kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED)]
@@ -6169,41 +6169,41 @@ pub enum ParameterNameTransportSlot {
     #[kind(kind::FLOAT_LITERAL)]
     FloatLiteral(FloatLiteralTransport),
     #[kind(kind::NEGATIVE_LITERAL)]
-    NegativeLiteral(Box<NegativeLiteralTransport>),
+    NegativeLiteral(NegativeLiteralTransport),
     #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
-    ScopedIdentifier(Box<ScopedIdentifierTransport>),
+    ScopedIdentifier(ScopedIdentifierTransport),
     #[kind(kind::GENERIC_PATTERN)]
-    GenericPattern(Box<GenericPatternTransport>),
+    GenericPattern(GenericPatternTransport),
     #[kind(kind::TUPLE_PATTERN)]
-    TuplePattern(Box<TuplePatternTransport>),
+    TuplePattern(TuplePatternTransport),
     #[kind(kind::TUPLE_STRUCT_PATTERN)]
-    TupleStructPattern(Box<TupleStructPatternTransport>),
+    TupleStructPattern(TupleStructPatternTransport),
     #[kind(kind::STRUCT_PATTERN)]
-    StructPattern(Box<StructPatternTransport>),
+    StructPattern(StructPatternTransport),
     #[kind(kind::REF_PATTERN)]
     RefPattern(RefPatternTransport),
     #[kind(kind::SLICE_PATTERN)]
-    SlicePattern(Box<SlicePatternTransport>),
+    SlicePattern(SlicePatternTransport),
     #[kind(kind::CAPTURED_PATTERN)]
-    CapturedPattern(Box<CapturedPatternTransport>),
+    CapturedPattern(CapturedPatternTransport),
     #[kind(kind::REFERENCE_PATTERN)]
     ReferencePattern(ReferencePatternTransport),
     #[kind(kind::MUT_PATTERN)]
     MutPattern(MutPatternTransport),
     #[kind(kind::RANGE_PATTERN_WITH_LEFT)]
-    RangePatternWithLeft(Box<RangePatternWithLeftTransport>),
+    RangePatternWithLeft(RangePatternWithLeftTransport),
     #[kind(kind::RANGE_PATTERN_PREFIX)]
-    RangePatternPrefix(Box<RangePatternPrefixTransport>),
+    RangePatternPrefix(RangePatternPrefixTransport),
     #[kind(kind::OR_PATTERN_BINARY)]
-    OrPatternBinary(Box<OrPatternBinaryTransport>),
+    OrPatternBinary(OrPatternBinaryTransport),
     #[kind(kind::OR_PATTERN_PREFIX)]
     OrPatternPrefix(OrPatternPrefixTransport),
     #[kind(kind::CONST_BLOCK)]
     ConstBlock(ConstBlockTransport),
     #[kind(kind::MACRO_INVOCATION)]
-    MacroInvocation(Box<MacroInvocationTransport>),
+    MacroInvocation(MacroInvocationTransport),
     #[kind(kind::U8_KEYWORD)]
     U8Keyword,
     #[kind(kind::I8_KEYWORD)]
@@ -6503,8 +6503,8 @@ impl ::sittir_core::view::KindOf for ParameterNameTransportSlot {
 impl ::sittir_core::render::Render for ParameterNameTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ParameterNameTransportSlot::StringLiteral(inner) => inner.as_ref().render(w),
-            ParameterNameTransportSlot::RawStringLiteral(inner) => inner.as_ref().render(w),
+            ParameterNameTransportSlot::StringLiteral(inner) => inner.render(w),
+            ParameterNameTransportSlot::RawStringLiteral(inner) => inner.render(w),
             ParameterNameTransportSlot::CharLiteralEscapedSimple(inner) => inner.render(w),
             ParameterNameTransportSlot::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
             ParameterNameTransportSlot::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
@@ -6517,24 +6517,24 @@ impl ::sittir_core::render::Render for ParameterNameTransportSlot {
             ParameterNameTransportSlot::IntegerLiteralBinary(inner) => inner.render(w),
             ParameterNameTransportSlot::IntegerLiteralOctal(inner) => inner.render(w),
             ParameterNameTransportSlot::FloatLiteral(inner) => inner.render(w),
-            ParameterNameTransportSlot::NegativeLiteral(inner) => inner.as_ref().render(w),
+            ParameterNameTransportSlot::NegativeLiteral(inner) => inner.render(w),
             ParameterNameTransportSlot::Identifier(inner) => inner.render(w),
-            ParameterNameTransportSlot::ScopedIdentifier(inner) => inner.as_ref().render(w),
-            ParameterNameTransportSlot::GenericPattern(inner) => inner.as_ref().render(w),
-            ParameterNameTransportSlot::TuplePattern(inner) => inner.as_ref().render(w),
-            ParameterNameTransportSlot::TupleStructPattern(inner) => inner.as_ref().render(w),
-            ParameterNameTransportSlot::StructPattern(inner) => inner.as_ref().render(w),
+            ParameterNameTransportSlot::ScopedIdentifier(inner) => inner.render(w),
+            ParameterNameTransportSlot::GenericPattern(inner) => inner.render(w),
+            ParameterNameTransportSlot::TuplePattern(inner) => inner.render(w),
+            ParameterNameTransportSlot::TupleStructPattern(inner) => inner.render(w),
+            ParameterNameTransportSlot::StructPattern(inner) => inner.render(w),
             ParameterNameTransportSlot::RefPattern(inner) => inner.render(w),
-            ParameterNameTransportSlot::SlicePattern(inner) => inner.as_ref().render(w),
-            ParameterNameTransportSlot::CapturedPattern(inner) => inner.as_ref().render(w),
+            ParameterNameTransportSlot::SlicePattern(inner) => inner.render(w),
+            ParameterNameTransportSlot::CapturedPattern(inner) => inner.render(w),
             ParameterNameTransportSlot::ReferencePattern(inner) => inner.render(w),
             ParameterNameTransportSlot::MutPattern(inner) => inner.render(w),
-            ParameterNameTransportSlot::RangePatternWithLeft(inner) => inner.as_ref().render(w),
-            ParameterNameTransportSlot::RangePatternPrefix(inner) => inner.as_ref().render(w),
-            ParameterNameTransportSlot::OrPatternBinary(inner) => inner.as_ref().render(w),
+            ParameterNameTransportSlot::RangePatternWithLeft(inner) => inner.render(w),
+            ParameterNameTransportSlot::RangePatternPrefix(inner) => inner.render(w),
+            ParameterNameTransportSlot::OrPatternBinary(inner) => inner.render(w),
             ParameterNameTransportSlot::OrPatternPrefix(inner) => inner.render(w),
             ParameterNameTransportSlot::ConstBlock(inner) => inner.render(w),
-            ParameterNameTransportSlot::MacroInvocation(inner) => inner.as_ref().render(w),
+            ParameterNameTransportSlot::MacroInvocation(inner) => inner.render(w),
             ParameterNameTransportSlot::U8Keyword => render_u8_keyword(w),
             ParameterNameTransportSlot::I8Keyword => render_i8_keyword(w),
             ParameterNameTransportSlot::U16Keyword => render_u16_keyword(w),
@@ -6567,7 +6567,7 @@ impl ::sittir_core::render::Render for ParameterNameTransportSlot {
 #[transport(choice)]
 pub enum VisibilityModifierContentTransportSlot {
     #[kind(kind::VISIBILITY_MODIFIER_PUB)]
-    VisibilityModifierPub(Box<VisibilityModifierPubTransport>),
+    VisibilityModifierPub(VisibilityModifierPubTransport),
     #[kind(kind::CRATE)]
     Crate,
 }
@@ -6605,7 +6605,7 @@ impl ::sittir_core::view::KindOf for VisibilityModifierContentTransportSlot {
 impl ::sittir_core::render::Render for VisibilityModifierContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            VisibilityModifierContentTransportSlot::VisibilityModifierPub(inner) => inner.as_ref().render(w),
+            VisibilityModifierContentTransportSlot::VisibilityModifierPub(inner) => inner.render(w),
             VisibilityModifierContentTransportSlot::Crate => render_crate(w),
         }
     }
@@ -6615,9 +6615,9 @@ impl ::sittir_core::render::Render for VisibilityModifierContentTransportSlot {
 #[transport(choice)]
 pub enum BracketedTypeTypeTransportSlot {
     #[kind(kind::ABSTRACT_TYPE)]
-    AbstractType(Box<AbstractTypeTransport>),
+    AbstractType(AbstractTypeTransport),
     #[kind(kind::REFERENCE_TYPE)]
-    ReferenceType(Box<ReferenceTypeTransport>),
+    ReferenceType(ReferenceTypeTransport),
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
     #[kind(kind::POINTER_TYPE_CONST)]
@@ -6625,29 +6625,29 @@ pub enum BracketedTypeTypeTransportSlot {
     #[kind(kind::POINTER_TYPE_MUT)]
     PointerTypeMut(PointerTypeMutTransport),
     #[kind(kind::GENERIC_TYPE)]
-    GenericType(Box<GenericTypeTransport>),
+    GenericType(GenericTypeTransport),
     #[kind(kind::SCOPED_TYPE_IDENTIFIER)]
-    ScopedTypeIdentifier(Box<ScopedTypeIdentifierTransport>),
+    ScopedTypeIdentifier(ScopedTypeIdentifierTransport),
     #[kind(kind::TUPLE_TYPE)]
-    TupleType(Box<TupleTypeTransport>),
+    TupleType(TupleTypeTransport),
     #[kind(kind::ARRAY_TYPE)]
-    ArrayType(Box<ArrayTypeTransport>),
+    ArrayType(ArrayTypeTransport),
     #[kind(kind::FUNCTION_TYPE)]
-    FunctionType(Box<FunctionTypeTransport>),
+    FunctionType(FunctionTypeTransport),
     #[kind(kind::_TYPE_IDENTIFIER, display)]
-    TypeIdentifier(Box<TypeIdentifierTransport>),
+    TypeIdentifier(TypeIdentifierTransport),
     #[kind(kind::MACRO_INVOCATION)]
-    MacroInvocation(Box<MacroInvocationTransport>),
+    MacroInvocation(MacroInvocationTransport),
     #[kind(kind::DYNAMIC_TYPE)]
     DynamicType(DynamicTypeTransport),
     #[kind(kind::BOUNDED_TYPE)]
-    BoundedType(Box<BoundedTypeTransport>),
+    BoundedType(BoundedTypeTransport),
     #[kind(kind::REMOVED_TRAIT_BOUND)]
     RemovedTraitBound(RemovedTraitBoundTransport),
     #[kind(kind::_PRIMITIVE_TYPE, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD)]
     PrimitiveType(PrimitiveTypeEnum),
     #[kind(kind::QUALIFIED_TYPE)]
-    QualifiedType(Box<QualifiedTypeTransport>),
+    QualifiedType(QualifiedTypeTransport),
     #[kind(kind::UNIT_TYPE)]
     UnitType,
     #[kind(kind::NEVER_TYPE)]
@@ -6755,23 +6755,23 @@ impl ::sittir_core::view::KindOf for BracketedTypeTypeTransportSlot {
 impl ::sittir_core::render::Render for BracketedTypeTypeTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            BracketedTypeTypeTransportSlot::AbstractType(inner) => inner.as_ref().render(w),
-            BracketedTypeTypeTransportSlot::ReferenceType(inner) => inner.as_ref().render(w),
+            BracketedTypeTypeTransportSlot::AbstractType(inner) => inner.render(w),
+            BracketedTypeTypeTransportSlot::ReferenceType(inner) => inner.render(w),
             BracketedTypeTypeTransportSlot::Metavariable(inner) => inner.render(w),
             BracketedTypeTypeTransportSlot::PointerTypeConst(inner) => inner.render(w),
             BracketedTypeTypeTransportSlot::PointerTypeMut(inner) => inner.render(w),
-            BracketedTypeTypeTransportSlot::GenericType(inner) => inner.as_ref().render(w),
-            BracketedTypeTypeTransportSlot::ScopedTypeIdentifier(inner) => inner.as_ref().render(w),
-            BracketedTypeTypeTransportSlot::TupleType(inner) => inner.as_ref().render(w),
-            BracketedTypeTypeTransportSlot::ArrayType(inner) => inner.as_ref().render(w),
-            BracketedTypeTypeTransportSlot::FunctionType(inner) => inner.as_ref().render(w),
-            BracketedTypeTypeTransportSlot::TypeIdentifier(inner) => inner.as_ref().render(w),
-            BracketedTypeTypeTransportSlot::MacroInvocation(inner) => inner.as_ref().render(w),
+            BracketedTypeTypeTransportSlot::GenericType(inner) => inner.render(w),
+            BracketedTypeTypeTransportSlot::ScopedTypeIdentifier(inner) => inner.render(w),
+            BracketedTypeTypeTransportSlot::TupleType(inner) => inner.render(w),
+            BracketedTypeTypeTransportSlot::ArrayType(inner) => inner.render(w),
+            BracketedTypeTypeTransportSlot::FunctionType(inner) => inner.render(w),
+            BracketedTypeTypeTransportSlot::TypeIdentifier(inner) => inner.render(w),
+            BracketedTypeTypeTransportSlot::MacroInvocation(inner) => inner.render(w),
             BracketedTypeTypeTransportSlot::DynamicType(inner) => inner.render(w),
-            BracketedTypeTypeTransportSlot::BoundedType(inner) => inner.as_ref().render(w),
+            BracketedTypeTypeTransportSlot::BoundedType(inner) => inner.render(w),
             BracketedTypeTypeTransportSlot::RemovedTraitBound(inner) => inner.render(w),
             BracketedTypeTypeTransportSlot::PrimitiveType(inner) => inner.render(w),
-            BracketedTypeTypeTransportSlot::QualifiedType(inner) => inner.as_ref().render(w),
+            BracketedTypeTypeTransportSlot::QualifiedType(inner) => inner.render(w),
             BracketedTypeTypeTransportSlot::UnitType => render_unit_type(w),
             BracketedTypeTypeTransportSlot::NeverType => render_never_type(w),
         }
@@ -6784,7 +6784,7 @@ pub enum FunctionTypeContentTransportSlot {
     #[kind(kind::FUNCTION_TYPE_TRAIT_FORM)]
     FunctionTypeTraitForm(FunctionTypeTraitFormTransport),
     #[kind(kind::FUNCTION_TYPE_FN_FORM)]
-    FunctionTypeFnForm(Box<FunctionTypeFnFormTransport>),
+    FunctionTypeFnForm(FunctionTypeFnFormTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for FunctionTypeContentTransportSlot {
@@ -6821,7 +6821,7 @@ impl ::sittir_core::render::Render for FunctionTypeContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             FunctionTypeContentTransportSlot::FunctionTypeTraitForm(inner) => inner.render(w),
-            FunctionTypeContentTransportSlot::FunctionTypeFnForm(inner) => inner.as_ref().render(w),
+            FunctionTypeContentTransportSlot::FunctionTypeFnForm(inner) => inner.render(w),
         }
     }
 }
@@ -6832,9 +6832,9 @@ pub enum GenericFunctionFunctionTransportSlot {
     #[kind(kind::IDENTIFIER, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD, kind::DEFAULT_KEYWORD, kind::UNION_KEYWORD, kind::GEN_KEYWORD)]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
-    ScopedIdentifier(Box<ScopedIdentifierTransport>),
+    ScopedIdentifier(ScopedIdentifierTransport),
     #[kind(kind::FIELD_EXPRESSION)]
-    FieldExpression(Box<FieldExpressionTransport>),
+    FieldExpression(FieldExpressionTransport),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -6881,8 +6881,8 @@ impl ::sittir_core::render::Render for GenericFunctionFunctionTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             GenericFunctionFunctionTransportSlot::Identifier(inner) => inner.render(w),
-            GenericFunctionFunctionTransportSlot::ScopedIdentifier(inner) => inner.as_ref().render(w),
-            GenericFunctionFunctionTransportSlot::FieldExpression(inner) => inner.as_ref().render(w),
+            GenericFunctionFunctionTransportSlot::ScopedIdentifier(inner) => inner.render(w),
+            GenericFunctionFunctionTransportSlot::FieldExpression(inner) => inner.render(w),
             GenericFunctionFunctionTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -6892,9 +6892,9 @@ impl ::sittir_core::render::Render for GenericFunctionFunctionTransportSlot {
 #[transport(choice)]
 pub enum GenericTypeTypeTransportSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
-    TypeIdentifier(Box<TypeIdentifierTransport>),
+    TypeIdentifier(TypeIdentifierTransport),
     #[kind(kind::SCOPED_TYPE_IDENTIFIER)]
-    ScopedTypeIdentifier(Box<ScopedTypeIdentifierTransport>),
+    ScopedTypeIdentifier(ScopedTypeIdentifierTransport),
     #[kind(kind::DEFAULT_KEYWORD)]
     DefaultKeyword,
     #[kind(kind::UNION_KEYWORD)]
@@ -6948,8 +6948,8 @@ impl ::sittir_core::view::KindOf for GenericTypeTypeTransportSlot {
 impl ::sittir_core::render::Render for GenericTypeTypeTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            GenericTypeTypeTransportSlot::TypeIdentifier(inner) => inner.as_ref().render(w),
-            GenericTypeTypeTransportSlot::ScopedTypeIdentifier(inner) => inner.as_ref().render(w),
+            GenericTypeTypeTransportSlot::TypeIdentifier(inner) => inner.render(w),
+            GenericTypeTypeTransportSlot::ScopedTypeIdentifier(inner) => inner.render(w),
             GenericTypeTypeTransportSlot::DefaultKeyword => render_default_keyword(w),
             GenericTypeTypeTransportSlot::UnionKeyword => render_union_keyword(w),
             GenericTypeTypeTransportSlot::GenKeyword => render_gen_keyword(w),
@@ -6961,9 +6961,9 @@ impl ::sittir_core::render::Render for GenericTypeTypeTransportSlot {
 #[transport(choice)]
 pub enum GenericTypeWithTurbofishTypeTransportSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
-    TypeIdentifier(Box<TypeIdentifierTransport>),
+    TypeIdentifier(TypeIdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
-    ScopedIdentifier(Box<ScopedIdentifierTransport>),
+    ScopedIdentifier(ScopedIdentifierTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for GenericTypeWithTurbofishTypeTransportSlot {
@@ -6999,8 +6999,8 @@ impl ::sittir_core::view::KindOf for GenericTypeWithTurbofishTypeTransportSlot {
 impl ::sittir_core::render::Render for GenericTypeWithTurbofishTypeTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            GenericTypeWithTurbofishTypeTransportSlot::TypeIdentifier(inner) => inner.as_ref().render(w),
-            GenericTypeWithTurbofishTypeTransportSlot::ScopedIdentifier(inner) => inner.as_ref().render(w),
+            GenericTypeWithTurbofishTypeTransportSlot::TypeIdentifier(inner) => inner.render(w),
+            GenericTypeWithTurbofishTypeTransportSlot::ScopedIdentifier(inner) => inner.render(w),
         }
     }
 }
@@ -7009,11 +7009,11 @@ impl ::sittir_core::render::Render for GenericTypeWithTurbofishTypeTransportSlot
 #[transport(choice)]
 pub enum BoundedTypeLeftTransportSlot {
     #[kind(kind::LIFETIME)]
-    Lifetime(Box<LifetimeTransport>),
+    Lifetime(LifetimeTransport),
     #[kind(kind::ABSTRACT_TYPE)]
-    AbstractType(Box<AbstractTypeTransport>),
+    AbstractType(AbstractTypeTransport),
     #[kind(kind::REFERENCE_TYPE)]
-    ReferenceType(Box<ReferenceTypeTransport>),
+    ReferenceType(ReferenceTypeTransport),
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
     #[kind(kind::POINTER_TYPE_CONST)]
@@ -7021,29 +7021,29 @@ pub enum BoundedTypeLeftTransportSlot {
     #[kind(kind::POINTER_TYPE_MUT)]
     PointerTypeMut(PointerTypeMutTransport),
     #[kind(kind::GENERIC_TYPE)]
-    GenericType(Box<GenericTypeTransport>),
+    GenericType(GenericTypeTransport),
     #[kind(kind::SCOPED_TYPE_IDENTIFIER)]
-    ScopedTypeIdentifier(Box<ScopedTypeIdentifierTransport>),
+    ScopedTypeIdentifier(ScopedTypeIdentifierTransport),
     #[kind(kind::TUPLE_TYPE)]
-    TupleType(Box<TupleTypeTransport>),
+    TupleType(TupleTypeTransport),
     #[kind(kind::ARRAY_TYPE)]
-    ArrayType(Box<ArrayTypeTransport>),
+    ArrayType(ArrayTypeTransport),
     #[kind(kind::FUNCTION_TYPE)]
-    FunctionType(Box<FunctionTypeTransport>),
+    FunctionType(FunctionTypeTransport),
     #[kind(kind::_TYPE_IDENTIFIER, display)]
-    TypeIdentifier(Box<TypeIdentifierTransport>),
+    TypeIdentifier(TypeIdentifierTransport),
     #[kind(kind::MACRO_INVOCATION)]
-    MacroInvocation(Box<MacroInvocationTransport>),
+    MacroInvocation(MacroInvocationTransport),
     #[kind(kind::DYNAMIC_TYPE)]
     DynamicType(DynamicTypeTransport),
     #[kind(kind::BOUNDED_TYPE)]
-    BoundedType(Box<BoundedTypeTransport>),
+    BoundedType(BoundedTypeTransport),
     #[kind(kind::REMOVED_TRAIT_BOUND)]
     RemovedTraitBound(RemovedTraitBoundTransport),
     #[kind(kind::_PRIMITIVE_TYPE, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD)]
     PrimitiveType(PrimitiveTypeEnum),
     #[kind(kind::USE_BOUNDS)]
-    UseBounds(Box<UseBoundsTransport>),
+    UseBounds(UseBoundsTransport),
     #[kind(kind::UNIT_TYPE)]
     UnitType,
     #[kind(kind::NEVER_TYPE)]
@@ -7155,24 +7155,24 @@ impl ::sittir_core::view::KindOf for BoundedTypeLeftTransportSlot {
 impl ::sittir_core::render::Render for BoundedTypeLeftTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            BoundedTypeLeftTransportSlot::Lifetime(inner) => inner.as_ref().render(w),
-            BoundedTypeLeftTransportSlot::AbstractType(inner) => inner.as_ref().render(w),
-            BoundedTypeLeftTransportSlot::ReferenceType(inner) => inner.as_ref().render(w),
+            BoundedTypeLeftTransportSlot::Lifetime(inner) => inner.render(w),
+            BoundedTypeLeftTransportSlot::AbstractType(inner) => inner.render(w),
+            BoundedTypeLeftTransportSlot::ReferenceType(inner) => inner.render(w),
             BoundedTypeLeftTransportSlot::Metavariable(inner) => inner.render(w),
             BoundedTypeLeftTransportSlot::PointerTypeConst(inner) => inner.render(w),
             BoundedTypeLeftTransportSlot::PointerTypeMut(inner) => inner.render(w),
-            BoundedTypeLeftTransportSlot::GenericType(inner) => inner.as_ref().render(w),
-            BoundedTypeLeftTransportSlot::ScopedTypeIdentifier(inner) => inner.as_ref().render(w),
-            BoundedTypeLeftTransportSlot::TupleType(inner) => inner.as_ref().render(w),
-            BoundedTypeLeftTransportSlot::ArrayType(inner) => inner.as_ref().render(w),
-            BoundedTypeLeftTransportSlot::FunctionType(inner) => inner.as_ref().render(w),
-            BoundedTypeLeftTransportSlot::TypeIdentifier(inner) => inner.as_ref().render(w),
-            BoundedTypeLeftTransportSlot::MacroInvocation(inner) => inner.as_ref().render(w),
+            BoundedTypeLeftTransportSlot::GenericType(inner) => inner.render(w),
+            BoundedTypeLeftTransportSlot::ScopedTypeIdentifier(inner) => inner.render(w),
+            BoundedTypeLeftTransportSlot::TupleType(inner) => inner.render(w),
+            BoundedTypeLeftTransportSlot::ArrayType(inner) => inner.render(w),
+            BoundedTypeLeftTransportSlot::FunctionType(inner) => inner.render(w),
+            BoundedTypeLeftTransportSlot::TypeIdentifier(inner) => inner.render(w),
+            BoundedTypeLeftTransportSlot::MacroInvocation(inner) => inner.render(w),
             BoundedTypeLeftTransportSlot::DynamicType(inner) => inner.render(w),
-            BoundedTypeLeftTransportSlot::BoundedType(inner) => inner.as_ref().render(w),
+            BoundedTypeLeftTransportSlot::BoundedType(inner) => inner.render(w),
             BoundedTypeLeftTransportSlot::RemovedTraitBound(inner) => inner.render(w),
             BoundedTypeLeftTransportSlot::PrimitiveType(inner) => inner.render(w),
-            BoundedTypeLeftTransportSlot::UseBounds(inner) => inner.as_ref().render(w),
+            BoundedTypeLeftTransportSlot::UseBounds(inner) => inner.render(w),
             BoundedTypeLeftTransportSlot::UnitType => render_unit_type(w),
             BoundedTypeLeftTransportSlot::NeverType => render_never_type(w),
         }
@@ -7183,19 +7183,19 @@ impl ::sittir_core::render::Render for BoundedTypeLeftTransportSlot {
 #[transport(choice)]
 pub enum AbstractTypeTraitTransportSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
-    TypeIdentifier(Box<TypeIdentifierTransport>),
+    TypeIdentifier(TypeIdentifierTransport),
     #[kind(kind::SCOPED_TYPE_IDENTIFIER)]
-    ScopedTypeIdentifier(Box<ScopedTypeIdentifierTransport>),
+    ScopedTypeIdentifier(ScopedTypeIdentifierTransport),
     #[kind(kind::REMOVED_TRAIT_BOUND)]
     RemovedTraitBound(RemovedTraitBoundTransport),
     #[kind(kind::GENERIC_TYPE)]
-    GenericType(Box<GenericTypeTransport>),
+    GenericType(GenericTypeTransport),
     #[kind(kind::FUNCTION_TYPE)]
-    FunctionType(Box<FunctionTypeTransport>),
+    FunctionType(FunctionTypeTransport),
     #[kind(kind::TUPLE_TYPE)]
-    TupleType(Box<TupleTypeTransport>),
+    TupleType(TupleTypeTransport),
     #[kind(kind::BOUNDED_TYPE)]
-    BoundedType(Box<BoundedTypeTransport>),
+    BoundedType(BoundedTypeTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for AbstractTypeTraitTransportSlot {
@@ -7251,13 +7251,13 @@ impl ::sittir_core::view::KindOf for AbstractTypeTraitTransportSlot {
 impl ::sittir_core::render::Render for AbstractTypeTraitTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            AbstractTypeTraitTransportSlot::TypeIdentifier(inner) => inner.as_ref().render(w),
-            AbstractTypeTraitTransportSlot::ScopedTypeIdentifier(inner) => inner.as_ref().render(w),
+            AbstractTypeTraitTransportSlot::TypeIdentifier(inner) => inner.render(w),
+            AbstractTypeTraitTransportSlot::ScopedTypeIdentifier(inner) => inner.render(w),
             AbstractTypeTraitTransportSlot::RemovedTraitBound(inner) => inner.render(w),
-            AbstractTypeTraitTransportSlot::GenericType(inner) => inner.as_ref().render(w),
-            AbstractTypeTraitTransportSlot::FunctionType(inner) => inner.as_ref().render(w),
-            AbstractTypeTraitTransportSlot::TupleType(inner) => inner.as_ref().render(w),
-            AbstractTypeTraitTransportSlot::BoundedType(inner) => inner.as_ref().render(w),
+            AbstractTypeTraitTransportSlot::GenericType(inner) => inner.render(w),
+            AbstractTypeTraitTransportSlot::FunctionType(inner) => inner.render(w),
+            AbstractTypeTraitTransportSlot::TupleType(inner) => inner.render(w),
+            AbstractTypeTraitTransportSlot::BoundedType(inner) => inner.render(w),
         }
     }
 }
@@ -7266,17 +7266,17 @@ impl ::sittir_core::render::Render for AbstractTypeTraitTransportSlot {
 #[transport(choice)]
 pub enum DynamicTypeTraitTransportSlot {
     #[kind(kind::HIGHER_RANKED_TRAIT_BOUND)]
-    HigherRankedTraitBound(Box<HigherRankedTraitBoundTransport>),
+    HigherRankedTraitBound(HigherRankedTraitBoundTransport),
     #[kind(kind::_TYPE_IDENTIFIER, display)]
-    TypeIdentifier(Box<TypeIdentifierTransport>),
+    TypeIdentifier(TypeIdentifierTransport),
     #[kind(kind::SCOPED_TYPE_IDENTIFIER)]
-    ScopedTypeIdentifier(Box<ScopedTypeIdentifierTransport>),
+    ScopedTypeIdentifier(ScopedTypeIdentifierTransport),
     #[kind(kind::GENERIC_TYPE)]
-    GenericType(Box<GenericTypeTransport>),
+    GenericType(GenericTypeTransport),
     #[kind(kind::FUNCTION_TYPE)]
-    FunctionType(Box<FunctionTypeTransport>),
+    FunctionType(FunctionTypeTransport),
     #[kind(kind::TUPLE_TYPE)]
-    TupleType(Box<TupleTypeTransport>),
+    TupleType(TupleTypeTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for DynamicTypeTraitTransportSlot {
@@ -7328,12 +7328,12 @@ impl ::sittir_core::view::KindOf for DynamicTypeTraitTransportSlot {
 impl ::sittir_core::render::Render for DynamicTypeTraitTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            DynamicTypeTraitTransportSlot::HigherRankedTraitBound(inner) => inner.as_ref().render(w),
-            DynamicTypeTraitTransportSlot::TypeIdentifier(inner) => inner.as_ref().render(w),
-            DynamicTypeTraitTransportSlot::ScopedTypeIdentifier(inner) => inner.as_ref().render(w),
-            DynamicTypeTraitTransportSlot::GenericType(inner) => inner.as_ref().render(w),
-            DynamicTypeTraitTransportSlot::FunctionType(inner) => inner.as_ref().render(w),
-            DynamicTypeTraitTransportSlot::TupleType(inner) => inner.as_ref().render(w),
+            DynamicTypeTraitTransportSlot::HigherRankedTraitBound(inner) => inner.render(w),
+            DynamicTypeTraitTransportSlot::TypeIdentifier(inner) => inner.render(w),
+            DynamicTypeTraitTransportSlot::ScopedTypeIdentifier(inner) => inner.render(w),
+            DynamicTypeTraitTransportSlot::GenericType(inner) => inner.render(w),
+            DynamicTypeTraitTransportSlot::FunctionType(inner) => inner.render(w),
+            DynamicTypeTraitTransportSlot::TupleType(inner) => inner.render(w),
         }
     }
 }
@@ -7342,7 +7342,7 @@ impl ::sittir_core::render::Render for DynamicTypeTraitTransportSlot {
 #[transport(choice)]
 pub enum MacroInvocationMacroTransportSlot {
     #[kind(kind::SCOPED_IDENTIFIER)]
-    ScopedIdentifier(Box<ScopedIdentifierTransport>),
+    ScopedIdentifier(ScopedIdentifierTransport),
     #[kind(kind::IDENTIFIER, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD)]
     Identifier(IdentifierTransport),
     #[kind(kind::DEFAULT_KEYWORD)]
@@ -7404,7 +7404,7 @@ impl ::sittir_core::view::KindOf for MacroInvocationMacroTransportSlot {
 impl ::sittir_core::render::Render for MacroInvocationMacroTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            MacroInvocationMacroTransportSlot::ScopedIdentifier(inner) => inner.as_ref().render(w),
+            MacroInvocationMacroTransportSlot::ScopedIdentifier(inner) => inner.render(w),
             MacroInvocationMacroTransportSlot::Identifier(inner) => inner.render(w),
             MacroInvocationMacroTransportSlot::DefaultKeyword => render_default_keyword(w),
             MacroInvocationMacroTransportSlot::UnionKeyword => render_union_keyword(w),
@@ -7422,11 +7422,11 @@ pub enum ScopedIdentifierPathTransportSlot {
     #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
-    ScopedIdentifier(Box<ScopedIdentifierTransport>),
+    ScopedIdentifier(ScopedIdentifierTransport),
     #[kind(kind::BRACKETED_TYPE)]
     BracketedType(BracketedTypeTransport),
     #[kind(kind::GENERIC_TYPE_WITH_TURBOFISH)]
-    GenericTypeWithTurbofish(Box<GenericTypeWithTurbofishTransport>),
+    GenericTypeWithTurbofish(GenericTypeWithTurbofishTransport),
     #[kind(kind::SELF)]
     Self_,
     #[kind(kind::U8_KEYWORD)]
@@ -7620,9 +7620,9 @@ impl ::sittir_core::render::Render for ScopedIdentifierPathTransportSlot {
         match self {
             ScopedIdentifierPathTransportSlot::Metavariable(inner) => inner.render(w),
             ScopedIdentifierPathTransportSlot::Identifier(inner) => inner.render(w),
-            ScopedIdentifierPathTransportSlot::ScopedIdentifier(inner) => inner.as_ref().render(w),
+            ScopedIdentifierPathTransportSlot::ScopedIdentifier(inner) => inner.render(w),
             ScopedIdentifierPathTransportSlot::BracketedType(inner) => inner.render(w),
-            ScopedIdentifierPathTransportSlot::GenericTypeWithTurbofish(inner) => inner.as_ref().render(w),
+            ScopedIdentifierPathTransportSlot::GenericTypeWithTurbofish(inner) => inner.render(w),
             ScopedIdentifierPathTransportSlot::Self_ => render_self(w),
             ScopedIdentifierPathTransportSlot::U8Keyword => render_u8_keyword(w),
             ScopedIdentifierPathTransportSlot::I8Keyword => render_i8_keyword(w),
@@ -7714,9 +7714,9 @@ pub enum ScopedTypeIdentifierInExpressionPositionPathTransportSlot {
     #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
-    ScopedIdentifier(Box<ScopedIdentifierTransport>),
+    ScopedIdentifier(ScopedIdentifierTransport),
     #[kind(kind::GENERIC_TYPE_WITH_TURBOFISH)]
-    GenericTypeWithTurbofish(Box<GenericTypeWithTurbofishTransport>),
+    GenericTypeWithTurbofish(GenericTypeWithTurbofishTransport),
     #[kind(kind::SELF)]
     Self_,
     #[kind(kind::U8_KEYWORD)]
@@ -7906,8 +7906,8 @@ impl ::sittir_core::render::Render for ScopedTypeIdentifierInExpressionPositionP
         match self {
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Metavariable(inner) => inner.render(w),
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Identifier(inner) => inner.render(w),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::ScopedIdentifier(inner) => inner.as_ref().render(w),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::GenericTypeWithTurbofish(inner) => inner.as_ref().render(w),
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::ScopedIdentifier(inner) => inner.render(w),
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::GenericTypeWithTurbofish(inner) => inner.render(w),
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Self_ => render_self(w),
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U8Keyword => render_u8_keyword(w),
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I8Keyword => render_i8_keyword(w),
@@ -7944,13 +7944,13 @@ pub enum ScopedTypeIdentifierPathTransportSlot {
     #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
-    ScopedIdentifier(Box<ScopedIdentifierTransport>),
+    ScopedIdentifier(ScopedIdentifierTransport),
     #[kind(kind::GENERIC_TYPE_WITH_TURBOFISH)]
-    GenericTypeWithTurbofish(Box<GenericTypeWithTurbofishTransport>),
+    GenericTypeWithTurbofish(GenericTypeWithTurbofishTransport),
     #[kind(kind::BRACKETED_TYPE)]
     BracketedType(BracketedTypeTransport),
     #[kind(kind::GENERIC_TYPE)]
-    GenericType(Box<GenericTypeTransport>),
+    GenericType(GenericTypeTransport),
     #[kind(kind::SELF)]
     Self_,
     #[kind(kind::U8_KEYWORD)]
@@ -8148,10 +8148,10 @@ impl ::sittir_core::render::Render for ScopedTypeIdentifierPathTransportSlot {
         match self {
             ScopedTypeIdentifierPathTransportSlot::Metavariable(inner) => inner.render(w),
             ScopedTypeIdentifierPathTransportSlot::Identifier(inner) => inner.render(w),
-            ScopedTypeIdentifierPathTransportSlot::ScopedIdentifier(inner) => inner.as_ref().render(w),
-            ScopedTypeIdentifierPathTransportSlot::GenericTypeWithTurbofish(inner) => inner.as_ref().render(w),
+            ScopedTypeIdentifierPathTransportSlot::ScopedIdentifier(inner) => inner.render(w),
+            ScopedTypeIdentifierPathTransportSlot::GenericTypeWithTurbofish(inner) => inner.render(w),
             ScopedTypeIdentifierPathTransportSlot::BracketedType(inner) => inner.render(w),
-            ScopedTypeIdentifierPathTransportSlot::GenericType(inner) => inner.as_ref().render(w),
+            ScopedTypeIdentifierPathTransportSlot::GenericType(inner) => inner.render(w),
             ScopedTypeIdentifierPathTransportSlot::Self_ => render_self(w),
             ScopedTypeIdentifierPathTransportSlot::U8Keyword => render_u8_keyword(w),
             ScopedTypeIdentifierPathTransportSlot::I8Keyword => render_i8_keyword(w),
@@ -8432,7 +8432,7 @@ impl ::sittir_core::render::Render for CompoundAssignmentExprOperatorTransportSl
 #[transport(choice)]
 pub enum CallExpressionFunctionTransportSlot {
     #[kind(kind::UNARY_EXPRESSION)]
-    UnaryExpression(Box<UnaryExpressionTransport>),
+    UnaryExpression(UnaryExpressionTransport),
     #[kind(kind::REFERENCE_EXPRESSION_RAW_CONST)]
     ReferenceExpressionRawConst(ReferenceExpressionRawConstTransport),
     #[kind(kind::REFERENCE_EXPRESSION_RAW_MUT)]
@@ -8444,23 +8444,23 @@ pub enum CallExpressionFunctionTransportSlot {
     #[kind(kind::TRY_EXPRESSION)]
     TryExpression(TryExpressionTransport),
     #[kind(kind::BINARY_EXPRESSION)]
-    BinaryExpression(Box<BinaryExpressionTransport>),
+    BinaryExpression(BinaryExpressionTransport),
     #[kind(kind::ASSIGNMENT_EXPRESSION)]
-    AssignmentExpression(Box<AssignmentExpressionTransport>),
+    AssignmentExpression(AssignmentExpressionTransport),
     #[kind(kind::COMPOUND_ASSIGNMENT_EXPR)]
-    CompoundAssignmentExpr(Box<CompoundAssignmentExprTransport>),
+    CompoundAssignmentExpr(CompoundAssignmentExprTransport),
     #[kind(kind::TYPE_CAST_EXPRESSION)]
-    TypeCastExpression(Box<TypeCastExpressionTransport>),
+    TypeCastExpression(TypeCastExpressionTransport),
     #[kind(kind::CALL_EXPRESSION)]
-    CallExpression(Box<CallExpressionTransport>),
+    CallExpression(CallExpressionTransport),
     #[kind(kind::RETURN_EXPRESSION)]
     ReturnExpression(ReturnExpressionTransport),
     #[kind(kind::YIELD_EXPRESSION)]
     YieldExpression(YieldExpressionTransport),
     #[kind(kind::STRING_LITERAL)]
-    StringLiteral(Box<StringLiteralTransport>),
+    StringLiteral(StringLiteralTransport),
     #[kind(kind::RAW_STRING_LITERAL)]
-    RawStringLiteral(Box<RawStringLiteralTransport>),
+    RawStringLiteral(RawStringLiteralTransport),
     #[kind(kind::CHAR_LITERAL_ESCAPED_SIMPLE)]
     CharLiteralEscapedSimple(CharLiteralEscapedSimpleTransport),
     #[kind(kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED)]
@@ -8488,37 +8488,37 @@ pub enum CallExpressionFunctionTransportSlot {
     #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
-    ScopedIdentifier(Box<ScopedIdentifierTransport>),
+    ScopedIdentifier(ScopedIdentifierTransport),
     #[kind(kind::GENERIC_FUNCTION)]
-    GenericFunction(Box<GenericFunctionTransport>),
+    GenericFunction(GenericFunctionTransport),
     #[kind(kind::AWAIT_EXPRESSION)]
     AwaitExpression(AwaitExpressionTransport),
     #[kind(kind::FIELD_EXPRESSION)]
-    FieldExpression(Box<FieldExpressionTransport>),
+    FieldExpression(FieldExpressionTransport),
     #[kind(kind::ARRAY_EXPRESSION_SEMI)]
-    ArrayExpressionSemi(Box<ArrayExpressionSemiTransport>),
+    ArrayExpressionSemi(ArrayExpressionSemiTransport),
     #[kind(kind::ARRAY_EXPRESSION_LIST)]
-    ArrayExpressionList(Box<ArrayExpressionListTransport>),
+    ArrayExpressionList(ArrayExpressionListTransport),
     #[kind(kind::TUPLE_EXPRESSION)]
-    TupleExpression(Box<TupleExpressionTransport>),
+    TupleExpression(TupleExpressionTransport),
     #[kind(kind::MACRO_INVOCATION)]
-    MacroInvocation(Box<MacroInvocationTransport>),
+    MacroInvocation(MacroInvocationTransport),
     #[kind(kind::BREAK_EXPRESSION)]
-    BreakExpression(Box<BreakExpressionTransport>),
+    BreakExpression(BreakExpressionTransport),
     #[kind(kind::CONTINUE_EXPRESSION)]
-    ContinueExpression(Box<ContinueExpressionTransport>),
+    ContinueExpression(ContinueExpressionTransport),
     #[kind(kind::INDEX_EXPRESSION)]
-    IndexExpression(Box<IndexExpressionTransport>),
+    IndexExpression(IndexExpressionTransport),
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
     #[kind(kind::CLOSURE_EXPRESSION_BLOCK)]
-    ClosureExpressionBlock(Box<ClosureExpressionBlockTransport>),
+    ClosureExpressionBlock(ClosureExpressionBlockTransport),
     #[kind(kind::CLOSURE_EXPRESSION_EXPR)]
-    ClosureExpressionExpr(Box<ClosureExpressionExprTransport>),
+    ClosureExpressionExpr(ClosureExpressionExprTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION)]
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     #[kind(kind::STRUCT_EXPRESSION)]
-    StructExpression(Box<StructExpressionTransport>),
+    StructExpression(StructExpressionTransport),
     #[kind(kind::UNSAFE_BLOCK)]
     UnsafeBlock(UnsafeBlockTransport),
     #[kind(kind::ASYNC_BLOCK)]
@@ -8528,17 +8528,17 @@ pub enum CallExpressionFunctionTransportSlot {
     #[kind(kind::TRY_BLOCK)]
     TryBlock(TryBlockTransport),
     #[kind(kind::BLOCK)]
-    Block(Box<BlockTransport>),
+    Block(BlockTransport),
     #[kind(kind::IF_EXPRESSION)]
-    IfExpression(Box<IfExpressionTransport>),
+    IfExpression(IfExpressionTransport),
     #[kind(kind::MATCH_EXPRESSION)]
-    MatchExpression(Box<MatchExpressionTransport>),
+    MatchExpression(MatchExpressionTransport),
     #[kind(kind::WHILE_EXPRESSION)]
-    WhileExpression(Box<WhileExpressionTransport>),
+    WhileExpression(WhileExpressionTransport),
     #[kind(kind::LOOP_EXPRESSION)]
-    LoopExpression(Box<LoopExpressionTransport>),
+    LoopExpression(LoopExpressionTransport),
     #[kind(kind::FOR_EXPRESSION)]
-    ForExpression(Box<ForExpressionTransport>),
+    ForExpression(ForExpressionTransport),
     #[kind(kind::CONST_BLOCK)]
     ConstBlock(ConstBlockTransport),
     #[kind(kind::U8_KEYWORD)]
@@ -8926,21 +8926,21 @@ impl ::sittir_core::view::KindOf for CallExpressionFunctionTransportSlot {
 impl ::sittir_core::render::Render for CallExpressionFunctionTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            CallExpressionFunctionTransportSlot::UnaryExpression(inner) => inner.as_ref().render(w),
+            CallExpressionFunctionTransportSlot::UnaryExpression(inner) => inner.render(w),
             CallExpressionFunctionTransportSlot::ReferenceExpressionRawConst(inner) => inner.render(w),
             CallExpressionFunctionTransportSlot::ReferenceExpressionRawMut(inner) => inner.render(w),
             CallExpressionFunctionTransportSlot::ReferenceExpressionMut(inner) => inner.render(w),
             CallExpressionFunctionTransportSlot::ReferenceExpressionBare(inner) => inner.render(w),
             CallExpressionFunctionTransportSlot::TryExpression(inner) => inner.render(w),
-            CallExpressionFunctionTransportSlot::BinaryExpression(inner) => inner.as_ref().render(w),
-            CallExpressionFunctionTransportSlot::AssignmentExpression(inner) => inner.as_ref().render(w),
-            CallExpressionFunctionTransportSlot::CompoundAssignmentExpr(inner) => inner.as_ref().render(w),
-            CallExpressionFunctionTransportSlot::TypeCastExpression(inner) => inner.as_ref().render(w),
-            CallExpressionFunctionTransportSlot::CallExpression(inner) => inner.as_ref().render(w),
+            CallExpressionFunctionTransportSlot::BinaryExpression(inner) => inner.render(w),
+            CallExpressionFunctionTransportSlot::AssignmentExpression(inner) => inner.render(w),
+            CallExpressionFunctionTransportSlot::CompoundAssignmentExpr(inner) => inner.render(w),
+            CallExpressionFunctionTransportSlot::TypeCastExpression(inner) => inner.render(w),
+            CallExpressionFunctionTransportSlot::CallExpression(inner) => inner.render(w),
             CallExpressionFunctionTransportSlot::ReturnExpression(inner) => inner.render(w),
             CallExpressionFunctionTransportSlot::YieldExpression(inner) => inner.render(w),
-            CallExpressionFunctionTransportSlot::StringLiteral(inner) => inner.as_ref().render(w),
-            CallExpressionFunctionTransportSlot::RawStringLiteral(inner) => inner.as_ref().render(w),
+            CallExpressionFunctionTransportSlot::StringLiteral(inner) => inner.render(w),
+            CallExpressionFunctionTransportSlot::RawStringLiteral(inner) => inner.render(w),
             CallExpressionFunctionTransportSlot::CharLiteralEscapedSimple(inner) => inner.render(w),
             CallExpressionFunctionTransportSlot::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
             CallExpressionFunctionTransportSlot::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
@@ -8954,32 +8954,32 @@ impl ::sittir_core::render::Render for CallExpressionFunctionTransportSlot {
             CallExpressionFunctionTransportSlot::IntegerLiteralOctal(inner) => inner.render(w),
             CallExpressionFunctionTransportSlot::FloatLiteral(inner) => inner.render(w),
             CallExpressionFunctionTransportSlot::Identifier(inner) => inner.render(w),
-            CallExpressionFunctionTransportSlot::ScopedIdentifier(inner) => inner.as_ref().render(w),
-            CallExpressionFunctionTransportSlot::GenericFunction(inner) => inner.as_ref().render(w),
+            CallExpressionFunctionTransportSlot::ScopedIdentifier(inner) => inner.render(w),
+            CallExpressionFunctionTransportSlot::GenericFunction(inner) => inner.render(w),
             CallExpressionFunctionTransportSlot::AwaitExpression(inner) => inner.render(w),
-            CallExpressionFunctionTransportSlot::FieldExpression(inner) => inner.as_ref().render(w),
-            CallExpressionFunctionTransportSlot::ArrayExpressionSemi(inner) => inner.as_ref().render(w),
-            CallExpressionFunctionTransportSlot::ArrayExpressionList(inner) => inner.as_ref().render(w),
-            CallExpressionFunctionTransportSlot::TupleExpression(inner) => inner.as_ref().render(w),
-            CallExpressionFunctionTransportSlot::MacroInvocation(inner) => inner.as_ref().render(w),
-            CallExpressionFunctionTransportSlot::BreakExpression(inner) => inner.as_ref().render(w),
-            CallExpressionFunctionTransportSlot::ContinueExpression(inner) => inner.as_ref().render(w),
-            CallExpressionFunctionTransportSlot::IndexExpression(inner) => inner.as_ref().render(w),
+            CallExpressionFunctionTransportSlot::FieldExpression(inner) => inner.render(w),
+            CallExpressionFunctionTransportSlot::ArrayExpressionSemi(inner) => inner.render(w),
+            CallExpressionFunctionTransportSlot::ArrayExpressionList(inner) => inner.render(w),
+            CallExpressionFunctionTransportSlot::TupleExpression(inner) => inner.render(w),
+            CallExpressionFunctionTransportSlot::MacroInvocation(inner) => inner.render(w),
+            CallExpressionFunctionTransportSlot::BreakExpression(inner) => inner.render(w),
+            CallExpressionFunctionTransportSlot::ContinueExpression(inner) => inner.render(w),
+            CallExpressionFunctionTransportSlot::IndexExpression(inner) => inner.render(w),
             CallExpressionFunctionTransportSlot::Metavariable(inner) => inner.render(w),
-            CallExpressionFunctionTransportSlot::ClosureExpressionBlock(inner) => inner.as_ref().render(w),
-            CallExpressionFunctionTransportSlot::ClosureExpressionExpr(inner) => inner.as_ref().render(w),
+            CallExpressionFunctionTransportSlot::ClosureExpressionBlock(inner) => inner.render(w),
+            CallExpressionFunctionTransportSlot::ClosureExpressionExpr(inner) => inner.render(w),
             CallExpressionFunctionTransportSlot::ParenthesizedExpression(inner) => inner.render(w),
-            CallExpressionFunctionTransportSlot::StructExpression(inner) => inner.as_ref().render(w),
+            CallExpressionFunctionTransportSlot::StructExpression(inner) => inner.render(w),
             CallExpressionFunctionTransportSlot::UnsafeBlock(inner) => inner.render(w),
             CallExpressionFunctionTransportSlot::AsyncBlock(inner) => inner.render(w),
             CallExpressionFunctionTransportSlot::GenBlock(inner) => inner.render(w),
             CallExpressionFunctionTransportSlot::TryBlock(inner) => inner.render(w),
-            CallExpressionFunctionTransportSlot::Block(inner) => inner.as_ref().render(w),
-            CallExpressionFunctionTransportSlot::IfExpression(inner) => inner.as_ref().render(w),
-            CallExpressionFunctionTransportSlot::MatchExpression(inner) => inner.as_ref().render(w),
-            CallExpressionFunctionTransportSlot::WhileExpression(inner) => inner.as_ref().render(w),
-            CallExpressionFunctionTransportSlot::LoopExpression(inner) => inner.as_ref().render(w),
-            CallExpressionFunctionTransportSlot::ForExpression(inner) => inner.as_ref().render(w),
+            CallExpressionFunctionTransportSlot::Block(inner) => inner.render(w),
+            CallExpressionFunctionTransportSlot::IfExpression(inner) => inner.render(w),
+            CallExpressionFunctionTransportSlot::MatchExpression(inner) => inner.render(w),
+            CallExpressionFunctionTransportSlot::WhileExpression(inner) => inner.render(w),
+            CallExpressionFunctionTransportSlot::LoopExpression(inner) => inner.render(w),
+            CallExpressionFunctionTransportSlot::ForExpression(inner) => inner.render(w),
             CallExpressionFunctionTransportSlot::ConstBlock(inner) => inner.render(w),
             CallExpressionFunctionTransportSlot::U8Keyword => render_u8_keyword(w),
             CallExpressionFunctionTransportSlot::I8Keyword => render_i8_keyword(w),
@@ -9012,11 +9012,11 @@ impl ::sittir_core::render::Render for CallExpressionFunctionTransportSlot {
 #[transport(choice)]
 pub enum StructExpressionNameTransportSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
-    TypeIdentifier(Box<TypeIdentifierTransport>),
+    TypeIdentifier(TypeIdentifierTransport),
     #[kind(kind::SCOPED_TYPE_IDENTIFIER_IN_EXPRESSION_POSITION)]
-    ScopedTypeIdentifierInExpressionPosition(Box<ScopedTypeIdentifierInExpressionPositionTransport>),
+    ScopedTypeIdentifierInExpressionPosition(ScopedTypeIdentifierInExpressionPositionTransport),
     #[kind(kind::GENERIC_TYPE_WITH_TURBOFISH)]
-    GenericTypeWithTurbofish(Box<GenericTypeWithTurbofishTransport>),
+    GenericTypeWithTurbofish(GenericTypeWithTurbofishTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for StructExpressionNameTransportSlot {
@@ -9056,9 +9056,9 @@ impl ::sittir_core::view::KindOf for StructExpressionNameTransportSlot {
 impl ::sittir_core::render::Render for StructExpressionNameTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            StructExpressionNameTransportSlot::TypeIdentifier(inner) => inner.as_ref().render(w),
-            StructExpressionNameTransportSlot::ScopedTypeIdentifierInExpressionPosition(inner) => inner.as_ref().render(w),
-            StructExpressionNameTransportSlot::GenericTypeWithTurbofish(inner) => inner.as_ref().render(w),
+            StructExpressionNameTransportSlot::TypeIdentifier(inner) => inner.render(w),
+            StructExpressionNameTransportSlot::ScopedTypeIdentifierInExpressionPosition(inner) => inner.render(w),
+            StructExpressionNameTransportSlot::GenericTypeWithTurbofish(inner) => inner.render(w),
         }
     }
 }
@@ -9067,7 +9067,7 @@ impl ::sittir_core::render::Render for StructExpressionNameTransportSlot {
 #[transport(choice)]
 pub enum FieldInitializerFieldTransportSlot {
     #[kind(kind::_FIELD_IDENTIFIER, display)]
-    FieldIdentifier(Box<FieldIdentifierTransport>),
+    FieldIdentifier(FieldIdentifierTransport),
     #[kind(kind::INTEGER_LITERAL_DECIMAL)]
     IntegerLiteralDecimal(IntegerLiteralDecimalTransport),
     #[kind(kind::INTEGER_LITERAL_HEX)]
@@ -9123,7 +9123,7 @@ impl ::sittir_core::view::KindOf for FieldInitializerFieldTransportSlot {
 impl ::sittir_core::render::Render for FieldInitializerFieldTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            FieldInitializerFieldTransportSlot::FieldIdentifier(inner) => inner.as_ref().render(w),
+            FieldInitializerFieldTransportSlot::FieldIdentifier(inner) => inner.render(w),
             FieldInitializerFieldTransportSlot::IntegerLiteralDecimal(inner) => inner.render(w),
             FieldInitializerFieldTransportSlot::IntegerLiteralHex(inner) => inner.render(w),
             FieldInitializerFieldTransportSlot::IntegerLiteralBinary(inner) => inner.render(w),
@@ -9136,7 +9136,7 @@ impl ::sittir_core::render::Render for FieldInitializerFieldTransportSlot {
 #[transport(choice)]
 pub enum IfExpressionConditionTransportSlot {
     #[kind(kind::UNARY_EXPRESSION)]
-    UnaryExpression(Box<UnaryExpressionTransport>),
+    UnaryExpression(UnaryExpressionTransport),
     #[kind(kind::REFERENCE_EXPRESSION_RAW_CONST)]
     ReferenceExpressionRawConst(ReferenceExpressionRawConstTransport),
     #[kind(kind::REFERENCE_EXPRESSION_RAW_MUT)]
@@ -9148,23 +9148,23 @@ pub enum IfExpressionConditionTransportSlot {
     #[kind(kind::TRY_EXPRESSION)]
     TryExpression(TryExpressionTransport),
     #[kind(kind::BINARY_EXPRESSION)]
-    BinaryExpression(Box<BinaryExpressionTransport>),
+    BinaryExpression(BinaryExpressionTransport),
     #[kind(kind::ASSIGNMENT_EXPRESSION)]
-    AssignmentExpression(Box<AssignmentExpressionTransport>),
+    AssignmentExpression(AssignmentExpressionTransport),
     #[kind(kind::COMPOUND_ASSIGNMENT_EXPR)]
-    CompoundAssignmentExpr(Box<CompoundAssignmentExprTransport>),
+    CompoundAssignmentExpr(CompoundAssignmentExprTransport),
     #[kind(kind::TYPE_CAST_EXPRESSION)]
-    TypeCastExpression(Box<TypeCastExpressionTransport>),
+    TypeCastExpression(TypeCastExpressionTransport),
     #[kind(kind::CALL_EXPRESSION)]
-    CallExpression(Box<CallExpressionTransport>),
+    CallExpression(CallExpressionTransport),
     #[kind(kind::RETURN_EXPRESSION)]
     ReturnExpression(ReturnExpressionTransport),
     #[kind(kind::YIELD_EXPRESSION)]
     YieldExpression(YieldExpressionTransport),
     #[kind(kind::STRING_LITERAL)]
-    StringLiteral(Box<StringLiteralTransport>),
+    StringLiteral(StringLiteralTransport),
     #[kind(kind::RAW_STRING_LITERAL)]
-    RawStringLiteral(Box<RawStringLiteralTransport>),
+    RawStringLiteral(RawStringLiteralTransport),
     #[kind(kind::CHAR_LITERAL_ESCAPED_SIMPLE)]
     CharLiteralEscapedSimple(CharLiteralEscapedSimpleTransport),
     #[kind(kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED)]
@@ -9192,37 +9192,37 @@ pub enum IfExpressionConditionTransportSlot {
     #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
-    ScopedIdentifier(Box<ScopedIdentifierTransport>),
+    ScopedIdentifier(ScopedIdentifierTransport),
     #[kind(kind::GENERIC_FUNCTION)]
-    GenericFunction(Box<GenericFunctionTransport>),
+    GenericFunction(GenericFunctionTransport),
     #[kind(kind::AWAIT_EXPRESSION)]
     AwaitExpression(AwaitExpressionTransport),
     #[kind(kind::FIELD_EXPRESSION)]
-    FieldExpression(Box<FieldExpressionTransport>),
+    FieldExpression(FieldExpressionTransport),
     #[kind(kind::ARRAY_EXPRESSION_SEMI)]
-    ArrayExpressionSemi(Box<ArrayExpressionSemiTransport>),
+    ArrayExpressionSemi(ArrayExpressionSemiTransport),
     #[kind(kind::ARRAY_EXPRESSION_LIST)]
-    ArrayExpressionList(Box<ArrayExpressionListTransport>),
+    ArrayExpressionList(ArrayExpressionListTransport),
     #[kind(kind::TUPLE_EXPRESSION)]
-    TupleExpression(Box<TupleExpressionTransport>),
+    TupleExpression(TupleExpressionTransport),
     #[kind(kind::MACRO_INVOCATION)]
-    MacroInvocation(Box<MacroInvocationTransport>),
+    MacroInvocation(MacroInvocationTransport),
     #[kind(kind::BREAK_EXPRESSION)]
-    BreakExpression(Box<BreakExpressionTransport>),
+    BreakExpression(BreakExpressionTransport),
     #[kind(kind::CONTINUE_EXPRESSION)]
-    ContinueExpression(Box<ContinueExpressionTransport>),
+    ContinueExpression(ContinueExpressionTransport),
     #[kind(kind::INDEX_EXPRESSION)]
-    IndexExpression(Box<IndexExpressionTransport>),
+    IndexExpression(IndexExpressionTransport),
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
     #[kind(kind::CLOSURE_EXPRESSION_BLOCK)]
-    ClosureExpressionBlock(Box<ClosureExpressionBlockTransport>),
+    ClosureExpressionBlock(ClosureExpressionBlockTransport),
     #[kind(kind::CLOSURE_EXPRESSION_EXPR)]
-    ClosureExpressionExpr(Box<ClosureExpressionExprTransport>),
+    ClosureExpressionExpr(ClosureExpressionExprTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION)]
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     #[kind(kind::STRUCT_EXPRESSION)]
-    StructExpression(Box<StructExpressionTransport>),
+    StructExpression(StructExpressionTransport),
     #[kind(kind::UNSAFE_BLOCK)]
     UnsafeBlock(UnsafeBlockTransport),
     #[kind(kind::ASYNC_BLOCK)]
@@ -9232,21 +9232,21 @@ pub enum IfExpressionConditionTransportSlot {
     #[kind(kind::TRY_BLOCK)]
     TryBlock(TryBlockTransport),
     #[kind(kind::BLOCK)]
-    Block(Box<BlockTransport>),
+    Block(BlockTransport),
     #[kind(kind::IF_EXPRESSION)]
-    IfExpression(Box<IfExpressionTransport>),
+    IfExpression(IfExpressionTransport),
     #[kind(kind::MATCH_EXPRESSION)]
-    MatchExpression(Box<MatchExpressionTransport>),
+    MatchExpression(MatchExpressionTransport),
     #[kind(kind::WHILE_EXPRESSION)]
-    WhileExpression(Box<WhileExpressionTransport>),
+    WhileExpression(WhileExpressionTransport),
     #[kind(kind::LOOP_EXPRESSION)]
-    LoopExpression(Box<LoopExpressionTransport>),
+    LoopExpression(LoopExpressionTransport),
     #[kind(kind::FOR_EXPRESSION)]
-    ForExpression(Box<ForExpressionTransport>),
+    ForExpression(ForExpressionTransport),
     #[kind(kind::CONST_BLOCK)]
     ConstBlock(ConstBlockTransport),
     #[kind(kind::RANGE_EXPRESSION_BINARY)]
-    RangeExpressionBinary(Box<RangeExpressionBinaryTransport>),
+    RangeExpressionBinary(RangeExpressionBinaryTransport),
     #[kind(kind::RANGE_EXPRESSION_POSTFIX)]
     RangeExpressionPostfix(RangeExpressionPostfixTransport),
     #[kind(kind::RANGE_EXPRESSION_PREFIX)]
@@ -9254,7 +9254,7 @@ pub enum IfExpressionConditionTransportSlot {
     #[kind(kind::RANGE_EXPRESSION_BARE)]
     RangeExpressionBare(RangeExpressionBareTransport),
     #[kind(kind::LET_CONDITION)]
-    LetCondition(Box<LetConditionTransport>),
+    LetCondition(LetConditionTransport),
     #[kind(kind::_LET_CHAIN, kind::LET_CHAIN)]
     LetChain(LetChainTransport),
     #[kind(kind::U8_KEYWORD)]
@@ -9666,21 +9666,21 @@ impl ::sittir_core::view::KindOf for IfExpressionConditionTransportSlot {
 impl ::sittir_core::render::Render for IfExpressionConditionTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            IfExpressionConditionTransportSlot::UnaryExpression(inner) => inner.as_ref().render(w),
+            IfExpressionConditionTransportSlot::UnaryExpression(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::ReferenceExpressionRawConst(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::ReferenceExpressionRawMut(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::ReferenceExpressionMut(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::ReferenceExpressionBare(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::TryExpression(inner) => inner.render(w),
-            IfExpressionConditionTransportSlot::BinaryExpression(inner) => inner.as_ref().render(w),
-            IfExpressionConditionTransportSlot::AssignmentExpression(inner) => inner.as_ref().render(w),
-            IfExpressionConditionTransportSlot::CompoundAssignmentExpr(inner) => inner.as_ref().render(w),
-            IfExpressionConditionTransportSlot::TypeCastExpression(inner) => inner.as_ref().render(w),
-            IfExpressionConditionTransportSlot::CallExpression(inner) => inner.as_ref().render(w),
+            IfExpressionConditionTransportSlot::BinaryExpression(inner) => inner.render(w),
+            IfExpressionConditionTransportSlot::AssignmentExpression(inner) => inner.render(w),
+            IfExpressionConditionTransportSlot::CompoundAssignmentExpr(inner) => inner.render(w),
+            IfExpressionConditionTransportSlot::TypeCastExpression(inner) => inner.render(w),
+            IfExpressionConditionTransportSlot::CallExpression(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::ReturnExpression(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::YieldExpression(inner) => inner.render(w),
-            IfExpressionConditionTransportSlot::StringLiteral(inner) => inner.as_ref().render(w),
-            IfExpressionConditionTransportSlot::RawStringLiteral(inner) => inner.as_ref().render(w),
+            IfExpressionConditionTransportSlot::StringLiteral(inner) => inner.render(w),
+            IfExpressionConditionTransportSlot::RawStringLiteral(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::CharLiteralEscapedSimple(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
@@ -9694,38 +9694,38 @@ impl ::sittir_core::render::Render for IfExpressionConditionTransportSlot {
             IfExpressionConditionTransportSlot::IntegerLiteralOctal(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::FloatLiteral(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::Identifier(inner) => inner.render(w),
-            IfExpressionConditionTransportSlot::ScopedIdentifier(inner) => inner.as_ref().render(w),
-            IfExpressionConditionTransportSlot::GenericFunction(inner) => inner.as_ref().render(w),
+            IfExpressionConditionTransportSlot::ScopedIdentifier(inner) => inner.render(w),
+            IfExpressionConditionTransportSlot::GenericFunction(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::AwaitExpression(inner) => inner.render(w),
-            IfExpressionConditionTransportSlot::FieldExpression(inner) => inner.as_ref().render(w),
-            IfExpressionConditionTransportSlot::ArrayExpressionSemi(inner) => inner.as_ref().render(w),
-            IfExpressionConditionTransportSlot::ArrayExpressionList(inner) => inner.as_ref().render(w),
-            IfExpressionConditionTransportSlot::TupleExpression(inner) => inner.as_ref().render(w),
-            IfExpressionConditionTransportSlot::MacroInvocation(inner) => inner.as_ref().render(w),
-            IfExpressionConditionTransportSlot::BreakExpression(inner) => inner.as_ref().render(w),
-            IfExpressionConditionTransportSlot::ContinueExpression(inner) => inner.as_ref().render(w),
-            IfExpressionConditionTransportSlot::IndexExpression(inner) => inner.as_ref().render(w),
+            IfExpressionConditionTransportSlot::FieldExpression(inner) => inner.render(w),
+            IfExpressionConditionTransportSlot::ArrayExpressionSemi(inner) => inner.render(w),
+            IfExpressionConditionTransportSlot::ArrayExpressionList(inner) => inner.render(w),
+            IfExpressionConditionTransportSlot::TupleExpression(inner) => inner.render(w),
+            IfExpressionConditionTransportSlot::MacroInvocation(inner) => inner.render(w),
+            IfExpressionConditionTransportSlot::BreakExpression(inner) => inner.render(w),
+            IfExpressionConditionTransportSlot::ContinueExpression(inner) => inner.render(w),
+            IfExpressionConditionTransportSlot::IndexExpression(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::Metavariable(inner) => inner.render(w),
-            IfExpressionConditionTransportSlot::ClosureExpressionBlock(inner) => inner.as_ref().render(w),
-            IfExpressionConditionTransportSlot::ClosureExpressionExpr(inner) => inner.as_ref().render(w),
+            IfExpressionConditionTransportSlot::ClosureExpressionBlock(inner) => inner.render(w),
+            IfExpressionConditionTransportSlot::ClosureExpressionExpr(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::ParenthesizedExpression(inner) => inner.render(w),
-            IfExpressionConditionTransportSlot::StructExpression(inner) => inner.as_ref().render(w),
+            IfExpressionConditionTransportSlot::StructExpression(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::UnsafeBlock(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::AsyncBlock(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::GenBlock(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::TryBlock(inner) => inner.render(w),
-            IfExpressionConditionTransportSlot::Block(inner) => inner.as_ref().render(w),
-            IfExpressionConditionTransportSlot::IfExpression(inner) => inner.as_ref().render(w),
-            IfExpressionConditionTransportSlot::MatchExpression(inner) => inner.as_ref().render(w),
-            IfExpressionConditionTransportSlot::WhileExpression(inner) => inner.as_ref().render(w),
-            IfExpressionConditionTransportSlot::LoopExpression(inner) => inner.as_ref().render(w),
-            IfExpressionConditionTransportSlot::ForExpression(inner) => inner.as_ref().render(w),
+            IfExpressionConditionTransportSlot::Block(inner) => inner.render(w),
+            IfExpressionConditionTransportSlot::IfExpression(inner) => inner.render(w),
+            IfExpressionConditionTransportSlot::MatchExpression(inner) => inner.render(w),
+            IfExpressionConditionTransportSlot::WhileExpression(inner) => inner.render(w),
+            IfExpressionConditionTransportSlot::LoopExpression(inner) => inner.render(w),
+            IfExpressionConditionTransportSlot::ForExpression(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::ConstBlock(inner) => inner.render(w),
-            IfExpressionConditionTransportSlot::RangeExpressionBinary(inner) => inner.as_ref().render(w),
+            IfExpressionConditionTransportSlot::RangeExpressionBinary(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::RangeExpressionPostfix(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::RangeExpressionPrefix(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::RangeExpressionBare(inner) => inner.render(w),
-            IfExpressionConditionTransportSlot::LetCondition(inner) => inner.as_ref().render(w),
+            IfExpressionConditionTransportSlot::LetCondition(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::LetChain(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::U8Keyword => render_u8_keyword(w),
             IfExpressionConditionTransportSlot::I8Keyword => render_i8_keyword(w),
@@ -9760,9 +9760,9 @@ pub enum LetChainLeftTransportSlot {
     #[kind(kind::_LET_CHAIN)]
     LetChain(LetChainTransport),
     #[kind(kind::LET_CONDITION)]
-    LetCondition(Box<LetConditionTransport>),
+    LetCondition(LetConditionTransport),
     #[kind(kind::UNARY_EXPRESSION)]
-    UnaryExpression(Box<UnaryExpressionTransport>),
+    UnaryExpression(UnaryExpressionTransport),
     #[kind(kind::REFERENCE_EXPRESSION_RAW_CONST)]
     ReferenceExpressionRawConst(ReferenceExpressionRawConstTransport),
     #[kind(kind::REFERENCE_EXPRESSION_RAW_MUT)]
@@ -9774,23 +9774,23 @@ pub enum LetChainLeftTransportSlot {
     #[kind(kind::TRY_EXPRESSION)]
     TryExpression(TryExpressionTransport),
     #[kind(kind::BINARY_EXPRESSION)]
-    BinaryExpression(Box<BinaryExpressionTransport>),
+    BinaryExpression(BinaryExpressionTransport),
     #[kind(kind::ASSIGNMENT_EXPRESSION)]
-    AssignmentExpression(Box<AssignmentExpressionTransport>),
+    AssignmentExpression(AssignmentExpressionTransport),
     #[kind(kind::COMPOUND_ASSIGNMENT_EXPR)]
-    CompoundAssignmentExpr(Box<CompoundAssignmentExprTransport>),
+    CompoundAssignmentExpr(CompoundAssignmentExprTransport),
     #[kind(kind::TYPE_CAST_EXPRESSION)]
-    TypeCastExpression(Box<TypeCastExpressionTransport>),
+    TypeCastExpression(TypeCastExpressionTransport),
     #[kind(kind::CALL_EXPRESSION)]
-    CallExpression(Box<CallExpressionTransport>),
+    CallExpression(CallExpressionTransport),
     #[kind(kind::RETURN_EXPRESSION)]
     ReturnExpression(ReturnExpressionTransport),
     #[kind(kind::YIELD_EXPRESSION)]
     YieldExpression(YieldExpressionTransport),
     #[kind(kind::STRING_LITERAL)]
-    StringLiteral(Box<StringLiteralTransport>),
+    StringLiteral(StringLiteralTransport),
     #[kind(kind::RAW_STRING_LITERAL)]
-    RawStringLiteral(Box<RawStringLiteralTransport>),
+    RawStringLiteral(RawStringLiteralTransport),
     #[kind(kind::CHAR_LITERAL_ESCAPED_SIMPLE)]
     CharLiteralEscapedSimple(CharLiteralEscapedSimpleTransport),
     #[kind(kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED)]
@@ -9818,37 +9818,37 @@ pub enum LetChainLeftTransportSlot {
     #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
-    ScopedIdentifier(Box<ScopedIdentifierTransport>),
+    ScopedIdentifier(ScopedIdentifierTransport),
     #[kind(kind::GENERIC_FUNCTION)]
-    GenericFunction(Box<GenericFunctionTransport>),
+    GenericFunction(GenericFunctionTransport),
     #[kind(kind::AWAIT_EXPRESSION)]
     AwaitExpression(AwaitExpressionTransport),
     #[kind(kind::FIELD_EXPRESSION)]
-    FieldExpression(Box<FieldExpressionTransport>),
+    FieldExpression(FieldExpressionTransport),
     #[kind(kind::ARRAY_EXPRESSION_SEMI)]
-    ArrayExpressionSemi(Box<ArrayExpressionSemiTransport>),
+    ArrayExpressionSemi(ArrayExpressionSemiTransport),
     #[kind(kind::ARRAY_EXPRESSION_LIST)]
-    ArrayExpressionList(Box<ArrayExpressionListTransport>),
+    ArrayExpressionList(ArrayExpressionListTransport),
     #[kind(kind::TUPLE_EXPRESSION)]
-    TupleExpression(Box<TupleExpressionTransport>),
+    TupleExpression(TupleExpressionTransport),
     #[kind(kind::MACRO_INVOCATION)]
-    MacroInvocation(Box<MacroInvocationTransport>),
+    MacroInvocation(MacroInvocationTransport),
     #[kind(kind::BREAK_EXPRESSION)]
-    BreakExpression(Box<BreakExpressionTransport>),
+    BreakExpression(BreakExpressionTransport),
     #[kind(kind::CONTINUE_EXPRESSION)]
-    ContinueExpression(Box<ContinueExpressionTransport>),
+    ContinueExpression(ContinueExpressionTransport),
     #[kind(kind::INDEX_EXPRESSION)]
-    IndexExpression(Box<IndexExpressionTransport>),
+    IndexExpression(IndexExpressionTransport),
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
     #[kind(kind::CLOSURE_EXPRESSION_BLOCK)]
-    ClosureExpressionBlock(Box<ClosureExpressionBlockTransport>),
+    ClosureExpressionBlock(ClosureExpressionBlockTransport),
     #[kind(kind::CLOSURE_EXPRESSION_EXPR)]
-    ClosureExpressionExpr(Box<ClosureExpressionExprTransport>),
+    ClosureExpressionExpr(ClosureExpressionExprTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION)]
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     #[kind(kind::STRUCT_EXPRESSION)]
-    StructExpression(Box<StructExpressionTransport>),
+    StructExpression(StructExpressionTransport),
     #[kind(kind::UNSAFE_BLOCK)]
     UnsafeBlock(UnsafeBlockTransport),
     #[kind(kind::ASYNC_BLOCK)]
@@ -9858,21 +9858,21 @@ pub enum LetChainLeftTransportSlot {
     #[kind(kind::TRY_BLOCK)]
     TryBlock(TryBlockTransport),
     #[kind(kind::BLOCK)]
-    Block(Box<BlockTransport>),
+    Block(BlockTransport),
     #[kind(kind::IF_EXPRESSION)]
-    IfExpression(Box<IfExpressionTransport>),
+    IfExpression(IfExpressionTransport),
     #[kind(kind::MATCH_EXPRESSION)]
-    MatchExpression(Box<MatchExpressionTransport>),
+    MatchExpression(MatchExpressionTransport),
     #[kind(kind::WHILE_EXPRESSION)]
-    WhileExpression(Box<WhileExpressionTransport>),
+    WhileExpression(WhileExpressionTransport),
     #[kind(kind::LOOP_EXPRESSION)]
-    LoopExpression(Box<LoopExpressionTransport>),
+    LoopExpression(LoopExpressionTransport),
     #[kind(kind::FOR_EXPRESSION)]
-    ForExpression(Box<ForExpressionTransport>),
+    ForExpression(ForExpressionTransport),
     #[kind(kind::CONST_BLOCK)]
     ConstBlock(ConstBlockTransport),
     #[kind(kind::RANGE_EXPRESSION_BINARY)]
-    RangeExpressionBinary(Box<RangeExpressionBinaryTransport>),
+    RangeExpressionBinary(RangeExpressionBinaryTransport),
     #[kind(kind::RANGE_EXPRESSION_POSTFIX)]
     RangeExpressionPostfix(RangeExpressionPostfixTransport),
     #[kind(kind::RANGE_EXPRESSION_PREFIX)]
@@ -10289,22 +10289,22 @@ impl ::sittir_core::render::Render for LetChainLeftTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             LetChainLeftTransportSlot::LetChain(inner) => inner.render(w),
-            LetChainLeftTransportSlot::LetCondition(inner) => inner.as_ref().render(w),
-            LetChainLeftTransportSlot::UnaryExpression(inner) => inner.as_ref().render(w),
+            LetChainLeftTransportSlot::LetCondition(inner) => inner.render(w),
+            LetChainLeftTransportSlot::UnaryExpression(inner) => inner.render(w),
             LetChainLeftTransportSlot::ReferenceExpressionRawConst(inner) => inner.render(w),
             LetChainLeftTransportSlot::ReferenceExpressionRawMut(inner) => inner.render(w),
             LetChainLeftTransportSlot::ReferenceExpressionMut(inner) => inner.render(w),
             LetChainLeftTransportSlot::ReferenceExpressionBare(inner) => inner.render(w),
             LetChainLeftTransportSlot::TryExpression(inner) => inner.render(w),
-            LetChainLeftTransportSlot::BinaryExpression(inner) => inner.as_ref().render(w),
-            LetChainLeftTransportSlot::AssignmentExpression(inner) => inner.as_ref().render(w),
-            LetChainLeftTransportSlot::CompoundAssignmentExpr(inner) => inner.as_ref().render(w),
-            LetChainLeftTransportSlot::TypeCastExpression(inner) => inner.as_ref().render(w),
-            LetChainLeftTransportSlot::CallExpression(inner) => inner.as_ref().render(w),
+            LetChainLeftTransportSlot::BinaryExpression(inner) => inner.render(w),
+            LetChainLeftTransportSlot::AssignmentExpression(inner) => inner.render(w),
+            LetChainLeftTransportSlot::CompoundAssignmentExpr(inner) => inner.render(w),
+            LetChainLeftTransportSlot::TypeCastExpression(inner) => inner.render(w),
+            LetChainLeftTransportSlot::CallExpression(inner) => inner.render(w),
             LetChainLeftTransportSlot::ReturnExpression(inner) => inner.render(w),
             LetChainLeftTransportSlot::YieldExpression(inner) => inner.render(w),
-            LetChainLeftTransportSlot::StringLiteral(inner) => inner.as_ref().render(w),
-            LetChainLeftTransportSlot::RawStringLiteral(inner) => inner.as_ref().render(w),
+            LetChainLeftTransportSlot::StringLiteral(inner) => inner.render(w),
+            LetChainLeftTransportSlot::RawStringLiteral(inner) => inner.render(w),
             LetChainLeftTransportSlot::CharLiteralEscapedSimple(inner) => inner.render(w),
             LetChainLeftTransportSlot::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
             LetChainLeftTransportSlot::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
@@ -10318,34 +10318,34 @@ impl ::sittir_core::render::Render for LetChainLeftTransportSlot {
             LetChainLeftTransportSlot::IntegerLiteralOctal(inner) => inner.render(w),
             LetChainLeftTransportSlot::FloatLiteral(inner) => inner.render(w),
             LetChainLeftTransportSlot::Identifier(inner) => inner.render(w),
-            LetChainLeftTransportSlot::ScopedIdentifier(inner) => inner.as_ref().render(w),
-            LetChainLeftTransportSlot::GenericFunction(inner) => inner.as_ref().render(w),
+            LetChainLeftTransportSlot::ScopedIdentifier(inner) => inner.render(w),
+            LetChainLeftTransportSlot::GenericFunction(inner) => inner.render(w),
             LetChainLeftTransportSlot::AwaitExpression(inner) => inner.render(w),
-            LetChainLeftTransportSlot::FieldExpression(inner) => inner.as_ref().render(w),
-            LetChainLeftTransportSlot::ArrayExpressionSemi(inner) => inner.as_ref().render(w),
-            LetChainLeftTransportSlot::ArrayExpressionList(inner) => inner.as_ref().render(w),
-            LetChainLeftTransportSlot::TupleExpression(inner) => inner.as_ref().render(w),
-            LetChainLeftTransportSlot::MacroInvocation(inner) => inner.as_ref().render(w),
-            LetChainLeftTransportSlot::BreakExpression(inner) => inner.as_ref().render(w),
-            LetChainLeftTransportSlot::ContinueExpression(inner) => inner.as_ref().render(w),
-            LetChainLeftTransportSlot::IndexExpression(inner) => inner.as_ref().render(w),
+            LetChainLeftTransportSlot::FieldExpression(inner) => inner.render(w),
+            LetChainLeftTransportSlot::ArrayExpressionSemi(inner) => inner.render(w),
+            LetChainLeftTransportSlot::ArrayExpressionList(inner) => inner.render(w),
+            LetChainLeftTransportSlot::TupleExpression(inner) => inner.render(w),
+            LetChainLeftTransportSlot::MacroInvocation(inner) => inner.render(w),
+            LetChainLeftTransportSlot::BreakExpression(inner) => inner.render(w),
+            LetChainLeftTransportSlot::ContinueExpression(inner) => inner.render(w),
+            LetChainLeftTransportSlot::IndexExpression(inner) => inner.render(w),
             LetChainLeftTransportSlot::Metavariable(inner) => inner.render(w),
-            LetChainLeftTransportSlot::ClosureExpressionBlock(inner) => inner.as_ref().render(w),
-            LetChainLeftTransportSlot::ClosureExpressionExpr(inner) => inner.as_ref().render(w),
+            LetChainLeftTransportSlot::ClosureExpressionBlock(inner) => inner.render(w),
+            LetChainLeftTransportSlot::ClosureExpressionExpr(inner) => inner.render(w),
             LetChainLeftTransportSlot::ParenthesizedExpression(inner) => inner.render(w),
-            LetChainLeftTransportSlot::StructExpression(inner) => inner.as_ref().render(w),
+            LetChainLeftTransportSlot::StructExpression(inner) => inner.render(w),
             LetChainLeftTransportSlot::UnsafeBlock(inner) => inner.render(w),
             LetChainLeftTransportSlot::AsyncBlock(inner) => inner.render(w),
             LetChainLeftTransportSlot::GenBlock(inner) => inner.render(w),
             LetChainLeftTransportSlot::TryBlock(inner) => inner.render(w),
-            LetChainLeftTransportSlot::Block(inner) => inner.as_ref().render(w),
-            LetChainLeftTransportSlot::IfExpression(inner) => inner.as_ref().render(w),
-            LetChainLeftTransportSlot::MatchExpression(inner) => inner.as_ref().render(w),
-            LetChainLeftTransportSlot::WhileExpression(inner) => inner.as_ref().render(w),
-            LetChainLeftTransportSlot::LoopExpression(inner) => inner.as_ref().render(w),
-            LetChainLeftTransportSlot::ForExpression(inner) => inner.as_ref().render(w),
+            LetChainLeftTransportSlot::Block(inner) => inner.render(w),
+            LetChainLeftTransportSlot::IfExpression(inner) => inner.render(w),
+            LetChainLeftTransportSlot::MatchExpression(inner) => inner.render(w),
+            LetChainLeftTransportSlot::WhileExpression(inner) => inner.render(w),
+            LetChainLeftTransportSlot::LoopExpression(inner) => inner.render(w),
+            LetChainLeftTransportSlot::ForExpression(inner) => inner.render(w),
             LetChainLeftTransportSlot::ConstBlock(inner) => inner.render(w),
-            LetChainLeftTransportSlot::RangeExpressionBinary(inner) => inner.as_ref().render(w),
+            LetChainLeftTransportSlot::RangeExpressionBinary(inner) => inner.render(w),
             LetChainLeftTransportSlot::RangeExpressionPostfix(inner) => inner.render(w),
             LetChainLeftTransportSlot::RangeExpressionPrefix(inner) => inner.render(w),
             LetChainLeftTransportSlot::RangeExpressionBare(inner) => inner.render(w),
@@ -10380,9 +10380,9 @@ impl ::sittir_core::render::Render for LetChainLeftTransportSlot {
 #[transport(choice)]
 pub enum LetChainRightTransportSlot {
     #[kind(kind::LET_CONDITION)]
-    LetCondition(Box<LetConditionTransport>),
+    LetCondition(LetConditionTransport),
     #[kind(kind::UNARY_EXPRESSION)]
-    UnaryExpression(Box<UnaryExpressionTransport>),
+    UnaryExpression(UnaryExpressionTransport),
     #[kind(kind::REFERENCE_EXPRESSION_RAW_CONST)]
     ReferenceExpressionRawConst(ReferenceExpressionRawConstTransport),
     #[kind(kind::REFERENCE_EXPRESSION_RAW_MUT)]
@@ -10394,23 +10394,23 @@ pub enum LetChainRightTransportSlot {
     #[kind(kind::TRY_EXPRESSION)]
     TryExpression(TryExpressionTransport),
     #[kind(kind::BINARY_EXPRESSION)]
-    BinaryExpression(Box<BinaryExpressionTransport>),
+    BinaryExpression(BinaryExpressionTransport),
     #[kind(kind::ASSIGNMENT_EXPRESSION)]
-    AssignmentExpression(Box<AssignmentExpressionTransport>),
+    AssignmentExpression(AssignmentExpressionTransport),
     #[kind(kind::COMPOUND_ASSIGNMENT_EXPR)]
-    CompoundAssignmentExpr(Box<CompoundAssignmentExprTransport>),
+    CompoundAssignmentExpr(CompoundAssignmentExprTransport),
     #[kind(kind::TYPE_CAST_EXPRESSION)]
-    TypeCastExpression(Box<TypeCastExpressionTransport>),
+    TypeCastExpression(TypeCastExpressionTransport),
     #[kind(kind::CALL_EXPRESSION)]
-    CallExpression(Box<CallExpressionTransport>),
+    CallExpression(CallExpressionTransport),
     #[kind(kind::RETURN_EXPRESSION)]
     ReturnExpression(ReturnExpressionTransport),
     #[kind(kind::YIELD_EXPRESSION)]
     YieldExpression(YieldExpressionTransport),
     #[kind(kind::STRING_LITERAL)]
-    StringLiteral(Box<StringLiteralTransport>),
+    StringLiteral(StringLiteralTransport),
     #[kind(kind::RAW_STRING_LITERAL)]
-    RawStringLiteral(Box<RawStringLiteralTransport>),
+    RawStringLiteral(RawStringLiteralTransport),
     #[kind(kind::CHAR_LITERAL_ESCAPED_SIMPLE)]
     CharLiteralEscapedSimple(CharLiteralEscapedSimpleTransport),
     #[kind(kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED)]
@@ -10438,37 +10438,37 @@ pub enum LetChainRightTransportSlot {
     #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
-    ScopedIdentifier(Box<ScopedIdentifierTransport>),
+    ScopedIdentifier(ScopedIdentifierTransport),
     #[kind(kind::GENERIC_FUNCTION)]
-    GenericFunction(Box<GenericFunctionTransport>),
+    GenericFunction(GenericFunctionTransport),
     #[kind(kind::AWAIT_EXPRESSION)]
     AwaitExpression(AwaitExpressionTransport),
     #[kind(kind::FIELD_EXPRESSION)]
-    FieldExpression(Box<FieldExpressionTransport>),
+    FieldExpression(FieldExpressionTransport),
     #[kind(kind::ARRAY_EXPRESSION_SEMI)]
-    ArrayExpressionSemi(Box<ArrayExpressionSemiTransport>),
+    ArrayExpressionSemi(ArrayExpressionSemiTransport),
     #[kind(kind::ARRAY_EXPRESSION_LIST)]
-    ArrayExpressionList(Box<ArrayExpressionListTransport>),
+    ArrayExpressionList(ArrayExpressionListTransport),
     #[kind(kind::TUPLE_EXPRESSION)]
-    TupleExpression(Box<TupleExpressionTransport>),
+    TupleExpression(TupleExpressionTransport),
     #[kind(kind::MACRO_INVOCATION)]
-    MacroInvocation(Box<MacroInvocationTransport>),
+    MacroInvocation(MacroInvocationTransport),
     #[kind(kind::BREAK_EXPRESSION)]
-    BreakExpression(Box<BreakExpressionTransport>),
+    BreakExpression(BreakExpressionTransport),
     #[kind(kind::CONTINUE_EXPRESSION)]
-    ContinueExpression(Box<ContinueExpressionTransport>),
+    ContinueExpression(ContinueExpressionTransport),
     #[kind(kind::INDEX_EXPRESSION)]
-    IndexExpression(Box<IndexExpressionTransport>),
+    IndexExpression(IndexExpressionTransport),
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
     #[kind(kind::CLOSURE_EXPRESSION_BLOCK)]
-    ClosureExpressionBlock(Box<ClosureExpressionBlockTransport>),
+    ClosureExpressionBlock(ClosureExpressionBlockTransport),
     #[kind(kind::CLOSURE_EXPRESSION_EXPR)]
-    ClosureExpressionExpr(Box<ClosureExpressionExprTransport>),
+    ClosureExpressionExpr(ClosureExpressionExprTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION)]
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     #[kind(kind::STRUCT_EXPRESSION)]
-    StructExpression(Box<StructExpressionTransport>),
+    StructExpression(StructExpressionTransport),
     #[kind(kind::UNSAFE_BLOCK)]
     UnsafeBlock(UnsafeBlockTransport),
     #[kind(kind::ASYNC_BLOCK)]
@@ -10478,21 +10478,21 @@ pub enum LetChainRightTransportSlot {
     #[kind(kind::TRY_BLOCK)]
     TryBlock(TryBlockTransport),
     #[kind(kind::BLOCK)]
-    Block(Box<BlockTransport>),
+    Block(BlockTransport),
     #[kind(kind::IF_EXPRESSION)]
-    IfExpression(Box<IfExpressionTransport>),
+    IfExpression(IfExpressionTransport),
     #[kind(kind::MATCH_EXPRESSION)]
-    MatchExpression(Box<MatchExpressionTransport>),
+    MatchExpression(MatchExpressionTransport),
     #[kind(kind::WHILE_EXPRESSION)]
-    WhileExpression(Box<WhileExpressionTransport>),
+    WhileExpression(WhileExpressionTransport),
     #[kind(kind::LOOP_EXPRESSION)]
-    LoopExpression(Box<LoopExpressionTransport>),
+    LoopExpression(LoopExpressionTransport),
     #[kind(kind::FOR_EXPRESSION)]
-    ForExpression(Box<ForExpressionTransport>),
+    ForExpression(ForExpressionTransport),
     #[kind(kind::CONST_BLOCK)]
     ConstBlock(ConstBlockTransport),
     #[kind(kind::RANGE_EXPRESSION_BINARY)]
-    RangeExpressionBinary(Box<RangeExpressionBinaryTransport>),
+    RangeExpressionBinary(RangeExpressionBinaryTransport),
     #[kind(kind::RANGE_EXPRESSION_POSTFIX)]
     RangeExpressionPostfix(RangeExpressionPostfixTransport),
     #[kind(kind::RANGE_EXPRESSION_PREFIX)]
@@ -10904,22 +10904,22 @@ impl ::sittir_core::view::KindOf for LetChainRightTransportSlot {
 impl ::sittir_core::render::Render for LetChainRightTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            LetChainRightTransportSlot::LetCondition(inner) => inner.as_ref().render(w),
-            LetChainRightTransportSlot::UnaryExpression(inner) => inner.as_ref().render(w),
+            LetChainRightTransportSlot::LetCondition(inner) => inner.render(w),
+            LetChainRightTransportSlot::UnaryExpression(inner) => inner.render(w),
             LetChainRightTransportSlot::ReferenceExpressionRawConst(inner) => inner.render(w),
             LetChainRightTransportSlot::ReferenceExpressionRawMut(inner) => inner.render(w),
             LetChainRightTransportSlot::ReferenceExpressionMut(inner) => inner.render(w),
             LetChainRightTransportSlot::ReferenceExpressionBare(inner) => inner.render(w),
             LetChainRightTransportSlot::TryExpression(inner) => inner.render(w),
-            LetChainRightTransportSlot::BinaryExpression(inner) => inner.as_ref().render(w),
-            LetChainRightTransportSlot::AssignmentExpression(inner) => inner.as_ref().render(w),
-            LetChainRightTransportSlot::CompoundAssignmentExpr(inner) => inner.as_ref().render(w),
-            LetChainRightTransportSlot::TypeCastExpression(inner) => inner.as_ref().render(w),
-            LetChainRightTransportSlot::CallExpression(inner) => inner.as_ref().render(w),
+            LetChainRightTransportSlot::BinaryExpression(inner) => inner.render(w),
+            LetChainRightTransportSlot::AssignmentExpression(inner) => inner.render(w),
+            LetChainRightTransportSlot::CompoundAssignmentExpr(inner) => inner.render(w),
+            LetChainRightTransportSlot::TypeCastExpression(inner) => inner.render(w),
+            LetChainRightTransportSlot::CallExpression(inner) => inner.render(w),
             LetChainRightTransportSlot::ReturnExpression(inner) => inner.render(w),
             LetChainRightTransportSlot::YieldExpression(inner) => inner.render(w),
-            LetChainRightTransportSlot::StringLiteral(inner) => inner.as_ref().render(w),
-            LetChainRightTransportSlot::RawStringLiteral(inner) => inner.as_ref().render(w),
+            LetChainRightTransportSlot::StringLiteral(inner) => inner.render(w),
+            LetChainRightTransportSlot::RawStringLiteral(inner) => inner.render(w),
             LetChainRightTransportSlot::CharLiteralEscapedSimple(inner) => inner.render(w),
             LetChainRightTransportSlot::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
             LetChainRightTransportSlot::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
@@ -10933,34 +10933,34 @@ impl ::sittir_core::render::Render for LetChainRightTransportSlot {
             LetChainRightTransportSlot::IntegerLiteralOctal(inner) => inner.render(w),
             LetChainRightTransportSlot::FloatLiteral(inner) => inner.render(w),
             LetChainRightTransportSlot::Identifier(inner) => inner.render(w),
-            LetChainRightTransportSlot::ScopedIdentifier(inner) => inner.as_ref().render(w),
-            LetChainRightTransportSlot::GenericFunction(inner) => inner.as_ref().render(w),
+            LetChainRightTransportSlot::ScopedIdentifier(inner) => inner.render(w),
+            LetChainRightTransportSlot::GenericFunction(inner) => inner.render(w),
             LetChainRightTransportSlot::AwaitExpression(inner) => inner.render(w),
-            LetChainRightTransportSlot::FieldExpression(inner) => inner.as_ref().render(w),
-            LetChainRightTransportSlot::ArrayExpressionSemi(inner) => inner.as_ref().render(w),
-            LetChainRightTransportSlot::ArrayExpressionList(inner) => inner.as_ref().render(w),
-            LetChainRightTransportSlot::TupleExpression(inner) => inner.as_ref().render(w),
-            LetChainRightTransportSlot::MacroInvocation(inner) => inner.as_ref().render(w),
-            LetChainRightTransportSlot::BreakExpression(inner) => inner.as_ref().render(w),
-            LetChainRightTransportSlot::ContinueExpression(inner) => inner.as_ref().render(w),
-            LetChainRightTransportSlot::IndexExpression(inner) => inner.as_ref().render(w),
+            LetChainRightTransportSlot::FieldExpression(inner) => inner.render(w),
+            LetChainRightTransportSlot::ArrayExpressionSemi(inner) => inner.render(w),
+            LetChainRightTransportSlot::ArrayExpressionList(inner) => inner.render(w),
+            LetChainRightTransportSlot::TupleExpression(inner) => inner.render(w),
+            LetChainRightTransportSlot::MacroInvocation(inner) => inner.render(w),
+            LetChainRightTransportSlot::BreakExpression(inner) => inner.render(w),
+            LetChainRightTransportSlot::ContinueExpression(inner) => inner.render(w),
+            LetChainRightTransportSlot::IndexExpression(inner) => inner.render(w),
             LetChainRightTransportSlot::Metavariable(inner) => inner.render(w),
-            LetChainRightTransportSlot::ClosureExpressionBlock(inner) => inner.as_ref().render(w),
-            LetChainRightTransportSlot::ClosureExpressionExpr(inner) => inner.as_ref().render(w),
+            LetChainRightTransportSlot::ClosureExpressionBlock(inner) => inner.render(w),
+            LetChainRightTransportSlot::ClosureExpressionExpr(inner) => inner.render(w),
             LetChainRightTransportSlot::ParenthesizedExpression(inner) => inner.render(w),
-            LetChainRightTransportSlot::StructExpression(inner) => inner.as_ref().render(w),
+            LetChainRightTransportSlot::StructExpression(inner) => inner.render(w),
             LetChainRightTransportSlot::UnsafeBlock(inner) => inner.render(w),
             LetChainRightTransportSlot::AsyncBlock(inner) => inner.render(w),
             LetChainRightTransportSlot::GenBlock(inner) => inner.render(w),
             LetChainRightTransportSlot::TryBlock(inner) => inner.render(w),
-            LetChainRightTransportSlot::Block(inner) => inner.as_ref().render(w),
-            LetChainRightTransportSlot::IfExpression(inner) => inner.as_ref().render(w),
-            LetChainRightTransportSlot::MatchExpression(inner) => inner.as_ref().render(w),
-            LetChainRightTransportSlot::WhileExpression(inner) => inner.as_ref().render(w),
-            LetChainRightTransportSlot::LoopExpression(inner) => inner.as_ref().render(w),
-            LetChainRightTransportSlot::ForExpression(inner) => inner.as_ref().render(w),
+            LetChainRightTransportSlot::Block(inner) => inner.render(w),
+            LetChainRightTransportSlot::IfExpression(inner) => inner.render(w),
+            LetChainRightTransportSlot::MatchExpression(inner) => inner.render(w),
+            LetChainRightTransportSlot::WhileExpression(inner) => inner.render(w),
+            LetChainRightTransportSlot::LoopExpression(inner) => inner.render(w),
+            LetChainRightTransportSlot::ForExpression(inner) => inner.render(w),
             LetChainRightTransportSlot::ConstBlock(inner) => inner.render(w),
-            LetChainRightTransportSlot::RangeExpressionBinary(inner) => inner.as_ref().render(w),
+            LetChainRightTransportSlot::RangeExpressionBinary(inner) => inner.render(w),
             LetChainRightTransportSlot::RangeExpressionPostfix(inner) => inner.render(w),
             LetChainRightTransportSlot::RangeExpressionPrefix(inner) => inner.render(w),
             LetChainRightTransportSlot::RangeExpressionBare(inner) => inner.render(w),
@@ -10995,9 +10995,9 @@ impl ::sittir_core::render::Render for LetChainRightTransportSlot {
 #[transport(choice)]
 pub enum ElseClauseBodyTransportSlot {
     #[kind(kind::BLOCK)]
-    Block(Box<BlockTransport>),
+    Block(BlockTransport),
     #[kind(kind::IF_EXPRESSION)]
-    IfExpression(Box<IfExpressionTransport>),
+    IfExpression(IfExpressionTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for ElseClauseBodyTransportSlot {
@@ -11033,8 +11033,8 @@ impl ::sittir_core::view::KindOf for ElseClauseBodyTransportSlot {
 impl ::sittir_core::render::Render for ElseClauseBodyTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ElseClauseBodyTransportSlot::Block(inner) => inner.as_ref().render(w),
-            ElseClauseBodyTransportSlot::IfExpression(inner) => inner.as_ref().render(w),
+            ElseClauseBodyTransportSlot::Block(inner) => inner.render(w),
+            ElseClauseBodyTransportSlot::IfExpression(inner) => inner.render(w),
         }
     }
 }
@@ -11091,9 +11091,9 @@ impl ::sittir_core::render::Render for LastMatchArmAttributesTransportSlot {
 #[transport(choice)]
 pub enum ClosureParametersParametersTransportSlot {
     #[kind(kind::STRING_LITERAL)]
-    StringLiteral(Box<StringLiteralTransport>),
+    StringLiteral(StringLiteralTransport),
     #[kind(kind::RAW_STRING_LITERAL)]
-    RawStringLiteral(Box<RawStringLiteralTransport>),
+    RawStringLiteral(RawStringLiteralTransport),
     #[kind(kind::CHAR_LITERAL_ESCAPED_SIMPLE)]
     CharLiteralEscapedSimple(CharLiteralEscapedSimpleTransport),
     #[kind(kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED)]
@@ -11119,41 +11119,41 @@ pub enum ClosureParametersParametersTransportSlot {
     #[kind(kind::FLOAT_LITERAL)]
     FloatLiteral(FloatLiteralTransport),
     #[kind(kind::NEGATIVE_LITERAL)]
-    NegativeLiteral(Box<NegativeLiteralTransport>),
+    NegativeLiteral(NegativeLiteralTransport),
     #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
-    ScopedIdentifier(Box<ScopedIdentifierTransport>),
+    ScopedIdentifier(ScopedIdentifierTransport),
     #[kind(kind::GENERIC_PATTERN)]
-    GenericPattern(Box<GenericPatternTransport>),
+    GenericPattern(GenericPatternTransport),
     #[kind(kind::TUPLE_PATTERN)]
-    TuplePattern(Box<TuplePatternTransport>),
+    TuplePattern(TuplePatternTransport),
     #[kind(kind::TUPLE_STRUCT_PATTERN)]
-    TupleStructPattern(Box<TupleStructPatternTransport>),
+    TupleStructPattern(TupleStructPatternTransport),
     #[kind(kind::STRUCT_PATTERN)]
-    StructPattern(Box<StructPatternTransport>),
+    StructPattern(StructPatternTransport),
     #[kind(kind::REF_PATTERN)]
     RefPattern(RefPatternTransport),
     #[kind(kind::SLICE_PATTERN)]
-    SlicePattern(Box<SlicePatternTransport>),
+    SlicePattern(SlicePatternTransport),
     #[kind(kind::CAPTURED_PATTERN)]
-    CapturedPattern(Box<CapturedPatternTransport>),
+    CapturedPattern(CapturedPatternTransport),
     #[kind(kind::REFERENCE_PATTERN)]
     ReferencePattern(ReferencePatternTransport),
     #[kind(kind::MUT_PATTERN)]
     MutPattern(MutPatternTransport),
     #[kind(kind::RANGE_PATTERN_WITH_LEFT)]
-    RangePatternWithLeft(Box<RangePatternWithLeftTransport>),
+    RangePatternWithLeft(RangePatternWithLeftTransport),
     #[kind(kind::RANGE_PATTERN_PREFIX)]
-    RangePatternPrefix(Box<RangePatternPrefixTransport>),
+    RangePatternPrefix(RangePatternPrefixTransport),
     #[kind(kind::OR_PATTERN_BINARY)]
-    OrPatternBinary(Box<OrPatternBinaryTransport>),
+    OrPatternBinary(OrPatternBinaryTransport),
     #[kind(kind::OR_PATTERN_PREFIX)]
     OrPatternPrefix(OrPatternPrefixTransport),
     #[kind(kind::CONST_BLOCK)]
     ConstBlock(ConstBlockTransport),
     #[kind(kind::MACRO_INVOCATION)]
-    MacroInvocation(Box<MacroInvocationTransport>),
+    MacroInvocation(MacroInvocationTransport),
     #[kind(kind::PARAMETER)]
     Parameter(Box<ParameterTransport>),
     #[kind(kind::U8_KEYWORD)]
@@ -11453,8 +11453,8 @@ impl ::sittir_core::view::KindOf for ClosureParametersParametersTransportSlot {
 impl ::sittir_core::render::Render for ClosureParametersParametersTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ClosureParametersParametersTransportSlot::StringLiteral(inner) => inner.as_ref().render(w),
-            ClosureParametersParametersTransportSlot::RawStringLiteral(inner) => inner.as_ref().render(w),
+            ClosureParametersParametersTransportSlot::StringLiteral(inner) => inner.render(w),
+            ClosureParametersParametersTransportSlot::RawStringLiteral(inner) => inner.render(w),
             ClosureParametersParametersTransportSlot::CharLiteralEscapedSimple(inner) => inner.render(w),
             ClosureParametersParametersTransportSlot::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
             ClosureParametersParametersTransportSlot::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
@@ -11467,24 +11467,24 @@ impl ::sittir_core::render::Render for ClosureParametersParametersTransportSlot 
             ClosureParametersParametersTransportSlot::IntegerLiteralBinary(inner) => inner.render(w),
             ClosureParametersParametersTransportSlot::IntegerLiteralOctal(inner) => inner.render(w),
             ClosureParametersParametersTransportSlot::FloatLiteral(inner) => inner.render(w),
-            ClosureParametersParametersTransportSlot::NegativeLiteral(inner) => inner.as_ref().render(w),
+            ClosureParametersParametersTransportSlot::NegativeLiteral(inner) => inner.render(w),
             ClosureParametersParametersTransportSlot::Identifier(inner) => inner.render(w),
-            ClosureParametersParametersTransportSlot::ScopedIdentifier(inner) => inner.as_ref().render(w),
-            ClosureParametersParametersTransportSlot::GenericPattern(inner) => inner.as_ref().render(w),
-            ClosureParametersParametersTransportSlot::TuplePattern(inner) => inner.as_ref().render(w),
-            ClosureParametersParametersTransportSlot::TupleStructPattern(inner) => inner.as_ref().render(w),
-            ClosureParametersParametersTransportSlot::StructPattern(inner) => inner.as_ref().render(w),
+            ClosureParametersParametersTransportSlot::ScopedIdentifier(inner) => inner.render(w),
+            ClosureParametersParametersTransportSlot::GenericPattern(inner) => inner.render(w),
+            ClosureParametersParametersTransportSlot::TuplePattern(inner) => inner.render(w),
+            ClosureParametersParametersTransportSlot::TupleStructPattern(inner) => inner.render(w),
+            ClosureParametersParametersTransportSlot::StructPattern(inner) => inner.render(w),
             ClosureParametersParametersTransportSlot::RefPattern(inner) => inner.render(w),
-            ClosureParametersParametersTransportSlot::SlicePattern(inner) => inner.as_ref().render(w),
-            ClosureParametersParametersTransportSlot::CapturedPattern(inner) => inner.as_ref().render(w),
+            ClosureParametersParametersTransportSlot::SlicePattern(inner) => inner.render(w),
+            ClosureParametersParametersTransportSlot::CapturedPattern(inner) => inner.render(w),
             ClosureParametersParametersTransportSlot::ReferencePattern(inner) => inner.render(w),
             ClosureParametersParametersTransportSlot::MutPattern(inner) => inner.render(w),
-            ClosureParametersParametersTransportSlot::RangePatternWithLeft(inner) => inner.as_ref().render(w),
-            ClosureParametersParametersTransportSlot::RangePatternPrefix(inner) => inner.as_ref().render(w),
-            ClosureParametersParametersTransportSlot::OrPatternBinary(inner) => inner.as_ref().render(w),
+            ClosureParametersParametersTransportSlot::RangePatternWithLeft(inner) => inner.render(w),
+            ClosureParametersParametersTransportSlot::RangePatternPrefix(inner) => inner.render(w),
+            ClosureParametersParametersTransportSlot::OrPatternBinary(inner) => inner.render(w),
             ClosureParametersParametersTransportSlot::OrPatternPrefix(inner) => inner.render(w),
             ClosureParametersParametersTransportSlot::ConstBlock(inner) => inner.render(w),
-            ClosureParametersParametersTransportSlot::MacroInvocation(inner) => inner.as_ref().render(w),
+            ClosureParametersParametersTransportSlot::MacroInvocation(inner) => inner.render(w),
             ClosureParametersParametersTransportSlot::Parameter(inner) => inner.as_ref().render(w),
             ClosureParametersParametersTransportSlot::U8Keyword => render_u8_keyword(w),
             ClosureParametersParametersTransportSlot::I8Keyword => render_i8_keyword(w),
@@ -11519,7 +11519,7 @@ pub enum GenericPatternNameTransportSlot {
     #[kind(kind::IDENTIFIER, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD, kind::DEFAULT_KEYWORD, kind::UNION_KEYWORD, kind::GEN_KEYWORD)]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
-    ScopedIdentifier(Box<ScopedIdentifierTransport>),
+    ScopedIdentifier(ScopedIdentifierTransport),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -11562,7 +11562,7 @@ impl ::sittir_core::render::Render for GenericPatternNameTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             GenericPatternNameTransportSlot::Identifier(inner) => inner.render(w),
-            GenericPatternNameTransportSlot::ScopedIdentifier(inner) => inner.as_ref().render(w),
+            GenericPatternNameTransportSlot::ScopedIdentifier(inner) => inner.render(w),
             GenericPatternNameTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -11574,9 +11574,9 @@ pub enum TupleStructPatternTypeTransportSlot {
     #[kind(kind::IDENTIFIER, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD, kind::DEFAULT_KEYWORD, kind::UNION_KEYWORD, kind::GEN_KEYWORD)]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
-    ScopedIdentifier(Box<ScopedIdentifierTransport>),
+    ScopedIdentifier(ScopedIdentifierTransport),
     #[kind(kind::GENERIC_TYPE_WITH_TURBOFISH)]
-    GenericTypeWithTurbofish(Box<GenericTypeWithTurbofishTransport>),
+    GenericTypeWithTurbofish(GenericTypeWithTurbofishTransport),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -11623,8 +11623,8 @@ impl ::sittir_core::render::Render for TupleStructPatternTypeTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             TupleStructPatternTypeTransportSlot::Identifier(inner) => inner.render(w),
-            TupleStructPatternTypeTransportSlot::ScopedIdentifier(inner) => inner.as_ref().render(w),
-            TupleStructPatternTypeTransportSlot::GenericTypeWithTurbofish(inner) => inner.as_ref().render(w),
+            TupleStructPatternTypeTransportSlot::ScopedIdentifier(inner) => inner.render(w),
+            TupleStructPatternTypeTransportSlot::GenericTypeWithTurbofish(inner) => inner.render(w),
             TupleStructPatternTypeTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -11634,9 +11634,9 @@ impl ::sittir_core::render::Render for TupleStructPatternTypeTransportSlot {
 #[transport(choice)]
 pub enum StructPatternTypeTransportSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
-    TypeIdentifier(Box<TypeIdentifierTransport>),
+    TypeIdentifier(TypeIdentifierTransport),
     #[kind(kind::SCOPED_TYPE_IDENTIFIER)]
-    ScopedTypeIdentifier(Box<ScopedTypeIdentifierTransport>),
+    ScopedTypeIdentifier(ScopedTypeIdentifierTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for StructPatternTypeTransportSlot {
@@ -11672,8 +11672,8 @@ impl ::sittir_core::view::KindOf for StructPatternTypeTransportSlot {
 impl ::sittir_core::render::Render for StructPatternTypeTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            StructPatternTypeTransportSlot::TypeIdentifier(inner) => inner.as_ref().render(w),
-            StructPatternTypeTransportSlot::ScopedTypeIdentifier(inner) => inner.as_ref().render(w),
+            StructPatternTypeTransportSlot::TypeIdentifier(inner) => inner.render(w),
+            StructPatternTypeTransportSlot::ScopedTypeIdentifier(inner) => inner.render(w),
         }
     }
 }
@@ -11836,9 +11836,9 @@ pub enum LineCommentContentTransportSlot {
     #[kind(kind::LINE_COMMENT_EXTRA_SLASHES)]
     LineCommentExtraSlashes(LineCommentExtraSlashesTransport),
     #[kind(kind::LINE_COMMENT_DOC_OUTER)]
-    LineCommentDocOuter(Box<LineCommentDocOuterTransport>),
+    LineCommentDocOuter(LineCommentDocOuterTransport),
     #[kind(kind::LINE_COMMENT_DOC_INNER)]
-    LineCommentDocInner(Box<LineCommentDocInnerTransport>),
+    LineCommentDocInner(LineCommentDocInnerTransport),
     #[kind(kind::LINE_COMMENT_REGULAR)]
     LineCommentRegular(LineCommentRegularTransport),
     #[transport(verbatim)]
@@ -11891,8 +11891,8 @@ impl ::sittir_core::render::Render for LineCommentContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             LineCommentContentTransportSlot::LineCommentExtraSlashes(inner) => inner.render(w),
-            LineCommentContentTransportSlot::LineCommentDocOuter(inner) => { w.adjacent(); inner.as_ref().render(w) },
-            LineCommentContentTransportSlot::LineCommentDocInner(inner) => { w.adjacent(); inner.as_ref().render(w) },
+            LineCommentContentTransportSlot::LineCommentDocOuter(inner) => { w.adjacent(); inner.render(w) },
+            LineCommentContentTransportSlot::LineCommentDocInner(inner) => { w.adjacent(); inner.render(w) },
             LineCommentContentTransportSlot::LineCommentRegular(inner) => inner.render(w),
             LineCommentContentTransportSlot::Verbatim(inner) => inner.render(w),
         }
@@ -11903,9 +11903,9 @@ impl ::sittir_core::render::Render for LineCommentContentTransportSlot {
 #[transport(choice)]
 pub enum BlockCommentContentTransportSlot {
     #[kind(kind::BLOCK_COMMENT_DOC_OUTER)]
-    BlockCommentDocOuter(Box<BlockCommentDocOuterTransport>),
+    BlockCommentDocOuter(BlockCommentDocOuterTransport),
     #[kind(kind::BLOCK_COMMENT_DOC_INNER)]
-    BlockCommentDocInner(Box<BlockCommentDocInnerTransport>),
+    BlockCommentDocInner(BlockCommentDocInnerTransport),
     #[kind(kind::BLOCK_COMMENT_REGULAR)]
     BlockCommentRegular(BlockCommentRegularTransport),
     #[transport(verbatim)]
@@ -11953,8 +11953,8 @@ impl ::sittir_core::view::KindOf for BlockCommentContentTransportSlot {
 impl ::sittir_core::render::Render for BlockCommentContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            BlockCommentContentTransportSlot::BlockCommentDocOuter(inner) => { w.adjacent(); inner.as_ref().render(w) },
-            BlockCommentContentTransportSlot::BlockCommentDocInner(inner) => { w.adjacent(); inner.as_ref().render(w) },
+            BlockCommentContentTransportSlot::BlockCommentDocOuter(inner) => { w.adjacent(); inner.render(w) },
+            BlockCommentContentTransportSlot::BlockCommentDocInner(inner) => { w.adjacent(); inner.render(w) },
             BlockCommentContentTransportSlot::BlockCommentRegular(inner) => inner.render(w),
             BlockCommentContentTransportSlot::Verbatim(inner) => { w.adjacent(); inner.render(w) },
         }
@@ -11965,9 +11965,9 @@ impl ::sittir_core::render::Render for BlockCommentContentTransportSlot {
 #[transport(choice)]
 pub enum UseBoundsElementsItemTransportSlot {
     #[kind(kind::LIFETIME)]
-    Lifetime(Box<LifetimeTransport>),
+    Lifetime(LifetimeTransport),
     #[kind(kind::_TYPE_IDENTIFIER, display)]
-    TypeIdentifier(Box<TypeIdentifierTransport>),
+    TypeIdentifier(TypeIdentifierTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for UseBoundsElementsItemTransportSlot {
@@ -12003,8 +12003,8 @@ impl ::sittir_core::view::KindOf for UseBoundsElementsItemTransportSlot {
 impl ::sittir_core::render::Render for UseBoundsElementsItemTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            UseBoundsElementsItemTransportSlot::Lifetime(inner) => inner.as_ref().render(w),
-            UseBoundsElementsItemTransportSlot::TypeIdentifier(inner) => inner.as_ref().render(w),
+            UseBoundsElementsItemTransportSlot::Lifetime(inner) => inner.render(w),
+            UseBoundsElementsItemTransportSlot::TypeIdentifier(inner) => inner.render(w),
         }
     }
 }
@@ -12013,11 +12013,11 @@ impl ::sittir_core::render::Render for UseBoundsElementsItemTransportSlot {
 #[transport(choice)]
 pub enum FieldInitializerListElementsItemTransportSlot {
     #[kind(kind::SHORTHAND_FIELD_INITIALIZER)]
-    ShorthandFieldInitializer(Box<ShorthandFieldInitializerTransport>),
+    ShorthandFieldInitializer(ShorthandFieldInitializerTransport),
     #[kind(kind::FIELD_INITIALIZER)]
     FieldInitializer(Box<FieldInitializerTransport>),
     #[kind(kind::BASE_FIELD_INITIALIZER)]
-    BaseFieldInitializer(Box<BaseFieldInitializerTransport>),
+    BaseFieldInitializer(BaseFieldInitializerTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for FieldInitializerListElementsItemTransportSlot {
@@ -12057,9 +12057,9 @@ impl ::sittir_core::view::KindOf for FieldInitializerListElementsItemTransportSl
 impl ::sittir_core::render::Render for FieldInitializerListElementsItemTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            FieldInitializerListElementsItemTransportSlot::ShorthandFieldInitializer(inner) => inner.as_ref().render(w),
+            FieldInitializerListElementsItemTransportSlot::ShorthandFieldInitializer(inner) => inner.render(w),
             FieldInitializerListElementsItemTransportSlot::FieldInitializer(inner) => inner.as_ref().render(w),
-            FieldInitializerListElementsItemTransportSlot::BaseFieldInitializer(inner) => inner.as_ref().render(w),
+            FieldInitializerListElementsItemTransportSlot::BaseFieldInitializer(inner) => inner.render(w),
         }
     }
 }
@@ -12068,9 +12068,9 @@ impl ::sittir_core::render::Render for FieldInitializerListElementsItemTransport
 #[transport(choice)]
 pub enum TuplePatternElementsItemTransportSlot {
     #[kind(kind::STRING_LITERAL)]
-    StringLiteral(Box<StringLiteralTransport>),
+    StringLiteral(StringLiteralTransport),
     #[kind(kind::RAW_STRING_LITERAL)]
-    RawStringLiteral(Box<RawStringLiteralTransport>),
+    RawStringLiteral(RawStringLiteralTransport),
     #[kind(kind::CHAR_LITERAL_ESCAPED_SIMPLE)]
     CharLiteralEscapedSimple(CharLiteralEscapedSimpleTransport),
     #[kind(kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED)]
@@ -12096,45 +12096,45 @@ pub enum TuplePatternElementsItemTransportSlot {
     #[kind(kind::FLOAT_LITERAL)]
     FloatLiteral(FloatLiteralTransport),
     #[kind(kind::NEGATIVE_LITERAL)]
-    NegativeLiteral(Box<NegativeLiteralTransport>),
+    NegativeLiteral(NegativeLiteralTransport),
     #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
-    ScopedIdentifier(Box<ScopedIdentifierTransport>),
+    ScopedIdentifier(ScopedIdentifierTransport),
     #[kind(kind::GENERIC_PATTERN)]
-    GenericPattern(Box<GenericPatternTransport>),
+    GenericPattern(GenericPatternTransport),
     #[kind(kind::TUPLE_PATTERN)]
-    TuplePattern(Box<TuplePatternTransport>),
+    TuplePattern(TuplePatternTransport),
     #[kind(kind::TUPLE_STRUCT_PATTERN)]
-    TupleStructPattern(Box<TupleStructPatternTransport>),
+    TupleStructPattern(TupleStructPatternTransport),
     #[kind(kind::STRUCT_PATTERN)]
-    StructPattern(Box<StructPatternTransport>),
+    StructPattern(StructPatternTransport),
     #[kind(kind::REF_PATTERN)]
     RefPattern(RefPatternTransport),
     #[kind(kind::SLICE_PATTERN)]
-    SlicePattern(Box<SlicePatternTransport>),
+    SlicePattern(SlicePatternTransport),
     #[kind(kind::CAPTURED_PATTERN)]
-    CapturedPattern(Box<CapturedPatternTransport>),
+    CapturedPattern(CapturedPatternTransport),
     #[kind(kind::REFERENCE_PATTERN)]
     ReferencePattern(ReferencePatternTransport),
     #[kind(kind::MUT_PATTERN)]
     MutPattern(MutPatternTransport),
     #[kind(kind::RANGE_PATTERN_WITH_LEFT)]
-    RangePatternWithLeft(Box<RangePatternWithLeftTransport>),
+    RangePatternWithLeft(RangePatternWithLeftTransport),
     #[kind(kind::RANGE_PATTERN_PREFIX)]
-    RangePatternPrefix(Box<RangePatternPrefixTransport>),
+    RangePatternPrefix(RangePatternPrefixTransport),
     #[kind(kind::OR_PATTERN_BINARY)]
-    OrPatternBinary(Box<OrPatternBinaryTransport>),
+    OrPatternBinary(OrPatternBinaryTransport),
     #[kind(kind::OR_PATTERN_PREFIX)]
     OrPatternPrefix(OrPatternPrefixTransport),
     #[kind(kind::CONST_BLOCK)]
     ConstBlock(ConstBlockTransport),
     #[kind(kind::MACRO_INVOCATION)]
-    MacroInvocation(Box<MacroInvocationTransport>),
+    MacroInvocation(MacroInvocationTransport),
     #[kind(kind::CLOSURE_EXPRESSION_BLOCK)]
-    ClosureExpressionBlock(Box<ClosureExpressionBlockTransport>),
+    ClosureExpressionBlock(ClosureExpressionBlockTransport),
     #[kind(kind::CLOSURE_EXPRESSION_EXPR)]
-    ClosureExpressionExpr(Box<ClosureExpressionExprTransport>),
+    ClosureExpressionExpr(ClosureExpressionExprTransport),
     #[kind(kind::U8_KEYWORD)]
     U8Keyword,
     #[kind(kind::I8_KEYWORD)]
@@ -12436,8 +12436,8 @@ impl ::sittir_core::view::KindOf for TuplePatternElementsItemTransportSlot {
 impl ::sittir_core::render::Render for TuplePatternElementsItemTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            TuplePatternElementsItemTransportSlot::StringLiteral(inner) => inner.as_ref().render(w),
-            TuplePatternElementsItemTransportSlot::RawStringLiteral(inner) => inner.as_ref().render(w),
+            TuplePatternElementsItemTransportSlot::StringLiteral(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::RawStringLiteral(inner) => inner.render(w),
             TuplePatternElementsItemTransportSlot::CharLiteralEscapedSimple(inner) => inner.render(w),
             TuplePatternElementsItemTransportSlot::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
             TuplePatternElementsItemTransportSlot::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
@@ -12450,26 +12450,26 @@ impl ::sittir_core::render::Render for TuplePatternElementsItemTransportSlot {
             TuplePatternElementsItemTransportSlot::IntegerLiteralBinary(inner) => inner.render(w),
             TuplePatternElementsItemTransportSlot::IntegerLiteralOctal(inner) => inner.render(w),
             TuplePatternElementsItemTransportSlot::FloatLiteral(inner) => inner.render(w),
-            TuplePatternElementsItemTransportSlot::NegativeLiteral(inner) => inner.as_ref().render(w),
+            TuplePatternElementsItemTransportSlot::NegativeLiteral(inner) => inner.render(w),
             TuplePatternElementsItemTransportSlot::Identifier(inner) => inner.render(w),
-            TuplePatternElementsItemTransportSlot::ScopedIdentifier(inner) => inner.as_ref().render(w),
-            TuplePatternElementsItemTransportSlot::GenericPattern(inner) => inner.as_ref().render(w),
-            TuplePatternElementsItemTransportSlot::TuplePattern(inner) => inner.as_ref().render(w),
-            TuplePatternElementsItemTransportSlot::TupleStructPattern(inner) => inner.as_ref().render(w),
-            TuplePatternElementsItemTransportSlot::StructPattern(inner) => inner.as_ref().render(w),
+            TuplePatternElementsItemTransportSlot::ScopedIdentifier(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::GenericPattern(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::TuplePattern(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::TupleStructPattern(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::StructPattern(inner) => inner.render(w),
             TuplePatternElementsItemTransportSlot::RefPattern(inner) => inner.render(w),
-            TuplePatternElementsItemTransportSlot::SlicePattern(inner) => inner.as_ref().render(w),
-            TuplePatternElementsItemTransportSlot::CapturedPattern(inner) => inner.as_ref().render(w),
+            TuplePatternElementsItemTransportSlot::SlicePattern(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::CapturedPattern(inner) => inner.render(w),
             TuplePatternElementsItemTransportSlot::ReferencePattern(inner) => inner.render(w),
             TuplePatternElementsItemTransportSlot::MutPattern(inner) => inner.render(w),
-            TuplePatternElementsItemTransportSlot::RangePatternWithLeft(inner) => inner.as_ref().render(w),
-            TuplePatternElementsItemTransportSlot::RangePatternPrefix(inner) => inner.as_ref().render(w),
-            TuplePatternElementsItemTransportSlot::OrPatternBinary(inner) => inner.as_ref().render(w),
+            TuplePatternElementsItemTransportSlot::RangePatternWithLeft(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::RangePatternPrefix(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::OrPatternBinary(inner) => inner.render(w),
             TuplePatternElementsItemTransportSlot::OrPatternPrefix(inner) => inner.render(w),
             TuplePatternElementsItemTransportSlot::ConstBlock(inner) => inner.render(w),
-            TuplePatternElementsItemTransportSlot::MacroInvocation(inner) => inner.as_ref().render(w),
-            TuplePatternElementsItemTransportSlot::ClosureExpressionBlock(inner) => inner.as_ref().render(w),
-            TuplePatternElementsItemTransportSlot::ClosureExpressionExpr(inner) => inner.as_ref().render(w),
+            TuplePatternElementsItemTransportSlot::MacroInvocation(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::ClosureExpressionBlock(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::ClosureExpressionExpr(inner) => inner.render(w),
             TuplePatternElementsItemTransportSlot::U8Keyword => render_u8_keyword(w),
             TuplePatternElementsItemTransportSlot::I8Keyword => render_i8_keyword(w),
             TuplePatternElementsItemTransportSlot::U16Keyword => render_u16_keyword(w),
@@ -12501,9 +12501,9 @@ impl ::sittir_core::render::Render for TuplePatternElementsItemTransportSlot {
 #[transport(choice)]
 pub enum StructPatternElementsItemTransportSlot {
     #[kind(kind::FIELD_PATTERN_SHORTHAND)]
-    FieldPatternShorthand(Box<FieldPatternShorthandTransport>),
+    FieldPatternShorthand(FieldPatternShorthandTransport),
     #[kind(kind::FIELD_PATTERN_NAMED)]
-    FieldPatternNamed(Box<FieldPatternNamedTransport>),
+    FieldPatternNamed(FieldPatternNamedTransport),
     #[kind(kind::REMAINING_FIELD_PATTERN, kind::DOT_DOT)]
     RemainingFieldPattern,
 }
@@ -12545,8 +12545,8 @@ impl ::sittir_core::view::KindOf for StructPatternElementsItemTransportSlot {
 impl ::sittir_core::render::Render for StructPatternElementsItemTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            StructPatternElementsItemTransportSlot::FieldPatternShorthand(inner) => inner.as_ref().render(w),
-            StructPatternElementsItemTransportSlot::FieldPatternNamed(inner) => inner.as_ref().render(w),
+            StructPatternElementsItemTransportSlot::FieldPatternShorthand(inner) => inner.render(w),
+            StructPatternElementsItemTransportSlot::FieldPatternNamed(inner) => inner.render(w),
             StructPatternElementsItemTransportSlot::RemainingFieldPattern => render_remaining_field_pattern(w),
         }
     }
@@ -12556,7 +12556,7 @@ impl ::sittir_core::render::Render for StructPatternElementsItemTransportSlot {
 #[transport(choice)]
 pub enum ClosureExpressionExprBodyTransportSlot {
     #[kind(kind::UNARY_EXPRESSION)]
-    UnaryExpression(Box<UnaryExpressionTransport>),
+    UnaryExpression(UnaryExpressionTransport),
     #[kind(kind::REFERENCE_EXPRESSION_RAW_CONST)]
     ReferenceExpressionRawConst(ReferenceExpressionRawConstTransport),
     #[kind(kind::REFERENCE_EXPRESSION_RAW_MUT)]
@@ -12568,23 +12568,23 @@ pub enum ClosureExpressionExprBodyTransportSlot {
     #[kind(kind::TRY_EXPRESSION)]
     TryExpression(TryExpressionTransport),
     #[kind(kind::BINARY_EXPRESSION)]
-    BinaryExpression(Box<BinaryExpressionTransport>),
+    BinaryExpression(BinaryExpressionTransport),
     #[kind(kind::ASSIGNMENT_EXPRESSION)]
-    AssignmentExpression(Box<AssignmentExpressionTransport>),
+    AssignmentExpression(AssignmentExpressionTransport),
     #[kind(kind::COMPOUND_ASSIGNMENT_EXPR)]
-    CompoundAssignmentExpr(Box<CompoundAssignmentExprTransport>),
+    CompoundAssignmentExpr(CompoundAssignmentExprTransport),
     #[kind(kind::TYPE_CAST_EXPRESSION)]
-    TypeCastExpression(Box<TypeCastExpressionTransport>),
+    TypeCastExpression(TypeCastExpressionTransport),
     #[kind(kind::CALL_EXPRESSION)]
-    CallExpression(Box<CallExpressionTransport>),
+    CallExpression(CallExpressionTransport),
     #[kind(kind::RETURN_EXPRESSION)]
     ReturnExpression(ReturnExpressionTransport),
     #[kind(kind::YIELD_EXPRESSION)]
     YieldExpression(YieldExpressionTransport),
     #[kind(kind::STRING_LITERAL)]
-    StringLiteral(Box<StringLiteralTransport>),
+    StringLiteral(StringLiteralTransport),
     #[kind(kind::RAW_STRING_LITERAL)]
-    RawStringLiteral(Box<RawStringLiteralTransport>),
+    RawStringLiteral(RawStringLiteralTransport),
     #[kind(kind::CHAR_LITERAL_ESCAPED_SIMPLE)]
     CharLiteralEscapedSimple(CharLiteralEscapedSimpleTransport),
     #[kind(kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED)]
@@ -12612,37 +12612,37 @@ pub enum ClosureExpressionExprBodyTransportSlot {
     #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
-    ScopedIdentifier(Box<ScopedIdentifierTransport>),
+    ScopedIdentifier(ScopedIdentifierTransport),
     #[kind(kind::GENERIC_FUNCTION)]
-    GenericFunction(Box<GenericFunctionTransport>),
+    GenericFunction(GenericFunctionTransport),
     #[kind(kind::AWAIT_EXPRESSION)]
     AwaitExpression(AwaitExpressionTransport),
     #[kind(kind::FIELD_EXPRESSION)]
-    FieldExpression(Box<FieldExpressionTransport>),
+    FieldExpression(FieldExpressionTransport),
     #[kind(kind::ARRAY_EXPRESSION_SEMI)]
-    ArrayExpressionSemi(Box<ArrayExpressionSemiTransport>),
+    ArrayExpressionSemi(ArrayExpressionSemiTransport),
     #[kind(kind::ARRAY_EXPRESSION_LIST)]
-    ArrayExpressionList(Box<ArrayExpressionListTransport>),
+    ArrayExpressionList(ArrayExpressionListTransport),
     #[kind(kind::TUPLE_EXPRESSION)]
-    TupleExpression(Box<TupleExpressionTransport>),
+    TupleExpression(TupleExpressionTransport),
     #[kind(kind::MACRO_INVOCATION)]
-    MacroInvocation(Box<MacroInvocationTransport>),
+    MacroInvocation(MacroInvocationTransport),
     #[kind(kind::BREAK_EXPRESSION)]
-    BreakExpression(Box<BreakExpressionTransport>),
+    BreakExpression(BreakExpressionTransport),
     #[kind(kind::CONTINUE_EXPRESSION)]
-    ContinueExpression(Box<ContinueExpressionTransport>),
+    ContinueExpression(ContinueExpressionTransport),
     #[kind(kind::INDEX_EXPRESSION)]
-    IndexExpression(Box<IndexExpressionTransport>),
+    IndexExpression(IndexExpressionTransport),
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
     #[kind(kind::CLOSURE_EXPRESSION_BLOCK)]
-    ClosureExpressionBlock(Box<ClosureExpressionBlockTransport>),
+    ClosureExpressionBlock(ClosureExpressionBlockTransport),
     #[kind(kind::CLOSURE_EXPRESSION_EXPR)]
-    ClosureExpressionExpr(Box<ClosureExpressionExprTransport>),
+    ClosureExpressionExpr(ClosureExpressionExprTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION)]
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     #[kind(kind::STRUCT_EXPRESSION)]
-    StructExpression(Box<StructExpressionTransport>),
+    StructExpression(StructExpressionTransport),
     #[kind(kind::UNSAFE_BLOCK)]
     UnsafeBlock(UnsafeBlockTransport),
     #[kind(kind::ASYNC_BLOCK)]
@@ -12652,21 +12652,21 @@ pub enum ClosureExpressionExprBodyTransportSlot {
     #[kind(kind::TRY_BLOCK)]
     TryBlock(TryBlockTransport),
     #[kind(kind::BLOCK)]
-    Block(Box<BlockTransport>),
+    Block(BlockTransport),
     #[kind(kind::IF_EXPRESSION)]
-    IfExpression(Box<IfExpressionTransport>),
+    IfExpression(IfExpressionTransport),
     #[kind(kind::MATCH_EXPRESSION)]
-    MatchExpression(Box<MatchExpressionTransport>),
+    MatchExpression(MatchExpressionTransport),
     #[kind(kind::WHILE_EXPRESSION)]
-    WhileExpression(Box<WhileExpressionTransport>),
+    WhileExpression(WhileExpressionTransport),
     #[kind(kind::LOOP_EXPRESSION)]
-    LoopExpression(Box<LoopExpressionTransport>),
+    LoopExpression(LoopExpressionTransport),
     #[kind(kind::FOR_EXPRESSION)]
-    ForExpression(Box<ForExpressionTransport>),
+    ForExpression(ForExpressionTransport),
     #[kind(kind::CONST_BLOCK)]
     ConstBlock(ConstBlockTransport),
     #[kind(kind::RANGE_EXPRESSION_BINARY)]
-    RangeExpressionBinary(Box<RangeExpressionBinaryTransport>),
+    RangeExpressionBinary(RangeExpressionBinaryTransport),
     #[kind(kind::RANGE_EXPRESSION_POSTFIX)]
     RangeExpressionPostfix(RangeExpressionPostfixTransport),
     #[kind(kind::RANGE_EXPRESSION_PREFIX)]
@@ -13080,21 +13080,21 @@ impl ::sittir_core::view::KindOf for ClosureExpressionExprBodyTransportSlot {
 impl ::sittir_core::render::Render for ClosureExpressionExprBodyTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ClosureExpressionExprBodyTransportSlot::UnaryExpression(inner) => inner.as_ref().render(w),
+            ClosureExpressionExprBodyTransportSlot::UnaryExpression(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::ReferenceExpressionRawConst(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::ReferenceExpressionRawMut(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::ReferenceExpressionMut(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::ReferenceExpressionBare(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::TryExpression(inner) => inner.render(w),
-            ClosureExpressionExprBodyTransportSlot::BinaryExpression(inner) => inner.as_ref().render(w),
-            ClosureExpressionExprBodyTransportSlot::AssignmentExpression(inner) => inner.as_ref().render(w),
-            ClosureExpressionExprBodyTransportSlot::CompoundAssignmentExpr(inner) => inner.as_ref().render(w),
-            ClosureExpressionExprBodyTransportSlot::TypeCastExpression(inner) => inner.as_ref().render(w),
-            ClosureExpressionExprBodyTransportSlot::CallExpression(inner) => inner.as_ref().render(w),
+            ClosureExpressionExprBodyTransportSlot::BinaryExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyTransportSlot::AssignmentExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyTransportSlot::CompoundAssignmentExpr(inner) => inner.render(w),
+            ClosureExpressionExprBodyTransportSlot::TypeCastExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyTransportSlot::CallExpression(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::ReturnExpression(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::YieldExpression(inner) => inner.render(w),
-            ClosureExpressionExprBodyTransportSlot::StringLiteral(inner) => inner.as_ref().render(w),
-            ClosureExpressionExprBodyTransportSlot::RawStringLiteral(inner) => inner.as_ref().render(w),
+            ClosureExpressionExprBodyTransportSlot::StringLiteral(inner) => inner.render(w),
+            ClosureExpressionExprBodyTransportSlot::RawStringLiteral(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::CharLiteralEscapedSimple(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
@@ -13108,34 +13108,34 @@ impl ::sittir_core::render::Render for ClosureExpressionExprBodyTransportSlot {
             ClosureExpressionExprBodyTransportSlot::IntegerLiteralOctal(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::FloatLiteral(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::Identifier(inner) => inner.render(w),
-            ClosureExpressionExprBodyTransportSlot::ScopedIdentifier(inner) => inner.as_ref().render(w),
-            ClosureExpressionExprBodyTransportSlot::GenericFunction(inner) => inner.as_ref().render(w),
+            ClosureExpressionExprBodyTransportSlot::ScopedIdentifier(inner) => inner.render(w),
+            ClosureExpressionExprBodyTransportSlot::GenericFunction(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::AwaitExpression(inner) => inner.render(w),
-            ClosureExpressionExprBodyTransportSlot::FieldExpression(inner) => inner.as_ref().render(w),
-            ClosureExpressionExprBodyTransportSlot::ArrayExpressionSemi(inner) => inner.as_ref().render(w),
-            ClosureExpressionExprBodyTransportSlot::ArrayExpressionList(inner) => inner.as_ref().render(w),
-            ClosureExpressionExprBodyTransportSlot::TupleExpression(inner) => inner.as_ref().render(w),
-            ClosureExpressionExprBodyTransportSlot::MacroInvocation(inner) => inner.as_ref().render(w),
-            ClosureExpressionExprBodyTransportSlot::BreakExpression(inner) => inner.as_ref().render(w),
-            ClosureExpressionExprBodyTransportSlot::ContinueExpression(inner) => inner.as_ref().render(w),
-            ClosureExpressionExprBodyTransportSlot::IndexExpression(inner) => inner.as_ref().render(w),
+            ClosureExpressionExprBodyTransportSlot::FieldExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyTransportSlot::ArrayExpressionSemi(inner) => inner.render(w),
+            ClosureExpressionExprBodyTransportSlot::ArrayExpressionList(inner) => inner.render(w),
+            ClosureExpressionExprBodyTransportSlot::TupleExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyTransportSlot::MacroInvocation(inner) => inner.render(w),
+            ClosureExpressionExprBodyTransportSlot::BreakExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyTransportSlot::ContinueExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyTransportSlot::IndexExpression(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::Metavariable(inner) => inner.render(w),
-            ClosureExpressionExprBodyTransportSlot::ClosureExpressionBlock(inner) => inner.as_ref().render(w),
-            ClosureExpressionExprBodyTransportSlot::ClosureExpressionExpr(inner) => inner.as_ref().render(w),
+            ClosureExpressionExprBodyTransportSlot::ClosureExpressionBlock(inner) => inner.render(w),
+            ClosureExpressionExprBodyTransportSlot::ClosureExpressionExpr(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::ParenthesizedExpression(inner) => inner.render(w),
-            ClosureExpressionExprBodyTransportSlot::StructExpression(inner) => inner.as_ref().render(w),
+            ClosureExpressionExprBodyTransportSlot::StructExpression(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::UnsafeBlock(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::AsyncBlock(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::GenBlock(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::TryBlock(inner) => inner.render(w),
-            ClosureExpressionExprBodyTransportSlot::Block(inner) => inner.as_ref().render(w),
-            ClosureExpressionExprBodyTransportSlot::IfExpression(inner) => inner.as_ref().render(w),
-            ClosureExpressionExprBodyTransportSlot::MatchExpression(inner) => inner.as_ref().render(w),
-            ClosureExpressionExprBodyTransportSlot::WhileExpression(inner) => inner.as_ref().render(w),
-            ClosureExpressionExprBodyTransportSlot::LoopExpression(inner) => inner.as_ref().render(w),
-            ClosureExpressionExprBodyTransportSlot::ForExpression(inner) => inner.as_ref().render(w),
+            ClosureExpressionExprBodyTransportSlot::Block(inner) => inner.render(w),
+            ClosureExpressionExprBodyTransportSlot::IfExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyTransportSlot::MatchExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyTransportSlot::WhileExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyTransportSlot::LoopExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyTransportSlot::ForExpression(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::ConstBlock(inner) => inner.render(w),
-            ClosureExpressionExprBodyTransportSlot::RangeExpressionBinary(inner) => inner.as_ref().render(w),
+            ClosureExpressionExprBodyTransportSlot::RangeExpressionBinary(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::RangeExpressionPostfix(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::RangeExpressionPrefix(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::RangeExpressionBare(inner) => inner.render(w),
@@ -13176,11 +13176,11 @@ impl ::sittir_core::render::Render for ClosureExpressionExprBodyTransportSlot {
 #[transport(choice)]
 pub enum ImplItemPositiveClauseTraitTransportSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
-    TypeIdentifier(Box<TypeIdentifierTransport>),
+    TypeIdentifier(TypeIdentifierTransport),
     #[kind(kind::SCOPED_TYPE_IDENTIFIER)]
-    ScopedTypeIdentifier(Box<ScopedTypeIdentifierTransport>),
+    ScopedTypeIdentifier(ScopedTypeIdentifierTransport),
     #[kind(kind::GENERIC_TYPE)]
-    GenericType(Box<GenericTypeTransport>),
+    GenericType(GenericTypeTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for ImplItemPositiveClauseTraitTransportSlot {
@@ -13220,9 +13220,9 @@ impl ::sittir_core::view::KindOf for ImplItemPositiveClauseTraitTransportSlot {
 impl ::sittir_core::render::Render for ImplItemPositiveClauseTraitTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ImplItemPositiveClauseTraitTransportSlot::TypeIdentifier(inner) => inner.as_ref().render(w),
-            ImplItemPositiveClauseTraitTransportSlot::ScopedTypeIdentifier(inner) => inner.as_ref().render(w),
-            ImplItemPositiveClauseTraitTransportSlot::GenericType(inner) => inner.as_ref().render(w),
+            ImplItemPositiveClauseTraitTransportSlot::TypeIdentifier(inner) => inner.render(w),
+            ImplItemPositiveClauseTraitTransportSlot::ScopedTypeIdentifier(inner) => inner.render(w),
+            ImplItemPositiveClauseTraitTransportSlot::GenericType(inner) => inner.render(w),
         }
     }
 }
@@ -13279,7 +13279,7 @@ impl ::sittir_core::render::Render for ImplItemBodyTraitClauseTransportSlot {
 #[transport(choice)]
 pub enum VisibilityModifierPubScopeContentTransportSlot {
     #[kind(kind::VISIBILITY_MODIFIER_PUB_SCOPE_IN_PATH)]
-    VisibilityModifierPubScopeInPath(Box<VisibilityModifierPubScopeInPathTransport>),
+    VisibilityModifierPubScopeInPath(VisibilityModifierPubScopeInPathTransport),
     #[kind(kind::SELF)]
     Self_,
     #[kind(kind::SUPER)]
@@ -13329,7 +13329,7 @@ impl ::sittir_core::view::KindOf for VisibilityModifierPubScopeContentTransportS
 impl ::sittir_core::render::Render for VisibilityModifierPubScopeContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            VisibilityModifierPubScopeContentTransportSlot::VisibilityModifierPubScopeInPath(inner) => inner.as_ref().render(w),
+            VisibilityModifierPubScopeContentTransportSlot::VisibilityModifierPubScopeInPath(inner) => inner.render(w),
             VisibilityModifierPubScopeContentTransportSlot::Self_ => render_self(w),
             VisibilityModifierPubScopeContentTransportSlot::Super => render_super(w),
             VisibilityModifierPubScopeContentTransportSlot::Crate => render_crate(w),
@@ -13390,17 +13390,17 @@ pub enum MatchArmBlockEndingValueTransportSlot {
     #[kind(kind::TRY_BLOCK)]
     TryBlock(TryBlockTransport),
     #[kind(kind::BLOCK)]
-    Block(Box<BlockTransport>),
+    Block(BlockTransport),
     #[kind(kind::IF_EXPRESSION)]
-    IfExpression(Box<IfExpressionTransport>),
+    IfExpression(IfExpressionTransport),
     #[kind(kind::MATCH_EXPRESSION)]
-    MatchExpression(Box<MatchExpressionTransport>),
+    MatchExpression(MatchExpressionTransport),
     #[kind(kind::WHILE_EXPRESSION)]
-    WhileExpression(Box<WhileExpressionTransport>),
+    WhileExpression(WhileExpressionTransport),
     #[kind(kind::LOOP_EXPRESSION)]
-    LoopExpression(Box<LoopExpressionTransport>),
+    LoopExpression(LoopExpressionTransport),
     #[kind(kind::FOR_EXPRESSION)]
-    ForExpression(Box<ForExpressionTransport>),
+    ForExpression(ForExpressionTransport),
     #[kind(kind::CONST_BLOCK)]
     ConstBlock(ConstBlockTransport),
 }
@@ -13478,12 +13478,12 @@ impl ::sittir_core::render::Render for MatchArmBlockEndingValueTransportSlot {
             MatchArmBlockEndingValueTransportSlot::AsyncBlock(inner) => inner.render(w),
             MatchArmBlockEndingValueTransportSlot::GenBlock(inner) => inner.render(w),
             MatchArmBlockEndingValueTransportSlot::TryBlock(inner) => inner.render(w),
-            MatchArmBlockEndingValueTransportSlot::Block(inner) => inner.as_ref().render(w),
-            MatchArmBlockEndingValueTransportSlot::IfExpression(inner) => inner.as_ref().render(w),
-            MatchArmBlockEndingValueTransportSlot::MatchExpression(inner) => inner.as_ref().render(w),
-            MatchArmBlockEndingValueTransportSlot::WhileExpression(inner) => inner.as_ref().render(w),
-            MatchArmBlockEndingValueTransportSlot::LoopExpression(inner) => inner.as_ref().render(w),
-            MatchArmBlockEndingValueTransportSlot::ForExpression(inner) => inner.as_ref().render(w),
+            MatchArmBlockEndingValueTransportSlot::Block(inner) => inner.render(w),
+            MatchArmBlockEndingValueTransportSlot::IfExpression(inner) => inner.render(w),
+            MatchArmBlockEndingValueTransportSlot::MatchExpression(inner) => inner.render(w),
+            MatchArmBlockEndingValueTransportSlot::WhileExpression(inner) => inner.render(w),
+            MatchArmBlockEndingValueTransportSlot::LoopExpression(inner) => inner.render(w),
+            MatchArmBlockEndingValueTransportSlot::ForExpression(inner) => inner.render(w),
             MatchArmBlockEndingValueTransportSlot::ConstBlock(inner) => inner.render(w),
         }
     }
@@ -13493,7 +13493,7 @@ impl ::sittir_core::render::Render for MatchArmBlockEndingValueTransportSlot {
 #[transport(choice)]
 pub enum DelimTokenTreeParenDelimTokensTransportSlot {
     #[kind(kind::_NON_SPECIAL_TOKEN)]
-    NonSpecialToken(Box<NonSpecialTokenTransport>),
+    NonSpecialToken(NonSpecialTokenTransport),
     #[kind(kind::DELIM_TOKEN_TREE_PAREN)]
     DelimTokenTreeParen(DelimTokenTreeParenTransport),
     #[kind(kind::DELIM_TOKEN_TREE_BRACKET)]
@@ -13549,7 +13549,7 @@ impl ::sittir_core::view::KindOf for DelimTokenTreeParenDelimTokensTransportSlot
 impl ::sittir_core::render::Render for DelimTokenTreeParenDelimTokensTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            DelimTokenTreeParenDelimTokensTransportSlot::NonSpecialToken(inner) => inner.as_ref().render(w),
+            DelimTokenTreeParenDelimTokensTransportSlot::NonSpecialToken(inner) => inner.render(w),
             DelimTokenTreeParenDelimTokensTransportSlot::DelimTokenTreeParen(inner) => inner.render(w),
             DelimTokenTreeParenDelimTokensTransportSlot::DelimTokenTreeBracket(inner) => inner.render(w),
             DelimTokenTreeParenDelimTokensTransportSlot::DelimTokenTreeBrace(inner) => inner.render(w),
@@ -13631,9 +13631,9 @@ impl ::sittir_core::render::Render for MacroDefinitionParenNameTransportSlot {
 #[transport(choice)]
 pub enum RangePatternPrefixRightTransportSlot {
     #[kind(kind::STRING_LITERAL)]
-    StringLiteral(Box<StringLiteralTransport>),
+    StringLiteral(StringLiteralTransport),
     #[kind(kind::RAW_STRING_LITERAL)]
-    RawStringLiteral(Box<RawStringLiteralTransport>),
+    RawStringLiteral(RawStringLiteralTransport),
     #[kind(kind::CHAR_LITERAL_ESCAPED_SIMPLE)]
     CharLiteralEscapedSimple(CharLiteralEscapedSimpleTransport),
     #[kind(kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED)]
@@ -13659,13 +13659,13 @@ pub enum RangePatternPrefixRightTransportSlot {
     #[kind(kind::FLOAT_LITERAL)]
     FloatLiteral(FloatLiteralTransport),
     #[kind(kind::NEGATIVE_LITERAL)]
-    NegativeLiteral(Box<NegativeLiteralTransport>),
+    NegativeLiteral(NegativeLiteralTransport),
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
     #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
-    ScopedIdentifier(Box<ScopedIdentifierTransport>),
+    ScopedIdentifier(ScopedIdentifierTransport),
     #[kind(kind::SELF)]
     Self_,
     #[kind(kind::U8_KEYWORD)]
@@ -13909,8 +13909,8 @@ impl ::sittir_core::view::KindOf for RangePatternPrefixRightTransportSlot {
 impl ::sittir_core::render::Render for RangePatternPrefixRightTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            RangePatternPrefixRightTransportSlot::StringLiteral(inner) => inner.as_ref().render(w),
-            RangePatternPrefixRightTransportSlot::RawStringLiteral(inner) => inner.as_ref().render(w),
+            RangePatternPrefixRightTransportSlot::StringLiteral(inner) => inner.render(w),
+            RangePatternPrefixRightTransportSlot::RawStringLiteral(inner) => inner.render(w),
             RangePatternPrefixRightTransportSlot::CharLiteralEscapedSimple(inner) => inner.render(w),
             RangePatternPrefixRightTransportSlot::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
             RangePatternPrefixRightTransportSlot::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
@@ -13923,10 +13923,10 @@ impl ::sittir_core::render::Render for RangePatternPrefixRightTransportSlot {
             RangePatternPrefixRightTransportSlot::IntegerLiteralBinary(inner) => inner.render(w),
             RangePatternPrefixRightTransportSlot::IntegerLiteralOctal(inner) => inner.render(w),
             RangePatternPrefixRightTransportSlot::FloatLiteral(inner) => inner.render(w),
-            RangePatternPrefixRightTransportSlot::NegativeLiteral(inner) => inner.as_ref().render(w),
+            RangePatternPrefixRightTransportSlot::NegativeLiteral(inner) => inner.render(w),
             RangePatternPrefixRightTransportSlot::Metavariable(inner) => inner.render(w),
             RangePatternPrefixRightTransportSlot::Identifier(inner) => inner.render(w),
-            RangePatternPrefixRightTransportSlot::ScopedIdentifier(inner) => inner.as_ref().render(w),
+            RangePatternPrefixRightTransportSlot::ScopedIdentifier(inner) => inner.render(w),
             RangePatternPrefixRightTransportSlot::Self_ => render_self(w),
             RangePatternPrefixRightTransportSlot::U8Keyword => render_u8_keyword(w),
             RangePatternPrefixRightTransportSlot::I8Keyword => render_i8_keyword(w),
@@ -14066,7 +14066,7 @@ impl ::sittir_core::render::Render for RangePatternWithLeftWithRightContentTrans
 #[transport(choice)]
 pub enum RangePatternWithLeftContentTransportSlot {
     #[kind(kind::RANGE_PATTERN_WITH_LEFT_WITH_RIGHT)]
-    RangePatternWithLeftWithRight(Box<RangePatternWithLeftWithRightTransport>),
+    RangePatternWithLeftWithRight(RangePatternWithLeftWithRightTransport),
     #[kind(kind::RANGE_PATTERN_WITH_LEFT_BARE, kind::DOT_DOT)]
     RangePatternWithLeftBare,
 }
@@ -14104,7 +14104,7 @@ impl ::sittir_core::view::KindOf for RangePatternWithLeftContentTransportSlot {
 impl ::sittir_core::render::Render for RangePatternWithLeftContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            RangePatternWithLeftContentTransportSlot::RangePatternWithLeftWithRight(inner) => inner.as_ref().render(w),
+            RangePatternWithLeftContentTransportSlot::RangePatternWithLeftWithRight(inner) => inner.render(w),
             RangePatternWithLeftContentTransportSlot::RangePatternWithLeftBare => {
                 w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_DOT_DOT_BEFORE);
                 let written = render_range_pattern_with_left_bare(w);
@@ -14121,13 +14121,13 @@ pub enum AttributedParameterContentTransportSlot {
     #[kind(kind::PARAMETER)]
     Parameter(Box<ParameterTransport>),
     #[kind(kind::SELF_PARAMETER)]
-    SelfParameter(Box<SelfParameterTransport>),
+    SelfParameter(SelfParameterTransport),
     #[kind(kind::VARIADIC_PARAMETER)]
-    VariadicParameter(Box<VariadicParameterTransport>),
+    VariadicParameter(VariadicParameterTransport),
     #[kind(kind::ABSTRACT_TYPE)]
-    AbstractType(Box<AbstractTypeTransport>),
+    AbstractType(AbstractTypeTransport),
     #[kind(kind::REFERENCE_TYPE)]
-    ReferenceType(Box<ReferenceTypeTransport>),
+    ReferenceType(ReferenceTypeTransport),
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
     #[kind(kind::POINTER_TYPE_CONST)]
@@ -14135,23 +14135,23 @@ pub enum AttributedParameterContentTransportSlot {
     #[kind(kind::POINTER_TYPE_MUT)]
     PointerTypeMut(PointerTypeMutTransport),
     #[kind(kind::GENERIC_TYPE)]
-    GenericType(Box<GenericTypeTransport>),
+    GenericType(GenericTypeTransport),
     #[kind(kind::SCOPED_TYPE_IDENTIFIER)]
-    ScopedTypeIdentifier(Box<ScopedTypeIdentifierTransport>),
+    ScopedTypeIdentifier(ScopedTypeIdentifierTransport),
     #[kind(kind::TUPLE_TYPE)]
-    TupleType(Box<TupleTypeTransport>),
+    TupleType(TupleTypeTransport),
     #[kind(kind::ARRAY_TYPE)]
-    ArrayType(Box<ArrayTypeTransport>),
+    ArrayType(ArrayTypeTransport),
     #[kind(kind::FUNCTION_TYPE)]
-    FunctionType(Box<FunctionTypeTransport>),
+    FunctionType(FunctionTypeTransport),
     #[kind(kind::_TYPE_IDENTIFIER, display)]
-    TypeIdentifier(Box<TypeIdentifierTransport>),
+    TypeIdentifier(TypeIdentifierTransport),
     #[kind(kind::MACRO_INVOCATION)]
-    MacroInvocation(Box<MacroInvocationTransport>),
+    MacroInvocation(MacroInvocationTransport),
     #[kind(kind::DYNAMIC_TYPE)]
     DynamicType(DynamicTypeTransport),
     #[kind(kind::BOUNDED_TYPE)]
-    BoundedType(Box<BoundedTypeTransport>),
+    BoundedType(BoundedTypeTransport),
     #[kind(kind::REMOVED_TRAIT_BOUND)]
     RemovedTraitBound(RemovedTraitBoundTransport),
     #[kind(kind::_PRIMITIVE_TYPE, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD)]
@@ -14278,22 +14278,22 @@ impl ::sittir_core::render::Render for AttributedParameterContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             AttributedParameterContentTransportSlot::Parameter(inner) => inner.as_ref().render(w),
-            AttributedParameterContentTransportSlot::SelfParameter(inner) => inner.as_ref().render(w),
-            AttributedParameterContentTransportSlot::VariadicParameter(inner) => inner.as_ref().render(w),
-            AttributedParameterContentTransportSlot::AbstractType(inner) => inner.as_ref().render(w),
-            AttributedParameterContentTransportSlot::ReferenceType(inner) => inner.as_ref().render(w),
+            AttributedParameterContentTransportSlot::SelfParameter(inner) => inner.render(w),
+            AttributedParameterContentTransportSlot::VariadicParameter(inner) => inner.render(w),
+            AttributedParameterContentTransportSlot::AbstractType(inner) => inner.render(w),
+            AttributedParameterContentTransportSlot::ReferenceType(inner) => inner.render(w),
             AttributedParameterContentTransportSlot::Metavariable(inner) => inner.render(w),
             AttributedParameterContentTransportSlot::PointerTypeConst(inner) => inner.render(w),
             AttributedParameterContentTransportSlot::PointerTypeMut(inner) => inner.render(w),
-            AttributedParameterContentTransportSlot::GenericType(inner) => inner.as_ref().render(w),
-            AttributedParameterContentTransportSlot::ScopedTypeIdentifier(inner) => inner.as_ref().render(w),
-            AttributedParameterContentTransportSlot::TupleType(inner) => inner.as_ref().render(w),
-            AttributedParameterContentTransportSlot::ArrayType(inner) => inner.as_ref().render(w),
-            AttributedParameterContentTransportSlot::FunctionType(inner) => inner.as_ref().render(w),
-            AttributedParameterContentTransportSlot::TypeIdentifier(inner) => inner.as_ref().render(w),
-            AttributedParameterContentTransportSlot::MacroInvocation(inner) => inner.as_ref().render(w),
+            AttributedParameterContentTransportSlot::GenericType(inner) => inner.render(w),
+            AttributedParameterContentTransportSlot::ScopedTypeIdentifier(inner) => inner.render(w),
+            AttributedParameterContentTransportSlot::TupleType(inner) => inner.render(w),
+            AttributedParameterContentTransportSlot::ArrayType(inner) => inner.render(w),
+            AttributedParameterContentTransportSlot::FunctionType(inner) => inner.render(w),
+            AttributedParameterContentTransportSlot::TypeIdentifier(inner) => inner.render(w),
+            AttributedParameterContentTransportSlot::MacroInvocation(inner) => inner.render(w),
             AttributedParameterContentTransportSlot::DynamicType(inner) => inner.render(w),
-            AttributedParameterContentTransportSlot::BoundedType(inner) => inner.as_ref().render(w),
+            AttributedParameterContentTransportSlot::BoundedType(inner) => inner.render(w),
             AttributedParameterContentTransportSlot::RemovedTraitBound(inner) => inner.render(w),
             AttributedParameterContentTransportSlot::PrimitiveType(inner) => inner.render(w),
             AttributedParameterContentTransportSlot::UnitType => render_unit_type(w),
@@ -14316,7 +14316,7 @@ pub enum AttributedTypeParameterContentTransportSlot {
     #[kind(kind::TYPE_PARAMETER)]
     TypeParameter(Box<TypeParameterTransport>),
     #[kind(kind::LIFETIME_PARAMETER)]
-    LifetimeParameter(Box<LifetimeParameterTransport>),
+    LifetimeParameter(LifetimeParameterTransport),
     #[kind(kind::CONST_PARAMETER)]
     ConstParameter(Box<ConstParameterTransport>),
 }
@@ -14364,7 +14364,7 @@ impl ::sittir_core::render::Render for AttributedTypeParameterContentTransportSl
         match self {
             AttributedTypeParameterContentTransportSlot::Metavariable(inner) => inner.render(w),
             AttributedTypeParameterContentTransportSlot::TypeParameter(inner) => inner.as_ref().render(w),
-            AttributedTypeParameterContentTransportSlot::LifetimeParameter(inner) => inner.as_ref().render(w),
+            AttributedTypeParameterContentTransportSlot::LifetimeParameter(inner) => inner.render(w),
             AttributedTypeParameterContentTransportSlot::ConstParameter(inner) => inner.as_ref().render(w),
         }
     }
@@ -14374,9 +14374,9 @@ impl ::sittir_core::render::Render for AttributedTypeParameterContentTransportSl
 #[transport(choice)]
 pub enum TypeArgumentContentTransportSlot {
     #[kind(kind::ABSTRACT_TYPE)]
-    AbstractType(Box<AbstractTypeTransport>),
+    AbstractType(AbstractTypeTransport),
     #[kind(kind::REFERENCE_TYPE)]
-    ReferenceType(Box<ReferenceTypeTransport>),
+    ReferenceType(ReferenceTypeTransport),
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
     #[kind(kind::POINTER_TYPE_CONST)]
@@ -14384,23 +14384,23 @@ pub enum TypeArgumentContentTransportSlot {
     #[kind(kind::POINTER_TYPE_MUT)]
     PointerTypeMut(PointerTypeMutTransport),
     #[kind(kind::GENERIC_TYPE)]
-    GenericType(Box<GenericTypeTransport>),
+    GenericType(GenericTypeTransport),
     #[kind(kind::SCOPED_TYPE_IDENTIFIER)]
-    ScopedTypeIdentifier(Box<ScopedTypeIdentifierTransport>),
+    ScopedTypeIdentifier(ScopedTypeIdentifierTransport),
     #[kind(kind::TUPLE_TYPE)]
-    TupleType(Box<TupleTypeTransport>),
+    TupleType(TupleTypeTransport),
     #[kind(kind::ARRAY_TYPE)]
-    ArrayType(Box<ArrayTypeTransport>),
+    ArrayType(ArrayTypeTransport),
     #[kind(kind::FUNCTION_TYPE)]
-    FunctionType(Box<FunctionTypeTransport>),
+    FunctionType(FunctionTypeTransport),
     #[kind(kind::_TYPE_IDENTIFIER, display)]
-    TypeIdentifier(Box<TypeIdentifierTransport>),
+    TypeIdentifier(TypeIdentifierTransport),
     #[kind(kind::MACRO_INVOCATION)]
-    MacroInvocation(Box<MacroInvocationTransport>),
+    MacroInvocation(MacroInvocationTransport),
     #[kind(kind::DYNAMIC_TYPE)]
     DynamicType(DynamicTypeTransport),
     #[kind(kind::BOUNDED_TYPE)]
-    BoundedType(Box<BoundedTypeTransport>),
+    BoundedType(BoundedTypeTransport),
     #[kind(kind::REMOVED_TRAIT_BOUND)]
     RemovedTraitBound(RemovedTraitBoundTransport),
     #[kind(kind::_PRIMITIVE_TYPE, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD)]
@@ -14408,11 +14408,11 @@ pub enum TypeArgumentContentTransportSlot {
     #[kind(kind::TYPE_BINDING)]
     TypeBinding(Box<TypeBindingTransport>),
     #[kind(kind::LIFETIME)]
-    Lifetime(Box<LifetimeTransport>),
+    Lifetime(LifetimeTransport),
     #[kind(kind::STRING_LITERAL)]
-    StringLiteral(Box<StringLiteralTransport>),
+    StringLiteral(StringLiteralTransport),
     #[kind(kind::RAW_STRING_LITERAL)]
-    RawStringLiteral(Box<RawStringLiteralTransport>),
+    RawStringLiteral(RawStringLiteralTransport),
     #[kind(kind::CHAR_LITERAL_ESCAPED_SIMPLE)]
     CharLiteralEscapedSimple(CharLiteralEscapedSimpleTransport),
     #[kind(kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED)]
@@ -14438,7 +14438,7 @@ pub enum TypeArgumentContentTransportSlot {
     #[kind(kind::FLOAT_LITERAL)]
     FloatLiteral(FloatLiteralTransport),
     #[kind(kind::BLOCK)]
-    Block(Box<BlockTransport>),
+    Block(BlockTransport),
     #[kind(kind::UNIT_TYPE)]
     UnitType,
     #[kind(kind::NEVER_TYPE)]
@@ -14616,26 +14616,26 @@ impl ::sittir_core::view::KindOf for TypeArgumentContentTransportSlot {
 impl ::sittir_core::render::Render for TypeArgumentContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            TypeArgumentContentTransportSlot::AbstractType(inner) => inner.as_ref().render(w),
-            TypeArgumentContentTransportSlot::ReferenceType(inner) => inner.as_ref().render(w),
+            TypeArgumentContentTransportSlot::AbstractType(inner) => inner.render(w),
+            TypeArgumentContentTransportSlot::ReferenceType(inner) => inner.render(w),
             TypeArgumentContentTransportSlot::Metavariable(inner) => inner.render(w),
             TypeArgumentContentTransportSlot::PointerTypeConst(inner) => inner.render(w),
             TypeArgumentContentTransportSlot::PointerTypeMut(inner) => inner.render(w),
-            TypeArgumentContentTransportSlot::GenericType(inner) => inner.as_ref().render(w),
-            TypeArgumentContentTransportSlot::ScopedTypeIdentifier(inner) => inner.as_ref().render(w),
-            TypeArgumentContentTransportSlot::TupleType(inner) => inner.as_ref().render(w),
-            TypeArgumentContentTransportSlot::ArrayType(inner) => inner.as_ref().render(w),
-            TypeArgumentContentTransportSlot::FunctionType(inner) => inner.as_ref().render(w),
-            TypeArgumentContentTransportSlot::TypeIdentifier(inner) => inner.as_ref().render(w),
-            TypeArgumentContentTransportSlot::MacroInvocation(inner) => inner.as_ref().render(w),
+            TypeArgumentContentTransportSlot::GenericType(inner) => inner.render(w),
+            TypeArgumentContentTransportSlot::ScopedTypeIdentifier(inner) => inner.render(w),
+            TypeArgumentContentTransportSlot::TupleType(inner) => inner.render(w),
+            TypeArgumentContentTransportSlot::ArrayType(inner) => inner.render(w),
+            TypeArgumentContentTransportSlot::FunctionType(inner) => inner.render(w),
+            TypeArgumentContentTransportSlot::TypeIdentifier(inner) => inner.render(w),
+            TypeArgumentContentTransportSlot::MacroInvocation(inner) => inner.render(w),
             TypeArgumentContentTransportSlot::DynamicType(inner) => inner.render(w),
-            TypeArgumentContentTransportSlot::BoundedType(inner) => inner.as_ref().render(w),
+            TypeArgumentContentTransportSlot::BoundedType(inner) => inner.render(w),
             TypeArgumentContentTransportSlot::RemovedTraitBound(inner) => inner.render(w),
             TypeArgumentContentTransportSlot::PrimitiveType(inner) => inner.render(w),
             TypeArgumentContentTransportSlot::TypeBinding(inner) => inner.as_ref().render(w),
-            TypeArgumentContentTransportSlot::Lifetime(inner) => inner.as_ref().render(w),
-            TypeArgumentContentTransportSlot::StringLiteral(inner) => inner.as_ref().render(w),
-            TypeArgumentContentTransportSlot::RawStringLiteral(inner) => inner.as_ref().render(w),
+            TypeArgumentContentTransportSlot::Lifetime(inner) => inner.render(w),
+            TypeArgumentContentTransportSlot::StringLiteral(inner) => inner.render(w),
+            TypeArgumentContentTransportSlot::RawStringLiteral(inner) => inner.render(w),
             TypeArgumentContentTransportSlot::CharLiteralEscapedSimple(inner) => inner.render(w),
             TypeArgumentContentTransportSlot::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
             TypeArgumentContentTransportSlot::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
@@ -14648,7 +14648,7 @@ impl ::sittir_core::render::Render for TypeArgumentContentTransportSlot {
             TypeArgumentContentTransportSlot::IntegerLiteralBinary(inner) => inner.render(w),
             TypeArgumentContentTransportSlot::IntegerLiteralOctal(inner) => inner.render(w),
             TypeArgumentContentTransportSlot::FloatLiteral(inner) => inner.render(w),
-            TypeArgumentContentTransportSlot::Block(inner) => inner.as_ref().render(w),
+            TypeArgumentContentTransportSlot::Block(inner) => inner.render(w),
             TypeArgumentContentTransportSlot::UnitType => render_unit_type(w),
             TypeArgumentContentTransportSlot::NeverType => render_never_type(w),
             TypeArgumentContentTransportSlot::Verbatim(inner) => inner.render(w),
@@ -14661,7 +14661,7 @@ impl ::sittir_core::render::Render for TypeArgumentContentTransportSlot {
 #[transport(kind = kind::SOURCE_FILE, gap(0) = statements)]
 pub struct SourceFileTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_shebang")]
     #[slot(field = field::SHEBANG)]
     pub shebang: Option<::sittir_core::SlotValue<ShebangTransport>>,
@@ -14686,7 +14686,7 @@ impl ::sittir_core::options::Edged for SourceFileTransport {
 
 impl ::sittir_core::render::Render for SourceFileTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(176)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_source_file(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(176)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_source_file(self, w))
     }
 }
 
@@ -14744,7 +14744,7 @@ impl ::sittir_core::render::Render for EmptyStatementTransport {
 #[transport(kind = kind::EXPRESSION_STATEMENT)]
 pub struct ExpressionStatementTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<ExpressionStatementContentTransportSlot>,
@@ -14764,7 +14764,7 @@ impl ::sittir_core::options::Edged for ExpressionStatementTransport {
 
 impl ::sittir_core::render::Render for ExpressionStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(179)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_expression_statement(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(179)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_expression_statement(self, w))
     }
 }
 
@@ -14786,7 +14786,7 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementTransport {
 #[transport(kind = kind::MACRO_RULE, layout = [kind::EQ_GT])]
 pub struct MacroRuleTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_left")]
     #[slot(field = field::LEFT)]
     pub left: ::sittir_core::SlotValue<TokenTreePatternTransport>,
@@ -14809,7 +14809,7 @@ impl ::sittir_core::options::Edged for MacroRuleTransport {
 
 impl ::sittir_core::render::Render for MacroRuleTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(181)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_macro_rule(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(181)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_macro_rule(self, w))
     }
 }
 
@@ -14835,7 +14835,7 @@ impl ::sittir_core::prepare::Prepare for MacroRuleTransport {
 #[transport(kind = kind::TOKEN_BINDING_PATTERN, layout = [kind::COLON])]
 pub struct TokenBindingPatternTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<MetavariableTransport>,
@@ -14858,7 +14858,7 @@ impl ::sittir_core::options::Edged for TokenBindingPatternTransport {
 
 impl ::sittir_core::render::Render for TokenBindingPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(184)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_binding_pattern(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(184)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_binding_pattern(self, w))
     }
 }
 
@@ -14884,7 +14884,7 @@ impl ::sittir_core::prepare::Prepare for TokenBindingPatternTransport {
 #[transport(kind = kind::TOKEN_REPETITION_PATTERN, layout = [kind::DOLLAR, kind::LPAREN, kind::RPAREN])]
 pub struct TokenRepetitionPatternTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_token_patterns")]
     #[slot(field = field::TOKEN_PATTERNS)]
     pub token_patterns: Option<Vec<::sittir_core::SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>>,
@@ -14916,7 +14916,7 @@ impl ::sittir_core::options::Edged for TokenRepetitionPatternTransport {
 
 impl ::sittir_core::render::Render for TokenRepetitionPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(185)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_repetition_pattern(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(185)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_repetition_pattern(self, w))
     }
 }
 
@@ -15031,7 +15031,7 @@ impl ::sittir_core::render::Render for FragmentSpecifierEnum {
 #[transport(kind = kind::TOKEN_REPETITION, layout = [kind::DOLLAR, kind::LPAREN, kind::RPAREN])]
 pub struct TokenRepetitionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_tokens")]
     #[slot(field = field::TOKENS)]
     pub tokens: Option<Vec<::sittir_core::SlotValue<TokenRepetitionTokensTransportSlot>>>,
@@ -15063,7 +15063,7 @@ impl ::sittir_core::options::Edged for TokenRepetitionTransport {
 
 impl ::sittir_core::render::Render for TokenRepetitionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(188)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_repetition(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(188)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_repetition(self, w))
     }
 }
 
@@ -15093,7 +15093,7 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionTransport {
 #[transport(kind = kind::_NON_SPECIAL_TOKEN)]
 pub struct NonSpecialTokenTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<NonSpecialTokenContentTransportSlot>,
@@ -15113,7 +15113,7 @@ impl ::sittir_core::options::Edged for NonSpecialTokenTransport {
 
 impl ::sittir_core::render::Render for NonSpecialTokenTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(189)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_non_special_token(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(189)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_non_special_token(self, w))
     }
 }
 
@@ -15135,7 +15135,7 @@ impl ::sittir_core::prepare::Prepare for NonSpecialTokenTransport {
 #[transport(kind = kind::ATTRIBUTE_ITEM, layout = [kind::POUND, kind::LBRACK, kind::RBRACK])]
 pub struct AttributeItemTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attribute")]
     #[slot(field = field::ATTRIBUTE)]
     pub attribute: ::sittir_core::SlotValue<AttributeTransport>,
@@ -15155,7 +15155,7 @@ impl ::sittir_core::options::Edged for AttributeItemTransport {
 
 impl ::sittir_core::render::Render for AttributeItemTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(190)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attribute_item(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(190)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attribute_item(self, w))
     }
 }
 
@@ -15180,7 +15180,7 @@ impl ::sittir_core::prepare::Prepare for AttributeItemTransport {
 #[transport(kind = kind::INNER_ATTRIBUTE_ITEM, layout = [kind::POUND, kind::BANG, kind::LBRACK, kind::RBRACK])]
 pub struct InnerAttributeItemTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attribute")]
     #[slot(field = field::ATTRIBUTE)]
     pub attribute: ::sittir_core::SlotValue<AttributeTransport>,
@@ -15200,7 +15200,7 @@ impl ::sittir_core::options::Edged for InnerAttributeItemTransport {
 
 impl ::sittir_core::render::Render for InnerAttributeItemTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(191)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_inner_attribute_item(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(191)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_inner_attribute_item(self, w))
     }
 }
 
@@ -15225,7 +15225,7 @@ impl ::sittir_core::prepare::Prepare for InnerAttributeItemTransport {
 #[transport(kind = kind::ATTRIBUTE)]
 pub struct AttributeTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_path")]
     #[slot(field = field::PATH)]
     pub path: ::sittir_core::SlotValue<AttributePathTransportSlot>,
@@ -15248,7 +15248,7 @@ impl ::sittir_core::options::Edged for AttributeTransport {
 
 impl ::sittir_core::render::Render for AttributeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(192)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attribute(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(192)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attribute(self, w))
     }
 }
 
@@ -15274,7 +15274,7 @@ impl ::sittir_core::prepare::Prepare for AttributeTransport {
 #[transport(kind = kind::DECLARATION_LIST, layout = [kind::LBRACE, kind::RBRACE], gap(1) = declarations)]
 pub struct DeclarationListTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_declarations")]
     #[slot(field = field::DECLARATIONS)]
     pub declarations: Option<Vec<::sittir_core::SlotValue<DeclarationStatementTransport>>>,
@@ -15296,7 +15296,7 @@ impl ::sittir_core::options::Edged for DeclarationListTransport {
 
 impl ::sittir_core::render::Render for DeclarationListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(195)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_declaration_list(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(195)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_declaration_list(self, w))
     }
 }
 
@@ -15324,7 +15324,7 @@ impl ::sittir_core::prepare::Prepare for DeclarationListTransport {
 #[transport(kind = kind::UNION_ITEM, layout = [kind::UNION_KEYWORD])]
 pub struct UnionItemTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_visibility_modifier")]
     #[slot(field = field::VISIBILITY_MODIFIER)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
@@ -15356,7 +15356,7 @@ impl ::sittir_core::options::Edged for UnionItemTransport {
 
 impl ::sittir_core::render::Render for UnionItemTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(197)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_union_item(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(197)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_union_item(self, w))
     }
 }
 
@@ -15385,7 +15385,7 @@ impl ::sittir_core::prepare::Prepare for UnionItemTransport {
 #[transport(kind = kind::ENUM_ITEM, layout = [kind::ENUM_KEYWORD])]
 pub struct EnumItemTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_visibility_modifier")]
     #[slot(field = field::VISIBILITY_MODIFIER)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
@@ -15417,7 +15417,7 @@ impl ::sittir_core::options::Edged for EnumItemTransport {
 
 impl ::sittir_core::render::Render for EnumItemTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(198)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_enum_item(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(198)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_enum_item(self, w))
     }
 }
 
@@ -15446,7 +15446,7 @@ impl ::sittir_core::prepare::Prepare for EnumItemTransport {
 #[transport(kind = kind::ENUM_VARIANT_LIST, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], gap(1) = elements)]
 pub struct EnumVariantListTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
     pub elements: Option<::sittir_core::SlotValue<EnumVariantListElementsTransport>>,
@@ -15466,7 +15466,7 @@ impl ::sittir_core::options::Edged for EnumVariantListTransport {
 
 impl ::sittir_core::render::Render for EnumVariantListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(199)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_enum_variant_list(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(199)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_enum_variant_list(self, w))
     }
 }
 
@@ -15491,7 +15491,7 @@ impl ::sittir_core::prepare::Prepare for EnumVariantListTransport {
 #[transport(kind = kind::ENUM_VARIANT, layout = [kind::EQ])]
 pub struct EnumVariantTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_visibility_modifier")]
     #[slot(field = field::VISIBILITY_MODIFIER)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
@@ -15520,7 +15520,7 @@ impl ::sittir_core::options::Edged for EnumVariantTransport {
 
 impl ::sittir_core::render::Render for EnumVariantTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(200)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_enum_variant(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(200)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_enum_variant(self, w))
     }
 }
 
@@ -15548,7 +15548,7 @@ impl ::sittir_core::prepare::Prepare for EnumVariantTransport {
 #[transport(kind = kind::FIELD_DECLARATION_LIST, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], gap(1) = elements)]
 pub struct FieldDeclarationListTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
     pub elements: Option<::sittir_core::SlotValue<FieldDeclarationListElementsTransport>>,
@@ -15568,7 +15568,7 @@ impl ::sittir_core::options::Edged for FieldDeclarationListTransport {
 
 impl ::sittir_core::render::Render for FieldDeclarationListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(201)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_declaration_list(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(201)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_declaration_list(self, w))
     }
 }
 
@@ -15593,7 +15593,7 @@ impl ::sittir_core::prepare::Prepare for FieldDeclarationListTransport {
 #[transport(kind = kind::FIELD_DECLARATION, layout = [kind::COLON])]
 pub struct FieldDeclarationTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_visibility_modifier")]
     #[slot(field = field::VISIBILITY_MODIFIER)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
@@ -15619,7 +15619,7 @@ impl ::sittir_core::options::Edged for FieldDeclarationTransport {
 
 impl ::sittir_core::render::Render for FieldDeclarationTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(202)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_declaration(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(202)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_declaration(self, w))
     }
 }
 
@@ -15646,7 +15646,7 @@ impl ::sittir_core::prepare::Prepare for FieldDeclarationTransport {
 #[transport(kind = kind::ORDERED_FIELD_DECLARATION_LIST, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], gap(1) = attributes)]
 pub struct OrderedFieldDeclarationListTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES)]
     pub attributes: Option<::sittir_core::SlotValue<OrderedFieldDeclarationListElementsTransport>>,
@@ -15666,7 +15666,7 @@ impl ::sittir_core::options::Edged for OrderedFieldDeclarationListTransport {
 
 impl ::sittir_core::render::Render for OrderedFieldDeclarationListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(203)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_ordered_field_declaration_list(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(203)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_ordered_field_declaration_list(self, w))
     }
 }
 
@@ -15691,7 +15691,7 @@ impl ::sittir_core::prepare::Prepare for OrderedFieldDeclarationListTransport {
 #[transport(kind = kind::EXTERN_CRATE_DECLARATION, layout = [kind::EXTERN_KEYWORD, kind::CRATE, kind::AS_KEYWORD, kind::SEMI])]
 pub struct ExternCrateDeclarationTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_visibility_modifier")]
     #[slot(field = field::VISIBILITY_MODIFIER)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
@@ -15717,7 +15717,7 @@ impl ::sittir_core::options::Edged for ExternCrateDeclarationTransport {
 
 impl ::sittir_core::render::Render for ExternCrateDeclarationTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(204)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_extern_crate_declaration(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(204)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_extern_crate_declaration(self, w))
     }
 }
 
@@ -15744,7 +15744,7 @@ impl ::sittir_core::prepare::Prepare for ExternCrateDeclarationTransport {
 #[transport(kind = kind::CONST_ITEM, layout = [kind::CONST_KEYWORD, kind::COLON, kind::EQ, kind::SEMI])]
 pub struct ConstItemTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_visibility_modifier")]
     #[slot(field = field::VISIBILITY_MODIFIER)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
@@ -15773,7 +15773,7 @@ impl ::sittir_core::options::Edged for ConstItemTransport {
 
 impl ::sittir_core::render::Render for ConstItemTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(205)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_const_item(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(205)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_const_item(self, w))
     }
 }
 
@@ -15801,7 +15801,7 @@ impl ::sittir_core::prepare::Prepare for ConstItemTransport {
 #[transport(kind = kind::STATIC_ITEM, layout = [kind::STATIC_KEYWORD, kind::COLON, kind::EQ, kind::SEMI])]
 pub struct StaticItemTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_visibility_modifier")]
     #[slot(field = field::VISIBILITY_MODIFIER)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
@@ -15836,7 +15836,7 @@ impl ::sittir_core::options::Edged for StaticItemTransport {
 
 impl ::sittir_core::render::Render for StaticItemTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(206)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_static_item(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(206)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_static_item(self, w))
     }
 }
 
@@ -15866,7 +15866,7 @@ impl ::sittir_core::prepare::Prepare for StaticItemTransport {
 #[transport(kind = kind::TYPE_ITEM, layout = [kind::TYPE_KEYWORD, kind::EQ, kind::SEMI])]
 pub struct TypeItemTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_visibility_modifier")]
     #[slot(field = field::VISIBILITY_MODIFIER)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
@@ -15901,7 +15901,7 @@ impl ::sittir_core::options::Edged for TypeItemTransport {
 
 impl ::sittir_core::render::Render for TypeItemTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(207)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_item(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(207)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_item(self, w))
     }
 }
 
@@ -15931,7 +15931,7 @@ impl ::sittir_core::prepare::Prepare for TypeItemTransport {
 #[transport(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT])]
 pub struct FunctionItemTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_visibility_modifier")]
     #[slot(field = field::VISIBILITY_MODIFIER)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
@@ -15972,7 +15972,7 @@ impl ::sittir_core::options::Edged for FunctionItemTransport {
 
 impl ::sittir_core::render::Render for FunctionItemTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(208)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_function_item(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(208)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_function_item(self, w))
     }
 }
 
@@ -16004,7 +16004,7 @@ impl ::sittir_core::prepare::Prepare for FunctionItemTransport {
 #[transport(kind = kind::FUNCTION_SIGNATURE_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT, kind::SEMI])]
 pub struct FunctionSignatureItemTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_visibility_modifier")]
     #[slot(field = field::VISIBILITY_MODIFIER)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
@@ -16042,7 +16042,7 @@ impl ::sittir_core::options::Edged for FunctionSignatureItemTransport {
 
 impl ::sittir_core::render::Render for FunctionSignatureItemTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(209)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_function_signature_item(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(209)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_function_signature_item(self, w))
     }
 }
 
@@ -16073,7 +16073,7 @@ impl ::sittir_core::prepare::Prepare for FunctionSignatureItemTransport {
 #[transport(kind = kind::FUNCTION_MODIFIERS)]
 pub struct FunctionModifiersTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_modifier")]
     #[slot(field = field::MODIFIER)]
     pub modifier: Vec<::sittir_core::SlotValue<FunctionModifiersModifierTransportSlot>>,
@@ -16095,7 +16095,7 @@ impl ::sittir_core::options::Edged for FunctionModifiersTransport {
 
 impl ::sittir_core::render::Render for FunctionModifiersTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(210)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_function_modifiers(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(210)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_function_modifiers(self, w))
     }
 }
 
@@ -16123,7 +16123,7 @@ impl ::sittir_core::prepare::Prepare for FunctionModifiersTransport {
 #[transport(kind = kind::WHERE_CLAUSE, min_depth = 2, layout = [kind::WHERE_KEYWORD])]
 pub struct WhereClauseTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_where_predicates")]
     #[slot]
     pub where_predicates: Option<::sittir_core::SlotValue<WherePredicatesTransport>>,
@@ -16143,7 +16143,7 @@ impl ::sittir_core::options::Edged for WhereClauseTransport {
 
 impl ::sittir_core::render::Render for WhereClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(211)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_where_clause(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(211)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_where_clause(self, w))
     }
 }
 
@@ -16168,7 +16168,7 @@ impl ::sittir_core::prepare::Prepare for WhereClauseTransport {
 #[transport(kind = kind::WHERE_PREDICATE)]
 pub struct WherePredicateTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_left")]
     #[slot(field = field::LEFT)]
     pub left: ::sittir_core::SlotValue<WherePredicateLeftTransportSlot>,
@@ -16191,7 +16191,7 @@ impl ::sittir_core::options::Edged for WherePredicateTransport {
 
 impl ::sittir_core::render::Render for WherePredicateTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(212)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_where_predicate(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(212)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_where_predicate(self, w))
     }
 }
 
@@ -16217,7 +16217,7 @@ impl ::sittir_core::prepare::Prepare for WherePredicateTransport {
 #[transport(kind = kind::TRAIT_ITEM, layout = [kind::TRAIT_KEYWORD])]
 pub struct TraitItemTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_visibility_modifier")]
     #[slot(field = field::VISIBILITY_MODIFIER)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
@@ -16255,7 +16255,7 @@ impl ::sittir_core::options::Edged for TraitItemTransport {
 
 impl ::sittir_core::render::Render for TraitItemTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(214)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_trait_item(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(214)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_trait_item(self, w))
     }
 }
 
@@ -16286,7 +16286,7 @@ impl ::sittir_core::prepare::Prepare for TraitItemTransport {
 #[transport(kind = kind::ASSOCIATED_TYPE, layout = [kind::TYPE_KEYWORD, kind::SEMI])]
 pub struct AssociatedTypeTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierTransport>,
@@ -16315,7 +16315,7 @@ impl ::sittir_core::options::Edged for AssociatedTypeTransport {
 
 impl ::sittir_core::render::Render for AssociatedTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(215)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_associated_type(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(215)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_associated_type(self, w))
     }
 }
 
@@ -16343,7 +16343,7 @@ impl ::sittir_core::prepare::Prepare for AssociatedTypeTransport {
 #[transport(kind = kind::TRAIT_BOUNDS, layout = [kind::COLON])]
 pub struct TraitBoundsTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_bounds")]
     #[slot(field = field::BOUNDS, separator = kind::PLUS)]
     pub bounds: Vec<::sittir_core::SlotValue<TraitBoundsBoundsTransportSlot>>,
@@ -16367,7 +16367,7 @@ impl ::sittir_core::options::Edged for TraitBoundsTransport {
 
 impl ::sittir_core::render::Render for TraitBoundsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(216)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_trait_bounds(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(216)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_trait_bounds(self, w))
     }
 }
 
@@ -16396,7 +16396,7 @@ impl ::sittir_core::prepare::Prepare for TraitBoundsTransport {
 #[transport(kind = kind::HIGHER_RANKED_TRAIT_BOUND, layout = [kind::FOR_KEYWORD])]
 pub struct HigherRankedTraitBoundTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_type_parameters")]
     #[slot(field = field::TYPE_PARAMETERS)]
     pub type_parameters: ::sittir_core::SlotValue<TypeParametersTransport>,
@@ -16419,7 +16419,7 @@ impl ::sittir_core::options::Edged for HigherRankedTraitBoundTransport {
 
 impl ::sittir_core::render::Render for HigherRankedTraitBoundTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(217)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_higher_ranked_trait_bound(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(217)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_higher_ranked_trait_bound(self, w))
     }
 }
 
@@ -16445,7 +16445,7 @@ impl ::sittir_core::prepare::Prepare for HigherRankedTraitBoundTransport {
 #[transport(kind = kind::REMOVED_TRAIT_BOUND, layout = [kind::QMARK])]
 pub struct RemovedTraitBoundTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<Box<TypeTransport>>,
@@ -16465,7 +16465,7 @@ impl ::sittir_core::options::Edged for RemovedTraitBoundTransport {
 
 impl ::sittir_core::render::Render for RemovedTraitBoundTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(218)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_removed_trait_bound(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(218)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_removed_trait_bound(self, w))
     }
 }
 
@@ -16490,7 +16490,7 @@ impl ::sittir_core::prepare::Prepare for RemovedTraitBoundTransport {
 #[transport(kind = kind::TYPE_PARAMETERS, min_depth = 2, layout = [kind::LT, kind::GT])]
 pub struct TypeParametersTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
     pub elements: ::sittir_core::SlotValue<TypeParametersElementsTransport>,
@@ -16510,7 +16510,7 @@ impl ::sittir_core::options::Edged for TypeParametersTransport {
 
 impl ::sittir_core::render::Render for TypeParametersTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(219)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_parameters(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(219)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_parameters(self, w))
     }
 }
 
@@ -16535,7 +16535,7 @@ impl ::sittir_core::prepare::Prepare for TypeParametersTransport {
 #[transport(kind = kind::CONST_PARAMETER, layout = [kind::CONST_KEYWORD, kind::COLON, kind::EQ])]
 pub struct ConstParameterTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -16561,7 +16561,7 @@ impl ::sittir_core::options::Edged for ConstParameterTransport {
 
 impl ::sittir_core::render::Render for ConstParameterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(220)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_const_parameter(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(220)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_const_parameter(self, w))
     }
 }
 
@@ -16588,7 +16588,7 @@ impl ::sittir_core::prepare::Prepare for ConstParameterTransport {
 #[transport(kind = kind::TYPE_PARAMETER, layout = [kind::EQ])]
 pub struct TypeParameterTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierTransport>,
@@ -16614,7 +16614,7 @@ impl ::sittir_core::options::Edged for TypeParameterTransport {
 
 impl ::sittir_core::render::Render for TypeParameterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(221)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_parameter(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(221)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_parameter(self, w))
     }
 }
 
@@ -16641,7 +16641,7 @@ impl ::sittir_core::prepare::Prepare for TypeParameterTransport {
 #[transport(kind = kind::LIFETIME_PARAMETER)]
 pub struct LifetimeParameterTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<LifetimeTransport>,
@@ -16664,7 +16664,7 @@ impl ::sittir_core::options::Edged for LifetimeParameterTransport {
 
 impl ::sittir_core::render::Render for LifetimeParameterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(222)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lifetime_parameter(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(222)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lifetime_parameter(self, w))
     }
 }
 
@@ -16690,7 +16690,7 @@ impl ::sittir_core::prepare::Prepare for LifetimeParameterTransport {
 #[transport(kind = kind::LET_DECLARATION, layout = [kind::LET_KEYWORD, kind::COLON, kind::EQ, kind::ELSE_KEYWORD, kind::SEMI])]
 pub struct LetDeclarationTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_mutable")]
     #[slot(field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER)]
     pub mutable: Option<bool>,
@@ -16722,7 +16722,7 @@ impl ::sittir_core::options::Edged for LetDeclarationTransport {
 
 impl ::sittir_core::render::Render for LetDeclarationTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(223)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_let_declaration(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(223)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_let_declaration(self, w))
     }
 }
 
@@ -16751,7 +16751,7 @@ impl ::sittir_core::prepare::Prepare for LetDeclarationTransport {
 #[transport(kind = kind::USE_DECLARATION, layout = [kind::USE_KEYWORD, kind::SEMI])]
 pub struct UseDeclarationTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_visibility_modifier")]
     #[slot(field = field::VISIBILITY_MODIFIER)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
@@ -16774,7 +16774,7 @@ impl ::sittir_core::options::Edged for UseDeclarationTransport {
 
 impl ::sittir_core::render::Render for UseDeclarationTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(224)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_declaration(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(224)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_declaration(self, w))
     }
 }
 
@@ -16800,7 +16800,7 @@ impl ::sittir_core::prepare::Prepare for UseDeclarationTransport {
 #[transport(kind = kind::SCOPED_USE_LIST, layout = [kind::COLON_COLON])]
 pub struct ScopedUseListTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_path")]
     #[slot(field = field::PATH)]
     pub path: Option<::sittir_core::SlotValue<AttributePathTransportSlot>>,
@@ -16823,7 +16823,7 @@ impl ::sittir_core::options::Edged for ScopedUseListTransport {
 
 impl ::sittir_core::render::Render for ScopedUseListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(226)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_scoped_use_list(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(226)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_scoped_use_list(self, w))
     }
 }
 
@@ -16849,7 +16849,7 @@ impl ::sittir_core::prepare::Prepare for ScopedUseListTransport {
 #[transport(kind = kind::USE_LIST, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], gap(1) = use_clauses)]
 pub struct UseListTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_use_clauses")]
     #[slot]
     pub use_clauses: Option<::sittir_core::SlotValue<UseClausesTransport>>,
@@ -16869,7 +16869,7 @@ impl ::sittir_core::options::Edged for UseListTransport {
 
 impl ::sittir_core::render::Render for UseListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(227)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_list(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(227)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_list(self, w))
     }
 }
 
@@ -16894,7 +16894,7 @@ impl ::sittir_core::prepare::Prepare for UseListTransport {
 #[transport(kind = kind::USE_AS_CLAUSE, layout = [kind::AS_KEYWORD])]
 pub struct UseAsClauseTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_path")]
     #[slot(field = field::PATH)]
     pub path: ::sittir_core::SlotValue<AttributePathTransportSlot>,
@@ -16917,7 +16917,7 @@ impl ::sittir_core::options::Edged for UseAsClauseTransport {
 
 impl ::sittir_core::render::Render for UseAsClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(228)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_as_clause(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(228)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_as_clause(self, w))
     }
 }
 
@@ -16943,7 +16943,7 @@ impl ::sittir_core::prepare::Prepare for UseAsClauseTransport {
 #[transport(kind = kind::USE_WILDCARD, layout = [kind::STAR])]
 pub struct UseWildcardTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_use_wildcard_group")]
     #[slot]
     pub use_wildcard_group: Option<::sittir_core::SlotValue<UseWildcardGroupTransport>>,
@@ -16963,7 +16963,7 @@ impl ::sittir_core::options::Edged for UseWildcardTransport {
 
 impl ::sittir_core::render::Render for UseWildcardTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(229)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_wildcard(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(229)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_wildcard(self, w))
     }
 }
 
@@ -16988,7 +16988,7 @@ impl ::sittir_core::prepare::Prepare for UseWildcardTransport {
 #[transport(kind = kind::PARAMETERS, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], gap(1) = elements)]
 pub struct ParametersTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
     pub elements: Option<::sittir_core::SlotValue<ParametersElementsTransport>>,
@@ -17008,7 +17008,7 @@ impl ::sittir_core::options::Edged for ParametersTransport {
 
 impl ::sittir_core::render::Render for ParametersTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(230)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parameters(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(230)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parameters(self, w))
     }
 }
 
@@ -17033,7 +17033,7 @@ impl ::sittir_core::prepare::Prepare for ParametersTransport {
 #[transport(kind = kind::SELF_PARAMETER, layout = [kind::SELF])]
 pub struct SelfParameterTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_reference")]
     #[slot(field = field::REFERENCE, presence = kind::AMP)]
     pub reference: Option<bool>,
@@ -17059,7 +17059,7 @@ impl ::sittir_core::options::Edged for SelfParameterTransport {
 
 impl ::sittir_core::render::Render for SelfParameterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(231)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_self_parameter(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(231)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_self_parameter(self, w))
     }
 }
 
@@ -17086,7 +17086,7 @@ impl ::sittir_core::prepare::Prepare for SelfParameterTransport {
 #[transport(kind = kind::VARIADIC_PARAMETER, layout = [kind::COLON, kind::DOT_DOT_DOT])]
 pub struct VariadicParameterTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_mutable")]
     #[slot(field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER)]
     pub mutable: Option<bool>,
@@ -17109,7 +17109,7 @@ impl ::sittir_core::options::Edged for VariadicParameterTransport {
 
 impl ::sittir_core::render::Render for VariadicParameterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(232)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_variadic_parameter(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(232)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_variadic_parameter(self, w))
     }
 }
 
@@ -17135,7 +17135,7 @@ impl ::sittir_core::prepare::Prepare for VariadicParameterTransport {
 #[transport(kind = kind::PARAMETER, layout = [kind::COLON])]
 pub struct ParameterTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_mutable")]
     #[slot(field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER)]
     pub mutable: Option<bool>,
@@ -17161,7 +17161,7 @@ impl ::sittir_core::options::Edged for ParameterTransport {
 
 impl ::sittir_core::render::Render for ParameterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(233)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parameter(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(233)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parameter(self, w))
     }
 }
 
@@ -17188,7 +17188,7 @@ impl ::sittir_core::prepare::Prepare for ParameterTransport {
 #[transport(kind = kind::EXTERN_MODIFIER, layout = [kind::EXTERN_KEYWORD])]
 pub struct ExternModifierTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_abi")]
     #[slot(field = field::ABI)]
     pub abi: Option<::sittir_core::SlotValue<StringLiteralTransport>>,
@@ -17208,7 +17208,7 @@ impl ::sittir_core::options::Edged for ExternModifierTransport {
 
 impl ::sittir_core::render::Render for ExternModifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(234)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_extern_modifier(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(234)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_extern_modifier(self, w))
     }
 }
 
@@ -17233,7 +17233,7 @@ impl ::sittir_core::prepare::Prepare for ExternModifierTransport {
 #[transport(kind = kind::VISIBILITY_MODIFIER)]
 pub struct VisibilityModifierTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<VisibilityModifierContentTransportSlot>,
@@ -17253,7 +17253,7 @@ impl ::sittir_core::options::Edged for VisibilityModifierTransport {
 
 impl ::sittir_core::render::Render for VisibilityModifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(235)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_visibility_modifier(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(235)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_visibility_modifier(self, w))
     }
 }
 
@@ -17275,7 +17275,7 @@ impl ::sittir_core::prepare::Prepare for VisibilityModifierTransport {
 #[transport(kind = kind::BRACKETED_TYPE, layout = [kind::LT, kind::GT])]
 pub struct BracketedTypeTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<Box<BracketedTypeTypeTransportSlot>>,
@@ -17295,7 +17295,7 @@ impl ::sittir_core::options::Edged for BracketedTypeTransport {
 
 impl ::sittir_core::render::Render for BracketedTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(237)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_bracketed_type(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(237)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_bracketed_type(self, w))
     }
 }
 
@@ -17320,7 +17320,7 @@ impl ::sittir_core::prepare::Prepare for BracketedTypeTransport {
 #[transport(kind = kind::QUALIFIED_TYPE, layout = [kind::AS_KEYWORD])]
 pub struct QualifiedTypeTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<Box<TypeTransport>>,
@@ -17343,7 +17343,7 @@ impl ::sittir_core::options::Edged for QualifiedTypeTransport {
 
 impl ::sittir_core::render::Render for QualifiedTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(238)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_qualified_type(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(238)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_qualified_type(self, w))
     }
 }
 
@@ -17369,7 +17369,7 @@ impl ::sittir_core::prepare::Prepare for QualifiedTypeTransport {
 #[transport(kind = kind::LIFETIME, layout = [kind::SQUOTE])]
 pub struct LifetimeTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -17389,7 +17389,7 @@ impl ::sittir_core::options::Edged for LifetimeTransport {
 
 impl ::sittir_core::render::Render for LifetimeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(239)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lifetime(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(239)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lifetime(self, w))
     }
 }
 
@@ -17414,7 +17414,7 @@ impl ::sittir_core::prepare::Prepare for LifetimeTransport {
 #[transport(kind = kind::ARRAY_TYPE, layout = [kind::LBRACK, kind::SEMI, kind::RBRACK])]
 pub struct ArrayTypeTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_element")]
     #[slot(field = field::ELEMENT)]
     pub element: ::sittir_core::SlotValue<Box<TypeTransport>>,
@@ -17437,7 +17437,7 @@ impl ::sittir_core::options::Edged for ArrayTypeTransport {
 
 impl ::sittir_core::render::Render for ArrayTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(240)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_array_type(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(240)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_array_type(self, w))
     }
 }
 
@@ -17463,7 +17463,7 @@ impl ::sittir_core::prepare::Prepare for ArrayTypeTransport {
 #[transport(kind = kind::FOR_LIFETIMES, min_depth = 2, layout = [kind::FOR_KEYWORD, kind::LT, kind::GT])]
 pub struct ForLifetimesTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_lifetimes")]
     #[slot]
     pub lifetimes: ::sittir_core::SlotValue<LifetimesTransport>,
@@ -17483,7 +17483,7 @@ impl ::sittir_core::options::Edged for ForLifetimesTransport {
 
 impl ::sittir_core::render::Render for ForLifetimesTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(241)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_for_lifetimes(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(241)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_for_lifetimes(self, w))
     }
 }
 
@@ -17508,7 +17508,7 @@ impl ::sittir_core::prepare::Prepare for ForLifetimesTransport {
 #[transport(kind = kind::FUNCTION_TYPE, layout = [kind::DASH_GT])]
 pub struct FunctionTypeTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_for_lifetimes")]
     #[slot(field = field::FOR_LIFETIMES)]
     pub for_lifetimes: Option<::sittir_core::SlotValue<ForLifetimesTransport>>,
@@ -17537,7 +17537,7 @@ impl ::sittir_core::options::Edged for FunctionTypeTransport {
 
 impl ::sittir_core::render::Render for FunctionTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(242)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_function_type(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(242)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_function_type(self, w))
     }
 }
 
@@ -17565,7 +17565,7 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeTransport {
 #[transport(kind = kind::TUPLE_TYPE, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN])]
 pub struct TupleTypeTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_types")]
     #[slot]
     pub types: ::sittir_core::SlotValue<TypesTransport>,
@@ -17585,7 +17585,7 @@ impl ::sittir_core::options::Edged for TupleTypeTransport {
 
 impl ::sittir_core::render::Render for TupleTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(243)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_type(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(243)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_type(self, w))
     }
 }
 
@@ -17635,7 +17635,7 @@ impl ::sittir_core::render::Render for UnitTypeTransport {
 #[transport(kind = kind::GENERIC_FUNCTION, layout = [kind::COLON_COLON])]
 pub struct GenericFunctionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_function")]
     #[slot(field = field::FUNCTION)]
     pub function: ::sittir_core::SlotValue<Box<GenericFunctionFunctionTransportSlot>>,
@@ -17658,7 +17658,7 @@ impl ::sittir_core::options::Edged for GenericFunctionTransport {
 
 impl ::sittir_core::render::Render for GenericFunctionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(245)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_generic_function(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(245)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_generic_function(self, w))
     }
 }
 
@@ -17684,7 +17684,7 @@ impl ::sittir_core::prepare::Prepare for GenericFunctionTransport {
 #[transport(kind = kind::GENERIC_TYPE)]
 pub struct GenericTypeTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<Box<GenericTypeTypeTransportSlot>>,
@@ -17707,7 +17707,7 @@ impl ::sittir_core::options::Edged for GenericTypeTransport {
 
 impl ::sittir_core::render::Render for GenericTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(246)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_generic_type(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(246)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_generic_type(self, w))
     }
 }
 
@@ -17733,7 +17733,7 @@ impl ::sittir_core::prepare::Prepare for GenericTypeTransport {
 #[transport(kind = kind::GENERIC_TYPE_WITH_TURBOFISH, layout = [kind::COLON_COLON])]
 pub struct GenericTypeWithTurbofishTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<Box<GenericTypeWithTurbofishTypeTransportSlot>>,
@@ -17756,7 +17756,7 @@ impl ::sittir_core::options::Edged for GenericTypeWithTurbofishTransport {
 
 impl ::sittir_core::render::Render for GenericTypeWithTurbofishTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(247)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_generic_type_with_turbofish(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(247)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_generic_type_with_turbofish(self, w))
     }
 }
 
@@ -17782,7 +17782,7 @@ impl ::sittir_core::prepare::Prepare for GenericTypeWithTurbofishTransport {
 #[transport(kind = kind::BOUNDED_TYPE, layout = [kind::PLUS])]
 pub struct BoundedTypeTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_left")]
     #[slot(field = field::LEFT)]
     pub left: ::sittir_core::SlotValue<Box<BoundedTypeLeftTransportSlot>>,
@@ -17805,7 +17805,7 @@ impl ::sittir_core::options::Edged for BoundedTypeTransport {
 
 impl ::sittir_core::render::Render for BoundedTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(248)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_bounded_type(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(248)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_bounded_type(self, w))
     }
 }
 
@@ -17831,7 +17831,7 @@ impl ::sittir_core::prepare::Prepare for BoundedTypeTransport {
 #[transport(kind = kind::USE_BOUNDS, min_depth = 2, layout = [kind::USE_KEYWORD, kind::LT, kind::GT], gap(2) = bounds)]
 pub struct UseBoundsTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_bounds")]
     #[slot(field = field::BOUNDS)]
     pub bounds: Option<::sittir_core::SlotValue<UseBoundsElementsTransport>>,
@@ -17851,7 +17851,7 @@ impl ::sittir_core::options::Edged for UseBoundsTransport {
 
 impl ::sittir_core::render::Render for UseBoundsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(249)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_bounds(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(249)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_bounds(self, w))
     }
 }
 
@@ -17876,7 +17876,7 @@ impl ::sittir_core::prepare::Prepare for UseBoundsTransport {
 #[transport(kind = kind::TYPE_ARGUMENTS, min_depth = 2, layout = [kind::LT, kind::GT])]
 pub struct TypeArgumentsTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
     pub elements: ::sittir_core::SlotValue<TypeArgumentsElementsTransport>,
@@ -17896,7 +17896,7 @@ impl ::sittir_core::options::Edged for TypeArgumentsTransport {
 
 impl ::sittir_core::render::Render for TypeArgumentsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(250)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_arguments(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(250)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_arguments(self, w))
     }
 }
 
@@ -17921,7 +17921,7 @@ impl ::sittir_core::prepare::Prepare for TypeArgumentsTransport {
 #[transport(kind = kind::TYPE_BINDING, layout = [kind::EQ])]
 pub struct TypeBindingTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierTransport>,
@@ -17947,7 +17947,7 @@ impl ::sittir_core::options::Edged for TypeBindingTransport {
 
 impl ::sittir_core::render::Render for TypeBindingTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(251)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_binding(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(251)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_binding(self, w))
     }
 }
 
@@ -17974,7 +17974,7 @@ impl ::sittir_core::prepare::Prepare for TypeBindingTransport {
 #[transport(kind = kind::REFERENCE_TYPE, layout = [kind::AMP])]
 pub struct ReferenceTypeTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_lifetime")]
     #[slot(field = field::LIFETIME)]
     pub lifetime: Option<::sittir_core::SlotValue<LifetimeTransport>>,
@@ -18000,7 +18000,7 @@ impl ::sittir_core::options::Edged for ReferenceTypeTransport {
 
 impl ::sittir_core::render::Render for ReferenceTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(252)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_reference_type(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(252)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_reference_type(self, w))
     }
 }
 
@@ -18052,7 +18052,7 @@ impl ::sittir_core::render::Render for NeverTypeTransport {
 #[transport(kind = kind::ABSTRACT_TYPE, layout = [kind::IMPL_KEYWORD, kind::FOR_KEYWORD])]
 pub struct AbstractTypeTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_type_parameters")]
     #[slot(field = field::TYPE_PARAMETERS)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
@@ -18075,7 +18075,7 @@ impl ::sittir_core::options::Edged for AbstractTypeTransport {
 
 impl ::sittir_core::render::Render for AbstractTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(255)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_abstract_type(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(255)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_abstract_type(self, w))
     }
 }
 
@@ -18101,7 +18101,7 @@ impl ::sittir_core::prepare::Prepare for AbstractTypeTransport {
 #[transport(kind = kind::DYNAMIC_TYPE, layout = [kind::DYN_KEYWORD])]
 pub struct DynamicTypeTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_trait")]
     #[slot(field = field::TRAIT)]
     pub trait_: ::sittir_core::SlotValue<Box<DynamicTypeTraitTransportSlot>>,
@@ -18121,7 +18121,7 @@ impl ::sittir_core::options::Edged for DynamicTypeTransport {
 
 impl ::sittir_core::render::Render for DynamicTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(256)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_dynamic_type(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(256)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_dynamic_type(self, w))
     }
 }
 
@@ -18171,7 +18171,7 @@ impl ::sittir_core::render::Render for MutableSpecifierTransport {
 #[transport(kind = kind::MACRO_INVOCATION, layout = [kind::BANG])]
 pub struct MacroInvocationTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_macro")]
     #[slot(field = field::MACRO)]
     pub macro_: ::sittir_core::SlotValue<Box<MacroInvocationMacroTransportSlot>>,
@@ -18194,7 +18194,7 @@ impl ::sittir_core::options::Edged for MacroInvocationTransport {
 
 impl ::sittir_core::render::Render for MacroInvocationTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(259)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_macro_invocation(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(259)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_macro_invocation(self, w))
     }
 }
 
@@ -18220,7 +18220,7 @@ impl ::sittir_core::prepare::Prepare for MacroInvocationTransport {
 #[transport(kind = kind::SCOPED_IDENTIFIER, layout = [kind::COLON_COLON])]
 pub struct ScopedIdentifierTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_path")]
     #[slot(field = field::PATH)]
     pub path: Option<::sittir_core::SlotValue<Box<ScopedIdentifierPathTransportSlot>>>,
@@ -18243,7 +18243,7 @@ impl ::sittir_core::options::Edged for ScopedIdentifierTransport {
 
 impl ::sittir_core::render::Render for ScopedIdentifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(263)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_scoped_identifier(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(263)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_scoped_identifier(self, w))
     }
 }
 
@@ -18269,7 +18269,7 @@ impl ::sittir_core::prepare::Prepare for ScopedIdentifierTransport {
 #[transport(kind = kind::SCOPED_TYPE_IDENTIFIER_IN_EXPRESSION_POSITION, layout = [kind::COLON_COLON])]
 pub struct ScopedTypeIdentifierInExpressionPositionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_path")]
     #[slot(field = field::PATH)]
     pub path: Option<::sittir_core::SlotValue<Box<ScopedTypeIdentifierInExpressionPositionPathTransportSlot>>>,
@@ -18292,7 +18292,7 @@ impl ::sittir_core::options::Edged for ScopedTypeIdentifierInExpressionPositionT
 
 impl ::sittir_core::render::Render for ScopedTypeIdentifierInExpressionPositionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(264)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_scoped_type_identifier_in_expression_position(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(264)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_scoped_type_identifier_in_expression_position(self, w))
     }
 }
 
@@ -18318,7 +18318,7 @@ impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierInExpressionPositio
 #[transport(kind = kind::SCOPED_TYPE_IDENTIFIER, layout = [kind::COLON_COLON])]
 pub struct ScopedTypeIdentifierTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_path")]
     #[slot(field = field::PATH)]
     pub path: Option<::sittir_core::SlotValue<Box<ScopedTypeIdentifierPathTransportSlot>>>,
@@ -18341,7 +18341,7 @@ impl ::sittir_core::options::Edged for ScopedTypeIdentifierTransport {
 
 impl ::sittir_core::render::Render for ScopedTypeIdentifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(265)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_scoped_type_identifier(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(265)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_scoped_type_identifier(self, w))
     }
 }
 
@@ -18367,7 +18367,7 @@ impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierTransport {
 #[transport(kind = kind::UNARY_EXPRESSION)]
 pub struct UnaryExpressionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_operator")]
     #[slot(field = field::OPERATOR)]
     pub operator: ::sittir_core::SlotValue<UnaryExpressionOperatorTransportSlot>,
@@ -18394,7 +18394,7 @@ impl ::sittir_core::options::Edged for UnaryExpressionTransport {
 
 impl ::sittir_core::render::Render for UnaryExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(267)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_unary_expression(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(267)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_unary_expression(self, w))
     }
 }
 
@@ -18420,7 +18420,7 @@ impl ::sittir_core::prepare::Prepare for UnaryExpressionTransport {
 #[transport(kind = kind::TRY_EXPRESSION, layout = [kind::QMARK])]
 pub struct TryExpressionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE)]
     pub value: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -18440,7 +18440,7 @@ impl ::sittir_core::options::Edged for TryExpressionTransport {
 
 impl ::sittir_core::render::Render for TryExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(268)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_try_expression(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(268)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_try_expression(self, w))
     }
 }
 
@@ -18465,7 +18465,7 @@ impl ::sittir_core::prepare::Prepare for TryExpressionTransport {
 #[transport(kind = kind::BINARY_EXPRESSION)]
 pub struct BinaryExpressionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_left")]
     #[slot(field = field::LEFT)]
     pub left: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -18491,7 +18491,7 @@ impl ::sittir_core::options::Edged for BinaryExpressionTransport {
 
 impl ::sittir_core::render::Render for BinaryExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(270)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_binary_expression(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(270)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_binary_expression(self, w))
     }
 }
 
@@ -18518,7 +18518,7 @@ impl ::sittir_core::prepare::Prepare for BinaryExpressionTransport {
 #[transport(kind = kind::ASSIGNMENT_EXPRESSION, layout = [kind::EQ])]
 pub struct AssignmentExpressionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_left")]
     #[slot(field = field::LEFT)]
     pub left: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -18541,7 +18541,7 @@ impl ::sittir_core::options::Edged for AssignmentExpressionTransport {
 
 impl ::sittir_core::render::Render for AssignmentExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(271)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_assignment_expression(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(271)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_assignment_expression(self, w))
     }
 }
 
@@ -18567,7 +18567,7 @@ impl ::sittir_core::prepare::Prepare for AssignmentExpressionTransport {
 #[transport(kind = kind::COMPOUND_ASSIGNMENT_EXPR)]
 pub struct CompoundAssignmentExprTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_left")]
     #[slot(field = field::LEFT)]
     pub left: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -18593,7 +18593,7 @@ impl ::sittir_core::options::Edged for CompoundAssignmentExprTransport {
 
 impl ::sittir_core::render::Render for CompoundAssignmentExprTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(272)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_compound_assignment_expr(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(272)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_compound_assignment_expr(self, w))
     }
 }
 
@@ -18620,7 +18620,7 @@ impl ::sittir_core::prepare::Prepare for CompoundAssignmentExprTransport {
 #[transport(kind = kind::TYPE_CAST_EXPRESSION, layout = [kind::AS_KEYWORD])]
 pub struct TypeCastExpressionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE)]
     pub value: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -18643,7 +18643,7 @@ impl ::sittir_core::options::Edged for TypeCastExpressionTransport {
 
 impl ::sittir_core::render::Render for TypeCastExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(273)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_cast_expression(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(273)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_cast_expression(self, w))
     }
 }
 
@@ -18669,7 +18669,7 @@ impl ::sittir_core::prepare::Prepare for TypeCastExpressionTransport {
 #[transport(kind = kind::RETURN_EXPRESSION, layout = [kind::RETURN_KEYWORD])]
 pub struct ReturnExpressionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_expression")]
     #[slot(field = field::EXPRESSION)]
     pub expression: Option<::sittir_core::SlotValue<Box<ExpressionTransport>>>,
@@ -18689,7 +18689,7 @@ impl ::sittir_core::options::Edged for ReturnExpressionTransport {
 
 impl ::sittir_core::render::Render for ReturnExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(274)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_return_expression(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(274)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_return_expression(self, w))
     }
 }
 
@@ -18714,7 +18714,7 @@ impl ::sittir_core::prepare::Prepare for ReturnExpressionTransport {
 #[transport(kind = kind::YIELD_EXPRESSION, layout = [kind::YIELD_KEYWORD])]
 pub struct YieldExpressionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_expression")]
     #[slot(field = field::EXPRESSION)]
     pub expression: Option<::sittir_core::SlotValue<Box<ExpressionTransport>>>,
@@ -18734,7 +18734,7 @@ impl ::sittir_core::options::Edged for YieldExpressionTransport {
 
 impl ::sittir_core::render::Render for YieldExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(275)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_yield_expression(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(275)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_yield_expression(self, w))
     }
 }
 
@@ -18759,7 +18759,7 @@ impl ::sittir_core::prepare::Prepare for YieldExpressionTransport {
 #[transport(kind = kind::CALL_EXPRESSION)]
 pub struct CallExpressionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_function")]
     #[slot(field = field::FUNCTION)]
     pub function: ::sittir_core::SlotValue<Box<CallExpressionFunctionTransportSlot>>,
@@ -18782,7 +18782,7 @@ impl ::sittir_core::options::Edged for CallExpressionTransport {
 
 impl ::sittir_core::render::Render for CallExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(276)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_call_expression(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(276)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_call_expression(self, w))
     }
 }
 
@@ -18808,7 +18808,7 @@ impl ::sittir_core::prepare::Prepare for CallExpressionTransport {
 #[transport(kind = kind::ARGUMENTS, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], gap(1) = elements)]
 pub struct ArgumentsTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
     pub elements: Option<::sittir_core::SlotValue<ArgumentsElementsTransport>>,
@@ -18828,7 +18828,7 @@ impl ::sittir_core::options::Edged for ArgumentsTransport {
 
 impl ::sittir_core::render::Render for ArgumentsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(277)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_arguments(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(277)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_arguments(self, w))
     }
 }
 
@@ -18853,7 +18853,7 @@ impl ::sittir_core::prepare::Prepare for ArgumentsTransport {
 #[transport(kind = kind::PARENTHESIZED_EXPRESSION, layout = [kind::LPAREN, kind::RPAREN])]
 pub struct ParenthesizedExpressionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_expression")]
     #[slot(field = field::EXPRESSION)]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -18873,7 +18873,7 @@ impl ::sittir_core::options::Edged for ParenthesizedExpressionTransport {
 
 impl ::sittir_core::render::Render for ParenthesizedExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(279)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parenthesized_expression(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(279)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parenthesized_expression(self, w))
     }
 }
 
@@ -18898,7 +18898,7 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionTransport {
 #[transport(kind = kind::TUPLE_EXPRESSION, layout = [kind::LPAREN, kind::RPAREN])]
 pub struct TupleExpressionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES)]
     pub attributes: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
@@ -18923,7 +18923,7 @@ impl ::sittir_core::options::Edged for TupleExpressionTransport {
 
 impl ::sittir_core::render::Render for TupleExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(280)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_expression(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(280)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_expression(self, w))
     }
 }
 
@@ -18977,7 +18977,7 @@ impl ::sittir_core::render::Render for UnitExpressionTransport {
 #[transport(kind = kind::STRUCT_EXPRESSION)]
 pub struct StructExpressionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<Box<StructExpressionNameTransportSlot>>,
@@ -19000,7 +19000,7 @@ impl ::sittir_core::options::Edged for StructExpressionTransport {
 
 impl ::sittir_core::render::Render for StructExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(282)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_struct_expression(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(282)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_struct_expression(self, w))
     }
 }
 
@@ -19026,7 +19026,7 @@ impl ::sittir_core::prepare::Prepare for StructExpressionTransport {
 #[transport(kind = kind::FIELD_INITIALIZER_LIST, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], gap(1) = initializers)]
 pub struct FieldInitializerListTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_initializers")]
     #[slot(field = field::INITIALIZERS)]
     pub initializers: Option<::sittir_core::SlotValue<FieldInitializerListElementsTransport>>,
@@ -19046,7 +19046,7 @@ impl ::sittir_core::options::Edged for FieldInitializerListTransport {
 
 impl ::sittir_core::render::Render for FieldInitializerListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(283)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_initializer_list(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(283)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_initializer_list(self, w))
     }
 }
 
@@ -19071,7 +19071,7 @@ impl ::sittir_core::prepare::Prepare for FieldInitializerListTransport {
 #[transport(kind = kind::SHORTHAND_FIELD_INITIALIZER)]
 pub struct ShorthandFieldInitializerTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES)]
     pub attributes: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
@@ -19096,7 +19096,7 @@ impl ::sittir_core::options::Edged for ShorthandFieldInitializerTransport {
 
 impl ::sittir_core::render::Render for ShorthandFieldInitializerTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(284)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shorthand_field_initializer(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(284)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shorthand_field_initializer(self, w))
     }
 }
 
@@ -19125,7 +19125,7 @@ impl ::sittir_core::prepare::Prepare for ShorthandFieldInitializerTransport {
 #[transport(kind = kind::FIELD_INITIALIZER, layout = [kind::COLON])]
 pub struct FieldInitializerTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_field")]
     #[slot(field = field::FIELD)]
     pub field: ::sittir_core::SlotValue<FieldInitializerFieldTransportSlot>,
@@ -19153,7 +19153,7 @@ impl ::sittir_core::options::Edged for FieldInitializerTransport {
 
 impl ::sittir_core::render::Render for FieldInitializerTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(285)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_initializer(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(285)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_initializer(self, w))
     }
 }
 
@@ -19183,7 +19183,7 @@ impl ::sittir_core::prepare::Prepare for FieldInitializerTransport {
 #[transport(kind = kind::BASE_FIELD_INITIALIZER, layout = [kind::DOT_DOT])]
 pub struct BaseFieldInitializerTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE)]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
@@ -19203,7 +19203,7 @@ impl ::sittir_core::options::Edged for BaseFieldInitializerTransport {
 
 impl ::sittir_core::render::Render for BaseFieldInitializerTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(286)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_base_field_initializer(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(286)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_base_field_initializer(self, w))
     }
 }
 
@@ -19228,7 +19228,7 @@ impl ::sittir_core::prepare::Prepare for BaseFieldInitializerTransport {
 #[transport(kind = kind::IF_EXPRESSION, layout = [kind::IF_KEYWORD])]
 pub struct IfExpressionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_condition")]
     #[slot(field = field::CONDITION)]
     pub condition: ::sittir_core::SlotValue<Box<IfExpressionConditionTransportSlot>>,
@@ -19254,7 +19254,7 @@ impl ::sittir_core::options::Edged for IfExpressionTransport {
 
 impl ::sittir_core::render::Render for IfExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(287)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_if_expression(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(287)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_if_expression(self, w))
     }
 }
 
@@ -19281,7 +19281,7 @@ impl ::sittir_core::prepare::Prepare for IfExpressionTransport {
 #[transport(kind = kind::LET_CONDITION, layout = [kind::LET_KEYWORD, kind::EQ])]
 pub struct LetConditionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN)]
     pub pattern: ::sittir_core::SlotValue<Box<PatternTransport>>,
@@ -19304,7 +19304,7 @@ impl ::sittir_core::options::Edged for LetConditionTransport {
 
 impl ::sittir_core::render::Render for LetConditionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(288)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_let_condition(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(288)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_let_condition(self, w))
     }
 }
 
@@ -19330,7 +19330,7 @@ impl ::sittir_core::prepare::Prepare for LetConditionTransport {
 #[transport(kind = kind::_LET_CHAIN, layout = [kind::AMP_AMP])]
 pub struct LetChainTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_left")]
     #[slot(field = field::LEFT)]
     pub left: ::sittir_core::SlotValue<Box<LetChainLeftTransportSlot>>,
@@ -19357,7 +19357,7 @@ impl ::sittir_core::options::Edged for LetChainTransport {
 
 impl ::sittir_core::render::Render for LetChainTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(289)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_let_chain(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(289)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_let_chain(self, w))
     }
 }
 
@@ -19384,7 +19384,7 @@ impl ::sittir_core::prepare::Prepare for LetChainTransport {
 #[transport(kind = kind::ELSE_CLAUSE, layout = [kind::ELSE_KEYWORD])]
 pub struct ElseClauseTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_body")]
     #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<ElseClauseBodyTransportSlot>>,
@@ -19404,7 +19404,7 @@ impl ::sittir_core::options::Edged for ElseClauseTransport {
 
 impl ::sittir_core::render::Render for ElseClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(291)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_else_clause(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(291)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_else_clause(self, w))
     }
 }
 
@@ -19429,7 +19429,7 @@ impl ::sittir_core::prepare::Prepare for ElseClauseTransport {
 #[transport(kind = kind::MATCH_EXPRESSION, layout = [kind::MATCH_KEYWORD])]
 pub struct MatchExpressionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE)]
     pub value: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -19452,7 +19452,7 @@ impl ::sittir_core::options::Edged for MatchExpressionTransport {
 
 impl ::sittir_core::render::Render for MatchExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(292)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_expression(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(292)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_expression(self, w))
     }
 }
 
@@ -19478,7 +19478,7 @@ impl ::sittir_core::prepare::Prepare for MatchExpressionTransport {
 #[transport(kind = kind::MATCH_BLOCK, layout = [kind::LBRACE, kind::RBRACE], gap(1) = match_block_arms)]
 pub struct MatchBlockTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_match_block_arms")]
     #[slot]
     pub match_block_arms: Option<::sittir_core::SlotValue<Box<MatchBlockArmsTransport>>>,
@@ -19498,7 +19498,7 @@ impl ::sittir_core::options::Edged for MatchBlockTransport {
 
 impl ::sittir_core::render::Render for MatchBlockTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(293)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_block(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(293)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_block(self, w))
     }
 }
 
@@ -19523,7 +19523,7 @@ impl ::sittir_core::prepare::Prepare for MatchBlockTransport {
 #[transport(kind = kind::LAST_MATCH_ARM, layout = [kind::EQ_GT])]
 pub struct LastMatchArmTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES)]
     pub attributes: Option<Vec<::sittir_core::SlotValue<LastMatchArmAttributesTransportSlot>>>,
@@ -19554,7 +19554,7 @@ impl ::sittir_core::options::Edged for LastMatchArmTransport {
 
 impl ::sittir_core::render::Render for LastMatchArmTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(295)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_last_match_arm(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(295)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_last_match_arm(self, w))
     }
 }
 
@@ -19585,7 +19585,7 @@ impl ::sittir_core::prepare::Prepare for LastMatchArmTransport {
 #[transport(kind = kind::MATCH_PATTERN, layout = [kind::IF_KEYWORD])]
 pub struct MatchPatternTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN)]
     pub pattern: ::sittir_core::SlotValue<Box<PatternTransport>>,
@@ -19608,7 +19608,7 @@ impl ::sittir_core::options::Edged for MatchPatternTransport {
 
 impl ::sittir_core::render::Render for MatchPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(296)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_pattern(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(296)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_pattern(self, w))
     }
 }
 
@@ -19634,7 +19634,7 @@ impl ::sittir_core::prepare::Prepare for MatchPatternTransport {
 #[transport(kind = kind::WHILE_EXPRESSION, layout = [kind::COLON, kind::WHILE_KEYWORD])]
 pub struct WhileExpressionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_label")]
     #[slot(field = field::LABEL)]
     pub label: Option<::sittir_core::SlotValue<LabelTransport>>,
@@ -19660,7 +19660,7 @@ impl ::sittir_core::options::Edged for WhileExpressionTransport {
 
 impl ::sittir_core::render::Render for WhileExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(297)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_while_expression(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(297)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_while_expression(self, w))
     }
 }
 
@@ -19687,7 +19687,7 @@ impl ::sittir_core::prepare::Prepare for WhileExpressionTransport {
 #[transport(kind = kind::LOOP_EXPRESSION, layout = [kind::COLON, kind::LOOP_KEYWORD])]
 pub struct LoopExpressionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_label")]
     #[slot(field = field::LABEL)]
     pub label: Option<::sittir_core::SlotValue<LabelTransport>>,
@@ -19710,7 +19710,7 @@ impl ::sittir_core::options::Edged for LoopExpressionTransport {
 
 impl ::sittir_core::render::Render for LoopExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(298)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_loop_expression(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(298)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_loop_expression(self, w))
     }
 }
 
@@ -19736,7 +19736,7 @@ impl ::sittir_core::prepare::Prepare for LoopExpressionTransport {
 #[transport(kind = kind::FOR_EXPRESSION, layout = [kind::COLON, kind::FOR_KEYWORD, kind::IN_KEYWORD])]
 pub struct ForExpressionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_label")]
     #[slot(field = field::LABEL)]
     pub label: Option<::sittir_core::SlotValue<LabelTransport>>,
@@ -19765,7 +19765,7 @@ impl ::sittir_core::options::Edged for ForExpressionTransport {
 
 impl ::sittir_core::render::Render for ForExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(299)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_for_expression(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(299)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_for_expression(self, w))
     }
 }
 
@@ -19793,7 +19793,7 @@ impl ::sittir_core::prepare::Prepare for ForExpressionTransport {
 #[transport(kind = kind::CONST_BLOCK, layout = [kind::CONST_KEYWORD])]
 pub struct ConstBlockTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_body")]
     #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<BlockTransport>>,
@@ -19813,7 +19813,7 @@ impl ::sittir_core::options::Edged for ConstBlockTransport {
 
 impl ::sittir_core::render::Render for ConstBlockTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(300)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_const_block(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(300)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_const_block(self, w))
     }
 }
 
@@ -19838,7 +19838,7 @@ impl ::sittir_core::prepare::Prepare for ConstBlockTransport {
 #[transport(kind = kind::CLOSURE_PARAMETERS, layout = [kind::PIPE], gap(1) = parameters)]
 pub struct ClosureParametersTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_parameters")]
     #[slot(field = field::PARAMETERS, separator = kind::COMMA)]
     pub parameters: Option<Vec<::sittir_core::SlotValue<ClosureParametersParametersTransportSlot>>>,
@@ -19862,7 +19862,7 @@ impl ::sittir_core::options::Edged for ClosureParametersTransport {
 
 impl ::sittir_core::render::Render for ClosureParametersTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(302)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_closure_parameters(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(302)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_closure_parameters(self, w))
     }
 }
 
@@ -19891,7 +19891,7 @@ impl ::sittir_core::prepare::Prepare for ClosureParametersTransport {
 #[transport(kind = kind::LABEL, layout = [kind::SQUOTE])]
 pub struct LabelTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -19911,7 +19911,7 @@ impl ::sittir_core::options::Edged for LabelTransport {
 
 impl ::sittir_core::render::Render for LabelTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(303)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_label(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(303)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_label(self, w))
     }
 }
 
@@ -19936,7 +19936,7 @@ impl ::sittir_core::prepare::Prepare for LabelTransport {
 #[transport(kind = kind::BREAK_EXPRESSION, layout = [kind::BREAK_KEYWORD])]
 pub struct BreakExpressionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_label")]
     #[slot(field = field::LABEL)]
     pub label: Option<::sittir_core::SlotValue<LabelTransport>>,
@@ -19959,7 +19959,7 @@ impl ::sittir_core::options::Edged for BreakExpressionTransport {
 
 impl ::sittir_core::render::Render for BreakExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(304)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_break_expression(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(304)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_break_expression(self, w))
     }
 }
 
@@ -19985,7 +19985,7 @@ impl ::sittir_core::prepare::Prepare for BreakExpressionTransport {
 #[transport(kind = kind::CONTINUE_EXPRESSION, layout = [kind::CONTINUE_KEYWORD])]
 pub struct ContinueExpressionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_label")]
     #[slot(field = field::LABEL)]
     pub label: Option<::sittir_core::SlotValue<LabelTransport>>,
@@ -20005,7 +20005,7 @@ impl ::sittir_core::options::Edged for ContinueExpressionTransport {
 
 impl ::sittir_core::render::Render for ContinueExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(305)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_continue_expression(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(305)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_continue_expression(self, w))
     }
 }
 
@@ -20030,7 +20030,7 @@ impl ::sittir_core::prepare::Prepare for ContinueExpressionTransport {
 #[transport(kind = kind::INDEX_EXPRESSION, layout = [kind::LBRACK, kind::RBRACK])]
 pub struct IndexExpressionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_object")]
     #[slot(field = field::OBJECT)]
     pub object: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -20053,7 +20053,7 @@ impl ::sittir_core::options::Edged for IndexExpressionTransport {
 
 impl ::sittir_core::render::Render for IndexExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(306)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_index_expression(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(306)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_index_expression(self, w))
     }
 }
 
@@ -20079,7 +20079,7 @@ impl ::sittir_core::prepare::Prepare for IndexExpressionTransport {
 #[transport(kind = kind::AWAIT_EXPRESSION, layout = [kind::DOT, kind::AWAIT_KEYWORD])]
 pub struct AwaitExpressionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_expression")]
     #[slot(field = field::EXPRESSION)]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -20099,7 +20099,7 @@ impl ::sittir_core::options::Edged for AwaitExpressionTransport {
 
 impl ::sittir_core::render::Render for AwaitExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(307)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_await_expression(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(307)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_await_expression(self, w))
     }
 }
 
@@ -20124,7 +20124,7 @@ impl ::sittir_core::prepare::Prepare for AwaitExpressionTransport {
 #[transport(kind = kind::FIELD_EXPRESSION, layout = [kind::DOT])]
 pub struct FieldExpressionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE)]
     pub value: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -20147,7 +20147,7 @@ impl ::sittir_core::options::Edged for FieldExpressionTransport {
 
 impl ::sittir_core::render::Render for FieldExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(308)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_expression(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(308)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_expression(self, w))
     }
 }
 
@@ -20173,7 +20173,7 @@ impl ::sittir_core::prepare::Prepare for FieldExpressionTransport {
 #[transport(kind = kind::UNSAFE_BLOCK, layout = [kind::UNSAFE_KEYWORD])]
 pub struct UnsafeBlockTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_body")]
     #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<BlockTransport>>,
@@ -20193,7 +20193,7 @@ impl ::sittir_core::options::Edged for UnsafeBlockTransport {
 
 impl ::sittir_core::render::Render for UnsafeBlockTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(309)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_unsafe_block(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(309)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_unsafe_block(self, w))
     }
 }
 
@@ -20218,7 +20218,7 @@ impl ::sittir_core::prepare::Prepare for UnsafeBlockTransport {
 #[transport(kind = kind::ASYNC_BLOCK, layout = [kind::ASYNC_KEYWORD])]
 pub struct AsyncBlockTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_move")]
     #[slot(field = field::MOVE, presence = kind::MOVE_KEYWORD)]
     pub move_: Option<bool>,
@@ -20241,7 +20241,7 @@ impl ::sittir_core::options::Edged for AsyncBlockTransport {
 
 impl ::sittir_core::render::Render for AsyncBlockTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(310)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_async_block(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(310)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_async_block(self, w))
     }
 }
 
@@ -20267,7 +20267,7 @@ impl ::sittir_core::prepare::Prepare for AsyncBlockTransport {
 #[transport(kind = kind::GEN_BLOCK, layout = [kind::GEN_KEYWORD])]
 pub struct GenBlockTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_move")]
     #[slot(field = field::MOVE, presence = kind::MOVE_KEYWORD)]
     pub move_: Option<bool>,
@@ -20290,7 +20290,7 @@ impl ::sittir_core::options::Edged for GenBlockTransport {
 
 impl ::sittir_core::render::Render for GenBlockTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(311)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_gen_block(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(311)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_gen_block(self, w))
     }
 }
 
@@ -20316,7 +20316,7 @@ impl ::sittir_core::prepare::Prepare for GenBlockTransport {
 #[transport(kind = kind::TRY_BLOCK, layout = [kind::TRY_KEYWORD])]
 pub struct TryBlockTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_body")]
     #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<BlockTransport>>,
@@ -20336,7 +20336,7 @@ impl ::sittir_core::options::Edged for TryBlockTransport {
 
 impl ::sittir_core::render::Render for TryBlockTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(312)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_try_block(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(312)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_try_block(self, w))
     }
 }
 
@@ -20361,7 +20361,7 @@ impl ::sittir_core::prepare::Prepare for TryBlockTransport {
 #[transport(kind = kind::BLOCK, layout = [kind::COLON, kind::LBRACE, kind::RBRACE], gap(1) = statements)]
 pub struct BlockTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_label")]
     #[slot(field = field::LABEL)]
     pub label: Option<::sittir_core::SlotValue<LabelTransport>>,
@@ -20389,7 +20389,7 @@ impl ::sittir_core::options::Edged for BlockTransport {
 
 impl ::sittir_core::render::Render for BlockTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(313)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_block(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(313)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_block(self, w))
     }
 }
 
@@ -20419,7 +20419,7 @@ impl ::sittir_core::prepare::Prepare for BlockTransport {
 #[transport(kind = kind::GENERIC_PATTERN, layout = [kind::COLON_COLON])]
 pub struct GenericPatternTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<Box<GenericPatternNameTransportSlot>>,
@@ -20442,7 +20442,7 @@ impl ::sittir_core::options::Edged for GenericPatternTransport {
 
 impl ::sittir_core::render::Render for GenericPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(315)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_generic_pattern(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(315)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_generic_pattern(self, w))
     }
 }
 
@@ -20468,7 +20468,7 @@ impl ::sittir_core::prepare::Prepare for GenericPatternTransport {
 #[transport(kind = kind::TUPLE_PATTERN, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], gap(1) = elements)]
 pub struct TuplePatternTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
     pub elements: Option<::sittir_core::SlotValue<TuplePatternElementsTransport>>,
@@ -20488,7 +20488,7 @@ impl ::sittir_core::options::Edged for TuplePatternTransport {
 
 impl ::sittir_core::render::Render for TuplePatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(316)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_pattern(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(316)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_pattern(self, w))
     }
 }
 
@@ -20513,7 +20513,7 @@ impl ::sittir_core::prepare::Prepare for TuplePatternTransport {
 #[transport(kind = kind::SLICE_PATTERN, min_depth = 2, layout = [kind::LBRACK, kind::RBRACK], gap(1) = patterns)]
 pub struct SlicePatternTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_patterns")]
     #[slot]
     pub patterns: Option<::sittir_core::SlotValue<PatternsTransport>>,
@@ -20533,7 +20533,7 @@ impl ::sittir_core::options::Edged for SlicePatternTransport {
 
 impl ::sittir_core::render::Render for SlicePatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(317)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_slice_pattern(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(317)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_slice_pattern(self, w))
     }
 }
 
@@ -20558,7 +20558,7 @@ impl ::sittir_core::prepare::Prepare for SlicePatternTransport {
 #[transport(kind = kind::TUPLE_STRUCT_PATTERN, layout = [kind::LPAREN, kind::RPAREN])]
 pub struct TupleStructPatternTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<Box<TupleStructPatternTypeTransportSlot>>,
@@ -20581,7 +20581,7 @@ impl ::sittir_core::options::Edged for TupleStructPatternTransport {
 
 impl ::sittir_core::render::Render for TupleStructPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(318)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_struct_pattern(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(318)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_struct_pattern(self, w))
     }
 }
 
@@ -20607,7 +20607,7 @@ impl ::sittir_core::prepare::Prepare for TupleStructPatternTransport {
 #[transport(kind = kind::STRUCT_PATTERN, layout = [kind::LBRACE, kind::RBRACE])]
 pub struct StructPatternTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<Box<StructPatternTypeTransportSlot>>,
@@ -20630,7 +20630,7 @@ impl ::sittir_core::options::Edged for StructPatternTransport {
 
 impl ::sittir_core::render::Render for StructPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(319)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_struct_pattern(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(319)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_struct_pattern(self, w))
     }
 }
 
@@ -20681,7 +20681,7 @@ impl ::sittir_core::render::Render for RemainingFieldPatternTransport {
 #[transport(kind = kind::MUT_PATTERN, layout = [kind::MUTABLE_SPECIFIER])]
 pub struct MutPatternTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN)]
     pub pattern: ::sittir_core::SlotValue<Box<PatternTransport>>,
@@ -20701,7 +20701,7 @@ impl ::sittir_core::options::Edged for MutPatternTransport {
 
 impl ::sittir_core::render::Render for MutPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(322)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_mut_pattern(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(322)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_mut_pattern(self, w))
     }
 }
 
@@ -20726,7 +20726,7 @@ impl ::sittir_core::prepare::Prepare for MutPatternTransport {
 #[transport(kind = kind::REF_PATTERN, layout = [kind::REF_KEYWORD])]
 pub struct RefPatternTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN)]
     pub pattern: ::sittir_core::SlotValue<Box<PatternTransport>>,
@@ -20746,7 +20746,7 @@ impl ::sittir_core::options::Edged for RefPatternTransport {
 
 impl ::sittir_core::render::Render for RefPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(324)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_ref_pattern(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(324)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_ref_pattern(self, w))
     }
 }
 
@@ -20771,7 +20771,7 @@ impl ::sittir_core::prepare::Prepare for RefPatternTransport {
 #[transport(kind = kind::CAPTURED_PATTERN, layout = [kind::AT])]
 pub struct CapturedPatternTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -20794,7 +20794,7 @@ impl ::sittir_core::options::Edged for CapturedPatternTransport {
 
 impl ::sittir_core::render::Render for CapturedPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(325)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_captured_pattern(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(325)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_captured_pattern(self, w))
     }
 }
 
@@ -20820,7 +20820,7 @@ impl ::sittir_core::prepare::Prepare for CapturedPatternTransport {
 #[transport(kind = kind::REFERENCE_PATTERN, layout = [kind::AMP])]
 pub struct ReferencePatternTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_mutable")]
     #[slot(field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER)]
     pub mutable: Option<bool>,
@@ -20843,7 +20843,7 @@ impl ::sittir_core::options::Edged for ReferencePatternTransport {
 
 impl ::sittir_core::render::Render for ReferencePatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(326)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_reference_pattern(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(326)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_reference_pattern(self, w))
     }
 }
 
@@ -20869,7 +20869,7 @@ impl ::sittir_core::prepare::Prepare for ReferencePatternTransport {
 #[transport(kind = kind::NEGATIVE_LITERAL, layout = [kind::DASH])]
 pub struct NegativeLiteralTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE)]
     pub value: ::sittir_core::SlotValue<NegativeLiteralValueTransportSlot>,
@@ -20889,7 +20889,7 @@ impl ::sittir_core::options::Edged for NegativeLiteralTransport {
 
 impl ::sittir_core::render::Render for NegativeLiteralTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(330)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_negative_literal(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(330)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_negative_literal(self, w))
     }
 }
 
@@ -20914,7 +20914,7 @@ impl ::sittir_core::prepare::Prepare for NegativeLiteralTransport {
 #[transport(kind = kind::STRING_LITERAL, layout = [kind::DQUOTE])]
 pub struct StringLiteralTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_string_open")]
     #[slot(field = field::STRING_OPEN)]
     pub string_open: ::sittir_core::SlotValue<StringOpenTransport>,
@@ -20937,7 +20937,7 @@ impl ::sittir_core::options::Edged for StringLiteralTransport {
 
 impl ::sittir_core::render::Render for StringLiteralTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(332)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_string_literal(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(332)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_string_literal(self, w))
     }
 }
 
@@ -20963,7 +20963,7 @@ impl ::sittir_core::prepare::Prepare for StringLiteralTransport {
 #[transport(kind = kind::RAW_STRING_LITERAL)]
 pub struct RawStringLiteralTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_raw_string_literal_start")]
     #[slot(field = field::RAW_STRING_LITERAL_START)]
     pub raw_string_literal_start: ::sittir_core::SlotValue<RawStringLiteralStartTransport>,
@@ -20989,7 +20989,7 @@ impl ::sittir_core::options::Edged for RawStringLiteralTransport {
 
 impl ::sittir_core::render::Render for RawStringLiteralTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(333)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_raw_string_literal(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(333)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_raw_string_literal(self, w))
     }
 }
 
@@ -21049,7 +21049,7 @@ impl ::sittir_core::render::Render for BooleanLiteralEnum {
 #[transport(kind = kind::LINE_COMMENT, layout = [kind::SLASH_SLASH])]
 pub struct LineCommentTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<LineCommentContentTransportSlot>,
@@ -21069,7 +21069,7 @@ impl ::sittir_core::options::Edged for LineCommentTransport {
 
 impl ::sittir_core::render::Render for LineCommentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(337)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_line_comment(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(337)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_line_comment(self, w))
     }
 }
 
@@ -21144,7 +21144,7 @@ impl ::sittir_core::render::Render for OuterLineDocCommentMarkerTransport {
 #[transport(kind = kind::BLOCK_COMMENT, layout = [kind::SLASH_STAR, kind::STAR_SLASH])]
 pub struct BlockCommentTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot]
     pub content: Option<::sittir_core::SlotValue<BlockCommentContentTransportSlot, true>>,
@@ -21164,7 +21164,7 @@ impl ::sittir_core::options::Edged for BlockCommentTransport {
 
 impl ::sittir_core::render::Render for BlockCommentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(340)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_block_comment(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(340)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_block_comment(self, w))
     }
 }
 
@@ -21189,7 +21189,7 @@ impl ::sittir_core::prepare::Prepare for BlockCommentTransport {
 #[transport(kind = kind::IDENTIFIER, text)]
 pub struct IdentifierTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -21208,7 +21208,7 @@ impl ::sittir_core::options::Edged for IdentifierTransport {
 
 impl ::sittir_core::render::Render for IdentifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(1)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(1)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -21229,7 +21229,7 @@ impl ::sittir_core::prepare::Prepare for IdentifierTransport {
 #[transport(kind = kind::SHEBANG, interior = "^#!(?<content>[\\r\\f\\t\\v ]*(?:[^\\[\\n].*)?)\n$")]
 pub struct ShebangTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     pub content: String,
@@ -21249,7 +21249,7 @@ impl ::sittir_core::options::Edged for ShebangTransport {
 
 impl ::sittir_core::render::Render for ShebangTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(124)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shebang(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(124)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shebang(self, w))
     }
 }
 
@@ -21346,7 +21346,7 @@ impl ::sittir_core::render::Render for CrateTransport {
 #[transport(kind = kind::METAVARIABLE, interior = "^\\$(?<name>[a-zA-Z_]\\w*)$")]
 pub struct MetavariableTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(capture = "name")]
     pub name: String,
@@ -21366,7 +21366,7 @@ impl ::sittir_core::options::Edged for MetavariableTransport {
 
 impl ::sittir_core::render::Render for MetavariableTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(128)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_metavariable(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(128)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_metavariable(self, w))
     }
 }
 
@@ -21481,7 +21481,7 @@ impl ::sittir_core::render::Render for PrimitiveTypeEnum {
 #[transport(kind = kind::MACRO_RULES, list, item = item)]
 pub struct MacroRulesTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::SEMI)]
     pub item: Vec<::sittir_core::SlotValue<MacroRuleTransport>>,
@@ -21508,7 +21508,7 @@ impl ::sittir_core::options::Edged for MacroRulesTransport {
 
 impl ::sittir_core::render::Render for MacroRulesTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(342)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_macro_rules(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(342)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_macro_rules(self, w))
     }
 }
 
@@ -21538,7 +21538,7 @@ impl ::sittir_core::prepare::Prepare for MacroRulesTransport {
 #[transport(kind = kind::ENUM_VARIANT_LIST_ELEMENTS, list, item = item)]
 pub struct EnumVariantListElementsTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
     pub item: Vec<::sittir_core::SlotValue<AttributedEnumVariantTransport>>,
@@ -21565,7 +21565,7 @@ impl ::sittir_core::options::Edged for EnumVariantListElementsTransport {
 
 impl ::sittir_core::render::Render for EnumVariantListElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(343)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_enum_variant_list_elements(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(343)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_enum_variant_list_elements(self, w))
     }
 }
 
@@ -21595,7 +21595,7 @@ impl ::sittir_core::prepare::Prepare for EnumVariantListElementsTransport {
 #[transport(kind = kind::FIELD_DECLARATION_LIST_ELEMENTS, list, item = item)]
 pub struct FieldDeclarationListElementsTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
     pub item: Vec<::sittir_core::SlotValue<AttributedFieldDeclarationTransport>>,
@@ -21622,7 +21622,7 @@ impl ::sittir_core::options::Edged for FieldDeclarationListElementsTransport {
 
 impl ::sittir_core::render::Render for FieldDeclarationListElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(344)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_declaration_list_elements(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(344)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_declaration_list_elements(self, w))
     }
 }
 
@@ -21652,7 +21652,7 @@ impl ::sittir_core::prepare::Prepare for FieldDeclarationListElementsTransport {
 #[transport(kind = kind::ORDERED_FIELD_DECLARATION_LIST_ELEMENTS, list, item = item)]
 pub struct OrderedFieldDeclarationListElementsTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
     pub item: Vec<::sittir_core::SlotValue<AttributedOrderedFieldTransport>>,
@@ -21679,7 +21679,7 @@ impl ::sittir_core::options::Edged for OrderedFieldDeclarationListElementsTransp
 
 impl ::sittir_core::render::Render for OrderedFieldDeclarationListElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(345)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_ordered_field_declaration_list_elements(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(345)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_ordered_field_declaration_list_elements(self, w))
     }
 }
 
@@ -21709,7 +21709,7 @@ impl ::sittir_core::prepare::Prepare for OrderedFieldDeclarationListElementsTran
 #[transport(kind = kind::WHERE_PREDICATES, list, item = item)]
 pub struct WherePredicatesTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
     pub item: Vec<::sittir_core::SlotValue<WherePredicateTransport>>,
@@ -21736,7 +21736,7 @@ impl ::sittir_core::options::Edged for WherePredicatesTransport {
 
 impl ::sittir_core::render::Render for WherePredicatesTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(346)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_where_predicates(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(346)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_where_predicates(self, w))
     }
 }
 
@@ -21766,7 +21766,7 @@ impl ::sittir_core::prepare::Prepare for WherePredicatesTransport {
 #[transport(kind = kind::TYPE_PARAMETERS_ELEMENTS, list, item = item)]
 pub struct TypeParametersElementsTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
     pub item: Vec<::sittir_core::SlotValue<AttributedTypeParameterTransport>>,
@@ -21793,7 +21793,7 @@ impl ::sittir_core::options::Edged for TypeParametersElementsTransport {
 
 impl ::sittir_core::render::Render for TypeParametersElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(347)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_parameters_elements(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(347)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_parameters_elements(self, w))
     }
 }
 
@@ -21823,7 +21823,7 @@ impl ::sittir_core::prepare::Prepare for TypeParametersElementsTransport {
 #[transport(kind = kind::USE_CLAUSES, list, item = item)]
 pub struct UseClausesTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
     pub item: Vec<::sittir_core::SlotValue<UseDeclarationArgumentTransportSlot>>,
@@ -21850,7 +21850,7 @@ impl ::sittir_core::options::Edged for UseClausesTransport {
 
 impl ::sittir_core::render::Render for UseClausesTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(348)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_clauses(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(348)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_clauses(self, w))
     }
 }
 
@@ -21880,7 +21880,7 @@ impl ::sittir_core::prepare::Prepare for UseClausesTransport {
 #[transport(kind = kind::PARAMETERS_ELEMENTS, list, item = item)]
 pub struct ParametersElementsTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
     pub item: Vec<::sittir_core::SlotValue<AttributedParameterTransport>>,
@@ -21907,7 +21907,7 @@ impl ::sittir_core::options::Edged for ParametersElementsTransport {
 
 impl ::sittir_core::render::Render for ParametersElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(349)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parameters_elements(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(349)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parameters_elements(self, w))
     }
 }
 
@@ -21937,7 +21937,7 @@ impl ::sittir_core::prepare::Prepare for ParametersElementsTransport {
 #[transport(kind = kind::LIFETIMES, list, item = item)]
 pub struct LifetimesTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
     pub item: Vec<::sittir_core::SlotValue<LifetimeTransport>>,
@@ -21964,7 +21964,7 @@ impl ::sittir_core::options::Edged for LifetimesTransport {
 
 impl ::sittir_core::render::Render for LifetimesTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(350)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lifetimes(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(350)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lifetimes(self, w))
     }
 }
 
@@ -21994,7 +21994,7 @@ impl ::sittir_core::prepare::Prepare for LifetimesTransport {
 #[transport(kind = kind::TYPES, list, item = item)]
 pub struct TypesTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
     pub item: Vec<::sittir_core::SlotValue<TypeTransport>>,
@@ -22021,7 +22021,7 @@ impl ::sittir_core::options::Edged for TypesTransport {
 
 impl ::sittir_core::render::Render for TypesTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(351)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_types(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(351)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_types(self, w))
     }
 }
 
@@ -22051,7 +22051,7 @@ impl ::sittir_core::prepare::Prepare for TypesTransport {
 #[transport(kind = kind::USE_BOUNDS_ELEMENTS, list, item = item)]
 pub struct UseBoundsElementsTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
     pub item: Vec<::sittir_core::SlotValue<UseBoundsElementsItemTransportSlot>>,
@@ -22078,7 +22078,7 @@ impl ::sittir_core::options::Edged for UseBoundsElementsTransport {
 
 impl ::sittir_core::render::Render for UseBoundsElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(352)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_bounds_elements(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(352)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_bounds_elements(self, w))
     }
 }
 
@@ -22108,7 +22108,7 @@ impl ::sittir_core::prepare::Prepare for UseBoundsElementsTransport {
 #[transport(kind = kind::TYPE_ARGUMENTS_ELEMENTS, list, item = item)]
 pub struct TypeArgumentsElementsTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
     pub item: Vec<::sittir_core::SlotValue<TypeArgumentTransport>>,
@@ -22135,7 +22135,7 @@ impl ::sittir_core::options::Edged for TypeArgumentsElementsTransport {
 
 impl ::sittir_core::render::Render for TypeArgumentsElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(353)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_arguments_elements(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(353)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_arguments_elements(self, w))
     }
 }
 
@@ -22165,7 +22165,7 @@ impl ::sittir_core::prepare::Prepare for TypeArgumentsElementsTransport {
 #[transport(kind = kind::ARGUMENTS_ELEMENTS, list, item = item)]
 pub struct ArgumentsElementsTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
     pub item: Vec<::sittir_core::SlotValue<AttributedArgumentTransport>>,
@@ -22192,7 +22192,7 @@ impl ::sittir_core::options::Edged for ArgumentsElementsTransport {
 
 impl ::sittir_core::render::Render for ArgumentsElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(354)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_arguments_elements(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(354)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_arguments_elements(self, w))
     }
 }
 
@@ -22222,7 +22222,7 @@ impl ::sittir_core::prepare::Prepare for ArgumentsElementsTransport {
 #[transport(kind = kind::EXPRESSIONS, list, item = item)]
 pub struct ExpressionsTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
     pub item: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
@@ -22249,7 +22249,7 @@ impl ::sittir_core::options::Edged for ExpressionsTransport {
 
 impl ::sittir_core::render::Render for ExpressionsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(355)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_expressions(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(355)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_expressions(self, w))
     }
 }
 
@@ -22279,7 +22279,7 @@ impl ::sittir_core::prepare::Prepare for ExpressionsTransport {
 #[transport(kind = kind::FIELD_INITIALIZER_LIST_ELEMENTS, list, item = item)]
 pub struct FieldInitializerListElementsTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
     pub item: Vec<::sittir_core::SlotValue<FieldInitializerListElementsItemTransportSlot>>,
@@ -22306,7 +22306,7 @@ impl ::sittir_core::options::Edged for FieldInitializerListElementsTransport {
 
 impl ::sittir_core::render::Render for FieldInitializerListElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(356)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_initializer_list_elements(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(356)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_initializer_list_elements(self, w))
     }
 }
 
@@ -22336,7 +22336,7 @@ impl ::sittir_core::prepare::Prepare for FieldInitializerListElementsTransport {
 #[transport(kind = kind::TUPLE_PATTERN_ELEMENTS, list, item = item)]
 pub struct TuplePatternElementsTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
     pub item: Vec<::sittir_core::SlotValue<TuplePatternElementsItemTransportSlot>>,
@@ -22363,7 +22363,7 @@ impl ::sittir_core::options::Edged for TuplePatternElementsTransport {
 
 impl ::sittir_core::render::Render for TuplePatternElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(357)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_pattern_elements(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(357)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_pattern_elements(self, w))
     }
 }
 
@@ -22393,7 +22393,7 @@ impl ::sittir_core::prepare::Prepare for TuplePatternElementsTransport {
 #[transport(kind = kind::PATTERNS, list, item = item)]
 pub struct PatternsTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
     pub item: Vec<::sittir_core::SlotValue<PatternTransport>>,
@@ -22420,7 +22420,7 @@ impl ::sittir_core::options::Edged for PatternsTransport {
 
 impl ::sittir_core::render::Render for PatternsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(358)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_patterns(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(358)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_patterns(self, w))
     }
 }
 
@@ -22450,7 +22450,7 @@ impl ::sittir_core::prepare::Prepare for PatternsTransport {
 #[transport(kind = kind::STRUCT_PATTERN_ELEMENTS, list, item = item)]
 pub struct StructPatternElementsTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
     pub item: Vec<::sittir_core::SlotValue<StructPatternElementsItemTransportSlot>>,
@@ -22477,7 +22477,7 @@ impl ::sittir_core::options::Edged for StructPatternElementsTransport {
 
 impl ::sittir_core::render::Render for StructPatternElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(359)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_struct_pattern_elements(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(359)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_struct_pattern_elements(self, w))
     }
 }
 
@@ -22507,7 +22507,7 @@ impl ::sittir_core::prepare::Prepare for StructPatternElementsTransport {
 #[transport(kind = kind::USE_WILDCARD_GROUP, layout = [kind::COLON_COLON])]
 pub struct UseWildcardGroupTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_path")]
     #[slot(field = field::PATH)]
     pub path: Option<::sittir_core::SlotValue<AttributePathTransportSlot>>,
@@ -22527,7 +22527,7 @@ impl ::sittir_core::options::Edged for UseWildcardGroupTransport {
 
 impl ::sittir_core::render::Render for UseWildcardGroupTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(360)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_wildcard_group(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(360)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_wildcard_group(self, w))
     }
 }
 
@@ -22552,7 +22552,7 @@ impl ::sittir_core::prepare::Prepare for UseWildcardGroupTransport {
 #[transport(kind = kind::TOKEN_REPETITION_PATTERN_TEXT, text)]
 pub struct TokenRepetitionPatternTextTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -22571,7 +22571,7 @@ impl ::sittir_core::options::Edged for TokenRepetitionPatternTextTransport {
 
 impl ::sittir_core::render::Render for TokenRepetitionPatternTextTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(132)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(132)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -22592,7 +22592,7 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionPatternTextTransport {
 #[transport(kind = kind::STRING_OPEN, text)]
 pub struct StringOpenTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -22611,7 +22611,7 @@ impl ::sittir_core::options::Edged for StringOpenTransport {
 
 impl ::sittir_core::render::Render for StringOpenTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(133)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(133)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -23024,7 +23024,7 @@ impl ::sittir_core::render::Render for ImplItemUnsafeMarkerTransport {
 #[transport(kind = kind::INTEGER_LITERAL_DECIMAL, interior = "^(?<content>(?:[0-9][0-9_]*))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$")]
 pub struct IntegerLiteralDecimalTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     pub content: String,
@@ -23047,7 +23047,7 @@ impl ::sittir_core::options::Edged for IntegerLiteralDecimalTransport {
 
 impl ::sittir_core::render::Render for IntegerLiteralDecimalTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(141)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_integer_literal_decimal(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(141)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_integer_literal_decimal(self, w))
     }
 }
 
@@ -23070,7 +23070,7 @@ impl ::sittir_core::prepare::Prepare for IntegerLiteralDecimalTransport {
 #[transport(kind = kind::INTEGER_LITERAL_HEX, interior = "^(?<content>(?:0x[0-9a-fA-F_]+))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$")]
 pub struct IntegerLiteralHexTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     pub content: String,
@@ -23093,7 +23093,7 @@ impl ::sittir_core::options::Edged for IntegerLiteralHexTransport {
 
 impl ::sittir_core::render::Render for IntegerLiteralHexTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(142)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_integer_literal_hex(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(142)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_integer_literal_hex(self, w))
     }
 }
 
@@ -23116,7 +23116,7 @@ impl ::sittir_core::prepare::Prepare for IntegerLiteralHexTransport {
 #[transport(kind = kind::INTEGER_LITERAL_BINARY, interior = "^(?<content>(?:0b[01_]+))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$")]
 pub struct IntegerLiteralBinaryTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     pub content: String,
@@ -23139,7 +23139,7 @@ impl ::sittir_core::options::Edged for IntegerLiteralBinaryTransport {
 
 impl ::sittir_core::render::Render for IntegerLiteralBinaryTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(143)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_integer_literal_binary(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(143)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_integer_literal_binary(self, w))
     }
 }
 
@@ -23162,7 +23162,7 @@ impl ::sittir_core::prepare::Prepare for IntegerLiteralBinaryTransport {
 #[transport(kind = kind::INTEGER_LITERAL_OCTAL, interior = "^(?<content>(?:0o[0-7_]+))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$")]
 pub struct IntegerLiteralOctalTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     pub content: String,
@@ -23185,7 +23185,7 @@ impl ::sittir_core::options::Edged for IntegerLiteralOctalTransport {
 
 impl ::sittir_core::render::Render for IntegerLiteralOctalTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(144)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_integer_literal_octal(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(144)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_integer_literal_octal(self, w))
     }
 }
 
@@ -23208,7 +23208,7 @@ impl ::sittir_core::prepare::Prepare for IntegerLiteralOctalTransport {
 #[transport(kind = kind::CHAR_LITERAL_PLAIN, interior = "^(?<b>b)?'(?<content>(?:[^\\\\']))'$")]
 pub struct CharLiteralPlainTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_b")]
     #[slot(capture = "b")]
     pub b: Option<bool>,
@@ -23231,7 +23231,7 @@ impl ::sittir_core::options::Edged for CharLiteralPlainTransport {
 
 impl ::sittir_core::render::Render for CharLiteralPlainTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(145)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_char_literal_plain(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(145)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_char_literal_plain(self, w))
     }
 }
 
@@ -23254,7 +23254,7 @@ impl ::sittir_core::prepare::Prepare for CharLiteralPlainTransport {
 #[transport(kind = kind::CHAR_LITERAL_EMPTY, text)]
 pub struct CharLiteralEmptyTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -23273,7 +23273,7 @@ impl ::sittir_core::options::Edged for CharLiteralEmptyTransport {
 
 impl ::sittir_core::render::Render for CharLiteralEmptyTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(146)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(146)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -23294,7 +23294,7 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEmptyTransport {
 #[transport(kind = kind::CHAR_LITERAL_ESCAPED_SIMPLE, interior = "^(?<b>b)?'(?<content>\\\\(?:[^xu]))'$")]
 pub struct CharLiteralEscapedSimpleTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_b")]
     #[slot(capture = "b")]
     pub b: Option<bool>,
@@ -23317,7 +23317,7 @@ impl ::sittir_core::options::Edged for CharLiteralEscapedSimpleTransport {
 
 impl ::sittir_core::render::Render for CharLiteralEscapedSimpleTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(147)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_char_literal_escaped_simple(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(147)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_char_literal_escaped_simple(self, w))
     }
 }
 
@@ -23340,7 +23340,7 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEscapedSimpleTransport {
 #[transport(kind = kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED, interior = "^(?<b>b)?'(?<content>\\\\(?:u[0-9a-fA-F]{4}))'$")]
 pub struct CharLiteralEscapedUnicodeFixedTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_b")]
     #[slot(capture = "b")]
     pub b: Option<bool>,
@@ -23363,7 +23363,7 @@ impl ::sittir_core::options::Edged for CharLiteralEscapedUnicodeFixedTransport {
 
 impl ::sittir_core::render::Render for CharLiteralEscapedUnicodeFixedTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(148)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_char_literal_escaped_unicode_fixed(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(148)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_char_literal_escaped_unicode_fixed(self, w))
     }
 }
 
@@ -23386,7 +23386,7 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEscapedUnicodeFixedTransport
 #[transport(kind = kind::CHAR_LITERAL_ESCAPED_UNICODE_BRACED, interior = "^(?<b>b)?'(?<content>\\\\(?:u\\{[0-9a-fA-F]+\\}))'$")]
 pub struct CharLiteralEscapedUnicodeBracedTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_b")]
     #[slot(capture = "b")]
     pub b: Option<bool>,
@@ -23409,7 +23409,7 @@ impl ::sittir_core::options::Edged for CharLiteralEscapedUnicodeBracedTransport 
 
 impl ::sittir_core::render::Render for CharLiteralEscapedUnicodeBracedTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(149)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_char_literal_escaped_unicode_braced(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(149)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_char_literal_escaped_unicode_braced(self, w))
     }
 }
 
@@ -23432,7 +23432,7 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEscapedUnicodeBracedTranspor
 #[transport(kind = kind::CHAR_LITERAL_ESCAPED_HEX, interior = "^(?<b>b)?'(?<content>\\\\(?:x[0-9a-fA-F]{2}))'$")]
 pub struct CharLiteralEscapedHexTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_b")]
     #[slot(capture = "b")]
     pub b: Option<bool>,
@@ -23455,7 +23455,7 @@ impl ::sittir_core::options::Edged for CharLiteralEscapedHexTransport {
 
 impl ::sittir_core::render::Render for CharLiteralEscapedHexTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(150)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_char_literal_escaped_hex(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(150)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_char_literal_escaped_hex(self, w))
     }
 }
 
@@ -23478,7 +23478,7 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEscapedHexTransport {
 #[transport(kind = kind::ESCAPE_SEQUENCE_SIMPLE, interior = "^\\\\(?<content>(?:[^xu]))$")]
 pub struct EscapeSequenceSimpleTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     pub content: String,
@@ -23498,7 +23498,7 @@ impl ::sittir_core::options::Edged for EscapeSequenceSimpleTransport {
 
 impl ::sittir_core::render::Render for EscapeSequenceSimpleTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(151)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_simple(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(151)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_simple(self, w))
     }
 }
 
@@ -23520,7 +23520,7 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceSimpleTransport {
 #[transport(kind = kind::ESCAPE_SEQUENCE_UNICODE_FIXED, interior = "^\\\\(?<content>(?:u[0-9a-fA-F]{4}))$")]
 pub struct EscapeSequenceUnicodeFixedTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     pub content: String,
@@ -23540,7 +23540,7 @@ impl ::sittir_core::options::Edged for EscapeSequenceUnicodeFixedTransport {
 
 impl ::sittir_core::render::Render for EscapeSequenceUnicodeFixedTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(152)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_unicode_fixed(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(152)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_unicode_fixed(self, w))
     }
 }
 
@@ -23562,7 +23562,7 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceUnicodeFixedTransport {
 #[transport(kind = kind::ESCAPE_SEQUENCE_UNICODE_BRACED, interior = "^\\\\(?<content>(?:u\\{[0-9a-fA-F]+\\}))$")]
 pub struct EscapeSequenceUnicodeBracedTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     pub content: String,
@@ -23582,7 +23582,7 @@ impl ::sittir_core::options::Edged for EscapeSequenceUnicodeBracedTransport {
 
 impl ::sittir_core::render::Render for EscapeSequenceUnicodeBracedTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(153)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_unicode_braced(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(153)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_unicode_braced(self, w))
     }
 }
 
@@ -23604,7 +23604,7 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceUnicodeBracedTransport {
 #[transport(kind = kind::ESCAPE_SEQUENCE_HEX, interior = "^\\\\(?<content>(?:x[0-9a-fA-F]{2}))$")]
 pub struct EscapeSequenceHexTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     pub content: String,
@@ -23624,7 +23624,7 @@ impl ::sittir_core::options::Edged for EscapeSequenceHexTransport {
 
 impl ::sittir_core::render::Render for EscapeSequenceHexTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(154)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_hex(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(154)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_hex(self, w))
     }
 }
 
@@ -23646,7 +23646,7 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceHexTransport {
 #[transport(kind = kind::ARRAY_EXPRESSION_SEMI, layout = [kind::LBRACK, kind::SEMI, kind::RBRACK])]
 pub struct ArrayExpressionSemiTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES)]
     pub attributes: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
@@ -23674,7 +23674,7 @@ impl ::sittir_core::options::Edged for ArrayExpressionSemiTransport {
 
 impl ::sittir_core::render::Render for ArrayExpressionSemiTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(366)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_array_expression_semi(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(366)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_array_expression_semi(self, w))
     }
 }
 
@@ -23704,7 +23704,7 @@ impl ::sittir_core::prepare::Prepare for ArrayExpressionSemiTransport {
 #[transport(kind = kind::ARRAY_EXPRESSION_LIST, layout = [kind::LBRACK, kind::RBRACK], gap(1) = attributes)]
 pub struct ArrayExpressionListTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES)]
     pub attributes: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
@@ -23729,7 +23729,7 @@ impl ::sittir_core::options::Edged for ArrayExpressionListTransport {
 
 impl ::sittir_core::render::Render for ArrayExpressionListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(367)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_array_expression_list(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(367)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_array_expression_list(self, w))
     }
 }
 
@@ -23758,7 +23758,7 @@ impl ::sittir_core::prepare::Prepare for ArrayExpressionListTransport {
 #[transport(kind = kind::ATTRIBUTE_INPUT, layout = [kind::EQ])]
 pub struct AttributeInputTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE)]
     pub value: Option<::sittir_core::SlotValue<ExpressionTransport>>,
@@ -23781,7 +23781,7 @@ impl ::sittir_core::options::Edged for AttributeInputTransport {
 
 impl ::sittir_core::render::Render for AttributeInputTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(368)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attribute_input(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(368)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attribute_input(self, w))
     }
 }
 
@@ -23804,7 +23804,7 @@ impl ::sittir_core::prepare::Prepare for AttributeInputTransport {
 #[transport(kind = kind::CLOSURE_EXPRESSION_BLOCK, layout = [kind::DASH_GT])]
 pub struct ClosureExpressionBlockTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_static")]
     #[slot(field = field::STATIC, presence = kind::STATIC_KEYWORD)]
     pub static_: Option<bool>,
@@ -23839,7 +23839,7 @@ impl ::sittir_core::options::Edged for ClosureExpressionBlockTransport {
 
 impl ::sittir_core::render::Render for ClosureExpressionBlockTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(369)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_closure_expression_block(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(369)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_closure_expression_block(self, w))
     }
 }
 
@@ -23869,7 +23869,7 @@ impl ::sittir_core::prepare::Prepare for ClosureExpressionBlockTransport {
 #[transport(kind = kind::CLOSURE_EXPRESSION_EXPR)]
 pub struct ClosureExpressionExprTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_static")]
     #[slot(field = field::STATIC, presence = kind::STATIC_KEYWORD)]
     pub static_: Option<bool>,
@@ -23901,7 +23901,7 @@ impl ::sittir_core::options::Edged for ClosureExpressionExprTransport {
 
 impl ::sittir_core::render::Render for ClosureExpressionExprTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(370)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_closure_expression_expr(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(370)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_closure_expression_expr(self, w))
     }
 }
 
@@ -23930,7 +23930,7 @@ impl ::sittir_core::prepare::Prepare for ClosureExpressionExprTransport {
 #[transport(kind = kind::REFERENCE_EXPRESSION_RAW_CONST, layout = [kind::AMP, kind::RAW_KEYWORD, kind::CONST_KEYWORD])]
 pub struct ReferenceExpressionRawConstTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE)]
     pub value: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -23950,7 +23950,7 @@ impl ::sittir_core::options::Edged for ReferenceExpressionRawConstTransport {
 
 impl ::sittir_core::render::Render for ReferenceExpressionRawConstTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(371)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_reference_expression_raw_const(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(371)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_reference_expression_raw_const(self, w))
     }
 }
 
@@ -23975,7 +23975,7 @@ impl ::sittir_core::prepare::Prepare for ReferenceExpressionRawConstTransport {
 #[transport(kind = kind::REFERENCE_EXPRESSION_RAW_MUT, layout = [kind::AMP, kind::RAW_KEYWORD, kind::MUTABLE_SPECIFIER])]
 pub struct ReferenceExpressionRawMutTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE)]
     pub value: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -23995,7 +23995,7 @@ impl ::sittir_core::options::Edged for ReferenceExpressionRawMutTransport {
 
 impl ::sittir_core::render::Render for ReferenceExpressionRawMutTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(372)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_reference_expression_raw_mut(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(372)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_reference_expression_raw_mut(self, w))
     }
 }
 
@@ -24020,7 +24020,7 @@ impl ::sittir_core::prepare::Prepare for ReferenceExpressionRawMutTransport {
 #[transport(kind = kind::REFERENCE_EXPRESSION_MUT, layout = [kind::AMP, kind::MUTABLE_SPECIFIER])]
 pub struct ReferenceExpressionMutTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE)]
     pub value: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -24040,7 +24040,7 @@ impl ::sittir_core::options::Edged for ReferenceExpressionMutTransport {
 
 impl ::sittir_core::render::Render for ReferenceExpressionMutTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(373)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_reference_expression_mut(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(373)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_reference_expression_mut(self, w))
     }
 }
 
@@ -24065,7 +24065,7 @@ impl ::sittir_core::prepare::Prepare for ReferenceExpressionMutTransport {
 #[transport(kind = kind::REFERENCE_EXPRESSION_BARE, layout = [kind::AMP])]
 pub struct ReferenceExpressionBareTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE)]
     pub value: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -24085,7 +24085,7 @@ impl ::sittir_core::options::Edged for ReferenceExpressionBareTransport {
 
 impl ::sittir_core::render::Render for ReferenceExpressionBareTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(374)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_reference_expression_bare(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(374)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_reference_expression_bare(self, w))
     }
 }
 
@@ -24110,7 +24110,7 @@ impl ::sittir_core::prepare::Prepare for ReferenceExpressionBareTransport {
 #[transport(kind = kind::IMPL_ITEM_POSITIVE_CLAUSE, layout = [kind::FOR_KEYWORD])]
 pub struct ImplItemPositiveClauseTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_trait")]
     #[slot(field = field::TRAIT)]
     pub trait_: ::sittir_core::SlotValue<ImplItemPositiveClauseTraitTransportSlot>,
@@ -24130,7 +24130,7 @@ impl ::sittir_core::options::Edged for ImplItemPositiveClauseTransport {
 
 impl ::sittir_core::render::Render for ImplItemPositiveClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(375)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_impl_item_positive_clause(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(375)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_impl_item_positive_clause(self, w))
     }
 }
 
@@ -24155,7 +24155,7 @@ impl ::sittir_core::prepare::Prepare for ImplItemPositiveClauseTransport {
 #[transport(kind = kind::IMPL_ITEM_NEGATIVE_CLAUSE, layout = [kind::BANG, kind::FOR_KEYWORD])]
 pub struct ImplItemNegativeClauseTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_trait")]
     #[slot(field = field::TRAIT)]
     pub trait_: ::sittir_core::SlotValue<ImplItemPositiveClauseTraitTransportSlot>,
@@ -24175,7 +24175,7 @@ impl ::sittir_core::options::Edged for ImplItemNegativeClauseTransport {
 
 impl ::sittir_core::render::Render for ImplItemNegativeClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(376)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_impl_item_negative_clause(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(376)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_impl_item_negative_clause(self, w))
     }
 }
 
@@ -24200,7 +24200,7 @@ impl ::sittir_core::prepare::Prepare for ImplItemNegativeClauseTransport {
 #[transport(kind = kind::IMPL_ITEM_BODY, layout = [kind::IMPL_KEYWORD])]
 pub struct ImplItemBodyTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_unsafe")]
     #[slot(field = field::UNSAFE, presence = kind::UNSAFE_KEYWORD)]
     pub unsafe_: Option<bool>,
@@ -24235,7 +24235,7 @@ impl ::sittir_core::options::Edged for ImplItemBodyTransport {
 
 impl ::sittir_core::render::Render for ImplItemBodyTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(377)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_impl_item_body(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(377)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_impl_item_body(self, w))
     }
 }
 
@@ -24265,7 +24265,7 @@ impl ::sittir_core::prepare::Prepare for ImplItemBodyTransport {
 #[transport(kind = kind::IMPL_ITEM_SEMI, layout = [kind::IMPL_KEYWORD, kind::SEMI])]
 pub struct ImplItemSemiTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_unsafe")]
     #[slot(field = field::UNSAFE, presence = kind::UNSAFE_KEYWORD)]
     pub unsafe_: Option<bool>,
@@ -24297,7 +24297,7 @@ impl ::sittir_core::options::Edged for ImplItemSemiTransport {
 
 impl ::sittir_core::render::Render for ImplItemSemiTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(378)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_impl_item_semi(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(378)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_impl_item_semi(self, w))
     }
 }
 
@@ -24326,7 +24326,7 @@ impl ::sittir_core::prepare::Prepare for ImplItemSemiTransport {
 #[transport(kind = kind::VISIBILITY_MODIFIER_PUB_SCOPE_IN_PATH, layout = [kind::IN_KEYWORD, kind::IDENTIFIER])]
 pub struct VisibilityModifierPubScopeInPathTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_path")]
     #[slot]
     pub path: ::sittir_core::SlotValue<AttributePathTransportSlot>,
@@ -24346,7 +24346,7 @@ impl ::sittir_core::options::Edged for VisibilityModifierPubScopeInPathTransport
 
 impl ::sittir_core::render::Render for VisibilityModifierPubScopeInPathTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(379)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_visibility_modifier_pub_scope_in_path(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(379)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_visibility_modifier_pub_scope_in_path(self, w))
     }
 }
 
@@ -24371,7 +24371,7 @@ impl ::sittir_core::prepare::Prepare for VisibilityModifierPubScopeInPathTranspo
 #[transport(kind = kind::VISIBILITY_MODIFIER_PUB_SCOPE, layout = [kind::LPAREN, kind::RPAREN])]
 pub struct VisibilityModifierPubScopeTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<VisibilityModifierPubScopeContentTransportSlot>,
@@ -24391,7 +24391,7 @@ impl ::sittir_core::options::Edged for VisibilityModifierPubScopeTransport {
 
 impl ::sittir_core::render::Render for VisibilityModifierPubScopeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(380)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_visibility_modifier_pub_scope(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(380)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_visibility_modifier_pub_scope(self, w))
     }
 }
 
@@ -24416,7 +24416,7 @@ impl ::sittir_core::prepare::Prepare for VisibilityModifierPubScopeTransport {
 #[transport(kind = kind::VISIBILITY_MODIFIER_PUB, layout = [kind::PUB_KEYWORD])]
 pub struct VisibilityModifierPubTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_visibility_modifier_pub_scope")]
     #[slot]
     pub visibility_modifier_pub_scope: Option<::sittir_core::SlotValue<VisibilityModifierPubScopeTransport>>,
@@ -24436,7 +24436,7 @@ impl ::sittir_core::options::Edged for VisibilityModifierPubTransport {
 
 impl ::sittir_core::render::Render for VisibilityModifierPubTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(381)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_visibility_modifier_pub(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(381)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_visibility_modifier_pub(self, w))
     }
 }
 
@@ -24461,7 +24461,7 @@ impl ::sittir_core::prepare::Prepare for VisibilityModifierPubTransport {
 #[transport(kind = kind::FUNCTION_TYPE_TRAIT_FORM)]
 pub struct FunctionTypeTraitFormTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_trait")]
     #[slot(field = field::TRAIT)]
     pub trait_: ::sittir_core::SlotValue<Box<StructPatternTypeTransportSlot>>,
@@ -24481,7 +24481,7 @@ impl ::sittir_core::options::Edged for FunctionTypeTraitFormTransport {
 
 impl ::sittir_core::render::Render for FunctionTypeTraitFormTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(382)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_function_type_trait_form(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(382)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_function_type_trait_form(self, w))
     }
 }
 
@@ -24503,7 +24503,7 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeTraitFormTransport {
 #[transport(kind = kind::FUNCTION_TYPE_FN_FORM, layout = [kind::FN_KEYWORD])]
 pub struct FunctionTypeFnFormTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_function_modifiers")]
     #[slot]
     pub function_modifiers: Option<::sittir_core::SlotValue<FunctionModifiersTransport>>,
@@ -24523,7 +24523,7 @@ impl ::sittir_core::options::Edged for FunctionTypeFnFormTransport {
 
 impl ::sittir_core::render::Render for FunctionTypeFnFormTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(383)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_function_type_fn_form(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(383)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_function_type_fn_form(self, w))
     }
 }
 
@@ -24548,7 +24548,7 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeFnFormTransport {
 #[transport(kind = kind::MOD_ITEM_EXTERNAL, layout = [kind::MOD_KEYWORD, kind::SEMI])]
 pub struct ModItemExternalTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_visibility_modifier")]
     #[slot(field = field::VISIBILITY_MODIFIER)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
@@ -24571,7 +24571,7 @@ impl ::sittir_core::options::Edged for ModItemExternalTransport {
 
 impl ::sittir_core::render::Render for ModItemExternalTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(384)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_mod_item_external(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(384)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_mod_item_external(self, w))
     }
 }
 
@@ -24597,7 +24597,7 @@ impl ::sittir_core::prepare::Prepare for ModItemExternalTransport {
 #[transport(kind = kind::MOD_ITEM_INLINE, layout = [kind::MOD_KEYWORD])]
 pub struct ModItemInlineTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_visibility_modifier")]
     #[slot(field = field::VISIBILITY_MODIFIER)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
@@ -24623,7 +24623,7 @@ impl ::sittir_core::options::Edged for ModItemInlineTransport {
 
 impl ::sittir_core::render::Render for ModItemInlineTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(385)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_mod_item_inline(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(385)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_mod_item_inline(self, w))
     }
 }
 
@@ -24650,7 +24650,7 @@ impl ::sittir_core::prepare::Prepare for ModItemInlineTransport {
 #[transport(kind = kind::OR_PATTERN_BINARY, layout = [kind::PIPE])]
 pub struct OrPatternBinaryTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_left")]
     #[slot(field = field::LEFT)]
     pub left: ::sittir_core::SlotValue<Box<PatternTransport>>,
@@ -24673,7 +24673,7 @@ impl ::sittir_core::options::Edged for OrPatternBinaryTransport {
 
 impl ::sittir_core::render::Render for OrPatternBinaryTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(386)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_or_pattern_binary(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(386)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_or_pattern_binary(self, w))
     }
 }
 
@@ -24699,7 +24699,7 @@ impl ::sittir_core::prepare::Prepare for OrPatternBinaryTransport {
 #[transport(kind = kind::OR_PATTERN_PREFIX, layout = [kind::PIPE])]
 pub struct OrPatternPrefixTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_right")]
     #[slot(field = field::RIGHT)]
     pub right: ::sittir_core::SlotValue<Box<PatternTransport>>,
@@ -24719,7 +24719,7 @@ impl ::sittir_core::options::Edged for OrPatternPrefixTransport {
 
 impl ::sittir_core::render::Render for OrPatternPrefixTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(387)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_or_pattern_prefix(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(387)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_or_pattern_prefix(self, w))
     }
 }
 
@@ -24744,7 +24744,7 @@ impl ::sittir_core::prepare::Prepare for OrPatternPrefixTransport {
 #[transport(kind = kind::POINTER_TYPE_CONST, layout = [kind::STAR, kind::CONST_KEYWORD])]
 pub struct PointerTypeConstTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<Box<TypeTransport>>,
@@ -24764,7 +24764,7 @@ impl ::sittir_core::options::Edged for PointerTypeConstTransport {
 
 impl ::sittir_core::render::Render for PointerTypeConstTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(388)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_pointer_type_const(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(388)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_pointer_type_const(self, w))
     }
 }
 
@@ -24789,7 +24789,7 @@ impl ::sittir_core::prepare::Prepare for PointerTypeConstTransport {
 #[transport(kind = kind::POINTER_TYPE_MUT, layout = [kind::STAR, kind::MUTABLE_SPECIFIER])]
 pub struct PointerTypeMutTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<Box<TypeTransport>>,
@@ -24809,7 +24809,7 @@ impl ::sittir_core::options::Edged for PointerTypeMutTransport {
 
 impl ::sittir_core::render::Render for PointerTypeMutTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(389)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_pointer_type_mut(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(389)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_pointer_type_mut(self, w))
     }
 }
 
@@ -24834,7 +24834,7 @@ impl ::sittir_core::prepare::Prepare for PointerTypeMutTransport {
 #[transport(kind = kind::RANGE_EXPRESSION_BINARY)]
 pub struct RangeExpressionBinaryTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_start")]
     #[slot(field = field::START)]
     pub start: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -24860,7 +24860,7 @@ impl ::sittir_core::options::Edged for RangeExpressionBinaryTransport {
 
 impl ::sittir_core::render::Render for RangeExpressionBinaryTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(390)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_range_expression_binary(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(390)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_range_expression_binary(self, w))
     }
 }
 
@@ -24887,7 +24887,7 @@ impl ::sittir_core::prepare::Prepare for RangeExpressionBinaryTransport {
 #[transport(kind = kind::RANGE_EXPRESSION_POSTFIX, layout = [kind::DOT_DOT])]
 pub struct RangeExpressionPostfixTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_start")]
     #[slot(field = field::START)]
     pub start: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -24907,7 +24907,7 @@ impl ::sittir_core::options::Edged for RangeExpressionPostfixTransport {
 
 impl ::sittir_core::render::Render for RangeExpressionPostfixTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(391)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_range_expression_postfix(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(391)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_range_expression_postfix(self, w))
     }
 }
 
@@ -24932,7 +24932,7 @@ impl ::sittir_core::prepare::Prepare for RangeExpressionPostfixTransport {
 #[transport(kind = kind::RANGE_EXPRESSION_PREFIX, layout = [kind::DOT_DOT])]
 pub struct RangeExpressionPrefixTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_end")]
     #[slot(field = field::END)]
     pub end: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -24952,7 +24952,7 @@ impl ::sittir_core::options::Edged for RangeExpressionPrefixTransport {
 
 impl ::sittir_core::render::Render for RangeExpressionPrefixTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(392)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_range_expression_prefix(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(392)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_range_expression_prefix(self, w))
     }
 }
 
@@ -24977,7 +24977,7 @@ impl ::sittir_core::prepare::Prepare for RangeExpressionPrefixTransport {
 #[transport(kind = kind::RANGE_EXPRESSION_BARE)]
 pub struct RangeExpressionBareTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_range_expression_bare")]
     #[slot]
     pub range_expression_bare: ::sittir_core::SlotValue<_RangeExpressionBareTransport>,
@@ -24997,7 +24997,7 @@ impl ::sittir_core::options::Edged for RangeExpressionBareTransport {
 
 impl ::sittir_core::render::Render for RangeExpressionBareTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(393)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_range_expression_bare(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(393)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_range_expression_bare(self, w))
     }
 }
 
@@ -25019,7 +25019,7 @@ impl ::sittir_core::prepare::Prepare for RangeExpressionBareTransport {
 #[transport(kind = kind::EXPRESSION_STATEMENT_WITH_SEMI, layout = [kind::SEMI])]
 pub struct ExpressionStatementWithSemiTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_expression")]
     #[slot(field = field::EXPRESSION)]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
@@ -25039,7 +25039,7 @@ impl ::sittir_core::options::Edged for ExpressionStatementWithSemiTransport {
 
 impl ::sittir_core::render::Render for ExpressionStatementWithSemiTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(394)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_expression_statement_with_semi(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(394)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_expression_statement_with_semi(self, w))
     }
 }
 
@@ -25064,7 +25064,7 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementWithSemiTransport {
 #[transport(kind = kind::FOREIGN_MOD_ITEM_SEMI, layout = [kind::SEMI])]
 pub struct ForeignModItemSemiTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_visibility_modifier")]
     #[slot(field = field::VISIBILITY_MODIFIER)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
@@ -25087,7 +25087,7 @@ impl ::sittir_core::options::Edged for ForeignModItemSemiTransport {
 
 impl ::sittir_core::render::Render for ForeignModItemSemiTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(395)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_foreign_mod_item_semi(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(395)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_foreign_mod_item_semi(self, w))
     }
 }
 
@@ -25113,7 +25113,7 @@ impl ::sittir_core::prepare::Prepare for ForeignModItemSemiTransport {
 #[transport(kind = kind::FOREIGN_MOD_ITEM_BODY)]
 pub struct ForeignModItemBodyTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_visibility_modifier")]
     #[slot(field = field::VISIBILITY_MODIFIER)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
@@ -25139,7 +25139,7 @@ impl ::sittir_core::options::Edged for ForeignModItemBodyTransport {
 
 impl ::sittir_core::render::Render for ForeignModItemBodyTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(396)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_foreign_mod_item_body(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(396)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_foreign_mod_item_body(self, w))
     }
 }
 
@@ -25166,7 +25166,7 @@ impl ::sittir_core::prepare::Prepare for ForeignModItemBodyTransport {
 #[transport(kind = kind::MATCH_ARM_WITH_COMMA, layout = [kind::EQ_GT, kind::COMMA])]
 pub struct MatchArmWithCommaTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES)]
     pub attributes: Option<Vec<::sittir_core::SlotValue<LastMatchArmAttributesTransportSlot>>>,
@@ -25194,7 +25194,7 @@ impl ::sittir_core::options::Edged for MatchArmWithCommaTransport {
 
 impl ::sittir_core::render::Render for MatchArmWithCommaTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(397)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_arm_with_comma(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(397)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_arm_with_comma(self, w))
     }
 }
 
@@ -25224,7 +25224,7 @@ impl ::sittir_core::prepare::Prepare for MatchArmWithCommaTransport {
 #[transport(kind = kind::MATCH_ARM_BLOCK_ENDING, layout = [kind::EQ_GT])]
 pub struct MatchArmBlockEndingTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES)]
     pub attributes: Option<Vec<::sittir_core::SlotValue<LastMatchArmAttributesTransportSlot>>>,
@@ -25252,7 +25252,7 @@ impl ::sittir_core::options::Edged for MatchArmBlockEndingTransport {
 
 impl ::sittir_core::render::Render for MatchArmBlockEndingTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(398)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_arm_block_ending(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(398)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_arm_block_ending(self, w))
     }
 }
 
@@ -25282,7 +25282,7 @@ impl ::sittir_core::prepare::Prepare for MatchArmBlockEndingTransport {
 #[transport(kind = kind::LINE_COMMENT_EXTRA_SLASHES, text)]
 pub struct LineCommentExtraSlashesTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -25301,7 +25301,7 @@ impl ::sittir_core::options::Edged for LineCommentExtraSlashesTransport {
 
 impl ::sittir_core::render::Render for LineCommentExtraSlashesTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(399)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(399)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -25322,7 +25322,7 @@ impl ::sittir_core::prepare::Prepare for LineCommentExtraSlashesTransport {
 #[transport(kind = kind::LINE_COMMENT_DOC_OUTER, layout = [kind::_OUTER_LINE_DOC_COMMENT_MARKER])]
 pub struct LineCommentDocOuterTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_doc")]
     #[slot(field = field::DOC)]
     pub doc: ::sittir_core::SlotValue<DocCommentTransport, true>,
@@ -25342,7 +25342,7 @@ impl ::sittir_core::options::Edged for LineCommentDocOuterTransport {
 
 impl ::sittir_core::render::Render for LineCommentDocOuterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(400)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_line_comment_doc_outer(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(400)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_line_comment_doc_outer(self, w))
     }
 }
 
@@ -25364,7 +25364,7 @@ impl ::sittir_core::prepare::Prepare for LineCommentDocOuterTransport {
 #[transport(kind = kind::LINE_COMMENT_DOC_INNER, layout = [kind::_INNER_LINE_DOC_COMMENT_MARKER])]
 pub struct LineCommentDocInnerTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_doc")]
     #[slot(field = field::DOC)]
     pub doc: ::sittir_core::SlotValue<DocCommentTransport, true>,
@@ -25384,7 +25384,7 @@ impl ::sittir_core::options::Edged for LineCommentDocInnerTransport {
 
 impl ::sittir_core::render::Render for LineCommentDocInnerTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(401)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_line_comment_doc_inner(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(401)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_line_comment_doc_inner(self, w))
     }
 }
 
@@ -25406,7 +25406,7 @@ impl ::sittir_core::prepare::Prepare for LineCommentDocInnerTransport {
 #[transport(kind = kind::LINE_COMMENT_REGULAR, text)]
 pub struct LineCommentRegularTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -25425,7 +25425,7 @@ impl ::sittir_core::options::Edged for LineCommentRegularTransport {
 
 impl ::sittir_core::render::Render for LineCommentRegularTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(156)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(156)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
     }
 }
 
@@ -25446,7 +25446,7 @@ impl ::sittir_core::prepare::Prepare for LineCommentRegularTransport {
 #[transport(kind = kind::BLOCK_COMMENT_DOC_OUTER, layout = [kind::STAR])]
 pub struct BlockCommentDocOuterTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_doc")]
     #[slot(field = field::DOC)]
     pub doc: Option<::sittir_core::SlotValue<BlockCommentContentTransport, true>>,
@@ -25466,7 +25466,7 @@ impl ::sittir_core::options::Edged for BlockCommentDocOuterTransport {
 
 impl ::sittir_core::render::Render for BlockCommentDocOuterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(402)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_block_comment_doc_outer(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(402)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_block_comment_doc_outer(self, w))
     }
 }
 
@@ -25488,7 +25488,7 @@ impl ::sittir_core::prepare::Prepare for BlockCommentDocOuterTransport {
 #[transport(kind = kind::BLOCK_COMMENT_DOC_INNER, layout = [kind::BANG])]
 pub struct BlockCommentDocInnerTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_doc")]
     #[slot(field = field::DOC)]
     pub doc: Option<::sittir_core::SlotValue<BlockCommentContentTransport, true>>,
@@ -25508,7 +25508,7 @@ impl ::sittir_core::options::Edged for BlockCommentDocInnerTransport {
 
 impl ::sittir_core::render::Render for BlockCommentDocInnerTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(403)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_block_comment_doc_inner(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(403)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_block_comment_doc_inner(self, w))
     }
 }
 
@@ -25530,7 +25530,7 @@ impl ::sittir_core::prepare::Prepare for BlockCommentDocInnerTransport {
 #[transport(kind = kind::BLOCK_COMMENT_REGULAR, text)]
 pub struct BlockCommentRegularTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -25549,7 +25549,7 @@ impl ::sittir_core::options::Edged for BlockCommentRegularTransport {
 
 impl ::sittir_core::render::Render for BlockCommentRegularTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(404)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(404)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
     }
 }
 
@@ -25570,7 +25570,7 @@ impl ::sittir_core::prepare::Prepare for BlockCommentRegularTransport {
 #[transport(kind = kind::TOKEN_TREE_PATTERN_PAREN, layout = [kind::LPAREN, kind::RPAREN], gap(1) = token_patterns)]
 pub struct TokenTreePatternParenTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_token_patterns")]
     #[slot(field = field::TOKEN_PATTERNS)]
     pub token_patterns: Option<Vec<::sittir_core::SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>>,
@@ -25592,7 +25592,7 @@ impl ::sittir_core::options::Edged for TokenTreePatternParenTransport {
 
 impl ::sittir_core::render::Render for TokenTreePatternParenTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(405)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_tree_pattern_paren(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(405)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_tree_pattern_paren(self, w))
     }
 }
 
@@ -25620,7 +25620,7 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternParenTransport {
 #[transport(kind = kind::TOKEN_TREE_PATTERN_BRACKET, layout = [kind::LBRACK, kind::RBRACK], gap(1) = token_patterns)]
 pub struct TokenTreePatternBracketTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_token_patterns")]
     #[slot(field = field::TOKEN_PATTERNS)]
     pub token_patterns: Option<Vec<::sittir_core::SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>>,
@@ -25642,7 +25642,7 @@ impl ::sittir_core::options::Edged for TokenTreePatternBracketTransport {
 
 impl ::sittir_core::render::Render for TokenTreePatternBracketTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(406)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_tree_pattern_bracket(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(406)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_tree_pattern_bracket(self, w))
     }
 }
 
@@ -25670,7 +25670,7 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternBracketTransport {
 #[transport(kind = kind::TOKEN_TREE_PATTERN_BRACE, layout = [kind::LBRACE, kind::RBRACE], gap(1) = token_patterns)]
 pub struct TokenTreePatternBraceTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_token_patterns")]
     #[slot(field = field::TOKEN_PATTERNS)]
     pub token_patterns: Option<Vec<::sittir_core::SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>>,
@@ -25692,7 +25692,7 @@ impl ::sittir_core::options::Edged for TokenTreePatternBraceTransport {
 
 impl ::sittir_core::render::Render for TokenTreePatternBraceTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(407)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_tree_pattern_brace(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(407)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_tree_pattern_brace(self, w))
     }
 }
 
@@ -25720,7 +25720,7 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternBraceTransport {
 #[transport(kind = kind::TOKEN_TREE_PAREN, layout = [kind::LPAREN, kind::RPAREN], gap(1) = tokens)]
 pub struct TokenTreeParenTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_tokens")]
     #[slot(field = field::TOKENS)]
     pub tokens: Option<Vec<::sittir_core::SlotValue<TokenRepetitionTokensTransportSlot>>>,
@@ -25742,7 +25742,7 @@ impl ::sittir_core::options::Edged for TokenTreeParenTransport {
 
 impl ::sittir_core::render::Render for TokenTreeParenTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(408)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_tree_paren(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(408)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_tree_paren(self, w))
     }
 }
 
@@ -25770,7 +25770,7 @@ impl ::sittir_core::prepare::Prepare for TokenTreeParenTransport {
 #[transport(kind = kind::TOKEN_TREE_BRACKET, layout = [kind::LBRACK, kind::RBRACK], gap(1) = tokens)]
 pub struct TokenTreeBracketTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_tokens")]
     #[slot(field = field::TOKENS)]
     pub tokens: Option<Vec<::sittir_core::SlotValue<TokenRepetitionTokensTransportSlot>>>,
@@ -25792,7 +25792,7 @@ impl ::sittir_core::options::Edged for TokenTreeBracketTransport {
 
 impl ::sittir_core::render::Render for TokenTreeBracketTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(409)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_tree_bracket(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(409)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_tree_bracket(self, w))
     }
 }
 
@@ -25820,7 +25820,7 @@ impl ::sittir_core::prepare::Prepare for TokenTreeBracketTransport {
 #[transport(kind = kind::TOKEN_TREE_BRACE, layout = [kind::LBRACE, kind::RBRACE], gap(1) = tokens)]
 pub struct TokenTreeBraceTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_tokens")]
     #[slot(field = field::TOKENS)]
     pub tokens: Option<Vec<::sittir_core::SlotValue<TokenRepetitionTokensTransportSlot>>>,
@@ -25842,7 +25842,7 @@ impl ::sittir_core::options::Edged for TokenTreeBraceTransport {
 
 impl ::sittir_core::render::Render for TokenTreeBraceTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(410)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_tree_brace(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(410)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_tree_brace(self, w))
     }
 }
 
@@ -25870,7 +25870,7 @@ impl ::sittir_core::prepare::Prepare for TokenTreeBraceTransport {
 #[transport(kind = kind::DELIM_TOKEN_TREE_PAREN, layout = [kind::LPAREN, kind::RPAREN], gap(1) = delim_tokens)]
 pub struct DelimTokenTreeParenTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_delim_tokens")]
     #[slot(field = field::DELIM_TOKENS)]
     pub delim_tokens: Option<Vec<::sittir_core::SlotValue<DelimTokenTreeParenDelimTokensTransportSlot>>>,
@@ -25892,7 +25892,7 @@ impl ::sittir_core::options::Edged for DelimTokenTreeParenTransport {
 
 impl ::sittir_core::render::Render for DelimTokenTreeParenTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(411)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_delim_token_tree_paren(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(411)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_delim_token_tree_paren(self, w))
     }
 }
 
@@ -25920,7 +25920,7 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeParenTransport {
 #[transport(kind = kind::DELIM_TOKEN_TREE_BRACKET, layout = [kind::LBRACK, kind::RBRACK], gap(1) = delim_tokens)]
 pub struct DelimTokenTreeBracketTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_delim_tokens")]
     #[slot(field = field::DELIM_TOKENS)]
     pub delim_tokens: Option<Vec<::sittir_core::SlotValue<DelimTokenTreeParenDelimTokensTransportSlot>>>,
@@ -25942,7 +25942,7 @@ impl ::sittir_core::options::Edged for DelimTokenTreeBracketTransport {
 
 impl ::sittir_core::render::Render for DelimTokenTreeBracketTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(412)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_delim_token_tree_bracket(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(412)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_delim_token_tree_bracket(self, w))
     }
 }
 
@@ -25970,7 +25970,7 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeBracketTransport {
 #[transport(kind = kind::DELIM_TOKEN_TREE_BRACE, layout = [kind::LBRACE, kind::RBRACE], gap(1) = delim_tokens)]
 pub struct DelimTokenTreeBraceTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_delim_tokens")]
     #[slot(field = field::DELIM_TOKENS)]
     pub delim_tokens: Option<Vec<::sittir_core::SlotValue<DelimTokenTreeParenDelimTokensTransportSlot>>>,
@@ -25992,7 +25992,7 @@ impl ::sittir_core::options::Edged for DelimTokenTreeBraceTransport {
 
 impl ::sittir_core::render::Render for DelimTokenTreeBraceTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(413)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_delim_token_tree_brace(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(413)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_delim_token_tree_brace(self, w))
     }
 }
 
@@ -26020,7 +26020,7 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeBraceTransport {
 #[transport(kind = kind::FIELD_PATTERN_SHORTHAND)]
 pub struct FieldPatternShorthandTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_ref")]
     #[slot(field = field::REF, presence = kind::REF_KEYWORD)]
     pub ref_: Option<bool>,
@@ -26046,7 +26046,7 @@ impl ::sittir_core::options::Edged for FieldPatternShorthandTransport {
 
 impl ::sittir_core::render::Render for FieldPatternShorthandTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(414)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_pattern_shorthand(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(414)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_pattern_shorthand(self, w))
     }
 }
 
@@ -26073,7 +26073,7 @@ impl ::sittir_core::prepare::Prepare for FieldPatternShorthandTransport {
 #[transport(kind = kind::FIELD_PATTERN_NAMED, layout = [kind::COLON])]
 pub struct FieldPatternNamedTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_ref")]
     #[slot(field = field::REF, presence = kind::REF_KEYWORD)]
     pub ref_: Option<bool>,
@@ -26102,7 +26102,7 @@ impl ::sittir_core::options::Edged for FieldPatternNamedTransport {
 
 impl ::sittir_core::render::Render for FieldPatternNamedTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(415)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_pattern_named(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(415)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_pattern_named(self, w))
     }
 }
 
@@ -26130,7 +26130,7 @@ impl ::sittir_core::prepare::Prepare for FieldPatternNamedTransport {
 #[transport(kind = kind::MACRO_DEFINITION_PAREN, layout = [kind::MACRO_RULES_BANG, kind::LPAREN, kind::RPAREN, kind::SEMI])]
 pub struct MacroDefinitionParenTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<MacroDefinitionParenNameTransportSlot>,
@@ -26153,7 +26153,7 @@ impl ::sittir_core::options::Edged for MacroDefinitionParenTransport {
 
 impl ::sittir_core::render::Render for MacroDefinitionParenTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(416)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_macro_definition_paren(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(416)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_macro_definition_paren(self, w))
     }
 }
 
@@ -26179,7 +26179,7 @@ impl ::sittir_core::prepare::Prepare for MacroDefinitionParenTransport {
 #[transport(kind = kind::MACRO_DEFINITION_BRACKET, layout = [kind::MACRO_RULES_BANG, kind::LBRACK, kind::RBRACK, kind::SEMI])]
 pub struct MacroDefinitionBracketTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<MacroDefinitionParenNameTransportSlot>,
@@ -26202,7 +26202,7 @@ impl ::sittir_core::options::Edged for MacroDefinitionBracketTransport {
 
 impl ::sittir_core::render::Render for MacroDefinitionBracketTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(417)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_macro_definition_bracket(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(417)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_macro_definition_bracket(self, w))
     }
 }
 
@@ -26228,7 +26228,7 @@ impl ::sittir_core::prepare::Prepare for MacroDefinitionBracketTransport {
 #[transport(kind = kind::MACRO_DEFINITION_BRACE, layout = [kind::MACRO_RULES_BANG, kind::LBRACE, kind::RBRACE])]
 pub struct MacroDefinitionBraceTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<MacroDefinitionParenNameTransportSlot>,
@@ -26251,7 +26251,7 @@ impl ::sittir_core::options::Edged for MacroDefinitionBraceTransport {
 
 impl ::sittir_core::render::Render for MacroDefinitionBraceTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(418)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_macro_definition_brace(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(418)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_macro_definition_brace(self, w))
     }
 }
 
@@ -26277,7 +26277,7 @@ impl ::sittir_core::prepare::Prepare for MacroDefinitionBraceTransport {
 #[transport(kind = kind::RANGE_PATTERN_PREFIX, layout = [kind::DOT_DOT_EQ, kind::DOT_DOT])]
 pub struct RangePatternPrefixTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_right")]
     #[slot(field = field::RIGHT)]
     pub right: ::sittir_core::SlotValue<Box<RangePatternPrefixRightTransportSlot>>,
@@ -26304,7 +26304,7 @@ impl ::sittir_core::options::Edged for RangePatternPrefixTransport {
 
 impl ::sittir_core::render::Render for RangePatternPrefixTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(419)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_range_pattern_prefix(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(419)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_range_pattern_prefix(self, w))
     }
 }
 
@@ -26330,7 +26330,7 @@ impl ::sittir_core::prepare::Prepare for RangePatternPrefixTransport {
 #[transport(kind = kind::RANGE_PATTERN_WITH_LEFT_WITH_RIGHT, layout = [kind::DOT_DOT_DOT, kind::DOT_DOT_EQ, kind::DOT_DOT])]
 pub struct RangePatternWithLeftWithRightTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_right")]
     #[slot(field = field::RIGHT)]
     pub right: ::sittir_core::SlotValue<Box<RangePatternPrefixRightTransportSlot>>,
@@ -26357,7 +26357,7 @@ impl ::sittir_core::options::Edged for RangePatternWithLeftWithRightTransport {
 
 impl ::sittir_core::render::Render for RangePatternWithLeftWithRightTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(420)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_range_pattern_with_left_with_right(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(420)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_range_pattern_with_left_with_right(self, w))
     }
 }
 
@@ -26408,7 +26408,7 @@ impl ::sittir_core::render::Render for RangePatternWithLeftBareTransport {
 #[transport(kind = kind::RANGE_PATTERN_WITH_LEFT)]
 pub struct RangePatternWithLeftTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_left")]
     #[slot(field = field::LEFT)]
     pub left: ::sittir_core::SlotValue<Box<RangePatternPrefixRightTransportSlot>>,
@@ -26431,7 +26431,7 @@ impl ::sittir_core::options::Edged for RangePatternWithLeftTransport {
 
 impl ::sittir_core::render::Render for RangePatternWithLeftTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(422)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_range_pattern_with_left(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(422)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_range_pattern_with_left(self, w))
     }
 }
 
@@ -26457,7 +26457,7 @@ impl ::sittir_core::prepare::Prepare for RangePatternWithLeftTransport {
 #[transport(kind = kind::STRUCT_ITEM_BRACE, layout = [kind::STRUCT_KEYWORD])]
 pub struct StructItemBraceTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_visibility_modifier")]
     #[slot(field = field::VISIBILITY_MODIFIER)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
@@ -26489,7 +26489,7 @@ impl ::sittir_core::options::Edged for StructItemBraceTransport {
 
 impl ::sittir_core::render::Render for StructItemBraceTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(423)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_struct_item_brace(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(423)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_struct_item_brace(self, w))
     }
 }
 
@@ -26518,7 +26518,7 @@ impl ::sittir_core::prepare::Prepare for StructItemBraceTransport {
 #[transport(kind = kind::STRUCT_ITEM_TUPLE, layout = [kind::STRUCT_KEYWORD, kind::SEMI])]
 pub struct StructItemTupleTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_visibility_modifier")]
     #[slot(field = field::VISIBILITY_MODIFIER)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
@@ -26550,7 +26550,7 @@ impl ::sittir_core::options::Edged for StructItemTupleTransport {
 
 impl ::sittir_core::render::Render for StructItemTupleTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(424)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_struct_item_tuple(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(424)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_struct_item_tuple(self, w))
     }
 }
 
@@ -26579,7 +26579,7 @@ impl ::sittir_core::prepare::Prepare for StructItemTupleTransport {
 #[transport(kind = kind::STRUCT_ITEM_UNIT, layout = [kind::STRUCT_KEYWORD, kind::SEMI])]
 pub struct StructItemUnitTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_visibility_modifier")]
     #[slot(field = field::VISIBILITY_MODIFIER)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
@@ -26605,7 +26605,7 @@ impl ::sittir_core::options::Edged for StructItemUnitTransport {
 
 impl ::sittir_core::render::Render for StructItemUnitTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(425)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_struct_item_unit(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(425)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_struct_item_unit(self, w))
     }
 }
 
@@ -26657,7 +26657,7 @@ impl ::sittir_core::render::Render for WildcardPatternTransport {
 #[transport(kind = kind::_ATTRIBUTED_FIELD_DECLARATION)]
 pub struct AttributedFieldDeclarationTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attribute_item")]
     #[slot]
     pub attribute_item: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
@@ -26682,7 +26682,7 @@ impl ::sittir_core::options::Edged for AttributedFieldDeclarationTransport {
 
 impl ::sittir_core::render::Render for AttributedFieldDeclarationTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(427)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attributed_field_declaration(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(427)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attributed_field_declaration(self, w))
     }
 }
 
@@ -26711,7 +26711,7 @@ impl ::sittir_core::prepare::Prepare for AttributedFieldDeclarationTransport {
 #[transport(kind = kind::_ATTRIBUTED_ENUM_VARIANT)]
 pub struct AttributedEnumVariantTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attribute_item")]
     #[slot]
     pub attribute_item: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
@@ -26736,7 +26736,7 @@ impl ::sittir_core::options::Edged for AttributedEnumVariantTransport {
 
 impl ::sittir_core::render::Render for AttributedEnumVariantTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(428)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attributed_enum_variant(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(428)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attributed_enum_variant(self, w))
     }
 }
 
@@ -26765,7 +26765,7 @@ impl ::sittir_core::prepare::Prepare for AttributedEnumVariantTransport {
 #[transport(kind = kind::_ATTRIBUTED_PARAMETER, layout = [kind::UNDERSCORE])]
 pub struct AttributedParameterTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attribute_item")]
     #[slot]
     pub attribute_item: Option<::sittir_core::SlotValue<AttributeItemTransport>>,
@@ -26788,7 +26788,7 @@ impl ::sittir_core::options::Edged for AttributedParameterTransport {
 
 impl ::sittir_core::render::Render for AttributedParameterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(429)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attributed_parameter(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(429)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attributed_parameter(self, w))
     }
 }
 
@@ -26814,7 +26814,7 @@ impl ::sittir_core::prepare::Prepare for AttributedParameterTransport {
 #[transport(kind = kind::_ATTRIBUTED_TYPE_PARAMETER)]
 pub struct AttributedTypeParameterTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attribute_item")]
     #[slot]
     pub attribute_item: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
@@ -26839,7 +26839,7 @@ impl ::sittir_core::options::Edged for AttributedTypeParameterTransport {
 
 impl ::sittir_core::render::Render for AttributedTypeParameterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(430)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attributed_type_parameter(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(430)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attributed_type_parameter(self, w))
     }
 }
 
@@ -26868,7 +26868,7 @@ impl ::sittir_core::prepare::Prepare for AttributedTypeParameterTransport {
 #[transport(kind = kind::_ATTRIBUTED_ARGUMENT)]
 pub struct AttributedArgumentTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attribute_item")]
     #[slot]
     pub attribute_item: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
@@ -26893,7 +26893,7 @@ impl ::sittir_core::options::Edged for AttributedArgumentTransport {
 
 impl ::sittir_core::render::Render for AttributedArgumentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(431)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attributed_argument(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(431)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attributed_argument(self, w))
     }
 }
 
@@ -26922,7 +26922,7 @@ impl ::sittir_core::prepare::Prepare for AttributedArgumentTransport {
 #[transport(kind = kind::_ATTRIBUTED_ORDERED_FIELD)]
 pub struct AttributedOrderedFieldTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
@@ -26950,7 +26950,7 @@ impl ::sittir_core::options::Edged for AttributedOrderedFieldTransport {
 
 impl ::sittir_core::render::Render for AttributedOrderedFieldTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(432)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attributed_ordered_field(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(432)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attributed_ordered_field(self, w))
     }
 }
 
@@ -26980,7 +26980,7 @@ impl ::sittir_core::prepare::Prepare for AttributedOrderedFieldTransport {
 #[transport(kind = kind::_TYPE_ARGUMENT)]
 pub struct TypeArgumentTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<TypeArgumentContentTransportSlot>,
@@ -27003,7 +27003,7 @@ impl ::sittir_core::options::Edged for TypeArgumentTransport {
 
 impl ::sittir_core::render::Render for TypeArgumentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(433)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_argument(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(433)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_argument(self, w))
     }
 }
 
@@ -27029,7 +27029,7 @@ impl ::sittir_core::prepare::Prepare for TypeArgumentTransport {
 #[transport(kind = kind::_MATCH_BLOCK_ARMS)]
 pub struct MatchBlockArmsTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_last_arm")]
     #[slot(field = field::LAST_ARM)]
     pub last_arm: ::sittir_core::SlotValue<Box<LastMatchArmTransport>>,
@@ -27054,7 +27054,7 @@ impl ::sittir_core::options::Edged for MatchBlockArmsTransport {
 
 impl ::sittir_core::render::Render for MatchBlockArmsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(434)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_block_arms(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(434)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_block_arms(self, w))
     }
 }
 
@@ -27083,7 +27083,7 @@ impl ::sittir_core::prepare::Prepare for MatchBlockArmsTransport {
 #[transport(kind = kind::FLOAT_LITERAL, text)]
 pub struct FloatLiteralTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -27102,7 +27102,7 @@ impl ::sittir_core::options::Edged for FloatLiteralTransport {
 
 impl ::sittir_core::render::Render for FloatLiteralTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(162)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(162)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -27123,7 +27123,7 @@ impl ::sittir_core::prepare::Prepare for FloatLiteralTransport {
 #[transport(kind = kind::STRING_CONTENT, text)]
 pub struct StringContentTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -27142,7 +27142,7 @@ impl ::sittir_core::options::Edged for StringContentTransport {
 
 impl ::sittir_core::render::Render for StringContentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(158)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(158)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -27163,7 +27163,7 @@ impl ::sittir_core::prepare::Prepare for StringContentTransport {
 #[transport(kind = kind::RAW_STRING_LITERAL_CONTENT, text)]
 pub struct RawStringLiteralContentTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -27182,7 +27182,7 @@ impl ::sittir_core::options::Edged for RawStringLiteralContentTransport {
 
 impl ::sittir_core::render::Render for RawStringLiteralContentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(160)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(160)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -27253,7 +27253,7 @@ impl ::sittir_core::render::Render for InnerDocCommentMarkerTransport {
 #[transport(kind = kind::_RAW_STRING_LITERAL_START, text)]
 pub struct RawStringLiteralStartTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -27272,7 +27272,7 @@ impl ::sittir_core::options::Edged for RawStringLiteralStartTransport {
 
 impl ::sittir_core::render::Render for RawStringLiteralStartTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(159)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(159)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -27293,7 +27293,7 @@ impl ::sittir_core::prepare::Prepare for RawStringLiteralStartTransport {
 #[transport(kind = kind::_RAW_STRING_LITERAL_END, text)]
 pub struct RawStringLiteralEndTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -27312,7 +27312,7 @@ impl ::sittir_core::options::Edged for RawStringLiteralEndTransport {
 
 impl ::sittir_core::render::Render for RawStringLiteralEndTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(161)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(161)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
     }
 }
 
@@ -27333,7 +27333,7 @@ impl ::sittir_core::prepare::Prepare for RawStringLiteralEndTransport {
 #[transport(kind = kind::_DOC_COMMENT, text)]
 pub struct DocCommentTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -27352,7 +27352,7 @@ impl ::sittir_core::options::Edged for DocCommentTransport {
 
 impl ::sittir_core::render::Render for DocCommentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(166)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(166)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
     }
 }
 
@@ -27373,7 +27373,7 @@ impl ::sittir_core::prepare::Prepare for DocCommentTransport {
 #[transport(kind = kind::_BLOCK_COMMENT_CONTENT, text)]
 pub struct BlockCommentContentTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -27392,7 +27392,7 @@ impl ::sittir_core::options::Edged for BlockCommentContentTransport {
 
 impl ::sittir_core::render::Render for BlockCommentContentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(165)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(165)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
     }
 }
 
@@ -27613,7 +27613,7 @@ impl ::sittir_core::render::Render for DedentTransport {
 #[transport(kind = kind::_ERROR_SENTINEL, text)]
 pub struct ErrorSentinelTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -27632,7 +27632,7 @@ impl ::sittir_core::options::Edged for ErrorSentinelTransport {
 
 impl ::sittir_core::render::Render for ErrorSentinelTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(167)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(167)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -27653,7 +27653,7 @@ impl ::sittir_core::prepare::Prepare for ErrorSentinelTransport {
 #[transport(kind = kind::_TYPE_IDENTIFIER, display, envelope, content = content)]
 pub struct TypeIdentifierTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     pub content: ::sittir_core::SlotValue<IdentifierTransport>,
 }
@@ -27672,7 +27672,7 @@ impl ::sittir_core::options::Edged for TypeIdentifierTransport {
 
 impl ::sittir_core::render::Render for TypeIdentifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(468)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_identifier(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(468)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_identifier(self, w))
     }
 }
 
@@ -27694,7 +27694,7 @@ impl ::sittir_core::prepare::Prepare for TypeIdentifierTransport {
 #[transport(kind = kind::_FIELD_IDENTIFIER, display, envelope, content = content)]
 pub struct FieldIdentifierTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     pub content: ::sittir_core::SlotValue<IdentifierTransport>,
 }
@@ -27713,7 +27713,7 @@ impl ::sittir_core::options::Edged for FieldIdentifierTransport {
 
 impl ::sittir_core::render::Render for FieldIdentifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(465)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_identifier(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(465)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_identifier(self, w))
     }
 }
 
@@ -27735,7 +27735,7 @@ impl ::sittir_core::prepare::Prepare for FieldIdentifierTransport {
 #[transport(kind = kind::_SHORTHAND_FIELD_IDENTIFIER, display, envelope, content = content)]
 pub struct ShorthandFieldIdentifierTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     pub content: ::sittir_core::SlotValue<IdentifierTransport>,
 }
@@ -27754,7 +27754,7 @@ impl ::sittir_core::options::Edged for ShorthandFieldIdentifierTransport {
 
 impl ::sittir_core::render::Render for ShorthandFieldIdentifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(467)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shorthand_field_identifier(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(467)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shorthand_field_identifier(self, w))
     }
 }
 
@@ -37782,10 +37782,10 @@ fn render_macro_rules_bang(w: &mut dyn ::sittir_core::render::RenderSink) -> ::s
 
 fn render_statement(t: &StatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        StatementTransport::ExpressionStatement(inner) => inner.as_ref().render(w),
-        StatementTransport::DeclarationStatement(inner) => inner.render(w),
+        StatementTransport::ExpressionStatement(inner) => inner.render(w),
+        StatementTransport::DeclarationStatement(inner) => inner.as_ref().render(w),
         StatementTransport::ConstItem(inner) => inner.as_ref().render(w),
-        StatementTransport::MacroInvocation(inner) => inner.as_ref().render(w),
+        StatementTransport::MacroInvocation(inner) => inner.render(w),
         StatementTransport::MacroDefinition(inner) => inner.render(w),
         StatementTransport::EmptyStatement => render_empty_statement(w),
         StatementTransport::AttributeItem(inner) => inner.as_ref().render(w),
@@ -37800,7 +37800,7 @@ fn render_statement(t: &StatementTransport, w: &mut dyn ::sittir_core::render::R
         StatementTransport::FunctionSignatureItem(inner) => inner.as_ref().render(w),
         StatementTransport::ImplItem(inner) => inner.render(w),
         StatementTransport::TraitItem(inner) => inner.as_ref().render(w),
-        StatementTransport::AssociatedType(inner) => inner.as_ref().render(w),
+        StatementTransport::AssociatedType(inner) => inner.render(w),
         StatementTransport::LetDeclaration(inner) => inner.as_ref().render(w),
         StatementTransport::UseDeclaration(inner) => inner.as_ref().render(w),
         StatementTransport::ExternCrateDeclaration(inner) => inner.as_ref().render(w),
@@ -37811,7 +37811,7 @@ fn render_statement(t: &StatementTransport, w: &mut dyn ::sittir_core::render::R
 fn render_declaration_statement(t: &DeclarationStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         DeclarationStatementTransport::ConstItem(inner) => inner.as_ref().render(w),
-        DeclarationStatementTransport::MacroInvocation(inner) => inner.as_ref().render(w),
+        DeclarationStatementTransport::MacroInvocation(inner) => inner.render(w),
         DeclarationStatementTransport::MacroDefinition(inner) => inner.render(w),
         DeclarationStatementTransport::EmptyStatement => render_empty_statement(w),
         DeclarationStatementTransport::AttributeItem(inner) => inner.as_ref().render(w),
@@ -37826,7 +37826,7 @@ fn render_declaration_statement(t: &DeclarationStatementTransport, w: &mut dyn :
         DeclarationStatementTransport::FunctionSignatureItem(inner) => inner.as_ref().render(w),
         DeclarationStatementTransport::ImplItem(inner) => inner.render(w),
         DeclarationStatementTransport::TraitItem(inner) => inner.as_ref().render(w),
-        DeclarationStatementTransport::AssociatedType(inner) => inner.as_ref().render(w),
+        DeclarationStatementTransport::AssociatedType(inner) => inner.render(w),
         DeclarationStatementTransport::LetDeclaration(inner) => inner.as_ref().render(w),
         DeclarationStatementTransport::UseDeclaration(inner) => inner.as_ref().render(w),
         DeclarationStatementTransport::ExternCrateDeclaration(inner) => inner.as_ref().render(w),
@@ -37836,9 +37836,9 @@ fn render_declaration_statement(t: &DeclarationStatementTransport, w: &mut dyn :
 
 fn render_macro_definition(t: &MacroDefinitionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        MacroDefinitionTransport::MacroDefinitionParen(inner) => inner.as_ref().render(w),
-        MacroDefinitionTransport::MacroDefinitionBracket(inner) => inner.as_ref().render(w),
-        MacroDefinitionTransport::MacroDefinitionBrace(inner) => inner.as_ref().render(w),
+        MacroDefinitionTransport::MacroDefinitionParen(inner) => inner.render(w),
+        MacroDefinitionTransport::MacroDefinitionBracket(inner) => inner.render(w),
+        MacroDefinitionTransport::MacroDefinitionBrace(inner) => inner.render(w),
     }
 }
 
@@ -37860,14 +37860,14 @@ fn render_token_tree(t: &TokenTreeTransport, w: &mut dyn ::sittir_core::render::
 
 fn render_mod_item(t: &ModItemTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        ModItemTransport::ModItemExternal(inner) => inner.as_ref().render(w),
+        ModItemTransport::ModItemExternal(inner) => inner.render(w),
         ModItemTransport::ModItemInline(inner) => inner.as_ref().render(w),
     }
 }
 
 fn render_foreign_mod_item(t: &ForeignModItemTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        ForeignModItemTransport::ForeignModItemSemi(inner) => inner.as_ref().render(w),
+        ForeignModItemTransport::ForeignModItemSemi(inner) => inner.render(w),
         ForeignModItemTransport::ForeignModItemBody(inner) => inner.as_ref().render(w),
     }
 }
@@ -37889,21 +37889,21 @@ fn render_impl_item(t: &ImplItemTransport, w: &mut dyn ::sittir_core::render::Re
 
 fn render_type(t: &TypeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        TypeTransport::AbstractType(inner) => inner.as_ref().render(w),
-        TypeTransport::ReferenceType(inner) => inner.as_ref().render(w),
+        TypeTransport::AbstractType(inner) => inner.render(w),
+        TypeTransport::ReferenceType(inner) => inner.render(w),
         TypeTransport::Metavariable(inner) => inner.render(w),
         TypeTransport::PointerType(inner) => inner.render(w),
-        TypeTransport::GenericType(inner) => inner.as_ref().render(w),
-        TypeTransport::ScopedTypeIdentifier(inner) => inner.as_ref().render(w),
-        TypeTransport::TupleType(inner) => inner.as_ref().render(w),
+        TypeTransport::GenericType(inner) => inner.render(w),
+        TypeTransport::ScopedTypeIdentifier(inner) => inner.render(w),
+        TypeTransport::TupleType(inner) => inner.render(w),
         TypeTransport::UnitType => render_unit_type(w),
-        TypeTransport::ArrayType(inner) => inner.as_ref().render(w),
-        TypeTransport::FunctionType(inner) => inner.as_ref().render(w),
-        TypeTransport::TypeIdentifier(inner) => inner.as_ref().render(w),
-        TypeTransport::MacroInvocation(inner) => inner.as_ref().render(w),
+        TypeTransport::ArrayType(inner) => inner.render(w),
+        TypeTransport::FunctionType(inner) => inner.render(w),
+        TypeTransport::TypeIdentifier(inner) => inner.render(w),
+        TypeTransport::MacroInvocation(inner) => inner.render(w),
         TypeTransport::NeverType => render_never_type(w),
         TypeTransport::DynamicType(inner) => inner.render(w),
-        TypeTransport::BoundedType(inner) => inner.as_ref().render(w),
+        TypeTransport::BoundedType(inner) => inner.render(w),
         TypeTransport::RemovedTraitBound(inner) => inner.render(w),
         TypeTransport::PrimitiveType(inner) => inner.render(w),
     }
@@ -37918,18 +37918,18 @@ fn render_pointer_type(t: &PointerTypeTransport, w: &mut dyn ::sittir_core::rend
 
 fn render_expression(t: &ExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        ExpressionTransport::UnaryExpression(inner) => inner.as_ref().render(w),
+        ExpressionTransport::UnaryExpression(inner) => inner.render(w),
         ExpressionTransport::ReferenceExpression(inner) => inner.render(w),
         ExpressionTransport::TryExpression(inner) => inner.render(w),
-        ExpressionTransport::BinaryExpression(inner) => inner.as_ref().render(w),
-        ExpressionTransport::AssignmentExpression(inner) => inner.as_ref().render(w),
-        ExpressionTransport::CompoundAssignmentExpr(inner) => inner.as_ref().render(w),
-        ExpressionTransport::TypeCastExpression(inner) => inner.as_ref().render(w),
-        ExpressionTransport::CallExpression(inner) => inner.as_ref().render(w),
+        ExpressionTransport::BinaryExpression(inner) => inner.render(w),
+        ExpressionTransport::AssignmentExpression(inner) => inner.render(w),
+        ExpressionTransport::CompoundAssignmentExpr(inner) => inner.render(w),
+        ExpressionTransport::TypeCastExpression(inner) => inner.render(w),
+        ExpressionTransport::CallExpression(inner) => inner.render(w),
         ExpressionTransport::ReturnExpression(inner) => inner.render(w),
         ExpressionTransport::YieldExpression(inner) => inner.render(w),
-        ExpressionTransport::StringLiteral(inner) => inner.as_ref().render(w),
-        ExpressionTransport::RawStringLiteral(inner) => inner.as_ref().render(w),
+        ExpressionTransport::StringLiteral(inner) => inner.render(w),
+        ExpressionTransport::RawStringLiteral(inner) => inner.render(w),
         ExpressionTransport::CharLiteral(inner) => inner.render(w),
         ExpressionTransport::BooleanLiteral(inner) => inner.render(w),
         ExpressionTransport::IntegerLiteral(inner) => inner.render(w),
@@ -37956,31 +37956,31 @@ fn render_expression(t: &ExpressionTransport, w: &mut dyn ::sittir_core::render:
         ExpressionTransport::UnionKeyword => render_union_keyword(w),
         ExpressionTransport::GenKeyword => render_gen_keyword(w),
         ExpressionTransport::Self_ => render_self(w),
-        ExpressionTransport::ScopedIdentifier(inner) => inner.as_ref().render(w),
-        ExpressionTransport::GenericFunction(inner) => inner.as_ref().render(w),
+        ExpressionTransport::ScopedIdentifier(inner) => inner.render(w),
+        ExpressionTransport::GenericFunction(inner) => inner.render(w),
         ExpressionTransport::AwaitExpression(inner) => inner.render(w),
-        ExpressionTransport::FieldExpression(inner) => inner.as_ref().render(w),
+        ExpressionTransport::FieldExpression(inner) => inner.render(w),
         ExpressionTransport::ArrayExpression(inner) => inner.render(w),
-        ExpressionTransport::TupleExpression(inner) => inner.as_ref().render(w),
-        ExpressionTransport::MacroInvocation(inner) => inner.as_ref().render(w),
+        ExpressionTransport::TupleExpression(inner) => inner.render(w),
+        ExpressionTransport::MacroInvocation(inner) => inner.render(w),
         ExpressionTransport::UnitExpression => render_unit_expression(w),
-        ExpressionTransport::BreakExpression(inner) => inner.as_ref().render(w),
-        ExpressionTransport::ContinueExpression(inner) => inner.as_ref().render(w),
-        ExpressionTransport::IndexExpression(inner) => inner.as_ref().render(w),
+        ExpressionTransport::BreakExpression(inner) => inner.render(w),
+        ExpressionTransport::ContinueExpression(inner) => inner.render(w),
+        ExpressionTransport::IndexExpression(inner) => inner.render(w),
         ExpressionTransport::Metavariable(inner) => inner.render(w),
         ExpressionTransport::ClosureExpression(inner) => inner.render(w),
         ExpressionTransport::ParenthesizedExpression(inner) => inner.render(w),
-        ExpressionTransport::StructExpression(inner) => inner.as_ref().render(w),
+        ExpressionTransport::StructExpression(inner) => inner.render(w),
         ExpressionTransport::UnsafeBlock(inner) => inner.render(w),
         ExpressionTransport::AsyncBlock(inner) => inner.render(w),
         ExpressionTransport::GenBlock(inner) => inner.render(w),
         ExpressionTransport::TryBlock(inner) => inner.render(w),
-        ExpressionTransport::Block(inner) => inner.as_ref().render(w),
-        ExpressionTransport::IfExpression(inner) => inner.as_ref().render(w),
-        ExpressionTransport::MatchExpression(inner) => inner.as_ref().render(w),
-        ExpressionTransport::WhileExpression(inner) => inner.as_ref().render(w),
-        ExpressionTransport::LoopExpression(inner) => inner.as_ref().render(w),
-        ExpressionTransport::ForExpression(inner) => inner.as_ref().render(w),
+        ExpressionTransport::Block(inner) => inner.render(w),
+        ExpressionTransport::IfExpression(inner) => inner.render(w),
+        ExpressionTransport::MatchExpression(inner) => inner.render(w),
+        ExpressionTransport::WhileExpression(inner) => inner.render(w),
+        ExpressionTransport::LoopExpression(inner) => inner.render(w),
+        ExpressionTransport::ForExpression(inner) => inner.render(w),
         ExpressionTransport::ConstBlock(inner) => inner.render(w),
         ExpressionTransport::RangeExpression(inner) => inner.render(w),
         ExpressionTransport::Verbatim(inner) => inner.render(w),
@@ -37997,7 +37997,7 @@ fn render_delim_token_tree(t: &DelimTokenTreeTransport, w: &mut dyn ::sittir_cor
 
 fn render_range_expression(t: &RangeExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        RangeExpressionTransport::RangeExpressionBinary(inner) => inner.as_ref().render(w),
+        RangeExpressionTransport::RangeExpressionBinary(inner) => inner.render(w),
         RangeExpressionTransport::RangeExpressionPostfix(inner) => inner.render(w),
         RangeExpressionTransport::RangeExpressionPrefix(inner) => inner.render(w),
         RangeExpressionTransport::RangeExpressionBare(inner) => inner.render(w),
@@ -38015,8 +38015,8 @@ fn render_reference_expression(t: &ReferenceExpressionTransport, w: &mut dyn ::s
 
 fn render_array_expression(t: &ArrayExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        ArrayExpressionTransport::ArrayExpressionSemi(inner) => inner.as_ref().render(w),
-        ArrayExpressionTransport::ArrayExpressionList(inner) => inner.as_ref().render(w),
+        ArrayExpressionTransport::ArrayExpressionSemi(inner) => inner.render(w),
+        ArrayExpressionTransport::ArrayExpressionList(inner) => inner.render(w),
     }
 }
 
@@ -38029,8 +38029,8 @@ fn render_match_arm(t: &MatchArmTransport, w: &mut dyn ::sittir_core::render::Re
 
 fn render_closure_expression(t: &ClosureExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        ClosureExpressionTransport::ClosureExpressionBlock(inner) => inner.as_ref().render(w),
-        ClosureExpressionTransport::ClosureExpressionExpr(inner) => inner.as_ref().render(w),
+        ClosureExpressionTransport::ClosureExpressionBlock(inner) => inner.render(w),
+        ClosureExpressionTransport::ClosureExpressionExpr(inner) => inner.render(w),
     }
 }
 
@@ -38055,24 +38055,24 @@ fn render_pattern(t: &PatternTransport, w: &mut dyn ::sittir_core::render::Rende
         PatternTransport::StrKeyword => render_str_keyword(w),
         PatternTransport::CharKeyword => render_char_keyword(w),
         PatternTransport::Identifier(inner) => inner.render(w),
-        PatternTransport::ScopedIdentifier(inner) => inner.as_ref().render(w),
-        PatternTransport::GenericPattern(inner) => inner.as_ref().render(w),
-        PatternTransport::TuplePattern(inner) => inner.as_ref().render(w),
-        PatternTransport::TupleStructPattern(inner) => inner.as_ref().render(w),
-        PatternTransport::StructPattern(inner) => inner.as_ref().render(w),
+        PatternTransport::ScopedIdentifier(inner) => inner.render(w),
+        PatternTransport::GenericPattern(inner) => inner.render(w),
+        PatternTransport::TuplePattern(inner) => inner.render(w),
+        PatternTransport::TupleStructPattern(inner) => inner.render(w),
+        PatternTransport::StructPattern(inner) => inner.render(w),
         PatternTransport::DefaultKeyword => render_default_keyword(w),
         PatternTransport::UnionKeyword => render_union_keyword(w),
         PatternTransport::GenKeyword => render_gen_keyword(w),
         PatternTransport::RefPattern(inner) => inner.render(w),
-        PatternTransport::SlicePattern(inner) => inner.as_ref().render(w),
-        PatternTransport::CapturedPattern(inner) => inner.as_ref().render(w),
+        PatternTransport::SlicePattern(inner) => inner.render(w),
+        PatternTransport::CapturedPattern(inner) => inner.render(w),
         PatternTransport::ReferencePattern(inner) => inner.render(w),
         PatternTransport::RemainingFieldPattern => render_remaining_field_pattern(w),
         PatternTransport::MutPattern(inner) => inner.render(w),
         PatternTransport::RangePattern(inner) => inner.render(w),
         PatternTransport::OrPattern(inner) => inner.render(w),
         PatternTransport::ConstBlock(inner) => inner.render(w),
-        PatternTransport::MacroInvocation(inner) => inner.as_ref().render(w),
+        PatternTransport::MacroInvocation(inner) => inner.render(w),
         PatternTransport::WildcardPattern => render_wildcard_pattern(w),
         PatternTransport::Verbatim(inner) => inner.render(w),
     }
@@ -38080,27 +38080,27 @@ fn render_pattern(t: &PatternTransport, w: &mut dyn ::sittir_core::render::Rende
 
 fn render_range_pattern(t: &RangePatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        RangePatternTransport::RangePatternWithLeft(inner) => inner.as_ref().render(w),
-        RangePatternTransport::RangePatternPrefix(inner) => inner.as_ref().render(w),
+        RangePatternTransport::RangePatternWithLeft(inner) => inner.render(w),
+        RangePatternTransport::RangePatternPrefix(inner) => inner.render(w),
     }
 }
 
 fn render_or_pattern(t: &OrPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        OrPatternTransport::OrPatternBinary(inner) => inner.as_ref().render(w),
+        OrPatternTransport::OrPatternBinary(inner) => inner.render(w),
         OrPatternTransport::OrPatternPrefix(inner) => inner.render(w),
     }
 }
 
 fn render_literal_pattern(t: &LiteralPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        LiteralPatternTransport::StringLiteral(inner) => inner.as_ref().render(w),
-        LiteralPatternTransport::RawStringLiteral(inner) => inner.as_ref().render(w),
+        LiteralPatternTransport::StringLiteral(inner) => inner.render(w),
+        LiteralPatternTransport::RawStringLiteral(inner) => inner.render(w),
         LiteralPatternTransport::CharLiteral(inner) => inner.render(w),
         LiteralPatternTransport::BooleanLiteral(inner) => inner.render(w),
         LiteralPatternTransport::IntegerLiteral(inner) => inner.render(w),
         LiteralPatternTransport::FloatLiteral(inner) => inner.render(w),
-        LiteralPatternTransport::NegativeLiteral(inner) => inner.as_ref().render(w),
+        LiteralPatternTransport::NegativeLiteral(inner) => inner.render(w),
         LiteralPatternTransport::Verbatim(inner) => inner.render(w),
     }
 }
@@ -38982,15 +38982,15 @@ pub fn render_transport_parts(
     Ok((TransportSource::Factory, rendered))
 }
 
-const _: () = assert!(::core::mem::size_of::<AbstractTypeTransport>() > 256, "AbstractTypeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<AbstractTypeTransport>() <= 256, "AbstractTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ArgumentsElementsTransport>() <= 256, "ArgumentsElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ArgumentsTransport>() > 256, "ArgumentsTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ArrayExpressionListTransport>() > 256, "ArrayExpressionListTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ArrayExpressionSemiTransport>() > 256, "ArrayExpressionSemiTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ArgumentsTransport>() <= 256, "ArgumentsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ArrayExpressionListTransport>() <= 256, "ArrayExpressionListTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ArrayExpressionSemiTransport>() <= 256, "ArrayExpressionSemiTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ArrayExpressionTransport>() <= 256, "ArrayExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ArrayTypeTransport>() > 256, "ArrayTypeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AssignmentExpressionTransport>() > 256, "AssignmentExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AssociatedTypeTransport>() > 256, "AssociatedTypeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ArrayTypeTransport>() <= 256, "ArrayTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<AssignmentExpressionTransport>() <= 256, "AssignmentExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<AssociatedTypeTransport>() <= 256, "AssociatedTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AsyncBlockTransport>() <= 256, "AsyncBlockTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributeInputTransport>() > 256, "AttributeInputTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributeItemTransport>() > 256, "AttributeItemTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
@@ -39000,22 +39000,22 @@ const _: () = assert!(::core::mem::size_of::<AttributedEnumVariantTransport>() >
 const _: () = assert!(::core::mem::size_of::<AttributedFieldDeclarationTransport>() > 256, "AttributedFieldDeclarationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributedOrderedFieldTransport>() > 256, "AttributedOrderedFieldTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributedParameterTransport>() > 256, "AttributedParameterTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AttributedTypeParameterTransport>() > 256, "AttributedTypeParameterTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<AttributedTypeParameterTransport>() <= 256, "AttributedTypeParameterTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AwaitExpressionTransport>() <= 256, "AwaitExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<BaseFieldInitializerTransport>() > 256, "BaseFieldInitializerTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<BinaryExpressionTransport>() > 256, "BinaryExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<BaseFieldInitializerTransport>() <= 256, "BaseFieldInitializerTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<BinaryExpressionTransport>() <= 256, "BinaryExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<BlockCommentContentTransport>() <= 256, "BlockCommentContentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<BlockCommentDocInnerTransport>() > 256, "BlockCommentDocInnerTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<BlockCommentDocOuterTransport>() > 256, "BlockCommentDocOuterTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<BlockCommentDocInnerTransport>() <= 256, "BlockCommentDocInnerTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<BlockCommentDocOuterTransport>() <= 256, "BlockCommentDocOuterTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<BlockCommentRegularTransport>() <= 256, "BlockCommentRegularTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<BlockCommentTransport>() > 256, "BlockCommentTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<BlockTransport>() > 256, "BlockTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<BlockCommentTransport>() <= 256, "BlockCommentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<BlockTransport>() <= 256, "BlockTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<BooleanLiteralEnum>() <= 256, "BooleanLiteralEnum is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<BoundedTypeTransport>() > 256, "BoundedTypeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<BoundedTypeTransport>() <= 256, "BoundedTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<BracketedTypeTransport>() <= 256, "BracketedTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<BreakExpressionTransport>() > 256, "BreakExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CallExpressionTransport>() > 256, "CallExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CapturedPatternTransport>() > 256, "CapturedPatternTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<BreakExpressionTransport>() <= 256, "BreakExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CallExpressionTransport>() <= 256, "CallExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CapturedPatternTransport>() <= 256, "CapturedPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<CharLiteralEmptyTransport>() <= 256, "CharLiteralEmptyTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<CharLiteralEscapedHexTransport>() <= 256, "CharLiteralEscapedHexTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<CharLiteralEscapedSimpleTransport>() <= 256, "CharLiteralEscapedSimpleTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -39024,17 +39024,17 @@ const _: () = assert!(::core::mem::size_of::<CharLiteralEscapedUnicodeBracedTran
 const _: () = assert!(::core::mem::size_of::<CharLiteralEscapedUnicodeFixedTransport>() <= 256, "CharLiteralEscapedUnicodeFixedTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<CharLiteralPlainTransport>() <= 256, "CharLiteralPlainTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<CharLiteralTransport>() <= 256, "CharLiteralTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ClosureExpressionBlockTransport>() > 256, "ClosureExpressionBlockTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ClosureExpressionExprTransport>() > 256, "ClosureExpressionExprTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ClosureExpressionBlockTransport>() <= 256, "ClosureExpressionBlockTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ClosureExpressionExprTransport>() <= 256, "ClosureExpressionExprTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ClosureExpressionTransport>() <= 256, "ClosureExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ClosureParametersTransport>() <= 256, "ClosureParametersTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CompoundAssignmentExprTransport>() > 256, "CompoundAssignmentExprTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CompoundAssignmentExprTransport>() <= 256, "CompoundAssignmentExprTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ConstBlockTransport>() <= 256, "ConstBlockTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ConstItemTransport>() > 256, "ConstItemTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ConstParameterTransport>() > 256, "ConstParameterTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ContinueExpressionTransport>() > 256, "ContinueExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ContinueExpressionTransport>() <= 256, "ContinueExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DeclarationListTransport>() <= 256, "DeclarationListTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<DeclarationStatementTransport>() <= 256, "DeclarationStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<DeclarationStatementTransport>() > 256, "DeclarationStatementTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DelimTokenTreeBraceTransport>() <= 256, "DelimTokenTreeBraceTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DelimTokenTreeBracketTransport>() <= 256, "DelimTokenTreeBracketTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DelimTokenTreeParenTransport>() <= 256, "DelimTokenTreeParenTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -39043,124 +39043,124 @@ const _: () = assert!(::core::mem::size_of::<DynamicTypeTransport>() <= 256, "Dy
 const _: () = assert!(::core::mem::size_of::<ElseClauseTransport>() <= 256, "ElseClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<EnumItemTransport>() > 256, "EnumItemTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<EnumVariantListElementsTransport>() <= 256, "EnumVariantListElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<EnumVariantListTransport>() > 256, "EnumVariantListTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<EnumVariantListTransport>() <= 256, "EnumVariantListTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<EnumVariantTransport>() > 256, "EnumVariantTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ErrorSentinelTransport>() <= 256, "ErrorSentinelTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<EscapeSequenceHexTransport>() <= 256, "EscapeSequenceHexTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<EscapeSequenceSimpleTransport>() <= 256, "EscapeSequenceSimpleTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<EscapeSequenceUnicodeBracedTransport>() <= 256, "EscapeSequenceUnicodeBracedTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<EscapeSequenceUnicodeFixedTransport>() <= 256, "EscapeSequenceUnicodeFixedTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ExpressionStatementTransport>() > 256, "ExpressionStatementTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ExpressionStatementWithSemiTransport>() > 256, "ExpressionStatementWithSemiTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ExpressionStatementTransport>() <= 256, "ExpressionStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ExpressionStatementWithSemiTransport>() <= 256, "ExpressionStatementWithSemiTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExpressionsTransport>() <= 256, "ExpressionsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExternCrateDeclarationTransport>() > 256, "ExternCrateDeclarationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ExternModifierTransport>() > 256, "ExternModifierTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ExternModifierTransport>() <= 256, "ExternModifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FieldDeclarationListElementsTransport>() <= 256, "FieldDeclarationListElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FieldDeclarationListTransport>() > 256, "FieldDeclarationListTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<FieldDeclarationListTransport>() <= 256, "FieldDeclarationListTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FieldDeclarationTransport>() > 256, "FieldDeclarationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FieldExpressionTransport>() > 256, "FieldExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FieldIdentifierTransport>() > 256, "FieldIdentifierTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<FieldExpressionTransport>() <= 256, "FieldExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<FieldIdentifierTransport>() <= 256, "FieldIdentifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FieldInitializerListElementsTransport>() <= 256, "FieldInitializerListElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FieldInitializerListTransport>() > 256, "FieldInitializerListTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<FieldInitializerListTransport>() <= 256, "FieldInitializerListTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FieldInitializerTransport>() > 256, "FieldInitializerTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FieldPatternNamedTransport>() > 256, "FieldPatternNamedTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FieldPatternShorthandTransport>() > 256, "FieldPatternShorthandTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<FieldPatternNamedTransport>() <= 256, "FieldPatternNamedTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<FieldPatternShorthandTransport>() <= 256, "FieldPatternShorthandTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FloatLiteralTransport>() <= 256, "FloatLiteralTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ForExpressionTransport>() > 256, "ForExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ForLifetimesTransport>() > 256, "ForLifetimesTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ForExpressionTransport>() <= 256, "ForExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ForLifetimesTransport>() <= 256, "ForLifetimesTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ForeignModItemBodyTransport>() > 256, "ForeignModItemBodyTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ForeignModItemSemiTransport>() > 256, "ForeignModItemSemiTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ForeignModItemSemiTransport>() <= 256, "ForeignModItemSemiTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ForeignModItemTransport>() <= 256, "ForeignModItemTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FragmentSpecifierEnum>() <= 256, "FragmentSpecifierEnum is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FunctionItemTransport>() > 256, "FunctionItemTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FunctionModifiersTransport>() <= 256, "FunctionModifiersTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FunctionSignatureItemTransport>() > 256, "FunctionSignatureItemTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FunctionTypeFnFormTransport>() > 256, "FunctionTypeFnFormTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<FunctionTypeFnFormTransport>() <= 256, "FunctionTypeFnFormTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FunctionTypeTraitFormTransport>() <= 256, "FunctionTypeTraitFormTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FunctionTypeTransport>() > 256, "FunctionTypeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<FunctionTypeTransport>() <= 256, "FunctionTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<GenBlockTransport>() <= 256, "GenBlockTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<GenericFunctionTransport>() > 256, "GenericFunctionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<GenericPatternTransport>() > 256, "GenericPatternTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<GenericTypeTransport>() > 256, "GenericTypeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<GenericTypeWithTurbofishTransport>() > 256, "GenericTypeWithTurbofishTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<HigherRankedTraitBoundTransport>() > 256, "HigherRankedTraitBoundTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<GenericFunctionTransport>() <= 256, "GenericFunctionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<GenericPatternTransport>() <= 256, "GenericPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<GenericTypeTransport>() <= 256, "GenericTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<GenericTypeWithTurbofishTransport>() <= 256, "GenericTypeWithTurbofishTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<HigherRankedTraitBoundTransport>() <= 256, "HigherRankedTraitBoundTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<IdentifierTransport>() <= 256, "IdentifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<IfExpressionTransport>() > 256, "IfExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<IfExpressionTransport>() <= 256, "IfExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ImplItemBodyTransport>() > 256, "ImplItemBodyTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ImplItemNegativeClauseTransport>() <= 256, "ImplItemNegativeClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ImplItemPositiveClauseTransport>() <= 256, "ImplItemPositiveClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ImplItemSemiTransport>() > 256, "ImplItemSemiTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ImplItemTransport>() <= 256, "ImplItemTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<IndexExpressionTransport>() > 256, "IndexExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<IndexExpressionTransport>() <= 256, "IndexExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<InnerAttributeItemTransport>() > 256, "InnerAttributeItemTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<IntegerLiteralBinaryTransport>() <= 256, "IntegerLiteralBinaryTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<IntegerLiteralDecimalTransport>() <= 256, "IntegerLiteralDecimalTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<IntegerLiteralHexTransport>() <= 256, "IntegerLiteralHexTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<IntegerLiteralOctalTransport>() <= 256, "IntegerLiteralOctalTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<IntegerLiteralTransport>() <= 256, "IntegerLiteralTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LabelTransport>() > 256, "LabelTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LastMatchArmTransport>() > 256, "LastMatchArmTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<LabelTransport>() <= 256, "LabelTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<LastMatchArmTransport>() <= 256, "LastMatchArmTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<LetChainTransport>() <= 256, "LetChainTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LetConditionTransport>() > 256, "LetConditionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<LetConditionTransport>() <= 256, "LetConditionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<LetDeclarationTransport>() > 256, "LetDeclarationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LifetimeParameterTransport>() > 256, "LifetimeParameterTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LifetimeTransport>() > 256, "LifetimeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<LifetimeParameterTransport>() <= 256, "LifetimeParameterTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<LifetimeTransport>() <= 256, "LifetimeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<LifetimesTransport>() <= 256, "LifetimesTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LineCommentDocInnerTransport>() > 256, "LineCommentDocInnerTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LineCommentDocOuterTransport>() > 256, "LineCommentDocOuterTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<LineCommentDocInnerTransport>() <= 256, "LineCommentDocInnerTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<LineCommentDocOuterTransport>() <= 256, "LineCommentDocOuterTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<LineCommentExtraSlashesTransport>() <= 256, "LineCommentExtraSlashesTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<LineCommentRegularTransport>() <= 256, "LineCommentRegularTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LineCommentTransport>() > 256, "LineCommentTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<LineCommentTransport>() <= 256, "LineCommentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<LiteralPatternTransport>() <= 256, "LiteralPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LoopExpressionTransport>() > 256, "LoopExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<MacroDefinitionBraceTransport>() > 256, "MacroDefinitionBraceTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<MacroDefinitionBracketTransport>() > 256, "MacroDefinitionBracketTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<MacroDefinitionParenTransport>() > 256, "MacroDefinitionParenTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<LoopExpressionTransport>() <= 256, "LoopExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<MacroDefinitionBraceTransport>() <= 256, "MacroDefinitionBraceTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<MacroDefinitionBracketTransport>() <= 256, "MacroDefinitionBracketTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<MacroDefinitionParenTransport>() <= 256, "MacroDefinitionParenTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<MacroDefinitionTransport>() <= 256, "MacroDefinitionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<MacroInvocationTransport>() > 256, "MacroInvocationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<MacroRuleTransport>() > 256, "MacroRuleTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<MacroInvocationTransport>() <= 256, "MacroInvocationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<MacroRuleTransport>() <= 256, "MacroRuleTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<MacroRulesTransport>() <= 256, "MacroRulesTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<MatchArmBlockEndingTransport>() > 256, "MatchArmBlockEndingTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<MatchArmWithCommaTransport>() > 256, "MatchArmWithCommaTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<MatchBlockArmsTransport>() <= 256, "MatchBlockArmsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<MatchBlockTransport>() <= 256, "MatchBlockTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<MatchExpressionTransport>() > 256, "MatchExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<MatchPatternTransport>() > 256, "MatchPatternTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<MatchExpressionTransport>() <= 256, "MatchExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<MatchPatternTransport>() <= 256, "MatchPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<MetavariableTransport>() <= 256, "MetavariableTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ModItemExternalTransport>() > 256, "ModItemExternalTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ModItemExternalTransport>() <= 256, "ModItemExternalTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ModItemInlineTransport>() > 256, "ModItemInlineTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ModItemTransport>() <= 256, "ModItemTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<MutPatternTransport>() <= 256, "MutPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<NegativeLiteralTransport>() > 256, "NegativeLiteralTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<NonSpecialTokenTransport>() > 256, "NonSpecialTokenTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<OrPatternBinaryTransport>() > 256, "OrPatternBinaryTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<NegativeLiteralTransport>() <= 256, "NegativeLiteralTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<NonSpecialTokenTransport>() <= 256, "NonSpecialTokenTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<OrPatternBinaryTransport>() <= 256, "OrPatternBinaryTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<OrPatternPrefixTransport>() <= 256, "OrPatternPrefixTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<OrPatternTransport>() <= 256, "OrPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<OrderedFieldDeclarationListElementsTransport>() <= 256, "OrderedFieldDeclarationListElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<OrderedFieldDeclarationListTransport>() > 256, "OrderedFieldDeclarationListTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<OrderedFieldDeclarationListTransport>() <= 256, "OrderedFieldDeclarationListTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ParameterTransport>() > 256, "ParameterTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ParametersElementsTransport>() <= 256, "ParametersElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ParametersTransport>() > 256, "ParametersTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ParametersTransport>() <= 256, "ParametersTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ParenthesizedExpressionTransport>() <= 256, "ParenthesizedExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<PatternsTransport>() <= 256, "PatternsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<PointerTypeConstTransport>() <= 256, "PointerTypeConstTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<PointerTypeMutTransport>() <= 256, "PointerTypeMutTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<PointerTypeTransport>() <= 256, "PointerTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<PrimitiveTypeEnum>() <= 256, "PrimitiveTypeEnum is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<QualifiedTypeTransport>() > 256, "QualifiedTypeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<QualifiedTypeTransport>() <= 256, "QualifiedTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<RangeExpressionBareTransport>() <= 256, "RangeExpressionBareTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<RangeExpressionBinaryTransport>() > 256, "RangeExpressionBinaryTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<RangeExpressionBinaryTransport>() <= 256, "RangeExpressionBinaryTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<RangeExpressionPostfixTransport>() <= 256, "RangeExpressionPostfixTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<RangeExpressionPrefixTransport>() <= 256, "RangeExpressionPrefixTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<RangeExpressionTransport>() <= 256, "RangeExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<RangePatternPrefixTransport>() > 256, "RangePatternPrefixTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<RangePatternPrefixTransport>() <= 256, "RangePatternPrefixTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<RangePatternTransport>() <= 256, "RangePatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<RangePatternWithLeftTransport>() > 256, "RangePatternWithLeftTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<RangePatternWithLeftWithRightTransport>() > 256, "RangePatternWithLeftWithRightTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<RangePatternWithLeftTransport>() <= 256, "RangePatternWithLeftTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<RangePatternWithLeftWithRightTransport>() <= 256, "RangePatternWithLeftWithRightTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<RawStringLiteralContentTransport>() <= 256, "RawStringLiteralContentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<RawStringLiteralEndTransport>() <= 256, "RawStringLiteralEndTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<RawStringLiteralStartTransport>() <= 256, "RawStringLiteralStartTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<RawStringLiteralTransport>() > 256, "RawStringLiteralTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<RawStringLiteralTransport>() <= 256, "RawStringLiteralTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<RefPatternTransport>() <= 256, "RefPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ReferenceExpressionBareTransport>() <= 256, "ReferenceExpressionBareTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ReferenceExpressionMutTransport>() <= 256, "ReferenceExpressionMutTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -39168,35 +39168,35 @@ const _: () = assert!(::core::mem::size_of::<ReferenceExpressionRawConstTranspor
 const _: () = assert!(::core::mem::size_of::<ReferenceExpressionRawMutTransport>() <= 256, "ReferenceExpressionRawMutTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ReferenceExpressionTransport>() <= 256, "ReferenceExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ReferencePatternTransport>() <= 256, "ReferencePatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ReferenceTypeTransport>() > 256, "ReferenceTypeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ReferenceTypeTransport>() <= 256, "ReferenceTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<RemovedTraitBoundTransport>() <= 256, "RemovedTraitBoundTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ReturnExpressionTransport>() <= 256, "ReturnExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ScopedIdentifierTransport>() > 256, "ScopedIdentifierTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ScopedTypeIdentifierInExpressionPositionTransport>() > 256, "ScopedTypeIdentifierInExpressionPositionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ScopedTypeIdentifierTransport>() > 256, "ScopedTypeIdentifierTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ScopedUseListTransport>() > 256, "ScopedUseListTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<SelfParameterTransport>() > 256, "SelfParameterTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ScopedIdentifierTransport>() <= 256, "ScopedIdentifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ScopedTypeIdentifierInExpressionPositionTransport>() <= 256, "ScopedTypeIdentifierInExpressionPositionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ScopedTypeIdentifierTransport>() <= 256, "ScopedTypeIdentifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ScopedUseListTransport>() <= 256, "ScopedUseListTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<SelfParameterTransport>() <= 256, "SelfParameterTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ShebangTransport>() <= 256, "ShebangTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ShorthandFieldIdentifierTransport>() > 256, "ShorthandFieldIdentifierTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ShorthandFieldInitializerTransport>() > 256, "ShorthandFieldInitializerTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<SlicePatternTransport>() > 256, "SlicePatternTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<SourceFileTransport>() > 256, "SourceFileTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ShorthandFieldIdentifierTransport>() <= 256, "ShorthandFieldIdentifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ShorthandFieldInitializerTransport>() <= 256, "ShorthandFieldInitializerTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<SlicePatternTransport>() <= 256, "SlicePatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<SourceFileTransport>() <= 256, "SourceFileTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StaticItemTransport>() > 256, "StaticItemTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StringContentTransport>() <= 256, "StringContentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<StringLiteralTransport>() > 256, "StringLiteralTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<StringLiteralTransport>() <= 256, "StringLiteralTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StringOpenTransport>() <= 256, "StringOpenTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<StructExpressionTransport>() > 256, "StructExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<StructExpressionTransport>() <= 256, "StructExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StructItemBraceTransport>() > 256, "StructItemBraceTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StructItemTransport>() <= 256, "StructItemTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StructItemTupleTransport>() > 256, "StructItemTupleTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StructItemUnitTransport>() > 256, "StructItemUnitTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StructPatternElementsTransport>() <= 256, "StructPatternElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<StructPatternTransport>() > 256, "StructPatternTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TokenBindingPatternTransport>() > 256, "TokenBindingPatternTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<StructPatternTransport>() <= 256, "StructPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TokenBindingPatternTransport>() <= 256, "TokenBindingPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TokenKeywordsEnum>() <= 256, "TokenKeywordsEnum is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TokenRepetitionPatternTextTransport>() <= 256, "TokenRepetitionPatternTextTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TokenRepetitionPatternTransport>() > 256, "TokenRepetitionPatternTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TokenRepetitionTransport>() > 256, "TokenRepetitionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TokenRepetitionPatternTransport>() <= 256, "TokenRepetitionPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TokenRepetitionTransport>() <= 256, "TokenRepetitionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TokenTreeBraceTransport>() <= 256, "TokenTreeBraceTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TokenTreeBracketTransport>() <= 256, "TokenTreeBracketTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TokenTreeParenTransport>() <= 256, "TokenTreeParenTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -39208,40 +39208,40 @@ const _: () = assert!(::core::mem::size_of::<TraitBoundsTransport>() <= 256, "Tr
 const _: () = assert!(::core::mem::size_of::<TraitItemTransport>() > 256, "TraitItemTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TryBlockTransport>() <= 256, "TryBlockTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TryExpressionTransport>() <= 256, "TryExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TupleExpressionTransport>() > 256, "TupleExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TupleExpressionTransport>() <= 256, "TupleExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TuplePatternElementsTransport>() <= 256, "TuplePatternElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TuplePatternTransport>() > 256, "TuplePatternTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TupleStructPatternTransport>() > 256, "TupleStructPatternTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TupleTypeTransport>() > 256, "TupleTypeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TuplePatternTransport>() <= 256, "TuplePatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TupleStructPatternTransport>() <= 256, "TupleStructPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TupleTypeTransport>() <= 256, "TupleTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeArgumentTransport>() > 256, "TypeArgumentTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeArgumentsElementsTransport>() <= 256, "TypeArgumentsElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TypeArgumentsTransport>() > 256, "TypeArgumentsTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TypeArgumentsTransport>() <= 256, "TypeArgumentsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeBindingTransport>() > 256, "TypeBindingTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TypeCastExpressionTransport>() > 256, "TypeCastExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TypeIdentifierTransport>() > 256, "TypeIdentifierTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TypeCastExpressionTransport>() <= 256, "TypeCastExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TypeIdentifierTransport>() <= 256, "TypeIdentifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeItemTransport>() > 256, "TypeItemTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeParameterTransport>() > 256, "TypeParameterTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeParametersElementsTransport>() <= 256, "TypeParametersElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TypeParametersTransport>() > 256, "TypeParametersTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TypeParametersTransport>() <= 256, "TypeParametersTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypesTransport>() <= 256, "TypesTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<UnaryExpressionTransport>() > 256, "UnaryExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<UnaryExpressionTransport>() <= 256, "UnaryExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<UnionItemTransport>() > 256, "UnionItemTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<UnsafeBlockTransport>() <= 256, "UnsafeBlockTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<UseAsClauseTransport>() > 256, "UseAsClauseTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<UseAsClauseTransport>() <= 256, "UseAsClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<UseBoundsElementsTransport>() <= 256, "UseBoundsElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<UseBoundsTransport>() > 256, "UseBoundsTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<UseBoundsTransport>() <= 256, "UseBoundsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<UseClausesTransport>() <= 256, "UseClausesTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<UseDeclarationTransport>() > 256, "UseDeclarationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<UseListTransport>() > 256, "UseListTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<UseWildcardGroupTransport>() > 256, "UseWildcardGroupTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<UseWildcardTransport>() > 256, "UseWildcardTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<VariadicParameterTransport>() > 256, "VariadicParameterTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<VisibilityModifierPubScopeInPathTransport>() > 256, "VisibilityModifierPubScopeInPathTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<UseListTransport>() <= 256, "UseListTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<UseWildcardGroupTransport>() <= 256, "UseWildcardGroupTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<UseWildcardTransport>() <= 256, "UseWildcardTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<VariadicParameterTransport>() <= 256, "VariadicParameterTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<VisibilityModifierPubScopeInPathTransport>() <= 256, "VisibilityModifierPubScopeInPathTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<VisibilityModifierPubScopeTransport>() <= 256, "VisibilityModifierPubScopeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<VisibilityModifierPubTransport>() > 256, "VisibilityModifierPubTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<VisibilityModifierPubTransport>() <= 256, "VisibilityModifierPubTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<VisibilityModifierTransport>() <= 256, "VisibilityModifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<WhereClauseTransport>() > 256, "WhereClauseTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<WherePredicateTransport>() > 256, "WherePredicateTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<WhereClauseTransport>() <= 256, "WhereClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<WherePredicateTransport>() <= 256, "WherePredicateTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<WherePredicatesTransport>() <= 256, "WherePredicatesTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<WhileExpressionTransport>() > 256, "WhileExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<WhileExpressionTransport>() <= 256, "WhileExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<YieldExpressionTransport>() <= 256, "YieldExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");

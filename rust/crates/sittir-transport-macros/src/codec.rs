@@ -352,7 +352,7 @@ mod tests {
             #[transport(kind = kind::LET_DECLARATION)]
             pub struct LetDeclarationTransport {
                 #[wire(key = "$_layout")]
-                pub layout: Option<TransportLayout>,
+                pub layout: Option<Box<TransportLayout>>,
                 #[wire(key = "_pattern")]
                 #[slot(field = field::PATTERN)]
                 pub pattern: SlotValue<PatternTransport>,
@@ -376,7 +376,7 @@ mod tests {
             #[transport(kind = kind::SELF, text = "self")]
             pub struct SelfTransport {
                 #[wire(key = "$_layout")]
-                pub layout: Option<TransportLayout>,
+                pub layout: Option<Box<TransportLayout>>,
                 #[wire(key = "$text")]
                 pub text: String,
             }
@@ -392,7 +392,7 @@ mod tests {
             #[transport(kind = kind::IDENTIFIER, text)]
             pub struct IdentifierTransport {
                 #[wire(key = "$_layout")]
-                pub layout: Option<TransportLayout>,
+                pub layout: Option<Box<TransportLayout>>,
                 #[wire(key = "$text")]
                 pub text: String,
             }
@@ -409,7 +409,7 @@ mod tests {
             #[transport(kind = IDENTIFIER, text)]
             pub struct IdentifierTransport {
                 #[wire(key = "$_layout")]
-                pub layout: Option<TransportLayout>,
+                pub layout: Option<Box<TransportLayout>>,
                 #[wire(key = "$text")]
                 pub text: String,
             }

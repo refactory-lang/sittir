@@ -2080,11 +2080,6 @@ function literalSeamedArm(enumName: string, variant: string, write: string, seam
 	];
 }
 
-interface UnitKindIds {
-	readonly ids: readonly { readonly id: number; readonly unit: FixedLiteral }[];
-	readonly allResolved: boolean;
-}
-
 function unitKindIdsOf(
 	entry: PerSlotChildEnum,
 	units: ReadonlyMap<string, ChoiceUnit>,
@@ -2092,7 +2087,7 @@ function unitKindIdsOf(
 	validKinds: readonly { readonly kind: string; readonly node: AssembledNode }[],
 	fixed: FixedLiterals,
 	kindEntries: readonly KindEnumEntry[]
-): UnitKindIds {
+): readonly { readonly id: number; readonly unit: FixedLiteral }[] {
 	const ids: { id: number; unit: FixedLiteral }[] = [];
 	const seen = new Set<number>();
 	const push = (id: number, unit: FixedLiteral): void => {
@@ -2100,48 +2095,15 @@ function unitKindIdsOf(
 		seen.add(id);
 		ids.push({ id, unit });
 	};
-	let allResolved = true;
 	for (const literal of entry.literals) {
 		const id = resolveLiteralKindId(literal, kindEntries);
-		if (id === undefined) allResolved = false;
-		else push(id, fixedLiteralOf(fixed, literal.kind));
+		if (id !== undefined) push(id, fixedLiteralOf(fixed, literal.kind));
 	}
 	for (const { kind, node } of validKinds) {
 		if (!isFixedTextLeaf(node)) continue;
 		for (const id of acceptedIdsOf(kind, node)) push(id, fixedLiteralOf(fixed, node.kind));
 	}
-	return { ids, allResolved };
-}
-
-function prepareFilledSlotOf(entry: PerSlotChildEnum, nodeMap: NodeMap): AssembledNonterminal | undefined {
-	const slot = nodeMap.nodes.get(entry.ownerKind)?.slots.find((candidate) => candidate.name === entry.fieldName);
-	return slot !== undefined && isPrepareFilled(slot) ? slot : undefined;
-}
-
-function fromKindIdImpl(
-	enumName: string,
-	entry: PerSlotChildEnum,
-	unitIds: UnitKindIds,
-	hasPayloadVariants: boolean,
-	blank: boolean
-): string[] {
-	if (hasPayloadVariants || !unitIds.allResolved) {
-		throw new Error(
-			`render-module: ${entry.ownerKind}.${entry.fieldName} is a registered choice option filled at prepare, but ${enumName} has an arm no kind id can build`
-		);
-	}
-	return [
-		`impl ${enumName} {`,
-		'    pub fn from_kind_id(id: u16) -> Option<Self> {',
-		'        match id {',
-		...unitIds.ids.map(({ id, unit }) => `            ${id} => Some(Self::${unit.variant}),`),
-		...(blank ? [`            ${BLANK_KIND_ID} => Some(Self::${BLANK_VARIANT}),`] : []),
-		'            _ => None,',
-		'        }',
-		'    }',
-		'}',
-		''
-	];
+	return ids;
 }
 
 function alternatesOf(ids: readonly number[], alternates: ReadonlyMap<number, number>): number[] {
@@ -2196,7 +2158,7 @@ function emitPerSlotChildEnum(
 	const claim = (variant: string, id: number): void => {
 		claimedBy.set(variant, [...(claimedBy.get(variant) ?? []), id]);
 	};
-	for (const { id, unit } of unitIds.ids) {
+	for (const { id, unit } of unitIds) {
 		emittedIds.add(id);
 		claim(unit.variant, id);
 	}
@@ -2259,9 +2221,6 @@ function emitPerSlotChildEnum(
 		)
 	);
 
-	if (prepareFilledSlotOf(entry, nodeMap) !== undefined) {
-		lines.push(...fromKindIdImpl(enumName, entry, unitIds, nodeKinds.length > 0, blank));
-	}
 	lines.push(`impl ::sittir_core::render::Render for ${enumName} {`);
 	lines.push(
 		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
@@ -3136,7 +3095,7 @@ function renderTransportDataStruct(
 	);
 	const body = isLeafNode ? leafRenderExpr(node, 'self') : `${rustTypedRenderFnName(node.typeName)}(self, w)`;
 	const owner = !isLeafNode || ownsTrivia(kindEntries, node.kind);
-	lines.push(`        ${layoutRenderCall('self.layout.as_ref()', ownKind, owner, body)}`);
+	lines.push(`        ${layoutRenderCall('self.layout.as_deref()', ownKind, owner, body)}`);
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
@@ -3272,7 +3231,7 @@ function renderFixedLiteralTransport(typeName: string, fixed: FixedLiteral, read
 	];
 }
 
-const LAYOUT_FIELD = { wireKey: '$_layout', rustName: 'layout', rustType: 'Option<TransportLayout>' } as const;
+const LAYOUT_FIELD = { wireKey: '$_layout', rustName: 'layout', rustType: 'Option<Box<TransportLayout>>' } as const;
 
 function wireKeyAttr(key: string): string {
 	return `    #[wire(key = ${JSON.stringify(key)})]`;

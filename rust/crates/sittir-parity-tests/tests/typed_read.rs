@@ -170,13 +170,13 @@ use sittir_core::{SlotValue, Transport};
 use sittir_rust::render::{field_ids as field, kind_ids as kind};
 use sittir_typescript::render::kind_ids as ts;
 
-type Layout = Option<sittir_core::layout::TransportLayout<()>>;
+type Layout = Option<Box<sittir_core::layout::TransportLayout<()>>>;
 
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = kind::IDENTIFIER, text)]
 struct Ident {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "$text")]
     text: String,
 }
@@ -185,14 +185,14 @@ struct Ident {
 #[transport(kind = kind::PARAMETERS, layout = [kind::LPAREN, kind::RPAREN])]
 struct Params {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = kind::BLOCK, layout = [kind::LBRACE, kind::RBRACE], gap(1) = statements)]
 struct Block {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS)]
     statements: Option<Vec<SlotValue<Function>>>,
@@ -202,7 +202,7 @@ struct Block {
 #[transport(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD])]
 struct Function {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     name: SlotValue<Ident>,
@@ -219,7 +219,7 @@ struct Function {
 #[transport(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD])]
 struct FunctionWithoutBody {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     name: SlotValue<Ident>,
@@ -232,7 +232,7 @@ struct FunctionWithoutBody {
 #[transport(kind = kind::SOURCE_FILE, gap(0) = statements)]
 struct File {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS)]
     statements: Option<Vec<SlotValue<Function>>>,
@@ -243,7 +243,7 @@ struct File {
 #[transport(kind = ts::_AUTOMATIC_SEMICOLON, text = ";")]
 struct Inserted {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "$text")]
     text: String,
 }
@@ -284,6 +284,14 @@ fn read_nth<T: ReadTransport>(
     T::read(&mut find(tree, kind, nth), &ReadCtx::new(source, 7), depth, Sides::root())
 }
 
+/// What the read placed on a node beside its own coordinate, which every read
+/// node names: `None` when it placed nothing.
+fn placed(layout: &Layout) -> Option<sittir_core::layout::TransportLayout<()>> {
+    let mut layout = (**layout.as_ref().expect("a read node names itself")).clone();
+    assert!(layout.at.take().is_some(), "a read node names itself");
+    (layout != sittir_core::layout::TransportLayout::default()).then_some(layout)
+}
+
 fn function(file: &File, i: usize) -> &Function {
     file.statements.as_ref().unwrap()[i].transport().expect("read within the depth")
 }
@@ -313,7 +321,7 @@ fn a_function_reads_into_its_slots_with_its_layout_tokens_skipped() {
     let f = function(&file, 0);
     assert_eq!(f.name.transport().unwrap().text, "f");
     assert_eq!(f.body.transport().unwrap().statements, Some(vec![]));
-    assert_eq!((&f.layout, &file.layout), (&None, &None));
+    assert_eq!((placed(&f.layout), placed(&file.layout)), (None, None));
 }
 
 #[test]
@@ -384,7 +392,7 @@ fn a_missing_token_routes_as_its_kind() {
     let tree = parse_rust(source);
     assert!(find(&tree, kind::RPAREN, 0).node().is_missing());
     let file: File = read(&tree, source, Depth::All).unwrap();
-    assert_eq!(function(&file, 0).parameters.transport().unwrap().layout, None);
+    assert_eq!(placed(&function(&file, 0).parameters.transport().unwrap().layout), None);
 }
 
 #[test]
@@ -420,7 +428,7 @@ enum Type {
 #[transport(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT])]
 struct Typed {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     name: SlotValue<Ident>,
@@ -499,7 +507,7 @@ fn a_unit_variant_owns_no_trivia_so_a_comment_after_it_trails_the_owner_before()
 #[transport(kind = ts::IDENTIFIER, text)]
 struct TsIdent {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "$text")]
     text: String,
 }
@@ -508,7 +516,7 @@ struct TsIdent {
 #[transport(kind = ts::NUMBER_DECIMAL, text)]
 struct TsNumber {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "$text")]
     text: String,
 }
@@ -517,7 +525,7 @@ struct TsNumber {
 #[transport(kind = ts::VARIABLE_DECLARATOR_PLAIN, layout = [ts::EQ])]
 struct Declarator {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_name")]
     #[slot(field = ts_field::NAME)]
     name: SlotValue<TsIdent>,
@@ -548,7 +556,7 @@ enum Terminator {
 #[transport(kind = ts::LEXICAL_DECLARATION)]
 struct Declaration {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_kind")]
     #[slot(field = ts_field::KIND)]
     kind: SlotValue<DeclarationKind>,
@@ -586,7 +594,7 @@ enum BlockTerminator {
 #[transport(kind = ts::STATEMENT_BLOCK, layout = [ts::LBRACE, ts::RBRACE])]
 struct StatementBlock {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_terminator")]
     #[slot(field = ts_field::TERMINATOR)]
     terminator: Option<SlotValue<BlockTerminator>>,
@@ -610,7 +618,7 @@ fn an_absent_slot_with_a_blank_arm_reads_as_its_blank() {
 )]
 struct Decimal {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     content: String,
@@ -623,7 +631,7 @@ struct Decimal {
 #[transport(kind = kind::_TYPE_IDENTIFIER, display, envelope, content = content)]
 struct TypeIdent {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_content")]
     content: SlotValue<Ident>,
 }
@@ -641,7 +649,7 @@ enum NamedType {
 #[transport(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT])]
 struct Named {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     name: SlotValue<Ident>,
@@ -679,14 +687,14 @@ fn an_envelope_holds_its_content_and_the_trivia_its_content_was_given() {
 #[transport(kind = kind::_ATTRIBUTED_PARAMETER)]
 struct Param {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = kind::PARAMETERS_ELEMENTS, list, item = item)]
 struct List {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
     item: Vec<SlotValue<Param>>,
@@ -699,7 +707,7 @@ struct List {
 #[transport(kind = kind::PARAMETERS, layout = [kind::LPAREN, kind::RPAREN], min_depth = 2, gap(1) = elements)]
 struct Owner {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
     elements: Option<SlotValue<List>>,
@@ -749,7 +757,7 @@ enum Name {
 #[transport(kind = kind::_TYPE_IDENTIFIER, display, envelope, content = content)]
 struct TypeIdentOfChoice {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_content")]
     content: SlotValue<Name>,
 }
@@ -765,7 +773,7 @@ enum NamedTypeOfChoice {
 #[transport(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT])]
 struct NamedOfChoice {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     name: SlotValue<Ident>,
