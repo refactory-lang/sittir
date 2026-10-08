@@ -149,7 +149,7 @@ describe('createEngine', () => {
 		expect(() => r.save('/dev/null')).toThrow('rendered text disposed');
 	});
 
-	it('rejects the surfaces and interceptors it does not implement', async () => {
+	it('rejects unimplemented surfaces and accepts interceptor options', async () => {
 		const f = fakeLanguage();
 		await expect(createEngine(f.language as never, { api: 'portable' } as never)).rejects.toThrow(
 			'api "portable" is not implemented'
@@ -157,10 +157,8 @@ describe('createEngine', () => {
 		await expect(createEngine(f.language as never, { api: 'strict' } as never)).rejects.toThrow(
 			'api "strict" is not implemented'
 		);
-		await expect(createEngine(f.language as never, { intercept: [{}] } as never)).rejects.toThrow(
-			'interceptors are not implemented'
-		);
 		expect(f.loads()).toBe(0);
+		await expect(createEngine(f.language as never, { intercept: [{}] } as never)).resolves.toBeDefined();
 		await expect(createEngine(f.language as never, { api: 'default', intercept: [] } as never)).resolves.toBeDefined();
 	});
 

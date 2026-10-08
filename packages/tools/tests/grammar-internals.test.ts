@@ -14,6 +14,36 @@ const sources: Readonly<Record<string, string>> = {
 };
 
 describe.each(stableGrammars())('%s grammar internals', (grammar) => {
+	it('keeps middleware on the canonical parsed and rendered engine surface', async () => {
+		const source = sources[grammar];
+		if (source === undefined) throw new Error(`Missing fixture for ${grammar}`);
+		const calls: string[] = [];
+		const engine = await createEngine(await languageByName(grammar), {
+			intercept: [
+				{
+					parse(call, next) {
+						calls.push(`parse:${call.source}`);
+						return next();
+					},
+					render(_call, next) {
+						calls.push('render');
+						return next();
+					}
+				}
+			]
+		});
+		try {
+			const root = engine.parse(source);
+			expect(engine.isParsedNode(root)).toBe(true);
+			using rendered = engine.render(root);
+			expect(rendered.toString()).toBe(source);
+			expect(rendered.toString()).toBe(source);
+			expect(calls).toEqual([`parse:${source}`, 'render']);
+		} finally {
+			engine.dispose();
+		}
+	});
+
 	it('uses the current engine with matching raw, coercion and wrap artifacts', async () => {
 		const source = sources[grammar];
 		if (source === undefined) throw new Error(`Missing fixture for ${grammar}`);
