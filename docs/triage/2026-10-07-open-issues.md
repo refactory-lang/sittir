@@ -105,7 +105,7 @@ The fixes have focused red/green regressions and regeneration coverage. Backlog 
 | Issue | Priority | Disposition / next action |
 |---|---|---|
 | [#627 — Corpus rebuild failures: builders reject real source](https://github.com/refactory-lang/sittir/issues/627) | P2 | Closed at maintainer request. Documented audit samples now rebuild with zero failures/differences; original TypeScript/regex files were not committed. Reopen for a new reproducing input. |
-| [#577 — Circular types when a list kind is a member of its own element union](https://github.com/refactory-lang/sittir/issues/577) | P2 | Historical cycle is resolved by shallow node admission and lazy namespace argument rows. An isolated emitted recursive-list fixture compiles on TypeScript 6 and 7 with own-kind built/parsed nodes, nested loose configs, setters, and map-wide rows. Python grammar remains unchanged; the inline trial's delimiter gap is tracked separately in [#716](https://github.com/refactory-lang/sittir/issues/716). |
+| [#577 — Circular types when a list kind is a member of its own element union](https://github.com/refactory-lang/sittir/issues/577) | P2 | Historical cycle is resolved by shallow node admission and lazy namespace argument rows. An isolated emitted recursive-list fixture compiles on TypeScript 6 and 7 with own-kind built/parsed nodes, nested loose configs, setters, and map-wide rows. Python's shipped helper rule on master passes its baseline and remains unchanged. The failed inline rewrite was an abandoned experiment; #716 was closed as not planned. |
 
 ## Correctness queue
 
