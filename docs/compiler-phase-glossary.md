@@ -373,24 +373,3 @@ entries already have an accepted reason.
 
 Reference:
 [glossary/compiler-diagnostics.md](glossary/compiler-diagnostics.md).
-
-## Rust Clippy emission policy
-
-### `packages/codegen/src/emitters/kind-id-rust.ts::kindIdPattern`
-
-Prints the parser-derived scalar child-id set as a Rust match pattern.
-The context holds the output parts. Sorted contiguous runs of three or
-more ids use inclusive ranges; singletons and pairs remain explicit.
-Only exact consecutive ids are combined, so holes in the admitted set
-remain holes. This changes syntax, not model admission.
-
-### `packages/codegen/src/emitters/render-module.ts::commonRustUseImports`
-
-The generated transport module permits `clippy::large_enum_variant`
-because `payloadCeilingAssertions` enforces the canonical pinned payload
-ceiling in both directions. Clippy's generic size heuristic does not
-override the measured boxing policy. This allowance applies to the
-transport module, not the rest of the generated crate.
-
-See [Clippy policy](clippy-policy.md) for the CI command and the separate
-legacy-deserializer exception.
