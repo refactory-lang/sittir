@@ -524,7 +524,7 @@ This section folds in what was ruled on 2026-10-08, the writer change ruled the 
     - an inserted statement takes the pattern's gap;
     - an explicit option overrides a detected one;
     - a source gap that departs from the file's own pattern is evened out to the pattern (statement-list gaps are no longer stamped, question 18).
-- **Detection stays internal.** There is no public `inferOptions`. The public way in stays `styleFrom` and the descriptor's `createEngine`. The tree-inferred options work's inference walk and "indentation as one fact" are absorbed into this design. Its per-site table resolved at `prepare` is dropped, and so is its tree layer in the native resolution: a detected option reaches the engine as an ordinary option (see [Detection](#detection)).
+- **Detection stays internal.** There is no public `inferOptions`. The public way in is `engine.styleFrom` (see [Detection](#detection)). The tree-inferred options work's inference walk and "indentation as one fact" are absorbed into this design. Its per-site table resolved at `prepare` is dropped, and so is its tree layer in the native resolution: a detected option reaches the engine as an ordinary option (see [Detection](#detection)).
 - **Where each detected option applies.**
   - The line ending and the indent unit apply to every render, a fragment included, and need no table.
     - The line ending is applied by a `LineEndings` write adapter at the end of the render (`docs/superpowers/plans/2026-10-08-line-endings.md`, approved, executed after the typed reader's 1c-i).
@@ -703,13 +703,19 @@ Precedence (ruled by the maintainer 2026-10-08) follows the acceptance that an e
 
 **Detected options are applied once, when `styleFrom` is called (ruled by the maintainer 2026-10-08).** `styleFrom` is the public entry; the detection behind it (`inferOptions`) stays internal. The native engine has no detected layer, and the client does no tracking.
 
-- **When:** a call to `styleFrom` runs detection on the tree it is given. The client lays the keys `createEngine` was given over the detected options and hands the result to the native engine as its options, replacing what the engine held. That is the only point where detected options are applied.
+- **When:** a call to `styleFrom` runs detection on the sources it is given. The client lays the keys `createEngine` was given over the detected options and hands the result to the native engine as its options, replacing what the engine held. That is the only point where detected options are applied.
 - **Parse runs no detection and changes no options.** Neither does rendering, editing or disposing a tree.
 - **Renders** go through the native resolve as today: per-call options over the engine's options, then the grammar's defaults.
-- **Consequence:** nothing changes an engine's style unless `styleFrom` is called. A caller who wants a file's own style calls it once on that file's tree; until then, and for every engine that never calls it, the `createEngine` options and the grammar's defaults apply.
+- **Consequence:** nothing changes an engine's style unless `styleFrom` is called. A caller who wants a file's own style calls it once with that file, or its tree; until then, and for every engine that never calls it, the `createEngine` options and the grammar's defaults apply.
 - **What the native engine needs:** a way to replace its options after construction. Today they are resolved once in the constructor.
 - **Cost:** detection is paid only on a `styleFrom` call. Stage 4 measures it.
-- **Open, an API shape for the maintainer:** this `styleFrom` acts on an engine and takes a tree, as `engine.styleFrom(tree)`. The tree-inferred options work ruled a different form: `styleFrom(language, ...paths)` and `rust.styleFrom(...paths)`, which read files, need no engine and return an options object. The two need reconciling. One way: keep the file form, returning options, and add the engine form, which applies them. Both would run the same internal detection.
+- **The shape (ruled by the maintainer 2026-10-08): `engine.styleFrom(...sources)`**, the one entry point.
+  - **Sources:** each is a tree the engine parsed, or a file path.
+  - **File I/O:** done by the client, not the native engine. `@sittir/common` reads each path with Node's `fs` (`readFile`), refuses a path whose extension is not in the descriptor's `fileTypes`, parses the text with the engine's own parser, and disposes those trees after detection, also when one fails. Trees the caller passed are left alone. Taking paths is what makes the call `async`. For a grammar with no file types, the type of `styleFrom` admits trees only.
+  - **More than one source:** detection's raw votes are summed across sources before the fold, so the result is never a majority of per-file majorities.
+  - **Applying:** the `createEngine` keys win, and one native call replaces the engine's options.
+  - **Return value:** the applied options, with each key marked `detected` or `defaulted`. That is the record the tree-inferred options work said `styleFrom` reports. Proposed, not ruled: a key the `createEngine` options set is marked `set`.
+  - **What it retires:** the engine-less `styleFrom(language, ...paths)` and `rust.styleFrom(...paths)` that the tree-inferred options work ruled, and the source-text `styleFromSource` beside them. Source text is parsed with `engine.parse` and passed as a tree.
 
 This reverses the render-options design, which put a tree layer above the engine's options in the native chain, and the reversal is ruled. An engine configured with `indent: '\t'` now renders a parsed four-space file with tabs; before, it followed the file. Nothing in the native chain or the table depends on a render naming its tree for options. The typed reader's `$_layout.at` names a node's tree for its own reasons (folding an untouched node to its source).
 
