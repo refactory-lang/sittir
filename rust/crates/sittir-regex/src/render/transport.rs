@@ -502,11 +502,11 @@ impl ::sittir_core::render::Render for TriviaTransport {
 }
 
 impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {
-    fn seam_text(&self) -> Option<&str> {
+    fn seam_gap(&self) -> Option<(::sittir_core::layout_kinds::LayoutKinds, Option<&str>)> {
         match self {
-            TriviaTransport::Newline => Some("\n"),
-            TriviaTransport::Blankline => Some("\n\n"),
-            TriviaTransport::DoubleBlankline => Some("\n\n\n"),
+            TriviaTransport::Newline => Some((::sittir_core::layout_kinds::LayoutKinds::NEWLINE, None)),
+            TriviaTransport::Blankline => Some((::sittir_core::layout_kinds::LayoutKinds::BLANKLINE, None)),
+            TriviaTransport::DoubleBlankline => Some((::sittir_core::layout_kinds::LayoutKinds::DOUBLE_BLANKLINE, None)),
             _ => None,
         }
     }
@@ -4302,7 +4302,6 @@ fn render_lookahead_assertion(node: &LookaheadAssertionTransport, w: &mut dyn ::
     let pattern = &node.pattern;
     w.edge(::sittir_core::types::KindId(56), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(?")?;
-    w.adjacent();
     w.site_at(options::SITE_LOOKAHEAD_ASSERTION_LPAREN_QMARK_AFTER);
     content.render(w)?;
     pattern.render(w)?;
@@ -4317,7 +4316,6 @@ fn render_lookbehind_assertion(node: &LookbehindAssertionTransport, w: &mut dyn 
     let pattern = &node.pattern;
     w.edge(::sittir_core::types::KindId(57), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(?<")?;
-    w.adjacent();
     w.site_at(options::SITE_LOOKBEHIND_ASSERTION_LPAREN_QMARK_LT_AFTER);
     content.render(w)?;
     pattern.render(w)?;
@@ -4376,7 +4374,6 @@ fn render_posix_character_class(node: &PosixCharacterClassTransport, w: &mut dyn
     let posix_class_name = &node.posix_class_name;
     w.edge(::sittir_core::types::KindId(59), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[:")?;
-    w.adjacent();
     w.site_at(options::SITE_POSIX_CHARACTER_CLASS_LBRACK_COLON_AFTER);
     posix_class_name.render(w)?;
     w.site_at(options::SITE_POSIX_CHARACTER_CLASS_COLON_RBRACK_BEFORE);
@@ -4425,7 +4422,7 @@ fn render_named_capturing_group(node: &NamedCapturingGroupTransport, w: &mut dyn
     let pattern = &node.pattern;
     w.edge(::sittir_core::types::KindId(63), ::sittir_core::options::Side::Before, node.layout.edges().before);
     content.render(w)?;
-    w.adjacent();
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     group_name.render(w)?;
     w.site_at(options::SITE_NAMED_CAPTURING_GROUP_GT_BEFORE);
     w.text(">")?;
@@ -4487,7 +4484,6 @@ fn render_backreference_escape(node: &BackreferenceEscapeTransport, w: &mut dyn 
     w.site_at(options::SITE_BACKREFERENCE_ESCAPE_BSLASHK_AFTER);
     w.site_at(options::SITE_BACKREFERENCE_ESCAPE_LT_BEFORE);
     w.text("<")?;
-    w.adjacent();
     w.site_at(options::SITE_BACKREFERENCE_ESCAPE_LT_AFTER);
     group_name.render(w)?;
     w.site_at(options::SITE_BACKREFERENCE_ESCAPE_GT_BEFORE);
@@ -4500,7 +4496,6 @@ fn render_named_group_backreference(node: &NamedGroupBackreferenceTransport, w: 
     let group_name = &node.group_name;
     w.edge(::sittir_core::types::KindId(72), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(?P=")?;
-    w.adjacent();
     w.site_at(options::SITE_NAMED_GROUP_BACKREFERENCE_LPAREN_QMARK_P_EQ_AFTER);
     group_name.render(w)?;
     w.site_at(options::SITE_NAMED_GROUP_BACKREFERENCE_RPAREN_BEFORE);
@@ -4548,7 +4543,7 @@ fn render_control_letter_escape(t: &ControlLetterEscapeTransport, w: &mut dyn ::
 fn render_identity_escape(node: &IdentityEscapeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     w.text("\\")?;
-    w.adjacent();
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     content.render(w)?;
     Ok(())
 }
@@ -4629,7 +4624,6 @@ fn render_inline_flags_group_enable(node: &InlineFlagsGroupEnableTransport, w: &
     let pattern = View::new(&node.pattern, "{}");
     w.edge(::sittir_core::types::KindId(83), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(?")?;
-    w.adjacent();
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_ENABLE_LPAREN_QMARK_AFTER);
     enabled.render(w)?;
     if pattern.is_present() {
@@ -4650,12 +4644,10 @@ fn render_inline_flags_group_toggle(node: &InlineFlagsGroupToggleTransport, w: &
     let pattern = View::new(&node.pattern, "{}");
     w.edge(::sittir_core::types::KindId(84), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(?")?;
-    w.adjacent();
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_TOGGLE_LPAREN_QMARK_AFTER);
     enabled.render(w)?;
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_TOGGLE_DASH_BEFORE);
     w.text("-")?;
-    w.adjacent();
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_TOGGLE_DASH_AFTER);
     disabled.render(w)?;
     if pattern.is_present() {
@@ -4678,7 +4670,6 @@ fn render_inline_flags_group_disable(node: &InlineFlagsGroupDisableTransport, w:
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_DISABLE_LPAREN_QMARK_AFTER);
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_DISABLE_DASH_BEFORE);
     w.text("-")?;
-    w.adjacent();
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_DISABLE_DASH_AFTER);
     disabled.render(w)?;
     if pattern.is_present() {
@@ -4730,19 +4721,19 @@ fn render_negation(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_co
 }
 
 fn render_tight(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(47)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.token_seam(""); Ok::<(), ::sittir_core::render::RenderError>(()) })
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(47)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); Ok::<(), ::sittir_core::render::RenderError>(()) })
 }
 
 fn render_newline(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(48)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) })
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(48)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.seam(::sittir_core::layout_kinds::LayoutKinds::NEWLINE); Ok::<(), ::sittir_core::render::RenderError>(()) })
 }
 
 fn render_blankline(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(49)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.token_seam("\n\n"); Ok::<(), ::sittir_core::render::RenderError>(()) })
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(49)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.seam(::sittir_core::layout_kinds::LayoutKinds::BLANKLINE); Ok::<(), ::sittir_core::render::RenderError>(()) })
 }
 
 fn render_double_blankline(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(50)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.token_seam("\n\n\n"); Ok::<(), ::sittir_core::render::RenderError>(()) })
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(50)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.seam(::sittir_core::layout_kinds::LayoutKinds::DOUBLE_BLANKLINE); Ok::<(), ::sittir_core::render::RenderError>(()) })
 }
 
 fn render_caret(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {

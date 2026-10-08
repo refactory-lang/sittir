@@ -60,3 +60,20 @@ describe('a macro separator leaf keeps its own text', () => {
 		}, 120_000);
 	}
 });
+
+describe('a template join no longer takes a line break from the block it ends', () => {
+	it('keeps the line break after the header of an async with whose body is an async for', async () => {
+		const source = '\nasync with a as b:\n  async for c in d:\n     [e async for f in g]\n';
+		const { rendered } = await probe('python', source, 'with_statement');
+		expect(rendered).toContain('async with a as b:\n    async for c in d:');
+	}, 120_000);
+});
+
+describe('a word-collision space passes the leaf edge like any held seam', () => {
+	it('keeps rust string content glued to the escape sequence before it', async () => {
+		const source = 'fn f() { let s = "foo\\x42\\x43bar"; }';
+		const { rendered } = await probe('rust', source, 'string_literal');
+		expect(rendered).toContain('\\x43bar');
+		expect(rendered).not.toContain('\\x43 bar');
+	}, 120_000);
+});

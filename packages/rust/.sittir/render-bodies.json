@@ -3380,9 +3380,6 @@
 			"text": "for"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "for_keyword_after"
 		},
@@ -5979,9 +5976,6 @@
 			"name": "content"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "tokenSeam",
 			"text": "\n"
 		}
@@ -6554,9 +6548,6 @@
 		{
 			"kind": "text",
 			"text": ":"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -8107,9 +8098,6 @@
 		{
 			"kind": "text",
 			"text": "("
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",

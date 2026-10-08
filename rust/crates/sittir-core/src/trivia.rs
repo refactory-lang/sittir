@@ -7,6 +7,7 @@
 //! that follow the owner on that row, so the sink holds it until the next
 //! owner, coordinate or line break (`RenderSink::defer_trailing`).
 
+use crate::layout_kinds::LayoutKinds;
 use crate::options::Side;
 use crate::render::{Render, RenderResult, RenderSink};
 use crate::types::KindId;
@@ -29,19 +30,20 @@ impl<T: Render> Render for TriviaEntry<T> {
     }
 }
 
-/// A trivia value that is whitespace answers its text: it is merged into the
-/// gap it sits in (`RenderSink::trivia_seam`), replacing that gap's default,
-/// instead of being written as a line of its own.
+/// A trivia value that is whitespace answers its gap kind: it is merged into
+/// the gap it sits in (`RenderSink::trivia_seam`), replacing that gap's
+/// default, instead of being written as a line of its own. A line
+/// continuation also answers the source text it was read with.
 pub trait TriviaSeam {
-    fn seam_text(&self) -> Option<&str> {
+    fn seam_gap(&self) -> Option<(LayoutKinds, Option<&str>)> {
         None
     }
 }
 
 impl<T: Render + TriviaSeam> TriviaEntry<T> {
-    fn seam_text(&self) -> Option<&str> {
+    fn seam_gap(&self) -> Option<(LayoutKinds, Option<&str>)> {
         match &self.value {
-            SlotValue::Transport(value) => value.seam_text(),
+            SlotValue::Transport(value) => value.seam_gap(),
             SlotValue::Coord(_) => None,
         }
     }
@@ -110,18 +112,22 @@ impl<T> Default for TransportTrivia<T> {
 /// a line comment on its row would be swallowed by it. Where the output
 /// already stands at a line start (an entry whose span includes its
 /// terminator), the join is already made.
-fn join(text: &str, w: &mut dyn RenderSink) {
+fn join(gap: LayoutKinds, w: &mut dyn RenderSink) {
     if !w.ends_line() {
-        whitespace(text, true, w);
+        whitespace(gap, None, true, w);
     }
 }
 
 /// A whitespace entry's text, which replaces the seam at its gap. Right
 /// after an entry (`after_entry`) it is kept to at least the line break that
 /// entry left pending; anywhere else it replaces the gap's seam outright.
-fn whitespace(text: &str, after_entry: bool, w: &mut dyn RenderSink) {
-    let keeps_break = after_entry && w.pending_break() && !text.contains('\n');
-    w.trivia_seam(if keeps_break { "\n" } else { text });
+fn whitespace(gap: LayoutKinds, text: Option<&str>, after_entry: bool, w: &mut dyn RenderSink) {
+    let keeps_break = after_entry && w.pending_break() && !gap.breaks();
+    if keeps_break {
+        w.trivia_seam(LayoutKinds::NEWLINE, None);
+    } else {
+        w.trivia_seam(gap, text);
+    }
 }
 
 /// Render `entries` separated by `between`, a whitespace entry taking the
@@ -129,13 +135,13 @@ fn whitespace(text: &str, after_entry: bool, w: &mut dyn RenderSink) {
 /// it; only the joins are written here.
 fn render_joined<T: Render + TriviaSeam>(
     entries: &[TriviaEntry<T>],
-    between: &dyn Fn(&TriviaEntry<T>) -> &'static str,
+    between: &dyn Fn(&TriviaEntry<T>) -> LayoutKinds,
     w: &mut dyn RenderSink,
 ) -> RenderResult {
     let mut previous: Option<&TriviaEntry<T>> = None;
     for entry in entries {
-        if let Some(text) = entry.seam_text() {
-            whitespace(text, previous.is_some(), w);
+        if let Some((gap, text)) = entry.seam_gap() {
+            whitespace(gap, text, previous.is_some(), w);
             previous = None;
             continue;
         }
@@ -163,9 +169,9 @@ impl<T: Render + TriviaSeam> TransportTrivia<T> {
     /// owner's row joins it with a space, any other ends its line.
     pub fn render_leading(&self, w: &mut dyn RenderSink) -> RenderResult {
         let leading = self.leading.as_deref().unwrap_or(&[]);
-        let owner_join = |entry: &TriviaEntry<T>| if entry.same_line { " " } else { "\n" };
+        let owner_join = |entry: &TriviaEntry<T>| if entry.same_line { LayoutKinds::SPACE } else { LayoutKinds::NEWLINE };
         render_joined(leading, &owner_join, w)?;
-        if let Some(last) = leading.last().filter(|entry| entry.seam_text().is_none()) {
+        if let Some(last) = leading.last().filter(|entry| entry.seam_gap().is_none()) {
             join(owner_join(last), w);
         }
         Ok(())
@@ -202,13 +208,13 @@ impl<T: Render + TriviaSeam> TransportTrivia<T> {
             let mut gap_set = false;
             let mut after_entry = false;
             for entry in own_line {
-                if let Some(text) = entry.seam_text() {
-                    whitespace(text, std::mem::replace(&mut after_entry, false), w);
+                if let Some((gap, text)) = entry.seam_gap() {
+                    whitespace(gap, text, std::mem::replace(&mut after_entry, false), w);
                     gap_set = true;
                     continue;
                 }
                 if !std::mem::replace(&mut gap_set, false) {
-                    join("\n", w);
+                    join(LayoutKinds::NEWLINE, w);
                 }
                 entry.render(w)?;
                 after_entry = true;
@@ -229,7 +235,7 @@ impl<T: Render + TriviaSeam> TransportTrivia<T> {
         let Some(entries) = self.inner.as_ref().and_then(|inner| inner.get(key)) else {
             return Ok(());
         };
-        let between: &'static str = if w.at_body_start() || w.ends_line() { "\n" } else { " " };
+        let between = if w.at_body_start() || w.ends_line() { LayoutKinds::NEWLINE } else { LayoutKinds::SPACE };
         render_joined(entries, &|_| between, w)
     }
 }

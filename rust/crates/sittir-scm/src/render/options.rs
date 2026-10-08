@@ -412,7 +412,10 @@ pub fn allowed(site: usize) -> &'static [u16] {
 /// Every layout kind (each `_layout` member, the depth movers among them where the grammar has them), the domain of `spacing_text`.
 pub const LAYOUT_KINDS: &[u16] = &[25, 26, 27, 28, 29, 30, 31, 32];
 
-pub const WHITESPACE: ::sittir_core::render::WhitespaceTable = ::sittir_core::render::WhitespaceTable { text_of: spacing_text, indent: INDENT_KIND, dedent: DEDENT_KIND, leaf_edges: LEAF_EDGES };
+/// The kind id the grammar gives each gap kind, by `LayoutKinds` bit.
+pub const GAPS: &[(u8, u16)] = &[(1, 25), (2, 26), (4, 27), (8, 28), (16, 29), (32, 30)];
+
+pub const WHITESPACE: ::sittir_core::render::WhitespaceTable = ::sittir_core::render::WhitespaceTable { text_of: spacing_text, indent: INDENT_KIND, dedent: DEDENT_KIND, leaf_edges: LEAF_EDGES, gaps: GAPS };
 
 /// Per spacing site, in vector order: the arm its table holds by default and the strength that default carries.
 pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[

@@ -93,7 +93,7 @@ export function indentUnitOf(nodeMap: NodeMap, declared: string | undefined, gra
 	return declared;
 }
 
-const LAYOUT_KIND_BITS: Readonly<Record<string, number>> = {
+export const LAYOUT_KIND_BITS: Readonly<Record<string, number>> = {
 	_tight: 1 << 0,
 	_space: 1 << 1,
 	_tab: 1 << 2,
@@ -124,4 +124,23 @@ export function leafEdgesOf(node: AssembledLeaf, nodeMap: NodeMap): LeafEdges | 
 	const leading = node.immediate ? (gaps.find(({ text }) => text === '')?.bit ?? 0) : accepts(dfa && leadingChars(dfa));
 	const trailing = accepts(dfa && trailingChars(dfa));
 	return leading === all && trailing === all ? undefined : { leading, trailing };
+}
+
+const LAYOUT_KINDS_PATH = '::sittir_core::layout_kinds::LayoutKinds';
+
+export const TIGHT_KINDS = `${LAYOUT_KINDS_PATH}::TIGHT`;
+export const NEWLINE_KINDS = `${LAYOUT_KINDS_PATH}::NEWLINE`;
+export const SEPARATING_KINDS = `${LAYOUT_KINDS_PATH}::SEPARATING`;
+export const CONTINUATION_KINDS = `${LAYOUT_KINDS_PATH}::LINE_CONTINUATION`;
+export const NO_KINDS = `${LAYOUT_KINDS_PATH}::NONE`;
+
+export function layoutKindsOfText(text: string): string {
+	const breaks = [...text].filter((c) => c === '\n').length;
+	if (breaks === 0) return `${LAYOUT_KINDS_PATH}::${text === '' ? 'TIGHT' : text.includes('\t') ? 'TAB' : 'SPACE'}`;
+	return `${LAYOUT_KINDS_PATH}::${breaks === 1 ? 'NEWLINE' : breaks === 2 ? 'BLANKLINE' : 'DOUBLE_BLANKLINE'}`;
+}
+
+export function breakingKindsOfText(text: string): string {
+	const breaks = Math.min(3, Math.max(1, [...text].filter((c) => c === '\n').length));
+	return `${LAYOUT_KINDS_PATH}::from_bits(${0x78 & ~((8 << (breaks - 1)) - 1)})`;
 }

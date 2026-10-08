@@ -221,7 +221,7 @@ impl NodeCoordinate {
         adjacent: bool,
     ) -> Result<(), crate::render::RenderError> {
         if adjacent {
-            w.adjacent();
+            w.seam(crate::layout_kinds::LayoutKinds::TIGHT);
         } else if let Some(seam) = self.edges.and_then(|e| e.before) {
             w.seam_arm(seam);
         }
@@ -524,7 +524,7 @@ mod tests {
         const EDGE_TABLE: WhitespaceTable = WhitespaceTable {
             text_of,
             indent: 0,
-            dedent: 0, leaf_edges: &[]
+            dedent: 0, leaf_edges: &[], gaps: &[(1, 1), (2, 2)]
         };
         static EDGES: [EdgeSite; 1] = [EdgeSite { before: 0, after: NO_SITE, before_arms: &[], after_arms: &[] }];
         static EDGE_ROWS: [u16; 10] = [NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 0];
@@ -667,7 +667,7 @@ mod tests {
     const TABLE: WhitespaceTable = WhitespaceTable {
         text_of,
         indent: 0,
-        dedent: 0, leaf_edges: &[]
+        dedent: 0, leaf_edges: &[], gaps: &[]
     };
 
     fn rendered(value: &dyn Render) -> String {

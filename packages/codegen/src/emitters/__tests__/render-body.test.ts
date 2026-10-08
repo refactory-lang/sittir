@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
+import { doubledFlanks,
 	ADJACENT,
 	DEDENT,
 	DYNAMIC_EDGE,
@@ -161,10 +161,10 @@ describe('printRustBody', () => {
 			'    w.text("fn ")?;',
 			'    name.render(w)?;',
 			'    w.text("(")?;',
-			'    w.adjacent();',
+			'    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);',
 			'    parameters.render(w)?;',
 			'    w.text(" ")?;',
-			'    w.token_seam("\\n");',
+			'    w.seam(::sittir_core::layout_kinds::LayoutKinds::NEWLINE);',
 			'    w.text("{}")?;',
 			'    Ok(())'
 		]);
@@ -210,9 +210,9 @@ describe('printRustBody', () => {
 		expect(printRustBody(concat(text(':'), INDENT, slot('block'), DEDENT), printer)).toEqual([
 			'    w.text(":")?;',
 			'    w.indent();',
-			'    w.seam("\\n");',
+			'    w.seam(::sittir_core::layout_kinds::LayoutKinds::from_bits(120));',
 			'    block.render(w)?;',
-			'    w.dedent("");',
+			'    w.dedent(::sittir_core::layout_kinds::LayoutKinds::NONE);',
 			'    Ok(())'
 		]);
 	});
@@ -221,9 +221,9 @@ describe('printRustBody', () => {
 		expect(printRustBody(concat(text(':'), INDENT, text('  \na'), DEDENT), printer)).toEqual([
 			'    w.text(":")?;',
 			'    w.indent();',
-			'    w.seam("  \\n");',
+			'    w.seam(::sittir_core::layout_kinds::LayoutKinds::from_bits(120));',
 			'    w.text("a")?;',
-			'    w.dedent("");',
+			'    w.dedent(::sittir_core::layout_kinds::LayoutKinds::NONE);',
 			'    Ok(())'
 		]);
 	});
@@ -341,6 +341,15 @@ describe('gateKeywordSlotSeams', () => {
 			site: (n) => `options::SITE_${n.toUpperCase()}`,
 			kinds: (names) => `&[${names.join(', ')}]`
 		});
-		expect(lines.join('\n')).toContain('if operator.kind_in(&*w, &[typeof_keyword]) {\n        w.seam(" ");\n    } else {\n        w.site_at(options::SITE_OPERATOR_AFTER);');
+		expect(lines.join('\n')).toContain('if operator.kind_in(&*w, &[typeof_keyword]) {\n        w.seam(::sittir_core::layout_kinds::LayoutKinds::SEPARATING);\n    } else {\n        w.site_at(options::SITE_OPERATOR_AFTER);');
+	});
+});
+
+describe('doubledFlanks', () => {
+	it('flags a join beside a site seam and a token seam, and leaves site beside site alone', () => {
+		expect(doubledFlanks([{ kind: 'adjacent' }, { kind: 'seam', field: 'a' }])).toHaveLength(1);
+		expect(doubledFlanks([{ kind: 'adjacent' }, { kind: 'tokenSeam', text: '\n' }])).toHaveLength(1);
+		expect(doubledFlanks([{ kind: 'seam', field: 'a' }, { kind: 'seam', field: 'b' }])).toHaveLength(0);
+		expect(doubledFlanks([{ kind: 'seam', field: 'a' }, { kind: 'tokenSeam', text: '\n' }])).toHaveLength(0);
 	});
 });

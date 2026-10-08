@@ -193,9 +193,9 @@ mod tests {
         fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
             w.text(&self.0)?;
             if self.0.starts_with("/*") {
-                w.seam(" ");
+                w.seam(crate::layout_kinds::LayoutKinds::SPACE);
             } else {
-                w.seam("\n");
+                w.seam(crate::layout_kinds::LayoutKinds::NEWLINE);
                 w.hold_line_end(crate::render::LineHold::Terminated);
             }
             Ok(())
@@ -276,7 +276,7 @@ mod tests {
                 ""
             }
         }
-        const TABLE: crate::render::WhitespaceTable = crate::render::WhitespaceTable { text_of, indent: 0, dedent: 0 , leaf_edges: &[]};
+        const TABLE: crate::render::WhitespaceTable = crate::render::WhitespaceTable { text_of, indent: 0, dedent: 0 , leaf_edges: &[], gaps: &[(1, 1), (2, 2)]};
         let tight = Some(EdgeArm { arm: TIGHT, strength: Some(SEAM_TRIVIA), dedent: None });
         let edged = |text, edges| MockTransport {
             text,
@@ -341,7 +341,7 @@ mod tests {
         let text = render_with(|w| {
             pattern.render(w)?;
             w.text(":")?;
-            w.seam("\n");
+            w.seam(crate::layout_kinds::LayoutKinds::NEWLINE);
             body.render(w)
         });
         assert_eq!(text, "case x: # c\npass");

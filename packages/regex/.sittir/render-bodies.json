@@ -57,9 +57,6 @@
 			"text": "<"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "lt_after"
 		},
@@ -403,9 +400,6 @@
 			"text": "-"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "dash_after"
 		},
@@ -470,9 +464,6 @@
 		{
 			"kind": "text",
 			"text": "(?"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -541,9 +532,6 @@
 			"text": "(?"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "lparen_qmark_after"
 		},
@@ -558,9 +546,6 @@
 		{
 			"kind": "text",
 			"text": "-"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -635,9 +620,6 @@
 			"text": "(?"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "lparen_qmark_after"
 		},
@@ -676,9 +658,6 @@
 		{
 			"kind": "text",
 			"text": "(?<"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -760,9 +739,6 @@
 			"text": "(?P="
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "lparen_qmarkP_eq_after"
 		},
@@ -835,9 +811,6 @@
 		{
 			"kind": "text",
 			"text": "[:"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",

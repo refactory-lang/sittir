@@ -27,7 +27,7 @@ fn text_of(kind: u16) -> &'static str {
 const TABLE: WhitespaceTable = WhitespaceTable {
     text_of,
     indent: INDENT,
-    dedent: DEDENT, leaf_edges: &[]
+    dedent: DEDENT, leaf_edges: &[], gaps: &[(1, 1), (2, 2), (8, 3), (16, 4)]
 };
 
 fn rt(value: &dyn Render) -> String {

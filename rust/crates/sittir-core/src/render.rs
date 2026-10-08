@@ -50,9 +50,25 @@ pub struct WhitespaceTable {
     /// Per kind id, the layout kinds its leaf pattern takes before it (low
     /// byte) and after it (high byte); 0 for a kind with no stamp.
     pub leaf_edges: &'static [u16],
+    /// The kind id the grammar gives each gap kind, by `LayoutKinds` bit.
+    pub gaps: &'static [(u8, u16)],
 }
 
 impl WhitespaceTable {
+    /// The gap kind a whitespace kind id is, when it is one (a depth arm or an
+    /// unknown id is not).
+    pub fn gap_of(&self, id: u16) -> Option<crate::layout_kinds::LayoutKinds> {
+        self.gaps.iter().find(|(_, gap)| *gap == id).map(|(bit, _)| crate::layout_kinds::LayoutKinds(*bit))
+    }
+
+    /// The text the grammar spells one gap kind with.
+    pub fn text_of_gap(&self, gap: crate::layout_kinds::LayoutKinds) -> &'static str {
+        match self.gaps.iter().find(|(bit, _)| *bit == gap.0) {
+            Some((_, id)) => (self.text_of)(*id),
+            None => gap.default_text(),
+        }
+    }
+
     /// The layout kinds a leaf of `kind` takes before and after it, when it is stamped.
     pub fn leaf_edges_of(&self, kind: KindId) -> Option<(u8, u8)> {
         self.leaf_edges.get(kind.0 as usize).copied().filter(|packed| *packed != 0).map(|packed| (packed as u8, (packed >> 8) as u8))
@@ -136,7 +152,6 @@ pub enum LineHold {
 
 pub trait RenderSink {
     fn text(&mut self, s: &str) -> RenderResult;
-    fn adjacent(&mut self);
     /// The next text is a leaf whose pattern takes layout text only of the
     /// `LayoutKinds` bits in `leading` before it and `trailing` after it.
     /// The next text is a leaf of `kind`: its edge stamp, when it carries one
@@ -145,10 +160,7 @@ pub trait RenderSink {
         let _ = kind;
     }
     fn leaf_edges(&mut self, leading: u8, trailing: u8) {
-        let _ = trailing;
-        if leading & crate::layout_kinds::LayoutKinds::SPACE.0 == 0 {
-            self.adjacent();
-        }
+        let _ = (leading, trailing);
     }
     fn site(&mut self, kind: u16);
     /// A site's arm with the strength its table row gives it; `site` is the
@@ -162,7 +174,7 @@ pub trait RenderSink {
     /// its arm at its strength.
     fn seam_arm(&mut self, seam: crate::slot::SeamArm) {
         if seam.dedent {
-            self.dedent("");
+            self.dedent(crate::layout_kinds::LayoutKinds::NONE);
         }
         self.site_with(seam.arm, seam.strength);
     }
@@ -186,13 +198,17 @@ pub trait RenderSink {
     /// template, and this writes nothing. Only a stamp carrying its strength
     /// is written: one set by a list gap's source class or a seat.
     fn unsited_edge(&mut self, _kind: KindId, _side: crate::options::Side, _stamped: Option<crate::options::EdgeArm>) {}
-    fn seam(&mut self, text: &str);
-    fn token_seam(&mut self, text: &str);
-    /// A whitespace trivia entry: its text replaces whatever seam the gap it
-    /// sits in would otherwise get. A sink that knows no strengths writes it
-    /// as a token seam.
-    fn trivia_seam(&mut self, text: &str) {
-        self.token_seam(text);
+    /// A join of two fragments: the layout kinds valid at the gap. A single
+    /// kind is a whitespace token and survives the end of a render; a set is
+    /// dropped there.
+    fn seam(&mut self, kinds: crate::layout_kinds::LayoutKinds);
+    /// A whitespace trivia entry: its kind replaces whatever seam the gap it
+    /// sits in would otherwise get. A line continuation carries the source
+    /// text it was read with. A sink that knows no strengths writes it as a
+    /// whitespace token.
+    fn trivia_seam(&mut self, gap: crate::layout_kinds::LayoutKinds, text: Option<&str>) {
+        let _ = text;
+        self.seam(gap);
     }
     /// Write the bytes a coordinate names, from the tree table this writer
     /// holds. The default refuses: a sink with no source table cannot answer
@@ -229,7 +245,7 @@ pub trait RenderSink {
     /// its bare delimiters. An empty seam merges nothing. This is the only
     /// place the "may a break follow a dedent" question is answered — a
     /// caller never asks it.
-    fn dedent(&mut self, seam: &str);
+    fn dedent(&mut self, seam: crate::layout_kinds::LayoutKinds);
     fn ends_line(&self) -> bool;
     /// Whether the seam held for the next write breaks the line.
     fn pending_break(&self) -> bool {
@@ -301,7 +317,9 @@ pub trait RenderSink {
 /// a whitespace token wrote it, and whether a list flank wrote it.
 #[derive(Debug, Clone)]
 pub struct HeldSeam {
-    pub text: String,
+    pub kinds: crate::layout_kinds::LayoutKinds,
+    pub pick: crate::layout_kinds::LayoutKinds,
+    pub cont: String,
     pub strength: u8,
     pub token: bool,
     pub flank: bool,

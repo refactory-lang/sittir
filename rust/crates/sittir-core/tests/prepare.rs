@@ -161,7 +161,7 @@ fn ws_text(kind: u16) -> &'static str {
         _ => "",
     }
 }
-const WS: WhitespaceTable = WhitespaceTable { text_of: ws_text, indent: 0, dedent: 0 , leaf_edges: &[]};
+const WS: WhitespaceTable = WhitespaceTable { text_of: ws_text, indent: 0, dedent: 0 , leaf_edges: &[], gaps: &[(2, 9)]};
 
 #[test]
 fn a_sink_writes_a_site_from_the_options_it_holds() {
@@ -503,7 +503,7 @@ fn flank_text(kind: u16) -> &'static str {
         _ => "",
     }
 }
-const FLANKS: WhitespaceTable = WhitespaceTable { text_of: flank_text, indent: 0, dedent: 0 , leaf_edges: &[]};
+const FLANKS: WhitespaceTable = WhitespaceTable { text_of: flank_text, indent: 0, dedent: 0 , leaf_edges: &[], gaps: &[(1, 1), (8, 3), (16, 4)]};
 
 #[test]
 fn a_root_reads_its_flanks_from_the_bytes_around_its_first_and_last_coordinate() {

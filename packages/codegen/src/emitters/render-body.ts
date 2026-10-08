@@ -1,3 +1,4 @@
+import { NO_KINDS, SEPARATING_KINDS, TIGHT_KINDS, breakingKindsOfText, layoutKindsOfText } from '../compiler/model/layout-kinds.ts';
 import { isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
 
 export function isWhitespaceOnly(text: string): boolean {
@@ -209,19 +210,23 @@ export function opensAsTag(node: BodyNode): boolean {
 }
 
 export function adjacentInto(body: Body): Body {
-	return body.flatMap((node): Body =>
-		node.kind === 'if'
-			? [
-					{
-						...node,
-						arms: node.arms.map((arm) => ({ ...arm, body: adjacentInto(arm.body) })),
-						fallback: node.fallback === undefined ? undefined : adjacentInto(node.fallback)
-					}
-				]
-			: node.kind === 'slot' || node.kind === 'seam' || node.kind === 'tokenSeam' || node.kind === 'text'
-				? [{ kind: 'adjacent' }, node]
-				: [node]
-	);
+	const out: BodyNode[] = [];
+	for (const node of body) {
+		const previous = out.at(-1);
+		const seamed = previous?.kind === 'seam' || previous?.kind === 'tokenSeam';
+		if (node.kind === 'if') {
+			out.push({
+				...node,
+				arms: node.arms.map((arm) => ({ ...arm, body: adjacentInto(arm.body) })),
+				fallback: node.fallback === undefined ? undefined : adjacentInto(node.fallback)
+			});
+		} else if (node.kind === 'slot' || node.kind === 'text') {
+			out.push(...(seamed ? [node] : [{ kind: 'adjacent' } as const, node]));
+		} else {
+			out.push(node);
+		}
+	}
+	return out;
 }
 
 export function isExpression(body: Body): boolean {
@@ -562,6 +567,7 @@ export interface RustBodyPrinter {
 	/** The Rust slice literal naming these kinds' ids, for a kind-gated arm. */
 	readonly kinds: (names: readonly string[]) => string;
 	readonly innerGap?: (name: string) => boolean;
+	readonly optional?: (name: string) => boolean;
 }
 
 export function escapeBraces(value: string): string {
@@ -571,6 +577,30 @@ export function escapeBraces(value: string): string {
 export function templateOf(flanks: Flanks | undefined): string {
 	if (flanks === undefined) return '{}';
 	return `${escapeBraces(flanks.prefix)}{}${escapeBraces(flanks.suffix)}`;
+}
+
+const SEAM_NODES: ReadonlySet<BodyNode['kind']> = new Set(['seam', 'adjacent', 'wordSeam', 'tokenSeam']);
+
+export function doubledFlanks(body: Body, path = 'body'): string[] {
+	const found: string[] = [];
+	let run: BodyNode[] = [];
+	const close = (at: number): void => {
+		if (run.length > 1 && run.some((n) => n.kind === 'adjacent' || n.kind === 'wordSeam')) found.push(`${path}[${at - run.length}..${at}] ${run.map((n) => n.kind).join('+')}`);
+		run = [];
+	};
+	body.forEach((node, i) => {
+		if (SEAM_NODES.has(node.kind)) {
+			run.push(node);
+			return;
+		}
+		close(i);
+		if (node.kind === 'if') {
+			node.arms.forEach((arm, a) => found.push(...doubledFlanks(arm.body, `${path}.if[${i}].arm${a}`)));
+			if (node.fallback !== undefined) found.push(...doubledFlanks(node.fallback, `${path}.if[${i}].else`));
+		}
+	});
+	close(body.length);
+	return found;
 }
 
 export function printRustBody(body: Body, printer: RustBodyPrinter): string[] {
@@ -629,10 +659,18 @@ function printStatements(
 			case 'space':
 				literal += ' ';
 				break;
-			case 'adjacent':
+			case 'adjacent': {
 				flush();
-				lines.push(`${pad}w.adjacent();`);
+				const left = body[i - 1];
+				if (left?.kind === 'slot' && printer.optional?.(left.name) === true) {
+					lines.push(`${pad}if ${printer.field(left.name)}.is_present() {`);
+					lines.push(`${pad}    w.seam(${TIGHT_KINDS});`);
+					lines.push(`${pad}}`);
+				} else {
+					lines.push(`${pad}w.seam(${TIGHT_KINDS});`);
+				}
 				break;
+			}
 			case 'slot':
 				flush();
 				seatGap(node.name);
@@ -652,23 +690,23 @@ function printStatements(
 			case 'indent':
 				flush();
 				lines.push(`${pad}w.indent();`);
-				lines.push(`${pad}w.seam(${rustStringLiteral(payload === '' ? DEPTH_BREAK : payload)});`);
+				lines.push(`${pad}w.seam(${breakingKindsOfText(payload === '' ? DEPTH_BREAK : payload)});`);
 				break;
 			case 'dedent':
 				flush();
 				if (payload !== '') {
-					lines.push(`${pad}w.dedent(${rustStringLiteral(payload)});`);
+					lines.push(`${pad}w.dedent(${layoutKindsOfText(payload)});`);
 				} else {
-					lines.push(`${pad}w.dedent("");`);
+					lines.push(`${pad}w.dedent(${NO_KINDS});`);
 				}
 				break;
 			case 'tokenSeam':
 				flush();
-				lines.push(`${pad}w.token_seam(${rustStringLiteral(node.text + payload)});`);
+				lines.push(`${pad}w.seam(${layoutKindsOfText(node.text + payload)});`);
 				break;
 			case 'wordSeam':
 				flush();
-				lines.push(`${pad}w.seam(" ");`);
+				lines.push(`${pad}w.seam(${SEPARATING_KINDS});`);
 				break;
 			case 'if': {
 				flush();

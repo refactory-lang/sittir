@@ -4,7 +4,7 @@ import type { KindEntryLike } from '../dsl/symbol-table.ts';
 import { findEntryForKindName } from '../dsl/symbol-table.ts';
 import { Delimiter } from '@sittir/common/utils';
 import { AssembledLeaf } from '../compiler/model/node-map.ts';
-import { leafEdgesOf } from '../compiler/model/layout-kinds.ts';
+import { LAYOUT_KIND_BITS, leafEdgesOf } from '../compiler/model/layout-kinds.ts';
 import { BLANK_ARM, BLANK_KIND_ID, type PreferenceArm, type SitePreference, type SpacingSide } from '../compiler/model/site-preferences.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { displayNameOf } from '../compiler/model/display-name.ts';
@@ -89,6 +89,7 @@ export interface RenderOptionsPlan {
 	readonly whitespaceText: readonly { readonly id: number; readonly text: string }[];
 	readonly kindFlags: readonly { readonly id: number; readonly flags: number }[];
 	readonly leafEdges: readonly { readonly id: number; readonly flags: number }[];
+	readonly gaps: readonly { readonly bit: number; readonly id: number }[];
 	readonly indentChars: readonly string[];
 	readonly indent: string;
 }
@@ -245,6 +246,12 @@ export function planRenderOptions(
 			.sort((a, b) => a.id - b.id),
 		kindFlags: kindFlagsOf(kindEntries, nodeMap),
 		leafEdges: leafEdgesTable(kindEntries, nodeMap),
+		gaps: [...whitespaceText.keys()]
+			.flatMap((kind) => {
+				const bit = LAYOUT_KIND_BITS[`_${kind}`];
+				return bit === undefined ? [] : [{ bit, id: idOf(kindEntries, kind, 'visibleExternals') }];
+			})
+			.sort((a, b) => a.bit - b.bit),
 		indentChars: indentChars(nodeMap),
 		indent: indentUnitOf(nodeMap, declaredIndent, grammar)
 	};
@@ -605,8 +612,10 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push("pub fn allowed(site: usize) -> &'static [u16] {", '    SPACING_SITES[site].3', '}', '');
 	L.push('/// Every layout kind (each `_layout` member, the depth movers among them where the grammar has them), the domain of `spacing_text`.');
 	L.push(`pub const LAYOUT_KINDS: &[u16] = &[${plan.whitespaceText.map((w) => w.id).join(', ')}];`, '');
+	L.push('/// The kind id the grammar gives each gap kind, by `LayoutKinds` bit.');
+	L.push(`pub const GAPS: &[(u8, u16)] = &[${plan.gaps.map((g) => `(${g.bit}, ${g.id})`).join(', ')}];`, '');
 	L.push(
-		'pub const WHITESPACE: ::sittir_core::render::WhitespaceTable = ::sittir_core::render::WhitespaceTable { text_of: spacing_text, indent: INDENT_KIND, dedent: DEDENT_KIND, leaf_edges: LEAF_EDGES };',
+		'pub const WHITESPACE: ::sittir_core::render::WhitespaceTable = ::sittir_core::render::WhitespaceTable { text_of: spacing_text, indent: INDENT_KIND, dedent: DEDENT_KIND, leaf_edges: LEAF_EDGES, gaps: GAPS };',
 		''
 	);
 	L.push('/// Per spacing site, in vector order: the arm its table holds by default and the strength that default carries.');
