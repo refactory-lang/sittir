@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { createEngine, hostTemplateFor, applyHost, type ReparseHosts } from '@sittir/common';
+import { createEngine, hostTemplateFor, applyHost } from '@sittir/common';
+import { requireGrammarModule } from '../src/grammar-internals.ts';
 import { compileGrammar } from '../../codegen/src/compiler/compile.ts';
 import { loadGeneratedIdTables } from '../../codegen/src/compiler/generated-metadata.ts';
 import { grammarPackage } from '@sittir/codegen/grammars';
@@ -12,7 +13,7 @@ describe.each(['python', 'rust', 'typescript'])('%s: every delimited kind, writt
 	it('shows the kind spanning the whole sample', async () => {
 		const { nodeMap } = await compileGrammar({ package: grammarPackage(grammar), generatedIdTables: await loadGeneratedIdTables(grammar) });
 		const engine: any = await createEngine((await import(`@sittir/${grammar}`)).default);
-		const { REPARSE_HOSTS } = (await import(`../../${grammar}/src/reparse-hosts.ts`)) as { REPARSE_HOSTS: ReparseHosts };
+		const { REPARSE_HOSTS } = await requireGrammarModule(grammar, 'reparse-hosts.ts');
 		const supertypes = new Map<string, string[]>();
 		for (const node of nodeMap.nodes.values()) {
 			if (node instanceof AssembledSupertype) for (const sub of node.subtypeNames) supertypes.set(sub, [...(supertypes.get(sub) ?? []), node.kind]);
