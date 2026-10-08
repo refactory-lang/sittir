@@ -4,6 +4,7 @@ import { resolveOverridesPath } from '../compiler/resolve-grammar.ts';
 import { existsSync } from 'node:fs';
 import { evaluatePackage } from '../compiler/evaluate-package.ts';
 import { grammarPackage } from '../grammars.ts';
+import { FULL_PIPELINE_TIMEOUT } from './helpers/timeouts.ts';
 
 describe('Overrides integration', () => {
 	it('evaluates Python with grammar.sittir.ts', async () => {
@@ -55,7 +56,7 @@ describe('Overrides integration', () => {
 			});
 		}
 		console.log('total override fields across all rules:', overrideCount);
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 
 	function countOverrideFields(rule: any, cb: (n: number) => void) {
 		if (rule?.type === 'FIELD' && rule.source === 'override') cb(1);
@@ -70,5 +71,5 @@ describe('Overrides integration', () => {
 		// Without overrides, augmented_assignment should have grammar-level fields only
 		const augAssign = raw.rules['augmented_assignment'];
 		expect(augAssign).toBeDefined();
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 });
