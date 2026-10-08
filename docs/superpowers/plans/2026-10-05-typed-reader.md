@@ -6532,7 +6532,8 @@ The native side of the switch: `parse` and `read`, and every read transport carr
 **Files:**
 - Modify: `rust/crates/sittir-core/src/layout.rs` (`TransportLayout::at`, its codec)
 - Modify: `rust/crates/sittir-core/src/read.rs` (`ReadCtx::coordinate`, `Placement::into_layout`, `Sides::into_layout`)
-- Modify: `rust/crates/sittir-transport-macros/src/expand.rs` (`common_inits`' layout init; `envelope_body`)
+- Modify: `rust/crates/sittir-transport-macros/src/expand.rs` (`common_inits`' layout init; `envelope_body`; slot arm guards; a struct's kind check; `from_kind_id`)
+- Modify: `packages/codegen/src/emitters/render-module.ts` (`fromKindIdImpl` goes)
 - Modify: `rust/crates/sittir-core/src/engine.rs` (`ParsedTree::read`)
 - Modify: `rust/crates/sittir-core/src/napi_engine.rs` (`parse`, `read`; the macro takes `$any:ty`)
 - Modify: `packages/codegen/src/emitters/native-crate.ts` (`AnyTransport` passed to `napi_engine!`; `NATIVE_RENDER_TRANSPORT_ABI` 20)
@@ -6675,7 +6676,15 @@ Its `FromNapiValue` reads `at` through `boundary::optional` as a coordinate obje
 
 `native-crate.ts` passes `AnyTransport` after `RenderRoot` and sets the ABI to 20. `NativeEngineLike` in `packages/common/src/engine.ts` declares `parse(source: string): string` and `read(treeId: number, index: number, depth?: number): object`, each with its JSDoc.
 
-- [ ] **Step 5: Regenerate, test, gate, commit**
+- [ ] **Step 5: The routing checks hydration needs**
+
+`read` is the first caller of `read_at` outside tests, so the checks 1a deferred land here, each with a unit test in the derive's or `read.rs`'s tests:
+- `read_at` refuses a parent type that does not admit the parent node's kind (`ReadError::Unadmitted` naming the parent's kind and index), instead of placing its sides by the wrong routes.
+- Two slots of one struct on one field: the derive puts each slot's `takes` test in its arm's guard, so a child the first slot does not take is tried on the second before it is refused as unrouted.
+- A struct's `read` refuses a node whose kind it does not admit (`ReadError::Unadmitted`), so a field-tagged child of an unexpected named kind is never read into the slot's struct, and a text leaf never reads another kind's text.
+- `from_kind_id` for a choice whose variants are all unit or blank is expanded by the derive from the `#[kind(…)]` claims it already reads; `fromKindIdImpl` in `render-module.ts` stops printing it, keeping its "an arm no kind id can build" error as the derive's compile error.
+
+- [ ] **Step 6: Regenerate, test, gate, commit**
 
 `pnpm run regen:all`. The round trip (`typed-read-parity`'s `round-trip` outcome) still compares encode and decode, now with `at` on every layout. The full gates; rendered bytes and validation rows unchanged, since no consumer calls the new methods.
 
@@ -6784,13 +6793,17 @@ Write each removal's glossary entry out of its glossary in the same commit, and 
 
 In `packages/tools/src/validate/common.ts`, `buildReadHandle`'s native path, `walkNativeForKind`, `findNativeNodeId`, `readUntypedNodeAt` and `hydrateChildOf` read through `TreeHandle.read` and `readNode`; a match is named by its coordinate (`$treeHandle`, `$span`) in place of a parent handle and child index. Each validator that walked `UntypedNode` fields walks the transport's `_slot` keys.
 
-- [ ] **Step 6: Review Focus tests**
+- [ ] **Step 6: No trivia on a node whose read keeps none**
+
+An enum kind whose grammar id is none of its member ids (typescript `predefined_type`) is given trivia by the placement rule and its read drops it; today's read lost it too, so parity never saw it, and with the typed read the only read it is a real loss. The placement rule and the read model agree instead: a node its transport stores as a unit variant or an enum member is never an owner, so an extra beside it goes by the rule's next case (the owner after it, the owner before it, or the parent's gap). Test in `packages/typescript/tests/`: `let x: number /* c */ = 1;` read and rendered from its data keeps `/* c */`.
+
+- [ ] **Step 7: Review Focus tests**
 
 In `packages/rust/tests/` (a new `typed-read-switch.test.ts`):
 - a `$trivia` write on a read `function_item` renders the new comment, and the untouched sibling renders its source bytes (Review Focus 4);
 - `let x = a;` read at depth 1: `value()` of the `let_declaration` is an `Identifier` whose `$render()` is `a` (Review Focus 5).
 
-- [ ] **Step 7: Regenerate and gate**
+- [ ] **Step 8: Regenerate and gate**
 
 `pnpm run regen:all`, then the full gates. Rendered bytes and validation rows unchanged. Report the type-check time against master, as the global constraints ask for the wrap's size.
 
@@ -6823,7 +6836,7 @@ Delete `read_untyped_node.rs` and its `pub mod`, `UntypedNode`, `FieldValue`, `N
 
 - [ ] **Step 4: The transitional methods go**
 
-Remove `typed_read_refusal`, `typed_read_parity`, `typed_read_round_trip` and their reports from `napi_engine.rs`; `typedReadRefusal`, `typedReadParity` and `typedReadRoundTrip` from `EngineDiagnostics`, `NativeLanguageEngine` and `NativeEngineLike`; the `typed-read-parity` tool and validator, and its row in `validate:native`. The round trip's encode and decode keep their coverage through every validator that reads a corpus file and renders it.
+Remove `typed_read_refusal`, `typed_read_parity`, `typed_read_round_trip` and their reports from `napi_engine.rs`; `typedReadRefusal`, `typedReadParity` and `typedReadRoundTrip` from `EngineDiagnostics`, `NativeLanguageEngine` and `NativeEngineLike`; the `typed-read-parity` tool and validator, and its row in `validate:native`. Its envelope-pin counts go with it: `assertEnvelopeExtrasPinned` in codegen is what enforces that ceiling. The round trip's encode and decode keep their coverage through every validator that reads a corpus file and renders it.
 
 - [ ] **Step 5: Gates, the PR**
 
