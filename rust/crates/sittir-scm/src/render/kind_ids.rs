@@ -179,7 +179,7 @@ pub fn stores_scalar(parent: KindId, field: Option<&str>, child: KindId) -> bool
         (47, Some("name")) => matches!(child.0, 7),
         (52, Some("prefix")) => matches!(child.0, 19 | 20),
         (52, Some("type")) => matches!(child.0, 4 | 18),
-        (54, Some("quantifier")) => matches!(child.0, 2 | 3 | 4),
+        (54, Some("quantifier")) => matches!(child.0, 2..=4),
         (61, Some("name")) => matches!(child.0, 7),
         _ => false,
     }

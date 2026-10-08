@@ -740,6 +740,12 @@ fn extras_run<'t>(
     (extras, None)
 }
 
+type ReadSlots = (
+    Option<IndexMap<String, FieldValue>>,
+    Option<Vec<UntypedNode>>,
+    Option<Vec<String>>,
+);
+
 /// Walk a node's children once, partitioning by whether the child
 /// occupies a field slot. Returns `(fields, children, slot_order)` ready
 /// to drop into `UntypedNode` — `slot_order` is the cross-bucket interleave
@@ -766,11 +772,7 @@ fn read_slots(
     depth: ReadDepth,
     model: &dyn ReadModel,
     mint: &mut dyn HandleMint,
-) -> (
-    Option<IndexMap<String, FieldValue>>,
-    Option<Vec<UntypedNode>>,
-    Option<Vec<String>>,
-) {
+) -> ReadSlots {
     let mut fields_acc: IndexMap<String, Vec<UntypedNode>> = IndexMap::new();
     let mut children_acc: Vec<UntypedNode> = Vec::new();
     let mut slot_order_acc: Vec<String> = Vec::new();

@@ -21,6 +21,19 @@ export interface KindConstant {
 	readonly id: number;
 }
 
+interface KindIdPatternCtx {
+	parts: string[];
+}
+
+function kindIdPattern(target: readonly number[], ctx: KindIdPatternCtx): string {
+	for (let index = 0; index < target.length; index++) {
+		const start = index;
+		while (index + 1 < target.length && target[index + 1] === target[index]! + 1) index++;
+		ctx.parts.push(index - start >= 2 ? `${target[start]}..=${target[index]}` : target.slice(start, index + 1).join(' | '));
+	}
+	return ctx.parts.join(' | ');
+}
+
 export function kindConstants(
 	entries: readonly { readonly member: string; readonly kind: string; readonly id: number; readonly parseId?: number; readonly parseName?: string }[]
 ): readonly KindConstant[] {
@@ -99,7 +112,9 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push('    match (parent.0, field) {');
 	for (const row of scalarChildRows(nodeMap, entries)) {
 		const fieldPattern = row.field === undefined ? 'None' : `Some(${JSON.stringify(row.field)})`;
-		lines.push(`        (${row.parentId}, ${fieldPattern}) => matches!(child.0, ${row.childIds.join(' | ')}),`);
+		lines.push(
+			`        (${row.parentId}, ${fieldPattern}) => matches!(child.0, ${kindIdPattern(row.childIds, { parts: [] })}),`
+		);
 	}
 	lines.push('        _ => false,');
 	lines.push('    }');
@@ -164,7 +179,6 @@ export function scalarChildRows(
 		.map((row) => ({ ...row, childIds: [...row.childIds].sort((a, b) => a - b) }))
 		.sort((a, b) => a.parentId - b.parentId || (a.field ?? '').localeCompare(b.field ?? ''));
 }
-
 
 
 

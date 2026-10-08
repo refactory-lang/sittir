@@ -147,13 +147,21 @@ static NEXT_TREE_ID: std::sync::atomic::AtomicU32 = std::sync::atomic::AtomicU32
 /// the JavaScript process instead (`claim_tree_id_from`), and this counter
 /// serves engines built in Rust alone.
 pub fn claim_tree_id() -> Option<u32> {
-    NEXT_TREE_ID
-        .fetch_update(
-            std::sync::atomic::Ordering::Relaxed,
-            std::sync::atomic::Ordering::Relaxed,
-            |next| (next <= MAX_TREE_ID).then_some(next + 1),
-        )
-        .ok()
+    claim_tree_id_from_counter(&NEXT_TREE_ID)
+}
+
+fn claim_tree_id_from_counter(counter: &std::sync::atomic::AtomicU32) -> Option<u32> {
+    use std::sync::atomic::Ordering::Relaxed;
+
+    // try_update requires Rust 1.95; this bounded CAS preserves the 1.88 minimum.
+    let mut next = counter.load(Relaxed);
+    while next <= MAX_TREE_ID {
+        match counter.compare_exchange_weak(next, next + 1, Relaxed, Relaxed) {
+            Ok(id) => return Some(id),
+            Err(observed) => next = observed,
+        }
+    }
+    None
 }
 
 /// Mint the next tree id from a counter shared by every image in the
@@ -385,7 +393,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             if node.is_named()
                 && !node.is_extra()
                 && (kinds.is_empty() || kinds.contains(&node.grammar_id()))
-                && plan.map_or(true, |plan| plan.holds(&node, &self.source))
+                && plan.is_none_or(|plan| plan.holds(&node, &self.source))
             {
                 let depth = frames.len() - 1;
                 let parent = Self::mint_frame(&mut self.nodes, &mut frames, &path, depth - 1);
@@ -711,10 +719,92 @@ pub fn panic_msg(payload: Box<dyn std::any::Any + Send>, fallback: &str) -> Stri
     }
 }
 
+/// The engine's live trees as the render context's source table: a handle's
+/// tag names the tree, and the tree owns the source its spans index into.
+impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
+    fn source_of(&self, tree_id: u32) -> Option<&Arc<str>> {
+        self.get(&tree_id).map(|tree| &tree.source)
+    }
+
+    fn kind_of(&self, coord: &NodeCoordinate) -> Option<KindId> {
+        let tree = self.get(&coord.tree_id())?;
+        let index = tree.local_index(coord.handle).ok()?;
+        ParsedTree::<G>::resolve_handle(&tree.nodes, &tree.tree, index).map(|node| KindId(node.kind_id()))
+    }
+
+    fn last_list_child_kind(&self, handle: u64, span: crate::types::Span, kind: KindId) -> Option<KindId> {
+        let tree = self.get(&decode_handle(handle).0)?;
+        crate::read_untyped_node::last_list_child(&tree.tree, span.start as usize, span.end as usize, kind.0)
+            .map(|child| KindId(child.grammar_id()))
+    }
+
+    fn for_each_kind_ending_with(&self, coord: &NodeCoordinate, f: &mut dyn FnMut(KindId)) {
+        let Some(tree) = self.get(&coord.tree_id()) else {
+            return;
+        };
+        let Ok(index) = tree.local_index(coord.handle) else {
+            return;
+        };
+        let mut node = ParsedTree::<G>::resolve_handle(&tree.nodes, &tree.tree, index);
+        let exact = node.is_some_and(|n| {
+            n.start_byte() == coord.span.start as usize && n.end_byte() == coord.span.end as usize
+        });
+        while let Some(current) = node {
+            f(KindId(current.kind_id()));
+            if !exact {
+                return;
+            }
+            node = u32::try_from(current.child_count())
+                .ok()
+                .and_then(|count| count.checked_sub(1))
+                .and_then(|last| current.child(last))
+                .filter(|last| last.end_byte() == current.end_byte());
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::types::{FormatBoundary, FormatRecord};
+
+    #[test]
+    fn counter_exhaustion_does_not_wrap_or_reuse_an_id() {
+        use std::sync::atomic::{AtomicU32, Ordering::Relaxed};
+
+        let counter = AtomicU32::new(MAX_TREE_ID - 1);
+        assert_eq!(claim_tree_id_from_counter(&counter), Some(MAX_TREE_ID - 1));
+        assert_eq!(claim_tree_id_from_counter(&counter), Some(MAX_TREE_ID));
+        assert_eq!(claim_tree_id_from_counter(&counter), None);
+        assert_eq!(claim_tree_id_from_counter(&counter), None);
+        assert_eq!(counter.load(Relaxed), MAX_TREE_ID + 1);
+    }
+
+    #[test]
+    fn concurrent_counter_claims_are_unique() {
+        use std::sync::{atomic::AtomicU32, Arc, Barrier};
+
+        let counter = Arc::new(AtomicU32::new(0));
+        let barrier = Arc::new(Barrier::new(8));
+        let threads: Vec<_> = (0..8)
+            .map(|_| {
+                let counter = Arc::clone(&counter);
+                let barrier = Arc::clone(&barrier);
+                std::thread::spawn(move || {
+                    barrier.wait();
+                    (0..256)
+                        .map(|_| claim_tree_id_from_counter(&counter).unwrap())
+                        .collect::<Vec<_>>()
+                })
+            })
+            .collect();
+        let mut ids: Vec<_> = threads
+            .into_iter()
+            .flat_map(|thread| thread.join().unwrap())
+            .collect();
+        ids.sort_unstable();
+        assert_eq!(ids, (0..2048).collect::<Vec<_>>());
+    }
 
     #[derive(Clone, Copy)]
     struct TestGrammar;
@@ -998,49 +1088,5 @@ mod tests {
             .unwrap();
 
         assert_eq!(rendered, "canonical");
-    }
-}
-
-/// The engine's live trees as the render context's source table: a handle's
-/// tag names the tree, and the tree owns the source its spans index into.
-impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
-    fn source_of(&self, tree_id: u32) -> Option<&Arc<str>> {
-        self.get(&tree_id).map(|tree| &tree.source)
-    }
-
-    fn kind_of(&self, coord: &NodeCoordinate) -> Option<KindId> {
-        let tree = self.get(&coord.tree_id())?;
-        let index = tree.local_index(coord.handle).ok()?;
-        ParsedTree::<G>::resolve_handle(&tree.nodes, &tree.tree, index).map(|node| KindId(node.kind_id()))
-    }
-
-    fn last_list_child_kind(&self, handle: u64, span: crate::types::Span, kind: KindId) -> Option<KindId> {
-        let tree = self.get(&decode_handle(handle).0)?;
-        crate::read_untyped_node::last_list_child(&tree.tree, span.start as usize, span.end as usize, kind.0)
-            .map(|child| KindId(child.grammar_id()))
-    }
-
-    fn for_each_kind_ending_with(&self, coord: &NodeCoordinate, f: &mut dyn FnMut(KindId)) {
-        let Some(tree) = self.get(&coord.tree_id()) else {
-            return;
-        };
-        let Ok(index) = tree.local_index(coord.handle) else {
-            return;
-        };
-        let mut node = ParsedTree::<G>::resolve_handle(&tree.nodes, &tree.tree, index);
-        let exact = node.is_some_and(|n| {
-            n.start_byte() == coord.span.start as usize && n.end_byte() == coord.span.end as usize
-        });
-        while let Some(current) = node {
-            f(KindId(current.kind_id()));
-            if !exact {
-                return;
-            }
-            node = u32::try_from(current.child_count())
-                .ok()
-                .and_then(|count| count.checked_sub(1))
-                .and_then(|last| current.child(last))
-                .filter(|last| last.end_byte() == current.end_byte());
-        }
     }
 }
