@@ -1,6 +1,9 @@
 import { assertGrammar, stableGrammars } from '@sittir/codegen/grammars';
+import { readFileSync } from 'node:fs';
+import { sourceSpans, spanSlicer } from '@sittir/common';
+import { computeRunCensus, renderRunCensus } from './gap-runs.ts';
 import { gapClassOf, type GapClass } from '../exercise/default-diff.ts';
-import { loadCorpusEntries, loadKindNameFromId, loadLanguageForGrammar, loadNativeEngine, type TSNode } from './common.ts';
+import { loadCorpusEntries, type CorpusEntry, loadKindNameFromId, loadLanguageForGrammar, loadNativeEngine, type TSNode } from './common.ts';
 
 export type LossyShape =
 	| 'crlf'
@@ -36,6 +39,7 @@ export interface ListGap {
 
 export interface LossyRow {
 	readonly entry: string;
+	readonly offset: number;
 	readonly parent: string;
 	readonly field: string;
 	readonly separator: string;
@@ -77,16 +81,16 @@ export function lossyShapeOf(
 		[source.lead, rendered.lead],
 		[source.trail, rendered.trail]
 	];
-	const differing = sides.filter(([from, to]) => from !== to).map(([from]) => from);
-	if (differing.some((text) => text.includes('\r'))) return 'crlf';
-	if (differing.some((text) => text.includes('\t'))) return 'tabs';
-	if (differing.some((text) => /[ \t]\n/.test(text))) return 'trailing-before-break';
-	if (differing.some((text) => !text.includes('\n') && /  /.test(text))) return 'multi-space';
-	if (sides.some(([from, to]) => from !== to && breaksOf(from) > breaksOf(to) && breaksOf(to) >= 1)) return 'wide-break-run';
-	if (sides.some(([from, to]) => from !== to && breaksOf(from) >= 1 && breaksOf(to) === 0)) return 'break-lost';
-	if (sides.some(([from, to]) => from === '' && to !== '')) return 'tight-lost';
-	const indentOnly = sides.every(([from, to]) => from === to || stripIndent(from) === stripIndent(to));
-	return indentOnly ? 'indent-after-break' : 'other';
+	const differing = sides.filter(([from, to]) => from !== to);
+	if (differing.every(([from, to]) => stripIndent(from) === stripIndent(to))) return 'indent-after-break';
+	if (differing.some(([from]) => from.includes('\r'))) return 'crlf';
+	if (differing.some(([from]) => from.includes('\t'))) return 'tabs';
+	if (differing.some(([from]) => /[ \t]\n/.test(from))) return 'trailing-before-break';
+	if (differing.some(([from]) => !from.includes('\n') && /  /.test(from))) return 'multi-space';
+	if (differing.some(([from, to]) => breaksOf(from) > breaksOf(to) && breaksOf(to) >= 1)) return 'wide-break-run';
+	if (differing.some(([from, to]) => breaksOf(from) >= 1 && breaksOf(to) === 0)) return 'break-lost';
+	if (differing.some(([from, to]) => from === '' && to !== '')) return 'tight-lost';
+	return 'other';
 }
 
 function stripIndent(text: string): string {
@@ -223,12 +227,6 @@ function rebuiltLists(root: TypedNode, kindName: (id: number) => string, rebuild
 	return lists;
 }
 
-function indexOfByte(source: string): (offset: number) => number {
-	if (/^[\x00-\x7f]*$/.test(source)) return (offset) => offset;
-	const bytes = Buffer.from(source);
-	return (offset) => bytes.subarray(0, offset).toString().length;
-}
-
 export interface EntryMeasure {
 	readonly status: 'measured' | 'unparsed' | 'unrendered';
 	readonly gaps: number;
@@ -257,7 +255,8 @@ export async function createGapMeter(grammar: string): Promise<GapMeter> {
 		if (parsed === null || parsed.rootNode.hasError) return { ...UNMEASURED, status: 'unparsed' };
 		const scan = scanListGaps(parsed.rootNode, source);
 		const byOffsets = new Map(scan.gaps.map((gap) => [gap.key, gap]));
-		const toIndex = indexOfByte(source);
+		const spans = sourceSpans(source);
+		const textOf = spanSlicer(source);
 		const rebuildFailures: string[] = [];
 		let lists: RebuiltList[];
 		try {
@@ -269,18 +268,18 @@ export async function createGapMeter(grammar: string): Promise<GapMeter> {
 		const lossy: LossyRow[] = [];
 		let [exact, unmatched, locateFailures] = [0, 0, 0];
 		for (const list of lists) {
-			const text = list.items.map((item) => source.slice(toIndex(item.$span.start), toIndex(item.$span.end)));
-			const spans = locateItems(list.rendered, text);
-			if (spans === undefined) {
+			const text = list.items.map((item) => textOf(item.$span));
+			const located = locateItems(list.rendered, text);
+			if (located === undefined) {
 				locateFailures += 1;
 				continue;
 			}
 			for (let pair = 0; pair + 1 < list.items.length; pair++) {
-				const key = `${toIndex(list.items[pair]!.$span.end)}:${toIndex(list.items[pair + 1]!.$span.start)}`;
+				const key = `${spans.toIndices(list.items[pair]!.$span).end}:${spans.toIndices(list.items[pair + 1]!.$span).start}`;
 				const gap = byOffsets.get(key);
 				if (gap === undefined || seen.has(key) || list.adjacent[pair] !== true) continue;
 				seen.add(key);
-				const outcome = splitAtSeparator(list.rendered.slice(spans[pair]![1], spans[pair + 1]![0]), gap.separator);
+				const outcome = splitAtSeparator(list.rendered.slice(located[pair]![1], located[pair + 1]![0]), gap.separator);
 				if (outcome === undefined) {
 					unmatched += 1;
 					continue;
@@ -292,6 +291,7 @@ export async function createGapMeter(grammar: string): Promise<GapMeter> {
 				}
 				lossy.push({
 					entry: name,
+					offset: Number(key.split(':')[0]),
 					parent: `${list.owner}.${list.slot}`,
 					field: gap.field,
 					separator: gap.separator,
@@ -375,9 +375,9 @@ function splitAtSeparator(gap: string, separator: string): { lead: string; trail
 	return WHITESPACE_ONLY.test(lead) && WHITESPACE_ONLY.test(trail) ? { lead, trail } : undefined;
 }
 
-export async function computeGapCensus(grammar: string): Promise<GapCensus> {
+export async function computeGapCensus(grammar: string, sources?: readonly CorpusEntry[]): Promise<GapCensus> {
 	const meter = await createGapMeter(grammar);
-	const entries = loadCorpusEntries(grammar);
+	const entries = sources ?? loadCorpusEntries(grammar);
 	const lossy: LossyRow[] = [];
 	const uncoveredBy: Record<string, number> = {};
 	const byShape = emptyByShape();
@@ -406,16 +406,27 @@ export async function computeGapCensus(grammar: string): Promise<GapCensus> {
 export interface GapCensusOptions {
 	readonly grammar: string;
 	readonly allGrammars: boolean;
+	readonly files: readonly string[];
+	readonly crlf: boolean;
+	readonly runs: boolean;
+	readonly top: number;
 	readonly examples: number;
 	readonly json: boolean;
+}
+
+function fileEntry(file: string, crlf: boolean): CorpusEntry {
+	const text = readFileSync(file, 'utf-8');
+	return { name: file, source: crlf ? text.replace(/\r?\n/g, '\r\n') : text };
 }
 
 const escaped = (text: string): string => JSON.stringify(text);
 
 export async function run(opts: GapCensusOptions): Promise<number> {
 	const grammars = opts.allGrammars ? stableGrammars() : [assertGrammar(opts.grammar)];
+	if (opts.runs) return runRunCensus(opts, grammars);
 	const censuses: GapCensus[] = [];
-	for (const grammar of grammars) censuses.push(await computeGapCensus(grammar));
+	const sources = opts.files.length === 0 ? undefined : opts.files.map((file) => fileEntry(file, opts.crlf));
+	for (const grammar of grammars) censuses.push(await computeGapCensus(grammar, sources));
 	if (opts.json) {
 		console.log(JSON.stringify(opts.allGrammars ? censuses : censuses[0], null, 2));
 		return 0;
@@ -432,5 +443,17 @@ export async function run(opts: GapCensusOptions): Promise<number> {
 			}
 		}
 	}
+	return 0;
+}
+
+async function runRunCensus(opts: GapCensusOptions, grammars: readonly string[]): Promise<number> {
+	const sources = opts.files.length === 0 ? undefined : opts.files.map((file) => fileEntry(file, opts.crlf));
+	const censuses = [];
+	for (const grammar of grammars) censuses.push(await computeRunCensus(grammar, sources));
+	if (opts.json) {
+		console.log(JSON.stringify(opts.allGrammars ? censuses : censuses[0], null, 2));
+		return 0;
+	}
+	for (const census of censuses) for (const line of renderRunCensus(census, opts.top)) console.log(line);
 	return 0;
 }

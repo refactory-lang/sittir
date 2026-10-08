@@ -758,6 +758,10 @@ Census the source gaps between adjacent list items: exact versus the nearest mem
 
 - `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
 - `--all-grammars` — Run every stable grammar
+- `--files <paths...>` — Measure these source files of the grammar instead of its corpus
+- `--crlf` — Convert the files to CRLF line endings in memory before measuring
+- `--runs` — Instead of the lossy census, report blank-line counts within runs of statements and at run boundaries
+- `--top <n>` — Groups to print per list with --runs (default: `12`)
 - `--examples <n>` — Examples to print per lossy shape (default: `3`)
 - `--json` — Print every lossy row and the summary as JSON
 
