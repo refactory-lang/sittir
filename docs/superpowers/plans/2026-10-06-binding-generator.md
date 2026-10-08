@@ -60,6 +60,7 @@ Stage 4 drives the count to zero for each cause on the side that owns it. Rust i
 ## Stage 2: one route resolution
 
 - `resolveRoutes(input)` in `packages/codegen/src/bindings/routes.ts` produces, per kind, as data: read entries (most specific first: placed-and-predicate claims, then predicate claims, then placed claims, then literals, ties in file order), member routes (slot, presence through a token, nested through a selector), container unwraps and build inverses (member to parameter path, with pins). `derive`'s member loop folds member types from these routes instead of re-walking slots, and slot matching uses `derive`'s field matching only.
+- The routes are written per bound grammar as `packages/<grammar>/src/node-model-portable.json5`, beside and apart from `node-model.json5`, which stays low-level.
 - The low-level build's routing (the seat table and its mounts, already codegen output) is unchanged: the validation lanes build through the low-level API, whose references carry the concrete kind.
 - Gate: the inventory's report is byte-identical, and the `ir-render-parse` rows are equal.
 
