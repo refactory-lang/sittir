@@ -5,7 +5,6 @@ import { isStorageKey, STORED_TRIVIA, toTransportData, treeTokenOf } from '@sitt
 import rust from '../../rust/src/index.ts';
 import typescript from '../../typescript/src/index.ts';
 import python from '../../python/src/index.ts';
-import { buildIdentifier } from '../../rust/src/factories/raw.ts';
 
 v8.setFlagsFromString('--allow-natives-syntax');
 const hasFastProperties = new Function('o', 'return %HasFastProperties(o)') as (o: object) => boolean;
@@ -15,6 +14,7 @@ const fastCount = (make: () => object): number => Array.from({ length: COUNT }, 
 const rs = await createEngine(rust);
 const ts = await createEngine(typescript);
 const py = await createEngine(python);
+const { identifier: buildIdentifier } = (await rust.load()).build;
 
 const parsedMatchBlock = () => {
 	const item = rs.parse('fn f() { match x { 1 => 1, _ => 2 } }\n').statements()[0]!;
@@ -29,18 +29,33 @@ const arms = parsedMatchBlock().matchBlockArms();
 
 const classes: Record<string, () => object> = {
 	'rust text leaf': () => rs.build.identifier('x'),
-	'rust plain kind': () => rs.build.binaryExpression({ left: rs.build.identifier('a'), operator: '+', right: rs.build.identifier('b') }),
+	'rust plain kind': () =>
+		rs.build.binaryExpression({ left: rs.build.identifier('a'), operator: '+', right: rs.build.identifier('b') }),
 	'rust group seat, group present': () => rs.build.matchBlock(arms),
 	'rust group seat, group absent': () => rs.build.matchBlock(),
-	'rust list owner': () => rs.build.arguments(rs.build.identifier('a'), rs.build.identifier('b'), rs.build.identifier('c')),
+	'rust list owner': () =>
+		rs.build.arguments(rs.build.identifier('a'), rs.build.identifier('b'), rs.build.identifier('c')),
 	'typescript text leaf': () => ts.build.identifier('x'),
-	'typescript plain kind': () => ts.build.binaryExpression({ left: ts.build.identifier('a'), operator: '+', right: ts.build.identifier('b') }),
+	'typescript plain kind': () =>
+		ts.build.binaryExpression({ left: ts.build.identifier('a'), operator: '+', right: ts.build.identifier('b') }),
 	'typescript group seat': () => ts.build.catchClause({ body: ts.build.statementBlock() }),
 	'python text leaf': () => py.build.identifier('x'),
 	'python group seat': () => py.build.slice({})
 };
 
-const TRANSPORT_METADATA = new Set(['$type', '$source', '$named', '$text', '$other', '$span', '$textOnly', '$treeHandle', '$format', '$_trivia', '$slotOrder']);
+const TRANSPORT_METADATA = new Set([
+	'$type',
+	'$source',
+	'$named',
+	'$text',
+	'$other',
+	'$span',
+	'$textOnly',
+	'$treeHandle',
+	'$format',
+	'$_trivia',
+	'$slotOrder'
+]);
 
 const offenders = (value: unknown, path = '$'): string[] => {
 	if (typeof value === 'function') return [`${path} is a function`];
@@ -49,7 +64,9 @@ const offenders = (value: unknown, path = '$'): string[] => {
 	const isNode = ['number', 'string'].includes(typeof (value as { $type?: unknown }).$type);
 	return Object.entries(value).flatMap(([key, entry]) => {
 		const stray =
-			!isNode || isStorageKey(key) || TRANSPORT_METADATA.has(key) ? [] : [`${path}.${key} is neither storage nor $ metadata`];
+			!isNode || isStorageKey(key) || TRANSPORT_METADATA.has(key)
+				? []
+				: [`${path}.${key} is neither storage nor $ metadata`];
 		return [...stray, ...offenders(entry, `${path}.${key}`)];
 	});
 };
@@ -121,7 +138,11 @@ const typedNodesOf = (root: unknown): object[] => {
 describe('a parsed plain kind keeps fast properties', () => {
 	it('binary expressions, let declarations and function items read from source', () => {
 		const nodes = typedNodesOf(rs.parse('fn f() { let x = a + b * c; }\nfn g() { 1 + 2 }\n', { deep: true }));
-		const plain = nodes.filter((node) => [rs.kinds.BinaryExpression, rs.kinds.LetDeclaration, rs.kinds.FunctionItem].includes((node as { $type: number }).$type));
+		const plain = nodes.filter((node) =>
+			[rs.kinds.BinaryExpression, rs.kinds.LetDeclaration, rs.kinds.FunctionItem].includes(
+				(node as { $type: number }).$type
+			)
+		);
 		expect(plain.length).toBeGreaterThanOrEqual(4);
 		expect(plain.filter((node) => !hasFastProperties(node))).toEqual([]);
 	});

@@ -12,7 +12,7 @@ import {
 } from '../validate/common.ts';
 import { nativeShownKindId } from '../validate/shown-kind.ts';
 import type { FactoryShape, PolymorphVariantMap } from '../codegen-surface.ts';
-import type { NodeTrivia as ReadTrivia, TriviaFacts } from '@sittir/types';
+import type { NodeTrivia as ReadTrivia } from '@sittir/types';
 import type { TriviaSides } from '@sittir/common';
 import { isStorageKey, mapTriviaEntries, readTrivia } from '@sittir/common/utils';
 import type { LineGapAddress, LineGaps } from '@sittir/types';
@@ -81,7 +81,6 @@ export class Printed {
 		readonly facts?: PrintedFacts
 	) {}
 }
-
 
 const INDENT = '\t';
 
@@ -395,7 +394,9 @@ function wrapSeatElement(item: unknown, ctx: PrintContext): unknown {
 	const wrapped = wrapTextLeaves(seatKind, item, ctx);
 	const id = ctx.facts.kindIdOfName(seatKind);
 	const tagged = id !== undefined && isLoose(ctx) && seatHoistedSlot(seatKind, ctx.facts) !== undefined;
-	return tagged && isPlainObject(wrapped) ? { $type: new Printed(id, kindTagSource(id, ctx), seatKind), ...wrapped } : wrapped;
+	return tagged && isPlainObject(wrapped)
+		? { $type: new Printed(id, kindTagSource(id, ctx), seatKind), ...wrapped }
+		: wrapped;
 }
 
 function soleSlotKind(kind: string, ctx: PrintContext): string | undefined {
@@ -475,7 +476,9 @@ function loosenValue(
 			printValue(looseListElement(listKind, hoistSeatElement(item, ctx), ctx), ctx, 0)
 		);
 		const bare = printed.length === 1 && !/^[{[]/.test(printed[0]!) ? printed[0]! : undefined;
-		return new Printed(value.$type, bare ?? `[${printed.join(', ')}]`, value.kind, printed.join(', '), { elements: { items } });
+		return new Printed(value.$type, bare ?? `[${printed.join(', ')}]`, value.kind, printed.join(', '), {
+			elements: { items }
+		});
 	}
 	const inner = value.facts?.inner;
 	const innerText = inner instanceof Printed ? inner.facts?.text : undefined;
@@ -619,7 +622,8 @@ export function printingFactoryMap(
 						return new Printed(id, member === undefined ? JSON.stringify(text) : printValue(member, ctx, 0), kind);
 					}
 					if (kind.startsWith('_')) return text;
-					if (typeof id === 'number' && ctx.keywordKinds?.has(kind)) return new Printed(id, printValue(id, ctx, 0), kind);
+					if (typeof id === 'number' && ctx.keywordKinds?.has(kind))
+						return new Printed(id, printValue(id, ctx, 0), kind);
 					return new Printed(id, `${path}(${JSON.stringify(text)})`, kind, undefined, { text });
 				}
 				case 'direct':
@@ -628,25 +632,31 @@ export function printingFactoryMap(
 					const value = placed.loose;
 					const ownedList = ownedListArgs(kind, value, ctx);
 					const absorbed =
-						ownedList === undefined && value instanceof Printed && value.kind !== undefined && ctx.absorbedKinds?.has(value.kind)
+						ownedList === undefined &&
+						value instanceof Printed &&
+						value.kind !== undefined &&
+						ctx.absorbedKinds?.has(value.kind)
 							? value.argsSource
 							: undefined;
 					const valueSource =
 						ownedList !== undefined
 							? ownedList
 							: absorbed !== undefined
-							? isLoose(ctx)
-								? `[${absorbed}]`
-								: absorbed
-							: value === undefined
-								? ''
-								: printValue(value, ctx, 0);
+								? isLoose(ctx)
+									? `[${absorbed}]`
+									: absorbed
+								: value === undefined
+									? ''
+									: printValue(value, ctx, 0);
 					const optionsSource = isPlainObject(args[1]) ? printValue(args[1], ctx, 0) : undefined;
 					const argSource =
 						optionsSource === undefined
 							? valueSource
 							: `${valueSource === '' ? 'undefined' : valueSource}, ${optionsSource}`;
-					return new Printed(id, `${call}(${argSource})`, kind, argSource, { inner: placed.strict, ownsList: ownedList !== undefined });
+					return new Printed(id, `${call}(${argSource})`, kind, argSource, {
+						inner: placed.strict,
+						ownsList: ownedList !== undefined
+					});
 				}
 				case 'spread': {
 					const [first, ...rest] = args;
@@ -665,9 +675,7 @@ export function printingFactoryMap(
 					const elements = items.map((a) => printValue(looseListElement(kind, a, ctx), ctx, 0));
 					const options = hasOptions ? first : undefined;
 					const head =
-						options !== undefined && !listOptionsAreDefault(kind, options, ctx)
-							? [printListOptions(options, ctx)]
-							: [];
+						options !== undefined && !listOptionsAreDefault(kind, options, ctx) ? [printListOptions(options, ctx)] : [];
 					const argSource = [...head, ...elements].join(', ');
 					return new Printed(id, `${call}(${argSource})`, kind, argSource, { elements: { options, items } });
 				}
@@ -695,7 +703,8 @@ function constantsAsValues(
 	shapes: Record<string, FactoryShape>
 ): Record<string, FactoryEntry> {
 	const values: Record<string, FactoryEntry> = {};
-	for (const [kind, entry] of Object.entries(map)) values[kind] = shapes[kind] === 'constant' ? (entry() as Printed) : entry;
+	for (const [kind, entry] of Object.entries(map))
+		values[kind] = shapes[kind] === 'constant' ? (entry() as Printed) : entry;
 	return values;
 }
 
@@ -729,7 +738,15 @@ function mountArmPrinters(
 			const mounted: Record<string, unknown> = { strict: mountPrinter(path, seat, hostKind, builtKind, id, ctx) };
 			entry[seat.mount] = mounted;
 			if (!visiting.has(seat.kind)) {
-				mountArmPrinters(mounted, `${path}.${seat.mount}`, seat.kind, builtKind, id, ctx, new Set([...visiting, seat.kind]));
+				mountArmPrinters(
+					mounted,
+					`${path}.${seat.mount}`,
+					seat.kind,
+					builtKind,
+					id,
+					ctx,
+					new Set([...visiting, seat.kind])
+				);
 			}
 		}
 	}
@@ -769,8 +786,8 @@ export function printFactorySource(
 
 import { readFileSync, writeFileSync } from 'node:fs';
 import { basename, resolve } from 'node:path';
+import { importGrammarModule, requireGrammarModule } from '../grammar-internals.ts';
 import {
-	importGrammarModule,
 	buildReadHandle,
 	loadKindIdFromName,
 	loadKindNameFromId,
@@ -786,11 +803,6 @@ import { Delimiter } from '@sittir/common/utils';
 import { invoke, load } from '../codegen-surface.ts';
 import { languageByName } from '../languages.ts';
 import type { GeneratedIdTables, GeneratedKindEntry } from '../codegen-surface.ts';
-
-interface TypesModule {
-	readonly KIND_NAMES: ReadonlyMap<number, string>;
-	readonly TSKindId: Record<number, string | number>;
-}
 
 function pascalCase(name: string): string {
 	const c = camelCase(name.replace(/[^A-Za-z0-9_]+/g, '_'));
@@ -879,7 +891,12 @@ interface TriviaTextContext {
 	readonly slotDefaults: Record<string, Record<string, string>>;
 }
 
-function seatLineGaps(node: unknown, lineGapsOf: (address: LineGapAddress) => LineGaps, newline: number | undefined, depth = 0): void {
+function seatLineGaps(
+	node: unknown,
+	lineGapsOf: (address: LineGapAddress) => LineGaps,
+	newline: number | undefined,
+	depth = 0
+): void {
 	if (depth > 256) return;
 	if (Array.isArray(node)) {
 		for (const entry of node) seatLineGaps(entry, lineGapsOf, newline, depth + 1);
@@ -897,7 +914,11 @@ function seatLineGaps(node: unknown, lineGapsOf: (address: LineGapAddress) => Li
 	};
 	const leading = kept(trivia.leading);
 	const trailing = kept(trivia.trailing);
-	const printed = { ...(leading && { leading }), ...(trailing && { trailing }), ...(trivia.inner && { inner: trivia.inner }) };
+	const printed = {
+		...(leading && { leading }),
+		...(trailing && { trailing }),
+		...(trivia.inner && { inner: trivia.inner })
+	};
 	if (Object.keys(printed).length === 0) delete node.$_trivia;
 	else node.$_trivia = printed as ReadTrivia;
 }
@@ -1043,7 +1064,7 @@ export async function emitFactorySourceText(
 	const kindIdFromName = await loadKindIdFromName(grammar);
 	const handle = await buildReadHandle(grammar, tree, source, options.backend ?? 'native', kindIdFromName);
 	const model = await loadNodeModel(grammar);
-	const types = (await importGrammarModule(grammar, 'types.ts')) as TypesModule | undefined;
+	const types = await importGrammarModule(grammar, 'types.ts');
 	if (!types) throw new Error(`emit-factory-source: no types module for ${grammar}`);
 	const displayNameFromId = await loadKindNameFromId(grammar);
 	const kindNameFromId = (id: number): string | undefined => types.KIND_NAMES.get(id) ?? displayNameFromId?.(id);
@@ -1058,9 +1079,13 @@ export async function emitFactorySourceText(
 	const catalog = catalogEntriesOf(await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar));
 	const { findEntryForLiteralText } = await load('symbolTable');
 	const root = materialize(readNode(handle)) as ReadNodeLike;
-	const { triviaFacts } = (await importGrammarModule(grammar, 'utils.ts')) as { triviaFacts?: TriviaFacts };
+	const { triviaFacts } = await requireGrammarModule(grammar, 'utils.ts');
 	const nativeEngine = await loadNativeEngine(grammar);
-	seatLineGaps(root, (address) => nativeEngine.diagnostics.lineGapsOf(address), triviaFacts?.whitespace?.kindIdByText['\n']);
+	seatLineGaps(
+		root,
+		(address) => nativeEngine.diagnostics.lineGapsOf(address),
+		triviaFacts?.whitespace?.kindIdByText['\n']
+	);
 	seatFormTree(root, { kindNameFromId, seats: model.seats });
 	const textLeafKinds = new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'pattern'));
 	spellTriviaTree(root, {

@@ -1,5 +1,6 @@
 import { spanOf } from '@sittir/common/utils';
 import type { FactoryEntry, ReadNodeLike } from '../validate/common.ts';
+import { requireGrammarModule } from '../grammar-internals.ts';
 
 import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
 import type { FactoryShape } from '../codegen-surface.ts';
@@ -67,7 +68,6 @@ export interface ExerciseOptions {
 }
 
 const COMMON_MODULE_PATH = '../validate/common.ts';
-const factoryModulePath = (grammar: GrammarName): string => `../../../${grammar}/src/factories/raw.ts`;
 const BUILTIN_CASES: Partial<Record<GrammarName, readonly ExerciseCase[]>> = {
 	rust: [
 		{ kind: 'identifier', find: 'identifier', source: 'fn foo() {}' },
@@ -109,9 +109,7 @@ async function loadCommon(): Promise<CommonModule> {
 }
 
 export async function loadFactoryArtifacts(grammar: GrammarName): Promise<FactoryArtifacts> {
-	const factoryModule: { _factoryMap?: Record<string, FactoryEntry> } = await import(
-		new URL(factoryModulePath(grammar), import.meta.url).pathname
-	);
+	const factoryModule = await requireGrammarModule(grammar, 'factories/raw.ts');
 	const common = await loadCommon();
 	const model = await common.loadNodeModel(grammar);
 	return {

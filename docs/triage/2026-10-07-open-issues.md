@@ -6,6 +6,8 @@ This report classifies issue bodies and current context. #706, #692 and the rema
 
 ## Verified remediation
 
+- **#400:** tools now load generated grammar artifacts through one typed filename-to-module boundary. Validators, factory-source emission, round-trip exercises and white-box tests share path resolution and optional/required import behavior. Current public operations continue through language descriptors, `createEngine` and diagnostics; those supersede the original issue's boundary/engine loading concerns. Unscoped builder tests use `language.load().build` where possible.
+
 - **#706:** query compilation now caches by immutable query-slot table, condition callback and numeric kind. This is the compilation dependency: distinct grammar tables cannot share plans, while contexts sharing the same table can. Five tests cover both grammar orders, validation isolation and legitimate shared compilation. Three of the tests failed before the fix.
 - **#692:** regeneration refreshes all stable grammars with native builds disabled before invoking the canonical generation/build command for each grammar. Three subprocess tests cover ordering, generation failure and native failure; all failed before the fix. Full `pnpm regen:all` then passed for Python, regex, Rust, SCM and TypeScript with no generated changes. The canonical second pass repeats generation to retain native build, typedef cleanup and fixture sequencing in one implementation.
 - **#626:** current `modifier` config arrays already coerce correctly. The remaining lone-array input was treated as one element, causing text/enum arrays to route to `extern_modifier` and empty arrays to render `extern`. The shared repeat-slot resolver now unwraps the array before per-element coercion; generated `LooseArgs` derives a readonly array form from the same loose element types and cardinality. Six regression tests cover text, enums, readonly input, non-empty rejection, config equivalence and held-node reconstruction.
@@ -16,6 +18,8 @@ This report classifies issue bodies and current context. #706, #692 and the rema
 - **#523:** `buildNodeMap` now delegates to `compileNodeMap`, reusing canonical grammar diagnosis and reference hydration. Two previously failing regressions now recognize TypeScript's preference-carried statement terminator and Rust's referenced fixed-text `..` slot; two controls pin the canonical loader. The required-slot census reads `configSlots` directly instead of correcting the model with the emitted builder's `options` type. No generator or generated grammar artifacts change.
 
 ## Validation
+
+- #400: the full tools suite passes (93 files, 780 tests, ten existing skips), including fresh generated-example comparisons. Tools package and repository test type checks, fresh package build, changed-source lint/format and diff checks pass. All five grammar loader/engine contracts and import sentinels pass. Native per-grammar From, Coverage, Round-trip/AST and Factory counts match the committed baseline (table below), including three existing round-trip misses. Generated output is unchanged.
 
 - Root runtime run: 25 files, 202 tests passed (all common tests plus regeneration sequencing tests).
 - Root tooling run: 91 files, 768 tests passed and 10 skipped.
@@ -199,7 +203,7 @@ The fixes have focused red/green regressions and regeneration coverage. Backlog 
 | [#631 — Ratchet test: per-grammar ceiling on default-diff differing gaps](https://github.com/refactory-lang/sittir/issues/631) | Deferred | Deferred for now at the maintainer's request (trivia scope). Resume with: Define default generated-diff ceilings per grammar. |
 | [#603 — Inventory: member kinds are tagged tokens, not prefixed strings](https://github.com/refactory-lang/sittir/issues/603) | P2 | Use tagged token inventory instead of prefix inference, with a byte gate. |
 | [#601 — Bindings: each bindings.scm renders back byte-identical through @sittir/scm](https://github.com/refactory-lang/sittir/issues/601) | P2 | Derive bindings for parse/render under a byte gate. |
-| [#400 — One internal loader for white-box grammar access in tools](https://github.com/refactory-lang/sittir/issues/400) | P2 | Consolidate tool loading in one typed internal loader. |
+| [#400 — One internal loader for white-box grammar access in tools](https://github.com/refactory-lang/sittir/issues/400) | P2 | Remediation prepared: one typed generated-artifact loader; retain the current descriptor/engine APIs. Public engine loading and diagnostics already supersede that part of the original issue. |
 | [#392 — rust grammar entry: one remaining type error (variant path '1/0/2' on reference_expression)](https://github.com/refactory-lang/sittir/issues/392) | P2 | Refresh grammar error ceilings; title and historical body counts disagree. |
 | [#366 — The predicted kind catalog has no lexicalRank](https://github.com/refactory-lang/sittir/issues/366) | P3 | Measure lexical-rank prediction against parser behavior before expanding it. |
 | [#365 — Patch-site credit is owner-level; credit per rule() site](https://github.com/refactory-lang/sittir/issues/365) | P3 | Specify latent patch credit using rule identity. |

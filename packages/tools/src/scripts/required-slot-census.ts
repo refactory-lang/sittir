@@ -2,6 +2,7 @@ import { dirname, resolve } from 'node:path';
 import ts from 'typescript6';
 import { allGrammars } from '@sittir/codegen/grammars';
 import { compileNodeMap, load } from '../codegen-surface.ts';
+import { grammarModulePath } from '../grammar-internals.ts';
 
 const root = resolve(import.meta.dirname, '../../../..');
 
@@ -22,7 +23,8 @@ export const admittingSlots = async (
 		ts.sys,
 		dirname(configPath)
 	);
-	const rawPath = resolve(root, `packages/${grammar}/src/factories/raw.ts`);
+	const rawPath = grammarModulePath(grammar, 'factories/raw.ts');
+	if (rawPath === undefined) throw new Error(`Missing raw factories for ${grammar}`);
 	const probePath = resolve(root, `packages/${grammar}/src/zz-loose-probe.ts`);
 	const options = { ...parsed.options, strict: true, noEmit: true };
 	const host = ts.createCompilerHost(options);

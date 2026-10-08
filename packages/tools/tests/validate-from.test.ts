@@ -8,13 +8,13 @@
  * exercises successful generated-module loads.
  */
 import { describe, it, expect, vi } from 'vitest';
-import { fileURLToPath } from 'node:url';
+import { grammarModulePath } from '../src/grammar-internals.ts';
 const loadValidateFrom = async () => (await import('../src/validate/from.ts')).validateFrom;
 
 describe('validateFrom — module load failure sentinel', () => {
 	it('surfaces a rejected from.ts import as a (from-module-load) sentinel error, not a false 0/0 pass', async () => {
-		const fromTsUrl = new URL('../src/validate/from.ts', import.meta.url);
-		const brokenFromModulePath = fileURLToPath(new URL('../../../rust/src/factories/coerce.ts', fromTsUrl));
+		const brokenFromModulePath = grammarModulePath('rust', 'factories/coerce.ts');
+		if (brokenFromModulePath === undefined) throw new Error('Missing Rust coercion module');
 
 		vi.doMock(brokenFromModulePath, () => {
 			throw new Error('synthetic from-module load failure (test)');

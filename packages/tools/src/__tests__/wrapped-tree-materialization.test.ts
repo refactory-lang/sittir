@@ -15,6 +15,7 @@ import {
 	type TypedNode
 } from '../validate/common.ts';
 import { makeNodeMapWith } from '../../../codegen/src/__tests__/helpers/node-map-fixtures.ts';
+import { requireGrammarModule } from '../grammar-internals.ts';
 
 function leaf(handle: number, text: string): TypedNode {
 	return {
@@ -193,21 +194,15 @@ describe('wrapped tree materialization', () => {
 	});
 
 	it('normalizes nested field storage when children are already materialized', async () => {
-		const wrapModulePath = new URL('../../../rust/src/wrap.ts', import.meta.url).pathname;
-		const typesModulePath = new URL('../../../rust/src/types.ts', import.meta.url).pathname;
-		const { wrapFunctionItem } = (await import(wrapModulePath)) as {
-			wrapFunctionItem: (node: unknown, tree: TreeHandle) => unknown;
-		};
-		const { TSKindId } = (await import(typesModulePath)) as {
-			TSKindId: Record<string, number>;
-		};
+		const { wrapNode } = await requireGrammarModule('rust', 'wrap.ts');
+		const { TSKindId } = await requireGrammarModule('rust', 'types.ts');
 		const tree = {
 			get rootNode(): never {
 				throw new Error('unused');
 			}
 		} satisfies TreeHandle;
 
-		const wrapped = wrapFunctionItem(
+		const wrapped = wrapNode(
 			{
 				$type: TSKindId.FunctionItem,
 				_function_modifiers: {
@@ -254,10 +249,7 @@ describe('wrapped tree materialization', () => {
 			parser.setLanguage(lang);
 			const tree = parser.parse(source)!;
 			const handle = await buildReadHandle('typescript', tree, source, 'native');
-			const wrapModulePath = new URL('../../../typescript/src/wrap.ts', import.meta.url).pathname;
-			const { readNode } = (await import(wrapModulePath)) as {
-				readNode: (tree: TreeHandle, handle?: number, childIndex?: number) => unknown;
-			};
+			const { readNode } = await requireGrammarModule('typescript', 'wrap.ts');
 			const root = readNode(handle) as {
 				statements: () => Array<{ content: () => unknown }>;
 			};
