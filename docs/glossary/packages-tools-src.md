@@ -14,7 +14,15 @@ Each grammar package's exported API type, keyed by the grammar's name. It is the
 
 ### `packages/tools/src/codegen-surface.ts::evaluateGrammar`
 
-Evaluates a grammar package by name through codegen's `evaluatePackage`, so every probe and diagnostic tool builds its model with the package's real file types and entry choice; `base` selects the upstream `grammar.js` where a tool offers to show it before overrides. `buildSimplifiedGrammar`, `buildNodeMap`, the refs, stages and grammar-diagnostics tools all start here, and none resolves an entry path or passes file types itself.
+Evaluates a grammar package by name through codegen's `evaluatePackage`, so every probe and diagnostic tool builds its model with the package's real file types and entry choice; `base` selects the upstream `grammar.js` where a tool offers to show it before overrides. `buildSimplifiedGrammar`, the refs, stages and grammar-diagnostics tools start here, and none resolves an entry path or passes file types itself. Full node-map loaders use the canonical compiler instead of rebuilding its phases.
+
+### `packages/tools/src/codegen-surface.ts::buildNodeMap`
+
+Compatibility entry point for `compileNodeMap`. Tools that need an assembled node map receive the canonical compiled model, including hydrated references and registered option defaults. The former independent evaluate/link/normalize/assemble path omitted both facts.
+
+### `packages/tools/src/codegen-surface.ts::compileNodeMap`
+
+Loads the package and generated ID tables, then returns `compileGrammar`'s node map. Canonical grammar diagnosis resolves declared preferences through the existing site resolver, and compilation hydrates slot references. Both tool loader names share this path; phase-specific tools retain `evaluateGrammar` and `buildSimplifiedGrammar`.
 
 ### `packages/tools/src/sync-base.ts::syncBase`
 
@@ -50,7 +58,7 @@ The hoisted kinds of the grammar's node model, list kinds included (`hoistedKind
 
 ### `packages/tools/src/scripts/required-slot-census.ts::admittingSlots`
 
-The census behind the typing rule, run over the compiled grammar's node map (references hydrated, as the emitters see it): every config slot that is required, that the emitted builder's `options` type does not carry and that `slotFilledWhenOmitted` does not accept must be a required key whose type has no `undefined` member, in the strict config, in the builder's direct-value parameter and (with `includeLoose`) in the loose config. A builder whose whole config is optional is held to the same rule. The one exemption class is the literal affix slots of a token-interior kind (everything in a lexed-interior kind that is not its content slot): the coercer fills them from the spelled form, which the model does not declare. The loose check compiles a probe module in memory per grammar, which costs about 25 s for all five, so it runs as `pnpm run type-check:required-slots` (a CI step beside the type-check), and the unit test `strict-required-slot-types.test.ts` runs the strict half only.
+The census behind the typing rule, run over the compiled grammar's node map (references hydrated and preferences registered, as the emitters see it): every config slot that is required and that `slotFilledWhenOmitted` does not accept must be a required key whose type has no `undefined` member, in the strict config, in the builder's direct-value parameter and (with `includeLoose`) in the loose config. A builder whose whole config is optional is held to the same rule. The one exemption class is the literal affix slots of a token-interior kind (everything in a lexed-interior kind that is not its content slot): the coercer fills them from the spelled form, which the model does not declare. The loose check compiles a probe module in memory per grammar, which costs about 25 s for all five, so it runs as `pnpm run type-check:required-slots` (a CI step beside the type-check), and the unit test `strict-required-slot-types.test.ts` runs the strict half only.
 
 ### `packages/tools/tests/argument-optional-honesty.test.ts`
 

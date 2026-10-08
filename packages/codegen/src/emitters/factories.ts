@@ -1181,7 +1181,7 @@ function resolveConfigFactorySurface(
 				rest: true,
 				strictType: elementsTypeOf(nonEmpty, nonEmpty ? admitNodes(elementType) : elementType),
 				looseType: elementsTypeOf(nonEmpty, looseElement),
-				rowLooseType: `(T.${node.typeName}.Loose | ${looseElement})[]`,
+				rowLooseType: elementsTypeOf(nonEmpty, `T.${node.typeName}.Loose | ${looseElement}`),
 				...(nonEmpty ? {} : { admitsNodes: true as const })
 			};
 			return {

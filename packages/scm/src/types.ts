@@ -1829,10 +1829,10 @@ export namespace StringContent {
 	export type BuildArgs = [...children: NonEmptyArray<Admit<T.StringContentText | T.EscapeSequence>>];
 	export type LooseArgs =
 		| [
-				...children: (
+				...children: NonEmptyArray<
 					| T.StringContent.Loose
 					| LooseValue<T.StringContentText | T.EscapeSequence, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
+				>
 		  ]
 		| [
 				children: Readonly<
@@ -1859,10 +1859,10 @@ export namespace Parameters {
 	export type BuildArgs = [...children: NonEmptyArray<Admit<T.Capture | T.String | T.Identifier>>];
 	export type LooseArgs =
 		| [
-				...children: (
+				...children: NonEmptyArray<
 					| T.Parameters.Loose
 					| LooseValue<T.Capture | T.String | T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
+				>
 		  ]
 		| [
 				children: Readonly<

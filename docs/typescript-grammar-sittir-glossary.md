@@ -877,13 +877,6 @@ grammar-wide `operator:` spacing unless its variant says otherwise.
 			// arm of and leave that slot without a value.
 ```
 
-### `expectTestFailures` (`packages/typescript/grammar.sittir.ts:1111`)
-
-```text
-			// Known-failing generated nodes.test.ts kinds — tracked defects, not
-			// silenced mysteries. Remove an entry + regen when its issue is fixed.
-```
-
 ### `expectDiagnostics` (`packages/typescript/grammar.sittir.ts`)
 
 The `rule-reauthored-without-cause` floor: `rules:` entries that replace an
