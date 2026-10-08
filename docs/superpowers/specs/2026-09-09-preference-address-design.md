@@ -537,6 +537,11 @@ literals. A render therefore has one line ending.
 
 - **No site overrides.** A file has one line ending, so the "explicit site
   overrides" item of the test list above does not apply to it.
+- **Transitive references and token lowering do not arise.** Inside the
+  whitespace vocabulary, every reference names `newline` directly, and no
+  member is lowered to a parser token (see Parser lowering). Those two items
+  of the test list stay with the general reference mechanism; the line
+  ending tests references, all three spellings and break counting.
 - **References.** `blankline` is `seq(newline, newline)` and
   `double_blankline` is `seq(newline, newline, newline)`. They keep their
   names as layout arms. There is no general whitespace-count primitive.

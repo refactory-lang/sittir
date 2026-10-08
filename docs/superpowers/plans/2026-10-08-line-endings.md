@@ -13,7 +13,10 @@
 ## Rulings (user, 2026-10-08)
 
 1. The option is `render: { newline }`, text-valued like `indent`, one of `'\n' | '\r\n' | '\r'`, typed from `_newline`'s arms. It is accepted per engine and per call. Default `'\n'`.
-2. Every line break in the output takes the preference: the writer's breaks, and the breaks inside source slices, comments and literals. A render has one line ending. This is safe for rust, typescript and python, whose lexers turn CRLF inside literals into LF anyway.
+2. Every line break in the output takes the preference: the writer's breaks, and the breaks inside source slices, comments and literals. A render has one line ending. This is safe for rust, typescript and python, because none of them lets a CR or CRLF inside a literal carry meaning:
+   - rust normalizes CRLF to LF before lexing and refuses a bare CR in any string literal, raw ones included;
+   - a JavaScript string literal cannot hold an unescaped line terminator (only a line continuation, which adds nothing to the value), and template literals normalize CR and CRLF to LF in both their cooked and raw values;
+   - python reads source with universal newlines, so CR and CRLF are LF before it tokenizes.
 3. The line ending is global. There is no per-site override, and the amendment's "explicit site overrides" test does not apply to it (recorded in the addendum).
 4. It is applied by a `fmt::Write` adapter at the end of every root render. The `Output` trait stays the width setting's first stage.
 5. `blankline` and `double_blankline` stay named members, with their arm names unchanged, defined as two and three references to `newline`. There is no general whitespace-count primitive.
@@ -32,7 +35,7 @@
 
 ## Global Constraints
 
-- Branch `feat/line-endings` from `origin/master`, in `scratchpad/wt-line-endings`. Commits use pathspecs (`git commit -F msg -- <paths>`).
+- Branch `feat/line-endings` from `origin/master` **after the typed reader's 1c-i has merged**: Tasks 3 and 4 touch `engine.rs` and `napi_engine.rs`, which 1c-i rewrites. Work in `scratchpad/wt-line-endings`. Commits use pathspecs (`git commit -F msg -- <paths>`).
 - Generated outputs are never hand-edited: change the DSL or emitter and regenerate.
 - No comments in `packages/codegen/src/`; every new declaration gets a `docs/glossary/` entry. No plan, task, PR or issue numbers in comments or glossary text.
 - DRY: the line-ending arms are declared once (`NEWLINE_ARMS` in `whitespace.ts`). The Rust tables, the TypeScript `Newline` type and `_newline`'s model all read that constant. Each member's canonical text has one derivation (`canonicalText`). Breaks are counted by one function in Rust (`logical_breaks`).
