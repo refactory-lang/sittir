@@ -669,6 +669,7 @@ export function coerceToAlternation(...input: T.Alternation.LooseArgs): ReturnTy
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('terms' in head)) return input;
 		const v = (head as Record<string, unknown>)['terms'];
 		return Array.isArray(v) ? v : [v];
@@ -690,6 +691,7 @@ export function coerceToTerm(...input: T.Term.LooseArgs): ReturnType<typeof F.bu
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('termGroup' in head)) return input;
 		const v = (head as Record<string, unknown>)['termGroup'];
 		return Array.isArray(v) ? v : [v];

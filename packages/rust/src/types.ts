@@ -20161,12 +20161,14 @@ export namespace DeclarationList {
 	export type Loose = LooseFor<TSKindId.DeclarationList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DeclarationList>;
 	export type BuildArgs = [...children: Admit<T.DeclarationStatement[]>];
-	export type LooseArgs = [
-		...children: (
-			| T.DeclarationList.Loose
-			| LooseValue<T.DeclarationStatement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	];
+	export type LooseArgs =
+		| [
+				...children: (
+					| T.DeclarationList.Loose
+					| LooseValue<T.DeclarationStatement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ]
+		| [children: Readonly<LooseValue<T.DeclarationStatement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]>];
 	export type Kind = TSKindId.DeclarationList;
 }
 export namespace UnionItem {
@@ -20418,27 +20420,50 @@ export namespace FunctionModifiers {
 			>
 		>
 	];
-	export type LooseArgs = [
-		...children: (
-			| T.FunctionModifiers.Loose
-			| LooseValue<
-					| TSKindId.AsyncKeyword
-					| TSKindId.DefaultKeyword
-					| TSKindId.ConstKeyword
-					| TSKindId.UnsafeKeyword
-					| T.ExternModifier,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-			  >
-			| LooseValue<
-					'async' | 'default' | 'const' | 'unsafe' | T.ExternModifier,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-			  >
-		)[]
-	];
+	export type LooseArgs =
+		| [
+				...children: NonEmptyArray<
+					| T.FunctionModifiers.Loose
+					| LooseValue<
+							| TSKindId.AsyncKeyword
+							| TSKindId.DefaultKeyword
+							| TSKindId.ConstKeyword
+							| TSKindId.UnsafeKeyword
+							| T.ExternModifier,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >
+					| LooseValue<
+							'async' | 'default' | 'const' | 'unsafe' | T.ExternModifier,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >
+				>
+		  ]
+		| [
+				children: Readonly<
+					NonEmptyArray<
+						| LooseValue<
+								| TSKindId.AsyncKeyword
+								| TSKindId.DefaultKeyword
+								| TSKindId.ConstKeyword
+								| TSKindId.UnsafeKeyword
+								| T.ExternModifier,
+								T.LeafScalarMap,
+								T.LeafStringMap,
+								T.NamespaceMap
+						  >
+						| LooseValue<
+								'async' | 'default' | 'const' | 'unsafe' | T.ExternModifier,
+								T.LeafScalarMap,
+								T.LeafStringMap,
+								T.NamespaceMap
+						  >
+					>
+				>
+		  ];
 	export type Kind = TSKindId.FunctionModifiers;
 }
 export namespace WhereClause {
@@ -20525,18 +20550,37 @@ export namespace TraitBounds {
 	export type BuildArgs = [
 		...children: NonEmptyArray<Admit<(T.Type | T.Lifetime | T.HigherRankedTraitBound) | T.TypeIdentifier.Types>>
 	];
-	export type LooseArgs = [
-		...children: (
-			| T.TraitBounds.Loose
-			| LooseValue<
-					(T.Type | T.Lifetime | T.HigherRankedTraitBound) | T.TypeIdentifier.Types,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-			  >
-			| LooseValue<T.Type | T.Lifetime | T.HigherRankedTraitBound, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	];
+	export type LooseArgs =
+		| [
+				...children: NonEmptyArray<
+					| T.TraitBounds.Loose
+					| LooseValue<
+							(T.Type | T.Lifetime | T.HigherRankedTraitBound) | T.TypeIdentifier.Types,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >
+					| LooseValue<T.Type | T.Lifetime | T.HigherRankedTraitBound, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				>
+		  ]
+		| [
+				children: Readonly<
+					NonEmptyArray<
+						| LooseValue<
+								(T.Type | T.Lifetime | T.HigherRankedTraitBound) | T.TypeIdentifier.Types,
+								T.LeafScalarMap,
+								T.LeafStringMap,
+								T.NamespaceMap
+						  >
+						| LooseValue<
+								T.Type | T.Lifetime | T.HigherRankedTraitBound,
+								T.LeafScalarMap,
+								T.LeafStringMap,
+								T.NamespaceMap
+						  >
+					>
+				>
+		  ];
 	export type Kind = TSKindId.TraitBounds;
 }
 export namespace HigherRankedTraitBound {
@@ -21778,12 +21822,14 @@ export namespace ClosureParameters {
 	export type Loose = LooseFor<TSKindId.ClosureParameters>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClosureParameters>;
 	export type BuildArgs = [...children: Admit<(T.Pattern | T.Parameter)[]>];
-	export type LooseArgs = [
-		...children: (
-			| T.ClosureParameters.Loose
-			| LooseValue<T.Pattern | T.Parameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	];
+	export type LooseArgs =
+		| [
+				...children: (
+					| T.ClosureParameters.Loose
+					| LooseValue<T.Pattern | T.Parameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ]
+		| [children: Readonly<LooseValue<T.Pattern | T.Parameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]>];
 	export type Kind = TSKindId.ClosureParameters;
 }
 export namespace Label {
@@ -24617,17 +24663,32 @@ export namespace TokenTreePatternParen {
 			(T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken)[]
 		>
 	];
-	export type LooseArgs = [
-		...children: (
-			| T.TokenTreePatternParen.Loose
-			| LooseValue<
-					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-			  >
-		)[]
-	];
+	export type LooseArgs =
+		| [
+				...children: (
+					| T.TokenTreePatternParen.Loose
+					| LooseValue<
+							| T.TokenTreePattern
+							| T.TokenRepetitionPattern
+							| T.TokenBindingPattern
+							| T.Metavariable
+							| T.NonSpecialToken,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >
+				)[]
+		  ]
+		| [
+				children: Readonly<
+					LooseValue<
+						T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
+						T.LeafScalarMap,
+						T.LeafStringMap,
+						T.NamespaceMap
+					>[]
+				>
+		  ];
 	export type Kind = TSKindId.TokenTreePatternParen;
 }
 export namespace TokenTreePatternBracket {
@@ -24648,17 +24709,32 @@ export namespace TokenTreePatternBracket {
 			(T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken)[]
 		>
 	];
-	export type LooseArgs = [
-		...children: (
-			| T.TokenTreePatternBracket.Loose
-			| LooseValue<
-					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-			  >
-		)[]
-	];
+	export type LooseArgs =
+		| [
+				...children: (
+					| T.TokenTreePatternBracket.Loose
+					| LooseValue<
+							| T.TokenTreePattern
+							| T.TokenRepetitionPattern
+							| T.TokenBindingPattern
+							| T.Metavariable
+							| T.NonSpecialToken,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >
+				)[]
+		  ]
+		| [
+				children: Readonly<
+					LooseValue<
+						T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
+						T.LeafScalarMap,
+						T.LeafStringMap,
+						T.NamespaceMap
+					>[]
+				>
+		  ];
 	export type Kind = TSKindId.TokenTreePatternBracket;
 }
 export namespace TokenTreePatternBrace {
@@ -24679,17 +24755,32 @@ export namespace TokenTreePatternBrace {
 			(T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken)[]
 		>
 	];
-	export type LooseArgs = [
-		...children: (
-			| T.TokenTreePatternBrace.Loose
-			| LooseValue<
-					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-			  >
-		)[]
-	];
+	export type LooseArgs =
+		| [
+				...children: (
+					| T.TokenTreePatternBrace.Loose
+					| LooseValue<
+							| T.TokenTreePattern
+							| T.TokenRepetitionPattern
+							| T.TokenBindingPattern
+							| T.Metavariable
+							| T.NonSpecialToken,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >
+				)[]
+		  ]
+		| [
+				children: Readonly<
+					LooseValue<
+						T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
+						T.LeafScalarMap,
+						T.LeafStringMap,
+						T.NamespaceMap
+					>[]
+				>
+		  ];
 	export type Kind = TSKindId.TokenTreePatternBrace;
 }
 export namespace TokenTreeParen {
@@ -24708,17 +24799,28 @@ export namespace TokenTreeParen {
 	export type BuildArgs = [
 		...children: Admit<(T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]>
 	];
-	export type LooseArgs = [
-		...children: (
-			| T.TokenTreeParen.Loose
-			| LooseValue<
-					T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-			  >
-		)[]
-	];
+	export type LooseArgs =
+		| [
+				...children: (
+					| T.TokenTreeParen.Loose
+					| LooseValue<
+							T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >
+				)[]
+		  ]
+		| [
+				children: Readonly<
+					LooseValue<
+						T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
+						T.LeafScalarMap,
+						T.LeafStringMap,
+						T.NamespaceMap
+					>[]
+				>
+		  ];
 	export type Kind = TSKindId.TokenTreeParen;
 }
 export namespace TokenTreeBracket {
@@ -24737,17 +24839,28 @@ export namespace TokenTreeBracket {
 	export type BuildArgs = [
 		...children: Admit<(T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]>
 	];
-	export type LooseArgs = [
-		...children: (
-			| T.TokenTreeBracket.Loose
-			| LooseValue<
-					T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-			  >
-		)[]
-	];
+	export type LooseArgs =
+		| [
+				...children: (
+					| T.TokenTreeBracket.Loose
+					| LooseValue<
+							T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >
+				)[]
+		  ]
+		| [
+				children: Readonly<
+					LooseValue<
+						T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
+						T.LeafScalarMap,
+						T.LeafStringMap,
+						T.NamespaceMap
+					>[]
+				>
+		  ];
 	export type Kind = TSKindId.TokenTreeBracket;
 }
 export namespace TokenTreeBrace {
@@ -24766,17 +24879,28 @@ export namespace TokenTreeBrace {
 	export type BuildArgs = [
 		...children: Admit<(T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]>
 	];
-	export type LooseArgs = [
-		...children: (
-			| T.TokenTreeBrace.Loose
-			| LooseValue<
-					T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-			  >
-		)[]
-	];
+	export type LooseArgs =
+		| [
+				...children: (
+					| T.TokenTreeBrace.Loose
+					| LooseValue<
+							T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >
+				)[]
+		  ]
+		| [
+				children: Readonly<
+					LooseValue<
+						T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
+						T.LeafScalarMap,
+						T.LeafStringMap,
+						T.NamespaceMap
+					>[]
+				>
+		  ];
 	export type Kind = TSKindId.TokenTreeBrace;
 }
 export namespace DelimTokenTreeParen {
@@ -24793,18 +24917,32 @@ export namespace DelimTokenTreeParen {
 	export type Loose = LooseFor<TSKindId.DelimTokenTreeParen>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DelimTokenTreeParen>;
 	export type BuildArgs = [...children: Admit<(T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]>];
-	export type LooseArgs = [
-		...children: (
-			| T.DelimTokenTreeParen.Loose
-			| LooseValue<
-					T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-			  >
-			| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	];
+	export type LooseArgs =
+		| [
+				...children: (
+					| T.DelimTokenTreeParen.Loose
+					| LooseValue<
+							T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >
+					| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ]
+		| [
+				children: Readonly<
+					(
+						| LooseValue<
+								T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
+								T.LeafScalarMap,
+								T.LeafStringMap,
+								T.NamespaceMap
+						  >
+						| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+					)[]
+				>
+		  ];
 	export type Kind = TSKindId.DelimTokenTreeParen;
 }
 export namespace DelimTokenTreeBracket {
@@ -24821,18 +24959,32 @@ export namespace DelimTokenTreeBracket {
 	export type Loose = LooseFor<TSKindId.DelimTokenTreeBracket>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DelimTokenTreeBracket>;
 	export type BuildArgs = [...children: Admit<(T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]>];
-	export type LooseArgs = [
-		...children: (
-			| T.DelimTokenTreeBracket.Loose
-			| LooseValue<
-					T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-			  >
-			| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	];
+	export type LooseArgs =
+		| [
+				...children: (
+					| T.DelimTokenTreeBracket.Loose
+					| LooseValue<
+							T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >
+					| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ]
+		| [
+				children: Readonly<
+					(
+						| LooseValue<
+								T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
+								T.LeafScalarMap,
+								T.LeafStringMap,
+								T.NamespaceMap
+						  >
+						| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+					)[]
+				>
+		  ];
 	export type Kind = TSKindId.DelimTokenTreeBracket;
 }
 export namespace DelimTokenTreeBrace {
@@ -24849,18 +25001,32 @@ export namespace DelimTokenTreeBrace {
 	export type Loose = LooseFor<TSKindId.DelimTokenTreeBrace>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DelimTokenTreeBrace>;
 	export type BuildArgs = [...children: Admit<(T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]>];
-	export type LooseArgs = [
-		...children: (
-			| T.DelimTokenTreeBrace.Loose
-			| LooseValue<
-					T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-			  >
-			| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	];
+	export type LooseArgs =
+		| [
+				...children: (
+					| T.DelimTokenTreeBrace.Loose
+					| LooseValue<
+							T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >
+					| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ]
+		| [
+				children: Readonly<
+					(
+						| LooseValue<
+								T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
+								T.LeafScalarMap,
+								T.LeafStringMap,
+								T.NamespaceMap
+						  >
+						| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+					)[]
+				>
+		  ];
 	export type Kind = TSKindId.DelimTokenTreeBrace;
 }
 export namespace FieldPatternShorthand {

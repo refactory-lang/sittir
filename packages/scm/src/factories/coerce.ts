@@ -537,6 +537,7 @@ export function coerceToProgram(...input: T.Program.LooseArgs): ReturnType<typeo
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('definitions' in head)) return input;
 		const v = (head as Record<string, unknown>)['definitions'];
 		return Array.isArray(v) ? v : [v];
@@ -661,6 +662,7 @@ export function coerceToStringContent(...input: T.StringContent.LooseArgs): Retu
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('content' in head)) return input;
 		const v = (head as Record<string, unknown>)['content'];
 		return Array.isArray(v) ? v : [v];
@@ -688,6 +690,7 @@ export function coerceToParameters(...input: T.Parameters.LooseArgs): ReturnType
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('elements' in head)) return input;
 		const v = (head as Record<string, unknown>)['elements'];
 		return Array.isArray(v) ? v : [v];

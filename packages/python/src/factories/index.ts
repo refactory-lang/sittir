@@ -186,6 +186,9 @@ export const subscripts: Hoisted<typeof O.subscripts> = hoistAs<typeof O.subscri
 export const dictionaryElements: Hoisted<typeof O.dictionaryElements> = hoistAs<typeof O.dictionaryElements>(
 	O.dictionaryElements
 );
+export const tuplePatternElements: Hoisted<typeof O.tuplePatternElements> = hoistAs<typeof O.tuplePatternElements>(
+	O.tuplePatternElements
+);
 export const tupleElements: Hoisted<typeof O.tupleElements> = hoistAs<typeof O.tupleElements>(O.tupleElements);
 export const exceptClauseExceptionAs: Hoisted<typeof O.exceptClauseExceptionAs> = hoistAs<
 	typeof O.exceptClauseExceptionAs

@@ -2763,7 +2763,22 @@ describe('call', () => {
 				$source: 2,
 				$named: true,
 				_body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-				_comprehension_clauses: { $type: TSKindId.ComprehensionClauses, $text: 'test', $source: 2, $named: true } as any
+				_comprehension_clauses: {
+					$type: TSKindId.ComprehensionClauses,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_content: [
+						{
+							$type: TSKindId.ForInClause,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+							_right: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+						} as any
+					]
+				} as any
 			} as any
 		});
 		expect(node.$type).toBe(TSKindId.Call);
@@ -2778,7 +2793,22 @@ describe('call', () => {
 				$source: 2,
 				$named: true,
 				_body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-				_comprehension_clauses: { $type: TSKindId.ComprehensionClauses, $text: 'test', $source: 2, $named: true } as any
+				_comprehension_clauses: {
+					$type: TSKindId.ComprehensionClauses,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_content: [
+						{
+							$type: TSKindId.ForInClause,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+							_right: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+						} as any
+					]
+				} as any
 			} as any
 		});
 		const rendered = node.$render!();
@@ -3304,7 +3334,22 @@ describe('list_comprehension', () => {
 	it('factory produces correct type', () => {
 		const node = ir.listComprehension({
 			body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			comprehensionClauses: { $type: TSKindId.ComprehensionClauses, $text: 'test', $source: 2, $named: true } as any
+			comprehensionClauses: {
+				$type: TSKindId.ComprehensionClauses,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: [
+					{
+						$type: TSKindId.ForInClause,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+						_right: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+					} as any
+				]
+			} as any
 		});
 		expect(node.$type).toBe(TSKindId.ListComprehension);
 		expect(node.$source).toBe(2);
@@ -3312,7 +3357,22 @@ describe('list_comprehension', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.listComprehension({
 			body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			comprehensionClauses: { $type: TSKindId.ComprehensionClauses, $text: 'test', $source: 2, $named: true } as any
+			comprehensionClauses: {
+				$type: TSKindId.ComprehensionClauses,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: [
+					{
+						$type: TSKindId.ForInClause,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+						_right: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+					} as any
+				]
+			} as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -3330,7 +3390,22 @@ describe('dictionary_comprehension', () => {
 				_key: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 				_value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 			} as any,
-			comprehensionClauses: { $type: TSKindId.ComprehensionClauses, $text: 'test', $source: 2, $named: true } as any
+			comprehensionClauses: {
+				$type: TSKindId.ComprehensionClauses,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: [
+					{
+						$type: TSKindId.ForInClause,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+						_right: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+					} as any
+				]
+			} as any
 		});
 		expect(node.$type).toBe(TSKindId.DictionaryComprehension);
 		expect(node.$source).toBe(2);
@@ -3345,7 +3420,22 @@ describe('dictionary_comprehension', () => {
 				_key: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 				_value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 			} as any,
-			comprehensionClauses: { $type: TSKindId.ComprehensionClauses, $text: 'test', $source: 2, $named: true } as any
+			comprehensionClauses: {
+				$type: TSKindId.ComprehensionClauses,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: [
+					{
+						$type: TSKindId.ForInClause,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+						_right: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+					} as any
+				]
+			} as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -3356,7 +3446,22 @@ describe('set_comprehension', () => {
 	it('factory produces correct type', () => {
 		const node = ir.setComprehension({
 			body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			comprehensionClauses: { $type: TSKindId.ComprehensionClauses, $text: 'test', $source: 2, $named: true } as any
+			comprehensionClauses: {
+				$type: TSKindId.ComprehensionClauses,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: [
+					{
+						$type: TSKindId.ForInClause,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+						_right: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+					} as any
+				]
+			} as any
 		});
 		expect(node.$type).toBe(TSKindId.SetComprehension);
 		expect(node.$source).toBe(2);
@@ -3364,7 +3469,22 @@ describe('set_comprehension', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.setComprehension({
 			body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			comprehensionClauses: { $type: TSKindId.ComprehensionClauses, $text: 'test', $source: 2, $named: true } as any
+			comprehensionClauses: {
+				$type: TSKindId.ComprehensionClauses,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: [
+					{
+						$type: TSKindId.ForInClause,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+						_right: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+					} as any
+				]
+			} as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -3375,7 +3495,22 @@ describe('generator_expression', () => {
 	it('factory produces correct type', () => {
 		const node = ir.generatorExpression({
 			body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			comprehensionClauses: { $type: TSKindId.ComprehensionClauses, $text: 'test', $source: 2, $named: true } as any
+			comprehensionClauses: {
+				$type: TSKindId.ComprehensionClauses,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: [
+					{
+						$type: TSKindId.ForInClause,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+						_right: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+					} as any
+				]
+			} as any
 		});
 		expect(node.$type).toBe(TSKindId.GeneratorExpression);
 		expect(node.$source).toBe(2);
@@ -3383,7 +3518,22 @@ describe('generator_expression', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.generatorExpression({
 			body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			comprehensionClauses: { $type: TSKindId.ComprehensionClauses, $text: 'test', $source: 2, $named: true } as any
+			comprehensionClauses: {
+				$type: TSKindId.ComprehensionClauses,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: [
+					{
+						$type: TSKindId.ForInClause,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+						_right: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+					} as any
+				]
+			} as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -3533,13 +3683,25 @@ describe('string', () => {
 
 describe('string_content', () => {
 	it('factory produces correct type', () => {
-		const node = ir.stringContent();
+		const node = ir.stringContent({
+			$type: TSKindId.EscapeInterpolation,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
 		expect(node.$type).toBe(TSKindId.StringContent);
 		expect(node.$source).toBe(2);
 	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.stringContent();
-		expect(() => node.$render!()).not.toThrow();
+	it('render produces non-empty string', () => {
+		const node = ir.stringContent({
+			$type: TSKindId.EscapeInterpolation,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('test');
 	});
 });
 
@@ -3968,6 +4130,22 @@ describe('format_specifier_text', () => {
 	});
 });
 
+describe('tuple_pattern_elements', () => {
+	it('factory produces correct type', () => {
+		const node = ir.tuplePatternElements(
+			...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+		);
+		expect(node.$type).toBe(TSKindId.TuplePatternElements);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.tuplePatternElements(
+			...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+		);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
 describe('tuple_elements', () => {
 	it('factory produces correct type', () => {
 		const node = ir.tupleElements(...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]);
@@ -4154,13 +4332,33 @@ describe('parenthesized_import_list', () => {
 
 describe('comprehension_clauses', () => {
 	it('factory produces correct type', () => {
-		const node = ir.comprehensionClauses();
+		const node = ir.comprehensionClauses({
+			$type: TSKindId.ForInClause,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_async: true as never,
+			_left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			_right: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any],
+			_comma: true as never
+		} as any);
 		expect(node.$type).toBe(TSKindId.ComprehensionClauses);
 		expect(node.$source).toBe(2);
 	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.comprehensionClauses();
-		expect(() => node.$render!()).not.toThrow();
+	it('render produces non-empty string', () => {
+		const node = ir.comprehensionClauses({
+			$type: TSKindId.ForInClause,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_async: true as never,
+			_left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			_right: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any],
+			_comma: true as never
+		} as any);
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('test');
 	});
 });
 

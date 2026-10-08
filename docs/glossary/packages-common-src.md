@@ -66,6 +66,10 @@ The engine a value belongs to: what its `$engine()` returns, or for a value with
 
 Records the engine handle that read a tree, so the wrap layer can find it from the tree alone.
 
+### `packages/common/src/engine-scope.ts::hydrateListStorage`
+
+Resolves a list owner's shallow read stub before a factory stores and sizes its list. The stub's tree token selects its reading engine and that engine's grammar-owned `hydrateChild` hook; this retains the existing depth and envelope normalization in one implementation. Non-stubs pass through unchanged. A missing tree binding, disposed reading engine or different calling language leaves the stub unresolved, so the factory's existing read-stub refusal remains effective.
+
 ### `packages/common/src/tree-token.ts::registerTree`
 
 Records the tree handle a parse made under the tree's token, so anything holding the token reaches the handle (`treeOf`). A weak entry: the handle lives exactly as long as the token, which every node of the tree holds.
@@ -160,7 +164,7 @@ Keeps the entries of a batch whose slots satisfy a `where` condition: entries ar
 
 ### `packages/common/src/query.ts::compileFor`
 
-The plan a `where` callback records for elements of one kind, cached per callback and kind. The callback runs against that kind's recorder, so each slot it reads compiles to that kind's parser routes for the slot; a kind lacking a slot the callback reads is refused there.
+The plan a `where` callback records for elements of one kind, cached per immutable `querySlots` table, callback and kind. The callback runs against that kind's recorder, so each slot it reads compiles to that kind's parser routes for the slot; a kind lacking a slot the callback reads is refused there. Contexts sharing a table share plans, while equal numeric kind ids in different grammars never reuse each other's routes or validation.
 
 ### `packages/common/src/query.ts::recorder`
 

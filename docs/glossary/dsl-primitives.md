@@ -663,3 +663,7 @@ Marks a position in a rule's patches as a visible wrapper flattened onto its par
 ```text
 A patch placeholder carrying a replacement regex source for the pattern at the patched path.
 ```
+
+### `packages/codegen/src/dsl/primitives/rule-cause.ts::SemanticGapWitness`
+
+Evidence for `reauthored('semantic-gap', witness, body)`: the upstream parser's kind, accepted text and grammar form, plus the language meaning that differs from the modeled construction. The gate checks that the kind is unchanged, the upstream rule derives the form, and the meaning is stated. Upstream parser tests verify the text/kind; construction regressions verify the semantic correction. This cause covers #550, where `(x)` and `(x,)` share an upstream tuple kind but mean different things in the language. It does not claim to prove language semantics from the grammar.

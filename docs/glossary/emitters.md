@@ -139,7 +139,7 @@ The name of a grammar's type map, `<Prefix>TypeMap` (`RustTypeMap`), from the sa
 
 ### `packages/codegen/src/emitters/engine.ts::emitApi`
 
-The grammar's `api.ts`: the implementation a language descriptor loads. It declares the grammar's `LanguageAPI` (the builder table, guards, kind ids, the kind-to-node-type map keyed by each kind's ir key, the parsed root, the node union, the render options, and `indentChar`, which names the grammar's `IndentChar` alias from `options.ts`, and `empty`, the grammar's type-map member naming each kind's empty form) and exports `hooks`, which wire the package's render module hash, the builder table, guards, kind ids and trivia facts (joined by the grammar's comment coercer, `commentCoercer`, when it has a default trivia form, so a loose trivia string builds a comment), a native engine per engine through the shared `nativeLanguageEngine` adapter over `createRenderEngine`, and `wrapNode` for a parsed root and its tree.
+The grammar's `api.ts`: the implementation a language descriptor loads. It declares the grammar's `LanguageAPI` (the builder table, guards, kind ids, the kind-to-node-type map keyed by each kind's ir key, the parsed root, the node union, the render options, and `indentChar`, which names the grammar's `IndentChar` alias from `options.ts`, and `empty`, the grammar's type-map member naming each kind's empty form) and exports `hooks`, which wire the package's render module hash, the builder table, guards, kind ids and trivia facts (joined by the grammar's comment coercer, `commentCoercer`, when it has a default trivia form, so a loose trivia string builds a comment), a native engine per engine through the shared `nativeLanguageEngine` adapter over `createRenderEngine`, and `wrapNode` for a parsed root and its tree. The `hydrate` hook points to the existing `hydrateChild`, so factories resolve bound list stubs through the grammar's single child-hydration implementation.
 
 
 ```text
@@ -636,6 +636,8 @@ A pattern value contributes `string`; a slot holding only pattern values never t
 ```
 
 ### `packages/codegen/src/emitters/factories.ts::emitFieldCarryingFactory`
+
+A list owner's storage expression passes through `hydrateListStorage` before the shared view sizes it. The existing seat plan identifies that storage; the initializer, getter and list view then use the same resolved value. A missing live tree binding retains the existing refusal.
 
 ```text
 /**
@@ -1586,6 +1588,8 @@ The `SiblingLeadRefusal` a polymorph coercer's input is intersected with: the fu
  * (numeric-discriminant gate, self-UntypedNode unwrap, fresh-input fallback);
  * they differ ONLY in how the final call expression is built from a resolved
  * variable name, which `buildCallExpr` parameterizes.
+ * For repeat-slot containers, a lone array is unwrapped before the same
+ * per-element coercion used by spread arguments and config-slot arrays.
  *
  * The rest parameter is the kind's `LooseArgs` row, by name. The row is where
  * the element is spelled (`listBuiltTypeSurface`, `resolveConfigFactorySurface`):
@@ -11376,7 +11380,7 @@ Reads a `RowParam` off a kind's factory surface: the row types as `paramsToTuple
 
 The construction surface of a field-carrying kind, from its factory surface: the `$with` setters, and the `BuildArgs` / `LooseArgs` tuples from the surface's row parameters. The `BuildArgs` of a kind whose strict builder forwards to its child's constructor is the union of that builder's overloads (`forwardedConstruction`): the child itself, the child's config, the child's content, or the child's elements, each typed by the child's strict types. An own-text leaf (`ownTextLeaf`) has one row for both, `ownTextArgs`, and takes at most two arguments. A kind with a `listSpreadTarget` unions its tuples with the target's own (`… | T.<Target>.BuildArgs`), by name, so the spread form is the list's derivation rather than a copy; its `maxArgs` is then unbounded.
 
-A spread kind with leading options has two rows, the children alone and the options followed by the children.
+A repeat-slot spread kind also accepts a single readonly array on its loose surface. This row uses the same loose element types and cardinality as its spread parameters. Leading options apply to both the spread and array forms.
 
 ### `packages/codegen/src/emitters/factories.ts::constructorSurface`
 
@@ -16228,7 +16232,7 @@ The call arguments for one sub-factory case, following the arm shapes `shape` em
 
 The loose row of a kind that takes one argument is that kind's own `Loose`, by name: a config kind's, a single-slot kind's and a single-child kind's alike. `Loose` is what the coercer accepts (the config, the built or parsed node itself, and the bare value of the kind's sole slot), so the row and the coercer's parameter are one type and a wrapper's row takes its target's config with no second spelling. A child of a supertype given as a config must carry its `$type`, because nothing else says which kind it is; the row does not admit an untagged one. A kind that spreads its children takes, per element, its own `Loose`, the strict element widened through `LooseValue`, and the element the coercer resolves (`coercedChildElementType`).
 
-The rest parameter of a spreading kind is typed from the slot's own cardinality, with the function a list's elements use (`elementsTypeOf`): a slot the model marks non-empty takes `NonEmptyArray` of the admitted element (strict) and the `$with` setter takes the same, so the empty call is a compile-time refusal beside the runtime guard; the loose row stays an array, because a tuple row would make `Loose` refer to itself.
+The rest parameter of a spreading kind is typed from the slot's own cardinality, with the function a list's elements use (`elementsTypeOf`): a slot the model marks non-empty takes `NonEmptyArray` of the admitted element (strict) and the `$with` setter takes the same, so the empty call is a compile-time refusal beside the runtime guard; the loose spread row uses that same cardinality around the union of its own loose form and the widened element. The lone-array row derives from the loose rest parameter, admitting both strict and coerced element spellings and preserving non-empty cardinality.
 
 #### body
 

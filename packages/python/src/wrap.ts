@@ -3991,8 +3991,8 @@ export function wrapSimplePattern(data: T.SimplePattern, tree: TreeHandle): T.Si
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _UntypedNode).$span }
 				),
-				{ True: 70, False: 71, None: 72, _: 278 },
-				{ 48: 278 }
+				{ True: 70, False: 71, None: 72, _: 279 },
+				{ 48: 279 }
 			),
 			tree
 		),
@@ -4108,8 +4108,8 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle): T.Unio
 					'patterns',
 					{ tree, nodeType: data.$type, slotName: 'patterns', span: (data as _UntypedNode).$span }
 				),
-				{ True: 70, False: 71, None: 72, _: 278 },
-				{ 48: 278 }
+				{ True: 70, False: 71, None: 72, _: 279 },
+				{ 48: 279 }
 			),
 			tree
 		),
@@ -4236,8 +4236,8 @@ export function wrapKeyValuePattern(data: T.KeyValuePattern, tree: TreeHandle): 
 					slotName: 'key',
 					span: (data as _UntypedNode).$span
 				}),
-				{ True: 70, False: 71, None: 72, _: 278 },
-				{ 48: 278 }
+				{ True: 70, False: 71, None: 72, _: 279 },
+				{ 48: 279 }
 			),
 			tree
 		),
@@ -4327,8 +4327,8 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle): T.
 					slotName: 'value',
 					span: (data as _UntypedNode).$span
 				}),
-				{ True: 70, False: 71, None: 72, _: 278 },
-				{ 48: 278 }
+				{ True: 70, False: 71, None: 72, _: 279 },
+				{ 48: 279 }
 			),
 			tree
 		),
@@ -4809,39 +4809,39 @@ export function wrapPattern(
 }
 
 export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle): T.TuplePattern.Parsed {
-	data = modelSlots(data, ['_patterns']);
+	data = modelSlots(data, ['_elements']);
 	const handle = currentHandle();
-	const _patterns = storeExpanded(
-		normalizeSingularWrapSlot(data._patterns, 'patterns', false, data.$type, {
+	const _elements = storeExpanded(
+		normalizeSingularWrapSlot(data._elements, 'elements', false, data.$type, {
 			tree,
 			nodeType: data.$type,
-			slotName: 'patterns',
+			slotName: 'elements',
 			span: (data as _UntypedNode).$span
 		}),
 		tree
 	);
-	const listView = ownerView(_patterns, '_item', (list) => hydrateChild(list, tree));
+	const listView = ownerView(_elements, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.TuplePattern as const,
-		_patterns,
+		_elements,
 
-		patterns() {
-			return hydrateSlot<T.Patterns | undefined>(this, '_patterns', tree);
+		elements() {
+			return hydrateSlot<T.TuplePatternElements | undefined>(this, '_elements', tree);
 		},
 		$with: {
-			patterns: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
-						{ kind: TSKindId.Patterns as const, optional: true, make: RAW.buildPatterns },
-						(v: NonNullable<T.TuplePattern['_patterns']>) => wrapTuplePattern({ ...$edited(data), _patterns: v }, tree)
+						{ kind: TSKindId.TuplePatternElements as const, optional: true, make: RAW.buildTuplePatternElements },
+						(v: NonNullable<T.TuplePattern['_elements']>) => wrapTuplePattern({ ...$edited(data), _elements: v }, tree)
 					)
 				)
 		},
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.patterns(), 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -8263,7 +8263,7 @@ export function wrapStringContent(data: T.StringContent, tree: TreeHandle): T.St
 						readTerminalFromOther<
 							T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment
 						>(data, [TSKindId.NotEscapeSequence]),
-					false,
+					true,
 					'content',
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _UntypedNode).$span }
 				),
@@ -8281,7 +8281,7 @@ export function wrapStringContent(data: T.StringContent, tree: TreeHandle): T.St
 			);
 		},
 		$with: {
-			contents: (...v: NonNullable<T.StringContent['_content']>[number][]) =>
+			contents: (...v: NonEmptyArray<NonNullable<T.StringContent['_content']>[number]>) =>
 				rebuilt(node, handle, () => wrapStringContent({ ...$edited(data), _content: restItems('contents', v) }, tree))
 		},
 		$render: () => renderText(handle, node),
@@ -9416,6 +9416,58 @@ export function wrapSliceGroup(data: T.SliceGroup, tree: TreeHandle): T.SliceGro
 	return node as unknown as T.SliceGroup.Parsed;
 }
 
+export function wrapTuplePatternElements(
+	data: T.TuplePatternElements & {
+		readonly $other?: _UntypedNode['$other'];
+		readonly $span?: { start: number; end: number };
+	},
+	tree: TreeHandle
+): T.TuplePatternElements.Parsed {
+	data = modelSlots(data, ['_item']);
+	const handle = currentHandle();
+	const _content = storeExpanded(
+		normalizeRepeatedWrapSlot(data._item, true, 'item', {
+			tree,
+			nodeType: data.$type,
+			slotName: 'item',
+			span: (data as _UntypedNode).$span
+		}),
+		tree
+	);
+	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+		? Delimiter.Trailing
+		: Delimiter.None;
+	const listedStored = storedElements(_content);
+	const node = {
+		...data,
+		$type: TSKindId.TuplePatternElements as const,
+		_item: _content,
+		_delimiter,
+
+		items() {
+			return hydrateSlots<T.Pattern>(this, '_item', tree);
+		},
+		$with: {},
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? undefined,
+		$render: () => renderText(handle, node),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.TuplePatternElements.Parsed;
+}
+
 export function wrapTupleElements(
 	data: T.TupleElements & { readonly $other?: _UntypedNode['$other']; readonly $span?: { start: number; end: number } },
 	tree: TreeHandle
@@ -9936,7 +9988,7 @@ export function wrapComprehensionClauses(
 		...data,
 		$type: TSKindId.ComprehensionClauses as const,
 		_content: storeExpanded(
-			normalizeRepeatedWrapSlot(data._content, false, 'content', {
+			normalizeRepeatedWrapSlot(data._content, true, 'content', {
 				tree,
 				nodeType: data.$type,
 				slotName: 'content',
@@ -9949,7 +10001,7 @@ export function wrapComprehensionClauses(
 			return hydrateSlots<T.ForInClause | T.IfClause>(this, '_content', tree);
 		},
 		$with: {
-			contents: (...v: NonNullable<T.ComprehensionClauses['_content']>[number][]) =>
+			contents: (...v: NonEmptyArray<NonNullable<T.ComprehensionClauses['_content']>[number]>) =>
 				rebuilt(node, handle, () =>
 					wrapComprehensionClauses({ ...$edited(data), _content: restItems('contents', v) }, tree)
 				)
@@ -11892,6 +11944,7 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.DictionaryElements]: (d, t) => wrapDictionaryElements(d as unknown as T.DictionaryElements, t),
 	[TSKindId.SliceGroup]: (d, t) => wrapSliceGroup(d as unknown as T.SliceGroup, t),
 	[TSKindId.FormatSpecifierText]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.FormatSpecifierText as const }),
+	[TSKindId.TuplePatternElements]: (d, t) => wrapTuplePatternElements(d as unknown as T.TuplePatternElements, t),
 	[TSKindId.TupleElements]: (d, t) => wrapTupleElements(d as unknown as T.TupleElements, t),
 	[TSKindId.ExceptClauseExceptionAs]: (d, t) =>
 		wrapExceptClauseExceptionAs(d as unknown as T.ExceptClauseExceptionAs, t),
@@ -12026,11 +12079,11 @@ function _wrapTrivia(trivia: _UntypedNode['$_trivia'], tree: TreeHandle): _Untyp
 	);
 }
 
-const _ALIAS_ENVELOPES: ReadonlySet<_UntypedNode['$type']> = new Set([333, 334, 335]);
+const _ALIAS_ENVELOPES: ReadonlySet<_UntypedNode['$type']> = new Set([335, 336, 337]);
 const _HIDDEN_KINDS: ReadonlySet<_UntypedNode['$type']> = new Set([
 	116, 117, 122, 123, 124, 125, 126, 128, 129, 143, 162, 183, 194, 195, 203, 204, 205, 215, 218, 250, 251, 254, 255,
-	281, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319,
-	320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332
+	282, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320,
+	321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334
 ]);
 function _displayOf(entry: _UntypedNode): _UntypedNode['$type'] {
 	return (entry as { readonly $displayType?: _UntypedNode['$type'] }).$displayType ?? entry.$type;
@@ -12045,7 +12098,7 @@ function _withoutDisplay(data: _UntypedNode): _UntypedNode {
 }
 
 const _RECLAIMS_ANONYMOUS: ReadonlySet<_UntypedNode['$type']> = new Set([
-	134, 141, 144, 145, 146, 183, 219, 225, 248, 269, 276, 292, 295, 296, 297
+	134, 141, 144, 145, 146, 183, 219, 225, 248, 269, 277, 293, 296, 297, 298
 ]);
 function _spellingTokens(data: _UntypedNode): readonly _UntypedNode[] | undefined {
 	const { $other, ...node } = data;

@@ -2930,6 +2930,7 @@ export function coerceToVariableDeclaration(
 	const _elems: readonly unknown[] = (() => {
 		if (_rest.length !== 1) return _rest;
 		const head: unknown = _rest[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('declarators' in head)) return _rest;
 		const v = (head as Record<string, unknown>)['declarators'];
 		return Array.isArray(v) ? v : [v];
@@ -2994,6 +2995,7 @@ export function coerceToStatementBlock(...input: T.StatementBlock.LooseArgs): Re
 	const _elems: readonly unknown[] = (() => {
 		if (_rest.length !== 1) return _rest;
 		const head: unknown = _rest[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('statements' in head)) return _rest;
 		const v = (head as Record<string, unknown>)['statements'];
 		return Array.isArray(v) ? v : [v];
@@ -3565,6 +3567,7 @@ export function coerceToSwitchBody(...input: T.SwitchBody.LooseArgs): ReturnType
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('cases' in head)) return input;
 		const v = (head as Record<string, unknown>)['cases'];
 		return Array.isArray(v) ? v : [v];
@@ -3613,6 +3616,7 @@ export function coerceToSwitchDefault(...input: T.SwitchDefault.LooseArgs): Retu
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('body' in head)) return input;
 		const v = (head as Record<string, unknown>)['body'];
 		return Array.isArray(v) ? v : [v];
@@ -3792,6 +3796,7 @@ export function coerceToObject(...input: T.Object.LooseArgs): ReturnType<typeof 
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('properties' in head)) return input;
 		const v = (head as Record<string, unknown>)['properties'];
 		return Array.isArray(v) ? v : [v];
@@ -3983,6 +3988,7 @@ export function coerceToObjectPattern(...input: T.ObjectPattern.LooseArgs): Retu
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('properties' in head)) return input;
 		const v = (head as Record<string, unknown>)['properties'];
 		return Array.isArray(v) ? v : [v];
@@ -4216,6 +4222,7 @@ export function coerceToArray(...input: T.Array.LooseArgs): ReturnType<typeof F.
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('elements' in head)) return input;
 		const v = (head as Record<string, unknown>)['elements'];
 		return Array.isArray(v) ? v : [v];
@@ -4244,6 +4251,7 @@ export function coerceToArrayPattern(...input: T.ArrayPattern.LooseArgs): Return
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('elements' in head)) return input;
 		const v = (head as Record<string, unknown>)['elements'];
 		return Array.isArray(v) ? v : [v];
@@ -5377,6 +5385,7 @@ export function coerceToSequenceExpression(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('expression' in head)) return input;
 		const v = (head as Record<string, unknown>)['expression'];
 		return Array.isArray(v) ? v : [v];
@@ -5442,6 +5451,7 @@ export function coerceToTemplateString(...input: T.TemplateString.LooseArgs): Re
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('elements' in head)) return input;
 		const v = (head as Record<string, unknown>)['elements'];
 		return Array.isArray(v) ? v : [v];
@@ -5588,6 +5598,7 @@ export function coerceToArguments(...input: T.Arguments.LooseArgs): ReturnType<t
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('elements' in head)) return input;
 		const v = (head as Record<string, unknown>)['elements'];
 		return Array.isArray(v) ? v : [v];
@@ -5707,6 +5718,7 @@ export function coerceToClassBody(...input: T.ClassBody.LooseArgs): ReturnType<t
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('members' in head)) return input;
 		const v = (head as Record<string, unknown>)['members'];
 		return Array.isArray(v) ? v : [v];
@@ -7199,6 +7211,7 @@ export function coerceToExtendsClause(...input: T.ExtendsClause.LooseArgs): Retu
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('extendsClauseSingle' in head)) return input;
 		const v = (head as Record<string, unknown>)['extendsClauseSingle'];
 		return Array.isArray(v) ? v : [v];
@@ -7253,6 +7266,7 @@ export function coerceToImplementsClause(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('type' in head)) return input;
 		const v = (head as Record<string, unknown>)['type'];
 		return Array.isArray(v) ? v : [v];
@@ -7469,6 +7483,7 @@ export function coerceToExtendsTypeClause(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('type' in head)) return input;
 		const v = (head as Record<string, unknown>)['type'];
 		return Array.isArray(v) ? v : [v];
@@ -8285,6 +8300,7 @@ export function coerceToTemplateLiteralType(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('elements' in head)) return input;
 		const v = (head as Record<string, unknown>)['elements'];
 		return Array.isArray(v) ? v : [v];
@@ -11364,6 +11380,7 @@ export function coerceToStringDouble(...input: T.StringDouble.LooseArgs): Return
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('elements' in head)) return input;
 		const v = (head as Record<string, unknown>)['elements'];
 		return Array.isArray(v) ? v : [v];
@@ -11391,6 +11408,7 @@ export function coerceToStringSingle(...input: T.StringSingle.LooseArgs): Return
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('elements' in head)) return input;
 		const v = (head as Record<string, unknown>)['elements'];
 		return Array.isArray(v) ? v : [v];

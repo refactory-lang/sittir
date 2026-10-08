@@ -101,5 +101,5 @@ export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = Object
 	module: Object.freeze(['statements']),
 	parameters: Object.freeze(['elements']),
 	tuple: Object.freeze(['elements']),
-	tuple_pattern: Object.freeze(['patterns'])
+	tuple_pattern: Object.freeze(['elements'])
 });

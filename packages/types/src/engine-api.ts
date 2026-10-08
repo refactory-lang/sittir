@@ -165,6 +165,7 @@ export interface LanguageHooks<API extends LanguageAPI> {
 	readonly querySlots: QuerySlots;
 	createNative(options?: NativeEngineOptions<API['options']>): NativeLanguageEngine<API>;
 	wrap(root: unknown, tree: unknown): API['root'];
+	hydrate?(node: unknown, tree: unknown): unknown;
 }
 
 export interface NativeLanguageEngine<API extends LanguageAPI> {

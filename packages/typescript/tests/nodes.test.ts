@@ -770,8 +770,7 @@ describe('continue_statement', () => {
 	});
 });
 
-// known-failing: #170 — _resolveOneLeaf cannot resolve the _semicolon stub
-describe.skip('debugger_statement', () => {
+describe('debugger_statement', () => {
 	it('factory produces correct type', () => {
 		const node = ir.debuggerStatement({
 			$type: TSKindId.AutomaticSemicolon,
@@ -2485,8 +2484,7 @@ describe('instantiation_expression', () => {
 	});
 });
 
-// known-failing: #170 — Missing field _content on ImportRequireClauseTransport._source
-describe.skip('import_require_clause', () => {
+describe('import_require_clause', () => {
 	it('factory produces correct type', () => {
 		const node = ir.importRequireClause({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
@@ -4532,8 +4530,7 @@ describe('ambient_declaration_module', () => {
 	});
 });
 
-// known-failing: #170 (#172-adjacent) — Missing field _content through export-arm transport
-describe.skip('object_type_content', () => {
+describe('object_type_content', () => {
 	it('factory produces correct type', () => {
 		const node = ir.objectTypeContent(
 			...[

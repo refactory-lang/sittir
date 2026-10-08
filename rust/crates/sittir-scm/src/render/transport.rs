@@ -1553,7 +1553,7 @@ pub struct StringContentTransport {
     pub layout: Option<TransportLayout>,
     #[wire(key = "_content")]
     #[slot]
-    pub content: Option<Vec<::sittir_core::SlotValue<StringContentContentTransportSlot, true>>>,
+    pub content: Vec<::sittir_core::SlotValue<StringContentContentTransportSlot, true>>,
 }
 
 impl ::sittir_core::view::KindOf for StringContentTransport {
@@ -3492,7 +3492,7 @@ fn render_immediate_string(node: &ImmediateStringTransport, w: &mut dyn ::sittir
 
 fn render_string_content(node: &StringContentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = ListView {
-        items: node.content.as_deref().unwrap_or(&[]),
+        items: &node.content,
         template: "{}",
         token: "",
         before: 0,

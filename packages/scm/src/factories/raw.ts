@@ -146,7 +146,7 @@ export function buildCapture(value: Admit<T.ImmediateIdentifier>): T.Capture.Bou
 
 export function buildString(value?: Admit<T.StringContent>): ReturnType<typeof _buildString>;
 export function buildString(
-	...children: Admit<(T.StringContentText | T.EscapeSequence)[]>
+	...children: NonEmptyArray<Admit<T.StringContentText | T.EscapeSequence>>
 ): ReturnType<typeof _buildString>;
 export function buildString(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -185,7 +185,7 @@ function _buildString(value?: Admit<T.StringContent>): T.String.Bound {
 
 export function buildImmediateString(value?: Admit<T.StringContent>): ReturnType<typeof _buildImmediateString>;
 export function buildImmediateString(
-	...children: Admit<(T.StringContentText | T.EscapeSequence)[]>
+	...children: NonEmptyArray<Admit<T.StringContentText | T.EscapeSequence>>
 ): ReturnType<typeof _buildImmediateString>;
 export function buildImmediateString(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -225,8 +225,9 @@ function _buildImmediateString(value?: Admit<T.StringContent>): T.ImmediateStrin
 }
 
 export function buildStringContent(
-	...children: Admit<(T.StringContentText | T.EscapeSequence)[]>
+	...children: NonEmptyArray<Admit<T.StringContentText | T.EscapeSequence>>
 ): T.StringContent.Bound {
+	_assertNonEmpty(children, 'string_content.children');
 	const _content = rejectBareText(children, 'StringContent.content', 'buildStringContentText(…)');
 	const handle = currentHandle();
 	const node = {
@@ -235,7 +236,7 @@ export function buildStringContent(
 		$named: true as const,
 		_content,
 		$with: {
-			contents: (...vs: Admit<T.StringContentText | T.EscapeSequence>[]) =>
+			contents: (...vs: NonEmptyArray<Admit<T.StringContentText | T.EscapeSequence>>) =>
 				rebuilt(node, handle, () => buildStringContent(...restItems('contents', vs)))
 		},
 		contents: () => _content,

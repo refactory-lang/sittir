@@ -149,6 +149,7 @@ export const _fromMap = {
 	dictionary_elements: coerceToDictionaryElements,
 	slice_group: coerceToSliceGroup,
 	format_specifier_text: coerceToFormatSpecifierText,
+	tuple_pattern_elements: coerceToTuplePatternElements,
 	tuple_elements: coerceToTupleElements,
 	except_clause_exception_as: coerceToExceptClauseExceptionAs,
 	case_tuple_pattern: coerceToCaseTuplePattern,
@@ -469,279 +470,284 @@ const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33,
 	34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62,
 	63, 64, 65, 67, 68, 69, 70, 71, 72, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 107, 108, 109, 110, 111,
-	112, 113, 114, 115, 122, 123, 124, 125, 126, 137, 147, 148, 149, 210, 211, 252, 257, 258, 278
+	112, 113, 114, 115, 122, 123, 124, 125, 126, 137, 147, 148, 149, 210, 211, 252, 257, 258, 279
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	_simple_statements: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 130, 133, 134, 135, 136, 138, 140,
 		141, 142, 144, 145, 146, 147, 148, 149, 167, 168, 169, 170, 171, 172, 175, 180, 181, 200, 202, 206, 207, 208, 209,
 		212, 213, 216, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246, 247, 256, 259,
-		268, 270, 274, 276, 277, 279, 285, 286, 287, 288, 297, 335
+		268, 271, 275, 277, 278, 280, 286, 287, 288, 289, 298, 337
 	]),
-	import_statement: new Set([135, 136, 181, 335]),
-	future_import_statement: new Set([135, 136, 181, 279]),
+	import_statement: new Set([135, 136, 181, 337]),
+	future_import_statement: new Set([135, 136, 181, 280]),
 	import_list: new Set([136, 181]),
 	print_statement: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 274, 276, 277, 297
+		247, 256, 268, 271, 275, 277, 278, 298
 	]),
 	chevron: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
 	expression_statement: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 216, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245,
-		246, 247, 256, 268, 270, 285, 286, 287, 288, 297
+		246, 247, 256, 268, 271, 286, 287, 288, 289, 298
 	]),
 	return_statement: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
 	delete_statement: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
 	else_clause: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 115, 130, 133, 134, 135, 136, 138,
 		140, 141, 142, 144, 145, 146, 147, 148, 149, 167, 168, 169, 170, 171, 172, 175, 179, 180, 181, 200, 202, 206, 207,
 		208, 209, 212, 213, 216, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246, 247,
-		256, 259, 268, 270, 274, 276, 277, 279, 285, 286, 287, 288, 293, 294, 295, 297, 335
+		256, 259, 268, 271, 275, 277, 278, 280, 286, 287, 288, 289, 294, 295, 296, 298, 337
 	]),
-	match_block: new Set([115, 291, 292]),
+	match_block: new Set([115, 292, 293]),
 	finally_clause: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 115, 130, 133, 134, 135, 136, 138,
 		140, 141, 142, 144, 145, 146, 147, 148, 149, 167, 168, 169, 170, 171, 172, 175, 179, 180, 181, 200, 202, 206, 207,
 		208, 209, 212, 213, 216, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246, 247,
-		256, 259, 268, 270, 274, 276, 277, 279, 285, 286, 287, 288, 293, 294, 295, 297, 335
+		256, 259, 268, 271, 275, 277, 278, 280, 286, 287, 288, 289, 294, 295, 296, 298, 337
 	]),
 	with_item: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
-	parameters: new Set([1, 22, 38, 39, 67, 68, 69, 192, 193, 196, 197, 198, 199, 200, 201, 220, 221, 224, 257, 258]),
+	parameters: new Set([
+		1, 22, 38, 39, 67, 68, 69, 192, 193, 196, 197, 198, 199, 200, 201, 220, 221, 224, 257, 258, 270
+	]),
 	lambda_parameters: new Set([
-		1, 22, 38, 39, 67, 68, 69, 192, 193, 196, 197, 198, 199, 200, 201, 220, 221, 224, 257, 258
+		1, 22, 38, 39, 67, 68, 69, 192, 193, 196, 197, 198, 199, 200, 201, 220, 221, 224, 257, 258, 270
 	]),
 	list_splat: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
 	dictionary_splat: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
 	type_parameter: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 225, 226, 227, 228, 229, 230, 232, 233, 234, 235, 236, 237, 238,
-		239, 240, 241, 242, 245, 246, 247, 256, 263, 268, 270, 297
+		239, 240, 241, 242, 245, 246, 247, 256, 263, 268, 271, 298
 	]),
 	parenthesized_list_splat: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
 	argument_list: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245,
-		246, 247, 256, 264, 268, 270, 297
+		246, 247, 256, 264, 268, 271, 298
 	]),
 	decorator: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
 	expression_list: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
 	case_pattern: new Set([
-		70, 71, 72, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 246, 247, 265, 266, 272, 273, 278, 282
+		70, 71, 72, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 246, 247, 265, 266, 273, 274, 279, 283
 	]),
 	_simple_pattern: new Set([
-		70, 71, 72, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 246, 247, 265, 266, 272, 273, 278, 282
+		70, 71, 72, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 246, 247, 265, 266, 273, 274, 279, 283
 	]),
 	dict_pattern: new Set([187, 189, 266]),
-	parameters_elements: new Set([1, 22, 38, 39, 67, 68, 69, 193, 196, 197, 198, 199, 200, 201, 220, 221, 224, 257, 258]),
-	patterns: new Set([1, 22, 38, 39, 67, 68, 69, 193, 196, 197, 200, 220, 221]),
-	tuple_pattern: new Set([1, 22, 38, 39, 67, 68, 69, 193, 196, 197, 200, 220, 221]),
-	list_pattern: new Set([1, 22, 38, 39, 67, 68, 69, 193, 196, 197, 200, 220, 221]),
+	parameters_elements: new Set([
+		1, 22, 38, 39, 67, 68, 69, 193, 196, 197, 198, 199, 200, 201, 220, 221, 224, 257, 258, 270
+	]),
+	patterns: new Set([1, 22, 38, 39, 67, 68, 69, 193, 196, 197, 200, 220, 221, 270]),
+	tuple_pattern: new Set([1, 22, 38, 39, 67, 68, 69, 193, 196, 197, 200, 220, 221, 270]),
+	list_pattern: new Set([1, 22, 38, 39, 67, 68, 69, 193, 196, 197, 200, 220, 221, 270]),
 	list_splat_pattern: new Set([1, 220, 221]),
 	dictionary_splat_pattern: new Set([1, 220, 221]),
 	not_operator: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
-	pattern_list: new Set([1, 22, 38, 39, 67, 68, 69, 193, 196, 197, 200, 220, 221]),
+	pattern_list: new Set([1, 22, 38, 39, 67, 68, 69, 193, 196, 197, 200, 220, 221, 270]),
 	yield: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
 	type: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 226, 227, 228, 229, 230, 232, 233, 234, 235, 236, 237, 238, 239,
-		240, 241, 242, 245, 246, 247, 256, 268, 270, 297
+		240, 241, 242, 245, 246, 247, 256, 268, 271, 298
 	]),
 	list: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
 	set: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
 	tuple: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
 	dictionary: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
 	parenthesized_expression: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
 	collection_elements: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
 	if_clause: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
 	await: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
 	simple_statements_elements: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 130, 133, 134, 135, 136, 138, 140,
 		141, 142, 144, 145, 146, 147, 148, 149, 167, 168, 169, 170, 171, 172, 175, 180, 181, 200, 202, 206, 207, 208, 209,
 		212, 213, 216, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246, 247, 256, 268,
-		270, 274, 276, 277, 279, 285, 286, 287, 288, 297, 335
+		271, 275, 277, 278, 280, 286, 287, 288, 289, 298, 337
 	]),
 	subjects: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
 	case_patterns: new Set([
-		70, 71, 72, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 246, 247, 265, 266, 272, 273, 278, 282
+		70, 71, 72, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 246, 247, 265, 266, 273, 274, 279, 283
 	]),
 	with_clause_with_items: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 163, 167, 168, 175, 180, 200,
 		202, 206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245,
-		246, 247, 256, 268, 270, 297
+		246, 247, 256, 268, 271, 298
 	]),
 	types: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 225, 226, 227, 228, 229, 230, 232, 233, 234, 235, 236, 237, 238,
-		239, 240, 241, 242, 245, 246, 247, 256, 268, 270, 297
+		239, 240, 241, 242, 245, 246, 247, 256, 268, 271, 298
 	]),
 	argument_list_elements: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245,
-		246, 247, 256, 268, 270, 297
+		246, 247, 256, 268, 271, 298
 	]),
 	list_pattern_case_patterns: new Set([
-		70, 71, 72, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 246, 247, 265, 266, 272, 273, 278, 282
+		70, 71, 72, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 246, 247, 265, 266, 273, 274, 279, 283
 	]),
 	dict_pattern_elements: new Set([187, 189]),
 	subscripts: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 222, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245,
-		246, 247, 256, 268, 270, 297
+		246, 247, 256, 268, 271, 298
 	]),
 	dictionary_elements: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
 	slice_group: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
+	tuple_pattern_elements: new Set([1, 22, 38, 39, 67, 68, 69, 193, 196, 197, 200, 220, 221, 270]),
 	tuple_elements: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
 	case_tuple_pattern: new Set([
-		70, 71, 72, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 246, 247, 265, 266, 272, 273, 278, 282
+		70, 71, 72, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 246, 247, 265, 266, 273, 274, 279, 283
 	]),
 	case_list_pattern: new Set([
-		70, 71, 72, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 246, 247, 265, 266, 272, 273, 278, 282
+		70, 71, 72, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 246, 247, 265, 266, 273, 274, 279, 283
 	]),
 	print_arguments: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
 	print_chevron_arguments: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
 	print_statement_plain: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 274, 297
+		247, 256, 268, 271, 275, 298
 	]),
 	parenthesized_import_list: new Set([135, 136, 181]),
-	except_clause_exception: new Set([271, 283]),
+	except_clause_exception: new Set([272, 284]),
 	expression_statement_tuple: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
 	with_clause_bare: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 163, 167, 168, 175, 180, 200,
 		202, 206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245,
-		246, 247, 256, 268, 270, 297
+		246, 247, 256, 268, 271, 298
 	]),
 	with_clause_paren: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 163, 167, 168, 175, 180, 200,
 		202, 206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245,
-		246, 247, 256, 262, 268, 270, 297
+		246, 247, 256, 262, 268, 271, 298
 	]),
 	match_block_empty: new Set([115]),
 	suite_inline: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 130, 133, 134, 135, 136, 138, 140,
 		141, 142, 144, 145, 146, 147, 148, 149, 167, 168, 169, 170, 171, 172, 175, 180, 181, 200, 202, 206, 207, 208, 209,
 		212, 213, 216, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246, 247, 256, 259,
-		268, 270, 274, 276, 277, 279, 285, 286, 287, 288, 297, 335
+		268, 271, 275, 277, 278, 280, 286, 287, 288, 289, 298, 337
 	]),
 	suite_block: new Set([179]),
 	suite_empty: new Set([115]),
 	yield_from_clause: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
 	names: new Set([135, 136, 181]),
 	as_pattern_target: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
 		206, 207, 208, 209, 212, 213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246,
-		247, 256, 268, 270, 297
+		247, 256, 268, 271, 298
 	]),
 	format_expression: new Set([249])
 };
@@ -965,6 +971,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	subscripts: TSKindId.Subscripts,
 	dictionary_elements: TSKindId.DictionaryElements,
 	slice_group: TSKindId.SliceGroup,
+	tuple_pattern_elements: TSKindId.TuplePatternElements,
 	tuple_elements: TSKindId.TupleElements,
 	case_tuple_pattern: TSKindId.CaseTuplePattern,
 	case_list_pattern: TSKindId.CaseListPattern,
@@ -1014,7 +1021,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	dict_pattern: 'dict_pattern_elements',
 	parameters_elements: 'parameter',
 	patterns: 'pattern',
-	tuple_pattern: 'patterns',
+	tuple_pattern: 'tuple_pattern_elements',
 	list_pattern: 'patterns',
 	not_operator: 'expression',
 	pattern_list: 'pattern',
@@ -1032,6 +1039,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	types: 'type',
 	list_pattern_case_patterns: 'case_pattern',
 	slice_group: 'expression',
+	tuple_pattern_elements: 'pattern',
 	case_tuple_pattern: 'list_pattern_case_patterns',
 	case_list_pattern: 'list_pattern_case_patterns',
 	print_arguments: 'expression',
@@ -1252,6 +1260,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (coerceToDictionaryElements as (...args: unknown[]) => unknown)(...children);
 		case 'slice_group':
 			return F.buildSliceGroup(children[0] as Parameters<typeof F.buildSliceGroup>[0]);
+		case 'tuple_pattern_elements':
+			return (coerceToTuplePatternElements as (...args: unknown[]) => unknown)(...children);
 		case 'tuple_elements':
 			return (coerceToTupleElements as (...args: unknown[]) => unknown)(...children);
 		case 'case_tuple_pattern':
@@ -2089,6 +2099,7 @@ export function coerceToModule(...input: T.Module.LooseArgs): ReturnType<typeof 
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('statements' in head)) return input;
 		const v = (head as Record<string, unknown>)['statements'];
 		return Array.isArray(v) ? v : [v];
@@ -2343,6 +2354,7 @@ export function coerceToAssertStatement(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('expression' in head)) return input;
 		const v = (head as Record<string, unknown>)['expression'];
 		return Array.isArray(v) ? v : [v];
@@ -3067,6 +3079,7 @@ export function coerceToGlobalStatement(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('names' in head)) return input;
 		const v = (head as Record<string, unknown>)['names'];
 		return Array.isArray(v) ? v : [v];
@@ -3092,6 +3105,7 @@ export function coerceToNonlocalStatement(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('names' in head)) return input;
 		const v = (head as Record<string, unknown>)['names'];
 		return Array.isArray(v) ? v : [v];
@@ -3335,6 +3349,7 @@ export function coerceToBlock(...input: T.Block.LooseArgs): ReturnType<typeof F.
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('statements' in head)) return input;
 		const v = (head as Record<string, unknown>)['statements'];
 		return Array.isArray(v) ? v : [v];
@@ -3430,6 +3445,7 @@ export function coerceToDottedName(...input: T.DottedName.LooseArgs): ReturnType
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('names' in head)) return input;
 		const v = (head as Record<string, unknown>)['names'];
 		return Array.isArray(v) ? v : [v];
@@ -3580,6 +3596,7 @@ export function coerceToUnionPattern(...input: T.UnionPattern.LooseArgs): Return
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('patterns' in head)) return input;
 		const v = (head as Record<string, unknown>)['patterns'];
 		return Array.isArray(v) ? v : [v];
@@ -3924,22 +3941,27 @@ export function coerceToPatterns(...input: T.Patterns.LooseArgs): ReturnType<typ
 	);
 }
 
-export function resolveTuplePattern_patterns(
-	value: T.TuplePattern.LooseConfig['patterns']
-): Admit<T.TuplePattern['_patterns']> {
-	return _resolveOneBranch<T.Patterns>(value, 'patterns', undefined, true);
+export function resolveTuplePattern_elements(
+	value: T.TuplePattern.LooseConfig['elements']
+): Admit<T.TuplePattern['_elements']> {
+	return _resolveOneBranch<T.TuplePatternElements>(value, 'tuple_pattern_elements', undefined, true);
 }
 
 export function coerceToTuplePattern(): T.EmptyTuplePattern;
-export function coerceToTuplePattern(...input: T.Patterns.LooseArgs): ReturnType<typeof F.buildTuplePattern>;
+export function coerceToTuplePattern(
+	...input: T.TuplePatternElements.LooseArgs
+): ReturnType<typeof F.buildTuplePattern>;
 export function coerceToTuplePattern(input?: T.TuplePattern.Loose): ReturnType<typeof F.buildTuplePattern>;
 export function coerceToTuplePattern(...args: unknown[]): ReturnType<typeof F.buildTuplePattern> {
-	if (args.length > 1) return F.buildTuplePattern(coerceToPatterns(...(args as Parameters<typeof coerceToPatterns>)));
+	if (args.length > 1)
+		return F.buildTuplePattern(
+			coerceToTuplePatternElements(...(args as Parameters<typeof coerceToTuplePatternElements>))
+		);
 	const input = args[0] as T.TuplePattern.Loose | undefined;
 	return F.buildTuplePattern(
-		_resolveOneBranch<T.Patterns>(
-			configFieldOr(input, 'patterns', () => input),
-			'patterns',
+		_resolveOneBranch<T.TuplePatternElements>(
+			configFieldOr(input, 'elements', () => input),
+			'tuple_pattern_elements',
 			undefined,
 			true
 		)
@@ -4978,8 +5000,11 @@ export function coerceToListComprehension(
 		return input as unknown as ReturnType<typeof F.buildListComprehension>;
 	return F.buildListComprehension({
 		body: _requireField('list_comprehension', 'body', resolveListComprehension_body(input.body)),
-		comprehensionClauses:
-			resolveListComprehension_comprehensionClauses(input.comprehensionClauses) ?? F.buildComprehensionClauses()
+		comprehensionClauses: _requireField(
+			'list_comprehension',
+			'comprehensionClauses',
+			resolveListComprehension_comprehensionClauses(input.comprehensionClauses)
+		)
 	});
 }
 
@@ -5002,8 +5027,11 @@ export function coerceToDictionaryComprehension(
 		return input as unknown as ReturnType<typeof F.buildDictionaryComprehension>;
 	return F.buildDictionaryComprehension({
 		body: _requireField('dictionary_comprehension', 'body', resolveDictionaryComprehension_body(input.body)),
-		comprehensionClauses:
-			resolveDictionaryComprehension_comprehensionClauses(input.comprehensionClauses) ?? F.buildComprehensionClauses()
+		comprehensionClauses: _requireField(
+			'dictionary_comprehension',
+			'comprehensionClauses',
+			resolveDictionaryComprehension_comprehensionClauses(input.comprehensionClauses)
+		)
 	});
 }
 
@@ -5027,8 +5055,11 @@ export function coerceToSetComprehension(input: T.SetComprehension.Loose): Retur
 		return input as unknown as ReturnType<typeof F.buildSetComprehension>;
 	return F.buildSetComprehension({
 		body: _requireField('set_comprehension', 'body', resolveSetComprehension_body(input.body)),
-		comprehensionClauses:
-			resolveSetComprehension_comprehensionClauses(input.comprehensionClauses) ?? F.buildComprehensionClauses()
+		comprehensionClauses: _requireField(
+			'set_comprehension',
+			'comprehensionClauses',
+			resolveSetComprehension_comprehensionClauses(input.comprehensionClauses)
+		)
 	});
 }
 
@@ -5054,8 +5085,11 @@ export function coerceToGeneratorExpression(
 		return input as unknown as ReturnType<typeof F.buildGeneratorExpression>;
 	return F.buildGeneratorExpression({
 		body: _requireField('generator_expression', 'body', resolveGeneratorExpression_body(input.body)),
-		comprehensionClauses:
-			resolveGeneratorExpression_comprehensionClauses(input.comprehensionClauses) ?? F.buildComprehensionClauses()
+		comprehensionClauses: _requireField(
+			'generator_expression',
+			'comprehensionClauses',
+			resolveGeneratorExpression_comprehensionClauses(input.comprehensionClauses)
+		)
 	});
 }
 
@@ -5296,6 +5330,7 @@ export function coerceToConcatenatedString(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('string' in head)) return input;
 		const v = (head as Record<string, unknown>)['string'];
 		return Array.isArray(v) ? v : [v];
@@ -5349,6 +5384,7 @@ export function coerceToStringContent(...input: T.StringContent.LooseArgs): Retu
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('content' in head)) return input;
 		const v = (head as Record<string, unknown>)['content'];
 		return Array.isArray(v) ? v : [v];
@@ -5427,6 +5463,7 @@ export function coerceToFormatSpecifier(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('elements' in head)) return input;
 		const v = (head as Record<string, unknown>)['elements'];
 		return Array.isArray(v) ? v : [v];
@@ -6002,6 +6039,41 @@ export function coerceToFormatSpecifierText(
 	return F.buildFormatSpecifierText(input as Parameters<typeof F.buildFormatSpecifierText>[0]);
 }
 
+export function coerceToTuplePatternElements(
+	...input: T.TuplePatternElements.LooseArgs
+): ReturnType<typeof F.buildTuplePatternElements> {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TuplePatternElements)) {
+		const data = input[0];
+		const stored = (data as unknown as { _item?: unknown })._item;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildTuplePatternElements(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<Admit<T.Pattern>>)
+		);
+	}
+	return F.buildTuplePatternElements(
+		...(_listElements(input, ['delimiter'], undefined, (els) => _resolveMany<T.Pattern>(els, _K13, _K24), [
+			'identifier',
+			'print_keyword',
+			'exec_keyword',
+			'async_keyword',
+			'await_keyword',
+			'type_keyword',
+			'match_keyword',
+			'subscript',
+			'attribute',
+			'list_splat_pattern',
+			'tuple_pattern',
+			'list_pattern'
+		]) as unknown as NonEmptyArray<Admit<T.Pattern>>)
+	);
+}
+
 export function coerceToTupleElements(...input: T.TupleElements.LooseArgs): ReturnType<typeof F.buildTupleElements> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TupleElements)) {
 		const data = input[0];
@@ -6432,6 +6504,7 @@ export function coerceToComprehensionClauses(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('content' in head)) return input;
 		const v = (head as Record<string, unknown>)['content'];
 		return Array.isArray(v) ? v : [v];
@@ -6975,6 +7048,7 @@ export function coerceToExceptClauseExceptionList(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('value' in head)) return input;
 		const v = (head as Record<string, unknown>)['value'];
 		return Array.isArray(v) ? v : [v];
@@ -7245,6 +7319,7 @@ export function coerceToMatchBlockBlock(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
 		if (typeof head !== 'object' || head === null || isNode(head) || !('alternative' in head)) return input;
 		const v = (head as Record<string, unknown>)['alternative'];
 		return Array.isArray(v) ? v : [v];

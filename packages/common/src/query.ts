@@ -469,11 +469,14 @@ function knownKinds(steps: readonly Step[]): readonly number[] | undefined {
 	return kinds;
 }
 
-const compiled = new WeakMap<Where, Map<number, QueryPlan>>();
+const compiled = new WeakMap<QuerySlots, WeakMap<Where, Map<number, QueryPlan>>>();
 
 function compileFor(context: Context, condition: Where, kind: number): QueryPlan {
-	let byKind = compiled.get(condition);
-	if (byKind === undefined) compiled.set(condition, (byKind = new Map()));
+	const slots = context.hooks.querySlots;
+	let byCondition = compiled.get(slots);
+	if (byCondition === undefined) compiled.set(slots, (byCondition = new WeakMap()));
+	let byKind = byCondition.get(condition);
+	if (byKind === undefined) byCondition.set(condition, (byKind = new Map()));
 	let plan = byKind.get(kind);
 	if (plan === undefined) byKind.set(kind, (plan = planOf(condition(recorder(context, kind)))));
 	return plan;

@@ -18,6 +18,7 @@ import {
 	ownerElements,
 	listOption,
 	refuseReadStub,
+	hydrateListStorage,
 	storedElements,
 	defineListIndices,
 	elementsWith,
@@ -187,7 +188,9 @@ export function buildSimpleStatements(...args: unknown[]) {
 			);
 }
 function _buildSimpleStatements(value: Admit<T.SimpleStatementsElements>): T.SimpleStatements.Bound {
-	const _elements = rejectBareText(value, 'SimpleStatements.elements', 'a built SimpleStatementsElements');
+	const _elements = hydrateListStorage(
+		rejectBareText(value, 'SimpleStatements.elements', 'a built SimpleStatementsElements')
+	);
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -1238,7 +1241,7 @@ export function buildParameters(...args: unknown[]) {
 			);
 }
 function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bound {
-	const _elements = rejectBareText(value, 'Parameters.elements', 'a built ParametersElements');
+	const _elements = hydrateListStorage(rejectBareText(value, 'Parameters.elements', 'a built ParametersElements'));
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -1305,10 +1308,8 @@ export function buildLambdaParameters(...args: unknown[]) {
 			);
 }
 function _buildLambdaParameters(value: Admit<T.ParametersElements>): T.LambdaParameters.Bound {
-	const _parameters_elements = rejectBareText(
-		value,
-		'LambdaParameters.parametersElements',
-		'a built ParametersElements'
+	const _parameters_elements = hydrateListStorage(
+		rejectBareText(value, 'LambdaParameters.parametersElements', 'a built ParametersElements')
 	);
 	const listView = ownerView(_parameters_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_parameters_elements');
@@ -1582,7 +1583,7 @@ export function buildTypeParameter(...args: unknown[]) {
 			);
 }
 function _buildTypeParameter(value: Admit<T.Types>): T.TypeParameter.Bound {
-	const _types = rejectBareText(value, 'TypeParameter.types', 'a built Types');
+	const _types = hydrateListStorage(rejectBareText(value, 'TypeParameter.types', 'a built Types'));
 	const listView = ownerView(_types, '_item');
 	if (listView.stored === undefined) refuseReadStub('_types');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -1680,7 +1681,9 @@ export function buildArgumentList(...args: unknown[]) {
 			);
 }
 function _buildArgumentList(value?: Admit<T.ArgumentListElements>): T.ArgumentList.Bound {
-	const _arguments = rejectBareText(value, 'ArgumentList.arguments', 'a built ArgumentListElements');
+	const _arguments = hydrateListStorage(
+		rejectBareText(value, 'ArgumentList.arguments', 'a built ArgumentListElements')
+	);
 	const listView = ownerView(_arguments, '_item');
 	if (listView.stored === undefined) refuseReadStub('_arguments');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -2109,7 +2112,7 @@ export function buildDictPattern(...args: unknown[]) {
 			);
 }
 function _buildDictPattern(value?: Admit<T.DictPatternElements>): T.DictPattern.Bound {
-	const _elements = rejectBareText(value, 'DictPattern.elements', 'a built DictPatternElements');
+	const _elements = hydrateListStorage(rejectBareText(value, 'DictPattern.elements', 'a built DictPatternElements'));
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -2448,7 +2451,7 @@ function _buildPatterns(
 }
 
 export function buildTuplePattern(): T.EmptyTuplePattern;
-export function buildTuplePattern(value?: Admit<T.Patterns>): ReturnType<typeof _buildTuplePattern>;
+export function buildTuplePattern(value?: Admit<T.TuplePatternElements>): ReturnType<typeof _buildTuplePattern>;
 export function buildTuplePattern(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.Pattern>>
@@ -2462,35 +2465,35 @@ export function buildTuplePattern(...args: unknown[]) {
 		args.length === 1 &&
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.Patterns as const);
+		(args[0] as { $type?: unknown }).$type === (TSKindId.TuplePatternElements as const);
 	return prebuilt
 		? _buildTuplePattern(args[0] as Parameters<typeof _buildTuplePattern>[0])
 		: _buildTuplePattern(
-				(buildPatterns as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildTuplePattern>[0]
+				(buildTuplePatternElements as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildTuplePattern>[0]
 			);
 }
-function _buildTuplePattern(value?: Admit<T.Patterns>): T.TuplePattern.Bound {
-	const _patterns = rejectBareText(value, 'TuplePattern.patterns', 'a built Patterns');
-	const listView = ownerView(_patterns, '_item');
-	if (listView.stored === undefined) refuseReadStub('_patterns');
+function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePattern.Bound {
+	const _elements = hydrateListStorage(rejectBareText(value, 'TuplePattern.elements', 'a built TuplePatternElements'));
+	const listView = ownerView(_elements, '_item');
+	if (listView.stored === undefined) refuseReadStub('_elements');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TuplePattern as const,
 		$source: 2 as const,
 		$named: true as const,
-		_patterns,
+		_elements,
 		$with: {
-			patterns: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
-						{ kind: TSKindId.Patterns as const, optional: true, make: buildPatterns },
-						(value?: Admit<T.Patterns>) => _buildTuplePattern(value)
+						{ kind: TSKindId.TuplePatternElements as const, optional: true, make: buildTuplePatternElements },
+						(value?: Admit<T.TuplePatternElements>) => _buildTuplePattern(value)
 					)
 				)
 		},
-		patterns: () => _patterns,
+		elements: () => _elements,
 		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
 		...LIST_METHODS,
@@ -2534,7 +2537,7 @@ export function buildListPattern(...args: unknown[]) {
 			);
 }
 function _buildListPattern(value?: Admit<T.Patterns>): T.ListPattern.Bound {
-	const _patterns = rejectBareText(value, 'ListPattern.patterns', 'a built Patterns');
+	const _patterns = hydrateListStorage(rejectBareText(value, 'ListPattern.patterns', 'a built Patterns'));
 	const listView = ownerView(_patterns, '_item');
 	if (listView.stored === undefined) refuseReadStub('_patterns');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -3644,7 +3647,9 @@ export function buildList(...args: unknown[]) {
 			);
 }
 function _buildList(value?: Admit<T.CollectionElements>): T.List.Bound {
-	const _collection_elements = rejectBareText(value, 'List.collectionElements', 'a built CollectionElements');
+	const _collection_elements = hydrateListStorage(
+		rejectBareText(value, 'List.collectionElements', 'a built CollectionElements')
+	);
 	const listView = ownerView(_collection_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_collection_elements');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -3707,7 +3712,9 @@ export function buildSet(...args: unknown[]) {
 		: _buildSet((buildCollectionElements as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildSet>[0]);
 }
 function _buildSet(value: Admit<T.CollectionElements>): T.Set.Bound {
-	const _collection_elements = rejectBareText(value, 'Set.collectionElements', 'a built CollectionElements');
+	const _collection_elements = hydrateListStorage(
+		rejectBareText(value, 'Set.collectionElements', 'a built CollectionElements')
+	);
 	const listView = ownerView(_collection_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_collection_elements');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -3770,7 +3777,7 @@ export function buildTuple(...args: unknown[]) {
 		: _buildTuple((buildTupleElements as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildTuple>[0]);
 }
 function _buildTuple(value?: Admit<T.TupleElements>): T.Tuple.Bound {
-	const _elements = rejectBareText(value, 'Tuple.elements', 'a built TupleElements');
+	const _elements = hydrateListStorage(rejectBareText(value, 'Tuple.elements', 'a built TupleElements'));
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -3836,7 +3843,7 @@ export function buildDictionary(...args: unknown[]) {
 			);
 }
 function _buildDictionary(value?: Admit<T.DictionaryElements>): T.Dictionary.Bound {
-	const _elements = rejectBareText(value, 'Dictionary.elements', 'a built DictionaryElements');
+	const _elements = hydrateListStorage(rejectBareText(value, 'Dictionary.elements', 'a built DictionaryElements'));
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -3916,7 +3923,7 @@ export function buildListComprehension(config: T.ListComprehension.Config): T.Li
 		'a built Expression'
 	);
 	const _comprehension_clauses = rejectBareText(
-		orDefault(config.comprehensionClauses, () => buildComprehensionClauses()),
+		config.comprehensionClauses,
 		'ListComprehension.comprehensionClauses',
 		'a built ComprehensionClauses'
 	);
@@ -3950,7 +3957,7 @@ export function buildDictionaryComprehension(
 ): T.DictionaryComprehension.Bound {
 	const _body = rejectBareText(config.body, 'DictionaryComprehension.body', 'a built Pair');
 	const _comprehension_clauses = rejectBareText(
-		orDefault(config.comprehensionClauses, () => buildComprehensionClauses()),
+		config.comprehensionClauses,
 		'DictionaryComprehension.comprehensionClauses',
 		'a built ComprehensionClauses'
 	);
@@ -3986,7 +3993,7 @@ export function buildSetComprehension(config: T.SetComprehension.Config): T.SetC
 		'a built Expression'
 	);
 	const _comprehension_clauses = rejectBareText(
-		orDefault(config.comprehensionClauses, () => buildComprehensionClauses()),
+		config.comprehensionClauses,
 		'SetComprehension.comprehensionClauses',
 		'a built ComprehensionClauses'
 	);
@@ -4022,7 +4029,7 @@ export function buildGeneratorExpression(config: T.GeneratorExpression.Config): 
 		'a built Expression'
 	);
 	const _comprehension_clauses = rejectBareText(
-		orDefault(config.comprehensionClauses, () => buildComprehensionClauses()),
+		config.comprehensionClauses,
 		'GeneratorExpression.comprehensionClauses',
 		'a built ComprehensionClauses'
 	);
@@ -4316,8 +4323,11 @@ export function buildString(config: T.String.Config): T.String.Bound {
 }
 
 export function buildStringContent(
-	...children: Admit<(T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment)[]>
+	...children: NonEmptyArray<
+		Admit<T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment>
+	>
 ): T.StringContent.Bound {
+	_assertNonEmpty(children, 'string_content.children');
 	const _content = rejectBareText(
 		children,
 		'StringContent.content',
@@ -4331,7 +4341,9 @@ export function buildStringContent(
 		_content,
 		$with: {
 			contents: (
-				...vs: Admit<T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment>[]
+				...vs: NonEmptyArray<
+					Admit<T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment>
+				>
 			) => rebuilt(node, handle, () => buildStringContent(...restItems('contents', vs)))
 		},
 		contents: () => _content,
@@ -5194,6 +5206,67 @@ export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bo
 	return node as unknown as T.FormatSpecifierText.Bound;
 }
 
+export function buildTuplePatternElements(
+	...elements: NonEmptyArray<Admit<T.Pattern>>
+): ReturnType<typeof _buildTuplePatternElements>;
+export function buildTuplePatternElements(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: NonEmptyArray<Admit<T.Pattern>>
+): ReturnType<typeof _buildTuplePatternElements>;
+export function buildTuplePatternElements(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.Pattern>)[]
+) {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.Pattern>>;
+	return _buildTuplePatternElements(elements, options);
+}
+function _buildTuplePatternElements(
+	elements: NonEmptyArray<Admit<T.Pattern>>,
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
+): T.TuplePatternElements.Bound {
+	_assertNonEmpty(elements, 'tuple_pattern_elements.elements');
+	const _item = elements;
+	const _delimiter = options.delimiter;
+	const listedStored = storedElements(_item);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TuplePatternElements as const,
+		$source: 2 as const,
+		$named: true as const,
+		_item,
+		_delimiter,
+		$with: {
+			items: (...vs: NonEmptyArray<Admit<T.Pattern>>) =>
+				rebuilt(node, handle, () => buildTuplePatternElements(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildTuplePatternElements({ ...options, delimiter: v }, ...elements))
+		},
+		items: () => _item,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? undefined,
+		$render: () => renderText(handle, node),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.TuplePatternElements.Bound;
+}
+
 export function buildTupleElements(
 	...elements: NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>
 ): ReturnType<typeof _buildTupleElements>;
@@ -5327,10 +5400,8 @@ export function buildCaseTuplePattern(...args: unknown[]) {
 			);
 }
 function _buildCaseTuplePattern(value?: Admit<T.ListPatternCasePatterns>): T.CaseTuplePattern.Bound {
-	const _list_pattern_case_patterns = rejectBareText(
-		value,
-		'CaseTuplePattern.listPatternCasePatterns',
-		'a built ListPatternCasePatterns'
+	const _list_pattern_case_patterns = hydrateListStorage(
+		rejectBareText(value, 'CaseTuplePattern.listPatternCasePatterns', 'a built ListPatternCasePatterns')
 	);
 	const listView = ownerView(_list_pattern_case_patterns, '_item');
 	if (listView.stored === undefined) refuseReadStub('_list_pattern_case_patterns');
@@ -5401,10 +5472,8 @@ export function buildCaseListPattern(...args: unknown[]) {
 			);
 }
 function _buildCaseListPattern(value?: Admit<T.ListPatternCasePatterns>): T.CaseListPattern.Bound {
-	const _list_pattern_case_patterns = rejectBareText(
-		value,
-		'CaseListPattern.listPatternCasePatterns',
-		'a built ListPatternCasePatterns'
+	const _list_pattern_case_patterns = hydrateListStorage(
+		rejectBareText(value, 'CaseListPattern.listPatternCasePatterns', 'a built ListPatternCasePatterns')
 	);
 	const listView = ownerView(_list_pattern_case_patterns, '_item');
 	if (listView.stored === undefined) refuseReadStub('_list_pattern_case_patterns');
@@ -5633,7 +5702,9 @@ export function buildPrintStatementPlain(...args: unknown[]) {
 			);
 }
 function _buildPrintStatementPlain(value: Admit<T.PrintArguments>): T.PrintStatementPlain.Bound {
-	const _print_arguments = rejectBareText(value, 'PrintStatementPlain.printArguments', 'a built PrintArguments');
+	const _print_arguments = hydrateListStorage(
+		rejectBareText(value, 'PrintStatementPlain.printArguments', 'a built PrintArguments')
+	);
 	const listView = ownerView(_print_arguments, '_argument');
 	if (listView.stored === undefined) refuseReadStub('_print_arguments');
 	const listedItems = listItems(ownerElements(listView.list, 'arguments'), undefined);
@@ -5703,7 +5774,9 @@ export function buildParenthesizedImportList(...args: unknown[]) {
 			);
 }
 function _buildParenthesizedImportList(value: Admit<T.ImportList>): T.ParenthesizedImportList.Bound {
-	const _import_list = rejectBareText(value, 'ParenthesizedImportList.importList', 'a built ImportList');
+	const _import_list = hydrateListStorage(
+		rejectBareText(value, 'ParenthesizedImportList.importList', 'a built ImportList')
+	);
 	const listView = ownerView(_import_list, '_name');
 	if (listView.stored === undefined) refuseReadStub('_import_list');
 	const listedItems = listItems(ownerElements(listView.list, 'names'), undefined);
@@ -5744,8 +5817,9 @@ function _buildParenthesizedImportList(value: Admit<T.ImportList>): T.Parenthesi
 }
 
 export function buildComprehensionClauses(
-	...children: Admit<(T.ForInClause | T.IfClause)[]>
+	...children: NonEmptyArray<Admit<T.ForInClause | T.IfClause>>
 ): T.ComprehensionClauses.Bound {
+	_assertNonEmpty(children, 'comprehension_clauses.children');
 	const _content = rejectBareText(children, 'ComprehensionClauses.content', 'a built ForInClause / IfClause');
 	const handle = currentHandle();
 	const node = {
@@ -5754,7 +5828,7 @@ export function buildComprehensionClauses(
 		$named: true as const,
 		_content,
 		$with: {
-			contents: (...vs: Admit<T.ForInClause | T.IfClause>[]) =>
+			contents: (...vs: NonEmptyArray<Admit<T.ForInClause | T.IfClause>>) =>
 				rebuilt(node, handle, () => buildComprehensionClauses(...restItems('contents', vs)))
 		},
 		contents: () => _content,
@@ -6701,7 +6775,9 @@ export function buildWithClauseParen(...args: unknown[]) {
 			);
 }
 function _buildWithClauseParen(value: Admit<T.WithClauseWithItems>): T.WithClauseParen.Bound {
-	const _with_items = rejectBareText(value, 'WithClauseParen.withItems', 'a built WithClauseWithItems');
+	const _with_items = hydrateListStorage(
+		rejectBareText(value, 'WithClauseParen.withItems', 'a built WithClauseWithItems')
+	);
 	const listView = ownerView(_with_items, '_item');
 	if (listView.stored === undefined) refuseReadStub('_with_items');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -6835,7 +6911,9 @@ export function buildSuiteInline(...args: unknown[]) {
 			);
 }
 function _buildSuiteInline(value: Admit<T.SimpleStatementsElements>): T.SuiteInline.Bound {
-	const _elements = rejectBareText(value, 'SuiteInline.elements', 'a built SimpleStatementsElements');
+	const _elements = hydrateListStorage(
+		rejectBareText(value, 'SuiteInline.elements', 'a built SimpleStatementsElements')
+	);
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -7361,6 +7439,7 @@ export type FluentKindMap = {
 	dictionary_elements: T.DictionaryElements.Bound;
 	slice_group: T.SliceGroup.Bound;
 	format_specifier_text: T.FormatSpecifierText;
+	tuple_pattern_elements: T.TuplePatternElements.Bound;
 	tuple_elements: T.TupleElements.Bound;
 	except_clause_exception_as: T.ExceptClauseExceptionAs.Bound;
 	case_tuple_pattern: T.CaseTuplePattern.Bound;
@@ -7559,6 +7638,7 @@ export const _factoryMap = {
 	dictionary_elements: buildDictionaryElements,
 	slice_group: buildSliceGroup,
 	format_specifier_text: buildFormatSpecifierText,
+	tuple_pattern_elements: buildTuplePatternElements,
 	tuple_elements: buildTupleElements,
 	except_clause_exception_as: buildExceptClauseExceptionAs,
 	case_tuple_pattern: buildCaseTuplePattern,

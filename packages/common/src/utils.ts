@@ -794,7 +794,7 @@ function setTriviaData(node: AnyUntypedNode, triviaData: NodeTrivia): void {
 
 export { numberText, type NumberBase } from './number.ts';
 export { hydrateStub, isStub, readUntypedNode, type Stub, type TreeHandle } from './readUntypedNode.ts';
-export { currentHandle, inEngine, type EngineHandle } from './engine-scope.ts';
+export { currentHandle, inEngine, hydrateListStorage, type EngineHandle } from './engine-scope.ts';
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
