@@ -192,7 +192,9 @@ function findNodeAt(node: TSNode, kind: string, offset: number): TSNode | null {
  * keywords, operators) must match byte-exactly — that's how we catch
  * silently dropped content like `;` statement terminators, since
  * the renderer sometimes omits anonymous children that aren't
- * promoted into a named field. Named children recurse.
+ * promoted into a named field. Named leaves must match in text too, so a
+ * changed spelling or inserted character inside a leaf is a mismatch. Named
+ * children with children recurse.
  *
  * Returns `null` if the subtrees match, otherwise a short human-
  * readable diff path explaining the first mismatch.
@@ -279,6 +281,9 @@ export function astStructuralDiff(
 				return `${path || a.type}[${i}]: anon ${JSON.stringify(ac.text)} ≠ ${JSON.stringify(bc.text)}`;
 			}
 			continue;
+		}
+		if (ac.childCount === 0 && bc.childCount === 0 && ac.text !== bc.text) {
+			return `${path || a.type}[${i}].${ac.type}: text ${JSON.stringify(ac.text)} ≠ ${JSON.stringify(bc.text)}`;
 		}
 		// Named child — recurse.
 		const sub = astStructuralDiff(ac, bc, `${path || a.type}[${i}].${ac.type}`, variantChildKinds);
