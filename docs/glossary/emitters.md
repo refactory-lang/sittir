@@ -2885,6 +2885,14 @@ A row's member is named from its model kind (`modelKindOfEntry`, so a renamed ro
 
 One `kind_ids.rs` constant: its name and the kind id it holds.
 
+### `packages/codegen/src/emitters/kind-id-rust.ts::kindIdPattern`
+
+Prints the parser-derived scalar child-id set as a Rust match pattern.
+The context holds the output parts. Sorted contiguous runs of three or
+more ids use inclusive ranges; singletons and pairs remain explicit.
+Only exact consecutive ids are combined, so holes in the admitted set
+remain holes. This changes syntax, not model admission.
+
 ### `packages/codegen/src/emitters/kind-id-rust.ts::kindConstants`
 
 The constants of a grammar's kind table, one per kind row, plus one for each alias parse id that has no row of its own: the parser symbol an alias site is read under (`let_chain`, `lhs_expression`), named from its parse name so the reader names every id it matches by constant. An alias whose name another kind already holds is a diagnostic.
@@ -3387,6 +3395,13 @@ The `use` block at the top of `transport.rs`: the views (`View`,
 `ListView`, `NO_ITEMS`) and the transport support types. `fmt::Write` is
 deliberately not imported; the kind bodies write through `Formatter`'s
 inherent `write_fmt`, and the render root spells the trait call in full.
+
+The module permits `clippy::large_enum_variant` because
+`payloadCeilingAssertions` enforces the canonical pinned payload ceiling
+in both directions. Clippy's generic size heuristic does not override the
+measured boxing policy. This allowance applies to the transport module.
+See [Clippy policy](../clippy-policy.md) for the CI command and the separate
+legacy-deserializer exception.
 
 ### `packages/codegen/src/emitters/render-module.ts::collectUsedSupertypeNames`
 

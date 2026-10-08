@@ -221,7 +221,7 @@ pub fn stores_scalar(parent: KindId, field: Option<&str>, child: KindId) -> bool
         (61, Some("end")) => matches!(child.0, 14),
         (61, Some("start")) => matches!(child.0, 14),
         (63, None) => matches!(child.0, 11 | 22),
-        (77, None) => matches!(child.0, 2 | 4 | 5 | 6 | 54),
+        (77, None) => matches!(child.0, 2 | 4..=6 | 54),
         (89, Some("content")) => matches!(child.0, 26),
         _ => false,
     }

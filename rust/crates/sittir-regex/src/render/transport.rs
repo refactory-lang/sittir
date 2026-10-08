@@ -6,6 +6,7 @@
 // bridge helpers.
 
 #![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]
+#![allow(clippy::large_enum_variant, reason = "Choice payload sizes are checked by the generated pinned ceiling assertions")]
 
 use ::sittir_core::view::{KindOf, KindTest, View, ListView, NO_ITEMS};
 use ::sittir_core::render::Render;
