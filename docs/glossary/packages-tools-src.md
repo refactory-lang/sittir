@@ -54,7 +54,9 @@ Whether a pass-count drop of one validator is a kind leaving and not a failure. 
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::departedKindCount`
 
-How many kinds left a grammar's direct-render set between the base and head baselines: the rise in `supertypeKindCount` (a kind that became a supertype has no template and no raw builder of its own) plus the fall in `hoistedKindCount` (a hoisted kind that is no longer minted takes its cases with it). Each term counts only in its own direction, so a fall in supertypes or a rise in hoisted kinds adds nothing.
+A lower bound on how many kinds left a grammar's direct-render set between the base and head baselines: the larger of the rise in `supertypeKindCount` (a kind that became a supertype has no template and no raw builder of its own) and the fall in `hoistedKindCount` (a seated kind that is no longer minted takes its cases with it). Each term counts only in its own direction, so a fall in supertypes or a rise in hoisted kinds adds nothing.
+
+The terms are not summed. `hoistedKindCount` counts seated kinds, and a parser supertype is never seated, so one seated kind that becomes a supertype raises the first count and lowers the second. Counts alone cannot tell that one kind from two kinds leaving separately, so the bound takes the smaller reading and a larger drop stays unexplained.
 
 The two counts are read differently when the base lacks them. A base without `supertypeKindCount` reads as 0, because only the rise matters. A fall cannot be read from one count, so a base without `hoistedKindCount` contributes nothing and the drop stays unexplained: the fact has to be in the base baseline before a change can lean on it.
 
