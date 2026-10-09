@@ -1274,18 +1274,20 @@ value (`wildcard_import_clause(path)`), never the spliced keys.
 
 The config of a group element carries its seat kind as a mark that is not a key (`withSeatKind`, read back by `seatKindOf`), because a `kind` key would be an unknown slot for the strict factory. The printer reads the mark to tag the element on the loose surface; it never infers the seat from the config's keys.
 
-### `packages/tools/src/validate/common.ts::carryElementTrivia`
+### `packages/tools/src/validate/common.ts::carryGroupTrivia`
 
 ```text
 /**
- * A seated element projects to the group's config, and a config cannot carry
- * trivia — the transport rejects the key. The group's own built value can, and
- * it renders in the element's position, so a comment the read attached to the
- * group rides that value instead. Only a group with exactly one built value
- * has an unambiguous carrier; anything else keeps the group's trivia
- * unattached rather than guessing which child owns it.
+ * A seated group has no ir object, so its own trivia moves onto the children
+ * the call builds: leading entries to the first built child, trailing entries to
+ * the last. A moved trailing entry keeps its place relative to what follows the
+ * group: its tokens-between grows by the group's own tokens after that child
+ * (a trailing delimiter). One rule for every seat shape; a group with trivia
+ * and no built child at that edge is recorded in `seatedTriviaEdges`.
  */
 ```
+
+The same rule serves the `elements`, `tuple` and `flatten` shapes; the container is the config (or argument list) the shape projects, and the first and last built values are found in it past array nesting. The edge child is replaced in its container by a copy carrying the moved entries, never changed in place: a child is the cached built value of the read node, and a second projection of the same group would otherwise append the moved comment again. Entries resolve through `resolveChild` and keep their placement (`carryPlacement`), so a same-line comment stays on its line and still defers past the tokens that follow it. `seatedTriviaEdges` is the census hook: it is empty across the five grammars' ir lanes.
 
 ### `packages/tools/src/validate/common.ts::projectArmSlot`
 

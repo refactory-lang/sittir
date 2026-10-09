@@ -217489,6 +217489,48 @@
   {
     "kind": "render",
     "grammar": "python",
+    "pattern": "aliased_import",
+    "input": {
+      "$type": 136,
+      "_name": {
+        "$type": 181,
+        "_names": [
+          {
+            "$type": 1,
+            "$text": "b"
+          },
+          {
+            "$type": 1,
+            "$text": "c",
+            "$_layout": {
+              "gap": {
+                "$text": "."
+              }
+            }
+          }
+        ]
+      },
+      "_alias": {
+        "$type": 1,
+        "$text": "d"
+      }
+    },
+    "expectedOutput": "b.c as d"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "b.c as d",
+    "pattern": "aliased_import",
+    "edits": [],
+    "expectedSourceOut": "b.c as d",
+    "expectedReparseTree": "(aliased_import name: (dotted_name names: (identifier) names: (identifier)) alias: (identifier))",
+    "wrappedText": "import b.c as d",
+    "wrappedOffset": 7
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
     "pattern": "module",
     "input": {
       "$type": 127,
