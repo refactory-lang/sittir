@@ -12,9 +12,8 @@ describe('selfContainedRenderInput', () => {
 		const out = selfContainedRenderInput(
 			{
 				$type: COMPOUND,
-				$handle: 4,
-				$span: { start: 0, end: 4 },
-				_name: { $type: LEAF, $parentHandle: 4, $childIndex: 0, $span: { start: 0, end: 2 } }
+				$_layout: { at: { $treeHandle: 4, $span: { start: 0, end: 4 }, $type: COMPOUND } },
+				_name: { $treeHandle: 5, $span: { start: 0, end: 2 }, $type: LEAF }
 			},
 			source,
 			isLeafKind,
@@ -27,17 +26,16 @@ describe('selfContainedRenderInput', () => {
 	});
 
 	it('gives a storage-less leaf its bytes and keeps a captured $text as it is', () => {
-		expect(selfContainedRenderInput({ $type: LEAF, $span: { start: 0, end: 2 }, $text: 'zz' }, source, isLeafKind, STORED_TRIVIA)).toEqual({
+		expect(selfContainedRenderInput({ $type: LEAF, $_layout: { at: { $treeHandle: 1, $span: { start: 0, end: 2 }, $type: LEAF } }, $text: 'zz' }, source, isLeafKind, STORED_TRIVIA)).toEqual({
 			$type: LEAF,
-			$span: { start: 0, end: 2 },
 			$text: 'zz'
 		});
 	});
 
 	it('keeps a storage-less compound as its identity, never as text', () => {
 		expect(
-			selfContainedRenderInput({ $type: COMPOUND, $handle: 1, $span: { start: 2, end: 4 } }, source, isLeafKind, STORED_TRIVIA)
-		).toEqual({ $type: COMPOUND, $span: { start: 2, end: 4 } });
+			selfContainedRenderInput({ $type: COMPOUND, $_layout: { at: { $treeHandle: 1, $span: { start: 2, end: 4 }, $type: COMPOUND } } }, source, isLeafKind, STORED_TRIVIA)
+		).toEqual({ $type: COMPOUND });
 	});
 
 	it('turns a storage-less trivia entry into its text and stamped kind on both sides', () => {
@@ -45,9 +43,11 @@ describe('selfContainedRenderInput', () => {
 			{
 				$type: COMPOUND,
 				_x: [],
-				$_trivia: {
-					leading: [{ $type: 3, $treeHandle: 1, $span: { start: 4, end: 8 } }],
-					trailing: [{ $type: 3, $text: '// d', $treeHandle: 1 }]
+				$_layout: {
+					trivia: {
+						leading: [{ $type: 3, $treeHandle: 1, $span: { start: 4, end: 8 } }],
+						trailing: [{ $type: 3, $text: '// d' }]
+					}
 				}
 			},
 			source,
@@ -62,9 +62,11 @@ describe('selfContainedRenderInput', () => {
 			{
 				$type: COMPOUND,
 				_x: [],
-				$_trivia: {
-					trailing: [{ $type: 3, $treeHandle: 1, $span: { start: 4, end: 8 }, $sameLine: true, $tokensBetween: 1 }],
-					inner: { x: [{ $type: 3, $treeHandle: 1, $span: { start: 4, end: 8 } }] }
+				$_layout: {
+					trivia: {
+						trailing: [{ $type: 3, $treeHandle: 1, $span: { start: 4, end: 8 }, $sameLine: true, $tokensBetween: 1 }],
+						inner: { x: [{ $type: 3, $treeHandle: 1, $span: { start: 4, end: 8 } }] }
+					}
 				}
 			},
 			source,

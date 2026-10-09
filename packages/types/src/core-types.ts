@@ -44,20 +44,6 @@ export interface NodeTrivia {
  */
 export type NodeMemberValue = AnyUntypedNode | string | number | boolean;
 
-/**
- * Anonymous-child value type — like {@link NodeMemberValue} but without
- * `boolean`: children carry nodes and scalar text/number leaves only.
- */
-export type NodeChildValue = AnyUntypedNode | string | number;
-
-/**
- * Anonymous-child storage shape.
- *
- * Unnamed slots may remain scalar when the grammar slot is singular, or array-
- * shaped when the grammar slot is repeated.
- */
-export type NodeChildren = NodeChildValue | readonly NodeChildValue[];
-
 /** A byte range into a source string, as the reader stamps it. */
 export interface ByteSpan {
 	readonly start: number;
@@ -84,47 +70,17 @@ export interface AnyUntypedNode {
 	$source?: 0 | 1 | 2;
 	/** Variant subtype name — set by factory, absent on readUntypedNode output. */
 	$variant?: string;
-	$other?: NodeChildren;
 	/**
-	 * Source text for this node. The reader sends it for anonymous tokens
-	 * spelled otherwise than their kind name, errors, and nodes without
-	 * children; the wrap layer spells a named node whose only content is
-	 * tokens tiling its span from those tokens. A branch (`_<name>` storage
-	 * and/or `$other` present) rebuilds its text from its slots through the
-	 * render template. Every read node carries a `$span`; an untouched node
-	 * is addressed by it, never by text.
-	 *
-	 * Factory-built nodes never set `$text`; the `$TEXT` template
-	 * variable falls back to a best-effort field+children concatenation.
+	 * The text of a text leaf: a read leaf carries the bytes it spans, a built
+	 * one the text it was built from. A node with slots has none; it renders
+	 * from its slots, or, untouched, from the bytes its `$_layout.at` names.
 	 */
 	$text?: string;
 	/**
-	 * Where this node sits in its source, as a half-open range of UTF-8 byte
-	 * offsets (tree-sitter's byte range). These are not string indices: a JS
-	 * string counts UTF-16 code units, and the two differ after the first
-	 * non-ASCII character. Get the text or the string indices of a span through
-	 * `sourceSpans` (or `sliceSpan`) from `@sittir/common`; never pass these
-	 * offsets to `String.prototype.slice`.
+	 * A node's layout as the transport carries it: where a read node came
+	 * from (`at`), and the trivia it owns, whether read or written.
 	 */
-	$span?: ByteSpan;
-	/** This node's own handle, on a node a read returns: re-reading it reads this node. */
-	$handle?: number;
-	/** The parent's handle, beside `$childIndex`: the coordinate a stub is hydrated at. */
-	$parentHandle?: number;
-	/** Any handle of this node's tree, on a node nothing re-reads (a deep read's leaf, a trivia entry, a folded coordinate): it names only the tree `$span` slices. */
-	$treeHandle?: number;
-	/** Position in parent's child array for child(i) access. */
-	$childIndex?: number;
-	/** Set by a deep read on a leaf: the coordinate addresses the node's text only, never the layout around it. */
-	$textOnly?: boolean;
-	/** Document-order route names (field or kind) of this node's named-slot
-	 * children, stamped by the native reader on multi-bucket parents. The
-	 * per-slot `_<name>` buckets each preserve document order internally,
-	 * but the wire cannot express cross-bucket interleave — and
-	 * text-collapsed leaf members carry no `$span` to re-derive it — so
-	 * the wrap layer's bucket merge consumes this stamp. Absent on
-	 * single-bucket nodes, leaves, and factory output. */
-	$slotOrder?: readonly string[];
+	$_layout?: NodeLayout;
 	/** Whether this is a named (vs anonymous) node in the grammar.
 	 * Optional at the type level because generated kind interfaces
 	 * omit it by convention (factory output always sets it at runtime). */
@@ -142,8 +98,6 @@ export interface AnyUntypedNode {
 
 	/** Render this node to source text. */
 	$render?: () => string;
-	/** Trivia metadata (leading / trailing comments) attached through `$trivia`. */
-	$_trivia?: NodeTrivia;
 	/** The node's trivia positions (`leading`, `trailing`); see {@link TriviaSetter}.
 	 *
 	 * `any[]` in the base type so per-grammar narrowed signatures
@@ -151,6 +105,25 @@ export interface AnyUntypedNode {
 	 * function parameters are contravariant, and `unknown` would
 	 * reject narrower argument types. */
 	$trivia?: TriviaSetter;
+}
+
+/**
+ * A node a read left past its depth, or the node a read node came from: its
+ * tree and descendant index packed in `$treeHandle`, its span, and its kind.
+ * `$span` is a half-open range of UTF-8 byte offsets, not string indices: get
+ * the text of a span through `sourceSpans` (or `sliceSpan`) from
+ * `@sittir/common`, never `String.prototype.slice`.
+ */
+export interface TransportCoordinate {
+	readonly $treeHandle: number;
+	readonly $span: ByteSpan;
+	readonly $type: number;
+}
+
+/** A node's layout (`$_layout`): its own coordinate when a read gave it (`at`), and its trivia. */
+export interface NodeLayout {
+	readonly at?: TransportCoordinate;
+	readonly trivia?: NodeTrivia;
 }
 
 /** tree-sitter's builtin ERROR symbol id, the kind of an {@link ErrorNode}. */
@@ -369,35 +342,17 @@ export interface FormatRecord {
 // Parsed tree node
 // ---------------------------------------------------------------------------
 
-/**
- * A parsed tree node.
- * Structurally compatible with ast-grep SgNode.
- */
-export interface AnyTreeNode {
-	readonly type: string;
-	range(): StringIndexRange;
-	id(): number;
-	field(name: string): AnyTreeNode | null;
-	fieldChildren(name: string): AnyTreeNode[];
-	fieldNameForChild?(index: number): string | null;
-	text(): string;
-	children(): AnyTreeNode[];
-	isNamed(): boolean;
-}
 
 // ---------------------------------------------------------------------------
 // Native (NAPI) parse result
 // ---------------------------------------------------------------------------
 
 /**
- * Return value of the native (NAPI) `parseAndRead` call.
- * Carries both the hydrated node data and the inferred format (if any)
- * so callers can attach format to the {@link TreeHandle} without a
- * second round-trip.
+ * Return value of the native (NAPI) `parse` call: the tree it keeps, the
+ * format it inferred and its error regions. It reads nothing; the root is
+ * read from the tree at index 0.
  */
 export interface NativeParseResult {
-	/** Hydrated root node data produced by the native parser. */
-	readonly untypedNode: AnyUntypedNode;
 	/** Format inferred from source layout, if inference succeeded. */
 	readonly format?: FormatRecord;
 	/** The tree this parse produced, released once nothing reads from it. */

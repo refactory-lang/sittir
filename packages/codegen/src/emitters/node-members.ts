@@ -1,6 +1,6 @@
 import { emptyForms, innerGapsKeyed } from '../compiler/model/trivia.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import type { ListViewPlan, SeatPlan } from './factories.ts';
+import type { GroupSeatHint, ListViewPlan, SeatPlan } from './factories.ts';
 
 export interface SetterEntry {
 	readonly name: string;
@@ -95,13 +95,17 @@ export function seatedSetters(setters: readonly SetterEntry[], plan: SeatPlan): 
 	return [...seated.filter((entry) => !replaced.has(entry.name)), ...keyed];
 }
 
-export function groupSeatParts(plan: SeatPlan, readOf: (slot: string) => string): { readonly prelude: string[]; readonly members: string[] } {
+export function groupSeatParts(
+	plan: SeatPlan,
+	readOf: (hint: GroupSeatHint) => string,
+	storedOf: (stored: string) => string = (stored) => stored
+): { readonly prelude: string[]; readonly members: string[] } {
 	if (plan.groups.length === 0) return { prelude: [], members: [] };
-	const prelude = plan.groups.map(({ hint }) => `  const ${readGroupName(hint.slot)} = ${readOf(hint.slot)};`);
+	const prelude = plan.groups.map(({ hint }) => `  const ${readGroupName(hint.slot)} = ${readOf(hint)};`);
 	const members = plan.groups.flatMap(({ hint }) =>
 		hint.keys.map(
 			(key) =>
-				`    ${key.name}: ${hint.stored} === undefined ? undefined : () => groupField(${readGroupName(hint.slot)}.call(node), ${JSON.stringify(key.field ?? key.name)}),`
+				`    ${key.name}: ${storedOf(hint.stored)} === undefined ? undefined : () => groupField(${readGroupName(hint.slot)}.call(node), ${JSON.stringify(key.field ?? key.name)}),`
 		)
 	);
 	members.push(`    [STORED_SLOT_READERS]: { ${plan.groups.map(({ hint }) => `${hint.slot}: ${readGroupName(hint.slot)}`).join(', ')} },`);
@@ -138,7 +142,7 @@ export function ownerViewParts(plan: ListViewPlan, storage: string, accessor: st
 		};
 	}
 	return {
-		prelude: [`  const listView = ownerView(${storage}, ${JSON.stringify(plan.count)}, (list) => hydrateChild(list, tree));`],
+		prelude: [`  const listView = ownerView(${storage}, ${JSON.stringify(plan.count)}, (list) => hydrate(list, tree));`],
 		members: [
 			'    length: listView.stored?.length,',
 			'    [LIST_ITEMS]: undefined,',
@@ -156,7 +160,10 @@ export function listSelfViewParts(
 	environment: 'factory' | 'wrap'
 ): ListViewParts {
 	const wrapper = plan.wrapper ?? 'undefined';
-	const options = plan.options.map((option) => `    ${option.key}: _${option.key} ?? ${option.default},`);
+	const options = plan.options.map(
+		(option) =>
+			`    ${option.key}: ${environment === 'factory' ? `_${option.key}` : `(data as { readonly _${option.key}?: unknown })._${option.key}`} ?? ${option.default},`
+	);
 	const shared = [
 		'    ...LIST_METHODS,',
 		'    [Symbol.iterator]: listIterator,',

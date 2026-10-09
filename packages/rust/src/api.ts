@@ -17,7 +17,7 @@ import { querySlots, triviaFacts } from './utils.js';
 import { coerceToLineComment, coerceToBlockComment } from './factories/coerce.js';
 import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type SourceFileRoot } from './render-engine.js';
-import { wrapNode, hydrateChild, type SourceFileTree } from './wrap.js';
+import { wrapNode, hydrate, type SourceFileTree } from './wrap.js';
 
 export interface RustAPI extends LanguageAPI {
 	readonly name: 'rust';
@@ -50,5 +50,5 @@ export const hooks: LanguageHooks<RustAPI> = Object.freeze<LanguageHooks<RustAPI
 	querySlots,
 	createNative: (options) => nativeLanguageEngine<RustAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as SourceFileRoot & ParsedRoot, tree as TreeHandle),
-	hydrate: (node, tree) => hydrateChild(node, tree as TreeHandle)
+	hydrate: (node, tree) => hydrate(node, tree as TreeHandle)
 });

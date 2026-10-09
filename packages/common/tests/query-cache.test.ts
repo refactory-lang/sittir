@@ -14,16 +14,13 @@ interface QueryTestView extends Iterable<unknown> {
 
 function queryContext(querySlots: QuerySlots) {
 	const walks: DescendantWalk[] = [];
-	const node = { $type: 0, $source: 'ts', $handle: 1 } as const;
+	const node = { $type: 0, $_layout: { at: { $treeHandle: 1, $span: { start: 0, end: 0 }, $type: 0 } } } as const;
 	const token = mintTreeToken(1);
 	registerTree(token, {
-		get rootNode(): never {
-			throw new Error('The query fixture never reads tree-sitter nodes');
-		},
 		query: {
 			descendants(walk) {
 				walks.push(walk);
-				return { stubs: [], resume: null, origin: 0 };
+				return { coordinates: [], resume: null, origin: 0 };
 			},
 			planHolds: () => []
 		}

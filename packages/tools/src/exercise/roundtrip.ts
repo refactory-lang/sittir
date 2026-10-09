@@ -4,7 +4,6 @@ import { requireGrammarModule } from '../grammar-internals.ts';
 
 import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
 import type { FactoryShape } from '../codegen-surface.ts';
-import { nativeShownKindId } from '../validate/shown-kind.ts';
 type FactorySlotMeta = {
 	readonly unnamed: boolean;
 	readonly required: boolean;
@@ -137,8 +136,7 @@ function findFirstOfKind(
 	let found: ParsedNode | undefined;
 	common.walkWrappedTree(root, (node) => {
 		if (found !== undefined || node.$named === false) return;
-		const shown = nativeShownKindId(node);
-		if (typeof shown === 'number' && kindNameFromId?.(shown) === kind) found = node;
+		if (typeof node.$type === 'number' && kindNameFromId?.(node.$type) === kind) found = node;
 	});
 	return found;
 }

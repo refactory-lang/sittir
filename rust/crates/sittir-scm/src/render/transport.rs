@@ -10,9 +10,7 @@
 
 use ::sittir_core::view::{KindOf, KindTest, View, ListView, NO_ITEMS};
 use ::sittir_core::render::Render;
-use ::sittir_core::types::{
-    FieldValue, OneOrMany, Source, Span, NodeTrivia,
-};
+use ::sittir_core::types::{Source, Span};
 
 use ::sittir_core::layout::Layout as _;
 use ::sittir_core::options::Edged as _;
@@ -34,11 +32,11 @@ pub enum AnyTransport {
     #[kind(kind::_IMMEDIATE_IDENTIFIER)]
     ImmediateIdentifier(ImmediateIdentifierTransport),
     #[kind(kind::CAPTURE)]
-    Capture(Box<CaptureTransport>),
+    Capture(CaptureTransport),
     #[kind(kind::STRING)]
-    String(Box<StringTransport>),
+    String(StringTransport),
     #[kind(kind::_IMMEDIATE_STRING)]
-    ImmediateString(Box<ImmediateStringTransport>),
+    ImmediateString(ImmediateStringTransport),
     #[kind(kind::STRING_CONTENT)]
     StringContent(StringContentTransport),
     #[kind(kind::PARAMETERS)]
@@ -50,31 +48,31 @@ pub enum AnyTransport {
     #[kind(kind::GROUPING)]
     Grouping(GroupingTransport),
     #[kind(kind::MISSING_NODE)]
-    MissingNode(Box<MissingNodeTransport>),
+    MissingNode(MissingNodeTransport),
     #[kind(kind::ANONYMOUS_NODE)]
     AnonymousNode(AnonymousNodeTransport),
     #[kind(kind::FIELD_DEFINITION)]
-    FieldDefinition(Box<FieldDefinitionTransport>),
+    FieldDefinition(FieldDefinitionTransport),
     #[kind(kind::NEGATED_FIELD)]
-    NegatedField(Box<NegatedFieldTransport>),
+    NegatedField(NegatedFieldTransport),
     #[kind(kind::PREDICATE)]
-    Predicate(Box<PredicateTransport>),
+    Predicate(PredicateTransport),
     #[kind(kind::PREDICATE_TYPE)]
     PredicateType(PredicateTypeEnum),
     #[kind(kind::LIST_ELEMENT_QUANTIFIER)]
     ListElementQuantifier(ListElementQuantifierTransport),
     #[kind(kind::GROUP_EXPRESSION_ARM)]
-    GroupExpressionArm(Box<GroupExpressionArmTransport>),
+    GroupExpressionArm(GroupExpressionArmTransport),
     #[kind(kind::NAMED_NODE_EXPRESSION_ARM)]
-    NamedNodeExpressionArm(Box<NamedNodeExpressionArmTransport>),
+    NamedNodeExpressionArm(NamedNodeExpressionArmTransport),
     #[kind(kind::GROUPING_GROUP)]
-    GroupingGroup(Box<GroupingGroupTransport>),
+    GroupingGroup(GroupingGroupTransport),
     #[kind(kind::STRING_CONTENT_TEXT)]
     StringContentText(StringContentTextTransport),
     #[kind(kind::NAMED_NODE_PLAIN)]
-    NamedNodePlain(Box<NamedNodePlainTransport>),
+    NamedNodePlain(NamedNodePlainTransport),
     #[kind(kind::NAMED_NODE_SUPERTYPED)]
-    NamedNodeSupertyped(Box<NamedNodeSupertypedTransport>),
+    NamedNodeSupertyped(NamedNodeSupertypedTransport),
     #[kind(kind::NAMED_NODE_GROUP_CHILDREN)]
     NamedNodeGroupChildren(NamedNodeGroupChildrenTransport),
     #[kind(kind::NAMED_NODE_GROUP_ANCHORED_LAST)]
@@ -101,11 +99,11 @@ pub enum AnyTransport {
     Star,
     #[kind(kind::PLUS)]
     Plus,
-    #[kind(display(kind::QMARK))]
+    #[kind(kind::QMARK, folded(kind::QMARK2))]
     Qmark,
     #[kind(kind::AT)]
     At,
-    #[kind(display(kind::DQUOTE))]
+    #[kind(kind::DQUOTE, folded(kind::DQUOTE2))]
     Dquote,
     #[kind(kind::LBRACK)]
     Lbrack,
@@ -121,7 +119,7 @@ pub enum AnyTransport {
     Underscore,
     #[kind(kind::COLON)]
     Colon,
-    #[kind(display(kind::BANG))]
+    #[kind(kind::BANG, folded(kind::BANG2))]
     Bang,
     #[kind(kind::POUND)]
     Pound,
@@ -410,15 +408,15 @@ pub enum DefinitionTransport {
     #[kind(kind::ANONYMOUS_NODE)]
     AnonymousNode(AnonymousNodeTransport),
     #[kind(kind::MISSING_NODE)]
-    MissingNode(Box<MissingNodeTransport>),
+    MissingNode(MissingNodeTransport),
     #[kind(kind::GROUPING)]
     Grouping(GroupingTransport),
     #[kind(kind::PREDICATE)]
-    Predicate(Box<PredicateTransport>),
+    Predicate(PredicateTransport),
     #[kind(kind::LIST)]
     List(ListTransport),
     #[kind(kind::FIELD_DEFINITION)]
-    FieldDefinition(Box<FieldDefinitionTransport>),
+    FieldDefinition(FieldDefinitionTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for DefinitionTransport {
@@ -481,9 +479,9 @@ impl ::sittir_core::render::Render for DefinitionTransport {
 #[transport(choice)]
 pub enum NamedNodeTransport {
     #[kind(kind::NAMED_NODE_PLAIN)]
-    NamedNodePlain(Box<NamedNodePlainTransport>),
+    NamedNodePlain(NamedNodePlainTransport),
     #[kind(kind::NAMED_NODE_SUPERTYPED)]
-    NamedNodeSupertyped(Box<NamedNodeSupertypedTransport>),
+    NamedNodeSupertyped(NamedNodeSupertypedTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for NamedNodeTransport {
@@ -533,7 +531,7 @@ impl ::sittir_core::render::Render for NamedNodeTransport {
 #[transport(choice)]
 pub enum ListElementTransport {
     #[kind(kind::CAPTURE)]
-    Capture(Box<CaptureTransport>),
+    Capture(CaptureTransport),
     #[kind(kind::LIST_ELEMENT_QUANTIFIER)]
     ListElementQuantifier(ListElementQuantifierTransport),
 }
@@ -679,9 +677,9 @@ impl ::sittir_core::render::Render for StringContentContentTransportSlot {
 #[transport(choice)]
 pub enum ParametersElementsTransportSlot {
     #[kind(kind::CAPTURE)]
-    Capture(Box<CaptureTransport>),
+    Capture(CaptureTransport),
     #[kind(kind::STRING)]
-    String(Box<StringTransport>),
+    String(StringTransport),
     #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
     #[transport(verbatim)]
@@ -729,8 +727,8 @@ impl ::sittir_core::view::KindOf for ParametersElementsTransportSlot {
 impl ::sittir_core::render::Render for ParametersElementsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ParametersElementsTransportSlot::Capture(inner) => inner.as_ref().render(w),
-            ParametersElementsTransportSlot::String(inner) => inner.as_ref().render(w),
+            ParametersElementsTransportSlot::Capture(inner) => inner.render(w),
+            ParametersElementsTransportSlot::String(inner) => inner.render(w),
             ParametersElementsTransportSlot::Identifier(inner) => inner.render(w),
             ParametersElementsTransportSlot::Verbatim(inner) => inner.render(w),
         }
@@ -743,7 +741,7 @@ pub enum MissingNodeNameTransportSlot {
     #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING)]
-    String(Box<StringTransport>),
+    String(StringTransport),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -786,7 +784,7 @@ impl ::sittir_core::render::Render for MissingNodeNameTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             MissingNodeNameTransportSlot::Identifier(inner) => inner.render(w),
-            MissingNodeNameTransportSlot::String(inner) => inner.as_ref().render(w),
+            MissingNodeNameTransportSlot::String(inner) => inner.render(w),
             MissingNodeNameTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -796,7 +794,7 @@ impl ::sittir_core::render::Render for MissingNodeNameTransportSlot {
 #[transport(choice)]
 pub enum AnonymousNodeNameTransportSlot {
     #[kind(kind::STRING)]
-    String(Box<StringTransport>),
+    String(StringTransport),
     #[kind(kind::UNDERSCORE)]
     Underscore,
 }
@@ -834,7 +832,7 @@ impl ::sittir_core::view::KindOf for AnonymousNodeNameTransportSlot {
 impl ::sittir_core::render::Render for AnonymousNodeNameTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            AnonymousNodeNameTransportSlot::String(inner) => inner.as_ref().render(w),
+            AnonymousNodeNameTransportSlot::String(inner) => inner.render(w),
             AnonymousNodeNameTransportSlot::Underscore => {
                 let written = render_underscore(w);
                 written?;
@@ -885,23 +883,23 @@ impl ::sittir_core::render::Render for PredicatePrefixTransportSlot {
 #[transport(choice)]
 pub enum GroupExpressionArmLeftTransportSlot {
     #[kind(kind::NAMED_NODE_PLAIN)]
-    NamedNodePlain(Box<NamedNodePlainTransport>),
+    NamedNodePlain(NamedNodePlainTransport),
     #[kind(kind::NAMED_NODE_SUPERTYPED)]
-    NamedNodeSupertyped(Box<NamedNodeSupertypedTransport>),
+    NamedNodeSupertyped(NamedNodeSupertypedTransport),
     #[kind(kind::ANONYMOUS_NODE)]
     AnonymousNode(AnonymousNodeTransport),
     #[kind(kind::MISSING_NODE)]
-    MissingNode(Box<MissingNodeTransport>),
+    MissingNode(MissingNodeTransport),
     #[kind(kind::GROUPING)]
     Grouping(GroupingTransport),
     #[kind(kind::PREDICATE)]
-    Predicate(Box<PredicateTransport>),
+    Predicate(PredicateTransport),
     #[kind(kind::LIST)]
     List(ListTransport),
     #[kind(kind::FIELD_DEFINITION)]
-    FieldDefinition(Box<FieldDefinitionTransport>),
+    FieldDefinition(FieldDefinitionTransport),
     #[kind(kind::GROUP_EXPRESSION_ARM)]
-    GroupExpressionArm(Box<GroupExpressionArmTransport>),
+    GroupExpressionArm(GroupExpressionArmTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for GroupExpressionArmLeftTransportSlot {
@@ -965,15 +963,15 @@ impl ::sittir_core::view::KindOf for GroupExpressionArmLeftTransportSlot {
 impl ::sittir_core::render::Render for GroupExpressionArmLeftTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            GroupExpressionArmLeftTransportSlot::NamedNodePlain(inner) => inner.as_ref().render(w),
-            GroupExpressionArmLeftTransportSlot::NamedNodeSupertyped(inner) => inner.as_ref().render(w),
+            GroupExpressionArmLeftTransportSlot::NamedNodePlain(inner) => inner.render(w),
+            GroupExpressionArmLeftTransportSlot::NamedNodeSupertyped(inner) => inner.render(w),
             GroupExpressionArmLeftTransportSlot::AnonymousNode(inner) => inner.render(w),
-            GroupExpressionArmLeftTransportSlot::MissingNode(inner) => inner.as_ref().render(w),
+            GroupExpressionArmLeftTransportSlot::MissingNode(inner) => inner.render(w),
             GroupExpressionArmLeftTransportSlot::Grouping(inner) => inner.render(w),
-            GroupExpressionArmLeftTransportSlot::Predicate(inner) => inner.as_ref().render(w),
+            GroupExpressionArmLeftTransportSlot::Predicate(inner) => inner.render(w),
             GroupExpressionArmLeftTransportSlot::List(inner) => inner.render(w),
-            GroupExpressionArmLeftTransportSlot::FieldDefinition(inner) => inner.as_ref().render(w),
-            GroupExpressionArmLeftTransportSlot::GroupExpressionArm(inner) => inner.as_ref().render(w),
+            GroupExpressionArmLeftTransportSlot::FieldDefinition(inner) => inner.render(w),
+            GroupExpressionArmLeftTransportSlot::GroupExpressionArm(inner) => inner.render(w),
         }
     }
 }
@@ -982,25 +980,25 @@ impl ::sittir_core::render::Render for GroupExpressionArmLeftTransportSlot {
 #[transport(choice)]
 pub enum NamedNodeExpressionArmLeftTransportSlot {
     #[kind(kind::NAMED_NODE_PLAIN)]
-    NamedNodePlain(Box<NamedNodePlainTransport>),
+    NamedNodePlain(NamedNodePlainTransport),
     #[kind(kind::NAMED_NODE_SUPERTYPED)]
-    NamedNodeSupertyped(Box<NamedNodeSupertypedTransport>),
+    NamedNodeSupertyped(NamedNodeSupertypedTransport),
     #[kind(kind::ANONYMOUS_NODE)]
     AnonymousNode(AnonymousNodeTransport),
     #[kind(kind::MISSING_NODE)]
-    MissingNode(Box<MissingNodeTransport>),
+    MissingNode(MissingNodeTransport),
     #[kind(kind::GROUPING)]
     Grouping(GroupingTransport),
     #[kind(kind::PREDICATE)]
-    Predicate(Box<PredicateTransport>),
+    Predicate(PredicateTransport),
     #[kind(kind::LIST)]
     List(ListTransport),
     #[kind(kind::FIELD_DEFINITION)]
-    FieldDefinition(Box<FieldDefinitionTransport>),
+    FieldDefinition(FieldDefinitionTransport),
     #[kind(kind::NEGATED_FIELD)]
-    NegatedField(Box<NegatedFieldTransport>),
+    NegatedField(NegatedFieldTransport),
     #[kind(kind::NAMED_NODE_EXPRESSION_ARM)]
-    NamedNodeExpressionArm(Box<NamedNodeExpressionArmTransport>),
+    NamedNodeExpressionArm(NamedNodeExpressionArmTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for NamedNodeExpressionArmLeftTransportSlot {
@@ -1068,16 +1066,16 @@ impl ::sittir_core::view::KindOf for NamedNodeExpressionArmLeftTransportSlot {
 impl ::sittir_core::render::Render for NamedNodeExpressionArmLeftTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            NamedNodeExpressionArmLeftTransportSlot::NamedNodePlain(inner) => inner.as_ref().render(w),
-            NamedNodeExpressionArmLeftTransportSlot::NamedNodeSupertyped(inner) => inner.as_ref().render(w),
+            NamedNodeExpressionArmLeftTransportSlot::NamedNodePlain(inner) => inner.render(w),
+            NamedNodeExpressionArmLeftTransportSlot::NamedNodeSupertyped(inner) => inner.render(w),
             NamedNodeExpressionArmLeftTransportSlot::AnonymousNode(inner) => inner.render(w),
-            NamedNodeExpressionArmLeftTransportSlot::MissingNode(inner) => inner.as_ref().render(w),
+            NamedNodeExpressionArmLeftTransportSlot::MissingNode(inner) => inner.render(w),
             NamedNodeExpressionArmLeftTransportSlot::Grouping(inner) => inner.render(w),
-            NamedNodeExpressionArmLeftTransportSlot::Predicate(inner) => inner.as_ref().render(w),
+            NamedNodeExpressionArmLeftTransportSlot::Predicate(inner) => inner.render(w),
             NamedNodeExpressionArmLeftTransportSlot::List(inner) => inner.render(w),
-            NamedNodeExpressionArmLeftTransportSlot::FieldDefinition(inner) => inner.as_ref().render(w),
-            NamedNodeExpressionArmLeftTransportSlot::NegatedField(inner) => inner.as_ref().render(w),
-            NamedNodeExpressionArmLeftTransportSlot::NamedNodeExpressionArm(inner) => inner.as_ref().render(w),
+            NamedNodeExpressionArmLeftTransportSlot::FieldDefinition(inner) => inner.render(w),
+            NamedNodeExpressionArmLeftTransportSlot::NegatedField(inner) => inner.render(w),
+            NamedNodeExpressionArmLeftTransportSlot::NamedNodeExpressionArm(inner) => inner.render(w),
         }
     }
 }
@@ -1149,7 +1147,7 @@ pub enum NamedNodeSupertypedNameTransportSlot {
     #[kind(kind::_IMMEDIATE_IDENTIFIER, kind::IDENTIFIER)]
     ImmediateIdentifier(ImmediateIdentifierTransport),
     #[kind(kind::_IMMEDIATE_STRING)]
-    ImmediateString(Box<ImmediateStringTransport>),
+    ImmediateString(ImmediateStringTransport),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -1192,7 +1190,7 @@ impl ::sittir_core::render::Render for NamedNodeSupertypedNameTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             NamedNodeSupertypedNameTransportSlot::ImmediateIdentifier(inner) => inner.render(w),
-            NamedNodeSupertypedNameTransportSlot::ImmediateString(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.as_ref().render(w) },
+            NamedNodeSupertypedNameTransportSlot::ImmediateString(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
             NamedNodeSupertypedNameTransportSlot::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
         }
     }
@@ -1203,7 +1201,7 @@ impl ::sittir_core::render::Render for NamedNodeSupertypedNameTransportSlot {
 #[transport(kind = kind::PROGRAM, gap(0) = definitions)]
 pub struct ProgramTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_definitions")]
     #[slot(field = field::DEFINITIONS)]
     pub definitions: Option<Vec<::sittir_core::SlotValue<DefinitionTransport>>>,
@@ -1225,7 +1223,7 @@ impl ::sittir_core::options::Edged for ProgramTransport {
 
 impl ::sittir_core::render::Render for ProgramTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(33)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_program(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(33)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_program(self, w))
     }
 }
 
@@ -1257,7 +1255,7 @@ impl ::sittir_core::prepare::Prepare for ProgramTransport {
 #[transport(kind = kind::ESCAPE_SEQUENCE, interior = "^\\\\(?<content>(?:.))$")]
 pub struct EscapeSequenceTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     pub content: String,
@@ -1277,7 +1275,7 @@ impl ::sittir_core::options::Edged for EscapeSequenceTransport {
 
 impl ::sittir_core::render::Render for EscapeSequenceTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(1)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(1)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence(self, w))
     }
 }
 
@@ -1302,7 +1300,7 @@ pub enum QuantifierEnum {
     Star,
     #[kind(kind::PLUS)]
     Plus,
-    #[kind(display(kind::QMARK))]
+    #[kind(kind::QMARK, folded(kind::QMARK2))]
     Question,
 }
 
@@ -1336,7 +1334,7 @@ impl ::sittir_core::render::Render for QuantifierEnum {
 #[transport(kind = kind::IDENTIFIER, text)]
 pub struct IdentifierTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -1355,7 +1353,7 @@ impl ::sittir_core::options::Edged for IdentifierTransport {
 
 impl ::sittir_core::render::Render for IdentifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(5)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(5)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
@@ -1376,7 +1374,7 @@ impl ::sittir_core::prepare::Prepare for IdentifierTransport {
 #[transport(kind = kind::_IMMEDIATE_IDENTIFIER, text)]
 pub struct ImmediateIdentifierTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -1395,7 +1393,7 @@ impl ::sittir_core::options::Edged for ImmediateIdentifierTransport {
 
 impl ::sittir_core::render::Render for ImmediateIdentifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(6)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(6)); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(6)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(6)); w.text(&self.text) })
     }
 }
 
@@ -1416,7 +1414,7 @@ impl ::sittir_core::prepare::Prepare for ImmediateIdentifierTransport {
 #[transport(kind = kind::CAPTURE, layout = [kind::AT])]
 pub struct CaptureTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<ImmediateIdentifierTransport, true>,
@@ -1436,7 +1434,7 @@ impl ::sittir_core::options::Edged for CaptureTransport {
 
 impl ::sittir_core::render::Render for CaptureTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(39)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_capture(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(39)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_capture(self, w))
     }
 }
 
@@ -1458,10 +1456,10 @@ impl ::sittir_core::prepare::Prepare for CaptureTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::STRING, layout = [kind::DQUOTE])]
+#[transport(kind = kind::STRING, layout = [kind::DQUOTE | kind::DQUOTE2])]
 pub struct StringTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_string_content")]
     #[slot(field = field::STRING_CONTENT)]
     pub string_content: Option<::sittir_core::SlotValue<StringContentTransport>>,
@@ -1481,7 +1479,7 @@ impl ::sittir_core::options::Edged for StringTransport {
 
 impl ::sittir_core::render::Render for StringTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(40)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_string(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(40)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_string(self, w))
     }
 }
 
@@ -1503,10 +1501,10 @@ impl ::sittir_core::prepare::Prepare for StringTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_IMMEDIATE_STRING, layout = [kind::DQUOTE])]
+#[transport(kind = kind::_IMMEDIATE_STRING, layout = [kind::DQUOTE | kind::DQUOTE2])]
 pub struct ImmediateStringTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_string_content")]
     #[slot]
     pub string_content: Option<::sittir_core::SlotValue<StringContentTransport>>,
@@ -1526,7 +1524,7 @@ impl ::sittir_core::options::Edged for ImmediateStringTransport {
 
 impl ::sittir_core::render::Render for ImmediateStringTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(41)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_immediate_string(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(41)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_immediate_string(self, w))
     }
 }
 
@@ -1551,7 +1549,7 @@ impl ::sittir_core::prepare::Prepare for ImmediateStringTransport {
 #[transport(kind = kind::STRING_CONTENT)]
 pub struct StringContentTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot]
     pub content: Vec<::sittir_core::SlotValue<StringContentContentTransportSlot, true>>,
@@ -1571,7 +1569,7 @@ impl ::sittir_core::options::Edged for StringContentTransport {
 
 impl ::sittir_core::render::Render for StringContentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(42)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_string_content(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(42)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_string_content(self, w))
     }
 }
 
@@ -1593,7 +1591,7 @@ impl ::sittir_core::prepare::Prepare for StringContentTransport {
 #[transport(kind = kind::PARAMETERS)]
 pub struct ParametersTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
     pub elements: Vec<::sittir_core::SlotValue<ParametersElementsTransportSlot>>,
@@ -1615,7 +1613,7 @@ impl ::sittir_core::options::Edged for ParametersTransport {
 
 impl ::sittir_core::render::Render for ParametersTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(43)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parameters(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(43)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parameters(self, w))
     }
 }
 
@@ -1643,7 +1641,7 @@ impl ::sittir_core::prepare::Prepare for ParametersTransport {
 #[transport(kind = kind::COMMENT, interior = "^;(?<content>(?:.*))$")]
 pub struct CommentTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     pub content: String,
@@ -1663,7 +1661,7 @@ impl ::sittir_core::options::Edged for CommentTransport {
 
 impl ::sittir_core::render::Render for CommentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(11)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_comment(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(11)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_comment(self, w))
     }
 }
 
@@ -1685,7 +1683,7 @@ impl ::sittir_core::prepare::Prepare for CommentTransport {
 #[transport(kind = kind::LIST, layout = [kind::LBRACK, kind::RBRACK])]
 pub struct ListTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_definitions")]
     #[slot(field = field::DEFINITIONS)]
     pub definitions: Vec<::sittir_core::SlotValue<DefinitionTransport>>,
@@ -1712,7 +1710,7 @@ impl ::sittir_core::options::Edged for ListTransport {
 
 impl ::sittir_core::render::Render for ListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(44)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_list(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(44)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_list(self, w))
     }
 }
 
@@ -1744,13 +1742,13 @@ impl ::sittir_core::prepare::Prepare for ListTransport {
 #[transport(kind = kind::GROUPING, layout = [kind::LPAREN, kind::RPAREN])]
 pub struct GroupingTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
-    #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS)]
-    pub elements: Option<Vec<::sittir_core::SlotValue<ListElementTransport>>>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_grouping_group")]
     #[slot]
     pub grouping_group: Vec<::sittir_core::SlotValue<GroupingGroupTransport>>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS)]
+    pub elements: Option<Vec<::sittir_core::SlotValue<ListElementTransport>>>,
     #[wire(key = "_elements_separator_space")]
     pub elements_separator_space: Option<u16>,
     #[wire(key = "_grouping_group_separator_space")]
@@ -1771,7 +1769,7 @@ impl ::sittir_core::options::Edged for GroupingTransport {
 
 impl ::sittir_core::render::Render for GroupingTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(45)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_grouping(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(45)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_grouping(self, w))
     }
 }
 
@@ -1787,8 +1785,8 @@ impl ::sittir_core::prepare::Prepare for GroupingTransport {
         self.grouping_group_separator_space.get_or_insert(ctx.options.spacing[options::SITE_GROUPING_GROUPING_GROUP_SEPARATOR_SPACE].arm);
         if let Some(seated_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_GROUPING_ELEMENTS, ctx); }
         ::sittir_core::prepare::fill_seated_gaps(self.grouping_group.iter_mut().map(Some), options::SEATS_GROUPING_GROUPING_GROUP, ctx);
-        self.elements.prepare(ctx)?;
         self.grouping_group.prepare(ctx)?;
+        self.elements.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -1803,7 +1801,7 @@ impl ::sittir_core::prepare::Prepare for GroupingTransport {
 #[transport(kind = kind::MISSING_NODE, layout = [kind::LPAREN, kind::MISSING_KEYWORD, kind::RPAREN], gap(2) = name)]
 pub struct MissingNodeTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: Option<::sittir_core::SlotValue<MissingNodeNameTransportSlot>>,
@@ -1828,7 +1826,7 @@ impl ::sittir_core::options::Edged for MissingNodeTransport {
 
 impl ::sittir_core::render::Render for MissingNodeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(46)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_missing_node(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(46)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_missing_node(self, w))
     }
 }
 
@@ -1857,7 +1855,7 @@ impl ::sittir_core::prepare::Prepare for MissingNodeTransport {
 #[transport(kind = kind::ANONYMOUS_NODE)]
 pub struct AnonymousNodeTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<AnonymousNodeNameTransportSlot>,
@@ -1882,7 +1880,7 @@ impl ::sittir_core::options::Edged for AnonymousNodeTransport {
 
 impl ::sittir_core::render::Render for AnonymousNodeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(47)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_anonymous_node(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(47)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_anonymous_node(self, w))
     }
 }
 
@@ -1911,7 +1909,7 @@ impl ::sittir_core::prepare::Prepare for AnonymousNodeTransport {
 #[transport(kind = kind::FIELD_DEFINITION)]
 pub struct FieldDefinitionTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, separator = kind::COLON)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -1934,7 +1932,7 @@ impl ::sittir_core::options::Edged for FieldDefinitionTransport {
 
 impl ::sittir_core::render::Render for FieldDefinitionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(50)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_definition(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(50)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_definition(self, w))
     }
 }
 
@@ -1957,10 +1955,10 @@ impl ::sittir_core::prepare::Prepare for FieldDefinitionTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::NEGATED_FIELD, layout = [kind::BANG])]
+#[transport(kind = kind::NEGATED_FIELD, layout = [kind::BANG | kind::BANG2])]
 pub struct NegatedFieldTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_identifier")]
     #[slot(field = field::IDENTIFIER)]
     pub identifier: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -1980,7 +1978,7 @@ impl ::sittir_core::options::Edged for NegatedFieldTransport {
 
 impl ::sittir_core::render::Render for NegatedFieldTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(51)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_negated_field(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(51)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_negated_field(self, w))
     }
 }
 
@@ -2005,7 +2003,7 @@ impl ::sittir_core::prepare::Prepare for NegatedFieldTransport {
 #[transport(kind = kind::PREDICATE, layout = [kind::LPAREN, kind::RPAREN])]
 pub struct PredicateTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_prefix")]
     #[slot(field = field::PREFIX)]
     pub prefix: ::sittir_core::SlotValue<PredicatePrefixTransportSlot>,
@@ -2034,7 +2032,7 @@ impl ::sittir_core::options::Edged for PredicateTransport {
 
 impl ::sittir_core::render::Render for PredicateTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(52)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_predicate(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(52)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_predicate(self, w))
     }
 }
 
@@ -2061,9 +2059,9 @@ impl ::sittir_core::prepare::Prepare for PredicateTransport {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ::sittir_core::Transport)]
 #[transport(kind = kind::PREDICATE_TYPE, spelled)]
 pub enum PredicateTypeEnum {
-    #[kind(display(kind::QMARK))]
+    #[kind(kind::QMARK, folded(kind::QMARK2))]
     Question,
-    #[kind(display(kind::BANG))]
+    #[kind(kind::BANG, folded(kind::BANG2))]
     Bang,
 }
 
@@ -2095,7 +2093,7 @@ impl ::sittir_core::render::Render for PredicateTypeEnum {
 #[transport(kind = kind::LIST_ELEMENT_QUANTIFIER)]
 pub struct ListElementQuantifierTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_quantifier")]
     #[slot(field = field::QUANTIFIER)]
     pub quantifier: ::sittir_core::SlotValue<QuantifierEnum>,
@@ -2115,7 +2113,7 @@ impl ::sittir_core::options::Edged for ListElementQuantifierTransport {
 
 impl ::sittir_core::render::Render for ListElementQuantifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(54)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_list_element_quantifier(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(54)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_list_element_quantifier(self, w))
     }
 }
 
@@ -2137,7 +2135,7 @@ impl ::sittir_core::prepare::Prepare for ListElementQuantifierTransport {
 #[transport(kind = kind::GROUP_EXPRESSION_ARM, layout = [kind::DOT])]
 pub struct GroupExpressionArmTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_left")]
     #[slot(field = field::LEFT)]
     pub left: ::sittir_core::SlotValue<Box<GroupExpressionArmLeftTransportSlot>>,
@@ -2160,7 +2158,7 @@ impl ::sittir_core::options::Edged for GroupExpressionArmTransport {
 
 impl ::sittir_core::render::Render for GroupExpressionArmTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(56)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_group_expression_arm(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(56)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_group_expression_arm(self, w))
     }
 }
 
@@ -2186,7 +2184,7 @@ impl ::sittir_core::prepare::Prepare for GroupExpressionArmTransport {
 #[transport(kind = kind::NAMED_NODE_EXPRESSION_ARM, layout = [kind::DOT])]
 pub struct NamedNodeExpressionArmTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_left")]
     #[slot(field = field::LEFT)]
     pub left: ::sittir_core::SlotValue<Box<NamedNodeExpressionArmLeftTransportSlot>>,
@@ -2209,7 +2207,7 @@ impl ::sittir_core::options::Edged for NamedNodeExpressionArmTransport {
 
 impl ::sittir_core::render::Render for NamedNodeExpressionArmTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(57)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_named_node_expression_arm(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(57)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_named_node_expression_arm(self, w))
     }
 }
 
@@ -2235,12 +2233,12 @@ impl ::sittir_core::prepare::Prepare for NamedNodeExpressionArmTransport {
 #[transport(kind = kind::GROUPING_GROUP)]
 pub struct GroupingGroupTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_group_expression")]
     #[slot]
     pub group_expression: ::sittir_core::SlotValue<GroupExpressionArmLeftTransportSlot>,
     #[wire(key = "_anchor")]
-    #[slot(presence = kind::_ANCHOR)]
+    #[slot(presence = display(kind::_ANCHOR))]
     pub anchor: Option<bool>,
 }
 
@@ -2258,7 +2256,7 @@ impl ::sittir_core::options::Edged for GroupingGroupTransport {
 
 impl ::sittir_core::render::Render for GroupingGroupTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(58)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_grouping_group(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(58)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_grouping_group(self, w))
     }
 }
 
@@ -2284,7 +2282,7 @@ impl ::sittir_core::prepare::Prepare for GroupingGroupTransport {
 #[transport(kind = kind::STRING_CONTENT_TEXT, text)]
 pub struct StringContentTextTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -2303,7 +2301,7 @@ impl ::sittir_core::options::Edged for StringContentTextTransport {
 
 impl ::sittir_core::render::Render for StringContentTextTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(23)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(23)); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(23)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(23)); w.text(&self.text) })
     }
 }
 
@@ -2349,16 +2347,16 @@ impl ::sittir_core::render::Render for AnchorTransport {
 #[transport(kind = kind::NAMED_NODE_PLAIN, layout = [kind::LPAREN, kind::RPAREN])]
 pub struct NamedNodePlainTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<NamedNodePlainNameTransportSlot>,
-    #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS)]
-    pub elements: Option<Vec<::sittir_core::SlotValue<ListElementTransport>>>,
     #[wire(key = "_named_node_group")]
     #[slot]
     pub named_node_group: Option<::sittir_core::SlotValue<Box<NamedNodeGroupTransport>>>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS)]
+    pub elements: Option<Vec<::sittir_core::SlotValue<ListElementTransport>>>,
     #[wire(key = "_elements_separator_space")]
     pub elements_separator_space: Option<u16>,
 }
@@ -2377,7 +2375,7 @@ impl ::sittir_core::options::Edged for NamedNodePlainTransport {
 
 impl ::sittir_core::render::Render for NamedNodePlainTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(61)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_named_node_plain(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(61)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_named_node_plain(self, w))
     }
 }
 
@@ -2391,8 +2389,8 @@ impl ::sittir_core::prepare::Prepare for NamedNodePlainTransport {
         self.elements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_NAMED_NODE_PLAIN_ELEMENTS_SEPARATOR_SPACE].arm);
         if let Some(seated_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_NAMED_NODE_PLAIN_ELEMENTS, ctx); }
         self.name.prepare(ctx)?;
-        self.elements.prepare(ctx)?;
         self.named_node_group.prepare(ctx)?;
+        self.elements.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -2407,19 +2405,19 @@ impl ::sittir_core::prepare::Prepare for NamedNodePlainTransport {
 #[transport(kind = kind::NAMED_NODE_SUPERTYPED, layout = [kind::LPAREN, kind::SLASH, kind::RPAREN])]
 pub struct NamedNodeSupertypedTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_supertype")]
     #[slot(field = field::SUPERTYPE)]
     pub supertype: ::sittir_core::SlotValue<IdentifierTransport>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<NamedNodeSupertypedNameTransportSlot, true>,
-    #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS)]
-    pub elements: Option<Vec<::sittir_core::SlotValue<ListElementTransport>>>,
     #[wire(key = "_named_node_group")]
     #[slot]
     pub named_node_group: Option<::sittir_core::SlotValue<Box<NamedNodeGroupTransport>>>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS)]
+    pub elements: Option<Vec<::sittir_core::SlotValue<ListElementTransport>>>,
     #[wire(key = "_elements_separator_space")]
     pub elements_separator_space: Option<u16>,
 }
@@ -2438,7 +2436,7 @@ impl ::sittir_core::options::Edged for NamedNodeSupertypedTransport {
 
 impl ::sittir_core::render::Render for NamedNodeSupertypedTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(62)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_named_node_supertyped(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(62)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_named_node_supertyped(self, w))
     }
 }
 
@@ -2453,8 +2451,8 @@ impl ::sittir_core::prepare::Prepare for NamedNodeSupertypedTransport {
         if let Some(seated_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_NAMED_NODE_SUPERTYPED_ELEMENTS, ctx); }
         self.supertype.prepare(ctx)?;
         self.name.prepare(ctx)?;
-        self.elements.prepare(ctx)?;
         self.named_node_group.prepare(ctx)?;
+        self.elements.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -2469,13 +2467,13 @@ impl ::sittir_core::prepare::Prepare for NamedNodeSupertypedTransport {
 #[transport(kind = kind::NAMED_NODE_GROUP_CHILDREN)]
 pub struct NamedNodeGroupChildrenTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
+    #[wire(key = "_anchor")]
+    #[slot(presence = display(kind::_ANCHOR))]
+    pub anchor: Option<bool>,
     #[wire(key = "_named_node_expressions")]
     #[slot(field = field::NAMED_NODE_EXPRESSIONS)]
     pub named_node_expressions: Vec<::sittir_core::SlotValue<NamedNodeExpressionArmLeftTransportSlot>>,
-    #[wire(key = "_anchor")]
-    #[slot(presence = kind::_ANCHOR)]
-    pub anchor: Option<bool>,
     #[wire(key = "_named_node_expressions_separator_space")]
     pub named_node_expressions_separator_space: Option<u16>,
 }
@@ -2494,7 +2492,7 @@ impl ::sittir_core::options::Edged for NamedNodeGroupChildrenTransport {
 
 impl ::sittir_core::render::Render for NamedNodeGroupChildrenTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(63)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_named_node_group_children(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(63)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_named_node_group_children(self, w))
     }
 }
 
@@ -2507,8 +2505,8 @@ impl ::sittir_core::prepare::Prepare for NamedNodeGroupChildrenTransport {
         ::sittir_core::prepare::fill_list_gaps(self.named_node_expressions.iter_mut().map(Some), "", options::allowed(options::SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.named_node_expressions_separator_space.get_or_insert(ctx.options.spacing[options::SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.named_node_expressions.iter_mut().map(Some), options::SEATS_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS, ctx);
-        self.named_node_expressions.prepare(ctx)?;
         self.anchor.prepare(ctx)?;
+        self.named_node_expressions.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -2523,16 +2521,16 @@ impl ::sittir_core::prepare::Prepare for NamedNodeGroupChildrenTransport {
 #[transport(kind = kind::NAMED_NODE_GROUP_ANCHORED_LAST, layout = [kind::DOT])]
 pub struct NamedNodeGroupAnchoredLastTransport {
     #[wire(key = "$_layout")]
-    pub layout: Option<TransportLayout>,
+    pub layout: Option<Box<TransportLayout>>,
+    #[wire(key = "_anchor")]
+    #[slot(presence = display(kind::_ANCHOR))]
+    pub anchor: Option<bool>,
     #[wire(key = "_named_node_expressions")]
     #[slot(field = field::NAMED_NODE_EXPRESSIONS)]
     pub named_node_expressions: Option<Vec<::sittir_core::SlotValue<NamedNodeExpressionArmLeftTransportSlot>>>,
     #[wire(key = "_last")]
     #[slot(field = field::LAST)]
     pub last: ::sittir_core::SlotValue<Box<NamedNodeExpressionArmLeftTransportSlot>>,
-    #[wire(key = "_anchor")]
-    #[slot(presence = kind::_ANCHOR)]
-    pub anchor: Option<bool>,
     #[wire(key = "_named_node_expressions_separator_space")]
     pub named_node_expressions_separator_space: Option<u16>,
 }
@@ -2551,7 +2549,7 @@ impl ::sittir_core::options::Edged for NamedNodeGroupAnchoredLastTransport {
 
 impl ::sittir_core::render::Render for NamedNodeGroupAnchoredLastTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(64)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_named_node_group_anchored_last(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(64)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_named_node_group_anchored_last(self, w))
     }
 }
 
@@ -2564,9 +2562,9 @@ impl ::sittir_core::prepare::Prepare for NamedNodeGroupAnchoredLastTransport {
         if let Some(gap_items) = self.named_node_expressions.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
         self.named_node_expressions_separator_space.get_or_insert(ctx.options.spacing[options::SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE].arm);
         if let Some(seated_items) = self.named_node_expressions.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS, ctx); }
+        self.anchor.prepare(ctx)?;
         self.named_node_expressions.prepare(ctx)?;
         self.last.prepare(ctx)?;
-        self.anchor.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -2830,7 +2828,7 @@ impl ::sittir_core::render::Render for PlusTransport {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum QmarkTransport {
-    #[kind(display(kind::QMARK))]
+    #[kind(kind::QMARK, folded(kind::QMARK2))]
     Qmark,
 }
 
@@ -2880,7 +2878,7 @@ impl ::sittir_core::render::Render for AtTransport {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum DquoteTransport {
-    #[kind(display(kind::DQUOTE))]
+    #[kind(kind::DQUOTE, folded(kind::DQUOTE2))]
     Dquote,
 }
 
@@ -3080,7 +3078,7 @@ impl ::sittir_core::render::Render for ColonTransport {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum BangTransport {
-    #[kind(display(kind::BANG))]
+    #[kind(kind::BANG, folded(kind::BANG2))]
     Bang,
 }
 
@@ -3962,24 +3960,24 @@ fn render_definition(t: &DefinitionTransport, w: &mut dyn ::sittir_core::render:
     match t {
         DefinitionTransport::NamedNode(inner) => inner.render(w),
         DefinitionTransport::AnonymousNode(inner) => inner.render(w),
-        DefinitionTransport::MissingNode(inner) => inner.as_ref().render(w),
+        DefinitionTransport::MissingNode(inner) => inner.render(w),
         DefinitionTransport::Grouping(inner) => inner.render(w),
-        DefinitionTransport::Predicate(inner) => inner.as_ref().render(w),
+        DefinitionTransport::Predicate(inner) => inner.render(w),
         DefinitionTransport::List(inner) => inner.render(w),
-        DefinitionTransport::FieldDefinition(inner) => inner.as_ref().render(w),
+        DefinitionTransport::FieldDefinition(inner) => inner.render(w),
     }
 }
 
 fn render_named_node(t: &NamedNodeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        NamedNodeTransport::NamedNodePlain(inner) => inner.as_ref().render(w),
-        NamedNodeTransport::NamedNodeSupertyped(inner) => inner.as_ref().render(w),
+        NamedNodeTransport::NamedNodePlain(inner) => inner.render(w),
+        NamedNodeTransport::NamedNodeSupertyped(inner) => inner.render(w),
     }
 }
 
 fn render_list_element(t: &ListElementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        ListElementTransport::Capture(inner) => inner.as_ref().render(w),
+        ListElementTransport::Capture(inner) => inner.render(w),
         ListElementTransport::ListElementQuantifier(inner) => inner.render(w),
     }
 }
@@ -4150,31 +4148,31 @@ pub fn render_transport_parts(
 }
 
 const _: () = assert!(::core::mem::size_of::<AnonymousNodeTransport>() <= 256, "AnonymousNodeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CaptureTransport>() > 256, "CaptureTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CaptureTransport>() <= 256, "CaptureTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<CommentTransport>() <= 256, "CommentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<EscapeSequenceTransport>() <= 256, "EscapeSequenceTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FieldDefinitionTransport>() > 256, "FieldDefinitionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<GroupExpressionArmTransport>() > 256, "GroupExpressionArmTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<GroupingGroupTransport>() > 256, "GroupingGroupTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<FieldDefinitionTransport>() <= 256, "FieldDefinitionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<GroupExpressionArmTransport>() <= 256, "GroupExpressionArmTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<GroupingGroupTransport>() <= 256, "GroupingGroupTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<GroupingTransport>() <= 256, "GroupingTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<IdentifierTransport>() <= 256, "IdentifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ImmediateIdentifierTransport>() <= 256, "ImmediateIdentifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ImmediateStringTransport>() > 256, "ImmediateStringTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ImmediateStringTransport>() <= 256, "ImmediateStringTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ListElementQuantifierTransport>() <= 256, "ListElementQuantifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ListTransport>() <= 256, "ListTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<MissingNodeTransport>() > 256, "MissingNodeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<NamedNodeExpressionArmTransport>() > 256, "NamedNodeExpressionArmTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<MissingNodeTransport>() <= 256, "MissingNodeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<NamedNodeExpressionArmTransport>() <= 256, "NamedNodeExpressionArmTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<NamedNodeGroupAnchoredLastTransport>() <= 256, "NamedNodeGroupAnchoredLastTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<NamedNodeGroupChildrenTransport>() <= 256, "NamedNodeGroupChildrenTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<NamedNodePlainTransport>() > 256, "NamedNodePlainTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<NamedNodeSupertypedTransport>() > 256, "NamedNodeSupertypedTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<NamedNodePlainTransport>() <= 256, "NamedNodePlainTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<NamedNodeSupertypedTransport>() <= 256, "NamedNodeSupertypedTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<NamedNodeTransport>() <= 256, "NamedNodeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<NegatedFieldTransport>() > 256, "NegatedFieldTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<NegatedFieldTransport>() <= 256, "NegatedFieldTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ParametersTransport>() <= 256, "ParametersTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<PredicateTransport>() > 256, "PredicateTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<PredicateTransport>() <= 256, "PredicateTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<PredicateTypeEnum>() <= 256, "PredicateTypeEnum is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ProgramTransport>() <= 256, "ProgramTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<QuantifierEnum>() <= 256, "QuantifierEnum is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StringContentTextTransport>() <= 256, "StringContentTextTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StringContentTransport>() <= 256, "StringContentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<StringTransport>() > 256, "StringTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<StringTransport>() <= 256, "StringTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");

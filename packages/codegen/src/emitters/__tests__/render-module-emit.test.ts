@@ -2,7 +2,7 @@
  * render-module-emit.test.ts — unit tests for Phase 1 typed transport emission.
  *
  * Tests cover:
- * - `classifySlot` / `buildSupertypeTransportSet` / `deriveChildrenKinds` exported helpers
+ * - `classifySlot` / `buildSupertypeTransportSet` exported helpers
  * - Phase 1: single-concrete-kind field and children slots emit typed Rust types
  * - Phase 1: render functions call typed `render_<kind>`, not `render_transport_dispatch`
  *
@@ -12,7 +12,7 @@
 
 import { beforeAll, describe, expect, it } from 'vitest';
 import { DEDENT_TEXT, INDENT_TEXT } from '../../dsl/primitives/spacing.ts';
-import { classifySlot, buildSupertypeTransportSet, deriveChildrenKinds, type SlotClass } from '../transport-common.ts';
+import { classifySlot, buildSupertypeTransportSet, type SlotClass } from '../transport-common.ts';
 import { emitRenderModule, grammarRenderInputs, payloadCeilingAssertions, rustTransportStructName, transportSlotShapeOf } from '../render-module.ts';
 import { BOXED_PAYLOADS, PAYLOAD_CEILING_BYTES } from '../boxed-payloads.ts';
 import { ENVELOPE_PINS } from '../envelope-claims.ts';
@@ -81,51 +81,6 @@ describe('buildSupertypeTransportSet', () => {
 		} as unknown as NodeMap;
 		const result = buildSupertypeTransportSet(nodeMap);
 		expect(result.size).toBe(0);
-	});
-});
-
-// ---------------------------------------------------------------------------
-// deriveChildrenKinds — exported helper
-// ---------------------------------------------------------------------------
-
-describe('deriveChildrenKinds', () => {
-	it('extracts resolved node-ref kinds from AssembledNonterminal.values', () => {
-		// Construct a minimal AssembledNonterminal-shaped object for testing.
-		const mockChild = {
-			values: [
-				{ kind: 'node-ref', node: { kind: 'identifier' }, multiplicity: 'array' },
-				{ kind: 'node-ref', node: { kind: 'call_expression' }, multiplicity: 'array' },
-				{ kind: 'terminal', value: ',', multiplicity: 'array' } // terminals ignored
-			]
-		};
-		const result = deriveChildrenKinds(mockChild as unknown as AssembledNonterminal);
-		expect(result).toEqual(['identifier', 'call_expression']);
-	});
-
-	it('deduplicates repeated kinds', () => {
-		const mockChild = {
-			values: [
-				{ kind: 'node-ref', node: { kind: 'identifier' }, multiplicity: 'array' },
-				{ kind: 'node-ref', node: { kind: 'identifier' }, multiplicity: 'array' }
-			]
-		};
-		const result = deriveChildrenKinds(mockChild as unknown as AssembledNonterminal);
-		expect(result).toEqual(['identifier']);
-	});
-
-	it('includes unresolved refs using their name (mirrors projection.kinds behaviour)', () => {
-		// Children are always stored as unresolved refs in the assembled IR.
-		// deriveChildrenKinds must use the ref's .name (grammar kind string)
-		// so classifySlotForEmit can look up the kind in nodeMap — the same
-		// approach AssembledField.projection.kinds uses in deriveSlotsRaw.
-		const mockChild = {
-			values: [
-				{ kind: 'node-ref', node: { kind: 'identifier' }, multiplicity: 'array' },
-				{ kind: 'node-ref', node: { kind: 'unresolved-ref', name: '_expression' }, multiplicity: 'array' }
-			]
-		};
-		const result = deriveChildrenKinds(mockChild as unknown as AssembledNonterminal);
-		expect(result).toEqual(['identifier', '_expression']);
 	});
 });
 
@@ -450,7 +405,7 @@ describe('render options on transports', () => {
 		for (const name of ['ArgumentsTransport', 'StatementBlockTransport']) {
 			const body = extractStructBody(src, name);
 			expect(body).toContain('wire(key = "$_layout")');
-			expect(body).toContain('pub layout: Option<TransportLayout>,');
+			expect(body).toContain('pub layout: Option<Box<TransportLayout>>,');
 			expect(src).toContain(`impl ::sittir_core::options::Edged for ${name} {`);
 			const prepare = src.slice(src.indexOf(`impl ::sittir_core::prepare::Prepare for ${name} {`));
 			expect(prepare.slice(0, prepare.indexOf('\n}\n'))).toContain('::sittir_core::prepare::prepare_edges(self, ctx);');
@@ -535,7 +490,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		]) {
 			expect(transportRs).not.toContain(`pub ${field}:`);
 		}
-		expect(transportRs).toContain('pub layout: Option<TransportLayout>');
+		expect(transportRs).toContain('pub layout: Option<Box<TransportLayout>>');
 		expect(transportRs).not.toContain('pub transport_text: Option<String>');
 	});
 
@@ -710,6 +665,38 @@ describe('transport read facts', () => {
 	});
 });
 
+describe('transport read facts for an aliased presence keyword', () => {
+	let model: Awaited<ReturnType<typeof modelFor>>;
+	let ctx: ReadFactsCtx;
+	beforeAll(async () => {
+		model = await modelFor('typescript');
+		ctx = {
+			nodeMap: model.nodeMap,
+			kindEntries: model.kindEntries,
+			names: readNames(model.kindEntries, generatedFieldIds(model.generatedIdTables)),
+			listOwners: new Set(listViewOwners(model.nodeMap).map((node) => node.kind)),
+			envelopeIds: new Set(aliasEnvelopeIds(aliasEnvelopesOf(model.nodeMap))),
+			folds: model.generatedIdTables.folds ?? new Map(),
+			grammar: 'typescript'
+		};
+	}, 120_000);
+
+	const presenceArgs = (struct: string, storageName: string): string => {
+		const owner = [...model.nodeMap.nodes.values()].find((n) => rustTransportStructName(n) === struct);
+		if (owner === undefined) throw new Error(`no kind emits ${struct}`);
+		const s = owner.slots.find((each) => each.storageName === storageName)!;
+		return slotArgs(s, owner, transportSlotShapeOf(s, model.nodeMap), ctx);
+	};
+
+	it('reads a keyword the site aliases by the display id the alias shows', () => {
+		expect(presenceArgs('TypeQuerySubscriptExpressionTransport', 'optional_chain')).toMatch(/presence = display\(kind::_OPTIONAL_CHAIN_MARKER\)$/);
+	});
+
+	it('reads the same keyword slot over an unaliased kind by its grammar id', () => {
+		expect(presenceArgs('SubscriptExpressionTransport', 'optional_chain')).toMatch(/presence = kind::OPTIONAL_CHAIN$/);
+	});
+});
+
 describe('transport attributes', () => {
 	it('derives the reader and states the read facts on a struct', async () => {
 		const src = await getRustTemplatesRs();
@@ -744,11 +731,9 @@ describe('transport attributes', () => {
 			.filter(hasBlankArm);
 		const blankChoices = [...src.matchAll(/pub enum (\w+) \{[^}]*\n    #\[transport\(blank\)\]\n    Blank,/g)].map((m) => m[1]!);
 		const heldByBlankChoices = [...src.matchAll(/pub \w+: Option<::sittir_core::SlotValue<(\w+)>>,/g)].filter((m) => blankChoices.includes(m[1]!));
-		const blankIdArms = [...src.matchAll(/ 0 => Some\(Self::Blank\)/g)];
 		expect(blankOptions).toHaveLength(9);
 		expect(heldByBlankChoices).toHaveLength(blankOptions.length);
 		expect(blankChoices).toHaveLength(4);
-		expect(blankIdArms).toHaveLength(blankChoices.length);
 	});
 });
 
@@ -789,7 +774,7 @@ describe('the wire codec facts', () => {
 		}
 		expect(src).toContain('use ::sittir_core::VerbatimTransport;');
 		const item = extractStructBody(src, 'FunctionItemTransport');
-		expect(item).toMatch(/    #\[wire\(key = "\$_layout"\)\]\n    pub layout: Option<TransportLayout>,/);
+		expect(item).toMatch(/    #\[wire\(key = "\$_layout"\)\]\n    pub layout: Option<Box<TransportLayout>>,/);
 		expect(item).toMatch(/    #\[wire\(key = "_name"\)\]\n    #\[slot\(field = field::NAME\)\]\n    pub name: /);
 		expect(extractStructBody(src, 'IdentifierTransport')).toMatch(/    #\[wire\(key = "\$text"\)\]\n    pub text: String,/);
 	});

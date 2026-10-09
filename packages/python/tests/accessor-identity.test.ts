@@ -6,10 +6,10 @@ const py = await createEngine(python);
 const SOURCE = 'def f(x, y=1):\n    return x\n\n\nclass C:\n    pass\n';
 
 describe.each([
-	['a shallow read', false],
-	['a deep read', true]
-])('an accessor on %s', (_, deep) => {
-	const root = py.parse(SOURCE, { deep });
+	['a shallow read', 1],
+	['a deep read', Infinity]
+])('an accessor on %s', (_, depth) => {
+	const root = py.parse(SOURCE, { depth });
 	const fn = root.statements()[0]!;
 	if (!py.is.functionDefinition(fn)) throw new Error('expected a function definition');
 

@@ -6,7 +6,7 @@ import { inTreeEngine } from '../src/engine-scope.ts';
 import { ERROR_KIND_ID } from '../src/error-kind.ts';
 import { Source } from '../src/source.ts';
 import { withMembers as withMethods } from './support/members.ts';
-import { triviaFacts } from './support/fake-engine.ts';
+import { asRead, triviaFacts } from './support/fake-engine.ts';
 
 interface Options {
 	readonly indent?: string;
@@ -48,16 +48,16 @@ function fakeLanguage(name: string) {
 				parseAndRead: () => {
 					const tree = { source: 'src' };
 					trees.push(tree);
-					return { root: { $type: 4, $source: Source.Ts, _items: [] }, tree };
+					return { root: { $type: 4, _items: [] }, tree };
 				},
 				dispose: () => undefined
 			};
 		},
-		wrap: (root: object, tree: object) => inTreeEngine(tree, () => node({ ...root, $source: Source.Ts }))
+		wrap: (root: object, tree: object) => inTreeEngine(tree, () => asRead(node({ ...root })))
 	};
 	return {
 		language: { name, load: async () => hooks },
-		hydrate: (tree: object) => inTreeEngine(tree, () => node({ $type: 5, $text: 'lazy', $source: Source.Ts })),
+		hydrate: (tree: object) => inTreeEngine(tree, () => asRead(node({ $type: 5, $text: 'lazy' }))),
 		trees
 	};
 }
@@ -212,7 +212,7 @@ describe('the immutability of an engine', () => {
 
 describe('the node guards of an engine', () => {
 	const parsedLeaf = (fake: ReturnType<typeof fakeLanguage>) =>
-		inTreeEngine(fake.trees[0]!, () => node({ $type: 1, $text: 'p', $source: Source.Ts }));
+		inTreeEngine(fake.trees[0]!, () => asRead(node({ $type: 1, $text: 'p' })));
 
 	it('accept a node of their language, from any engine of it and from any origin', async () => {
 		const fake = fakeLanguage('fake');
@@ -265,7 +265,7 @@ describe('the node guards of an engine', () => {
 		const fake = fakeLanguage('fake');
 		const engine = await engineOf(fake);
 		engine.parse('src');
-		const error = inTreeEngine(fake.trees[0]!, () => node({ $type: ERROR_KIND_ID, $source: Source.Ts }));
+		const error = inTreeEngine(fake.trees[0]!, () => asRead(node({ $type: ERROR_KIND_ID, $text: '' })));
 		expect(engine.isErrorNode(error)).toBe(true);
 		expect(engine.isErrorNode(parsedLeaf(fake))).toBe(false);
 		const other = await engineOf(fakeLanguage('other'));

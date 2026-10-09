@@ -41,9 +41,9 @@ describe('renderText', () => {
 describe('rebuilt', () => {
 	it('hands the source node trivia to the node it returns', () => {
 		const handle = handleOf();
-		const source = { $type: 1, $source: 2, _a: undefined, $_trivia: { leading: [comment('// c')] } } as unknown as AnyUntypedNode;
+		const source = { $type: 1, $source: 2, _a: undefined, $_layout: { trivia: { leading: [comment('// c')] } } } as unknown as AnyUntypedNode;
 		const result = rebuilt(source, handle, () => ({ $type: 1, $source: 2, _a: 'v' }) as unknown as AnyUntypedNode);
-		expect(result.$_trivia).toBe(source.$_trivia);
+		expect(result.$_layout?.trivia).toBe(source.$_layout?.trivia);
 	});
 
 	it('runs the rebuild inside the engine of the node, and with no engine just runs it', () => {
@@ -56,11 +56,11 @@ describe('rebuilt', () => {
 
 	it('refuses inner comments on a node that is no longer empty', () => {
 		const handle = handleOf();
-		const source = { $type: 1, $source: 2, $_trivia: { inner: { body: [comment('// c')] } } } as unknown as AnyUntypedNode;
+		const source = { $type: 1, $source: 2, $_layout: { trivia: { inner: { body: [comment('// c')] } } } } as unknown as AnyUntypedNode;
 		expect(() => rebuilt(source, handle, () => ({ $type: 1, $source: 2, _a: 'v' }) as unknown as AnyUntypedNode)).toThrow(
 			'holds inner comments'
 		);
-		expect(rebuilt(source, handle, () => ({ $type: 1, $source: 2 }) as AnyUntypedNode).$_trivia).toBe(source.$_trivia);
+		expect(rebuilt(source, handle, () => ({ $type: 1, $source: 2 }) as AnyUntypedNode).$_layout?.trivia).toBe(source.$_layout?.trivia);
 	});
 });
 
@@ -70,8 +70,8 @@ describe('trivia positions', () => {
 		const node = { $type: 1, $source: 2 } as AnyUntypedNode;
 		expect(triviaSide(node, handle, 'leading', [comment('// a')])).toBe(node);
 		expect(triviaSide(node, handle, 'trailing', [comment('// b')])).toBe(node);
-		expect(node.$_trivia?.leading).toHaveLength(1);
-		expect(triviaSide(node, handle, 'trailing', [])).toBe(node.$_trivia?.trailing);
+		expect(node.$_layout?.trivia?.leading).toHaveLength(1);
+		expect(triviaSide(node, handle, 'trailing', [])).toBe(node.$_layout?.trivia?.trailing);
 		expect(triviaSide({ $type: 1, $source: 2 } as AnyUntypedNode, handle, 'leading', [])).toEqual([]);
 	});
 
@@ -84,7 +84,7 @@ describe('trivia positions', () => {
 		const handle = handleOf({ block: ['body', 'tail'] });
 		const empty = { $type: 1, $source: 2, _statements: [] } as unknown as AnyUntypedNode;
 		expect(triviaInner(empty, handle, [comment('// x')])).toBe(empty);
-		expect(empty.$_trivia?.inner?.body).toHaveLength(1);
+		expect(empty.$_layout?.trivia?.inner?.body).toHaveLength(1);
 		expect(triviaInnerAt(empty, handle, 'tail', [comment('// y')])).toBe(empty);
 		expect(triviaInnerAt(empty, handle, 'tail', [])).toHaveLength(1);
 		expect(() => triviaInnerAt(empty, handle, 'nope', [comment('// z')])).toThrow("has no gap 'nope'");

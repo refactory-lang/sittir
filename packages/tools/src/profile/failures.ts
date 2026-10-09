@@ -95,7 +95,7 @@ function kindFromRtName(name: string): string {
 /** Run all four validators for one grammar and collect Failure records. */
 async function profileGrammar(grammar: GrammarName): Promise<Failure[]> {
 	const { runFrom, runRt, runCoverage, runFactory } = await loadValidatorModules();
-	const [from, rt, fac] = await Promise.all([runFrom(grammar, 'native'), runRt(grammar, 'native'), runFactory(grammar, 'native')]);
+	const [from, rt, fac] = await Promise.all([runFrom(grammar), runRt(grammar, 'native'), runFactory(grammar, 'native')]);
 	const cov = runCoverage(grammar);
 
 	const failures: Failure[] = [];

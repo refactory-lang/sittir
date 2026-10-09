@@ -1,17 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import python from '../src/index.ts';
-import { readNode } from '../src/wrap.ts';
 import { createEngine } from '@sittir/common';
-import type { TreeHandle } from '@sittir/common/utils';
 
 const py = await createEngine(python);
 
 type Stored = Record<string, unknown>;
-
-function readDeep(source: string): unknown {
-	const { tree } = (py.diagnostics as unknown as { parseAndRead(source: string): { tree: TreeHandle } }).parseAndRead(source);
-	return readNode(tree, undefined, undefined, 8);
-}
 
 function storedOfKind(node: unknown, kind: number): Stored | undefined {
 	if (node === null || typeof node !== 'object') return undefined;
@@ -31,22 +24,23 @@ function storedOfKind(node: unknown, kind: number): Stored | undefined {
 	return undefined;
 }
 
-const typed = (value: unknown): boolean => typeof (value as { $render?: unknown } | undefined)?.$render === 'function';
+const readDeep = (source: string): unknown => py.diagnostics.parseAndRead(source, { depth: 8 }).root;
 
-describe('a child read ahead of its parent reaches the model slot through the wrap', () => {
-	it('a list the reader keys by its kind is stored, wrapped, under the slot the wrap routes it to', () => {
+describe('a child read ahead of its parent is stored under its model slot', () => {
+	it('a list the parser keys by its kind is stored under the slot the model names, and its accessor wraps it', () => {
 		const statement = storedOfKind(readDeep('from a import b, c\n'), py.kinds.ImportFromStatement);
-		expect(typed(statement)).toBe(true);
+		expect(statement).toHaveProperty('_content');
 		expect(statement).not.toHaveProperty('_import_list');
-		const list = statement!._content as ArrayLike<unknown>;
-		expect(typed(list)).toBe(true);
+		const parsed = py.parse('from a import b, c\n', { depth: 8 }).$query().$descendants.ofType(py.kinds.ImportFromStatement).find();
+		if (parsed === undefined) throw new Error('expected an import-from statement');
+		const list = parsed.content() as unknown as ArrayLike<unknown> & { $render(): unknown };
+		expect(typeof list.$render).toBe('function');
 		expect(list.length).toBe(2);
 	});
 
 	it('a list owner sizes its view from the list read ahead with it', () => {
-		const parameters = storedOfKind(readDeep('def f(a, b): pass\n'), py.kinds.Parameters);
-		expect(typed(parameters)).toBe(true);
-		expect(typed(parameters!._elements)).toBe(true);
-		expect((parameters as unknown as ArrayLike<unknown>).length).toBe(2);
+		const parsed = py.parse('def f(a, b): pass\n', { depth: 8 }).statements()[0];
+		if (parsed === undefined || !py.is.functionDefinition(parsed)) throw new Error('expected a function definition');
+		expect(parsed.parameters().length).toBe(2);
 	});
 });

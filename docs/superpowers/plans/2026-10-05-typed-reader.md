@@ -6334,7 +6334,7 @@ Modify:
 2. **A handle from a released tree, or past a tree's last node.** Both are refused naming the handle, never answered from another tree or clamped. Test: Task 17 (`a_handle_past_the_last_node_is_refused`; a released tree is refused by `tree_not_live`, as today).
 3. **A query started at a node deep in the tree.** Its stubs' parents are indexes from the root, not from the start. Test: Task 17 (`a_walk_from_a_deep_start_hands_out_root_indexes`).
 4. **A parsed node edited in place, then rendered.** It crosses as data, never as its `at`. Test: Task 20 (a `$trivia` write on a read node renders the new comment).
-5. **A text leaf inside a choice, read within the depth.** It wraps from its transport object, keeps its `$type`, and folds to its `at`. Test: Task 20 (an identifier as an expression renders its bytes and wraps as `Identifier`).
+5. **A text leaf inside a choice, read within the depth.** It keeps `$type` Identifier, crosses plain (no members; a builder admits it by its tree token), and folds to its `at`. Test: Task 20 (an identifier as an expression is the plain identifier transport, and its parent renders its bytes).
 
 ---
 
@@ -6702,7 +6702,9 @@ The switch. The engine parses with `parse`, reads the root with `read(treeId, 0,
 - Modify: `packages/common/src/engine.ts` (`parseAndRead`, `readUntypedNode` → `readNode`), `packages/common/src/create-engine.ts`
 - Modify: `packages/common/src/transport-data.ts` (`canFold`, `foldToCoordinate`, `markEdited`, `sourceGapOf`, `sourceFlankOf`, `HANDLE_KEYS`, `COORDINATE_KEYS`)
 - Modify: `packages/common/src/utils.ts` (`hydrateSlot`, `hydrateSlots`, `storeExpanded` goes)
-- Modify: `packages/codegen/src/emitters/wrap.ts` (`emitFieldCarryingWrap`, `emitSeparatedListWrap`, `emitTransparentSupertypeWrap`, `emitFieldStorageLines`, `resolveSlotHydrateExprs`, `WrapEmitter.finalize`)
+- Modify: `packages/codegen/src/emitters/wrap.ts` (`emitFieldCarryingWrap`, `emitSeparatedListWrap`, `emitFieldStorageLines`, `resolveSlotHydrateExprs`, `WrapEmitter.finalize`; `emitTransparentSupertypeWrap` goes)
+- Modify: `rust/crates/sittir-core/src/engine.rs` (`descendants` returns coordinates), `packages/common/src/query.ts`
+- Delete: `packages/common/src/readUntypedNode.ts` (the JavaScript walker), with every tools lane that read through it
 - Modify: `packages/tools/src/validate/common.ts` and each validator that reads through `readUntypedNode` or `walkNativeForKind`
 - Modify: `docs/glossary/emitters.md`, `packages-common-src.md`, `packages-types-src.md`, `packages-tools-src-validate.md`
 - Test: `packages/common/tests/read.test.ts` (new); `packages/{rust,typescript,python}/tests/parsed-surface.test-d.ts`
@@ -6712,9 +6714,9 @@ The switch. The engine parses with `parse`, reads the root with `read(treeId, 0,
 - Produces:
   - `ParseOptions.depth?: number` (default 1, `Infinity` for all), replacing `deep`;
   - `TransportCoordinate = { readonly $treeHandle: number; readonly $span: Span; readonly $type: number }`;
-  - `readNode(tree: TreeHandle, index: number, depth?: number): AnyTransportData`, in `packages/common/src/read.ts`;
+  - `readNode(tree: TreeHandle, coordinate: TransportCoordinate, depth?: number): object`, in `packages/common/src/read.ts`;
   - `isCoordinate(value: unknown): value is TransportCoordinate`;
-  - `hydrate(value, tree, depth?)`: a coordinate read and wrapped, anything else as it is.
+  - `hydrate(value, tree, depth?)`, exported by each grammar's wrap module in place of `readNode` and `hydrateChild`: a coordinate read and wrapped, anything else as it is. The engine's `hooks.hydrate` calls it.
 
 - [ ] **Step 1: The JavaScript read, tested**
 
@@ -6785,7 +6787,8 @@ export function wrapFunctionItem(data: T.FunctionItem, tree: TreeHandle): T.Func
 - Each accessor reads its slot through `hydrateSlot(node, '_slot', tree)` (one value) or `hydrateSlots(node, '_slot', tree)` (a list). In `utils.ts` both hydrate a coordinate through `readNode`, wrap it, write it back into the slot and `adoptChild` it, as today's do with a stub; a value that is not a coordinate (a transport read within the depth, a kind id, a boolean, text) is wrapped on first access when it is a transport object, and returned as it is otherwise. `storeExpanded` goes: a child read within the depth gets its members when an accessor first reaches it (ruling 11).
 - `$trivia`'s getters read `data.$_layout?.trivia`, and its entries hydrate like slot values.
 - Removed from every wrap, with their helpers and tables in `@sittir/common` and the emitter: `modelSlots`; `normalizeSingularWrapSlot`, `normalizeRepeatedWrapSlot` and the other `normalize…` helpers; `coerceBooleanKeywordStorage`, `coerceBitflagStorage` and the other `coerce…` helpers; `projectKindEnumStorage`, `projectMixedEnumStorage` and `kindEnumTextIdPairs`; `readTerminalFromOther`; `_aliasEnvelope`, `_ALIAS_ENVELOPES`, `_HIDDEN_KINDS`; the `_spelled…` helpers and `_isReadTextLeaf`; `_projectLexed`, `projectInterior`, `TOKEN_INTERIORS`; `_wrapTrivia`, `mapTriviaEntries`; `dropWireDelimiters`; `_hasSeparatorFlank`, `_separatorKindOf`; `hydrateSelf`, `hydrateChild`, `hydrateChildren`; the `_ROUTES_<Kind>` tables and `_LIST_OWNER_KINDS`; `_filterWrapChildrenByKind`, `_firstKindKeyedWrapChild`, `SUPERTYPE_MEMBERS`.
-- `wrapNode` dispatches on `data.$type` as today. A text leaf crosses as `{ $type, $_layout, $text }` and wraps through its kind's wrap; a unit variant stays the kind id the accessor returns.
+- `wrapNode` dispatches on `data.$type` as today, and returns data with no table row as it is. A read text leaf crosses as `{ $type, $_layout, $text }` and stays plain: no wrap, no members; a builder admits it by its tree token. A unit variant stays the kind id the accessor returns.
+- Supertype wraps and their table rows go, with `emitTransparentSupertypeWrap`. The typed read never stamps a supertype id: it stamps the member, and a polymorph its variant. Reading every corpus document at depth `Infinity` in rust, typescript and python found 0 supertype stamps in about 5,500 documents.
 
 Write each removal's glossary entry out of its glossary in the same commit, and give the changed emitter functions their new entries.
 
@@ -6793,17 +6796,21 @@ Write each removal's glossary entry out of its glossary in the same commit, and 
 
 In `packages/tools/src/validate/common.ts`, `buildReadHandle`'s native path, `walkNativeForKind`, `findNativeNodeId`, `readUntypedNodeAt` and `hydrateChildOf` read through `TreeHandle.read` and `readNode`; a match is named by its coordinate (`$treeHandle`, `$span`) in place of a parent handle and child index. Each validator that walked `UntypedNode` fields walks the transport's `_slot` keys.
 
-- [ ] **Step 6: No trivia on a node whose read keeps none**
+- [ ] **Step 6: The queries return coordinates**
+
+`ParsedTree::descendants` returns, for each match, the coordinate `ReadCtx::coordinate` gives it from the walk's index, and `DescendantBatch.stubs` becomes `coordinates`. The query facet in `@sittir/common` hydrates each through `readNode`. A JavaScript node's query and line-gap address is `{ handle: at.$treeHandle }`. `Address::Span` stays in Rust, unsent, until Task 22. Test in `packages/rust/tests/deep-query.test.ts`: a query from a deep node hydrates its matches, each rendering byte-identical to the node its accessor reaches, and no `$parentHandle`/`$childIndex` stub reaches JavaScript.
+
+- [ ] **Step 7: No trivia on a node whose read keeps none**
 
 An enum kind whose grammar id is none of its member ids (typescript `predefined_type`) is given trivia by the placement rule and its read drops it; today's read lost it too, so parity never saw it, and with the typed read the only read it is a real loss. The placement rule and the read model agree instead: a node its transport stores as a unit variant or an enum member is never an owner, so an extra beside it goes by the rule's next case (the owner after it, the owner before it, or the parent's gap). Test in `packages/typescript/tests/`: `let x: number /* c */ = 1;` read and rendered from its data keeps `/* c */`.
 
-- [ ] **Step 7: Review Focus tests**
+- [ ] **Step 8: Review Focus tests**
 
 In `packages/rust/tests/` (a new `typed-read-switch.test.ts`):
-- a `$trivia` write on a read `function_item` renders the new comment, and the untouched sibling renders its source bytes (Review Focus 4);
-- `let x = a;` read at depth 1: `value()` of the `let_declaration` is an `Identifier` whose `$render()` is `a` (Review Focus 5).
+- a `$trivia` write on a read `function_item` renders the new comment, the written node crosses as data, and the untouched sibling's tokens render in order (Review Focus 4). The sibling's source spacing is not asserted: an untouched node that carries outside trivia does not fold yet, and making it fold is follow-up work;
+- `let x = a;` read at depth 1: `value()` of the `let_declaration` is the identifier transport (`$type` Identifier, `$text`, `$_layout.at`, a tree token, no members), and the `let_declaration`'s `$render()` is `let x = a;` (Review Focus 5).
 
-- [ ] **Step 8: Regenerate and gate**
+- [ ] **Step 9: Regenerate and gate**
 
 `pnpm run regen:all`, then the full gates. Rendered bytes and validation rows unchanged. Report the type-check time against master, as the global constraints ask for the wrap's size.
 
@@ -6814,9 +6821,9 @@ Commit: `feat(engine): every read goes through the typed read, and the wrap atta
 ## Task 22: Today's reader goes, and the coordinate takes its final form
 
 **Files:**
-- Delete: `rust/crates/sittir-core/src/read_untyped_node.rs`; `packages/common/src/readUntypedNode.ts`; `packages/tools/src/validate/typed-read-parity.ts` and `packages/cli/src/commands/tool/typed-read-parity.ts` with their tests
+- Delete: `rust/crates/sittir-core/src/read_untyped_node.rs`; `packages/tools/src/validate/typed-read-parity.ts` and `packages/cli/src/commands/tool/typed-read-parity.ts` with their tests
 - Modify: `rust/crates/sittir-core/src/types.rs` (`UntypedNode`, `FieldValue`, `NodeHandle` and their serde go)
-- Modify: `rust/crates/sittir-core/src/engine.rs` (`read_root`, `read_at`, `TreeMint`, `Address::Span`; `descendants` returns coordinates)
+- Modify: `rust/crates/sittir-core/src/engine.rs` (`read_root`, `read_at`, `TreeMint`, `Address::Span`)
 - Modify: `rust/crates/sittir-core/src/napi_engine.rs` (`parse_and_read`, `read_root`, `read_untyped_node`, `typed_read_refusal`, `typed_read_parity`, `typed_read_round_trip`, `with_typed_read`, `parity_report`, `round_trip_report`, `depth_from_wire` go)
 - Modify: `rust/crates/sittir-core/src/slot.rs` (`NodeCoordinate`: `tree: u32`, `index: u32`; `text_only` goes)
 - Modify: `packages/codegen/src/emitters/kind-id-rust.ts` (`stores_scalar`, `inner_gap_key`, the `ReadModel` impl go)
@@ -6826,13 +6833,15 @@ Commit: `feat(engine): every read goes through the typed read, and the wrap atta
 
 Delete `read_untyped_node.rs` and its `pub mod`, `UntypedNode`, `FieldValue`, `NodeHandle`, `ReadDepth`, `HandleMint`, `NoMint`, `ReadModel` and the `ReadModel` impls `kind-id-rust.ts` prints, with `stores_scalar` and `inner_gap_key`. Task 3's placement driver goes. `EngineGrammar` drops its `ReadModel` bound. `error_regions`, `line_gaps`, `node_at_span` and `last_list_child`, which the render side and `parse` still call, move to `engine.rs` unchanged.
 
-- [ ] **Step 2: The queries return coordinates**
+- [ ] **Step 2: `Address::Span` goes**
 
-`ParsedTree::descendants` returns, for each match, the coordinate `ReadCtx::coordinate` gives it, and `DescendantBatch.stubs` becomes `coordinates`. `Address` keeps `Own { handle }` and `Child { parent, index }`; `Span` goes, since every node a read hands out names its index. The query facet in `@sittir/common` hydrates each through `readNode`.
+The queries already return coordinates (Task 20). `Address` keeps `Own { handle }` and `Child { parent, index }`; `Span` goes, since every node a read hands out names its index.
 
 - [ ] **Step 3: The coordinate's final fields**
 
 `NodeCoordinate { tree: u32, index: u32, span: Span, kind: Option<KindId>, edges: Option<CoordinateEdges>, gap: Option<SourceGap> }`; `text_only` goes, since every coordinate now names a node. On the wire it stays `{ $treeHandle, $span, $type }`, with `$treeHandle` packing the two (`encode_handle`) as today: 1c-ii's registry splits it with `decodeIndex` and `decodeTree`. `SourceGap::Range` and `FlankSource::Tree` carry the tree id.
+
+Then check whether `SourceFlank`'s `ToNapiValue` and the coordinate encoder's gap entry (`$_layout: { gap }`) run on any native→JS path, or exist only to satisfy a trait bound: a flank and a coordinate's gap belong to the prepare walk, and no corpus read writes either. Delete whichever no path calls; if a bound forces one to exist, name the bound in the commit.
 
 - [ ] **Step 4: The transitional methods go**
 
@@ -6854,7 +6863,7 @@ Open the PR with `Owner: sittir-engine-api` first in its body, the follow-up iss
 
 Detailed against master after 1c-i lands.
 
-- **Task 19: The registry and the edited set.** One weak index-to-wrapper map per tree and surface, which accessors, hydration and queries share; an in-place `$trivia` write adds its node's index to a sorted set per tree; a node folds when no edited index lies in `[index, end)`, `end` being `index + descendant_count()` carried by the coordinate (`$end`); `adoptChild`, `detachAncestors`, `canFold`'s walk and `isUntouchedBelow` go; a query's results resolve through the registry, and the refusal of a `$trivia` write on a node reached through a query is lifted. The query test of the arena spec's identity verification: the same object through a query and through accessors, and byte-identical renders of the same write through each.
+- **Task 19: The registry and the edited set.** One weak index-to-wrapper map per tree and surface, which accessors, hydration and queries share; an in-place `$trivia` write adds its node's index to a sorted set per tree; a node folds when no edited index lies in `[index, end)`, `end` being `index + descendant_count()` carried by the coordinate (`$end`); `adoptChild`, `detachAncestors`, `canFold`'s walk and `isUntouchedBelow` go; a query's results resolve through the registry, and the refusal of a `$trivia` write on a node reached through a query is lifted. The query test of the arena spec's identity verification: the same object through a query and through accessors, and byte-identical renders of the same write through each. Flag: an alias envelope and its content name the same parser node, so they share one descendant index and one coordinate; the registry has to decide which wrapper that index names. One index, two wrappers.
 - **Task 21: An empty list is `[]`.** The census of list slots whose value can be absent today, then the reader, `Vec<T>` transports, factories and types; every fixture and factory move at a census slot, from nothing to `[]`.
 - **Task 23: Measurements.** The relative-coordinates spec's verifications 1–6: identity, no ancestor reads, offsets, the fold by range, the fold's timing against 1c-i's walk, and the registry's heap on the untouched whole-tree read and the query-heavy population.
 - **Task 24: A built node hydrates the coordinates it stores, through Task 19's registry.**

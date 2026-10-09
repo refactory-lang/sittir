@@ -28,7 +28,7 @@ function makeComment(text: string): LineComment {
  *  deliberately not part of the public node type surface. */
 type TriviaData = { leading?: unknown[]; trailing?: unknown[] };
 function triviaDataOf(node: unknown): TriviaData | undefined {
-	return (node as { $_trivia?: TriviaData }).$_trivia;
+	return (node as { $_layout?: { trivia?: TriviaData } }).$_layout?.trivia;
 }
 
 describe('$trivia integration', () => {
@@ -130,31 +130,27 @@ describe('$trivia integration', () => {
 	type WrappedEntry = { content(): unknown; $render(): string };
 
 	it('wraps read trivia entries like slot children', () => {
-		const letDecl = rs.parse('//!\n/*!*/\n//\n///\nlet x;\n').statements()[0]!;
-		const lead = triviaDataOf(letDecl)!.leading as WrappedEntry[];
+		const letDecl = rs.parse('//!\n/*!*/\n//\n///\nlet x;\n').statements()[0];
+		if (!rs.isNode(letDecl)) throw new Error('expected a statement node');
+		const lead = (letDecl.$trivia.leading() as readonly unknown[]).filter((entry): entry is WrappedEntry => typeof entry === 'object');
 		expect(lead.every((entry) => typeof entry.content === 'function')).toBe(true);
 		expect(lead.map((entry) => entry.$render())).toEqual(['//!\n', '/*!*/', '//\n', '///\n']);
 	});
 
 	it('reads each entry with the span the parser gave it, whatever its render adds', () => {
 		const source = '//!\n/*!*/\n//\n///\nlet x;\n';
-		const { root } = rsNative.parseAndRead(source, { deep: true });
+		const { root } = rsNative.parseAndRead(source, { depth: Infinity });
 		const statements = (root as unknown as { _statements: unknown })._statements;
 		const statement = (Array.isArray(statements) ? statements[0] : statements) as {
-			$_trivia: { leading: { $span: { start: number; end: number } }[] };
+			$_layout: { trivia: { leading: { $span: { start: number; end: number } }[] } };
 		};
-		expect(statement.$_trivia.leading.map(({ $span }) => source.slice($span.start, $span.end))).toEqual(['//!\n', '/*!*/', '//', '///\n']);
+		expect(statement.$_layout.trivia.leading.map(({ $span }) => source.slice($span.start, $span.end))).toEqual(['//!\n', '/*!*/', '//', '///\n']);
 	});
 
 	it('wraps the entries of an inner gap', () => {
 		const fn = rs.parse('fn f() {\n    // only\n}\n').statements()[0] as unknown as {
-			body(): object;
+			body(): { $trivia: { inner(): readonly WrappedEntry[] } };
 		};
-		const inner = (triviaDataOf(fn.body()) as { inner?: Record<string, WrappedEntry[]> }).inner!;
-		expect(
-			Object.values(inner)
-				.flat()
-				.map((entry) => entry.$render())
-		).toEqual(['// only\n']);
+		expect(fn.body().$trivia.inner().map((entry) => entry.$render())).toEqual(['// only\n']);
 	});
 });

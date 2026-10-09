@@ -5,5 +5,5 @@ import { parentPort, workerData } from 'node:worker_threads';
 
 const native = createRequire(import.meta.url)(workerData.addon);
 const before = native.liveTreeCount();
-const read = JSON.parse(new native.SittirEngine().parseAndRead('fn worker() {}'));
+const read = JSON.parse(new native.SittirEngine().parse('fn worker() {}'));
 parentPort.postMessage({ before, after: native.liveTreeCount(), treeId: read.treeId });

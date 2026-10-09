@@ -26,18 +26,10 @@ describe('native boundary', () => {
 		).not.toThrow();
 	});
 
-	it('refuses a node naming two handles', () => {
+	it('refuses a coordinate without the span its handle names', () => {
+		expect(() => assertRenderableUntypedNode({ $type: 1, $treeHandle: 1 } as unknown as AnyUntypedNode)).toThrow('$span');
 		expect(() =>
-			assertRenderableUntypedNode({ $type: 1, $source: 0, $named: true, $handle: 1, $treeHandle: 1 } as AnyUntypedNode)
-		).toThrow('node names more than one of $handle, $parentHandle, $treeHandle');
-	});
-
-	it("refuses a parent handle without the child index that completes a stub's coordinate", () => {
-		expect(() =>
-			assertRenderableUntypedNode({ $type: 1, $source: 0, $named: true, $parentHandle: 2 } as AnyUntypedNode)
-		).toThrow('node.$parentHandle needs a $childIndex: a stub is addressed by the pair');
-		expect(() =>
-			assertRenderableUntypedNode({ $type: 1, $source: 0, $named: true, $parentHandle: 2, $childIndex: 0 } as AnyUntypedNode)
+			assertRenderableUntypedNode({ $type: 1, $treeHandle: 1, $span: { start: 0, end: 1 } } as unknown as AnyUntypedNode)
 		).not.toThrow();
 	});
 });

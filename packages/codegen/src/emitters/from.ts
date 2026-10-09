@@ -154,7 +154,7 @@ function emitNamespaceImports(lines: string[], kindEntries: readonly KindEnumEnt
 	}
 	lines.push(DELIMITER_IMPORT);
 	lines.push(`import type { ${[TYPES_IMPORT_ALWAYS, ...TYPES_IMPORT_OPTIONAL].join(', ')} } from '@sittir/types';`);
-	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, isNodeOfKind } from '@sittir/common/utils';");
+	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, isCoordinate, isNodeOfKind } from '@sittir/common/utils';");
 	lines.push("import { isNode } from '../utils.js';");
 	lines.push('');
 }
@@ -1199,7 +1199,7 @@ function emitResolveByKindHelper(lines: string[]): void {
 	lines.push('}');
 	lines.push('');
 	lines.push('function _splitTag(v: unknown): { readonly tag: unknown; readonly rest: _LooseFieldInput } | undefined {');
-	lines.push('  if (typeof v !== "object" || v === null || Array.isArray(v) || isNode(v) || !("$type" in v)) return undefined;');
+	lines.push('  if (typeof v !== "object" || v === null || Array.isArray(v) || isNode(v) || isCoordinate(v) || !("$type" in v)) return undefined;');
 	lines.push('  const { $type, ...rest } = v as Record<string, unknown>;');
 	lines.push('  return { tag: $type, rest };');
 	lines.push('}');
@@ -1352,7 +1352,7 @@ function emitResolveOneHelper(lines: string[], resolvesScalars: boolean): void {
 	lines.push('): Admit<T> {');
 	lines.push('  if (v === undefined || v === null) return v as Admit<T>;');
 	lines.push(
-		'  const kindId = isNode(v) ? v.$type : typeof v === "number" && _KIND_ID_STORED.has(v) ? v : undefined;'
+		'  const kindId = isNode(v) || isCoordinate(v) ? v.$type : typeof v === "number" && _KIND_ID_STORED.has(v) ? v : undefined;'
 	);
 	// A value that already names its own kind (UntypedNode, or a stored kind-id)
 	// is never re-targeted by a declared default — there is nothing ambiguous
@@ -1367,7 +1367,7 @@ function emitResolveOneHelper(lines: string[], resolvesScalars: boolean): void {
 	lines.push('    const arms = branchKinds.filter((b) => _BARE_ACCEPTS[b]?.has(kindId) === true);');
 	lines.push('    const arm = arms.length <= 1 ? arms[0] : undefined;');
 	lines.push('    if (arm !== undefined && _isFromKind(arm)) return _resolveByKind(arm, v) as Admit<T>;');
-	lines.push('    if (isNode(v)) return v as Admit<T>;');
+	lines.push('    if (isNode(v) || isCoordinate(v)) return v as Admit<T>;');
 	lines.push('    if (arms.length > 1) {');
 	lines.push(
 		'      throw new Error(`_resolveOne: a bare ${kindName ?? kindId} fits more than one arm: [${arms.join(", ")}]; name the arm explicitly`);'

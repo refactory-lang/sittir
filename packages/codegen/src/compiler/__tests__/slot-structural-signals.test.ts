@@ -6,7 +6,7 @@ import { assemble, AssembleCtx } from '../assemble.ts';
 import type { RawGrammar } from '../types.ts';
 import {
 	factoryTakesSpreadChildren,
-	wrapExposesChildren,
+	fromForwardsToChildFactory,
 	classifyFactoryShape,
 	isSlotBearingCompound,
 	resolveSingleFieldFactorySlot
@@ -100,7 +100,7 @@ describe('slot structural signals', () => {
 		// The sole slot holds a single concrete kind, so the shape is the
 		// forwarding refinement of 'direct'; the child SURFACE stays 'direct'.
 		expect(classifyFactoryShape(box, nodeMap)).toBe('forwarded');
-		expect(wrapExposesChildren(box, nodeMap)).toBe(true);
+		expect(fromForwardsToChildFactory(box, nodeMap)).toBe(true);
 		expect(factoryTakesSpreadChildren(box, nodeMap)).toBe(false);
 	});
 

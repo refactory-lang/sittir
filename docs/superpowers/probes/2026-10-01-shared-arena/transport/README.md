@@ -266,3 +266,24 @@ alternated with none); at `ccb370d67`, which reads no `$_layout`, it costs 1–3
 is unchanged by either commit: the base's fixtures projected at `0575d6069` and at `ccb370d67` take
 317 / 298 / 306 and 312 / 302 / 307 ns per slot value. Against `69b821c18`, the native call is within
 1–7 % and the projection 17–19 % above.
+
+### One reader: the heap at 1c-i (2026-10-09)
+
+`measure-heap.mts` on `inputs/engine.rs` (24 766 B), the same script from a checkout at the 1c-i
+base `c2b9102fd` and at `3f680432d`, where the typed read is the only read; release natives, Apple
+M4 Pro. The script finds either native read, so it runs unchanged at both.
+
+| population | `c2b9102fd` | `3f680432d` |
+| --- | --- | --- |
+| the deep read alone | 1 069 KB, 5 960 nodes | 817 KB, 3 435 nodes |
+| whole-tree parse, untouched | 7 853 KB | 941 KB |
+| whole-tree parse, walked, root held | 7 862 KB | 3 470 KB |
+| whole-tree parse, walked, every wrapped node kept | 7 907 KB | 3 499 KB |
+| one-level parse, walked, every wrapped node kept | 4 362 KB | 3 137 KB |
+
+Both walks reach the same wrapped nodes: 3 268 deep and 1 769 shallow. The untouched row is the
+spec's verification of members on first access: a whole-tree read that no accessor touches keeps
+about its read data (941 KB), the class of the 1 096 KB measured at `69b821c18`. The first row does
+not compare the two reads node for node: the base's is `JSON.parse` of today's wire, the head's the
+transport objects the typed read returns, and the two shapes hold different numbers of `$type`
+records for the same source.

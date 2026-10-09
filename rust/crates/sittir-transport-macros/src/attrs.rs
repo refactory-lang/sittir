@@ -14,7 +14,7 @@ pub struct KindAttrs {
     pub spelled: bool,
     pub blank: bool,
     pub min_depth: Option<u32>,
-    pub layout: Vec<Path>,
+    pub layout: Vec<TokenGroup>,
     pub folded: Vec<Path>,
     pub wraps_hidden: bool,
     pub gaps: Vec<(u16, String)>,
@@ -37,8 +37,8 @@ pub struct KindAttrs {
 pub struct SlotAttrs {
     pub fields: Vec<Path>,
     pub untagged: bool,
-    pub presence: Option<Path>,
-    pub separators: Vec<Path>,
+    pub presence: Option<Presence>,
+    pub separators: Vec<TokenGroup>,
     pub capture: Option<LitStr>,
     pub scalar: bool,
 }
@@ -67,12 +67,51 @@ pub struct FlankAttrs {
 
 /// `#[separator_kind(candidates = […], default = …)]`.
 pub struct SeparatorKindAttrs {
-    pub candidates: Vec<Path>,
+    pub candidates: Vec<TokenGroup>,
     pub default: Option<Path>,
 }
 
 fn key(path: &Path) -> String {
     path.get_ident().map(Ident::to_string).unwrap_or_default()
+}
+
+/// One token a table names, written `KIND | RAW | …`: its kind, then each raw
+/// symbol the grammar folds into that kind. A child is this token when its
+/// grammar id is any of them; the kind is the id stored for it.
+pub type TokenGroup = Vec<Path>;
+
+fn token_group(input: ParseStream) -> syn::Result<TokenGroup> {
+    Ok(Punctuated::<Path, Token![|]>::parse_separated_nonempty(input)?.into_iter().collect())
+}
+
+/// The keyword a presence slot reads: a token, matched by grammar id like any
+/// table entry, or `display(KIND)`, an alias the site wraps the keyword in,
+/// matched by the display id it shows.
+pub enum Presence {
+    Token(TokenGroup),
+    Display(Path),
+}
+
+fn presence(input: ParseStream) -> syn::Result<Presence> {
+    let fork = input.fork();
+    if fork.call(Ident::parse_any).is_ok_and(|ident| ident == "display") && fork.peek(syn::token::Paren) {
+        input.call(Ident::parse_any)?;
+        let content;
+        syn::parenthesized!(content in input);
+        return Ok(Presence::Display(content.parse()?));
+    }
+    Ok(Presence::Token(token_group(input)?))
+}
+
+/// `[GROUP, …]`, or one `GROUP`.
+fn token_groups(input: ParseStream) -> syn::Result<Vec<TokenGroup>> {
+    if input.peek(syn::token::Bracket) {
+        let content;
+        syn::bracketed!(content in input);
+        Ok(Punctuated::<TokenGroup, Token![,]>::parse_terminated_with(&content, token_group)?.into_iter().collect())
+    } else {
+        Ok(vec![token_group(input)?])
+    }
 }
 
 /// `[PATH, …]`, or one `PATH`.
@@ -97,7 +136,7 @@ pub fn kind_attrs(attrs: &[Attribute]) -> syn::Result<KindAttrs> {
                 "spelled" => out.spelled = true,
                 "blank" => out.blank = true,
                 "min_depth" => out.min_depth = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
-                "layout" => out.layout = paths(meta.value()?)?,
+                "layout" => out.layout = token_groups(meta.value()?)?,
                 "folded" => out.folded = paths(meta.value()?)?,
                 "wraps_hidden" => out.wraps_hidden = true,
                 "gap" => {
@@ -133,8 +172,8 @@ pub fn slot_attrs(attrs: &[Attribute]) -> syn::Result<Option<SlotAttrs>> {
         match key(&meta.path).as_str() {
             "field" => out.fields.extend(paths(meta.value()?)?),
             "untagged" => out.untagged = true,
-            "presence" => out.presence = Some(meta.value()?.parse()?),
-            "separator" => out.separators.extend(paths(meta.value()?)?),
+            "presence" => out.presence = Some(presence(meta.value()?)?),
+            "separator" => out.separators.extend(token_groups(meta.value()?)?),
             "capture" => out.capture = Some(meta.value()?.parse()?),
             "scalar" => out.scalar = true,
             _ => return Err(meta.error("unknown `slot` attribute")),
@@ -190,7 +229,7 @@ pub fn separator_kind_attrs(attrs: &[Attribute]) -> syn::Result<Option<Separator
     let mut out = SeparatorKindAttrs { candidates: Vec::new(), default: None };
     attr.parse_nested_meta(|meta| {
         match key(&meta.path).as_str() {
-            "candidates" => out.candidates = paths(meta.value()?)?,
+            "candidates" => out.candidates = token_groups(meta.value()?)?,
             "default" => out.default = Some(meta.value()?.parse()?),
             _ => return Err(meta.error("unknown `separator_kind` attribute")),
         }

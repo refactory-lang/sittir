@@ -1,14 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-	adaptNode,
 	buildReadHandle,
 	findFirst,
 	findNativeNodeId,
 	loadCorpusEntries,
 	loadKindNameFromId,
 	loadLanguageForGrammar,
-	readUntypedNodeAt
+	readNativeAt
 } from '../validate/common.ts';
 
 describe('native node coords', () => {
@@ -25,7 +24,7 @@ describe('native node coords', () => {
 		parser.setLanguage(lang);
 		const tree = parser.parse(entry.source);
 		if (!tree) throw new Error('expected parser to return a tree');
-		const handle = await buildReadHandle(grammar, tree, entry.source, 'native');
+		const handle = await buildReadHandle(grammar, entry.source);
 		const kindNameFromId = await loadKindNameFromId(grammar);
 		if (!kindNameFromId) throw new Error('expected rust kindNameFromId resolver');
 
@@ -43,7 +42,7 @@ describe('native node coords', () => {
 			expect(treeNode).not.toBeNull();
 			if (!coords || !treeNode) continue;
 
-			const data = readUntypedNodeAt(handle, adaptNode(treeNode), coords);
+			const data = readNativeAt(handle, coords);
 			const dataKind = typeof data.$type === 'number' ? kindNameFromId(data.$type) : data.$type;
 			expect(dataKind).toBe(kind);
 		}
@@ -64,7 +63,7 @@ describe('native node coords', () => {
 		parser.setLanguage(lang);
 		const tree = parser.parse(source);
 		if (!tree) throw new Error('expected parser to return a tree');
-		const handle = await buildReadHandle(grammar, tree, source, 'native');
+		const handle = await buildReadHandle(grammar, source);
 		const kindNameFromId = await loadKindNameFromId(grammar);
 		if (!kindNameFromId) throw new Error('expected python kindNameFromId resolver');
 
@@ -76,7 +75,7 @@ describe('native node coords', () => {
 			expect(treeNode).not.toBeNull();
 			if (!coords || !treeNode) continue;
 
-			const data = readUntypedNodeAt(handle, adaptNode(treeNode), coords);
+			const data = readNativeAt(handle, coords);
 			const dataKind = typeof data.$type === 'number' ? kindNameFromId(data.$type) : data.$type;
 			expect(dataKind).toBe(kind);
 		}
@@ -90,7 +89,7 @@ describe('native node coords', () => {
 		parser.setLanguage(lang);
 		const tree = parser.parse(source);
 		if (!tree) throw new Error('expected parser to return a tree');
-		const handle = await buildReadHandle(grammar, tree, source, 'native');
+		const handle = await buildReadHandle(grammar, source);
 		const kindNameFromId = await loadKindNameFromId(grammar);
 		if (!kindNameFromId) throw new Error('expected python kindNameFromId resolver');
 
@@ -102,7 +101,7 @@ describe('native node coords', () => {
 		expect(treeNode).not.toBeNull();
 		if (!coords || !treeNode) return;
 
-		const data = readUntypedNodeAt(handle, adaptNode(treeNode), coords);
+		const data = readNativeAt(handle, coords);
 		const dataKind = typeof data.$type === 'number' ? kindNameFromId(data.$type) : data.$type;
 		expect(dataKind).toBe('module');
 	}, 30000);

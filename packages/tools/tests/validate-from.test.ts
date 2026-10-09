@@ -45,7 +45,7 @@ describe('validateFrom — unresolved native coords diagnostic', () => {
 		// factory(text) instead of refusing to compare. python's corpus has
 		// no other from() failure mode, so the run passes fully.
 		const validateFrom = await loadValidateFrom();
-		const result = await validateFrom('python', 'native');
+		const result = await validateFrom('python');
 
 		expect(result.fail).toBe(0);
 		expect(result.pass).toBe(result.total);
@@ -59,7 +59,7 @@ describe('validateFrom — unresolved native coords diagnostic', () => {
 		// must keep refusing the unsound comparison. Which rows survive
 		// depends on corpus content, so pin the contract, not the roster.
 		const validateFrom = await loadValidateFrom();
-		const result = await validateFrom('rust', 'native');
+		const result = await validateFrom('rust');
 		const { loadNodeModel } = await import('../src/validate/common.ts');
 		const model = await loadNodeModel('rust');
 
