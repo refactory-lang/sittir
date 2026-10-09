@@ -9,29 +9,22 @@ const LEVELS: [usize; 4] = [1, 10, 40, 200];
 
 /// What the typed read may cost in stack, pinned per target and profile from
 /// the measured values (frames are fixed at compile time, so there is no jitter
-/// to pad for). Each only tightens. A target with no row fails with its own
+/// to pad for): the least stack, in KiB, at each of `LEVELS`. The slope between
+/// two levels is not gated, since one level's 8 KiB search granularity swings
+/// it. Each only tightens. A target with no row fails with its own
 /// measurement, so pinning it is one edit.
 struct Ceilings {
     os: &'static str,
     arch: &'static str,
     release: bool,
-    limit: Limit,
-}
-
-/// A row's gate. `Levels` pins the least stack, in KiB, at each of `LEVELS`;
-/// the slope between two levels is not gated, since one level's 8 KiB search
-/// granularity swings it. `Slope` is a row whose per-level values no run has
-/// reported yet: the bytes per level from 40 to 200 levels and the root (one
-/// level) cost.
-enum Limit {
-    Levels([usize; 4]),
-    Slope { bytes_per_level: f64, root_kib: usize },
+    levels: [usize; 4],
 }
 
 const CEILINGS: &[Ceilings] = &[
-    Ceilings { os: "macos", arch: "aarch64", release: true, limit: Limit::Levels([23, 39, 71, 263]) },
-    Ceilings { os: "macos", arch: "aarch64", release: false, limit: Limit::Levels([151, 183, 311, 999]) },
-    Ceilings { os: "linux", arch: "x86_64", release: false, limit: Limit::Slope { bytes_per_level: 5632.0, root_kib: 400 } },
+    Ceilings { os: "macos", arch: "aarch64", release: true, levels: [23, 39, 71, 263] },
+    Ceilings { os: "macos", arch: "aarch64", release: false, levels: [151, 183, 311, 999] },
+    Ceilings { os: "linux", arch: "x86_64", release: true, levels: [55, 63, 95, 271] },
+    Ceilings { os: "linux", arch: "x86_64", release: false, levels: [167, 207, 327, 983] },
 ];
 
 /// The deepest entry of the rust corpus by parse-tree depth, saved as a probe
@@ -158,15 +151,7 @@ fn the_typed_read_stays_within_its_pinned_stack_ceilings() {
     let Some(pinned) = CEILINGS.iter().find(|row| row.os == os && row.arch == arch && row.release == release) else {
         panic!("no stack ceilings are pinned for {os}/{arch} ({profile} profile); measured {typed:?} KiB at {LEVELS:?} levels: add a row to CEILINGS");
     };
-    match pinned.limit {
-        Limit::Levels(ceilings) => {
-            for ((level, kib), ceiling) in LEVELS.iter().zip(typed).zip(ceilings) {
-                assert!(kib <= ceiling, "typed {kib} KiB at {level} levels exceeds {ceiling} KiB; measured {typed:?}");
-            }
-        }
-        Limit::Slope { bytes_per_level, root_kib } => {
-            assert!(slope(2, 3) <= bytes_per_level, "typed {:.0} B per level exceeds {bytes_per_level:.0} B; measured {typed:?}", slope(2, 3));
-            assert!(typed[0] <= root_kib, "typed root cost {} KiB exceeds {root_kib} KiB; measured {typed:?}", typed[0]);
-        }
+    for ((level, kib), ceiling) in LEVELS.iter().zip(typed).zip(pinned.levels) {
+        assert!(kib <= ceiling, "typed {kib} KiB at {level} levels exceeds {ceiling} KiB; measured {typed:?}");
     }
 }
