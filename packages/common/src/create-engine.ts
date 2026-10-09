@@ -23,7 +23,7 @@ import { metricsEnabled, recordFfi } from './metrics.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
 import { createRenderHandle } from './engine.ts';
-import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode } from './utils.ts';
+import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode, wrapRegistered } from './utils.ts';
 
 type Middleware<Call, Result> = (call: Call, next: () => Result) => Result;
 
@@ -233,7 +233,7 @@ function assembleEngine<API extends LanguageAPI>(
 			const run = (): API['root'] => {
 				const { root, tree } = readAndBind(source, parseOptions);
 				if (parseOptions?.errors === 'throw' && root.$errors.length > 0) throw new ParseErrors(root.$errors);
-				return hooks.wrap(root, tree);
+				return wrapRegistered(root, tree, hooks.wrap);
 			};
 			return parseChain === undefined ? run() : parseChain({ source }, run);
 		},

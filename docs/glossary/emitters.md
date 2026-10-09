@@ -12378,7 +12378,7 @@ What `slotAccessorBody` needs to know about a slot beyond its model: the element
 
 ### `packages/codegen/src/emitters/wrap.ts::slotAccessorBody`
 
-The body of one slot accessor. A scalar slot (`boolean`, `bitflag` or `kindEnum` storage: a flag, a set of flags, a kind id) returns its storage as it is; a node slot hydrates through `hydrateSlots` (`many`) or `hydrateSlot`, typed by the slot's element type.
+The body of one slot accessor. A scalar slot (`boolean`, `bitflag` or `kindEnum` storage: a flag, a set of flags, a kind id) returns its storage as it is; a node slot hydrates through `hydrateSlots` (`many`) or `hydrateSlot`, typed by the slot's element type. An alias envelope's content slot (`aliasContent`) passes the role `contentRole` gives its stored content, so a content that shares the envelope's parser node is registered apart from the envelope.
 
 
 ### `packages/codegen/src/emitters/wrap.ts::fieldAccessorLines`
@@ -12539,7 +12539,7 @@ normalization; a node that already carries slot storage (built or edited) is lef
 
 Assembles the wrap module: the imports `pruneUnusedImports` leaves, `ParsedOfData` (a transport's `$type` mapped to its wrapped surface through `T.ParsedByKindId`, the data type itself for a grammar with no kind catalog), the hydrate helpers, every per-kind wrap function, the `_wrapTable` dispatch table and `wrapNode`.
 
-`hydrate`, `hydrateSlot` and `hydrateSlots` bind `@sittir/common`'s `hydrateWith`, `hydrateSlotWith` and `hydrateSlotsWith` to this module's `wrapNode`: a stored coordinate is read through `readNode` on the holder's tree and wrapped, a transport is wrapped, anything else (a kind id, a text leaf already plain) is returned as it is. A slot accessor writes what it hydrated back into the slot and adopts it, so the next read returns the same node, and a list is stored once as a frozen array. `hydrate` is exported, so a tool that hydrates read data takes the same path as the accessors.
+`hydrate`, `hydrateSlot` and `hydrateSlots` bind `@sittir/common`'s `hydrateWith`, `hydrateSlotWith` and `hydrateSlotsWith` to this module's `wrapNode` (`hydrateSlot` also passes the route's registry role): a stored coordinate is read through `readNode` on the holder's tree and wrapped, a transport is wrapped, anything else (a kind id, a text leaf already plain) is returned as it is. A slot accessor writes what it hydrated back into the slot and adopts it, so the next read returns the same node, and a list is stored once as a frozen array. `hydrate` is exported, so a tool that hydrates read data takes the same path as the accessors.
 
 `wrapNode` dispatches on `data.$type` through `_wrapTable` and runs the kind's wrap function inside `inTreeEngine`, so a node is built under the engine that read its tree however long after the parse it is first reached; it carries read provenance (`carryRead`) from the transport to the wrapped node. Data whose kind has no row (an ERROR read, a plain text leaf) is returned as it crossed. With a catalog, `wrapNode` has a narrowing overload: a `$type`-narrowed input (an `is.*` guard) resolves to that kind's wrapped surface, read through an indexed `D['$type']` so a guard-narrowed intersection reduces instead of unioning every constituent's discriminant.
 

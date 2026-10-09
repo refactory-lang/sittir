@@ -186,10 +186,6 @@ The plan a `where` callback records for elements of one kind, cached per immutab
 
 What a `where` callback receives: a Proxy whose members are the accessors of a kind, each a slot reference with `eq` and `match` that records the slot's parser routes (fields, and kinds under no field) from the kind's `querySlots` row. Any other key, an assignment and a call are refused. A view whose element kinds are not yet known checks the callback at the `where` call against every accessor of the grammar, recording no routes, so its shape is refused early and each kind's slots when it runs. A pattern crosses as its source; a flag has no native equivalent and is refused rather than dropped.
 
-### `packages/common/src/query.ts::sameOccurrence`
-
-How `includes` compares: the same object, or two parsed nodes of the same tree (the same token) with the same kind and span, which `node_at_span` would resolve to one node. A built node compares by identity only.
-
 ### `packages/common/src/query.ts::holds`
 
 The JavaScript evaluation of a plan over the texts a node's children have along each leaf's routes. It is the oracle the native evaluator is tested against, never an evaluator of its own.
@@ -596,7 +592,7 @@ Refuses a delimited composite whose content would not read back inside its own d
 
 ### `packages/common/src/query.ts::entryOfCoordinate`
 
-A query result the native matcher returned as a coordinate, as a query entry: its kind and handle, and a `hydrate` that reads the node through `readNode` on the result's tree and wraps it under that tree's engine (`inTreeEngine`), so a match is read only when the caller asks for the node.
+A query result the native matcher returned as a coordinate, as a query entry: its kind and handle, and a `hydrate` that resolves the coordinate through `hydrateWith` under that tree's engine (`inTreeEngine`), so a match is read only when the caller asks for the node, and a match the registry already holds is the object its parent's accessor returns. It passes no role: a query yields each parser node once, as its alias envelope where an envelope and its content share one node.
 
 ### `packages/common/src/runtime.ts::coerceBitflagStorage`
 
@@ -621,4 +617,32 @@ A trivia side with its coordinate entries hydrated (`hydrateTriviaEntry`); the s
 ### `packages/common/src/read.ts::INDEX_RANGE`
 
 The size of the index field a packed handle holds (`2 ** 32`): the native `encode_handle` multiplies the tree id by it and adds the descendant index, inside a double's exact integer range.
+
+### `packages/common/src/identity.ts::Role`
+
+How a route reaches a parsed node, the second half of its registry key. `aliasContent` is the content of an alias envelope that shares the envelope's parser node, and so its descendant index; every other route, an alias content that is its own parser node included, reaches a node as `node`. The role comes from the route, never from what the registry already holds.
+
+### `packages/common/src/identity.ts::keyOf`
+
+The registry key of an index and a role: twice the index, plus one for `aliasContent`. An index is below 2^32, so the key stays inside a double's exact range.
+
+### `packages/common/src/identity.ts::registered`
+
+The wrapper registered for a node of a tree, by index and role, while it lives: one map per `TreeHandle` object (a tree handle is bound to one engine surface), each entry a `WeakRef`, so the registry never keeps a wrapper, its token or its tree alive. Every route that hydrates (a parent's accessor, a query, the parse root) asks here first, which makes a node one object on its surface.
+
+### `packages/common/src/identity.ts::register`
+
+Records a wrapper for a node of a tree, by index and role, weakly. A finalization registry drops the entry when the wrapper is collected, unless a newer wrapper took the key since; the next route then wraps the node afresh and registers that.
+
+### `packages/common/src/transport-data.ts::indexOf`
+
+The descendant index a read node or a coordinate names itself by: `decodeIndex` of `treeHandleOf`. `undefined` for a node with no coordinate (a built node, a draft).
+
+### `packages/common/src/utils.ts::wrapRegistered`
+
+The one seat that wraps and registers: the wrapper the registry holds at the value's index and role, or the value wrapped and registered there. A value that names no index is wrapped and not registered. The registry stores wrappers as `object` because one registry serves every kind; that what is registered at a tree, an index and a role is always the wrapper of one storage kind (measured over every corpus entry of rust, typescript and python, across the nested read, the read at the index and the query yield) is what makes returning it as `T` sound.
+
+### `packages/common/src/utils.ts::contentRole`
+
+The role an alias envelope's content accessor hydrates in: `aliasContent` when the content stamps the envelope's own index (the alias renamed one parser node), `node` when the content is its own parser node, which a query may also reach and which must then be one object. It compares the two values' stamped indexes, so it re-derives nothing the reader did not stamp.
 

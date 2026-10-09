@@ -1,11 +1,12 @@
 import type { AnyUntypedNode, ByteSpan, ErrorNode, LineGap, LineGapAddress, LineGaps, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
-import { carryPlacement, carryRead, carrySource, coordinateOf, detachCoordinate, holdsSlots, isRead, isStorageKey, sourceOf, triviaOf, type DerivedSides } from './transport-data.ts';
+import { carryPlacement, carryRead, carrySource, coordinateOf, detachCoordinate, holdsSlots, indexOf, isRead, isStorageKey, sourceOf, triviaOf, type DerivedSides } from './transport-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { hydrateListStorage, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
 import { Delimiter } from './delimiter.ts';
-import { isCoordinate, readNode, type TreeHandle } from './read.ts';
+import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle } from './read.ts';
+import { register, registered, type Role } from './identity.ts';
 import { holdsParse } from './tree-token.ts';
 import { spelledForm } from './interior.ts';
 
@@ -683,20 +684,46 @@ const NO_CHILDREN: readonly never[] = Object.freeze([]);
 export type WrapTransport = (data: object, tree: TreeHandle) => unknown;
 
 /**
- * One stored value as an accessor returns it: a coordinate read `depth` levels down (one when absent) and
- * hydrated as the transport it reads as, a transport not yet wrapped wrapped, and anything else (a wrapped
- * node, a kind id such as a unit variant's, a boolean, text) as it is.
+ * One stored value as an accessor returns it: the node the registry holds at its index and `role`, else a
+ * coordinate read `depth` levels down (one when absent) and hydrated as the transport it reads as, a
+ * transport wrapped and registered (`wrapRegistered`), and anything else (a wrapped node, a kind id such as
+ * a unit variant's, a boolean, text) as it is.
  */
-export function hydrateWith(value: unknown, tree: TreeHandle, wrap: WrapTransport, depth?: number): unknown {
+export function hydrateWith(value: unknown, tree: TreeHandle, wrap: WrapTransport, depth?: number, role: Role = 'node'): unknown {
 	if (value === null || typeof value !== 'object' || Array.isArray(value)) return value;
-	if (isCoordinate(value)) return hydrateWith(readNode(tree, value, depth), tree, wrap);
-	return isTypedNode(value) || typeof (value as { readonly $type?: unknown }).$type !== 'number' ? value : wrap(value, tree);
+	if (isCoordinate(value)) {
+		const known = decodeTree(value.$treeHandle) === tree.id ? registered(tree, decodeIndex(value.$treeHandle), role) : undefined;
+		return known ?? hydrateWith(readNode(tree, value, depth), tree, wrap, undefined, role);
+	}
+	if (isTypedNode(value) || typeof (value as { readonly $type?: unknown }).$type !== 'number') return value;
+	return wrapRegistered(value, tree, wrap, role);
+}
+
+/**
+ * The node `value` reads as on `tree`: the wrapper already registered at its index and role, or
+ * `wrap(value, tree)`, registered there. A value that names no index is wrapped and not registered.
+ */
+export function wrapRegistered<T>(value: object, tree: TreeHandle, wrap: (value: object, tree: TreeHandle) => T, role: Role = 'node'): T {
+	const index = indexOf(value);
+	if (index === undefined) return wrap(value, tree);
+	const known = registered(tree, index, role);
+	if (known !== undefined) return known as T;
+	const wrapper = wrap(value, tree);
+	if (wrapper !== null && typeof wrapper === 'object') register(tree, index, role, wrapper);
+	return wrapper;
+}
+
+/** The role an envelope's content is reached in: `aliasContent` when it shares the envelope's parser node (both stamp one index), else `node`. */
+export function contentRole(envelope: object, content: unknown): Role {
+	if (content === null || typeof content !== 'object') return 'node';
+	const own = indexOf(envelope);
+	return own !== undefined && own === indexOf(content) ? 'aliasContent' : 'node';
 }
 
 /** The value of slot `key` of a wrapped node, hydrated by `hydrateWith`, written back into the slot and adopted by the node. */
-export function hydrateSlotWith(node: object, key: string, tree: TreeHandle, wrap: WrapTransport): unknown {
+export function hydrateSlotWith(node: object, key: string, tree: TreeHandle, wrap: WrapTransport, role: Role = 'node'): unknown {
 	const slots = node as Record<string, unknown>;
-	const child = hydrateWith(slots[key], tree, wrap);
+	const child = hydrateWith(slots[key], tree, wrap, undefined, role);
 	if (child !== slots[key]) slots[key] = child;
 	adoptChild(node, child);
 	return child;
@@ -716,6 +743,7 @@ export function hydrateSlotsWith(node: object, key: string, tree: TreeHandle, wr
 
 export { numberText, type NumberBase } from './number.ts';
 export { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle } from './read.ts';
+export type { Role } from './identity.ts';
 export { currentHandle, inEngine, hydrateListStorage, type EngineHandle } from './engine-scope.ts';
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';

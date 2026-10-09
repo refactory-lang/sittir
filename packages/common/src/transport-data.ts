@@ -1,5 +1,5 @@
 import type { AnyUntypedNode, NodeLayout, TransportCoordinate } from '@sittir/types';
-import { isCoordinate } from './read.ts';
+import { decodeIndex, isCoordinate } from './read.ts';
 import { assertHoldsTree, holdsParse, holdTreeOn, releaseTreeOn, treeTokenOf, type TreeToken } from './tree-token.ts';
 import { forEachTriviaList, type TriviaSides } from './trivia.ts';
 
@@ -68,6 +68,12 @@ function forEachParsedObject(value: unknown, visit: (node: Record<string, unknow
 /** The handle a read node or a coordinate names itself by: its tree and its descendant index. */
 export function treeHandleOf(node: object): number | undefined {
 	return coordinateOf(node)?.$treeHandle;
+}
+
+/** The descendant index a read node or a coordinate names itself by, in its tree. */
+export function indexOf(node: object): number | undefined {
+	const handle = treeHandleOf(node);
+	return handle === undefined ? undefined : decodeIndex(handle);
 }
 
 /** Whether `key` names one of a node's slots (`_<name>`). */

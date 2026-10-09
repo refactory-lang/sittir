@@ -8,6 +8,7 @@ import {
 	hydrateWith,
 	hydrateSlotWith,
 	hydrateSlotsWith,
+	contentRole,
 	inTreeEngine,
 	currentHandle,
 	listSlotWith,
@@ -31,7 +32,7 @@ import {
 	triviaSide,
 	triviaInner
 } from '@sittir/common/utils';
-import type { TreeHandle } from '@sittir/common/utils';
+import type { Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
 import type { AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';
 import { TSKindId } from './types.js';
@@ -48,8 +49,8 @@ const _wrap = (data: object, tree: TreeHandle): unknown => wrapNode(data as _Unt
 export function hydrate<T>(value: T, tree: TreeHandle, depth?: number): ParsedOfData<T> {
 	return hydrateWith(value, tree, _wrap, depth) as ParsedOfData<T>;
 }
-function hydrateSlot<T>(node: object, key: string, tree: TreeHandle): ParsedOfData<T> {
-	return hydrateSlotWith(node, key, tree, _wrap) as ParsedOfData<T>;
+function hydrateSlot<T>(node: object, key: string, tree: TreeHandle, role?: Role): ParsedOfData<T> {
+	return hydrateSlotWith(node, key, tree, _wrap, role) as ParsedOfData<T>;
 }
 function hydrateSlots<T>(node: object, key: string, tree: TreeHandle): readonly ParsedOfData<T>[] {
 	return hydrateSlotsWith(node, key, tree, _wrap) as readonly ParsedOfData<T>[];
@@ -5082,7 +5083,7 @@ export function wrapNames(data: T.Names, tree: TreeHandle): T.Names.Parsed {
 		...data,
 		$type: TSKindId.Names as const,
 		content() {
-			return hydrateSlot<T.ImportList>(this, '_content', tree);
+			return hydrateSlot<T.ImportList>(this, '_content', tree, contentRole(this, this._content));
 		},
 		$with: {
 			content: (...args: unknown[]) =>
@@ -5111,7 +5112,7 @@ export function wrapAsPatternTarget(data: T.AsPatternTarget, tree: TreeHandle): 
 		...data,
 		$type: TSKindId.AsPatternTarget as const,
 		content() {
-			return hydrateSlot<T.Expression>(this, '_content', tree);
+			return hydrateSlot<T.Expression>(this, '_content', tree, contentRole(this, this._content));
 		},
 		$with: {
 			content: (v: NonNullable<T.AsPatternTarget['_content']>) =>
@@ -5134,7 +5135,7 @@ export function wrapFormatExpression(data: T.FormatExpression, tree: TreeHandle)
 		...data,
 		$type: TSKindId.FormatExpression as const,
 		content() {
-			return hydrateSlot<T.Interpolation>(this, '_content', tree);
+			return hydrateSlot<T.Interpolation>(this, '_content', tree, contentRole(this, this._content));
 		},
 		$with: {
 			content: (v: NonNullable<T.FormatExpression['_content']>) =>

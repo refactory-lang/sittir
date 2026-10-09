@@ -1,9 +1,8 @@
 import type { AnyUntypedNode, Cond, QueryPlan, QuerySlots, Recorder, SlotRef, SlotRoutes, TransportCoordinate } from '@sittir/types';
 import { inTreeEngine } from './engine-scope.ts';
-import { readNode, type TreeHandle } from './read.ts';
+import type { TreeHandle } from './read.ts';
 import { treeOf, treeTokenOf } from './tree-token.ts';
-import { treeHandleOf } from './transport-data.ts';
-import { nodeAddressOf, type NodeAddress } from './utils.ts';
+import { hydrateWith, nodeAddressOf, type NodeAddress } from './utils.ts';
 
 export interface DescendantWalk {
 	readonly from: NodeAddress;
@@ -185,7 +184,7 @@ function view(context: Context, source: Source, steps: readonly Step[]): QueryVi
 		findIndex: (predicate) => findIndex(items(), predicate),
 		some: (predicate) => findIndex(items(), predicate) >= 0,
 		every: (predicate) => findIndex(items(), (node, index) => !predicate(node, index)) < 0,
-		includes: (node) => findIndex(items(), (candidate) => sameOccurrence(candidate, node)) >= 0,
+		includes: (node) => findIndex(items(), (candidate) => candidate === node) >= 0,
 		reduce: (fn, ...initial) => reduce(items(), fn, initial),
 		forEach: (fn) => forEach(items(), fn),
 		at: (index) => at(items(), index),
@@ -331,7 +330,7 @@ function entryOfCoordinate(coordinate: TransportCoordinate, tree: TreeHandle, ho
 	return {
 		kind: coordinate.$type,
 		address: { handle: coordinate.$treeHandle },
-		hydrate: () => inTreeEngine(tree, () => hooks.wrap(readNode(tree, coordinate), tree))
+		hydrate: () => inTreeEngine(tree, () => hydrateWith(coordinate, tree, hooks.wrap))
 	};
 }
 
@@ -553,15 +552,6 @@ function recorder(context: Context, kind: number | undefined): Recorder<unknown>
 				? { configurable: true, enumerable: true, value: slotRef(key, slots.get(key)!) }
 				: undefined
 	});
-}
-
-function sameOccurrence(a: unknown, b: unknown): boolean {
-	if (a === b) return true;
-	if (a === null || b === null || typeof a !== 'object' || typeof b !== 'object') return false;
-	const tokenA = treeTokenOf(a);
-	if (tokenA === undefined || tokenA !== treeTokenOf(b)) return false;
-	const handle = treeHandleOf(a);
-	return handle !== undefined && handle === treeHandleOf(b);
 }
 
 export function holds(plan: QueryPlan, texts: (routes: SlotRoutes) => readonly string[]): boolean {
