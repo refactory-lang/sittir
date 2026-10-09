@@ -1,6 +1,6 @@
 # Layout table for width-aware rendering: design note
 
-Status: design note; rulings are marked where made. Its probes, outputs and prototype patches are in `docs/superpowers/probes/2026-10-02-layout-table/`, and the paths `probes/`, `outputs/` and `prototype-*.patch` below are relative to that folder. Updated 2026-10-08: see [Layout inference, kind runs and gap sets](#layout-inference-kind-runs-and-gap-sets-2026-10-08), which holds where it conflicts with earlier sections, and questions 16 to 21. Request of record: the width-setting issue, section "Direction under discussion".
+Status: design note; rulings are marked where made. Its probes, outputs and prototype patches are in `docs/superpowers/probes/2026-10-02-layout-table/`, and the paths `probes/`, `outputs/` and `prototype-*.patch` below are relative to that folder. Updated 2026-10-08: see [Layout inference, kind runs and gap sets](#layout-inference-kind-runs-and-gap-sets-2026-10-08), which holds where it conflicts with earlier sections, and questions 16 to 21; the 2026-10-09 rulings (questions 1 to 14, typescript's context source, write-time runs and the break writer) are marked where they apply, and [The break writer and write-time runs](#the-break-writer-and-write-time-runs-2026-10-09) holds where it conflicts with anything before it. Request of record: the width-setting issue, section "Direction under discussion".
 Measured at master `fd189d4c9`, where the output-trait rebuild in [Staging](#staging) was also made. The validators and the python list form were rerun at `0f9556b17`, and everything in [Which arms a site admits](#which-arms-a-site-admits) was measured there. Master has since moved twice, to `9c01b8cbc` (slot renames; typescript has 1,360 sites against 1,356) and to `4052dd013` (python's terminated tuple form; python has 972 sites against 942); only the site counts were re-read there. Every number below comes from a throwaway prototype (see [The prototype](#the-prototype)).
 
 ## What is already ruled, and what this note settles
@@ -341,11 +341,18 @@ A third candidate, hugging, is in question 3.
 
 ### Options and how they travel
 
-- `width`: columns. Unset means no table.
-- `breaking`: `'group'` (default) or `'fill'`.
-- `tabWidth`: the columns a tab counts as.
+*Ruled 2026-10-09 (questions 7 and 8; the tab count revised the same day):* every whole-render layout setting sits in one `layout` group under `render`:
 
-They are top-level render options beside `indent`, not site addresses. They are accepted where `indent` is, at engine level (`createEngine(language, { render: { width: 100 } })`) and per call, read by `Options::read` and carried in the resolved options the writer already holds. A grammar that declares no bracket pair has no `width` key, as a grammar with no indent character has no `indent` key. The root dispatch chooses the table output when a width is set and the transport is the grammar's root kind ([Staging](#staging)).
+```ts
+render: { layout: { width: 100, breaking: 'group', indent: '\t', newline: '\n' } }
+```
+
+- `width`: columns. Unset, and not detected, means no table.
+- `breaking`: `'group'` (default) or `'fill'`.
+- No tab-width option (ruled 2026-10-09). Tabs are always written as `\t`, and a tab counts as 2 columns when a line is measured against `width`, fixed in the writer. A public option would read as if it changed the output. A detected width is measured with the same count, so the constant only matters against a `width` the caller sets.
+- `indent` and `newline` move into the group: `indent` from `render.indent`, and `newline` as the line-endings plan adds it there.
+
+They are not site addresses. They are accepted at engine level (`createEngine(language, { render: { layout: { width: 100 } } })`) and per call, read by `Options::read` and carried in the resolved options the writer already holds. A grammar that declares no bracket pair has no `width` key, as a grammar with no indent character has no `indent` key. The root dispatch chooses the table output when a width is set and the transport is the grammar's root kind ([Staging](#staging)).
 
 ## The conditional trailing separator
 
@@ -529,13 +536,14 @@ This section folds in what was ruled on 2026-10-08, the writer change ruled the 
   - The line ending and the indent unit apply to every render, a fragment included, and need no table.
     - The line ending is applied by a `LineEndings` write adapter at the end of the render (`docs/superpowers/plans/2026-10-08-line-endings.md`, approved, executed after the typed reader's 1c-i).
     - The indent unit is the writer's `indent`.
-  - Run patterns and the width apply on the table. A root render builds the table whenever either is in effect; with neither, there is no table and the output is byte-identical.
+  - Run patterns apply when a list is prepared, at write time, with no table (ruled 2026-10-09). Width applies through the break writer, which buffers only undecided lists (see [The break writer](#the-break-writer-and-write-time-runs-2026-10-09)). With no width, the writer writes straight to its output and the bytes are unchanged.
 - **"Run" means a run of kinds.** A run is a maximal sequence of consecutive items of one kind in a list, such as a block of imports. Repeated whitespace is not a run. `blankline` is `seq(newline, newline)`, `double_blankline` is three references, and there is no general whitespace-count primitive.
 - **Run addresses take both shapes.** Under a list slot:
-  - `(source_file)/statements:/(_)/run/before|after` is any run;
-  - `(source_file)/statements:/(use_declaration)/run/before|after` is a run of that kind.
+  - `(source_file)/statements:/(_)/run/after` is any run;
+  - `(source_file)/statements:/(use_declaration)/run/after` is a run of that kind.
 
   The kind address wins by the address design's strict-subset rule. Inside a run, the existing seated `(_)/after` and `(K)/after` sites keep applying.
+- **`run/after` only (ruled 2026-10-09).** A gap between siblings has one owner, the preceding item's `after` edge, so a boundary is the gap after a run ends and is addressed by that run's kind. There is no `run/before`. A list has run addresses only where its grammar's `options` block declares them (the scope rule every site follows); they take no default unless declared, so an unset run marks nothing.
 - **The table copies text.** Measured against borrowing:
   - a borrowed row needs a 16-byte `&str` beside the row's facts, about 24 bytes in place of 12;
   - rows come every 3.6 to 4 output bytes, while the copy costs one byte per output byte;
@@ -577,13 +585,11 @@ What the lex state cannot supply is a scanner's context, decided outside the lex
   ```
 
   The statement gaps are untouched: the break between statements is the scanner's own `_newline` token, which passes one fixed kind.
-- **A narrower supertype: typescript's no-break positions.** After `return`, `throw`, `break` and `continue`, and before a postfix `++` or `--` and before `=>`, no spelling of a break is legal, so the gap draws from a narrower supertype. Enrich mints `_inline_layout` (`_tight`, `_space`, `_tab`) beside `_layout`. A sittir-side marker names the supertype for the gap before a member; in tree-sitter's run of the grammar it is identity, as `role(…)` is:
-
-  ```ts
-  return_statement: ($, original) => seq('return', gap($._inline_layout, optional($._expressions)), $._semicolon)
-  ```
-
-  The parse-table derivation computes typescript's positions too. Codegen fails with a diagnostic naming each position where the derivation and the declaration differ, so the declaration is the checked source and the derivation is its test.
+- **A narrower supertype: typescript's no-break positions, derived (ruled 2026-10-09).** After `return`, `break` and `continue`, and before a postfix `++` or `--`, no spelling of a break is legal, so the gap draws from a narrower supertype. Enrich mints `_inline_layout` (`_tight`, `_space`, `_tab`) as a hidden supertype beside `_layout`. No marker places it: the positions come from the "matches whitespace" rule over the lex state (step 3).
+  - **The automatic semicolon is a token that matches whitespace.** Its lexical shape is a line break that the external scanner does not continue: `\n` not followed by a character that continues the expression (`.`, `,`, `(`, `[`, a binary operator, `?`, `:`, `=`, a backtick, and the scanner's handling of `++` and `--`). That pattern, with its lookahead, is the one declared fact, mirroring the scanner, the way `renderAs` gives python's string externals their shape.
+  - **Where it is lexable at a seam and matches `\n` plus the next leaf's first character, the newline kinds are ruled out** and the seam's `kinds` compile to `_inline_layout`'s members. `return` ⎵ `x` matches (`\nx`), so the gap is inline only. `a` ⎵ `+ b` does not (`\n+`), so it keeps its break: the 112 sites the parse table alone flags, and that take a break with no change, come out right.
+  - **`throw` and `=>` are upstream.** tree-sitter-javascript accepts a break after `throw` and before `=>`, which JavaScript rejects; neither involves the automatic semicolon (`=` continues the expression). The parser is followed and the difference is reported upstream; nothing is declared for it.
+  - **Open for the implementation:** whether `renderAs` can carry a lexical pattern for a token whose render spelling differs (an automatic semicolon renders as `;` or nothing), or whether the lexical shape needs a sibling declaration.
 
 **How it compiles onto each seam's `kinds`.**
 - **A narrower supertype:** the emitter writes the supertype's members as the constant `kinds` of the seam at that gap.
@@ -595,7 +601,6 @@ What the lex state cannot supply is a scanner's context, decided outside the lex
 **Later, not scoped: the same facts as `bindings.scm` captures.** Once the generator reads `bindings.scm` (the bootstrap work, where the generator runs sittir's own scm package), the declarations above can move beside the vocabulary claims, as query captures that reach codegen through a generated `grammar.bindings.ts`. They would compile onto `kinds` exactly as above. Proposed names:
 
 - `@layout.break.<kind>` on a node: inside it, a break is spelled with that layout kind, and the innermost capture wins.
-- `@layout.nobreak.after` and `@layout.nobreak.before` on a token: no break in the one gap after or before it.
 
 ```scheme
 ; python
@@ -603,12 +608,9 @@ What the lex state cannot supply is a scanner's context, decided outside the lex
 (_ "(" ")") @layout.break.newline
 (_ "[" "]") @layout.break.newline
 (_ "{" "}") @layout.break.newline
-; typescript
-(throw_statement "throw" @layout.nobreak.after)
-(return_statement "return" @layout.nobreak.after)
-(update_expression argument: (_) ["++" "--"] @layout.nobreak.before)
-(arrow_function "=>" @layout.nobreak.before)
 ```
+
+Typescript needs no capture: its positions are derived (above).
 
 What this changes in the table: a seam row carries its gap's valid set in place of the "admits a line break" bit.
 
@@ -682,14 +684,14 @@ Three findings for the design:
 - **Seating prefix kinds is the one large effect.** With rust's attributes seated onto the item after them, the boundary gaps that hold no blank line fall from 1,440 to 147, and the boundary share goes from 28.8% to 71.3%. An attribute-to-item gap is the item's own, not a run boundary.
 - **Keying through wrappers helps typescript a little** (`export` grouped with what it exports: 95.0% to 97.2%). **It hurts python's generic statements:** `simple_statements` keyed by its statement splits an assignment from the call after it, which adds boundaries with no blank line (module 90.2% to 83.4%, block 21.1% to 15.7%).
 - **Python's role grouping, through the wrappers, gives the best module boundary share (92.2%).** It groups `import` with `from … import` while leaving generic statements together, but in rust it does slightly worse than the kind.
-- **Python imports followed by a definition:** 7 module-level boundaries, 3 with one blank line and 4 with two. Imports followed by anything else: 53, of which 43 have one blank line. Under the ruled coalescing, a detected `(import)/run/after` of one line and a `(class_definition)/run/before` of two give two, as PEP 8 asks.
+- **Python imports followed by a definition:** 7 module-level boundaries, 3 with one blank line and 4 with two. Imports followed by anything else: 53, of which 43 have one blank line. With `run/after` only, the gap after a run of imports takes `(import_statement)/run/after`, one blank line, and coalesces at the gap with the next item's own `before` edge by rank. A top-level definition whose `before` edge is `double_blankline` therefore gets two, since `double_blankline` outranks `blankline`, as PEP 8 asks; any other statement after the imports gets one.
 
 ### Detection
 
 One native walk over a parsed tree, run when `styleFrom` is called. It returns its result to the client as an options object in the language's `render` options shape, and keeps nothing in the native option chain. Per statement list kind, it detects:
 
 - **Within-run gaps.** `(_)/after` is the dominant gap inside runs over all kinds. `(K)/after` is detected for a kind whose own dominant gap differs from it and that has at least as many votes as the smallest kind the corpora show a pattern for (question 20).
-- **Boundaries.** `(K)/run/after` is the dominant gap where a run of K ends. `(J)/run/before` is detected only where the before-attribution is uniform across J's predecessors and is not already explained by those predecessors' `after`. `(_)/run/after` and `(_)/run/before` are detected from the rest.
+- **Boundaries.** `(K)/run/after` is the dominant gap where a run of K ends; `(_)/run/after` is detected from the rest.
 - **The indent unit:** the consensus of line starts, today's `extract_format` rule, which replaces the tree's format record.
 - **The line ending:** the majority of logical breaks (`\r\n`, `\n`, `\r`). This feeds the adapter's `newline`.
 - **No pattern:** a tie, or no occurrence, leaves the key absent, and the declared default applies. The detection records each key as detected or defaulted; `styleFrom` reports that later.
@@ -735,49 +737,98 @@ Today's render is the "before": an inserted statement takes the slot's declared 
 
 Two pieces run outside this note: the line-ending plan, after 1c-i, and the `seam(kinds)` writer change, now. Then:
 
-1. **The output trait,** text output only, byte-identical. The generated root dispatch goes through one core function. The prototype's table module is renamed (`table.rs`), because master's `layout.rs` now holds `TransportLayout`.
-2. **The `prepare` change:** the list view resolves a separator's arm by its site.
-3. **Context sets:** the "matches whitespace" rule over the lex state at each seam (from the parse table); python's `layout: { newline }` and typescript's `_inline_layout` with its `gap(…)` positions, declared in `grammar.sittir.ts` and compiled into `seam(kinds)`; the writer's context stack; the parse-table check for typescript. Gate 6. This step does not wait for the generator to read `bindings.scm`.
-4. **Detection:** the native walk behind `styleFrom` returning an options object, applied once under the `createEngine` keys by the native engine replacing its options, and indentation as one fact. This stage already delivers the detected line ending and indent unit, with no table.
-5. **The table output:** rows carry valid sets; there are list calls and a pass interface.
-6. **The run-pattern rule over the table.** This is the first stage that delivers statement-gap patterns: an inserted statement takes the file's gap, and the before-and-after check above is its gate.
-7. **`width` and the group rule,** then the conditional trailing separator.
-8. **Later rules:**
-   - **Column alignment:** multi-space runs render as one space today, in 160 rust gaps (aligned macro token trees), 18 typescript and 7 python.
-   - `fill`, and admission derived from the parser where it is not yet derived.
+Revised again 2026-10-09: run patterns need no table, and the table became the break writer.
 
-Stages 3 and 4 do not depend on each other. Stage 6 needs 1, 2, 4 and 5.
+1. **Run patterns and detection** (`docs/superpowers/plans/2026-10-09-run-patterns.md`, held until the maintainer releases it): run addresses declared in the `options` blocks, resolved when a list is prepared; statement lists drop their source stamps; `styleFrom` detection of statement gaps and the indent unit, applied once; the tree's format record goes. This stage delivers statement-gap patterns: the before-and-after check above is its gate.
+2. **Context sets:** the "matches whitespace" rule over the lex state at each seam (from the parse table); python's `layout: { newline }` declared in `grammar.sittir.ts`; typescript's automatic-semicolon pattern, from which the `_inline_layout` positions are derived; both compiled into `seam(kinds)`; the writer's context stack. Gate 6. This step does not wait for the generator to read `bindings.scm`.
+3. **The `prepare` change:** the list view resolves a separator's arm by its site, so the writer knows whether the caller set it.
+4. **The break writer:** `width` under `render.layout`, the list calls, rows carrying the legal set and the caller-set bit, and the `group` rule.
+5. **The conditional trailing separator.**
+6. **Later rules:**
+   - **Column alignment:** multi-space runs render as one space today, in 160 rust gaps (aligned macro token trees), 18 typescript and 7 python.
+   - `fill`, operator-first breaking of `+`/`&&` lists, and admission derived from the parser where it is not yet derived.
+
+Stages 1 and 2 do not depend on each other. Stage 4 needs 2 and 3. The line-endings plan runs after the typed reader's 1c-i, beside these, and gives the writer its `Output` trait, which the break writer implements.
+
+## The break writer and write-time runs (2026-10-09)
+
+This section holds where it conflicts with anything above it: the whole-file table, the table output on the `Output` trait, the "read from source" bit, the bracket flags on `List`, and runs on the table.
+
+### Runs are resolved at write time
+
+A run option is an ordinary site option, resolved when the list is prepared, as a seat is. For each pair of adjacent present items whose kinds differ (K, then J), the preceding item's `after` edge takes `(K)/run/after`, else `(_)/run/after`, before the seats fill; an unset run leaves the seat to apply. The item's kind is the parser kind, with a wrapper that is not itself seated answering for the node it holds (the descent seats already use). The detail is in `docs/superpowers/plans/2026-10-09-run-patterns.md`.
+
+### The break writer
+
+With `layout.width` set, `SpacingWriter` writes into a `BreakWriter`; without it, into its output directly. The choice is made by type, once, where the core builds the writer for a root render, so the writer without a width is the code it is today:
+
+```rust
+match options.layout.width {
+    None    => render(&mut SpacingWriter::new(out, &options)),
+    Some(w) => render(&mut SpacingWriter::new(BreakWriter::new(out, w), &options)),
+}
+```
+
+A fragment always takes the first branch (question 10). The `LineEndings` adapter wraps `out` in both. Generated render bodies see `&mut dyn RenderSink` either way and do not change.
+
+`BreakWriter` sits after seam resolution: `SpacingWriter` hands it resolved text, resolved gaps (bytes, legal set, caller-set bit) and `ListView`'s three list calls. In front of `SpacingWriter` it would have to re-run the seam law; replaying sink calls would render every list region twice.
+
+**It acts only on lists.** Outside a pending list every write passes through to the output; the only cost on the width path is the check. It keeps a stack of open lists, each `Pending`, `Flat` or `Broken`:
+
+- `list_open` with no window open starts recording and pushes the list as `Pending`; a list opened while recording is pushed `Pending` too. A list that writes a line break in one of its own gaps before the window is decided is `Broken` (question 4), so statement lists, whose first separator is a line break, never hold a window.
+- The window closes at the first line break written while recording: a gap that resolves to one, a text row holding one (a multi-line item, question 5), or the end of the render. `group` then runs over the window, outermost list first; each `Pending` list becomes `Broken` when its own gaps already hold a break or its flat run with what follows it on the line passes `width`, else `Flat`. A list whose outer list broke is judged again on its new line. The window is flattened to the output and recording stops.
+- After the close, a `Broken` list still open writes each later eligible gap (the legal set holds `newline` and the caller did not set it) as a line break, live; a `Flat` one writes its gaps as resolved. The next list that opens starts a new window.
+
+So no list stays undecided past the end of the line it started on. Memory is one line's rows plus the list stack, and only text inside a window is copied. The writer carries its column across, counting characters since the last line break with a tab counted as 2 (question 7).
+
+### Rows
+
+Rows are the table's rows, scoped to the window:
+
+```rust
+struct Row {      // 12 bytes
+    end: u32,     // one past this row's bytes in the window's text
+    list: u32,    // seam: the list whose gap this is
+    depth: u16,   // the writer's depth when the row was written
+    kind: u8,     // text|seam · starts a line · conditional · broken by the pass · place in list (3 bits)
+    gap: u8,      // seam: the legal LayoutKinds (7 bits) · set by the caller (1 bit)
+}
+```
+
+A row carries no site and no arm (question 9) and no "read from source" bit (question 2: source-read gaps may break). A list carries its parent, its head and tail rows, and whether it is separated; it has no bracket flags (question 1).
+
+### What is dropped
+
+- The whole-file table and the table output on the `Output` trait: the break writer is `SpacingWriter`'s output only when a width is set, and records only windows.
+- `breaking` stays a `render.layout` option selecting the rule; `group` is the only one at first.
 
 ## Open questions for the maintainer
 
-1. **Bracket pairs: declared per grammar, or fixed in codegen?** (Revised 2026-10-08: legality is declared in `grammar.sittir.ts`, never in `options`; see question 19.)
-   Recommend declared, in `grammar.sittir.ts`. In python the pairs are the contexts of newline's choice (question 19). In every grammar they also choose the lists the first rule breaks (question 14), which is the same declaration read by the rule, not a second one. Regex declares none.
+1. **Bracket pairs: declared per grammar, or fixed in codegen?** Ruled (maintainer, 2026-10-09): neither, for width. Any gap whose seam takes `_layout`, not `_inline_layout`, is eligible (question 14), so the rule needs no pairs. Pairs remain only in python's legality declaration, `layout.newline.within`.
+   Recommended declared, in `grammar.sittir.ts`. In python the pairs are the contexts of newline's choice (question 19). In every grammar they also choose the lists the first rule breaks (question 14), which is the same declaration read by the rule, not a second one. Regex declares none.
 
-2. **An edited parsed list whose source gaps were inline: may width break it?**
-   Recommend no, as ruled: what was read from source keeps its layout, and width applies to what was built. The alternative, treating a source-read arm that equals the default as a default, would let it break; it needs no stamp from `prepare`, but it cannot tell "the source says inline" from "nothing is known".
+2. **An edited parsed list whose source gaps were inline: may width break it?** Ruled (maintainer, 2026-10-09): yes. Width applies to every list whenever it is set or detected, parsed lists included, as detection-not-preservation already holds for gaps. A source-read seam is no longer "not adjustable" by that fact alone; an explicitly set one still is.
+   - Detection gains `width` (ruled 2026-10-09): the file's longest line, with a tab counted as 2 columns, rounded up to the next multiple of 10. An unedited file gains no break, and inserted content breaks at the file's own width. A file whose longest line is one unbreakable piece (a long string or comment) detects a wide width and so breaks little; detection may later measure only lines that hold a breakable gap, if the corpora show such outliers.
 
-3. **The first rule: plain group, or group that hugs a single item?**
-   Recommend plain group now and hugging as a later rule. Hugging is closer to rustfmt (`Ok(ParsedTree {` … `})`; 219 against 247 differing lines on `engine.rs`) but misfires on a closure whose body ends in a call (`.map(|node| KindId(` / `node.kind_id()` / `))`), and a clean condition needs a fact the table does not hold.
+3. **The first rule: plain group, or group that hugs a single item?** Ruled (maintainer, 2026-10-09): plain group.
+   Recommended plain group now and hugging as a later rule. Hugging is closer to rustfmt (`Ok(ParsedTree {` … `})`; 219 against 247 differing lines on `engine.rs`) but misfires on a closure whose body ends in a call (`.map(|node| KindId(` / `node.kind_id()` / `))`), and a clean condition needs a fact the table does not hold.
 
-4. **A list that already holds a line break between its items: do its default flanks break too, whatever the width?**
-   Recommend yes. A list is either flat or broken; this turns a comment-forced or explicitly separated list from `f(a,` / `b)` into a properly broken one. It applies only when a width is set.
+4. **A list that already holds a line break between its items: do its default flanks break too, whatever the width?** Ruled (maintainer, 2026-10-09): yes.
+   Recommended yes. A list is either flat or broken; this turns a comment-forced or explicitly separated list from `f(a,` / `b)` into a properly broken one. It applies only when a width is set.
 
-5. **A multi-line item: judged by its first line?**
-   Recommend yes, as the issue proposed.
+5. **A multi-line item: judged by its first line?** Ruled (maintainer, 2026-10-09): yes. Otherwise a callback's block body forces every argument of its call apart, since the line holding the call never fits.
 
-6. **The conditional separator's name, and whether rust's defaults move to it.**
-   Recommend `Delimiter.TrailingIfBroken`. Recommend moving rust's bracketed lists to it as a separate change after the table lands: it is what rustfmt writes, and with no width it changes bytes only for lists broken as written.
+6. **The conditional separator's name, and whether rust's defaults move to it.** Ruled (maintainer, 2026-10-09): only where the grammar spells an optional trailing separator, the same condition `Trailing` has; the grammar makes it legal and the option chooses whether to write it. Name and rust's defaults as recommended.
+   Recommended `Delimiter.TrailingIfBroken`. Recommend moving rust's bracketed lists to it as a separate change after the table lands: it is what rustfmt writes, and with no width it changes bytes only for lists broken as written.
 
-7. **Tab width.**
-   Recommend a `tabWidth` option defaulting to 4. The issue's table counted a tab as one; oxfmt here counts two.
+7. **Tab width.** Ruled (maintainer, 2026-10-09): no option. Tabs are always written as `\t`, and a tab counts as 2 columns when measuring, fixed in the writer; a public option would read as if it changed the output. The issue's table counted a tab as one; oxfmt here counts two.
 
-8. **Option names.**
-   Recommend `width`, `breaking` and `tabWidth`.
+8. **Option names.** Ruled (maintainer, 2026-10-09): `render: { layout: { width, breaking, indent, newline } }`, with `indent` and `newline` in the group (see [Options and how they travel](#options-and-how-they-travel)).
 
-9. **Should a seam row record its site and arm now?**
+9. **Should a seam row record its site and arm now?** Ruled (maintainer, 2026-10-09): no. The pass applies nothing node-specific; every site and option decision is made when the writer fills the row.
    Recommend no: nothing reads them, and they would add a third to every row. Add them with a kept table.
 
-10. **A width set while a fragment is rendered.**
+10. **A width set while a fragment is rendered.** Ruled (maintainer, 2026-10-09): it renders flat, and the option's documentation says so.
     Recommend that it renders flat, silently, as ruled, with the option's doc saying so. Refusing it would break `$render()` on any node under an engine that has a width.
 
 Added with the reframing:
@@ -785,8 +836,8 @@ Added with the reframing:
 11. **Per-site admission: is this the right definition?**
     Recommend yes: a site admits the line-break arms when its seam is free or the grammar ends a line there, and otherwise only tight, space and tab. Without the second case the grammars' own defaults and four keys of the committed python options test would be refused.
 
-12. **Admission from the parser: build it, when, and should it restrict options?**
-    Recommend building it as its own step after the table, and restricting options only then.
+12. **Admission from the parser: build it, when, and should it restrict options?** Ruled (maintainer, 2026-10-09): the options type reads the same `kinds` each seam already carries, with no new vocabulary. A site whose set excludes the newline kinds (typescript's derived `_inline_layout` positions) offers no line-break arms; leaf-edge exclusions are left to the writer's intersection. Typescript's positions come from the automatic semicolon's pattern (see [the context set's source](#the-gaps-valid-set-replaces-per-site-admission)), so the 112 keep their break.
+    Recommended building it as its own step after the table, and restricting options only then.
     - Rust and scm need nothing built: no scanner token is line-sensitive.
     - Typescript needs tree-sitter's state report and a walk back through the parse table for the sites that follow a child. Neither is hard and neither is done.
     - Restricting options with it refuses 184 of the 569 typescript sites seen, 112 of which take a line break today with no change (before `.`, before a binary operator). Recommend declaring those to admit one rather than losing them.
@@ -795,7 +846,7 @@ Added with the reframing:
 13. **The three declarations: names and places.** (Superseded by question 19.)
     The line-sensitive tokens keep `role(…)`. The bracket pairs and "does not admit a line break" become question 19's two forms in `grammar.sittir.ts`: newline's choices for python's pairs, and the `_inline_layout` supertype for typescript's no-break positions. Regex's root is decided by the "matches whitespace" rule, and python's f-string field needs nothing, since Python 3.14 lets a replacement field span lines. Neither goes in the `options` block.
 
-14. **Which lists the first rule breaks, now that rust admits a break everywhere.**
+14. **Which lists the first rule breaks, now that rust admits a break everywhere.** Ruled (maintainer, 2026-10-09): any list whose gaps take `_layout`; legality is eligibility, and the algorithm chooses which eligible lists break. A gap whose only break is python's `line_continuation` is not eligible, so the width rule never writes a `\`. `+` and `&&` lists break after the operator under `group`; an operator-first layout is a later rule.
     Recommend lists at a declared pair in every grammar, as measured. Admission says where a break is safe, not where it reads well: rust's trait bounds and `let` chains are free too, and a list broken at `+` or `&&` wants a different layout. Rust can add `<` and `>` to its pairs at no risk.
 
 15. **The order of work.**
@@ -803,7 +854,7 @@ Added with the reframing:
 
 Added on 2026-10-08:
 
-16. **Precedence at a run boundary.** Ruled (maintainer, 2026-10-08): the existing coalescing, as at every gap: strength first, then rank, so tight wins over space and a blank line over a newline. Rust's attributes stay right through detection: a run's `before` is detected only where its predecessors agree, and an attribute's run ends in a newline 566 times in 567, so after an attribute no detected `before` asks for a blank line. An explicit `(J)/run/before` applies after an attribute too; that is what the caller asked for.
+16. **Precedence at a run boundary.** Ruled (maintainer, 2026-10-08): the existing coalescing, as at every gap: strength first, then rank, so tight wins over space and a blank line over a newline. Revised 2026-10-09: with `run/after` only, the boundary is the ending run's `after` edge, and it coalesces with the next item's own `before` edge at the gap. Rust's attributes stay directly above their items through `(attribute_item)/run/after`, detected (an attribute's run ends in a newline 566 times in 567) or declared in rust's options block; a detected kind address beats an explicit wildcard, since `styleFrom` merges them into one options object.
 
 17. **What "same kind" means for a run.** Ruled (maintainer, 2026-10-08):
     - seat prefix kinds (rust's `attribute_item`), derived from the seated-node fact, so an attribute-to-item gap is never a run boundary;
@@ -817,7 +868,7 @@ Added on 2026-10-08:
 
 19. **The context set's form.** Ruled (maintainer, 2026-10-08): declared in `grammar.sittir.ts`, as newline's choices in a context or as a specific supertype; never in `options`. Not scoped yet: the move to `bindings.scm` captures, which waits for the generator to read `bindings.scm`.
     - Python's pairs take newline's choices: `layout: { newline: { outside: $.line_continuation, within: [pairs] } }`, with the writer's context stack where a kind occurs both bracketed and bare. Its f-string field needs no declaration: Python 3.14 lets a replacement field span lines.
-    - Typescript's no-break positions take the minted `_inline_layout` supertype through the `gap($._inline_layout, member)` marker, derived from the parse table and checked against the declaration.
+    - Typescript's no-break positions take the minted `_inline_layout` supertype. Revised 2026-10-09: derived from the automatic semicolon's declared pattern through the "matches whitespace" rule, with no `gap(…)` marker.
 
     A supertype compiles to a constant `kinds`; a newline choice is spelled at compile time where the context is fixed, else through the writer's context stack. This replaces question 13's three declarations; the line-sensitive tokens keep their `role(…)`.
 

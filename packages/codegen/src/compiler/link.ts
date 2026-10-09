@@ -45,7 +45,7 @@ import {
 } from '../types/rule.ts';
 import { normalizeEnumMembers, makeRuleMetadata } from '../dsl/rule-metadata.ts';
 import { runToFixpoint } from './fixpoint.ts';
-import { findEntryForKindName, findEntryForLiteralText, findEntryForPatternValue, isParserHiddenKind, isSurfaceHiddenKind, isAliasedHiddenStorage, isShownConcreteKind, modelKindOfEntry, type GeneratedIdTables, type GeneratedKindEntry } from '../dsl/symbol-table.ts';
+import { findEntryForKindName, findEntryForLiteralText, findEntryForPatternValue, isParserHiddenKind, isSurfaceHiddenKind, isAliasedHiddenStorage, isShownConcreteKind, modelKindOfEntry, type GeneratedIdTables, type GeneratedKindEntry, findOwnKindEntry, seatedOf } from '../dsl/symbol-table.ts';
 import type {
 	RawGrammar,
 	LinkedGrammar,
@@ -1714,7 +1714,7 @@ function classifyHiddenRule(
 	name: string,
 	rules: Record<string, Rule<'link'>>
 ): ClassifyResult {
-	if (isEnumChoiceRule(rule) || rule.type === SUPERTYPE || rule.annotations?.hoisted === true) {
+	if (isEnumChoiceRule(rule) || rule.type === SUPERTYPE || seatedOf(rule.annotations, findOwnKindEntry(ctx.kindEntries, name))) {
 		return { rule };
 	}
 

@@ -1930,20 +1930,20 @@ export const compoundStatement: {
 
 export const withClause: {
 	readonly bare: typeof B.withClauseBare;
-	readonly paren: { strict: typeof F.buildWithClauseParen; coerce: typeof C.coerceToWithClauseParen };
+	readonly paren: typeof B.withClauseParen;
 } = Object.freeze({
 	bare: B.withClauseBare,
-	paren: bundle(F.buildWithClauseParen, C.coerceToWithClauseParen)
+	paren: B.withClauseParen
 });
 
 export const suite: {
-	readonly inline: { strict: typeof F.buildSuiteInline; coerce: typeof C.coerceToSuiteInline };
-	readonly block: { strict: typeof F.buildSuiteBlock; coerce: typeof C.coerceToSuiteBlock };
-	readonly empty: { strict: typeof F.buildSuiteEmpty; coerce: typeof C.coerceToSuiteEmpty };
+	readonly inline: typeof B.suiteInline;
+	readonly block: typeof B.suiteBlock;
+	readonly empty: typeof B.suiteEmpty;
 } = Object.freeze({
-	inline: bundle(F.buildSuiteInline, C.coerceToSuiteInline),
-	block: bundle(F.buildSuiteBlock, C.coerceToSuiteBlock),
-	empty: bundle(F.buildSuiteEmpty, C.coerceToSuiteEmpty, { key: 'suite.empty', max: 1 })
+	inline: B.suiteInline,
+	block: B.suiteBlock,
+	empty: B.suiteEmpty
 });
 
 export const parameter: {
@@ -1969,13 +1969,13 @@ export const parameter: {
 });
 
 export const assignment: {
-	readonly eq: { strict: typeof F.buildAssignmentEq; coerce: typeof C.coerceToAssignmentEq };
-	readonly type: { strict: typeof F.buildAssignmentType; coerce: typeof C.coerceToAssignmentType };
-	readonly typed: { strict: typeof F.buildAssignmentTyped; coerce: typeof C.coerceToAssignmentTyped };
+	readonly eq: typeof B.assignmentEq;
+	readonly type: typeof B.assignmentType;
+	readonly typed: typeof B.assignmentTyped;
 } = Object.freeze({
-	eq: bundle(F.buildAssignmentEq, C.coerceToAssignmentEq, { key: 'assignment.eq', max: 1 }),
-	type: bundle(F.buildAssignmentType, C.coerceToAssignmentType, { key: 'assignment.type', max: 1 }),
-	typed: bundle(F.buildAssignmentTyped, C.coerceToAssignmentTyped, { key: 'assignment.typed', max: 1 })
+	eq: B.assignmentEq,
+	type: B.assignmentType,
+	typed: B.assignmentTyped
 });
 
 export const escapeSequence: {
@@ -1999,16 +1999,16 @@ export const escapeSequence: {
 });
 
 export const float: {
-	readonly strict: typeof F.buildFloatPoint;
-	readonly coerce: typeof C.coerceToFloatPoint;
-	readonly point: { strict: typeof F.buildFloatPoint; coerce: typeof C.coerceToFloatPoint };
-	readonly leadingPoint: { strict: typeof F.buildFloatLeadingPoint; coerce: typeof C.coerceToFloatLeadingPoint };
-	readonly scientific: { strict: typeof F.buildFloatScientific; coerce: typeof C.coerceToFloatScientific };
+	readonly strict: typeof B.floatPoint.strict;
+	readonly coerce: typeof B.floatPoint.coerce;
+	readonly point: typeof B.floatPoint;
+	readonly leadingPoint: typeof B.floatLeadingPoint;
+	readonly scientific: typeof B.floatScientific;
 } = Object.freeze({
-	...bundle(F.buildFloatPoint, C.coerceToFloatPoint, { key: 'float', max: 1 }),
-	point: bundle(F.buildFloatPoint, C.coerceToFloatPoint, { key: 'float.point', max: 1 }),
-	leadingPoint: bundle(F.buildFloatLeadingPoint, C.coerceToFloatLeadingPoint, { key: 'float.leadingPoint', max: 1 }),
-	scientific: bundle(F.buildFloatScientific, C.coerceToFloatScientific, { key: 'float.scientific', max: 1 })
+	...bundle(B.floatPoint.strict, B.floatPoint.coerce, { key: 'float', max: 1 }),
+	point: B.floatPoint,
+	leadingPoint: B.floatLeadingPoint,
+	scientific: B.floatScientific
 });
 
 export const lineContinuation: {
@@ -2035,14 +2035,14 @@ export const integerDecimal: {
 
 export const integer: {
 	readonly strict: typeof F.buildIntegerDecimalPlain;
-	readonly hex: { strict: typeof F.buildIntegerHex; coerce: typeof C.coerceToIntegerHex };
-	readonly octal: { strict: typeof F.buildIntegerOctal; coerce: typeof C.coerceToIntegerOctal };
-	readonly binary: { strict: typeof F.buildIntegerBinary; coerce: typeof C.coerceToIntegerBinary };
+	readonly hex: typeof B.integerHex;
+	readonly octal: typeof B.integerOctal;
+	readonly binary: typeof B.integerBinary;
 	readonly decimal: typeof integerDecimal;
 } = Object.freeze({
 	...bundle(F.buildIntegerDecimalPlain, undefined, { key: 'integer', max: 1 }),
-	hex: bundle(F.buildIntegerHex, C.coerceToIntegerHex, { key: 'integer.hex', max: 2 }),
-	octal: bundle(F.buildIntegerOctal, C.coerceToIntegerOctal, { key: 'integer.octal', max: 2 }),
-	binary: bundle(F.buildIntegerBinary, C.coerceToIntegerBinary, { key: 'integer.binary', max: 2 }),
+	hex: B.integerHex,
+	octal: B.integerOctal,
+	binary: B.integerBinary,
 	decimal: integerDecimal
 });

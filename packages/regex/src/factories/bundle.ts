@@ -62,4 +62,15 @@ export const unicodePropertyValueExpression = bundle(
 	C.coerceToUnicodePropertyValueExpression,
 	{ key: 'unicodePropertyValueExpression', max: 1 }
 );
-export const termGroup = bundle(F.buildTermGroup, C.coerceToTermGroup, { key: 'termGroup', max: 1 });
+export const inlineFlagsGroupEnable = bundle(F.buildInlineFlagsGroupEnable, C.coerceToInlineFlagsGroupEnable, {
+	key: 'inlineFlagsGroupEnable',
+	max: 1
+});
+export const inlineFlagsGroupToggle = bundle(F.buildInlineFlagsGroupToggle, C.coerceToInlineFlagsGroupToggle, {
+	key: 'inlineFlagsGroupToggle',
+	max: 1
+});
+export const inlineFlagsGroupDisable = bundle(F.buildInlineFlagsGroupDisable, C.coerceToInlineFlagsGroupDisable, {
+	key: 'inlineFlagsGroupDisable',
+	max: 1
+});

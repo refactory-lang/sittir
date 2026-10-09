@@ -49,9 +49,13 @@ export const ir: {
 	readonly fieldDefinition: typeof F.fieldDefinition;
 	readonly negatedField: typeof F.negatedField;
 	readonly predicate: typeof F.predicate;
+	readonly listElementQuantifier: typeof F.listElementQuantifier;
 	readonly groupExpressionArm: typeof F.groupExpressionArm;
 	readonly namedNodeExpressionArm: typeof F.namedNodeExpressionArm;
-	readonly groupingGroup: typeof F.groupingGroup;
+	readonly namedNodePlain: typeof F.namedNodePlain;
+	readonly namedNodeSupertyped: typeof F.namedNodeSupertyped;
+	readonly namedNodeGroupChildren: typeof F.namedNodeGroupChildren;
+	readonly namedNodeGroupAnchoredLast: typeof F.namedNodeGroupAnchoredLast;
 	readonly namedNode: typeof F.namedNode;
 	readonly namedNodeGroup: typeof F.namedNodeGroup;
 	readonly anchor: typeof F.buildAnchor;
@@ -78,9 +82,13 @@ export const ir: {
 	fieldDefinition: F.fieldDefinition,
 	negatedField: F.negatedField,
 	predicate: F.predicate,
+	listElementQuantifier: F.listElementQuantifier,
 	groupExpressionArm: F.groupExpressionArm,
 	namedNodeExpressionArm: F.namedNodeExpressionArm,
-	groupingGroup: F.groupingGroup,
+	namedNodePlain: F.namedNodePlain,
+	namedNodeSupertyped: F.namedNodeSupertyped,
+	namedNodeGroupChildren: F.namedNodeGroupChildren,
+	namedNodeGroupAnchoredLast: F.namedNodeGroupAnchoredLast,
 	namedNode: F.namedNode,
 	namedNodeGroup: F.namedNodeGroup,
 

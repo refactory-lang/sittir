@@ -13,8 +13,8 @@ describe('a strict builder with render options given its target\'s argument', ()
 
 	it('refuses a lone string, which the loose entry takes', () => {
 		// @ts-expect-error text to a leaf is coercion: the loose entry takes it
-		expect(() => ts.build.exportStatementNamespaceExport.strict('ns')).toThrow(/a strict factory takes a built node, not a string/);
-		expect(ts.build.exportStatementNamespaceExport.strict(ts.build.identifier('ns')).$render()).toBe('export as namespace ns;');
-		expect(ts.build.exportStatementNamespaceExport('ns').$render()).toBe('export as namespace ns;');
+		expect(() => ts.build.exportStatement.namespaceExport.strict('ns')).toThrow(/a strict factory takes a built node, not a string/);
+		expect(ts.build.exportStatement.namespaceExport.strict(ts.build.identifier('ns')).$render()).toBe('export as namespace ns;');
+		expect(ts.build.exportStatement.namespaceExport.coerce('ns').$render()).toBe('export as namespace ns;');
 	});
 });

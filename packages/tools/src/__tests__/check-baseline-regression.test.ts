@@ -437,7 +437,21 @@ describe('checkRegression', () => {
 		expect(verdict.details.path).toBe('grammars.python.validators.from.pass');
 	});
 
-	it('from pass drop covered by a supertype rise and a hoisted fall together — passes', () => {
+	it('a supertype rise and a hoisted fall of one each explain one departure — passes (a seated kind that became a supertype moves both counts)', () => {
+		const base = baseline();
+		base.grammars.rust!.supertypeKindCount = 27;
+		base.grammars.rust!.hoistedKindCount = 80;
+		base.grammars.rust!.validators.from = vr(245, 245);
+		const head = clone(base);
+		head.grammars.rust!.supertypeKindCount = 28;
+		head.grammars.rust!.hoistedKindCount = 79;
+		head.grammars.rust!.validators.from = vr(244, 244);
+		head.totals.pass -= 1;
+		head.totals.total -= 1;
+		expect(checkRegression(base, head).ok).toBe(true);
+	});
+
+	it('a supertype rise and a hoisted fall of one each do not explain two departures — fail (counts alone cannot tell one kind from two)', () => {
 		const base = baseline();
 		base.grammars.rust!.supertypeKindCount = 27;
 		base.grammars.rust!.hoistedKindCount = 80;
@@ -448,7 +462,9 @@ describe('checkRegression', () => {
 		head.grammars.rust!.validators.from = vr(243, 243);
 		head.totals.pass -= 2;
 		head.totals.total -= 2;
-		expect(checkRegression(base, head).ok).toBe(true);
+		const verdict = checkRegression(base, head);
+		expectFail(verdict);
+		expect(verdict.details.path).toBe('grammars.rust.validators.from.pass');
 	});
 
 	it('hoisted fall alongside a new fail — fail (a kind leaving does not excuse an actual regression)', () => {

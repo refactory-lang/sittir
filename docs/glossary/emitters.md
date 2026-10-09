@@ -6796,7 +6796,7 @@ The sorted, distinct alias kind ids of `envelopes`: the members of `_ALIAS_ENVEL
 
 ### `packages/codegen/src/emitters/wrap.ts::rebuildWrapperKindIds`
 
-What a rebuild constructs around an existing node, as sorted, distinct kind ids: the kinds enrich mints, which the model stamps `hoisted` (rust `_attributed_parameter` among them), and the alias envelopes (`aliasEnvelopeIds`). Such a wrapper, rebuilt, has no source of its own, so where source adjacency is judged the node it holds stands for it (`evidenceOf`). The set is derived only from those two existing stamps, with no filter by model class, and emitted once per grammar as `TriviaFacts.rebuildWrappers` (`emitTriviaFacts`). Its breadth is safe on two independent checks: `evidenceOf` looks through an instance only when it holds exactly one present node, so a list or a leaf never is, and the reader takes `previous` from the outermost node spanning exactly the child's bytes, so a rebuilt wrapper that adds tokens around a read child never reads as adjacent.
+What a rebuild constructs around an existing node, as sorted, distinct kind ids: the kinds enrich mints that seat on their parent (`seated`; rust `_attributed_parameter` among them), and the alias envelopes (`aliasEnvelopeIds`). Such a wrapper, rebuilt, has no source of its own, so where source adjacency is judged the node it holds stands for it (`evidenceOf`). The set is derived only from those two existing stamps, with no filter by model class, and emitted once per grammar as `TriviaFacts.rebuildWrappers` (`emitTriviaFacts`). Its breadth is safe on two independent checks: `evidenceOf` looks through an instance only when it holds exactly one present node, so a list or a leaf never is, and the reader takes `previous` from the outermost node spanning exactly the child's bytes, so a rebuilt wrapper that adds tokens around a read child never reads as adjacent.
 
 ### `packages/codegen/src/emitters/wrap.ts::listKindIds`
 
@@ -10281,8 +10281,9 @@ Set on a kind with one builder and no strict/coerce pair (`hasOneSurface`). The 
 ```
 
 Every node carries its rule's `annotations` (`hoisted`, `variant`,
-`variantOf`, …) as written; the tools read `annotations.hoisted` and there
-is no separate flag. A hoisted compound also serializes `name`.
+`variantOf`, …) as written, and `seated` when it seats on its parent; the
+tools read `seated`, never `annotations.hoisted`. A seated compound also
+serializes `name`.
 
 ### `packages/codegen/src/emitters/node-model.ts::serializeSlot`
 
@@ -14026,7 +14027,7 @@ group is not a seat: the parent's own builder already takes it whole.
 
 #### declared visible wrappers
 
-A group is flattenable when its kind carries `annotations.hoisted` (a hidden group) or the reference to it carries `annotations.flattened` (a visible wrapper the grammar declares, `isHoistedAt`). A declared seat is never inferred: only `flatten()` in `grammar.sittir.ts` puts the annotation on a reference.
+A group is flattenable when its kind is `seated` (a hidden group) or the reference to it carries `annotations.flattened` (a visible wrapper the grammar declares, `isHoistedAt`). A declared seat is never inferred: only `flatten()` in `grammar.sittir.ts` puts the annotation on a reference.
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::elementsSeatOf`
 

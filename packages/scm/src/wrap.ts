@@ -10,6 +10,7 @@ import {
 	hydrateSlotsWith,
 	inTreeEngine,
 	currentHandle,
+	elementsWith,
 	rebuilt,
 	renderText,
 	queryOf,
@@ -21,6 +22,7 @@ import type { ParsedRoot } from '@sittir/common/engine';
 import type { AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';
 import { TSKindId } from './types.js';
 import type * as T from './types-internal.js';
+import * as RAW from './factories/raw.js';
 
 export type ParsedOfData<D> = D extends { readonly $type: infer Id }
 	? Id extends keyof T.ParsedByKindId
@@ -264,9 +266,14 @@ export function wrapGrouping(data: T.Grouping, tree: TreeHandle): T.Grouping.Par
 			return hydrateSlots<T.ListElement>(this, '_elements', tree);
 		},
 		$with: {
-			groupingGroups: (...v: NonEmptyArray<NonNullable<T.Grouping['_grouping_group']>[number]>) =>
+			groupingGroups: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
-					wrapGrouping({ ...$edited(data), _grouping_group: restItems('groupingGroups', v) }, tree)
+					elementsWith(
+						args,
+						{ slot: 'groupingGroups', keys: ['groupExpression', 'anchor'], make: RAW.buildGroupingGroup },
+						(...v: NonEmptyArray<NonNullable<T.Grouping['_grouping_group']>[number]>) =>
+							wrapGrouping({ ...$edited(data), _grouping_group: restItems('groupingGroups', v) }, tree)
+					)
 				),
 			elements: (...v: NonNullable<T.Grouping['_elements']>[number][]) =>
 				rebuilt(node, handle, () => wrapGrouping({ ...$edited(data), _elements: restItems('elements', v) }, tree))

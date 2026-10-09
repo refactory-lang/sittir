@@ -463,8 +463,9 @@ const DEPARTURE_EXPLAINED_DROP: Partial<Record<ValidatorName, (departedKinds: nu
 
 /**
  * How many kinds left the grammar's direct-render set between two
- * baselines: kinds that became supertypes (`supertypeKindCount` rose)
- * plus hoisted kinds that left (`hoistedKindCount` fell). A base file
+ * baselines, at least: the larger of the rise in `supertypeKindCount`
+ * and the fall in `hoistedKindCount`. A seated kind that becomes a
+ * supertype moves both counts, so they are not summed. A base file
  * committed before `supertypeKindCount` existed reads as 0 — only the
  * rise matters. A fall cannot be read that way, so a base without
  * `hoistedKindCount` contributes nothing.
@@ -475,7 +476,7 @@ function departedKindCount(baseGrammar: GrammarEntry, headGrammar: GrammarEntry)
 		baseGrammar.hoistedKindCount === undefined || headGrammar.hoistedKindCount === undefined
 			? 0
 			: baseGrammar.hoistedKindCount - headGrammar.hoistedKindCount;
-	return Math.max(supertypeRise, 0) + Math.max(hoistedFall, 0);
+	return Math.max(supertypeRise, hoistedFall, 0);
 }
 
 /**

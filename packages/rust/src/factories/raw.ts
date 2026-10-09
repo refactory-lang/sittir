@@ -2771,6 +2771,7 @@ export function buildUseWildcard(...args: unknown[]) {
 }
 function _buildUseWildcard(value?: Admit<T.UseWildcardGroup>): T.UseWildcard.Bound {
 	const _use_wildcard_group = rejectBareText(value, 'UseWildcard.useWildcardGroup', 'a built UseWildcardGroup');
+	const readGroup_useWildcardGroup = () => _use_wildcard_group;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.UseWildcard as const,
@@ -2778,9 +2779,28 @@ function _buildUseWildcard(value?: Admit<T.UseWildcardGroup>): T.UseWildcard.Bou
 		$named: true as const,
 		_use_wildcard_group,
 		$with: {
-			useWildcardGroup: (value?: Admit<T.UseWildcardGroup>) => rebuilt(node, handle, () => _buildUseWildcard(value))
+			useWildcardGroup: (value?: Admit<T.UseWildcardGroup>) => rebuilt(node, handle, () => _buildUseWildcard(value)),
+			path: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'useWildcardGroup',
+							stored: '_use_wildcard_group',
+							kind: TSKindId.UseWildcardGroup as const,
+							make: buildUseWildcardGroup,
+							keys: [{ name: 'path', rest: false }]
+						},
+						'path',
+						args,
+						(value?: Admit<T.UseWildcardGroup>) => _buildUseWildcard(value),
+						() => readGroup_useWildcardGroup.call(node)
+					)
+				)
 		},
 		useWildcardGroup: () => _use_wildcard_group,
+		path:
+			_use_wildcard_group === undefined ? undefined : () => groupField(readGroup_useWildcardGroup.call(node), 'path'),
+		[STORED_SLOT_READERS]: { useWildcardGroup: readGroup_useWildcardGroup },
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),

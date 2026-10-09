@@ -21,6 +21,10 @@ export const fieldDefinition = bundle(F.buildFieldDefinition, C.coerceToFieldDef
 });
 export const negatedField = bundle(F.buildNegatedField, C.coerceToNegatedField, { key: 'negatedField', max: 1 });
 export const predicate = bundle(F.buildPredicate, C.coerceToPredicate, { key: 'predicate', max: 1 });
+export const listElementQuantifier = bundle(F.buildListElementQuantifier, C.coerceToListElementQuantifier, {
+	key: 'listElementQuantifier',
+	max: 1
+});
 export const groupExpressionArm = bundle(F.buildGroupExpressionArm, C.coerceToGroupExpressionArm, {
 	key: 'groupExpressionArm',
 	max: 1
@@ -29,4 +33,20 @@ export const namedNodeExpressionArm = bundle(F.buildNamedNodeExpressionArm, C.co
 	key: 'namedNodeExpressionArm',
 	max: 1
 });
-export const groupingGroup = bundle(F.buildGroupingGroup, C.coerceToGroupingGroup, { key: 'groupingGroup', max: 1 });
+export const namedNodePlain = bundle(F.buildNamedNodePlain, C.coerceToNamedNodePlain, {
+	key: 'namedNodePlain',
+	max: 1
+});
+export const namedNodeSupertyped = bundle(F.buildNamedNodeSupertyped, C.coerceToNamedNodeSupertyped, {
+	key: 'namedNodeSupertyped',
+	max: 1
+});
+export const namedNodeGroupChildren = bundle(F.buildNamedNodeGroupChildren, C.coerceToNamedNodeGroupChildren, {
+	key: 'namedNodeGroupChildren',
+	max: 1
+});
+export const namedNodeGroupAnchoredLast = bundle(
+	F.buildNamedNodeGroupAnchoredLast,
+	C.coerceToNamedNodeGroupAnchoredLast,
+	{ key: 'namedNodeGroupAnchoredLast', max: 1 }
+);

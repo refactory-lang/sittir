@@ -9,12 +9,11 @@ describe('hoistedCensus', () => {
 			nodes: [
 				{
 					kind: 'parent',
-					annotations: {},
 					slots: [{ values: [{ seat: { kind: '_parent_arm' } }] }]
 				},
-				{ kind: '_parent_arm', annotations: { hoisted: true }, slots: [] },
-				{ kind: '_orphan', annotations: { hoisted: true }, slots: [] },
-				{ kind: '_items', modelType: 'list', annotations: { hoisted: true } }
+				{ kind: '_parent_arm', seated: true, slots: [] },
+				{ kind: '_orphan', seated: true, slots: [] },
+				{ kind: '_items', modelType: 'list', seated: true }
 			]
 		};
 		expect(hoistedCensus(model)).toEqual({
@@ -28,7 +27,7 @@ describe('hoistedCensus', () => {
 		const model: CensusModel = {
 			nodes: [
 				{ kind: 'parent', modelType: 'supertype' },
-				{ kind: 'parent_eq', annotations: { hoisted: true }, slots: [] }
+				{ kind: 'parent_eq', seated: true, slots: [] }
 			],
 			variantRoutes: { parent_eq: 'parent.eq' }
 		};
@@ -36,7 +35,7 @@ describe('hoistedCensus', () => {
 	});
 
 	it('accepts a keyed node map', () => {
-		const model: CensusModel = { nodes: { a: { kind: 'a', annotations: { hoisted: true } }, b: { kind: 'b' } } };
+		const model: CensusModel = { nodes: { a: { kind: 'a', seated: true }, b: { kind: 'b' } } };
 		expect(hoistedCensus(model).hoisted).toEqual(['a']);
 	});
 
@@ -51,8 +50,8 @@ describe('hoistedKindCount', () => {
 	it('counts every hoisted kind, lists included', () => {
 		const model: CensusModel = {
 			nodes: [
-				{ kind: 'a', annotations: { hoisted: true } },
-				{ kind: 'a_items', modelType: 'list', annotations: { hoisted: true } },
+				{ kind: 'a', seated: true },
+				{ kind: 'a_items', modelType: 'list', seated: true },
 				{ kind: 'b' }
 			]
 		};

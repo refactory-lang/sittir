@@ -1990,6 +1990,8 @@ export function wrapUseAsClause(data: T.UseAsClause, tree: TreeHandle): T.UseAsC
 
 export function wrapUseWildcard(data: T.UseWildcard, tree: TreeHandle): T.UseWildcard.Parsed {
 	const handle = currentHandle();
+	const readGroup_useWildcardGroup = () =>
+		hydrateSlot<T.UseWildcardGroup | undefined>(node, '_use_wildcard_group', tree);
 	const node = {
 		...data,
 		$type: TSKindId.UseWildcard as const,
@@ -1998,8 +2000,30 @@ export function wrapUseWildcard(data: T.UseWildcard, tree: TreeHandle): T.UseWil
 		},
 		$with: {
 			useWildcardGroup: (v: NonNullable<T.UseWildcard['_use_wildcard_group']>) =>
-				rebuilt(node, handle, () => wrapUseWildcard({ ...$edited(data), _use_wildcard_group: v }, tree))
+				rebuilt(node, handle, () => wrapUseWildcard({ ...$edited(data), _use_wildcard_group: v }, tree)),
+			path: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'useWildcardGroup',
+							stored: '_use_wildcard_group',
+							kind: TSKindId.UseWildcardGroup as const,
+							make: RAW.buildUseWildcardGroup,
+							keys: [{ name: 'path', rest: false }]
+						},
+						'path',
+						args,
+						(v: NonNullable<T.UseWildcard['_use_wildcard_group']>) =>
+							wrapUseWildcard({ ...$edited(data), _use_wildcard_group: v }, tree),
+						() => readGroup_useWildcardGroup.call(node)
+					)
+				)
 		},
+		path:
+			data._use_wildcard_group === undefined
+				? undefined
+				: () => groupField(readGroup_useWildcardGroup.call(node), 'path'),
+		[STORED_SLOT_READERS]: { useWildcardGroup: readGroup_useWildcardGroup },
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),

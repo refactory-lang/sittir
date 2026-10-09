@@ -1182,7 +1182,10 @@
             "fieldSource": "override"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "count_quantifier_group": {
       "type": "SEQ",

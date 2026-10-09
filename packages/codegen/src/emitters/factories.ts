@@ -1299,7 +1299,7 @@ export function forwardedConstructorTarget(
 	const targetNode = nodeMap.nodes.get(target);
 	const seatedGroup =
 		targetNode instanceof AbstractAssembledCompound &&
-		targetNode.annotations?.hoisted === true &&
+		targetNode.seated &&
 		classifyFactoryShape(targetNode, nodeMap) === 'config';
 	return seatedGroup ? null : target;
 }

@@ -31,7 +31,7 @@ export function listKindIds(nodeMap: NodeMap): number[] {
 
 export function rebuildWrapperKindIds(nodeMap: NodeMap): number[] {
 	const hoisted = [...nodeMap.nodes.values()].flatMap((node) =>
-		node instanceof AbstractAssembledCompound && node.annotations?.hoisted === true && node.kindId !== undefined ? [node.kindId] : []
+		node instanceof AbstractAssembledCompound && node.seated && node.kindId !== undefined ? [node.kindId] : []
 	);
 	return [...new Set([...aliasEnvelopeIds(aliasEnvelopesOf(nodeMap)), ...hoisted])].sort((a, b) => a - b);
 }

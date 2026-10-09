@@ -291,7 +291,7 @@ describe('Assemble — classifyNode', () => {
 				}
 			]
 		};
-		expect(classifyNode('_args', flatten({ ...rule, annotations: { hoisted: true } }), { hoisted: true })).toBe('list');
+		expect(classifyNode('_args', flatten({ ...rule, annotations: { hoisted: true } }), { seated: true })).toBe('list');
 	});
 
 	it('classifies a group-wrapped separated list of mixed field/bare choice arms as separatedList', () => {
@@ -319,7 +319,7 @@ describe('Assemble — classifyNode', () => {
 				}
 			]
 		};
-		expect(classifyNode('_enum_body_elements', flatten(rule), { hoisted: true })).toBe('list');
+		expect(classifyNode('_enum_body_elements', flatten(rule), { seated: true })).toBe('list');
 	});
 
 	it('does not assemble a hidden rule whose whole body is an alias over a leaf — the parser issues only its display', () => {
@@ -1116,5 +1116,62 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 		expect(node).toBeInstanceOf(AssembledSupertype);
 		expect(node.subtypeNames).toEqual(['_inner', 'identifier', '_simple_statements']);
 		expect(node.subtypes.map((s) => s.storageKindId)).toEqual([10, 99, 77]);
+	});
+	describe('seating', () => {
+		const groupRules = () =>
+			makeNormalized({
+				_sig: {
+					type: SEQ,
+					members: [{ type: FIELD, name: 'params', content: { type: SYMBOL, name: 'parameters' } }],
+					annotations: { hoisted: true }
+				},
+				parameters: { type: PATTERN, value: '[a-z]+' }
+			});
+		const groupEntry = (supertype: boolean): GeneratedIdEntry => ({
+			id: 3,
+			parser: {
+				cSymbol: 'sym__sig',
+				parserName: '_sig',
+				anon: false,
+				aux: false,
+				alias: false,
+				hidden: true,
+				...(supertype ? { supertype: true as const } : {})
+			}
+		});
+
+		it('seats a hoisted group the parser emits a node for', () => {
+			const nodeMap = assemble(AssembleCtx.from(groupRules(), makeIdTables({ _sig: groupEntry(false) })));
+			expect(nodeMap.nodes.get('_sig')?.seated).toBe(true);
+		});
+
+		it('gives a seated group no surface of its own: it is built through its parent', () => {
+			const nodeMap = assemble(AssembleCtx.from(groupRules(), makeIdTables({ _sig: groupEntry(false) })));
+			expect(nodeMap.nodes.get('_sig')?.ownSurface).toBe(false);
+		});
+
+		it('seats a hoisted arm of a parser supertype and gives it its own surface too', () => {
+			const normalized = makeNormalized(
+				{
+					_arms: { type: CHOICE, members: [{ type: SYMBOL, name: 'arm_eq' }, { type: SYMBOL, name: 'parameters' }] },
+					arm_eq: {
+						type: SEQ,
+						members: [{ type: STRING, value: '=' }, { type: FIELD, name: 'params', content: { type: SYMBOL, name: 'parameters' } }],
+						annotations: { hoisted: true }
+					},
+					parameters: { type: PATTERN, value: '[a-z]+' }
+				},
+				{ supertypes: new Set(['_arms']) }
+			);
+			const nodeMap = assemble(AssembleCtx.from(normalized, makeIdTables({})));
+			expect(nodeMap.nodes.get('arm_eq')?.seated).toBe(true);
+			expect(nodeMap.nodes.get('arm_eq')?.ownSurface).toBe(true);
+			expect(nodeMap.nodes.get('arm_eq')?.irKey).toBe('armEq');
+		});
+
+		it('does not seat a hoisted group the parser declares a supertype: it has no node', () => {
+			const nodeMap = assemble(AssembleCtx.from(groupRules(), makeIdTables({ _sig: groupEntry(true) })));
+			expect(nodeMap.nodes.get('_sig')?.seated).toBe(false);
+		});
 	});
 });

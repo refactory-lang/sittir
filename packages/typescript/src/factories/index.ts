@@ -289,6 +289,9 @@ export const importSpecifiers: Hoisted<typeof O.importSpecifiers> = hoistAs<type
 export const formalParametersElements: Hoisted<typeof O.formalParametersElements> = hoistAs<
 	typeof O.formalParametersElements
 >(O.formalParametersElements);
+export const enumBodyElementName: Hoisted<typeof O.enumBodyElementName> = hoistAs<typeof O.enumBodyElementName>(
+	O.enumBodyElementName
+);
 export const enumBodyElements: Hoisted<typeof O.enumBodyElements> = hoistAs<typeof O.enumBodyElements>(
 	O.enumBodyElements
 );
@@ -317,6 +320,81 @@ export const exportStatementTypeExport: Hoisted<typeof O.exportStatementTypeExpo
 export const exportStatementEqualsExport: Hoisted<typeof O.exportStatementEqualsExport> = hoistAs<
 	typeof O.exportStatementEqualsExport
 >(O.exportStatementEqualsExport);
+export const numberHex: Hoisted<typeof O.numberHex> = hoistAs<typeof O.numberHex>(O.numberHex);
+export const numberFloatPoint: Hoisted<typeof O.numberFloatPoint> = hoistAs<typeof O.numberFloatPoint>(
+	O.numberFloatPoint
+);
+export const numberFloatLeadingPoint: Hoisted<typeof O.numberFloatLeadingPoint> = hoistAs<
+	typeof O.numberFloatLeadingPoint
+>(O.numberFloatLeadingPoint);
+export const numberFloatScientific: Hoisted<typeof O.numberFloatScientific> = hoistAs<typeof O.numberFloatScientific>(
+	O.numberFloatScientific
+);
+export const numberBinary: Hoisted<typeof O.numberBinary> = hoistAs<typeof O.numberBinary>(O.numberBinary);
+export const numberOctal: Hoisted<typeof O.numberOctal> = hoistAs<typeof O.numberOctal>(O.numberOctal);
+export const classBodyMemberMethod: Hoisted<typeof O.classBodyMemberMethod> = hoistAs<typeof O.classBodyMemberMethod>(
+	O.classBodyMemberMethod
+);
+export const classBodyMemberMethodSig: Hoisted<typeof O.classBodyMemberMethodSig> = hoistAs<
+	typeof O.classBodyMemberMethodSig
+>(O.classBodyMemberMethodSig);
+export const classBodyMemberDeclaration: Hoisted<typeof O.classBodyMemberDeclaration> = hoistAs<
+	typeof O.classBodyMemberDeclaration
+>(O.classBodyMemberDeclaration);
+export const indexSignatureColon: Hoisted<typeof O.indexSignatureColon> = hoistAs<typeof O.indexSignatureColon>(
+	O.indexSignatureColon
+);
+export const indexSignatureMappedTypeClause: Hoisted<typeof O.indexSignatureMappedTypeClause> = hoistAs<
+	typeof O.indexSignatureMappedTypeClause
+>(O.indexSignatureMappedTypeClause);
+export const importSpecifierName: Hoisted<typeof O.importSpecifierName> = hoistAs<typeof O.importSpecifierName>(
+	O.importSpecifierName
+);
+export const importSpecifierAs: Hoisted<typeof O.importSpecifierAs> = hoistAs<typeof O.importSpecifierAs>(
+	O.importSpecifierAs
+);
+export const parenthesizedExpressionTyped: Hoisted<typeof O.parenthesizedExpressionTyped> = hoistAs<
+	typeof O.parenthesizedExpressionTyped
+>(O.parenthesizedExpressionTyped);
+export const parenthesizedExpressionSequence: Hoisted<typeof O.parenthesizedExpressionSequence> = hoistAs<
+	typeof O.parenthesizedExpressionSequence
+>(O.parenthesizedExpressionSequence);
+export const callExpressionCall: Hoisted<typeof O.callExpressionCall> = hoistAs<typeof O.callExpressionCall>(
+	O.callExpressionCall
+);
+export const callExpressionTemplateCall: Hoisted<typeof O.callExpressionTemplateCall> = hoistAs<
+	typeof O.callExpressionTemplateCall
+>(O.callExpressionTemplateCall);
+export const callExpressionMember: Hoisted<typeof O.callExpressionMember> = hoistAs<typeof O.callExpressionMember>(
+	O.callExpressionMember
+);
+export const stringDouble: Hoisted<typeof O.stringDouble> = hoistAs<typeof O.stringDouble>(O.stringDouble);
+export const stringSingle: Hoisted<typeof O.stringSingle> = hoistAs<typeof O.stringSingle>(O.stringSingle);
+export const updateExpressionPostfix: Hoisted<typeof O.updateExpressionPostfix> = hoistAs<
+	typeof O.updateExpressionPostfix
+>(O.updateExpressionPostfix);
+export const updateExpressionPrefix: Hoisted<typeof O.updateExpressionPrefix> = hoistAs<
+	typeof O.updateExpressionPrefix
+>(O.updateExpressionPrefix);
+export const exportStatementDefaultFrom: Hoisted<typeof O.exportStatementDefaultFrom> = hoistAs<
+	typeof O.exportStatementDefaultFrom
+>(O.exportStatementDefaultFrom);
+export const exportStatementDefaultDeclaration: Hoisted<typeof O.exportStatementDefaultDeclaration> = hoistAs<
+	typeof O.exportStatementDefaultDeclaration
+>(O.exportStatementDefaultDeclaration);
+export const variableDeclaratorPlain: Hoisted<typeof O.variableDeclaratorPlain> = hoistAs<
+	typeof O.variableDeclaratorPlain
+>(O.variableDeclaratorPlain);
+export const variableDeclaratorDefinite: Hoisted<typeof O.variableDeclaratorDefinite> = hoistAs<
+	typeof O.variableDeclaratorDefinite
+>(O.variableDeclaratorDefinite);
+export const forHeaderLhs: Hoisted<typeof O.forHeaderLhs> = hoistAs<typeof O.forHeaderLhs>(O.forHeaderLhs);
+export const forHeaderVarKind: Hoisted<typeof O.forHeaderVarKind> = hoistAs<typeof O.forHeaderVarKind>(
+	O.forHeaderVarKind
+);
+export const forHeaderLetConstKind: Hoisted<typeof O.forHeaderLetConstKind> = hoistAs<typeof O.forHeaderLetConstKind>(
+	O.forHeaderLetConstKind
+);
 export const declaration: Hoisted<typeof O.declaration> = hoistAs<typeof O.declaration>(O.declaration);
 export const importSpecifier: Hoisted<typeof O.importSpecifier> = hoistAs<typeof O.importSpecifier>(O.importSpecifier);
 export const variableDeclarator: Hoisted<typeof O.variableDeclarator> = hoistAs<typeof O.variableDeclarator>(

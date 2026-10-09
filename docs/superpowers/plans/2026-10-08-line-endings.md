@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans (or superpowers:subagent-driven-development when the user chooses it) to implement this plan task by task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** A render spells every line break with one line-ending preference, `render: { newline: '\n' | '\r\n' | '\r' }`. The `newline` whitespace member owns that preference, and `blankline` and `double_blankline` are repeated references to it, so no break is spelled anywhere else.
+**Goal:** A render spells every line break with one line-ending preference, `render: { layout: { newline: '\n' | '\r\n' | '\r' } }`. The `newline` whitespace member owns that preference, and `blankline` and `double_blankline` are repeated references to it, so no break is spelled anywhere else.
 
 **Architecture:** The model declares the line-ending arms once, on `_newline` in the whitespace vocabulary. `_blankline` is `seq(_newline, _newline)` and `_double_blankline` is `seq(_newline, _newline, _newline)`, references that keep `_newline`'s preference. Everything downstream of the model stays in one internal spelling: the node map, the generated `spacing_text` and the spacing writer all see each member's canonical text, where a break is `'\n'`. Where source whitespace enters the writer, its breaks are normalized to that spelling. A `LineEndings<W>` `fmt::Write` adapter at the end of every root render then writes each logical break (`\r\n`, `\r` or `\n`, including one split across two text pieces) as the preferred ending. The layout table (the width setting) will flatten into the same adapter later, so neither the writer nor the table knows about line endings.
 
@@ -12,7 +12,8 @@
 
 ## Rulings (user, 2026-10-08)
 
-1. The option is `render: { newline }`, text-valued like `indent`, one of `'\n' | '\r\n' | '\r'`, typed from `_newline`'s arms. It is accepted per engine and per call. Default `'\n'`.
+1. The option is `render: { layout: { newline } }`, text-valued like `indent`, one of `'\n' | '\r\n' | '\r'`, typed from `_newline`'s arms. It is accepted per engine and per call. Default `'\n'`.
+   - The `layout` group (ruled 2026-10-09) holds every whole-render layout setting: `indent` and `newline` now, and the width setting's `width` and `breaking` when they land. `indent` moves from `render.indent` to `render.layout.indent` in Task 4, with no alias at the old key.
 2. Every line break in the output takes the preference: the writer's breaks, and the breaks inside source slices, comments and literals. A render has one line ending. This is safe for rust, typescript and python, because none of them lets a CR or CRLF inside a literal carry meaning:
    - rust normalizes CRLF to LF before lexing and refuses a bare CR in any string literal, raw ones included;
    - a JavaScript string literal cannot hold an unescaped line terminator (only a line continuation, which adds nothing to the value), and template literals normalize CR and CRLF to LF in both their cooked and raw values;
@@ -259,7 +260,7 @@ impl<W: fmt::Write + ?Sized> fmt::Write for LineEndings<'_, W> {
 
 ---
 
-### Task 4: The `newline` option
+### Task 4: The `layout` group and its `newline` option
 
 **Files:**
 - Modify: `rust/crates/sittir-core/src/options.rs`:
@@ -274,32 +275,37 @@ impl<W: fmt::Write + ?Sized> fmt::Write for LineEndings<'_, W> {
 
 **Interfaces:**
 - Consumes: `NEWLINE_ARMS` (Task 1), `apply_render_format(…, newline)` (Task 3).
-- Produces: `render: { newline?: Newline }`, per engine and per call. Generated `Newline` per grammar.
+- Produces: `render: { layout?: { indent?: IndentChar; newline?: Newline } }`, per engine and per call. Generated `Newline` per grammar. `render.indent` no longer exists.
 
-**Behaviour:** The `"newline"` key is read at the top level, beside `"indent"`, only when `newline_arms` is non-empty. `resolve` refuses a value outside the arms, naming them: `newline "\t" is not one of ['\n', '\r\n', '\r']`. The base table's `newline` is `"\n"`, the preferred arm of `_newline`'s choice, taken from the model's preference rather than written down a second time. There are no per-site keys (ruling 3).
+**Behaviour:** `Options::read` reads a `"layout"` object, and `"indent"` and `"newline"` inside it; neither is read at the top level any more. Moving `indent` changes no rendered byte: its tests and every `render: { indent }` in the repository (tests, examples, docs) move to `render: { layout: { indent } }` in this task. `"newline"` is read only when `newline_arms` is non-empty. `resolve` refuses a value outside the arms, naming them: `newline "\t" is not one of ['\n', '\r\n', '\r']`. The base table's `newline` is `"\n"`, the preferred arm of `_newline`'s choice, taken from the model's preference rather than written down a second time. There are no per-site keys (ruling 3).
 
 ```ts
 export type NewlineOption<Newline extends string> = [Newline] extends [never]
 	? unknown
 	: { readonly newline?: Newline };
+// The layout group: IndentOption and NewlineOption, nested under one key.
+export type LayoutOption<I extends string, IndentChar extends string, Newline extends string> = {
+	readonly layout?: IndentOption<I, IndentChar> & NewlineOption<Newline>;
+};
 ```
 
 - [ ] **Step 1: Failing tests,** modelled on `indent-option.test.ts`:
-  - `createEngine(rust, { render: { newline: '\r\n' } })` renders a built `fn f() { a; }` as `'fn f() {\r\n    a;\r\n}'`;
-  - per call, `rs.render(fn(), { newline: '\r' })` gives `'fn f() {\r    a;\r}'`;
+  - `createEngine(rust, { render: { layout: { newline: '\r\n' } } })` renders a built `fn f() { a; }` as `'fn f() {\r\n    a;\r\n}'`;
+  - per call, `rs.render(fn(), { layout: { newline: '\r' } })` gives `'fn f() {\r    a;\r}'`;
+  - `indent-option.test.ts` passes with its options under `layout`, and `render: { indent }` at the top level is a type error;
   - the default stays `'\n'`;
   - a value outside the arms is a type error and a runtime refusal naming the arms.
 
-  Type test: `newline: '\n\n'` is a `@ts-expect-error`.
+  Type tests: `layout: { newline: '\n\n' }` and a top-level `indent` are each a `@ts-expect-error`.
 
   Run: `pnpm exec vitest run packages/rust/tests/newline-option.test.ts`. Expected: FAIL.
 - [ ] **Step 2: Implement,** then regenerate all grammars.
 - [ ] **Step 3: Gates.**
-  - The generated diff is only the new `newline_arms` row, the `Newline` type and the engine options type. Name every other moved file, and stop if there is one.
+  - The generated diff is only the new `newline_arms` row, the `Newline` type and the engine options type (now nesting `indent` under `layout`). Name every other moved file, and stop if there is one.
   - `validate:native` rows identical.
   - Full vitest, type-check, lint, `cargo test --workspace --no-default-features`.
 - [ ] **Step 4: Glossary** entries, plus the render-options spec's option list (an implemented-surface note, not a design change).
-- [ ] **Step 5: Commit** `feat(options): a render's line ending is the newline option`.
+- [ ] **Step 5: Commit** `feat(options): a layout group holds indent and the line ending`.
 
 ---
 
@@ -312,7 +318,7 @@ export type NewlineOption<Newline extends string> = [Newline] extends [never]
 
 ```ts
 const engine = await createEngine(rust);
-const crlfEngine = await createEngine(rust, { render: { newline: '\r\n' } });
+const crlfEngine = await createEngine(rust, { render: { layout: { newline: '\r\n' } } });
 // corpus(): [name, text] for each file the Task 0 spike listed, read with node:fs.
 for (const [name, lf] of corpus()) {
 	const crlf = lf.replace(/\r?\n/g, '\r\n');

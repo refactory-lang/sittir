@@ -15,10 +15,10 @@
 
 These go into the grammar package's types module, beside `ParsedByKindId` and `BoundByKindId`, so a low-level type names its portable node type where it is defined.
 
-- **`Ctx extends GrammarContext`,** the language's context: per namespace, the union of the interfaces of the kinds the grammar claims. Every portable node type and member type is instantiated over it.
+- **`Ctx extends GrammarContext<Ctx>`,** the language's context: per namespace, the union of the interfaces of the kinds the grammar claims. Every portable node type and member type is instantiated over it.
 
   ```ts
-  export interface Ctx extends GrammarContext {
+  export interface Ctx extends GrammarContext<Ctx> {
   	readonly identifier: V.Identifier<Ctx> | V.Identifier.Crate<Ctx> | … | 'bool' | 'gen' | 'union' | …;
   	…
   	readonly slots: {
@@ -29,10 +29,10 @@ These go into the grammar package's types module, beside `ParsedByKindId` and `B
   }
   ```
 
-  - **A role admits the grammar's keyword text.** A vocabulary member that names one role beside keyword text is typed as the role (`G['identifier']`), and the grammar's role entry admits the keywords its grammar aliases there.
-  - **`slots`, the context slot table,** is keyed by kind path, then member: `G['slots']['<kind path>']['<member>']`. A vocabulary member is typed through it unless it collapses to one role, to vocabulary refs, or to a scalar. `SlotTable` declares every entry, typed `unknown`.
+  - **A role admits the grammar's keyword text.** A vocabulary member that names one role beside keyword text is typed as the role (`G['identifier']`), and the grammar's role entry admits the keywords its grammar aliases there. The namespace map types each role by kinds, so how it admits that text is open (bindings spec §11).
+  - **`slots`, the context slot table,** is keyed by kind path, then member: `G['slots']['<kind path>']['<member>']`. A vocabulary member is typed through it unless it collapses to one role, to vocabulary refs, or to a scalar. The namespace map, `GrammarContext<G>`, declares every entry (bindings spec §3.4).
   - **The grammar fills each entry** from its own routes: roles and refs, a fixed literal or enum value as its const string, a pattern-matched leaf as `string`. An entry the grammar does not route is `never`.
-  - **`BaseContext`, the permissive closure, fills each entry** with roles and refs where its arms are kinds, and `string` where they are text. The vocabulary itself names no concrete literal.
+  - **The namespace map fills each entry permissively over `G`:** roles and refs where its arms are kinds, and `string` where they are text. A consumer generic over the context reads the entry through that constraint, and each grammar's fill must fit within it. The vocabulary itself names no concrete literal.
   - **Nothing is dropped.** The only member left undeclared is one no grammar routes.
 
 - **`ViewForm<I>`,** the one mapped type that turns a property-shaped interface into its portable node form: each member becomes a closure that is always present, its return type carrying the optionality (`body(): … | undefined`). Member types resolve through `VocabViews`, recursing only through arrays, as `Resolve` goes through `ParsedByKindId` by `$type`.

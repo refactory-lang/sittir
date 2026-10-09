@@ -13551,7 +13551,10 @@
             "fieldSource": "override"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "tuple_type_members": {
       "type": "SEQ",
@@ -14058,7 +14061,10 @@
             "variantOf": "export_statement_default"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "export_statement_namespace_export": {
       "type": "SEQ",
@@ -14097,7 +14103,10 @@
             "fieldSource": "override"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "export_statement_type_export": {
       "type": "SEQ",
@@ -14144,7 +14153,10 @@
             "fieldSource": "override"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "export_statement_equals_export": {
       "type": "SEQ",
@@ -14179,7 +14191,10 @@
             "fieldSource": "override"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "comment_line": {
       "type": "TOKEN",
@@ -16857,7 +16872,10 @@
                 "fieldSource": "override"
               }
             }
-          ]
+          ],
+          "annotations": {
+            "hoisted": true
+          }
         },
         {
           "type": "FIELD",

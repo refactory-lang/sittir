@@ -408,6 +408,10 @@ export const functionType = bundle(F.buildFunctionType, C.coerceToFunctionType, 
 export const exportSpecifiers = bundle(F.buildExportSpecifiers, C.coerceToExportSpecifiers);
 export const importSpecifiers = bundle(F.buildImportSpecifiers, C.coerceToImportSpecifiers);
 export const formalParametersElements = bundle(F.buildFormalParametersElements, C.coerceToFormalParametersElements);
+export const enumBodyElementName = bundle(F.buildEnumBodyElementName, C.coerceToEnumBodyElementName, {
+	key: 'enumBodyElementName',
+	max: 1
+});
 export const enumBodyElements = bundle(F.buildEnumBodyElements, C.coerceToEnumBodyElements);
 export const types = bundle(F.buildTypes, C.coerceToTypes);
 export const typeParametersElements = bundle(F.buildTypeParametersElements, C.coerceToTypeParametersElements);
@@ -432,3 +436,108 @@ export const exportStatementEqualsExport = bundle(
 	C.coerceToExportStatementEqualsExport,
 	{ key: 'exportStatementEqualsExport', max: 2 }
 );
+export const numberHex = bundle(F.buildNumberHex, C.coerceToNumberHex, { key: 'numberHex', max: 2 });
+export const numberFloatPoint = bundle(F.buildNumberFloatPoint, C.coerceToNumberFloatPoint, {
+	key: 'numberFloatPoint',
+	max: 2
+});
+export const numberFloatLeadingPoint = bundle(F.buildNumberFloatLeadingPoint, C.coerceToNumberFloatLeadingPoint, {
+	key: 'numberFloatLeadingPoint',
+	max: 2
+});
+export const numberFloatScientific = bundle(F.buildNumberFloatScientific, C.coerceToNumberFloatScientific, {
+	key: 'numberFloatScientific',
+	max: 2
+});
+export const numberBinary = bundle(F.buildNumberBinary, C.coerceToNumberBinary, { key: 'numberBinary', max: 2 });
+export const numberOctal = bundle(F.buildNumberOctal, C.coerceToNumberOctal, { key: 'numberOctal', max: 2 });
+export const classBodyMemberMethod = bundle(F.buildClassBodyMemberMethod, C.coerceToClassBodyMemberMethod, {
+	key: 'classBodyMemberMethod',
+	max: 2
+});
+export const classBodyMemberMethodSig = bundle(F.buildClassBodyMemberMethodSig, C.coerceToClassBodyMemberMethodSig, {
+	key: 'classBodyMemberMethodSig',
+	max: 1
+});
+export const classBodyMemberDeclaration = bundle(
+	F.buildClassBodyMemberDeclaration,
+	C.coerceToClassBodyMemberDeclaration,
+	{ key: 'classBodyMemberDeclaration', max: 2 }
+);
+export const indexSignatureColon = bundle(F.buildIndexSignatureColon, C.coerceToIndexSignatureColon, {
+	key: 'indexSignatureColon',
+	max: 1
+});
+export const indexSignatureMappedTypeClause = bundle(
+	F.buildIndexSignatureMappedTypeClause,
+	C.coerceToIndexSignatureMappedTypeClause,
+	{ key: 'indexSignatureMappedTypeClause', max: 1 }
+);
+export const importSpecifierName = bundle(F.buildImportSpecifierName, C.coerceToImportSpecifierName, {
+	key: 'importSpecifierName',
+	max: 1
+});
+export const importSpecifierAs = bundle(F.buildImportSpecifierAs, C.coerceToImportSpecifierAs, {
+	key: 'importSpecifierAs',
+	max: 1
+});
+export const parenthesizedExpressionTyped = bundle(
+	F.buildParenthesizedExpressionTyped,
+	C.coerceToParenthesizedExpressionTyped,
+	{ key: 'parenthesizedExpressionTyped', max: 1 }
+);
+export const parenthesizedExpressionSequence = bundle(
+	F.buildParenthesizedExpressionSequence,
+	C.coerceToParenthesizedExpressionSequence
+);
+export const callExpressionCall = bundle(F.buildCallExpressionCall, C.coerceToCallExpressionCall, {
+	key: 'callExpressionCall',
+	max: 1
+});
+export const callExpressionTemplateCall = bundle(
+	F.buildCallExpressionTemplateCall,
+	C.coerceToCallExpressionTemplateCall,
+	{ key: 'callExpressionTemplateCall', max: 1 }
+);
+export const callExpressionMember = bundle(F.buildCallExpressionMember, C.coerceToCallExpressionMember, {
+	key: 'callExpressionMember',
+	max: 1
+});
+export const stringDouble = bundle(F.buildStringDouble, C.coerceToStringDouble);
+export const stringSingle = bundle(F.buildStringSingle, C.coerceToStringSingle);
+export const updateExpressionPostfix = bundle(F.buildUpdateExpressionPostfix, C.coerceToUpdateExpressionPostfix, {
+	key: 'updateExpressionPostfix',
+	max: 1
+});
+export const updateExpressionPrefix = bundle(F.buildUpdateExpressionPrefix, C.coerceToUpdateExpressionPrefix, {
+	key: 'updateExpressionPrefix',
+	max: 1
+});
+export const exportStatementDefaultFrom = bundle(
+	F.buildExportStatementDefaultFrom,
+	C.coerceToExportStatementDefaultFrom,
+	{ key: 'exportStatementDefaultFrom', max: 2 }
+);
+export const exportStatementDefaultDeclaration = bundle(
+	F.buildExportStatementDefaultDeclaration,
+	C.coerceToExportStatementDefaultDeclaration,
+	{ key: 'exportStatementDefaultDeclaration', max: 1 }
+);
+export const variableDeclaratorPlain = bundle(F.buildVariableDeclaratorPlain, C.coerceToVariableDeclaratorPlain, {
+	key: 'variableDeclaratorPlain',
+	max: 1
+});
+export const variableDeclaratorDefinite = bundle(
+	F.buildVariableDeclaratorDefinite,
+	C.coerceToVariableDeclaratorDefinite,
+	{ key: 'variableDeclaratorDefinite', max: 1 }
+);
+export const forHeaderLhs = bundle(F.buildForHeaderLhs, C.coerceToForHeaderLhs, { key: 'forHeaderLhs', max: 1 });
+export const forHeaderVarKind = bundle(F.buildForHeaderVarKind, C.coerceToForHeaderVarKind, {
+	key: 'forHeaderVarKind',
+	max: 1
+});
+export const forHeaderLetConstKind = bundle(F.buildForHeaderLetConstKind, C.coerceToForHeaderLetConstKind, {
+	key: 'forHeaderLetConstKind',
+	max: 2
+});

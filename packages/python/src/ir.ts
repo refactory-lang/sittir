@@ -309,10 +309,24 @@ export const ir: {
 	readonly printChevronArguments: typeof F.printChevronArguments;
 	readonly printStatementChevron: typeof F.printStatementChevron;
 	readonly printStatementPlain: typeof F.printStatementPlain;
-	readonly parenthesizedImportList: typeof F.parenthesizedImportList;
 	readonly comprehensionClauses: typeof F.comprehensionClauses;
+	readonly integerHex: typeof F.integerHex;
+	readonly integerOctal: typeof F.integerOctal;
+	readonly integerBinary: typeof F.integerBinary;
+	readonly floatPoint: typeof F.floatPoint;
+	readonly floatLeadingPoint: typeof F.floatLeadingPoint;
+	readonly floatScientific: typeof F.floatScientific;
+	readonly assignmentEq: typeof F.assignmentEq;
+	readonly assignmentType: typeof F.assignmentType;
+	readonly assignmentTyped: typeof F.assignmentTyped;
 	readonly expressionStatementTuple: typeof F.expressionStatementTuple;
 	readonly withClauseBare: typeof F.withClauseBare;
+	readonly withClauseParen: typeof F.withClauseParen;
+	readonly matchBlockBlock: typeof F.matchBlockBlock;
+	readonly matchBlockEmpty: typeof F.matchBlockEmpty;
+	readonly suiteInline: typeof F.suiteInline;
+	readonly suiteBlock: typeof F.suiteBlock;
+	readonly suiteEmpty: typeof F.suiteEmpty;
 	readonly withClause: typeof F.withClause;
 	readonly suite: typeof F.suite;
 	readonly assignment: typeof F.assignment;
@@ -335,6 +349,13 @@ export const ir: {
 	readonly wildcardPattern: typeof F.buildWildcardPattern;
 	readonly newline: typeof F.buildNewline;
 	readonly comment: typeof F.buildComment;
+	readonly escapeSequenceUnicodeFixed: typeof F.buildEscapeSequenceUnicodeFixed;
+	readonly escapeSequenceUnicodeWide: typeof F.buildEscapeSequenceUnicodeWide;
+	readonly escapeSequenceHex: typeof F.buildEscapeSequenceHex;
+	readonly escapeSequenceOctal: typeof F.buildEscapeSequenceOctal;
+	readonly escapeSequenceLineBreak: typeof F.buildEscapeSequenceLineBreak;
+	readonly escapeSequenceSimple: typeof F.buildEscapeSequenceSimple;
+	readonly escapeSequenceNamed: typeof F.buildEscapeSequenceNamed;
 	readonly importPrefix: typeof F.buildImportPrefix;
 	readonly typeConversion: typeof F.buildTypeConversion;
 	readonly identifier: typeof F.buildIdentifier;
@@ -481,10 +502,24 @@ export const ir: {
 	printChevronArguments: F.printChevronArguments,
 	printStatementChevron: F.printStatementChevron,
 	printStatementPlain: F.printStatementPlain,
-	parenthesizedImportList: F.parenthesizedImportList,
 	comprehensionClauses: F.comprehensionClauses,
+	integerHex: F.integerHex,
+	integerOctal: F.integerOctal,
+	integerBinary: F.integerBinary,
+	floatPoint: F.floatPoint,
+	floatLeadingPoint: F.floatLeadingPoint,
+	floatScientific: F.floatScientific,
+	assignmentEq: F.assignmentEq,
+	assignmentType: F.assignmentType,
+	assignmentTyped: F.assignmentTyped,
 	expressionStatementTuple: F.expressionStatementTuple,
 	withClauseBare: F.withClauseBare,
+	withClauseParen: F.withClauseParen,
+	matchBlockBlock: F.matchBlockBlock,
+	matchBlockEmpty: F.matchBlockEmpty,
+	suiteInline: F.suiteInline,
+	suiteBlock: F.suiteBlock,
+	suiteEmpty: F.suiteEmpty,
 	withClause: F.withClause,
 	suite: F.suite,
 	assignment: F.assignment,
@@ -511,6 +546,13 @@ export const ir: {
 
 	// Leaves whose one slot is their own text
 	comment: F.buildComment,
+	escapeSequenceUnicodeFixed: F.buildEscapeSequenceUnicodeFixed,
+	escapeSequenceUnicodeWide: F.buildEscapeSequenceUnicodeWide,
+	escapeSequenceHex: F.buildEscapeSequenceHex,
+	escapeSequenceOctal: F.buildEscapeSequenceOctal,
+	escapeSequenceLineBreak: F.buildEscapeSequenceLineBreak,
+	escapeSequenceSimple: F.buildEscapeSequenceSimple,
+	escapeSequenceNamed: F.buildEscapeSequenceNamed,
 
 	// Leaf node factories
 	importPrefix: F.buildImportPrefix,

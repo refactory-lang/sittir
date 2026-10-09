@@ -10298,7 +10298,10 @@
           "type": "STRING",
           "value": "::"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_kw_default": {
       "type": "STRING",
@@ -11498,7 +11501,10 @@
                 "name": "_expression"
               }
             }
-          ]
+          ],
+          "annotations": {
+            "hoisted": true
+          }
         },
         {
           "type": "STRING",

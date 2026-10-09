@@ -457,7 +457,7 @@ interface ParsedNodeModel {
 		kind: string;
 		irKey?: string;
 		modelType?: string;
-		annotations?: { readonly hoisted?: true };
+		seated?: true;
 		slots?: ReadonlyArray<{
 			name: string;
 			propertyName: string;
@@ -562,7 +562,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		if (node.irKey !== undefined) irKeys[node.kind] = node.irKey;
 		if (node.modelType !== undefined) modelTypes[node.kind] = node.modelType;
 		if (node.leafPattern !== undefined) leafPatterns[node.kind] = regexOfLiteral(node.leafPattern);
-		if (node.annotations?.hoisted === true) hoistedKinds.add(node.kind);
+		if (node.seated === true) hoistedKinds.add(node.kind);
 		if (node.oneSurface === true) oneSurfaceKinds.add(node.kind);
 		for (const seat of node.elementSeats ?? []) seatAt(node.kind, '*', seat);
 		if (node.slots !== undefined) {
@@ -1059,8 +1059,8 @@ function positionalOf(config: Record<string, unknown>): readonly unknown[] | und
 	return (config as Record<symbol, unknown>)[POSITIONAL] as readonly unknown[] | undefined;
 }
 
-function isFlattened(config: Record<string, unknown>): boolean {
-	return (config as Record<symbol, unknown>)[FLATTENED] === true;
+function flattenedOf(config: Record<string, unknown>): true | readonly unknown[] | undefined {
+	return (config as Record<symbol, true | readonly unknown[] | undefined>)[FLATTENED];
 }
 
 function readValueKind(value: unknown, opts: NodeToConfigOpts): string | undefined {
@@ -1196,7 +1196,9 @@ function projectSeatedSlot(
 	const key = slotConfigKey(slot);
 	switch (seat.shape) {
 		case 'flatten': {
-			const group = nodeToConfig(hydrateForConfig(value as ReadNodeLike, opts), childOpts(opts));
+			const groupNode = hydrateForConfig(value as ReadNodeLike, opts);
+			const inner = childOpts(opts);
+			const group = nodeToConfig(groupNode, inner);
 			const nested = armRouteOf(group);
 			if (nested !== undefined) {
 				throw new Error(
@@ -1204,7 +1206,9 @@ function projectSeatedSlot(
 				);
 			}
 			Object.assign(out, group);
-			Object.defineProperty(out, FLATTENED, { value: true, enumerable: false });
+			const groupShape = opts.factoryShapes?.[seat.kind] ?? 'config';
+			const flattened = groupShape === 'config' ? true : factoryArgs(seat.kind, groupShape, group, groupNode, inner);
+			Object.defineProperty(out, FLATTENED, { value: flattened, enumerable: false });
 			return;
 		}
 		case 'elements':
@@ -1268,7 +1272,9 @@ function factoryArgs(
 	if (positional !== undefined) return positional;
 	if (shape === 'direct' || shape === 'forwarded') {
 		const { base, registered } = splitRegisteredSlots(kind, config, opts);
-		const value = isFlattened(base) ? base : directFactoryValue(kind, base, opts.factorySlots, opts.factoryFields);
+		const flattened = flattenedOf(config);
+		const value =
+			flattened === undefined ? directFactoryValue(kind, base, opts.factorySlots, opts.factoryFields) : flattened === true ? base : flattened[0];
 		return registered === undefined ? [value] : [value, registered];
 	}
 	const { base, registered } = splitRegisteredSlots(kind, config, opts);

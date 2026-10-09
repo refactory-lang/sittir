@@ -381,6 +381,7 @@ export const ir: {
 	readonly exportSpecifiers: typeof F.exportSpecifiers;
 	readonly importSpecifiers: typeof F.importSpecifiers;
 	readonly formalParametersElements: typeof F.formalParametersElements;
+	readonly enumBodyElementName: typeof F.enumBodyElementName;
 	readonly enumBodyElements: typeof F.enumBodyElements;
 	readonly types: typeof F.types;
 	readonly typeParametersElements: typeof F.typeParametersElements;
@@ -391,6 +392,35 @@ export const ir: {
 	readonly exportStatementNamespaceExport: typeof F.exportStatementNamespaceExport;
 	readonly exportStatementTypeExport: typeof F.exportStatementTypeExport;
 	readonly exportStatementEqualsExport: typeof F.exportStatementEqualsExport;
+	readonly numberHex: typeof F.numberHex;
+	readonly numberFloatPoint: typeof F.numberFloatPoint;
+	readonly numberFloatLeadingPoint: typeof F.numberFloatLeadingPoint;
+	readonly numberFloatScientific: typeof F.numberFloatScientific;
+	readonly numberBinary: typeof F.numberBinary;
+	readonly numberOctal: typeof F.numberOctal;
+	readonly classBodyMemberMethod: typeof F.classBodyMemberMethod;
+	readonly classBodyMemberMethodSig: typeof F.classBodyMemberMethodSig;
+	readonly classBodyMemberDeclaration: typeof F.classBodyMemberDeclaration;
+	readonly indexSignatureColon: typeof F.indexSignatureColon;
+	readonly indexSignatureMappedTypeClause: typeof F.indexSignatureMappedTypeClause;
+	readonly importSpecifierName: typeof F.importSpecifierName;
+	readonly importSpecifierAs: typeof F.importSpecifierAs;
+	readonly parenthesizedExpressionTyped: typeof F.parenthesizedExpressionTyped;
+	readonly parenthesizedExpressionSequence: typeof F.parenthesizedExpressionSequence;
+	readonly callExpressionCall: typeof F.callExpressionCall;
+	readonly callExpressionTemplateCall: typeof F.callExpressionTemplateCall;
+	readonly callExpressionMember: typeof F.callExpressionMember;
+	readonly stringDouble: typeof F.stringDouble;
+	readonly stringSingle: typeof F.stringSingle;
+	readonly updateExpressionPostfix: typeof F.updateExpressionPostfix;
+	readonly updateExpressionPrefix: typeof F.updateExpressionPrefix;
+	readonly exportStatementDefaultFrom: typeof F.exportStatementDefaultFrom;
+	readonly exportStatementDefaultDeclaration: typeof F.exportStatementDefaultDeclaration;
+	readonly variableDeclaratorPlain: typeof F.variableDeclaratorPlain;
+	readonly variableDeclaratorDefinite: typeof F.variableDeclaratorDefinite;
+	readonly forHeaderLhs: typeof F.forHeaderLhs;
+	readonly forHeaderVarKind: typeof F.forHeaderVarKind;
+	readonly forHeaderLetConstKind: typeof F.forHeaderLetConstKind;
 	readonly importSpecifier: typeof F.importSpecifier;
 	readonly variableDeclarator: typeof F.variableDeclarator;
 	readonly forHeader: typeof F.forHeader;
@@ -425,6 +455,12 @@ export const ir: {
 	readonly hashBangLine: typeof F.buildHashBangLine;
 	readonly escapeSequence: typeof F.buildEscapeSequence;
 	readonly privatePropertyIdentifier: typeof F.buildPrivatePropertyIdentifier;
+	readonly commentLine: typeof F.buildCommentLine;
+	readonly commentBlock: typeof F.buildCommentBlock;
+	readonly numberBigintHex: typeof F.buildNumberBigintHex;
+	readonly numberBigintBinary: typeof F.buildNumberBigintBinary;
+	readonly numberBigintOctal: typeof F.buildNumberBigintOctal;
+	readonly numberBigintDecimal: typeof F.buildNumberBigintDecimal;
 	readonly unescapedDoubleStringFragment: typeof F.buildUnescapedDoubleStringFragment;
 	readonly unescapedSingleStringFragment: typeof F.buildUnescapedSingleStringFragment;
 	readonly regexPattern: typeof F.buildRegexPattern;
@@ -599,6 +635,7 @@ export const ir: {
 	exportSpecifiers: F.exportSpecifiers,
 	importSpecifiers: F.importSpecifiers,
 	formalParametersElements: F.formalParametersElements,
+	enumBodyElementName: F.enumBodyElementName,
 	enumBodyElements: F.enumBodyElements,
 	types: F.types,
 	typeParametersElements: F.typeParametersElements,
@@ -609,6 +646,35 @@ export const ir: {
 	exportStatementNamespaceExport: F.exportStatementNamespaceExport,
 	exportStatementTypeExport: F.exportStatementTypeExport,
 	exportStatementEqualsExport: F.exportStatementEqualsExport,
+	numberHex: F.numberHex,
+	numberFloatPoint: F.numberFloatPoint,
+	numberFloatLeadingPoint: F.numberFloatLeadingPoint,
+	numberFloatScientific: F.numberFloatScientific,
+	numberBinary: F.numberBinary,
+	numberOctal: F.numberOctal,
+	classBodyMemberMethod: F.classBodyMemberMethod,
+	classBodyMemberMethodSig: F.classBodyMemberMethodSig,
+	classBodyMemberDeclaration: F.classBodyMemberDeclaration,
+	indexSignatureColon: F.indexSignatureColon,
+	indexSignatureMappedTypeClause: F.indexSignatureMappedTypeClause,
+	importSpecifierName: F.importSpecifierName,
+	importSpecifierAs: F.importSpecifierAs,
+	parenthesizedExpressionTyped: F.parenthesizedExpressionTyped,
+	parenthesizedExpressionSequence: F.parenthesizedExpressionSequence,
+	callExpressionCall: F.callExpressionCall,
+	callExpressionTemplateCall: F.callExpressionTemplateCall,
+	callExpressionMember: F.callExpressionMember,
+	stringDouble: F.stringDouble,
+	stringSingle: F.stringSingle,
+	updateExpressionPostfix: F.updateExpressionPostfix,
+	updateExpressionPrefix: F.updateExpressionPrefix,
+	exportStatementDefaultFrom: F.exportStatementDefaultFrom,
+	exportStatementDefaultDeclaration: F.exportStatementDefaultDeclaration,
+	variableDeclaratorPlain: F.variableDeclaratorPlain,
+	variableDeclaratorDefinite: F.variableDeclaratorDefinite,
+	forHeaderLhs: F.forHeaderLhs,
+	forHeaderVarKind: F.forHeaderVarKind,
+	forHeaderLetConstKind: F.forHeaderLetConstKind,
 	importSpecifier: F.importSpecifier,
 	variableDeclarator: F.variableDeclarator,
 	forHeader: F.forHeader,
@@ -647,6 +713,12 @@ export const ir: {
 	hashBangLine: F.buildHashBangLine,
 	escapeSequence: F.buildEscapeSequence,
 	privatePropertyIdentifier: F.buildPrivatePropertyIdentifier,
+	commentLine: F.buildCommentLine,
+	commentBlock: F.buildCommentBlock,
+	numberBigintHex: F.buildNumberBigintHex,
+	numberBigintBinary: F.buildNumberBigintBinary,
+	numberBigintOctal: F.buildNumberBigintOctal,
+	numberBigintDecimal: F.buildNumberBigintDecimal,
 
 	// Leaf node factories
 	unescapedDoubleStringFragment: F.buildUnescapedDoubleStringFragment,

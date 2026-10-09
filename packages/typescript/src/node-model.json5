@@ -6201,6 +6201,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "parameter",
@@ -7430,6 +7431,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "left",
@@ -7606,6 +7608,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "function",
@@ -7693,6 +7696,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "function",
@@ -7773,6 +7777,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "function",
@@ -8019,6 +8024,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "parameter",
@@ -8255,6 +8261,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "member",
@@ -8353,6 +8360,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "decorator",
@@ -8438,6 +8446,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "method_signature",
@@ -8691,6 +8700,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "extends_clause",
@@ -8852,6 +8862,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "content",
@@ -8921,6 +8932,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "content",
@@ -10704,6 +10716,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "name",
@@ -10984,6 +10997,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -11437,6 +11451,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -11476,6 +11491,9 @@
       "typeName": "ExportStatementDefault",
       "irKey": "exportStatementDefault",
       "hidden": true,
+      "annotations": {
+        "hoisted": true
+      },
       "transparent": true,
       "subtypes": [
         "export_statement_default_declaration",
@@ -11492,6 +11510,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "decorator",
@@ -11564,6 +11583,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "content",
@@ -11711,6 +11731,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "value",
@@ -11854,6 +11875,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "content",
@@ -11966,6 +11988,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "export_clause",
@@ -12025,6 +12048,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "namespace_export",
@@ -12084,6 +12108,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "source",
@@ -12123,6 +12148,10 @@
       "factoryName": "exportStatementEqualsExport",
       "irKey": "exportStatementEqualsExport",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "seated": true,
       "slots": [
         {
           "name": "expression",
@@ -12171,6 +12200,7 @@
           ]
         }
       ],
+      "name": "export_statement_equals_export",
       "factoryShape": "direct",
       "factoryFields": [
         "expression"
@@ -12262,6 +12292,10 @@
       "factoryName": "exportStatementNamespaceExport",
       "irKey": "exportStatementNamespaceExport",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "seated": true,
       "slots": [
         {
           "name": "name",
@@ -12310,6 +12344,7 @@
           ]
         }
       ],
+      "name": "export_statement_namespace_export",
       "factoryShape": "forwarded",
       "forwardsTo": "identifier",
       "factoryFields": [
@@ -12326,6 +12361,10 @@
       "factoryName": "exportStatementTypeExport",
       "irKey": "exportStatementTypeExport",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "seated": true,
       "slots": [
         {
           "name": "export_clause",
@@ -12394,6 +12433,7 @@
           ]
         }
       ],
+      "name": "export_statement_type_export",
       "factoryShape": "config",
       "factoryFields": [
         "export_clause",
@@ -12890,6 +12930,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "kind",
@@ -13040,6 +13081,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "left",
@@ -13138,6 +13180,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "left",
@@ -13535,6 +13578,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -15064,6 +15108,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "identifier",
@@ -15135,6 +15180,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "content",
@@ -15266,6 +15312,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "import_kind",
@@ -15369,6 +15416,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "import_kind",
@@ -15438,6 +15486,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -15591,6 +15640,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "import_clause",
@@ -15673,6 +15723,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "sign",
@@ -15950,6 +16001,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "sign",
@@ -17022,6 +17074,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "operator",
@@ -17392,6 +17445,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "isParameterless": true,
       "stampExpression": "\"import.meta\" as const",
       "text": "import.meta",
@@ -17408,6 +17462,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "isParameterless": true,
       "stampExpression": "\"new.target\" as const",
       "text": "new.target",
@@ -18884,6 +18939,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "content",
@@ -18950,6 +19006,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "content",
@@ -19016,6 +19073,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "content",
@@ -19082,6 +19140,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "content",
@@ -19148,6 +19207,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "prefix",
@@ -19246,6 +19306,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "pattern": "\\d(_?\\d)*",
       "leafPattern": "/^(?:(?:\\d(_?\\d)*))$/u",
       "oneSurface": true,
@@ -19262,6 +19323,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "fraction",
@@ -19410,6 +19472,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "integer",
@@ -19584,6 +19647,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "integer",
@@ -19728,6 +19792,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "prefix",
@@ -19837,6 +19902,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "prefix",
@@ -21752,6 +21818,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "sequence_expression",
@@ -21794,6 +21861,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "expression",
@@ -25137,6 +25205,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "elements",
@@ -25193,6 +25262,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "elements",
@@ -26399,6 +26469,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -27049,6 +27120,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -27795,6 +27867,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -28097,6 +28170,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "argument",
@@ -28160,6 +28234,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "operator",
@@ -28317,6 +28392,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "name",
@@ -28376,6 +28452,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "name",
@@ -28740,6 +28817,7 @@
         "variantOf": "yield_expression",
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "expression",

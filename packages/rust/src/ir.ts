@@ -446,7 +446,58 @@ export const ir: {
 	readonly tuplePatternElements: typeof F.tuplePatternElements;
 	readonly patterns: typeof F.patterns;
 	readonly structPatternElements: typeof F.structPatternElements;
-	readonly useWildcardGroup: typeof F.useWildcardGroup;
+	readonly integerLiteralDecimal: typeof F.integerLiteralDecimal;
+	readonly integerLiteralHex: typeof F.integerLiteralHex;
+	readonly integerLiteralBinary: typeof F.integerLiteralBinary;
+	readonly integerLiteralOctal: typeof F.integerLiteralOctal;
+	readonly charLiteralPlain: typeof F.charLiteralPlain;
+	readonly charLiteralEscapedSimple: typeof F.charLiteralEscapedSimple;
+	readonly charLiteralEscapedUnicodeFixed: typeof F.charLiteralEscapedUnicodeFixed;
+	readonly charLiteralEscapedUnicodeBraced: typeof F.charLiteralEscapedUnicodeBraced;
+	readonly charLiteralEscapedHex: typeof F.charLiteralEscapedHex;
+	readonly arrayExpressionSemi: typeof F.arrayExpressionSemi;
+	readonly arrayExpressionList: typeof F.arrayExpressionList;
+	readonly closureExpressionBlock: typeof F.closureExpressionBlock;
+	readonly closureExpressionExpr: typeof F.closureExpressionExpr;
+	readonly referenceExpressionRawConst: typeof F.referenceExpressionRawConst;
+	readonly referenceExpressionRawMut: typeof F.referenceExpressionRawMut;
+	readonly referenceExpressionMut: typeof F.referenceExpressionMut;
+	readonly referenceExpressionBare: typeof F.referenceExpressionBare;
+	readonly implItemBody: typeof F.implItemBody;
+	readonly implItemSemi: typeof F.implItemSemi;
+	readonly modItemExternal: typeof F.modItemExternal;
+	readonly modItemInline: typeof F.modItemInline;
+	readonly orPatternBinary: typeof F.orPatternBinary;
+	readonly orPatternPrefix: typeof F.orPatternPrefix;
+	readonly pointerTypeConst: typeof F.pointerTypeConst;
+	readonly pointerTypeMut: typeof F.pointerTypeMut;
+	readonly rangeExpressionBinary: typeof F.rangeExpressionBinary;
+	readonly rangeExpressionPostfix: typeof F.rangeExpressionPostfix;
+	readonly rangeExpressionPrefix: typeof F.rangeExpressionPrefix;
+	readonly rangeExpressionBare: typeof F.rangeExpressionBare;
+	readonly foreignModItemSemi: typeof F.foreignModItemSemi;
+	readonly foreignModItemBody: typeof F.foreignModItemBody;
+	readonly matchArmWithComma: typeof F.matchArmWithComma;
+	readonly matchArmBlockEnding: typeof F.matchArmBlockEnding;
+	readonly tokenTreePatternParen: typeof F.tokenTreePatternParen;
+	readonly tokenTreePatternBracket: typeof F.tokenTreePatternBracket;
+	readonly tokenTreePatternBrace: typeof F.tokenTreePatternBrace;
+	readonly tokenTreeParen: typeof F.tokenTreeParen;
+	readonly tokenTreeBracket: typeof F.tokenTreeBracket;
+	readonly tokenTreeBrace: typeof F.tokenTreeBrace;
+	readonly delimTokenTreeParen: typeof F.delimTokenTreeParen;
+	readonly delimTokenTreeBracket: typeof F.delimTokenTreeBracket;
+	readonly delimTokenTreeBrace: typeof F.delimTokenTreeBrace;
+	readonly fieldPatternShorthand: typeof F.fieldPatternShorthand;
+	readonly fieldPatternNamed: typeof F.fieldPatternNamed;
+	readonly macroDefinitionParen: typeof F.macroDefinitionParen;
+	readonly macroDefinitionBracket: typeof F.macroDefinitionBracket;
+	readonly macroDefinitionBrace: typeof F.macroDefinitionBrace;
+	readonly rangePatternPrefix: typeof F.rangePatternPrefix;
+	readonly rangePatternWithLeft: typeof F.rangePatternWithLeft;
+	readonly structItemBrace: typeof F.structItemBrace;
+	readonly structItemTuple: typeof F.structItemTuple;
+	readonly structItemUnit: typeof F.structItemUnit;
 	readonly macroDefinition: typeof F.macroDefinition;
 	readonly tokenTreePattern: typeof F.tokenTreePattern;
 	readonly tokenTree: typeof F.tokenTree;
@@ -485,6 +536,10 @@ export const ir: {
 	readonly innerDocCommentMarker: typeof F.buildInnerDocCommentMarker;
 	readonly shebang: typeof F.buildShebang;
 	readonly metavariable: typeof F.buildMetavariable;
+	readonly escapeSequenceSimple: typeof F.buildEscapeSequenceSimple;
+	readonly escapeSequenceUnicodeFixed: typeof F.buildEscapeSequenceUnicodeFixed;
+	readonly escapeSequenceUnicodeBraced: typeof F.buildEscapeSequenceUnicodeBraced;
+	readonly escapeSequenceHex: typeof F.buildEscapeSequenceHex;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly tokenRepetitionPatternText: typeof F.buildTokenRepetitionPatternText;
 	readonly stringOpen: typeof F.buildStringOpen;
@@ -652,7 +707,58 @@ export const ir: {
 	tuplePatternElements: F.tuplePatternElements,
 	patterns: F.patterns,
 	structPatternElements: F.structPatternElements,
-	useWildcardGroup: F.useWildcardGroup,
+	integerLiteralDecimal: F.integerLiteralDecimal,
+	integerLiteralHex: F.integerLiteralHex,
+	integerLiteralBinary: F.integerLiteralBinary,
+	integerLiteralOctal: F.integerLiteralOctal,
+	charLiteralPlain: F.charLiteralPlain,
+	charLiteralEscapedSimple: F.charLiteralEscapedSimple,
+	charLiteralEscapedUnicodeFixed: F.charLiteralEscapedUnicodeFixed,
+	charLiteralEscapedUnicodeBraced: F.charLiteralEscapedUnicodeBraced,
+	charLiteralEscapedHex: F.charLiteralEscapedHex,
+	arrayExpressionSemi: F.arrayExpressionSemi,
+	arrayExpressionList: F.arrayExpressionList,
+	closureExpressionBlock: F.closureExpressionBlock,
+	closureExpressionExpr: F.closureExpressionExpr,
+	referenceExpressionRawConst: F.referenceExpressionRawConst,
+	referenceExpressionRawMut: F.referenceExpressionRawMut,
+	referenceExpressionMut: F.referenceExpressionMut,
+	referenceExpressionBare: F.referenceExpressionBare,
+	implItemBody: F.implItemBody,
+	implItemSemi: F.implItemSemi,
+	modItemExternal: F.modItemExternal,
+	modItemInline: F.modItemInline,
+	orPatternBinary: F.orPatternBinary,
+	orPatternPrefix: F.orPatternPrefix,
+	pointerTypeConst: F.pointerTypeConst,
+	pointerTypeMut: F.pointerTypeMut,
+	rangeExpressionBinary: F.rangeExpressionBinary,
+	rangeExpressionPostfix: F.rangeExpressionPostfix,
+	rangeExpressionPrefix: F.rangeExpressionPrefix,
+	rangeExpressionBare: F.rangeExpressionBare,
+	foreignModItemSemi: F.foreignModItemSemi,
+	foreignModItemBody: F.foreignModItemBody,
+	matchArmWithComma: F.matchArmWithComma,
+	matchArmBlockEnding: F.matchArmBlockEnding,
+	tokenTreePatternParen: F.tokenTreePatternParen,
+	tokenTreePatternBracket: F.tokenTreePatternBracket,
+	tokenTreePatternBrace: F.tokenTreePatternBrace,
+	tokenTreeParen: F.tokenTreeParen,
+	tokenTreeBracket: F.tokenTreeBracket,
+	tokenTreeBrace: F.tokenTreeBrace,
+	delimTokenTreeParen: F.delimTokenTreeParen,
+	delimTokenTreeBracket: F.delimTokenTreeBracket,
+	delimTokenTreeBrace: F.delimTokenTreeBrace,
+	fieldPatternShorthand: F.fieldPatternShorthand,
+	fieldPatternNamed: F.fieldPatternNamed,
+	macroDefinitionParen: F.macroDefinitionParen,
+	macroDefinitionBracket: F.macroDefinitionBracket,
+	macroDefinitionBrace: F.macroDefinitionBrace,
+	rangePatternPrefix: F.rangePatternPrefix,
+	rangePatternWithLeft: F.rangePatternWithLeft,
+	structItemBrace: F.structItemBrace,
+	structItemTuple: F.structItemTuple,
+	structItemUnit: F.structItemUnit,
 	macroDefinition: F.macroDefinition,
 	tokenTreePattern: F.tokenTreePattern,
 	tokenTree: F.tokenTree,
@@ -695,6 +801,10 @@ export const ir: {
 	// Leaves whose one slot is their own text
 	shebang: F.buildShebang,
 	metavariable: F.buildMetavariable,
+	escapeSequenceSimple: F.buildEscapeSequenceSimple,
+	escapeSequenceUnicodeFixed: F.buildEscapeSequenceUnicodeFixed,
+	escapeSequenceUnicodeBraced: F.buildEscapeSequenceUnicodeBraced,
+	escapeSequenceHex: F.buildEscapeSequenceHex,
 
 	// Leaf node factories
 	identifier: F.buildIdentifier,
