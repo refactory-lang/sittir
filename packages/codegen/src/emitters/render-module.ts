@@ -3252,7 +3252,11 @@ interface StructSlot {
 }
 
 function structSlotsOf(node: AssembledNode, slotModel: RenderSlotModel, nodeMap: NodeMap): StructSlot[] {
-	const out: StructSlot[] = [...slotModel.named, ...slotModel.unnamed].map((slot) => ({ slot, owner: node, forceOptional: false }));
+	const position = new Map(node.slots.map((slot, index) => [slot.storageName, index]));
+	const at = (slot: AssembledNonterminal): number => position.get(slot.storageName) ?? node.slots.length;
+	const out: StructSlot[] = [...slotModel.named, ...slotModel.unnamed]
+		.sort((a, b) => at(a) - at(b))
+		.map((slot) => ({ slot, owner: node, forceOptional: false }));
 	const emittedStorageNames = new Set(out.map(({ slot }) => slot.storageName));
 	for (const unnamedSlot of slotModel.unnamed) {
 		if (isMultiple(unnamedSlot)) continue;

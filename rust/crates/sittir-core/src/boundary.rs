@@ -72,10 +72,31 @@ pub unsafe fn object_with(
     env: ::napi::sys::napi_env,
     fields: &[(&::std::ffi::CStr, ::napi::sys::napi_value)],
 ) -> ::napi::Result<::napi::sys::napi_value> {
+    unsafe { object_from(env, fields.iter().copied()) }
+}
+
+/// A new object holding the fields of `fields` that are present, in their
+/// order, defined in one call: a struct's fields in declaration order, an
+/// absent optional one left out.
+///
+/// # Safety
+/// Every present value must be live in `env`.
+#[cfg(feature = "napi-bindings")]
+pub unsafe fn object_with_present(
+    env: ::napi::sys::napi_env,
+    fields: &[Option<(&::std::ffi::CStr, ::napi::sys::napi_value)>],
+) -> ::napi::Result<::napi::sys::napi_value> {
+    unsafe { object_from(env, fields.iter().flatten().copied()) }
+}
+
+#[cfg(feature = "napi-bindings")]
+unsafe fn object_from<'k>(
+    env: ::napi::sys::napi_env,
+    fields: impl Iterator<Item = (&'k ::std::ffi::CStr, ::napi::sys::napi_value)>,
+) -> ::napi::Result<::napi::sys::napi_value> {
     use ::napi::bindgen_prelude::sys::{napi_property_descriptor, PropertyAttributes};
     let descriptors: Vec<napi_property_descriptor> = fields
-        .iter()
-        .map(|&(key, value)| napi_property_descriptor {
+        .map(|(key, value)| napi_property_descriptor {
             utf8name: key.as_ptr(),
             name: ::std::ptr::null_mut(),
             method: None,

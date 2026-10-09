@@ -18680,12 +18680,12 @@ pub struct ForInStatementTransport {
     #[wire(key = "_await")]
     #[slot(field = field::AWAIT, presence = kind::AWAIT_KEYWORD)]
     pub await_: Option<bool>,
-    #[wire(key = "_body")]
-    #[slot(field = field::BODY)]
-    pub body: ::sittir_core::SlotValue<Box<StatementTransport>>,
     #[wire(key = "_for_header")]
     #[slot]
     pub for_header: ::sittir_core::SlotValue<ForHeaderTransport>,
+    #[wire(key = "_body")]
+    #[slot(field = field::BODY)]
+    pub body: ::sittir_core::SlotValue<Box<StatementTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for ForInStatementTransport {
@@ -18713,8 +18713,8 @@ impl ::sittir_core::prepare::Prepare for ForInStatementTransport {
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.await_.prepare(ctx)?;
-        self.body.prepare(ctx)?;
         self.for_header.prepare(ctx)?;
+        self.body.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -19409,12 +19409,12 @@ impl ::sittir_core::prepare::Prepare for SwitchDefaultTransport {
 pub struct CatchClauseTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_body")]
-    #[slot(field = field::BODY)]
-    pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
     #[wire(key = "_catch_clause_group")]
     #[slot]
     pub catch_clause_group: Option<::sittir_core::SlotValue<CatchClauseGroupTransport>>,
+    #[wire(key = "_body")]
+    #[slot(field = field::BODY)]
+    pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
 }
 
 impl ::sittir_core::view::KindOf for CatchClauseTransport {
@@ -19441,8 +19441,8 @@ impl ::sittir_core::prepare::Prepare for CatchClauseTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.body.prepare(ctx)?;
         self.catch_clause_group.prepare(ctx)?;
+        self.body.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -20359,12 +20359,12 @@ pub struct ArrowFunctionTransport {
     #[wire(key = "_async")]
     #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
     pub async_: Option<bool>,
-    #[wire(key = "_body")]
-    #[slot(field = field::BODY)]
-    pub body: ::sittir_core::SlotValue<Box<ArrowFunctionBodyTransportSlot>>,
     #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<ArrowFunctionContentTransportSlot>,
+    #[wire(key = "_body")]
+    #[slot(field = field::BODY)]
+    pub body: ::sittir_core::SlotValue<Box<ArrowFunctionBodyTransportSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ArrowFunctionTransport {
@@ -20392,8 +20392,8 @@ impl ::sittir_core::prepare::Prepare for ArrowFunctionTransport {
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.async_.prepare(ctx)?;
-        self.body.prepare(ctx)?;
         self.content.prepare(ctx)?;
+        self.body.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -23739,6 +23739,9 @@ pub struct RequiredParameterTransport {
     #[wire(key = "_decorator")]
     #[slot(field = field::DECORATOR)]
     pub decorator: Option<Vec<::sittir_core::SlotValue<DecoratorTransport>>>,
+    #[wire(key = "_accessibility_modifier")]
+    #[slot]
+    pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
     #[wire(key = "_override")]
     #[slot(field = field::OVERRIDE, presence = kind::OVERRIDE_MODIFIER)]
     pub override_: Option<bool>,
@@ -23754,9 +23757,6 @@ pub struct RequiredParameterTransport {
     #[wire(key = "_value")]
     #[slot(field = field::VALUE)]
     pub value: Option<::sittir_core::SlotValue<ExpressionTransport>>,
-    #[wire(key = "_accessibility_modifier")]
-    #[slot]
-    pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
     #[wire(key = "_decorator_separator_space")]
     pub decorator_separator_space: Option<u16>,
 }
@@ -23789,12 +23789,12 @@ impl ::sittir_core::prepare::Prepare for RequiredParameterTransport {
         self.decorator_separator_space.get_or_insert(ctx.options.spacing[options::SITE_REQUIRED_PARAMETER_DECORATOR_SEPARATOR_SPACE].arm);
         if let Some(seated_items) = self.decorator.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_REQUIRED_PARAMETER_DECORATOR, ctx); }
         self.decorator.prepare(ctx)?;
+        self.accessibility_modifier.prepare(ctx)?;
         self.override_.prepare(ctx)?;
         self.readonly.prepare(ctx)?;
         self.pattern.prepare(ctx)?;
         self.type_.prepare(ctx)?;
         self.value.prepare(ctx)?;
-        self.accessibility_modifier.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -23813,6 +23813,9 @@ pub struct OptionalParameterTransport {
     #[wire(key = "_decorator")]
     #[slot(field = field::DECORATOR)]
     pub decorator: Option<Vec<::sittir_core::SlotValue<DecoratorTransport>>>,
+    #[wire(key = "_accessibility_modifier")]
+    #[slot]
+    pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
     #[wire(key = "_override")]
     #[slot(field = field::OVERRIDE, presence = kind::OVERRIDE_MODIFIER)]
     pub override_: Option<bool>,
@@ -23828,9 +23831,6 @@ pub struct OptionalParameterTransport {
     #[wire(key = "_value")]
     #[slot(field = field::VALUE)]
     pub value: Option<::sittir_core::SlotValue<ExpressionTransport>>,
-    #[wire(key = "_accessibility_modifier")]
-    #[slot]
-    pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
     #[wire(key = "_decorator_separator_space")]
     pub decorator_separator_space: Option<u16>,
 }
@@ -23863,12 +23863,12 @@ impl ::sittir_core::prepare::Prepare for OptionalParameterTransport {
         self.decorator_separator_space.get_or_insert(ctx.options.spacing[options::SITE_OPTIONAL_PARAMETER_DECORATOR_SEPARATOR_SPACE].arm);
         if let Some(seated_items) = self.decorator.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_OPTIONAL_PARAMETER_DECORATOR, ctx); }
         self.decorator.prepare(ctx)?;
+        self.accessibility_modifier.prepare(ctx)?;
         self.override_.prepare(ctx)?;
         self.readonly.prepare(ctx)?;
         self.pattern.prepare(ctx)?;
         self.type_.prepare(ctx)?;
         self.value.prepare(ctx)?;
-        self.accessibility_modifier.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -24839,12 +24839,12 @@ pub struct TypeQueryMemberExpressionTransport {
     #[wire(key = "_object")]
     #[slot(field = field::OBJECT)]
     pub object: ::sittir_core::SlotValue<Box<TypeQueryMemberExpressionObjectTransportSlot>>,
-    #[wire(key = "_property")]
-    #[slot(field = field::PROPERTY)]
-    pub property: ::sittir_core::SlotValue<MemberExpressionPropertyTransportSlot>,
     #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<TypeQueryMemberExpressionContentTransportSlot>,
+    #[wire(key = "_property")]
+    #[slot(field = field::PROPERTY)]
+    pub property: ::sittir_core::SlotValue<MemberExpressionPropertyTransportSlot>,
 }
 
 impl ::sittir_core::view::KindOf for TypeQueryMemberExpressionTransport {
@@ -24872,8 +24872,8 @@ impl ::sittir_core::prepare::Prepare for TypeQueryMemberExpressionTransport {
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.object.prepare(ctx)?;
-        self.property.prepare(ctx)?;
         self.content.prepare(ctx)?;
+        self.property.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -25825,12 +25825,12 @@ impl ::sittir_core::prepare::Prepare for DefaultTypeTransport {
 pub struct ConstraintTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_type")]
-    #[slot(field = field::TYPE)]
-    pub type_: ::sittir_core::SlotValue<TypeTransport>,
     #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<ConstraintContentTransportSlot>,
+    #[wire(key = "_type")]
+    #[slot(field = field::TYPE)]
+    pub type_: ::sittir_core::SlotValue<TypeTransport>,
 }
 
 impl ::sittir_core::view::KindOf for ConstraintTransport {
@@ -25861,8 +25861,8 @@ impl ::sittir_core::prepare::Prepare for ConstraintTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.type_.prepare(ctx)?;
         self.content.prepare(ctx)?;
+        self.type_.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -27795,12 +27795,12 @@ pub struct ClassBodyMemberMethodTransport {
     #[wire(key = "_decorator")]
     #[slot(field = field::DECORATOR)]
     pub decorator: Option<Vec<::sittir_core::SlotValue<DecoratorTransport>>>,
-    #[wire(key = "_terminator")]
-    #[slot(field = field::TERMINATOR)]
-    pub terminator: Option<::sittir_core::SlotValue<ClassBodyMemberMethodTerminatorTransportSlot>>,
     #[wire(key = "_method_definition")]
     #[slot]
     pub method_definition: ::sittir_core::SlotValue<MethodDefinitionTransport>,
+    #[wire(key = "_terminator")]
+    #[slot(field = field::TERMINATOR)]
+    pub terminator: Option<::sittir_core::SlotValue<ClassBodyMemberMethodTerminatorTransportSlot>>,
     #[wire(key = "_decorator_separator_space")]
     pub decorator_separator_space: Option<u16>,
 }
@@ -27834,8 +27834,8 @@ impl ::sittir_core::prepare::Prepare for ClassBodyMemberMethodTransport {
         if let Some(seated_items) = self.decorator.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_CLASS_BODY_MEMBER_METHOD_DECORATOR, ctx); }
         if self.terminator.is_none() { self.terminator = ClassBodyMemberMethodTerminatorTransportSlot::from_kind_id(ctx.options.spacing[options::SITE_CLASS_BODY_MEMBER_METHOD_TERMINATOR].arm).map(::sittir_core::SlotValue::Transport); }
         self.decorator.prepare(ctx)?;
-        self.terminator.prepare(ctx)?;
         self.method_definition.prepare(ctx)?;
+        self.terminator.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -27851,12 +27851,12 @@ impl ::sittir_core::prepare::Prepare for ClassBodyMemberMethodTransport {
 pub struct ClassBodyMemberMethodSigTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_terminator")]
-    #[slot(field = field::TERMINATOR)]
-    pub terminator: ::sittir_core::SlotValue<ClassBodyMemberMethodSigTerminatorTransportSlot>,
     #[wire(key = "_method_signature")]
     #[slot]
     pub method_signature: ::sittir_core::SlotValue<MethodSignatureTransport>,
+    #[wire(key = "_terminator")]
+    #[slot(field = field::TERMINATOR)]
+    pub terminator: ::sittir_core::SlotValue<ClassBodyMemberMethodSigTerminatorTransportSlot>,
 }
 
 impl ::sittir_core::view::KindOf for ClassBodyMemberMethodSigTransport {
@@ -27883,8 +27883,8 @@ impl ::sittir_core::prepare::Prepare for ClassBodyMemberMethodSigTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.terminator.prepare(ctx)?;
         self.method_signature.prepare(ctx)?;
+        self.terminator.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -28017,12 +28017,12 @@ pub struct IndexSignatureMappedTypeClauseTransport {
     #[wire(key = "_readonly")]
     #[slot(field = field::READONLY, presence = kind::READONLY_KEYWORD)]
     pub readonly: Option<bool>,
-    #[wire(key = "_type")]
-    #[slot(field = field::TYPE)]
-    pub type_: ::sittir_core::SlotValue<IndexSignatureColonTypeTransportSlot>,
     #[wire(key = "_mapped_type_clause")]
     #[slot]
     pub mapped_type_clause: ::sittir_core::SlotValue<MappedTypeClauseTransport>,
+    #[wire(key = "_type")]
+    #[slot(field = field::TYPE)]
+    pub type_: ::sittir_core::SlotValue<IndexSignatureColonTypeTransportSlot>,
 }
 
 impl ::sittir_core::view::KindOf for IndexSignatureMappedTypeClauseTransport {
@@ -28051,8 +28051,8 @@ impl ::sittir_core::prepare::Prepare for IndexSignatureMappedTypeClauseTransport
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.sign.prepare(ctx)?;
         self.readonly.prepare(ctx)?;
-        self.type_.prepare(ctx)?;
         self.mapped_type_clause.prepare(ctx)?;
+        self.type_.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -28068,12 +28068,12 @@ impl ::sittir_core::prepare::Prepare for IndexSignatureMappedTypeClauseTransport
 pub struct ImportStatementClauseFromTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_source")]
-    #[slot(field = field::SOURCE)]
-    pub source: ::sittir_core::SlotValue<StringTransport>,
     #[wire(key = "_import_clause")]
     #[slot]
     pub import_clause: ::sittir_core::SlotValue<ImportClauseTransport>,
+    #[wire(key = "_source")]
+    #[slot(field = field::SOURCE)]
+    pub source: ::sittir_core::SlotValue<StringTransport>,
 }
 
 impl ::sittir_core::view::KindOf for ImportStatementClauseFromTransport {
@@ -28100,8 +28100,8 @@ impl ::sittir_core::prepare::Prepare for ImportStatementClauseFromTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.source.prepare(ctx)?;
         self.import_clause.prepare(ctx)?;
+        self.source.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -28289,12 +28289,12 @@ impl ::sittir_core::prepare::Prepare for ImportSpecifierAsTransport {
 pub struct ParenthesizedExpressionTypedTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_type")]
-    #[slot(field = field::TYPE)]
-    pub type_: Option<::sittir_core::SlotValue<TypeAnnotationTransport>>,
     #[wire(key = "_expression")]
     #[slot]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
+    #[wire(key = "_type")]
+    #[slot(field = field::TYPE)]
+    pub type_: Option<::sittir_core::SlotValue<TypeAnnotationTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for ParenthesizedExpressionTypedTransport {
@@ -28321,8 +28321,8 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionTypedTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.type_.prepare(ctx)?;
         self.expression.prepare(ctx)?;
+        self.type_.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -29022,12 +29022,12 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultFromStarFromTrans
 pub struct ExportStatementDefaultFromNsFromTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_source")]
-    #[slot(field = field::SOURCE)]
-    pub source: ::sittir_core::SlotValue<StringTransport>,
     #[wire(key = "_namespace_export")]
     #[slot]
     pub namespace_export: ::sittir_core::SlotValue<NamespaceExportTransport>,
+    #[wire(key = "_source")]
+    #[slot(field = field::SOURCE)]
+    pub source: ::sittir_core::SlotValue<StringTransport>,
 }
 
 impl ::sittir_core::view::KindOf for ExportStatementDefaultFromNsFromTransport {
@@ -29054,8 +29054,8 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultFromNsFromTranspo
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.source.prepare(ctx)?;
         self.namespace_export.prepare(ctx)?;
+        self.source.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -29071,12 +29071,12 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultFromNsFromTranspo
 pub struct ExportStatementDefaultFromClauseFromTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_source")]
-    #[slot(field = field::SOURCE)]
-    pub source: ::sittir_core::SlotValue<StringTransport>,
     #[wire(key = "_export_clause")]
     #[slot]
     pub export_clause: ::sittir_core::SlotValue<ExportClauseTransport>,
+    #[wire(key = "_source")]
+    #[slot(field = field::SOURCE)]
+    pub source: ::sittir_core::SlotValue<StringTransport>,
 }
 
 impl ::sittir_core::view::KindOf for ExportStatementDefaultFromClauseFromTransport {
@@ -29103,8 +29103,8 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultFromClauseFromTra
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.source.prepare(ctx)?;
         self.export_clause.prepare(ctx)?;
+        self.source.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {

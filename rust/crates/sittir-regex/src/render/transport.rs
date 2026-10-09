@@ -1820,6 +1820,9 @@ impl ::sittir_core::prepare::Prepare for PatternCharacterTransport {
 pub struct CharacterClassTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[wire(key = "_negation")]
+    #[slot(presence = kind::_NEGATION)]
+    pub negation: Option<bool>,
     #[wire(key = "_leading")]
     #[slot(field = field::LEADING, presence = kind::CLASS_CHARACTER)]
     pub leading: Option<bool>,
@@ -1829,9 +1832,6 @@ pub struct CharacterClassTransport {
     #[wire(key = "_trailing")]
     #[slot(field = field::TRAILING, presence = kind::CLASS_CHARACTER)]
     pub trailing: Option<bool>,
-    #[wire(key = "_negation")]
-    #[slot(presence = kind::_NEGATION)]
-    pub negation: Option<bool>,
 }
 
 impl ::sittir_core::view::KindOf for CharacterClassTransport {
@@ -1858,10 +1858,10 @@ impl ::sittir_core::prepare::Prepare for CharacterClassTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        self.negation.prepare(ctx)?;
         self.leading.prepare(ctx)?;
         self.class_atoms.prepare(ctx)?;
         self.trailing.prepare(ctx)?;
-        self.negation.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -2096,15 +2096,15 @@ impl ::sittir_core::prepare::Prepare for AnonymousCapturingGroupTransport {
 pub struct NamedCapturingGroupTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[wire(key = "_content")]
+    #[slot]
+    pub content: ::sittir_core::SlotValue<NamedCapturingGroupContentTransportSlot>,
     #[wire(key = "_group_name")]
     #[slot(field = field::GROUP_NAME)]
     pub group_name: ::sittir_core::SlotValue<GroupNameTransport>,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN)]
     pub pattern: ::sittir_core::SlotValue<PatternTransport>,
-    #[wire(key = "_content")]
-    #[slot]
-    pub content: ::sittir_core::SlotValue<NamedCapturingGroupContentTransportSlot>,
 }
 
 impl ::sittir_core::view::KindOf for NamedCapturingGroupTransport {
@@ -2135,9 +2135,9 @@ impl ::sittir_core::prepare::Prepare for NamedCapturingGroupTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        self.content.prepare(ctx)?;
         self.group_name.prepare(ctx)?;
         self.pattern.prepare(ctx)?;
-        self.content.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -2910,12 +2910,12 @@ impl ::sittir_core::prepare::Prepare for DecimalDigitsTransport {
 pub struct TermGroupTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_quantifier")]
-    #[slot(field = field::QUANTIFIER)]
-    pub quantifier: Option<::sittir_core::SlotValue<TermGroupQuantifierTransportSlot>>,
     #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<TermGroupContentTransportSlot>,
+    #[wire(key = "_quantifier")]
+    #[slot(field = field::QUANTIFIER)]
+    pub quantifier: Option<::sittir_core::SlotValue<TermGroupQuantifierTransportSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for TermGroupTransport {
@@ -2942,8 +2942,8 @@ impl ::sittir_core::prepare::Prepare for TermGroupTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.quantifier.prepare(ctx)?;
         self.content.prepare(ctx)?;
+        self.quantifier.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -3053,12 +3053,12 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierArmTransport {
 pub struct CharacterClassEscapeArmTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_unicode_property_value_expression")]
-    #[slot(field = field::UNICODE_PROPERTY_VALUE_EXPRESSION)]
-    pub unicode_property_value_expression: ::sittir_core::SlotValue<UnicodePropertyValueExpressionTransport>,
     #[wire(key = "_character_class_escape_text2")]
     #[slot]
     pub character_class_escape_text2: ::sittir_core::SlotValue<CharacterClassEscapeText2Transport>,
+    #[wire(key = "_unicode_property_value_expression")]
+    #[slot(field = field::UNICODE_PROPERTY_VALUE_EXPRESSION)]
+    pub unicode_property_value_expression: ::sittir_core::SlotValue<UnicodePropertyValueExpressionTransport>,
 }
 
 impl ::sittir_core::view::KindOf for CharacterClassEscapeArmTransport {
@@ -3085,8 +3085,8 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeArmTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.unicode_property_value_expression.prepare(ctx)?;
         self.character_class_escape_text2.prepare(ctx)?;
+        self.unicode_property_value_expression.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {

@@ -10076,12 +10076,12 @@ impl ::sittir_core::prepare::Prepare for DeleteStatementTransport {
 pub struct RaiseStatementTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_cause")]
-    #[slot(field = field::CAUSE)]
-    pub cause: Option<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_expressions")]
     #[slot]
     pub expressions: Option<::sittir_core::SlotValue<ReturnStatementExpressionsTransportSlot>>,
+    #[wire(key = "_cause")]
+    #[slot(field = field::CAUSE)]
+    pub cause: Option<::sittir_core::SlotValue<ExpressionTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for RaiseStatementTransport {
@@ -10108,8 +10108,8 @@ impl ::sittir_core::prepare::Prepare for RaiseStatementTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.cause.prepare(ctx)?;
         self.expressions.prepare(ctx)?;
+        self.cause.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -10352,12 +10352,12 @@ impl ::sittir_core::prepare::Prepare for ElseClauseTransport {
 pub struct MatchStatementTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_body")]
-    #[slot(field = field::BODY)]
-    pub body: ::sittir_core::SlotValue<MatchBlockTransport>,
     #[wire(key = "_subjects")]
     #[slot]
     pub subjects: ::sittir_core::SlotValue<SubjectsTransport>,
+    #[wire(key = "_body")]
+    #[slot(field = field::BODY)]
+    pub body: ::sittir_core::SlotValue<MatchBlockTransport>,
 }
 
 impl ::sittir_core::view::KindOf for MatchStatementTransport {
@@ -10384,8 +10384,8 @@ impl ::sittir_core::prepare::Prepare for MatchStatementTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.body.prepare(ctx)?;
         self.subjects.prepare(ctx)?;
+        self.body.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -10443,15 +10443,15 @@ impl ::sittir_core::prepare::Prepare for MatchBlockTransport {
 pub struct CaseClauseTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[wire(key = "_case_patterns")]
+    #[slot]
+    pub case_patterns: ::sittir_core::SlotValue<CasePatternsTransport>,
     #[wire(key = "_guard")]
     #[slot(field = field::GUARD)]
     pub guard: Option<::sittir_core::SlotValue<IfClauseTransport>>,
     #[wire(key = "_consequence")]
     #[slot(field = field::CONSEQUENCE)]
     pub consequence: ::sittir_core::SlotValue<SuiteTransport>,
-    #[wire(key = "_case_patterns")]
-    #[slot]
-    pub case_patterns: ::sittir_core::SlotValue<CasePatternsTransport>,
 }
 
 impl ::sittir_core::view::KindOf for CaseClauseTransport {
@@ -10478,9 +10478,9 @@ impl ::sittir_core::prepare::Prepare for CaseClauseTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        self.case_patterns.prepare(ctx)?;
         self.guard.prepare(ctx)?;
         self.consequence.prepare(ctx)?;
-        self.case_patterns.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -11509,12 +11509,12 @@ impl ::sittir_core::prepare::Prepare for ArgumentListTransport {
 pub struct DecoratedDefinitionTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_definition")]
-    #[slot(field = field::DEFINITION)]
-    pub definition: ::sittir_core::SlotValue<DecoratedDefinitionDefinitionTransportSlot>,
     #[wire(key = "_decorator")]
     #[slot]
     pub decorator: Vec<::sittir_core::SlotValue<DecoratorTransport>>,
+    #[wire(key = "_definition")]
+    #[slot(field = field::DEFINITION)]
+    pub definition: ::sittir_core::SlotValue<DecoratedDefinitionDefinitionTransportSlot>,
     #[wire(key = "_decorator_separator_space")]
     pub decorator_separator_space: Option<u16>,
 }
@@ -11546,8 +11546,8 @@ impl ::sittir_core::prepare::Prepare for DecoratedDefinitionTransport {
         ::sittir_core::prepare::fill_list_gaps(self.decorator.iter_mut().map(Some), "", options::allowed(options::SITE_DECORATED_DEFINITION_DECORATOR_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.decorator_separator_space.get_or_insert(ctx.options.spacing[options::SITE_DECORATED_DEFINITION_DECORATOR_SEPARATOR_SPACE].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.decorator.iter_mut().map(Some), options::SEATS_DECORATED_DEFINITION_DECORATOR, ctx);
-        self.definition.prepare(ctx)?;
         self.decorator.prepare(ctx)?;
+        self.definition.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {

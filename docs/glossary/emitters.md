@@ -16553,7 +16553,7 @@ The ids a fixed-literal transport takes: its accepted ids, or its own id. The de
 
 ### `packages/codegen/src/emitters/render-module.ts::structSlotsOf`
 
-The slots a struct has fields for, in order: the slot model's named and unnamed slots, then the named slots of each hidden helper node an unnamed slot hoists, all optional. The printer and the check that follows it walk the same list.
+The slots a struct has fields for, in order: the slot model's named and unnamed slots in the node's own slot order, then the named slots of each hidden helper node an unnamed slot hoists, all optional. The field order is the order the read writes the transport's keys, so a read transport's keys follow the model's slots. The printer and the check that follows it walk the same list.
 
 ### `packages/codegen/src/emitters/render-module.ts::slotReadAttr`
 
