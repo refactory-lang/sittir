@@ -66,6 +66,10 @@ describe('astStructuralDiff compares the text of named leaves', () => {
 		expect(astStructuralDiff(a, b)).toMatch(/call_expression\[0\]\.identifier: text "x" ≠ "y"/);
 	});
 
+	it('fails a candidate that is itself a named leaf whose text changed', () => {
+		expect(astStructuralDiff(node('identifier', 'x'), node('identifier', 'y'))).toBe('identifier: text "x" ≠ "y"');
+	});
+
 	it('passes a named leaf whose text is unchanged', () => {
 		const a = node('call_expression', 'f(x)', [node('identifier', 'x')]);
 		expect(astStructuralDiff(a, node('call_expression', 'f(x)', [node('identifier', 'x')]))).toBeNull();

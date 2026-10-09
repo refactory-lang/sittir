@@ -219,6 +219,9 @@ export function astStructuralDiff(
 	if (a.grammarId !== b.grammarId) {
 		return `${path || 'root'}: grammar type ${a.grammarType} ≠ ${b.grammarType}`;
 	}
+	if (a.isNamed && a.childCount === 0 && b.childCount === 0 && a.text !== b.text) {
+		return `${path || a.type}: text ${JSON.stringify(a.text)} ≠ ${JSON.stringify(b.text)}`;
+	}
 	const aChildren = collectVisibleChildren(a);
 	let bChildren = collectVisibleChildren(b);
 	// Group-lift transparency: sittir's enrich lifts choice arms of canonical
@@ -281,9 +284,6 @@ export function astStructuralDiff(
 				return `${path || a.type}[${i}]: anon ${JSON.stringify(ac.text)} ≠ ${JSON.stringify(bc.text)}`;
 			}
 			continue;
-		}
-		if (ac.childCount === 0 && bc.childCount === 0 && ac.text !== bc.text) {
-			return `${path || a.type}[${i}].${ac.type}: text ${JSON.stringify(ac.text)} ≠ ${JSON.stringify(bc.text)}`;
 		}
 		// Named child — recurse.
 		const sub = astStructuralDiff(ac, bc, `${path || a.type}[${i}].${ac.type}`, variantChildKinds);

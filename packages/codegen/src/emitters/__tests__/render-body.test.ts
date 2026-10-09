@@ -351,5 +351,6 @@ describe('doubledFlanks', () => {
 		expect(doubledFlanks([{ kind: 'adjacent' }, { kind: 'tokenSeam', text: '\n' }])).toHaveLength(1);
 		expect(doubledFlanks([{ kind: 'seam', field: 'a' }, { kind: 'seam', field: 'b' }])).toHaveLength(0);
 		expect(doubledFlanks([{ kind: 'seam', field: 'a' }, { kind: 'tokenSeam', text: '\n' }])).toHaveLength(0);
+		expect(doubledFlanks([{ kind: 'seam', field: 'a' }, ...gate('x', [{ kind: 'adjacent' }, { kind: 'slot', name: 'x' }])])).toHaveLength(1);
 	});
 });

@@ -581,11 +581,13 @@ export function templateOf(flanks: Flanks | undefined): string {
 
 const SEAM_NODES: ReadonlySet<BodyNode['kind']> = new Set(['seam', 'adjacent', 'wordSeam', 'tokenSeam']);
 
-export function doubledFlanks(body: Body, path = 'body'): string[] {
+export function doubledFlanks(body: Body, path = 'body', precededBySeam = false): string[] {
 	const found: string[] = [];
-	let run: BodyNode[] = [];
+	let run: BodyNode[] = precededBySeam ? [{ kind: 'seam', field: '' }] : [];
 	const close = (at: number): void => {
-		if (run.length > 1 && run.some((n) => n.kind === 'adjacent' || n.kind === 'wordSeam')) found.push(`${path}[${at - run.length}..${at}] ${run.map((n) => n.kind).join('+')}`);
+		if (run.length > 1 && run.some((n) => n.kind === 'adjacent' || n.kind === 'wordSeam')) {
+			found.push(`${path}[${at - run.length}..${at}] ${run.map((n) => n.kind).join('+')}`);
+		}
 		run = [];
 	};
 	body.forEach((node, i) => {
@@ -593,10 +595,11 @@ export function doubledFlanks(body: Body, path = 'body'): string[] {
 			run.push(node);
 			return;
 		}
+		const seamed = run.length > 0;
 		close(i);
 		if (node.kind === 'if') {
-			node.arms.forEach((arm, a) => found.push(...doubledFlanks(arm.body, `${path}.if[${i}].arm${a}`)));
-			if (node.fallback !== undefined) found.push(...doubledFlanks(node.fallback, `${path}.if[${i}].else`));
+			node.arms.forEach((arm, a) => found.push(...doubledFlanks(arm.body, `${path}.if[${i}].arm${a}`, seamed)));
+			if (node.fallback !== undefined) found.push(...doubledFlanks(node.fallback, `${path}.if[${i}].else`, seamed));
 		}
 	});
 	close(body.length);

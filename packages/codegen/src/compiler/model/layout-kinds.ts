@@ -108,12 +108,14 @@ export interface LeafEdges {
 }
 
 export function leafEdgesOf(node: AssembledLeaf, nodeMap: NodeMap): LeafEdges | undefined {
-	if (!declaresWhitespace(nodeMap)) return undefined;
-	const gaps = [...layoutSymbolsOf(nodeMap).values()].flatMap((symbol) => {
-		const bit = LAYOUT_KIND_BITS[symbol];
-		const member = nodeMap.nodes.get(symbol);
-		return bit !== undefined && member !== undefined && isFixedTextLeaf(member) ? [{ bit, text: member.text }] : [];
-	});
+	const declared = declaresWhitespace(nodeMap)
+		? [...layoutSymbolsOf(nodeMap).values()].flatMap((symbol) => {
+				const bit = LAYOUT_KIND_BITS[symbol];
+				const member = nodeMap.nodes.get(symbol);
+				return bit !== undefined && member !== undefined && isFixedTextLeaf(member) ? [{ bit, text: member.text }] : [];
+			})
+		: [];
+	const gaps = declared.some(({ text }) => text === '') ? declared : [{ bit: LAYOUT_KIND_BITS[TIGHT_MEMBER]!, text: '' }, ...declared];
 	const all = gaps.reduce((set, { bit }) => set | bit, 0);
 	const pattern = node instanceof AssembledPattern ? node.textPattern : undefined;
 	const dfa = pattern === undefined ? undefined : patternDfa(pattern);
@@ -121,9 +123,9 @@ export function leafEdgesOf(node: AssembledLeaf, nodeMap: NodeMap): LeafEdges | 
 		edge === undefined
 			? all
 			: gaps.reduce((set, { bit, text }) => (text !== '' && [...text].every((c) => edge.has(c.codePointAt(0)!)) ? set : set | bit), 0);
-	const leading = node.immediate ? (gaps.find(({ text }) => text === '')?.bit ?? 0) : accepts(dfa && leadingChars(dfa));
+	const leading = node.immediate ? LAYOUT_KIND_BITS[TIGHT_MEMBER]! : accepts(dfa && leadingChars(dfa));
 	const trailing = accepts(dfa && trailingChars(dfa));
-	return leading === all && trailing === all ? undefined : { leading, trailing };
+	return !node.immediate && leading === all && trailing === all ? undefined : { leading, trailing };
 }
 
 const LAYOUT_KINDS_PATH = '::sittir_core::layout_kinds::LayoutKinds';
