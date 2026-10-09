@@ -6857,6 +6857,16 @@ Detailed against master after 1c-i lands.
 - **Task 19: The registry and the edited set.** One weak index-to-wrapper map per tree and surface, which accessors, hydration and queries share; an in-place `$trivia` write adds its node's index to a sorted set per tree; a node folds when no edited index lies in `[index, end)`, `end` being `index + descendant_count()` carried by the coordinate (`$end`); `adoptChild`, `detachAncestors`, `canFold`'s walk and `isUntouchedBelow` go; a query's results resolve through the registry, and the refusal of a `$trivia` write on a node reached through a query is lifted. The query test of the arena spec's identity verification: the same object through a query and through accessors, and byte-identical renders of the same write through each.
 - **Task 21: An empty list is `[]`.** The census of list slots whose value can be absent today, then the reader, `Vec<T>` transports, factories and types; every fixture and factory move at a census slot, from nothing to `[]`.
 - **Task 23: Measurements.** The relative-coordinates spec's verifications 1–6: identity, no ancestor reads, offsets, the fold by range, the fold's timing against 1c-i's walk, and the registry's heap on the untouched whole-tree read and the query-heavy population.
+- **Task 24: A built node hydrates the coordinates it stores, through Task 19's registry.**
+  - **Today:** a built node's accessor over a stored coordinate returns the raw `{ $treeHandle, $span, $type }`. This happens on both routes that put one there: `from()` of parsed data, and a slot that copies storage straight (`_content`). Render is unaffected: it folds the coordinate by its handle. The builder accessor is the one `node-members.ts` emits (`name: () => read`). Before 1c-i it returned the raw stub the same way.
+  - **Why the parsed path doesn't serve it:** parsed accessors hydrate through `hydrateWith`, which reads through the holder's `tree`, and a built holder has none. `hydrateListStorage` resolves a tree with `treeOf(value)`, which reads the tree token the coordinate holds, not its `$treeHandle`.
+  - **The direction to choose.** The task picks one, and says why in the commit:
+    - the coordinate's tree token: a symbol member that a same-thread spread carries, and a structured clone or JSON round trip drops;
+    - its `$treeHandle`'s tree id through the global live-tree table: it survives any copy of the data, as render's fold does.
+  - **Identity:** the hydrated wrapper resolves through the registry, so one coordinate yields one object whether it is reached through a built holder, a parsed holder or a query.
+  - **Test:**
+    - `Module.from(parsed).statements()[0]` is the same object as `parsed.statements()[0]`, and renders the same bytes;
+    - after the tree is released, the accessor refuses, naming the tree (as `tree_not_live` does), and never returns the raw coordinate.
 
 
 ## Outline: after step 1

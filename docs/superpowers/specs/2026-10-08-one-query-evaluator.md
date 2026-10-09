@@ -1,6 +1,6 @@
 # One QueryPlan evaluator
 
-**Status:** Proposed, for review
+**Status:** Approved. It executes after the binding generator's Stage 3 lands.
 **Date:** 2026-10-08
 **Scope:** where a `QueryPlan` is evaluated. Two consumers compile plans: the query facet's `where` and the portable `is` guards.
 **Supersedes:** in the node query design (`2026-10-02-node-query-traversal-modification-api-design.md`), the §7.2 sentence "There is one native evaluator, and the JavaScript evaluator is kept only as the test oracle", and the §7.3 paragraph on Rust's `regex` crate.
@@ -132,7 +132,7 @@ The full table, with every python `json/decoder.py` row, typescript `engine.ts` 
 
 ## 4. What changes in meaning
 
-These follow from the choice. Q1 and Q2 change behaviour or surface that users see.
+These follow from the choice. Q1 and Q2 changed behaviour or surface that users see, so the maintainer ruled them.
 
 - **`where` patterns run as ECMAScript `u`.**
   - `\w`, `\d` and `\b` become ASCII-only.
@@ -148,11 +148,11 @@ These follow from the choice. Q1 and Q2 change behaviour or surface that users s
 
     On the probe's names (`café`, `x٣`, `plain`, `naïve_ünïcode`), `^[\p{L}\p{N}_]+$` matches all 4 and `\p{Nd}` matches 1, as Rust's `^\w+$` and `\d` do today.
   - All 12 `#match?` patterns in the three grammars' `bindings.scm` are in the subset where the two dialects agree. The 7 `#eq?` predicates have no dialect. The only `.` (python's `^__(?<stem>.*)__$`) differs only on `\r`, U+2028 and U+2029, which no identifier contains.
-  - **Q1 (user):** accept ECMAScript `u` as the one dialect? Recommended: yes.
-    - The trade: a `where` written with `\w` or `\d` over non-ASCII names finds fewer nodes than today, and the fix is the spelled-out class above.
-    - The alternative is refusing `\w`, `\d` and `\b` so that no pattern changes meaning silently. That keeps the second dialect alive as a rule users must learn.
+  - **Q1, ruled: ECMAScript `u` is the one dialect.**
+    - The trade: a `where` written with `\w` or `\d` over non-ASCII names finds fewer nodes than today, and the fix is the spelled-out class above. `match`'s documentation says so (Task 2).
+    - Not taken: refusing `\w`, `\d` and `\b` so that no pattern changes meaning silently. That would keep the second dialect alive as a rule users must learn.
 - **`match` flags.** `slotRef.match` refuses every flag but `u`, because the native side had no equivalent. With one JavaScript evaluator, `i`, `s` and `m` could cross.
-  - **Q2 (user):** admit them? Recommended: not in this change. Keep the refusal, and decide it as a surface question of its own.
+  - **Q2, ruled: flags stay refused in this change.** Admitting them is a surface question of its own.
 - **The walk's limit counts kind matches, not passing stubs.** A selective `where` takes more batches. The first-result latency the geometric batch limits protect is unchanged for `ofType` alone.
 
 ## 5. Migration
@@ -170,7 +170,7 @@ One branch, five tasks.
 
 **Stop rule:**
 - A row whose master native time is over 1 ms and whose new time exceeds 2× it, or any result count that differs from master's native count, stops the work and is reported.
-- Exception: the dialect rows Q1 accepts.
+- Exception: rows whose pattern uses `\w`, `\d` or `\b` over non-ASCII text, which move by Q1's ruling. The commit names each one.
 
 **Tasks:**
 
@@ -184,7 +184,8 @@ One branch, five tasks.
 2. **Compile the plan once.**
    - `compilePlan(plan) → CompiledPlan` in `common/src/query.ts` (a `match` leaf holds its `RegExp`), cached per plan object.
    - `holds` takes a `CompiledPlan`.
-   - A unit test pins the dialect on Q1's answer, for example `^\w+$` against `café`.
+   - A unit test pins the dialect: `^\w+$` does not match `café`, and `^[\p{L}\p{N}_]+$` does.
+   - `match`'s documentation says what the dialect is and what a user writes for today's Unicode meaning: `[\p{L}\p{N}_]` for `\w`, `\p{Nd}` for `\d`, and `(?<![\p{L}\p{N}_])` / `(?![\p{L}\p{N}_])` for a word edge. It also says flags other than `u` are refused. The documentation lives in two places: the JSDoc on `SlotRef.match` in `@sittir/types`, and the query section of `docs/use-cases-and-examples.md`.
 3. **Native: spans, not answers.**
    - `ParsedTree::descendants` takes `subjects` in place of a plan, and each returned stub carries `spans[subject][value]`.
    - `subject_spans(addresses, subjects)` replaces `plan_holds`, and the napi bindings follow.
