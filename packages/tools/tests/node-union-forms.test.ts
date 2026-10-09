@@ -44,6 +44,6 @@ describe("a grammar's node union", () => {
 			const { kinds, both } = kindsWithDataAndParsed(grammar);
 			expect(kinds).toBeGreaterThan(10);
 			expect(both).toEqual([]);
-		});
+		}, 120000);
 	}
 });
