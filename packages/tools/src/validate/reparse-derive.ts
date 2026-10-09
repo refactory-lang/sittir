@@ -18,8 +18,8 @@ export interface DeriveHostsInput {
 	readonly kindToSupertypes: ReadonlyMap<string, readonly string[]>;
 	/** Parent kind -> the kinds its slots admit, from the node model. */
 	readonly admits: ReadonlyMap<string, ReadonlySet<string>>;
-	/** A model kind's stamped kind id: the grammar id of the tree nodes it is the display of. */
-	readonly kindIdOf: (kind: string) => number | undefined;
+	/** The stamped kind ids of a model kind: every symbol the generated kind tables name with it. */
+	readonly kindIdsOf: (kind: string) => readonly number[];
 	readonly corpus: readonly DerivationTree[];
 	readonly parse: (text: string) => TSTree;
 	/** The reparsed node with the source node's grammar id at the hole's offset, or null. */
@@ -106,11 +106,10 @@ export function deriveReparseHosts(input: DeriveHostsInput): Record<string, stri
 	for (const list of input.kindToSupertypes.values()) for (const name of list) modelNames.add(name);
 	const byId = new Map<number, string[]>();
 	for (const name of modelNames) {
-		const id = input.kindIdOf(name);
-		if (id !== undefined) byId.set(id, [...(byId.get(id) ?? []), name]);
+		for (const id of input.kindIdsOf(name)) byId.set(id, [...(byId.get(id) ?? []), name]);
 	}
 	const ids: IdIndex = {
-		visible: new Set([...occurrences.values()].flatMap((list) => list.map((o) => o.node.grammarId))),
+		visible: new Set([...occurrences.values()].flatMap((list) => list.map((o) => nodeIdOf(o.node)))),
 		namesOf: (id) => byId.get(id) ?? []
 	};
 	const derived: Record<string, string> = {};
@@ -183,38 +182,46 @@ export function deriveReparseHosts(input: DeriveHostsInput): Record<string, stri
  * is never a tree display name.
  */
 function admitsKind(input: DeriveHostsInput, ids: IdIndex, parent: TSNode, child: TSNode): boolean {
-	const parentNames = ids.namesOf(parent.grammarId).filter((name) => input.admits.has(name));
+	const parentNames = ids.namesOf(nodeIdOf(parent)).filter((name) => input.admits.has(name));
 	if (parentNames.length === 0) return true;
 	const admitted = new Set<number>();
 	const admittedUnstamped = new Set<string>();
 	const walk = (names: readonly string[]): void => {
 		for (const name of names) {
 			for (const admittedName of input.admits.get(name) ?? []) {
-				const id = input.kindIdOf(admittedName);
-				if (id === undefined) {
+				const stamped = input.kindIdsOf(admittedName);
+				if (stamped.length === 0) {
 					admittedUnstamped.add(admittedName);
 					continue;
 				}
-				if (admitted.has(id)) continue;
-				admitted.add(id);
-				if (!ids.visible.has(id)) walk(ids.namesOf(id));
+				for (const id of stamped) {
+					if (admitted.has(id)) continue;
+					admitted.add(id);
+					if (!ids.visible.has(id)) walk(ids.namesOf(id));
+				}
 			}
 		}
 	};
 	walk(parentNames);
 	const seen = new Set<string>();
-	const queue = [...ids.namesOf(child.grammarId), child.type];
-	const reached = new Set<number>([child.grammarId]);
+	const queue = [...ids.namesOf(nodeIdOf(child)), child.type];
+	const reached = new Set<number>([nodeIdOf(child)]);
 	while (queue.length > 0) {
 		const name = queue.shift()!;
 		if (seen.has(name)) continue;
 		seen.add(name);
-		const id = input.kindIdOf(name);
-		if (id !== undefined) reached.add(id);
-		else if (admittedUnstamped.has(name)) return true;
+		const stamped = input.kindIdsOf(name);
+		for (const id of stamped) reached.add(id);
+		if (stamped.length === 0 && admittedUnstamped.has(name)) return true;
 		queue.push(...(input.kindToSupertypes.get(name) ?? []));
 	}
 	return [...reached].some((id) => admitted.has(id));
+}
+
+/** The symbol a node is matched on: its display symbol at an alias envelope, its grammar symbol elsewhere. */
+function nodeIdOf(node: TSNode): number {
+	const display = (node as { typeId?: number }).typeId;
+	return display !== undefined && display !== node.grammarId ? display : node.grammarId;
 }
 
 interface IdIndex {
