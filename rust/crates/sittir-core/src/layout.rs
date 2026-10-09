@@ -188,21 +188,15 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
     /// `{ trivia?, gap?, flank?, at? }`, each only when present. The edges are
     /// the prepare walk's and never cross.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
-        use crate::boundary::{object_with, set};
-        let obj = unsafe { object_with(env, &[])? };
-        if let Some(trivia) = val.trivia {
-            unsafe { set(env, obj, c"trivia", TransportTrivia::to_napi_value(env, trivia)?)? };
+        use crate::boundary::{object_with_present, present, present_with};
+        unsafe {
+            object_with_present(env, &[
+                present(env, c"trivia", val.trivia)?,
+                present(env, c"gap", val.gap)?,
+                present(env, c"flank", val.flank)?,
+                present_with(c"at", val.at, |at| crate::slot::coordinate_to_napi(env, at))?,
+            ])
         }
-        if let Some(gap) = val.gap {
-            unsafe { set(env, obj, c"gap", SourceGap::to_napi_value(env, gap)?)? };
-        }
-        if let Some(flank) = val.flank {
-            unsafe { set(env, obj, c"flank", SourceFlank::to_napi_value(env, flank)?)? };
-        }
-        if let Some(at) = val.at {
-            unsafe { set(env, obj, c"at", crate::slot::coordinate_to_napi(env, at)?)? };
-        }
-        Ok(obj)
     }
 }
 

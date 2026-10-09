@@ -322,25 +322,19 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
     /// gap's name is data, so its key is too: the gaps object is defined, not
     /// assigned, so any name (`__proto__` included) stays an own property.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
-        use crate::boundary::{object_with, set};
-        let obj = unsafe { object_with(env, &[])? };
-        if let Some(leading) = val.leading {
-            unsafe { set(env, obj, c"leading", Vec::to_napi_value(env, leading)?)? };
-        }
-        if let Some(trailing) = val.trailing {
-            unsafe { set(env, obj, c"trailing", Vec::to_napi_value(env, trailing)?)? };
-        }
-        if let Some(inner) = val.inner {
+        use crate::boundary::{object_with, object_with_present, present, present_with};
+        let leading = unsafe { present(env, c"leading", val.leading)? };
+        let trailing = unsafe { present(env, c"trailing", val.trailing)? };
+        let inner = present_with(c"inner", val.inner, |inner| {
             let mut fields = Vec::with_capacity(inner.len());
             for (name, entries) in inner {
                 let name = ::std::ffi::CString::new(name).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
                 fields.push((name, unsafe { Vec::to_napi_value(env, entries)? }));
             }
             let fields: Vec<_> = fields.iter().map(|(name, entries)| (name.as_c_str(), *entries)).collect();
-            let gaps = unsafe { object_with(env, &fields)? };
-            unsafe { set(env, obj, c"inner", gaps)? };
-        }
-        Ok(obj)
+            unsafe { object_with(env, &fields) }
+        })?;
+        unsafe { object_with_present(env, &[leading, trailing, inner]) }
     }
 }
 
@@ -351,23 +345,21 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
     /// id carries them in `{ $text }` or `{ $type }`, the objects the decoder
     /// reads back.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
-        use crate::boundary::{object_with, set};
+        use crate::boundary::{define_present, object_with_present, present};
         let value = unsafe { SlotValue::to_napi_value(env, val.value)? };
-        if !val.same_line && val.tokens_between == 0 {
+        let same_line = unsafe { present(env, c"$sameLine", val.same_line.then_some(true))? };
+        let tokens_between = unsafe { present(env, c"$tokensBetween", (val.tokens_between != 0).then(|| u32::from(val.tokens_between)))? };
+        if same_line.is_none() && tokens_between.is_none() {
             return Ok(value);
         }
-        let obj = match unsafe { crate::slot::transport_value_type(env, value)? } {
-            ::napi::ValueType::Object => value,
-            ::napi::ValueType::String => unsafe { object_with(env, &[(c"$text", value)])? },
-            _ => unsafe { object_with(env, &[(c"$type", value)])? },
-        };
-        if val.same_line {
-            unsafe { set(env, obj, c"$sameLine", bool::to_napi_value(env, true)?)? };
+        match unsafe { crate::slot::transport_value_type(env, value)? } {
+            ::napi::ValueType::Object => {
+                unsafe { define_present(env, value, &[same_line, tokens_between])? };
+                Ok(value)
+            }
+            ::napi::ValueType::String => unsafe { object_with_present(env, &[Some((c"$text", value)), same_line, tokens_between]) },
+            _ => unsafe { object_with_present(env, &[Some((c"$type", value)), same_line, tokens_between]) },
         }
-        if val.tokens_between != 0 {
-            unsafe { set(env, obj, c"$tokensBetween", u32::to_napi_value(env, u32::from(val.tokens_between))?)? };
-        }
-        Ok(obj)
     }
 }
 

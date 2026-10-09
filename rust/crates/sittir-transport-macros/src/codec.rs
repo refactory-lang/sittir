@@ -86,12 +86,7 @@ fn struct_encode(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenSt
     for field in fields {
         let (name, key) = (field.ident, c_key(field.key)?);
         entries.push(if is_option(field.ty) {
-            quote! {
-                match #name {
-                    ::core::option::Option::Some(value) => ::core::option::Option::Some((#key, #napi::bindgen_prelude::ToNapiValue::to_napi_value(env, value)?)),
-                    ::core::option::Option::None => ::core::option::Option::None,
-                },
-            }
+            quote!(::sittir_core::boundary::present(env, #key, #name)?,)
         } else {
             quote!(::core::option::Option::Some((#key, #napi::bindgen_prelude::ToNapiValue::to_napi_value(env, #name)?)),)
         });
@@ -365,7 +360,7 @@ mod tests {
         assert!(has(&out, "let obj = unsafe { ::sittir_core::boundary::object(env, napi_val)? };"));
         assert!(has(&out, r#"pattern: unsafe { ::sittir_core::boundary::required(env, obj, c"_pattern", "LetDeclarationTransport")? },"#));
         assert!(has(&out, r#"value: unsafe { ::sittir_core::boundary::optional(env, obj, c"_value", "LetDeclarationTransport")? },"#));
-        assert!(has(&out, r#"::sittir_core::boundary::object_with_present(env, &[ ::core::option::Option::Some((c"$type", ::sittir_core::__napi::bindgen_prelude::ToNapiValue::to_napi_value(env, __KIND.0)?)), match layout {"#));
+        assert!(has(&out, r#"::sittir_core::boundary::object_with_present(env, &[ ::core::option::Option::Some((c"$type", ::sittir_core::__napi::bindgen_prelude::ToNapiValue::to_napi_value(env, __KIND.0)?)), ::sittir_core::boundary::present(env, c"$_layout", layout)?,"#));
         let order = ["c\"$type\"", "c\"$_layout\"", "c\"_pattern\"", "c\"_value\""].map(|key| out.rfind(key).expect("every key is written"));
         assert!(order.windows(2).all(|pair| pair[0] < pair[1]), "keys are written in declaration order: {order:?}");
         assert!(!has(&out, "::sittir_core::boundary::set(env, obj,"));
