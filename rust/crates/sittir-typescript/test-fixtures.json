@@ -32747,14 +32747,7 @@
                             "$type": 467,
                             "_content": {
                               "$type": 1,
-                              "$text": "Y",
-                              "$_layout": {
-                                "trivia": {
-                                  "leading": [
-                                    183
-                                  ]
-                                }
-                              }
+                              "$text": "Y"
                             },
                             "$_layout": {
                               "trivia": {
@@ -32939,14 +32932,7 @@
                         "$type": 467,
                         "_content": {
                           "$type": 1,
-                          "$text": "Y",
-                          "$_layout": {
-                            "trivia": {
-                              "leading": [
-                                183
-                              ]
-                            }
-                          }
+                          "$text": "Y"
                         },
                         "$_layout": {
                           "trivia": {
@@ -33113,6 +33099,30 @@
     "expectedSourceOut": "X",
     "expectedReparseTree": "(type_identifier)",
     "wrappedText": "type _X = X;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "type_identifier",
+    "input": {
+      "$type": 467,
+      "_content": {
+        "$type": 1,
+        "$text": "Y"
+      }
+    },
+    "expectedOutput": "Y"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "Y",
+    "pattern": "type_identifier",
+    "edits": [],
+    "expectedSourceOut": "Y",
+    "expectedReparseTree": "(type_identifier)",
+    "wrappedText": "type _X = Y;",
     "wrappedOffset": 10
   },
   {
@@ -70235,14 +70245,7 @@
                             "$type": 467,
                             "_content": {
                               "$type": 1,
-                              "$text": "Y",
-                              "$_layout": {
-                                "trivia": {
-                                  "leading": [
-                                    183
-                                  ]
-                                }
-                              }
+                              "$text": "Y"
                             },
                             "$_layout": {
                               "trivia": {
@@ -70331,14 +70334,7 @@
                             "$type": 467,
                             "_content": {
                               "$type": 1,
-                              "$text": "Y",
-                              "$_layout": {
-                                "trivia": {
-                                  "leading": [
-                                    183
-                                  ]
-                                }
-                              }
+                              "$text": "Y"
                             },
                             "$_layout": {
                               "trivia": {
@@ -70603,14 +70599,7 @@
                         "$type": 467,
                         "_content": {
                           "$type": 1,
-                          "$text": "Y",
-                          "$_layout": {
-                            "trivia": {
-                              "leading": [
-                                183
-                              ]
-                            }
-                          }
+                          "$text": "Y"
                         },
                         "$_layout": {
                           "trivia": {
@@ -70709,14 +70698,7 @@
                         "$type": 467,
                         "_content": {
                           "$type": 1,
-                          "$text": "Y",
-                          "$_layout": {
-                            "trivia": {
-                              "leading": [
-                                183
-                              ]
-                            }
-                          }
+                          "$text": "Y"
                         },
                         "$_layout": {
                           "trivia": {
@@ -70983,6 +70965,30 @@
       "$type": 467,
       "_content": {
         "$type": 1,
+        "$text": "Y"
+      }
+    },
+    "expectedOutput": "Y"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "Y",
+    "pattern": "type_identifier",
+    "edits": [],
+    "expectedSourceOut": "Y",
+    "expectedReparseTree": "(type_identifier)",
+    "wrappedText": "type _X = Y;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "type_identifier",
+    "input": {
+      "$type": 467,
+      "_content": {
+        "$type": 1,
         "$text": "E"
       }
     },
@@ -71021,6 +71027,30 @@
     "expectedSourceOut": "X",
     "expectedReparseTree": "(type_identifier)",
     "wrappedText": "type _X = X;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "type_identifier",
+    "input": {
+      "$type": 467,
+      "_content": {
+        "$type": 1,
+        "$text": "Y"
+      }
+    },
+    "expectedOutput": "Y"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "Y",
+    "pattern": "type_identifier",
+    "edits": [],
+    "expectedSourceOut": "Y",
+    "expectedReparseTree": "(type_identifier)",
+    "wrappedText": "type _X = Y;",
     "wrappedOffset": 10
   },
   {

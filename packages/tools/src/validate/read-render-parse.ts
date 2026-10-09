@@ -13,6 +13,7 @@ import { writeSync } from 'node:fs';
 import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
 import { sourceSpans, spanSlicer, type TriviaSides } from '@sittir/common';
 import {
+	carrySource,
 	isStorageKey,
 	mapTriviaEntries,
 	readNode as readTransport,
@@ -345,7 +346,9 @@ export interface ReadRenderParseResult {
  * between it and the node, never the root's outer-edge whitespace. The
  * stripped copy keeps an empty `leading` side rather than none: an empty side
  * still refuses the fold to a coordinate, so both renders print the node from
- * its storage and differ only by the leading trivia. Both are measured
+ * its storage and differ only by the leading trivia. The stripped copy keeps
+ * the node's source identity, so an alias envelope's content still crosses
+ * without the line gap the envelope owns. Both are measured
  * without trailing whitespace, which only the outer edge contributes.
  */
 export function leadingTriviaRenderedWidth(
@@ -357,6 +360,7 @@ export function leadingTriviaRenderedWidth(
 	const leading = trivia?.leading;
 	if (!leading || leading.length === 0) return 0;
 	const stripped = { ...data, $_layout: { ...data.$_layout, trivia: { ...trivia, leading: [] } } } as AnyUntypedNode;
+	carrySource(data, stripped);
 	return render(data).trimEnd().length - render(stripped).trimEnd().length;
 }
 

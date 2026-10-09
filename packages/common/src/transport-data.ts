@@ -362,6 +362,17 @@ export function sourceGapOf(
 	return { $treeHandle: source.treeHandle, $span: { start: derived.previous.end, end: source.span.start } };
 }
 
+/**
+ * Whether `node` names the parser node `owner` names: an alias envelope's
+ * content does. The trivia derived from that node's line gaps is the
+ * owner's, so the node crosses with its stored trivia only.
+ */
+function namesSameNode(owner: Record<string, unknown>, node: Record<string, unknown>): boolean {
+	const own = sourceOf(owner);
+	const other = sourceOf(node);
+	return own !== undefined && other !== undefined && own.token === other.token && own.treeHandle === other.treeHandle;
+}
+
 function isSourceSibling(candidate: Record<string, unknown>, node: Record<string, unknown>, span: { readonly start: number; readonly end: number }): boolean {
 	const own = sourceOf(candidate);
 	const other = sourceOf(node);
@@ -491,7 +502,7 @@ function toTransportValue(
 		return plainCoordinate(value);
 	}
 	const bears = bearer === undefined || bearer === value;
-	const trivia = crossingTrivia(value, view, bears ? changed : NO_EDGES);
+	const trivia = owner !== undefined && namesSameNode(owner, value) ? triviaOf(value) : crossingTrivia(value, view, bears ? changed : NO_EDGES);
 	if (fold && canFold(value, trivia)) {
 		assertHoldsTree(value);
 		return foldToCoordinate(value);

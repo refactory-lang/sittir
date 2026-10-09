@@ -437,12 +437,16 @@ The transport for data leaving the tree it was read from, such as a render fixtu
 
 ### `packages/common/src/transport-data.ts::toTransportValue`
 
-The walk behind `toTransportData` and `toDetachedTransportData`. A node that already holds a `gap` or a `flank` in its `$_layout` crosses with them: data a tool detached from its tree keeps the layout evidence the tree would have given, and without its tree nothing else could recompute it. Evidence the walk derives replaces a carried value: the flank the source gives (`sourceFlankOf`), and the gap an owner sets on each element after converting it (`sourceGapOf`).
+The walk behind `toTransportData` and `toDetachedTransportData`. A node naming the same parser node as its owner (`namesSameNode`) crosses with its stored trivia only. A node that already holds a `gap` or a `flank` in its `$_layout` crosses with them: data a tool detached from its tree keeps the layout evidence the tree would have given, and without its tree nothing else could recompute it. Evidence the walk derives replaces a carried value: the flank the source gives (`sourceFlankOf`), and the gap an owner sets on each element after converting it (`sourceGapOf`).
 
 
 ### `packages/common/src/transport-data.ts::crossingTrivia`
 
 A node's trivia as it crosses: without the runs whose neighbour changed (`withoutChangedEdges`), and, for a list node (`listItemsOf`), without the derived whitespace runs at its two ends. Those runs are the list's flanks, which its source flanks spell instead, depth included, so each flank has one source. Comments stay.
+
+### `packages/common/src/transport-data.ts::namesSameNode`
+
+Whether a node names the parser node its owner names, by tree token and tree handle. An alias envelope's content does: the read gives both records the one coordinate. The trivia a node derives from its line gaps (`TriviaView.trivia`) belongs to that parser node, so only the outermost record carries it; `toTransportValue` crosses a node that names its owner's parser node with its stored trivia only. Without that, a rebuilt envelope rendered on its own drops its own derived runs at the root edges while its content still carries a copy of them, writing a line break before the envelope, and the content, holding trivia, cannot fold to its source bytes.
 
 ### `packages/common/src/transport-data.ts::evidenceOf`
 
