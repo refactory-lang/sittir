@@ -114,8 +114,11 @@ describe('astStructuralDiff compares extras as one ordered sequence', () => {
 	}, 60_000);
 
 	it('passes a comment seated under another parent with the same bytes', async () => {
-		const trailing = await parse('fn f() { 1 /* c */ }');
-		const leading = await parse('fn f() { /* c */ 1 }');
-		expect(astStructuralDiff(trailing, leading)).toBeNull();
+		const inside = await parse('fn f() { (/* c */ 1) }');
+		const before = await parse('fn f() { /* c */ (1) }');
+		const parentOf = (root: Awaited<ReturnType<typeof parse>>) => root.descendantsOfType('block_comment')[0]!.parent!.type;
+		expect(parentOf(inside)).toBe('parenthesized_expression');
+		expect(parentOf(before)).toBe('block');
+		expect(astStructuralDiff(inside, before)).toBeNull();
 	}, 60_000);
 });
