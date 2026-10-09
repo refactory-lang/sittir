@@ -7236,6 +7236,10 @@ The parser catalog rows (`kindEntries`) a link pass reads before `LinkCtx` exist
  * separator and a rune escape's `"` never become `blank_identifier` or
  * `dquote`). A FIELD holding a whole token (`field(x, token(';'))`) sits
  * outside the TOKEN and still rewrites, because that string is the token.
+ * A STRING that arrives with `resolvedKindId` stands in for a symbol
+ * (`literalRuleForStamp`): it keeps that id instead of resolving by its
+ * text, and at a FIELD position it rewrites into a reference to that
+ * symbol, not to the catalog kind its text names.
  *
  * An inline SYMBOL (or inline SUPERTYPE subtype) whose name has an entry
  * in `aliasBodies` is not stamped in place — its alias body is spliced in
@@ -8967,7 +8971,10 @@ It applies only the lifts `validateGroupsConfig` keeps and returns the issues of
  *  nodes spelled `!`/`*`); without it the literal would resolve by its
  *  text to the anonymous `!`/`*` token, and the reader would find a
  *  child its kind has no route for. `canonicalizeRuleLiterals` stamps
- *  the alias's `aliasedToId`, which `layoutTokenIds` prefers. */
+ *  the alias's `aliasedToId`, which `layoutTokenIds` prefers. The literal
+ *  also carries `resolvedKindId`: the id of `symbol`'s own kind entry,
+ *  since the parser issues that symbol at the site whatever text it
+ *  renders as. */
 ```
 
 ### `packages/codegen/src/compiler/link.ts::rewriteRuleForStamp`

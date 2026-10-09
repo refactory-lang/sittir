@@ -503,8 +503,9 @@ export function canonicalizeRuleLiterals(
 						subtypes: rule.subtypes.map((s) => stampSymbolRefKindIds(s, { kindEntries, misses, aliasBodies }))
 					};
 		case STRING: {
+			const parsedAs = rule.resolvedKindId === undefined ? undefined : kindEntries.find((entry) => entry.id === rule.resolvedKindId);
 			if (allowLiteralRewrite) {
-				const entry = findEntryForLiteralText(kindEntries, rule.value);
+				const entry = parsedAs ?? findEntryForLiteralText(kindEntries, rule.value);
 				if (entry && (syntactic || entry.anon === true)) {
 					return stampAliasTargetId(
 						{
@@ -512,7 +513,7 @@ export function canonicalizeRuleLiterals(
 							name: entry.kind,
 							literal: rule.value,
 							inline: isParserHiddenKind(entry.kind, kindEntries),
-							kindId: entry.parseId ?? entry.id,
+							kindId: parsedAs?.id ?? entry.parseId ?? entry.id,
 							metadata: makeRuleMetadata({ symbolSource: 'link' }),
 							...(rule.aliasedTo === undefined ? {} : { aliasedTo: rule.aliasedTo }),
 							...(rule.annotations === undefined ? {} : { annotations: rule.annotations })
@@ -523,6 +524,7 @@ export function canonicalizeRuleLiterals(
 			}
 			if (kindEntries.length === 0) return rule;
 			const aliased = stampAliasTargetId(rule, { kindEntries, misses, aliasBodies });
+			if (parsedAs !== undefined) return aliased;
 			const literalEntry = findEntryForLiteralText(kindEntries, rule.value);
 			if (literalEntry === undefined) {
 				if (syntactic) misses.literals.add(rule.value);
@@ -2392,9 +2394,11 @@ interface RenderAsStampCtx {
 	readonly kindEntries: readonly GeneratedKindEntry[];
 }
 function literalRuleForStamp(stamp: RenderAsLiteralStamp, symbol: string, id: RuleId | undefined, ctx: RenderAsStampCtx): Rule<'link'> {
+	const parsedAs = findEntryForKindName(ctx.kindEntries, symbol);
 	const literal: StringRule<'link'> = {
 		type: STRING,
 		value: stamp.value,
+		...(parsedAs === undefined ? {} : { resolvedKindId: parsedAs.id }),
 		...(isParserHiddenKind(symbol, ctx.kindEntries) ? {} : { aliasedTo: symbol })
 	};
 	return stamp.immediate ? withId({ type: TOKEN, content: literal, immediate: true }, id) : withId(literal, id);
