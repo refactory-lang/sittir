@@ -1750,4 +1750,8 @@ Why a kind without a host is excluded from a rendering row: `hidden-kind` when t
 
 ### `packages/tools/src/validate/read-render-parse.ts::findReparsedNodeAtOffset`
 
-The reparsed node of a kind at the splice offset. The kind is a grammar id wherever the source node is known, since a named rule and the keyword token it wraps share a name and a range but not an id; a name stands in only where there is no source node. Lookups run in order: past the candidate's own leading trivia, at the splice offset itself (a list kind's leading trivia belongs to its first element), and last at a node of the kind that starts inside the whitespace run just before the hole and spans it (a block node starts at the line break before its first line). Each requires the kind.
+The reparsed node of a kind at the splice offset. The kind is a grammar id wherever the source node is known, since a named rule and the keyword token it wraps share a name and a range but not an id; a name stands in only where there is no source node. Lookups run in order: past the candidate's own leading trivia (mapped through the indentation the host added to the lines before it), at the splice offset itself (a list kind's leading trivia belongs to its first element), and last at a node of the kind that starts inside the whitespace run just before the hole and spans it (a block node starts at the line break before its first line). Each requires the kind.
+
+### `packages/tools/src/validate/read-render-parse.ts::candidateData`
+
+The candidate as its own source span has it. A trailing entry held past tokens that follow the node (`$tokensBetween` above zero) sits outside the span, where the parent renders it after those tokens, so a candidate rendered alone leaves it out. `renderReparse` applies it first, so the read-render-parse, factory and ir lanes prepare a candidate in one place.

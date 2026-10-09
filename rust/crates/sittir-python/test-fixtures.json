@@ -110688,6 +110688,143 @@
                               "_content": [
                                 {
                                   "$type": 119,
+                                  "$text": "quit"
+                                }
+                              ]
+                            }
+                          ],
+                          "_string_end": {
+                            "$type": 121,
+                            "$text": "\""
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "_delimiter": 0,
+                  "$_layout": {
+                    "flank": {
+                      "$text": "    case [\"quit\"]",
+                      "$span": {
+                        "start": 10,
+                        "end": 16
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "_delimiter": 0,
+        "$_layout": {
+          "flank": {
+            "$text": "    case [\"quit\"]:",
+            "$span": {
+              "start": 9,
+              "end": 17
+            },
+            "$before": true,
+            "$after": false
+          }
+        }
+      },
+      "_consequence": {
+        "$type": 294,
+        "_elements": {
+          "$type": 259,
+          "_item": [
+            {
+              "$type": 141,
+              "_content": 64
+            }
+          ],
+          "_delimiter": 0,
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                {
+                  "$type": 73,
+                  "$_layout": {},
+                  "_content": " Code omitted for brevity",
+                  "$sameLine": true
+                }
+              ]
+            },
+            "flank": {
+              "$text": "    case [\"quit\"]: ... #",
+              "$span": {
+                "start": 19,
+                "end": 22
+              },
+              "$before": true,
+              "$after": true
+            }
+          }
+        }
+      },
+      "$_layout": {
+        "trivia": {
+          "leading": [
+            {
+              "$type": 73,
+              "$_layout": {},
+              "_content": " ^ conditional"
+            },
+            115
+          ]
+        }
+      }
+    },
+    "expectedOutput": "# ^ conditional\ncase [\"quit\"]: ... # Code omitted for brevity\n"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "case [\"quit\"]: ... # Code omitted for brevity",
+    "pattern": "case_clause",
+    "edits": [],
+    "expectedSourceOut": "# ^ conditional\ncase [\"quit\"]: ... # Code omitted for brevity\n",
+    "expectedReparseTree": "(case_clause (case_patterns item: (case_pattern (simple_pattern (case_list_pattern (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))))))) consequence: (suite_inline elements: (simple_statements_elements item: (expression_statement (ellipsis))) (comment) (newline)))",
+    "wrappedText": "match 0:\n    \n    \n    # ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    ",
+    "wrappedOffset": 23
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "case_clause",
+    "input": {
+      "$type": 155,
+      "_case_patterns": {
+        "$type": 261,
+        "_item": [
+          {
+            "$type": 182,
+            "_content": {
+              "$type": 183,
+              "_content": {
+                "$type": 274,
+                "_list_pattern_case_patterns": {
+                  "$type": 265,
+                  "_item": [
+                    {
+                      "$type": 182,
+                      "_content": {
+                        "$type": 183,
+                        "_content": {
+                          "$type": 247,
+                          "_string_start": {
+                            "$type": 118,
+                            "$text": "\""
+                          },
+                          "_content": [
+                            {
+                              "$type": 248,
+                              "_content": [
+                                {
+                                  "$type": 119,
                                   "$text": "go"
                                 }
                               ]
@@ -161764,6 +161901,17 @@
     "wrappedOffset": 23
   },
   {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "Click((x, y), button=Button.LEFT)",
+    "pattern": "case_patterns",
+    "edits": [],
+    "expectedSourceOut": "Click((x, y), button = Button.LEFT)",
+    "expectedReparseTree": "(case_patterns item: (case_pattern (simple_pattern (class_pattern name: (dotted_name names: (identifier)) arguments: (list_pattern_case_patterns item: (case_pattern (simple_pattern (case_tuple_pattern (list_pattern_case_patterns item: (case_pattern (simple_pattern (dotted_name names: (identifier)))) item: (case_pattern (simple_pattern (dotted_name names: (identifier)))))))) item: (case_pattern (keyword_pattern name: (identifier) value: (dotted_name names: (identifier) names: (identifier)))))))))",
+    "wrappedText": "match 0:\n    \n    \n    case Click((x, y), button = Button.LEFT): pass",
+    "wrappedOffset": 28
+  },
+  {
     "kind": "render",
     "grammar": "python",
     "pattern": "case_patterns",
@@ -203435,6 +203583,94 @@
     "wrappedOffset": 23
   },
   {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "Something()",
+    "pattern": "case_patterns",
+    "edits": [],
+    "expectedSourceOut": "Something()",
+    "expectedReparseTree": "(case_patterns item: (case_pattern (simple_pattern (class_pattern name: (dotted_name names: (identifier))))))",
+    "wrappedText": "match 0:\n    \n    \n    case Something(): pass",
+    "wrappedOffset": 28
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "Something.Else()",
+    "pattern": "case_patterns",
+    "edits": [],
+    "expectedSourceOut": "Something.Else()",
+    "expectedReparseTree": "(case_patterns item: (case_pattern (simple_pattern (class_pattern name: (dotted_name names: (identifier) names: (identifier))))))",
+    "wrappedText": "match 0:\n    \n    \n    case Something.Else(): pass",
+    "wrappedOffset": 28
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "Point2D(0, 1, 2)",
+    "pattern": "case_patterns",
+    "edits": [],
+    "expectedSourceOut": "Point2D(0, 1, 2)",
+    "expectedReparseTree": "(case_patterns item: (case_pattern (simple_pattern (class_pattern name: (dotted_name names: (identifier)) arguments: (list_pattern_case_patterns item: (case_pattern (simple_pattern (simple_pattern_negative value: (integer_decimal_plain)))) item: (case_pattern (simple_pattern (simple_pattern_negative value: (integer_decimal_plain)))) item: (case_pattern (simple_pattern (simple_pattern_negative value: (integer_decimal_plain)))))))))",
+    "wrappedText": "match 0:\n    \n    \n    case Point2D(0, 1, 2): pass",
+    "wrappedOffset": 28
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "Point3D(x=0, y=0, z=0)",
+    "pattern": "case_patterns",
+    "edits": [],
+    "expectedSourceOut": "Point3D(x = 0, y = 0, z = 0)",
+    "expectedReparseTree": "(case_patterns item: (case_pattern (simple_pattern (class_pattern name: (dotted_name names: (identifier)) arguments: (list_pattern_case_patterns item: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative value: (integer_decimal_plain)))) item: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative value: (integer_decimal_plain)))) item: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative value: (integer_decimal_plain)))))))))",
+    "wrappedText": "match 0:\n    \n    \n    case Point3D(x = 0, y = 0, z = 0): pass",
+    "wrappedOffset": 28
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "Point3D(34, x=0, y=0, z=0)",
+    "pattern": "case_patterns",
+    "edits": [],
+    "expectedSourceOut": "Point3D(34, x = 0, y = 0, z = 0)",
+    "expectedReparseTree": "(case_patterns item: (case_pattern (simple_pattern (class_pattern name: (dotted_name names: (identifier)) arguments: (list_pattern_case_patterns item: (case_pattern (simple_pattern (simple_pattern_negative value: (integer_decimal_plain)))) item: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative value: (integer_decimal_plain)))) item: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative value: (integer_decimal_plain)))) item: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative value: (integer_decimal_plain)))))))))",
+    "wrappedText": "match 0:\n    \n    \n    case Point3D(34, x = 0, y = 0, z = 0): pass",
+    "wrappedOffset": 28
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "Point2D(0, 1, 2,)",
+    "pattern": "case_patterns",
+    "edits": [],
+    "expectedSourceOut": "Point2D(0, 1, 2,)",
+    "expectedReparseTree": "(case_patterns item: (case_pattern (simple_pattern (class_pattern name: (dotted_name names: (identifier)) arguments: (list_pattern_case_patterns item: (case_pattern (simple_pattern (simple_pattern_negative value: (integer_decimal_plain)))) item: (case_pattern (simple_pattern (simple_pattern_negative value: (integer_decimal_plain)))) item: (case_pattern (simple_pattern (simple_pattern_negative value: (integer_decimal_plain)))))))))",
+    "wrappedText": "match 0:\n    \n    \n    case Point2D(0, 1, 2,): pass",
+    "wrappedOffset": 28
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "Point3D(x=0, y=0, z=0,)",
+    "pattern": "case_patterns",
+    "edits": [],
+    "expectedSourceOut": "Point3D(x = 0, y = 0, z = 0,)",
+    "expectedReparseTree": "(case_patterns item: (case_pattern (simple_pattern (class_pattern name: (dotted_name names: (identifier)) arguments: (list_pattern_case_patterns item: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative value: (integer_decimal_plain)))) item: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative value: (integer_decimal_plain)))) item: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative value: (integer_decimal_plain)))))))))",
+    "wrappedText": "match 0:\n    \n    \n    case Point3D(x = 0, y = 0, z = 0,): pass",
+    "wrappedOffset": 28
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "Point3D(34, x=0, y=0, z=0,)",
+    "pattern": "case_patterns",
+    "edits": [],
+    "expectedSourceOut": "Point3D(34, x = 0, y = 0, z = 0,)",
+    "expectedReparseTree": "(case_patterns item: (case_pattern (simple_pattern (class_pattern name: (dotted_name names: (identifier)) arguments: (list_pattern_case_patterns item: (case_pattern (simple_pattern (simple_pattern_negative value: (integer_decimal_plain)))) item: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative value: (integer_decimal_plain)))) item: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative value: (integer_decimal_plain)))) item: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative value: (integer_decimal_plain)))))))))",
+    "wrappedText": "match 0:\n    \n    \n    case Point3D(34, x = 0, y = 0, z = 0,): pass",
+    "wrappedOffset": 28
+  },
+  {
     "kind": "render",
     "grammar": "python",
     "pattern": "case_pattern",
@@ -217248,48 +217484,6 @@
     "expectedSourceOut": "a.b.c",
     "expectedReparseTree": "(dotted_name names: (identifier) names: (identifier) names: (identifier))",
     "wrappedText": "import a.b.c",
-    "wrappedOffset": 7
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "aliased_import",
-    "input": {
-      "$type": 136,
-      "_name": {
-        "$type": 181,
-        "_names": [
-          {
-            "$type": 1,
-            "$text": "b"
-          },
-          {
-            "$type": 1,
-            "$text": "c",
-            "$_layout": {
-              "gap": {
-                "$text": "."
-              }
-            }
-          }
-        ]
-      },
-      "_alias": {
-        "$type": 1,
-        "$text": "d"
-      }
-    },
-    "expectedOutput": "b.c as d"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "b.c as d",
-    "pattern": "aliased_import",
-    "edits": [],
-    "expectedSourceOut": "b.c as d",
-    "expectedReparseTree": "(aliased_import name: (dotted_name names: (identifier) names: (identifier)) alias: (identifier))",
-    "wrappedText": "import b.c as d",
     "wrappedOffset": 7
   },
   {
@@ -268270,6 +268464,119 @@
     "expectedReparseTree": "(suite_block (comment) (comment) (comment) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (comment) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline))))",
     "wrappedText": "if a:\n  \n      # one\n      # two\n      # three\n      b\n      # four\n      c\n  ",
     "wrappedOffset": 8
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "block",
+    "input": {
+      "$type": 179,
+      "_statements": [
+        {
+          "$type": 129,
+          "_elements": {
+            "$type": 259,
+            "_item": [
+              {
+                "$type": 141,
+                "_content": {
+                  "$type": 1,
+                  "$text": "b"
+                }
+              }
+            ],
+            "_delimiter": 0,
+            "$_layout": {
+              "flank": {
+                "$text": "    # three\n  b\n    #",
+                "$span": {
+                  "start": 14,
+                  "end": 15
+                },
+                "$before": true,
+                "$after": false
+              }
+            }
+          }
+        },
+        {
+          "$type": 129,
+          "_elements": {
+            "$type": 259,
+            "_item": [
+              {
+                "$type": 141,
+                "_content": {
+                  "$type": 1,
+                  "$text": "c"
+                }
+              }
+            ],
+            "_delimiter": 0,
+            "$_layout": {
+              "flank": {
+                "$text": "    # four\n  c\n",
+                "$span": {
+                  "start": 13,
+                  "end": 14
+                },
+                "$before": false,
+                "$after": true
+              }
+            }
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                115,
+                {
+                  "$type": 73,
+                  "$_layout": {},
+                  "_content": " four"
+                },
+                115
+              ]
+            }
+          }
+        }
+      ],
+      "$_layout": {
+        "trivia": {
+          "leading": [
+            {
+              "$type": 73,
+              "$_layout": {},
+              "_content": " one"
+            },
+            115,
+            {
+              "$type": 73,
+              "$_layout": {},
+              "_content": " two"
+            },
+            115,
+            {
+              "$type": 73,
+              "$_layout": {},
+              "_content": " three"
+            },
+            115
+          ]
+        }
+      }
+    },
+    "expectedOutput": "# one\n# two\n# three\nb\n# four\nc\n"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "b\n    # four\n  c",
+    "pattern": "block",
+    "edits": [],
+    "expectedSourceOut": "# one\n# two\n# three\nb\n# four\nc\n",
+    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (comment) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)))",
+    "wrappedText": "if a:\n  \n  # one\n  # two\n  # three\n  b\n  # four\n  c\n  ",
+    "wrappedOffset": 11
   },
   {
     "kind": "render",

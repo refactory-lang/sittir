@@ -523,10 +523,10 @@ export function selfContainedRenderInput(
 export function findReparsedNodeAtOffset(
 	tree2: TSTree,
 	targetKind: string | number,
-	wrapped: { text: string; offset: number },
+	wrapped: { text: string; offset: number; at?: (renderedOffset: number) => number },
 	offsetAdjust = 0
 ): TSNode | null {
-	const adjusted = findNodeAt(tree2.rootNode, targetKind, wrapped.offset + offsetAdjust);
+	const adjusted = findNodeAt(tree2.rootNode, targetKind, wrapped.at?.(offsetAdjust) ?? wrapped.offset + offsetAdjust);
 	if (adjusted !== null) return adjusted;
 	const plain = offsetAdjust === 0 ? null : findNodeAt(tree2.rootNode, targetKind, wrapped.offset);
 	if (plain !== null) return plain;
@@ -668,6 +668,25 @@ export type RenderReparseOutcome =
 	  };
 
 /**
+ * The candidate as its own source span has it: a trailing entry held past
+ * tokens that follow the node (`$tokensBetween` above zero) sits outside the
+ * span, where the parent renders it after those tokens, so a candidate
+ * rendered alone leaves it out. The one place every validator lane prepares
+ * a candidate.
+ */
+export function candidateData(data: AnyUntypedNode, triviaOf: (node: object) => NodeTrivia | undefined): AnyUntypedNode {
+	const trivia = triviaOf(data);
+	const trailing = trivia?.trailing;
+	if (trailing === undefined) return data;
+	const own = trailing.filter((entry) => !(typeof entry === 'object' && entry !== null && Number((entry as { $tokensBetween?: number }).$tokensBetween ?? 0) > 0));
+	if (own.length === trailing.length) return data;
+	const layout = (data as { $_layout?: { trivia?: object } }).$_layout;
+	const trailingOf = own.length === 0 ? undefined : own;
+	if (layout?.trivia !== undefined) return { ...data, $_layout: { ...layout, trivia: { ...layout.trivia, trailing: trailingOf } } } as AnyUntypedNode;
+	return { ...data, $_trivia: { ...trivia, trailing: trailingOf } } as AnyUntypedNode;
+}
+
+/**
  * Render `data` with the native engine, reparse the text inside its kind's
  * reparse wrapper, find the reparsed node of `targetKind` (or `renderedKind`)
  * at the rendered offset (the root when `treeRoot`), and compare its AST with
@@ -683,6 +702,7 @@ export function renderReparse(
 	ctx: RenderReparseContext,
 	dumpLabel?: string
 ): RenderReparseOutcome {
+	data = candidateData(data, ctx.triviaOf);
 	const rendered = ctx.render(data);
 	if (dumpLabel !== undefined) {
 		writeSync(2, `[dump-render] ${dumpLabel} data=${JSON.stringify(data)}\n`);

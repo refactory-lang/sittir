@@ -592,7 +592,7 @@ The host template that reparses a rendered kind: its own, its target kind's, or 
 
 ### `packages/common/src/reparse.ts::applyHost`
 
-Splices rendered text into a host template's `$r` hole and reports the hole's offset. When only whitespace precedes the hole on its line, every continuation line of the rendered text is indented to the hole's column, so a multi-line render stays a block of the same indentation in indentation-sensitive grammars. Given a parser for the host language, lines `lineStartsInsideTokens` finds on the unindented text are left where they are.
+Splices rendered text into a host template's `$r` hole and reports the hole's offset. When only whitespace precedes the hole on its line, every continuation line of the rendered text is indented to the hole's column, so a multi-line render stays a block of the same indentation in indentation-sensitive grammars. Given a parser for the host language, lines `lineStartsInsideTokens` finds on the unindented text are left where they are. The result also carries `at`, a non-enumerable map from an offset in the rendered text to its offset in the hosted text, which counts the indentation added to the lines before it.
 
 ### `packages/common/src/reparse.ts::lineStartsInsideTokens`
 

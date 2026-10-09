@@ -9,6 +9,8 @@ export const NO_REPARSE_HOSTS: ReparseHosts = Object.freeze({ hosts: {}, priorit
 export interface HostedText {
 	readonly text: string;
 	readonly offset: number;
+	/** The offset in `text` of the character at `renderedOffset` in the rendered text spliced into the first hole. */
+	readonly at?: (renderedOffset: number) => number;
 }
 
 export interface HostOptions {
@@ -65,6 +67,7 @@ export function applyHost(template: string, rendered: string, parse?: (text: str
 	const inside = parse === undefined ? new Set<number>() : lineStartsInsideTokens(parse(plain)?.rootNode ?? { startIndex: 0, endIndex: 0, children: [] }, plain);
 	let text = parts[0]!;
 	let plainAt = parts[0]!.length;
+	const shifts: { readonly at: number; readonly length: number }[] = [];
 	for (let i = 1; i < parts.length; i++) {
 		const lineStart = text.lastIndexOf('\n') + 1;
 		const indent = /^[ \t]*$/.test(text.slice(lineStart)) ? text.slice(lineStart) : '';
@@ -72,19 +75,26 @@ export function applyHost(template: string, rendered: string, parse?: (text: str
 			text += rendered;
 		} else {
 			let at = plainAt;
+			let renderedAt = 0;
 			text += rendered
 				.split('\n')
 				.map((line, index) => {
 					const lineAt = at;
+					const lineRenderedAt = renderedAt;
 					at += line.length + 1;
-					return index === 0 || inside.has(lineAt) ? line : indent + line;
+					renderedAt += line.length + 1;
+					if (index === 0 || inside.has(lineAt)) return line;
+					if (i === 1) shifts.push({ at: lineRenderedAt, length: indent.length });
+					return indent + line;
 				})
 				.join('\n');
 		}
 		plainAt += rendered.length + parts[i]!.length;
 		text += parts[i]!;
 	}
-	return { text, offset: offset >= 0 ? offset : 0 };
+	const hostOffset = offset >= 0 ? offset : 0;
+	const at = (renderedOffset: number): number => hostOffset + renderedOffset + shifts.filter((shift) => shift.at <= renderedOffset).reduce((sum, shift) => sum + shift.length, 0);
+	return Object.defineProperty({ text, offset: hostOffset }, 'at', { value: at, enumerable: false }) as HostedText;
 }
 
 function hostBySupertype(
