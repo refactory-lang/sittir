@@ -36670,6 +36670,129 @@
           "$source": 0,
           "$named": true,
           "_content": {
+            "$type": 388,
+            "$source": 0,
+            "$named": true,
+            "_type": {
+              "$type": 468,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "c_char",
+                "$span": {
+                  "start": 57,
+                  "end": 63
+                }
+              }
+            },
+            "$other": [
+              {
+                "$type": 9,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 50,
+                  "end": 51
+                }
+              },
+              {
+                "$type": 35,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 51,
+                  "end": 56
+                }
+              }
+            ]
+          }
+        },
+        {
+          "$type": 429,
+          "$source": 0,
+          "$named": true,
+          "_content": {
+            "$type": 232,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 69,
+              "end": 72
+            },
+            "$text": "..."
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                171
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 130,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 63,
+            "end": 64
+          }
+        },
+        {
+          "$type": 130,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 72,
+            "end": 73
+          }
+        }
+      ],
+      "_delimiter": 2,
+      "$_layout": {
+        "flank": {
+          "$text": "extern \"C\" fn printf(\n    *const c_char,\n    ...,\n)",
+          "$span": {
+            "start": 26,
+            "end": 49
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "* const c_char,\n    ...,"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "*const c_char,\n    ...,",
+    "pattern": "parameters_elements",
+    "edits": [],
+    "expectedSourceOut": "* const c_char,\n    ...,",
+    "expectedReparseTree": "(parameters_elements item: (attributed_parameter (pointer_type_const type: (type_identifier))) item: (attributed_parameter (variadic_parameter)))",
+    "wrappedText": "fn _f(* const c_char,\n    ...,) {}",
+    "wrappedOffset": 6
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "parameters_elements",
+    "input": {
+      "$type": 349,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 429,
+          "$source": 0,
+          "$named": true,
+          "_content": {
             "$type": 233,
             "$source": 0,
             "$named": true,
@@ -47026,6 +47149,109 @@
   {
     "kind": "render",
     "grammar": "rust",
+    "pattern": "struct_pattern_elements",
+    "input": {
+      "$type": 359,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 414,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 467,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "texts",
+              "$span": {
+                "start": 20,
+                "end": 25
+              }
+            }
+          }
+        },
+        {
+          "$type": 414,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 467,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "values",
+              "$span": {
+                "start": 31,
+                "end": 37
+              }
+            }
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                171
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 130,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 25,
+            "end": 26
+          }
+        },
+        {
+          "$type": 130,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 37,
+            "end": 38
+          }
+        }
+      ],
+      "_delimiter": 2,
+      "$_layout": {
+        "flank": {
+          "$text": "let Foo::Bar {\n    texts,\n    values,\n}",
+          "$span": {
+            "start": 19,
+            "end": 37
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "texts,\n    values,"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "texts,\n    values,",
+    "pattern": "struct_pattern_elements",
+    "edits": [],
+    "expectedSourceOut": "texts,\n    values,",
+    "expectedReparseTree": "(struct_pattern_elements item: (field_pattern_shorthand name: (shorthand_field_identifier)) item: (field_pattern_shorthand name: (shorthand_field_identifier)))",
+    "wrappedText": "fn _f() { let D::E{texts,\n    values,} = (); }",
+    "wrappedOffset": 19
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
     "pattern": "field_pattern_shorthand",
     "input": {
       "$type": 414,
@@ -51947,6 +52173,214 @@
   {
     "kind": "render",
     "grammar": "rust",
+    "pattern": "field_declaration_list_elements",
+    "input": {
+      "$type": 344,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 427,
+          "$source": 0,
+          "$named": true,
+          "_field_declaration": {
+            "$type": 202,
+            "$source": 0,
+            "$named": true,
+            "_name": {
+              "$type": 465,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "x",
+                "$span": {
+                  "start": 99,
+                  "end": 100
+                }
+              }
+            },
+            "_type": 63,
+            "$other": [
+              {
+                "$type": 4,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 100,
+                  "end": 101
+                }
+              }
+            ],
+            "$slotOrder": [
+              "name",
+              "type"
+            ]
+          },
+          "_attribute_item": []
+        },
+        {
+          "$type": 427,
+          "$source": 0,
+          "$named": true,
+          "_attribute_item": [
+            {
+              "$type": 190,
+              "$source": 0,
+              "$named": true,
+              "_attribute": {
+                "$type": 192,
+                "$source": 0,
+                "$named": true,
+                "_path": {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "attribute1",
+                  "$span": {
+                    "start": 112,
+                    "end": 122
+                  }
+                }
+              },
+              "$other": [
+                {
+                  "$type": 26,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 110,
+                    "end": 111
+                  }
+                },
+                {
+                  "$type": 27,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 111,
+                    "end": 112
+                  }
+                },
+                {
+                  "$type": 28,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 122,
+                    "end": 123
+                  }
+                }
+              ]
+            }
+          ],
+          "_field_declaration": {
+            "$type": 202,
+            "$source": 0,
+            "$named": true,
+            "_name": {
+              "$type": 465,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "y",
+                "$span": {
+                  "start": 126,
+                  "end": 127
+                }
+              }
+            },
+            "_type": 63,
+            "$other": [
+              {
+                "$type": 4,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 127,
+                  "end": 128
+                }
+              }
+            ],
+            "$slotOrder": [
+              "name",
+              "type"
+            ],
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  171
+                ]
+              }
+            }
+          },
+          "$slotOrder": [
+            "attribute_item",
+            "field_declaration"
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 130,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 105,
+            "end": 106
+          }
+        },
+        {
+          "$type": 130,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 132,
+            "end": 133
+          }
+        }
+      ],
+      "_delimiter": 2,
+      "$_layout": {
+        "flank": {
+          "$text": "struct Point {\n  x: i32,\n\n  #[attribute1]\n  y: i32,\n}",
+          "$span": {
+            "start": 17,
+            "end": 51
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "x: i32,\n\n    #[attribute1]\n    y: i32,"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "x: i32,\n\n  #[attribute1]\n  y: i32,",
+    "pattern": "field_declaration_list_elements",
+    "edits": [],
+    "expectedSourceOut": "x: i32,\n\n    #[attribute1]\n    y: i32,",
+    "expectedReparseTree": "(field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) item: (attributed_field_declaration (attribute_item attribute: (attribute path: (identifier))) (field_declaration name: (field_identifier) type: (primitive_type))))",
+    "wrappedText": "struct A {x: i32,\n\n    #[attribute1]\n    y: i32,}",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
     "pattern": "attributed_field_declaration",
     "input": {
       "$type": 427,
@@ -55739,6 +56173,539 @@
     "expectedReparseTree": "(field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (array_type element: (type_identifier) length: (integer_literal_decimal)))) item: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (array_type element: (type_identifier) length: (integer_literal_decimal)))) item: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (array_type element: (type_identifier) length: (integer_literal_decimal)))) item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (array_type element: (primitive_type) length: (integer_literal_decimal))))))",
     "wrappedText": "struct A {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}",
     "wrappedOffset": 9
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "field_declaration_list_elements",
+    "input": {
+      "$type": 344,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 427,
+          "$source": 0,
+          "$named": true,
+          "_field_declaration": {
+            "$type": 202,
+            "$source": 0,
+            "$named": true,
+            "_visibility_modifier": {
+              "$type": 235,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 381,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 40,
+                  "end": 43
+                },
+                "$text": "pub"
+              }
+            },
+            "_name": {
+              "$type": 465,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "__u6_addr8",
+                "$span": {
+                  "start": 44,
+                  "end": 54
+                }
+              }
+            },
+            "_type": {
+              "$type": 240,
+              "$source": 0,
+              "$named": true,
+              "_element": {
+                "$type": 468,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "__uint8_t",
+                  "$span": {
+                    "start": 57,
+                    "end": 66
+                  }
+                }
+              },
+              "_length": {
+                "$type": 141,
+                "$source": 0,
+                "$named": true,
+                "_content": "16",
+                "_suffix": "usize"
+              },
+              "$other": [
+                {
+                  "$type": 27,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 56,
+                    "end": 57
+                  }
+                },
+                {
+                  "$type": 2,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 66,
+                    "end": 67
+                  }
+                },
+                {
+                  "$type": 28,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 75,
+                    "end": 76
+                  }
+                }
+              ],
+              "$slotOrder": [
+                "element",
+                "length"
+              ]
+            },
+            "$other": [
+              {
+                "$type": 4,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 54,
+                  "end": 55
+                }
+              }
+            ],
+            "$slotOrder": [
+              "visibility_modifier",
+              "name",
+              "type"
+            ]
+          },
+          "_attribute_item": []
+        },
+        {
+          "$type": 427,
+          "$source": 0,
+          "$named": true,
+          "_field_declaration": {
+            "$type": 202,
+            "$source": 0,
+            "$named": true,
+            "_visibility_modifier": {
+              "$type": 235,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 381,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 82,
+                  "end": 85
+                },
+                "$text": "pub"
+              }
+            },
+            "_name": {
+              "$type": 465,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "__u6_addr16",
+                "$span": {
+                  "start": 86,
+                  "end": 97
+                }
+              }
+            },
+            "_type": {
+              "$type": 240,
+              "$source": 0,
+              "$named": true,
+              "_element": {
+                "$type": 468,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "__uint16_t",
+                  "$span": {
+                    "start": 100,
+                    "end": 110
+                  }
+                }
+              },
+              "_length": {
+                "$type": 141,
+                "$source": 0,
+                "$named": true,
+                "_content": "8",
+                "_suffix": "usize"
+              },
+              "$other": [
+                {
+                  "$type": 27,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 99,
+                    "end": 100
+                  }
+                },
+                {
+                  "$type": 2,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 110,
+                    "end": 111
+                  }
+                },
+                {
+                  "$type": 28,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 118,
+                    "end": 119
+                  }
+                }
+              ],
+              "$slotOrder": [
+                "element",
+                "length"
+              ]
+            },
+            "$other": [
+              {
+                "$type": 4,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 97,
+                  "end": 98
+                }
+              }
+            ],
+            "$slotOrder": [
+              "visibility_modifier",
+              "name",
+              "type"
+            ]
+          },
+          "_attribute_item": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                171
+              ]
+            }
+          }
+        },
+        {
+          "$type": 427,
+          "$source": 0,
+          "$named": true,
+          "_field_declaration": {
+            "$type": 202,
+            "$source": 0,
+            "$named": true,
+            "_visibility_modifier": {
+              "$type": 235,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 381,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 125,
+                  "end": 128
+                },
+                "$text": "pub"
+              }
+            },
+            "_name": {
+              "$type": 465,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "__u6_addr32",
+                "$span": {
+                  "start": 129,
+                  "end": 140
+                }
+              }
+            },
+            "_type": {
+              "$type": 240,
+              "$source": 0,
+              "$named": true,
+              "_element": {
+                "$type": 468,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "__uint32_t",
+                  "$span": {
+                    "start": 143,
+                    "end": 153
+                  }
+                }
+              },
+              "_length": {
+                "$type": 141,
+                "$source": 0,
+                "$named": true,
+                "_content": "4",
+                "_suffix": "usize"
+              },
+              "$other": [
+                {
+                  "$type": 27,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 142,
+                    "end": 143
+                  }
+                },
+                {
+                  "$type": 2,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 153,
+                    "end": 154
+                  }
+                },
+                {
+                  "$type": 28,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 161,
+                    "end": 162
+                  }
+                }
+              ],
+              "$slotOrder": [
+                "element",
+                "length"
+              ]
+            },
+            "$other": [
+              {
+                "$type": 4,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 140,
+                  "end": 141
+                }
+              }
+            ],
+            "$slotOrder": [
+              "visibility_modifier",
+              "name",
+              "type"
+            ]
+          },
+          "_attribute_item": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                171
+              ]
+            }
+          }
+        },
+        {
+          "$type": 427,
+          "$source": 0,
+          "$named": true,
+          "_field_declaration": {
+            "$type": 202,
+            "$source": 0,
+            "$named": true,
+            "_name": {
+              "$type": 465,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "_bindgen_union_align",
+                "$span": {
+                  "start": 168,
+                  "end": 188
+                }
+              }
+            },
+            "_type": {
+              "$type": 240,
+              "$source": 0,
+              "$named": true,
+              "_element": 62,
+              "_length": {
+                "$type": 141,
+                "$source": 0,
+                "$named": true,
+                "_content": "4",
+                "_suffix": "usize"
+              },
+              "$other": [
+                {
+                  "$type": 27,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 190,
+                    "end": 191
+                  }
+                },
+                {
+                  "$type": 2,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 194,
+                    "end": 195
+                  }
+                },
+                {
+                  "$type": 28,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 202,
+                    "end": 203
+                  }
+                }
+              ],
+              "$slotOrder": [
+                "element",
+                "length"
+              ]
+            },
+            "$other": [
+              {
+                "$type": 4,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 188,
+                  "end": 189
+                }
+              }
+            ],
+            "$slotOrder": [
+              "name",
+              "type"
+            ]
+          },
+          "_attribute_item": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                171
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 130,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 76,
+            "end": 77
+          }
+        },
+        {
+          "$type": 130,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 119,
+            "end": 120
+          }
+        },
+        {
+          "$type": 130,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 162,
+            "end": 163
+          }
+        },
+        {
+          "$type": 130,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 203,
+            "end": 204
+          }
+        }
+      ],
+      "_delimiter": 2,
+      "$_layout": {
+        "flank": {
+          "$text": "pub union in6_addr__bindgen_ty_1 {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}",
+          "$span": {
+            "start": 39,
+            "end": 203
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],",
+    "pattern": "field_declaration_list_elements",
+    "edits": [],
+    "expectedSourceOut": "pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],",
+    "expectedReparseTree": "(field_declaration_list_elements item: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (array_type element: (type_identifier) length: (integer_literal_decimal)))) item: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (array_type element: (type_identifier) length: (integer_literal_decimal)))) item: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (array_type element: (type_identifier) length: (integer_literal_decimal)))) item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (array_type element: (primitive_type) length: (integer_literal_decimal)))))",
+    "wrappedText": "struct A {pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],}",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -65276,6 +66243,810 @@
   {
     "kind": "render",
     "grammar": "rust",
+    "pattern": "enum_variant_list_elements",
+    "input": {
+      "$type": 343,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 428,
+          "$source": 0,
+          "$named": true,
+          "_enum_variant": {
+            "$type": 200,
+            "$source": 0,
+            "$named": true,
+            "_name": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "None",
+              "$span": {
+                "start": 26,
+                "end": 30
+              }
+            }
+          },
+          "_attribute_item": []
+        },
+        {
+          "$type": 428,
+          "$source": 0,
+          "$named": true,
+          "_enum_variant": {
+            "$type": 200,
+            "$source": 0,
+            "$named": true,
+            "_name": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "Some",
+              "$span": {
+                "start": 36,
+                "end": 40
+              }
+            },
+            "_body": {
+              "$type": 203,
+              "$source": 0,
+              "$named": true,
+              "_attributes": {
+                "$type": 345,
+                "$source": 0,
+                "$named": true,
+                "_item": [
+                  {
+                    "$type": 432,
+                    "$source": 0,
+                    "$named": true,
+                    "_type": {
+                      "$type": 468,
+                      "$source": 0,
+                      "$named": true,
+                      "_content": {
+                        "$type": 1,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "T",
+                        "$span": {
+                          "start": 41,
+                          "end": 42
+                        }
+                      }
+                    },
+                    "_attribute_item": []
+                  }
+                ],
+                "_delimiter": 0,
+                "$_layout": {
+                  "flank": {
+                    "$text": "    Some(T)",
+                    "$span": {
+                      "start": 9,
+                      "end": 10
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
+                }
+              },
+              "$other": [
+                {
+                  "$type": 6,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 40,
+                    "end": 41
+                  }
+                },
+                {
+                  "$type": 7,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 42,
+                    "end": 43
+                  }
+                }
+              ]
+            },
+            "$slotOrder": [
+              "name",
+              "body"
+            ]
+          },
+          "_attribute_item": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                171
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 130,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 30,
+            "end": 31
+          }
+        },
+        {
+          "$type": 130,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 43,
+            "end": 44
+          }
+        }
+      ],
+      "_delimiter": 2,
+      "$_layout": {
+        "flank": {
+          "$text": "pub enum Option<T> {\n    None,\n    Some(T),\n}",
+          "$span": {
+            "start": 25,
+            "end": 43
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "None,\n    Some(T),"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "None,\n    Some(T),",
+    "pattern": "enum_variant_list_elements",
+    "edits": [],
+    "expectedSourceOut": "None,\n    Some(T),",
+    "expectedReparseTree": "(enum_variant_list_elements item: (attributed_enum_variant (enum_variant name: (identifier))) item: (attributed_enum_variant (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier)))))))",
+    "wrappedText": "pub enum Error {\n    None,\n        Some(T),\n}",
+    "wrappedOffset": 21
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "enum_variant_list_elements",
+    "input": {
+      "$type": 343,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 428,
+          "$source": 0,
+          "$named": true,
+          "_enum_variant": {
+            "$type": 200,
+            "$source": 0,
+            "$named": true,
+            "_name": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "Internal",
+              "$span": {
+                "start": 77,
+                "end": 85
+              }
+            },
+            "_body": {
+              "$type": 201,
+              "$source": 0,
+              "$named": true,
+              "_elements": {
+                "$type": 344,
+                "$source": 0,
+                "$named": true,
+                "_item": [
+                  {
+                    "$type": 427,
+                    "$source": 0,
+                    "$named": true,
+                    "_field_declaration": {
+                      "$type": 202,
+                      "$source": 0,
+                      "$named": true,
+                      "_name": {
+                        "$type": 465,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": {
+                          "$type": 1,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "children",
+                          "$span": {
+                            "start": 96,
+                            "end": 104
+                          }
+                        }
+                      },
+                      "_type": {
+                        "$type": 246,
+                        "$source": 0,
+                        "$named": true,
+                        "_type": {
+                          "$type": 468,
+                          "$source": 0,
+                          "$named": true,
+                          "_content": {
+                            "$type": 1,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "Vec",
+                            "$span": {
+                              "start": 106,
+                              "end": 109
+                            }
+                          }
+                        },
+                        "_type_arguments": {
+                          "$type": 250,
+                          "$source": 0,
+                          "$named": true,
+                          "_elements": {
+                            "$type": 353,
+                            "$source": 0,
+                            "$named": true,
+                            "_item": [
+                              {
+                                "$type": 433,
+                                "$source": 0,
+                                "$named": true,
+                                "_content": {
+                                  "$type": 246,
+                                  "$source": 0,
+                                  "$named": true,
+                                  "_type": {
+                                    "$type": 468,
+                                    "$source": 0,
+                                    "$named": true,
+                                    "_content": {
+                                      "$type": 1,
+                                      "$source": 0,
+                                      "$named": true,
+                                      "$text": "Tree",
+                                      "$span": {
+                                        "start": 110,
+                                        "end": 114
+                                      }
+                                    }
+                                  },
+                                  "_type_arguments": {
+                                    "$type": 250,
+                                    "$source": 0,
+                                    "$named": true,
+                                    "_elements": {
+                                      "$type": 353,
+                                      "$source": 0,
+                                      "$named": true,
+                                      "_item": [
+                                        {
+                                          "$type": 433,
+                                          "$source": 0,
+                                          "$named": true,
+                                          "_content": {
+                                            "$type": 468,
+                                            "$source": 0,
+                                            "$named": true,
+                                            "_content": {
+                                              "$type": 1,
+                                              "$source": 0,
+                                              "$named": true,
+                                              "$text": "T",
+                                              "$span": {
+                                                "start": 115,
+                                                "end": 116
+                                              }
+                                            }
+                                          }
+                                        }
+                                      ],
+                                      "_delimiter": 0,
+                                      "$_layout": {
+                                        "flank": {
+                                          "$text": "        children: Vec<Tree<T>",
+                                          "$span": {
+                                            "start": 27,
+                                            "end": 28
+                                          },
+                                          "$before": true,
+                                          "$after": true
+                                        }
+                                      }
+                                    },
+                                    "$other": [
+                                      {
+                                        "$type": 53,
+                                        "$displayType": 43,
+                                        "$source": 0,
+                                        "$named": false,
+                                        "$span": {
+                                          "start": 114,
+                                          "end": 115
+                                        }
+                                      },
+                                      {
+                                        "$type": 44,
+                                        "$source": 0,
+                                        "$named": false,
+                                        "$span": {
+                                          "start": 116,
+                                          "end": 117
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  "$slotOrder": [
+                                    "type",
+                                    "type_arguments"
+                                  ]
+                                }
+                              }
+                            ],
+                            "_delimiter": 0,
+                            "$_layout": {
+                              "flank": {
+                                "$text": "        children: Vec<Tree<T>>",
+                                "$span": {
+                                  "start": 22,
+                                  "end": 29
+                                },
+                                "$before": true,
+                                "$after": true
+                              }
+                            }
+                          },
+                          "$other": [
+                            {
+                              "$type": 53,
+                              "$displayType": 43,
+                              "$source": 0,
+                              "$named": false,
+                              "$span": {
+                                "start": 109,
+                                "end": 110
+                              }
+                            },
+                            {
+                              "$type": 44,
+                              "$source": 0,
+                              "$named": false,
+                              "$span": {
+                                "start": 117,
+                                "end": 118
+                              }
+                            }
+                          ]
+                        },
+                        "$slotOrder": [
+                          "type",
+                          "type_arguments"
+                        ]
+                      },
+                      "$other": [
+                        {
+                          "$type": 4,
+                          "$source": 0,
+                          "$named": false,
+                          "$span": {
+                            "start": 104,
+                            "end": 105
+                          }
+                        }
+                      ],
+                      "$slotOrder": [
+                        "name",
+                        "type"
+                      ]
+                    },
+                    "_attribute_item": []
+                  },
+                  {
+                    "$type": 427,
+                    "$source": 0,
+                    "$named": true,
+                    "_field_declaration": {
+                      "$type": 202,
+                      "$source": 0,
+                      "$named": true,
+                      "_name": {
+                        "$type": 465,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": {
+                          "$type": 1,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "height",
+                          "$span": {
+                            "start": 128,
+                            "end": 134
+                          }
+                        }
+                      },
+                      "_type": 60,
+                      "$other": [
+                        {
+                          "$type": 4,
+                          "$source": 0,
+                          "$named": false,
+                          "$span": {
+                            "start": 134,
+                            "end": 135
+                          }
+                        }
+                      ],
+                      "$slotOrder": [
+                        "name",
+                        "type"
+                      ]
+                    },
+                    "_attribute_item": [],
+                    "$_layout": {
+                      "trivia": {
+                        "leading": [
+                          171
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "$other": [
+                  {
+                    "$type": 130,
+                    "$source": 0,
+                    "$named": false,
+                    "$span": {
+                      "start": 118,
+                      "end": 119
+                    }
+                  }
+                ],
+                "_delimiter": 0,
+                "$_layout": {
+                  "flank": {
+                    "$text": "    Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    }",
+                    "$span": {
+                      "start": 23,
+                      "end": 66
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
+                }
+              },
+              "$other": [
+                {
+                  "$type": 30,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 86,
+                    "end": 87
+                  }
+                },
+                {
+                  "$type": 31,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 144,
+                    "end": 145
+                  }
+                }
+              ]
+            },
+            "$slotOrder": [
+              "name",
+              "body"
+            ]
+          },
+          "_attribute_item": []
+        },
+        {
+          "$type": 428,
+          "$source": 0,
+          "$named": true,
+          "_attribute_item": [
+            {
+              "$type": 190,
+              "$source": 0,
+              "$named": true,
+              "_attribute": {
+                "$type": 192,
+                "$source": 0,
+                "$named": true,
+                "_path": {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "attribute1",
+                  "$span": {
+                    "start": 153,
+                    "end": 163
+                  }
+                }
+              },
+              "$other": [
+                {
+                  "$type": 26,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 151,
+                    "end": 152
+                  }
+                },
+                {
+                  "$type": 27,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 152,
+                    "end": 153
+                  }
+                },
+                {
+                  "$type": 28,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 163,
+                    "end": 164
+                  }
+                }
+              ]
+            },
+            {
+              "$type": 190,
+              "$source": 0,
+              "$named": true,
+              "_attribute": {
+                "$type": 192,
+                "$source": 0,
+                "$named": true,
+                "_path": {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "attribute2",
+                  "$span": {
+                    "start": 171,
+                    "end": 181
+                  }
+                }
+              },
+              "$other": [
+                {
+                  "$type": 26,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 169,
+                    "end": 170
+                  }
+                },
+                {
+                  "$type": 27,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 170,
+                    "end": 171
+                  }
+                },
+                {
+                  "$type": 28,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 181,
+                    "end": 182
+                  }
+                }
+              ],
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    171
+                  ]
+                }
+              }
+            }
+          ],
+          "_enum_variant": {
+            "$type": 200,
+            "$source": 0,
+            "$named": true,
+            "_name": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "Leaf",
+              "$span": {
+                "start": 187,
+                "end": 191
+              }
+            },
+            "_body": {
+              "$type": 201,
+              "$source": 0,
+              "$named": true,
+              "_elements": {
+                "$type": 344,
+                "$source": 0,
+                "$named": true,
+                "_item": [
+                  {
+                    "$type": 427,
+                    "$source": 0,
+                    "$named": true,
+                    "_field_declaration": {
+                      "$type": 202,
+                      "$source": 0,
+                      "$named": true,
+                      "_name": {
+                        "$type": 465,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": {
+                          "$type": 1,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "value",
+                          "$span": {
+                            "start": 202,
+                            "end": 207
+                          }
+                        }
+                      },
+                      "_type": {
+                        "$type": 468,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": {
+                          "$type": 1,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "T",
+                          "$span": {
+                            "start": 209,
+                            "end": 210
+                          }
+                        }
+                      },
+                      "$other": [
+                        {
+                          "$type": 4,
+                          "$source": 0,
+                          "$named": false,
+                          "$span": {
+                            "start": 207,
+                            "end": 208
+                          }
+                        }
+                      ],
+                      "$slotOrder": [
+                        "name",
+                        "type"
+                      ]
+                    },
+                    "_attribute_item": []
+                  }
+                ],
+                "_delimiter": 0,
+                "$_layout": {
+                  "flank": {
+                    "$text": "    Leaf {\n        value: T\n    }",
+                    "$span": {
+                      "start": 19,
+                      "end": 27
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
+                }
+              },
+              "$other": [
+                {
+                  "$type": 30,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 192,
+                    "end": 193
+                  }
+                },
+                {
+                  "$type": 31,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 215,
+                    "end": 216
+                  }
+                }
+              ]
+            },
+            "$slotOrder": [
+              "name",
+              "body"
+            ],
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  171
+                ]
+              }
+            }
+          },
+          "$slotOrder": [
+            "attribute_item",
+            "attribute_item",
+            "enum_variant"
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                171
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 130,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 145,
+            "end": 146
+          }
+        }
+      ],
+      "_delimiter": 0,
+      "$_layout": {
+        "flank": {
+          "$text": "pub enum Node<T: Item> {\n    Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    },\n    #[attribute1]\n    #[attribute2]\n    Leaf {\n        value: T\n    }\n}",
+          "$span": {
+            "start": 29,
+            "end": 168
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    },\n    #[attribute1]\n    #[attribute2]\n    Leaf {\n        value: T\n    }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    },\n    #[attribute1]\n    #[attribute2]\n    Leaf {\n        value: T\n    }",
+    "pattern": "enum_variant_list_elements",
+    "edits": [],
+    "expectedSourceOut": "Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    },\n    #[attribute1]\n    #[attribute2]\n    Leaf {\n        value: T\n    }",
+    "expectedReparseTree": "(enum_variant_list_elements item: (attributed_enum_variant (enum_variant name: (identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))))))))) item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))))))) item: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier))) (attribute_item attribute: (attribute path: (identifier))) (enum_variant name: (identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier))))))))",
+    "wrappedText": "pub enum Error {\n    Internal {\n            children: Vec<Tree<T>>,\n            height: u16\n        },\n        #[attribute1]\n        #[attribute2]\n        Leaf {\n            value: T\n        }\n}",
+    "wrappedOffset": 21
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
     "pattern": "attributed_enum_variant",
     "input": {
       "$type": 428,
@@ -67309,6 +69080,306 @@
     "expectedReparseTree": "(field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier)))))",
     "wrappedText": "struct A {\n    value: T\n}",
     "wrappedOffset": 9
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "field_declaration_list_elements",
+    "input": {
+      "$type": 344,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 427,
+          "$source": 0,
+          "$named": true,
+          "_field_declaration": {
+            "$type": 202,
+            "$source": 0,
+            "$named": true,
+            "_name": {
+              "$type": 465,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "children",
+                "$span": {
+                  "start": 96,
+                  "end": 104
+                }
+              }
+            },
+            "_type": {
+              "$type": 246,
+              "$source": 0,
+              "$named": true,
+              "_type": {
+                "$type": 468,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "Vec",
+                  "$span": {
+                    "start": 106,
+                    "end": 109
+                  }
+                }
+              },
+              "_type_arguments": {
+                "$type": 250,
+                "$source": 0,
+                "$named": true,
+                "_elements": {
+                  "$type": 353,
+                  "$source": 0,
+                  "$named": true,
+                  "_item": [
+                    {
+                      "$type": 433,
+                      "$source": 0,
+                      "$named": true,
+                      "_content": {
+                        "$type": 246,
+                        "$source": 0,
+                        "$named": true,
+                        "_type": {
+                          "$type": 468,
+                          "$source": 0,
+                          "$named": true,
+                          "_content": {
+                            "$type": 1,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "Tree",
+                            "$span": {
+                              "start": 110,
+                              "end": 114
+                            }
+                          }
+                        },
+                        "_type_arguments": {
+                          "$type": 250,
+                          "$source": 0,
+                          "$named": true,
+                          "_elements": {
+                            "$type": 353,
+                            "$source": 0,
+                            "$named": true,
+                            "_item": [
+                              {
+                                "$type": 433,
+                                "$source": 0,
+                                "$named": true,
+                                "_content": {
+                                  "$type": 468,
+                                  "$source": 0,
+                                  "$named": true,
+                                  "_content": {
+                                    "$type": 1,
+                                    "$source": 0,
+                                    "$named": true,
+                                    "$text": "T",
+                                    "$span": {
+                                      "start": 115,
+                                      "end": 116
+                                    }
+                                  }
+                                }
+                              }
+                            ],
+                            "_delimiter": 0,
+                            "$_layout": {
+                              "flank": {
+                                "$text": "        children: Vec<Tree<T>",
+                                "$span": {
+                                  "start": 27,
+                                  "end": 28
+                                },
+                                "$before": true,
+                                "$after": true
+                              }
+                            }
+                          },
+                          "$other": [
+                            {
+                              "$type": 53,
+                              "$displayType": 43,
+                              "$source": 0,
+                              "$named": false,
+                              "$span": {
+                                "start": 114,
+                                "end": 115
+                              }
+                            },
+                            {
+                              "$type": 44,
+                              "$source": 0,
+                              "$named": false,
+                              "$span": {
+                                "start": 116,
+                                "end": 117
+                              }
+                            }
+                          ]
+                        },
+                        "$slotOrder": [
+                          "type",
+                          "type_arguments"
+                        ]
+                      }
+                    }
+                  ],
+                  "_delimiter": 0,
+                  "$_layout": {
+                    "flank": {
+                      "$text": "        children: Vec<Tree<T>>",
+                      "$span": {
+                        "start": 22,
+                        "end": 29
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
+                  }
+                },
+                "$other": [
+                  {
+                    "$type": 53,
+                    "$displayType": 43,
+                    "$source": 0,
+                    "$named": false,
+                    "$span": {
+                      "start": 109,
+                      "end": 110
+                    }
+                  },
+                  {
+                    "$type": 44,
+                    "$source": 0,
+                    "$named": false,
+                    "$span": {
+                      "start": 117,
+                      "end": 118
+                    }
+                  }
+                ]
+              },
+              "$slotOrder": [
+                "type",
+                "type_arguments"
+              ]
+            },
+            "$other": [
+              {
+                "$type": 4,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 104,
+                  "end": 105
+                }
+              }
+            ],
+            "$slotOrder": [
+              "name",
+              "type"
+            ]
+          },
+          "_attribute_item": []
+        },
+        {
+          "$type": 427,
+          "$source": 0,
+          "$named": true,
+          "_field_declaration": {
+            "$type": 202,
+            "$source": 0,
+            "$named": true,
+            "_name": {
+              "$type": 465,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "height",
+                "$span": {
+                  "start": 128,
+                  "end": 134
+                }
+              }
+            },
+            "_type": 60,
+            "$other": [
+              {
+                "$type": 4,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 134,
+                  "end": 135
+                }
+              }
+            ],
+            "$slotOrder": [
+              "name",
+              "type"
+            ]
+          },
+          "_attribute_item": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                171
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 130,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 118,
+            "end": 119
+          }
+        }
+      ],
+      "_delimiter": 0,
+      "$_layout": {
+        "flank": {
+          "$text": "    Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    }",
+          "$span": {
+            "start": 23,
+            "end": 66
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "children: Vec<Tree<T>>,\n    height: u16"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "children: Vec<Tree<T>>,\n        height: u16",
+    "pattern": "field_declaration_list_elements",
+    "edits": [],
+    "expectedSourceOut": "children: Vec<Tree<T>>,\n    height: u16",
+    "expectedReparseTree": "(field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))))))))) item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))))",
+    "wrappedText": "struct A {children: Vec<Tree<T>>,\n    height: u16}",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -69909,6 +71980,144 @@
     "expectedReparseTree": "(enum_variant_list elements: (enum_variant_list_elements item: (attributed_enum_variant (enum_variant name: (identifier) value: (integer_literal_decimal))) item: (attributed_enum_variant (enum_variant name: (identifier) value: (integer_literal_decimal)))))",
     "wrappedText": "pub enum Error {\n    val1 = 1,\n    val2 = 2\n}",
     "wrappedOffset": 15
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "enum_variant_list_elements",
+    "input": {
+      "$type": 343,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 428,
+          "$source": 0,
+          "$named": true,
+          "_enum_variant": {
+            "$type": 200,
+            "$source": 0,
+            "$named": true,
+            "_name": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "val1",
+              "$span": {
+                "start": 29,
+                "end": 33
+              }
+            },
+            "_value": {
+              "$type": 141,
+              "$source": 0,
+              "$named": true,
+              "_content": "1"
+            },
+            "$other": [
+              {
+                "$type": 38,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 34,
+                  "end": 35
+                }
+              }
+            ],
+            "$slotOrder": [
+              "name",
+              "value"
+            ]
+          },
+          "_attribute_item": []
+        },
+        {
+          "$type": 428,
+          "$source": 0,
+          "$named": true,
+          "_enum_variant": {
+            "$type": 200,
+            "$source": 0,
+            "$named": true,
+            "_name": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "val2",
+              "$span": {
+                "start": 43,
+                "end": 47
+              }
+            },
+            "_value": {
+              "$type": 141,
+              "$source": 0,
+              "$named": true,
+              "_content": "2"
+            },
+            "$other": [
+              {
+                "$type": 38,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 48,
+                  "end": 49
+                }
+              }
+            ],
+            "$slotOrder": [
+              "name",
+              "value"
+            ]
+          },
+          "_attribute_item": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                171
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 130,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 37,
+            "end": 38
+          }
+        }
+      ],
+      "_delimiter": 0,
+      "$_layout": {
+        "flank": {
+          "$text": "pub enum c_style_enum {\n    val1 = 1,\n    val2 = 2\n}",
+          "$span": {
+            "start": 28,
+            "end": 50
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "val1 = 1,\n    val2 = 2"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "val1 = 1,\n    val2 = 2",
+    "pattern": "enum_variant_list_elements",
+    "edits": [],
+    "expectedSourceOut": "val1 = 1,\n    val2 = 2",
+    "expectedReparseTree": "(enum_variant_list_elements item: (attributed_enum_variant (enum_variant name: (identifier) value: (integer_literal_decimal))) item: (attributed_enum_variant (enum_variant name: (identifier) value: (integer_literal_decimal))))",
+    "wrappedText": "pub enum Error {\n    val1 = 1,\n        val2 = 2\n}",
+    "wrappedOffset": 21
   },
   {
     "kind": "render",
@@ -115828,6 +118037,861 @@
     "expectedReparseTree": "(enum_variant_list elements: (enum_variant_list_elements item: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal_decimal))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier)))))) item: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))) (enum_variant name: (identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier)))))))))",
     "wrappedText": "pub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}",
     "wrappedOffset": 15
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "enum_variant_list_elements",
+    "input": {
+      "$type": 343,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 428,
+          "$source": 0,
+          "$named": true,
+          "_attribute_item": [
+            {
+              "$type": 190,
+              "$source": 0,
+              "$named": true,
+              "_attribute": {
+                "$type": 192,
+                "$source": 0,
+                "$named": true,
+                "_path": {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "error",
+                  "$span": {
+                    "start": 181,
+                    "end": 186
+                  }
+                },
+                "_input": {
+                  "$type": 368,
+                  "$source": 0,
+                  "$named": true,
+                  "_arguments": {
+                    "$type": 411,
+                    "$source": 0,
+                    "$named": true,
+                    "_delim_tokens": [
+                      {
+                        "$type": 189,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": {
+                          "$type": 332,
+                          "$source": 0,
+                          "$named": true,
+                          "_string_open": {
+                            "$type": 133,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "\"",
+                            "$span": {
+                              "start": 187,
+                              "end": 188
+                            }
+                          },
+                          "_elements": [
+                            {
+                              "$type": 158,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "first letter must be lowercase but was {:?}",
+                              "$span": {
+                                "start": 188,
+                                "end": 231
+                              }
+                            }
+                          ],
+                          "$other": [
+                            {
+                              "$type": 116,
+                              "$source": 0,
+                              "$named": false,
+                              "$span": {
+                                "start": 231,
+                                "end": 232
+                              }
+                            }
+                          ],
+                          "$slotOrder": [
+                            "string_open",
+                            "elements"
+                          ]
+                        }
+                      },
+                      {
+                        "$type": 189,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": 130,
+                        "$_layout": {
+                          "gap": {
+                            "$text": ""
+                          }
+                        }
+                      },
+                      {
+                        "$type": 189,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": {
+                          "$type": 1,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "first_char",
+                          "$span": {
+                            "start": 234,
+                            "end": 244
+                          }
+                        },
+                        "$_layout": {
+                          "gap": {
+                            "$text": " "
+                          }
+                        }
+                      },
+                      {
+                        "$type": 411,
+                        "$source": 0,
+                        "$named": true,
+                        "_delim_tokens": [
+                          {
+                            "$type": 189,
+                            "$source": 0,
+                            "$named": true,
+                            "_content": 109
+                          },
+                          {
+                            "$type": 189,
+                            "$source": 0,
+                            "$named": true,
+                            "_content": {
+                              "$type": 141,
+                              "$source": 0,
+                              "$named": true,
+                              "_content": "0"
+                            },
+                            "$_layout": {
+                              "gap": {
+                                "$text": ""
+                              }
+                            }
+                          }
+                        ],
+                        "$other": [
+                          {
+                            "$type": 6,
+                            "$source": 0,
+                            "$named": false,
+                            "$span": {
+                              "start": 244,
+                              "end": 245
+                            }
+                          },
+                          {
+                            "$type": 7,
+                            "$source": 0,
+                            "$named": false,
+                            "$span": {
+                              "start": 247,
+                              "end": 248
+                            }
+                          }
+                        ],
+                        "$_layout": {
+                          "gap": {
+                            "$text": ""
+                          }
+                        }
+                      }
+                    ],
+                    "$other": [
+                      {
+                        "$type": 6,
+                        "$source": 0,
+                        "$named": false,
+                        "$span": {
+                          "start": 186,
+                          "end": 187
+                        }
+                      },
+                      {
+                        "$type": 7,
+                        "$source": 0,
+                        "$named": false,
+                        "$span": {
+                          "start": 248,
+                          "end": 249
+                        }
+                      }
+                    ]
+                  }
+                },
+                "$slotOrder": [
+                  "path",
+                  "input"
+                ]
+              },
+              "$other": [
+                {
+                  "$type": 26,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 179,
+                    "end": 180
+                  }
+                },
+                {
+                  "$type": 27,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 180,
+                    "end": 181
+                  }
+                },
+                {
+                  "$type": 28,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 249,
+                    "end": 250
+                  }
+                }
+              ]
+            }
+          ],
+          "_enum_variant": {
+            "$type": 200,
+            "$source": 0,
+            "$named": true,
+            "_name": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "WrongCase",
+              "$span": {
+                "start": 255,
+                "end": 264
+              }
+            },
+            "_body": {
+              "$type": 203,
+              "$source": 0,
+              "$named": true,
+              "_attributes": {
+                "$type": 345,
+                "$source": 0,
+                "$named": true,
+                "_item": [
+                  {
+                    "$type": 432,
+                    "$source": 0,
+                    "$named": true,
+                    "_type": {
+                      "$type": 468,
+                      "$source": 0,
+                      "$named": true,
+                      "_content": {
+                        "$type": 1,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "String",
+                        "$span": {
+                          "start": 265,
+                          "end": 271
+                        }
+                      }
+                    },
+                    "_attribute_item": []
+                  }
+                ],
+                "_delimiter": 0,
+                "$_layout": {
+                  "flank": {
+                    "$text": "    WrongCase(String)",
+                    "$span": {
+                      "start": 14,
+                      "end": 20
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
+                }
+              },
+              "$other": [
+                {
+                  "$type": 6,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 264,
+                    "end": 265
+                  }
+                },
+                {
+                  "$type": 7,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 271,
+                    "end": 272
+                  }
+                }
+              ]
+            },
+            "$slotOrder": [
+              "name",
+              "body"
+            ],
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  171
+                ]
+              }
+            }
+          },
+          "$slotOrder": [
+            "attribute_item",
+            "enum_variant"
+          ]
+        },
+        {
+          "$type": 428,
+          "$source": 0,
+          "$named": true,
+          "_attribute_item": [
+            {
+              "$type": 190,
+              "$source": 0,
+              "$named": true,
+              "_attribute": {
+                "$type": 192,
+                "$source": 0,
+                "$named": true,
+                "_path": {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "error",
+                  "$span": {
+                    "start": 280,
+                    "end": 285
+                  }
+                },
+                "_input": {
+                  "$type": 368,
+                  "$source": 0,
+                  "$named": true,
+                  "_arguments": {
+                    "$type": 411,
+                    "$source": 0,
+                    "$named": true,
+                    "_delim_tokens": [
+                      {
+                        "$type": 189,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": {
+                          "$type": 332,
+                          "$source": 0,
+                          "$named": true,
+                          "_string_open": {
+                            "$type": 133,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "\"",
+                            "$span": {
+                              "start": 286,
+                              "end": 287
+                            }
+                          },
+                          "_elements": [
+                            {
+                              "$type": 158,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "invalid index {idx}, expected at least {} and at most {}",
+                              "$span": {
+                                "start": 287,
+                                "end": 343
+                              }
+                            }
+                          ],
+                          "$other": [
+                            {
+                              "$type": 116,
+                              "$source": 0,
+                              "$named": false,
+                              "$span": {
+                                "start": 343,
+                                "end": 344
+                              }
+                            }
+                          ],
+                          "$slotOrder": [
+                            "string_open",
+                            "elements"
+                          ]
+                        }
+                      },
+                      {
+                        "$type": 189,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": 130,
+                        "$_layout": {
+                          "gap": {
+                            "$text": ""
+                          }
+                        }
+                      },
+                      {
+                        "$type": 189,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": 109,
+                        "$_layout": {
+                          "gap": {
+                            "$text": " "
+                          }
+                        }
+                      },
+                      {
+                        "$type": 189,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": {
+                          "$type": 1,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "limits",
+                          "$span": {
+                            "start": 347,
+                            "end": 353
+                          }
+                        },
+                        "$_layout": {
+                          "gap": {
+                            "$text": ""
+                          }
+                        }
+                      },
+                      {
+                        "$type": 189,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": 109,
+                        "$_layout": {
+                          "gap": {
+                            "$text": ""
+                          }
+                        }
+                      },
+                      {
+                        "$type": 189,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": {
+                          "$type": 1,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "lo",
+                          "$span": {
+                            "start": 354,
+                            "end": 356
+                          }
+                        },
+                        "$_layout": {
+                          "gap": {
+                            "$text": ""
+                          }
+                        }
+                      },
+                      {
+                        "$type": 189,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": 130,
+                        "$_layout": {
+                          "gap": {
+                            "$text": ""
+                          }
+                        }
+                      },
+                      {
+                        "$type": 189,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": 109,
+                        "$_layout": {
+                          "gap": {
+                            "$text": " "
+                          }
+                        }
+                      },
+                      {
+                        "$type": 189,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": {
+                          "$type": 1,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "limits",
+                          "$span": {
+                            "start": 359,
+                            "end": 365
+                          }
+                        },
+                        "$_layout": {
+                          "gap": {
+                            "$text": ""
+                          }
+                        }
+                      },
+                      {
+                        "$type": 189,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": 109,
+                        "$_layout": {
+                          "gap": {
+                            "$text": ""
+                          }
+                        }
+                      },
+                      {
+                        "$type": 189,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": {
+                          "$type": 1,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "hi",
+                          "$span": {
+                            "start": 366,
+                            "end": 368
+                          }
+                        },
+                        "$_layout": {
+                          "gap": {
+                            "$text": ""
+                          }
+                        }
+                      }
+                    ],
+                    "$other": [
+                      {
+                        "$type": 6,
+                        "$source": 0,
+                        "$named": false,
+                        "$span": {
+                          "start": 285,
+                          "end": 286
+                        }
+                      },
+                      {
+                        "$type": 7,
+                        "$source": 0,
+                        "$named": false,
+                        "$span": {
+                          "start": 368,
+                          "end": 369
+                        }
+                      }
+                    ]
+                  }
+                },
+                "$slotOrder": [
+                  "path",
+                  "input"
+                ]
+              },
+              "$other": [
+                {
+                  "$type": 26,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 278,
+                    "end": 279
+                  }
+                },
+                {
+                  "$type": 27,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 279,
+                    "end": 280
+                  }
+                },
+                {
+                  "$type": 28,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 369,
+                    "end": 370
+                  }
+                }
+              ]
+            }
+          ],
+          "_enum_variant": {
+            "$type": 200,
+            "$source": 0,
+            "$named": true,
+            "_name": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "OutOfBounds",
+              "$span": {
+                "start": 375,
+                "end": 386
+              }
+            },
+            "_body": {
+              "$type": 201,
+              "$source": 0,
+              "$named": true,
+              "_elements": {
+                "$type": 344,
+                "$source": 0,
+                "$named": true,
+                "_item": [
+                  {
+                    "$type": 427,
+                    "$source": 0,
+                    "$named": true,
+                    "_field_declaration": {
+                      "$type": 202,
+                      "$source": 0,
+                      "$named": true,
+                      "_name": {
+                        "$type": 465,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": {
+                          "$type": 1,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "idx",
+                          "$span": {
+                            "start": 389,
+                            "end": 392
+                          }
+                        }
+                      },
+                      "_type": 69,
+                      "$other": [
+                        {
+                          "$type": 4,
+                          "$source": 0,
+                          "$named": false,
+                          "$span": {
+                            "start": 392,
+                            "end": 393
+                          }
+                        }
+                      ],
+                      "$slotOrder": [
+                        "name",
+                        "type"
+                      ]
+                    },
+                    "_attribute_item": []
+                  },
+                  {
+                    "$type": 427,
+                    "$source": 0,
+                    "$named": true,
+                    "_field_declaration": {
+                      "$type": 202,
+                      "$source": 0,
+                      "$named": true,
+                      "_name": {
+                        "$type": 465,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": {
+                          "$type": 1,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "limits",
+                          "$span": {
+                            "start": 401,
+                            "end": 407
+                          }
+                        }
+                      },
+                      "_type": {
+                        "$type": 468,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": {
+                          "$type": 1,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "Limits",
+                          "$span": {
+                            "start": 409,
+                            "end": 415
+                          }
+                        }
+                      },
+                      "$other": [
+                        {
+                          "$type": 4,
+                          "$source": 0,
+                          "$named": false,
+                          "$span": {
+                            "start": 407,
+                            "end": 408
+                          }
+                        }
+                      ],
+                      "$slotOrder": [
+                        "name",
+                        "type"
+                      ]
+                    },
+                    "_attribute_item": [],
+                    "$_layout": {
+                      "gap": {
+                        "$text": ", "
+                      }
+                    }
+                  }
+                ],
+                "$other": [
+                  {
+                    "$type": 130,
+                    "$source": 0,
+                    "$named": false,
+                    "$span": {
+                      "start": 399,
+                      "end": 400
+                    }
+                  }
+                ],
+                "_delimiter": 0,
+                "$_layout": {
+                  "flank": {
+                    "$text": "    OutOfBounds { idx: usize, limits: Limits }",
+                    "$span": {
+                      "start": 18,
+                      "end": 44
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
+                }
+              },
+              "$other": [
+                {
+                  "$type": 30,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 387,
+                    "end": 388
+                  }
+                },
+                {
+                  "$type": 31,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 416,
+                    "end": 417
+                  }
+                }
+              ]
+            },
+            "$slotOrder": [
+              "name",
+              "body"
+            ],
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  171
+                ]
+              }
+            }
+          },
+          "$slotOrder": [
+            "attribute_item",
+            "enum_variant"
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                171
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 130,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 272,
+            "end": 273
+          }
+        },
+        {
+          "$type": 130,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 417,
+            "end": 418
+          }
+        }
+      ],
+      "_delimiter": 2,
+      "$_layout": {
+        "flank": {
+          "$text": "pub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}",
+          "$span": {
+            "start": 21,
+            "end": 260
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "#[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "#[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },",
+    "pattern": "enum_variant_list_elements",
+    "edits": [],
+    "expectedSourceOut": "#[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },",
+    "expectedReparseTree": "(enum_variant_list_elements item: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal_decimal))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier)))))) item: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))) (enum_variant name: (identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier))))))))",
+    "wrappedText": "pub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n        WrongCase(String),\n        #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n        OutOfBounds { idx: usize, limits: Limits },\n}",
+    "wrappedOffset": 21
   },
   {
     "kind": "render",
@@ -207448,6 +210512,223 @@
   {
     "kind": "render",
     "grammar": "rust",
+    "pattern": "field_declaration_list_elements",
+    "input": {
+      "$type": 344,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 427,
+          "$source": 0,
+          "$named": true,
+          "_field_declaration": {
+            "$type": 202,
+            "$source": 0,
+            "$named": true,
+            "_name": {
+              "$type": 465,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "a",
+                "$span": {
+                  "start": 14,
+                  "end": 15
+                }
+              }
+            },
+            "_type": {
+              "$type": 265,
+              "$source": 0,
+              "$named": true,
+              "_path": 51,
+              "_name": {
+                "$type": 468,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "B",
+                  "$span": {
+                    "start": 26,
+                    "end": 27
+                  }
+                }
+              },
+              "$other": [
+                {
+                  "$type": 47,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 24,
+                    "end": 26
+                  }
+                }
+              ],
+              "$slotOrder": [
+                "path",
+                "name"
+              ]
+            },
+            "$other": [
+              {
+                "$type": 4,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 15,
+                  "end": 16
+                }
+              }
+            ],
+            "$slotOrder": [
+              "name",
+              "type"
+            ]
+          },
+          "_attribute_item": []
+        },
+        {
+          "$type": 427,
+          "$source": 0,
+          "$named": true,
+          "_field_declaration": {
+            "$type": 202,
+            "$source": 0,
+            "$named": true,
+            "_name": {
+              "$type": 465,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "b",
+                "$span": {
+                  "start": 31,
+                  "end": 32
+                }
+              }
+            },
+            "_type": {
+              "$type": 265,
+              "$source": 0,
+              "$named": true,
+              "_path": 32,
+              "_name": {
+                "$type": 468,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "C",
+                  "$span": {
+                    "start": 41,
+                    "end": 42
+                  }
+                }
+              },
+              "$other": [
+                {
+                  "$type": 47,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 39,
+                    "end": 41
+                  }
+                }
+              ],
+              "$slotOrder": [
+                "path",
+                "name"
+              ]
+            },
+            "$other": [
+              {
+                "$type": 4,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 32,
+                  "end": 33
+                }
+              }
+            ],
+            "$slotOrder": [
+              "name",
+              "type"
+            ]
+          },
+          "_attribute_item": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                171
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 130,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 27,
+            "end": 28
+          }
+        },
+        {
+          "$type": 130,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 42,
+            "end": 43
+          }
+        }
+      ],
+      "_delimiter": 2,
+      "$_layout": {
+        "flank": {
+          "$text": "struct A {\n  a: default::B,\n  b: union::C,\n}",
+          "$span": {
+            "start": 13,
+            "end": 42
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "a: default::B,\n    b: union::C,"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "a: default::B,\n  b: union::C,",
+    "pattern": "field_declaration_list_elements",
+    "edits": [],
+    "expectedSourceOut": "a: default::B,\n    b: union::C,",
+    "expectedReparseTree": "(field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (scoped_type_identifier path: (identifier) name: (type_identifier)))) item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (scoped_type_identifier path: (identifier) name: (type_identifier)))))",
+    "wrappedText": "struct A {a: default::B,\n    b: union::C,}",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
     "pattern": "attributed_field_declaration",
     "input": {
       "$type": 427,
@@ -228636,6 +231917,95 @@
     "expectedSourceOut": "1i32, 2i32",
     "expectedReparseTree": "(arguments_elements item: (attributed_argument (integer_literal_decimal)) item: (attributed_argument (integer_literal_decimal)))",
     "wrappedText": "f(1i32, 2i32);",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "arguments_elements",
+    "input": {
+      "$type": 354,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 431,
+          "$source": 0,
+          "$named": true,
+          "_expression": {
+            "$type": 141,
+            "$source": 0,
+            "$named": true,
+            "_content": "1",
+            "_suffix": "i32"
+          },
+          "_attribute_item": []
+        },
+        {
+          "$type": 431,
+          "$source": 0,
+          "$named": true,
+          "_expression": {
+            "$type": 141,
+            "$source": 0,
+            "$named": true,
+            "_content": "2",
+            "_suffix": "i32"
+          },
+          "_attribute_item": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                171
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 130,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 38,
+            "end": 39
+          }
+        },
+        {
+          "$type": 130,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 48,
+            "end": 49
+          }
+        }
+      ],
+      "_delimiter": 2,
+      "$_layout": {
+        "flank": {
+          "$text": "add(\n    1i32,\n    2i32,\n)",
+          "$span": {
+            "start": 9,
+            "end": 24
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "1i32,\n    2i32,"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "1i32,\n    2i32,",
+    "pattern": "arguments_elements",
+    "edits": [],
+    "expectedSourceOut": "1i32,\n    2i32,",
+    "expectedReparseTree": "(arguments_elements item: (attributed_argument (integer_literal_decimal)) item: (attributed_argument (integer_literal_decimal)))",
+    "wrappedText": "f(1i32,\n    2i32,);",
     "wrappedOffset": 2
   },
   {
@@ -335534,6 +338904,578 @@
             "$named": true,
             "_token_patterns": [
               {
+                "$type": 189,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "x",
+                  "$span": {
+                    "start": 141,
+                    "end": 142
+                  }
+                }
+              },
+              {
+                "$type": 189,
+                "$source": 0,
+                "$named": true,
+                "_content": 3,
+                "$_layout": {
+                  "gap": {
+                    "$text": " "
+                  }
+                }
+              },
+              {
+                "$type": 184,
+                "$source": 0,
+                "$named": true,
+                "_name": {
+                  "$type": 128,
+                  "$source": 0,
+                  "$named": true,
+                  "_name": "e"
+                },
+                "_type": 12,
+                "$other": [
+                  {
+                    "$type": 4,
+                    "$source": 0,
+                    "$named": false,
+                    "$span": {
+                      "start": 148,
+                      "end": 149
+                    }
+                  }
+                ],
+                "$slotOrder": [
+                  "name",
+                  "type"
+                ],
+                "$_layout": {
+                  "gap": {
+                    "$text": " "
+                  }
+                }
+              }
+            ],
+            "$other": [
+              {
+                "$type": 6,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 140,
+                  "end": 141
+                }
+              },
+              {
+                "$type": 7,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 153,
+                  "end": 154
+                }
+              }
+            ]
+          },
+          "_right": {
+            "$type": 408,
+            "$source": 0,
+            "$named": true,
+            "_tokens": [
+              {
+                "$type": 189,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "println",
+                  "$span": {
+                    "start": 159,
+                    "end": 166
+                  }
+                }
+              },
+              {
+                "$type": 189,
+                "$source": 0,
+                "$named": true,
+                "_content": 29,
+                "$_layout": {
+                  "gap": {
+                    "$text": ""
+                  }
+                }
+              },
+              {
+                "$type": 408,
+                "$source": 0,
+                "$named": true,
+                "_tokens": [
+                  {
+                    "$type": 189,
+                    "$source": 0,
+                    "$named": true,
+                    "_content": {
+                      "$type": 332,
+                      "$source": 0,
+                      "$named": true,
+                      "_string_open": {
+                        "$type": 133,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "\"",
+                        "$span": {
+                          "start": 168,
+                          "end": 169
+                        }
+                      },
+                      "_elements": [
+                        {
+                          "$type": 158,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "mode X: {}",
+                          "$span": {
+                            "start": 169,
+                            "end": 179
+                          }
+                        }
+                      ],
+                      "$other": [
+                        {
+                          "$type": 116,
+                          "$source": 0,
+                          "$named": false,
+                          "$span": {
+                            "start": 179,
+                            "end": 180
+                          }
+                        }
+                      ],
+                      "$slotOrder": [
+                        "string_open",
+                        "elements"
+                      ]
+                    }
+                  },
+                  {
+                    "$type": 189,
+                    "$source": 0,
+                    "$named": true,
+                    "_content": 130,
+                    "$_layout": {
+                      "gap": {
+                        "$text": ""
+                      }
+                    }
+                  },
+                  {
+                    "$type": 128,
+                    "$source": 0,
+                    "$named": true,
+                    "_name": "e",
+                    "$_layout": {
+                      "gap": {
+                        "$text": " "
+                      }
+                    }
+                  }
+                ],
+                "$other": [
+                  {
+                    "$type": 6,
+                    "$source": 0,
+                    "$named": false,
+                    "$span": {
+                      "start": 167,
+                      "end": 168
+                    }
+                  },
+                  {
+                    "$type": 7,
+                    "$source": 0,
+                    "$named": false,
+                    "$span": {
+                      "start": 184,
+                      "end": 185
+                    }
+                  }
+                ],
+                "$_layout": {
+                  "gap": {
+                    "$text": ""
+                  }
+                }
+              }
+            ],
+            "$other": [
+              {
+                "$type": 6,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 158,
+                  "end": 159
+                }
+              },
+              {
+                "$type": 7,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 185,
+                  "end": 186
+                }
+              }
+            ]
+          },
+          "$other": [
+            {
+              "$type": 3,
+              "$source": 0,
+              "$named": false,
+              "$span": {
+                "start": 155,
+                "end": 157
+              }
+            }
+          ],
+          "$slotOrder": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "$type": 181,
+          "$source": 0,
+          "$named": true,
+          "_left": {
+            "$type": 405,
+            "$source": 0,
+            "$named": true,
+            "_token_patterns": [
+              {
+                "$type": 189,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "y",
+                  "$span": {
+                    "start": 193,
+                    "end": 194
+                  }
+                }
+              },
+              {
+                "$type": 189,
+                "$source": 0,
+                "$named": true,
+                "_content": 3,
+                "$_layout": {
+                  "gap": {
+                    "$text": " "
+                  }
+                }
+              },
+              {
+                "$type": 184,
+                "$source": 0,
+                "$named": true,
+                "_name": {
+                  "$type": 128,
+                  "$source": 0,
+                  "$named": true,
+                  "_name": "e"
+                },
+                "_type": 12,
+                "$other": [
+                  {
+                    "$type": 4,
+                    "$source": 0,
+                    "$named": false,
+                    "$span": {
+                      "start": 200,
+                      "end": 201
+                    }
+                  }
+                ],
+                "$slotOrder": [
+                  "name",
+                  "type"
+                ],
+                "$_layout": {
+                  "gap": {
+                    "$text": " "
+                  }
+                }
+              }
+            ],
+            "$other": [
+              {
+                "$type": 6,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 192,
+                  "end": 193
+                }
+              },
+              {
+                "$type": 7,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 205,
+                  "end": 206
+                }
+              }
+            ]
+          },
+          "_right": {
+            "$type": 408,
+            "$source": 0,
+            "$named": true,
+            "_tokens": [
+              {
+                "$type": 189,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "println",
+                  "$span": {
+                    "start": 211,
+                    "end": 218
+                  }
+                }
+              },
+              {
+                "$type": 189,
+                "$source": 0,
+                "$named": true,
+                "_content": 29,
+                "$_layout": {
+                  "gap": {
+                    "$text": ""
+                  }
+                }
+              },
+              {
+                "$type": 408,
+                "$source": 0,
+                "$named": true,
+                "_tokens": [
+                  {
+                    "$type": 189,
+                    "$source": 0,
+                    "$named": true,
+                    "_content": {
+                      "$type": 332,
+                      "$source": 0,
+                      "$named": true,
+                      "_string_open": {
+                        "$type": 133,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "\"",
+                        "$span": {
+                          "start": 220,
+                          "end": 221
+                        }
+                      },
+                      "_elements": [
+                        {
+                          "$type": 158,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "mode Y: {}",
+                          "$span": {
+                            "start": 221,
+                            "end": 231
+                          }
+                        }
+                      ],
+                      "$other": [
+                        {
+                          "$type": 116,
+                          "$source": 0,
+                          "$named": false,
+                          "$span": {
+                            "start": 231,
+                            "end": 232
+                          }
+                        }
+                      ],
+                      "$slotOrder": [
+                        "string_open",
+                        "elements"
+                      ]
+                    }
+                  },
+                  {
+                    "$type": 189,
+                    "$source": 0,
+                    "$named": true,
+                    "_content": 130,
+                    "$_layout": {
+                      "gap": {
+                        "$text": ""
+                      }
+                    }
+                  },
+                  {
+                    "$type": 128,
+                    "$source": 0,
+                    "$named": true,
+                    "_name": "e",
+                    "$_layout": {
+                      "gap": {
+                        "$text": " "
+                      }
+                    }
+                  }
+                ],
+                "$other": [
+                  {
+                    "$type": 6,
+                    "$source": 0,
+                    "$named": false,
+                    "$span": {
+                      "start": 219,
+                      "end": 220
+                    }
+                  },
+                  {
+                    "$type": 7,
+                    "$source": 0,
+                    "$named": false,
+                    "$span": {
+                      "start": 236,
+                      "end": 237
+                    }
+                  }
+                ],
+                "$_layout": {
+                  "gap": {
+                    "$text": ""
+                  }
+                }
+              }
+            ],
+            "$other": [
+              {
+                "$type": 6,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 210,
+                  "end": 211
+                }
+              },
+              {
+                "$type": 7,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 237,
+                  "end": 238
+                }
+              }
+            ]
+          },
+          "$other": [
+            {
+              "$type": 3,
+              "$source": 0,
+              "$named": false,
+              "$span": {
+                "start": 207,
+                "end": 209
+              }
+            }
+          ],
+          "$slotOrder": [
+            "left",
+            "right"
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                171
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 2,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 186,
+            "end": 187
+          }
+        }
+      ],
+      "_delimiter": 0,
+      "$_layout": {
+        "flank": {
+          "$text": "macro_rules! foo {\n    (x => $e:expr) => (println!(\"mode X: {}\", $e));\n    (y => $e:expr) => (println!(\"mode Y: {}\", $e))\n}",
+          "$span": {
+            "start": 23,
+            "end": 121
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "(x => $e:expr) =>(println!(\"mode X: {}\", $e));\n    (y => $e:expr) =>(println!(\"mode Y: {}\", $e))"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(x => $e:expr) => (println!(\"mode X: {}\", $e));\n    (y => $e:expr) => (println!(\"mode Y: {}\", $e))",
+    "pattern": "macro_rules",
+    "edits": [],
+    "expectedSourceOut": "(x => $e:expr) =>(println!(\"mode X: {}\", $e));\n    (y => $e:expr) =>(println!(\"mode Y: {}\", $e))",
+    "expectedReparseTree": "(macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))) item: (macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))))",
+    "wrappedText": "macro_rules! foo {\n    (x => $e:expr) =>(println!(\"mode X: {}\", $e));\n        (y => $e:expr) =>(println!(\"mode Y: {}\", $e))\n}",
+    "wrappedOffset": 23
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "macro_rules",
+    "input": {
+      "$type": 342,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 181,
+          "$source": 0,
+          "$named": true,
+          "_left": {
+            "$type": 405,
+            "$source": 0,
+            "$named": true,
+            "_token_patterns": [
+              {
                 "$type": 185,
                 "$source": 0,
                 "$named": true,
@@ -335980,6 +339922,274 @@
     "expectedSourceOut": "(\n$($x:expr; [$($y:expr),*]);*\n) => {\n$($($x + $e),*),*\n}",
     "expectedReparseTree": "(macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (token_repetition tokens: (metavariable) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable) separator: (token_repetition_pattern_text)) separator: (token_repetition_pattern_text)))))",
     "wrappedText": "macro_rules! foo {\n    (\n    $($x:expr; [$($y:expr),*]);*\n    ) => {\n    $($($x + $e),*),*\n    }\n}",
+    "wrappedOffset": 23
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "macro_rules",
+    "input": {
+      "$type": 342,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 181,
+          "$source": 0,
+          "$named": true,
+          "_left": {
+            "$type": 405,
+            "$source": 0,
+            "$named": true,
+            "_token_patterns": [
+              {
+                "$type": 185,
+                "$source": 0,
+                "$named": true,
+                "_token_patterns": [
+                  {
+                    "$type": 184,
+                    "$source": 0,
+                    "$named": true,
+                    "_name": {
+                      "$type": 128,
+                      "$source": 0,
+                      "$named": true,
+                      "_name": "e"
+                    },
+                    "_type": 12,
+                    "$other": [
+                      {
+                        "$type": 4,
+                        "$source": 0,
+                        "$named": false,
+                        "$span": {
+                          "start": 386,
+                          "end": 387
+                        }
+                      }
+                    ],
+                    "$slotOrder": [
+                      "name",
+                      "type"
+                    ]
+                  }
+                ],
+                "_separator": {
+                  "$type": 132,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": ",",
+                  "$span": {
+                    "start": 392,
+                    "end": 393
+                  }
+                },
+                "_operator": 10,
+                "$other": [
+                  {
+                    "$type": 5,
+                    "$source": 0,
+                    "$named": false,
+                    "$span": {
+                      "start": 382,
+                      "end": 383
+                    }
+                  },
+                  {
+                    "$type": 6,
+                    "$source": 0,
+                    "$named": false,
+                    "$span": {
+                      "start": 383,
+                      "end": 384
+                    }
+                  },
+                  {
+                    "$type": 7,
+                    "$source": 0,
+                    "$named": false,
+                    "$span": {
+                      "start": 391,
+                      "end": 392
+                    }
+                  }
+                ],
+                "$slotOrder": [
+                  "token_patterns",
+                  "separator",
+                  "operator"
+                ]
+              }
+            ],
+            "$other": [
+              {
+                "$type": 6,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 381,
+                  "end": 382
+                }
+              },
+              {
+                "$type": 7,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 394,
+                  "end": 395
+                }
+              }
+            ]
+          },
+          "_right": {
+            "$type": 410,
+            "$source": 0,
+            "$named": true,
+            "_tokens": [
+              {
+                "$type": 188,
+                "$source": 0,
+                "$named": true,
+                "_tokens": [
+                  {
+                    "$type": 128,
+                    "$source": 0,
+                    "$named": true,
+                    "_name": "e"
+                  }
+                ],
+                "_separator": {
+                  "$type": 132,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": ",",
+                  "$span": {
+                    "start": 414,
+                    "end": 415
+                  }
+                },
+                "_operator": 10,
+                "$other": [
+                  {
+                    "$type": 5,
+                    "$source": 0,
+                    "$named": false,
+                    "$span": {
+                      "start": 409,
+                      "end": 410
+                    }
+                  },
+                  {
+                    "$type": 6,
+                    "$source": 0,
+                    "$named": false,
+                    "$span": {
+                      "start": 410,
+                      "end": 411
+                    }
+                  },
+                  {
+                    "$type": 7,
+                    "$source": 0,
+                    "$named": false,
+                    "$span": {
+                      "start": 413,
+                      "end": 414
+                    }
+                  }
+                ],
+                "$slotOrder": [
+                  "tokens",
+                  "separator",
+                  "operator"
+                ],
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      171
+                    ],
+                    "trailing": [
+                      171
+                    ]
+                  }
+                }
+              }
+            ],
+            "$other": [
+              {
+                "$type": 30,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 399,
+                  "end": 400
+                }
+              },
+              {
+                "$type": 31,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 421,
+                  "end": 422
+                }
+              }
+            ]
+          },
+          "$other": [
+            {
+              "$type": 3,
+              "$source": 0,
+              "$named": false,
+              "$span": {
+                "start": 396,
+                "end": 398
+              }
+            }
+          ],
+          "$slotOrder": [
+            "left",
+            "right"
+          ]
+        }
+      ],
+      "$other": [
+        {
+          "$type": 2,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 422,
+            "end": 423
+          }
+        }
+      ],
+      "_delimiter": 2,
+      "$_layout": {
+        "flank": {
+          "$text": "macro_rules! zero_or_one {\n    ($($e:expr),?) => {\n        $($e),?\n    };\n}",
+          "$span": {
+            "start": 31,
+            "end": 73
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "($($e:expr),?) => {\n    $($e),?\n    };"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "($($e:expr),?) => {\n        $($e),?\n    };",
+    "pattern": "macro_rules",
+    "edits": [],
+    "expectedSourceOut": "($($e:expr),?) => {\n    $($e),?\n    };",
+    "expectedReparseTree": "(macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (metavariable) separator: (token_repetition_pattern_text)))))",
+    "wrappedText": "macro_rules! foo {\n    ($($e:expr),?) => {\n        $($e),?\n        };\n}",
     "wrappedOffset": 23
   },
   {
@@ -340876,6 +345086,226 @@
     "expectedReparseTree": "(metavariable)",
     "wrappedText": "fn _f() { let _ = $e; }",
     "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "token_repetition_pattern",
+    "input": {
+      "$type": 185,
+      "$source": 0,
+      "$named": true,
+      "_token_patterns": [
+        {
+          "$type": 184,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 128,
+            "$source": 0,
+            "$named": true,
+            "_name": "x"
+          },
+          "_type": 12,
+          "$other": [
+            {
+              "$type": 4,
+              "$source": 0,
+              "$named": false,
+              "$span": {
+                "start": 277,
+                "end": 278
+              }
+            }
+          ],
+          "$slotOrder": [
+            "name",
+            "type"
+          ]
+        },
+        {
+          "$type": 189,
+          "$source": 0,
+          "$named": true,
+          "_content": 2,
+          "$_layout": {
+            "gap": {
+              "$text": ""
+            }
+          }
+        },
+        {
+          "$type": 406,
+          "$source": 0,
+          "$named": true,
+          "_token_patterns": [
+            {
+              "$type": 185,
+              "$source": 0,
+              "$named": true,
+              "_token_patterns": [
+                {
+                  "$type": 184,
+                  "$source": 0,
+                  "$named": true,
+                  "_name": {
+                    "$type": 128,
+                    "$source": 0,
+                    "$named": true,
+                    "_name": "y"
+                  },
+                  "_type": 12,
+                  "$other": [
+                    {
+                      "$type": 4,
+                      "$source": 0,
+                      "$named": false,
+                      "$span": {
+                        "start": 291,
+                        "end": 292
+                      }
+                    }
+                  ],
+                  "$slotOrder": [
+                    "name",
+                    "type"
+                  ]
+                }
+              ],
+              "_separator": {
+                "$type": 132,
+                "$source": 0,
+                "$named": true,
+                "$text": ",",
+                "$span": {
+                  "start": 298,
+                  "end": 299
+                }
+              },
+              "_operator": 9,
+              "$other": [
+                {
+                  "$type": 5,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 286,
+                    "end": 287
+                  }
+                },
+                {
+                  "$type": 6,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 287,
+                    "end": 288
+                  }
+                },
+                {
+                  "$type": 7,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 297,
+                    "end": 298
+                  }
+                }
+              ],
+              "$slotOrder": [
+                "token_patterns",
+                "separator",
+                "operator"
+              ]
+            }
+          ],
+          "$other": [
+            {
+              "$type": 27,
+              "$source": 0,
+              "$named": false,
+              "$span": {
+                "start": 284,
+                "end": 285
+              }
+            },
+            {
+              "$type": 28,
+              "$source": 0,
+              "$named": false,
+              "$span": {
+                "start": 301,
+                "end": 302
+              }
+            }
+          ],
+          "$_layout": {
+            "gap": {
+              "$text": " "
+            }
+          }
+        }
+      ],
+      "_separator": {
+        "$type": 132,
+        "$source": 0,
+        "$named": true,
+        "$text": ";",
+        "$span": {
+          "start": 303,
+          "end": 304
+        }
+      },
+      "_operator": 9,
+      "$other": [
+        {
+          "$type": 5,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 273,
+            "end": 274
+          }
+        },
+        {
+          "$type": 6,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 274,
+            "end": 275
+          }
+        },
+        {
+          "$type": 7,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 302,
+            "end": 303
+          }
+        }
+      ],
+      "$slotOrder": [
+        "token_patterns",
+        "token_patterns",
+        "token_patterns",
+        "separator",
+        "operator"
+      ]
+    },
+    "expectedOutput": "$($x:expr; [$($y:expr),*]);*"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "$($x:expr; [ $( $y:expr ),* ]);*",
+    "pattern": "token_repetition_pattern",
+    "edits": [],
+    "expectedSourceOut": "$($x:expr; [$($y:expr),*]);*",
+    "expectedReparseTree": "(token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))) separator: (token_repetition_pattern_text))",
+    "wrappedText": "macro_rules! foo {\n    ($($x:expr; [$($y:expr),*]);*) => {}\n}",
+    "wrappedOffset": 24
   },
   {
     "kind": "render",

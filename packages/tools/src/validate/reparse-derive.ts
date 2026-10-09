@@ -2,7 +2,6 @@ import { applyHost, hostTemplateFor, type ReparseHosts } from '@sittir/common';
 import type { TSNode, TSTree } from './common.ts';
 
 const HOLE = '$r';
-const SAMPLE_LIMIT = 12;
 
 /** One corpus entry, parsed. */
 export interface DerivationTree {
@@ -21,6 +20,8 @@ export interface DeriveHostsInput {
 	readonly parse: (text: string) => TSTree;
 	/** The reparsed node of `kind` at the hole's offset, or null. */
 	readonly findAt: (tree: TSTree, kind: string, hosted: { text: string; offset: number }) => TSNode | null;
+	/** Whether the reparsed node is the source node, structurally. */
+	readonly same: (source: TSNode, reparsed: TSNode) => boolean;
 }
 
 interface Occurrence {
@@ -72,16 +73,22 @@ export function deriveReparseHosts(input: DeriveHostsInput): Record<string, stri
 	const derived: Record<string, string> = {};
 	const table = (): ReparseHosts => ({ ...input.declared, hosts: { ...derived, ...input.declared.hosts } });
 	const hostOf = (kind: string): string | undefined => hostTemplateFor(kind, table(), input.kindToSupertypes, { root: input.root });
-	const samplesOf = (kind: string): string[] =>
-		[...new Set((occurrences.get(kind) ?? []).map((o) => o.node.text.slice(layoutLead(o.node))))]
-			.sort((a, b) => a.length - b.length || (a < b ? -1 : a > b ? 1 : 0))
-			.slice(0, SAMPLE_LIMIT);
+	const samplesOf = (kind: string): { text: string; node: TSNode }[] => {
+		const byText = new Map<string, TSNode>();
+		for (const { node } of occurrences.get(kind) ?? []) {
+			const text = node.text.slice(layoutLead(node));
+			if (!byText.has(text)) byText.set(text, node);
+		}
+		return [...byText].map(([text, node]) => ({ text, node })).sort((a, b) => a.text.length - b.text.length || (a.text < b.text ? -1 : a.text > b.text ? 1 : 0));
+	};
 
-	const verified = (kind: string, template: string, samples: readonly string[]): boolean =>
-		samples.every((sample) => {
-			const hosted = applyHost(template, sample);
+	const verified = (kind: string, template: string, samples: readonly { text: string; node: TSNode }[]): boolean =>
+		samples.every(({ text, node }) => {
+			const hosted = applyHost(template, text);
 			const tree = input.parse(hosted.text);
-			return !tree.rootNode.hasError && input.findAt(tree, kind, hosted) !== null;
+			if (tree.rootNode.hasError) return false;
+			const reparsed = input.findAt(tree, kind, hosted);
+			return reparsed !== null && input.same(node, reparsed);
 		});
 
 	const pending = [...occurrences.keys()].filter((kind) => hostOf(kind) === undefined).sort();

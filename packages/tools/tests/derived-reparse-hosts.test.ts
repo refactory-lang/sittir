@@ -13,9 +13,9 @@ const hostFor = (grammar: string, kind: string, ctx: Awaited<ReturnType<typeof c
 	wrapForReparse('x', kind, grammar, ctx.kindToSupertypes, { adoptedVariantKinds: ctx.adoptedVariantKinds, root: ctx.root });
 
 describe('a kind with no declared host is hosted through a parent that is', () => {
-	it('python: statements reach the declared statement hosts, blocks and match clauses a derived one', async () => {
+	it('python: statements reach the declared statement hosts, a match block a derived one', async () => {
 		const ctx = await contextFor('python');
-		for (const kind of ['return_statement', 'match_statement', 'block', 'case_clause']) {
+		for (const kind of ['return_statement', 'match_statement', 'match_block']) {
 			expect(hostFor('python', kind, ctx), kind).not.toBeNull();
 		}
 	}, 120_000);
@@ -28,6 +28,6 @@ describe('a kind with no declared host is hosted through a parent that is', () =
 	it('a kind with no node of its own is excluded as hidden, not as hostless', async () => {
 		const ctx = await contextFor('python');
 		expect(hostlessReason('_simple_statements', '_simple_statements', ctx)).toBe('hidden-kind');
-		expect(hostlessReason('block', 'block', ctx)).toBe('no-reparse-wrapper');
+		expect(hostlessReason('return_statement', 'return_statement', ctx)).toBe('no-reparse-wrapper');
 	}, 120_000);
 });

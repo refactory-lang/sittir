@@ -7203,8 +7203,8 @@
     "edits": [],
     "expectedSourceOut": "constructor",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.constructor;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly constructor: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -7235,8 +7235,8 @@
     "edits": [],
     "expectedSourceOut": "verbose",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.verbose;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly verbose: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -7267,8 +7267,8 @@
     "edits": [],
     "expectedSourceOut": "modal",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.modal;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly modal: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -7299,8 +7299,8 @@
     "edits": [],
     "expectedSourceOut": "title",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.title;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly title: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -7331,8 +7331,8 @@
     "edits": [],
     "expectedSourceOut": "color",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.color;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly color: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -7363,8 +7363,8 @@
     "edits": [],
     "expectedSourceOut": "constructor",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.constructor;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly constructor: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -7395,8 +7395,8 @@
     "edits": [],
     "expectedSourceOut": "greeting",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.greeting;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly greeting: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -7427,8 +7427,8 @@
     "edits": [],
     "expectedSourceOut": "showGreeting",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.showGreeting;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly showGreeting: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -7459,8 +7459,8 @@
     "edits": [],
     "expectedSourceOut": "Bar",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.Bar;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly Bar: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -13636,6 +13636,213 @@
     "expectedSourceOut": "verbose?: boolean;",
     "expectedReparseTree": "(object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))",
     "wrappedText": "type _X = {verbose?: boolean;};",
+    "wrappedOffset": 11
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "object_type_content",
+    "input": {
+      "$type": 390,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 363,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "modal",
+              "$span": {
+                "start": 354,
+                "end": 359
+              }
+            }
+          },
+          "_type": {
+            "$type": 326,
+            "$source": 0,
+            "$named": true,
+            "_type": 40,
+            "$other": [
+              {
+                "$type": 51,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 359,
+                  "end": 360
+                }
+              }
+            ]
+          },
+          "$slotOrder": [
+            "name",
+            "type"
+          ]
+        },
+        {
+          "$type": 363,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "title",
+              "$span": {
+                "start": 376,
+                "end": 381
+              }
+            }
+          },
+          "_optional": true,
+          "_type": {
+            "$type": 326,
+            "$source": 0,
+            "$named": true,
+            "_type": 41,
+            "$other": [
+              {
+                "$type": 51,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 382,
+                  "end": 383
+                }
+              }
+            ]
+          },
+          "$slotOrder": [
+            "name",
+            "optional",
+            "type"
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        },
+        {
+          "$type": 363,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "color",
+              "$span": {
+                "start": 398,
+                "end": 403
+              }
+            }
+          },
+          "_optional": true,
+          "_type": {
+            "$type": 326,
+            "$source": 0,
+            "$named": true,
+            "_type": 41,
+            "$other": [
+              {
+                "$type": 51,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 404,
+                  "end": 405
+                }
+              }
+            ]
+          },
+          "$slotOrder": [
+            "name",
+            "optional",
+            "type"
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 20,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 368,
+            "end": 369
+          }
+        },
+        {
+          "$type": 20,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 390,
+            "end": 391
+          }
+        },
+        {
+          "$type": 20,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 412,
+            "end": 413
+          }
+        }
+      ],
+      "_separator": 20,
+      "_delimiter": 2,
+      "$_layout": {
+        "flank": {
+          "$text": "    interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }",
+          "$span": {
+            "start": 35,
+            "end": 94
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "modal: boolean;\n  title?: string;\n  color?: string;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "modal: boolean;\n      title?: string;\n      color?: string;",
+    "pattern": "object_type_content",
+    "edits": [],
+    "expectedSourceOut": "modal: boolean;\n  title?: string;\n  color?: string;",
+    "expectedReparseTree": "(object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))",
+    "wrappedText": "type _X = {modal: boolean;\n  title?: string;\n  color?: string;};",
     "wrappedOffset": 11
   },
   {
@@ -19985,6 +20192,188 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "object_type_content",
+    "input": {
+      "$type": 390,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 293,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "bar",
+              "$span": {
+                "start": 28,
+                "end": 31
+              }
+            }
+          },
+          "_parameters": {
+            "$type": 281,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 31,
+              "end": 33
+            },
+            "$text": "()"
+          },
+          "_return_type": {
+            "$type": 326,
+            "$source": 0,
+            "$named": true,
+            "_type": 39,
+            "$other": [
+              {
+                "$type": 51,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 33,
+                  "end": 34
+                }
+              }
+            ]
+          },
+          "$slotOrder": [
+            "name",
+            "parameters",
+            "return_type"
+          ]
+        },
+        {
+          "$type": 293,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "baz",
+              "$span": {
+                "start": 45,
+                "end": 48
+              }
+            }
+          },
+          "_parameters": {
+            "$type": 281,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 48,
+              "end": 50
+            },
+            "$text": "()"
+          },
+          "_return_type": {
+            "$type": 326,
+            "$source": 0,
+            "$named": true,
+            "_type": {
+              "$type": 467,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "IBaz",
+                "$span": {
+                  "start": 52,
+                  "end": 56
+                }
+              }
+            },
+            "$other": [
+              {
+                "$type": 51,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 50,
+                  "end": 51
+                }
+              }
+            ]
+          },
+          "$slotOrder": [
+            "name",
+            "parameters",
+            "return_type"
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 41,
+            "end": 42
+          }
+        },
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 56,
+            "end": 57
+          }
+        }
+      ],
+      "_separator": 14,
+      "_delimiter": 2,
+      "$_layout": {
+        "flank": {
+          "$text": "declare interface IFoo {\n  bar(): number,\n  baz(): IBaz,\n}",
+          "$span": {
+            "start": 27,
+            "end": 56
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "bar(): number,\n  baz(): IBaz,"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "bar(): number,\n  baz(): IBaz,",
+    "pattern": "object_type_content",
+    "edits": [],
+    "expectedSourceOut": "bar(): number,\n  baz(): IBaz,",
+    "expectedReparseTree": "(object_type_content item: (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))) item: (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))",
+    "wrappedText": "type _X = {bar(): number,\n  baz(): IBaz,};",
+    "wrappedOffset": 11
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "method_signature",
     "input": {
       "$type": 293,
@@ -20315,8 +20704,8 @@
     "edits": [],
     "expectedSourceOut": "bar",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.bar;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly bar: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -20347,8 +20736,8 @@
     "edits": [],
     "expectedSourceOut": "baz",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.baz;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly baz: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -20379,8 +20768,8 @@
     "edits": [],
     "expectedSourceOut": "bar",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.bar;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly bar: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -20411,8 +20800,8 @@
     "edits": [],
     "expectedSourceOut": "baz",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.baz;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly baz: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -21838,8 +22227,8 @@
     "edits": [],
     "expectedSourceOut": "exports",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.exports;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly exports: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -21870,8 +22259,8 @@
     "edits": [],
     "expectedSourceOut": "foo",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.foo;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly foo: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -27241,8 +27630,8 @@
     "edits": [],
     "expectedSourceOut": "findConfiguration",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.findConfiguration;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly findConfiguration: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -27916,8 +28305,8 @@
     "edits": [],
     "expectedSourceOut": "N",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.N;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly N: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -28627,8 +29016,8 @@
     "edits": [],
     "expectedSourceOut": "N",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.N;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly N: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -31562,8 +31951,8 @@
     "edits": [],
     "expectedSourceOut": "users",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.users;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly users: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -31594,8 +31983,8 @@
     "edits": [],
     "expectedSourceOut": "id",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.id;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly id: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -39933,6 +40322,29 @@
     "expectedReparseTree": "(pair key: (property_identifier) value: (identifier))",
     "wrappedText": "let _ = { private: private_ };",
     "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 462,
+      "$source": 0,
+      "$named": true,
+      "_content": 33
+    },
+    "expectedOutput": "private"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "private",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "private",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "interface _I { public readonly private: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -52231,8 +52643,8 @@
     "edits": [],
     "expectedSourceOut": "Blaz",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.Blaz;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly Blaz: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -52263,8 +52675,8 @@
     "edits": [],
     "expectedSourceOut": "Bloz",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.Bloz;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly Bloz: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -52295,8 +52707,8 @@
     "edits": [],
     "expectedSourceOut": "Bleez",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.Bleez;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly Bleez: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -55648,6 +56060,75 @@
     "expectedReparseTree": "(method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier))))) body: (statement_block terminator: (automatic_semicolon)))",
     "wrappedText": "class _C {\n  private set(plugin) {}\n}",
     "wrappedOffset": 13
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 462,
+      "$source": 0,
+      "$named": true,
+      "_content": 48
+    },
+    "expectedOutput": "async"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "async",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "async",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "interface _I { public readonly async: ReadonlyArray<User> }",
+    "wrappedOffset": 31
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 462,
+      "$source": 0,
+      "$named": true,
+      "_content": 46
+    },
+    "expectedOutput": "get"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "get",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "get",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "interface _I { public readonly get: ReadonlyArray<User> }",
+    "wrappedOffset": 31
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 462,
+      "$source": 0,
+      "$named": true,
+      "_content": 47
+    },
+    "expectedOutput": "set"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "set",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "set",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "interface _I { public readonly set: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -62384,8 +62865,8 @@
     "edits": [],
     "expectedSourceOut": "waitFor",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.waitFor;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly waitFor: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -62416,8 +62897,8 @@
     "edits": [],
     "expectedSourceOut": "bar",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.bar;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly bar: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -62448,8 +62929,8 @@
     "edits": [],
     "expectedSourceOut": "bar",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.bar;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly bar: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -62480,8 +62961,8 @@
     "edits": [],
     "expectedSourceOut": "bar",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.bar;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly bar: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -73149,8 +73630,8 @@
     "edits": [],
     "expectedSourceOut": "method",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.method;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly method: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -77799,8 +78280,8 @@
     "edits": [],
     "expectedSourceOut": "buzz",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.buzz;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly buzz: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -77831,8 +78312,8 @@
     "edits": [],
     "expectedSourceOut": "fooBar",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.fooBar;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly fooBar: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -82076,8 +82557,8 @@
     "edits": [],
     "expectedSourceOut": "bar",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.bar;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly bar: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -82108,8 +82589,8 @@
     "edits": [],
     "expectedSourceOut": "one",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.one;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly one: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -82140,8 +82621,8 @@
     "edits": [],
     "expectedSourceOut": "two",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.two;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly two: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -82172,8 +82653,8 @@
     "edits": [],
     "expectedSourceOut": "three",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.three;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly three: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -86164,8 +86645,8 @@
     "edits": [],
     "expectedSourceOut": "baz",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.baz;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly baz: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -89535,8 +90016,8 @@
     "edits": [],
     "expectedSourceOut": "prop",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.prop;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly prop: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -89567,8 +90048,8 @@
     "edits": [],
     "expectedSourceOut": "requiredProp",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.requiredProp;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly requiredProp: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -89599,8 +90080,8 @@
     "edits": [],
     "expectedSourceOut": "makeSound",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.makeSound;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly makeSound: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -89631,8 +90112,8 @@
     "edits": [],
     "expectedSourceOut": "readonlyProp",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.readonlyProp;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly readonlyProp: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -89663,8 +90144,8 @@
     "edits": [],
     "expectedSourceOut": "readonlyProp",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.readonlyProp;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly readonlyProp: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -89695,8 +90176,8 @@
     "edits": [],
     "expectedSourceOut": "move",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.move;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly move: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -89727,8 +90208,8 @@
     "edits": [],
     "expectedSourceOut": "log",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.log;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly log: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -92694,8 +93175,8 @@
     "edits": [],
     "expectedSourceOut": "decorate",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.decorate;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly decorate: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -92726,8 +93207,8 @@
     "edits": [],
     "expectedSourceOut": "method2",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.method2;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly method2: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -97985,6 +98466,109 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "type_parameters_elements",
+    "input": {
+      "$type": 384,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 365,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 467,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "B",
+              "$span": {
+                "start": 12,
+                "end": 13
+              }
+            }
+          }
+        },
+        {
+          "$type": 365,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 467,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "C",
+              "$span": {
+                "start": 17,
+                "end": 18
+              }
+            }
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 13,
+            "end": 14
+          }
+        },
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 18,
+            "end": 19
+          }
+        }
+      ],
+      "_delimiter": 2,
+      "$_layout": {
+        "flank": {
+          "$text": "class A<\n  B,\n  C,\n>",
+          "$span": {
+            "start": 11,
+            "end": 18
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "B,\n  C,"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "B,\n  C,",
+    "pattern": "type_parameters_elements",
+    "edits": [],
+    "expectedSourceOut": "B,\n  C,",
+    "expectedReparseTree": "(type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))",
+    "wrappedText": "function _f<B,\n  C,>() {}",
+    "wrappedOffset": 12
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "type_parameter",
     "input": {
       "$type": 365,
@@ -98836,6 +99420,99 @@
     "expectedReparseTree": "(type_arguments (types item: (type_identifier) item: (type_identifier)))",
     "wrappedText": "type _X = C<\n  X,\n  Y,\n>;",
     "wrappedOffset": 11
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "types",
+    "input": {
+      "$type": 383,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 467,
+          "$source": 0,
+          "$named": true,
+          "_content": {
+            "$type": 1,
+            "$source": 0,
+            "$named": true,
+            "$text": "X",
+            "$span": {
+              "start": 47,
+              "end": 48
+            }
+          }
+        },
+        {
+          "$type": 467,
+          "$source": 0,
+          "$named": true,
+          "_content": {
+            "$type": 1,
+            "$source": 0,
+            "$named": true,
+            "$text": "Y",
+            "$span": {
+              "start": 52,
+              "end": 53
+            }
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 48,
+            "end": 49
+          }
+        },
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 53,
+            "end": 54
+          }
+        }
+      ],
+      "_delimiter": 2,
+      "$_layout": {
+        "flank": {
+          "$text": "class D extends A<\n  X,\n  Y,\n>",
+          "$span": {
+            "start": 21,
+            "end": 28
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "X,\n  Y,"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "X,\n  Y,",
+    "pattern": "types",
+    "edits": [],
+    "expectedSourceOut": "X,\n  Y,",
+    "expectedReparseTree": "(types item: (type_identifier) item: (type_identifier))",
+    "wrappedText": "type _X = C<X,\n  Y,>;",
+    "wrappedOffset": 12
   },
   {
     "kind": "render",
@@ -109731,8 +110408,8 @@
     "edits": [],
     "expectedSourceOut": "bar",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.bar;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly bar: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -110880,8 +111557,8 @@
     "edits": [],
     "expectedSourceOut": "baz",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.baz;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly baz: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -110912,8 +111589,8 @@
     "edits": [],
     "expectedSourceOut": "baz",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.baz;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly baz: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -121720,8 +122397,8 @@
     "edits": [],
     "expectedSourceOut": "exports",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.exports;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly exports: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -123692,8 +124369,8 @@
     "edits": [],
     "expectedSourceOut": "length",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.length;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly length: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -123724,8 +124401,8 @@
     "edits": [],
     "expectedSourceOut": "length",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.length;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly length: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -123756,8 +124433,8 @@
     "edits": [],
     "expectedSourceOut": "length",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.length;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly length: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -124824,8 +125501,8 @@
     "edits": [],
     "expectedSourceOut": "apply",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.apply;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly apply: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -126201,6 +126878,98 @@
       "$type": 462,
       "$source": 0,
       "$named": true,
+      "_content": 32
+    },
+    "expectedOutput": "public"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "public",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "public",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "interface _I { public readonly public: ReadonlyArray<User> }",
+    "wrappedOffset": 31
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 462,
+      "$source": 0,
+      "$named": true,
+      "_content": 33
+    },
+    "expectedOutput": "private"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "private",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "private",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "interface _I { public readonly private: ReadonlyArray<User> }",
+    "wrappedOffset": 31
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 462,
+      "$source": 0,
+      "$named": true,
+      "_content": 36
+    },
+    "expectedOutput": "readonly"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "readonly",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "readonly",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "interface _I { public readonly readonly: ReadonlyArray<User> }",
+    "wrappedOffset": 31
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 462,
+      "$source": 0,
+      "$named": true,
+      "_content": 36
+    },
+    "expectedOutput": "readonly"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "readonly",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "readonly",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "interface _I { public readonly readonly: ReadonlyArray<User> }",
+    "wrappedOffset": 31
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 462,
+      "$source": 0,
+      "$named": true,
       "_content": {
         "$type": 1,
         "$source": 0,
@@ -126222,8 +126991,31 @@
     "edits": [],
     "expectedSourceOut": "abstract",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.abstract;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly abstract: ReadonlyArray<User> }",
+    "wrappedOffset": 31
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 462,
+      "$source": 0,
+      "$named": true,
+      "_content": 49
+    },
+    "expectedOutput": "static"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "static",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "static",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "interface _I { public readonly static: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -131922,8 +132714,8 @@
     "edits": [],
     "expectedSourceOut": "f",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.f;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly f: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -144415,8 +145207,8 @@
     "edits": [],
     "expectedSourceOut": "b",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.b;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly b: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -154295,8 +155087,8 @@
     "edits": [],
     "expectedSourceOut": "constructor",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.constructor;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly constructor: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -154327,8 +155119,8 @@
     "edits": [],
     "expectedSourceOut": "toString",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.toString;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly toString: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -154359,8 +155151,8 @@
     "edits": [],
     "expectedSourceOut": "toString",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.toString;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly toString: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -154391,8 +155183,8 @@
     "edits": [],
     "expectedSourceOut": "y",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.y;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly y: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -164195,8 +164987,8 @@
     "edits": [],
     "expectedSourceOut": "a",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.a;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly a: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -167811,8 +168603,8 @@
     "edits": [],
     "expectedSourceOut": "name",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.name;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly name: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -167843,8 +168635,8 @@
     "edits": [],
     "expectedSourceOut": "age",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.age;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly age: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -170871,6 +171663,184 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "object_type_content",
+    "input": {
+      "$type": 390,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 362,
+          "$source": 0,
+          "$named": true,
+          "_parameters": {
+            "$type": 281,
+            "$source": 0,
+            "$named": true,
+            "_elements": {
+              "$type": 379,
+              "$source": 0,
+              "$named": true,
+              "_item": [
+                {
+                  "$type": 320,
+                  "$source": 0,
+                  "$named": true,
+                  "_pattern": {
+                    "$type": 258,
+                    "$source": 0,
+                    "$named": true,
+                    "_content": 41
+                  },
+                  "_decorator": []
+                }
+              ],
+              "_delimiter": 0,
+              "$_layout": {
+                "flank": {
+                  "$text": "  (string)",
+                  "$span": {
+                    "start": 3,
+                    "end": 9
+                  },
+                  "$before": true,
+                  "$after": true
+                }
+              }
+            },
+            "$other": [
+              {
+                "$type": 19,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 21,
+                  "end": 22
+                }
+              },
+              {
+                "$type": 21,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 28,
+                  "end": 29
+                }
+              }
+            ]
+          },
+          "_return_type": {
+            "$type": 326,
+            "$source": 0,
+            "$named": true,
+            "_type": 41,
+            "$other": [
+              {
+                "$type": 51,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 29,
+                  "end": 30
+                }
+              }
+            ]
+          },
+          "$slotOrder": [
+            "parameters",
+            "return_type"
+          ]
+        },
+        {
+          "$type": 363,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "length",
+              "$span": {
+                "start": 41,
+                "end": 47
+              }
+            }
+          },
+          "_type": {
+            "$type": 326,
+            "$source": 0,
+            "$named": true,
+            "_type": 39,
+            "$other": [
+              {
+                "$type": 51,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 47,
+                  "end": 48
+                }
+              }
+            ]
+          },
+          "$slotOrder": [
+            "name",
+            "type"
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 37,
+            "end": 38
+          }
+        }
+      ],
+      "_separator": 14,
+      "_delimiter": 0,
+      "$_layout": {
+        "flank": {
+          "$text": "let MyFunction: {\n  (string): string,\n  length: number\n}",
+          "$span": {
+            "start": 20,
+            "end": 54
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "(string): string,\n  length: number"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "(string): string,\n  length: number",
+    "pattern": "object_type_content",
+    "edits": [],
+    "expectedSourceOut": "(string): string,\n  length: number",
+    "expectedReparseTree": "(object_type_content item: (call_signature parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier))))) return_type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))",
+    "wrappedText": "type _X = {(string): string,\n  length: number};",
+    "wrappedOffset": 11
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "call_signature",
     "input": {
       "$type": 362,
@@ -171227,8 +172197,8 @@
     "edits": [],
     "expectedSourceOut": "length",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.length;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly length: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -172004,6 +172974,206 @@
     "expectedReparseTree": "(object_type members: (object_type_content item: (index_signature_colon name: (identifier) index_type: (predefined_type) type: (type_annotation type: (predefined_type))) item: (index_signature_colon name: (identifier) index_type: (predefined_type) type: (type_annotation type: (predefined_type)))))",
     "wrappedText": "type _X = {\n  [b: string]: any;\n  readonly[c: number]: string;\n};",
     "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "object_type_content",
+    "input": {
+      "$type": 390,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 402,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 1,
+            "$source": 0,
+            "$named": true,
+            "$text": "b",
+            "$span": {
+              "start": 17,
+              "end": 18
+            }
+          },
+          "_index_type": 41,
+          "_type": {
+            "$type": 326,
+            "$source": 0,
+            "$named": true,
+            "_type": 38,
+            "$other": [
+              {
+                "$type": 51,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 27,
+                  "end": 28
+                }
+              }
+            ]
+          },
+          "$other": [
+            {
+              "$type": 58,
+              "$source": 0,
+              "$named": false,
+              "$span": {
+                "start": 16,
+                "end": 17
+              }
+            },
+            {
+              "$type": 51,
+              "$source": 0,
+              "$named": false,
+              "$span": {
+                "start": 18,
+                "end": 19
+              }
+            },
+            {
+              "$type": 59,
+              "$source": 0,
+              "$named": false,
+              "$span": {
+                "start": 26,
+                "end": 27
+              }
+            }
+          ],
+          "$slotOrder": [
+            "name",
+            "index_type",
+            "type"
+          ]
+        },
+        {
+          "$type": 402,
+          "$source": 0,
+          "$named": true,
+          "_readonly": true,
+          "_name": {
+            "$type": 1,
+            "$source": 0,
+            "$named": true,
+            "$text": "c",
+            "$span": {
+              "start": 46,
+              "end": 47
+            }
+          },
+          "_index_type": 39,
+          "_type": {
+            "$type": 326,
+            "$source": 0,
+            "$named": true,
+            "_type": 41,
+            "$other": [
+              {
+                "$type": 51,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 56,
+                  "end": 57
+                }
+              }
+            ]
+          },
+          "$other": [
+            {
+              "$type": 58,
+              "$source": 0,
+              "$named": false,
+              "$span": {
+                "start": 45,
+                "end": 46
+              }
+            },
+            {
+              "$type": 51,
+              "$source": 0,
+              "$named": false,
+              "$span": {
+                "start": 47,
+                "end": 48
+              }
+            },
+            {
+              "$type": 59,
+              "$source": 0,
+              "$named": false,
+              "$span": {
+                "start": 55,
+                "end": 56
+              }
+            }
+          ],
+          "$slotOrder": [
+            "readonly",
+            "name",
+            "index_type",
+            "type"
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 20,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 32,
+            "end": 33
+          }
+        },
+        {
+          "$type": 20,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 64,
+            "end": 65
+          }
+        }
+      ],
+      "_separator": 20,
+      "_delimiter": 2,
+      "$_layout": {
+        "flank": {
+          "$text": "type Foo = {\n  [b: string]: any;\n  readonly [c: number]: string;\n}",
+          "$span": {
+            "start": 15,
+            "end": 64
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "[b: string]: any;\n  readonly[c: number]: string;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "[b: string]: any;\n  readonly [c: number]: string;",
+    "pattern": "object_type_content",
+    "edits": [],
+    "expectedSourceOut": "[b: string]: any;\n  readonly[c: number]: string;",
+    "expectedReparseTree": "(object_type_content item: (index_signature_colon name: (identifier) index_type: (predefined_type) type: (type_annotation type: (predefined_type))) item: (index_signature_colon name: (identifier) index_type: (predefined_type) type: (type_annotation type: (predefined_type))))",
+    "wrappedText": "type _X = {[b: string]: any;\n  readonly[c: number]: string;};",
+    "wrappedOffset": 11
   },
   {
     "kind": "render",
@@ -182899,8 +184069,8 @@
     "edits": [],
     "expectedSourceOut": "for",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.for;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly for: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -183955,8 +185125,8 @@
     "edits": [],
     "expectedSourceOut": "selection",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.selection;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly selection: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -183987,8 +185157,8 @@
     "edits": [],
     "expectedSourceOut": "createRange",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.createRange;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly createRange: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -201124,6 +202294,580 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "object_type_content",
+    "input": {
+      "$type": 390,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 363,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "document",
+              "$span": {
+                "start": 26,
+                "end": 34
+              }
+            }
+          },
+          "_type": {
+            "$type": 326,
+            "$source": 0,
+            "$named": true,
+            "_type": {
+              "$type": 467,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "Doc",
+                "$span": {
+                  "start": 36,
+                  "end": 39
+                }
+              }
+            },
+            "$other": [
+              {
+                "$type": 51,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 34,
+                  "end": 35
+                }
+              }
+            ]
+          },
+          "$slotOrder": [
+            "name",
+            "type"
+          ]
+        },
+        {
+          "$type": 363,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "headDocument",
+              "$span": {
+                "start": 43,
+                "end": 55
+              }
+            }
+          },
+          "_type": {
+            "$type": 326,
+            "$source": 0,
+            "$named": true,
+            "_type": {
+              "$type": 467,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "Doc",
+                "$span": {
+                  "start": 57,
+                  "end": 60
+                }
+              }
+            },
+            "$other": [
+              {
+                "$type": 51,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 55,
+                  "end": 56
+                }
+              }
+            ]
+          },
+          "$slotOrder": [
+            "name",
+            "type"
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        },
+        {
+          "$type": 363,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "baseDocument",
+              "$span": {
+                "start": 64,
+                "end": 76
+              }
+            }
+          },
+          "_type": {
+            "$type": 326,
+            "$source": 0,
+            "$named": true,
+            "_type": {
+              "$type": 467,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "Doc",
+                "$span": {
+                  "start": 78,
+                  "end": 81
+                }
+              }
+            },
+            "$other": [
+              {
+                "$type": 51,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 76,
+                  "end": 77
+                }
+              }
+            ]
+          },
+          "$slotOrder": [
+            "name",
+            "type"
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        },
+        {
+          "$type": 363,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "conflicts",
+              "$span": {
+                "start": 85,
+                "end": 94
+              }
+            }
+          },
+          "_type": {
+            "$type": 326,
+            "$source": 0,
+            "$named": true,
+            "_type": {
+              "$type": 370,
+              "$source": 0,
+              "$named": true,
+              "_type": {
+                "$type": 467,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "ConflictInfo",
+                  "$span": {
+                    "start": 96,
+                    "end": 108
+                  }
+                }
+              },
+              "$other": [
+                {
+                  "$type": 58,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 108,
+                    "end": 109
+                  }
+                },
+                {
+                  "$type": 59,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 109,
+                    "end": 110
+                  }
+                }
+              ]
+            },
+            "$other": [
+              {
+                "$type": 51,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 94,
+                  "end": 95
+                }
+              }
+            ]
+          },
+          "$slotOrder": [
+            "name",
+            "type"
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 39,
+            "end": 40
+          }
+        },
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 60,
+            "end": 61
+          }
+        },
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 81,
+            "end": 82
+          }
+        }
+      ],
+      "_separator": 14,
+      "_delimiter": 0,
+      "$_layout": {
+        "flank": {
+          "$text": "type FileMergeData = {\n  document: Doc,\n  headDocument: Doc,\n  baseDocument: Doc,\n  conflicts: ConflictInfo[]\n}",
+          "$span": {
+            "start": 25,
+            "end": 109
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "document: Doc,\n  headDocument: Doc,\n  baseDocument: Doc,\n  conflicts: ConflictInfo[]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "document: Doc,\n  headDocument: Doc,\n  baseDocument: Doc,\n  conflicts: ConflictInfo[]",
+    "pattern": "object_type_content",
+    "edits": [],
+    "expectedSourceOut": "document: Doc,\n  headDocument: Doc,\n  baseDocument: Doc,\n  conflicts: ConflictInfo[]",
+    "expectedReparseTree": "(object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) item: (property_signature name: (property_identifier) type: (type_annotation type: (array_type type: (type_identifier)))))",
+    "wrappedText": "type _X = {document: Doc,\n  headDocument: Doc,\n  baseDocument: Doc,\n  conflicts: ConflictInfo[]};",
+    "wrappedOffset": 11
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "object_type_content",
+    "input": {
+      "$type": 390,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 363,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "start",
+              "$span": {
+                "start": 138,
+                "end": 143
+              }
+            }
+          },
+          "_optional": true,
+          "_type": {
+            "$type": 326,
+            "$source": 0,
+            "$named": true,
+            "_type": {
+              "$type": 467,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "LineHandle",
+                "$span": {
+                  "start": 146,
+                  "end": 156
+                }
+              }
+            },
+            "$other": [
+              {
+                "$type": 51,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 144,
+                  "end": 145
+                }
+              }
+            ]
+          },
+          "$slotOrder": [
+            "name",
+            "optional",
+            "type"
+          ]
+        },
+        {
+          "$type": 363,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "middle",
+              "$span": {
+                "start": 160,
+                "end": 166
+              }
+            }
+          },
+          "_optional": true,
+          "_type": {
+            "$type": 326,
+            "$source": 0,
+            "$named": true,
+            "_type": {
+              "$type": 467,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "LineHandle",
+                "$span": {
+                  "start": 169,
+                  "end": 179
+                }
+              }
+            },
+            "$other": [
+              {
+                "$type": 51,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 167,
+                  "end": 168
+                }
+              }
+            ]
+          },
+          "$slotOrder": [
+            "name",
+            "optional",
+            "type"
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        },
+        {
+          "$type": 363,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "end",
+              "$span": {
+                "start": 183,
+                "end": 186
+              }
+            }
+          },
+          "_optional": true,
+          "_type": {
+            "$type": 326,
+            "$source": 0,
+            "$named": true,
+            "_type": {
+              "$type": 467,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "LineHandle",
+                "$span": {
+                  "start": 189,
+                  "end": 199
+                }
+              }
+            },
+            "$other": [
+              {
+                "$type": 51,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 187,
+                  "end": 188
+                }
+              }
+            ]
+          },
+          "$slotOrder": [
+            "name",
+            "optional",
+            "type"
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 156,
+            "end": 157
+          }
+        },
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 179,
+            "end": 180
+          }
+        }
+      ],
+      "_separator": 14,
+      "_delimiter": 0,
+      "$_layout": {
+        "flank": {
+          "$text": "type ConflictInfo = {\n  start?: LineHandle,\n  middle?: LineHandle,\n  end?: LineHandle\n}",
+          "$span": {
+            "start": 24,
+            "end": 85
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "start?: LineHandle,\n  middle?: LineHandle,\n  end?: LineHandle"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "start?: LineHandle,\n  middle?: LineHandle,\n  end?: LineHandle",
+    "pattern": "object_type_content",
+    "edits": [],
+    "expectedSourceOut": "start?: LineHandle,\n  middle?: LineHandle,\n  end?: LineHandle",
+    "expectedReparseTree": "(object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))))",
+    "wrappedText": "type _X = {start?: LineHandle,\n  middle?: LineHandle,\n  end?: LineHandle};",
+    "wrappedOffset": 11
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "property_signature",
     "input": {
       "$type": 363,
@@ -201685,8 +203429,8 @@
     "edits": [],
     "expectedSourceOut": "document",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.document;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly document: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -201717,8 +203461,8 @@
     "edits": [],
     "expectedSourceOut": "headDocument",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.headDocument;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly headDocument: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -201749,8 +203493,8 @@
     "edits": [],
     "expectedSourceOut": "baseDocument",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.baseDocument;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly baseDocument: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -201781,8 +203525,8 @@
     "edits": [],
     "expectedSourceOut": "conflicts",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.conflicts;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly conflicts: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -201813,8 +203557,8 @@
     "edits": [],
     "expectedSourceOut": "start",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.start;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly start: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -201845,8 +203589,8 @@
     "edits": [],
     "expectedSourceOut": "middle",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.middle;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly middle: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -201877,8 +203621,8 @@
     "edits": [],
     "expectedSourceOut": "end",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.end;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly end: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -205158,6 +206902,868 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "enum_body_elements",
+    "input": {
+      "$type": 382,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 380,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "A",
+              "$span": {
+                "start": 17,
+                "end": 18
+              }
+            }
+          }
+        },
+        {
+          "$type": 380,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 415,
+            "$source": 0,
+            "$named": true,
+            "_elements": [
+              {
+                "$type": 110,
+                "$source": 0,
+                "$named": true,
+                "$text": "B",
+                "$span": {
+                  "start": 25,
+                  "end": 26
+                }
+              }
+            ],
+            "$other": [
+              {
+                "$type": 167,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 24,
+                  "end": 25
+                }
+              },
+              {
+                "$type": 168,
+                "$displayType": 167,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 26,
+                  "end": 27
+                }
+              }
+            ]
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        },
+        {
+          "$type": 316,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 415,
+            "$source": 0,
+            "$named": true,
+            "_elements": [
+              {
+                "$type": 110,
+                "$source": 0,
+                "$named": true,
+                "$text": "C",
+                "$span": {
+                  "start": 34,
+                  "end": 35
+                }
+              }
+            ],
+            "$other": [
+              {
+                "$type": 167,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 33,
+                  "end": 34
+                }
+              },
+              {
+                "$type": 168,
+                "$displayType": 167,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 35,
+                  "end": 36
+                }
+              }
+            ]
+          },
+          "_value": {
+            "$type": 411,
+            "$source": 0,
+            "$named": true,
+            "_function": {
+              "$type": 256,
+              "$source": 0,
+              "$named": true,
+              "_object": {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "Math",
+                "$span": {
+                  "start": 39,
+                  "end": 43
+                }
+              },
+              "_separator": 60,
+              "_property": {
+                "$type": 462,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "floor",
+                  "$span": {
+                    "start": 44,
+                    "end": 49
+                  }
+                }
+              },
+              "$slotOrder": [
+                "object",
+                "separator",
+                "property"
+              ]
+            },
+            "_arguments": {
+              "$type": 276,
+              "$source": 0,
+              "$named": true,
+              "_elements": [
+                {
+                  "$type": 266,
+                  "$source": 0,
+                  "$named": true,
+                  "_left": {
+                    "$type": 411,
+                    "$source": 0,
+                    "$named": true,
+                    "_function": {
+                      "$type": 256,
+                      "$source": 0,
+                      "$named": true,
+                      "_object": {
+                        "$type": 1,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "Math",
+                        "$span": {
+                          "start": 50,
+                          "end": 54
+                        }
+                      },
+                      "_separator": 60,
+                      "_property": {
+                        "$type": 462,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": {
+                          "$type": 1,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "random",
+                          "$span": {
+                            "start": 55,
+                            "end": 61
+                          }
+                        }
+                      },
+                      "$slotOrder": [
+                        "object",
+                        "separator",
+                        "property"
+                      ]
+                    },
+                    "_arguments": {
+                      "$type": 276,
+                      "$source": 0,
+                      "$named": true,
+                      "_elements": []
+                    },
+                    "$slotOrder": [
+                      "function",
+                      "arguments"
+                    ]
+                  },
+                  "_operator": 3,
+                  "_right": {
+                    "$type": 158,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "1000",
+                    "$span": {
+                      "start": 66,
+                      "end": 70
+                    }
+                  },
+                  "$slotOrder": [
+                    "left",
+                    "operator",
+                    "right"
+                  ]
+                }
+              ],
+              "$other": [
+                {
+                  "$type": 19,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 49,
+                    "end": 50
+                  }
+                },
+                {
+                  "$type": 21,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 70,
+                    "end": 71
+                  }
+                }
+              ]
+            },
+            "$slotOrder": [
+              "function",
+              "arguments"
+            ]
+          },
+          "$other": [
+            {
+              "$type": 57,
+              "$source": 0,
+              "$named": false,
+              "$span": {
+                "start": 37,
+                "end": 38
+              }
+            }
+          ],
+          "$slotOrder": [
+            "name",
+            "value"
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        },
+        {
+          "$type": 316,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "D",
+              "$span": {
+                "start": 77,
+                "end": 78
+              }
+            }
+          },
+          "_value": {
+            "$type": 158,
+            "$source": 0,
+            "$named": true,
+            "$text": "10",
+            "$span": {
+              "start": 81,
+              "end": 83
+            }
+          },
+          "$other": [
+            {
+              "$type": 57,
+              "$source": 0,
+              "$named": false,
+              "$span": {
+                "start": 79,
+                "end": 80
+              }
+            }
+          ],
+          "$slotOrder": [
+            "name",
+            "value"
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        },
+        {
+          "$type": 380,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "E",
+              "$span": {
+                "start": 89,
+                "end": 90
+              }
+            }
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 18,
+            "end": 19
+          }
+        },
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 27,
+            "end": 28
+          }
+        },
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 71,
+            "end": 72
+          }
+        },
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 83,
+            "end": 84
+          }
+        }
+      ],
+      "_delimiter": 0,
+      "$_layout": {
+        "flank": {
+          "$text": "enum Test {\n    A,\n    'B',\n    'C' = Math.floor(Math.random() * 1000),\n    D = 10,\n    E\n}",
+          "$span": {
+            "start": 16,
+            "end": 89
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "A,\n  'B',\n  'C' = Math.floor(Math.random() * 1000),\n  D = 10,\n  E"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "A,\n    'B',\n    'C' = Math.floor(Math.random() * 1000),\n    D = 10,\n    E",
+    "pattern": "enum_body_elements",
+    "edits": [],
+    "expectedSourceOut": "A,\n  'B',\n  'C' = Math.floor(Math.random() * 1000),\n  D = 10,\n  E",
+    "expectedReparseTree": "(enum_body_elements item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (string_single elements: (string_fragment))) item: (enum_assignment name: (string_single elements: (string_fragment)) value: (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (binary_expression left: (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments)) right: (number_decimal))))) item: (enum_assignment name: (property_identifier) value: (number_decimal)) item: (enum_body_element_name name: (property_identifier)))",
+    "wrappedText": "enum T { A,\n  'B',\n  'C' = Math.floor(Math.random() * 1000),\n  D = 10,\n  E }",
+    "wrappedOffset": 9
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "enum_body_elements",
+    "input": {
+      "$type": 382,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 316,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "None",
+              "$span": {
+                "start": 111,
+                "end": 115
+              }
+            }
+          },
+          "_value": {
+            "$type": 158,
+            "$source": 0,
+            "$named": true,
+            "$text": "0",
+            "$span": {
+              "start": 118,
+              "end": 119
+            }
+          },
+          "$other": [
+            {
+              "$type": 57,
+              "$source": 0,
+              "$named": false,
+              "$span": {
+                "start": 116,
+                "end": 117
+              }
+            }
+          ],
+          "$slotOrder": [
+            "name",
+            "value"
+          ]
+        },
+        {
+          "$type": 316,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "Bold",
+              "$span": {
+                "start": 125,
+                "end": 129
+              }
+            }
+          },
+          "_value": {
+            "$type": 158,
+            "$source": 0,
+            "$named": true,
+            "$text": "1",
+            "$span": {
+              "start": 132,
+              "end": 133
+            }
+          },
+          "$other": [
+            {
+              "$type": 57,
+              "$source": 0,
+              "$named": false,
+              "$span": {
+                "start": 130,
+                "end": 131
+              }
+            }
+          ],
+          "$slotOrder": [
+            "name",
+            "value"
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        },
+        {
+          "$type": 316,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "Italic",
+              "$span": {
+                "start": 139,
+                "end": 145
+              }
+            }
+          },
+          "_value": {
+            "$type": 158,
+            "$source": 0,
+            "$named": true,
+            "$text": "2",
+            "$span": {
+              "start": 148,
+              "end": 149
+            }
+          },
+          "$other": [
+            {
+              "$type": 57,
+              "$source": 0,
+              "$named": false,
+              "$span": {
+                "start": 146,
+                "end": 147
+              }
+            }
+          ],
+          "$slotOrder": [
+            "name",
+            "value"
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        },
+        {
+          "$type": 316,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "Underline",
+              "$span": {
+                "start": 155,
+                "end": 164
+              }
+            }
+          },
+          "_value": {
+            "$type": 158,
+            "$source": 0,
+            "$named": true,
+            "$text": "4",
+            "$span": {
+              "start": 167,
+              "end": 168
+            }
+          },
+          "$other": [
+            {
+              "$type": 57,
+              "$source": 0,
+              "$named": false,
+              "$span": {
+                "start": 165,
+                "end": 166
+              }
+            }
+          ],
+          "$slotOrder": [
+            "name",
+            "value"
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        },
+        {
+          "$type": 316,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "Emphasis",
+              "$span": {
+                "start": 174,
+                "end": 182
+              }
+            }
+          },
+          "_value": {
+            "$type": 266,
+            "$source": 0,
+            "$named": true,
+            "_left": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "Bold",
+              "$span": {
+                "start": 185,
+                "end": 189
+              }
+            },
+            "_operator": 89,
+            "_right": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "Italic",
+              "$span": {
+                "start": 192,
+                "end": 198
+              }
+            },
+            "$slotOrder": [
+              "left",
+              "operator",
+              "right"
+            ]
+          },
+          "$other": [
+            {
+              "$type": 57,
+              "$source": 0,
+              "$named": false,
+              "$span": {
+                "start": 183,
+                "end": 184
+              }
+            }
+          ],
+          "$slotOrder": [
+            "name",
+            "value"
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        },
+        {
+          "$type": 316,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "Hyperlink",
+              "$span": {
+                "start": 204,
+                "end": 213
+              }
+            }
+          },
+          "_value": {
+            "$type": 266,
+            "$source": 0,
+            "$named": true,
+            "_left": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "Bold",
+              "$span": {
+                "start": 216,
+                "end": 220
+              }
+            },
+            "_operator": 89,
+            "_right": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "Underline",
+              "$span": {
+                "start": 223,
+                "end": 232
+              }
+            },
+            "$slotOrder": [
+              "left",
+              "operator",
+              "right"
+            ]
+          },
+          "$other": [
+            {
+              "$type": 57,
+              "$source": 0,
+              "$named": false,
+              "$span": {
+                "start": 214,
+                "end": 215
+              }
+            }
+          ],
+          "$slotOrder": [
+            "name",
+            "value"
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 119,
+            "end": 120
+          }
+        },
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 133,
+            "end": 134
+          }
+        },
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 149,
+            "end": 150
+          }
+        },
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 168,
+            "end": 169
+          }
+        },
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 198,
+            "end": 199
+          }
+        }
+      ],
+      "_delimiter": 0,
+      "$_layout": {
+        "flank": {
+          "$text": "enum Style {\n    None = 0,\n    Bold = 1,\n    Italic = 2,\n    Underline = 4,\n    Emphasis = Bold | Italic,\n    Hyperlink = Bold | Underline\n}",
+          "$span": {
+            "start": 17,
+            "end": 138
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "None = 0,\n  Bold = 1,\n  Italic = 2,\n  Underline = 4,\n  Emphasis = Bold | Italic,\n  Hyperlink = Bold | Underline"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "None = 0,\n    Bold = 1,\n    Italic = 2,\n    Underline = 4,\n    Emphasis = Bold | Italic,\n    Hyperlink = Bold | Underline",
+    "pattern": "enum_body_elements",
+    "edits": [],
+    "expectedSourceOut": "None = 0,\n  Bold = 1,\n  Italic = 2,\n  Underline = 4,\n  Emphasis = Bold | Italic,\n  Hyperlink = Bold | Underline",
+    "expectedReparseTree": "(enum_body_elements item: (enum_assignment name: (property_identifier) value: (number_decimal)) item: (enum_assignment name: (property_identifier) value: (number_decimal)) item: (enum_assignment name: (property_identifier) value: (number_decimal)) item: (enum_assignment name: (property_identifier) value: (number_decimal)) item: (enum_assignment name: (property_identifier) value: (binary_expression left: (identifier) right: (identifier))) item: (enum_assignment name: (property_identifier) value: (binary_expression left: (identifier) right: (identifier))))",
+    "wrappedText": "enum T { None = 0,\n  Bold = 1,\n  Italic = 2,\n  Underline = 4,\n  Emphasis = Bold | Italic,\n  Hyperlink = Bold | Underline }",
+    "wrappedOffset": 9
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "enum_body_element_name",
     "input": {
       "$type": 380,
@@ -205318,8 +207924,8 @@
     "edits": [],
     "expectedSourceOut": "A",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.A;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly A: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -205350,8 +207956,8 @@
     "edits": [],
     "expectedSourceOut": "floor",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.floor;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly floor: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -205382,8 +207988,8 @@
     "edits": [],
     "expectedSourceOut": "random",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.random;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly random: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -205414,8 +208020,8 @@
     "edits": [],
     "expectedSourceOut": "D",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.D;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly D: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -205446,8 +208052,8 @@
     "edits": [],
     "expectedSourceOut": "E",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.E;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly E: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -205478,8 +208084,8 @@
     "edits": [],
     "expectedSourceOut": "None",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.None;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly None: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -205510,8 +208116,8 @@
     "edits": [],
     "expectedSourceOut": "Bold",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.Bold;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly Bold: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -205542,8 +208148,8 @@
     "edits": [],
     "expectedSourceOut": "Italic",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.Italic;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly Italic: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -205574,8 +208180,8 @@
     "edits": [],
     "expectedSourceOut": "Underline",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.Underline;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly Underline: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -205606,8 +208212,8 @@
     "edits": [],
     "expectedSourceOut": "Emphasis",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.Emphasis;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly Emphasis: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -205638,8 +208244,8 @@
     "edits": [],
     "expectedSourceOut": "Hyperlink",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.Hyperlink;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly Hyperlink: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -209179,6 +211785,109 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "type_parameters_elements",
+    "input": {
+      "$type": 384,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 365,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 467,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "B",
+              "$span": {
+                "start": 12,
+                "end": 13
+              }
+            }
+          }
+        },
+        {
+          "$type": 365,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 467,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "C",
+              "$span": {
+                "start": 17,
+                "end": 18
+              }
+            }
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 13,
+            "end": 14
+          }
+        },
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 18,
+            "end": 19
+          }
+        }
+      ],
+      "_delimiter": 2,
+      "$_layout": {
+        "flank": {
+          "$text": "class A<\n  B,\n  C,\n>",
+          "$span": {
+            "start": 11,
+            "end": 18
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "B,\n  C,"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "B,\n  C,",
+    "pattern": "type_parameters_elements",
+    "edits": [],
+    "expectedSourceOut": "B,\n  C,",
+    "expectedReparseTree": "(type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))",
+    "wrappedText": "function _f<B,\n  C,>() {}",
+    "wrappedOffset": 12
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "type_parameter",
     "input": {
       "$type": 365,
@@ -211515,6 +214224,192 @@
     "expectedReparseTree": "(type_arguments (types item: (type_identifier)))",
     "wrappedText": "type _X = C<T>;",
     "wrappedOffset": 11
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "types",
+    "input": {
+      "$type": 383,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 467,
+          "$source": 0,
+          "$named": true,
+          "_content": {
+            "$type": 1,
+            "$source": 0,
+            "$named": true,
+            "$text": "X",
+            "$span": {
+              "start": 47,
+              "end": 48
+            }
+          }
+        },
+        {
+          "$type": 467,
+          "$source": 0,
+          "$named": true,
+          "_content": {
+            "$type": 1,
+            "$source": 0,
+            "$named": true,
+            "$text": "Y",
+            "$span": {
+              "start": 52,
+              "end": 53
+            }
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 48,
+            "end": 49
+          }
+        },
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 53,
+            "end": 54
+          }
+        }
+      ],
+      "_delimiter": 2,
+      "$_layout": {
+        "flank": {
+          "$text": "class D extends A<\n  X,\n  Y,\n>",
+          "$span": {
+            "start": 21,
+            "end": 28
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "X,\n  Y,"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "X,\n  Y,",
+    "pattern": "types",
+    "edits": [],
+    "expectedSourceOut": "X,\n  Y,",
+    "expectedReparseTree": "(types item: (type_identifier) item: (type_identifier))",
+    "wrappedText": "type _X = C<X,\n  Y,>;",
+    "wrappedOffset": 12
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "types",
+    "input": {
+      "$type": 383,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 467,
+          "$source": 0,
+          "$named": true,
+          "_content": {
+            "$type": 1,
+            "$source": 0,
+            "$named": true,
+            "$text": "X",
+            "$span": {
+              "start": 102,
+              "end": 103
+            }
+          }
+        },
+        {
+          "$type": 467,
+          "$source": 0,
+          "$named": true,
+          "_content": {
+            "$type": 1,
+            "$source": 0,
+            "$named": true,
+            "$text": "Y",
+            "$span": {
+              "start": 107,
+              "end": 108
+            }
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 103,
+            "end": 104
+          }
+        },
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 108,
+            "end": 109
+          }
+        }
+      ],
+      "_delimiter": 2,
+      "$_layout": {
+        "flank": {
+          "$text": "class E extends funThatEvalsToClass()<\n  X,\n  Y,\n>",
+          "$span": {
+            "start": 41,
+            "end": 48
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "X,\n  Y,"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "X,\n  Y,",
+    "pattern": "types",
+    "edits": [],
+    "expectedSourceOut": "X,\n  Y,",
+    "expectedReparseTree": "(types item: (type_identifier) item: (type_identifier))",
+    "wrappedText": "type _X = C<X,\n  Y,>;",
+    "wrappedOffset": 12
   },
   {
     "kind": "render",
@@ -214671,6 +217566,143 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "object_type_content",
+    "input": {
+      "$type": 390,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 363,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "url",
+              "$span": {
+                "start": 26,
+                "end": 29
+              }
+            }
+          },
+          "_type": {
+            "$type": 326,
+            "$source": 0,
+            "$named": true,
+            "_type": 41,
+            "$other": [
+              {
+                "$type": 51,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 29,
+                  "end": 30
+                }
+              }
+            ]
+          },
+          "$slotOrder": [
+            "name",
+            "type"
+          ]
+        },
+        {
+          "$type": 363,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "ms",
+              "$span": {
+                "start": 41,
+                "end": 43
+              }
+            }
+          },
+          "_type": {
+            "$type": 326,
+            "$source": 0,
+            "$named": true,
+            "_type": 39,
+            "$other": [
+              {
+                "$type": 51,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 43,
+                  "end": 44
+                }
+              }
+            ]
+          },
+          "$slotOrder": [
+            "name",
+            "type"
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 14,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 37,
+            "end": 38
+          }
+        }
+      ],
+      "_separator": 14,
+      "_delimiter": 0,
+      "$_layout": {
+        "flank": {
+          "$text": "type BrowserStats = {|\n  url: string,\n  ms: number\n|",
+          "$span": {
+            "start": 25,
+            "end": 50
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "url: string,\n  ms: number"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "url: string,\n  ms: number",
+    "pattern": "object_type_content",
+    "edits": [],
+    "expectedSourceOut": "url: string,\n  ms: number",
+    "expectedReparseTree": "(object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))",
+    "wrappedText": "type _X = {url: string,\n  ms: number};",
+    "wrappedOffset": 11
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "property_signature",
     "input": {
       "$type": 363,
@@ -214813,8 +217845,8 @@
     "edits": [],
     "expectedSourceOut": "url",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.url;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly url: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -214845,8 +217877,8 @@
     "edits": [],
     "expectedSourceOut": "ms",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.ms;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly ms: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -220192,8 +223224,8 @@
     "edits": [],
     "expectedSourceOut": "x",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.x;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly x: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -231509,8 +234541,8 @@
     "edits": [],
     "expectedSourceOut": "P",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.P;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly P: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -240525,8 +243557,8 @@
     "edits": [],
     "expectedSourceOut": "test",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.test;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly test: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -271450,8 +274482,8 @@
     "edits": [],
     "expectedSourceOut": "x",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.x;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly x: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -271482,8 +274514,8 @@
     "edits": [],
     "expectedSourceOut": "x",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.x;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly x: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -296716,8 +299748,8 @@
     "edits": [],
     "expectedSourceOut": "baz",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.baz;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly baz: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -308698,8 +311730,8 @@
     "edits": [],
     "expectedSourceOut": "colors",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.colors;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly colors: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -308730,8 +311762,8 @@
     "edits": [],
     "expectedSourceOut": "color",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.color;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly color: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -308762,8 +311794,8 @@
     "edits": [],
     "expectedSourceOut": "code",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.code;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly code: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -308794,8 +311826,8 @@
     "edits": [],
     "expectedSourceOut": "color",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.color;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly color: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -308826,8 +311858,8 @@
     "edits": [],
     "expectedSourceOut": "colors",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.colors;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly colors: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -308858,8 +311890,8 @@
     "edits": [],
     "expectedSourceOut": "colors",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.colors;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly colors: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -312517,8 +315549,8 @@
     "edits": [],
     "expectedSourceOut": "ReadStream",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.ReadStream;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly ReadStream: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -312549,8 +315581,8 @@
     "edits": [],
     "expectedSourceOut": "bar",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.bar;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly bar: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -313843,6 +316875,29 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 462,
+      "$source": 0,
+      "$named": true,
+      "_content": 7
+    },
+    "expectedOutput": "type"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "type",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "type",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "interface _I { public readonly type: ReadonlyArray<User> }",
+    "wrappedOffset": 31
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "program",
     "input": {
       "$type": 188,
@@ -314497,8 +317552,8 @@
     "edits": [],
     "expectedSourceOut": "A",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.A;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly A: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -314529,8 +317584,8 @@
     "edits": [],
     "expectedSourceOut": "B",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.B;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly B: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -324245,8 +327300,8 @@
     "edits": [],
     "expectedSourceOut": "constructor",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.constructor;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly constructor: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -324277,8 +327332,8 @@
     "edits": [],
     "expectedSourceOut": "verbose",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.verbose;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly verbose: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -324309,8 +327364,8 @@
     "edits": [],
     "expectedSourceOut": "modal",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.modal;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly modal: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -324341,8 +327396,8 @@
     "edits": [],
     "expectedSourceOut": "title",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.title;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly title: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -324373,8 +327428,8 @@
     "edits": [],
     "expectedSourceOut": "color",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.color;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly color: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -324405,8 +327460,8 @@
     "edits": [],
     "expectedSourceOut": "constructor",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.constructor;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly constructor: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -324437,8 +327492,8 @@
     "edits": [],
     "expectedSourceOut": "greeting",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.greeting;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly greeting: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -324469,8 +327524,8 @@
     "edits": [],
     "expectedSourceOut": "showGreeting",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.showGreeting;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly showGreeting: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -324501,8 +327556,8 @@
     "edits": [],
     "expectedSourceOut": "Bar",
     "expectedReparseTree": "(property_identifier)",
-    "wrappedText": "let _ = e.Bar;",
-    "wrappedOffset": 10
+    "wrappedText": "interface _I { public readonly Bar: ReadonlyArray<User> }",
+    "wrappedOffset": 31
   },
   {
     "kind": "render",
@@ -331030,6 +334085,213 @@
     "expectedSourceOut": "verbose?: boolean;",
     "expectedReparseTree": "(object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))",
     "wrappedText": "type _X = {verbose?: boolean;};",
+    "wrappedOffset": 11
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "object_type_content",
+    "input": {
+      "$type": 390,
+      "$source": 0,
+      "$named": true,
+      "_item": [
+        {
+          "$type": 363,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "modal",
+              "$span": {
+                "start": 354,
+                "end": 359
+              }
+            }
+          },
+          "_type": {
+            "$type": 326,
+            "$source": 0,
+            "$named": true,
+            "_type": 40,
+            "$other": [
+              {
+                "$type": 51,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 359,
+                  "end": 360
+                }
+              }
+            ]
+          },
+          "$slotOrder": [
+            "name",
+            "type"
+          ]
+        },
+        {
+          "$type": 363,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "title",
+              "$span": {
+                "start": 376,
+                "end": 381
+              }
+            }
+          },
+          "_optional": true,
+          "_type": {
+            "$type": 326,
+            "$source": 0,
+            "$named": true,
+            "_type": 41,
+            "$other": [
+              {
+                "$type": 51,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 382,
+                  "end": 383
+                }
+              }
+            ]
+          },
+          "$slotOrder": [
+            "name",
+            "optional",
+            "type"
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        },
+        {
+          "$type": 363,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 462,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "color",
+              "$span": {
+                "start": 398,
+                "end": 403
+              }
+            }
+          },
+          "_optional": true,
+          "_type": {
+            "$type": 326,
+            "$source": 0,
+            "$named": true,
+            "_type": 41,
+            "$other": [
+              {
+                "$type": 51,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 404,
+                  "end": 405
+                }
+              }
+            ]
+          },
+          "$slotOrder": [
+            "name",
+            "optional",
+            "type"
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                183
+              ]
+            }
+          }
+        }
+      ],
+      "$other": [
+        {
+          "$type": 20,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 368,
+            "end": 369
+          }
+        },
+        {
+          "$type": 20,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 390,
+            "end": 391
+          }
+        },
+        {
+          "$type": 20,
+          "$source": 0,
+          "$named": false,
+          "$span": {
+            "start": 412,
+            "end": 413
+          }
+        }
+      ],
+      "_separator": 20,
+      "_delimiter": 2,
+      "$_layout": {
+        "flank": {
+          "$text": "    interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }",
+          "$span": {
+            "start": 35,
+            "end": 94
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
+    },
+    "expectedOutput": "modal: boolean;\n  title?: string;\n  color?: string;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "modal: boolean;\n      title?: string;\n      color?: string;",
+    "pattern": "object_type_content",
+    "edits": [],
+    "expectedSourceOut": "modal: boolean;\n  title?: string;\n  color?: string;",
+    "expectedReparseTree": "(object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))",
+    "wrappedText": "type _X = {modal: boolean;\n  title?: string;\n  color?: string;};",
     "wrappedOffset": 11
   },
   {

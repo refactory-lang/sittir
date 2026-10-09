@@ -529,20 +529,9 @@ export function findReparsedNodeAtOffset(
 	wrapped: { text: string; offset: number },
 	offsetAdjust = 0
 ): TSNode | null {
-	const exact = wrapped.offset + offsetAdjust;
-	const found = findNodeAt(tree2.rootNode, targetKind, exact);
-	if (found !== null) return found;
-	const isSpace = (at: number): boolean => /\s/.test(wrapped.text[at] ?? 'x');
-	let before = exact;
-	while (before > 0 && isSpace(before - 1)) before--;
-	let after = exact;
-	while (after < wrapped.text.length && isSpace(after)) after++;
-	for (let at = before; at <= after; at++) {
-		if (at === exact) continue;
-		const hit = findNodeAt(tree2.rootNode, targetKind, at);
-		if (hit !== null) return hit;
-	}
-	return null;
+	const adjusted = findNodeAt(tree2.rootNode, targetKind, wrapped.offset + offsetAdjust);
+	if (adjusted !== null || offsetAdjust === 0) return adjusted;
+	return findNodeAt(tree2.rootNode, targetKind, wrapped.offset);
 }
 
 /**
@@ -758,7 +747,8 @@ function deriveHostsFor(grammar: string, parser: RenderReparseContext['parser'])
 			admits,
 			corpus,
 			parse: (text) => parser.parse(text) as TSTree,
-			findAt: (tree, kind, hosted) => findReparsedNodeAtOffset(tree, kind, hosted)
+			findAt: (tree, kind, hosted) => findReparsedNodeAtOffset(tree, kind, hosted),
+			same: (source, reparsed) => astStructuralDiff(source, reparsed) === null
 		});
 		setDerivedReparseHosts(grammar, derived);
 	})();

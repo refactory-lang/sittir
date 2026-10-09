@@ -14949,8 +14949,8 @@
     "edits": [],
     "expectedSourceOut": "\\.",
     "expectedReparseTree": "(identity_escape)",
-    "wrappedText": "\\.",
-    "wrappedOffset": 0
+    "wrappedText": "[\\.\\.]",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -15688,8 +15688,8 @@
     "edits": [],
     "expectedSourceOut": "\\a",
     "expectedReparseTree": "(identity_escape)",
-    "wrappedText": "\\a",
-    "wrappedOffset": 0
+    "wrappedText": "[\\a\\.]",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -15711,8 +15711,8 @@
     "edits": [],
     "expectedSourceOut": "\\c",
     "expectedReparseTree": "(identity_escape)",
-    "wrappedText": "\\c",
-    "wrappedOffset": 0
+    "wrappedText": "[\\c\\.]",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -15734,8 +15734,8 @@
     "edits": [],
     "expectedSourceOut": "\\\\",
     "expectedReparseTree": "(identity_escape)",
-    "wrappedText": "\\\\",
-    "wrappedOffset": 0
+    "wrappedText": "[\\\\\\.]",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -15757,8 +15757,8 @@
     "edits": [],
     "expectedSourceOut": "\\{",
     "expectedReparseTree": "(identity_escape)",
-    "wrappedText": "\\{",
-    "wrappedOffset": 0
+    "wrappedText": "[\\{\\.]",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -15780,8 +15780,8 @@
     "edits": [],
     "expectedSourceOut": "\\(",
     "expectedReparseTree": "(identity_escape)",
-    "wrappedText": "\\(",
-    "wrappedOffset": 0
+    "wrappedText": "[\\(\\.]",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -15803,8 +15803,8 @@
     "edits": [],
     "expectedSourceOut": "\\[",
     "expectedReparseTree": "(identity_escape)",
-    "wrappedText": "\\[",
-    "wrappedOffset": 0
+    "wrappedText": "[\\[\\.]",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -15826,8 +15826,8 @@
     "edits": [],
     "expectedSourceOut": "\\]",
     "expectedReparseTree": "(identity_escape)",
-    "wrappedText": "\\]",
-    "wrappedOffset": 0
+    "wrappedText": "[\\]\\.]",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -15849,8 +15849,8 @@
     "edits": [],
     "expectedSourceOut": "\\)",
     "expectedReparseTree": "(identity_escape)",
-    "wrappedText": "\\)",
-    "wrappedOffset": 0
+    "wrappedText": "[\\)\\.]",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -15872,8 +15872,8 @@
     "edits": [],
     "expectedSourceOut": "\\}",
     "expectedReparseTree": "(identity_escape)",
-    "wrappedText": "\\}",
-    "wrappedOffset": 0
+    "wrappedText": "[\\}\\.]",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -32803,8 +32803,8 @@
     "edits": [],
     "expectedSourceOut": "\\+",
     "expectedReparseTree": "(identity_escape)",
-    "wrappedText": "\\+",
-    "wrappedOffset": 0
+    "wrappedText": "[\\+\\.]",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -32826,8 +32826,8 @@
     "edits": [],
     "expectedSourceOut": "\\.",
     "expectedReparseTree": "(identity_escape)",
-    "wrappedText": "\\.",
-    "wrappedOffset": 0
+    "wrappedText": "[\\.\\.]",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -32849,8 +32849,8 @@
     "edits": [],
     "expectedSourceOut": "\\+",
     "expectedReparseTree": "(identity_escape)",
-    "wrappedText": "\\+",
-    "wrappedOffset": 0
+    "wrappedText": "[\\+\\.]",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -35297,8 +35297,8 @@
     "edits": [],
     "expectedSourceOut": "\\u",
     "expectedReparseTree": "(identity_escape)",
-    "wrappedText": "\\u",
-    "wrappedOffset": 0
+    "wrappedText": "[\\u\\.]",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -35320,8 +35320,8 @@
     "edits": [],
     "expectedSourceOut": "\\?",
     "expectedReparseTree": "(identity_escape)",
-    "wrappedText": "\\?",
-    "wrappedOffset": 0
+    "wrappedText": "[\\?\\.]",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
