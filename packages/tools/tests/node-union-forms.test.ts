@@ -1,12 +1,12 @@
 import { join } from 'node:path';
 import ts from 'typescript6';
 import { describe, expect, it } from 'vitest';
-import { allGrammars, grammarPackageDir, grammarTypePrefix } from '@sittir/codegen/grammars';
+import { allGrammars, grammarPackageDir, grammarTypePrefix, type GrammarName } from '@sittir/codegen/grammars';
 
 const constituents = (type: ts.Type): readonly ts.Type[] => (type.isUnion() ? type.types : [type]);
 
-function kindsWithDataAndParsed(grammar: string): { kinds: number; both: string[] } {
-	const dir = grammarPackageDir(grammar as never);
+function kindsWithDataAndParsed(grammar: GrammarName): { kinds: number; both: string[] } {
+	const dir = grammarPackageDir(grammar);
 	const config = ts.readConfigFile(join(dir, 'tsconfig.json'), ts.sys.readFile);
 	const options = ts.parseJsonConfigFileContent(config.config, ts.sys, dir).options;
 	const file = join(dir, 'src', 'types.ts');
