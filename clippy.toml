@@ -1,0 +1,1 @@
+disallowed-methods = [{ path = "tree_sitter::Node::kind_id", reason = "kinds are keyed by grammar id; use grammar_id(), or display_id() at an alias envelope" }]

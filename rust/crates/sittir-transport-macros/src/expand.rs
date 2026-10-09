@@ -246,7 +246,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     sides: __rt::Sides,
                 ) -> ::core::result::Result<Self, __rt::ReadError> {
                     let node = cursor.node();
-                    let (grammar, display) = (__Kind(node.grammar_id()), __Kind(node.kind_id()));
+                    let (grammar, display) = (__Kind(node.grammar_id()), __rt::display_id(&node));
                     match __variant(grammar, display) {
                         ::core::option::Option::Some(i) => __READS[i as usize](cursor, ctx, depth, sides),
                         ::core::option::Option::None => ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: grammar, row: __rt::row_of(cursor) }),
@@ -260,7 +260,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     sides: __rt::Sides,
                 ) -> ::core::result::Result<::std::boxed::Box<Self>, __rt::ReadError> {
                     let node = cursor.node();
-                    let (grammar, display) = (__Kind(node.grammar_id()), __Kind(node.kind_id()));
+                    let (grammar, display) = (__Kind(node.grammar_id()), __rt::display_id(&node));
                     match __variant(grammar, display) {
                         ::core::option::Option::Some(i) => __READS_BOXED[i as usize](cursor, ctx, depth, sides),
                         ::core::option::Option::None => ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: grammar, row: __rt::row_of(cursor) }),
@@ -273,7 +273,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     row: u32,
                 ) -> ::core::result::Result<__rt::Sides, __rt::ReadError> {
                     let node = cursor.node();
-                    match __variant(__Kind(node.grammar_id()), __Kind(node.kind_id())) {
+                    match __variant(__Kind(node.grammar_id()), __rt::display_id(&node)) {
                         #(#sides)*
                         _ => ::core::result::Result::Ok(__rt::Sides::default()),
                     }
@@ -336,7 +336,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
                     _sides: __rt::Sides,
                 ) -> ::core::result::Result<Self, __rt::ReadError> {
                     let node = cursor.node();
-                    if let ::core::option::Option::Some(member) = __member(__Kind(node.grammar_id()), __Kind(node.kind_id())) {
+                    if let ::core::option::Option::Some(member) = __member(__Kind(node.grammar_id()), __rt::display_id(&node)) {
                         return ::core::result::Result::Ok(member);
                     }
                     #spelled

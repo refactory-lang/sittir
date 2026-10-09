@@ -624,7 +624,8 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
                 std::cmp::Ordering::Equal => current >= rank,
             };
             let widens_held_break = self.line_end_held.is_some() && breaks && rank > current;
-            if keeps && !widens_held_break {
+            let drops_held_break = self.line_end_held.is_some() && !breaks && self.held_breaks();
+            if (keeps && !widens_held_break) || drops_held_break {
                 return false;
             }
         }
@@ -903,9 +904,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
             }
             return;
         }
-        if self.held_breaks() {
-            self.seam_strength = self.seam_strength.max(SEAM_TRIVIA);
-        } else {
+        if !self.held_breaks() {
             self.merge_seam_with(LayoutKinds::NEWLINE, SEAM_TRIVIA);
         }
         self.line_end_held = self.line_end_held.max(Some(hold));
@@ -1600,6 +1599,21 @@ mod strength_tests {
             w.text("a").unwrap();
             w.hold_line_end(crate::render::LineHold::Break);
             w.site_with(2, SEAM_DECLARED);
+            w.text("b").unwrap();
+        });
+        assert_eq!(out, "a\nb");
+    }
+
+    #[test]
+    fn a_held_line_end_keeps_the_strength_of_the_break_it_holds() {
+        // The declared blank line a line-terminated entry holds is a
+        // preference: the source's own single break replaces it, and the line
+        // end it floors is still satisfied.
+        let out = render(|w| {
+            w.text("a").unwrap();
+            w.site_with(4, SEAM_DECLARED);
+            w.hold_line_end(crate::render::LineHold::Break);
+            w.site_with(3, SEAM_TRIVIA);
             w.text("b").unwrap();
         });
         assert_eq!(out, "a\nb");
