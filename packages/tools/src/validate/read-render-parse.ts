@@ -767,6 +767,7 @@ function deriveHostsFor(grammar: string, parser: RenderReparseContext['parser'])
 			kindToSupertypes: buildKindToSupertypes(raw),
 			admits,
 			kindIdOf,
+			adoptedVariantKinds: await loadVariantAdoptedKinds(grammar),
 			corpus,
 			parse: (text) => parser.parse(text) as TSTree,
 			findAt: (tree, source, hosted) => findReparsedNodeAtOffset(tree, source.grammarId, hosted),

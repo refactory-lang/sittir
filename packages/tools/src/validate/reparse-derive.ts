@@ -13,6 +13,8 @@ export interface DeriveHostsInput {
 	/** The grammar's declared hosts. */
 	readonly declared: ReparseHosts;
 	readonly root: string | undefined;
+	/** Kinds a gated host serves: the variants a parent kind adopts. */
+	readonly adoptedVariantKinds: ReadonlySet<string>;
 	readonly kindToSupertypes: ReadonlyMap<string, readonly string[]>;
 	/** Parent kind -> the kinds its slots admit, from the node model. */
 	readonly admits: ReadonlyMap<string, ReadonlySet<string>>;
@@ -113,7 +115,8 @@ export function deriveReparseHosts(input: DeriveHostsInput): Record<string, stri
 	};
 	const derived: Record<string, string> = {};
 	const table = (): ReparseHosts => ({ ...input.declared, hosts: { ...derived, ...input.declared.hosts } });
-	const hostOf = (kind: string): string | undefined => hostTemplateFor(kind, table(), input.kindToSupertypes, { root: input.root });
+	const hostOf = (kind: string): string | undefined =>
+		hostTemplateFor(kind, table(), input.kindToSupertypes, { root: input.root, adoptedVariantKinds: input.adoptedVariantKinds, targetKind: kind });
 	const samplesOf = (kind: string): { text: string; node: TSNode }[] => {
 		const byText = new Map<string, TSNode>();
 		for (const { entry, node } of occurrences.get(kind) ?? []) {
