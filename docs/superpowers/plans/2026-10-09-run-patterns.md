@@ -12,9 +12,9 @@
 
 ## Rulings this plan carries
 
-1. **Run options are resolved at write time, not on the table** (maintainer, 2026-10-09).
+1. **Run options are resolved at write time, not on the table** (maintainer, 2026-10-09). A boundary is stored on the preceding item's `after` edge: a sibling gap has one owner, so no `before` seat exists. `(J)/run/before` is an address resolved onto that edge.
 2. **No source stamps for statement lists, and no interim that keeps them** (maintainer, 2026-10-09). Detection ships in the same plan, so an unedited file renders as itself wherever it follows its own pattern, after `styleFrom`.
-3. **"Same kind" is the parser kind** (Q17). An attribute before its item is handled by `(attribute_item)/run/after`, not by a separate prefix concept (maintainer, 2026-10-09).
+3. **"Same kind" is the parser kind** (Q17), with a non-seated wrapper answering for the node it wraps (the `SeatTarget` descent, maintainer, 2026-10-09). An attribute before its item is handled by `(attribute_item)/run/after`, not by a separate prefix concept (maintainer, 2026-10-09).
 4. **Boundary precedence is the existing seam law** (Q16): strength, then rank.
 5. **Option precedence.** It is decided per key: per-call options, then the `createEngine` keys, then detected options, then grammar defaults. Between different keys of one options object, the more specific address wins. `styleFrom` merges the detected options and the `createEngine` keys into one object, so a detected `(attribute_item)/run/after` beats an explicit `(_)/run/after`. A grammar default is a lower layer and does not.
 6. **Detection thresholds** (Q20): the majority wins; a tie or no occurrence leaves the key absent. A kind-specific key needs at least three gaps of support and must differ from the list's `(_)` value. `(J)/run/before` is detected only where J's predecessors agree and their `after` doesn't already explain it.
@@ -38,7 +38,7 @@
 - Generated outputs are never hand-edited. No comments in `packages/codegen/src/`; every new declaration gets a `docs/glossary/` entry. No PR or issue numbers in code, glossary or commits.
 - DRY:
   - one coalesce function (the seam law), called by the writer and by `prepare`;
-  - one "line list" fact (Task 1), read by stamping, run tables and detection;
+  - one source for which lists have runs: the options block's run declarations (Task 1), read by the run tables, the stamping and detection;
   - one kind-of-item answer, reusing the wrapper descent `SeatTarget` already has.
 - **Byte-identical gate for Tasks 1–2:** with no run option set, every generated render and every validation row is unchanged.
 - A failed gate stops the work for review. Never revert or stash the failing state.
@@ -53,20 +53,25 @@
 
 ---
 
-### Task 1: The line-list fact
+### Task 1: Run declarations in the options block
 
-**Files:** `packages/codegen/src/compiler/model/` (where list slots are stamped), the node-model emitter, the glossary.
+**Files:** `packages/{rust,typescript,python}/grammar.sittir.ts` (`options` blocks), the options-declaration resolver (`compiler/model/site-preferences.ts` and its address tables), the glossary.
 
-A **line list** is a list slot whose declared item gap (its separator or seated default) is a line break: rust `source_file`/`block`/`declaration_list`, typescript `program`/`statement_block`/`class_body`, python `module`/`block`, and so on. Stamp it once on the list slot in the model, derived from the slot's declared default arm. A name test is not acceptable.
+A site exists only where the grammar's `options` block names it, directly or through a label. That's the existing scope rule (maintainer, 2026-10-09). A list has runs because its grammar declares them, not because a fact is derived:
 
-- [ ] Stamp `lineList` on list slots. Print the per-grammar list in the commit message, and stop if a grammar has a statement-like list the fact misses.
-- [ ] Gate: generated output byte-identical; only node-model gains the field.
+- Each grammar declares the run addresses of its statement lists: rust `source_file`, `declaration_list` and `block`; typescript `program`, `statement_block` and `class_body`; python `module` and `block`. For example, `'(source_file)/statements:/(_)/run/after'` and `…/run/before`. They take **no default** (Global Constraints: unset marks nothing).
+- Declaring a list's wildcard run addresses mints that list's per-kind run sites, `(K)/run/after|before` for every kind its items admit, the way seated `(K)/after` sites are minted for a seated list.
+- Rust also declares `'(source_file)/statements:/(attribute_item)/run/after': newline` (and the same for the other two lists) as a declared default.
+- How a declaration with no default is spelled is the resolver's call. Keep it to one spelling and add it to the options glossary.
+
+- [ ] The declarations, the resolver change, and a test that each declared list's run sites resolve and an undeclared list has none.
+- [ ] Gate: generated output byte-identical apart from the new site entries, which are unused until Task 2.
 
 ### Task 2: Run sites and boundary fill
 
 **Files:** `packages/codegen/src/compiler/model/site-preferences.ts` (or wherever list sites are minted), `emitters/render-options-rs.ts`, `emitters/options.ts` (address type), `emitters/render-module.ts` (`prepare` emission), `rust/crates/sittir-core/src/prepare.rs`, `spacing.rs` (export the coalesce), tests per grammar.
 
-- **Sites.** Every line list gets `(_)/run/after` and `(_)/run/before`, plus `(K)/run/after` and `(K)/run/before` for each kind K its items admit. The address type prints them under the list slot as the seated `(K)/after` keys are printed. A run site has **no default arm**: unset resolves to nothing.
+- **Sites** come from Task 1's declarations. The address type prints them under the list slot as the seated `(K)/after` keys are printed. A run site with no declared default resolves to nothing when unset.
 - **Tables.** `RUNS_<LIST>_AFTER` and `RUNS_<LIST>_BEFORE`, dense by kind id like the seat tables, plus the list's wildcard site ids.
 - **Fill.** `fill_run_gaps(items, after_table, before_table, ctx)` runs after `fill_list_gaps` and before `fill_seated_gaps`. For each adjacent pair of present items, take K and J as the kinds `SeatTarget`'s descent answers (the wrapped node for a non-seated wrapper). If K ≠ J:
 
@@ -84,7 +89,7 @@ A **line list** is a list slot whose declared item gap (its separator or seated 
 
 **Files:** `emitters/render-module.ts` (`listGapClassification`), `prepare.rs` if the call shape changes.
 
-- [ ] `fill_list_gaps` is no longer emitted for line lists; other lists keep it.
+- [ ] `fill_list_gaps` is no longer emitted for lists that declare runs (Task 1); other lists keep it.
 - [ ] Gate:
   - read-render-parse rows unchanged, since an AST compare is neutral to whitespace;
   - name every byte fixture that moves (dogfood render bytes and similar), and stop there. Task 8 re-baselines them through `styleFrom`, so nothing is edited by hand.
@@ -93,7 +98,7 @@ A **line list** is a list slot whose declared item gap (its separator or seated 
 
 **Files:** create `rust/crates/sittir-core/src/detect.rs`; `engine.rs`; tests.
 
-`detect(tree) -> StyleVotes`. For every line list in the tree, classify each gap between adjacent items with `classify_whitespace` against the list's admitted arms:
+`detect(tree) -> StyleVotes`. For every list in the tree that declares runs, classify each gap between adjacent items with `classify_whitespace` against the list's admitted arms:
 
 - **inside a run:** a vote for `(_)/after` and for `(K)/after`;
 - **at a K→J boundary:** a vote for `(K)/run/after`. The vote for `(J)/run/before` is kept per predecessor, so the uniformity test in ruling 6 can run after the sum.
