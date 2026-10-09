@@ -729,7 +729,7 @@ impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
     fn kind_of(&self, coord: &NodeCoordinate) -> Option<KindId> {
         let tree = self.get(&coord.tree_id())?;
         let index = tree.local_index(coord.handle).ok()?;
-        ParsedTree::<G>::resolve_handle(&tree.nodes, &tree.tree, index).map(|node| KindId(node.kind_id()))
+        ParsedTree::<G>::resolve_handle(&tree.nodes, &tree.tree, index).map(|node| KindId(node.grammar_id()))
     }
 
     fn last_list_child_kind(&self, handle: u64, span: crate::types::Span, kind: KindId) -> Option<KindId> {
@@ -750,7 +750,7 @@ impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
             n.start_byte() == coord.span.start as usize && n.end_byte() == coord.span.end as usize
         });
         while let Some(current) = node {
-            f(KindId(current.kind_id()));
+            f(KindId(current.grammar_id()));
             if !exact {
                 return;
             }
