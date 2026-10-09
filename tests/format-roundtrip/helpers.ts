@@ -13,8 +13,9 @@ const CORPUS_PATH = resolve(repoRoot, 'tests/format-roundtrip/format-corpus.json
 type Grammar = 'python' | 'rust' | 'typescript';
 
 export type NativeEngine = {
-	parseAndRead(src: string): string;
-	readUntypedNode(handle: number, childIndex: number): string;
+	parse(src: string): string;
+	read(treeId: number, index: number, depth?: number): object;
+	lineGapsOf(handle: number): string;
 	dispose(): void;
 };
 
@@ -50,11 +51,9 @@ export function tryLoadNativeEngine(grammar: Grammar): NativeEngine | null {
 	}
 }
 
-export function parseNativeFixture(engine: NativeEngine, source: string): { untypedNode: object; format?: FormatRecord } {
-	return JSON.parse(engine.parseAndRead(source)) as {
-		untypedNode: object;
-		format?: FormatRecord;
-	};
+export function parseNativeFixture(engine: NativeEngine, source: string): { treeId: number; format?: FormatRecord } {
+	const parsed = JSON.parse(engine.parse(source)) as { treeId: number; format: FormatRecord | null };
+	return parsed.format === null ? { treeId: parsed.treeId } : { treeId: parsed.treeId, format: parsed.format };
 }
 
 export function diffPositions(a: string, b: string): { start: number; end: number } | null {

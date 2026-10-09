@@ -20,7 +20,7 @@
  *    render defect each fail on their own.
  */
 
-import type { AnyUntypedNode } from '@sittir/types';
+import type { AnyUntypedNode, NodeLayout } from '@sittir/types';
 import { sourceOf, spanOf } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { load } from '../codegen-surface.ts';
@@ -49,7 +49,6 @@ import {
 	loadScopedFactoryMap,
 	loadNativeEngine
 } from './common.ts';
-import { nativeShownKindId } from './shown-kind.ts';
 import { hostlessReason, loadRenderReparseContext, renderReparse } from './read-render-parse.ts';
 import { emptyBuiltRender, type BuiltRenderFailure, type BuiltRenderResult } from './built-render.ts';
 import { sourceSpans } from '@sittir/common';
@@ -118,10 +117,8 @@ function namedChildKinds(node: TSNode): string[] {
  * produced. Never part of the structural comparison.
  */
 const IGNORED_NODE_KEYS = new Set([
-	'$handle',
-	'$parentHandle',
+	'$_layout',
 	'$treeHandle',
-	'$childIndex',
 	'$span',
 	'$source',
 	'$named',
@@ -163,13 +160,7 @@ function isTextShapeNode(node: Record<string, unknown>, ctx: CompareCtx): boolea
 
 /**
  * Storage-relevant keys on a node: `$type`, `$text` (only for `'text'`-shape
- * kinds — see `isTextShapeNode`), and dehoisted `_<field>` keys. `$other`
- * (the catch-all bucket for anonymous/unnamed children — punctuation,
- * unlabeled keywords) is deliberately excluded: the factory API surface is
- * defined entirely by NAMED fields, so factories have no way to reconstruct
- * anonymous filler content and never populate it. Comparing `$other` would
- * flag every punctuation-bearing kind as "wrong" for something the factory
- * was never meant to reproduce.
+ * kinds — see `isTextShapeNode`), and dehoisted `_<field>` keys.
  */
 function storageKeysOf(v: Record<string, unknown>, ctx: CompareCtx): string[] {
 	return Object.keys(v).filter((k) => {
@@ -246,8 +237,8 @@ function compareNodeStorage(
 	path: string,
 	ctx: CompareCtx
 ): string | null {
-	const expectedKind = nativeShownKindId(expected);
-	const actualKind = nativeShownKindId(actual);
+	const expectedKind = expected.$type;
+	const actualKind = actual.$type;
 	if (expectedKind !== actualKind) {
 		return `${path || 'root'}: $type ${String(expectedKind)} ≠ ${String(actualKind)}`;
 	}
@@ -314,14 +305,7 @@ export interface FactoryStorageResult {
 	render: BuiltRenderResult;
 }
 
-const SOURCE_KEYS: ReadonlySet<string> = new Set([
-	'$handle',
-	'$parentHandle',
-	'$treeHandle',
-	'$childIndex',
-	'$span',
-	'$source'
-]);
+const SOURCE_KEYS: ReadonlySet<string> = new Set(['$treeHandle', '$span', '$source']);
 
 /**
  * `node` with every node under it built through `build` from its leaves up,
@@ -339,9 +323,12 @@ function rebuildChildren(
 		return isComparableNode(value) ? (build(data) ?? data) : data;
 	};
 	return Object.fromEntries(
-		Object.entries(node)
-			.filter(([key]) => !SOURCE_KEYS.has(key))
-			.map(([key, value]) => [key, rebuild(value)])
+		Object.entries(node).flatMap(([key, value]): [string, unknown][] => {
+			if (SOURCE_KEYS.has(key)) return [];
+			if (key !== '$_layout') return [[key, rebuild(value)]];
+			const trivia = (value as NodeLayout).trivia;
+			return trivia === undefined ? [] : [[key, { trivia: rebuild(trivia) }]];
+		})
 	);
 }
 
@@ -598,8 +585,7 @@ export async function validateFactoryStorage(
 		readPathFailure = `wrap module unavailable for '${grammar}' — no wrapped-tree read function`;
 	} else {
 		try {
-			const probeTree = parser.parse('') as TSTree;
-			const probeHandle = await buildReadHandle(grammar, probeTree, '', backend, undefined);
+			const probeHandle = await buildReadHandle(grammar, '');
 			if (!probeHandle.read) {
 				readPathFailure = `backend '${backend}' has no wrapped native read path (handle.read unavailable) — factory storage validation requires the native backend`;
 			}
@@ -641,13 +627,13 @@ export async function validateFactoryStorage(
 		// left child fields as unresolved stubs — the root cause of the
 		// native transport's "Missing field" errors once render was fixed
 		// to use the native engine).
-		const handle = await buildReadHandle(grammar, tree1, entry.source, backend, undefined);
+		const handle = await buildReadHandle(grammar, entry.source);
 		const wrappedRoot = readNode(handle) as TypedNode;
 		const candidatesByKind = new Map<string, { start: number; end: number; node: TypedNode }[]>();
 		const seen = new Set<string>();
 		walkWrappedTree(wrappedRoot, (w: TypedNode) => {
 			if (w.$named === false) return;
-			const sourceKind = kindNameFromId ? kindNameFromId(nativeShownKindId(w)) : undefined;
+			const sourceKind = kindNameFromId ? kindNameFromId(w.$type) : undefined;
 			if (sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
 			if (surface !== undefined && surface.entries[sourceKind] === undefined) return;
 			const span = spanOf(w);

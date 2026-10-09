@@ -242,7 +242,7 @@ The context `G` carries kind-sets by namespace, and that alone cannot make a mem
   - **It reads roles and slots through the namespace map's fills.** A slot that admits text is narrowed before its kind is read.
   - **Code over several languages names the union of their contexts:** `asyncOf<PythonContext | RustContext>(fn)`. Inferred from a mixed value, the type argument is one language's context, and the other's value fails.
   - **There is no permissive context.** A context with every feature would be a supertype of each language only through the compiler, which compares `X<Lang>` with `X<Base>` by their contexts. Member by member, a language's `Absent<F>` is not assignable to the present member's type.
-- **A gated member is gated along its inheritance line.** The feature that owns `async` on `declaration.function` also declares it on each refinement that restates it (`.generator`, `.signature`). An ungated declaration cannot override a gated one, nor a gated one an ungated one. For the same reason, a kind that inherits from a feature's kind belongs to a feature too.
+- **A gated member is gated along its inheritance line.** The feature that owns `async` on `declaration.function` also declares it on each refinement that restates it (`.generator`, `.signature`). An ungated declaration cannot override a gated one, nor a gated one an ungated one. For the same reason, a kind that inherits from a feature's kind belongs to a feature too. And a feature gates a member or adds the refinements that restate it, never both: a refinement is written as the base is, ungated, so it stays with its parent's owner or another feature, and the gating feature owns the member there as well. `default-arguments` gates a parameter's `default`, and python's default parameter, which restates it, stays in the base.
 - **Requiredness is restated, and the context applies it.** An augmentation cannot change a member's optionality: a second declaration of a member must agree with the first. A member is required in a language in two cases:
   - a feature the language composes restates the member without `?` (`manifest-typing` writes `Declaration.Field.type`);
   - every claim of the kind in the language's bindings requires it, as rust requires a function's body.
@@ -253,7 +253,7 @@ The context `G` carries kind-sets by namespace, and that alone cannot make a mem
 - **One copy serves polyglot programs.** An augmentation applies to the whole program, so the feature folders and `augment.ts` live once, in the vocabulary package, which loads them through its index. A program that imports several languages sees every feature, each gated per context, and no feature comes from outside the package.
 - **Cost, measured and reported.** The binding prototype's vocabulary was folded, gated and measured like for like (`docs/superpowers/probes/2026-10-09-vocabulary-features/`). Type-check time informs; it does not decide a type design.
   - The namespace map costs 41% more instantiations and 52% more memory than today's contexts, since every instantiation checks its context against the map.
-  - Over the folded vocabulary, twenty-two features and the probe's two proposals cost 8.2% more instantiations and 9.9% more memory. Gating every member and kind particular to some grammars costs 15.0% and 15.6%.
+  - Over the folded vocabulary, every row of §4.3 and of the rows §11 proposes, 75 features with the probe's three proposals, costs 16.1% more instantiations and 19.2% more memory. Gating every member and kind particular to some grammars by grammar costs about the same, 15.0% and 15.6%.
   - Reading each level off an augmentable kind registry costs 1.8 times the generated unions' instantiations. Cost is the only measured difference between them. The registry's one other merit is that a package outside the vocabulary could add kinds to a level by augmentation, which a type alias cannot take. That merit does not arise while every feature lives in the vocabulary package; a user's own features would reopen the choice (§11).
 
 ## 5. The map
@@ -392,14 +392,48 @@ A portable node reads through the grammar's typed surface: its low-level node's 
   3. **Restatements behind direct references.** The context applies a restatement where it names a kind: in its namespace sets, its slot fills and its type aliases. A member typed by a direct reference to an interface (`declaration.union`'s `body: V.Declaration.Field<G>[]`) does not see the restatement, so a rust union's fields keep an optional `type` there. Recommendation: a member whose kind a feature restates is typed through the slot table, which the context fills, and the inventory reports a direct reference to a restated kind.
   4. **Equality as levels.** `equal` and `not_equal` become levels. Each sits over a `.strict` leaf in the base (python's and rust's `==`, typescript's `===`) and a `.loose` leaf that `coercive-equality` adds (typescript's `==`). Typescript's `strict_equal` and `strict_not_equal` claims move to the `.strict` leaves. Recommendation: adopt, so a portable `equal.strict` means the same in every language.
   5. **`gradual-typing`.** The table's row becomes two features. `type-annotations` owns the annotation members and the `type` namespace. `manifest-typing` extends it and makes an annotation required where the language requires one (a rust field's `type`). Gradual typing is then `type-annotations` without `manifest-typing`. Recommendation: adopt.
-  6. **New rows for the table.** Recommendation: adopt these rows, with their grounding columns filled in this document:
-     - `methods`, which owns `declaration.method` and which `classes` extends;
-     - `coroutines`, which owns `yield`, and which `generators` extends;
-     - `higher-rank-polymorphism`, under `parametric-polymorphism`;
-     - `coercive-equality`;
-     - the features of a primitive type or literal form: `complex-numbers`, `arbitrary-precision-integers`, `characters`, `byte-strings`, `regular-expressions`, `string-interpolation`.
+  6. **New rows for the table.** The features probe realizes every row of §4.3 and needs these besides. Each is a slice some grounding language composes or omits as a unit, and its first three columns are the probe's compositions. Recommendation: adopt them.
+
+     | feature | adds | py | ts | rs | C# | Go | C++ | Swift |
+     | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+     | methods | a function declared as a member of a type; `classes` extends it | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+     | coroutines | `yield`; `generators` extends it | ✓ | ✓ | ✓ | ✓ |  | ✓ |  |
+     | higher-rank-polymorphism | a bound quantified over parameters of its own, `for<'a>` |  |  | ✓ |  |  |  |  |
+     | coercive-equality | a loose `==` beside the strict one |  | ✓ |  |  |  |  |  |
+     | complex-numbers | imaginary literals and their patterns | ✓ |  |  |  | ✓ | † |  |
+     | arbitrary-precision-integers | an integer of no fixed width, `10n` | ✓ | ✓ |  |  |  |  |  |
+     | characters | a character type and its literals |  |  | ✓ | ✓ | ✓ | ✓ | † |
+     | byte-strings | byte string literals, `b"…"` | ✓ |  | ✓ | ✓ |  |  |  |
+     | regular-expressions | regex literals |  | ✓ |  |  |  |  | ✓ |
+     | string-interpolation | expressions embedded in a string literal | ✓ | ✓ |  | ✓ |  |  | ✓ |
+     | raw-strings | string literals whose escapes are not processed | ✓ |  | ✓ | ✓ | ✓ | ✓ | ✓ |
+     | untagged-unions | `union`: fields sharing one storage |  |  | ✓ |  |  | ✓ |  |
+     | associated-types | a type an interface declares and each implementation binds |  |  | ✓ |  |  |  | ✓ |
+     | abstract-classes | an abstract class and the members its subclasses must implement | † | ✓ |  | ✓ |  | † |  |
+     | explicit-overrides | `override` | † | ✓ |  | ✓ |  | ✓ | ✓ |
+     | readonly-members | `readonly` |  | ✓ |  | ✓ |  |  |  |
+     | optional-members | a property, method or parameter that may be omitted, `x?: T` |  | ✓ |  |  |  |  | ✓ |
+     | ambient-declarations | `declare` |  | ✓ |  |  |  |  |  |
+     | non-null-assertions | `x!`, `x!: T`; extends `nullable-types` |  | ✓ |  | ✓ |  |  | ✓ |
+     | const-generics | a type parameter that is a value |  |  | ✓ |  |  | ✓ |  |
+     | module-declarations | a module declared in a file, `mod`, `namespace`; extends `modules` |  | ✓ | ✓ | ✓ |  | ✓ |  |
+     | foreign-function-interface | functions another language defines, `extern` |  |  | ✓ | ✓ | † | ✓ |  |
+     | unsafe-code | `unsafe` blocks and declarations |  |  | ✓ | ✓ |  |  |  |
+     | compile-time-evaluation | functions and blocks the compiler evaluates, `const fn`, `constexpr` |  |  | ✓ |  |  | ✓ |  |
+     | named-arguments | an argument passed by its parameter's name | ✓ |  |  | ✓ |  |  | ✓ |
+     | default-arguments | a parameter's value when a call omits it | ✓ | ✓ |  | ✓ |  | ✓ | ✓ |
+     | multiway-branch | a `switch` on a value to the case it equals |  | ✓ |  | ✓ | ✓ | ✓ |  |
+     | counted-loops | `for (init; cond; update)` |  | ✓ |  | ✓ | ✓ | ✓ |  |
+     | post-test-loops | `do … while`, `repeat … while` |  | ✓ |  | ✓ |  | ✓ | ✓ |
+     | conditional-expressions | `c ? a : b`, `a if c else b` | ✓ | ✓ |  | ✓ |  | ✓ | ✓ |
+     | optional-chaining | `a?.b` |  | ✓ |  | ✓ |  |  | ✓ |
+     | tuples | tuple values and the unit value | ✓ |  | ✓ | ✓ |  |  | ✓ |
+     | range-expressions | `a..b` |  |  | ✓ | ✓ |  |  | ✓ |
+     | slice-expressions | `a[i:j]` | ✓ |  |  |  | ✓ |  |  |
+
+     `modules` then adds import, export and re-export, and `module-declarations` the namespace. `comprehensions` and `async-blocks` (rust's `async { }`, under `async-await`) are features without rows, like `jsx`. Five features own nothing in the three grammars and are markers a composition names: `overloading`, `operator-overloading` (by content in python and rust), `nullable-types` (a union type in python and typescript), `concurrency-syntax` and `deferred-execution`.
   7. **Python's generators.** Python composes `generators`, but its bindings claim no generator kind and route no `generator` member, so the inventory reports the feature unreached. Python does delegate: `yield from` is tree-sitter's `yield` with a `from` token. Recommendation: python's bindings claim it as a refinement, `((yield "from") @expression.yield.delegate)`, which reaches `generators`; the composition stays.
-  8. **TypeScript's other typing kinds.** The probe gates TypeScript's typing members and the `type` namespace, so a JavaScript context lacks them. TypeScript's other typing kinds are still base kinds: interfaces, type aliases, call and construct signatures, the assertion and `satisfies` casts, abstract classes and methods, optional fields and parameters. Recommendation: move each into the feature that owns its concept (`interfaces`, `type-aliases`, `structural-conformance`, `type-annotations`), so that TypeScript is exactly JavaScript plus its typing features.
+  8. **TypeScript's other typing kinds.** The features probe moves every typing kind and member into the feature that owns its concept: interfaces and their property signatures to `interfaces`, type aliases to `type-aliases`, enums to `enumerations`, call, construct and index signatures to `structural-conformance`, abstract classes and methods to `abstract-classes`, the casts to `type-annotations`, namespaces to `module-declarations`, and four modifiers to features of their own (question 6): `optional-members` (`x?: T`, the optional parameter), `readonly-members`, `ambient-declarations` (`declare`) and `non-null-assertions` (`x!`, `x!: T`). Under `type-annotations` the modifiers would have reached rust's and python's fields, which compose annotations and none of them. A JavaScript context, over TypeScript's claims, then has none of the typing kinds. Recommendation: adopt.
   9. **Refinements outside their parent, and visibility's values.** The namespace map checks every refinement's fill against its parent's (§10.16). Of the three refinements in the binding prototype's vocabulary that fail, the property rule (§3.3) removes `identifier.property.private`. Open:
      - **The identity and membership operators.** `expression.binary.identity` and `.membership` leave `operator` `unknown`, outside `expression.binary`'s `string`, and so do their leaves (`.is`, `.is_not`, `.not_in`), though python routes it there. Recommendation: fill it as `string`, the keyword text it is, as the features probe does.
      - **Visibility's values** (§4.3). Recommendation: the table's ten levels. Three choices in it:
@@ -415,3 +449,9 @@ A portable node reads through the grammar's typed surface: its low-level node's 
       - Keyword text and leaf text become kinds carrying their text as a member, as a node carries `$value` (§9), and the map stays kinds.
 
       Recommendation: the first. One rule then fills keys and slots alike, the binding generator's contexts keep their keyword text, and a structure's leaf stays a bare string.
+  11. **What the full feature set leaves in the base.** With every row realized, 92 kinds some grammars claim stay in the base, each claimed only where a grammar has it. Recommendations:
+      - **Operators and keyword leaves stay in the base.** A language never claims an operator it lacks, so its context already leaves the leaf out, and a feature per token would add a marker and no member. `coercive-equality` is the exception, because its leaf is a different comparison.
+      - **One grammar's statements stay too:** python's `print`, `exec`, `global`, `nonlocal`, `assert`, `del` and `pass`, typescript's `debugger` and `with`. Each is a leaf only its grammar claims, with nothing for a feature to gate.
+      - **A kind two features share is split where their members differ.** `clause.case` holds python's match case and typescript's switch case; `match-expressions` and `multiway-branch` gate their members on it. Splitting it into two kinds lets each feature own its case.
+      - **One fact in two shapes is unified before a feature owns it.** Rust's `mut` is a `mutable` flag; typescript's `let` and `const` are `declaration.variable.lexical`'s keyword.
+      - **A feature composed by content reaches nothing until a reader derives it.** Python composes `visibility`, `accessors`, `abstract-classes`, `explicit-overrides` and `operator-overloading` by naming conventions, decorators and dunders, and its bindings route none of their members. They stay composed, as the table says, and the inventory reports them.

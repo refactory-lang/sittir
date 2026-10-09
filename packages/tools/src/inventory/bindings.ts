@@ -160,7 +160,7 @@ function unparsed(node: NodeMethodsOf): number[] {
 }
 
 async function definitionsOf(text: string): Promise<readonly Definition.Parsed[]> {
-	return (await bindingsEngine()).parse(text, { deep: true }).definitions();
+	return (await bindingsEngine()).parse(text, { depth: Infinity }).definitions();
 }
 
 export async function bindingPatterns(text: string): Promise<BindingPattern[]> {

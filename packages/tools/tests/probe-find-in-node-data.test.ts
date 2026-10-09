@@ -4,7 +4,7 @@ import { findInUntypedNode } from '../src/probe/kind.ts';
 const names = new Map<number, string>([
 	[1, 'program'],
 	[2, 'identifier'],
-	[3, 'shown_alias']
+	[3, 'other']
 ]);
 const kindNameFromId = (id: number): string | undefined => names.get(id);
 
@@ -13,11 +13,6 @@ describe('findInUntypedNode', () => {
 		const leaf = { $type: 2 };
 		const root = { $type: 1, _body: [{ $type: 3 }, leaf] };
 		expect(findInUntypedNode(root, 'identifier', kindNameFromId)).toBe(leaf);
-	});
-
-	it('matches the displayed kind when it differs from the parse kind', () => {
-		const aliased = { $type: 2, $displayType: 3 };
-		expect(findInUntypedNode({ $type: 1, _body: aliased }, 'shown_alias', kindNameFromId)).toBe(aliased);
 	});
 
 	it('still matches string $type and finds nothing for an absent kind', () => {

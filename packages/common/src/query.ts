@@ -1,7 +1,8 @@
-import type { AnyUntypedNode, Cond, QueryPlan, QuerySlots, Recorder, SlotRef, SlotRoutes } from '@sittir/types';
+import type { AnyUntypedNode, Cond, QueryPlan, QuerySlots, Recorder, SlotRef, SlotRoutes, TransportCoordinate } from '@sittir/types';
 import { inTreeEngine } from './engine-scope.ts';
-import type { TreeHandle } from './readUntypedNode.ts';
+import { readNode, type TreeHandle } from './read.ts';
 import { treeOf, treeTokenOf } from './tree-token.ts';
+import { treeHandleOf } from './transport-data.ts';
 import { nodeAddressOf, type NodeAddress } from './utils.ts';
 
 export interface DescendantWalk {
@@ -14,7 +15,7 @@ export interface DescendantWalk {
 }
 
 export interface DescendantBatch {
-	readonly stubs: readonly AnyUntypedNode[];
+	readonly coordinates: readonly TransportCoordinate[];
 	readonly resume: readonly number[] | null;
 	readonly origin: number;
 }
@@ -261,7 +262,7 @@ function* batches(context: Context, source: { readonly from: NodeAddress; readon
 			...(resume === undefined ? {} : { resume }),
 			...(source.depth === undefined ? {} : { depth: source.depth })
 		});
-		yield batch.stubs.map((stub) => entryOfStub(stub, tree, hooks));
+		yield batch.coordinates.map((coordinate) => entryOfCoordinate(coordinate, tree, hooks));
 		if (batch.resume === null) return;
 		from = { handle: batch.origin };
 		resume = batch.resume;
@@ -326,12 +327,11 @@ function entryOfItem(item: unknown): Entry {
 	};
 }
 
-function entryOfStub(stub: AnyUntypedNode, tree: TreeHandle, hooks: QueryHooks): Entry {
-	const record = stub as unknown as { readonly $parentHandle: number; readonly $childIndex: number };
+function entryOfCoordinate(coordinate: TransportCoordinate, tree: TreeHandle, hooks: QueryHooks): Entry {
 	return {
-		kind: stub.$type as number,
-		address: { parent: record.$parentHandle, index: record.$childIndex },
-		hydrate: () => inTreeEngine(tree, () => hooks.wrap(tree.read!(record.$parentHandle, record.$childIndex), tree))
+		kind: coordinate.$type,
+		address: { handle: coordinate.$treeHandle },
+		hydrate: () => inTreeEngine(tree, () => hooks.wrap(readNode(tree, coordinate), tree))
 	};
 }
 
@@ -560,15 +560,8 @@ function sameOccurrence(a: unknown, b: unknown): boolean {
 	if (a === null || b === null || typeof a !== 'object' || typeof b !== 'object') return false;
 	const tokenA = treeTokenOf(a);
 	if (tokenA === undefined || tokenA !== treeTokenOf(b)) return false;
-	const nodeA = a as AnyUntypedNode;
-	const nodeB = b as AnyUntypedNode;
-	return (
-		nodeA.$type === nodeB.$type &&
-		nodeA.$span !== undefined &&
-		nodeB.$span !== undefined &&
-		nodeA.$span.start === nodeB.$span.start &&
-		nodeA.$span.end === nodeB.$span.end
-	);
+	const handle = treeHandleOf(a);
+	return handle !== undefined && handle === treeHandleOf(b);
 }
 
 export function holds(plan: QueryPlan, texts: (routes: SlotRoutes) => readonly string[]): boolean {

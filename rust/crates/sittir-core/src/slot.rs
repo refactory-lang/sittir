@@ -6,16 +6,19 @@
 //! not a third shape: a slot whose members render from their own text admits
 //! a `VerbatimTransport`, and everywhere else a bare string is an error.
 
-use crate::engine::decode_handle;
+use crate::engine::encode_handle;
 use crate::render::{CoordinateError, SourceTable};
 use crate::types::Span;
 
-/// Where an untouched node's bytes live: the tagged handle that names its
-/// tree and the byte span inside that tree's source. A pure value; the
-/// source is looked up through the render context at the moment of use.
+/// Where an untouched node's bytes live: the tree that holds it, its
+/// descendant index there and the byte span inside that tree's source. A pure
+/// value; the source is looked up through the render context at the moment of
+/// use. The wire packs the tree and the index into one `$treeHandle`
+/// (`encode_handle`).
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct NodeCoordinate {
-    pub handle: u64,
+    pub tree: u32,
+    pub index: u32,
     pub span: Span,
     /// The kind the reader stamped on the node, when the wire carries it. A
     /// handle names a tree position, which for trivia is its owner's, so the
@@ -24,10 +27,6 @@ pub struct NodeCoordinate {
     /// The edge seams of the kind this coordinate names, filled by the prepare
     /// walk so a verbatim slice meets its neighbours like a rendered node does.
     pub edges: Option<CoordinateEdges>,
-    /// Set where a deep read mints the coordinate: it addresses the node's
-    /// text and nothing of the layout around it, so no edge or gap reader
-    /// takes evidence from it (`is_layout_evidence`).
-    pub text_only: bool,
     /// The gap toward the item before this one in a list, when the two are
     /// still adjacent in the source both were read from (`$_layout.gap`).
     pub gap: Option<SourceGap>,
@@ -35,12 +34,12 @@ pub struct NodeCoordinate {
 
 /// The bytes between a list item and the item before it, in the source both
 /// were read from, when the two are still adjacent there. A live render names
-/// them by their tree's tagged handle and byte range; data detached from its
-/// tree carries the bytes themselves. Evidence of layout only; nothing slices
-/// it into the output.
+/// them by their tree and byte range; data detached from its tree carries the
+/// bytes themselves. Evidence of layout only, written by JavaScript for the
+/// prepare walk; nothing slices it into the output, and it never crosses back.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SourceGap {
-    Range { handle: u64, span: Span },
+    Range { tree: u32, span: Span },
     Text(String),
 }
 
@@ -49,10 +48,7 @@ impl SourceGap {
     /// `sources`, or the text the gap carries.
     pub fn text<'g>(&'g self, sources: &'g dyn SourceTable) -> Option<&'g str> {
         match self {
-            SourceGap::Range { handle, span } => {
-                let (tree_id, _) = decode_handle(*handle);
-                sources.source_of(tree_id)?.get(span.start as usize..span.end as usize)
-            }
+            SourceGap::Range { tree, span } => sources.source_of(*tree)?.get(span.start as usize..span.end as usize),
             SourceGap::Text(text) => Some(text),
         }
     }
@@ -67,35 +63,18 @@ impl ::napi::bindgen_prelude::FromNapiValue for SourceGap {
         }
         let handle = unsafe { property::<f64>(env, napi_val, c"$treeHandle")? }
             .ok_or_else(|| ::napi::Error::from_reason("a source gap names its tree in $treeHandle or carries its $text"))?;
-        let handle = crate::napi_engine::checked_index(handle, "$treeHandle")?;
+        let (tree, _) = crate::engine::decode_handle(crate::napi_engine::checked_index(handle, "$treeHandle")?);
         let span: Span = unsafe { property(env, napi_val, c"$span")? }
-            .ok_or_else(|| ::napi::Error::from_reason(format!("source gap in tree {handle} carries no $span")))?;
-        Ok(Self::Range { handle, span })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for SourceGap {
-    /// `{ $text }` for a gap carrying its bytes, `{ $treeHandle, $span }` for
-    /// one naming its tree: the objects the decoder reads back.
-    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
-        use crate::boundary::object_with;
-        unsafe {
-            match val {
-                Self::Text(text) => object_with(env, &[(c"$text", String::to_napi_value(env, text)?)]),
-                Self::Range { handle, span } => object_with(env, &[
-                    (c"$treeHandle", f64::to_napi_value(env, handle as f64)?),
-                    (c"$span", Span::to_napi_value(env, span)?),
-                ]),
-            }
-        }
+            .ok_or_else(|| ::napi::Error::from_reason(format!("source gap in tree {tree} carries no $span")))?;
+        Ok(Self::Range { tree, span })
     }
 }
 
 /// A list node's flanks in the source it was read from: the source, the
 /// node's span in it, and which flanks the transport kept, each only while the
-/// list's edge item is still the source's edge item. Evidence of layout only;
-/// nothing slices it into the output.
+/// list's edge item is still the source's edge item. Evidence of layout only,
+/// written by JavaScript for the prepare walk; nothing slices it into the
+/// output, and it never crosses back.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SourceFlank {
     pub source: FlankSource,
@@ -104,12 +83,12 @@ pub struct SourceFlank {
     pub after: bool,
 }
 
-/// The source a flank's span counts into. A live render names the tree by its
-/// tagged handle; data detached from its tree carries a window of the source
-/// itself, from the start of the opener's line to the closer.
+/// The source a flank's span counts into. A live render names the tree; data
+/// detached from its tree carries a window of the source itself, from the start
+/// of the opener's line to the closer.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum FlankSource {
-    Tree(u64),
+    Tree(u32),
     Text(String),
 }
 
@@ -118,7 +97,7 @@ impl SourceFlank {
     /// `sources`, or the window the flank carries.
     pub fn source<'f>(&'f self, sources: &'f dyn SourceTable) -> Option<&'f str> {
         match &self.source {
-            FlankSource::Tree(handle) => sources.source_of(decode_handle(*handle).0).map(|source| &**source),
+            FlankSource::Tree(tree) => sources.source_of(*tree).map(|source| &**source),
             FlankSource::Text(text) => Some(text),
         }
     }
@@ -133,7 +112,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SourceFlank {
             None => {
                 let handle = unsafe { property::<f64>(env, napi_val, c"$treeHandle")? }
                     .ok_or_else(|| ::napi::Error::from_reason("source flanks name their tree in $treeHandle or carry its $text"))?;
-                FlankSource::Tree(crate::napi_engine::checked_index(handle, "$treeHandle")?)
+                FlankSource::Tree(crate::engine::decode_handle(crate::napi_engine::checked_index(handle, "$treeHandle")?).0)
             }
         };
         let span: Span = unsafe { property(env, napi_val, c"$span")? }
@@ -144,29 +123,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for SourceFlank {
             before: unsafe { property::<bool>(env, napi_val, c"$before")? }.unwrap_or(false),
             after: unsafe { property::<bool>(env, napi_val, c"$after")? }.unwrap_or(false),
         })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for SourceFlank {
-    /// Its source (`$text` or `$treeHandle`) and `$span`, then `$before` and
-    /// `$after` only when set, since the decoder reads an absent flag as false.
-    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
-        use crate::boundary::{object_with, set};
-        let source = unsafe {
-            match val.source {
-                FlankSource::Text(text) => (c"$text", String::to_napi_value(env, text)?),
-                FlankSource::Tree(handle) => (c"$treeHandle", f64::to_napi_value(env, handle as f64)?),
-            }
-        };
-        let obj = unsafe { object_with(env, &[source, (c"$span", Span::to_napi_value(env, val.span)?)])? };
-        if val.before {
-            unsafe { set(env, obj, c"$before", bool::to_napi_value(env, true)?)? };
-        }
-        if val.after {
-            unsafe { set(env, obj, c"$after", bool::to_napi_value(env, true)?)? };
-        }
-        Ok(obj)
     }
 }
 
@@ -188,22 +144,20 @@ pub struct CoordinateEdges {
 }
 
 impl NodeCoordinate {
-    pub fn new(handle: u64, span: Span) -> Self {
+    pub fn new(tree: u32, index: u32, span: Span) -> Self {
         Self {
-            handle,
+            tree,
+            index,
             span,
             kind: None,
             edges: None,
-            text_only: false,
             gap: None,
         }
     }
 
-    /// Whether the source around this coordinate can be read as the layout of
-    /// the tree it names: true for a tree-addressed coordinate, false for a
-    /// deep read's leaf, which addresses its text only.
-    pub fn is_layout_evidence(&self) -> bool {
-        !self.text_only
+    /// The tree and the index packed as one handle: the wire's `$treeHandle`.
+    pub fn handle(&self) -> u64 {
+        encode_handle(self.tree, self.index)
     }
 
     /// The kind this coordinate names: the reader's stamp when it carries one,
@@ -233,25 +187,19 @@ impl NodeCoordinate {
         Ok(())
     }
 
-    /// The tree this coordinate belongs to — the tag the handle carries.
-    pub fn tree_id(&self) -> u32 {
-        decode_handle(self.handle).0
-    }
-
     /// The bytes this coordinate names, or why the table cannot give them.
     pub fn resolve<'s>(&self, sources: &'s dyn SourceTable) -> Result<&'s str, CoordinateError> {
-        let tree_id = self.tree_id();
         let source = sources
-            .source_of(tree_id)
+            .source_of(self.tree)
             .ok_or(CoordinateError::UnknownTree {
-                handle: self.handle,
-                tree_id,
+                handle: self.handle(),
+                tree_id: self.tree,
             })?;
         let (start, end) = (self.span.start as usize, self.span.end as usize);
         let in_range = start <= end && end <= source.len();
         if !in_range || !source.is_char_boundary(start) || !source.is_char_boundary(end) {
             return Err(CoordinateError::BadSpan {
-                handle: self.handle,
+                handle: self.handle(),
                 detail: format!(
                     "span {start}..{end} is not a character range of its source of {} bytes",
                     source.len()
@@ -314,13 +262,13 @@ impl<T, const ADJACENT: bool> SlotValue<T, ADJACENT> {
 
 /// Two slot values are equal when they hold equal transports, or
 /// coordinates naming the same node: the same tree, span and kind. A
-/// coordinate may address its node by any handle its tree answers.
+/// coordinate may address its node by any index its tree answers.
 impl<T: PartialEq, const ADJACENT: bool> PartialEq for SlotValue<T, ADJACENT> {
     fn eq(&self, other: &Self) -> bool {
         match (self, other) {
             (Self::Transport(a), Self::Transport(b)) => a == b,
             (Self::Coord(a), Self::Coord(b)) => {
-                a.tree_id() == b.tree_id() && a.span == b.span && a.kind == b.kind
+                a.tree == b.tree && a.span == b.span && a.kind == b.kind
             }
             _ => false,
         }
@@ -373,21 +321,8 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue, const ADJACENT: bool>
     ) -> ::napi::Result<Self> {
         let value_type = unsafe { transport_value_type(env, napi_val)? };
         if value_type == ::napi::ValueType::Object {
-            use crate::boundary::property;
-            if let Some(handle) = unsafe { property::<f64>(env, napi_val, c"$treeHandle")? } {
-                let handle = crate::napi_engine::checked_index(handle, "$treeHandle")?;
-                let span: Span = unsafe { property(env, napi_val, c"$span")? }.ok_or_else(|| {
-                    ::napi::Error::from_reason(format!(
-                        "coordinate with $treeHandle {handle} carries no $span"
-                    ))
-                })?;
-                let kind = unsafe { property::<u32>(env, napi_val, c"$type")? }.map(|id| crate::types::KindId(id as u16));
-                let text_only = unsafe { property::<bool>(env, napi_val, c"$textOnly")? }.unwrap_or(false);
-                let gap = match unsafe { property::<::napi::bindgen_prelude::Object>(env, napi_val, c"$_layout")? } {
-                    Some(layout) => unsafe { property::<SourceGap>(env, ::napi::JsValue::raw(&layout), c"gap")? },
-                    None => None,
-                };
-                return Ok(Self::Coord(NodeCoordinate { kind, text_only, gap, ..NodeCoordinate::new(handle, span) }));
+            if let Some(coord) = unsafe { coordinate_from_napi(env, napi_val)? } {
+                return Ok(Self::Coord(coord));
             }
         }
         Ok(Self::Transport(unsafe {
@@ -410,30 +345,43 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue, const ADJACENT: bool> ::napi::bind
     }
 }
 
-/// `{ $treeHandle, $span, $type?, $textOnly?, $_layout?: { gap } }`, the
-/// object `SlotValue`'s decoder reads as a coordinate. Its edges are the
-/// prepare walk's and never cross.
+/// The coordinate the object `napi_val` spells, `{ $treeHandle, $span,
+/// $type?, $_layout?: { gap } }`, or `None` when it carries no `$treeHandle`.
+/// A `$treeHandle` without a `$span` is refused.
+///
+/// # Safety
+/// `napi_val` must be a live object in `env`.
 #[cfg(feature = "napi-bindings")]
-unsafe fn coordinate_to_napi(env: ::napi::sys::napi_env, coord: NodeCoordinate) -> ::napi::Result<::napi::sys::napi_value> {
-    use crate::boundary::{object_with, set};
-    use ::napi::bindgen_prelude::ToNapiValue;
-    let obj = unsafe {
-        object_with(env, &[
-            (c"$treeHandle", f64::to_napi_value(env, coord.handle as f64)?),
-            (c"$span", Span::to_napi_value(env, coord.span)?),
-        ])?
+pub(crate) unsafe fn coordinate_from_napi(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Option<NodeCoordinate>> {
+    use crate::boundary::property;
+    let Some(handle) = (unsafe { property::<f64>(env, napi_val, c"$treeHandle")? }) else {
+        return Ok(None);
     };
-    if let Some(kind) = coord.kind {
-        unsafe { set(env, obj, c"$type", u32::to_napi_value(env, u32::from(kind.0))?)? };
+    let handle = crate::napi_engine::checked_index(handle, "$treeHandle")?;
+    let span: Span = unsafe { property(env, napi_val, c"$span")? }
+        .ok_or_else(|| ::napi::Error::from_reason(format!("coordinate with $treeHandle {handle} carries no $span")))?;
+    let kind = unsafe { property::<u32>(env, napi_val, c"$type")? }.map(|id| crate::types::KindId(id as u16));
+    let gap = match unsafe { property::<::napi::bindgen_prelude::Object>(env, napi_val, c"$_layout")? } {
+        Some(layout) => unsafe { property::<SourceGap>(env, ::napi::JsValue::raw(&layout), c"gap")? },
+        None => None,
+    };
+    let (tree, index) = crate::engine::decode_handle(handle);
+    Ok(Some(NodeCoordinate { kind, gap, ..NodeCoordinate::new(tree, index, span) }))
+}
+
+/// `{ $treeHandle, $span, $type? }`, the object `coordinate_from_napi` reads
+/// back. Its edges are the prepare walk's and its gap JavaScript's, so neither
+/// crosses back.
+#[cfg(feature = "napi-bindings")]
+pub(crate) unsafe fn coordinate_to_napi(env: ::napi::sys::napi_env, coord: NodeCoordinate) -> ::napi::Result<::napi::sys::napi_value> {
+    use crate::boundary::{object_with_present, present};
+    unsafe {
+        object_with_present(env, &[
+            present(env, c"$treeHandle", Some(coord.handle() as f64))?,
+            present(env, c"$span", Some(coord.span))?,
+            present(env, c"$type", coord.kind.map(|kind| u32::from(kind.0)))?,
+        ])
     }
-    if coord.text_only {
-        unsafe { set(env, obj, c"$textOnly", bool::to_napi_value(env, true)?)? };
-    }
-    if let Some(gap) = coord.gap {
-        let layout = unsafe { object_with(env, &[(c"gap", SourceGap::to_napi_value(env, gap)?)])? };
-        unsafe { set(env, obj, c"$_layout", layout)? };
-    }
-    Ok(obj)
 }
 
 #[cfg(test)]
@@ -472,8 +420,8 @@ mod tests {
     #[test]
     fn a_coordinate_renders_its_slice_of_its_own_tree() {
         let sources = Sources(HashMap::from([(3, Arc::from("let main() {}"))]));
-        let coord = NodeCoordinate::new(encode_handle(3, 0), Span { start: 4, end: 8 });
-        assert_eq!(coord.tree_id(), 3);
+        let coord = NodeCoordinate::new(3, 0, Span { start: 4, end: 8 });
+        assert_eq!(coord.handle(), encode_handle(3, 0));
         assert_eq!(coord.resolve(&sources), Ok("main"));
         let slot: SlotValue<Word> = SlotValue::Coord(coord);
         assert_eq!(rendered_with(&slot, &sources).unwrap(), "main");
@@ -487,7 +435,8 @@ mod tests {
             fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
                 w.text("let")?;
                 let slot: SlotValue<Word, true> = SlotValue::Coord(NodeCoordinate::new(
-                    encode_handle(1, 0),
+                    1,
+                    0,
                     Span { start: 0, end: 1 },
                 ));
                 slot.render(w)
@@ -532,7 +481,8 @@ mod tests {
         let sources = Kinded(Sources(HashMap::from([(1, Arc::from("f()"))])));
         let render_with = |options: &ResolvedOptions, held: u8| {
             let mut slot: SlotValue<Word> = SlotValue::Coord(NodeCoordinate::new(
-                encode_handle(1, 0),
+                1,
+                0,
                 Span { start: 1, end: 3 },
             ));
             slot.prepare(&RenderContext {
@@ -569,7 +519,7 @@ mod tests {
     fn a_coordinate_into_an_unknown_tree_is_refused_with_its_handle() {
         let sources = Sources(HashMap::new());
         let handle = encode_handle(9, 2);
-        let coord = NodeCoordinate::new(handle, Span { start: 0, end: 1 });
+        let coord = NodeCoordinate::new(9, 2, Span { start: 0, end: 1 });
         assert_eq!(
             coord.resolve(&sources),
             Err(CoordinateError::UnknownTree { handle, tree_id: 9 })
@@ -584,12 +534,12 @@ mod tests {
             (1, Arc::from("é")),
             (2, Arc::from("short")),
         ]));
-        let off = NodeCoordinate::new(encode_handle(1, 0), Span { start: 1, end: 2 });
+        let off = NodeCoordinate::new(1, 0, Span { start: 1, end: 2 });
         assert!(matches!(
             off.resolve(&sources),
             Err(CoordinateError::BadSpan { .. })
         ));
-        let out = NodeCoordinate::new(encode_handle(2, 0), Span { start: 2, end: 40 });
+        let out = NodeCoordinate::new(2, 0, Span { start: 2, end: 40 });
         let Err(CoordinateError::BadSpan { detail, .. }) = out.resolve(&sources) else {
             panic!("expected BadSpan")
         };
@@ -599,7 +549,8 @@ mod tests {
     #[test]
     fn a_writer_without_sources_refuses_every_coordinate() {
         let slot: SlotValue<Word> = SlotValue::Coord(NodeCoordinate::new(
-            encode_handle(1, 0),
+            1,
+            0,
             Span { start: 0, end: 1 },
         ));
         let mut out = String::new();
@@ -657,7 +608,7 @@ mod tests {
         assert!(!absent.kind_in(&w, &[WORD_KIND]));
         // A table of bare sources holds no tree to ask, so a coordinate is no kind.
         let coord: SlotValue<Word> =
-            SlotValue::Coord(NodeCoordinate::new(encode_handle(3, 0), Span { start: 4, end: 8 }));
+            SlotValue::Coord(NodeCoordinate::new(3, 0, Span { start: 4, end: 8 }));
         assert!(!coord.kind_in(&w, &[WORD_KIND]));
     }
 
@@ -698,7 +649,8 @@ mod tests {
             .with_table(&TABLE)
             .with_sources(&sources);
         let coord: SlotValue<Word> = SlotValue::Coord(NodeCoordinate::new(
-            encode_handle(1, 0),
+            1,
+            0,
             Span { start: 0, end: 3 },
         ));
         assert!(coord.transport_or_write(&mut w2).unwrap().is_none());

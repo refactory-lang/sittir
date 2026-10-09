@@ -279,7 +279,7 @@ async function collectValidatorsForGrammar(grammar: GrammarName, backend: Backen
 	// collectBaseline() is called concurrently.
 	const backendArg: 'native' = backend;
 	const [from, cov, rt, fac, ir] = await Promise.all([
-		validateFrom(grammar, backendArg),
+		validateFrom(grammar),
 		Promise.resolve(validateTemplateCoverage(grammar)),
 		validateReadRenderParse(grammar, { backend: backendArg }),
 		validateFactoryStorage(grammar, backendArg),

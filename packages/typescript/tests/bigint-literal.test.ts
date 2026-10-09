@@ -9,12 +9,13 @@ import { createEngine } from '@sittir/common';
 const ts = await createEngine(typescript);
 const tsNative = (await typescript.load()).createNative();
 
-function textsOf(kind: number, value: unknown, out: string[] = []): string[] {
-	if (Array.isArray(value)) for (const item of value) textsOf(kind, item, out);
+function textsOf(kind: number, source: string, value: unknown, out: string[] = []): string[] {
+	if (Array.isArray(value)) for (const item of value) textsOf(kind, source, item, out);
 	else if (value !== null && typeof value === 'object') {
-		const node = value as { $type?: unknown; $text?: unknown };
-		if (node.$type === kind && typeof node.$text === 'string') out.push(node.$text);
-		for (const child of Object.values(value)) textsOf(kind, child, out);
+		const node = value as { $type?: unknown; $_layout?: { at?: { $span: { start: number; end: number } } } };
+		const at = node.$_layout?.at;
+		if (node.$type === kind && at !== undefined) out.push(source.slice(at.$span.start, at.$span.end));
+		for (const child of Object.values(value)) textsOf(kind, source, child, out);
 	}
 	return out;
 }
@@ -55,7 +56,8 @@ describe('a bigint literal', () => {
 	});
 
 	it.each(RADIX_ARMS)('the %s arm reparses as its own kind', (_, arm, digits, text, kind) => {
-		const root = tsNative.parseAndRead(`const x = ${arm(digits).$render()};`, { deep: true }).root;
-		expect(textsOf(kind, root)).toEqual([text]);
+		const source = `const x = ${arm(digits).$render()};`;
+		const root = tsNative.parseAndRead(source, { depth: Infinity }).root;
+		expect(textsOf(kind, source, root)).toEqual([text]);
 	});
 });

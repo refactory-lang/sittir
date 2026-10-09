@@ -77,35 +77,30 @@ fn field_reads(owner: &str, fields: &[&WireField<'_>]) -> syn::Result<Vec<TokenS
         .collect()
 }
 
-/// `{ $type, …fields }`: the required fields in one call, an optional one only when present.
+/// `{ $type, …fields }` in declaration order, defined in one call: an optional
+/// field only when present.
 fn struct_encode(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
     let napi = napi();
     let names = fields.iter().map(|field| field.ident);
-    let (mut required, mut optional) = (Vec::new(), Vec::new());
+    let mut entries = Vec::new();
     for field in fields {
         let (name, key) = (field.ident, c_key(field.key)?);
-        if is_option(field.ty) {
-            optional.push(quote! {
-                if let ::core::option::Option::Some(value) = #name {
-                    unsafe { ::sittir_core::boundary::set(env, obj, #key, #napi::bindgen_prelude::ToNapiValue::to_napi_value(env, value)?)? };
-                }
-            });
+        entries.push(if is_option(field.ty) {
+            quote!(::sittir_core::boundary::present(env, #key, #name)?,)
         } else {
-            required.push(quote!((#key, #napi::bindgen_prelude::ToNapiValue::to_napi_value(env, #name)?),));
-        }
+            quote!(::core::option::Option::Some((#key, #napi::bindgen_prelude::ToNapiValue::to_napi_value(env, #name)?)),)
+        });
     }
     Ok(quote! {
         impl #napi::bindgen_prelude::ToNapiValue for #ident {
             unsafe fn to_napi_value(env: #napi::sys::napi_env, val: Self) -> #napi::Result<#napi::sys::napi_value> {
                 let Self { #(#names),* } = val;
-                let obj = unsafe {
-                    ::sittir_core::boundary::object_with(env, &[
-                        (c"$type", #napi::bindgen_prelude::ToNapiValue::to_napi_value(env, __KIND.0)?),
-                        #(#required)*
-                    ])?
-                };
-                #(#optional)*
-                ::core::result::Result::Ok(obj)
+                unsafe {
+                    ::sittir_core::boundary::object_with_present(env, &[
+                        ::core::option::Option::Some((c"$type", #napi::bindgen_prelude::ToNapiValue::to_napi_value(env, __KIND.0)?)),
+                        #(#entries)*
+                    ])
+                }
             }
         }
     })
@@ -236,7 +231,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
             by_decodes.push(quote!(if [#(#ids),*].contains(&__Kind(id)) { return ::core::result::Result::Ok(#value); }));
         }
         if variant.blank {
-            blank = quote!(if id == 0 { return ::core::result::Result::Ok(#ident::#name); });
+            blank = quote!(if id == ::sittir_core::options::BLANK_ARM { return ::core::result::Result::Ok(#ident::#name); });
         }
         if variant.verbatim {
             let ty = variant.payload.ok_or_else(|| syn::Error::new_spanned(name, "a verbatim variant holds its text"))?;
@@ -257,7 +252,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
         }
         encodes.push(match (variant.payload, variant.blank, &variant.first) {
             (Some(ty), _, _) => quote!(Self::#name(payload) => unsafe { <#ty as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, payload) },),
-            (None, true, _) => quote!(Self::#name => unsafe { <u16 as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, 0) },),
+            (None, true, _) => quote!(Self::#name => unsafe { <u16 as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, ::sittir_core::options::BLANK_ARM) },),
             (None, false, Some(first)) => quote!(Self::#name => unsafe { <u16 as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, (#first).0) },),
             (None, false, None) => return Err(syn::Error::new_spanned(name, "a unit variant names the kind it writes: `#[kind(…)]`")),
         });
@@ -352,7 +347,7 @@ mod tests {
             #[transport(kind = kind::LET_DECLARATION)]
             pub struct LetDeclarationTransport {
                 #[wire(key = "$_layout")]
-                pub layout: Option<TransportLayout>,
+                pub layout: Option<Box<TransportLayout>>,
                 #[wire(key = "_pattern")]
                 #[slot(field = field::PATTERN)]
                 pub pattern: SlotValue<PatternTransport>,
@@ -365,8 +360,10 @@ mod tests {
         assert!(has(&out, "let obj = unsafe { ::sittir_core::boundary::object(env, napi_val)? };"));
         assert!(has(&out, r#"pattern: unsafe { ::sittir_core::boundary::required(env, obj, c"_pattern", "LetDeclarationTransport")? },"#));
         assert!(has(&out, r#"value: unsafe { ::sittir_core::boundary::optional(env, obj, c"_value", "LetDeclarationTransport")? },"#));
-        assert!(has(&out, r#"(c"$type", ::sittir_core::__napi::bindgen_prelude::ToNapiValue::to_napi_value(env, __KIND.0)?),"#));
-        assert!(has(&out, r#"::sittir_core::boundary::set(env, obj, c"_value","#));
+        assert!(has(&out, r#"::sittir_core::boundary::object_with_present(env, &[ ::core::option::Option::Some((c"$type", ::sittir_core::__napi::bindgen_prelude::ToNapiValue::to_napi_value(env, __KIND.0)?)), ::sittir_core::boundary::present(env, c"$_layout", layout)?,"#));
+        let order = ["c\"$type\"", "c\"$_layout\"", "c\"_pattern\"", "c\"_value\""].map(|key| out.rfind(key).expect("every key is written"));
+        assert!(order.windows(2).all(|pair| pair[0] < pair[1]), "keys are written in declaration order: {order:?}");
+        assert!(!has(&out, "::sittir_core::boundary::set(env, obj,"));
         assert!(has(&out, "impl ::sittir_core::__napi::bindgen_prelude::FromNapiValue for ::std::boxed::Box<LetDeclarationTransport>"));
     }
 
@@ -376,7 +373,7 @@ mod tests {
             #[transport(kind = kind::SELF, text = "self")]
             pub struct SelfTransport {
                 #[wire(key = "$_layout")]
-                pub layout: Option<TransportLayout>,
+                pub layout: Option<Box<TransportLayout>>,
                 #[wire(key = "$text")]
                 pub text: String,
             }
@@ -392,7 +389,7 @@ mod tests {
             #[transport(kind = kind::IDENTIFIER, text)]
             pub struct IdentifierTransport {
                 #[wire(key = "$_layout")]
-                pub layout: Option<TransportLayout>,
+                pub layout: Option<Box<TransportLayout>>,
                 #[wire(key = "$text")]
                 pub text: String,
             }
@@ -409,7 +406,7 @@ mod tests {
             #[transport(kind = IDENTIFIER, text)]
             pub struct IdentifierTransport {
                 #[wire(key = "$_layout")]
-                pub layout: Option<TransportLayout>,
+                pub layout: Option<Box<TransportLayout>>,
                 #[wire(key = "$text")]
                 pub text: String,
             }
@@ -434,7 +431,7 @@ mod tests {
         });
         assert!(has(&out, "match __variant(__Kind(id), __Kind(id)) { ::core::option::Option::Some(0u16) => return"));
         assert!(has(&out, "if [kind::GET_KEYWORD, kind::SET_KEYWORD].contains(&__Kind(id))"));
-        assert!(has(&out, "if id == 0 { return ::core::result::Result::Ok(PropertyTransportSlot::Blank); }"));
+        assert!(has(&out, "if id == ::sittir_core::options::BLANK_ARM { return ::core::result::Result::Ok(PropertyTransportSlot::Blank); }"));
         assert!(has(&out, r#"::std::format!("unknown kind id {id} in {}", "PropertyTransportSlot")"#));
         assert!(!has(&out, "if let ::core::result::Result::Ok("));
     }
@@ -451,7 +448,7 @@ mod tests {
             }
         });
         assert!(has(&out, "Self::AutomaticSemicolon => unsafe { <u16 as ::sittir_core::__napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, (kind::_AUTOMATIC_SEMICOLON).0) },"));
-        assert!(has(&out, "Self::Blank => unsafe { <u16 as ::sittir_core::__napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, 0) },"));
+        assert!(has(&out, "Self::Blank => unsafe { <u16 as ::sittir_core::__napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, ::sittir_core::options::BLANK_ARM) },"));
     }
 
     #[test]

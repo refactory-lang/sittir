@@ -18,23 +18,12 @@ const cases: readonly { readonly grammar: string; readonly source: (gap: string)
 	{ grammar: 'regex', source: (gap) => `a${gap}b` }
 ];
 
-type Read = { readonly $span?: { readonly start: number }; readonly $trivia?: { leading(): readonly unknown[] } };
+type Read = { readonly $trivia?: { leading(): readonly unknown[] } };
+type Queried = { $query(): { readonly $descendants: Iterable<unknown> } };
 
-function nodeAt(value: unknown, start: number): Read | undefined {
-	if (Array.isArray(value)) {
-		for (const entry of value) {
-			const found = nodeAt(entry, start);
-			if (found !== undefined) return found;
-		}
-		return undefined;
-	}
-	if (value === null || typeof value !== 'object') return undefined;
-	const node = value as Read & Record<string, unknown>;
-	if (spanOf(node)?.start === start && node.$trivia !== undefined) return node;
-	for (const key of Object.keys(node)) {
-		if (!key.startsWith('_') || key === '_trivia') continue;
-		const found = nodeAt(node[key], start);
-		if (found !== undefined) return found;
+function nodeAt(root: Queried, start: number): Read | undefined {
+	for (const node of [root, ...root.$query().$descendants]) {
+		if (node !== null && typeof node === 'object' && spanOf(node)?.start === start && (node as Read).$trivia !== undefined) return node as Read;
 	}
 	return undefined;
 }
@@ -51,7 +40,7 @@ describe('whitespace members read the same as loose text and as a read gap', () 
 				expect(whitespace!.run.test(text), `${grammar} run admits ${JSON.stringify(text)}`).toBe(true);
 				const code = source(text);
 				const start = new TextEncoder().encode(code.slice(0, code.indexOf(text) + text.length)).length;
-				const root = engine.parse(code, { deep: true });
+				const root = engine.parse(code, { depth: Infinity }) as unknown as Queried;
 				const item = nodeAt(root, start);
 				expect(item, `${grammar}: a node at ${start} in ${JSON.stringify(code)}`).toBeDefined();
 				expect(item!.$trivia!.leading(), `${grammar} ${JSON.stringify(text)}`).toEqual([kind]);

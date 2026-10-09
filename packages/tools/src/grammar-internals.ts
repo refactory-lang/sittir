@@ -7,7 +7,7 @@ import type { TokenInterior, TreeHandle } from '@sittir/common/utils';
 import type { TriviaFacts } from '@sittir/types';
 
 export type FactoryEntry = ((...args: any[]) => unknown) | number | object;
-export type HydrateChild = (entry: unknown, tree: TreeHandle) => unknown;
+export type Hydrate = (value: unknown, tree: TreeHandle, depth?: number) => unknown;
 
 export interface GrammarModules {
 	'types.ts': {
@@ -20,9 +20,8 @@ export interface GrammarModules {
 	'factories/raw.ts': Readonly<Record<string, unknown>> & { readonly _factoryMap: Record<string, FactoryEntry> };
 	'factories/coerce.ts': { readonly _fromMap: Record<string, (input: unknown) => unknown> };
 	'wrap.ts': {
-		readNode(tree: TreeHandle, parentHandle?: number, childIndex?: number): unknown;
 		wrapNode(data: unknown, tree: TreeHandle): unknown;
-		readonly hydrateChild: HydrateChild;
+		readonly hydrate: Hydrate;
 	};
 	'ir.ts': { readonly ir: Record<string, unknown> };
 	'consts.ts': { readonly TOKEN_INTERIORS: Readonly<Record<string, TokenInterior>> };

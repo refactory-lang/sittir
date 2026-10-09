@@ -1,5 +1,5 @@
 import type { TreeMember, TreeToken } from '@sittir/types';
-import type { TreeHandle } from './readUntypedNode.ts';
+import type { TreeHandle } from './read.ts';
 
 export type { TreeToken };
 

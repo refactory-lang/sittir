@@ -26,7 +26,6 @@ interface Span {
 
 interface ReadNode {
 	readonly $type: number;
-	readonly $displayType?: number;
 	readonly $span?: Span;
 }
 
@@ -164,7 +163,7 @@ export async function computeUncoveredContentCensus(name: string): Promise<Uncov
 	for (const entry of entries) {
 		const source = Buffer.from(entry.source, 'utf8');
 		const all: ReadNode[] = [];
-		readNodes(readNativeTree(engine, entry.source, { deep: true }).root, all);
+		readNodes(readNativeTree(engine, entry.source, { depth: Infinity }).root, all);
 		for (const node of all) {
 			const nested: ReadNode[] = [];
 			for (const [key, value] of Object.entries(node)) if (key !== '$span') readNodes(value, nested);
@@ -177,7 +176,7 @@ export async function computeUncoveredContentCensus(name: string): Promise<Uncov
 			const runs = uncoveredRuns(source, node, descendants);
 			if (runs.length === 0) continue;
 			nodes++;
-			const kind = kindName(node.$displayType ?? node.$type) ?? String(node.$displayType ?? node.$type);
+			const kind = kindName(node.$type) ?? String(node.$type);
 			let row = byKind.get(kind);
 			if (row === undefined) {
 				row = { nodes: 0, entries: new Set(), producers: producersOf(parserNames.get(node.$type) ?? kind), texts: new Map() };

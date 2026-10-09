@@ -9,11 +9,9 @@ export namespace Declaration {
 		}
 	}
 	export interface Extension<G extends GrammarContext> {
-		readonly implements?: G['slots']['declaration.extension']['implements'];
 	}
 	export namespace Extension {
 		export interface Conformance<G extends GrammarContext> {
-			readonly implements?: G['slots']['declaration.extension.conformance']['implements'];
 		}
 	}
 }

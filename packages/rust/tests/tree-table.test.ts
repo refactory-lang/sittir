@@ -16,7 +16,7 @@ function addon() {
 	return status.native;
 }
 
-/** The id of the tree a raw native read retained, from the JSON it returns. */
+/** The id of the tree a raw native parse retained, from the JSON it returns. */
 const treeIdOf = (read: string): number => (JSON.parse(read) as { treeId: number }).treeId;
 
 describe('the live tree table of a language', () => {
@@ -25,10 +25,10 @@ describe('the live tree table of a language', () => {
 		const before = native.liveTreeCount();
 		const a = new native.SittirEngine();
 		const b = new native.SittirEngine();
-		const first = treeIdOf(a.parseAndRead('fn a() {}'));
-		const second = treeIdOf(b.parseAndRead('fn b() {}'));
+		const first = treeIdOf(a.parse('fn a() {}'));
+		const second = treeIdOf(b.parse('fn b() {}'));
 		expect(native.liveTreeCount()).toBe(before + 2);
-		expect(JSON.parse(b.readRoot(first))).toBeDefined();
+		expect(b.read(first, 0)).toBeDefined();
 		native.disposeTree(first);
 		native.disposeTree(second);
 		expect(native.liveTreeCount()).toBe(before);
@@ -38,17 +38,17 @@ describe('the live tree table of a language', () => {
 		const native = addon();
 		const before = native.liveTreeCount();
 		const a = new native.SittirEngine();
-		const id = treeIdOf(a.parseAndRead('fn kept() {}'));
+		const id = treeIdOf(a.parse('fn kept() {}'));
 		a.dispose();
 		expect(native.liveTreeCount()).toBe(before + 1);
-		expect(JSON.parse(new native.SittirEngine().readRoot(id))).toBeDefined();
+		expect(new native.SittirEngine().read(id, 0)).toBeDefined();
 		native.disposeTree(id);
 		expect(native.liveTreeCount()).toBe(before);
 	});
 
 	it('ignores a nonsense tree id and a repeated release', () => {
 		const native = addon();
-		const id = treeIdOf(new native.SittirEngine().parseAndRead('fn a() {}'));
+		const id = treeIdOf(new native.SittirEngine().parse('fn a() {}'));
 		const held = native.liveTreeCount();
 		// `as` saturates, so an unchecked cast would turn both of these into
 		// 0 — a tree id, and a live one when it is the thread's first parse.
@@ -141,7 +141,7 @@ describe('the tree table across threads and processes', () => {
 
 	it('gives each worker thread its own table and its own tree ids', async () => {
 		const native = addon();
-		const mine = treeIdOf(new native.SittirEngine().parseAndRead('fn main_thread() {}'));
+		const mine = treeIdOf(new native.SittirEngine().parse('fn main_thread() {}'));
 		const held = native.liveTreeCount();
 		const worker = new Worker(fixture('tree-worker.mjs'), {
 			workerData: { addon: fileURLToPath(new URL('../native/index.cjs', import.meta.url)) }

@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { TSKindId } from '../src/types.ts';
 import { createEngine } from '@sittir/common';
+import type { TreeHandle } from '@sittir/common/utils';
 
 const descriptor = async () => (await import('../src/index.ts')).default;
 
@@ -33,26 +34,11 @@ describe('engine', () => {
 						render(_node: Record<string, unknown>): string {
 							return 'ok';
 						}
-						parseAndRead(_source: string): string {
-							// $type is numeric (TSKindId).
-							return JSON.stringify({
-								untypedNode: {
-									$type: TSKindId.Identifier,
-									$source: 0,
-									$named: true,
-									$text: 'x'
-								},
-								format: undefined
-							});
+						parse(_source: string): string {
+							return JSON.stringify({ treeId: 1, errors: [] });
 						}
-						readUntypedNode(_nodeId: number): string {
-							// $type is numeric (TSKindId).
-							return JSON.stringify({
-								$type: TSKindId.Identifier,
-								$source: 0,
-								$named: true,
-								$text: 'x'
-							});
+						read(_treeId: number, _index: number, _depth: number): object {
+							return { $type: TSKindId.Identifier, $text: 'x' };
 						}
 						dispose(): void {}
 					}
@@ -70,7 +56,9 @@ describe('engine', () => {
 		expect(typeof native.parseAndRead).toBe('function');
 	});
 
-	it('passes through native read payloads already in JS readUntypedNode shape', async () => {
+	it('reads the root and every coordinate through the native read, passing its transports through', async () => {
+		const reads: [number, number, number][] = [];
+		const coordinate = (index: number, start: number, end: number, $type: number) => ({ $treeHandle: index, $span: { start, end }, $type });
 		vi.doMock('../src/backend.js', () => ({
 			getActiveBackend: () => ({
 				name: 'native',
@@ -80,62 +68,20 @@ describe('engine', () => {
 						render(_node: Record<string, unknown>): string {
 							return 'ok';
 						}
-						parseAndRead(_source: string): string {
-							return JSON.stringify({
-								untypedNode: {
-									$type: TSKindId.FunctionItem,
-									$source: 0,
-									$named: true,
-									$span: { start: 0, end: 10 },
-									$handle: 0,
-									_name: {
-										$type: TSKindId.Identifier,
-										$source: 0,
-										$named: true,
-										$text: 'main',
-										$span: { start: 3, end: 7 },
-										$parentHandle: 0,
-										$childIndex: 1
-									},
-									_pub: {
-										$type: TSKindId.PubKeyword,
-										$source: 0,
-										$named: false,
-										$text: 'pub',
-										$span: { start: 0, end: 3 },
-										$parentHandle: 0,
-										$childIndex: 0
+						parse(_source: string): string {
+							return JSON.stringify({ treeId: 3, errors: [] });
+						}
+						read(treeId: number, index: number, depth: number): object {
+							reads.push([treeId, index, depth]);
+							return index === 0
+								? {
+										$type: TSKindId.FunctionItem,
+										$_layout: { at: coordinate(0, 0, 11, TSKindId.FunctionItem) },
+										_name: coordinate(1, 7, 11, TSKindId.Identifier)
 									}
-								}
-							});
+								: { $type: TSKindId.Identifier, $_layout: { at: coordinate(index, 7, 11, TSKindId.Identifier) }, $text: 'main' };
 						}
-						readUntypedNode(_handle: number, _childIndex: number): string {
-							return JSON.stringify({
-								$type: TSKindId.FunctionItem,
-								$source: 0,
-								$named: true,
-								$span: { start: 0, end: 10 },
-								$handle: 7,
-								_name: {
-									$type: TSKindId.Identifier,
-									$source: 0,
-									$named: true,
-									$text: 'main',
-									$span: { start: 3, end: 7 },
-									$parentHandle: 7,
-									$childIndex: 1
-								},
-								_pub: {
-									$type: TSKindId.PubKeyword,
-									$source: 0,
-									$named: false,
-									$text: 'pub',
-									$span: { start: 0, end: 3 },
-									$parentHandle: 7,
-									$childIndex: 0
-								}
-							});
-						}
+						disposeTree(_treeId: number): void {}
 						dispose(): void {}
 					}
 				}
@@ -143,29 +89,18 @@ describe('engine', () => {
 		}));
 
 		const native = (await (await descriptor()).load()).createNative();
-		const parsed = native.parseAndRead('pub fn main') as { root: unknown; tree: { read?(handle: number, childIndex: number): unknown } };
-		expect((parsed.root as unknown as Record<string, unknown>).$fields).toBeUndefined();
-		expect((parsed.root as unknown as Record<string, unknown>)._name).toMatchObject({
-			$text: 'main',
-			$parentHandle: 0,
-			$childIndex: 1
-		});
-		expect((parsed.root as unknown as Record<string, unknown>).$children).toBeUndefined();
-		expect((parsed.root as unknown as Record<string, unknown>)._pub).toMatchObject({
-			$text: 'pub',
-			$parentHandle: 0,
-			$childIndex: 0,
-			$named: false
-		});
+		const parsed = native.parseAndRead('pub fn main');
+		expect(reads).toEqual([[3, 0, 1]]);
+		expect(parsed.root).toMatchObject({ _name: coordinate(1, 7, 11, TSKindId.Identifier), $errors: [] });
 
-		const child = parsed.tree.read?.(0, 1);
-		expect(child).toBeDefined();
-		expect((child as unknown as Record<string, unknown>).$fields).toBeUndefined();
-		expect((child as unknown as Record<string, unknown>)._name).toMatchObject({
-			$text: 'main',
-			$parentHandle: 7,
-			$childIndex: 1
-		});
+		const tree = parsed.tree as TreeHandle;
+		expect(tree.read?.(1)).toMatchObject({ $type: TSKindId.Identifier, $text: 'main' });
+		expect(reads).toEqual([
+			[3, 0, 1],
+			[3, 1, 1]
+		]);
+		expect(tree.read?.(0)).toBe(parsed.root);
+		expect(reads).toHaveLength(2);
 	});
 
 	it('native engine rejects the ignoreFormat option', async () => {

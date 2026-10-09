@@ -92,13 +92,11 @@ describe('a list owner', () => {
 		expect(node[0]).toBe('arm');
 	});
 
-	it('sizes an owner over a read stub from its list node hydrated once, without reading the items', () => {
-		const reads: [number | undefined, number | undefined][] = [];
-		const hydrate = (list: { $parentHandle?: number; $childIndex?: number }) => (
-			reads.push([list.$parentHandle, list.$childIndex]), { $type: 9, _element: [{ $type: 2 }, { $type: 2 }] }
-		);
+	it('sizes an owner over a list past the read\'s depth from its list node hydrated once, without reading the items', () => {
+		const reads: (number | undefined)[] = [];
+		const hydrate = (list: { $treeHandle?: number }) => (reads.push(list.$treeHandle), { $type: 9, _element: [{ $type: 2 }, { $type: 2 }] });
 		let itemReads = 0;
-		const view = ownerView({ $type: 9, $parentHandle: 4, $childIndex: 1 }, '_element', hydrate);
+		const view = ownerView({ $type: 9, $treeHandle: 4, $span: { start: 0, end: 3 } }, '_element', hydrate);
 		const node: Record<PropertyKey, unknown> = {
 			$type: 1,
 			items: () => (itemReads++, listNode(['a', 'b'])),
@@ -109,13 +107,13 @@ describe('a list owner', () => {
 		};
 		defineListIndices(node, view.stored?.length ?? 0);
 		expect((node as any).length).toBe(2);
-		expect(reads).toEqual([[4, 1]]);
+		expect(reads).toEqual([4]);
 		expect(itemReads).toBe(0);
 		expect((node as any)[1]).toBe('b');
 	});
 
-	it('built over a read stub no tree can read, is refused at the build', () => {
-		expect(() => builtOwner({ $type: 9, $parentHandle: 4, $childIndex: 1 })).toThrow(/read stub/);
+	it('built over a coordinate no tree can read, is refused at the build', () => {
+		expect(() => builtOwner({ $type: 9, $treeHandle: 4, $span: { start: 0, end: 3 } })).toThrow(/read stub/);
 	});
 
 	it('reads an empty list node that carries its own handle as empty, not as a stub', () => {

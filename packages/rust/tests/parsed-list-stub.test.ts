@@ -1,25 +1,18 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
-import { hydrateStub, isStub } from '../../common/src/readUntypedNode.ts';
-import { treeOf } from '../../common/src/tree-token.ts';
+import type { TransportCoordinate } from '@sittir/types';
+import { isCoordinate } from '../../common/src/read.ts';
 import rust from '../src/index.ts';
 
 const rs = await createEngine(rust);
 
 const shallowList = (engine = rs) => {
-	const { root } = engine.diagnostics.parseAndRead('fn f(a: u8, b: u16) {}');
-	const statement = Reflect.get(root, '_statements');
-	if (!isStub(statement)) throw new Error('expected shallow statement stub');
-	const tree = treeOf(statement);
-	if (tree === undefined) throw new Error('expected reading tree');
-	const item = hydrateStub(statement, tree, 1);
-	if (Reflect.get(item, '$type') !== engine.kinds.FunctionItem) throw new Error('expected function item');
-	const parameters = Reflect.get(item, '_parameters');
-	if (!isStub(parameters)) throw new Error('expected parameters stub');
-	const raw = hydrateStub(parameters, tree, 1);
-	if (Reflect.get(raw, '$type') !== engine.kinds.Parameters) throw new Error('expected parameters');
-	const list = Reflect.get(raw, '_elements');
-	if (!isStub(list)) throw new Error('expected list stub');
+	const item = engine.parse('fn f(a: u8, b: u16) {}').statements()[0];
+	if (item === undefined || !engine.is.functionItem(item)) throw new Error('expected function item');
+	const list = item.parameters().elements();
+	if (list === undefined) throw new Error('expected parameter list');
+	const stored = (list as unknown as { readonly _item: readonly unknown[] })._item;
+	if (!stored.every(isCoordinate)) throw new Error('expected item coordinates');
 	return list;
 };
 
@@ -32,12 +25,12 @@ const buildParameters = (list: unknown, strict = true) => {
 
 const rendered = (node: object) => String(Reflect.apply(Reflect.get(node, '$render'), node, []));
 
-describe('builders consuming parsed list stubs', () => {
+describe('builders consuming parsed list coordinates', () => {
 	it('strict construction retains both items and renders them', () => {
 		const built = buildParameters(shallowList());
 		expect(Reflect.get(built, 'length')).toBe(2);
 		expect(rendered(built)).toBe('(a: u8, b: u16)');
-		expect(isStub(Reflect.get(built, '_elements'))).toBe(false);
+		expect(isCoordinate(Reflect.get(built, '_elements'))).toBe(false);
 	});
 
 	it('loose construction hydrates the same stored list', () => {
@@ -48,14 +41,10 @@ describe('builders consuming parsed list stubs', () => {
 		expect(Reflect.get(built, 1)).toBeDefined();
 	});
 
-	it('still refuses a stub that has lost its reading tree', () => {
-		const list = shallowList();
-		const detached = {
-			$type: Reflect.get(list, '$type'),
-			$parentHandle: list.$parentHandle,
-			$childIndex: list.$childIndex
-		};
-		expect(() => Reflect.apply(rs.build.parameters.strict, undefined, [detached])).toThrow('read stub');
+	it('still refuses item coordinates that have lost their reading tree', () => {
+		const stored = (shallowList() as unknown as { readonly _item: readonly TransportCoordinate[] })._item;
+		const detached = stored.map(({ $treeHandle, $span, $type }) => ({ $treeHandle, $span, $type }));
+		expect(() => rendered(buildParameters(detached))).toThrow('does not hold that tree');
 	});
 
 	it('reads the source tree when another engine of the same language builds it', async () => {
@@ -69,10 +58,12 @@ describe('builders consuming parsed list stubs', () => {
 		}
 	});
 
-	it('refuses a stub after its reading engine is disposed', async () => {
+	it('builds from a list whose reading engine is disposed, its items rendering from the tree they hold', async () => {
 		const reader = await createEngine(rust);
 		const list = shallowList(reader);
 		reader.dispose();
-		expect(() => buildParameters(list)).toThrow('read stub');
+		const built = buildParameters(list);
+		expect(Reflect.get(built, 'length')).toBe(2);
+		expect(rendered(built)).toBe('(a: u8, b: u16)');
 	});
 });

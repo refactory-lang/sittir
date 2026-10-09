@@ -9,10 +9,10 @@ export interface LineGap {
 	readonly start: number;
 }
 
-/** A read node as the line-gap query names it: its own handle, or as a deep read leaves it, its tree's tag, its span and its stamped kind. */
-export type LineGapAddress =
-	| { readonly handle: number }
-	| { readonly treeHandle: number; readonly span: { readonly start: number; readonly end: number }; readonly kind: number };
+/** A read node as the line-gap query names it: its own handle, the `$treeHandle` of its `$_layout.at`. */
+export interface LineGapAddress {
+	readonly handle: number;
+}
 
 /**
  * The line-break runs a read node owns, before it and in its closing gap, each in source order, and the spans of the
@@ -63,17 +63,13 @@ export interface SpelledTrivia {
 /** Options of one parse. */
 export interface ParseOptions {
 	/**
-	 * Read the whole tree in the parse, in place of one level at a time.
-	 *
-	 * A deep parse reads every node up front and types each node that holds
-	 * slots; text leaves and tokens are stored as read. It is for a caller that
-	 * will read the whole tree. The default (`false`) reads one level and
-	 * hydrates each child when an accessor first reaches it.
+	 * How many levels the parse reads: one by default, `Infinity` for the whole
+	 * tree. A node past the depth is read when an accessor first reaches it.
 	 *
 	 * The choice changes when the work is done, never the result: an untouched
-	 * node renders its source bytes whichever way it was read.
+	 * node renders its source bytes whatever depth it was read at.
 	 */
-	readonly deep?: boolean;
+	readonly depth?: number;
 	/**
 	 * `'throw'` makes a parse whose source did not parse cleanly throw a
 	 * `ParseErrors` carrying the root's `$errors`, in place of returning the
@@ -173,9 +169,6 @@ export interface NativeLanguageEngine<API extends LanguageAPI> {
 	parseAndRead: EngineDiagnostics<AnyUntypedNode>['parseAndRead'];
 	readonly buildProfile?: EngineDiagnostics['buildProfile'];
 	lineGapsOf: EngineDiagnostics['lineGapsOf'];
-	typedReadRefusal: EngineDiagnostics['typedReadRefusal'];
-	typedReadParity: EngineDiagnostics['typedReadParity'];
-	typedReadRoundTrip: EngineDiagnostics['typedReadRoundTrip'];
 	dispose(): void;
 }
 
@@ -199,12 +192,6 @@ export interface EngineDiagnostics<TRoot = unknown, TTree extends object = objec
 	 * run starts at. Asked of the parse that read the node.
 	 */
 	lineGapsOf(address: LineGapAddress): LineGaps;
-	/** Transitional: the refusal the typed reader meets reading tree `treeId` whole, or `null`. */
-	typedReadRefusal(treeId: number): string | null;
-	/** Transitional: compare the typed read of tree `treeId` with `today`, detached render input for its root; `null` when they agree, else a `normalized: <Kind>.<slot>` line per slot today's read leaves absent that the typed read fills with its empty value and the first other difference. */
-	typedReadParity(treeId: number, today: unknown): string | null;
-	/** Transitional: encode the typed read of tree `treeId` to JavaScript and decode it back, read one level deep and then whole; `null` when both come back unchanged, else the depth and the refusal, the codec's error or the first difference. */
-	typedReadRoundTrip(treeId: number): string | null;
 }
 
 export interface Rendered extends Disposable {

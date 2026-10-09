@@ -549,7 +549,7 @@ values.
 ```text
 /**
  * Descriptor telling validators how to stamp `$variant` on a derived
- * polymorph config when the caller didn't supply it (readUntypedNode-derived
+ * polymorph config when the caller didn't supply it (read-derived
  * shapes, `.from()` Loose wrappers). Serialized into node-model.json5's
  * `polymorphVariants` section; consumed by `nodeToConfig` via
  * `validate/common.ts`.

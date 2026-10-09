@@ -1,34 +1,44 @@
 //! The native half of a node query: the `where` plan a query compiles to, and
 //! the batch a descendant walk returns.
 
-use crate::types::UntypedNode;
+use crate::slot::NodeCoordinate;
+use crate::types::Span;
 
-/// One batch of [`crate::engine::ParsedTree::descendants`]: the stubs found,
-/// each carrying the coordinate it is hydrated at, the path to resume after
-/// (`None` once the walk is done), and the walk's start as its own handle, so
-/// the next batch names it without minting it again.
+/// One batch of [`crate::engine::ParsedTree::descendants`]: the coordinates of
+/// the nodes found, each the coordinate a read of its parent hands out, the
+/// path to resume after (`None` once the walk is done), and the walk's start
+/// as its own handle, so the next batch names it without minting it again.
 #[derive(serde::Serialize)]
 pub struct DescendantBatch {
-    pub stubs: Vec<UntypedNode>,
+    pub coordinates: Vec<QueryCoordinate>,
     pub resume: Option<Vec<u32>>,
     pub origin: u64,
 }
 
-/// A parsed node as a query names it: its own handle, the parent handle and
-/// child index a stub carries, or, for a node a deep read left without a
-/// handle, its tree's tag, its span and its stamped kind. The handle and span
-/// forms are spelled as the line-gap query spells them.
+/// A node a walk found, as it crosses: `{ $treeHandle, $span, $type }`.
+#[derive(serde::Serialize, Debug, Clone, Copy, PartialEq, Eq)]
+pub struct QueryCoordinate {
+    #[serde(rename = "$treeHandle")]
+    pub handle: u64,
+    #[serde(rename = "$span")]
+    pub span: Span,
+    #[serde(rename = "$type")]
+    pub kind: u16,
+}
+
+impl From<NodeCoordinate> for QueryCoordinate {
+    fn from(coord: NodeCoordinate) -> Self {
+        QueryCoordinate { handle: coord.handle(), span: coord.span, kind: coord.kind.map_or(0, |kind| kind.0) }
+    }
+}
+
+/// A parsed node as a query names it: its own handle, as the line-gap query
+/// spells it, or a parent's handle and a child's position under it.
 #[derive(serde::Deserialize, Clone, Copy, Debug)]
 #[serde(untagged)]
 pub enum Address {
     Own { handle: u64 },
     Child { parent: u64, index: u32 },
-    Span {
-        #[serde(rename = "treeHandle")]
-        tree: u64,
-        span: crate::types::Span,
-        kind: u16,
-    },
 }
 
 impl Address {
@@ -37,7 +47,6 @@ impl Address {
         match *self {
             Address::Own { handle } => handle,
             Address::Child { parent, .. } => parent,
-            Address::Span { tree, .. } => tree,
         }
     }
 }

@@ -1,4 +1,5 @@
 import type { GrammarContext } from '../../context.ts';
+import type { SubKindOf } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Declaration {
 	export interface Class<G extends GrammarContext> {
@@ -70,6 +71,13 @@ export namespace Declaration {
 		export interface Associated<G extends GrammarContext> {
 			readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
 		}
+	}
+	export interface TypeParameter<G extends GrammarContext> extends SubKindOf<V.Declaration<G>> {
+		readonly $kind: 'declaration.type_parameter';
+		readonly const?: boolean;
+		readonly default?: G['slots']['declaration.type_parameter']['default'];
+		readonly name?: G['identifier'];
+		readonly types?: G['type'][];
 	}
 	export interface Union<G extends GrammarContext> {
 		readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];

@@ -325,9 +325,6 @@ function dispatchNodeMapByTaxonomy(emitters: NodeDispatchEmitters, ctx: NodeDisp
 				if (templateEmission === 'emit') templateEmitter.emitBranch(node);
 				renderModuleEmitterInst?.emitBranch?.(node);
 				break;
-			case 'supertype':
-				if (wrapEmission === 'emit') wrapEmitter.emitSupertype(node);
-				break;
 			case 'list':
 				if (factoryEmission === 'emit') factoryEmitter.emitSeparatedList(node);
 				if (fromEmission === 'emit') fromEmitter.emitSeparatedList(node);

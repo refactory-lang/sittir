@@ -1,9 +1,19 @@
 import { assertGrammar, stableGrammars } from '@sittir/codegen/grammars';
 import { readFileSync } from 'node:fs';
 import { sourceSpans, spanSlicer } from '@sittir/common';
+import { spanOf } from '@sittir/common/utils';
 import { computeRunCensus, renderRunCensus } from './gap-runs.ts';
 import { gapClassOf, type GapClass } from '../exercise/default-diff.ts';
 import { loadCorpusEntries, type CorpusEntry, loadKindNameFromId, loadLanguageForGrammar, loadNativeEngine, type TSNode } from './common.ts';
+
+function adjacentPairs<T extends object>(items: readonly T[]): [T, T][] {
+	const pairs: [T, T][] = [];
+	items.reduce<T | undefined>((left, right) => {
+		if (left !== undefined) pairs.push([left, right]);
+		return right;
+	}, undefined);
+	return pairs;
+}
 
 export type LossyShape =
 	| 'crlf'
@@ -126,8 +136,7 @@ export function scanListGaps(root: TSNode, source: string): GapScan {
 			}
 		});
 		for (const [field, run] of runs) {
-			for (let pair = 0; pair + 1 < run.length; pair++) {
-				const [left, right] = [run[pair]!, run[pair + 1]!];
+			for (const [left, right] of adjacentPairs(run)) {
 				const between = node.children.slice(left.index + 1, right.index);
 				const separators = between.filter(isSeparatorToken);
 				const text = source.slice(left.item.endIndex, right.item.startIndex);
@@ -158,24 +167,27 @@ function emptyByShape(): Record<LossyShape, number> {
 	return Object.fromEntries(LOSSY_SHAPES.map((shape) => [shape, 0])) as Record<LossyShape, number>;
 }
 
-interface SpanLike {
-	readonly start: number;
-	readonly end: number;
-}
-
 interface TypedNode {
-	readonly $span: SpanLike;
 	readonly $type: number;
 	readonly $with?: Record<string, ((...items: unknown[]) => { $render(): string }) | undefined>;
 }
 
 const isTypedNode = (value: unknown): value is TypedNode =>
-	typeof value === 'object' && value !== null && '$span' in value && '$type' in value;
+	typeof value === 'object' && value !== null && '$type' in value && spanOf(value) !== undefined;
+
+const spansOf = (items: readonly TypedNode[]): ItemSpan[] =>
+	items.flatMap((item) => {
+		const span = spanOf(item);
+		return span === undefined ? [] : [span];
+	});
+
+type ItemSpan = NonNullable<ReturnType<typeof spanOf>>;
 
 interface RebuiltList {
 	readonly owner: string;
 	readonly slot: string;
 	readonly items: readonly TypedNode[];
+	readonly spans: readonly ItemSpan[];
 	readonly adjacent: readonly boolean[];
 	readonly rendered: string;
 }
@@ -186,7 +198,7 @@ const isArrayLike = (value: unknown): value is ArrayLike<unknown> =>
 	typeof value === 'object' && value !== null && typeof (value as { length?: unknown }).length === 'number';
 
 const holdsMany = (owner: unknown, value: unknown): value is ArrayLike<unknown> =>
-	isArrayLike(value) && (!('$span' in value) || isArrayLike(owner));
+	isArrayLike(value) && (spanOf(value) === undefined || isArrayLike(owner));
 
 function* slotValuesOf(node: TypedNode): Generator<{ camel: string; values: unknown[]; many: boolean }> {
 	const record = node as unknown as Record<string, unknown>;
@@ -219,7 +231,7 @@ function rebuiltLists(root: TypedNode, kindName: (id: number) => string, rebuild
 				const adjacent = items.slice(0, -1).map((item, at) => values.indexOf(items[at + 1]) === values.indexOf(item) + 1);
 				try {
 					if (rebuild !== undefined) {
-						lists.push({ owner: kindName(node.$type), slot: camel, items, adjacent, rendered: rebuild.call(node.$with, ...values).$render() });
+						lists.push({ owner: kindName(node.$type), slot: camel, items, spans: spansOf(items), adjacent, rendered: rebuild.call(node.$with, ...values).$render() });
 					}
 				} catch (error) {
 					rebuildFailures.push(`${kindName(node.$type)}.${camel}: ${String(error).slice(0, 120)}`);
@@ -283,18 +295,18 @@ export async function createGapMeter(grammar: string): Promise<GapMeter> {
 		const lossy: LossyRow[] = [];
 		let [exact, unmatched, locateFailures] = [0, 0, 0];
 		for (const list of lists) {
-			const text = list.items.map((item) => textOf(item.$span));
+			const text = list.spans.map(textOf);
 			const located = locateItems(list.rendered, text);
 			if (located === undefined) {
 				locateFailures += 1;
 				continue;
 			}
-			for (let pair = 0; pair + 1 < list.items.length; pair++) {
-				const key = `${spans.toIndices(list.items[pair]!.$span).end}:${spans.toIndices(list.items[pair + 1]!.$span).start}`;
+			for (const [pair, [left, right]] of adjacentPairs(list.spans.map((span, index) => ({ span, at: located[index] }))).entries()) {
+				const key = `${spans.toIndices(left.span).end}:${spans.toIndices(right.span).start}`;
 				const gap = byOffsets.get(key);
-				if (gap === undefined || seen.has(key) || list.adjacent[pair] !== true) continue;
+				if (gap === undefined || seen.has(key) || list.adjacent[pair] !== true || left.at === undefined || right.at === undefined) continue;
 				seen.add(key);
-				const outcome = splitAtSeparator(list.rendered.slice(located[pair]![1], located[pair + 1]![0]), gap.separator);
+				const outcome = splitAtSeparator(list.rendered.slice(left.at[1], right.at[0]), gap.separator);
 				if (outcome === undefined) {
 					unmatched += 1;
 					continue;

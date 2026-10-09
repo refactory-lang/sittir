@@ -5,11 +5,8 @@ import { createEngine } from '@sittir/common';
 
 const rs = await createEngine(rust);
 
-// Phase B: $type is a numeric TSKindId (not a string) on the native wire.
 const identifier = {
 	$type: rs.kinds.Identifier,
-	$source: 2,
-	$named: true,
 	$text: 'x'
 } as const;
 
@@ -73,29 +70,19 @@ describe('engine render boundary', () => {
 
 		const engine = await mockedEngine();
 		const render = (node: unknown): string => engine.render(node as never).toString();
-		// Phase B: $type is numeric on the wire; TSKindId.Identifier = 1
-		// $source is numeric: 2 = factory
 		expect(render(identifier)).toBe(`ok:${rs.kinds.Identifier}`);
 		expect(renderSpy).toHaveBeenCalledWith(
 			expect.objectContaining({
 				$type: rs.kinds.Identifier,
-				$source: 2,
-				$named: true,
 				$text: 'x'
 			})
 		);
 	});
 
-	it('passes readUntypedNode-shaped children straight through to native render (no normalization step)', async () => {
-		// engine.render() is a pure pass-through to the native engine — no $children-to-named-field
-		// normalization logic exists there or anywhere else on the JS side.
-		// That's correct: readUntypedNode.ts itself emits the de-hoisted `_<name>`
-		// storage shape directly (specs/022-binding-simplify-assemble/
-		// IMPLEMENTATION-STATUS.md: "`@sittir/core/readUntypedNode.ts` emits `_<name>`
-		// directly (no shim)"), matching source_file's real named `statements`
-		// field (`_statements`, per types.ts's `SourceFile` interface) — a
-		// generic `$children` intermediate shape is never actually produced,
-		// so there is nothing for the engine to normalize.
+	it('passes read-shaped slot storage straight through to native render (no normalization step)', async () => {
+		// engine.render() is a pure pass-through to the native engine: a read
+		// stores each slot under its `_<name>` key, and no `$children`
+		// intermediate shape exists for the engine to normalize.
 		const renderSpy = vi.fn((node: Record<string, unknown>) => `ok:${String(node.$type)}`);
 		mockNativeBackend(
 			class {
@@ -107,12 +94,9 @@ describe('engine render boundary', () => {
 
 		const engine = await mockedEngine();
 		const render = (node: unknown): string => engine.render(node as never).toString();
-		// Phase D: $type must be numeric (TSKindId). String coexistence removed.
 		const rawSourceFile = {
 			$type: rs.kinds.SourceFile,
-			$source: 0,
-			$named: true,
-			_statements: [{ $type: rs.kinds.EmptyStatement, $source: 0, $named: true, $text: ';' }]
+			_statements: [{ $type: rs.kinds.EmptyStatement, $text: ';' }]
 		} as const;
 
 		// $type is TSKindId.SourceFile (157). Children carry TSKindId.EmptyStatement.
@@ -131,15 +115,9 @@ describe('engine render boundary', () => {
 	});
 
 	it('does not inject $variant — polymorph dispatch is by child $type alone', async () => {
-		// DECIDED DOCTRINE (docs/superpowers/specs/2026-05-22-compiler-simplification-design.md
-		// §4d): "$variant is diagnostics/validate-only... it may appear in the
-		// serialized Model and the validator's dispatch map, never in
-		// generated types.ts / factories.ts / from.ts / wrap.ts / transports /
-		// templates." And: "Dispatch is by child kind ONLY — no runtime
-		// structural recovery... this supersedes any runtime slot-presence
-		// probe." engine.render() infers and injects no `$variant` tag from raw
-		// parsed child aliases: it passes the data straight to the native
-		// engine, which dispatches on the child's own concrete $type.
+		// `$variant` never reaches a transport: engine.render() infers and
+		// injects no tag from raw parsed child aliases, and the native engine
+		// dispatches on each child's own concrete $type.
 		const renderSpy = vi.fn((node: Record<string, unknown>) => `ok:${String(node.$type)}`);
 		mockNativeBackend(
 			class {
@@ -151,16 +129,11 @@ describe('engine render boundary', () => {
 
 		const engine = await mockedEngine();
 		const render = (node: unknown): string => engine.render(node as never).toString();
-		// Phase D: $type must be numeric (TSKindId). String coexistence removed.
 		const rawArrayExpression = {
 			$type: rs.kinds.ArrayExpression,
-			$source: 0,
-			$named: true,
 			_content: {
 				// array_expression_list aliases to _array_expression_list → TSKindId.ArrayExpressionList
 				$type: rs.kinds.ArrayExpressionList,
-				$source: 0,
-				$named: true,
 				_elements: [identifier]
 			}
 		} as const;
@@ -184,8 +157,6 @@ describe('engine render boundary', () => {
 		const render = (node: unknown): string => engine.render(node as never).toString();
 		const invalidNode = {
 			$type: rs.kinds.Arguments,
-			$source: 2,
-			$named: true,
 			$children: [identifier, 'oops']
 		} as const;
 		expect(render(invalidNode)).toMatch(/^ok:/);
@@ -220,11 +191,11 @@ describe('engine render boundary', () => {
 				render(node: Record<string, unknown>): string {
 					return renderSpy(node);
 				}
-				parseAndRead(_source: string): string {
-					return JSON.stringify({ untypedNode: identifier });
+				parse(_source: string): string {
+					return JSON.stringify({ treeId: 1, errors: [] });
 				}
-				readUntypedNode(_nodeId: number): string {
-					return JSON.stringify(identifier);
+				read(_treeId: number, _index: number, _depth: number): object {
+					return { ...identifier };
 				}
 				dispose(): void {}
 			}
@@ -241,10 +212,10 @@ describe('engine render boundary', () => {
 
 		// The native engine behind the descriptor reads raw node data
 		const { root } = (await descriptor.load()).createNative().parseAndRead('x');
-		// and nothing else under a string key: the token that keeps the
-		// root's tree live is no data key.
+		// and nothing else under a string key but the parse's error regions:
+		// the token that keeps the root's tree live is no data key.
 		const read = root as object;
-		expect(Object.fromEntries(Object.entries(read))).toEqual(identifier);
+		expect(Object.fromEntries(Object.entries(read))).toEqual({ ...identifier, $errors: [] });
 		expect(treeTokenOf(read)).toBeDefined();
 	});
 

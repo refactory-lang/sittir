@@ -2,6 +2,13 @@ import type { GrammarContext } from '../../context.ts';
 import type { SubKindOf } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Expression {
+	export namespace Call {
+		export interface Template<G extends GrammarContext> extends SubKindOf<V.Expression.Call<G>> {
+			readonly $kind: 'expression.call.template';
+			readonly arguments: V.Literal.Template<G>;
+			readonly function: G['slots']['expression.call.template']['function'];
+		}
+	}
 	export interface Interpolation<G extends GrammarContext> extends SubKindOf<V.Expression<G>> {
 		readonly $kind: 'expression.interpolation';
 		readonly debug?: boolean;

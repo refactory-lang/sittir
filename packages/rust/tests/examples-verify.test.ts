@@ -158,11 +158,11 @@ describe('dogfoodContract helper', () => {
 });
 
 describe('structuralShape trivia handling', () => {
-	it("keeps a bare leaf's $text alongside its $_trivia", () => {
+	it("keeps a bare leaf's $text alongside its trivia", () => {
 		const leaf = rs.build.synonym.identifier('main').$trivia.leading(rs.build.lineComment.regular('c'));
 		const shape = structuralShape(leaf) as Record<string, unknown>;
 		expect(shape.$text).toBe('main');
-		expect(shape.$_trivia).toBeDefined();
+		expect(shape.$_layout).toBeDefined();
 	});
 	it('differs when only the comment text differs', () => {
 		const alpha = rs.build.synonym.identifier('main').$trivia.leading(rs.build.lineComment.regular('alpha'));

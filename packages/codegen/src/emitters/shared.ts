@@ -577,10 +577,6 @@ export function kindEnumTextIdPairs(
 	return out;
 }
 
-export function kindEnumOwnSymbolIds(field: AssembledNonterminal, nodeMap: NodeMap): readonly number[] {
-	return enumArmsOf(field, nodeMap).ownSymbolIds;
-}
-
 export function kindEnumAltIdPairs(
 	field: AssembledNonterminal,
 	nodeMap: NodeMap
@@ -602,10 +598,6 @@ export function kindEnumAltIdPairs(
 		}
 	}
 	return out;
-}
-
-export function reclaimsAnonymousChild(slot: AssembledNonterminal, nodeMap: NodeMap): boolean {
-	return slot.isUnnamed && resolveFieldStorageInfo(slot, nodeMap).enumKinds.length > 0;
 }
 
 export function resolveFieldStorageInfo(
@@ -827,10 +819,6 @@ export function fromForwardsToChildFactory(node: AssembledNode, nodeMap: NodeMap
 	return classifyChildFactorySurface(node, nodeMap) !== null;
 }
 
-export function wrapExposesChildren(node: AssembledNode, nodeMap: NodeMap): boolean {
-	return classifyChildFactorySurface(node, nodeMap) !== null;
-}
-
 export function testConstructsWithChildren(node: AssembledNode, nodeMap: NodeMap): boolean {
 	return classifyChildFactorySurface(node, nodeMap) !== null;
 }
@@ -949,10 +937,6 @@ export function registeredSlots(node: {
 	if (node.configSlots === undefined) return node.slots.filter((slot) => slot.registeredOption !== undefined);
 	const config = new Set(node.configSlots);
 	return node.slots.filter((slot) => !config.has(slot));
-}
-
-export function blankFromRead(blank: boolean, expr: string): string {
-	return blank ? `(${expr} ?? ${BLANK_KIND_ID})` : expr;
 }
 
 export function blankFromInput(blank: boolean, expr: string): string {
@@ -1098,30 +1082,6 @@ export function wireRoutesOf(slot: AssembledNonterminal, nodeMap: NodeMap): Wire
 	const fields = valueParseLabelsOf(slot);
 	const kindNames = valueParseKindsOf(slot).filter((k) => !fields.includes(k));
 	return { fields, kinds: kindNames.length > 0 ? expandToConcreteParseKinds(kindNames, nodeMap) : [] };
-}
-
-export function slotRoutesOf(
-	node: { readonly kind: string; readonly slots: readonly AssembledNonterminal[] },
-	nodeMap: NodeMap
-): Readonly<Record<string, string>> {
-	const claims = new Map<string, string>();
-	const claim = (key: string, slot: string): void => {
-		const claimed = claims.get(key);
-		if (claimed !== undefined && claimed !== slot) {
-			throw new Error(
-				`slot routes: '${node.kind}' receives children keyed '${key}' for two slots ('${claimed}', '${slot}'); the wrap cannot route them by field or kind alone`
-			);
-		}
-		claims.set(key, slot);
-	};
-	for (const slot of node.slots) {
-		if (!slot.isUnnamed) claim(slot.storageName, slot.storageName);
-		const routes = wireRoutesOf(slot, nodeMap);
-		for (const key of [...routes.fields, ...routes.kinds]) claim(key, slot.storageName);
-	}
-	const routes: Record<string, string> = {};
-	for (const [key, slot] of claims) if (key !== slot) routes[key] = slot;
-	return routes;
 }
 
 export function classifyFactoryEmission(
@@ -1406,15 +1366,6 @@ export function fieldTaggedLiterals(node: AssembledNode): ReadonlyMap<string, re
 	};
 	if (node instanceof AbstractAssembledCompound && !node.lexedInterior) walk(node.renderRule, undefined);
 	return out;
-}
-
-export function fieldTaggedLiteralTexts(node: AssembledNode): ReadonlyMap<string, readonly string[]> {
-	return new Map([...fieldTaggedLiterals(node)].map(([field, literals]) => [field, [...new Set(literals.map((literal) => literal.text))]]));
-}
-
-export function slotDropTexts(slot: AssembledNonterminal, owner: AssembledNode | undefined, elided: boolean): string[] {
-	const tagged = owner !== undefined && slot.fieldName !== undefined ? (fieldTaggedLiteralTexts(owner).get(slot.fieldName) ?? []) : [];
-	return [...new Set([...slotSeparatorTexts(slot, elided), ...tagged])];
 }
 
 export function slotDropKindIds(slot: AssembledNonterminal, owner: AssembledNode | undefined, elided: boolean): number[] {
