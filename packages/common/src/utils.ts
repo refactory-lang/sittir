@@ -3,7 +3,7 @@ import { mapTriviaEntries } from './trivia.ts';
 import { carryPlacement, carryRead, carrySource, coordinateOf, detachCoordinate, holdsSlots, isRead, isStorageKey, sourceOf, triviaOf, type DerivedSides } from './transport-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
-import { currentHandle, hydrateListStorage, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
+import { hydrateListStorage, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
 import { Delimiter } from './delimiter.ts';
 import { isCoordinate, readNode, type TreeHandle } from './read.ts';
 import { holdsParse } from './tree-token.ts';
