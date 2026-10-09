@@ -22,7 +22,14 @@ const SENTINEL = '\u0001SITTIR_SENTINEL\u0001';
 
 export function applyHost(template: string, rendered: string): HostedText {
 	const offset = template.split(HOLE).join(SENTINEL).indexOf(SENTINEL);
-	return { text: template.split(HOLE).join(rendered), offset: offset >= 0 ? offset : 0 };
+	const parts = template.split(HOLE);
+	let text = parts[0]!;
+	for (let i = 1; i < parts.length; i++) {
+		const lineStart = text.lastIndexOf('\n') + 1;
+		const indent = /^[ \t]*$/.test(text.slice(lineStart)) ? text.slice(lineStart) : '';
+		text += (indent === '' ? rendered : rendered.split('\n').join('\n' + indent)) + parts[i]!;
+	}
+	return { text, offset: offset >= 0 ? offset : 0 };
 }
 
 function hostBySupertype(

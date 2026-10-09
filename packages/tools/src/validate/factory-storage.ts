@@ -50,7 +50,7 @@ import {
 	loadNativeEngine
 } from './common.ts';
 import { nativeShownKindId } from './shown-kind.ts';
-import { loadRenderReparseContext, renderReparse } from './read-render-parse.ts';
+import { hostlessReason, loadRenderReparseContext, renderReparse } from './read-render-parse.ts';
 import { emptyBuiltRender, type BuiltRenderFailure, type BuiltRenderResult } from './built-render.ts';
 import { sourceSpans } from '@sittir/common';
 
@@ -758,7 +758,7 @@ export async function validateFactoryStorage(
 					}) === null;
 				if (hostless) {
 					render.total--;
-					render.excluded.push({ entry: entry.name, kind, reason: 'no-reparse-wrapper', input: inputSource });
+					render.excluded.push({ entry: entry.name, kind, reason: hostlessReason(kind, node1?.type ?? kind, renderReparseContext), input: inputSource });
 				} else if (builtTree === null) {
 					render.errors.push(renderFailure(buildErrors[0]?.message ?? 'no node built'));
 				} else if (carriesSource(builtTree)) {

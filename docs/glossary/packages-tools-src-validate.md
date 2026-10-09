@@ -1896,3 +1896,19 @@ marks the config (`flattenedOf`): `true` for a config-shaped group, else the
 group's call arguments, so a direct parent can pass the group's positional
 value. An `elements` seat projects each element, and a `tuple` seat takes the
 group's call arguments as the slot's value.
+
+### `packages/tools/src/validate/reparse-derive.ts::deriveReparseHosts`
+
+The reparse hosts a grammar's corpus supports beyond its declared ones, derived at validation time and never stored. A kind is hostable when a parent kind whose slots admit it (through hidden wrapper kinds and supertypes) is hostable. Its template is the parent's host with a corpus occurrence of the parent around the kind: the kind's span is replaced by the hole, and the kind's layout lead (whitespace before its first child) stays in the template so text-leaf kinds are not given padding. Breadth first from the declared hosts: each round considers only parents hostable at the round's start, candidates order by shortest context then parent name, and the first template that verifies takes the kind. A template verifies when every sampled source text of the kind (up to twelve distinct, shortest first) reparses without an error and holds the kind at the hole. Declared hosts always win; a kind no verified template reaches stays hostless.
+
+### `packages/tools/src/validate/common.ts::setDerivedReparseHosts`
+
+Merges a grammar's derived hosts under its declared ones in the per-grammar host cache, so `wrapForReparse` sees one table in which declared entries override derived ones.
+
+### `packages/tools/src/validate/read-render-parse.ts::hostlessReason`
+
+Why a kind without a host is excluded from a rendering row: `hidden-kind` when the kind has no node of its own to reparse (it never appears among the grammar's named kinds), `no-reparse-wrapper` otherwise. The two are counted separately so a hidden kind is not mistaken for a missing host.
+
+### `packages/tools/src/validate/read-render-parse.ts::findReparsedNodeAtOffset`
+
+The reparsed node of a kind at the splice offset. The exact offset is tried first, then each offset in the whitespace run on either side of the hole, since a host's layout can put the node's first token a few whitespace characters from the offset the splice reports.

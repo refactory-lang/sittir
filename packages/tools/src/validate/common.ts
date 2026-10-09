@@ -533,6 +533,12 @@ export async function loadReparseHosts(grammar: string): Promise<ReparseHosts> {
 	return loaded;
 }
 
+export function setDerivedReparseHosts(grammar: string, derived: Readonly<Record<string, string>>): void {
+	const declared = reparseHostsCache.get(grammar);
+	if (declared === undefined) throw new Error(`reparse hosts for '${grammar}' are not loaded; await loadReparseHosts('${grammar}') first`);
+	reparseHostsCache.set(grammar, { ...declared, hosts: { ...derived, ...declared.hosts } });
+}
+
 export function wrapForReparse(
 	rendered: string,
 	kind: string,

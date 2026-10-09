@@ -37,6 +37,7 @@ import {
 	buildReadHandle,
 	buildKindToSupertypes,
 	loadReparseHosts,
+	setDerivedReparseHosts,
 	wrapForReparse,
 	readNodeOf,
 	walkWrappedTree,
@@ -54,6 +55,7 @@ import {
 	triviaViewOf
 } from './common.ts';
 import { nativeShownKindId } from './shown-kind.ts';
+import { deriveReparseHosts } from './reparse-derive.ts';
 
 /**
  * The kinds that participate in variant() adoption (each override-defined
@@ -527,7 +529,20 @@ export function findReparsedNodeAtOffset(
 	wrapped: { text: string; offset: number },
 	offsetAdjust = 0
 ): TSNode | null {
-	return findNodeAt(tree2.rootNode, targetKind, wrapped.offset + offsetAdjust);
+	const exact = wrapped.offset + offsetAdjust;
+	const found = findNodeAt(tree2.rootNode, targetKind, exact);
+	if (found !== null) return found;
+	const isSpace = (at: number): boolean => /\s/.test(wrapped.text[at] ?? 'x');
+	let before = exact;
+	while (before > 0 && isSpace(before - 1)) before--;
+	let after = exact;
+	while (after < wrapped.text.length && isSpace(after)) after++;
+	for (let at = before; at <= after; at++) {
+		if (at === exact) continue;
+		const hit = findNodeAt(tree2.rootNode, targetKind, at);
+		if (hit !== null) return hit;
+	}
+	return null;
 }
 
 /**
@@ -638,6 +653,7 @@ export interface RenderReparseContext {
 	readonly adoptedVariantKinds: ReadonlySet<string>;
 	readonly root: Awaited<ReturnType<typeof loadNodeModel>>['root'];
 	readonly variantChildKinds: ReadonlyMap<string, ReadonlySet<string>>;
+	readonly visibleKinds: ReadonlySet<string>;
 }
 
 /**
@@ -647,7 +663,7 @@ export interface RenderReparseContext {
  * `source` when one is given.
  */
 export type RenderReparseOutcome =
-	| { readonly status: 'excluded'; readonly reason: 'no-reparse-wrapper' | 'empty-render'; readonly rendered: string }
+	| { readonly status: 'excluded'; readonly reason: 'no-reparse-wrapper' | 'hidden-kind' | 'empty-render'; readonly rendered: string }
 	| { readonly status: 'failed'; readonly message: string; readonly rendered: string }
 	| {
 			readonly status: 'round-trip';
@@ -683,7 +699,7 @@ export function renderReparse(
 		targetKind,
 		root: ctx.root
 	});
-	if (wrapped === null) return { status: 'excluded', reason: 'no-reparse-wrapper', rendered };
+	if (wrapped === null) return { status: 'excluded', reason: hostlessReason(renderedKind, targetKind, ctx), rendered };
 	if (rendered.trim() === '') return { status: 'excluded', reason: 'empty-render', rendered };
 	const tree2 = ctx.parser.parse(wrapped.text) as TSTree;
 	if (dumpLabel !== undefined) {
@@ -716,6 +732,40 @@ export function renderReparse(
 	};
 }
 
+export function hostlessReason(renderedKind: string, targetKind: string, ctx: Pick<RenderReparseContext, 'visibleKinds'>): 'no-reparse-wrapper' | 'hidden-kind' {
+	return ctx.visibleKinds.has(renderedKind) || ctx.visibleKinds.has(targetKind) ? 'no-reparse-wrapper' : 'hidden-kind';
+}
+
+const derivedHosts = new Map<string, Promise<void>>();
+
+function deriveHostsFor(grammar: string, parser: RenderReparseContext['parser']): Promise<void> {
+	const cached = derivedHosts.get(grammar);
+	if (cached !== undefined) return cached;
+	const run = (async () => {
+		const declared = await loadReparseHosts(grammar);
+		const model = await loadNodeModel(grammar);
+		const raw = loadRawEntries(grammar);
+		const corpus: { source: string; tree: TSTree }[] = [];
+		for (const entry of loadCorpusEntries(grammar)) {
+			const tree = parser.parse(entry.source) as TSTree;
+			if (!tree.rootNode.hasError) corpus.push({ source: entry.source, tree });
+		}
+		const admits = new Map(Object.entries(model.slotKinds).map(([kind, slots]) => [kind, new Set(Object.values(slots).flat())]));
+		const derived = deriveReparseHosts({
+			declared,
+			root: model.root,
+			kindToSupertypes: buildKindToSupertypes(raw),
+			admits,
+			corpus,
+			parse: (text) => parser.parse(text) as TSTree,
+			findAt: (tree, kind, hosted) => findReparsedNodeAtOffset(tree, kind, hosted)
+		});
+		setDerivedReparseHosts(grammar, derived);
+	})();
+	derivedHosts.set(grammar, run);
+	return run;
+}
+
 /** Load what `renderReparse` needs for `grammar`, rendering through `nativeEngine`. */
 export async function loadRenderReparseContext(
 	grammar: string,
@@ -723,8 +773,10 @@ export async function loadRenderReparseContext(
 	nativeEngine: Awaited<ReturnType<typeof loadNativeEngine>>
 ): Promise<RenderReparseContext> {
 	await loadReparseHosts(grammar);
+	await deriveHostsFor(grammar, parser);
 	return {
 		grammar,
+		visibleKinds: new Set(loadRawEntries(grammar).filter((entry: { named: boolean }) => entry.named).map((entry: { type: string }) => entry.type)),
 		parser,
 		render: (node) => nativeEngine.render(node).toString(),
 		triviaOf: (node) => readTrivia(node, nativeEngine.diagnostics.lineGapsOf),
