@@ -33,6 +33,10 @@ pub trait EngineGrammar: Copy {
     /// at descendant `index` (`ReadTransport::sides_of` of the grammar's
     /// transports, dispatched by the node's kind).
     fn sides_at(self, cursor: &mut tree_sitter::TreeCursor<'_>, ctx: &ReadCtx<'_>, index: u32) -> Result<Sides, ReadError>;
+    /// The kind `node` reads as: the grammar's `AnyTransport` picks it from the node's grammar and
+    /// display ids exactly as a read does (an alias envelope by its display id, any other node by its
+    /// grammar id or a folded one), so a query selects by the kind its results are read as.
+    fn read_kind(self, node: &tree_sitter::Node<'_>) -> Option<KindId>;
 }
 
 /// The node at descendant `index` of `tree`, or `None` past its last node.
@@ -536,12 +540,14 @@ impl<G: EngineGrammar> ParsedTree<G> {
         }
         while Self::advance(&mut cursor, index, &mut indexes, &mut path, depth) {
             let node = cursor.node();
+            let read_kind = self.grammar.read_kind(&node);
             if node.is_named()
                 && !node.is_extra()
-                && (kinds.is_empty() || kinds.contains(&node.grammar_id()))
+                && (kinds.is_empty() || read_kind.is_some_and(|kind| kinds.contains(&kind.0)))
                 && plan.is_none_or(|plan| plan.holds(&node, &self.source))
             {
-                coordinates.push(QueryCoordinate::from(ctx.coordinate(&node, indexes[indexes.len() - 1])));
+                let coordinate = QueryCoordinate::from(ctx.coordinate(&node, indexes[indexes.len() - 1]));
+                coordinates.push(QueryCoordinate { kind: read_kind.map_or(coordinate.kind, |kind| kind.0), ..coordinate });
                 if coordinates.len() as u32 >= limit {
                     return Ok(DescendantBatch { coordinates, resume: Some(path), origin });
                 }
@@ -832,6 +838,10 @@ mod tests {
 
         fn sides_at(self, _: &mut tree_sitter::TreeCursor<'_>, _: &ReadCtx<'_>, _: u32) -> Result<Sides, ReadError> {
             Ok(Sides::default())
+        }
+
+        fn read_kind(self, node: &tree_sitter::Node<'_>) -> Option<KindId> {
+            Some(KindId(node.grammar_id()))
         }
     }
 

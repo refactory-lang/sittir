@@ -27,6 +27,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
     let mut scalars = Vec::new();
     let mut read_table: Vec<TokenStream> = vec![quote!(__unadmitted); data.variants.len()];
     let mut boxed_table: Vec<TokenStream> = vec![quote!(__unadmitted); data.variants.len()];
+    let mut kind_table: Vec<TokenStream> = vec![quote!(::core::option::Option::None); data.variants.len()];
     let mut variant_fns = Vec::new();
     let mut sides = Vec::new();
     let mut blank = None;
@@ -84,9 +85,13 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             builds.push(quote!(if [#(#claims),*].iter().any(|k| k.0 == id) { return ::core::option::Option::Some(Self::#name); }));
         }
         let i = at as u16;
+        let first = kinds.kinds.first().or(kinds.shown.first()).or(kinds.folded.first()).cloned();
+        if let Some(kind) = &first {
+            kind_table[at] = quote!(::core::option::Option::Some(#kind));
+        }
         wire.push(codec::WireVariant {
             index: Some(i),
-            first: kinds.kinds.first().or(kinds.shown.first()).or(kinds.folded.first()).cloned(),
+            first,
             decodes: kinds.decodes.clone(),
             ..unread(payload)
         });
@@ -242,6 +247,14 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 #(#by_grammar)*
                 #(#by_folded)*
                 ::core::option::Option::None
+            }
+            const __KINDS: &[::core::option::Option<__Kind>] = &[#(#kind_table),*];
+            impl #ident {
+                /// The kind a node with these ids reads as through this choice: the kind of the variant the read picks.
+                #[allow(dead_code)]
+                pub fn read_kind(grammar: __Kind, display: __Kind) -> ::core::option::Option<__Kind> {
+                    __variant(grammar, display).and_then(|i| __KINDS[i as usize])
+                }
             }
             impl __rt::ReadTransport for #ident {
                 fn admits(grammar: __Kind, display: __Kind) -> bool {

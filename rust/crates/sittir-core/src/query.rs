@@ -15,7 +15,9 @@ pub struct DescendantBatch {
     pub origin: u64,
 }
 
-/// A node a walk found, as it crosses: `{ $treeHandle, $span, $type }`.
+/// A node a walk found, as it crosses: `{ $treeHandle, $span, $type }`, its
+/// `$type` the kind the node reads as (`EngineGrammar::read_kind`), which is
+/// what a query's kind filter compares.
 #[derive(serde::Serialize, Debug, Clone, Copy, PartialEq, Eq)]
 pub struct QueryCoordinate {
     #[serde(rename = "$treeHandle")]

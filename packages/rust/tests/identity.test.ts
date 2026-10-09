@@ -99,3 +99,28 @@ describe('an alias envelope and its content', () => {
 		expect(Array.from(root.$query().$descendants).find((node) => engine.is.fieldIdentifier(node))).toBe(envelope);
 	});
 });
+
+describe('ofType at an alias envelope', () => {
+	const SOURCE_FIELDS = 'fn f() { a.b; c.d; }\n';
+	const accessed = (root: ReturnType<typeof engine.parse>) =>
+		root.$query().$descendants.ofType(engine.kinds.FieldExpression).map((access) => {
+			if (!engine.is.fieldExpression(access)) throw new Error('expected a field expression');
+			return access.field();
+		});
+
+	it('selects the envelopes by their display kind, the objects the accessors return', () => {
+		const root = engine.parse(SOURCE_FIELDS, { depth: 1 });
+		const fields = [...accessed(root)];
+		expect(fields.length).toBe(2);
+		expect([...root.$query().$descendants.ofType(engine.kinds.FieldIdentifier)]).toEqual(fields);
+		const [first] = root.$query().$descendants.ofType(engine.kinds.FieldIdentifier);
+		expect(first).toBe(fields[0]);
+	});
+
+	it('does not select an aliased node by its content kind', () => {
+		const root = engine.parse(SOURCE_FIELDS, { depth: 1 });
+		const identifiers = [...root.$query().$descendants.ofType(engine.kinds.Identifier)];
+		expect(identifiers.map((node) => (node as { readonly $text?: string }).$text)).toEqual(['f', 'a', 'c']);
+		expect(identifiers.every((node) => (node as { readonly $type: number }).$type === engine.kinds.Identifier)).toBe(true);
+	});
+});

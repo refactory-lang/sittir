@@ -58,6 +58,10 @@ impl EngineGrammar for TypeScriptGrammar {
     ) -> std::result::Result<sittir_core::read::Sides, sittir_core::read::ReadError> {
         <AnyTransport as sittir_core::read::ReadTransport>::sides_of(cursor, ctx, index)
     }
+
+    fn read_kind(self, node: &tree_sitter::Node<'_>) -> Option<sittir_core::types::KindId> {
+        AnyTransport::read_kind(sittir_core::types::KindId(node.grammar_id()), sittir_core::read::display_id(node))
+    }
 }
 
 // The engine class itself — parse, read, render, edits, and the live-tree
