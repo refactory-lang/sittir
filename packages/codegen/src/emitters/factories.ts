@@ -1551,7 +1551,7 @@ function emitFieldCarryingFactory(
 		}
 	}
 	const view = plan.viewPlan === undefined || owner === undefined ? undefined : ownerViewParts(plan.viewPlan, owner.storage, owner.accessor, 'factory');
-	const groups = groupSeatParts(plan, (slot) => `() => ${slotsToEmit.find((f) => f.propertyName === slot)!.storageKey}`);
+	const groups = groupSeatParts(plan, (hint) => `() => ${hint.stored}`);
 	const spelled = spelledGroupSlots(plan);
 	lines.push(...(view?.prelude ?? []), ...groups.prelude);
 	lines.push('  const handle = currentHandle();');
@@ -2081,7 +2081,18 @@ export function listViewPlanOf(
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): ListViewPlan | undefined {
 	const target = listViewTarget(node, nodeMap);
-	if (target === undefined) return undefined;
+	return target === undefined ? undefined : viewPlanOfTarget(target, nodeMap, kindEntries);
+}
+
+export function listSelfViewPlan(list: AssembledList, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): ListViewPlan {
+	return viewPlanOfTarget({ list }, nodeMap, kindEntries);
+}
+
+function viewPlanOfTarget(
+	target: { readonly owner?: AssembledNonterminal; readonly list: AssembledList },
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): ListViewPlan {
 	const wrapper = separatedListSurface(target.list, nodeMap, kindEntries).wrapper;
 	const elements = canonicalSeparatedListField(target.list);
 	return {

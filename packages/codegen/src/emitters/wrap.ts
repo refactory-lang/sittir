@@ -21,7 +21,7 @@ import {
 	pruneUnusedImports,
 	blankFromInput
 } from './shared.ts';
-import { builtTypeSurfaceOf, fieldElementType, seatPlanOf } from './factories.ts';
+import { builtTypeSurfaceOf, fieldElementType, listSelfViewPlan, seatPlanOf } from './factories.ts';
 import { collectKindEntries, findKindEntry, collectCatalogKinds, type KindEnumEntry } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
 
@@ -143,8 +143,8 @@ function emitSeparatedListWrap(
 	const contentSlot = buildSeparatedListContentSlot(node);
 	const canonical = canonicalSeparatedListField(node);
 	const parsedType = declaredParsedType(node, kindEntries);
-	const plan = seatPlanOf(nodeMap.nodes.get(node.kind)!, nodeMap, kindEntries, 'RAW.');
-	const view = listSelfViewParts(plan.viewPlan!, dataAccessExpr('data', canonical.storageKey), canonical.propertyName, 'wrap');
+	const plan = seatPlanOf(node, nodeMap, kindEntries, 'RAW.');
+	const view = listSelfViewParts(listSelfViewPlan(node, nodeMap, kindEntries), dataAccessExpr('data', canonical.storageKey), canonical.propertyName, 'wrap');
 	const lines = [
 		`export function wrap${node.typeName}(data: T.${node.typeName}, tree: TreeHandle)${returnAnnotation(parsedType)} {`,
 		'  const handle = currentHandle();',
@@ -202,7 +202,7 @@ function fieldAccessorLines(
 
 function emitFieldCarryingWrap(node: AuthoredCompound, kindEntries: readonly KindEnumEntry[] | undefined, nodeMap: NodeMap): string {
 	const parsedType = declaredParsedType(node, kindEntries);
-	const plan = seatPlanOf(nodeMap.nodes.get(node.kind)!, nodeMap, kindEntries, 'RAW.');
+	const plan = seatPlanOf(node, nodeMap, kindEntries, 'RAW.');
 	const owner = plan.viewPlan?.owner;
 	const view =
 		plan.viewPlan !== undefined && owner !== undefined
@@ -210,10 +210,7 @@ function emitFieldCarryingWrap(node: AuthoredCompound, kindEntries: readonly Kin
 			: undefined;
 	const groups = groupSeatParts(
 		plan,
-		(slot) => {
-			const { stored, group } = plan.groups.find(({ hint }) => hint.slot === slot)!.hint;
-			return `() => hydrateSlot<T.${group} | undefined>(node, ${JSON.stringify(stored)}, tree)`;
-		},
+		({ stored, group }) => `() => hydrateSlot<T.${group} | undefined>(node, ${JSON.stringify(stored)}, tree)`,
 		(stored) => dataAccessExpr('data', stored)
 	);
 	return [

@@ -15509,6 +15509,14 @@ The nodes that own a list: those `listViewTarget` finds an owner slot for. The w
 
 The separated list a node reads as: the node itself when it is an `AssembledList`, or, for a list owner, the list it forwards to together with its sole slot (`owner`). `undefined` when the node reads as neither.
 
+### `packages/codegen/src/emitters/factories.ts::listSelfViewPlan`
+
+The list view of a separated list read as itself: its elements, count, option defaults and wrapper. Every `AssembledList` reads as a list (`listViewTarget`), so the plan always exists; the list's own wrap takes it here rather than from `seatPlanOf`'s optional `viewPlan`.
+
+### `packages/codegen/src/emitters/factories.ts::viewPlanOfTarget`
+
+The list view a `listViewTarget` describes: the list's elements, count and option defaults, its wrapper when the list surface has one, and the owner's accessor and storage key when a list owner forwards to it. `listViewPlanOf` and `listSelfViewPlan` both build their plan here.
+
 ### `packages/codegen/src/emitters/factories.ts::groupSeatHints`
 
 The facts each flattened group of a node needs for its node surface, one per seat: the slot that seats the group and the parent's storage property that holds it (`stored`), the group's type and kind, its raw factory, whether the seat is optional, and the keys it flattens. Each key has the name the parent reads and sets it by (`name`), the group field it stands for (`field`) whether its setter takes rest arguments, and whether the group requires it (`required`, which lets `seatWith` refuse to build a partial group). There is one for each seat `flattenSeatsOf` names, and its keys come from that seat's own keys, so the config surface and the node surface agree on which kinds flatten a group and on every key's name. A key the seat prefixed is named with `prefixedKey` from the seat's accessor and the field's, the same rule the config key follows. A key that spells the seat's own slot reads the group's inner value, and its setter takes the inner value or the whole group.
@@ -15575,7 +15583,7 @@ The slots whose group seat has a key of the slot's own name. That key reads the 
 
 ### `packages/codegen/src/emitters/node-members.ts::groupSeatParts`
 
-The lines a group seat adds to a node's builder: a reader of the seated group, hoisted before the literal because both the setters and the stored-reader member call it; a member per flattened key, `undefined` while the group is absent and a reader of the group's field while it is present; and the `STORED_SLOT_READERS` member. A reader exists only when it has a value, decided when the node is built, so a node with the group and a node without it differ in the value of these members and not in the shape of the node.
+The lines a group seat adds to a node's builder: a reader of the seated group, hoisted before the literal because both the setters and the stored-reader member call it, and written by `readOf` from the seat's hint, which names the slot, its stored key and its group; a member per flattened key, `undefined` while the group is absent and a reader of the group's field while it is present; and the `STORED_SLOT_READERS` member. A reader exists only when it has a value, decided when the node is built, so a node with the group and a node without it differ in the value of these members and not in the shape of the node.
 
 ### `packages/codegen/src/emitters/node-members.ts::ownerViewParts`
 

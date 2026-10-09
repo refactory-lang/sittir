@@ -1,6 +1,6 @@
 import { emptyForms, innerGapsKeyed } from '../compiler/model/trivia.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import type { ListViewPlan, SeatPlan } from './factories.ts';
+import type { GroupSeatHint, ListViewPlan, SeatPlan } from './factories.ts';
 
 export interface SetterEntry {
 	readonly name: string;
@@ -97,11 +97,11 @@ export function seatedSetters(setters: readonly SetterEntry[], plan: SeatPlan): 
 
 export function groupSeatParts(
 	plan: SeatPlan,
-	readOf: (slot: string) => string,
+	readOf: (hint: GroupSeatHint) => string,
 	storedOf: (stored: string) => string = (stored) => stored
 ): { readonly prelude: string[]; readonly members: string[] } {
 	if (plan.groups.length === 0) return { prelude: [], members: [] };
-	const prelude = plan.groups.map(({ hint }) => `  const ${readGroupName(hint.slot)} = ${readOf(hint.slot)};`);
+	const prelude = plan.groups.map(({ hint }) => `  const ${readGroupName(hint.slot)} = ${readOf(hint)};`);
 	const members = plan.groups.flatMap(({ hint }) =>
 		hint.keys.map(
 			(key) =>

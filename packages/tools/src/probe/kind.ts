@@ -566,12 +566,9 @@ export async function probe(
 			: await readNodeOf(grammar);
 	const root = readNode ? readNode(handle, undefined, Infinity) : handle.read?.(0, Infinity);
 	let untypedNode: unknown = root;
-	if (!isRoot) {
-		untypedNode = opts.kind
-			? findInUntypedNode(root, opts.kind, await loadKindNameFromId(grammar))
-			: findInUntypedNodeByRange(root, opts.range!.start, opts.range!.end);
-		if (!untypedNode) throw new Error(`probe-kind: no node match in the read tree`);
-	}
+	if (opts.range) untypedNode = findInUntypedNodeByRange(root, opts.range.start, opts.range.end);
+	else if (opts.kind) untypedNode = findInUntypedNode(root, opts.kind, await loadKindNameFromId(grammar));
+	if (!isRoot && !untypedNode) throw new Error(`probe-kind: no node match in the read tree`);
 
 	let rendered: string | undefined;
 	let sameText: boolean | undefined;
