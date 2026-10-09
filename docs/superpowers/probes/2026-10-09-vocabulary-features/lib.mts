@@ -625,6 +625,30 @@ interface Edit {
 	readonly lines: readonly string[];
 }
 
+/** `lines` with each edit's span, `start` to `end` inclusive, replaced by the edit's lines. */
+function applyEdits(lines: readonly string[], edits: readonly Edit[]): string[] {
+	const byStart = new Map(edits.map((e) => [e.start, e]));
+	const out: string[] = [];
+	for (let i = 0; i < lines.length; i++) {
+		const e = byStart.get(i);
+		if (e) {
+			out.push(...e.lines);
+			i = e.end;
+		} else out.push(lines[i]!);
+	}
+	return out;
+}
+
+/** The index of the line that closes the brace block opening on line `open`. */
+function closing(lines: readonly string[], open: number): number {
+	let depth = 0;
+	for (let i = open; i < lines.length; i++) {
+		for (const c of lines[i]!) depth += c === '{' ? 1 : c === '}' ? -1 : 0;
+		if (depth === 0) return i;
+	}
+	throw new Error(`the block opening at line ${open + 1} does not close`);
+}
+
 const replaceOnce = (text: string, from: string | RegExp, to: string): string => {
 	const next = text.replace(from, to);
 	if (next === text) throw new Error(`no ${String(from)} to replace`);
@@ -636,16 +660,15 @@ export const stubAlias = (f: Feature): string => camel(posix.basename(f.dir));
 
 /**
  * How a level's `Any` holds the kinds features add:
- * - `unions`: the generated augmentation declares every level's union, a feature's kind as an arm gated on it;
+ * - `unions`: the generated augmentation declares every level's union, the kinds features add among its arms;
  * - `registry`: the base reads every level off the kind registry `Kinds<G>`, which features augment.
  */
 export type Levels = 'unions' | 'registry';
 
 /**
  * Writes the gated vocabulary into `vdir`, which holds the vocabulary `vocab` was read from and the feature tree under
- * features/: the base less what features own and less its `Any` unions, the gate, the features registry, the
- * permissive context extending every feature, and the generated augmentation, which adds back the members and kinds
- * features own and declares the levels.
+ * features/: the base less what features own and less its `Any` unions, the gate, the features registry, and the
+ * generated augmentation, which adds back the members and kinds features own and declares the levels.
  */
 export function writeGatedVocabulary(vdir: string, vocab: Vocab, features: ReadonlyMap<string, Feature>, p: Plan, levels: Levels): void {
 	// The base: owned members, added kinds and the level unions out.
@@ -663,15 +686,7 @@ export function writeGatedVocabulary(vdir: string, vocab: Vocab, features: Reado
 			const registry = `${indent}export type Any<G extends GrammarContext> = KindsUnder<G, '${levelPath(vocab.byQname, a.ns)}'>;`;
 			edits.push({ start: a.start, end: a.end, lines: levels === 'registry' ? [registry] : [] });
 		}
-		const byStart = new Map(edits.map((e) => [e.start, e]));
-		const out: string[] = [];
-		for (let i = 0; i < nf.lines.length; i++) {
-			const e = byStart.get(i);
-			if (e) {
-				out.push(...e.lines);
-				i = e.end;
-			} else out.push(nf.lines[i]!);
-		}
+		const out = applyEdits(nf.lines, edits);
 		if (levels === 'registry') out.splice(out.findLastIndex((l) => l.startsWith('import ')) + 1, 0, "import type { KindsUnder } from './kinds.ts';");
 		writeFileSync(join(vdir, file), out.join('\n'));
 	}
@@ -684,7 +699,7 @@ export function writeGatedVocabulary(vdir: string, vocab: Vocab, features: Reado
 				"import type { GrammarContext } from './context.ts';",
 				"import type * as V from './index.ts';",
 				'',
-				'/** The registered kinds by path. A feature registers the kinds it adds by augmentation, gated on the feature. */',
+				'/** The registered kinds by path. A feature registers the kinds it adds by augmentation. */',
 				'export interface Kinds<G extends GrammarContext> {',
 				...[...vocab.registered]
 					.filter((path) => !p.kinds.has(path))
@@ -693,7 +708,7 @@ export function writeGatedVocabulary(vdir: string, vocab: Vocab, features: Reado
 				'}',
 				'',
 				'/** The registered paths at the path `P` and under it, the same in every context. */',
-				'type PathsUnder<P extends string> = Extract<keyof Kinds<GrammarContext>, P | `${P}.${string}`>;',
+				'type PathsUnder<P extends string> = Extract<keyof Kinds<never>, P | `${P}.${string}`>;',
 				'',
 				'/** The registered kinds at the path `P` and under it: a level of the vocabulary. */',
 				'export type KindsUnder<G extends GrammarContext, P extends string> = Kinds<G>[PathsUnder<P>];',
@@ -713,16 +728,11 @@ export function writeGatedVocabulary(vdir: string, vocab: Vocab, features: Reado
 			'\treadonly absent: F;',
 			'}',
 			'',
-			"/** The permissive context's brand: a context that has it has every feature. No language context has it. */",
-			'export interface Permissive {',
-			'\treadonly permissive?: true;',
-			'}',
-			'',
 			'/**',
-			' * `T` where the context `G` has the feature `F` or is permissive, else `Otherwise`. `G` stays on the checked side, so',
-			" * a kind stays covariant in its context and a language's kind is assignable to the permissive context's.",
+			' * `T` where the context `G` has the feature `F`, else `Otherwise`. Over a union of contexts it is the union of each',
+			" * context's, so a union of contexts is a supertype of each of them, member by member.",
 			' */',
-			'export type In<G extends GrammarContext, F, T, Otherwise = Absent<F>> = G extends F ? T : G extends Permissive ? T : Otherwise;',
+			'export type In<G extends GrammarContext, F, T, Otherwise = Absent<F>> = G extends F ? T : Otherwise;',
 			'',
 		].join('\n')
 	);
@@ -733,21 +743,14 @@ export function writeGatedVocabulary(vdir: string, vocab: Vocab, features: Reado
 			.map((f) => `export type { ${f.name} } from './${f.dir}/index.ts';`)
 			.join('\n')}\n`
 	);
-	writeFileSync(
-		join(vdir, 'context.ts'),
-		replaceOnce(
-			readFileSync(join(vdir, 'context.ts'), 'utf8'),
-			'export interface BaseContext extends GrammarContext {',
-			'/** The permissive context: it has every feature, by its brand (`Permissive`), not by extending them. */\nexport interface BaseContext extends GrammarContext {\n\treadonly permissive?: true;'
-		)
-	);
 	writeFileSync(join(vdir, 'augment.ts'), augmentation(vocab, features, p, levels).join('\n'));
 	writeFileSync(join(vdir, 'index.ts'), `${readFileSync(join(vdir, 'index.ts'), 'utf8').trimEnd()}\nexport type * from './augment.ts';\n`);
 }
 
 /**
  * The generated augmentation: per vocabulary module, the kinds features add, the members they gate and (for `unions`)
- * every level's `Any`; for `registry`, the registry entries of the kinds features add.
+ * every level's `Any`, the vocabulary's whole level, kinds features add included; for `registry`, the registry entries
+ * of the kinds features add.
  */
 function augmentation(vocab: Vocab, features: ReadonlyMap<string, Feature>, p: Plan, levels: Levels): string[] {
 	const alias = (name: string): string => stubAlias(features.get(name)!);
@@ -755,11 +758,7 @@ function augmentation(vocab: Vocab, features: ReadonlyMap<string, Feature>, p: P
 	const byFile = new Map<string, Entry[]>();
 	if (levels === 'unions') {
 		for (const a of vocab.aliases) {
-			const arms = a.refs.map((qname) => {
-				const added = p.kinds.get(vocab.byQname.get(qname)!.path!);
-				if (added) used.add(added.feature);
-				return added ? `gate.In<G, features.${added.feature}, V.${qname}<G>, never>` : `V.${qname}<G>`;
-			});
+			const arms = a.refs.map((qname) => `V.${qname}<G>`);
 			byFile.set(a.file, [...(byFile.get(a.file) ?? []), { qname: `${a.ns}.Any`, order: a.start, lines: [`type Any<G extends GrammarContext> = ${arms.join(' | ')};`] }]);
 		}
 	}
@@ -783,7 +782,7 @@ function augmentation(vocab: Vocab, features: ReadonlyMap<string, Feature>, p: P
 	const registry = [...p.kinds]
 		.filter(([path]) => vocab.registered.has(path))
 		.sort((a, b) => a[0].localeCompare(b[0]))
-		.map(([path, { feature }]) => `\t\treadonly ${quoteKey(path)}: gate.In<G, features.${feature}, V.${vocab.byPath.get(path)!.qname}<G>, never>;`);
+		.map(([path]) => `\t\treadonly ${quoteKey(path)}: V.${vocab.byPath.get(path)!.qname}<G>;`);
 	const names = [...used].sort();
 	const stubs = names.filter((n) => [...p.kinds.values()].some((k) => k.feature === n) || [...p.owned.values()].some((o) => o.feature === n));
 	// The vocabulary's names are open inside each module block, so the glue reaches its own through lowercase
@@ -836,17 +835,13 @@ export function restatingImports(p: Plan | null, features: ReadonlyMap<string, F
 	return [...names].sort().map((n) => `import type * as ${stubAlias(features.get(n)!)} from '${from}${features.get(n)!.dir}/index.ts';`);
 }
 
-/** BaseContext's slot table, the lines between its `readonly slots: {` and the matching close. */
+/** The snapshot `BaseContext`'s slot table, the lines between its `readonly slots: {` and the matching close. */
 export function baseSlots(context: string): string[] {
 	const lines = context.split('\n');
 	const base = lines.findIndex((l) => l.startsWith('export interface BaseContext'));
 	const open = lines.findIndex((l, i) => i > base && l === '\treadonly slots: {');
-	let depth = 0;
-	for (let i = open; i < lines.length; i++) {
-		for (const c of lines[i]!) depth += c === '{' ? 1 : c === '}' ? -1 : 0;
-		if (depth === 0) return lines.slice(open + 1, i);
-	}
-	throw new Error('BaseContext has no closed slot table');
+	if (base < 0 || open < 0) throw new Error('the snapshot context declares no BaseContext slot table');
+	return lines.slice(open + 1, closing(lines, open));
 }
 
 /** A grammar context: its namespaces over the kinds it covers, and the slot table re-instantiated over it. */
@@ -1022,3 +1017,80 @@ export const EQUALITY_CLAIMS: Record<Grammar, Readonly<Record<string, string>>> 
 		'expression.binary.comparison.strict_not_equal': 'expression.binary.comparison.not_equal.strict',
 	},
 };
+
+// ---------------------------------------------------------------------------------------------------------------------
+// The fold
+
+/**
+ * The refinements whose slot fill the snapshot leaves outside their parent's, each with what is outside. The fold's typed
+ * constraint checks every refinement against its parent, so each is a compile error until the vocabulary fixes it.
+ */
+export const OUTSIDE_PARENT: Readonly<Record<string, string>> = {
+	'expression.binary.identity': "its operator fill is unknown, outside expression.binary's string",
+	'expression.binary.membership': "its operator fill is unknown, outside expression.binary's string",
+	'identifier.property.private': "its content fill is unknown, outside identifier.property's identifier role",
+};
+
+/**
+ * Folds the snapshot's `BaseContext` into the namespace map under `dir`, a variant's root. `GrammarContext<G>` types each
+ * namespace key and each slot by its permissive fill over `G`, so a consumer generic over the context reads them through
+ * the constraint; `BaseContext` and `SlotTable` go. Every context parameter in the variant is bounded by the map over
+ * itself, and each grammar context extends the map over itself. Each refinement `OUTSIDE_PARENT` lists is pinned with
+ * `@ts-expect-error` where it is declared, so the check fails when one is fixed or another appears.
+ */
+export function fold(dir: string, vocab: Vocab): void {
+	const file = join(dir, 'vocabulary/context.ts');
+	const lines = readFileSync(file, 'utf8').split('\n');
+	const span = (name: string): { readonly start: number; readonly head: number; readonly end: number } => {
+		const head = lines.findIndex((l) => new RegExp(`^export interface ${name}\\b`).test(l));
+		if (head < 0) throw new Error(`the context declares no ${name}`);
+		return { start: lines[head - 1]!.startsWith('/**') ? head - 1 : head, head, end: closing(lines, head) };
+	};
+	const map = span('GrammarContext');
+	const table = span('SlotTable');
+	const base = span('BaseContext');
+	const namespaceMap = [
+		'/**',
+		" * The namespace map: one key per top-level namespace, holding that namespace's kinds over the context `G`, and the",
+		' * slot table, each slot holding its permissive fill over `G`: roles and refs where its arms are kinds, `string` where',
+		" * they are text. A grammar's context extends the map over itself and narrows each key to what the grammar realizes.",
+		' */',
+		'export interface GrammarContext<G extends GrammarContext<G>> {',
+		...lines.slice(base.head + 1, base.end).map((l) => l.replace(/\bBaseContext\b/g, 'G')),
+		'}',
+	];
+	const folded = applyEdits(lines, [
+		{ start: map.start, end: map.end, lines: namespaceMap },
+		{ start: table.start, end: table.end, lines: [] },
+		{ start: base.start, end: base.end, lines: [] },
+	]);
+	writeFileSync(file, folded.join('\n').replace(/\n{3,}/g, '\n\n'));
+	const index = join(dir, 'vocabulary/index.ts');
+	writeFileSync(index, replaceOnce(readFileSync(index, 'utf8'), 'GrammarContext, BaseContext, SlotTable, Unmapped', 'GrammarContext, Unmapped'));
+	const heads = new Map(
+		Object.entries(OUTSIDE_PARENT).map(([path, outside]) => {
+			const it = vocab.byPath.get(path)!;
+			return [`interface ${it.qname.split('.').pop()}<G extends GrammarContext<G>> extends SubKindOf<V.${it.parent}<G>> {`, { path, outside }];
+		})
+	);
+	const pinned = new Set<string>();
+	for (const rel of readdirSync(dir, { recursive: true, encoding: 'utf8' }).filter((f) => f.endsWith('.ts'))) {
+		const path = join(dir, rel);
+		const text = readFileSync(path, 'utf8');
+		const bounded = text
+			.replace(/\bG extends GrammarContext\b(?!<)/g, () => 'G extends GrammarContext<G>')
+			.replace(/\b(\w+Context) extends GrammarContext\b(?!<)/g, (_, ctx: string) => `${ctx} extends GrammarContext<${ctx}>`)
+			.split('\n')
+			.flatMap((l) => {
+				const head = heads.get(l.trimStart().replace(/^export /, ''));
+				if (!head) return [l];
+				if (pinned.has(head.path)) throw new Error(`${head.path}: declared twice`);
+				pinned.add(head.path);
+				return [`${/^\s*/.exec(l)![0]}// @ts-expect-error ${head.path}: ${head.outside}.`, l];
+			})
+			.join('\n');
+		if (bounded !== text) writeFileSync(path, bounded);
+	}
+	const unpinned = [...heads.values()].filter((h) => !pinned.has(h.path)).map((h) => h.path);
+	if (unpinned.length > 0) throw new Error(`fold: no declaration to pin for ${unpinned.join(', ')}`);
+}

@@ -3,12 +3,13 @@
  *
  * It materializes the snapshot vocabulary and writes under out/:
  * - today/: the snapshot as it is, each grammar's context over the kinds it claims;
- * - gate/: the demonstration. The features in features/ own their kinds and members; the base keeps the rest and
- *   loads the generated augmentation that adds them back, each gated on its feature. The grammar contexts extend the
- *   compositions in compositions.ts. With them: a JavaScript context, each language's names, and demo.ts. It prints
- *   the plan's notes and each composition's diagnostics against the snapshot's claims and routes.
- * - scale-gate/: the cost model. Every member the snapshot tags as particular to some grammars, and every kind only
- *   some grammars claim, belongs to a feature named by those grammars, gated the same way.
+ * - fold/: the snapshot with its `BaseContext` folded into the namespace map (lib.mts, fold), no features;
+ * - gate/: the demonstration, folded. The features in features/ own their kinds and members; the base keeps the rest
+ *   and loads the generated augmentation that adds them back, each gated on its feature. The grammar contexts extend
+ *   the compositions in compositions.ts. With them: a JavaScript context, each language's names, and demo.ts. It
+ *   prints the plan's notes and each composition's diagnostics against the snapshot's claims and routes.
+ * - scale-gate/: the cost model, folded. Every member the snapshot tags as particular to some grammars, and every kind
+ *   only some grammars claim, belongs to a feature named by those grammars, gated the same way.
  * - scale-registry/: the cost model with each level read off an augmentable kind registry instead of a generated union.
  *
  * One rule writes every variant's consumers, so the variants compare like for like (lib.mts, writeConsumers).
@@ -26,6 +27,7 @@ import {
 	contextLines,
 	EQUALITY_CLAIMS,
 	equalityProposal,
+	fold,
 	GRAMMARS,
 	HERE,
 	lineage,
@@ -89,10 +91,10 @@ function report(variant: string, langs: readonly Language[], members: (lang: Lan
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-// today
+// today and fold
 
-function buildToday(snapshot: string): void {
-	const dir = freshVariant(snapshot, 'today');
+function buildUngated(snapshot: string, variant: 'today' | 'fold'): void {
+	const dir = freshVariant(snapshot, variant);
 	const vocab = readVocab(join(dir, 'vocabulary'));
 	const langs: Language[] = GRAMMARS.map((g) => ({
 		key: g,
@@ -108,7 +110,8 @@ function buildToday(snapshot: string): void {
 	const members = (_: Language, path: string): string[] => [...membersOf(vocab, vocab.byPath.get(path)!).keys()].filter((m) => m !== '$kind');
 	const consumers = writeConsumers(dir, vocab, null, new Map(), langs, members);
 	writeTsconfig(join(dir, 'tsconfig.json'), ['languages.ts', ...consumers]);
-	report('today', langs, members);
+	if (variant === 'fold') fold(dir, vocab);
+	report(variant, langs, members);
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -154,7 +157,7 @@ function composeLanguages(
 function diagnose(vocab: Vocab, p: Plan, features: ReadonlyMap<string, Feature>, composed: readonly Composed[]): void {
 	console.log('gate: what the plan found');
 	for (const n of p.notes) console.log(`  ${n}`);
-	const reserved = new Set<string>([...NAMESPACES, 'slots', 'permissive']);
+	const reserved = new Set<string>([...NAMESPACES, 'slots']);
 	const collide = [...features.values()].filter((f) => reserved.has(f.key));
 	console.log(`  marker keys that collide with a context's keys (${collide.length}): ${collide.map((f) => f.key).join(', ') || '-'}`);
 	console.log('gate: each composition against the snapshot claims and routes');
@@ -237,6 +240,7 @@ function buildGate(snapshot: string): void {
 	writeFileSync(join(dir, 'demo-errors.ts'), demo.replace(/^\s*\/\/ @ts-expect-error.*\n/gm, ''));
 	writeTsconfig(join(dir, 'tsconfig.demo.json'), ['languages.ts', 'javascript.ts', 'names.ts', 'demo.ts'], './tsconfig.json');
 	writeTsconfig(join(dir, 'tsconfig.errors.json'), ['demo-errors.ts'], './tsconfig.json');
+	fold(dir, vocab);
 	report('gate', grammars, members);
 }
 
@@ -352,6 +356,7 @@ function buildScale(snapshot: string, variant: string, levels: Levels): void {
 	const members = (lang: Language, path: string): string[] => composedMembers(vocab, p, path, lang.has);
 	const consumers = writeConsumers(dir, vocab, p, features, langs, members);
 	writeTsconfig(join(dir, 'tsconfig.json'), ['languages.ts', ...consumers]);
+	fold(dir, vocab);
 	console.log(`${variant}: ${summary}`);
 	if (levels === 'unions') for (const n of p.notes) console.log(`  ${n}`);
 	report(variant, langs, members);
@@ -359,7 +364,8 @@ function buildScale(snapshot: string, variant: string, levels: Levels): void {
 
 mkdirSync(OUT, { recursive: true });
 const snapshot = materialize();
-buildToday(snapshot);
+buildUngated(snapshot, 'today');
+buildUngated(snapshot, 'fold');
 buildGate(snapshot);
 buildScale(snapshot, 'scale-gate', 'unions');
 buildScale(snapshot, 'scale-registry', 'registry');

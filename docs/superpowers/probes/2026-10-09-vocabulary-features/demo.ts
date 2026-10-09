@@ -7,8 +7,8 @@ import type { JavaScript, JavaScriptContext } from './javascript.ts';
 import type { PythonContext, RustContext, TypeScriptContext } from './languages.ts';
 import type { Python, Rust, TypeScript } from './names.ts';
 import type { ViewForm } from './view-form.ts';
-import type { BaseContext, GrammarContext } from './vocabulary/context.ts';
-import type { AsyncAwait, AsyncBlocks, TypeAnnotations } from './vocabulary/features/index.ts';
+import type { GrammarContext } from './vocabulary/context.ts';
+import type { AsyncAwait, AsyncBlocks, Generators, TypeAnnotations } from './vocabulary/features/index.ts';
 import type * as V from './vocabulary/index.ts';
 
 // A context has its composition's closure. Rust names async blocks, which extend async-await.
@@ -37,10 +37,10 @@ export const noReturnType = javascriptFunction.returnType();
 // @ts-expect-error Nor type parameters.
 export const noTypeParameters = javascriptFunction.typeParameters();
 
-// A kind a feature adds: Rust has async blocks, at their level and by name; Python has neither.
-export const rustLevel: V.Expression.Any<RustContext> = null! as Rust.Expression.Block.Async;
-// @ts-expect-error Python's expression level has no async block.
-export const pythonLevel: V.Expression.Any<PythonContext> = null! as V.Expression.Block.Async<PythonContext>;
+// A kind a feature adds: Rust's expressions include async blocks, which it names; Python's do not, and it names none.
+export const rustLevel: RustContext['expression'] = null! as Rust.Expression.Block.Async;
+// @ts-expect-error Python's expressions have no async block.
+export const pythonLevel: PythonContext['expression'] = null! as V.Expression.Block.Async<PythonContext>;
 // @ts-expect-error Nor does Python name one.
 export type PythonAsyncBlock = Python.Expression.Block.Async;
 
@@ -65,14 +65,45 @@ export const rustTerm: Rust.Declaration.Mod = null! as Rust.Declaration.Module;
 // @ts-expect-error Python has no such term.
 export type PythonTerm = Python.Declaration.Mod;
 
-// A consumer over the permissive context takes every language's kinds, including one whose language lacks a member
-// the consumer reads: the member reads as absent at run time, which its type allows.
-export const rustMethodIsBase: V.Declaration.Method<BaseContext> = null! as Rust.Declaration.Method;
-export const isGenerator = (method: V.Declaration.Method<BaseContext>): boolean => method.generator === true;
-export const rustIsGenerator = isGenerator(null! as Rust.Declaration.Method);
+// Portable code is generic over the context. Bounded by the features it reads, it takes the languages that have them;
+// a language without one fails at the call.
+export function asyncOf<G extends GrammarContext<G> & AsyncAwait>(fn: V.Declaration.Function<G>): boolean | undefined {
+	return fn.async;
+}
+export const rustFunctionIsAsync = asyncOf(null! as Rust.Declaration.Function);
+export function generatorOf<G extends GrammarContext<G> & Generators>(method: V.Declaration.Method<G>): boolean | undefined {
+	return method.generator;
+}
+export const typescriptMethodIsGenerator = generatorOf(null! as TypeScript.Declaration.Method);
+// @ts-expect-error Rust's context lacks generators.
+export const rustMethodIsGenerator = generatorOf(null! as Rust.Declaration.Method);
 
-// A consumer generic over the context sees a gated member as possibly absent.
-export function asyncOf<G extends GrammarContext>(fn: V.Declaration.Function<G>): boolean | undefined {
+// Unbounded, it takes every language, and a gated member may be absent: it tests the member rather than return it.
+export function isGenerator<G extends GrammarContext<G>>(method: V.Declaration.Method<G>): boolean {
+	return method.generator === true;
+}
+export const rustIsGenerator = isGenerator(null! as Rust.Declaration.Method);
+export function asyncOfAny<G extends GrammarContext<G>>(fn: V.Declaration.Function<G>): boolean | undefined {
 	// @ts-expect-error The member is Absent<AsyncAwait> where G lacks async-await.
 	return fn.async;
 }
+
+// Roles and slots read through the namespace map, which types each by its permissive fill.
+export function nameKind<G extends GrammarContext<G>>(fn: V.Declaration.Function<G>): string {
+	return fn.name.$kind;
+}
+export function parameterKinds<G extends GrammarContext<G>>(fn: V.Declaration.Function<G>): string[] {
+	// @ts-expect-error A parameter's fill admits text, which has no kind.
+	return fn.parameters.map((p) => p.$kind);
+}
+export function narrowedParameterKinds<G extends GrammarContext<G>>(fn: V.Declaration.Function<G>): string[] {
+	return fn.parameters.map((p) => (typeof p === 'string' ? p : p.$kind));
+}
+
+// Several languages at once: a union of contexts, named where a value mixes them.
+export const polyglot: (PythonContext | RustContext)['expression'][] = [null! as PythonContext['expression'], null! as Rust.Expression.Block.Async];
+export const mixed = asyncOf<PythonContext | RustContext>(null! as Python.Declaration.Function | Rust.Declaration.Function);
+// @ts-expect-error Unnamed, the union infers one language's context and rejects the other's.
+export const inferred = asyncOf(null! as Python.Declaration.Function | Rust.Declaration.Function);
+// The union is a supertype of each language member by member: Rust's absent generator flag fits it.
+export const memberwise: V.Declaration.Method<PythonContext | RustContext>['generator'] = null! as V.Declaration.Method<RustContext>['generator'];
