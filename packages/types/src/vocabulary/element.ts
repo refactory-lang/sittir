@@ -103,23 +103,11 @@ export namespace Element {
 		export interface Field<G extends GrammarContext> extends SubKindOf<V.Element.Struct<G>> {
 			// claimed by r
 			readonly $kind: 'element.struct.field';
-			readonly attributeItems?: G['attribute'][];
-			readonly field?: V.Identifier.Field<G> | V.Literal.Number.Integer<G>;
+			readonly attributes?: G['attribute'][];
+			readonly field: G['identifier'] | V.Literal.Number.Integer<G>;
 			readonly value?: G['slots']['element.struct.field']['value'];
 		}
-		export namespace Field {
-			export interface Shorthand<G extends GrammarContext> extends SubKindOf<V.Element.Struct.Field<G>> {
-				// claimed by r
-				readonly $kind: 'element.struct.field.shorthand';
-				readonly attributes?: G['attribute'][];
-				readonly name: G['identifier'];
-			}
-			export type Any<G extends GrammarContext> = V.Element.Struct.Field<G> | V.Element.Struct.Field.Shorthand<G>;
-		}
-		export type Any<G extends GrammarContext> =
-			| V.Element.Struct.Base<G>
-			| V.Element.Struct.Field<G>
-			| V.Element.Struct.Field.Shorthand<G>;
+		export type Any<G extends GrammarContext> = V.Element.Struct.Base<G> | V.Element.Struct.Field<G>;
 	}
 	export interface Template<G extends GrammarContext> extends SubKindOf<V.Element<G>> {
 		readonly $kind: 'element.template';
@@ -186,7 +174,6 @@ export namespace Element {
 		| V.Element.Splat.Parenthesized<G>
 		| V.Element.Struct.Base<G>
 		| V.Element.Struct.Field<G>
-		| V.Element.Struct.Field.Shorthand<G>
 		| V.Element.Template.Substitution<G>
 		| V.Element.Tuple.Member<G>
 		| V.Element.Tuple.Member.Optional<G>

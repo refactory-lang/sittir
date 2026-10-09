@@ -627,6 +627,12 @@ export namespace Declaration {
 		readonly $kind: 'declaration.variable';
 		readonly alternative?: V.Statement.Block<G>;
 		// r only
+		readonly binding?: G['slots']['declaration.variable']['binding'];
+		// t only
+		readonly declarators?: V.Declaration.Variable<G>[];
+		// t only
+		readonly definite?: boolean;
+		// t only
 		readonly mutable?: boolean;
 		// r only
 		readonly name?: G['slots']['declaration.variable']['name'];
@@ -634,11 +640,11 @@ export namespace Declaration {
 		readonly value?: G['slots']['declaration.variable']['value'];
 	}
 	export namespace Variable {
-		export interface Lexical<G extends GrammarContext> extends SubKindOf<V.Declaration.Variable<G>> {
+		export interface Constant<G extends GrammarContext> extends SubKindOf<V.Declaration.Variable<G>> {
 			// claimed by t
-			readonly $kind: 'declaration.variable.lexical';
+			readonly $kind: 'declaration.variable.constant';
+			readonly binding: 'const';
 			readonly declarators: V.Declaration.Variable<G>[];
-			readonly keyword: G['slots']['declaration.variable.lexical']['keyword'];
 		}
 		export interface Pattern<G extends GrammarContext> extends SubKindOf<V.Declaration.Variable<G>> {
 			// claimed by t
@@ -646,6 +652,22 @@ export namespace Declaration {
 			readonly name: G['slots']['declaration.variable.pattern']['name'];
 			readonly type?: G['slots']['declaration.variable.pattern']['type'];
 			readonly value?: G['slots']['declaration.variable.pattern']['value'];
+		}
+		export interface Reassignable<G extends GrammarContext> extends SubKindOf<V.Declaration.Variable<G>> {
+			// claimed by t
+			readonly $kind: 'declaration.variable.reassignable';
+			readonly binding?: 'let';
+			readonly declarators: V.Declaration.Variable<G>[];
+		}
+		export namespace Reassignable {
+			export interface FunctionScoped<G extends GrammarContext> extends SubKindOf<V.Declaration.Variable.Reassignable<G>> {
+				// claimed by t
+				readonly $kind: 'declaration.variable.reassignable.function_scoped';
+				readonly binding?: never;
+			}
+			export type Any<G extends GrammarContext> =
+				| V.Declaration.Variable.Reassignable<G>
+				| V.Declaration.Variable.Reassignable.FunctionScoped<G>;
 		}
 		export interface Static<G extends GrammarContext> extends SubKindOf<V.Declaration.Variable<G>> {
 			// claimed by r
@@ -657,17 +679,13 @@ export namespace Declaration {
 			readonly value?: G['slots']['declaration.variable.static']['value'];
 			readonly visibility?: V.Modifier.Visibility<G>;
 		}
-		export interface Var<G extends GrammarContext> extends SubKindOf<V.Declaration.Variable<G>> {
-			// claimed by t
-			readonly $kind: 'declaration.variable.var';
-			readonly declarators: V.Declaration.Variable<G>[];
-		}
 		export type Any<G extends GrammarContext> =
 			| V.Declaration.Variable<G>
-			| V.Declaration.Variable.Lexical<G>
+			| V.Declaration.Variable.Constant<G>
 			| V.Declaration.Variable.Pattern<G>
-			| V.Declaration.Variable.Static<G>
-			| V.Declaration.Variable.Var<G>;
+			| V.Declaration.Variable.Reassignable<G>
+			| V.Declaration.Variable.Reassignable.FunctionScoped<G>
+			| V.Declaration.Variable.Static<G>;
 	}
 	export type Any<G extends GrammarContext> =
 		| V.Declaration.Ambient<G>
@@ -719,8 +737,9 @@ export namespace Declaration {
 		| V.Declaration.TypeParameter.Lifetime<G>
 		| V.Declaration.Union<G>
 		| V.Declaration.Variable<G>
-		| V.Declaration.Variable.Lexical<G>
+		| V.Declaration.Variable.Constant<G>
 		| V.Declaration.Variable.Pattern<G>
-		| V.Declaration.Variable.Static<G>
-		| V.Declaration.Variable.Var<G>;
+		| V.Declaration.Variable.Reassignable<G>
+		| V.Declaration.Variable.Reassignable.FunctionScoped<G>
+		| V.Declaration.Variable.Static<G>;
 }

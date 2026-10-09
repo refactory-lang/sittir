@@ -318,12 +318,10 @@ export interface SlotTable {
 		readonly value: unknown;
 	};
 	readonly 'declaration.variable': {
+		readonly binding: unknown;
 		readonly name: unknown;
 		readonly type: unknown;
 		readonly value: unknown;
-	};
-	readonly 'declaration.variable.lexical': {
-		readonly keyword: unknown;
 	};
 	readonly 'declaration.variable.pattern': {
 		readonly name: unknown;
@@ -577,15 +575,50 @@ export interface SlotTable {
 	readonly 'literal.number.float': {
 		readonly exponent: unknown;
 		readonly fraction: unknown;
+		readonly imaginary: unknown;
+		readonly integer: unknown;
+		readonly marker: unknown;
+		readonly sign: unknown;
+	};
+	readonly 'literal.number.float.leading_point': {
+		readonly exponent: unknown;
+		readonly fraction: unknown;
+		readonly imaginary: unknown;
+		readonly integer: unknown;
+		readonly marker: unknown;
+		readonly sign: unknown;
+	};
+	readonly 'literal.number.float.scientific': {
+		readonly exponent: unknown;
+		readonly imaginary: unknown;
 		readonly integer: unknown;
 		readonly marker: unknown;
 		readonly sign: unknown;
 	};
 	readonly 'literal.number.integer': {
 		readonly content: unknown;
+		readonly suffix: unknown;
+	};
+	readonly 'literal.number.integer.big.binary': {
+		readonly content: unknown;
+	};
+	readonly 'literal.number.integer.big.hex': {
+		readonly content: unknown;
+	};
+	readonly 'literal.number.integer.big.octal': {
+		readonly content: unknown;
+	};
+	readonly 'literal.number.integer.binary': {
+		readonly content: unknown;
 		readonly prefix: unknown;
+		readonly suffix: unknown;
 	};
 	readonly 'literal.number.integer.hex': {
+		readonly content: unknown;
+		readonly prefix: unknown;
+		readonly suffix: unknown;
+	};
+	readonly 'literal.number.integer.octal': {
 		readonly content: unknown;
 		readonly prefix: unknown;
 		readonly suffix: unknown;
@@ -1235,12 +1268,12 @@ export interface BaseContext extends GrammarContext {
 				| BaseContext['expression']
 				| BaseContext['identifier']
 				| BaseContext['literal'];
-			readonly visibility: V.Modifier.Visibility<BaseContext> | string;
+			readonly visibility: V.Modifier.Visibility<BaseContext>;
 		};
 		readonly 'declaration.field.signature': {
 			readonly name: BaseContext['literal'] | V.Identifier.Property.Any<BaseContext> | string;
 			readonly type: BaseContext['identifier'] | BaseContext['type'];
-			readonly visibility: string;
+			readonly visibility: V.Modifier.Visibility<BaseContext>;
 		};
 		readonly 'declaration.function': {
 			readonly body: V.Declaration.TypeAlias<BaseContext> | BaseContext['statement'];
@@ -1308,7 +1341,7 @@ export interface BaseContext extends GrammarContext {
 				| V.Expression.Call.Macro<BaseContext>
 				| BaseContext['identifier']
 				| BaseContext['type'];
-			readonly visibility: V.Modifier.Visibility<BaseContext> | string;
+			readonly visibility: V.Modifier.Visibility<BaseContext>;
 		};
 		readonly 'declaration.method.signature': {
 			readonly accessor: string;
@@ -1326,13 +1359,13 @@ export interface BaseContext extends GrammarContext {
 				| V.Expression.Call.Macro<BaseContext>
 				| BaseContext['identifier']
 				| BaseContext['type'];
-			readonly visibility: V.Modifier.Visibility<BaseContext> | string;
+			readonly visibility: V.Modifier.Visibility<BaseContext>;
 		};
 		readonly 'declaration.method.signature.abstract': {
 			readonly accessorKind: string;
 			readonly name: BaseContext['literal'] | V.Identifier.Property.Any<BaseContext> | string;
 			readonly returnType: BaseContext['identifier'] | BaseContext['type'];
-			readonly visibility: string;
+			readonly visibility: V.Modifier.Visibility<BaseContext>;
 		};
 		readonly 'declaration.method.static': {
 			readonly parameters:
@@ -1375,7 +1408,7 @@ export interface BaseContext extends GrammarContext {
 				| V.Expression.Call.Macro<BaseContext>
 				| BaseContext['identifier']
 				| BaseContext['type'];
-			readonly visibility: string;
+			readonly visibility: V.Modifier.Visibility<BaseContext>;
 		};
 		readonly 'declaration.parameter.default': {
 			readonly default:
@@ -1397,7 +1430,7 @@ export interface BaseContext extends GrammarContext {
 				| V.Literal.Null.Undefined<BaseContext>
 				| BaseContext['pattern'];
 			readonly type: BaseContext['identifier'] | BaseContext['type'];
-			readonly visibility: string;
+			readonly visibility: V.Modifier.Visibility<BaseContext>;
 		};
 		readonly 'declaration.parameter.typed': {
 			readonly name: BaseContext['identifier'] | V.Pattern.Splat.Any<BaseContext>;
@@ -1441,6 +1474,7 @@ export interface BaseContext extends GrammarContext {
 			readonly value: BaseContext['identifier'] | BaseContext['literal'] | V.Statement.Block<BaseContext>;
 		};
 		readonly 'declaration.variable': {
+			readonly binding: string;
 			readonly name: unknown | BaseContext['expression'] | BaseContext['identifier'] | BaseContext['pattern'];
 			readonly type:
 				| V.Clause.Bounds.Removed<BaseContext>
@@ -1454,9 +1488,6 @@ export interface BaseContext extends GrammarContext {
 				| BaseContext['literal']
 				| BaseContext['pattern']
 				| BaseContext['statement'];
-		};
-		readonly 'declaration.variable.lexical': {
-			readonly keyword: string;
 		};
 		readonly 'declaration.variable.pattern': {
 			readonly name: BaseContext['identifier'] | BaseContext['pattern'];
@@ -2058,15 +2089,50 @@ export interface BaseContext extends GrammarContext {
 		readonly 'literal.number.float': {
 			readonly exponent: unknown;
 			readonly fraction: unknown;
+			readonly imaginary: unknown;
+			readonly integer: unknown;
+			readonly marker: string;
+			readonly sign: string;
+		};
+		readonly 'literal.number.float.leading_point': {
+			readonly exponent: unknown;
+			readonly fraction: unknown;
+			readonly imaginary: unknown;
+			readonly integer: unknown;
+			readonly marker: string;
+			readonly sign: string;
+		};
+		readonly 'literal.number.float.scientific': {
+			readonly exponent: unknown;
+			readonly imaginary: unknown;
 			readonly integer: unknown;
 			readonly marker: string;
 			readonly sign: string;
 		};
 		readonly 'literal.number.integer': {
 			readonly content: unknown;
+			readonly suffix: string;
+		};
+		readonly 'literal.number.integer.big.binary': {
+			readonly content: unknown;
+		};
+		readonly 'literal.number.integer.big.hex': {
+			readonly content: unknown;
+		};
+		readonly 'literal.number.integer.big.octal': {
+			readonly content: unknown;
+		};
+		readonly 'literal.number.integer.binary': {
+			readonly content: unknown;
 			readonly prefix: string;
+			readonly suffix: string;
 		};
 		readonly 'literal.number.integer.hex': {
+			readonly content: unknown;
+			readonly prefix: string;
+			readonly suffix: string;
+		};
+		readonly 'literal.number.integer.octal': {
 			readonly content: unknown;
 			readonly prefix: string;
 			readonly suffix: string;
