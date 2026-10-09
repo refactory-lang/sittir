@@ -36,7 +36,7 @@ The two sides already give different answers on the same plan:
 
 - **Built nodes** reach the evaluator through their accessors, as `is` does today. Nothing crosses.
   - To evaluate natively instead, a built node would have to be encoded as a transport and sent across on every call.
-  - `is` over 2,000 built rust `binary_expression`s costs 564 ns per node in JavaScript.
+  - `is` over 2,000 built rust `binary_expression`s costs 606 ns per node in JavaScript.
   - A native call has a fixed cost of 1.0–1.3 µs (query design §5.1) before any encoding.
 - **Parsed nodes, one at a time** (`is`, a `where` after an opaque step) also go through their accessors, without crossing.
 - **The descendant walk keeps its pushdown, without evaluating.**
@@ -122,12 +122,13 @@ The full table, with every python `json/decoder.py` row, typescript `engine.ts` 
 - **Per node already in hand** (the shape of an `is` call), the same plans cost:
   - one native `planHolds` call: 1.3–19 µs, because it parses the plan and compiles its regexes on each call;
   - JavaScript `holds`: 0.4–1.2 µs, through a linear accessor scan.
-- **`is` itself** (coordinate's first run, at high load):
-  - 35–80 ns per admitted node on an exact path;
-  - 0.5–3.5 µs on a refined one (operator pins, placed and hidden captures);
-  - 564 ns per built node.
+- **`is` itself** (coordinate's `is-cost`, second run, started at a 1-minute load of 6.3; within about 10% of its first run):
+  - 36–78 ns per admitted node on an exact path;
+  - 0.52–3.36 µs on a refined one (self text, operator pins, placed and hidden captures, a pinned name);
+  - 38–200 ns per node over all nodes;
+  - 606 ns per built node.
 
-  Stamping the accessor removes the refined rows' scan. Coordinate is rerunning these at normal load.
+  The refined rows pay for trying a kind's entries in order, each scanning the slot-table row for its accessor. Stamping the accessor removes that scan.
 
 ## 4. What changes in meaning
 
