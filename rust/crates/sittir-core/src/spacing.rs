@@ -417,10 +417,12 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     }
 
     /// Whether a collision of two words may be spelled with a space here: the
-    /// leaf about to be written takes one before it, and a template join made
+    /// leaf about to be written takes one before it, the leaf just written
+    /// takes one after it, and a template join made
     /// at this gap did not ask for a tight one.
     fn word_space_allowed(&self) -> bool {
         self.leaf_leading.is_none_or(|leading| leading.has(LayoutKinds::SPACE))
+            && LayoutKinds(self.trailing_accepts).has(LayoutKinds::SPACE)
             && self.flushed_template.is_none_or(|set| set.has(LayoutKinds::SPACE))
     }
 
@@ -450,10 +452,19 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         // is untouched (`literal_whitespace_is_never_coalesced`) because
         // this only ever drops a *seam's own* payload, never text.
         let redundant = self.last.is_none() || (rank == 1 && self.last == Some('\n'));
-        let refused = !token && !root && line_end.is_none() && !LayoutKinds(self.trailing_accepts).has(self.seam_pick);
-        let payload = self.take_payload();
-        if !token && !root && (redundant || refused) {
+        let mut payload = self.take_payload();
+        if !token && !root && redundant {
             return Ok(());
+        }
+        if !token && !root && line_end.is_none() {
+            let kept = payload.set.and(LayoutKinds(self.trailing_accepts));
+            if kept.is_empty() {
+                return Ok(());
+            }
+            if !kept.has(payload.pick) {
+                payload.pick = kept.narrowest();
+            }
+            payload.set = kept;
         }
         if template {
             self.flushed_template = Some(payload.set);
@@ -480,14 +491,14 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
 
     /// The text a payload writes: the grammar's spelling of its picked kind,
     /// or the source text a line continuation carries.
-    fn payload_text(&self, payload: &Payload) -> String {
+    fn payload_text<'p>(&self, payload: &'p Payload) -> std::borrow::Cow<'p, str> {
         if payload.pick == LayoutKinds::LINE_CONTINUATION {
-            return payload.cont.clone();
+            return std::borrow::Cow::Borrowed(&payload.cont);
         }
-        match self.table {
-            Some(table) => table.text_of_gap(payload.pick).to_string(),
-            None => payload.pick.default_text().to_string(),
-        }
+        std::borrow::Cow::Borrowed(match self.table {
+            Some(table) => table.text_of_gap(payload.pick),
+            None => payload.pick.default_text(),
+        })
     }
 
     fn held_payload(&self) -> Payload {
@@ -700,7 +711,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     fn leaf_edges(&mut self, leading: u8, trailing: u8) {
         let leading = LayoutKinds(leading);
         self.leaf_leading = Some(leading);
-        if !self.seam_is_token && !self.seam_is_root && !self.seam_is_flank && self.seam.is_some() {
+        if !self.seam_is_token && !self.seam_is_root && self.seam.is_some() {
             let kept = self.seam_set.and(leading);
             if kept.is_empty() {
                 self.clear_payload();
@@ -774,7 +785,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     fn trivia_seam(&mut self, gap: LayoutKinds, text: Option<&str>) {
         let continues = self.seam.is_some() && self.seam_strength == SEAM_TRIVIA && gap == LayoutKinds::LINE_CONTINUATION;
         if continues {
-            let held = self.payload_text(&self.held_payload());
+            let held = self.payload_text(&self.held_payload()).into_owned();
             let payload = Payload { set: gap, pick: gap, cont: held + text.unwrap_or_default() };
             self.set_payload(payload);
         } else {
@@ -1388,6 +1399,47 @@ mod sink_tests {
                 w.text("}").unwrap();
             }),
             "{\n  a\n}"
+        );
+    }
+
+    #[test]
+    fn a_leaf_trailing_edge_ends_with_the_next_text() {
+        use crate::layout_kinds::LayoutKinds as K;
+        assert_eq!(
+            run(|w| {
+                w.text("let s = ").unwrap();
+                w.leaf_edges(K::TIGHT.0, K::TIGHT.0);
+                w.text("a").unwrap();
+                w.text(";").unwrap();
+                w.seam(K::NEWLINE);
+                w.seam(K::SEPARATING);
+                w.text("b").unwrap();
+            }),
+            "let s = a;\nb"
+        );
+    }
+
+    #[test]
+    fn a_trailing_edge_narrows_a_held_set_to_what_it_takes() {
+        use crate::layout_kinds::LayoutKinds as K;
+        assert_eq!(
+            run(|w| {
+                w.text("a").unwrap();
+                w.leaf_edges(K::ALL.0, K::SPACE.0 | K::TIGHT.0);
+                w.text("b").unwrap();
+                w.seam(K::SEPARATING);
+                w.text("c").unwrap();
+            }),
+            "a b c"
+        );
+        assert_eq!(
+            run(|w| {
+                w.leaf_edges(K::TIGHT.0, K::TIGHT.0);
+                w.text("b").unwrap();
+                w.seam(K::SEPARATING);
+                w.text("c").unwrap();
+            }),
+            "bc"
         );
     }
 

@@ -77,3 +77,15 @@ describe('a word-collision space passes the leaf edge like any held seam', () =>
 		expect(rendered).not.toContain('\\x43 bar');
 	}, 120_000);
 });
+
+describe('a leaf trailing edge ends with the text after it', () => {
+	it('keeps the statement break after a string that absorbs line breaks', async () => {
+		const { rendered } = await probe('rust', 'fn f() {\n    let s = "a";\n    let t = 1;\n}\n', 'function_item');
+		expect(rendered).toContain('let s = "a";\n    let t = 1;');
+	}, 120_000);
+
+	it('keeps the operator spacing around a string', async () => {
+		const { rendered } = await probe('rust', 'fn f() { "a" + b; }', 'function_item');
+		expect(rendered).toContain('"a" + b');
+	}, 120_000);
+});
