@@ -478,6 +478,9 @@ export interface IsGuards {
 	formalParametersElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FormalParametersElements };
+	enumBodyElementName<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EnumBodyElementName };
 	enumBodyElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EnumBodyElements };
@@ -499,6 +502,120 @@ export interface IsGuards {
 	objectTypeContent<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ObjectTypeContent };
+	exportStatementNamespaceExport<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementNamespaceExport };
+	exportStatementTypeExport<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementTypeExport };
+	exportStatementEqualsExport<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementEqualsExport };
+	commentLine<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CommentLine };
+	commentBlock<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CommentBlock };
+	numberHex<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NumberHex };
+	numberFloatPoint<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NumberFloatPoint };
+	numberFloatLeadingPoint<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NumberFloatLeadingPoint };
+	numberFloatScientific<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NumberFloatScientific };
+	numberBinary<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NumberBinary };
+	numberOctal<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NumberOctal };
+	numberBigintHex<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NumberBigintHex };
+	numberBigintBinary<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NumberBigintBinary };
+	numberBigintOctal<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NumberBigintOctal };
+	numberBigintDecimal<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NumberBigintDecimal };
+	classBodyMemberMethod<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ClassBodyMemberMethod };
+	classBodyMemberMethodSig<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ClassBodyMemberMethodSig };
+	classBodyMemberDeclaration<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ClassBodyMemberDeclaration };
+	indexSignatureColon<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IndexSignatureColon };
+	indexSignatureMappedTypeClause<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IndexSignatureMappedTypeClause };
+	importSpecifierName<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImportSpecifierName };
+	importSpecifierAs<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImportSpecifierAs };
+	parenthesizedExpressionTyped<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ParenthesizedExpressionTyped };
+	parenthesizedExpressionSequence<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ParenthesizedExpressionSequence };
+	callExpressionCall<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CallExpressionCall };
+	callExpressionTemplateCall<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CallExpressionTemplateCall };
+	callExpressionMember<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CallExpressionMember };
+	stringDouble<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringDouble };
+	stringSingle<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringSingle };
+	updateExpressionPostfix<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UpdateExpressionPostfix };
+	updateExpressionPrefix<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UpdateExpressionPrefix };
+	exportStatementDefaultFrom<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementDefaultFrom };
+	exportStatementDefaultDeclaration<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementDefaultDeclaration };
+	variableDeclaratorPlain<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.VariableDeclaratorPlain };
+	variableDeclaratorDefinite<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.VariableDeclaratorDefinite };
+	forHeaderLhs<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForHeaderLhs };
+	forHeaderVarKind<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForHeaderVarKind };
+	forHeaderLetConstKind<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForHeaderLetConstKind };
 	statementIdentifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StatementIdentifier };
@@ -1491,6 +1608,7 @@ export const is = Object.freeze({
 	exportSpecifiers: _g(TSKindId.ExportSpecifiers),
 	importSpecifiers: _g(TSKindId.ImportSpecifiers),
 	formalParametersElements: _g(TSKindId.FormalParametersElements),
+	enumBodyElementName: _g(TSKindId.EnumBodyElementName),
 	enumBodyElements: _g(TSKindId.EnumBodyElements),
 	types: _g(TSKindId.Types),
 	typeParametersElements: _g(TSKindId.TypeParametersElements),
@@ -1498,6 +1616,44 @@ export const is = Object.freeze({
 	ambientDeclarationGlobal: _g(TSKindId.AmbientDeclarationGlobal),
 	ambientDeclarationModule: _g(TSKindId.AmbientDeclarationModule),
 	objectTypeContent: _g(TSKindId.ObjectTypeContent),
+	exportStatementNamespaceExport: _g(TSKindId.ExportStatementNamespaceExport),
+	exportStatementTypeExport: _g(TSKindId.ExportStatementTypeExport),
+	exportStatementEqualsExport: _g(TSKindId.ExportStatementEqualsExport),
+	commentLine: _g(TSKindId.CommentLine),
+	commentBlock: _g(TSKindId.CommentBlock),
+	numberHex: _g(TSKindId.NumberHex),
+	numberFloatPoint: _g(TSKindId.NumberFloatPoint),
+	numberFloatLeadingPoint: _g(TSKindId.NumberFloatLeadingPoint),
+	numberFloatScientific: _g(TSKindId.NumberFloatScientific),
+	numberBinary: _g(TSKindId.NumberBinary),
+	numberOctal: _g(TSKindId.NumberOctal),
+	numberBigintHex: _g(TSKindId.NumberBigintHex),
+	numberBigintBinary: _g(TSKindId.NumberBigintBinary),
+	numberBigintOctal: _g(TSKindId.NumberBigintOctal),
+	numberBigintDecimal: _g(TSKindId.NumberBigintDecimal),
+	classBodyMemberMethod: _g(TSKindId.ClassBodyMemberMethod),
+	classBodyMemberMethodSig: _g(TSKindId.ClassBodyMemberMethodSig),
+	classBodyMemberDeclaration: _g(TSKindId.ClassBodyMemberDeclaration),
+	indexSignatureColon: _g(TSKindId.IndexSignatureColon),
+	indexSignatureMappedTypeClause: _g(TSKindId.IndexSignatureMappedTypeClause),
+	importSpecifierName: _g(TSKindId.ImportSpecifierName),
+	importSpecifierAs: _g(TSKindId.ImportSpecifierAs),
+	parenthesizedExpressionTyped: _g(TSKindId.ParenthesizedExpressionTyped),
+	parenthesizedExpressionSequence: _g(TSKindId.ParenthesizedExpressionSequence),
+	callExpressionCall: _g(TSKindId.CallExpressionCall),
+	callExpressionTemplateCall: _g(TSKindId.CallExpressionTemplateCall),
+	callExpressionMember: _g(TSKindId.CallExpressionMember),
+	stringDouble: _g(TSKindId.StringDouble),
+	stringSingle: _g(TSKindId.StringSingle),
+	updateExpressionPostfix: _g(TSKindId.UpdateExpressionPostfix),
+	updateExpressionPrefix: _g(TSKindId.UpdateExpressionPrefix),
+	exportStatementDefaultFrom: _g(TSKindId.ExportStatementDefaultFrom),
+	exportStatementDefaultDeclaration: _g(TSKindId.ExportStatementDefaultDeclaration),
+	variableDeclaratorPlain: _g(TSKindId.VariableDeclaratorPlain),
+	variableDeclaratorDefinite: _g(TSKindId.VariableDeclaratorDefinite),
+	forHeaderLhs: _g(TSKindId.ForHeaderLhs),
+	forHeaderVarKind: _g(TSKindId.ForHeaderVarKind),
+	forHeaderLetConstKind: _g(TSKindId.ForHeaderLetConstKind),
 	statementIdentifier: _g(TSKindId.StatementIdentifier),
 	shorthandPropertyIdentifier: _g(TSKindId.ShorthandPropertyIdentifier),
 	shorthandPropertyIdentifierPattern: _g(TSKindId.ShorthandPropertyIdentifierPattern),

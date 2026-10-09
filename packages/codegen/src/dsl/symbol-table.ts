@@ -643,6 +643,16 @@ export function seatedOf(annotations: RuleAnnotations | undefined, entry: KindEn
 	return annotations?.hoisted === true && entry?.supertype !== true;
 }
 
+export function supertypeArmsOf(supertypes: Iterable<string>, rules: Readonly<Record<string, AnyRule | undefined>>): ReadonlySet<string> {
+	const arms = new Set<string>();
+	for (const supertype of supertypes) {
+		const rule = rules[supertype];
+		const members = rule?.type === SUPERTYPE ? rule.subtypes : rule?.type === CHOICE ? rule.members : [];
+		for (const member of members) if (member.type === SYMBOL) arms.add(member.name);
+	}
+	return arms;
+}
+
 export function isSurfaceHiddenKind(kind: string, entries: readonly KindEntryLike[]): boolean {
 	return surfaceHiddenOf(findOwnKindEntry(entries, kind), kind);
 }

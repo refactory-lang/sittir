@@ -1472,3 +1472,56 @@ describe('negation', () => {
 		expect(ir.negation).toBe(TSKindId.Negation);
 	});
 });
+
+describe('inline_flags_group_enable', () => {
+	it('factory produces correct type', () => {
+		const node = ir.inlineFlagsGroupEnable({
+			enabled: { $type: TSKindId.Flags, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.InlineFlagsGroupEnable);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.inlineFlagsGroupEnable({
+			enabled: { $type: TSKindId.Flags, $text: 'test', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('inline_flags_group_toggle', () => {
+	it('factory produces correct type', () => {
+		const node = ir.inlineFlagsGroupToggle({
+			enabled: { $type: TSKindId.Flags, $text: 'test', $source: 2, $named: true } as any,
+			disabled: { $type: TSKindId.Flags, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.InlineFlagsGroupToggle);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.inlineFlagsGroupToggle({
+			enabled: { $type: TSKindId.Flags, $text: 'test', $source: 2, $named: true } as any,
+			disabled: { $type: TSKindId.Flags, $text: 'test', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('inline_flags_group_disable', () => {
+	it('factory produces correct type', () => {
+		const node = ir.inlineFlagsGroupDisable({
+			disabled: { $type: TSKindId.Flags, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.InlineFlagsGroupDisable);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.inlineFlagsGroupDisable({
+			disabled: { $type: TSKindId.Flags, $text: 'test', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});

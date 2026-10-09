@@ -322,3 +322,178 @@ export const fieldInitializerListElements = bundle(
 export const tuplePatternElements = bundle(F.buildTuplePatternElements, C.coerceToTuplePatternElements);
 export const patterns = bundle(F.buildPatterns, C.coerceToPatterns);
 export const structPatternElements = bundle(F.buildStructPatternElements, C.coerceToStructPatternElements);
+export const integerLiteralDecimal = bundle(F.buildIntegerLiteralDecimal, C.coerceToIntegerLiteralDecimal, {
+	key: 'integerLiteralDecimal',
+	max: 1
+});
+export const integerLiteralHex = bundle(F.buildIntegerLiteralHex, C.coerceToIntegerLiteralHex, {
+	key: 'integerLiteralHex',
+	max: 1
+});
+export const integerLiteralBinary = bundle(F.buildIntegerLiteralBinary, C.coerceToIntegerLiteralBinary, {
+	key: 'integerLiteralBinary',
+	max: 1
+});
+export const integerLiteralOctal = bundle(F.buildIntegerLiteralOctal, C.coerceToIntegerLiteralOctal, {
+	key: 'integerLiteralOctal',
+	max: 1
+});
+export const charLiteralPlain = bundle(F.buildCharLiteralPlain, C.coerceToCharLiteralPlain, {
+	key: 'charLiteralPlain',
+	max: 1
+});
+export const charLiteralEscapedSimple = bundle(F.buildCharLiteralEscapedSimple, C.coerceToCharLiteralEscapedSimple, {
+	key: 'charLiteralEscapedSimple',
+	max: 1
+});
+export const charLiteralEscapedUnicodeFixed = bundle(
+	F.buildCharLiteralEscapedUnicodeFixed,
+	C.coerceToCharLiteralEscapedUnicodeFixed,
+	{ key: 'charLiteralEscapedUnicodeFixed', max: 1 }
+);
+export const charLiteralEscapedUnicodeBraced = bundle(
+	F.buildCharLiteralEscapedUnicodeBraced,
+	C.coerceToCharLiteralEscapedUnicodeBraced,
+	{ key: 'charLiteralEscapedUnicodeBraced', max: 1 }
+);
+export const charLiteralEscapedHex = bundle(F.buildCharLiteralEscapedHex, C.coerceToCharLiteralEscapedHex, {
+	key: 'charLiteralEscapedHex',
+	max: 1
+});
+export const arrayExpressionSemi = bundle(F.buildArrayExpressionSemi, C.coerceToArrayExpressionSemi, {
+	key: 'arrayExpressionSemi',
+	max: 1
+});
+export const arrayExpressionList = bundle(F.buildArrayExpressionList, C.coerceToArrayExpressionList, {
+	key: 'arrayExpressionList',
+	max: 1
+});
+export const closureExpressionBlock = bundle(F.buildClosureExpressionBlock, C.coerceToClosureExpressionBlock, {
+	key: 'closureExpressionBlock',
+	max: 1
+});
+export const closureExpressionExpr = bundle(F.buildClosureExpressionExpr, C.coerceToClosureExpressionExpr, {
+	key: 'closureExpressionExpr',
+	max: 1
+});
+export const referenceExpressionRawConst = bundle(
+	F.buildReferenceExpressionRawConst,
+	C.coerceToReferenceExpressionRawConst,
+	{ key: 'referenceExpressionRawConst', max: 1 }
+);
+export const referenceExpressionRawMut = bundle(F.buildReferenceExpressionRawMut, C.coerceToReferenceExpressionRawMut, {
+	key: 'referenceExpressionRawMut',
+	max: 1
+});
+export const referenceExpressionMut = bundle(F.buildReferenceExpressionMut, C.coerceToReferenceExpressionMut, {
+	key: 'referenceExpressionMut',
+	max: 1
+});
+export const referenceExpressionBare = bundle(F.buildReferenceExpressionBare, C.coerceToReferenceExpressionBare, {
+	key: 'referenceExpressionBare',
+	max: 1
+});
+export const implItemBody = bundle(F.buildImplItemBody, C.coerceToImplItemBody, { key: 'implItemBody', max: 1 });
+export const implItemSemi = bundle(F.buildImplItemSemi, C.coerceToImplItemSemi, { key: 'implItemSemi', max: 1 });
+export const modItemExternal = bundle(F.buildModItemExternal, C.coerceToModItemExternal, {
+	key: 'modItemExternal',
+	max: 1
+});
+export const modItemInline = bundle(F.buildModItemInline, C.coerceToModItemInline, { key: 'modItemInline', max: 1 });
+export const orPatternBinary = bundle(F.buildOrPatternBinary, C.coerceToOrPatternBinary, {
+	key: 'orPatternBinary',
+	max: 1
+});
+export const orPatternPrefix = bundle(F.buildOrPatternPrefix, C.coerceToOrPatternPrefix, {
+	key: 'orPatternPrefix',
+	max: 1
+});
+export const pointerTypeConst = bundle(F.buildPointerTypeConst, C.coerceToPointerTypeConst, {
+	key: 'pointerTypeConst',
+	max: 1
+});
+export const pointerTypeMut = bundle(F.buildPointerTypeMut, C.coerceToPointerTypeMut, {
+	key: 'pointerTypeMut',
+	max: 1
+});
+export const rangeExpressionBinary = bundle(F.buildRangeExpressionBinary, C.coerceToRangeExpressionBinary, {
+	key: 'rangeExpressionBinary',
+	max: 1
+});
+export const rangeExpressionPostfix = bundle(F.buildRangeExpressionPostfix, C.coerceToRangeExpressionPostfix, {
+	key: 'rangeExpressionPostfix',
+	max: 1
+});
+export const rangeExpressionPrefix = bundle(F.buildRangeExpressionPrefix, C.coerceToRangeExpressionPrefix, {
+	key: 'rangeExpressionPrefix',
+	max: 1
+});
+export const rangeExpressionBare = bundle(F.buildRangeExpressionBare, C.coerceToRangeExpressionBare, {
+	key: 'rangeExpressionBare',
+	max: 1
+});
+export const foreignModItemSemi = bundle(F.buildForeignModItemSemi, C.coerceToForeignModItemSemi, {
+	key: 'foreignModItemSemi',
+	max: 1
+});
+export const foreignModItemBody = bundle(F.buildForeignModItemBody, C.coerceToForeignModItemBody, {
+	key: 'foreignModItemBody',
+	max: 1
+});
+export const matchArmWithComma = bundle(F.buildMatchArmWithComma, C.coerceToMatchArmWithComma, {
+	key: 'matchArmWithComma',
+	max: 1
+});
+export const matchArmBlockEnding = bundle(F.buildMatchArmBlockEnding, C.coerceToMatchArmBlockEnding, {
+	key: 'matchArmBlockEnding',
+	max: 1
+});
+export const tokenTreePatternParen = bundle(F.buildTokenTreePatternParen, C.coerceToTokenTreePatternParen);
+export const tokenTreePatternBracket = bundle(F.buildTokenTreePatternBracket, C.coerceToTokenTreePatternBracket);
+export const tokenTreePatternBrace = bundle(F.buildTokenTreePatternBrace, C.coerceToTokenTreePatternBrace);
+export const tokenTreeParen = bundle(F.buildTokenTreeParen, C.coerceToTokenTreeParen);
+export const tokenTreeBracket = bundle(F.buildTokenTreeBracket, C.coerceToTokenTreeBracket);
+export const tokenTreeBrace = bundle(F.buildTokenTreeBrace, C.coerceToTokenTreeBrace);
+export const delimTokenTreeParen = bundle(F.buildDelimTokenTreeParen, C.coerceToDelimTokenTreeParen);
+export const delimTokenTreeBracket = bundle(F.buildDelimTokenTreeBracket, C.coerceToDelimTokenTreeBracket);
+export const delimTokenTreeBrace = bundle(F.buildDelimTokenTreeBrace, C.coerceToDelimTokenTreeBrace);
+export const fieldPatternShorthand = bundle(F.buildFieldPatternShorthand, C.coerceToFieldPatternShorthand, {
+	key: 'fieldPatternShorthand',
+	max: 1
+});
+export const fieldPatternNamed = bundle(F.buildFieldPatternNamed, C.coerceToFieldPatternNamed, {
+	key: 'fieldPatternNamed',
+	max: 1
+});
+export const macroDefinitionParen = bundle(F.buildMacroDefinitionParen, C.coerceToMacroDefinitionParen, {
+	key: 'macroDefinitionParen',
+	max: 1
+});
+export const macroDefinitionBracket = bundle(F.buildMacroDefinitionBracket, C.coerceToMacroDefinitionBracket, {
+	key: 'macroDefinitionBracket',
+	max: 1
+});
+export const macroDefinitionBrace = bundle(F.buildMacroDefinitionBrace, C.coerceToMacroDefinitionBrace, {
+	key: 'macroDefinitionBrace',
+	max: 1
+});
+export const rangePatternPrefix = bundle(F.buildRangePatternPrefix, C.coerceToRangePatternPrefix, {
+	key: 'rangePatternPrefix',
+	max: 1
+});
+export const rangePatternWithLeft = bundle(F.buildRangePatternWithLeft, C.coerceToRangePatternWithLeft, {
+	key: 'rangePatternWithLeft',
+	max: 1
+});
+export const structItemBrace = bundle(F.buildStructItemBrace, C.coerceToStructItemBrace, {
+	key: 'structItemBrace',
+	max: 1
+});
+export const structItemTuple = bundle(F.buildStructItemTuple, C.coerceToStructItemTuple, {
+	key: 'structItemTuple',
+	max: 1
+});
+export const structItemUnit = bundle(F.buildStructItemUnit, C.coerceToStructItemUnit, {
+	key: 'structItemUnit',
+	max: 1
+});

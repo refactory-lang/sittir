@@ -176,7 +176,7 @@ function emitBranchTest(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	writesTextOf: (kind: string) => boolean
 ): void {
-	if (!(node instanceof AbstractAssembledCompound) || node instanceof AssembledList || node.seated) return;
+	if (!(node instanceof AbstractAssembledCompound) || node instanceof AssembledList || !node.ownSurface) return;
 	if (testConstructsWithChildren(node, nodeMap)) {
 		emitChildrenTest(lines, node, kind, key, kindEntries, nodeMap, writesTextOf(kind));
 		return;

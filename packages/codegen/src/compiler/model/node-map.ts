@@ -987,10 +987,16 @@ export type ModelType =
 	| 'pattern'
 	| 'list';
 
+export interface KindFacts {
+	readonly kindEntries?: readonly GeneratedKindEntry[];
+	readonly supertypeArms?: ReadonlySet<string>;
+}
+
 export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	readonly kind: string;
 	readonly kindEntry?: GeneratedKindEntry;
 	readonly seated: boolean;
+	readonly ownSurface: boolean;
 	readonly display: DisplayStamp;
 	readonly wordMatcher: RegExp | undefined;
 	typeName: string;
@@ -1061,11 +1067,10 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	constructor(
 		kind: string,
 		rule: R,
-		opts?: {
+		opts?: KindFacts & {
 			factoryName?: string;
 			irKey?: string;
 			hidden?: boolean;
-			kindEntries?: readonly GeneratedKindEntry[];
 			wordMatcher?: RegExp;
 			rowless?: RowlessDisplaySource;
 		}
@@ -1080,6 +1085,7 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		this.irKey = opts?.irKey ?? derived.irKey;
 		this.kindEntry = findOwnKindEntry(opts?.kindEntries ?? [], kind);
 		this.seated = seatedOf(rule.annotations, this.kindEntry);
+		this.ownSurface = !this.seated || opts?.supertypeArms?.has(kind) === true;
 		this.display = stampDisplay(kind, this.kindEntry, opts?.kindEntries ?? [], opts?.rowless ?? 'phantom');
 	}
 
@@ -1564,12 +1570,11 @@ export function isHiddenPresenceMarker(node: AssembledNode): node is AssembledKe
 	return node instanceof AssembledKeyword && node.surfaceHidden;
 }
 
-export interface CompoundOpts {
+export interface CompoundOpts extends KindFacts {
 	factoryName?: string;
 	irKey?: string;
 	hidden?: boolean;
 	variantChildKinds?: readonly VariantChild[];
-	kindEntries?: readonly GeneratedKindEntry[];
 	parseKindCollisionContext?: ParseKindCollisionContext;
 	slots?: readonly AssembledNonterminal[];
 	visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
@@ -1995,10 +2000,9 @@ export class AssembledPattern extends AssembledLeaf<RenderRule> {
 	constructor(
 		kind: string,
 		rule: RenderRule,
-		opts?: {
+		opts?: KindFacts & {
 			factoryName?: string;
 			irKey?: string;
-			kindEntries?: readonly GeneratedKindEntry[];
 			wordMatcher?: RegExp;
 			textPattern?: string;
 		}
@@ -2031,11 +2035,10 @@ export class AssembledKeyword extends AssembledLeaf<StringRule> {
 	constructor(
 		kind: string,
 		rule: StringRule,
-		opts?: {
+		opts?: KindFacts & {
 			factoryName?: string;
 			irKey?: string;
 			hidden?: boolean;
-			kindEntries?: readonly GeneratedKindEntry[];
 		}
 	) {
 		super(kind, rule, opts);
@@ -2135,10 +2138,9 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
 	constructor(
 		kind: string,
 		rule: ChoiceRule,
-		opts?: {
+		opts?: KindFacts & {
 			factoryName?: string;
 			irKey?: string;
-			kindEntries?: readonly GeneratedKindEntry[];
 		}
 	) {
 		super(kind, rule, opts);
@@ -2304,11 +2306,10 @@ export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, '
 		kind: string,
 		rule: SeparatedListElementRule,
 		ctx: DeriveCtx | undefined,
-		opts: {
+		opts: KindFacts & {
 			separatorRule: RenderRule | undefined;
 			simplifiedRule: SimplifiedRule;
 			renderRule: RenderRule;
-			kindEntries?: readonly GeneratedKindEntry[];
 			parseKindCollisionContext?: ParseKindCollisionContext;
 		}
 	) {

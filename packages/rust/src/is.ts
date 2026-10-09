@@ -442,6 +442,174 @@ export interface IsGuards {
 	structPatternElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StructPatternElements };
+	integerLiteralDecimal<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerLiteralDecimal };
+	integerLiteralHex<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerLiteralHex };
+	integerLiteralBinary<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerLiteralBinary };
+	integerLiteralOctal<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerLiteralOctal };
+	charLiteralPlain<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharLiteralPlain };
+	charLiteralEscapedSimple<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharLiteralEscapedSimple };
+	charLiteralEscapedUnicodeFixed<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharLiteralEscapedUnicodeFixed };
+	charLiteralEscapedUnicodeBraced<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharLiteralEscapedUnicodeBraced };
+	charLiteralEscapedHex<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharLiteralEscapedHex };
+	escapeSequenceSimple<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceSimple };
+	escapeSequenceUnicodeFixed<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceUnicodeFixed };
+	escapeSequenceUnicodeBraced<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceUnicodeBraced };
+	escapeSequenceHex<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceHex };
+	arrayExpressionSemi<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ArrayExpressionSemi };
+	arrayExpressionList<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ArrayExpressionList };
+	closureExpressionBlock<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ClosureExpressionBlock };
+	closureExpressionExpr<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ClosureExpressionExpr };
+	referenceExpressionRawConst<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ReferenceExpressionRawConst };
+	referenceExpressionRawMut<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ReferenceExpressionRawMut };
+	referenceExpressionMut<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ReferenceExpressionMut };
+	referenceExpressionBare<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ReferenceExpressionBare };
+	implItemBody<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImplItemBody };
+	implItemSemi<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImplItemSemi };
+	modItemExternal<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ModItemExternal };
+	modItemInline<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ModItemInline };
+	orPatternBinary<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.OrPatternBinary };
+	orPatternPrefix<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.OrPatternPrefix };
+	pointerTypeConst<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PointerTypeConst };
+	pointerTypeMut<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PointerTypeMut };
+	rangeExpressionBinary<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangeExpressionBinary };
+	rangeExpressionPostfix<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangeExpressionPostfix };
+	rangeExpressionPrefix<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangeExpressionPrefix };
+	rangeExpressionBare<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangeExpressionBare };
+	foreignModItemSemi<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForeignModItemSemi };
+	foreignModItemBody<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForeignModItemBody };
+	matchArmWithComma<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchArmWithComma };
+	matchArmBlockEnding<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchArmBlockEnding };
+	tokenTreePatternParen<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TokenTreePatternParen };
+	tokenTreePatternBracket<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TokenTreePatternBracket };
+	tokenTreePatternBrace<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TokenTreePatternBrace };
+	tokenTreeParen<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TokenTreeParen };
+	tokenTreeBracket<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TokenTreeBracket };
+	tokenTreeBrace<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TokenTreeBrace };
+	delimTokenTreeParen<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DelimTokenTreeParen };
+	delimTokenTreeBracket<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DelimTokenTreeBracket };
+	delimTokenTreeBrace<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DelimTokenTreeBrace };
+	fieldPatternShorthand<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FieldPatternShorthand };
+	fieldPatternNamed<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FieldPatternNamed };
+	macroDefinitionParen<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MacroDefinitionParen };
+	macroDefinitionBracket<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MacroDefinitionBracket };
+	macroDefinitionBrace<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MacroDefinitionBrace };
+	rangePatternPrefix<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangePatternPrefix };
+	rangePatternWithLeft<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangePatternWithLeft };
+	structItemBrace<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StructItemBrace };
+	structItemTuple<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StructItemTuple };
+	structItemUnit<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StructItemUnit };
 	typeIdentifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeIdentifier };
@@ -1462,6 +1630,62 @@ export const is = Object.freeze({
 	tuplePatternElements: _g(TSKindId.TuplePatternElements),
 	patterns: _g(TSKindId.Patterns),
 	structPatternElements: _g(TSKindId.StructPatternElements),
+	integerLiteralDecimal: _g(TSKindId.IntegerLiteralDecimal),
+	integerLiteralHex: _g(TSKindId.IntegerLiteralHex),
+	integerLiteralBinary: _g(TSKindId.IntegerLiteralBinary),
+	integerLiteralOctal: _g(TSKindId.IntegerLiteralOctal),
+	charLiteralPlain: _g(TSKindId.CharLiteralPlain),
+	charLiteralEscapedSimple: _g(TSKindId.CharLiteralEscapedSimple),
+	charLiteralEscapedUnicodeFixed: _g(TSKindId.CharLiteralEscapedUnicodeFixed),
+	charLiteralEscapedUnicodeBraced: _g(TSKindId.CharLiteralEscapedUnicodeBraced),
+	charLiteralEscapedHex: _g(TSKindId.CharLiteralEscapedHex),
+	escapeSequenceSimple: _g(TSKindId.EscapeSequenceSimple),
+	escapeSequenceUnicodeFixed: _g(TSKindId.EscapeSequenceUnicodeFixed),
+	escapeSequenceUnicodeBraced: _g(TSKindId.EscapeSequenceUnicodeBraced),
+	escapeSequenceHex: _g(TSKindId.EscapeSequenceHex),
+	arrayExpressionSemi: _g(TSKindId.ArrayExpressionSemi),
+	arrayExpressionList: _g(TSKindId.ArrayExpressionList),
+	closureExpressionBlock: _g(TSKindId.ClosureExpressionBlock),
+	closureExpressionExpr: _g(TSKindId.ClosureExpressionExpr),
+	referenceExpressionRawConst: _g(TSKindId.ReferenceExpressionRawConst),
+	referenceExpressionRawMut: _g(TSKindId.ReferenceExpressionRawMut),
+	referenceExpressionMut: _g(TSKindId.ReferenceExpressionMut),
+	referenceExpressionBare: _g(TSKindId.ReferenceExpressionBare),
+	implItemBody: _g(TSKindId.ImplItemBody),
+	implItemSemi: _g(TSKindId.ImplItemSemi),
+	modItemExternal: _g(TSKindId.ModItemExternal),
+	modItemInline: _g(TSKindId.ModItemInline),
+	orPatternBinary: _g(TSKindId.OrPatternBinary),
+	orPatternPrefix: _g(TSKindId.OrPatternPrefix),
+	pointerTypeConst: _g(TSKindId.PointerTypeConst),
+	pointerTypeMut: _g(TSKindId.PointerTypeMut),
+	rangeExpressionBinary: _g(TSKindId.RangeExpressionBinary),
+	rangeExpressionPostfix: _g(TSKindId.RangeExpressionPostfix),
+	rangeExpressionPrefix: _g(TSKindId.RangeExpressionPrefix),
+	rangeExpressionBare: _g(TSKindId.RangeExpressionBare),
+	foreignModItemSemi: _g(TSKindId.ForeignModItemSemi),
+	foreignModItemBody: _g(TSKindId.ForeignModItemBody),
+	matchArmWithComma: _g(TSKindId.MatchArmWithComma),
+	matchArmBlockEnding: _g(TSKindId.MatchArmBlockEnding),
+	tokenTreePatternParen: _g(TSKindId.TokenTreePatternParen),
+	tokenTreePatternBracket: _g(TSKindId.TokenTreePatternBracket),
+	tokenTreePatternBrace: _g(TSKindId.TokenTreePatternBrace),
+	tokenTreeParen: _g(TSKindId.TokenTreeParen),
+	tokenTreeBracket: _g(TSKindId.TokenTreeBracket),
+	tokenTreeBrace: _g(TSKindId.TokenTreeBrace),
+	delimTokenTreeParen: _g(TSKindId.DelimTokenTreeParen),
+	delimTokenTreeBracket: _g(TSKindId.DelimTokenTreeBracket),
+	delimTokenTreeBrace: _g(TSKindId.DelimTokenTreeBrace),
+	fieldPatternShorthand: _g(TSKindId.FieldPatternShorthand),
+	fieldPatternNamed: _g(TSKindId.FieldPatternNamed),
+	macroDefinitionParen: _g(TSKindId.MacroDefinitionParen),
+	macroDefinitionBracket: _g(TSKindId.MacroDefinitionBracket),
+	macroDefinitionBrace: _g(TSKindId.MacroDefinitionBrace),
+	rangePatternPrefix: _g(TSKindId.RangePatternPrefix),
+	rangePatternWithLeft: _g(TSKindId.RangePatternWithLeft),
+	structItemBrace: _g(TSKindId.StructItemBrace),
+	structItemTuple: _g(TSKindId.StructItemTuple),
+	structItemUnit: _g(TSKindId.StructItemUnit),
 	typeIdentifier: _g(TSKindId.TypeIdentifier),
 	fieldIdentifier: _g(TSKindId.FieldIdentifier),
 	shorthandFieldIdentifier: _g(TSKindId.ShorthandFieldIdentifier),

@@ -395,12 +395,78 @@ export interface IsGuards {
 	comprehensionClauses<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ComprehensionClauses };
+	integerHex<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerHex };
+	integerOctal<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerOctal };
+	integerBinary<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerBinary };
+	floatPoint<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FloatPoint };
+	floatLeadingPoint<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FloatLeadingPoint };
+	floatScientific<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FloatScientific };
+	escapeSequenceUnicodeFixed<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceUnicodeFixed };
+	escapeSequenceUnicodeWide<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceUnicodeWide };
+	escapeSequenceHex<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceHex };
+	escapeSequenceOctal<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceOctal };
+	escapeSequenceLineBreak<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceLineBreak };
+	escapeSequenceSimple<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceSimple };
+	escapeSequenceNamed<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceNamed };
+	assignmentEq<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AssignmentEq };
+	assignmentType<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AssignmentType };
+	assignmentTyped<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AssignmentTyped };
 	expressionStatementTuple<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExpressionStatementTuple };
 	withClauseBare<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.WithClauseBare };
+	withClauseParen<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.WithClauseParen };
+	matchBlockBlock<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchBlockBlock };
+	matchBlockEmpty<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchBlockEmpty };
+	suiteInline<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SuiteInline };
+	suiteBlock<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SuiteBlock };
+	suiteEmpty<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SuiteEmpty };
 	names<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Names };
@@ -1087,8 +1153,30 @@ export const is = Object.freeze({
 	printStatementChevron: _g(TSKindId.PrintStatementChevron),
 	printStatementPlain: _g(TSKindId.PrintStatementPlain),
 	comprehensionClauses: _g(TSKindId.ComprehensionClauses),
+	integerHex: _g(TSKindId.IntegerHex),
+	integerOctal: _g(TSKindId.IntegerOctal),
+	integerBinary: _g(TSKindId.IntegerBinary),
+	floatPoint: _g(TSKindId.FloatPoint),
+	floatLeadingPoint: _g(TSKindId.FloatLeadingPoint),
+	floatScientific: _g(TSKindId.FloatScientific),
+	escapeSequenceUnicodeFixed: _g(TSKindId.EscapeSequenceUnicodeFixed),
+	escapeSequenceUnicodeWide: _g(TSKindId.EscapeSequenceUnicodeWide),
+	escapeSequenceHex: _g(TSKindId.EscapeSequenceHex),
+	escapeSequenceOctal: _g(TSKindId.EscapeSequenceOctal),
+	escapeSequenceLineBreak: _g(TSKindId.EscapeSequenceLineBreak),
+	escapeSequenceSimple: _g(TSKindId.EscapeSequenceSimple),
+	escapeSequenceNamed: _g(TSKindId.EscapeSequenceNamed),
+	assignmentEq: _g(TSKindId.AssignmentEq),
+	assignmentType: _g(TSKindId.AssignmentType),
+	assignmentTyped: _g(TSKindId.AssignmentTyped),
 	expressionStatementTuple: _g(TSKindId.ExpressionStatementTuple),
 	withClauseBare: _g(TSKindId.WithClauseBare),
+	withClauseParen: _g(TSKindId.WithClauseParen),
+	matchBlockBlock: _g(TSKindId.MatchBlockBlock),
+	matchBlockEmpty: _g(TSKindId.MatchBlockEmpty),
+	suiteInline: _g(TSKindId.SuiteInline),
+	suiteBlock: _g(TSKindId.SuiteBlock),
+	suiteEmpty: _g(TSKindId.SuiteEmpty),
 	names: _g(TSKindId.Names),
 	asPatternTarget: _g(TSKindId.AsPatternTarget),
 	formatExpression: _g(TSKindId.FormatExpression),

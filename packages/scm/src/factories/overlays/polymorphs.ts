@@ -155,7 +155,31 @@ const namedNodePlain$underscore$anchoredLast$coerce = namedNodePlain$underscore$
 	namedNodePlain$underscore$appliedCoerce,
 	C.coerceToNamedNodeGroupAnchoredLast
 );
-const namedNodePlain: {
+export const namedNodePlain = Object.freeze({
+	...B.namedNodePlain,
+	underscore: {
+		...bundle(namedNodePlain$underscore$strict, namedNodePlain$underscore$coerce, {
+			key: 'namedNodePlain.underscore',
+			max: 2
+		}),
+		children: bundle(namedNodePlain$underscore$children$strict, namedNodePlain$underscore$children$coerce, {
+			key: 'namedNodePlain.underscore.children',
+			max: 2
+		}),
+		anchoredLast: bundle(namedNodePlain$underscore$anchoredLast$strict, namedNodePlain$underscore$anchoredLast$coerce, {
+			key: 'namedNodePlain.underscore.anchoredLast',
+			max: 2
+		})
+	},
+	children: bundle(namedNodePlain$children$strict, namedNodePlain$children$coerce, {
+		key: 'namedNodePlain.children',
+		max: 2
+	}),
+	anchoredLast: bundle(namedNodePlain$anchoredLast$strict, namedNodePlain$anchoredLast$coerce, {
+		key: 'namedNodePlain.anchoredLast',
+		max: 2
+	})
+}) as unknown as typeof B.namedNodePlain & {
 	underscore: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildNamedNodePlain>[0], 'name'>,
@@ -214,30 +238,7 @@ const namedNodePlain: {
 			options?: OptionsArg<typeof C.coerceToNamedNodePlain>
 		) => ReturnType<typeof C.coerceToNamedNodePlain>;
 	};
-} = Object.freeze({
-	underscore: {
-		...bundle(namedNodePlain$underscore$strict, namedNodePlain$underscore$coerce, {
-			key: 'namedNodePlain.underscore',
-			max: 2
-		}),
-		children: bundle(namedNodePlain$underscore$children$strict, namedNodePlain$underscore$children$coerce, {
-			key: 'namedNodePlain.underscore.children',
-			max: 2
-		}),
-		anchoredLast: bundle(namedNodePlain$underscore$anchoredLast$strict, namedNodePlain$underscore$anchoredLast$coerce, {
-			key: 'namedNodePlain.underscore.anchoredLast',
-			max: 2
-		})
-	},
-	children: bundle(namedNodePlain$children$strict, namedNodePlain$children$coerce, {
-		key: 'namedNodePlain.children',
-		max: 2
-	}),
-	anchoredLast: bundle(namedNodePlain$anchoredLast$strict, namedNodePlain$anchoredLast$coerce, {
-		key: 'namedNodePlain.anchoredLast',
-		max: 2
-	})
-});
+};
 
 const namedNodeSupertyped$children =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -277,7 +278,17 @@ const namedNodeSupertyped$anchoredLast$coerce = namedNodeSupertyped$anchoredLast
 	C.coerceToNamedNodeSupertyped,
 	C.coerceToNamedNodeGroupAnchoredLast
 );
-const namedNodeSupertyped: {
+export const namedNodeSupertyped = Object.freeze({
+	...B.namedNodeSupertyped,
+	children: bundle(namedNodeSupertyped$children$strict, namedNodeSupertyped$children$coerce, {
+		key: 'namedNodeSupertyped.children',
+		max: 2
+	}),
+	anchoredLast: bundle(namedNodeSupertyped$anchoredLast$strict, namedNodeSupertyped$anchoredLast$coerce, {
+		key: 'namedNodeSupertyped.anchoredLast',
+		max: 2
+	})
+}) as unknown as typeof B.namedNodeSupertyped & {
 	children: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildNamedNodeSupertyped>[0], 'namedNodeGroup'> &
@@ -302,63 +313,30 @@ const namedNodeSupertyped: {
 			options?: OptionsArg<typeof C.coerceToNamedNodeSupertyped>
 		) => ReturnType<typeof C.coerceToNamedNodeSupertyped>;
 	};
-} = Object.freeze({
-	children: bundle(namedNodeSupertyped$children$strict, namedNodeSupertyped$children$coerce, {
-		key: 'namedNodeSupertyped.children',
-		max: 2
-	}),
-	anchoredLast: bundle(namedNodeSupertyped$anchoredLast$strict, namedNodeSupertyped$anchoredLast$coerce, {
-		key: 'namedNodeSupertyped.anchoredLast',
-		max: 2
-	})
-});
+};
 
 export const namedNode: {
-	readonly plain: {
-		strict: typeof F.buildNamedNodePlain;
-		coerce: typeof C.coerceToNamedNodePlain;
-	} & typeof namedNodePlain;
-	readonly supertyped: {
-		strict: typeof F.buildNamedNodeSupertyped;
-		coerce: typeof C.coerceToNamedNodeSupertyped;
-	} & typeof namedNodeSupertyped;
+	readonly plain: typeof namedNodePlain;
+	readonly supertyped: typeof namedNodeSupertyped;
 } = Object.freeze({
-	plain: Object.freeze({
-		...bundle(F.buildNamedNodePlain, C.coerceToNamedNodePlain, { key: 'namedNode.plain', max: 1 }),
-		...namedNodePlain
-	}),
-	supertyped: Object.freeze({
-		...bundle(F.buildNamedNodeSupertyped, C.coerceToNamedNodeSupertyped, { key: 'namedNode.supertyped', max: 1 }),
-		...namedNodeSupertyped
-	})
+	plain: namedNodePlain,
+	supertyped: namedNodeSupertyped
 });
 
 export const listElement: {
 	readonly capture: typeof B.capture;
-	readonly quantifier: { strict: typeof F.buildListElementQuantifier; coerce: typeof C.coerceToListElementQuantifier };
+	readonly quantifier: typeof B.listElementQuantifier;
 } = Object.freeze({
 	capture: B.capture,
-	quantifier: bundle(F.buildListElementQuantifier, C.coerceToListElementQuantifier, {
-		key: 'listElement.quantifier',
-		max: 1
-	})
+	quantifier: B.listElementQuantifier
 });
 
 export const namedNodeGroup: {
-	readonly children: { strict: typeof F.buildNamedNodeGroupChildren; coerce: typeof C.coerceToNamedNodeGroupChildren };
-	readonly anchoredLast: {
-		strict: typeof F.buildNamedNodeGroupAnchoredLast;
-		coerce: typeof C.coerceToNamedNodeGroupAnchoredLast;
-	};
+	readonly children: typeof B.namedNodeGroupChildren;
+	readonly anchoredLast: typeof B.namedNodeGroupAnchoredLast;
 } = Object.freeze({
-	children: bundle(F.buildNamedNodeGroupChildren, C.coerceToNamedNodeGroupChildren, {
-		key: 'namedNodeGroup.children',
-		max: 1
-	}),
-	anchoredLast: bundle(F.buildNamedNodeGroupAnchoredLast, C.coerceToNamedNodeGroupAnchoredLast, {
-		key: 'namedNodeGroup.anchoredLast',
-		max: 1
-	})
+	children: B.namedNodeGroupChildren,
+	anchoredLast: B.namedNodeGroupAnchoredLast
 });
 
 export const definition: {

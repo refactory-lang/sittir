@@ -53,12 +53,27 @@ export interface IsGuards {
 	predicate<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Predicate };
+	listElementQuantifier<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ListElementQuantifier };
 	groupExpressionArm<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.GroupExpressionArm };
 	namedNodeExpressionArm<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodeExpressionArm };
+	namedNodePlain<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodePlain };
+	namedNodeSupertyped<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodeSupertyped };
+	namedNodeGroupChildren<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodeGroupChildren };
+	namedNodeGroupAnchoredLast<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodeGroupAnchoredLast };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	readonly definition: {
 		<T extends { readonly $type: string | number } | number>(
@@ -197,8 +212,13 @@ export const is = Object.freeze({
 	fieldDefinition: _g(TSKindId.FieldDefinition),
 	negatedField: _g(TSKindId.NegatedField),
 	predicate: _g(TSKindId.Predicate),
+	listElementQuantifier: _g(TSKindId.ListElementQuantifier),
 	groupExpressionArm: _g(TSKindId.GroupExpressionArm),
 	namedNodeExpressionArm: _g(TSKindId.NamedNodeExpressionArm),
+	namedNodePlain: _g(TSKindId.NamedNodePlain),
+	namedNodeSupertyped: _g(TSKindId.NamedNodeSupertyped),
+	namedNodeGroupChildren: _g(TSKindId.NamedNodeGroupChildren),
+	namedNodeGroupAnchoredLast: _g(TSKindId.NamedNodeGroupAnchoredLast),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
 	definition: _supertype_definition_guard,
 	namedNode: _supertype_namedNode_guard,

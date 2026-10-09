@@ -87,7 +87,7 @@ function keyedEntries(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): 
 		if (node.factoryInline) continue;
 		if (!node.rawFactoryName || !node.fromFunctionName) continue;
 		if (!(node instanceof AbstractAssembledCompound) && !(node instanceof AssembledList)) continue;
-		if (node instanceof AbstractAssembledCompound && !(node instanceof AssembledList) && node.seated) continue;
+		if (node instanceof AbstractAssembledCompound && !(node instanceof AssembledList) && !node.ownSurface) continue;
 		if (node instanceof AssembledAlias) continue;
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		if (classifyFromEmission(kind, node, { nodeMap, kindEntries }) !== 'emit') continue;

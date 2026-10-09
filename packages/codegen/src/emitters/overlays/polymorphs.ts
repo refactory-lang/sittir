@@ -54,7 +54,7 @@ type CoerceEmitted = (node: AssembledNode) => boolean;
 
 function isHoistedCompound(node: AssembledNode): boolean {
 	return (
-		node instanceof AbstractAssembledCompound && !(node instanceof AssembledList) && node.seated
+		node instanceof AbstractAssembledCompound && !(node instanceof AssembledList) && !node.ownSurface
 	);
 }
 

@@ -6768,8 +6768,8 @@ Whether a kind is hidden on the generated surface, from the two parser symbol fl
 
 ### `packages/codegen/src/dsl/symbol-table.ts::seatedOf`
 
-A kind seats on its parent when its rule is `hoisted` and the parser emits
-a node for it. A kind the parser declares a supertype (`supertype` on its
+A kind seats on its parent when its rule is `hoisted` and its content lands
+in a node its parent emits. A kind the parser declares a supertype (`supertype` on its
 kind entry) has no node: its subtypes reach the parent's slot directly,
 the way any supertype's do, so there is nothing to seat. Typescript
 `export_statement_default` is the case: a variant parent nested in
@@ -6779,6 +6779,14 @@ classifies it a supertype and its transport claims its arms.
 Link reads it to decide whether a hidden rule is left as a hoisted form
 (`classifyHiddenRule`), assemble to classify the kind before the node exists,
 and the node for `seated`, so all three read the same fact.
+
+### `packages/codegen/src/dsl/symbol-table.ts::supertypeArmsOf`
+
+The kinds a parser-declared supertype's rule names directly: a `SUPERTYPE`
+rule's subtypes, or a `CHOICE` rule's members, kept where they are symbols.
+Assemble derives it once from the normalized rules and hands it to every node
+construction (`KindFacts.supertypeArms`), where it decides `ownSurface`. Seating
+does not read it: an arm seats on its parent like any hoisted kind.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::isAliasedHiddenStorage`
 

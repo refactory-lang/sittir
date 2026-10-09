@@ -1330,20 +1330,11 @@ export const countQuantifier = Object.freeze({
 };
 
 export const inlineFlagsGroup: {
-	readonly enable: { strict: typeof F.buildInlineFlagsGroupEnable; coerce: typeof C.coerceToInlineFlagsGroupEnable };
-	readonly toggle: { strict: typeof F.buildInlineFlagsGroupToggle; coerce: typeof C.coerceToInlineFlagsGroupToggle };
-	readonly disable: { strict: typeof F.buildInlineFlagsGroupDisable; coerce: typeof C.coerceToInlineFlagsGroupDisable };
+	readonly enable: typeof B.inlineFlagsGroupEnable;
+	readonly toggle: typeof B.inlineFlagsGroupToggle;
+	readonly disable: typeof B.inlineFlagsGroupDisable;
 } = Object.freeze({
-	enable: bundle(F.buildInlineFlagsGroupEnable, C.coerceToInlineFlagsGroupEnable, {
-		key: 'inlineFlagsGroup.enable',
-		max: 1
-	}),
-	toggle: bundle(F.buildInlineFlagsGroupToggle, C.coerceToInlineFlagsGroupToggle, {
-		key: 'inlineFlagsGroup.toggle',
-		max: 1
-	}),
-	disable: bundle(F.buildInlineFlagsGroupDisable, C.coerceToInlineFlagsGroupDisable, {
-		key: 'inlineFlagsGroup.disable',
-		max: 1
-	})
+	enable: B.inlineFlagsGroupEnable,
+	toggle: B.inlineFlagsGroupToggle,
+	disable: B.inlineFlagsGroupDisable
 });

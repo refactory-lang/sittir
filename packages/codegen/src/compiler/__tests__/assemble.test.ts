@@ -1145,6 +1145,30 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 			expect(nodeMap.nodes.get('_sig')?.seated).toBe(true);
 		});
 
+		it('gives a seated group no surface of its own: it is built through its parent', () => {
+			const nodeMap = assemble(AssembleCtx.from(groupRules(), makeIdTables({ _sig: groupEntry(false) })));
+			expect(nodeMap.nodes.get('_sig')?.ownSurface).toBe(false);
+		});
+
+		it('seats a hoisted arm of a parser supertype and gives it its own surface too', () => {
+			const normalized = makeNormalized(
+				{
+					_arms: { type: CHOICE, members: [{ type: SYMBOL, name: 'arm_eq' }, { type: SYMBOL, name: 'parameters' }] },
+					arm_eq: {
+						type: SEQ,
+						members: [{ type: STRING, value: '=' }, { type: FIELD, name: 'params', content: { type: SYMBOL, name: 'parameters' } }],
+						annotations: { hoisted: true }
+					},
+					parameters: { type: PATTERN, value: '[a-z]+' }
+				},
+				{ supertypes: new Set(['_arms']) }
+			);
+			const nodeMap = assemble(AssembleCtx.from(normalized, makeIdTables({})));
+			expect(nodeMap.nodes.get('arm_eq')?.seated).toBe(true);
+			expect(nodeMap.nodes.get('arm_eq')?.ownSurface).toBe(true);
+			expect(nodeMap.nodes.get('arm_eq')?.irKey).toBe('armEq');
+		});
+
 		it('does not seat a hoisted group the parser declares a supertype: it has no node', () => {
 			const nodeMap = assemble(AssembleCtx.from(groupRules(), makeIdTables({ _sig: groupEntry(true) })));
 			expect(nodeMap.nodes.get('_sig')?.seated).toBe(false);

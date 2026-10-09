@@ -36,7 +36,7 @@ import { isEnumChoiceRule, isHiddenRule, ruleListParts } from '../dsl/rule-patte
 import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
 import type { SimplifiedGrammar, NodeMap, SignaturePool } from './types.ts';
 import type { RuleId } from '../types/rule.ts';
-import { collectGeneratedKindEntries, findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, type GeneratedIdTables, type GeneratedKindEntry, isSurfaceHiddenKind, seatedOf } from '../dsl/symbol-table.ts';
+import { collectGeneratedKindEntries, findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, type GeneratedIdTables, type GeneratedKindEntry, isSurfaceHiddenKind, seatedOf, supertypeArmsOf } from '../dsl/symbol-table.ts';
 import type {
 	AssembledNode,
 	AssembledNonterminal,
@@ -67,7 +67,8 @@ import {
 	branchClassFor,
 	aliasEnvelopeOf,
 	compoundModelTypeFor,
-	type CompoundModelTypeCtx
+	type CompoundModelTypeCtx,
+	type KindFacts
 } from './model/node-map.ts';
 import { simplifyRule } from './simplify.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
@@ -143,6 +144,8 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	const wordMatcherRegex = normalized.wordMatcher;
 	const nodes = ctx.nodes;
 	const kindEntries = ctx.kindEntries ?? collectGeneratedKindEntries(ctx.generatedIdTables);
+	const supertypeArms = supertypeArmsOf(normalized.supertypes, normalized.normalizedRules);
+	const facts: KindFacts = { kindEntries, supertypeArms };
 	const assembleDiagnostics = ctx.assembleDiagnostics;
 	const droppedKinds = new Set<string>();
 	const variantChildrenByParent = normalized.variantChildren ?? new Map<string, readonly VariantChild[]>();
@@ -189,7 +192,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 				const subtypes = resolveSupertypeSubtypes(renderRule, ctx, kindEntries);
 				nodes.set(
 					kind,
-					new AssembledSupertype(kind, renderRule, subtypes, { kindEntries })
+					new AssembledSupertype(kind, renderRule, subtypes, facts)
 				);
 				break;
 			}
@@ -204,8 +207,8 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 				nodes.set(
 					kind,
 					new CompoundClass(kind, simplifiedRule, renderRule, {
+						...facts,
 						variantChildKinds,
-						kindEntries,
 						parseKindCollisionContext,
 						visibleAliasTargets: normalized.visibleAliasTargets,
 						simplifiedRules: normalized.rules,
@@ -217,7 +220,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			}
 			case 'pattern': {
 				nodes.set(kind, new AssembledPattern(kind, simplifiedRule, {
-						kindEntries,
+						...facts,
 						wordMatcher: wordMatcherRegex,
 						textPattern: normalized.leafTextPatterns?.get(kind)
 					}));
@@ -233,8 +236,8 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 				nodes.set(
 					kind,
 					modelType === 'keyword'
-						? new AssembledKeyword(kind, simplifiedRule, { kindEntries })
-						: new AssembledPunctuation(kind, simplifiedRule, { hidden: !named, kindEntries })
+						? new AssembledKeyword(kind, simplifiedRule, facts)
+						: new AssembledPunctuation(kind, simplifiedRule, { ...facts, hidden: !named })
 				);
 				break;
 			}
@@ -258,7 +261,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 					);
 					continue;
 				}
-				nodes.set(kind, new AssembledEnum(kind, renderRule, { kindEntries }));
+				nodes.set(kind, new AssembledEnum(kind, renderRule, facts));
 				break;
 			}
 			case 'list': {
@@ -276,10 +279,10 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 						listRule,
 						{ kindEntries, diagnostics: assembleDiagnostics, simplifiedRules: normalized.rules },
 						{
+							...facts,
 							separatorRule,
 							simplifiedRule,
 							renderRule,
-							kindEntries,
 							parseKindCollisionContext
 						}
 					)
@@ -891,7 +894,7 @@ function preclaimSupertypeIrKeys(nodes: Map<string, AssembledNode>, claimed: Set
 	const ownedByKind = new Set<string>();
 	for (const node of nodes.values()) {
 		if (node instanceof AssembledSupertype || !node.factoryName) continue;
-		if (node instanceof AbstractAssembledCompound && node.seated) continue;
+		if (node instanceof AbstractAssembledCompound && !node.ownSurface) continue;
 		const short = shortenIrKey(node.kind);
 		if (short === node.factoryName) ownedByKind.add(short);
 	}
@@ -910,7 +913,7 @@ function partitionNodesIntoIrKeyPhases(nodes: Map<string, AssembledNode>): {
 	const phase2: AssembledNode[] = [];
 	for (const node of nodes.values()) {
 		if (!node.factoryName) continue;
-		if (node instanceof AbstractAssembledCompound && node.seated) continue;
+		if (node instanceof AbstractAssembledCompound && !node.ownSurface) continue;
 		const short = shortenIrKey(node.kind);
 		if (short === node.factoryName) phase1.push(node);
 		else phase2.push(node);

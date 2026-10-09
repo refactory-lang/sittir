@@ -1110,7 +1110,14 @@ const indexSignatureMappedTypeClause$mappedTypeClause$coerce = indexSignatureMap
 	C.coerceToIndexSignatureMappedTypeClause,
 	C.coerceToMappedTypeClause
 );
-const indexSignatureMappedTypeClause: {
+export const indexSignatureMappedTypeClause = Object.freeze({
+	...B.indexSignatureMappedTypeClause,
+	mappedTypeClause: bundle(
+		indexSignatureMappedTypeClause$mappedTypeClause$strict,
+		indexSignatureMappedTypeClause$mappedTypeClause$coerce,
+		{ key: 'indexSignatureMappedTypeClause.mappedTypeClause', max: 2 }
+	)
+}) as unknown as typeof B.indexSignatureMappedTypeClause & {
 	mappedTypeClause: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildIndexSignatureMappedTypeClause>[0], 'mappedTypeClause'> & {
@@ -1125,13 +1132,7 @@ const indexSignatureMappedTypeClause: {
 			options?: OptionsArg<typeof C.coerceToIndexSignatureMappedTypeClause>
 		) => ReturnType<typeof C.coerceToIndexSignatureMappedTypeClause>;
 	};
-} = Object.freeze({
-	mappedTypeClause: bundle(
-		indexSignatureMappedTypeClause$mappedTypeClause$strict,
-		indexSignatureMappedTypeClause$mappedTypeClause$coerce,
-		{ key: 'indexSignatureMappedTypeClause.mappedTypeClause', max: 2 }
-	)
-});
+};
 
 const parenthesizedExpressionSequence$sequenceExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1145,7 +1146,13 @@ const parenthesizedExpressionSequence$sequenceExpression$coerce = parenthesizedE
 	F.buildParenthesizedExpressionSequence,
 	C.coerceToSequenceExpression
 );
-const parenthesizedExpressionSequence: {
+export const parenthesizedExpressionSequence = Object.freeze({
+	...B.parenthesizedExpressionSequence,
+	sequenceExpression: bundle(
+		parenthesizedExpressionSequence$sequenceExpression$strict,
+		parenthesizedExpressionSequence$sequenceExpression$coerce
+	)
+}) as unknown as typeof B.parenthesizedExpressionSequence & {
 	sequenceExpression: {
 		strict: (
 			...args: ArgsOf<typeof F.buildSequenceExpression>
@@ -1154,12 +1161,7 @@ const parenthesizedExpressionSequence: {
 			...args: ArgsOf<typeof C.coerceToSequenceExpression>
 		) => ReturnType<typeof F.buildParenthesizedExpressionSequence>;
 	};
-} = Object.freeze({
-	sequenceExpression: bundle(
-		parenthesizedExpressionSequence$sequenceExpression$strict,
-		parenthesizedExpressionSequence$sequenceExpression$coerce
-	)
-});
+};
 
 const exportStatementDefaultFrom$starFrom =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1385,7 +1387,76 @@ const exportStatementDefaultFrom$exportClause$semi$coerce = exportStatementDefau
 	exportStatementDefaultFrom$exportClause$appliedCoerce,
 	TSKindId.Semi
 );
-const exportStatementDefaultFrom: {
+export const exportStatementDefaultFrom = Object.freeze({
+	...B.exportStatementDefaultFrom,
+	starFrom: {
+		...bundle(exportStatementDefaultFrom$starFrom$strict, exportStatementDefaultFrom$starFrom$coerce, {
+			key: 'exportStatementDefaultFrom.starFrom',
+			max: 1
+		}),
+		automaticSemicolon: bundle(
+			exportStatementDefaultFrom$starFrom$automaticSemicolon$strict,
+			exportStatementDefaultFrom$starFrom$automaticSemicolon$coerce,
+			{ key: 'exportStatementDefaultFrom.starFrom.automaticSemicolon', max: 2 }
+		),
+		semi: bundle(exportStatementDefaultFrom$starFrom$semi$strict, exportStatementDefaultFrom$starFrom$semi$coerce, {
+			key: 'exportStatementDefaultFrom.starFrom.semi',
+			max: 2
+		})
+	},
+	nsFrom: {
+		...bundle(exportStatementDefaultFrom$nsFrom$strict, exportStatementDefaultFrom$nsFrom$coerce, {
+			key: 'exportStatementDefaultFrom.nsFrom',
+			max: 1
+		}),
+		automaticSemicolon: bundle(
+			exportStatementDefaultFrom$nsFrom$automaticSemicolon$strict,
+			exportStatementDefaultFrom$nsFrom$automaticSemicolon$coerce,
+			{ key: 'exportStatementDefaultFrom.nsFrom.automaticSemicolon', max: 2 }
+		),
+		semi: bundle(exportStatementDefaultFrom$nsFrom$semi$strict, exportStatementDefaultFrom$nsFrom$semi$coerce, {
+			key: 'exportStatementDefaultFrom.nsFrom.semi',
+			max: 2
+		})
+	},
+	clauseFrom: {
+		...bundle(exportStatementDefaultFrom$clauseFrom$strict, exportStatementDefaultFrom$clauseFrom$coerce, {
+			key: 'exportStatementDefaultFrom.clauseFrom',
+			max: 1
+		}),
+		automaticSemicolon: bundle(
+			exportStatementDefaultFrom$clauseFrom$automaticSemicolon$strict,
+			exportStatementDefaultFrom$clauseFrom$automaticSemicolon$coerce,
+			{ key: 'exportStatementDefaultFrom.clauseFrom.automaticSemicolon', max: 2 }
+		),
+		semi: bundle(exportStatementDefaultFrom$clauseFrom$semi$strict, exportStatementDefaultFrom$clauseFrom$semi$coerce, {
+			key: 'exportStatementDefaultFrom.clauseFrom.semi',
+			max: 2
+		})
+	},
+	exportClause: {
+		...bundle(exportStatementDefaultFrom$exportClause$strict, exportStatementDefaultFrom$exportClause$coerce),
+		automaticSemicolon: bundle(
+			exportStatementDefaultFrom$exportClause$automaticSemicolon$strict,
+			exportStatementDefaultFrom$exportClause$automaticSemicolon$coerce,
+			{ key: 'exportStatementDefaultFrom.exportClause.automaticSemicolon', max: 2 }
+		),
+		semi: bundle(
+			exportStatementDefaultFrom$exportClause$semi$strict,
+			exportStatementDefaultFrom$exportClause$semi$coerce,
+			{ key: 'exportStatementDefaultFrom.exportClause.semi', max: 2 }
+		)
+	},
+	automaticSemicolon: bundle(
+		exportStatementDefaultFrom$automaticSemicolon$strict,
+		exportStatementDefaultFrom$automaticSemicolon$coerce,
+		{ key: 'exportStatementDefaultFrom.automaticSemicolon', max: 2 }
+	),
+	semi: bundle(exportStatementDefaultFrom$semi$strict, exportStatementDefaultFrom$semi$coerce, {
+		key: 'exportStatementDefaultFrom.semi',
+		max: 2
+	})
+}) as unknown as typeof B.exportStatementDefaultFrom & {
 	starFrom: {
 		strict: (
 			...args: ArgsOf<typeof F.buildExportStatementDefaultFromStarFrom>
@@ -1514,75 +1585,7 @@ const exportStatementDefaultFrom: {
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultFrom>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultFrom>;
 	};
-} = Object.freeze({
-	starFrom: {
-		...bundle(exportStatementDefaultFrom$starFrom$strict, exportStatementDefaultFrom$starFrom$coerce, {
-			key: 'exportStatementDefaultFrom.starFrom',
-			max: 1
-		}),
-		automaticSemicolon: bundle(
-			exportStatementDefaultFrom$starFrom$automaticSemicolon$strict,
-			exportStatementDefaultFrom$starFrom$automaticSemicolon$coerce,
-			{ key: 'exportStatementDefaultFrom.starFrom.automaticSemicolon', max: 2 }
-		),
-		semi: bundle(exportStatementDefaultFrom$starFrom$semi$strict, exportStatementDefaultFrom$starFrom$semi$coerce, {
-			key: 'exportStatementDefaultFrom.starFrom.semi',
-			max: 2
-		})
-	},
-	nsFrom: {
-		...bundle(exportStatementDefaultFrom$nsFrom$strict, exportStatementDefaultFrom$nsFrom$coerce, {
-			key: 'exportStatementDefaultFrom.nsFrom',
-			max: 1
-		}),
-		automaticSemicolon: bundle(
-			exportStatementDefaultFrom$nsFrom$automaticSemicolon$strict,
-			exportStatementDefaultFrom$nsFrom$automaticSemicolon$coerce,
-			{ key: 'exportStatementDefaultFrom.nsFrom.automaticSemicolon', max: 2 }
-		),
-		semi: bundle(exportStatementDefaultFrom$nsFrom$semi$strict, exportStatementDefaultFrom$nsFrom$semi$coerce, {
-			key: 'exportStatementDefaultFrom.nsFrom.semi',
-			max: 2
-		})
-	},
-	clauseFrom: {
-		...bundle(exportStatementDefaultFrom$clauseFrom$strict, exportStatementDefaultFrom$clauseFrom$coerce, {
-			key: 'exportStatementDefaultFrom.clauseFrom',
-			max: 1
-		}),
-		automaticSemicolon: bundle(
-			exportStatementDefaultFrom$clauseFrom$automaticSemicolon$strict,
-			exportStatementDefaultFrom$clauseFrom$automaticSemicolon$coerce,
-			{ key: 'exportStatementDefaultFrom.clauseFrom.automaticSemicolon', max: 2 }
-		),
-		semi: bundle(exportStatementDefaultFrom$clauseFrom$semi$strict, exportStatementDefaultFrom$clauseFrom$semi$coerce, {
-			key: 'exportStatementDefaultFrom.clauseFrom.semi',
-			max: 2
-		})
-	},
-	exportClause: {
-		...bundle(exportStatementDefaultFrom$exportClause$strict, exportStatementDefaultFrom$exportClause$coerce),
-		automaticSemicolon: bundle(
-			exportStatementDefaultFrom$exportClause$automaticSemicolon$strict,
-			exportStatementDefaultFrom$exportClause$automaticSemicolon$coerce,
-			{ key: 'exportStatementDefaultFrom.exportClause.automaticSemicolon', max: 2 }
-		),
-		semi: bundle(
-			exportStatementDefaultFrom$exportClause$semi$strict,
-			exportStatementDefaultFrom$exportClause$semi$coerce,
-			{ key: 'exportStatementDefaultFrom.exportClause.semi', max: 2 }
-		)
-	},
-	automaticSemicolon: bundle(
-		exportStatementDefaultFrom$automaticSemicolon$strict,
-		exportStatementDefaultFrom$automaticSemicolon$coerce,
-		{ key: 'exportStatementDefaultFrom.automaticSemicolon', max: 2 }
-	),
-	semi: bundle(exportStatementDefaultFrom$semi$strict, exportStatementDefaultFrom$semi$coerce, {
-		key: 'exportStatementDefaultFrom.semi',
-		max: 2
-	})
-});
+};
 
 const exportStatementDefaultDeclarationDefaultKwValue$automaticSemicolon =
 	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
@@ -3461,7 +3464,311 @@ const exportStatementDefaultDeclaration$defaultKw$value$semi$coerce =
 		C.coerceToExportStatementDefaultDeclaration,
 		exportStatementDefaultDeclarationDefaultKw.value.semi.coerce
 	);
-const exportStatementDefaultDeclaration: {
+export const exportStatementDefaultDeclaration = Object.freeze({
+	...B.exportStatementDefaultDeclaration,
+	function: bundle(
+		exportStatementDefaultDeclaration$function$strict,
+		exportStatementDefaultDeclaration$function$coerce,
+		{ key: 'exportStatementDefaultDeclaration.function', max: 2 }
+	),
+	generatorFunction: bundle(
+		exportStatementDefaultDeclaration$generatorFunction$strict,
+		exportStatementDefaultDeclaration$generatorFunction$coerce,
+		{ key: 'exportStatementDefaultDeclaration.generatorFunction', max: 2 }
+	),
+	class: bundle(exportStatementDefaultDeclaration$class$strict, exportStatementDefaultDeclaration$class$coerce, {
+		key: 'exportStatementDefaultDeclaration.class',
+		max: 2
+	}),
+	lexical: bundle(exportStatementDefaultDeclaration$lexical$strict, exportStatementDefaultDeclaration$lexical$coerce, {
+		key: 'exportStatementDefaultDeclaration.lexical',
+		max: 2
+	}),
+	variable: bundle(
+		exportStatementDefaultDeclaration$variable$strict,
+		exportStatementDefaultDeclaration$variable$coerce,
+		{ key: 'exportStatementDefaultDeclaration.variable', max: 2 }
+	),
+	functionSignature: bundle(
+		exportStatementDefaultDeclaration$functionSignature$strict,
+		exportStatementDefaultDeclaration$functionSignature$coerce,
+		{ key: 'exportStatementDefaultDeclaration.functionSignature', max: 2 }
+	),
+	abstractClass: bundle(
+		exportStatementDefaultDeclaration$abstractClass$strict,
+		exportStatementDefaultDeclaration$abstractClass$coerce,
+		{ key: 'exportStatementDefaultDeclaration.abstractClass', max: 2 }
+	),
+	module: bundle(exportStatementDefaultDeclaration$module$strict, exportStatementDefaultDeclaration$module$coerce, {
+		key: 'exportStatementDefaultDeclaration.module',
+		max: 2
+	}),
+	internalModule: bundle(
+		exportStatementDefaultDeclaration$internalModule$strict,
+		exportStatementDefaultDeclaration$internalModule$coerce,
+		{ key: 'exportStatementDefaultDeclaration.internalModule', max: 2 }
+	),
+	typeAlias: bundle(
+		exportStatementDefaultDeclaration$typeAlias$strict,
+		exportStatementDefaultDeclaration$typeAlias$coerce,
+		{ key: 'exportStatementDefaultDeclaration.typeAlias', max: 2 }
+	),
+	enum: bundle(exportStatementDefaultDeclaration$enum$strict, exportStatementDefaultDeclaration$enum$coerce, {
+		key: 'exportStatementDefaultDeclaration.enum',
+		max: 2
+	}),
+	interface: bundle(
+		exportStatementDefaultDeclaration$interface$strict,
+		exportStatementDefaultDeclaration$interface$coerce,
+		{ key: 'exportStatementDefaultDeclaration.interface', max: 2 }
+	),
+	importAlias: bundle(
+		exportStatementDefaultDeclaration$importAlias$strict,
+		exportStatementDefaultDeclaration$importAlias$coerce,
+		{ key: 'exportStatementDefaultDeclaration.importAlias', max: 2 }
+	),
+	ambient: {
+		...bundle(exportStatementDefaultDeclaration$ambient$strict, exportStatementDefaultDeclaration$ambient$coerce, {
+			key: 'exportStatementDefaultDeclaration.ambient',
+			max: 2
+		}),
+		function: bundle(
+			exportStatementDefaultDeclaration$ambient$function$strict,
+			exportStatementDefaultDeclaration$ambient$function$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.function', max: 2 }
+		),
+		generatorFunction: bundle(
+			exportStatementDefaultDeclaration$ambient$generatorFunction$strict,
+			exportStatementDefaultDeclaration$ambient$generatorFunction$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.generatorFunction', max: 2 }
+		),
+		class: bundle(
+			exportStatementDefaultDeclaration$ambient$class$strict,
+			exportStatementDefaultDeclaration$ambient$class$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.class', max: 2 }
+		),
+		lexical: bundle(
+			exportStatementDefaultDeclaration$ambient$lexical$strict,
+			exportStatementDefaultDeclaration$ambient$lexical$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.lexical', max: 2 }
+		),
+		variable: bundle(
+			exportStatementDefaultDeclaration$ambient$variable$strict,
+			exportStatementDefaultDeclaration$ambient$variable$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.variable', max: 2 }
+		),
+		functionSignature: bundle(
+			exportStatementDefaultDeclaration$ambient$functionSignature$strict,
+			exportStatementDefaultDeclaration$ambient$functionSignature$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.functionSignature', max: 2 }
+		),
+		abstractClass: bundle(
+			exportStatementDefaultDeclaration$ambient$abstractClass$strict,
+			exportStatementDefaultDeclaration$ambient$abstractClass$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.abstractClass', max: 2 }
+		),
+		internalModule: bundle(
+			exportStatementDefaultDeclaration$ambient$internalModule$strict,
+			exportStatementDefaultDeclaration$ambient$internalModule$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.internalModule', max: 2 }
+		),
+		typeAlias: bundle(
+			exportStatementDefaultDeclaration$ambient$typeAlias$strict,
+			exportStatementDefaultDeclaration$ambient$typeAlias$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.typeAlias', max: 2 }
+		),
+		enum: bundle(
+			exportStatementDefaultDeclaration$ambient$enum$strict,
+			exportStatementDefaultDeclaration$ambient$enum$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.enum', max: 2 }
+		),
+		interface: bundle(
+			exportStatementDefaultDeclaration$ambient$interface$strict,
+			exportStatementDefaultDeclaration$ambient$interface$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.interface', max: 2 }
+		),
+		importAlias: bundle(
+			exportStatementDefaultDeclaration$ambient$importAlias$strict,
+			exportStatementDefaultDeclaration$ambient$importAlias$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.importAlias', max: 2 }
+		),
+		ambient: bundle(
+			exportStatementDefaultDeclaration$ambient$ambient$strict,
+			exportStatementDefaultDeclaration$ambient$ambient$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.ambient', max: 2 }
+		),
+		global: bundle(
+			exportStatementDefaultDeclaration$ambient$global$strict,
+			exportStatementDefaultDeclaration$ambient$global$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.global', max: 2 }
+		)
+	},
+	defaultKw: {
+		...bundle(exportStatementDefaultDeclaration$defaultKw$strict, exportStatementDefaultDeclaration$defaultKw$coerce, {
+			key: 'exportStatementDefaultDeclaration.defaultKw',
+			max: 2
+		}),
+		function: bundle(
+			exportStatementDefaultDeclaration$defaultKw$function$strict,
+			exportStatementDefaultDeclaration$defaultKw$function$coerce,
+			{ key: 'exportStatementDefaultDeclaration.defaultKw.function', max: 2 }
+		),
+		generatorFunction: bundle(
+			exportStatementDefaultDeclaration$defaultKw$generatorFunction$strict,
+			exportStatementDefaultDeclaration$defaultKw$generatorFunction$coerce,
+			{ key: 'exportStatementDefaultDeclaration.defaultKw.generatorFunction', max: 2 }
+		),
+		class: bundle(
+			exportStatementDefaultDeclaration$defaultKw$class$strict,
+			exportStatementDefaultDeclaration$defaultKw$class$coerce,
+			{ key: 'exportStatementDefaultDeclaration.defaultKw.class', max: 2 }
+		),
+		lexical: bundle(
+			exportStatementDefaultDeclaration$defaultKw$lexical$strict,
+			exportStatementDefaultDeclaration$defaultKw$lexical$coerce,
+			{ key: 'exportStatementDefaultDeclaration.defaultKw.lexical', max: 2 }
+		),
+		variable: bundle(
+			exportStatementDefaultDeclaration$defaultKw$variable$strict,
+			exportStatementDefaultDeclaration$defaultKw$variable$coerce,
+			{ key: 'exportStatementDefaultDeclaration.defaultKw.variable', max: 2 }
+		),
+		functionSignature: bundle(
+			exportStatementDefaultDeclaration$defaultKw$functionSignature$strict,
+			exportStatementDefaultDeclaration$defaultKw$functionSignature$coerce,
+			{ key: 'exportStatementDefaultDeclaration.defaultKw.functionSignature', max: 2 }
+		),
+		abstractClass: bundle(
+			exportStatementDefaultDeclaration$defaultKw$abstractClass$strict,
+			exportStatementDefaultDeclaration$defaultKw$abstractClass$coerce,
+			{ key: 'exportStatementDefaultDeclaration.defaultKw.abstractClass', max: 2 }
+		),
+		module: bundle(
+			exportStatementDefaultDeclaration$defaultKw$module$strict,
+			exportStatementDefaultDeclaration$defaultKw$module$coerce,
+			{ key: 'exportStatementDefaultDeclaration.defaultKw.module', max: 2 }
+		),
+		internalModule: bundle(
+			exportStatementDefaultDeclaration$defaultKw$internalModule$strict,
+			exportStatementDefaultDeclaration$defaultKw$internalModule$coerce,
+			{ key: 'exportStatementDefaultDeclaration.defaultKw.internalModule', max: 2 }
+		),
+		typeAlias: bundle(
+			exportStatementDefaultDeclaration$defaultKw$typeAlias$strict,
+			exportStatementDefaultDeclaration$defaultKw$typeAlias$coerce,
+			{ key: 'exportStatementDefaultDeclaration.defaultKw.typeAlias', max: 2 }
+		),
+		enum: bundle(
+			exportStatementDefaultDeclaration$defaultKw$enum$strict,
+			exportStatementDefaultDeclaration$defaultKw$enum$coerce,
+			{ key: 'exportStatementDefaultDeclaration.defaultKw.enum', max: 2 }
+		),
+		interface: bundle(
+			exportStatementDefaultDeclaration$defaultKw$interface$strict,
+			exportStatementDefaultDeclaration$defaultKw$interface$coerce,
+			{ key: 'exportStatementDefaultDeclaration.defaultKw.interface', max: 2 }
+		),
+		importAlias: bundle(
+			exportStatementDefaultDeclaration$defaultKw$importAlias$strict,
+			exportStatementDefaultDeclaration$defaultKw$importAlias$coerce,
+			{ key: 'exportStatementDefaultDeclaration.defaultKw.importAlias', max: 2 }
+		),
+		ambient: {
+			...bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient', max: 2 }
+			),
+			function: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$function$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$function$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.function', max: 2 }
+			),
+			generatorFunction: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$generatorFunction$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$generatorFunction$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.generatorFunction', max: 2 }
+			),
+			class: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$class$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$class$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.class', max: 2 }
+			),
+			lexical: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$lexical$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$lexical$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.lexical', max: 2 }
+			),
+			variable: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$variable$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$variable$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.variable', max: 2 }
+			),
+			functionSignature: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$functionSignature$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$functionSignature$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.functionSignature', max: 2 }
+			),
+			abstractClass: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$abstractClass$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$abstractClass$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.abstractClass', max: 2 }
+			),
+			internalModule: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$internalModule$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$internalModule$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.internalModule', max: 2 }
+			),
+			typeAlias: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$typeAlias$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$typeAlias$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.typeAlias', max: 2 }
+			),
+			enum: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$enum$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$enum$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.enum', max: 2 }
+			),
+			interface: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$interface$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$interface$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.interface', max: 2 }
+			),
+			importAlias: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$importAlias$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$importAlias$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.importAlias', max: 2 }
+			),
+			ambient: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$ambient$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$ambient$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.ambient', max: 2 }
+			),
+			global: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$global$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$global$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.global', max: 2 }
+			)
+		},
+		value: {
+			...bundle(
+				exportStatementDefaultDeclaration$defaultKw$value$strict,
+				exportStatementDefaultDeclaration$defaultKw$value$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.value', max: 2 }
+			),
+			automaticSemicolon: bundle(
+				exportStatementDefaultDeclaration$defaultKw$value$automaticSemicolon$strict,
+				exportStatementDefaultDeclaration$defaultKw$value$automaticSemicolon$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.value.automaticSemicolon', max: 2 }
+			),
+			semi: bundle(
+				exportStatementDefaultDeclaration$defaultKw$value$semi$strict,
+				exportStatementDefaultDeclaration$defaultKw$value$semi$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.value.semi', max: 2 }
+			)
+		}
+	}
+}) as unknown as typeof B.exportStatementDefaultDeclaration & {
 	function: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
@@ -4282,310 +4589,7 @@ const exportStatementDefaultDeclaration: {
 			};
 		};
 	};
-} = Object.freeze({
-	function: bundle(
-		exportStatementDefaultDeclaration$function$strict,
-		exportStatementDefaultDeclaration$function$coerce,
-		{ key: 'exportStatementDefaultDeclaration.function', max: 2 }
-	),
-	generatorFunction: bundle(
-		exportStatementDefaultDeclaration$generatorFunction$strict,
-		exportStatementDefaultDeclaration$generatorFunction$coerce,
-		{ key: 'exportStatementDefaultDeclaration.generatorFunction', max: 2 }
-	),
-	class: bundle(exportStatementDefaultDeclaration$class$strict, exportStatementDefaultDeclaration$class$coerce, {
-		key: 'exportStatementDefaultDeclaration.class',
-		max: 2
-	}),
-	lexical: bundle(exportStatementDefaultDeclaration$lexical$strict, exportStatementDefaultDeclaration$lexical$coerce, {
-		key: 'exportStatementDefaultDeclaration.lexical',
-		max: 2
-	}),
-	variable: bundle(
-		exportStatementDefaultDeclaration$variable$strict,
-		exportStatementDefaultDeclaration$variable$coerce,
-		{ key: 'exportStatementDefaultDeclaration.variable', max: 2 }
-	),
-	functionSignature: bundle(
-		exportStatementDefaultDeclaration$functionSignature$strict,
-		exportStatementDefaultDeclaration$functionSignature$coerce,
-		{ key: 'exportStatementDefaultDeclaration.functionSignature', max: 2 }
-	),
-	abstractClass: bundle(
-		exportStatementDefaultDeclaration$abstractClass$strict,
-		exportStatementDefaultDeclaration$abstractClass$coerce,
-		{ key: 'exportStatementDefaultDeclaration.abstractClass', max: 2 }
-	),
-	module: bundle(exportStatementDefaultDeclaration$module$strict, exportStatementDefaultDeclaration$module$coerce, {
-		key: 'exportStatementDefaultDeclaration.module',
-		max: 2
-	}),
-	internalModule: bundle(
-		exportStatementDefaultDeclaration$internalModule$strict,
-		exportStatementDefaultDeclaration$internalModule$coerce,
-		{ key: 'exportStatementDefaultDeclaration.internalModule', max: 2 }
-	),
-	typeAlias: bundle(
-		exportStatementDefaultDeclaration$typeAlias$strict,
-		exportStatementDefaultDeclaration$typeAlias$coerce,
-		{ key: 'exportStatementDefaultDeclaration.typeAlias', max: 2 }
-	),
-	enum: bundle(exportStatementDefaultDeclaration$enum$strict, exportStatementDefaultDeclaration$enum$coerce, {
-		key: 'exportStatementDefaultDeclaration.enum',
-		max: 2
-	}),
-	interface: bundle(
-		exportStatementDefaultDeclaration$interface$strict,
-		exportStatementDefaultDeclaration$interface$coerce,
-		{ key: 'exportStatementDefaultDeclaration.interface', max: 2 }
-	),
-	importAlias: bundle(
-		exportStatementDefaultDeclaration$importAlias$strict,
-		exportStatementDefaultDeclaration$importAlias$coerce,
-		{ key: 'exportStatementDefaultDeclaration.importAlias', max: 2 }
-	),
-	ambient: {
-		...bundle(exportStatementDefaultDeclaration$ambient$strict, exportStatementDefaultDeclaration$ambient$coerce, {
-			key: 'exportStatementDefaultDeclaration.ambient',
-			max: 2
-		}),
-		function: bundle(
-			exportStatementDefaultDeclaration$ambient$function$strict,
-			exportStatementDefaultDeclaration$ambient$function$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.function', max: 2 }
-		),
-		generatorFunction: bundle(
-			exportStatementDefaultDeclaration$ambient$generatorFunction$strict,
-			exportStatementDefaultDeclaration$ambient$generatorFunction$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.generatorFunction', max: 2 }
-		),
-		class: bundle(
-			exportStatementDefaultDeclaration$ambient$class$strict,
-			exportStatementDefaultDeclaration$ambient$class$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.class', max: 2 }
-		),
-		lexical: bundle(
-			exportStatementDefaultDeclaration$ambient$lexical$strict,
-			exportStatementDefaultDeclaration$ambient$lexical$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.lexical', max: 2 }
-		),
-		variable: bundle(
-			exportStatementDefaultDeclaration$ambient$variable$strict,
-			exportStatementDefaultDeclaration$ambient$variable$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.variable', max: 2 }
-		),
-		functionSignature: bundle(
-			exportStatementDefaultDeclaration$ambient$functionSignature$strict,
-			exportStatementDefaultDeclaration$ambient$functionSignature$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.functionSignature', max: 2 }
-		),
-		abstractClass: bundle(
-			exportStatementDefaultDeclaration$ambient$abstractClass$strict,
-			exportStatementDefaultDeclaration$ambient$abstractClass$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.abstractClass', max: 2 }
-		),
-		internalModule: bundle(
-			exportStatementDefaultDeclaration$ambient$internalModule$strict,
-			exportStatementDefaultDeclaration$ambient$internalModule$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.internalModule', max: 2 }
-		),
-		typeAlias: bundle(
-			exportStatementDefaultDeclaration$ambient$typeAlias$strict,
-			exportStatementDefaultDeclaration$ambient$typeAlias$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.typeAlias', max: 2 }
-		),
-		enum: bundle(
-			exportStatementDefaultDeclaration$ambient$enum$strict,
-			exportStatementDefaultDeclaration$ambient$enum$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.enum', max: 2 }
-		),
-		interface: bundle(
-			exportStatementDefaultDeclaration$ambient$interface$strict,
-			exportStatementDefaultDeclaration$ambient$interface$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.interface', max: 2 }
-		),
-		importAlias: bundle(
-			exportStatementDefaultDeclaration$ambient$importAlias$strict,
-			exportStatementDefaultDeclaration$ambient$importAlias$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.importAlias', max: 2 }
-		),
-		ambient: bundle(
-			exportStatementDefaultDeclaration$ambient$ambient$strict,
-			exportStatementDefaultDeclaration$ambient$ambient$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.ambient', max: 2 }
-		),
-		global: bundle(
-			exportStatementDefaultDeclaration$ambient$global$strict,
-			exportStatementDefaultDeclaration$ambient$global$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.global', max: 2 }
-		)
-	},
-	defaultKw: {
-		...bundle(exportStatementDefaultDeclaration$defaultKw$strict, exportStatementDefaultDeclaration$defaultKw$coerce, {
-			key: 'exportStatementDefaultDeclaration.defaultKw',
-			max: 2
-		}),
-		function: bundle(
-			exportStatementDefaultDeclaration$defaultKw$function$strict,
-			exportStatementDefaultDeclaration$defaultKw$function$coerce,
-			{ key: 'exportStatementDefaultDeclaration.defaultKw.function', max: 2 }
-		),
-		generatorFunction: bundle(
-			exportStatementDefaultDeclaration$defaultKw$generatorFunction$strict,
-			exportStatementDefaultDeclaration$defaultKw$generatorFunction$coerce,
-			{ key: 'exportStatementDefaultDeclaration.defaultKw.generatorFunction', max: 2 }
-		),
-		class: bundle(
-			exportStatementDefaultDeclaration$defaultKw$class$strict,
-			exportStatementDefaultDeclaration$defaultKw$class$coerce,
-			{ key: 'exportStatementDefaultDeclaration.defaultKw.class', max: 2 }
-		),
-		lexical: bundle(
-			exportStatementDefaultDeclaration$defaultKw$lexical$strict,
-			exportStatementDefaultDeclaration$defaultKw$lexical$coerce,
-			{ key: 'exportStatementDefaultDeclaration.defaultKw.lexical', max: 2 }
-		),
-		variable: bundle(
-			exportStatementDefaultDeclaration$defaultKw$variable$strict,
-			exportStatementDefaultDeclaration$defaultKw$variable$coerce,
-			{ key: 'exportStatementDefaultDeclaration.defaultKw.variable', max: 2 }
-		),
-		functionSignature: bundle(
-			exportStatementDefaultDeclaration$defaultKw$functionSignature$strict,
-			exportStatementDefaultDeclaration$defaultKw$functionSignature$coerce,
-			{ key: 'exportStatementDefaultDeclaration.defaultKw.functionSignature', max: 2 }
-		),
-		abstractClass: bundle(
-			exportStatementDefaultDeclaration$defaultKw$abstractClass$strict,
-			exportStatementDefaultDeclaration$defaultKw$abstractClass$coerce,
-			{ key: 'exportStatementDefaultDeclaration.defaultKw.abstractClass', max: 2 }
-		),
-		module: bundle(
-			exportStatementDefaultDeclaration$defaultKw$module$strict,
-			exportStatementDefaultDeclaration$defaultKw$module$coerce,
-			{ key: 'exportStatementDefaultDeclaration.defaultKw.module', max: 2 }
-		),
-		internalModule: bundle(
-			exportStatementDefaultDeclaration$defaultKw$internalModule$strict,
-			exportStatementDefaultDeclaration$defaultKw$internalModule$coerce,
-			{ key: 'exportStatementDefaultDeclaration.defaultKw.internalModule', max: 2 }
-		),
-		typeAlias: bundle(
-			exportStatementDefaultDeclaration$defaultKw$typeAlias$strict,
-			exportStatementDefaultDeclaration$defaultKw$typeAlias$coerce,
-			{ key: 'exportStatementDefaultDeclaration.defaultKw.typeAlias', max: 2 }
-		),
-		enum: bundle(
-			exportStatementDefaultDeclaration$defaultKw$enum$strict,
-			exportStatementDefaultDeclaration$defaultKw$enum$coerce,
-			{ key: 'exportStatementDefaultDeclaration.defaultKw.enum', max: 2 }
-		),
-		interface: bundle(
-			exportStatementDefaultDeclaration$defaultKw$interface$strict,
-			exportStatementDefaultDeclaration$defaultKw$interface$coerce,
-			{ key: 'exportStatementDefaultDeclaration.defaultKw.interface', max: 2 }
-		),
-		importAlias: bundle(
-			exportStatementDefaultDeclaration$defaultKw$importAlias$strict,
-			exportStatementDefaultDeclaration$defaultKw$importAlias$coerce,
-			{ key: 'exportStatementDefaultDeclaration.defaultKw.importAlias', max: 2 }
-		),
-		ambient: {
-			...bundle(
-				exportStatementDefaultDeclaration$defaultKw$ambient$strict,
-				exportStatementDefaultDeclaration$defaultKw$ambient$coerce,
-				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient', max: 2 }
-			),
-			function: bundle(
-				exportStatementDefaultDeclaration$defaultKw$ambient$function$strict,
-				exportStatementDefaultDeclaration$defaultKw$ambient$function$coerce,
-				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.function', max: 2 }
-			),
-			generatorFunction: bundle(
-				exportStatementDefaultDeclaration$defaultKw$ambient$generatorFunction$strict,
-				exportStatementDefaultDeclaration$defaultKw$ambient$generatorFunction$coerce,
-				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.generatorFunction', max: 2 }
-			),
-			class: bundle(
-				exportStatementDefaultDeclaration$defaultKw$ambient$class$strict,
-				exportStatementDefaultDeclaration$defaultKw$ambient$class$coerce,
-				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.class', max: 2 }
-			),
-			lexical: bundle(
-				exportStatementDefaultDeclaration$defaultKw$ambient$lexical$strict,
-				exportStatementDefaultDeclaration$defaultKw$ambient$lexical$coerce,
-				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.lexical', max: 2 }
-			),
-			variable: bundle(
-				exportStatementDefaultDeclaration$defaultKw$ambient$variable$strict,
-				exportStatementDefaultDeclaration$defaultKw$ambient$variable$coerce,
-				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.variable', max: 2 }
-			),
-			functionSignature: bundle(
-				exportStatementDefaultDeclaration$defaultKw$ambient$functionSignature$strict,
-				exportStatementDefaultDeclaration$defaultKw$ambient$functionSignature$coerce,
-				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.functionSignature', max: 2 }
-			),
-			abstractClass: bundle(
-				exportStatementDefaultDeclaration$defaultKw$ambient$abstractClass$strict,
-				exportStatementDefaultDeclaration$defaultKw$ambient$abstractClass$coerce,
-				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.abstractClass', max: 2 }
-			),
-			internalModule: bundle(
-				exportStatementDefaultDeclaration$defaultKw$ambient$internalModule$strict,
-				exportStatementDefaultDeclaration$defaultKw$ambient$internalModule$coerce,
-				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.internalModule', max: 2 }
-			),
-			typeAlias: bundle(
-				exportStatementDefaultDeclaration$defaultKw$ambient$typeAlias$strict,
-				exportStatementDefaultDeclaration$defaultKw$ambient$typeAlias$coerce,
-				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.typeAlias', max: 2 }
-			),
-			enum: bundle(
-				exportStatementDefaultDeclaration$defaultKw$ambient$enum$strict,
-				exportStatementDefaultDeclaration$defaultKw$ambient$enum$coerce,
-				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.enum', max: 2 }
-			),
-			interface: bundle(
-				exportStatementDefaultDeclaration$defaultKw$ambient$interface$strict,
-				exportStatementDefaultDeclaration$defaultKw$ambient$interface$coerce,
-				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.interface', max: 2 }
-			),
-			importAlias: bundle(
-				exportStatementDefaultDeclaration$defaultKw$ambient$importAlias$strict,
-				exportStatementDefaultDeclaration$defaultKw$ambient$importAlias$coerce,
-				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.importAlias', max: 2 }
-			),
-			ambient: bundle(
-				exportStatementDefaultDeclaration$defaultKw$ambient$ambient$strict,
-				exportStatementDefaultDeclaration$defaultKw$ambient$ambient$coerce,
-				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.ambient', max: 2 }
-			),
-			global: bundle(
-				exportStatementDefaultDeclaration$defaultKw$ambient$global$strict,
-				exportStatementDefaultDeclaration$defaultKw$ambient$global$coerce,
-				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.global', max: 2 }
-			)
-		},
-		value: {
-			...bundle(
-				exportStatementDefaultDeclaration$defaultKw$value$strict,
-				exportStatementDefaultDeclaration$defaultKw$value$coerce,
-				{ key: 'exportStatementDefaultDeclaration.defaultKw.value', max: 2 }
-			),
-			automaticSemicolon: bundle(
-				exportStatementDefaultDeclaration$defaultKw$value$automaticSemicolon$strict,
-				exportStatementDefaultDeclaration$defaultKw$value$automaticSemicolon$coerce,
-				{ key: 'exportStatementDefaultDeclaration.defaultKw.value.automaticSemicolon', max: 2 }
-			),
-			semi: bundle(
-				exportStatementDefaultDeclaration$defaultKw$value$semi$strict,
-				exportStatementDefaultDeclaration$defaultKw$value$semi$coerce,
-				{ key: 'exportStatementDefaultDeclaration.defaultKw.value.semi', max: 2 }
-			)
-		}
-	}
-});
+};
 
 export const declaration: {
 	readonly function: typeof B.functionDeclaration;
@@ -4620,77 +4624,50 @@ export const declaration: {
 });
 
 export const importSpecifier: {
-	readonly name: { strict: typeof F.buildImportSpecifierName; coerce: typeof C.coerceToImportSpecifierName };
-	readonly as: { strict: typeof F.buildImportSpecifierAs; coerce: typeof C.coerceToImportSpecifierAs };
+	readonly name: typeof B.importSpecifierName;
+	readonly as: typeof B.importSpecifierAs;
 } = Object.freeze({
-	name: bundle(F.buildImportSpecifierName, C.coerceToImportSpecifierName, { key: 'importSpecifier.name', max: 1 }),
-	as: bundle(F.buildImportSpecifierAs, C.coerceToImportSpecifierAs, { key: 'importSpecifier.as', max: 1 })
+	name: B.importSpecifierName,
+	as: B.importSpecifierAs
 });
 
 export const variableDeclarator: {
-	readonly plain: { strict: typeof F.buildVariableDeclaratorPlain; coerce: typeof C.coerceToVariableDeclaratorPlain };
-	readonly definite: {
-		strict: typeof F.buildVariableDeclaratorDefinite;
-		coerce: typeof C.coerceToVariableDeclaratorDefinite;
-	};
+	readonly plain: typeof B.variableDeclaratorPlain;
+	readonly definite: typeof B.variableDeclaratorDefinite;
 } = Object.freeze({
-	plain: bundle(F.buildVariableDeclaratorPlain, C.coerceToVariableDeclaratorPlain, {
-		key: 'variableDeclarator.plain',
-		max: 1
-	}),
-	definite: bundle(F.buildVariableDeclaratorDefinite, C.coerceToVariableDeclaratorDefinite, {
-		key: 'variableDeclarator.definite',
-		max: 1
-	})
+	plain: B.variableDeclaratorPlain,
+	definite: B.variableDeclaratorDefinite
 });
 
 export const forHeader: {
-	readonly lhs: { strict: typeof F.buildForHeaderLhs; coerce: typeof C.coerceToForHeaderLhs };
-	readonly varKind: { strict: typeof F.buildForHeaderVarKind; coerce: typeof C.coerceToForHeaderVarKind };
-	readonly letConstKind: {
-		strict: typeof F.buildForHeaderLetConstKind;
-		coerce: typeof C.coerceToForHeaderLetConstKind;
-	};
+	readonly lhs: typeof B.forHeaderLhs;
+	readonly varKind: typeof B.forHeaderVarKind;
+	readonly letConstKind: typeof B.forHeaderLetConstKind;
 } = Object.freeze({
-	lhs: bundle(F.buildForHeaderLhs, C.coerceToForHeaderLhs, { key: 'forHeader.lhs', max: 1 }),
-	varKind: bundle(F.buildForHeaderVarKind, C.coerceToForHeaderVarKind, { key: 'forHeader.varKind', max: 1 }),
-	letConstKind: bundle(F.buildForHeaderLetConstKind, C.coerceToForHeaderLetConstKind, {
-		key: 'forHeader.letConstKind',
-		max: 2
-	})
+	lhs: B.forHeaderLhs,
+	varKind: B.forHeaderVarKind,
+	letConstKind: B.forHeaderLetConstKind
 });
 
 export const callExpression: {
-	readonly call: { strict: typeof F.buildCallExpressionCall; coerce: typeof C.coerceToCallExpressionCall };
-	readonly templateCall: {
-		strict: typeof F.buildCallExpressionTemplateCall;
-		coerce: typeof C.coerceToCallExpressionTemplateCall;
-	};
-	readonly member: { strict: typeof F.buildCallExpressionMember; coerce: typeof C.coerceToCallExpressionMember };
+	readonly call: typeof B.callExpressionCall;
+	readonly templateCall: typeof B.callExpressionTemplateCall;
+	readonly member: typeof B.callExpressionMember;
 } = Object.freeze({
-	call: bundle(F.buildCallExpressionCall, C.coerceToCallExpressionCall, { key: 'callExpression.call', max: 1 }),
-	templateCall: bundle(F.buildCallExpressionTemplateCall, C.coerceToCallExpressionTemplateCall, {
-		key: 'callExpression.templateCall',
-		max: 1
-	}),
-	member: bundle(F.buildCallExpressionMember, C.coerceToCallExpressionMember, { key: 'callExpression.member', max: 1 })
+	call: B.callExpressionCall,
+	templateCall: B.callExpressionTemplateCall,
+	member: B.callExpressionMember
 });
 
 export const updateExpression: {
-	readonly strict: typeof F.buildUpdateExpressionPostfix;
-	readonly coerce: typeof C.coerceToUpdateExpressionPostfix;
-	readonly postfix: { strict: typeof F.buildUpdateExpressionPostfix; coerce: typeof C.coerceToUpdateExpressionPostfix };
-	readonly prefix: { strict: typeof F.buildUpdateExpressionPrefix; coerce: typeof C.coerceToUpdateExpressionPrefix };
+	readonly strict: typeof B.updateExpressionPostfix.strict;
+	readonly coerce: typeof B.updateExpressionPostfix.coerce;
+	readonly postfix: typeof B.updateExpressionPostfix;
+	readonly prefix: typeof B.updateExpressionPrefix;
 } = Object.freeze({
-	...bundle(F.buildUpdateExpressionPostfix, C.coerceToUpdateExpressionPostfix, { key: 'updateExpression', max: 1 }),
-	postfix: bundle(F.buildUpdateExpressionPostfix, C.coerceToUpdateExpressionPostfix, {
-		key: 'updateExpression.postfix',
-		max: 1
-	}),
-	prefix: bundle(F.buildUpdateExpressionPrefix, C.coerceToUpdateExpressionPrefix, {
-		key: 'updateExpression.prefix',
-		max: 1
-	})
+	...bundle(B.updateExpressionPostfix.strict, B.updateExpressionPostfix.coerce, { key: 'updateExpression', max: 1 }),
+	postfix: B.updateExpressionPostfix,
+	prefix: B.updateExpressionPrefix
 });
 
 const yieldExpressionDelegate$as =
@@ -6132,7 +6109,185 @@ const parenthesizedExpressionTyped$yield$delegate$update$prefix$coerce =
 		C.coerceToParenthesizedExpressionTyped,
 		yieldExpression.delegate.update.prefix.coerce
 	);
-const parenthesizedExpressionTyped: {
+export const parenthesizedExpressionTyped = Object.freeze({
+	...B.parenthesizedExpressionTyped,
+	as: bundle(parenthesizedExpressionTyped$as$strict, parenthesizedExpressionTyped$as$coerce, {
+		key: 'parenthesizedExpressionTyped.as',
+		max: 2
+	}),
+	satisfies: bundle(parenthesizedExpressionTyped$satisfies$strict, parenthesizedExpressionTyped$satisfies$coerce, {
+		key: 'parenthesizedExpressionTyped.satisfies',
+		max: 2
+	}),
+	instantiation: bundle(
+		parenthesizedExpressionTyped$instantiation$strict,
+		parenthesizedExpressionTyped$instantiation$coerce,
+		{ key: 'parenthesizedExpressionTyped.instantiation', max: 2 }
+	),
+	internalModule: bundle(
+		parenthesizedExpressionTyped$internalModule$strict,
+		parenthesizedExpressionTyped$internalModule$coerce,
+		{ key: 'parenthesizedExpressionTyped.internalModule', max: 2 }
+	),
+	typeAssertion: bundle(
+		parenthesizedExpressionTyped$typeAssertion$strict,
+		parenthesizedExpressionTyped$typeAssertion$coerce,
+		{ key: 'parenthesizedExpressionTyped.typeAssertion', max: 2 }
+	),
+	assignment: bundle(parenthesizedExpressionTyped$assignment$strict, parenthesizedExpressionTyped$assignment$coerce, {
+		key: 'parenthesizedExpressionTyped.assignment',
+		max: 2
+	}),
+	augmentedAssignment: bundle(
+		parenthesizedExpressionTyped$augmentedAssignment$strict,
+		parenthesizedExpressionTyped$augmentedAssignment$coerce,
+		{ key: 'parenthesizedExpressionTyped.augmentedAssignment', max: 2 }
+	),
+	await: bundle(parenthesizedExpressionTyped$await$strict, parenthesizedExpressionTyped$await$coerce, {
+		key: 'parenthesizedExpressionTyped.await',
+		max: 2
+	}),
+	unary: bundle(parenthesizedExpressionTyped$unary$strict, parenthesizedExpressionTyped$unary$coerce, {
+		key: 'parenthesizedExpressionTyped.unary',
+		max: 2
+	}),
+	binary: {
+		...bundle(parenthesizedExpressionTyped$binary$strict, parenthesizedExpressionTyped$binary$coerce, {
+			key: 'parenthesizedExpressionTyped.binary',
+			max: 2
+		}),
+		in: bundle(parenthesizedExpressionTyped$binary$in$strict, parenthesizedExpressionTyped$binary$in$coerce, {
+			key: 'parenthesizedExpressionTyped.binary.in',
+			max: 2
+		})
+	},
+	ternary: bundle(parenthesizedExpressionTyped$ternary$strict, parenthesizedExpressionTyped$ternary$coerce, {
+		key: 'parenthesizedExpressionTyped.ternary',
+		max: 2
+	}),
+	update: {
+		...bundle(parenthesizedExpressionTyped$update$strict, parenthesizedExpressionTyped$update$coerce, {
+			key: 'parenthesizedExpressionTyped.update',
+			max: 2
+		}),
+		postfix: bundle(
+			parenthesizedExpressionTyped$update$postfix$strict,
+			parenthesizedExpressionTyped$update$postfix$coerce,
+			{ key: 'parenthesizedExpressionTyped.update.postfix', max: 2 }
+		),
+		prefix: bundle(
+			parenthesizedExpressionTyped$update$prefix$strict,
+			parenthesizedExpressionTyped$update$prefix$coerce,
+			{ key: 'parenthesizedExpressionTyped.update.prefix', max: 2 }
+		)
+	},
+	new: bundle(parenthesizedExpressionTyped$new$strict, parenthesizedExpressionTyped$new$coerce, {
+		key: 'parenthesizedExpressionTyped.new',
+		max: 2
+	}),
+	yield: {
+		...bundle(parenthesizedExpressionTyped$yield$strict, parenthesizedExpressionTyped$yield$coerce, {
+			key: 'parenthesizedExpressionTyped.yield',
+			max: 2
+		}),
+		delegate: {
+			...bundle(
+				parenthesizedExpressionTyped$yield$delegate$strict,
+				parenthesizedExpressionTyped$yield$delegate$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate', max: 2 }
+			),
+			as: bundle(
+				parenthesizedExpressionTyped$yield$delegate$as$strict,
+				parenthesizedExpressionTyped$yield$delegate$as$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.as', max: 2 }
+			),
+			satisfies: bundle(
+				parenthesizedExpressionTyped$yield$delegate$satisfies$strict,
+				parenthesizedExpressionTyped$yield$delegate$satisfies$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.satisfies', max: 2 }
+			),
+			instantiation: bundle(
+				parenthesizedExpressionTyped$yield$delegate$instantiation$strict,
+				parenthesizedExpressionTyped$yield$delegate$instantiation$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.instantiation', max: 2 }
+			),
+			internalModule: bundle(
+				parenthesizedExpressionTyped$yield$delegate$internalModule$strict,
+				parenthesizedExpressionTyped$yield$delegate$internalModule$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.internalModule', max: 2 }
+			),
+			typeAssertion: bundle(
+				parenthesizedExpressionTyped$yield$delegate$typeAssertion$strict,
+				parenthesizedExpressionTyped$yield$delegate$typeAssertion$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.typeAssertion', max: 2 }
+			),
+			assignment: bundle(
+				parenthesizedExpressionTyped$yield$delegate$assignment$strict,
+				parenthesizedExpressionTyped$yield$delegate$assignment$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.assignment', max: 2 }
+			),
+			augmentedAssignment: bundle(
+				parenthesizedExpressionTyped$yield$delegate$augmentedAssignment$strict,
+				parenthesizedExpressionTyped$yield$delegate$augmentedAssignment$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.augmentedAssignment', max: 2 }
+			),
+			await: bundle(
+				parenthesizedExpressionTyped$yield$delegate$await$strict,
+				parenthesizedExpressionTyped$yield$delegate$await$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.await', max: 2 }
+			),
+			unary: bundle(
+				parenthesizedExpressionTyped$yield$delegate$unary$strict,
+				parenthesizedExpressionTyped$yield$delegate$unary$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.unary', max: 2 }
+			),
+			binary: {
+				...bundle(
+					parenthesizedExpressionTyped$yield$delegate$binary$strict,
+					parenthesizedExpressionTyped$yield$delegate$binary$coerce,
+					{ key: 'parenthesizedExpressionTyped.yield.delegate.binary', max: 2 }
+				),
+				in: bundle(
+					parenthesizedExpressionTyped$yield$delegate$binary$in$strict,
+					parenthesizedExpressionTyped$yield$delegate$binary$in$coerce,
+					{ key: 'parenthesizedExpressionTyped.yield.delegate.binary.in', max: 2 }
+				)
+			},
+			ternary: bundle(
+				parenthesizedExpressionTyped$yield$delegate$ternary$strict,
+				parenthesizedExpressionTyped$yield$delegate$ternary$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.ternary', max: 2 }
+			),
+			update: {
+				...bundle(
+					parenthesizedExpressionTyped$yield$delegate$update$strict,
+					parenthesizedExpressionTyped$yield$delegate$update$coerce,
+					{ key: 'parenthesizedExpressionTyped.yield.delegate.update', max: 2 }
+				),
+				postfix: bundle(
+					parenthesizedExpressionTyped$yield$delegate$update$postfix$strict,
+					parenthesizedExpressionTyped$yield$delegate$update$postfix$coerce,
+					{ key: 'parenthesizedExpressionTyped.yield.delegate.update.postfix', max: 2 }
+				),
+				prefix: bundle(
+					parenthesizedExpressionTyped$yield$delegate$update$prefix$strict,
+					parenthesizedExpressionTyped$yield$delegate$update$prefix$coerce,
+					{ key: 'parenthesizedExpressionTyped.yield.delegate.update.prefix', max: 2 }
+				)
+			},
+			new: bundle(
+				parenthesizedExpressionTyped$yield$delegate$new$strict,
+				parenthesizedExpressionTyped$yield$delegate$new$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.new', max: 2 }
+			),
+			yield: bundle(
+				parenthesizedExpressionTyped$yield$delegate$yield$strict,
+				parenthesizedExpressionTyped$yield$delegate$yield$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.yield', max: 2 }
+			)
+		}
+	}
+}) as unknown as typeof B.parenthesizedExpressionTyped & {
 	as: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
@@ -6601,214 +6756,22 @@ const parenthesizedExpressionTyped: {
 			};
 		};
 	};
-} = Object.freeze({
-	as: bundle(parenthesizedExpressionTyped$as$strict, parenthesizedExpressionTyped$as$coerce, {
-		key: 'parenthesizedExpressionTyped.as',
-		max: 2
-	}),
-	satisfies: bundle(parenthesizedExpressionTyped$satisfies$strict, parenthesizedExpressionTyped$satisfies$coerce, {
-		key: 'parenthesizedExpressionTyped.satisfies',
-		max: 2
-	}),
-	instantiation: bundle(
-		parenthesizedExpressionTyped$instantiation$strict,
-		parenthesizedExpressionTyped$instantiation$coerce,
-		{ key: 'parenthesizedExpressionTyped.instantiation', max: 2 }
-	),
-	internalModule: bundle(
-		parenthesizedExpressionTyped$internalModule$strict,
-		parenthesizedExpressionTyped$internalModule$coerce,
-		{ key: 'parenthesizedExpressionTyped.internalModule', max: 2 }
-	),
-	typeAssertion: bundle(
-		parenthesizedExpressionTyped$typeAssertion$strict,
-		parenthesizedExpressionTyped$typeAssertion$coerce,
-		{ key: 'parenthesizedExpressionTyped.typeAssertion', max: 2 }
-	),
-	assignment: bundle(parenthesizedExpressionTyped$assignment$strict, parenthesizedExpressionTyped$assignment$coerce, {
-		key: 'parenthesizedExpressionTyped.assignment',
-		max: 2
-	}),
-	augmentedAssignment: bundle(
-		parenthesizedExpressionTyped$augmentedAssignment$strict,
-		parenthesizedExpressionTyped$augmentedAssignment$coerce,
-		{ key: 'parenthesizedExpressionTyped.augmentedAssignment', max: 2 }
-	),
-	await: bundle(parenthesizedExpressionTyped$await$strict, parenthesizedExpressionTyped$await$coerce, {
-		key: 'parenthesizedExpressionTyped.await',
-		max: 2
-	}),
-	unary: bundle(parenthesizedExpressionTyped$unary$strict, parenthesizedExpressionTyped$unary$coerce, {
-		key: 'parenthesizedExpressionTyped.unary',
-		max: 2
-	}),
-	binary: {
-		...bundle(parenthesizedExpressionTyped$binary$strict, parenthesizedExpressionTyped$binary$coerce, {
-			key: 'parenthesizedExpressionTyped.binary',
-			max: 2
-		}),
-		in: bundle(parenthesizedExpressionTyped$binary$in$strict, parenthesizedExpressionTyped$binary$in$coerce, {
-			key: 'parenthesizedExpressionTyped.binary.in',
-			max: 2
-		})
-	},
-	ternary: bundle(parenthesizedExpressionTyped$ternary$strict, parenthesizedExpressionTyped$ternary$coerce, {
-		key: 'parenthesizedExpressionTyped.ternary',
-		max: 2
-	}),
-	update: {
-		...bundle(parenthesizedExpressionTyped$update$strict, parenthesizedExpressionTyped$update$coerce, {
-			key: 'parenthesizedExpressionTyped.update',
-			max: 2
-		}),
-		postfix: bundle(
-			parenthesizedExpressionTyped$update$postfix$strict,
-			parenthesizedExpressionTyped$update$postfix$coerce,
-			{ key: 'parenthesizedExpressionTyped.update.postfix', max: 2 }
-		),
-		prefix: bundle(
-			parenthesizedExpressionTyped$update$prefix$strict,
-			parenthesizedExpressionTyped$update$prefix$coerce,
-			{ key: 'parenthesizedExpressionTyped.update.prefix', max: 2 }
-		)
-	},
-	new: bundle(parenthesizedExpressionTyped$new$strict, parenthesizedExpressionTyped$new$coerce, {
-		key: 'parenthesizedExpressionTyped.new',
-		max: 2
-	}),
-	yield: {
-		...bundle(parenthesizedExpressionTyped$yield$strict, parenthesizedExpressionTyped$yield$coerce, {
-			key: 'parenthesizedExpressionTyped.yield',
-			max: 2
-		}),
-		delegate: {
-			...bundle(
-				parenthesizedExpressionTyped$yield$delegate$strict,
-				parenthesizedExpressionTyped$yield$delegate$coerce,
-				{ key: 'parenthesizedExpressionTyped.yield.delegate', max: 2 }
-			),
-			as: bundle(
-				parenthesizedExpressionTyped$yield$delegate$as$strict,
-				parenthesizedExpressionTyped$yield$delegate$as$coerce,
-				{ key: 'parenthesizedExpressionTyped.yield.delegate.as', max: 2 }
-			),
-			satisfies: bundle(
-				parenthesizedExpressionTyped$yield$delegate$satisfies$strict,
-				parenthesizedExpressionTyped$yield$delegate$satisfies$coerce,
-				{ key: 'parenthesizedExpressionTyped.yield.delegate.satisfies', max: 2 }
-			),
-			instantiation: bundle(
-				parenthesizedExpressionTyped$yield$delegate$instantiation$strict,
-				parenthesizedExpressionTyped$yield$delegate$instantiation$coerce,
-				{ key: 'parenthesizedExpressionTyped.yield.delegate.instantiation', max: 2 }
-			),
-			internalModule: bundle(
-				parenthesizedExpressionTyped$yield$delegate$internalModule$strict,
-				parenthesizedExpressionTyped$yield$delegate$internalModule$coerce,
-				{ key: 'parenthesizedExpressionTyped.yield.delegate.internalModule', max: 2 }
-			),
-			typeAssertion: bundle(
-				parenthesizedExpressionTyped$yield$delegate$typeAssertion$strict,
-				parenthesizedExpressionTyped$yield$delegate$typeAssertion$coerce,
-				{ key: 'parenthesizedExpressionTyped.yield.delegate.typeAssertion', max: 2 }
-			),
-			assignment: bundle(
-				parenthesizedExpressionTyped$yield$delegate$assignment$strict,
-				parenthesizedExpressionTyped$yield$delegate$assignment$coerce,
-				{ key: 'parenthesizedExpressionTyped.yield.delegate.assignment', max: 2 }
-			),
-			augmentedAssignment: bundle(
-				parenthesizedExpressionTyped$yield$delegate$augmentedAssignment$strict,
-				parenthesizedExpressionTyped$yield$delegate$augmentedAssignment$coerce,
-				{ key: 'parenthesizedExpressionTyped.yield.delegate.augmentedAssignment', max: 2 }
-			),
-			await: bundle(
-				parenthesizedExpressionTyped$yield$delegate$await$strict,
-				parenthesizedExpressionTyped$yield$delegate$await$coerce,
-				{ key: 'parenthesizedExpressionTyped.yield.delegate.await', max: 2 }
-			),
-			unary: bundle(
-				parenthesizedExpressionTyped$yield$delegate$unary$strict,
-				parenthesizedExpressionTyped$yield$delegate$unary$coerce,
-				{ key: 'parenthesizedExpressionTyped.yield.delegate.unary', max: 2 }
-			),
-			binary: {
-				...bundle(
-					parenthesizedExpressionTyped$yield$delegate$binary$strict,
-					parenthesizedExpressionTyped$yield$delegate$binary$coerce,
-					{ key: 'parenthesizedExpressionTyped.yield.delegate.binary', max: 2 }
-				),
-				in: bundle(
-					parenthesizedExpressionTyped$yield$delegate$binary$in$strict,
-					parenthesizedExpressionTyped$yield$delegate$binary$in$coerce,
-					{ key: 'parenthesizedExpressionTyped.yield.delegate.binary.in', max: 2 }
-				)
-			},
-			ternary: bundle(
-				parenthesizedExpressionTyped$yield$delegate$ternary$strict,
-				parenthesizedExpressionTyped$yield$delegate$ternary$coerce,
-				{ key: 'parenthesizedExpressionTyped.yield.delegate.ternary', max: 2 }
-			),
-			update: {
-				...bundle(
-					parenthesizedExpressionTyped$yield$delegate$update$strict,
-					parenthesizedExpressionTyped$yield$delegate$update$coerce,
-					{ key: 'parenthesizedExpressionTyped.yield.delegate.update', max: 2 }
-				),
-				postfix: bundle(
-					parenthesizedExpressionTyped$yield$delegate$update$postfix$strict,
-					parenthesizedExpressionTyped$yield$delegate$update$postfix$coerce,
-					{ key: 'parenthesizedExpressionTyped.yield.delegate.update.postfix', max: 2 }
-				),
-				prefix: bundle(
-					parenthesizedExpressionTyped$yield$delegate$update$prefix$strict,
-					parenthesizedExpressionTyped$yield$delegate$update$prefix$coerce,
-					{ key: 'parenthesizedExpressionTyped.yield.delegate.update.prefix', max: 2 }
-				)
-			},
-			new: bundle(
-				parenthesizedExpressionTyped$yield$delegate$new$strict,
-				parenthesizedExpressionTyped$yield$delegate$new$coerce,
-				{ key: 'parenthesizedExpressionTyped.yield.delegate.new', max: 2 }
-			),
-			yield: bundle(
-				parenthesizedExpressionTyped$yield$delegate$yield$strict,
-				parenthesizedExpressionTyped$yield$delegate$yield$coerce,
-				{ key: 'parenthesizedExpressionTyped.yield.delegate.yield', max: 2 }
-			)
-		}
-	}
-});
+};
 
 export const parenthesizedExpression: {
-	readonly typed: {
-		strict: typeof F.buildParenthesizedExpressionTyped;
-		coerce: typeof C.coerceToParenthesizedExpressionTyped;
-	} & typeof parenthesizedExpressionTyped;
-	readonly sequence: {
-		strict: typeof F.buildParenthesizedExpressionSequence;
-		coerce: typeof C.coerceToParenthesizedExpressionSequence;
-	} & typeof parenthesizedExpressionSequence;
+	readonly typed: typeof parenthesizedExpressionTyped;
+	readonly sequence: typeof parenthesizedExpressionSequence;
 } = Object.freeze({
-	typed: Object.freeze({
-		...bundle(F.buildParenthesizedExpressionTyped, C.coerceToParenthesizedExpressionTyped, {
-			key: 'parenthesizedExpression.typed',
-			max: 1
-		}),
-		...parenthesizedExpressionTyped
-	}),
-	sequence: Object.freeze({
-		...bundle(F.buildParenthesizedExpressionSequence, C.coerceToParenthesizedExpressionSequence),
-		...parenthesizedExpressionSequence
-	})
+	typed: parenthesizedExpressionTyped,
+	sequence: parenthesizedExpressionSequence
 });
 
 export const string: {
-	readonly double: { strict: typeof F.buildStringDouble; coerce: typeof C.coerceToStringDouble };
-	readonly single: { strict: typeof F.buildStringSingle; coerce: typeof C.coerceToStringSingle };
+	readonly double: typeof B.stringDouble;
+	readonly single: typeof B.stringSingle;
 } = Object.freeze({
-	double: bundle(F.buildStringDouble, C.coerceToStringDouble),
-	single: bundle(F.buildStringSingle, C.coerceToStringSingle)
+	double: B.stringDouble,
+	single: B.stringSingle
 });
 
 export const comment: {
@@ -6838,83 +6801,41 @@ export const pattern: {
 });
 
 export const indexSignature: {
-	readonly colon: { strict: typeof F.buildIndexSignatureColon; coerce: typeof C.coerceToIndexSignatureColon };
-	readonly mappedTypeClause: {
-		strict: typeof F.buildIndexSignatureMappedTypeClause;
-		coerce: typeof C.coerceToIndexSignatureMappedTypeClause;
-	} & typeof indexSignatureMappedTypeClause;
+	readonly colon: typeof B.indexSignatureColon;
+	readonly mappedTypeClause: typeof indexSignatureMappedTypeClause;
 } = Object.freeze({
-	colon: bundle(F.buildIndexSignatureColon, C.coerceToIndexSignatureColon, { key: 'indexSignature.colon', max: 1 }),
-	mappedTypeClause: Object.freeze({
-		...bundle(F.buildIndexSignatureMappedTypeClause, C.coerceToIndexSignatureMappedTypeClause, {
-			key: 'indexSignature.mappedTypeClause',
-			max: 1
-		}),
-		...indexSignatureMappedTypeClause
-	})
+	colon: B.indexSignatureColon,
+	mappedTypeClause: indexSignatureMappedTypeClause
 });
 
 export const classBodyMember: {
-	readonly method: { strict: typeof F.buildClassBodyMemberMethod; coerce: typeof C.coerceToClassBodyMemberMethod };
-	readonly methodSig: {
-		strict: typeof F.buildClassBodyMemberMethodSig;
-		coerce: typeof C.coerceToClassBodyMemberMethodSig;
-	};
+	readonly method: typeof B.classBodyMemberMethod;
+	readonly methodSig: typeof B.classBodyMemberMethodSig;
 	readonly staticBlock: typeof B.classStaticBlock;
-	readonly declaration: {
-		strict: typeof F.buildClassBodyMemberDeclaration;
-		coerce: typeof C.coerceToClassBodyMemberDeclaration;
-	};
+	readonly declaration: typeof B.classBodyMemberDeclaration;
 	readonly empty: typeof F.buildEmptyMember;
 } = Object.freeze({
-	method: bundle(F.buildClassBodyMemberMethod, C.coerceToClassBodyMemberMethod, {
-		key: 'classBodyMember.method',
-		max: 2
-	}),
-	methodSig: bundle(F.buildClassBodyMemberMethodSig, C.coerceToClassBodyMemberMethodSig, {
-		key: 'classBodyMember.methodSig',
-		max: 1
-	}),
+	method: B.classBodyMemberMethod,
+	methodSig: B.classBodyMemberMethodSig,
 	staticBlock: B.classStaticBlock,
-	declaration: bundle(F.buildClassBodyMemberDeclaration, C.coerceToClassBodyMemberDeclaration, {
-		key: 'classBodyMember.declaration',
-		max: 2
-	}),
+	declaration: B.classBodyMemberDeclaration,
 	empty: F.buildEmptyMember
 });
 
 export const enumBodyElement: {
-	readonly name: { strict: typeof F.buildEnumBodyElementName; coerce: typeof C.coerceToEnumBodyElementName };
+	readonly name: typeof B.enumBodyElementName;
 	readonly assignment: typeof B.enumAssignment;
 } = Object.freeze({
-	name: bundle(F.buildEnumBodyElementName, C.coerceToEnumBodyElementName, { key: 'enumBodyElement.name', max: 1 }),
+	name: B.enumBodyElementName,
 	assignment: B.enumAssignment
 });
 
 export const exportStatementDefault: {
-	readonly from: {
-		strict: typeof F.buildExportStatementDefaultFrom;
-		coerce: typeof C.coerceToExportStatementDefaultFrom;
-	} & typeof exportStatementDefaultFrom;
-	readonly declaration: {
-		strict: typeof F.buildExportStatementDefaultDeclaration;
-		coerce: typeof C.coerceToExportStatementDefaultDeclaration;
-	} & typeof exportStatementDefaultDeclaration;
+	readonly from: typeof exportStatementDefaultFrom;
+	readonly declaration: typeof exportStatementDefaultDeclaration;
 } = Object.freeze({
-	from: Object.freeze({
-		...bundle(F.buildExportStatementDefaultFrom, C.coerceToExportStatementDefaultFrom, {
-			key: 'exportStatementDefault.from',
-			max: 2
-		}),
-		...exportStatementDefaultFrom
-	}),
-	declaration: Object.freeze({
-		...bundle(F.buildExportStatementDefaultDeclaration, C.coerceToExportStatementDefaultDeclaration, {
-			key: 'exportStatementDefault.declaration',
-			max: 1
-		}),
-		...exportStatementDefaultDeclaration
-	})
+	from: exportStatementDefaultFrom,
+	declaration: exportStatementDefaultDeclaration
 });
 
 export const numberBigint: {
@@ -7194,32 +7115,14 @@ export const literalType = Object.freeze({
 
 export const exportStatement: {
 	readonly default: typeof exportStatementDefault;
-	readonly typeExport: {
-		strict: typeof F.buildExportStatementTypeExport;
-		coerce: typeof C.coerceToExportStatementTypeExport;
-	};
-	readonly equalsExport: {
-		strict: typeof F.buildExportStatementEqualsExport;
-		coerce: typeof C.coerceToExportStatementEqualsExport;
-	};
-	readonly namespaceExport: {
-		strict: typeof F.buildExportStatementNamespaceExport;
-		coerce: typeof C.coerceToExportStatementNamespaceExport;
-	};
+	readonly typeExport: typeof B.exportStatementTypeExport;
+	readonly equalsExport: typeof B.exportStatementEqualsExport;
+	readonly namespaceExport: typeof B.exportStatementNamespaceExport;
 } = Object.freeze({
 	default: exportStatementDefault,
-	typeExport: bundle(F.buildExportStatementTypeExport, C.coerceToExportStatementTypeExport, {
-		key: 'exportStatement.typeExport',
-		max: 2
-	}),
-	equalsExport: bundle(F.buildExportStatementEqualsExport, C.coerceToExportStatementEqualsExport, {
-		key: 'exportStatement.equalsExport',
-		max: 2
-	}),
-	namespaceExport: bundle(F.buildExportStatementNamespaceExport, C.coerceToExportStatementNamespaceExport, {
-		key: 'exportStatement.namespaceExport',
-		max: 2
-	})
+	typeExport: B.exportStatementTypeExport,
+	equalsExport: B.exportStatementEqualsExport,
+	namespaceExport: B.exportStatementNamespaceExport
 });
 
 export const statement: {
@@ -7268,34 +7171,22 @@ export const statement: {
 
 export const number: {
 	readonly strict: typeof F.buildNumberDecimal;
-	readonly hex: { strict: typeof F.buildNumberHex; coerce: typeof C.coerceToNumberHex };
-	readonly floatPoint: { strict: typeof F.buildNumberFloatPoint; coerce: typeof C.coerceToNumberFloatPoint };
-	readonly floatLeadingPoint: {
-		strict: typeof F.buildNumberFloatLeadingPoint;
-		coerce: typeof C.coerceToNumberFloatLeadingPoint;
-	};
-	readonly floatScientific: {
-		strict: typeof F.buildNumberFloatScientific;
-		coerce: typeof C.coerceToNumberFloatScientific;
-	};
+	readonly hex: typeof B.numberHex;
+	readonly floatPoint: typeof B.numberFloatPoint;
+	readonly floatLeadingPoint: typeof B.numberFloatLeadingPoint;
+	readonly floatScientific: typeof B.numberFloatScientific;
 	readonly decimal: typeof F.buildNumberDecimal;
-	readonly binary: { strict: typeof F.buildNumberBinary; coerce: typeof C.coerceToNumberBinary };
-	readonly octal: { strict: typeof F.buildNumberOctal; coerce: typeof C.coerceToNumberOctal };
+	readonly binary: typeof B.numberBinary;
+	readonly octal: typeof B.numberOctal;
 	readonly bigint: typeof numberBigint;
 } = Object.freeze({
 	...bundle(F.buildNumberDecimal, undefined, { key: 'number', max: 1 }),
-	hex: bundle(F.buildNumberHex, C.coerceToNumberHex, { key: 'number.hex', max: 2 }),
-	floatPoint: bundle(F.buildNumberFloatPoint, C.coerceToNumberFloatPoint, { key: 'number.floatPoint', max: 2 }),
-	floatLeadingPoint: bundle(F.buildNumberFloatLeadingPoint, C.coerceToNumberFloatLeadingPoint, {
-		key: 'number.floatLeadingPoint',
-		max: 2
-	}),
-	floatScientific: bundle(F.buildNumberFloatScientific, C.coerceToNumberFloatScientific, {
-		key: 'number.floatScientific',
-		max: 2
-	}),
+	hex: B.numberHex,
+	floatPoint: B.numberFloatPoint,
+	floatLeadingPoint: B.numberFloatLeadingPoint,
+	floatScientific: B.numberFloatScientific,
 	decimal: F.buildNumberDecimal,
-	binary: bundle(F.buildNumberBinary, C.coerceToNumberBinary, { key: 'number.binary', max: 2 }),
-	octal: bundle(F.buildNumberOctal, C.coerceToNumberOctal, { key: 'number.octal', max: 2 }),
+	binary: B.numberBinary,
+	octal: B.numberOctal,
 	bigint: numberBigint
 });

@@ -43,6 +43,15 @@ export const characterClassEscape: Hoisted<typeof O.characterClassEscape> = hois
 export const unicodePropertyValueExpression: Hoisted<typeof O.unicodePropertyValueExpression> = hoistAs<
 	typeof O.unicodePropertyValueExpression
 >(O.unicodePropertyValueExpression);
+export const inlineFlagsGroupEnable: Hoisted<typeof O.inlineFlagsGroupEnable> = hoistAs<
+	typeof O.inlineFlagsGroupEnable
+>(O.inlineFlagsGroupEnable);
+export const inlineFlagsGroupToggle: Hoisted<typeof O.inlineFlagsGroupToggle> = hoistAs<
+	typeof O.inlineFlagsGroupToggle
+>(O.inlineFlagsGroupToggle);
+export const inlineFlagsGroupDisable: Hoisted<typeof O.inlineFlagsGroupDisable> = hoistAs<
+	typeof O.inlineFlagsGroupDisable
+>(O.inlineFlagsGroupDisable);
 export const inlineFlagsGroup: Hoisted<typeof O.inlineFlagsGroup> = hoistAs<typeof O.inlineFlagsGroup>(
 	O.inlineFlagsGroup
 );

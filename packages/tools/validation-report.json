@@ -11440,6 +11440,67 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
+    "kind": "ir: suite_block",
+    "count": 47,
+    "entries": [
+      "Adding a wild card",
+      "Arbitrary indentation between brackets",
+      "As patterns",
+      "Async Function definitions",
+      "Async context managers and iterators",
+      "Await expressions",
+      "Builtin classes",
+      "Case terminating in comma",
+      "Class definitions",
+      "Class definitions with superclasses",
+      "Comma separated cases",
+      "Comments after dedents",
+      "Comments at different indentation levels",
+      "Comments at the ends of indented blocks",
+      "Complex case patterns on classes",
+      "Complex case patterns on complex numbers",
+      "Constants and enums",
+      "Control-flow statements",
+      "Decorated definitions",
+      "Default Tuple Arguments",
+      "Dict mappings",
+      "Empty blocks",
+      "Extra newlines",
+      "For statements",
+      "Format strings",
+      "Function definitions",
+      "Generic Function Definitions",
+      "If else statements",
+      "If guards",
+      "If statements",
+      "Literals",
+      "Match match, case case",
+      "Matching multiple values",
+      "Matching objects",
+      "Matching specific values",
+      "Maybe sequence pattern right hand side precedence validation",
+      "Multiple match patterns",
+      "Named expressions",
+      "Nested if statements",
+      "Or patterns",
+      "Positional arguments",
+      "Print used as a parameter",
+      "Try statements",
+      "Walrus match (Issue #150)",
+      "While statements",
+      "With statements",
+      "Yield expressions"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: suite_block"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
     "kind": "ir: block",
     "count": 47,
     "entries": [
@@ -11617,6 +11678,25 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "ir: string_content"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
+    "kind": "ir: escape_sequence_simple",
+    "count": 5,
+    "entries": [
+      "Exec used as an identifier",
+      "Multi-line strings",
+      "Raw strings",
+      "Strings",
+      "Strings mixing text with escapes"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: escape_sequence_simple"
   },
   {
     "source": "validator",
@@ -12136,6 +12216,70 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
+    "kind": "ir: escape_sequence_line_break",
+    "count": 2,
+    "entries": [
+      "Multi-line strings",
+      "Strings"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: escape_sequence_line_break"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
+    "kind": "ir: escape_sequence_hex",
+    "count": 3,
+    "entries": [
+      "Raw strings",
+      "Strings",
+      "Unicode escape sequences"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: escape_sequence_hex"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
+    "kind": "ir: escape_sequence_octal",
+    "count": 2,
+    "entries": [
+      "Strings",
+      "Unicode escape sequences"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: escape_sequence_octal"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
+    "kind": "ir: escape_sequence_named",
+    "count": 1,
+    "entries": [
+      "Strings"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: escape_sequence_named"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
     "kind": "ir: interpolation",
     "count": 7,
     "entries": [
@@ -12169,6 +12313,21 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "ir: format_specifier"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
+    "kind": "ir: escape_sequence_unicode_fixed",
+    "count": 1,
+    "entries": [
+      "Unicode escape sequences"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: escape_sequence_unicode_fixed"
   },
   {
     "source": "validator",
@@ -12299,6 +12458,39 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "ir: match_block"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
+    "kind": "ir: match_block_block",
+    "count": 19,
+    "entries": [
+      "Adding a wild card",
+      "As patterns",
+      "Builtin classes",
+      "Case terminating in comma",
+      "Comma separated cases",
+      "Complex case patterns on classes",
+      "Complex case patterns on complex numbers",
+      "Constants and enums",
+      "Dict mappings",
+      "If guards",
+      "Literals",
+      "Match match, case case",
+      "Matching multiple values",
+      "Matching objects",
+      "Matching specific values",
+      "Maybe sequence pattern right hand side precedence validation",
+      "Multiple match patterns",
+      "Or patterns",
+      "Positional arguments"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: match_block_block"
   },
   {
     "source": "validator",
@@ -12488,6 +12680,23 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "ir: splat_pattern"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
+    "kind": "ir: suite_inline",
+    "count": 3,
+    "entries": [
+      "Actually not match",
+      "Adding a wild card",
+      "If else statements"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: suite_inline"
   },
   {
     "source": "validator",
@@ -12961,6 +13170,21 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
+    "kind": "ir: with_clause_paren",
+    "count": 1,
+    "entries": [
+      "With statements"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: with_clause_paren"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
     "kind": "ir: with_clause_with_items",
     "count": 1,
     "entries": [
@@ -13001,6 +13225,21 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "ir: parenthesized_list_splat"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
+    "kind": "ir: suite_empty",
+    "count": 1,
+    "entries": [
+      "Empty blocks"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: suite_empty"
   },
   {
     "source": "validator",
@@ -15018,6 +15257,51 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "ir: posix_character_class"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "ir: inline_flags_group_enable",
+    "count": 1,
+    "entries": [
+      "Inline regex flags"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: inline_flags_group_enable"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "ir: inline_flags_group_toggle",
+    "count": 1,
+    "entries": [
+      "Inline regex flags"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: inline_flags_group_toggle"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "ir: inline_flags_group_disable",
+    "count": 1,
+    "entries": [
+      "Inline regex flags"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: inline_flags_group_disable"
   },
   {
     "source": "validator",
@@ -21924,6 +22208,22 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
+    "kind": "ir: field_pattern_shorthand",
+    "count": 2,
+    "entries": [
+      "Let-else Statements",
+      "Struct patterns"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: field_pattern_shorthand"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
     "kind": "ir: patterns",
     "count": 12,
     "entries": [
@@ -22437,6 +22737,43 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
+    "kind": "ir: match_arm_block_ending",
+    "count": 1,
+    "entries": [
+      "Match expressions"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: match_arm_block_ending"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
+    "kind": "ir: match_arm_with_comma",
+    "count": 8,
+    "entries": [
+      "Captured patterns",
+      "Ignored patterns",
+      "Inline const or Const blocks as pattern",
+      "Match expressions",
+      "Pattern with turbofish",
+      "Reference patterns",
+      "Struct patterns",
+      "Tuple struct patterns"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: match_arm_with_comma"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
     "kind": "ir: label",
     "count": 2,
     "entries": [
@@ -22486,6 +22823,36 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
+    "kind": "ir: escape_sequence_simple",
+    "count": 1,
+    "entries": [
+      "String literals"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: escape_sequence_simple"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
+    "kind": "ir: escape_sequence_hex",
+    "count": 1,
+    "entries": [
+      "String literals"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: escape_sequence_hex"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
     "kind": "ir: macro_rules",
     "count": 1,
     "entries": [
@@ -22511,6 +22878,21 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "ir: macro_rule"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
+    "kind": "ir: token_tree_pattern_paren",
+    "count": 1,
+    "entries": [
+      "Macro definition"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: token_tree_pattern_paren"
   },
   {
     "source": "validator",
@@ -22546,6 +22928,21 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
+    "kind": "ir: token_tree_pattern_bracket",
+    "count": 1,
+    "entries": [
+      "Macro definition"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: token_tree_pattern_bracket"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
     "kind": "ir: token_repetition",
     "count": 1,
     "entries": [
@@ -22556,6 +22953,22 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "ir: token_repetition"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
+    "kind": "ir: field_pattern_named",
+    "count": 2,
+    "entries": [
+      "Ignored patterns",
+      "Struct patterns"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: field_pattern_named"
   },
   {
     "source": "validator",
@@ -23846,6 +24259,38 @@
     "source": "validator",
     "grammar": "scm",
     "backend": "native",
+    "kind": "ir: named_node_plain",
+    "count": 18,
+    "entries": [
+      "Anchor Operator",
+      "Anonymous nodes",
+      "Captures",
+      "Comments",
+      "Field names",
+      "Groups",
+      "Lists",
+      "Missing keyword",
+      "Named nodes",
+      "Negated fields",
+      "Predicates",
+      "Quantifiers (*)",
+      "Quantifiers (+)",
+      "Quantifiers (?)",
+      "Quantifiers (complex)",
+      "Strings",
+      "Supertypes",
+      "Wildcard nodes"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: named_node_plain"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
     "kind": "ir: anonymous_node",
     "count": 6,
     "entries": [
@@ -23953,6 +24398,33 @@
     "source": "validator",
     "grammar": "scm",
     "backend": "native",
+    "kind": "ir: named_node_group_children",
+    "count": 13,
+    "entries": [
+      "Anchor Operator",
+      "Captures",
+      "Comments",
+      "Field names",
+      "Lists",
+      "Missing keyword",
+      "Negated fields",
+      "Quantifiers (*)",
+      "Quantifiers (+)",
+      "Quantifiers (?)",
+      "Quantifiers (complex)",
+      "Supertypes",
+      "Wildcard nodes"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: named_node_group_children"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
     "kind": "ir: field_definition",
     "count": 8,
     "entries": [
@@ -24008,6 +24480,25 @@
     "source": "validator",
     "grammar": "scm",
     "backend": "native",
+    "kind": "ir: list_element_quantifier",
+    "count": 5,
+    "entries": [
+      "Lists",
+      "Quantifiers (*)",
+      "Quantifiers (+)",
+      "Quantifiers (?)",
+      "Quantifiers (complex)"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: list_element_quantifier"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
     "kind": "ir: predicate",
     "count": 3,
     "entries": [
@@ -24057,6 +24548,21 @@
     "source": "validator",
     "grammar": "scm",
     "backend": "native",
+    "kind": "ir: named_node_group_anchored_last",
+    "count": 1,
+    "entries": [
+      "Anchor Operator"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: named_node_group_anchored_last"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
     "kind": "ir: named_node_expression_arm",
     "count": 1,
     "entries": [
@@ -24082,6 +24588,21 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "ir: escape_sequence"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "ir: named_node_supertyped",
+    "count": 1,
+    "entries": [
+      "Supertypes"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: named_node_supertyped"
   },
   {
     "source": "validator",
@@ -28657,6 +29178,31 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
+    "kind": "ir: class_body_member_declaration",
+    "count": 11,
+    "entries": [
+      "Abstract classes",
+      "Ambient declarations",
+      "Ambient declarations with for-let",
+      "Classes with decorators",
+      "Classes with method signatures",
+      "Classes with methods with and without trailing semicolons on one line",
+      "Classes with property names as strings or numbers",
+      "Override modifier",
+      "Property signatures with accessibility modifiers",
+      "Typeof this",
+      "Typeof types"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: class_body_member_declaration"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
     "kind": "ir: public_field_definition",
     "count": 9,
     "entries": [
@@ -28791,6 +29337,22 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
+    "kind": "ir: for_header_lhs",
+    "count": 2,
+    "entries": [
+      "Ambient declarations",
+      "Ambient declarations with for-let"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: for_header_lhs"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
     "kind": "ir: else_clause",
     "count": 2,
     "entries": [
@@ -28884,6 +29446,21 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "ir: finally_clause"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "ir: class_body_member_method_sig",
+    "count": 1,
+    "entries": [
+      "Flow-style ambient class declarations with commas"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: class_body_member_method_sig"
   },
   {
     "source": "validator",
@@ -29112,6 +29689,47 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "ir: enum_body_elements"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "ir: enum_body_element_name",
+    "count": 3,
+    "entries": [
+      "Ambient type alias declarations in namespaces",
+      "Enum declarations",
+      "Enum with trailing comma"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: enum_body_element_name"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "ir: class_body_member_method",
+    "count": 10,
+    "entries": [
+      "Abstract classes",
+      "Assertion functions checking a type",
+      "Classes with decorator calls that have type arguments",
+      "Classes with decorators",
+      "Classes with methods with and without trailing semicolons on one line",
+      "Decorator with parenthesized expression",
+      "Method declarations with keywords as names",
+      "Override modifier",
+      "Semicolon is not automatically inserted for method definitions with a body",
+      "Super"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: class_body_member_method"
   },
   {
     "source": "validator",
@@ -29464,6 +30082,36 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "ir: import_specifiers"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "ir: import_specifier_name",
+    "count": 1,
+    "entries": [
+      "Flow Import Types"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: import_specifier_name"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "ir: import_specifier_as",
+    "count": 1,
+    "entries": [
+      "Flow Import Types"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: import_specifier_as"
   },
   {
     "source": "validator",
