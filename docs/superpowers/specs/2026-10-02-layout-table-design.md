@@ -1,6 +1,6 @@
 # Layout table for width-aware rendering: design note
 
-Status: design note; rulings are marked where made. Its probes, outputs and prototype patches are in `docs/superpowers/probes/2026-10-02-layout-table/`, and the paths `probes/`, `outputs/` and `prototype-*.patch` below are relative to that folder. Updated 2026-10-08: see [Layout inference, kind runs and gap sets](#layout-inference-kind-runs-and-gap-sets-2026-10-08), which holds where it conflicts with earlier sections, and questions 16 to 21. Request of record: the width-setting issue, section "Direction under discussion".
+Status: design note; rulings are marked where made. Its probes, outputs and prototype patches are in `docs/superpowers/probes/2026-10-02-layout-table/`, and the paths `probes/`, `outputs/` and `prototype-*.patch` below are relative to that folder. Updated 2026-10-08: see [Layout inference, kind runs and gap sets](#layout-inference-kind-runs-and-gap-sets-2026-10-08), which holds where it conflicts with earlier sections, and questions 16 to 21; the 2026-10-09 rulings (questions 2 to 8 and 12, and typescript's context source) are marked where they apply. Request of record: the width-setting issue, section "Direction under discussion".
 Measured at master `fd189d4c9`, where the output-trait rebuild in [Staging](#staging) was also made. The validators and the python list form were rerun at `0f9556b17`, and everything in [Which arms a site admits](#which-arms-a-site-admits) was measured there. Master has since moved twice, to `9c01b8cbc` (slot renames; typescript has 1,360 sites against 1,356) and to `4052dd013` (python's terminated tuple form; python has 972 sites against 942); only the site counts were re-read there. Every number below comes from a throwaway prototype (see [The prototype](#the-prototype)).
 
 ## What is already ruled, and what this note settles
@@ -341,11 +341,18 @@ A third candidate, hugging, is in question 3.
 
 ### Options and how they travel
 
-- `width`: columns. Unset means no table.
-- `breaking`: `'group'` (default) or `'fill'`.
-- `tabWidth`: the columns a tab counts as.
+*Ruled 2026-10-09 (questions 7 and 8):* every whole-render layout setting sits in one `layout` group under `render`:
 
-They are top-level render options beside `indent`, not site addresses. They are accepted where `indent` is, at engine level (`createEngine(language, { render: { width: 100 } })`) and per call, read by `Options::read` and carried in the resolved options the writer already holds. A grammar that declares no bracket pair has no `width` key, as a grammar with no indent character has no `indent` key. The root dispatch chooses the table output when a width is set and the transport is the grammar's root kind ([Staging](#staging)).
+```ts
+render: { layout: { width: 100, tabWidth: 4, breaking: 'group', indent: '\t', newline: '\n' } }
+```
+
+- `width`: columns. Unset, and not detected, means no table.
+- `breaking`: `'group'` (default) or `'fill'`.
+- `tabWidth`: how many columns a tab counts as when a line is measured against `width`. Tabs are always written as `\t`; this setting only measures. Default 4.
+- `indent` and `newline` move into the group: `indent` from `render.indent`, and `newline` as the line-endings plan adds it there.
+
+They are not site addresses. They are accepted at engine level (`createEngine(language, { render: { layout: { width: 100 } } })`) and per call, read by `Options::read` and carried in the resolved options the writer already holds. A grammar that declares no bracket pair has no `width` key, as a grammar with no indent character has no `indent` key. The root dispatch chooses the table output when a width is set and the transport is the grammar's root kind ([Staging](#staging)).
 
 ## The conditional trailing separator
 
@@ -577,13 +584,11 @@ What the lex state cannot supply is a scanner's context, decided outside the lex
   ```
 
   The statement gaps are untouched: the break between statements is the scanner's own `_newline` token, which passes one fixed kind.
-- **A narrower supertype: typescript's no-break positions.** After `return`, `throw`, `break` and `continue`, and before a postfix `++` or `--` and before `=>`, no spelling of a break is legal, so the gap draws from a narrower supertype. Enrich mints `_inline_layout` (`_tight`, `_space`, `_tab`) beside `_layout`. A sittir-side marker names the supertype for the gap before a member; in tree-sitter's run of the grammar it is identity, as `role(…)` is:
-
-  ```ts
-  return_statement: ($, original) => seq('return', gap($._inline_layout, optional($._expressions)), $._semicolon)
-  ```
-
-  The parse-table derivation computes typescript's positions too. Codegen fails with a diagnostic naming each position where the derivation and the declaration differ, so the declaration is the checked source and the derivation is its test.
+- **A narrower supertype: typescript's no-break positions, derived (ruled 2026-10-09).** After `return`, `break` and `continue`, and before a postfix `++` or `--`, no spelling of a break is legal, so the gap draws from a narrower supertype. Enrich mints `_inline_layout` (`_tight`, `_space`, `_tab`) as a hidden supertype beside `_layout`. No marker places it: the positions come from the "matches whitespace" rule over the lex state (step 3).
+  - **The automatic semicolon is a token that matches whitespace.** Its lexical shape is a line break that the external scanner does not continue: `\n` not followed by a character that continues the expression (`.`, `,`, `(`, `[`, a binary operator, `?`, `:`, `=`, a backtick, and the scanner's handling of `++` and `--`). That pattern, with its lookahead, is the one declared fact, mirroring the scanner, the way `renderAs` gives python's string externals their shape.
+  - **Where it is lexable at a seam and matches `\n` plus the next leaf's first character, the newline kinds are ruled out** and the seam's `kinds` compile to `_inline_layout`'s members. `return` ⎵ `x` matches (`\nx`), so the gap is inline only. `a` ⎵ `+ b` does not (`\n+`), so it keeps its break: the 112 sites the parse table alone flags, and that take a break with no change, come out right.
+  - **`throw` and `=>` are upstream.** tree-sitter-javascript accepts a break after `throw` and before `=>`, which JavaScript rejects; neither involves the automatic semicolon (`=` continues the expression). The parser is followed and the difference is reported upstream; nothing is declared for it.
+  - **Open for the implementation:** whether `renderAs` can carry a lexical pattern for a token whose render spelling differs (an automatic semicolon renders as `;` or nothing), or whether the lexical shape needs a sibling declaration.
 
 **How it compiles onto each seam's `kinds`.**
 - **A narrower supertype:** the emitter writes the supertype's members as the constant `kinds` of the seam at that gap.
@@ -595,7 +600,6 @@ What the lex state cannot supply is a scanner's context, decided outside the lex
 **Later, not scoped: the same facts as `bindings.scm` captures.** Once the generator reads `bindings.scm` (the bootstrap work, where the generator runs sittir's own scm package), the declarations above can move beside the vocabulary claims, as query captures that reach codegen through a generated `grammar.bindings.ts`. They would compile onto `kinds` exactly as above. Proposed names:
 
 - `@layout.break.<kind>` on a node: inside it, a break is spelled with that layout kind, and the innermost capture wins.
-- `@layout.nobreak.after` and `@layout.nobreak.before` on a token: no break in the one gap after or before it.
 
 ```scheme
 ; python
@@ -603,12 +607,9 @@ What the lex state cannot supply is a scanner's context, decided outside the lex
 (_ "(" ")") @layout.break.newline
 (_ "[" "]") @layout.break.newline
 (_ "{" "}") @layout.break.newline
-; typescript
-(throw_statement "throw" @layout.nobreak.after)
-(return_statement "return" @layout.nobreak.after)
-(update_expression argument: (_) ["++" "--"] @layout.nobreak.before)
-(arrow_function "=>" @layout.nobreak.before)
 ```
+
+Typescript needs no capture: its positions are derived (above).
 
 What this changes in the table: a seam row carries its gap's valid set in place of the "admits a line break" bit.
 
@@ -737,7 +738,7 @@ Two pieces run outside this note: the line-ending plan, after 1c-i, and the `sea
 
 1. **The output trait,** text output only, byte-identical. The generated root dispatch goes through one core function. The prototype's table module is renamed (`table.rs`), because master's `layout.rs` now holds `TransportLayout`.
 2. **The `prepare` change:** the list view resolves a separator's arm by its site.
-3. **Context sets:** the "matches whitespace" rule over the lex state at each seam (from the parse table); python's `layout: { newline }` and typescript's `_inline_layout` with its `gap(…)` positions, declared in `grammar.sittir.ts` and compiled into `seam(kinds)`; the writer's context stack; the parse-table check for typescript. Gate 6. This step does not wait for the generator to read `bindings.scm`.
+3. **Context sets:** the "matches whitespace" rule over the lex state at each seam (from the parse table); python's `layout: { newline }` declared in `grammar.sittir.ts`; typescript's automatic-semicolon pattern, from which the `_inline_layout` positions are derived; both compiled into `seam(kinds)`; the writer's context stack. Gate 6. This step does not wait for the generator to read `bindings.scm`.
 4. **Detection:** the native walk behind `styleFrom` returning an options object, applied once under the `createEngine` keys by the native engine replacing its options, and indentation as one fact. This stage already delivers the detected line ending and indent unit, with no table.
 5. **The table output:** rows carry valid sets; there are list calls and a pass interface.
 6. **The run-pattern rule over the table.** This is the first stage that delivers statement-gap patterns: an inserted statement takes the file's gap, and the before-and-after check above is its gate.
@@ -753,26 +754,24 @@ Stages 3 and 4 do not depend on each other. Stage 6 needs 1, 2, 4 and 5.
 1. **Bracket pairs: declared per grammar, or fixed in codegen?** (Revised 2026-10-08: legality is declared in `grammar.sittir.ts`, never in `options`; see question 19.)
    Recommend declared, in `grammar.sittir.ts`. In python the pairs are the contexts of newline's choice (question 19). In every grammar they also choose the lists the first rule breaks (question 14), which is the same declaration read by the rule, not a second one. Regex declares none.
 
-2. **An edited parsed list whose source gaps were inline: may width break it?**
-   Recommend no, as ruled: what was read from source keeps its layout, and width applies to what was built. The alternative, treating a source-read arm that equals the default as a default, would let it break; it needs no stamp from `prepare`, but it cannot tell "the source says inline" from "nothing is known".
+2. **An edited parsed list whose source gaps were inline: may width break it?** Ruled (maintainer, 2026-10-09): yes. Width applies to every list whenever it is set or detected, parsed lists included, as detection-not-preservation already holds for gaps. A source-read seam is no longer "not adjustable" by that fact alone; an explicitly set one still is.
+   - Detection gains `width`. Recommend (not ruled) the file's longest line, so that an unedited file gains no break and inserted content breaks at the file's own width.
 
-3. **The first rule: plain group, or group that hugs a single item?**
-   Recommend plain group now and hugging as a later rule. Hugging is closer to rustfmt (`Ok(ParsedTree {` … `})`; 219 against 247 differing lines on `engine.rs`) but misfires on a closure whose body ends in a call (`.map(|node| KindId(` / `node.kind_id()` / `))`), and a clean condition needs a fact the table does not hold.
+3. **The first rule: plain group, or group that hugs a single item?** Ruled (maintainer, 2026-10-09): plain group.
+   Recommended plain group now and hugging as a later rule. Hugging is closer to rustfmt (`Ok(ParsedTree {` … `})`; 219 against 247 differing lines on `engine.rs`) but misfires on a closure whose body ends in a call (`.map(|node| KindId(` / `node.kind_id()` / `))`), and a clean condition needs a fact the table does not hold.
 
-4. **A list that already holds a line break between its items: do its default flanks break too, whatever the width?**
-   Recommend yes. A list is either flat or broken; this turns a comment-forced or explicitly separated list from `f(a,` / `b)` into a properly broken one. It applies only when a width is set.
+4. **A list that already holds a line break between its items: do its default flanks break too, whatever the width?** Ruled (maintainer, 2026-10-09): yes.
+   Recommended yes. A list is either flat or broken; this turns a comment-forced or explicitly separated list from `f(a,` / `b)` into a properly broken one. It applies only when a width is set.
 
-5. **A multi-line item: judged by its first line?**
-   Recommend yes, as the issue proposed.
+5. **A multi-line item: judged by its first line?** Ruled (maintainer, 2026-10-09): yes. Otherwise a callback's block body forces every argument of its call apart, since the line holding the call never fits.
 
-6. **The conditional separator's name, and whether rust's defaults move to it.**
-   Recommend `Delimiter.TrailingIfBroken`. Recommend moving rust's bracketed lists to it as a separate change after the table lands: it is what rustfmt writes, and with no width it changes bytes only for lists broken as written.
+6. **The conditional separator's name, and whether rust's defaults move to it.** Ruled (maintainer, 2026-10-09): only where the grammar spells an optional trailing separator, the same condition `Trailing` has; the grammar makes it legal and the option chooses whether to write it. Name and rust's defaults as recommended.
+   Recommended `Delimiter.TrailingIfBroken`. Recommend moving rust's bracketed lists to it as a separate change after the table lands: it is what rustfmt writes, and with no width it changes bytes only for lists broken as written.
 
-7. **Tab width.**
-   Recommend a `tabWidth` option defaulting to 4. The issue's table counted a tab as one; oxfmt here counts two.
+7. **Tab width.** Ruled (maintainer, 2026-10-09): tabs are always written as `\t`; `tabWidth` only measures, default 4.
+   Recommended a `tabWidth` option defaulting to 4. The issue's table counted a tab as one; oxfmt here counts two.
 
-8. **Option names.**
-   Recommend `width`, `breaking` and `tabWidth`.
+8. **Option names.** Ruled (maintainer, 2026-10-09): `render: { layout: { width, tabWidth, breaking, indent, newline } }`, with `indent` and `newline` in the group (see [Options and how they travel](#options-and-how-they-travel)).
 
 9. **Should a seam row record its site and arm now?**
    Recommend no: nothing reads them, and they would add a third to every row. Add them with a kept table.
@@ -785,8 +784,8 @@ Added with the reframing:
 11. **Per-site admission: is this the right definition?**
     Recommend yes: a site admits the line-break arms when its seam is free or the grammar ends a line there, and otherwise only tight, space and tab. Without the second case the grammars' own defaults and four keys of the committed python options test would be refused.
 
-12. **Admission from the parser: build it, when, and should it restrict options?**
-    Recommend building it as its own step after the table, and restricting options only then.
+12. **Admission from the parser: build it, when, and should it restrict options?** Ruled (maintainer, 2026-10-09): the options type reads the same `kinds` each seam already carries, with no new vocabulary. A site whose set excludes the newline kinds (typescript's derived `_inline_layout` positions) offers no line-break arms; leaf-edge exclusions are left to the writer's intersection. Typescript's positions come from the automatic semicolon's pattern (see [the context set's source](#the-gaps-valid-set-replaces-per-site-admission)), so the 112 keep their break.
+    Recommended building it as its own step after the table, and restricting options only then.
     - Rust and scm need nothing built: no scanner token is line-sensitive.
     - Typescript needs tree-sitter's state report and a walk back through the parse table for the sites that follow a child. Neither is hard and neither is done.
     - Restricting options with it refuses 184 of the 569 typescript sites seen, 112 of which take a line break today with no change (before `.`, before a binary operator). Recommend declaring those to admit one rather than losing them.
@@ -817,7 +816,7 @@ Added on 2026-10-08:
 
 19. **The context set's form.** Ruled (maintainer, 2026-10-08): declared in `grammar.sittir.ts`, as newline's choices in a context or as a specific supertype; never in `options`. Not scoped yet: the move to `bindings.scm` captures, which waits for the generator to read `bindings.scm`.
     - Python's pairs take newline's choices: `layout: { newline: { outside: $.line_continuation, within: [pairs] } }`, with the writer's context stack where a kind occurs both bracketed and bare. Its f-string field needs no declaration: Python 3.14 lets a replacement field span lines.
-    - Typescript's no-break positions take the minted `_inline_layout` supertype through the `gap($._inline_layout, member)` marker, derived from the parse table and checked against the declaration.
+    - Typescript's no-break positions take the minted `_inline_layout` supertype. Revised 2026-10-09: derived from the automatic semicolon's declared pattern through the "matches whitespace" rule, with no `gap(…)` marker.
 
     A supertype compiles to a constant `kinds`; a newline choice is spelled at compile time where the context is fixed, else through the writer's context stack. This replaces question 13's three declarations; the line-sensitive tokens keep their `role(…)`.
 
