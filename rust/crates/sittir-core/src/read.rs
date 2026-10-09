@@ -916,7 +916,7 @@ mod tests {
     }
 
     #[test]
-    fn a_refusal_names_the_kind_the_child_and_the_row() {
+    fn a_refusal_names_the_kind_the_child_and_its_index() {
         let name = |k: KindId| if k.0 == 208 { "function_item" } else { "block" };
         let refusal = ReadError::Unrouted { kind: KindId(208), child: KindId(313), index: 451 };
         assert_eq!(

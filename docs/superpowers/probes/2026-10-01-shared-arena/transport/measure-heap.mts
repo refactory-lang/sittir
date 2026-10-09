@@ -16,6 +16,10 @@
  *
  * WHOLE_TREE names a whole-tree read in both option forms: `deep` before `depth: number` replaces
  * it, `depth: Infinity` after; each commit reads the one it knows.
+ *
+ * The raw read takes whichever native read the commit has: `parseAndRead` and `readRoot`'s JSON
+ * where they exist, else `parse` and the transport object `read(treeId, 0, Infinity)` returns. Its
+ * node count includes the trivia entries a layout holds (`$_layout.trivia`) as it does `$_trivia`'s.
  */
 import { createRequire } from 'node:module';
 import { existsSync, readFileSync } from 'node:fs';
@@ -29,8 +33,10 @@ const loaderPath = [`${REPO}/packages/${grammar}/native/index.cjs`, `${REPO}/rus
 if (!loaderPath) throw new Error(`no native loader under ${REPO}`);
 const native = req(loaderPath) as {
 	SittirEngine: new () => {
-		parseAndRead(source: string, depth?: number): string;
-		readRoot(treeId: number, depth?: number): string;
+		parseAndRead?(source: string, depth?: number): string;
+		readRoot?(treeId: number, depth?: number): string;
+		parse?(source: string): string;
+		read?(treeId: number, index: number, depth?: number): object;
 		disposeTree?(treeId: number): void;
 		buildProfile: string;
 	};
@@ -53,11 +59,17 @@ function countRaw(value: unknown): number {
 	let n = typeof rec.$type === 'number' ? 1 : 0;
 	for (const [key, child] of Object.entries(rec)) {
 		if (key.startsWith('_') || key === '$other') n += countRaw(child);
-		else if (key === '$_trivia' && child && typeof child === 'object') {
-			for (const list of Object.values(child as Record<string, unknown>)) n += countRaw(list);
-		}
+		else if (key === '$_trivia' && child && typeof child === 'object') n += countLists(child);
+		else if (key === '$_layout' && child && typeof child === 'object') n += countLists((child as { trivia?: unknown }).trivia);
 	}
 	return n;
+}
+
+/** The nodes in a trivia record's lists, however its sides nest them. */
+function countLists(value: unknown): number {
+	if (Array.isArray(value)) return countRaw(value);
+	if (value === null || typeof value !== 'object') return 0;
+	return Object.values(value as Record<string, unknown>).reduce((n: number, v) => n + countLists(v), 0);
 }
 
 const camel = (slot: string) => slot.replace(/^_/, '').replace(/_([a-z0-9])/g, (_, c: string) => c.toUpperCase());
@@ -115,16 +127,16 @@ function retained(build: () => unknown): number {
 
 const raw = new native.SittirEngine();
 const dispose = (treeId: number) => (native.disposeTree ? native.disposeTree(treeId) : raw.disposeTree!(treeId));
-const live = JSON.parse(raw.parseAndRead(source)) as { treeId: number };
-const deepWire = raw.readRoot(live.treeId, Infinity);
-const rawNodes = countRaw(JSON.parse(deepWire));
+const live = JSON.parse(raw.parseAndRead ? raw.parseAndRead(source) : raw.parse!(source)) as { treeId: number };
+const readDeep = (): unknown => (raw.readRoot ? JSON.parse(raw.readRoot(live.treeId, Infinity)) : raw.read!(live.treeId, 0, Infinity));
+const rawNodes = countRaw(readDeep());
 
 const engine = await createEngine(language);
 const deepVisited = walk(engine.parse(source, WHOLE_TREE), new Set());
 const shallowVisited = walk(engine.parse(source), new Set());
 
 const rows: [string, number, number, string][] = [
-	['raw: JSON.parse of the deep read', retained(() => JSON.parse(deepWire)), rawNodes, 'raw nodes'],
+	['raw: the deep read', retained(readDeep), rawNodes, 'raw nodes'],
 	['deep parse, untouched', retained(() => engine.parse(source, WHOLE_TREE)), deepVisited, 'deep-walk nodes'],
 	[
 		'deep parse, walked, root held',

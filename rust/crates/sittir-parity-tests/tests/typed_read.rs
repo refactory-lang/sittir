@@ -174,7 +174,7 @@ fn a_block_doc_comment_reads_whole_with_its_named_marker_skipped_as_layout() {
 }
 
 #[test]
-fn a_child_no_route_takes_refuses_the_read_naming_kind_child_and_row() {
+fn a_child_no_route_takes_refuses_the_read_naming_kind_child_and_index() {
     let source = "fn f() {}";
     let tree = parse_rust(source);
     let refused = read_nth::<FunctionWithoutBody>(&tree, source, kind::FUNCTION_ITEM, 0, Depth::All).unwrap_err();
