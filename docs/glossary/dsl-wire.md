@@ -2004,3 +2004,7 @@ Every `liftNames` key must be a rule enrich minted, else it throws. A renamed li
 ### `packages/codegen/src/dsl/wire/reparse-hosts.ts::ReparseHostsConfig`
 
 The grammar's `reparseHosts` block: a template per supertype or kind whose `$r` hole takes rendered text so it parses as a whole file, the priority order between reachable supertype hosts, and the kinds whose own host applies only when a variant is adopted. It passes through wire, evaluate and generate untouched and is emitted as data; the validator and the delimiter check both read it.
+
+### `packages/codegen/src/dsl/wire/reparse-hosts.ts::assertReparseHostKeys`
+
+Every key in the `reparseHosts` block's `hosts`, `priority` and `gated` must name a kind of the grammar, or generation throws naming each unknown key and the list it sits in. A kind is a name in the node map or in the kind-id catalog, by its kind name or its parse (display) name, so a hidden supertype (`_simple_statement`) and an aliased kind (`lhs_expression`) both count. A host looked up by an unknown key never matches anything, so a misspelled key silently excluded every candidate that depended on it from the reparse lanes; the check makes that a generation error. The shared default `priority` is not checked: it lists names common to the grammars and a grammar that lacks one of them simply has no host reached through it.
