@@ -16,7 +16,7 @@ The command that builds the pin (`sittir bootstrap`). The loader's refusal of a 
 
 ### `packages/codegen/src/bootstrap/bootstrap.ts::BOOTSTRAP_DIR_ENV`
 
-The environment variable that moves the pinned builds out of the checkout's `scratchpad/bootstrap`; CI leaves it unset and caches the default directory, keyed by the pinned commit.
+The environment variable that moves the pinned builds out of the main checkout's `scratchpad/bootstrap`; CI leaves it unset and caches the default directory, keyed by the pinned commit.
 
 ### `packages/codegen/src/bootstrap/bootstrap.ts::readPin`
 
@@ -24,7 +24,11 @@ The pinned commit, read from the checkout's `bootstrap.json`; anything but a ful
 
 ### `packages/codegen/src/bootstrap/bootstrap.ts::bootstrapDir`
 
-Where the pin is built: `<checkout>/scratchpad/bootstrap/<sha>`, or `<SITTIR_BOOTSTRAP_DIR>/<sha>`. Keyed by the commit, so builds of different pins sit side by side and a bumped pin never reuses a stale build.
+Where the pin is built: `<main checkout>/scratchpad/bootstrap/<sha>` (`mainCheckout`), or `<SITTIR_BOOTSTRAP_DIR>/<sha>`. It is the one resolver for that path: `bootstrap` builds there and the pinned loader reads there, so every worktree of the repository shares one build. Keyed by the commit, so builds of different pins sit side by side and a bumped pin never reuses a stale build.
+
+### `packages/codegen/src/bootstrap/bootstrap.ts::mainCheckout`
+
+The repository's main checkout, from any of its worktrees: the parent of git's common directory (`git rev-parse --git-common-dir`).
 
 ### `packages/codegen/src/bootstrap/bootstrap.ts::isBootstrapped`
 

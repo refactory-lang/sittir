@@ -1,4 +1,5 @@
-import { mkdtempSync, writeFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { mkdtempSync, realpathSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -7,9 +8,19 @@ import { loadPinnedScm } from '../../scm/pinned.ts';
 
 const SHA = 'a'.repeat(40);
 
+const git = (cwd: string, ...args: string[]): string =>
+	execFileSync('git', ['-c', 'user.name=test', '-c', 'user.email=test@example.com', '-c', 'commit.gpgsign=false', '-c', 'core.hooksPath=/dev/null', ...args], {
+		cwd,
+		encoding: 'utf8',
+		stdio: ['ignore', 'pipe', 'pipe']
+	});
+
 function checkout(): string {
-	const root = mkdtempSync(join(tmpdir(), 'sittir-pin-'));
+	const root = realpathSync(mkdtempSync(join(tmpdir(), 'sittir-pin-')));
+	git(root, 'init', '-q', '-b', 'master');
 	writeFileSync(join(root, 'bootstrap.json'), JSON.stringify({ sha: SHA }));
+	git(root, 'add', '-A');
+	git(root, 'commit', '-q', '-m', 'pin');
 	return root;
 }
 
@@ -28,6 +39,14 @@ describe('the pin', () => {
 		delete process.env.SITTIR_BOOTSTRAP_DIR;
 		const root = checkout();
 		expect(bootstrapDir(root)).toBe(join(root, 'scratchpad', 'bootstrap', SHA));
+	});
+
+	it('builds into the main checkout\'s scratchpad from any of its worktrees, so they share one build', () => {
+		delete process.env.SITTIR_BOOTSTRAP_DIR;
+		const root = checkout();
+		const worktree = `${root}-worktree`;
+		git(root, 'worktree', 'add', '-q', '--detach', worktree);
+		expect(bootstrapDir(worktree)).toBe(join(root, 'scratchpad', 'bootstrap', SHA));
 	});
 
 	it('builds where SITTIR_BOOTSTRAP_DIR says, still keyed by the commit', () => {

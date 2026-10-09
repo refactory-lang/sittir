@@ -1,6 +1,6 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { REPO_ROOT } from '../grammars.ts';
 
 export const BOOTSTRAP_PACKAGES = ['scm'] as const;
@@ -19,8 +19,12 @@ export function readPin(root: string = REPO_ROOT): string {
 	return sha;
 }
 
+function mainCheckout(root: string): string {
+	return dirname(execFileSync('git', ['rev-parse', '--path-format=absolute', '--git-common-dir'], { cwd: root, encoding: 'utf8' }).trim());
+}
+
 export function bootstrapDir(root: string = REPO_ROOT): string {
-	return join(process.env[BOOTSTRAP_DIR_ENV] ?? join(root, 'scratchpad', 'bootstrap'), readPin(root));
+	return join(process.env[BOOTSTRAP_DIR_ENV] ?? join(mainCheckout(root), 'scratchpad', 'bootstrap'), readPin(root));
 }
 
 export const isBootstrapped = (dir: string): boolean => existsSync(join(dir, COMPLETE));
