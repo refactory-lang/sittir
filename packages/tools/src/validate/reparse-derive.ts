@@ -16,6 +16,8 @@ export interface DeriveHostsInput {
 	readonly kindToSupertypes: ReadonlyMap<string, readonly string[]>;
 	/** Parent kind -> the kinds its slots admit, from the node model. */
 	readonly admits: ReadonlyMap<string, ReadonlySet<string>>;
+	/** A model kind's stamped kind id: the grammar id of the tree nodes it is the display of. */
+	readonly kindIdOf: (kind: string) => number | undefined;
 	readonly corpus: readonly DerivationTree[];
 	readonly parse: (text: string) => TSTree;
 	/** The reparsed node with the source node's grammar id at the hole's offset, or null. */
@@ -49,19 +51,21 @@ function hasMultiLineLeaf(node: TSNode): boolean {
 
 /**
  * The node's text as a host places it: without its layout lead and with every
- * continuation line shifted left by the column its first character sat at, so
- * the text reads from column 0 as a render does. Null when that shift is not
- * lossless: a continuation line indented less than the first, or a token that
- * itself spans lines (its inside would move with the shift).
+ * continuation line shifted left by the indentation of the line its first
+ * character sits on, so the text reads from column 0 as a render does. Null
+ * when that shift is not lossless: a continuation line indented less than
+ * that line, or a token that itself spans lines (its inside would move with
+ * the shift).
  */
-function relativeText(node: TSNode): string | null {
+function relativeText(node: TSNode, source: string): string | null {
 	const lead = layoutLead(node);
 	const text = node.text.slice(lead);
-	const leadText = node.text.slice(0, lead);
-	const column = leadText.includes('\n') ? leadText.length - leadText.lastIndexOf('\n') - 1 : node.startPosition.column + lead;
 	const lines = text.split('\n');
 	if (lines.length === 1) return text;
 	if (hasMultiLineLeaf(node)) return null;
+	const at = node.startIndex + lead;
+	const own = source.slice(source.lastIndexOf('\n', at - 1) + 1, at);
+	const column = /^[ \t]*/.exec(own)![0].length;
 	const shifted = lines.slice(1).map((line) => {
 		if (line.trim() === '') return '';
 		const indent = /^[ \t]*/.exec(line)![0].length;
@@ -98,14 +102,25 @@ export function deriveReparseHosts(input: DeriveHostsInput): Record<string, stri
 		}
 	});
 
-	const visibleKinds = new Set(occurrences.keys());
+	const modelNames = new Set<string>([...input.admits.keys(), ...input.kindToSupertypes.keys()]);
+	for (const set of input.admits.values()) for (const name of set) modelNames.add(name);
+	for (const list of input.kindToSupertypes.values()) for (const name of list) modelNames.add(name);
+	const byId = new Map<number, string[]>();
+	for (const name of modelNames) {
+		const id = input.kindIdOf(name);
+		if (id !== undefined) byId.set(id, [...(byId.get(id) ?? []), name]);
+	}
+	const ids: IdIndex = {
+		visible: new Set([...occurrences.values()].flatMap((list) => list.map((o) => o.node.grammarId))),
+		namesOf: (id) => byId.get(id) ?? []
+	};
 	const derived: Record<string, string> = {};
 	const table = (): ReparseHosts => ({ ...input.declared, hosts: { ...derived, ...input.declared.hosts } });
 	const hostOf = (kind: string): string | undefined => hostTemplateFor(kind, table(), input.kindToSupertypes, { root: input.root });
 	const samplesOf = (kind: string): { text: string; node: TSNode }[] => {
 		const byText = new Map<string, TSNode>();
-		for (const { node } of occurrences.get(kind) ?? []) {
-			const text = relativeText(node);
+		for (const { entry, node } of occurrences.get(kind) ?? []) {
+			const text = relativeText(node, input.corpus[entry]!.source);
 			if (text !== null && !byText.has(text)) byText.set(text, node);
 		}
 		return [...byText].map(([text, node]) => ({ text, node })).sort((a, b) => a.text.length - b.text.length || (a.text < b.text ? -1 : a.text > b.text ? 1 : 0));
@@ -132,7 +147,7 @@ export function deriveReparseHosts(input: DeriveHostsInput): Record<string, stri
 			for (const { node } of occurrences.get(kind) ?? []) {
 				const parent = node.parent;
 				if (parent === null || !hostable.has(parent.type)) continue;
-				if (!admitsKind(input, visibleKinds, parent.type, kind)) continue;
+				if (!admitsKind(input, ids, parent, node)) continue;
 				const parentHost = hostOf(parent.type);
 				if (parentHost === undefined) continue;
 				const context = contextOf(parent, node);
@@ -158,28 +173,51 @@ export function deriveReparseHosts(input: DeriveHostsInput): Record<string, stri
 	return derived;
 }
 
-function admitsKind(input: DeriveHostsInput, visible: ReadonlySet<string>, parent: string, kind: string): boolean {
-	if (!input.admits.has(parent)) return true;
-	const admitted = new Set<string>();
-	const walk = (from: string): void => {
-		for (const child of input.admits.get(from) ?? []) {
-			if (admitted.has(child)) continue;
-			admitted.add(child);
-			if (!visible.has(child)) walk(child);
-		}
-	};
-	walk(parent);
-	const seen = new Set<string>([kind]);
-	const queue = [kind];
-	while (queue.length > 0) {
-		const current = queue.shift()!;
-		if (admitted.has(current)) return true;
-		for (const supertype of input.kindToSupertypes.get(current) ?? []) {
-			if (!seen.has(supertype)) {
-				seen.add(supertype);
-				queue.push(supertype);
+/**
+ * Whether the parent's slots admit the child, compared by stamped kind id:
+ * every model kind resolves to its id, and a tree node carries the same id as
+ * the model kind it is the display of. Kinds the corpus never shows are
+ * hidden wrappers, whose own slots are walked through; a child is admitted
+ * directly or through a supertype of any model kind sharing its id. A kind
+ * with no stamped id (a hidden supertype) is compared by its model name, which
+ * is never a tree display name.
+ */
+function admitsKind(input: DeriveHostsInput, ids: IdIndex, parent: TSNode, child: TSNode): boolean {
+	const parentNames = ids.namesOf(parent.grammarId).filter((name) => input.admits.has(name));
+	if (parentNames.length === 0) return true;
+	const admitted = new Set<number>();
+	const admittedUnstamped = new Set<string>();
+	const walk = (names: readonly string[]): void => {
+		for (const name of names) {
+			for (const admittedName of input.admits.get(name) ?? []) {
+				const id = input.kindIdOf(admittedName);
+				if (id === undefined) {
+					admittedUnstamped.add(admittedName);
+					continue;
+				}
+				if (admitted.has(id)) continue;
+				admitted.add(id);
+				if (!ids.visible.has(id)) walk(ids.namesOf(id));
 			}
 		}
+	};
+	walk(parentNames);
+	const seen = new Set<string>();
+	const queue = [...ids.namesOf(child.grammarId), child.type];
+	const reached = new Set<number>([child.grammarId]);
+	while (queue.length > 0) {
+		const name = queue.shift()!;
+		if (seen.has(name)) continue;
+		seen.add(name);
+		const id = input.kindIdOf(name);
+		if (id !== undefined) reached.add(id);
+		else if (admittedUnstamped.has(name)) return true;
+		queue.push(...(input.kindToSupertypes.get(name) ?? []));
 	}
-	return false;
+	return [...reached].some((id) => admitted.has(id));
+}
+
+interface IdIndex {
+	readonly visible: ReadonlySet<number>;
+	readonly namesOf: (id: number) => readonly string[];
 }

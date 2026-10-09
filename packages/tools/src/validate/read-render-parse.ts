@@ -56,6 +56,7 @@ import {
 } from './common.ts';
 import { nativeShownKindId } from './shown-kind.ts';
 import { deriveReparseHosts } from './reparse-derive.ts';
+import { importGrammarModule } from '../grammar-internals.ts';
 
 /**
  * The kinds that participate in variant() adoption (each override-defined
@@ -749,12 +750,22 @@ function deriveHostsFor(grammar: string, parser: RenderReparseContext['parser'])
 			const tree = parser.parse(entry.source) as TSTree;
 			if (!tree.rootNode.hasError) corpus.push({ source: entry.source, tree });
 		}
+		const types = await importGrammarModule(grammar, 'types.ts');
+		if (typeof types?.kindIdFromName !== 'function') throw new Error(`${grammar}: src/types.ts has no kindIdFromName`);
+		const kindIdOf = (kind: string): number | undefined => {
+			try {
+				return types.kindIdFromName(kind);
+			} catch {
+				return undefined;
+			}
+		};
 		const admits = new Map(Object.entries(model.slotKinds).map(([kind, slots]) => [kind, new Set(Object.values(slots).flat())]));
 		const derived = deriveReparseHosts({
 			declared,
 			root: model.root,
 			kindToSupertypes: buildKindToSupertypes(raw),
 			admits,
+			kindIdOf,
 			corpus,
 			parse: (text) => parser.parse(text) as TSTree,
 			findAt: (tree, source, hosted) => findReparsedNodeAtOffset(tree, source.grammarId, hosted),
