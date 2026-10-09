@@ -6859,24 +6859,980 @@ Open the PR with `Owner: sittir-engine-api` first in its body, the follow-up iss
 
 ---
 
-## Outline: 1c-ii, identity
+## 1c-ii: identity and the empty list
 
-Detailed against master after 1c-i lands.
+Detailed against master `12644d5df`, which holds 1c-i. A parsed node has one wrapper per surface, whichever route reaches it; a trivia write marks its index edited and nothing else; a node folds to its bytes when no edited index lies in its range; a built node's accessor hydrates the coordinate it stores through the same registry; and an empty list is `[]` everywhere. The design is `docs/superpowers/specs/2026-10-06-relative-coordinates-design.md` (§ Identity: the index registry, § Edits and folding, § Verification 1–6), with the shared-arena spec's ruling 6.
 
-- **Task 19: The registry and the edited set.** One weak index-to-wrapper map per tree and surface, which accessors, hydration and queries share; an in-place `$trivia` write adds its node's index to a sorted set per tree; a node folds when no edited index lies in `[index, end)`, `end` being `index + descendant_count()` carried by the coordinate (`$end`); `adoptChild`, `detachAncestors`, `canFold`'s walk and `isUntouchedBelow` go; a query's results resolve through the registry, and the refusal of a `$trivia` write on a node reached through a query is lifted. The query test of the arena spec's identity verification: the same object through a query and through accessors, and byte-identical renders of the same write through each. Flag: an alias envelope and its content name the same parser node, so they share one descendant index and one coordinate; the registry has to decide which wrapper that index names. One index, two wrappers.
-- **Task 21: An empty list is `[]`.** The census of list slots whose value can be absent today, then the reader, `Vec<T>` transports, factories and types; every fixture and factory move at a census slot, from nothing to `[]`.
-- **Task 23: Measurements.** The relative-coordinates spec's verifications 1–6: identity, no ancestor reads, offsets, the fold by range, the fold's timing against 1c-i's walk, and the registry's heap on the untouched whole-tree read and the query-heavy population.
-- **Task 24: A built node hydrates the coordinates it stores, through Task 19's registry.**
-  - **Today:** a built node's accessor over a stored coordinate returns the raw `{ $treeHandle, $span, $type }`. This happens on both routes that put one there: `from()` of parsed data, and a slot that copies storage straight (`_content`). Render is unaffected: it folds the coordinate by its handle. The builder accessor is the one `node-members.ts` emits (`name: () => read`). Before 1c-i it returned the raw stub the same way.
-  - **Why the parsed path doesn't serve it:** parsed accessors hydrate through `hydrateWith`, which reads through the holder's `tree`, and a built holder has none. `hydrateListStorage` resolves a tree with `treeOf(value)`, which reads the tree token the coordinate holds, not its `$treeHandle`.
-  - **The direction to choose.** The task picks one, and says why in the commit:
-    - the coordinate's tree token: a symbol member that a same-thread spread carries, and a structured clone or JSON round trip drops;
-    - its `$treeHandle`'s tree id through the global live-tree table: it survives any copy of the data, as render's fold does.
-  - **Identity:** the hydrated wrapper resolves through the registry, so one coordinate yields one object whether it is reached through a built holder, a parsed holder or a query.
-  - **Test:**
-    - `Module.from(parsed).statements()[0]` is the same object as `parsed.statements()[0]`, and renders the same bytes;
-    - after the tree is released, the accessor refuses, naming the tree (as `tree_not_live` does), and never returns the raw coordinate.
+Execution order: **Task 19 → Task 25 → Task 24 → Task 21 → Task 23.** Task 25 is the outline's Task 19 second half (the edited set and the fold by range), split out because a reviewer can reject it while approving the registry.
 
+### Rulings (1c-ii)
+
+Brainstorm's, 2026-10-09, unless marked otherwise.
+
+1. **No hydration without identity.** Task 19 (the registry) lands before Task 24 (built-node hydration), so a built holder never mints a second wrapper for a node a parsed holder already wrapped.
+2. **Unit variants are out of the registry.** A coordinate whose read is a kind id (a unit variant: python `pass_statement`, a fixed-text leaf), and a match stored as a scalar (a kind id or an enum member id), are plain data: nothing is wrapped, so nothing is registered. Two reads of one are `===` because numbers are.
+3. **`canFold` is `foldedCoordinate`** (renamed in 1c-i). Task 25 rewrites its body; the name stays.
+4. **The empty list (maintainer, 2026-10-06).** An empty list slot is `[]`, never absent, for `repeat` and `optional(repeat1)` alike: reads, factories, fixtures and TS types (no `?` on a list storage key). The transport field is `Vec<T>`; an absent key is refused by the codec; a `repeat1` slot's empty read is refused as today (its type is `NonEmptyVec<T>`, Ruling 11, in place of the `#[slot(min = 1)]` attribute first proposed). A hole in an elided list (`[a, , b]`) stays an `undefined` item: a position, not the slot.
+5. **One surface per tree handle (design).** The spec keys the registry per tree and per surface. Today a `TreeHandle` object is bound to exactly one `EngineHandle` (`bindTree`, once per parse), so the registry is keyed by the `TreeHandle` object. Attach, when the binding generator lands it, binds the attached surface through its own `TreeHandle` view, and with it its own registry; no second key layer is built before then.
+6. **The registry's seat is `hydrateWith` (design).** Every generated accessor (`hydrateSlot`, `hydrateSlots`, `hydrate`), the parse root and the query hydrate through it, so one function looks up and registers. The query's own `hooks.wrap(readNode(…))` path goes.
+7. **`end` crosses as `$end` on the object wire (design).** The reader fills `NodeCoordinate::end` (`index + descendant_count()`); the coordinate encoder writes `$end` and the decoder reads it. The record step retires the object codec (shared-arena spec, ruling 6.3) and its record carries `end` from the same field; only the encoder and decoder lines are temporary.
+8. **A built holder resolves a stored coordinate's tree by its token** (Q1, ruled (a)). The builder accessor applies render's guard (`assertHoldsTree`); no id table is added.
+9. **The registry key is the index and a role, `node` or `aliasContent`** (Q2, ruled (i)). The role comes from the route that hydrates, never from what is already registered: the envelope's content accessor passes `aliasContent`; any other route passes `node`, and a query passes a role only if Task 19's Step 1 finding shows a query can yield an alias's content (then from the match's own kind: the envelope's kind or the content's).
+10. **`markEditedNode` is the only hook for an in-place write.** The trivia writer marks through it, and any future in-place verb (the node-query `$edit` verbs) marks through it too, so the fold stays correct when they land. `$with` mints a draft and marks nothing.
+11. **A `repeat1` list is `NonEmptyVec<T>` in Rust (design, on brainstorm's question).** The type states the fact TS states with `NonEmptyArray`: no `min` attribute, no `finish` parameter the other impls ignore, and the decoder refuses an empty one.
+
+### Brainstorm's rulings on the plan questions (2026-10-09)
+
+**Q1 — how a built holder resolves a stored coordinate's tree: (a), the token.** Native tree ids come from one process-wide counter (`NEXT_TREE_ID`, `engine.rs:353`), never reused in a process; render's fold refuses a coordinate that holds no token (`assertHoldsTree`, `transport-data.ts:501` and `:507`); a coordinate in parsed data holds its token (`holdReadTree` stamps every parsed object), and `from()` stores that object, so `treeOf(coordinate)` resolves it, as `hydrateListStorage` already does for owner lists. The builder accessor applies the same guard render applies; a cloned coordinate is refused.
+
+**Q2 — one index, two wrappers: (i), a role in the key.** An alias envelope and its content name one parser node and share its index. A kind cannot separate them: a coordinate's `$type` is the node's grammar id (`ReadCtx::coordinate` stamps `node.grammar_id()`), while a transport's `$type` is its storage kind, which differs for a variant arm and for an envelope. The key is the index and the route's role. Two facts are established before the registry is written (Task 19, Step 1):
+- whether `$query()` can yield an alias's content, or yields each parser node once, as the envelope;
+- whether a tree, an index and a role always hold one storage kind. If so, `hydrateWith` has no kind check on either branch (a coordinate's grammar id never equals an arm's or an envelope's storage kind, so a kind check would miss every coordinate access to an arm and pay a native read each time). If not, the only kind check compares a coordinate's `$type` with the registered wrapper's own coordinate `$type`, the same fact space.
+
+### File structure (1c-ii)
+
+Create:
+
+| File | Responsibility |
+| --- | --- |
+| `packages/common/src/identity.ts` | per tree: the index registry (`registered`, `register`, `Role`) and the edited set (`markIndexEdited`, `editedWithin`) |
+| `rust/crates/sittir-core/src/non_empty.rs` | `NonEmptyVec<T>`: a list the type says holds at least one item |
+| `docs/superpowers/probes/2026-10-09-relative-coordinates/registry-facts.mts` | Task 19's two findings: what a query yields at an alias, and storage kinds per index and role |
+| `packages/common/tests/identity.test.ts` | the registry and the edited set as units |
+| `packages/rust/tests/identity.test.ts` | identity across routes, the fold by range, built-node hydration (rust corpus) |
+| `docs/superpowers/probes/2026-10-09-relative-coordinates/` | Task 23's probes and README |
+
+Modify:
+
+| File | Change |
+| --- | --- |
+| `rust/crates/sittir-core/src/slot.rs` | `NodeCoordinate::end`; `$end` encoded and decoded |
+| `rust/crates/sittir-core/src/read.rs` | `ReadCtx::coordinate`, `coordinate_of` fill `end`; `Child::descendants`; `ReadSlot for Vec<…>` accepts an empty list; `ReadSlot for NonEmptyVec<…>` refuses one; the `Option<Vec<…>>` impls go |
+| `rust/crates/sittir-core/src/query.rs` | `QueryCoordinate::end` (`$end`) |
+| `packages/codegen/src/emitters/render-module.ts` | an optional multiple slot is `Vec<…>`; a required one `NonEmptyVec<…>` |
+| `packages/codegen/src/emitters/types.ts` | no `?` on a list storage key |
+| `packages/codegen/src/emitters/node-members.ts` | a builder accessor over stored storage hydrates through `hydrateStored` |
+| `packages/codegen/src/emitters/factories.ts` | `hydrateListStorage` → `hydrateStored` |
+| `packages/types/src/core-types.ts` | `TransportCoordinate.$end` |
+| `packages/common/src/utils.ts` | `hydrateWith` through the registry; the trivia writer marks edits; `adoptChild`, `parents`, `detachAncestors`, `refuseUnheld` go |
+| `packages/common/src/transport-data.ts` | `foldedCoordinate` by range; `isUntouchedBelow` goes; `plainCoordinate` copies `$end` |
+| `packages/common/src/query.ts` | `entryOfCoordinate` through `hydrateWith`; `sameOccurrence` goes |
+| `packages/common/src/create-engine.ts` | the parse root through `hydrateWith` |
+| `packages/common/src/engine-scope.ts` | `hydrateListStorage` → `hydrateStored`, refusing instead of returning the raw coordinate |
+| `packages/rust/tests/fold-in-place-trivia.test.ts` | the query-reached write renders instead of refusing |
+| `docs/glossary/packages-common-src.md`, `docs/glossary/emitters.md`, the core crate's glossary | entries for every new, renamed and removed declaration |
+| Generated: `packages/{rust,python,typescript}/src/*`, `rust/crates/sittir-*/src/*`, `rust/crates/sittir-*/test-fixtures.json` | regenerated, never hand-edited |
+
+### Global Constraints (1c-ii)
+
+1a's, 1b's and 1c-i's hold, and:
+
+- No rendered byte and no validation row moves, in any task. A moved row stops the work for review (no revert).
+- The stack pins (`typed_read_nesting.rs`, per level, linux and macos) do not rise. If `end: u32` pushes a choice payload past the 512-byte ceiling, the build asks for it to be pinned: pin it (the list moves, the ceiling never does).
+- `index` names the descendant index; `end` names `index + descendant_count()`; the half-open range `[index, end)` is a node's subtree. No other names for either in new code, docs or glossary.
+- The registry holds wrappers weakly: nothing it holds keeps a wrapper, a token or a tree alive.
+- No `!`, no cast as a fix, no runtime guard standing in for a type fact.
+
+### Review Focus (1c-ii)
+
+1. **A node reached first through a query, then through its parent's accessors** (the reverse of the spec's order). The accessor returns the query's object, and a `$trivia` write through either renders the same. Test: Task 19, Step 1 (`query first, accessor second`).
+2. **A wrapper collected between two reads.** The registry entry goes with it; the next read wraps afresh and registers that, and no stale `WeakRef` answers `undefined` as a hit. Test: Task 19, Step 1 (`a collected wrapper is wrapped again`, run with `--expose-gc`).
+3. **Two trivia writes on nested nodes, then a write on a sibling's subtree.** Every ancestor of each written node renders from data, and an untouched cousin still renders as source bytes. Test: Task 25, Step 1 (`nested writes fold only untouched ranges`).
+4. **A built node holding a parsed child whose subtree was edited.** The built node renders from data, the parsed child from data, and the child's untouched siblings inside it from bytes. Test: Task 25, Step 1 (`a built holder of an edited parsed child`).
+5. **A variant arm reached by coordinate.** Its coordinate's `$type` is the grammar id, its wrapper's the arm's storage kind; the second access through any route is a registry hit with no native read. Test: Task 19, Step 2 (the read count over `RangeExpressionBinary`).
+6. **A tokenless copy of a coordinate (JSON round trip) stored in a built node.** Its accessor refuses with `assertHoldsTree`'s message; it never returns the raw `{ $treeHandle, $span, $type, $end }`. Test: Task 24, Step 1.
+
+---
+
+## Task 19: The registry
+
+One weak map per tree from an index and a role to the wrapper. `hydrateWith` looks there first for a coordinate (skipping the native read) and for a transport (skipping the wrap); `wrapRegistered` is the one function that wraps and registers, and the parse root goes through it too. The query hydrates through `hydrateWith`. `sameOccurrence` goes: identity is `===`.
+
+**Files:**
+- Create: `packages/common/src/identity.ts`, `packages/common/tests/identity.test.ts`, `packages/rust/tests/identity.test.ts`, `docs/superpowers/probes/2026-10-09-relative-coordinates/registry-facts.mts`
+- Modify: `packages/common/src/utils.ts` (`hydrateWith`, `hydrateSlotWith`, `wrapRegistered`), `packages/common/src/transport-data.ts` (`indexOf`), `packages/common/src/query.ts` (`entryOfCoordinate`, `includes`, `sameOccurrence`), `packages/common/src/create-engine.ts` (`parse`)
+- Modify: `packages/codegen/src/emitters/wrap.ts` (the envelope's content accessor passes `aliasContent`)
+- Modify: `docs/glossary/packages-common-src.md`, `docs/glossary/emitters.md`
+- Generated: `packages/{rust,python,typescript}/src/wrap.ts`
+
+**Interfaces:**
+- Consumes: `decodeIndex(handle: number): number`, `decodeTree(handle: number): number`, `isCoordinate`, `readNode` (`read.ts`); `treeHandleOf(node: object): number | undefined` (`transport-data.ts`).
+- Produces:
+  - `type Role = 'node' | 'aliasContent'`, `registered(tree: TreeHandle, index: number, role: Role): object | undefined` and `register(tree: TreeHandle, index: number, role: Role, wrapper: object): void` in `identity.ts`, which imports only `read.ts`'s `TreeHandle` type;
+  - `indexOf(node: object): number | undefined` in `transport-data.ts`, beside `treeHandleOf`;
+  - `wrapRegistered<T>(value: object, tree: TreeHandle, wrap: (value: object, tree: TreeHandle) => T, role?: Role): T` in `utils.ts`: the registered wrapper at the value's index and role, or `wrap(value, tree)` registered there;
+  - `hydrateWith(value, tree, wrap, depth?, role?)` and `hydrateSlotWith(node, key, tree, wrap, role?)`: `role` defaults to `'node'`.
+
+- [ ] **Step 1: The two registry facts**
+
+`docs/superpowers/probes/2026-10-09-relative-coordinates/registry-facts.mts` parses every corpus file of rust, typescript and python at `depth: Infinity` and walks the read data (not the wrappers), and reports:
+
+1. **What a query yields at an alias.** For every alias envelope in the read (a transport whose wrap-table kind is an envelope; the generated `node-model.json5` marks envelope kinds), the kinds `root.$query().$descendants` yields at that envelope's index: the envelope's kind only, or also its content's.
+2. **Storage kinds per index and role.** For every index, the set of storage `$type`s of the transports at that index whose role is `node` (every transport not reached as an envelope's content) and of those whose role is `aliasContent`. A set with more than one member is a counterexample, printed with its kinds and source position.
+
+Run: `pnpm exec tsx docs/superpowers/probes/2026-10-09-relative-coordinates/registry-facts.mts`. Record both findings in Step 6's text and in the probe's README, then:
+- Finding 1, envelope only → content has one route (its envelope's accessor); `entryOfCoordinate` passes no role. Finding 1, content too → `entryOfCoordinate` passes `aliasContent` when the match's `$type` is the content's kind.
+- Finding 2 holds → `hydrateWith` has no kind check. Finding 2 fails → stop and report the counterexamples to brainstorm before Step 4: the only admissible check then compares a coordinate's `$type` with the registered wrapper's own coordinate `$type`.
+
+- [ ] **Step 2: Write the failing tests**
+
+Call `mcp__infigraph__generate_test_context` for `hydrateWith` and `queryFacet` first. `packages/rust/tests/identity.test.ts`:
+
+```ts
+import { describe, expect, it } from 'vitest';
+import { createEngine } from '@sittir/common';
+import { treeOf } from '../../common/src/tree-token.ts';
+import rust from '../src/index.ts';
+
+const engine = await createEngine(rust);
+const SOURCE = 'fn a() {}\nfn b() { let x = 1; }\n';
+
+function viaAccessors(root: ReturnType<typeof engine.parse>) {
+	const second = root.statements()[1]!;
+	if (!engine.is.functionItem(second)) throw new Error('expected a function');
+	const statement = second.body().statements()[0];
+	if (statement === undefined || !engine.is.letDeclaration(statement)) throw new Error('expected a let declaration');
+	return statement;
+}
+
+function viaQuery(root: ReturnType<typeof engine.parse>) {
+	const found = Array.from(root.$query().$descendants).find((node) => engine.is.letDeclaration(node));
+	if (found === undefined || !engine.is.letDeclaration(found)) throw new Error('expected a let declaration');
+	return found;
+}
+
+function countingReads(root: object): number[] {
+	const tree = treeOf(root);
+	if (tree?.read === undefined) throw new Error('expected a live tree');
+	const native = tree.read.bind(tree);
+	const reads: number[] = [];
+	tree.read = (index, depth) => (reads.push(index), native(index, depth));
+	return reads;
+}
+
+describe.each([
+	['a shallow read', 1],
+	['a deep read', Infinity]
+])('one wrapper per node, on %s', (_, depth) => {
+	it('a query returns the object the accessors return', () => {
+		const root = engine.parse(SOURCE, { depth });
+		expect(viaQuery(root)).toBe(viaAccessors(root));
+	});
+
+	it('query first, accessor second', () => {
+		const root = engine.parse(SOURCE, { depth });
+		const queried = viaQuery(root);
+		expect(viaAccessors(root)).toBe(queried);
+	});
+
+	it('the same object across two queries', () => {
+		const root = engine.parse(SOURCE, { depth });
+		expect(viaQuery(root)).toBe(viaQuery(root));
+	});
+
+	it('includes is identity', () => {
+		const root = engine.parse(SOURCE, { depth });
+		expect(root.$query().$descendants.includes(viaAccessors(root))).toBe(true);
+	});
+});
+
+describe.each([
+	['a let declaration', 'fn b() { let x = 1; let y = 2; }\n', () => engine.kinds.LetDeclaration],
+	['a variant arm', 'fn b() { let r = 0..1; let s = 2..3; }\n', () => engine.kinds.RangeExpressionBinary]
+])('a descendants query over %s', (_, source, kind) => {
+	it('reads only the matches not already registered, and no ancestor', () => {
+		const root = engine.parse(source, { depth: 1 });
+		const reads = countingReads(root);
+		const first = Array.from(root.$query().$descendants.ofType(kind()));
+		expect(first.length).toBe(2);
+		expect(reads.length).toBe(first.length);
+		reads.length = 0;
+		const again = Array.from(root.$query().$descendants.ofType(kind()));
+		expect(again).toEqual(first);
+		expect(reads).toEqual([]);
+	});
+});
+
+describe('a collected wrapper', () => {
+	it('is wrapped again, and the new wrapper is the one every route returns', async () => {
+		const gc = (globalThis as { gc?: () => void }).gc;
+		if (gc === undefined) throw new Error('run with --expose-gc');
+		const root = engine.parse(SOURCE, { depth: 1 });
+		const ref = new WeakRef(viaQuery(root));
+		await new Promise((resolve) => setTimeout(resolve, 0));
+		gc();
+		const again = viaQuery(root);
+		expect(viaAccessors(root)).toBe(again);
+		expect(ref.deref() === undefined || ref.deref() === again).toBe(true);
+	});
+});
+```
+
+`engine.kinds.LetDeclaration` and `engine.kinds.RangeExpressionBinary` are the kind ids under the engine's `kinds` (`TSKindId`); `ofType` takes the arm's kind id, as the query's `kinds` push-down compares a node's kind. If `ofType` at the base takes the grammar kind for an arm, use `engine.kinds.RangeExpression` and keep the assertion on reads.
+
+`packages/common/tests/identity.test.ts`:
+
+```ts
+import { describe, expect, it } from 'vitest';
+import { register, registered } from '../src/identity.ts';
+import type { TreeHandle } from '../src/read.ts';
+
+describe('the registry', () => {
+	it('answers what was registered, per tree, index and role', () => {
+		const a: TreeHandle = { id: 1 };
+		const b: TreeHandle = { id: 2 };
+		const envelope = {};
+		const content = {};
+		register(a, 7, 'node', envelope);
+		register(a, 7, 'aliasContent', content);
+		expect(registered(a, 7, 'node')).toBe(envelope);
+		expect(registered(a, 7, 'aliasContent')).toBe(content);
+		expect(registered(b, 7, 'node')).toBeUndefined();
+		expect(registered(a, 8, 'node')).toBeUndefined();
+	});
+});
+```
+
+- [ ] **Step 3: Run them to verify they fail**
+
+Run: `pnpm exec vitest run packages/common/tests/identity.test.ts` — Expected: FAIL, `identity.ts` not found.
+Run: `node --expose-gc node_modules/vitest/vitest.mjs run packages/rust/tests/identity.test.ts` — Expected: FAIL on `a query returns the object the accessors return`, `query first, accessor second`, `the same object across two queries`, and both read-count cases (`reads` is not empty on the second query); `includes is identity` passes today through `sameOccurrence`.
+
+- [ ] **Step 4: The registry**
+
+`packages/common/src/identity.ts`:
+
+```ts
+import type { TreeHandle } from './read.ts';
+
+export type Role = 'node' | 'aliasContent';
+
+type Wrappers = Map<number, WeakRef<object>>;
+
+const registries = new WeakMap<TreeHandle, Wrappers>();
+const collected = new FinalizationRegistry<{ readonly wrappers: Wrappers; readonly key: number; readonly ref: WeakRef<object> }>(
+	({ wrappers, key, ref }) => {
+		if (wrappers.get(key) === ref) wrappers.delete(key);
+	}
+);
+
+function keyOf(index: number, role: Role): number {
+	return index * 2 + (role === 'aliasContent' ? 1 : 0);
+}
+
+export function registered(tree: TreeHandle, index: number, role: Role): object | undefined {
+	return registries.get(tree)?.get(keyOf(index, role))?.deref();
+}
+
+export function register(tree: TreeHandle, index: number, role: Role, wrapper: object): void {
+	let wrappers = registries.get(tree);
+	if (wrappers === undefined) registries.set(tree, (wrappers = new Map()));
+	const key = keyOf(index, role);
+	const ref = new WeakRef(wrapper);
+	wrappers.set(key, ref);
+	collected.register(wrapper, { wrappers, key, ref });
+}
+```
+
+(`index < 2 ** 32`, so `index * 2 + 1` stays inside a double's exact range.) In `transport-data.ts`, beside `treeHandleOf`:
+
+```ts
+export function indexOf(node: object): number | undefined {
+	const handle = treeHandleOf(node);
+	return handle === undefined ? undefined : decodeIndex(handle);
+}
+```
+
+- [ ] **Step 5: One seat for wrapping and registering**
+
+In `packages/common/src/utils.ts`, beside `hydrateWith`:
+
+```ts
+export function wrapRegistered<T>(value: object, tree: TreeHandle, wrap: (value: object, tree: TreeHandle) => T, role: Role = 'node'): T {
+	const index = indexOf(value);
+	if (index === undefined) return wrap(value, tree);
+	const known = registered(tree, index, role);
+	if (known !== undefined) return known as T;
+	const wrapper = wrap(value, tree);
+	if (wrapper !== null && typeof wrapper === 'object') register(tree, index, role, wrapper);
+	return wrapper;
+}
+```
+
+`known as T` is the registry's one cast: what is registered at an index and role is what `wrap` returned for it (Step 1's finding 2), and the registry stores it as `object` because one registry serves every kind. Then `hydrateWith`:
+
+```ts
+export function hydrateWith(value: unknown, tree: TreeHandle, wrap: WrapTransport, depth?: number, role: Role = 'node'): unknown {
+	if (value === null || typeof value !== 'object' || Array.isArray(value)) return value;
+	if (isCoordinate(value)) {
+		const known = decodeTree(value.$treeHandle) === tree.id ? registered(tree, decodeIndex(value.$treeHandle), role) : undefined;
+		return known ?? hydrateWith(readNode(tree, value, depth), tree, wrap, undefined, role);
+	}
+	if (isTypedNode(value) || typeof (value as { readonly $type?: unknown }).$type !== 'number') return value;
+	return wrapRegistered(value, tree, wrap, role);
+}
+```
+
+`hydrateSlotWith` takes the same `role` and passes it to `hydrateWith`. The tree check keeps a coordinate of another tree away from this tree's registry; `readNode` then refuses it as today.
+
+The query hydrates through `hydrateWith`, in `query.ts`, with the role Step 1's finding 1 decides (no role when the query yields envelopes only):
+
+```ts
+function entryOfCoordinate(coordinate: TransportCoordinate, tree: TreeHandle, hooks: QueryHooks): Entry {
+	return {
+		kind: coordinate.$type,
+		address: { handle: coordinate.$treeHandle },
+		hydrate: () => inTreeEngine(tree, () => hydrateWith(coordinate, tree, hooks.wrap))
+	};
+}
+```
+
+`includes` compares by identity; delete `sameOccurrence`:
+
+```ts
+		includes: (node) => findIndex(items(), (candidate) => candidate === node) >= 0,
+```
+
+The parse root, in `create-engine.ts`'s `parse`, wraps through the same seat; the root is never registered before this call, so this registers it:
+
+```ts
+				return wrapRegistered(root, tree, hooks.wrap);
+```
+
+`wrapRegistered`'s `T` is inferred from `hooks.wrap`'s return, `API['root']`, so no cast is needed at the call.
+
+- [ ] **Step 6: The envelope's content accessor passes `aliasContent`**
+
+In `packages/codegen/src/emitters/wrap.ts`, the envelope branch's content accessor emits `hydrateSlot<…>(this, '<content key>', tree, 'aliasContent')`; the generated `hydrateSlot` wrapper takes and passes the role. Write here which case Step 1's finding 1 established: whether a query can yield an alias's content (and so passes `aliasContent` from `entryOfCoordinate` for a match of the content's kind), or yields each parser node once as its envelope (and so the content has one route, its envelope's accessor). Add the test to `packages/rust/tests/identity.test.ts` on a source holding an alias (at `12644d5df` rust `field_identifier` under `field_expression`): the envelope's content accessor returns one object twice; it is not `===` the envelope; and, if a query yields the content, a query matching the content's kind returns that same object. Regenerate.
+
+- [ ] **Step 7: Run the tests to verify they pass**
+
+Run: `pnpm exec vitest run packages/common/tests/identity.test.ts` — Expected: PASS.
+Run: `node --expose-gc node_modules/vitest/vitest.mjs run packages/rust/tests/identity.test.ts` — Expected: PASS.
+Run: `pnpm exec vitest run packages/rust/tests packages/python/tests packages/typescript/tests packages/common/tests` (its own Bash call) — Expected: PASS, apart from `fold-in-place-trivia.test.ts`'s refusal case, which still refuses (Task 25 lifts it).
+
+- [ ] **Step 8: Glossary, gates, commit**
+
+Glossary entries in `docs/glossary/packages-common-src.md`: `identity.ts::Role`, `keyOf`, `registered`, `register`; `transport-data.ts::indexOf`; `utils.ts::wrapRegistered`; `hydrateWith` and `hydrateSlotWith` updated (the lookup, the tree check, the role); `query.ts::sameOccurrence` removed; `entryOfCoordinate` updated. In `docs/glossary/emitters.md`, the envelope content accessor's role. Then `pnpm run validate:native` and `sittir validate history` against the base: rows unchanged.
+
+```bash
+git checkout -- .cursor/rules/infigraph.mdc .github/copilot-instructions.md GEMINI.md AGENTS.md
+git commit -F "$MSG" -- packages/common/src/identity.ts packages/common/src/utils.ts packages/common/src/transport-data.ts packages/common/src/query.ts packages/common/src/create-engine.ts packages/codegen/src/emitters/wrap.ts packages/common/tests/identity.test.ts packages/rust/tests/identity.test.ts docs/superpowers/probes/2026-10-09-relative-coordinates docs/glossary/packages-common-src.md docs/glossary/emitters.md
+```
+
+plus the regenerated `wrap.ts` files `git status` names. Message: `feat(identity): one wrapper per parsed node and role, shared by accessors, queries and the parse root`.
+
+---
+
+## Task 25: The edited set and the fold by range
+
+A trivia write marks its node's index edited in a sorted set per tree. A node folds to its coordinate when no edited index lies in `[index, end)`. The node keeps its coordinate and its tree: no ancestor is detached, so `adoptChild`, the parent links, `detachAncestors` and the projection walk (`isUntouchedBelow`) go, and the refusal of a write on a node a query reached is lifted.
+
+**Files:**
+- Modify: `rust/crates/sittir-core/src/slot.rs` (`NodeCoordinate::end`, `new`, `coordinate_to_napi`, `coordinate_from_napi`, their tests), `rust/crates/sittir-core/src/read.rs` (`ReadCtx::coordinate`, `coordinate_of`, `Child`), `rust/crates/sittir-core/src/query.rs` (`QueryCoordinate`), `rust/crates/sittir-core/tests/prepare.rs` (the `new` calls)
+- Modify: `packages/types/src/core-types.ts` (`TransportCoordinate.$end`)
+- Modify: `packages/common/src/identity.ts` (`markIndexEdited`, `editedWithin`), `packages/common/src/utils.ts` (the trivia writer; `adoptChild`, `parents`, `detachAncestors` go; `hydrateSlotWith`, `hydrateSlotsWith` stop adopting), `packages/common/src/transport-data.ts` (`foldedCoordinate`; `isUntouchedBelow` goes; `plainCoordinate`)
+- Modify: `packages/rust/tests/fold-in-place-trivia.test.ts`, `packages/rust/tests/identity.test.ts`, `packages/common/tests/identity.test.ts`
+- Modify: the glossaries
+
+**Interfaces:**
+- Consumes: Task 19's `indexOf` (`transport-data.ts`).
+- Produces: `markEditedNode(node: object): void` in `utils.ts`, the one hook every in-place write calls.
+- Produces:
+  - `TransportCoordinate.$end: number` — `index + descendant_count()` of the node it names;
+  - `markIndexEdited(tree: TreeHandle, index: number): void` and `editedWithin(tree: TreeHandle, index: number, end: number): boolean` in `identity.ts`;
+  - native `NodeCoordinate { tree, index, end, span, kind, edges, gap }` and `NodeCoordinate::new(tree: u32, index: u32, end: u32, span: Span)`.
+
+- [ ] **Step 1: Write the failing tests**
+
+In `packages/rust/tests/fold-in-place-trivia.test.ts`, the third case becomes:
+
+```ts
+	it('renders a comment written on a node a query reached, as written through the accessors', () => {
+		const root = engine.parse(SOURCE, { depth });
+		const viewed = Array.from(root.$query().$descendants).find((node) => engine.is.letDeclaration(node));
+		if (viewed === undefined || !engine.is.letDeclaration(viewed)) throw new Error('expected a let declaration');
+		viewed.$trivia.leading(engine.build.lineComment(' before'));
+		expect(root.$render()).toBe('fn a() {}\nfn b() {\n    // before\n    let x = 1;\n}\n');
+	});
+```
+
+Append to `packages/rust/tests/identity.test.ts` (it imports `readNode`'s module only for the read count):
+
+```ts
+const NESTED = 'fn a() { let p = 1; }\nfn b() { let q = 2; let r = 3; }\nfn c() { let s = 4; }\n';
+
+describe('the fold by range', () => {
+	it('a deep write unfolds its ancestors and leaves siblings and cousins as bytes', () => {
+		const root = engine.parse(NESTED, { depth: 1 });
+		const [, b] = root.statements();
+		if (b === undefined || !engine.is.functionItem(b)) throw new Error('expected a function');
+		const q = b.body().statements()[0];
+		if (q === undefined) throw new Error('expected a statement');
+		q.$trivia.leading(engine.build.lineComment(' q'));
+		expect(root.$render()).toBe('fn a() { let p = 1; }\nfn b() {\n    // q\n    let q = 2;\n    let r = 3;\n}\nfn c() { let s = 4; }\n');
+	});
+
+	it('nested writes fold only untouched ranges', () => {
+		const root = engine.parse(NESTED, { depth: 1 });
+		const [a, b] = root.statements();
+		if (a === undefined || b === undefined || !engine.is.functionItem(a) || !engine.is.functionItem(b)) throw new Error('expected functions');
+		const p = a.body().statements()[0];
+		const r = b.body().statements()[1];
+		if (p === undefined || r === undefined) throw new Error('expected statements');
+		p.$trivia.leading(engine.build.lineComment(' p'));
+		r.$trivia.trailing(engine.build.lineComment(' r'));
+		const out = root.$render();
+		expect(out).toContain('// p\n');
+		expect(out).toContain('let r = 3; // r');
+		expect(out.endsWith('fn c() { let s = 4; }\n')).toBe(true);
+	});
+
+	it('a built holder of an edited parsed child', () => {
+		const root = engine.parse(NESTED, { depth: 1 });
+		const [, b] = root.statements();
+		if (b === undefined || !engine.is.functionItem(b)) throw new Error('expected a function');
+		const q = b.body().statements()[0];
+		if (q === undefined) throw new Error('expected a statement');
+		q.$trivia.leading(engine.build.lineComment(' q'));
+		const built = engine.build.sourceFile(b);
+		expect(built.$render()).toBe('fn b() {\n    // q\n    let q = 2;\n    let r = 3;\n}\n');
+	});
+
+	it('an untouched node folds after a write elsewhere', () => {
+		const root = engine.parse(NESTED, { depth: 1 });
+		const [a, , c] = root.statements();
+		if (a === undefined || c === undefined || !engine.is.functionItem(a)) throw new Error('expected functions');
+		a.body().statements()[0]?.$trivia.leading(engine.build.lineComment(' p'));
+		expect(c.$render()).toBe('fn c() { let s = 4; }');
+	});
+});
+```
+
+If `engine.build.sourceFile`'s factory spelling differs at the base, take it from `packages/rust/src/factories/raw.ts`'s `buildSourceFile` (`sourceFile(...statements)`).
+
+Append to `packages/common/tests/identity.test.ts`:
+
+```ts
+import { editedWithin, markIndexEdited } from '../src/identity.ts';
+
+describe('the edited set', () => {
+	it('answers whether an edited index lies in a half-open range', () => {
+		const tree: TreeHandle = { id: 3 };
+		markIndexEdited(tree, 10);
+		markIndexEdited(tree, 4);
+		markIndexEdited(tree, 10);
+		expect(editedWithin(tree, 0, 4)).toBe(false);
+		expect(editedWithin(tree, 0, 5)).toBe(true);
+		expect(editedWithin(tree, 5, 10)).toBe(false);
+		expect(editedWithin(tree, 10, 11)).toBe(true);
+		expect(editedWithin({ id: 4 }, 0, 100)).toBe(false);
+	});
+});
+```
+
+In `slot.rs`'s tests, the encode test asserts `$end`; add to `read.rs`'s tests:
+
+```rust
+#[test]
+fn a_coordinate_ends_past_its_last_descendant() {
+    let source = "fn a() { let x = 1; }";
+    let tree = parse_rust(source);
+    let ctx = ReadCtx::new(source, 1);
+    let mut cursor = tree.walk();
+    for index in 0..tree.root_node().descendant_count() {
+        cursor.goto_descendant(index);
+        let coordinate = ctx.at_of(&cursor);
+        assert_eq!(coordinate.index as usize, index);
+        assert_eq!(coordinate.end as usize, index + cursor.node().descendant_count());
+    }
+}
+```
+
+(`parse_rust` is the helper `read.rs`'s tests already use; if its name differs at the base, use that one.)
+
+- [ ] **Step 2: Run them to verify they fail**
+
+Run: `cargo test -p sittir-core a_coordinate_ends_past_its_last_descendant` — Expected: FAIL to compile, no field `end`.
+Run: `pnpm exec vitest run packages/common/tests/identity.test.ts` — Expected: FAIL, `markIndexEdited` not exported.
+Run: `pnpm exec vitest run packages/rust/tests/fold-in-place-trivia.test.ts packages/rust/tests/identity.test.ts` — Expected: FAIL on the query-reached write (refused: "reached outside its parent's accessors").
+
+- [ ] **Step 3: `end` on the native coordinate**
+
+`slot.rs`:
+
+```rust
+pub struct NodeCoordinate {
+    pub tree: u32,
+    pub index: u32,
+    /// `index + descendant_count()`: the subtree is `[index, end)`.
+    pub end: u32,
+    pub span: Span,
+    // kind, edges, gap unchanged
+}
+
+impl NodeCoordinate {
+    pub fn new(tree: u32, index: u32, end: u32, span: Span) -> Self {
+        Self { tree, index, end, span, kind: None, edges: None, gap: None }
+    }
+}
+```
+
+`coordinate_to_napi` adds `present(env, c"$end", Some(coord.end))?` after `$treeHandle`; `coordinate_from_napi` reads it as required, like `$span`:
+
+```rust
+    let end: u32 = unsafe { property(env, napi_val, c"$end")? }
+        .ok_or_else(|| ::napi::Error::from_reason(format!("coordinate with $treeHandle {handle} carries no $end")))?;
+```
+
+and builds `NodeCoordinate::new(tree, index, end, span)`. These two lines go with the object codec at the record step.
+
+`read.rs`: `ReadCtx::coordinate` takes the node it already holds:
+
+```rust
+        NodeCoordinate {
+            kind: Some(KindId(node.grammar_id())),
+            ..NodeCoordinate::new(self.tree_id, index, index + node.descendant_count() as u32, span)
+        }
+```
+
+`Child` gains `pub descendants: u32`, set where the survey builds a `Child` from its node (`node.descendant_count() as u32`), and `coordinate_of` passes `child.index + child.descendants`.
+
+`query.rs`: `QueryCoordinate` gains `#[serde(rename = "$end")] pub end: u32`, filled from `coord.end`.
+
+Every `NodeCoordinate::new` call in tests passes an `end` (`index + 1` where the test names a leaf; the tests name no subtree). Then the `const` payload assertions: build; if one asks for a pin, pin it.
+
+- [ ] **Step 4: `$end` on the JavaScript coordinate**
+
+`core-types.ts`:
+
+```ts
+export interface TransportCoordinate {
+	readonly $treeHandle: number;
+	/** The index past the node's last descendant: its subtree is the indexes from its own up to this one, exclusive. */
+	readonly $end: number;
+	readonly $span: ByteSpan;
+	readonly $type: number;
+}
+```
+
+`transport-data.ts`'s `plainCoordinate` copies `$end: coordinate.$end`. `isCoordinate` is unchanged (`$treeHandle` and `$span` decide it).
+
+- [ ] **Step 5: The edited set**
+
+`identity.ts`:
+
+```ts
+const edited = new WeakMap<TreeHandle, number[]>();
+
+function lowerBound(sorted: readonly number[], value: number): number {
+	let low = 0;
+	let high = sorted.length;
+	while (low < high) {
+		const middle = (low + high) >>> 1;
+		if (sorted[middle]! < value) low = middle + 1;
+		else high = middle;
+	}
+	return low;
+}
+
+export function markIndexEdited(tree: TreeHandle, index: number): void {
+	let indexes = edited.get(tree);
+	if (indexes === undefined) edited.set(tree, (indexes = []));
+	const at = lowerBound(indexes, index);
+	if (indexes[at] !== index) indexes.splice(at, 0, index);
+}
+
+export function editedWithin(tree: TreeHandle, index: number, end: number): boolean {
+	const indexes = edited.get(tree);
+	if (indexes === undefined) return false;
+	const at = lowerBound(indexes, index);
+	return at < indexes.length && indexes[at]! < end;
+}
+```
+
+`sorted[middle]!` is an index inside `[0, length)`; if the lint forbids the `!`, read through `.at(middle) ?? Infinity`.
+
+`transport-data.ts`'s `markEdited` is a different fact (a `$with` draft's data, stripped of `at` and the token: a draft is a new node) and keeps its name; the edited set's verb is `markIndexEdited`.
+
+- [ ] **Step 6: The trivia writer marks the edit**
+
+In `utils.ts`'s `triviaWriter`: delete `refuseUnheld` and both calls; `store` becomes
+
+```ts
+	const store = (trivia: NodeTrivia, side: TriviaSideName): AnyUntypedNode => {
+		markWritten(node, side);
+		setTriviaData(node, trivia);
+		markEditedNode(node);
+		return node;
+	};
+```
+
+and `writeInner` drops `detachCoordinate(node)`. `markEditedNode` (in `utils.ts`):
+
+```ts
+function markEditedNode(node: object): void {
+	const tree = treeOf(node);
+	const index = indexOf(node);
+	if (tree !== undefined && index !== undefined) markIndexEdited(tree, index);
+}
+```
+
+A built node has no tree and no index: it renders from data already, so nothing is marked. `markEditedNode` is the only hook for an in-place write (Ruling 10): any future in-place verb, such as the node-query `$edit` verbs, marks through it, and its glossary entry says so; `$with` mints a draft and marks nothing. Delete `parents`, `adoptChild` and `detachAncestors`, and the `adoptChild` calls in `hydrateSlotWith` and `hydrateSlotsWith`.
+
+- [ ] **Step 7: The fold by range**
+
+`transport-data.ts`:
+
+```ts
+function foldedCoordinate(record: Record<string, unknown>, trivia: unknown): TransportCoordinate | undefined {
+	const coordinate = coordinateOf(record);
+	if (coordinate === undefined || hasOutsideTrivia(trivia)) return undefined;
+	const tree = treeOf(record);
+	if (tree === undefined) return undefined;
+	return editedWithin(tree, decodeIndex(coordinate.$treeHandle), coordinate.$end) ? undefined : coordinate;
+}
+```
+
+Delete `isUntouchedBelow`. A record with a coordinate but no tree (a copy that lost its token) does not fold, and its slots cross as data; `assertHoldsTree` still refuses a bare tokenless coordinate in a slot.
+
+- [ ] **Step 8: Run the tests to verify they pass**
+
+Run: `cargo test -p sittir-core` and the workspace (`cargo test --workspace`) — Expected: PASS; the stack pins unmoved.
+Run: `pnpm run validate:native` (regenerates) — Expected: rows unchanged.
+Run: `pnpm exec vitest run packages/common/tests/identity.test.ts packages/rust/tests/fold-in-place-trivia.test.ts packages/rust/tests/identity.test.ts` — Expected: PASS.
+Run: the full unit suite (its own Bash call) — Expected: PASS; any failure isolated by stash-and-rerun before it is called pre-existing.
+
+- [ ] **Step 9: Glossary, commit**
+
+Entries: `identity.ts::markIndexEdited`, `editedWithin`, `lowerBound`; `utils.ts::markEditedNode` (the only in-place-write hook; future in-place verbs mark through it); `transport-data.ts::foldedCoordinate` updated; removed: `adoptChild`, `detachAncestors`, `isUntouchedBelow`, the refusal. Core glossary: `NodeCoordinate::end`, `ReadCtx::coordinate`, `Child::descendants`, `QueryCoordinate::end`.
+
+Commit message: `feat(identity): an edit marks its index; a node folds when its range holds no edit`. Pathspec: every file in this task's Files list plus the regenerated outputs `git status` names.
+
+---
+
+## Task 24: A built node hydrates the coordinates it stores
+
+A built node's accessor over a stored coordinate returns the raw `{ $treeHandle, $span, $type, $end }` today, on both routes that put one there: `from()` of parsed data, and a slot that copies storage straight (`_content`). The builder accessor is the one `node-members.ts:43` emits (`name: () => read`). After this task it hydrates through `hydrateWith`, and so through Task 19's registry: one coordinate yields one object whether a built holder, a parsed holder or a query reaches it.
+
+**Files:**
+- Modify: `packages/common/src/engine-scope.ts` (`hydrateListStorage` → `hydrateStored`)
+- Modify: `packages/common/src/utils.ts` (`hydrateTriviaEntry`'s call; the re-export)
+- Modify: `packages/codegen/src/emitters/node-members.ts` (the builder accessor), `packages/codegen/src/emitters/factories.ts:1543` (the owner-list call)
+- Modify: `packages/rust/tests/identity.test.ts`
+- Modify: the glossaries
+- Generated: `packages/{rust,python,typescript}/src/*`
+
+**Interfaces:**
+- Consumes: Task 19's `hydrateWith` (registry-backed).
+- Produces: `hydrateStored(value: unknown): unknown` — a coordinate hydrated through its tree's engine and the registry, or refused; any other value unchanged.
+
+- [ ] **Step 1: Write the failing tests**
+
+Append to `packages/rust/tests/identity.test.ts`:
+
+```ts
+import { isCoordinate } from '../../common/src/read.ts';
+
+describe('a built node over parsed storage', () => {
+	it('hydrates the coordinate it stores into the parsed holder's object', () => {
+		const parsed = engine.parse(SOURCE, { depth: 1 });
+		const built = engine.build.sourceFile.from(parsed);
+		expect(built.statements()[0]).toBe(parsed.statements()[0]);
+		expect(built.$render()).toBe(SOURCE);
+	});
+
+	it('refuses a coordinate that lost its tree, and never returns it raw', () => {
+		const parsed = engine.parse(SOURCE, { depth: 1 });
+		const held = (parsed as unknown as { readonly _statements: readonly unknown[] })._statements[0];
+		expect(isCoordinate(held)).toBe(true);
+		const stored = JSON.parse(JSON.stringify(held));
+		const built = engine.build.sourceFile.from({ ...parsed, _statements: [stored] } as typeof parsed);
+		expect(() => built.statements()[0]).toThrow(/does not hold that tree/);
+	});
+
+	it('refuses after its engine is disposed, naming the tree', async () => {
+		const scoped = await createEngine(rust);
+		const parsed = scoped.parse(SOURCE, { depth: 1 });
+		const built = scoped.build.sourceFile.from(parsed);
+		scoped.dispose();
+		expect(() => built.statements()[0]).toThrow(/tree \d+/);
+	});
+});
+```
+
+Use the `from()` spelling the rust package exports at the base (`engine.build.sourceFile.from` or `engine.from.sourceFile`; `packages/rust/src/from.ts` names it). If the engine's disposal verb differs (`[Symbol.dispose]`), use that.
+
+- [ ] **Step 2: Run them to verify they fail**
+
+Run: `pnpm exec vitest run packages/rust/tests/identity.test.ts` — Expected: FAIL; the first case gets the raw coordinate (not `toBe` the wrapper), the second gets the raw copy, the third gets the raw coordinate.
+
+- [ ] **Step 3: `hydrateStored`**
+
+`engine-scope.ts`:
+
+```ts
+export function hydrateStored(value: unknown): unknown {
+	if (!isCoordinate(value)) return value;
+	assertHoldsTree(value);
+	const tree = treeOf(value);
+	const handle = tree === undefined ? undefined : treeHandles.get(tree);
+	if (tree === undefined || handle === undefined || !isLive(handle.current)) {
+		throw new Error(`this coordinate names tree ${decodeTree(value.$treeHandle)}, which is no longer live: its engine was disposed or its tree released`);
+	}
+	const caller = currentHandle();
+	if (caller !== undefined && !sameLanguage(caller.current, handle.current)) {
+		throw new Error(`a ${handle.current.language.name} node read through a ${caller.current.language.name} engine`);
+	}
+	return handle.hydrate?.(value, tree) ?? value;
+}
+```
+
+`handle.hydrate` is the generated `hydrate`, which calls `hydrateWith` (registry-backed), so a built holder, a parsed holder and a query reach one object. Delete `hydrateListStorage`; its callers (`utils.ts:155` `hydrateTriviaEntry`, the factories emitter's owner-list storage at `factories.ts:1543`) call `hydrateStored`. The trivia entry's hydration now refuses where it returned the raw coordinate; if a validation row moves because a trivia entry crossed engines on purpose, stop and report it (Global Constraints).
+
+- [ ] **Step 4: The builder accessor hydrates**
+
+`node-members.ts:43` emits, for a builder accessor whose storage can hold a coordinate (a slot whose read can be past depth: every node-valued slot), `${accessor.name}: () => hydrateStored(${accessor.read}),` for a single slot, and `() => storedItems(${accessor.read})` for a list slot, where `storedItems` (in `utils.ts`) hydrates each item through `hydrateStored` and freezes the array once, writing it back as `hydrateSlotsWith` does. Scalar slots (text, presence, kind-id storage) keep `() => read`: the slot's storage class (`slot.storageInfo.kind`) decides it, never the value's shape. Regenerate.
+
+- [ ] **Step 5: Run the tests**
+
+Run: `pnpm run validate:native` — Expected: rows unchanged.
+Run: `pnpm exec vitest run packages/rust/tests/identity.test.ts` — Expected: PASS.
+Run: the full unit suite (its own Bash call) — Expected: PASS.
+
+- [ ] **Step 6: Glossary, commit**
+
+Entries: `engine-scope.ts::hydrateStored` (replacing `hydrateListStorage`), `utils.ts::storedItems`, the `node-members.ts` accessor emission. Commit message: `feat(identity): a built node hydrates the coordinates it stores, through the registry`.
+
+---
+
+## Task 21: An empty list is `[]`
+
+The census at `12644d5df`: 62 list slots whose storage is optional (`Option<Vec<…>>` in `transport.rs`, `_x?:` in `types.ts`): python 8, rust 31, typescript 23 (regex 1 and scm 8 more in `transport.rs`). No producer leaves one absent today: the reader writes `Some(vec![])` (`ReadSlot for Option<Vec<…>>::finish`, `read.rs:519`), factories store `config.x ?? []` or a rest parameter's array, and every `test-fixtures.json` holds each one present (python 791 with items and 18 empty; rust 803 and 996; typescript 818 and 978). So no fixture or factory output moves: the task makes the single representation the contract. A possibly-empty list is `Vec<T>`, a `repeat1` list `NonEmptyVec<T>` (Ruling 11); the TS storage key is never optional; a missing key is refused at the codec, and so is an empty `repeat1` list.
+
+**Files:**
+- Create: `rust/crates/sittir-core/src/non_empty.rs`, `docs/superpowers/probes/2026-10-09-relative-coordinates/list-census.py`
+- Modify: `rust/crates/sittir-core/src/lib.rs` (`pub mod non_empty; pub use non_empty::NonEmptyVec;`), `rust/crates/sittir-core/src/read.rs` (`ReadSlot`), `rust/crates/sittir-core/src/prepare.rs` (`Prepare`, `EdgeItems`)
+- Modify: `packages/codegen/src/emitters/render-module.ts` (`wrap` in the slot type printer, `render-module.ts:3480-3486`; the `as_deref()`/`as_mut()` reads of optional lists)
+- Modify: `packages/codegen/src/emitters/types.ts:980` and `:1000` (`opt` for a multiple slot)
+- Modify: `packages/common/src/utils.ts` (`hydrateSlotsWith`'s `stored == null` arm, if Step 1 shows no caller needs it)
+- Modify: `packages/codegen/src/emitters/__tests__/render-module-emit.test.ts`, the types emitter's test file
+- Generated: `rust/crates/sittir-*/src/render/transport.rs`, `packages/*/src/types.ts`
+
+**Interfaces:**
+- Produces: `sittir_core::NonEmptyVec<T>`: `Deref<Target = [T]>` and `DerefMut`, `ReadSlot` for `NonEmptyVec<SlotValue<T, A>>` and `NonEmptyVec<Option<SlotValue<T, A>>>` (an empty read refused naming the slot), `Prepare`, `EdgeItems`, and the napi codec (an empty array refused); every list storage key typed `readonly (T)[]` or `NonEmptyArray<T>`, never optional.
+
+- [ ] **Step 1: The census as a probe**
+
+`docs/superpowers/probes/2026-10-09-relative-coordinates/list-census.py`, run from the checkout root as `python3 $P/list-census.py <python|rust|typescript>`:
+
+```python
+"""Census of list storage keys a type marks optional, and how a grammar's fixtures hold them."""
+import collections, json, os, re, sys
+
+lang = sys.argv[1]
+types = open(f'packages/{lang}/src/types.ts').read()
+interfaces = re.findall(r'export interface (\w+) \{\n\s+readonly \$type: TSKindId\.(\w+);([\s\S]*?)\n\}', types)
+optional = {kind: keys for _, kind, body in interfaces
+            if (keys := re.findall(r'readonly (_\w+)\?: (?:readonly|NonEmptyArray)', body))}
+ids = {}
+for name in os.listdir(f'packages/{lang}/src'):
+    if name.endswith('.ts'):
+        for kind, value in re.findall(r'\b(\w+) = (\d+)', open(f'packages/{lang}/src/{name}').read()):
+            ids.setdefault(kind, int(value))
+wanted = {ids[kind]: keys for kind, keys in optional.items() if kind in ids}
+unresolved = [kind for kind in optional if kind not in ids]
+counts = collections.Counter()
+
+def walk(value):
+    if isinstance(value, dict):
+        for key in wanted.get(value.get('$type'), []):
+            counts['absent' if key not in value else 'empty' if value[key] == [] else 'items'] += 1
+        for child in value.values():
+            walk(child)
+    elif isinstance(value, list):
+        for child in value:
+            walk(child)
+
+walk(json.load(open(f'rust/crates/sittir-{lang}/test-fixtures.json')))
+print(lang, 'optional list keys:', sum(map(len, optional.values())), 'unresolved kinds:', unresolved, dict(counts))
+```
+
+At `12644d5df` it prints `python … 8 … {'items': 791, 'empty': 18}`, `rust … 31 … {'items': 803, 'empty': 996}`, `typescript … 23 … {'items': 818, 'empty': 978}`. Extend it with the corpus: a small `list-census-corpus.mts` beside it reads every corpus file through `engine.parse(source, { depth: Infinity })` and counts list storage keys absent on read nodes. Expected: 0 absent in fixtures and in reads. A non-zero count is the work list: every absent site moves to `[]` in this task.
+
+Two more checks, recorded in the README:
+- every required multiple slot in `transport.rs` (today's non-`Option` `Vec<…>`, whose read refuses an empty list) is a slot the types emitter marks `NonEmptyArray` (`isNonEmpty`), and the reverse. A disagreement is two derivations of one fact: stop and report it.
+- `hydrateSlotsWith`'s callers: if every call names a list storage key, its `stored == null ? NO_CHILDREN` arm goes in Step 4; if a collapsed-multiplicity slot reaches it with a scalar, the arm stays and the commit says which slot.
+
+- [ ] **Step 2: Write the failing tests**
+
+In `render-module-emit.test.ts`, on the real python model (the test's existing real-model helper):
+
+```ts
+it('prints a possibly-empty list as a Vec and a repeat1 list as a NonEmptyVec', () => {
+	const rust = emitPythonTransport();
+	expect(rust).toContain('pub except_clauses: Vec<::sittir_core::SlotValue<ExceptClauseTransport>>');
+	expect(rust).not.toMatch(/Option<Vec</);
+	expect(rust).toMatch(/pub alternative: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<CaseClauseTransport>>/);
+});
+```
+
+(`MatchBlockBlock.alternative` is the python `repeat1` list; confirm against `node-model.json5` that its slot is required; if not, pick any required multiple python slot.)
+
+In the types emitter's test:
+
+```ts
+it('types a list storage key as an array, never optional', () => {
+	const types = emitPythonTypes();
+	expect(types).toContain('readonly _except_clauses: readonly ExceptClause[];');
+	expect(types).not.toMatch(/readonly _\w+\?: (readonly|NonEmptyArray)/);
+});
+```
+
+In `non_empty.rs`'s tests:
+
+```rust
+#[test]
+fn an_empty_list_is_not_a_non_empty_vec() {
+    assert!(NonEmptyVec::<u8>::try_from(Vec::new()).is_err());
+    let one = NonEmptyVec::try_from(vec![1u8]).unwrap();
+    assert_eq!(&*one, &[1u8]);
+}
+```
+
+In `read.rs`'s tests:
+
+```rust
+#[test]
+fn an_empty_list_reads_as_an_empty_vec() {
+    // python `try:\n  pass\nfinally:\n  pass\n`: no except clause
+    let read = read_python_root("try:\n  pass\nfinally:\n  pass\n");
+    assert_eq!(read.try_statement().except_clauses, Vec::new());
+}
+```
+
+(Use the read helper and accessor path `read.rs`'s python tests use at the base; the assertion is that the field is an empty `Vec`, not `None`.)
+
+- [ ] **Step 3: Run them to verify they fail**
+
+Run: `pnpm exec vitest run packages/codegen/src/emitters/__tests__/render-module-emit.test.ts` — Expected: FAIL, `Option<Vec<` present.
+Run: `cargo test -p sittir-core an_empty_list` — Expected: FAIL to compile (`NonEmptyVec` missing; `Option<Vec<…>>` against `Vec`).
+
+- [ ] **Step 4: Implement**
+
+`non_empty.rs`:
+
+```rust
+use std::ops::{Deref, DerefMut};
+
+/// A list that holds at least one item: a `repeat1` slot's storage.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct NonEmptyVec<T>(Vec<T>);
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct EmptyList;
+
+impl<T> TryFrom<Vec<T>> for NonEmptyVec<T> {
+    type Error = EmptyList;
+    fn try_from(items: Vec<T>) -> Result<Self, EmptyList> {
+        if items.is_empty() { Err(EmptyList) } else { Ok(Self(items)) }
+    }
+}
+
+impl<T> NonEmptyVec<T> {
+    pub fn into_vec(self) -> Vec<T> {
+        self.0
+    }
+}
+
+impl<T> Deref for NonEmptyVec<T> {
+    type Target = [T];
+    fn deref(&self) -> &[T] {
+        &self.0
+    }
+}
+
+impl<T> DerefMut for NonEmptyVec<T> {
+    fn deref_mut(&mut self) -> &mut [T] {
+        &mut self.0
+    }
+}
+```
+
+The napi codec, under `#[cfg(feature = "napi-bindings")]`, delegates to `Vec<T>`'s and refuses an empty array on decode (`::napi::Error::from_reason("a repeat1 list holds no item")`); it goes with the object codec at the record step. `prepare.rs`: `impl<T: Prepare> Prepare for NonEmptyVec<T>` and `impl<X: EdgeItems> EdgeItems for NonEmptyVec<X>`, each delegating to the slice the way the `Vec` impls do (move the `Vec` impls' bodies onto `[T]`/`[X]` helpers both call, so the body exists once).
+
+`read.rs`: `ReadSlot for Vec<SlotValue<T, A>>::finish` returns `Ok(acc)` (an empty list is `[]`); `ReadSlot for NonEmptyVec<SlotValue<T, A>>` has `Vec`'s accumulator and `finish` refusing an empty one with `missing(at)` (today's `Vec` behavior, moved). The same pair for the elided lists (`Vec<Option<…>>`, `NonEmptyVec<Option<…>>`). Delete `ReadSlot for Option<Vec<SlotValue<T, A>>>` and `for Option<Vec<Option<SlotValue<T, A>>>>`.
+
+`render-module.ts`'s `wrap`:
+
+```ts
+		if (multiple) {
+			const element = slotCarrier(inner, adjacent);
+			const items = optionalElement ? `Option<${element}>` : element;
+			return required ? `::sittir_core::NonEmptyVec<${items}>` : `Vec<${items}>`;
+		}
+```
+
+and the emitter's reads of an optional list (`node.<slot>.as_deref().unwrap_or(&[])`, `if let Some(gap_items) = self.<slot>.as_mut()`) become the plain slice reads the required lists use (`&node.<slot>`, `self.<slot>.iter_mut()`).
+
+`types.ts:980` and `:1000`:
+
+```ts
+			const opt = isRequired(f) || (isMultiple(f) && !storageInfo.collapsesMultiplicity) ? '' : '?';
+```
+
+(`storageInfo` is computed one line above; move the `opt` line below it.)
+
+Regenerate (`pnpm run validate:native`).
+
+- [ ] **Step 5: Run the tests**
+
+Run: the tests above — Expected: PASS.
+Run: `cargo test --workspace` — Expected: PASS; stack pins unmoved (`Vec` and `NonEmptyVec` are the size of `Option<Vec>`).
+Run: `pnpm run validate:native`, then `sittir validate history` — Expected: rows unchanged.
+Run: the workspace type-check (`tsc --noEmit`) — Expected: no new errors.
+Run: the full unit suite (its own Bash call) — Expected: PASS.
+
+- [ ] **Step 6: Glossary, commit**
+
+Entries: `non_empty.rs::NonEmptyVec`, `EmptyList`; the `render-module.ts` slot type printer (no optional list; `NonEmptyVec` for `repeat1`); `types.ts` storage optionality; the `ReadSlot` impls moved; the probe's README rows. Commit message: `feat(read): an empty list is [] in the transport, the types and the codec`.
+
+---
+
+## Task 23: Measurements and the 1c-ii gates
+
+The relative-coordinates spec's verifications 1–6, recorded in `docs/superpowers/probes/2026-10-09-relative-coordinates/README.md` with the commands, the base (`12644d5df`) and head commits, the machine and the numbers.
+
+**Files:**
+- Create: `docs/superpowers/probes/2026-10-09-relative-coordinates/README.md`, `query-reads.mts`, `fold-timing.mts`, `registry-heap.mts`
+
+- [ ] **Step 1: Verification 2 is a test**
+
+Task 19's `a descendants query over …` cases (a let declaration and a variant arm) pin it: the first query reads exactly its matches, the second reads nothing. The README names them.
+
+- [ ] **Step 2: Verifications 1, 3 and 4 are already tests**
+
+1: Task 19's identity tests and Task 25's query-reached write. 3: `rust/crates/sittir-parity-tests/tests/descendant_index.rs` (1c-i). 4: Task 25's fold tests. The README lists each with its test name.
+
+- [ ] **Step 3: Verification 5: the fold's timing**
+
+`fold-timing.mts`: for each of `docs/superpowers/probes/2026-10-01-shared-arena/transport/inputs/{engine.rs,spacing.rs,create-engine.ts}`, parse once at `depth: Infinity`, then time `root.$render()` of the untouched root (median of 31 after 5 warm-ups), and the same after one leading comment on the deepest statement. Run it at the base and the head on the same inputs, alternating, in a copy outside any watched tree (`rsync` the checkout to the session scratchpad, gate on load average under 4). Like for like: same inputs, same counts, same script at both commits. Expected: the head no slower than the base beyond noise; the base's projection walk (`isUntouchedBelow`) shows in its numbers and not in the head's.
+
+- [ ] **Step 4: Verification 6: the registry's heap**
+
+`registry-heap.mts`: `measure-heap.mts`'s two populations, the untouched whole-tree read and "walked with every wrapped node kept", plus a query-heavy one: every `$descendants` match of every kind, held. Per wrapper: (heap with the population held − heap with the root alone) ÷ wrappers, at the base and the head, median of five after a warm-up, double gc, `--expose-gc`. The head's delta per wrapper is the registry's cost (a `Map` entry, a `WeakRef`, a finalization-registry cell). Record it; no gate. The spec asks for the number, and the record step is where it is weighed.
+
+- [ ] **Step 5: The whole-branch gates, the PR**
+
+- `cargo test --workspace`; the stack pins unmoved;
+- `pnpm run validate:native`; `sittir validate history` against `12644d5df`, rows compared by number;
+- the full unit suite, with any new failure isolated by stash-and-rerun;
+- the workspace type-check (`tsc --noEmit`);
+- `packages/common/src` holds no `adoptChild`, `detachAncestors`, `isUntouchedBelow`, `sameOccurrence`, `hydrateListStorage` or "reached outside its parent's accessors"; `rust/crates/sittir-*/src/render/transport.rs` holds no `Option<Vec<`.
+
+Commit the probes and README (`docs(probes): relative-coordinates verifications 1–6 for 1c-ii`). Open the PR with `Owner: sittir-engine-api` first in its body and the Q1/Q2 rulings quoted, and ask brainstorm for the whole-branch review.
+
+---
 
 ## Outline: after step 1
 
