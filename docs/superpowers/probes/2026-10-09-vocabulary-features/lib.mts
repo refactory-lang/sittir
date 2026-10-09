@@ -1019,11 +1019,125 @@ export const EQUALITY_CLAIMS: Record<Grammar, Readonly<Record<string, string>>> 
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
+// The property-facts proposal
+
+/**
+ * The flags the property-facts proposal puts on the kinds that hold a property's name, each holder with the member that
+ * holds the name, and the grammars whose claims of a holder, or of a kind beneath it, route the flag.
+ */
+export const PROPERTY_FLAGS: Readonly<
+	Record<string, { readonly holders: Readonly<Record<string, string>>; readonly grammars: readonly Grammar[] }>
+> = {
+	computed: {
+		holders: { 'declaration.field': 'name', 'declaration.method': 'name', 'element.pair': 'key', 'pattern.object.pair': 'key' },
+		grammars: ['typescript'],
+	},
+	private: { holders: { 'declaration.field': 'name', 'declaration.method': 'name', 'expression.member': 'property' }, grammars: ['typescript'] },
+};
+
+/** The kinds of a property's name the proposal removes, each a fact about the property that holds the name. */
+const PROPERTY_NAME_KINDS = /\bV\.Identifier\.Property\.(?:Computed|Private|Shorthand)<(?:G|BaseContext)>/;
+
+/** `lines` less the union arms `arm` matches, a removed last arm's `;` moved to the arm before it. */
+function withoutArms(lines: readonly string[], arm: RegExp): string[] {
+	const out: string[] = [];
+	for (const l of lines) {
+		if (!/^\s*\| /.test(l) || !arm.test(l)) out.push(l);
+		else if (l.trimEnd().endsWith(';')) out.push(`${out.pop()!};`);
+	}
+	return out;
+}
+
+/** The lines of the namespace file declaring the kind at `path`, and the index of its `$kind` line. */
+function kindAt(vdir: string, path: string): { readonly file: string; readonly lines: string[]; readonly at: number } {
+	const file = join(vdir, `${path.split('.')[0]}.ts`);
+	const lines = readFileSync(file, 'utf8').split('\n');
+	const at = lines.findIndex((l) => l.trimStart() === `readonly $kind: '${path}';`);
+	if (at < 0) throw new Error(`property facts: ${file} declares no ${path}`);
+	return { file, lines, at };
+}
+
+/** Rewrites the member `name` of the kind at `path`, which must declare it. */
+function editMember(vdir: string, path: string, name: string, edit: (line: string) => string): void {
+	const { file, lines, at } = kindAt(vdir, path);
+	const end = lines.findIndex((l, i) => i > at && /^\t*}/.test(l));
+	const m = lines.findIndex((l, i) => i > at && i < end && new RegExp(`^\\s*readonly ${name}\\??:`).test(l));
+	if (m < 0) throw new Error(`property facts: ${path} declares no ${name}`);
+	lines[m] = edit(lines[m]!);
+	writeFileSync(file, lines.join('\n'));
+}
+
+/**
+ * Rewrites the vocabulary under `vdir` so a property's name is a property identifier and what the name's kinds said
+ * of the property is said by the property. `identifier.property.private` and `identifier.property.computed` become the
+ * `private` and `computed` flags `PROPERTY_FLAGS` names, a computed key being its expression, and
+ * `identifier.property.shorthand` a pair with no value. The identity and membership operators, which the snapshot
+ * leaves unfilled at every level, are filled as the keyword text they are.
+ */
+export function propertyFactsProposal(vdir: string): void {
+	const identifier = join(vdir, 'identifier.ts');
+	const ids = readFileSync(identifier, 'utf8').split('\n');
+	const ns = ids.indexOf('\texport namespace Property {');
+	if (ns < 0) throw new Error('property facts: identifier.ts has no Property namespace');
+	writeFileSync(identifier, withoutArms(applyEdits(ids, [{ start: ns, end: closing(ids, ns), lines: [] }]), PROPERTY_NAME_KINDS).join('\n'));
+	for (const [flag, { holders }] of Object.entries(PROPERTY_FLAGS)) {
+		for (const path of Object.keys(holders)) {
+			const { file, lines, at } = kindAt(vdir, path);
+			lines.splice(at + 1, 0, `${/^\s*/.exec(lines[at]!)![0]}readonly ${flag}?: boolean;`);
+			writeFileSync(file, lines.join('\n'));
+		}
+	}
+	editMember(vdir, 'element.pair', 'value', (l) => l.replace('readonly value:', 'readonly value?:'));
+
+	const context = join(vdir, 'context.ts');
+	const lines = withoutArms(readFileSync(context, 'utf8').replaceAll('V.Identifier.Property.Any<BaseContext>', 'V.Identifier.Property<BaseContext>').split('\n'), PROPERTY_NAME_KINDS);
+	// A computed key widens the name's fill only at kinds a grammar that routes `computed` claims.
+	const named = Object.entries(PROPERTY_FLAGS.computed!.holders);
+	const routed = new Set(PROPERTY_FLAGS.computed!.grammars.flatMap((g) => Object.keys(realization[g].routes)));
+	const edits: Edit[] = [];
+	for (let i = 0; i < lines.length; i++) {
+		const entry = /^\t\treadonly '?([\w.]+)'?: \{$/.exec(lines[i]!)?.[1];
+		if (entry === undefined) continue;
+		const end = closing(lines, i);
+		const block = lines.slice(i, end + 1);
+		if (/^identifier\.property\./.test(entry)) edits.push({ start: i, end, lines: [] });
+		else if (/^expression\.binary\.(identity|membership)\b/.test(entry)) {
+			edits.push({ start: i, end, lines: block.map((l) => l.replace(/^(\t{3}readonly operator\??: )unknown;$/, (_, head: string) => `${head}string;`)) });
+		} else if (routed.has(entry)) {
+			const name = named.find(([holder]) => entry === holder || entry.startsWith(`${holder}.`))?.[1];
+			const m = name === undefined ? -1 : block.findIndex((l) => l.startsWith(`\t\t\treadonly ${name}:`) || l.startsWith(`\t\t\treadonly ${name}?:`));
+			if (m < 0) continue;
+			const arms = block.slice(m + 1).findIndex((l) => !l.startsWith('\t\t\t\t|'));
+			const fill = block.slice(m, m + 1 + arms).join(' ');
+			if (fill.includes("BaseContext['expression']")) continue;
+			const next = [...block];
+			if (block[m]!.endsWith(';')) next[m] = block[m]!.replace(/: /, (s) => `${s}BaseContext['expression'] | `);
+			else next.splice(m + 1, 0, "\t\t\t\t| BaseContext['expression']");
+			edits.push({ start: i, end, lines: next });
+		}
+		i = end;
+	}
+	writeFileSync(context, applyEdits(lines, edits).join('\n'));
+	for (const file of readdirSync(vdir).filter((f) => f.endsWith('.ts'))) {
+		if (/\bIdentifier\.Property\.(?:Any|Computed|Private|Shorthand)\b/.test(readFileSync(join(vdir, file), 'utf8'))) throw new Error(`property facts: ${file} still names a removed kind`);
+	}
+}
+
+/** The flags the property-facts proposal routes for `grammar` at `path`: those whose holder is on the kind's line. */
+export function flagRoutes(vocab: Vocab, grammar: Grammar, path: string): string[] {
+	const line = lineage(vocab, path);
+	return Object.entries(PROPERTY_FLAGS)
+		.filter(([, f]) => f.grammars.includes(grammar) && Object.keys(f.holders).some((h) => line.includes(h)))
+		.map(([flag]) => flag);
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
 // The fold
 
 /**
  * The refinements whose slot fill the snapshot leaves outside their parent's, each with what is outside. The fold's typed
- * constraint checks every refinement against its parent, so each is a compile error until the vocabulary fixes it.
+ * constraint checks every refinement against its parent, so each is a compile error until the vocabulary fixes it; the
+ * property-facts proposal fixes all three.
  */
 export const OUTSIDE_PARENT: Readonly<Record<string, string>> = {
 	'expression.binary.identity': "its operator fill is unknown, outside expression.binary's string",
@@ -1035,10 +1149,10 @@ export const OUTSIDE_PARENT: Readonly<Record<string, string>> = {
  * Folds the snapshot's `BaseContext` into the namespace map under `dir`, a variant's root. `GrammarContext<G>` types each
  * namespace key and each slot by its permissive fill over `G`, so a consumer generic over the context reads them through
  * the constraint; `BaseContext` and `SlotTable` go. Every context parameter in the variant is bounded by the map over
- * itself, and each grammar context extends the map over itself. Each refinement `OUTSIDE_PARENT` lists is pinned with
+ * itself, and each grammar context extends the map over itself. Each refinement `pins` lists is pinned with
  * `@ts-expect-error` where it is declared, so the check fails when one is fixed or another appears.
  */
-export function fold(dir: string, vocab: Vocab): void {
+export function fold(dir: string, vocab: Vocab, pins: Readonly<Record<string, string>>): void {
 	const file = join(dir, 'vocabulary/context.ts');
 	const lines = readFileSync(file, 'utf8').split('\n');
 	const span = (name: string): { readonly start: number; readonly head: number; readonly end: number } => {
@@ -1068,7 +1182,7 @@ export function fold(dir: string, vocab: Vocab): void {
 	const index = join(dir, 'vocabulary/index.ts');
 	writeFileSync(index, replaceOnce(readFileSync(index, 'utf8'), 'GrammarContext, BaseContext, SlotTable, Unmapped', 'GrammarContext, Unmapped'));
 	const heads = new Map(
-		Object.entries(OUTSIDE_PARENT).map(([path, outside]) => {
+		Object.entries(pins).map(([path, outside]) => {
 			const it = vocab.byPath.get(path)!;
 			return [`interface ${it.qname.split('.').pop()}<G extends GrammarContext<G>> extends SubKindOf<V.${it.parent}<G>> {`, { path, outside }];
 		})

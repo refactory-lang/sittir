@@ -4,10 +4,11 @@
  * It materializes the snapshot vocabulary and writes under out/:
  * - today/: the snapshot as it is, each grammar's context over the kinds it claims;
  * - fold/: the snapshot with its `BaseContext` folded into the namespace map (lib.mts, fold), no features;
- * - gate/: the demonstration, folded. The features in features/ own their kinds and members; the base keeps the rest
- *   and loads the generated augmentation that adds them back, each gated on its feature. The grammar contexts extend
- *   the compositions in compositions.ts. With them: a JavaScript context, each language's names, and demo.ts. It
- *   prints the plan's notes and each composition's diagnostics against the snapshot's claims and routes.
+ * - gate/: the demonstration, folded, with the equality and property-facts proposals applied (lib.mts). The features in
+ *   features/ own their kinds and members; the base keeps the rest and loads the generated augmentation that adds them
+ *   back, each gated on its feature. The grammar contexts extend the compositions in compositions.ts. With them: a
+ *   JavaScript context, each language's names, and demo.ts. It prints the plan's notes and each composition's
+ *   diagnostics against the snapshot's claims and routes.
  * - scale-gate/: the cost model, folded. Every member the snapshot tags as particular to some grammars, and every kind
  *   only some grammars claim, belongs to a feature named by those grammars, gated the same way.
  * - scale-registry/: the cost model with each level read off an augmentable kind registry instead of a generated union.
@@ -27,6 +28,7 @@ import {
 	contextLines,
 	EQUALITY_CLAIMS,
 	equalityProposal,
+	flagRoutes,
 	fold,
 	GRAMMARS,
 	HERE,
@@ -36,7 +38,9 @@ import {
 	NAMESPACES,
 	namesLines,
 	OUT,
+	OUTSIDE_PARENT,
 	plan,
+	propertyFactsProposal,
 	readCompositions,
 	readFeatures,
 	readVocab,
@@ -68,12 +72,16 @@ function freshVariant(snapshot: string, name: string): string {
 	return dir;
 }
 
+/** Members a proposal routes beyond the snapshot's routes, by grammar and claimed path. */
+type ExtraRoutes = (grammar: Grammar, path: string) => readonly string[];
+
 /** A grammar's claims as a variant reads them: each path the vocabulary declares, with the members its routes reach. */
-function claimsOf(grammar: Grammar, vocab: Vocab, remap: Readonly<Record<string, string>> = {}): Map<string, readonly string[]> {
+function claimsOf(grammar: Grammar, vocab: Vocab, remap: Readonly<Record<string, string>> = {}, extra: ExtraRoutes = () => []): Map<string, readonly string[]> {
 	return new Map(
 		Object.entries(realization[grammar].routes)
 			.map(([path, routes]) => [remap[path] ?? path, routes] as const)
 			.filter(([path]) => vocab.byPath.has(path))
+			.map(([path, routes]) => [path, [...routes, ...extra(grammar, path)]] as const)
 	);
 }
 
@@ -110,7 +118,7 @@ function buildUngated(snapshot: string, variant: 'today' | 'fold'): void {
 	const members = (_: Language, path: string): string[] => [...membersOf(vocab, vocab.byPath.get(path)!).keys()].filter((m) => m !== '$kind');
 	const consumers = writeConsumers(dir, vocab, null, new Map(), langs, members);
 	writeTsconfig(join(dir, 'tsconfig.json'), ['languages.ts', ...consumers]);
-	if (variant === 'fold') fold(dir, vocab);
+	if (variant === 'fold') fold(dir, vocab, OUTSIDE_PARENT);
 	report(variant, langs, members);
 }
 
@@ -129,13 +137,14 @@ function composeLanguages(
 	p: Plan,
 	features: ReadonlyMap<string, Feature>,
 	compositions: ReadonlyMap<string, readonly string[]>,
-	entries: readonly (readonly [string, Grammar, Readonly<Record<string, string>>, Readonly<Record<string, string>>])[]
+	entries: readonly (readonly [string, Grammar, Readonly<Record<string, string>>, Readonly<Record<string, string>>])[],
+	extra?: ExtraRoutes
 ): Composed[] {
 	return entries.map(([key, grammar, terms, remap]) => {
 		const composition = `${NAME[key as LanguageKey]}Features`;
 		const set = closure(composition, features, compositions);
 		const has = (f: string): boolean => set.has(f);
-		const claims = claimsOf(grammar, vocab, remap);
+		const claims = claimsOf(grammar, vocab, remap, extra);
 		const inComposition = (path: string): boolean => {
 			const added = p.kinds.get(path);
 			return added === undefined || has(added.feature);
@@ -194,6 +203,7 @@ function buildGate(snapshot: string): void {
 	const dir = freshVariant(snapshot, 'gate');
 	const vdir = join(dir, 'vocabulary');
 	equalityProposal(vdir);
+	propertyFactsProposal(vdir);
 	cpSync(join(HERE, 'features'), join(vdir, 'features'), { recursive: true });
 	const vocab = readVocab(vdir);
 	const features = readFeatures(join(vdir, 'features'));
@@ -206,7 +216,8 @@ function buildGate(snapshot: string): void {
 		p,
 		features,
 		compositions,
-		Object.entries(languages).map(([key, l]) => [key, l.claims, l.terms, EQUALITY_CLAIMS[l.claims]] as const)
+		Object.entries(languages).map(([key, l]) => [key, l.claims, l.terms, EQUALITY_CLAIMS[l.claims]] as const),
+		(grammar, path) => flagRoutes(vocab, grammar, path)
 	);
 	diagnose(vocab, p, features, composed);
 
@@ -240,7 +251,7 @@ function buildGate(snapshot: string): void {
 	writeFileSync(join(dir, 'demo-errors.ts'), demo.replace(/^\s*\/\/ @ts-expect-error.*\n/gm, ''));
 	writeTsconfig(join(dir, 'tsconfig.demo.json'), ['languages.ts', 'javascript.ts', 'names.ts', 'demo.ts'], './tsconfig.json');
 	writeTsconfig(join(dir, 'tsconfig.errors.json'), ['demo-errors.ts'], './tsconfig.json');
-	fold(dir, vocab);
+	fold(dir, vocab, {});
 	report('gate', grammars, members);
 }
 
@@ -356,7 +367,7 @@ function buildScale(snapshot: string, variant: string, levels: Levels): void {
 	const members = (lang: Language, path: string): string[] => composedMembers(vocab, p, path, lang.has);
 	const consumers = writeConsumers(dir, vocab, p, features, langs, members);
 	writeTsconfig(join(dir, 'tsconfig.json'), ['languages.ts', ...consumers]);
-	fold(dir, vocab);
+	fold(dir, vocab, OUTSIDE_PARENT);
 	console.log(`${variant}: ${summary}`);
 	if (levels === 'unions') for (const n of p.notes) console.log(`  ${n}`);
 	report(variant, langs, members);

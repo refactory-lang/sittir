@@ -65,6 +65,29 @@ export const rustTerm: Rust.Declaration.Mod = null! as Rust.Declaration.Module;
 // @ts-expect-error Python has no such term.
 export type PythonTerm = Python.Declaration.Mod;
 
+// The property-facts proposal: a name is a property identifier, and what its kind said of the property, the property
+// says. A private member is flagged where it is declared and where it is read.
+export const typescriptPrivateField: TypeScript.Declaration.Field['private'] = true;
+// @ts-expect-error Rust lacks encapsulation.
+export const rustPrivateField: Rust.Declaration.Field['private'] = true;
+declare const javascriptMember: ViewForm<JavaScript.Expression.Member>;
+declare const pythonMember: ViewForm<Python.Expression.Member>;
+export const javascriptReadsPrivately = javascriptMember.private();
+// @ts-expect-error Nor does Python.
+export const pythonReadsPrivately = pythonMember.private();
+// @ts-expect-error No kind of name is private.
+export type PrivateName = TypeScript.Identifier.Property.Private;
+// A computed key is the key's expression, and the property is flagged.
+export const typescriptComputedMethod: TypeScript.Declaration.Method['computed'] = true;
+// @ts-expect-error Python lacks computed keys.
+export const pythonComputedMethod: Python.Declaration.Method['computed'] = true;
+// A shorthand property is a pair with no value.
+export const typescriptShorthand: Pick<TypeScript.Element.Pair, 'value'> = {};
+// The identity and membership operators are keyword text.
+export const isNot: Python.Expression.Binary.Identity.IsNot['operator'] = 'is not';
+// @ts-expect-error Text, not a number.
+export const numericOperator: Python.Expression.Binary.Identity.IsNot['operator'] = 1;
+
 // Portable code is generic over the context. Bounded by the features it reads, it takes the languages that have them;
 // a language without one fails at the call.
 export function asyncOf<G extends GrammarContext<G> & AsyncAwait>(fn: V.Declaration.Function<G>): boolean | undefined {

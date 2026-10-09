@@ -6,7 +6,9 @@ import type {
 	Characters,
 	CoerciveEquality,
 	ComplexNumbers,
+	ComputedKeys,
 	Coroutines,
+	Encapsulation,
 	Generators,
 	HigherRankPolymorphism,
 	InterfaceConformance,
@@ -22,7 +24,15 @@ import type {
 
 /** JavaScript's features. TypeScript is these and its typing features. */
 export interface JavaScriptFeatures
-	extends AsyncAwait, Generators, SingleInheritance, CoerciveEquality, ArbitraryPrecisionIntegers, RegularExpressions, StringInterpolation {}
+	extends AsyncAwait,
+		Generators,
+		SingleInheritance,
+		Encapsulation,
+		ComputedKeys,
+		CoerciveEquality,
+		ArbitraryPrecisionIntegers,
+		RegularExpressions,
+		StringInterpolation {}
 
 export interface PythonFeatures
 	extends AsyncAwait, Generators, MultipleInheritance, TypeAnnotations, ParametricPolymorphism, ArbitraryPrecisionIntegers, ComplexNumbers, ByteStrings, StringInterpolation {}
