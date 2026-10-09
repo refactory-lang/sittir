@@ -14,6 +14,7 @@ import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
 import { sourceSpans, spanSlicer, type TriviaSides } from '@sittir/common';
 import {
 	carrySource,
+	isDataKey,
 	isStorageKey,
 	mapTriviaEntries,
 	readNode as readTransport,
@@ -370,9 +371,16 @@ export interface ReadRenderParseResult {
 }
 
 /**
- * Width, in rendered bytes, of a candidate's own leading trivia — the text
+ * Width, in rendered bytes, of the leading trivia the render prints before a
+ * candidate's first token: the candidate's own, and that of each node down its
+ * first-descendant chain (a block's first statement prints its comments ahead
+ * of the block's content). A child belongs to the chain when stripping its
+ * leading entries changes the render from its first byte; one whose entries
+ * sit further in is interior trivia and is left alone. The width is the offset
+ * of the first token in the render, so a stripped render that differs from the
+ * original further on does not change it. The text is what
  * `render_with_trivia!` (Rust) / its JS-engine counterpart writes BEFORE the
- * candidate's own content. The candidate's real node starts this many bytes
+ * candidate's content. The candidate's real node starts this many bytes
  * after where its `rendered` string (trivia included) was spliced into the
  * reparse wrapper, so the offset-based lookup below must skip past it.
  * Returns 0 when there's no leading trivia (the common case).
@@ -399,12 +407,63 @@ export function leadingTriviaRenderedWidth(
 	render: (node: AnyUntypedNode) => string,
 	triviaOf: (node: object) => NodeTrivia | undefined
 ): number {
-	const trivia = triviaOf(data);
-	const leading = trivia?.leading;
-	if (!leading || leading.length === 0) return 0;
-	const stripped = { ...data, $_layout: { ...data.$_layout, trivia: { ...trivia, leading: [] } } } as AnyUntypedNode;
-	carrySource(data, stripped);
-	return render(data).trimEnd().length - render(stripped).trimEnd().length;
+	const rendered = (node: AnyUntypedNode): string => render(node).trimEnd();
+	const withLeading = (node: AnyUntypedNode, leading: readonly unknown[]): AnyUntypedNode => {
+		const copy = { ...node, $_layout: { ...node.$_layout, trivia: { ...triviaOf(node), leading } } } as AnyUntypedNode;
+		carrySource(node, copy);
+		return copy;
+	};
+	const childSlots = (node: AnyUntypedNode): { key: string; index: number | undefined; child: AnyUntypedNode }[] =>
+		Object.entries(node).flatMap(([key, value]) =>
+			isDataKey(key) && key !== '$_layout'
+				? (Array.isArray(value) ? value.map((child, index) => ({ key, index, child })) : [{ key, index: undefined, child: value }]).filter(
+						(slot): slot is { key: string; index: number | undefined; child: AnyUntypedNode } => typeof slot.child === 'object' && slot.child !== null && '$type' in slot.child
+					)
+				: []
+		);
+	const replaceChild = (node: AnyUntypedNode, slot: { key: string; index: number | undefined }, child: AnyUntypedNode): AnyUntypedNode => {
+		const value = (node as unknown as Record<string, unknown>)[slot.key];
+		const replaced = slot.index === undefined ? child : (value as unknown[]).map((item, index) => (index === slot.index ? child : item));
+		return withLeading({ ...node, [slot.key]: replaced } as AnyUntypedNode, triviaOf(node)?.leading ?? []);
+	};
+	const hasLeading = (node: AnyUntypedNode): boolean =>
+		(triviaOf(node)?.leading?.length ?? 0) > 0 || childSlots(node).some((slot) => hasLeading(slot.child));
+
+	const measured = rendered(data);
+	let current = measured;
+	let stripped = false;
+	const strip = (node: AnyUntypedNode, rebuild: (inner: AnyUntypedNode) => AnyUntypedNode): void => {
+		const own = triviaOf(node)?.leading;
+		const bare = own !== undefined && own.length > 0 ? withLeading(node, []) : node;
+		if (bare !== node) {
+			current = rendered(rebuild(bare));
+			stripped = true;
+		}
+		for (const slot of childSlots(bare)) {
+			if (!hasLeading(slot.child)) continue;
+			const probe = rebuild(replaceChild(bare, slot, withLeading(slot.child, [])));
+			const probed = rendered(probe);
+			if (probed !== current && commonPrefixLength(current, probed) === 0) {
+				strip(slot.child, (inner) => rebuild(replaceChild(bare, slot, inner)));
+				return;
+			}
+		}
+	};
+	strip(data, (inner) => inner);
+	if (!stripped) return 0;
+	const body = current.trimStart();
+	const line = body.split('\n')[0]!;
+	const indent = current.length - body.length;
+	for (let at = indent; at <= measured.length - line.length; at++) {
+		if (measured.startsWith(line, at) && (at === 0 || /\s/.test(measured[at - 1]!))) return at - indent;
+	}
+	return measured.length - current.length;
+}
+
+function commonPrefixLength(a: string, b: string): number {
+	let at = 0;
+	while (at < a.length && at < b.length && a[at] === b[at]) at++;
+	return at;
 }
 
 /**

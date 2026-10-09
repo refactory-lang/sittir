@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { readTrivia } from '@sittir/common/utils';
 import type { AnyUntypedNode } from '@sittir/types';
+import python from '../../python/src/index.ts';
 import typescript from '../../typescript/src/index.ts';
 import { loadNativeEngine, materializeDetached } from '../src/validate/common.ts';
 import { leadingTriviaRenderedWidth } from '../src/validate/read-render-parse.ts';
@@ -38,5 +39,26 @@ describe('leadingTriviaRenderedWidth on a detached alias envelope', () => {
 		const data = secondTypeArgument('type T = A<\n  X,\n  // c\n  Y,\n>;\n');
 		expect(render(data)).toBe('// c\nY');
 		expect(leadingTriviaRenderedWidth(data, render, triviaOf)).toBe('// c\n'.length);
+	});
+});
+
+/**
+ * A block owns the comments before its first statement, and the first
+ * statement may own more of them: the render prints all of them before the
+ * block's first token, so the width spans every one, not only the block's own.
+ */
+describe('leadingTriviaRenderedWidth through the first-descendant chain', () => {
+	it('counts the comments the block and its first statement print before the first token', async () => {
+		const py = await createEngine(python);
+		const nativePy = await loadNativeEngine('python');
+		const renderPy = (node: AnyUntypedNode): string => nativePy.render(node).toString();
+		const triviaPy = (node: object) => readTrivia(node, nativePy.diagnostics.lineGapsOf);
+		const statement = py.parse('if a:\n  # one\n# two\n    # three\n  b\n    # four\n  c\n').statements()[0];
+		if (statement === undefined || !py.is.ifStatement(statement)) throw new Error('expected an if statement');
+		const suite = statement.consequence();
+		if (!py.is.suiteBlock(suite)) throw new Error('expected a block suite');
+		const block = materializeDetached(suite.block());
+		expect(renderPy(block).startsWith('# one\n# two\n# three\nb')).toBe(true);
+		expect(leadingTriviaRenderedWidth(block, renderPy, triviaPy)).toBe('# one\n# two\n# three\n'.length);
 	});
 });
