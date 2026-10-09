@@ -1,14 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { loadNativeEngine } from '../src/validate/common.ts';
-
-interface ModuleNode {
-	statements(): Iterable<unknown>;
-	readonly $with: { statements(...items: unknown[]): { $render(): string } };
-}
+import { createEngine } from '@sittir/common';
+import { languageByName } from '../src/languages.ts';
 
 async function rebuilt(source: string): Promise<string> {
-	const engine = await loadNativeEngine('python');
-	const module = engine.parse(source) as unknown as ModuleNode;
+	const engine = await createEngine(await languageByName('python'));
+	const module = engine.parse(source);
 	return module.$with.statements(...module.statements()).$render();
 }
 
