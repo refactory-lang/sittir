@@ -1819,16 +1819,16 @@ pub struct CharacterClassTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_negation")]
-    #[slot(presence = kind::_NEGATION)]
+    #[slot(presence = display(kind::_NEGATION))]
     pub negation: Option<bool>,
     #[wire(key = "_leading")]
-    #[slot(field = field::LEADING, presence = kind::CLASS_CHARACTER)]
+    #[slot(field = field::LEADING, presence = display(kind::CLASS_CHARACTER))]
     pub leading: Option<bool>,
     #[wire(key = "_class_atoms")]
     #[slot(field = field::CLASS_ATOMS)]
     pub class_atoms: Option<Vec<::sittir_core::SlotValue<CharacterClassClassAtomsTransportSlot>>>,
     #[wire(key = "_trailing")]
-    #[slot(field = field::TRAILING, presence = kind::CLASS_CHARACTER)]
+    #[slot(field = field::TRAILING, presence = display(kind::CLASS_CHARACTER))]
     pub trailing: Option<bool>,
 }
 
@@ -2352,7 +2352,7 @@ impl ::sittir_core::prepare::Prepare for OptionalTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::COUNT_QUANTIFIER, layout = [kind::LBRACE, kind::RBRACE, kind::_LAZY])]
+#[transport(kind = kind::COUNT_QUANTIFIER, layout = [kind::LBRACE, kind::RBRACE, kind::QMARK])]
 pub struct CountQuantifierTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -2360,7 +2360,7 @@ pub struct CountQuantifierTransport {
     #[slot]
     pub content: ::sittir_core::SlotValue<CountQuantifierContentTransportSlot>,
     #[wire(key = "_lazy")]
-    #[slot(presence = kind::_LAZY)]
+    #[slot(presence = display(kind::_LAZY))]
     pub lazy: Option<bool>,
 }
 

@@ -1,7 +1,7 @@
 //! The expansions. Each wraps its items in `const _: () = { … };` so the
 //! helper items it defines never meet the transport's own names.
 
-use crate::attrs::{self, FlankAttrs, KindAttrs, SeparatorKindAttrs, SlotAttrs};
+use crate::attrs::{self, FlankAttrs, KindAttrs, Presence, SeparatorKindAttrs, SlotAttrs};
 use crate::codec;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
@@ -464,7 +464,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
     let fields = fields_of(ident, data)?;
     let folded = &attrs.folded;
     let admits = if attrs.display { quote!(display == #kind) } else { quote!(grammar == #kind #(|| grammar == #folded)*) };
-    let layout = &attrs.layout;
+    let layout: Vec<&Path> = attrs.layout.iter().flatten().collect();
     let gap_arms = attrs.gaps.iter().map(|(preceding, slot)| quote!(#preceding => ::core::option::Option::Some(#slot),));
     let Body { items, read, sides_of } = if let Some(fixed) = &attrs.text {
         text_body(ident, &fields, fixed.as_ref())?
@@ -715,9 +715,17 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
 }
 
 enum SlotKind<'a> {
-    Presence(&'a Path),
+    Presence(&'a Presence),
     Text,
     Node,
+}
+
+/// Whether `child` is the keyword a presence slot reads.
+fn presence_check(keyword: &Presence) -> TokenStream {
+    match keyword {
+        Presence::Token(group) => quote!([#(#group),*].contains(&child.grammar)),
+        Presence::Display(kind) => quote!(child.display == #kind),
+    }
 }
 
 fn slot_kind<'a>(field: &Field<'a>, slot: &'a SlotAttrs) -> SlotKind<'a> {
@@ -757,12 +765,12 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
             }
             SlotKind::Node => quote!(<#ty as __rt::ReadSlot>::scalar(child.grammar, child.display)),
         };
-        let own_separators = &slot.separators;
+        let own_separators: Vec<&Path> = slot.separators.iter().flatten().collect();
         let field_paths = &slot.fields;
         if !field_paths.is_empty() {
             let takes = match kind {
-                SlotKind::Presence(keyword) => quote!(child.display == #keyword),
-                SlotKind::Text => quote!(!__LAYOUT.contains(&child.display) && ![#(#own_separators),*].contains(&child.display)),
+                SlotKind::Presence(keyword) => presence_check(keyword),
+                SlotKind::Text => quote!(!__LAYOUT.contains(&child.grammar) && ![#(#own_separators),*].contains(&child.grammar)),
                 SlotKind::Node => quote!(<#ty as __rt::ReadSlot>::takes_tagged(child.grammar, child.display, child.named)),
             };
             tagged.push(quote! {
@@ -773,7 +781,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
         }
         if field_paths.is_empty() || slot.untagged {
             let admits = match kind {
-                SlotKind::Presence(keyword) => quote!(child.display == #keyword),
+                SlotKind::Presence(keyword) => presence_check(keyword),
                 SlotKind::Text => return Err(syn::Error::new_spanned(field.ident, "a text slot routes by its field")),
                 SlotKind::Node => quote!(<#ty as __rt::ReadSlot>::admits(child.grammar, child.display)),
             };
@@ -785,7 +793,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
         }
         if !own_separators.is_empty() && !field_paths.is_empty() && !attrs.list {
             tagged_separators.push(quote! {
-                ::core::option::Option::Some(__field) if (#(__field == #field_paths)||*) && [#(#own_separators),*].contains(&child.display) => {
+                ::core::option::Option::Some(__field) if (#(__field == #field_paths)||*) && [#(#own_separators),*].contains(&child.grammar) => {
                     return ::core::result::Result::Ok(__rt::Route::Separator { slot: #i, tagged: true });
                 }
             });
@@ -797,7 +805,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                 quote!(child.field.is_some_and(|__field| #(__field == #field_paths)||*))
             };
             separators.push(quote! {
-                if [#(#own_separators),*].contains(&child.display) {
+                if [#(#own_separators),*].contains(&child.grammar) {
                     return ::core::result::Result::Ok(__rt::Route::Separator { slot: #i, tagged: #own_field });
                 }
             });
@@ -829,7 +837,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                     _ => {}
                 }
                 #(#separators)*
-                if __LAYOUT.contains(&child.display) {
+                if __LAYOUT.contains(&child.grammar) {
                     return ::core::result::Result::Ok(__rt::Route::Layout);
                 }
                 ::core::result::Result::Err(__rt::ReadError::Unrouted { kind: __KIND, child: child.grammar, index: child.index })
@@ -888,7 +896,7 @@ fn list_inits(attrs: &KindAttrs, fields: &[Field<'_>], slots: &[(u16, &Field<'_>
                 });
             }
             Role::SeparatorKind(separator) => {
-                let candidates = &separator.candidates;
+                let candidates = separator.candidates.iter().map(|group| quote!(&[#(#group),*]));
                 let read = quote!(__rt::separator_kind(&children, &routes, &[#(#candidates),*]));
                 inits.push(match &separator.default {
                     Some(default) => quote!(#name: ::core::option::Option::Some(#read.unwrap_or(#default.0)),),

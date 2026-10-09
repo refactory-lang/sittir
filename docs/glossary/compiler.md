@@ -8971,10 +8971,10 @@ It applies only the lifts `validateGroupsConfig` keeps and returns the issues of
  *  nodes spelled `!`/`*`); without it the literal would resolve by its
  *  text to the anonymous `!`/`*` token, and the reader would find a
  *  child its kind has no route for. `canonicalizeRuleLiterals` stamps
- *  the alias's `aliasedToId`, which `layoutTokenIds` prefers. The literal
- *  also carries `resolvedKindId`: the id of `symbol`'s own kind entry,
- *  since the parser issues that symbol at the site whatever text it
- *  renders as. */
+ *  the alias's `aliasedToId`. The literal also carries `resolvedKindId`:
+ *  the id of `symbol`'s own kind entry, since the parser issues that
+ *  symbol at the site whatever text it renders as; `layoutTokenIds`
+ *  reads it, because the reader keys layout tokens on grammar ids. */
 ```
 
 ### `packages/codegen/src/compiler/link.ts::rewriteRuleForStamp`

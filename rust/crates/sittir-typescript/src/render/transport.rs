@@ -699,7 +699,7 @@ pub enum AnyTransport {
     QmarkQmarkEq,
     #[kind(kind::DOT_DOT_DOT)]
     DotDotDot,
-    #[kind(display(kind::QMARK))]
+    #[kind(kind::QMARK, folded(kind::_TERNARY_QMARK))]
     Qmark,
     #[kind(kind::AMP_AMP)]
     AmpAmp,
@@ -721,7 +721,7 @@ pub enum AnyTransport {
     Plus,
     #[kind(kind::DASH)]
     Dash,
-    #[kind(display(kind::SLASH))]
+    #[kind(kind::SLASH, folded(kind::SLASH2))]
     Slash,
     #[kind(kind::PERCENT)]
     Percent,
@@ -755,7 +755,7 @@ pub enum AnyTransport {
     VoidKeyword,
     #[kind(kind::DELETE_KEYWORD)]
     DeleteKeyword,
-    #[kind(display(kind::BQUOTE))]
+    #[kind(kind::BQUOTE, folded(kind::BQUOTE2))]
     Bquote,
     #[kind(kind::DOLLAR_LBRACE)]
     DollarLbrace,
@@ -809,9 +809,9 @@ pub enum AnyTransport {
     GlobalKeyword,
     #[kind(kind::FROM_KEYWORD)]
     FromKeyword,
-    #[kind(display(kind::DQUOTE))]
+    #[kind(kind::DQUOTE, folded(kind::DQUOTE2))]
     Dquote,
-    #[kind(display(kind::SQUOTE))]
+    #[kind(kind::SQUOTE, folded(kind::SQUOTE2))]
     Squote,
     #[kind(kind::PLUS_PLUS)]
     PlusPlus,
@@ -11347,7 +11347,7 @@ pub enum BinaryExpressionOperatorTransportSlot {
     Dash,
     #[kind(kind::STAR)]
     Star,
-    #[kind(display(kind::SLASH))]
+    #[kind(kind::SLASH, folded(kind::SLASH2))]
     Slash,
     #[kind(kind::PERCENT)]
     Percent,
@@ -12101,7 +12101,7 @@ impl ::sittir_core::render::Render for MethodDefinitionNameTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum PublicFieldDefinitionOptionalityTransportSlot {
-    #[kind(display(kind::QMARK))]
+    #[kind(kind::QMARK, folded(kind::_TERNARY_QMARK))]
     Qmark,
     #[kind(kind::BANG)]
     Bang,
@@ -20632,7 +20632,7 @@ impl ::sittir_core::prepare::Prepare for SubscriptExpressionTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_LHS_EXPRESSION, layout = [kind::IDENTIFIER])]
+#[transport(kind = kind::_LHS_EXPRESSION, layout = [kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::TYPE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::EXPORT_KEYWORD, kind::OBJECT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD])]
 pub struct LhsExpressionTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -20825,7 +20825,7 @@ impl ::sittir_core::prepare::Prepare for SpreadElementTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::TERNARY_EXPRESSION, layout = [kind::QMARK, kind::COLON])]
+#[transport(kind = kind::TERNARY_EXPRESSION, layout = [kind::QMARK | kind::_TERNARY_QMARK, kind::COLON])]
 pub struct TernaryExpressionTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -21160,7 +21160,7 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::TEMPLATE_STRING, layout = [kind::BQUOTE])]
+#[transport(kind = kind::TEMPLATE_STRING, layout = [kind::BQUOTE | kind::BQUOTE2])]
 pub struct TemplateStringTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -21250,7 +21250,7 @@ impl ::sittir_core::prepare::Prepare for TemplateSubstitutionTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::REGEX, layout = [kind::SLASH])]
+#[transport(kind = kind::REGEX, layout = [kind::SLASH | kind::SLASH2])]
 pub struct RegexTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -21956,7 +21956,7 @@ impl ::sittir_core::prepare::Prepare for ClassStaticBlockTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::REST_PATTERN, layout = [kind::DOT_DOT_DOT, kind::IDENTIFIER])]
+#[transport(kind = kind::REST_PATTERN, layout = [kind::DOT_DOT_DOT, kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::TYPE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::EXPORT_KEYWORD, kind::OBJECT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD])]
 pub struct RestPatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -22027,7 +22027,7 @@ pub struct MethodDefinitionTransport {
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<MethodDefinitionNameTransportSlot>,
     #[wire(key = "_optional")]
-    #[slot(field = field::OPTIONAL, presence = kind::QMARK)]
+    #[slot(field = field::OPTIONAL, presence = kind::QMARK | kind::_TERNARY_QMARK)]
     pub optional: Option<bool>,
     #[wire(key = "_type_parameters")]
     #[slot(field = field::TYPE_PARAMETERS)]
@@ -22398,7 +22398,7 @@ pub struct MethodSignatureTransport {
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<MethodDefinitionNameTransportSlot>,
     #[wire(key = "_optional")]
-    #[slot(field = field::OPTIONAL, presence = kind::QMARK)]
+    #[slot(field = field::OPTIONAL, presence = kind::QMARK | kind::_TERNARY_QMARK)]
     pub optional: Option<bool>,
     #[wire(key = "_type_parameters")]
     #[slot(field = field::TYPE_PARAMETERS)]
@@ -22474,7 +22474,7 @@ pub struct AbstractMethodSignatureTransport {
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<MethodDefinitionNameTransportSlot>,
     #[wire(key = "_optional")]
-    #[slot(field = field::OPTIONAL, presence = kind::QMARK)]
+    #[slot(field = field::OPTIONAL, presence = kind::QMARK | kind::_TERNARY_QMARK)]
     pub optional: Option<bool>,
     #[wire(key = "_type_parameters")]
     #[slot(field = field::TYPE_PARAMETERS)]
@@ -23804,7 +23804,7 @@ impl ::sittir_core::prepare::Prepare for RequiredParameterTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::OPTIONAL_PARAMETER, layout = [kind::QMARK, kind::EQ])]
+#[transport(kind = kind::OPTIONAL_PARAMETER, layout = [kind::QMARK | kind::_TERNARY_QMARK, kind::EQ])]
 pub struct OptionalParameterTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -24295,7 +24295,7 @@ impl ::sittir_core::prepare::Prepare for TupleParameterTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::OPTIONAL_TUPLE_PARAMETER, layout = [kind::QMARK])]
+#[transport(kind = kind::OPTIONAL_TUPLE_PARAMETER, layout = [kind::QMARK | kind::_TERNARY_QMARK])]
 pub struct OptionalTupleParameterTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -24344,7 +24344,7 @@ impl ::sittir_core::prepare::Prepare for OptionalTupleParameterTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::OPTIONAL_TYPE, layout = [kind::QMARK])]
+#[transport(kind = kind::OPTIONAL_TYPE, layout = [kind::QMARK | kind::_TERNARY_QMARK])]
 pub struct OptionalTypeTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -24536,7 +24536,7 @@ impl ::sittir_core::prepare::Prepare for TemplateTypeTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::TEMPLATE_LITERAL_TYPE, layout = [kind::BQUOTE])]
+#[transport(kind = kind::TEMPLATE_LITERAL_TYPE, layout = [kind::BQUOTE | kind::BQUOTE2])]
 pub struct TemplateLiteralTypeTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -24630,7 +24630,7 @@ impl ::sittir_core::prepare::Prepare for InferTypeTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CONDITIONAL_TYPE, layout = [kind::EXTENDS_KEYWORD, kind::QMARK, kind::COLON])]
+#[transport(kind = kind::CONDITIONAL_TYPE, layout = [kind::EXTENDS_KEYWORD, kind::QMARK | kind::_TERNARY_QMARK, kind::COLON])]
 pub struct ConditionalTypeTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -24891,7 +24891,7 @@ pub struct TypeQuerySubscriptExpressionTransport {
     #[slot(field = field::OBJECT)]
     pub object: ::sittir_core::SlotValue<Box<TypeQueryMemberExpressionObjectTransportSlot>>,
     #[wire(key = "_optional_chain")]
-    #[slot(field = field::OPTIONAL_CHAIN, presence = kind::_OPTIONAL_CHAIN_MARKER)]
+    #[slot(field = field::OPTIONAL_CHAIN, presence = display(kind::_OPTIONAL_CHAIN_MARKER))]
     pub optional_chain: Option<bool>,
     #[wire(key = "_index")]
     #[slot(field = field::INDEX)]
@@ -25293,7 +25293,7 @@ impl ::sittir_core::render::Render for ExistentialTypeTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::FLOW_MAYBE_TYPE, layout = [kind::QMARK])]
+#[transport(kind = kind::FLOW_MAYBE_TYPE, layout = [kind::QMARK | kind::_TERNARY_QMARK])]
 pub struct FlowMaybeTypeTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -25623,7 +25623,7 @@ pub struct PropertySignatureTransport {
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<MethodDefinitionNameTransportSlot>,
     #[wire(key = "_optional")]
-    #[slot(field = field::OPTIONAL, presence = kind::QMARK)]
+    #[slot(field = field::OPTIONAL, presence = kind::QMARK | kind::_TERNARY_QMARK)]
     pub optional: Option<bool>,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE)]
@@ -28532,7 +28532,7 @@ impl ::sittir_core::prepare::Prepare for CallExpressionMemberTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::STRING_DOUBLE, layout = [kind::DQUOTE])]
+#[transport(kind = kind::STRING_DOUBLE, layout = [kind::DQUOTE | kind::DQUOTE2])]
 pub struct StringDoubleTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -28577,7 +28577,7 @@ impl ::sittir_core::prepare::Prepare for StringDoubleTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::STRING_SINGLE, layout = [kind::SQUOTE])]
+#[transport(kind = kind::STRING_SINGLE, layout = [kind::SQUOTE | kind::SQUOTE2])]
 pub struct StringSingleTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -28819,7 +28819,7 @@ impl ::sittir_core::prepare::Prepare for ClassHeritageExtendsClauseTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::IMPORT_CLAUSE_DEFAULT_IMPORT, layout = [kind::IDENTIFIER])]
+#[transport(kind = kind::IMPORT_CLAUSE_DEFAULT_IMPORT, layout = [kind::TYPE_KEYWORD])]
 pub struct ImportClauseDefaultImportTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -32199,7 +32199,7 @@ impl ::sittir_core::render::Render for DotDotDotTransport {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum QmarkTransport {
-    #[kind(display(kind::QMARK))]
+    #[kind(kind::QMARK, folded(kind::_TERNARY_QMARK))]
     Qmark,
 }
 
@@ -32474,7 +32474,7 @@ impl ::sittir_core::render::Render for DashTransport {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum SlashTransport {
-    #[kind(display(kind::SLASH))]
+    #[kind(kind::SLASH, folded(kind::SLASH2))]
     Slash,
 }
 
@@ -32899,7 +32899,7 @@ impl ::sittir_core::render::Render for DeleteKeywordTransport {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum BquoteTransport {
-    #[kind(display(kind::BQUOTE))]
+    #[kind(kind::BQUOTE, folded(kind::BQUOTE2))]
     Bquote,
 }
 
@@ -33574,7 +33574,7 @@ impl ::sittir_core::render::Render for FromKeywordTransport {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum DquoteTransport {
-    #[kind(display(kind::DQUOTE))]
+    #[kind(kind::DQUOTE, folded(kind::DQUOTE2))]
     Dquote,
 }
 
@@ -33599,7 +33599,7 @@ impl ::sittir_core::render::Render for DquoteTransport {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum SquoteTransport {
-    #[kind(display(kind::SQUOTE))]
+    #[kind(kind::SQUOTE, folded(kind::SQUOTE2))]
     Squote,
 }
 

@@ -15627,13 +15627,17 @@ Builds `ReadNames` from the kind entries and the parser's field table. The first
 
 What the read facts are computed from: the node map, the kind entries, the names, and the kinds that own a list view (whose read reaches their items).
 
+### `packages/codegen/src/emitters/transport-projection.ts::tokenGroup`
+
+A token as an entry of a reader table (`layout`, an unaliased `presence`, `separator`, separator `candidates`): its kind, then each raw symbol the parser folds into it (`foldedTokens`), written `KIND | RAW`. The reader takes a child as this token when the child's grammar id is any of them, and stores the kind.
+
 ### `packages/codegen/src/emitters/transport-projection.ts::oneOrList`
 
 A path, or a bracketed list of paths when there are several.
 
 ### `packages/codegen/src/emitters/transport-projection.ts::layoutTokenIds`
 
-The tokens a kind's own rule writes and no slot takes, as the ids the parser shows for them: an unfielded string (its aliased id when the site aliases it), an unfielded literal symbol, an external, and a fixed-text leaf that no printed slot holds, fielded or not. Tokens inside a printed slot's field belong to the slot. The reader skips these tokens where it routes children. Every string reads its stamp: link stamps the public symbol on each string site, duplicates and `token(…)`-wrapped strings included, so there is no lookup by text. A string with no stamp, and a fixed symbol with no kind id, is a diagnostic naming the kind and the token, so nothing drops silently. The indent and dedent render markers are not tokens and are skipped.
+The tokens a kind's own rule writes and no slot takes, as the grammar ids the parser gives them: an unfielded string (at an alias site, the symbol under the alias, not the one it is shown as), an unfielded literal symbol, an external, and a fixed-text leaf that no printed slot holds, fielded or not. `transportArgs` prints each with the raw symbols folded into it (`tokenGroup`). Tokens inside a printed slot's field belong to the slot. The reader skips these tokens where it routes children. Every string reads its stamp: link stamps the public symbol on each string site, duplicates and `token(…)`-wrapped strings included, so there is no lookup by text. A string with no stamp, and a fixed symbol with no kind id, is a diagnostic naming the kind and the token, so nothing drops silently. The indent and dedent render markers are not tokens and are skipped.
 
 ### `packages/codegen/src/emitters/transport-projection.ts::listItemSlot`
 
@@ -15649,7 +15653,7 @@ Whether a slot takes children that carry no field: when it has no field route or
 
 ### `packages/codegen/src/emitters/transport-projection.ts::slotArgs`
 
-The `#[slot(…)]` arguments of one slot: its field routes, `untagged` when it also takes untagged kinds, the keyword a presence slot reads, its separators, read from the stamps (`slotDropKindIds`; a list's item slot also takes the list's separator candidates), and `scalar` for a text slot stored as a unit. Empty means a bare `#[slot]`.
+The `#[slot(…)]` arguments of one slot: its field routes, `untagged` when it also takes untagged kinds, the keyword a presence slot reads (`display(KIND)` for an aliased one, `presenceKeyword`), its separators, read from the stamps (`slotDropKindIds`; a list's item slot also takes the list's separator candidates), and `scalar` for a text slot stored as a unit. An unaliased keyword and each separator are printed with the raw symbols folded into them (`tokenGroup`). Empty means a bare `#[slot]`.
 
 ### `packages/codegen/src/emitters/transport-projection.ts::captureArgs`
 
@@ -15661,7 +15665,7 @@ The flanks a list leaves optional, each with the number of mandatory flank token
 
 ### `packages/codegen/src/emitters/transport-projection.ts::separatorKindArgs`
 
-The kinds a list's separator can be and the one its declaration falls back to: the arguments `_separatorKindOf` reads. `undefined` for a list with no separator. The candidate ids come from one derivation shared with the item slot's `separator =`.
+The kinds a list's separator can be and the one its declaration falls back to: the arguments `_separatorKindOf` reads. `undefined` for a list with no separator. The candidate ids come from one derivation shared with the item slot's `separator =`, each printed with the raw symbols folded into it (`tokenGroup`), so the reader matches a separator by its grammar id and stores the candidate's kind.
 
 ### `packages/codegen/src/emitters/transport-projection.ts::enumKindArgs`
 
@@ -15669,15 +15673,19 @@ The `#[transport(…)]` arguments of an enum kind: its own id, and `spelled` so 
 
 ### `packages/codegen/src/emitters/transport-projection.ts::variantKindArgs`
 
-The `#[kind(…)]` arguments of a variant: the ids it claims, and `display` when they are display ids. An alias envelope's id, and an anonymous token the parser folds into another symbol, are printed `display(kind)` because the parser shows them only by their public symbol. The raw symbols the parser folds into a named target are printed `folded(kind)`: the choice matches them after every exact claim, so a sibling variant that claims the raw symbol itself keeps it. An enum's members take their ids from the arms its decoder holds, so the reader and the decoder read one list.
+The `#[kind(…)]` arguments of a variant: the ids it claims, and `display` when they are display ids. An alias envelope's id is printed `display(kind)`, because the parser shows it only by its public symbol. The raw symbols the parser folds into a claimed kind are printed `folded(kind)`: the choice matches them after every exact claim, so a sibling variant that claims the raw symbol itself keeps it. An enum's members take their ids from the arms its decoder holds, so the reader and the decoder read one list.
 
 ### `packages/codegen/src/emitters/transport-projection.ts::assertOneUntaggedSlot`
 
 Refuses a kind with two slots that take an untagged child of the same kind, naming the kind, both slots and the shared kind: the reader could not choose between them.
 
-### `packages/codegen/src/emitters/transport-projection.ts::presenceKeywordId`
+### `packages/codegen/src/emitters/transport-projection.ts::presenceKeyword`
 
-The kind id of the keyword a presence slot reads: the id the parser shows for the slot's value (its aliased id when the site aliases the keyword), else a hidden marker keyword's own literal id, else the fixed-literal kind the slot references, else the parser symbol of its text. `slotArgs` names it as `presence`, and the diagnostic that checks untagged slots takes the slot's admitted id from it, so one lookup answers both.
+The keyword a presence slot reads, and how the reader matches it. A keyword the site aliases (`presenceIsAliased`) is an alias envelope: its id is the display id the alias shows, and `envelope` marks it to be matched by display id, as an envelope's admits are. Otherwise its id is the parser symbol of the slot's literal, else a hidden marker keyword's own literal id, else the fixed-literal kind the slot references, matched by grammar id with its folds. `slotArgs` prints it as `presence`, and the diagnostic that checks untagged slots takes the slot's admitted id from it, so one lookup answers both.
+
+### `packages/codegen/src/emitters/transport-projection.ts::presenceIsAliased`
+
+Whether a presence slot's value is a keyword the site wraps in an alias, read from the value's stamps. A literal is aliased unless the id the parser shows for it is its own anonymous token with its text. A referenced kind is aliased when the kind the parser shows differs from the kind it stores. A hidden symbol aliased to one name everywhere shows that name under its own id, so its display id and grammar id agree.
 
 ### `packages/codegen/src/emitters/render-module.ts::ReadPrint`
 
@@ -15702,10 +15710,6 @@ and is never read.
 ### `packages/codegen/src/emitters/transport-projection.ts::foldedTokens`
 
 The raw string-literal symbols the parser folds into a kind's public symbol (`ts_symbol_map`), from the stamped fold table, restricted to kind rows that carry their literal text: a token the grammar writes twice gets a second raw symbol the parser reports under the first one's id, and the typed reader admits it as that kind. A folded raw symbol with no literal text is a lexical symbol of its own and is not admitted.
-
-### `packages/codegen/src/emitters/transport-projection.ts::isAnonymousToken`
-
-Whether a kind id is an anonymous token row, the kind of claim that is printed `display(kind)` when the parser folds it.
 
 ### `packages/codegen/src/emitters/transport-projection.ts::separatorCandidateIds`
 

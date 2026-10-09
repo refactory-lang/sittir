@@ -43,7 +43,7 @@ import {
 	captureArgs,
 	enumKindArgs,
 	flankArgs,
-	presenceKeywordId,
+	presenceKeyword,
 	readNames,
 	separatorKindArgs,
 	slotArgs,
@@ -3340,7 +3340,7 @@ function assertReadableTransports(
 			if (!takesUntagged(slot, read.ctx)) continue;
 			const ids =
 				shape.tag === 'presence'
-					? [presenceKeywordId(shape, owner, slot, read.ctx)]
+					? [presenceKeyword(shape, owner, slot, read.ctx).id]
 					: typeName === undefined
 						? []
 						: read.admitted.get(typeName);

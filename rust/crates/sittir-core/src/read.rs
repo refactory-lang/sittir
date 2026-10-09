@@ -764,17 +764,18 @@ pub fn delimiter(list: &Node<'_>, children: &[Child], routes: &[Route], items: u
     bits
 }
 
-/// A list's separator kind, as today's `_separatorKindOf` reads it: the first
-/// anonymous unfielded child among `candidates`. A kind with a declared
-/// default falls back to it at its call site.
-pub fn separator_kind(children: &[Child], routes: &[Route], candidates: &[KindId]) -> Option<u16> {
-    children
-        .iter()
-        .zip(routes)
-        .find(|(child, route)| {
-            !child.named && child.field.is_none() && !matches!(route, Route::Slot { .. }) && candidates.contains(&child.display)
-        })
-        .map(|(child, _)| child.display.0)
+/// A list's separator kind: the kind of the first anonymous unfielded child
+/// that is one of `candidates`. Each candidate is a token's kind followed by
+/// the raw symbols the grammar folds into it; a child is that token when its
+/// grammar id is any of them, and the kind is what the list stores. A kind
+/// with a declared default falls back to it at its call site.
+pub fn separator_kind(children: &[Child], routes: &[Route], candidates: &[&[KindId]]) -> Option<u16> {
+    children.iter().zip(routes).find_map(|(child, route)| {
+        if child.named || child.field.is_some() || matches!(route, Route::Slot { .. }) {
+            return None;
+        }
+        candidates.iter().find(|token| token.contains(&child.grammar)).and_then(|token| token.first()).map(|kind| kind.0)
+    })
 }
 
 /// Read the node at `index` into `T`, with the sides its parent's placement

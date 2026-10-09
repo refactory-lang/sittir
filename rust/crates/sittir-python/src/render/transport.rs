@@ -423,7 +423,7 @@ pub enum AnyTransport {
     FutureUKeyword,
     #[kind(kind::AS_KEYWORD)]
     AsKeyword,
-    #[kind(display(kind::STAR))]
+    #[kind(kind::STAR, folded(kind::STAR2))]
     Star,
     #[kind(kind::GT_GT)]
     GtGt,
@@ -2840,7 +2840,7 @@ pub enum ImportFromStatementContentTransportSlot {
     ImportList(ImportListTransport),
     #[kind(kind::_PARENTHESIZED_IMPORT_LIST)]
     ParenthesizedImportList(ParenthesizedImportListTransport),
-    #[kind(kind::WILDCARD_IMPORT, display(kind::STAR))]
+    #[kind(kind::WILDCARD_IMPORT, kind::STAR, folded(kind::STAR2))]
     WildcardImport,
 }
 
@@ -4416,7 +4416,7 @@ impl ::sittir_core::render::Render for SimplePatternContentTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum SplatPatternOperatorTransportSlot {
-    #[kind(display(kind::STAR))]
+    #[kind(kind::STAR, folded(kind::STAR2))]
     Star,
     #[kind(kind::STAR_STAR)]
     StarStar,
@@ -4861,7 +4861,7 @@ pub enum BinaryOperatorOperatorTransportSlot {
     Plus,
     #[kind(kind::DASH)]
     Dash,
-    #[kind(display(kind::STAR))]
+    #[kind(kind::STAR, folded(kind::STAR2))]
     Star,
     #[kind(kind::AT)]
     At,
@@ -6734,7 +6734,7 @@ impl ::sittir_core::render::Render for TypeContentTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum SplatTypeOperatorTransportSlot {
-    #[kind(display(kind::STAR))]
+    #[kind(kind::STAR, folded(kind::STAR2))]
     Star,
     #[kind(kind::STAR_STAR)]
     StarStar,
@@ -10671,7 +10671,7 @@ pub struct ExceptClauseTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_group")]
-    #[slot(field = field::GROUP, presence = kind::STAR)]
+    #[slot(field = field::GROUP, presence = kind::STAR | kind::STAR2)]
     pub group: Option<bool>,
     #[wire(key = "_exception")]
     #[slot(field = field::EXCEPTION)]
@@ -11011,7 +11011,7 @@ impl ::sittir_core::prepare::Prepare for LambdaParametersTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::LIST_SPLAT, layout = [kind::STAR])]
+#[transport(kind = kind::LIST_SPLAT, layout = [kind::STAR | kind::STAR2])]
 pub struct ListSplatTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -12543,7 +12543,7 @@ impl ::sittir_core::prepare::Prepare for TypedDefaultParameterTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::LIST_SPLAT_PATTERN, layout = [kind::STAR])]
+#[transport(kind = kind::LIST_SPLAT_PATTERN, layout = [kind::STAR | kind::STAR2])]
 pub struct ListSplatPatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -18456,7 +18456,7 @@ impl ::sittir_core::render::Render for AsKeywordTransport {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum StarTransport {
-    #[kind(display(kind::STAR))]
+    #[kind(kind::STAR, folded(kind::STAR2))]
     Star,
 }
 

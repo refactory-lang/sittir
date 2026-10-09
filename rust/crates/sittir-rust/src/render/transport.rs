@@ -617,7 +617,7 @@ pub enum AnyTransport {
     Lbrack,
     #[kind(kind::RBRACK)]
     Rbrack,
-    #[kind(display(kind::BANG))]
+    #[kind(kind::BANG, folded(kind::BANG2))]
     Bang,
     #[kind(kind::U8_KEYWORD)]
     U8Keyword,
@@ -693,7 +693,7 @@ pub enum AnyTransport {
     TraitKeyword,
     #[kind(kind::FOR_KEYWORD)]
     ForKeyword,
-    #[kind(display(kind::LT))]
+    #[kind(kind::LT, folded(kind::LT2))]
     Lt,
     #[kind(kind::GT)]
     Gt,
@@ -737,7 +737,7 @@ pub enum AnyTransport {
     LtLt,
     #[kind(kind::GT_GT)]
     GtGt,
-    #[kind(display(kind::SLASH))]
+    #[kind(kind::SLASH, folded(kind::SLASH2))]
     Slash,
     #[kind(kind::PERCENT)]
     Percent,
@@ -4884,7 +4884,7 @@ pub enum NonSpecialTokenContentTransportSlot {
     Identifier(IdentifierTransport),
     #[kind(kind::_PRIMITIVE_TYPE, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD)]
     PrimitiveType(PrimitiveTypeEnum),
-    #[kind(kind::_TOKEN_TREE_PUNCTUATION, kind::PLUS, kind::DASH, kind::STAR, kind::PERCENT, kind::CARET, kind::AMP, kind::PIPE, kind::AMP_AMP, kind::PIPE_PIPE, kind::LT_LT, kind::GT_GT, kind::PLUS_EQ, kind::DASH_EQ, kind::STAR_EQ, kind::SLASH_EQ, kind::PERCENT_EQ, kind::CARET_EQ, kind::AMP_EQ, kind::PIPE_EQ, kind::LT_LT_EQ, kind::GT_GT_EQ, kind::EQ, kind::EQ_EQ, kind::BANG_EQ, kind::GT, kind::GT_EQ, kind::LT_EQ, kind::AT, kind::UNDERSCORE, kind::DOT, kind::DOT_DOT, kind::DOT_DOT_DOT, kind::DOT_DOT_EQ, kind::COMMA, kind::SEMI, kind::COLON, kind::COLON_COLON, kind::DASH_GT, kind::EQ_GT, kind::POUND, kind::QMARK, display(kind::SLASH), display(kind::BANG), display(kind::LT))]
+    #[kind(kind::_TOKEN_TREE_PUNCTUATION, kind::PLUS, kind::DASH, kind::STAR, kind::SLASH, kind::PERCENT, kind::CARET, kind::BANG, kind::AMP, kind::PIPE, kind::AMP_AMP, kind::PIPE_PIPE, kind::LT_LT, kind::GT_GT, kind::PLUS_EQ, kind::DASH_EQ, kind::STAR_EQ, kind::SLASH_EQ, kind::PERCENT_EQ, kind::CARET_EQ, kind::AMP_EQ, kind::PIPE_EQ, kind::LT_LT_EQ, kind::GT_GT_EQ, kind::EQ, kind::EQ_EQ, kind::BANG_EQ, kind::GT, kind::LT, kind::GT_EQ, kind::LT_EQ, kind::AT, kind::UNDERSCORE, kind::DOT, kind::DOT_DOT, kind::DOT_DOT_DOT, kind::DOT_DOT_EQ, kind::COMMA, kind::SEMI, kind::COLON, kind::COLON_COLON, kind::DASH_GT, kind::EQ_GT, kind::POUND, kind::QMARK, folded(kind::SLASH2), folded(kind::BANG2), folded(kind::LT2))]
     TokenTreePunctuation(TokenTreePunctuationEnum),
     #[kind(kind::_TOKEN_KEYWORDS, kind::SQUOTE, kind::AS_KEYWORD, kind::ASYNC_KEYWORD, kind::AWAIT_KEYWORD, kind::BREAK_KEYWORD, kind::CONST_KEYWORD, kind::CONTINUE_KEYWORD, kind::DEFAULT_KEYWORD, kind::ENUM_KEYWORD, kind::FN_KEYWORD, kind::FOR_KEYWORD, kind::GEN_KEYWORD, kind::IF_KEYWORD, kind::IMPL_KEYWORD, kind::LET_KEYWORD, kind::LOOP_KEYWORD, kind::MATCH_KEYWORD, kind::MOD_KEYWORD, kind::PUB_KEYWORD, kind::RETURN_KEYWORD, kind::STATIC_KEYWORD, kind::STRUCT_KEYWORD, kind::TRAIT_KEYWORD, kind::TYPE_KEYWORD, kind::UNION_KEYWORD, kind::UNSAFE_KEYWORD, kind::USE_KEYWORD, kind::WHERE_KEYWORD, kind::WHILE_KEYWORD)]
     TokenKeywords(TokenKeywordsEnum),
@@ -8185,7 +8185,7 @@ pub enum UnaryExpressionOperatorTransportSlot {
     Dash,
     #[kind(kind::STAR)]
     Star,
-    #[kind(display(kind::BANG))]
+    #[kind(kind::BANG, folded(kind::BANG2))]
     Bang,
 }
 
@@ -8251,7 +8251,7 @@ pub enum BinaryExpressionOperatorTransportSlot {
     EqEq,
     #[kind(kind::BANG_EQ)]
     BangEq,
-    #[kind(display(kind::LT))]
+    #[kind(kind::LT, folded(kind::LT2))]
     Lt,
     #[kind(kind::LT_EQ)]
     LtEq,
@@ -8269,7 +8269,7 @@ pub enum BinaryExpressionOperatorTransportSlot {
     Dash,
     #[kind(kind::STAR)]
     Star,
-    #[kind(display(kind::SLASH))]
+    #[kind(kind::SLASH, folded(kind::SLASH2))]
     Slash,
     #[kind(kind::PERCENT)]
     Percent,
@@ -15175,7 +15175,7 @@ impl ::sittir_core::prepare::Prepare for AttributeItemTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::INNER_ATTRIBUTE_ITEM, layout = [kind::POUND, kind::BANG, kind::LBRACK, kind::RBRACK])]
+#[transport(kind = kind::INNER_ATTRIBUTE_ITEM, layout = [kind::POUND, kind::BANG | kind::BANG2, kind::LBRACK, kind::RBRACK])]
 pub struct InnerAttributeItemTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -16485,7 +16485,7 @@ impl ::sittir_core::prepare::Prepare for RemovedTraitBoundTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::TYPE_PARAMETERS, min_depth = 2, layout = [kind::LT, kind::GT])]
+#[transport(kind = kind::TYPE_PARAMETERS, min_depth = 2, layout = [kind::LT | kind::LT2, kind::GT])]
 pub struct TypeParametersTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -17270,7 +17270,7 @@ impl ::sittir_core::prepare::Prepare for VisibilityModifierTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::BRACKETED_TYPE, layout = [kind::LT, kind::GT])]
+#[transport(kind = kind::BRACKETED_TYPE, layout = [kind::LT | kind::LT2, kind::GT])]
 pub struct BracketedTypeTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -17458,7 +17458,7 @@ impl ::sittir_core::prepare::Prepare for ArrayTypeTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::FOR_LIFETIMES, min_depth = 2, layout = [kind::FOR_KEYWORD, kind::LT, kind::GT])]
+#[transport(kind = kind::FOR_LIFETIMES, min_depth = 2, layout = [kind::FOR_KEYWORD, kind::LT | kind::LT2, kind::GT])]
 pub struct ForLifetimesTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -17826,7 +17826,7 @@ impl ::sittir_core::prepare::Prepare for BoundedTypeTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::USE_BOUNDS, min_depth = 2, layout = [kind::USE_KEYWORD, kind::LT, kind::GT], gap(2) = bounds)]
+#[transport(kind = kind::USE_BOUNDS, min_depth = 2, layout = [kind::USE_KEYWORD, kind::LT | kind::LT2, kind::GT], gap(2) = bounds)]
 pub struct UseBoundsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -17871,7 +17871,7 @@ impl ::sittir_core::prepare::Prepare for UseBoundsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::TYPE_ARGUMENTS, min_depth = 2, layout = [kind::LT, kind::GT])]
+#[transport(kind = kind::TYPE_ARGUMENTS, min_depth = 2, layout = [kind::LT | kind::LT2, kind::GT])]
 pub struct TypeArgumentsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -18166,7 +18166,7 @@ impl ::sittir_core::render::Render for MutableSpecifierTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::MACRO_INVOCATION, layout = [kind::BANG])]
+#[transport(kind = kind::MACRO_INVOCATION, layout = [kind::BANG | kind::BANG2])]
 pub struct MacroInvocationTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -22635,13 +22635,13 @@ pub enum TokenTreePunctuationEnum {
     Minus,
     #[kind(kind::STAR)]
     Star,
-    #[kind(display(kind::SLASH))]
+    #[kind(kind::SLASH, folded(kind::SLASH2))]
     Slash,
     #[kind(kind::PERCENT)]
     Percent,
     #[kind(kind::CARET)]
     Caret,
-    #[kind(display(kind::BANG))]
+    #[kind(kind::BANG, folded(kind::BANG2))]
     Bang,
     #[kind(kind::AMP)]
     Amp,
@@ -22683,7 +22683,7 @@ pub enum TokenTreePunctuationEnum {
     BangEq,
     #[kind(kind::GT)]
     Gt,
-    #[kind(display(kind::LT))]
+    #[kind(kind::LT, folded(kind::LT2))]
     Lt,
     #[kind(kind::GT_EQ)]
     GtEq,
@@ -24150,7 +24150,7 @@ impl ::sittir_core::prepare::Prepare for ImplItemPositiveClauseTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::IMPL_ITEM_NEGATIVE_CLAUSE, layout = [kind::BANG, kind::FOR_KEYWORD])]
+#[transport(kind = kind::IMPL_ITEM_NEGATIVE_CLAUSE, layout = [kind::BANG | kind::BANG2, kind::FOR_KEYWORD])]
 pub struct ImplItemNegativeClauseTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -24321,7 +24321,7 @@ impl ::sittir_core::prepare::Prepare for ImplItemSemiTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::VISIBILITY_MODIFIER_PUB_SCOPE_IN_PATH, layout = [kind::IN_KEYWORD, kind::IDENTIFIER])]
+#[transport(kind = kind::VISIBILITY_MODIFIER_PUB_SCOPE_IN_PATH, layout = [kind::IN_KEYWORD, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD, kind::DEFAULT_KEYWORD, kind::UNION_KEYWORD, kind::GEN_KEYWORD])]
 pub struct VisibilityModifierPubScopeInPathTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -28448,7 +28448,7 @@ impl ::sittir_core::render::Render for RbrackTransport {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum BangTransport {
-    #[kind(display(kind::BANG))]
+    #[kind(kind::BANG, folded(kind::BANG2))]
     Bang,
 }
 
@@ -29398,7 +29398,7 @@ impl ::sittir_core::render::Render for ForKeywordTransport {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum LtTransport {
-    #[kind(display(kind::LT))]
+    #[kind(kind::LT, folded(kind::LT2))]
     Lt,
 }
 
@@ -29948,7 +29948,7 @@ impl ::sittir_core::render::Render for GtGtTransport {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum SlashTransport {
-    #[kind(display(kind::SLASH))]
+    #[kind(kind::SLASH, folded(kind::SLASH2))]
     Slash,
 }
 

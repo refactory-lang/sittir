@@ -665,6 +665,38 @@ describe('transport read facts', () => {
 	});
 });
 
+describe('transport read facts for an aliased presence keyword', () => {
+	let model: Awaited<ReturnType<typeof modelFor>>;
+	let ctx: ReadFactsCtx;
+	beforeAll(async () => {
+		model = await modelFor('typescript');
+		ctx = {
+			nodeMap: model.nodeMap,
+			kindEntries: model.kindEntries,
+			names: readNames(model.kindEntries, generatedFieldIds(model.generatedIdTables)),
+			listOwners: new Set(listViewOwners(model.nodeMap).map((node) => node.kind)),
+			envelopeIds: new Set(aliasEnvelopeIds(aliasEnvelopesOf(model.nodeMap))),
+			folds: model.generatedIdTables.folds ?? new Map(),
+			grammar: 'typescript'
+		};
+	}, 120_000);
+
+	const presenceArgs = (struct: string, storageName: string): string => {
+		const owner = [...model.nodeMap.nodes.values()].find((n) => rustTransportStructName(n) === struct);
+		if (owner === undefined) throw new Error(`no kind emits ${struct}`);
+		const s = owner.slots.find((each) => each.storageName === storageName)!;
+		return slotArgs(s, owner, transportSlotShapeOf(s, model.nodeMap), ctx);
+	};
+
+	it('reads a keyword the site aliases by the display id the alias shows', () => {
+		expect(presenceArgs('TypeQuerySubscriptExpressionTransport', 'optional_chain')).toMatch(/presence = display\(kind::_OPTIONAL_CHAIN_MARKER\)$/);
+	});
+
+	it('reads the same keyword slot over an unaliased kind by its grammar id', () => {
+		expect(presenceArgs('SubscriptExpressionTransport', 'optional_chain')).toMatch(/presence = kind::OPTIONAL_CHAIN$/);
+	});
+});
+
 describe('transport attributes', () => {
 	it('derives the reader and states the read facts on a struct', async () => {
 		const src = await getRustTemplatesRs();
