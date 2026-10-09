@@ -355,7 +355,7 @@ export type KindTypes<Keys extends object, NsMap extends object> = {
 export type NodeOfNamespaces<NsMap extends object> = Extract<
 	{
 		[Id in keyof NsMap]: NsMap[Id] extends { readonly Node: infer N; readonly Bound: infer B }
-			? N | B | (NsMap[Id] extends { readonly Parsed: infer P } ? P : never)
+			? NsMap[Id] extends { readonly Parsed: infer P } ? ([P] extends [never] ? N | B : B | P) : N | B
 			: never;
 	}[keyof NsMap],
 	object
