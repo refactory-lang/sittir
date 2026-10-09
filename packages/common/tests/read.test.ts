@@ -18,6 +18,16 @@ describe('the JavaScript read', () => {
 		expect(item.$_layout.at.$span).toEqual(coordinate.$span);
 	});
 
+	it('refuses a coordinate from another tree instead of reading the node at its index there', () => {
+		const first = rs.diagnostics.parseAndRead('fn f(a: u8) {}');
+		const second = rs.diagnostics.parseAndRead('fn g() {}');
+		const [coordinate] = (first.root as unknown as { _statements: unknown[] })._statements;
+		if (!isCoordinate(coordinate)) throw new Error('expected a coordinate');
+
+		expect(() => readNode(second.tree, coordinate)).toThrow(/another tree/);
+		expect(readNode(first.tree, coordinate)).toMatchObject({ $type: rs.kinds.FunctionItem });
+	});
+
 	it('decodes a handle into the tree above 32 bits and the descendant index below them', () => {
 		const handle = 5 * 2 ** 32 + 17;
 		expect([decodeTree(handle), decodeIndex(handle)]).toEqual([5, 17]);

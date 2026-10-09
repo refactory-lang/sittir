@@ -684,12 +684,12 @@ export type WrapTransport = (data: object, tree: TreeHandle) => unknown;
 
 /**
  * One stored value as an accessor returns it: a coordinate read `depth` levels down (one when absent) and
- * wrapped, a transport not yet wrapped wrapped, and anything else (a wrapped node, a kind id, a boolean, text)
- * as it is.
+ * hydrated as the transport it reads as, a transport not yet wrapped wrapped, and anything else (a wrapped
+ * node, a kind id such as a unit variant's, a boolean, text) as it is.
  */
 export function hydrateWith(value: unknown, tree: TreeHandle, wrap: WrapTransport, depth?: number): unknown {
 	if (value === null || typeof value !== 'object' || Array.isArray(value)) return value;
-	if (isCoordinate(value)) return wrap(readNode(tree, value, depth), tree);
+	if (isCoordinate(value)) return hydrateWith(readNode(tree, value, depth), tree, wrap);
 	return isTypedNode(value) || typeof (value as { readonly $type?: unknown }).$type !== 'number' ? value : wrap(value, tree);
 }
 

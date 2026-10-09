@@ -5,8 +5,10 @@ import type { TreeQuery } from './query.ts';
 export interface TreeHandle {
 	/** Original source text. */
 	source?: string;
-	/** The node at descendant `index` read into its transport, `depth` levels down (one when absent, `Infinity` for all); index 0 is the root. */
-	read?(index: number, depth?: number): object;
+	/** The native tree `read` reads: the tree id every coordinate read from it packs. */
+	id?: number;
+	/** The node at descendant `index` read into its transport, `depth` levels down (one when absent, `Infinity` for all); index 0 is the root. A unit variant's transport is its kind id. */
+	read?(index: number, depth?: number): unknown;
 	/** Format record inferred from the source file by the native reader. */
 	format?: FormatRecord;
 	query?: TreeQuery;
@@ -29,8 +31,25 @@ export function isCoordinate(value: unknown): value is TransportCoordinate {
 	return value !== null && typeof value === 'object' && '$treeHandle' in value && '$span' in value;
 }
 
-/** The node a coordinate names, read `depth` levels down (one when absent). */
-export function readNode(tree: TreeHandle, coordinate: TransportCoordinate, depth?: number): object {
+/**
+ * The node a coordinate names, read into its transport `depth` levels down (one when absent): a unit
+ * variant's transport is its kind id.
+ *
+ * @throws when the tree has no native read, or the coordinate names another tree.
+ */
+export function readNode(tree: TreeHandle, coordinate: TransportCoordinate, depth?: number): unknown {
 	if (tree.read === undefined) throw new Error('readNode: this tree has no native read');
+	const owner = decodeTree(coordinate.$treeHandle);
+	if (owner !== tree.id) throw new Error(`readNode: the coordinate names another tree (${owner}), not this one (${String(tree.id)})`);
 	return tree.read(decodeIndex(coordinate.$treeHandle), depth);
+}
+
+/**
+ * A read that names a node with structure, such as a tree's root.
+ *
+ * @throws when the read is a unit variant's kind id.
+ */
+export function readObject(value: unknown, what: string): object {
+	if (value === null || typeof value !== 'object') throw new Error(`read: ${what} read as kind id ${String(value)}, not a node`);
+	return value;
 }

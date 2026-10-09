@@ -15,7 +15,7 @@ import type {
 	RenderCallOptions,
 	Rendered
 } from '@sittir/types';
-import type { TreeHandle } from './read.ts';
+import { readObject, type TreeHandle } from './read.ts';
 import { holdReadTree, toTransportData, type TriviaView } from './transport-data.ts';
 import { readDerivedSides, readTrivia } from './utils.ts';
 import { mintTreeToken, registerTree } from './tree-token.ts';
@@ -81,7 +81,7 @@ export interface NativeEngineLike<TTransport = unknown> {
 	 * @throws when the tree is not live, `index` is past its last node, or the grammar's model has no
 	 *   route for a child, naming the kind, the child and the index.
 	 */
-	read(treeId: number, index: number, depth?: number): object;
+	read(treeId: number, index: number, depth?: number): TTransport;
 	lineGapsOf(handle: number): string;
 	descendants(
 		from: string,
@@ -318,18 +318,19 @@ export function createNativeEngine<
 							release: status.native.disposeTree,
 							treeId: parsed.treeId
 						});
-						const readAt = (index: number, depth: number): object => {
+						const readAt = (index: number, depth: number): TTransport => {
 							const node = engine.read(parsed.treeId, index, depth);
 							holdReadTree(node, liveToken);
 							return node;
 						};
 						// The parse's error regions ride beside the root and are stamped here.
-						const root = Object.assign(readAt(0, depthOf(parseOptions)), { $errors: Object.freeze(parsed.errors) }) as TRoot & ParsedRoot;
+						const root = Object.assign(readObject(readAt(0, depthOf(parseOptions)), 'the root'), { $errors: Object.freeze(parsed.errors) }) as TRoot & ParsedRoot;
 						// One root per depth: the parse's own read seeds it, and a
 						// root asked for at another depth is read once.
-						const roots = new Map<number, object>([[depthOf(parseOptions), root]]);
+						const roots = new Map<number, unknown>([[depthOf(parseOptions), root]]);
 						const tree: TreeHandle = {
 							source,
+							id: parsed.treeId,
 							read: (index, depth = 1) => {
 								if (index !== 0) return readAt(index, depth);
 								let cached = roots.get(depth);
