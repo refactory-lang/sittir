@@ -59,8 +59,8 @@ impl EngineGrammar for RegexGrammar {
         <AnyTransport as sittir_core::read::ReadTransport>::sides_of(cursor, ctx, index)
     }
 
-    fn read_kind(self, node: &tree_sitter::Node<'_>) -> Option<sittir_core::types::KindId> {
-        AnyTransport::read_kind(sittir_core::types::KindId(node.grammar_id()), sittir_core::read::display_id(node))
+    fn shows(self) -> fn(sittir_core::types::KindId) -> bool {
+        <AnyTransport as sittir_core::read::ReadTransport>::shows
     }
 }
 

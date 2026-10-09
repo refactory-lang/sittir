@@ -146,6 +146,7 @@ export function emitIs(config: EmitIsConfig): string {
 
 	const supertypes: Array<{
 		kind: string;
+		id: number | undefined;
 		typeName: string;
 		guardKey: string;
 		memberKinds: string[];
@@ -174,7 +175,7 @@ export function emitIs(config: EmitIsConfig): string {
 		if (usedCamelKeys.has(guardKey)) continue;
 		usedCamelKeys.add(guardKey);
 		const variants = variantParents.find((parent) => parent.node === st)?.variants ?? [];
-		supertypes.push({ kind, typeName, guardKey, memberKinds, memberIds, memberKindIds, variants });
+		supertypes.push({ kind, id: kindIdOf(kind), typeName, guardKey, memberKinds, memberIds, memberKindIds, variants });
 	}
 	const guardKeyOfSupertype = (key: string): string => {
 		const nested = supertypes.find((s) => s.kind === supertypeKindByKey.get(key));
@@ -188,7 +189,7 @@ export function emitIs(config: EmitIsConfig): string {
 		}
 		const id = kindDiscriminantExpr(route.child.kind, nodeMap, kindEntries);
 		return route.leaf
-			? { type: `${route.name}${supertypePredicate(id)}`, value: `_sg(new Set<number>([${id}]))` }
+			? { type: `${route.name}${supertypePredicate(id)}`, value: `_mg(${id})` }
 			: { type: `${route.name}${kindPredicate(id)}`, value: `_g(${id})` };
 	};
 
@@ -227,9 +228,12 @@ export function emitIs(config: EmitIsConfig): string {
 	lines.push('');
 
 	if (kindEntries) {
-		lines.push('// Runtime: kind guards compare numeric TSKindId only.');
+		lines.push('// Runtime: every guard tests membership through `isMember`, the test a query\'s `ofType` uses.');
 		lines.push('function _g(id: number): (v: { readonly $type: number } | number) => boolean {');
-		lines.push("    return (v) => typeof v !== 'number' && v.$type === id;");
+		lines.push("    return (v) => typeof v !== 'number' && isMember(id, v.$type);");
+		lines.push('}');
+		lines.push('function _mg(kind: number): (v: { readonly $type: number } | number) => boolean {');
+		lines.push("    return (v) => isMember(kind, typeof v === 'number' ? v : v.$type);");
 		lines.push('}');
 		lines.push('function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number) => boolean {');
 		lines.push("    return (v) => ids.has(typeof v === 'number' ? v : v.$type);");
@@ -264,11 +268,25 @@ export function emitIs(config: EmitIsConfig): string {
 	}
 	if (supertypes.length > 0) lines.push('');
 
+	const tabled = supertypes.filter((s) => s.id !== undefined && s.memberIds.length > 0);
+	lines.push('const _members = new Map<number, ReadonlySet<number>>([');
+	for (const s of tabled) lines.push(`    [${s.id}, _supertype_${s.guardKey}_ids],`);
+	lines.push(']);');
+	lines.push('export function isMember(kind: number, type: number): boolean {');
+	lines.push('    return _members.get(kind)?.has(type) ?? type === kind;');
+	lines.push('}');
+	lines.push('export function membersOf(kind: number): readonly number[] {');
+	lines.push('    const members = _members.get(kind);');
+	lines.push('    return members === undefined ? [kind] : [...members];');
+	lines.push('}');
+	lines.push('');
+
 	for (const parent of variantParents) {
 		const s = supertypes.find((candidate) => candidate.kind === parent.node.kind);
 		if (s === undefined || s.variants.length === 0) continue;
 		const members = s.variants.map((variant) => `${variant.name}: ${variantGuard(variant).value}`).join(', ');
-		lines.push(`const _supertype_${s.guardKey}_guard = _vg(_sg(_supertype_${s.guardKey}_ids), { ${members} });`);
+		const base = s.id !== undefined ? `_mg(${s.id})` : `_sg(_supertype_${s.guardKey}_ids)`;
+		lines.push(`const _supertype_${s.guardKey}_guard = _vg(${base}, { ${members} });`);
 	}
 	if (supertypes.some((s) => s.variants.length > 0)) lines.push('');
 
@@ -282,7 +300,7 @@ export function emitIs(config: EmitIsConfig): string {
 		}
 	}
 	if (kindEntries) {
-		lines.push(`    kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,`);
+		lines.push(`    kind: (v: { readonly $type: number }, k: number): boolean => isMember(k, v.$type),`);
 	} else {
 		lines.push(`    kind: (v: { readonly $type: number }, k: string): boolean => (v.$type as unknown) === k,`);
 	}
@@ -290,7 +308,7 @@ export function emitIs(config: EmitIsConfig): string {
 		if (s.variants.length > 0) {
 			lines.push(`    ${s.guardKey}: _supertype_${s.guardKey}_guard,`);
 		} else if (kindEntries && s.memberIds.length > 0) {
-			lines.push(`    ${s.guardKey}: _sg(_supertype_${s.guardKey}_ids),`);
+			lines.push(`    ${s.guardKey}: ${s.id !== undefined ? `_mg(${s.id})` : `_sg(_supertype_${s.guardKey}_ids)`},`);
 		} else if (kindEntries) {
 			lines.push(`    ${s.guardKey}: _sg(new Set<number>()),`);
 		} else {

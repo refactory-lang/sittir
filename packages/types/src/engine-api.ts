@@ -1,7 +1,7 @@
 import type { AnyUntypedNode, ErrorNode, ErrorRegion, FormatRecord, GrammarTriviaEntry, RenderCallOptions, TriviaItem, TriviaSetter } from './core-types.ts';
 import type { IndentOption } from './options.ts';
 import type { Admit } from './node-surface.ts';
-import type { QueryFacet, QuerySlots } from './query.ts';
+import type { KindMembership, QueryFacet, QuerySlots } from './query.ts';
 
 /** One line-break run a read node owns as trivia: the whitespace member it reads as and the byte its run starts at. */
 export interface LineGap {
@@ -159,6 +159,7 @@ export interface LanguageHooks<API extends LanguageAPI> {
 	readonly kinds: API['kinds'];
 	readonly trivia: TriviaFacts;
 	readonly querySlots: QuerySlots;
+	readonly membership: KindMembership;
 	createNative(options?: NativeEngineOptions<API['options']>): NativeLanguageEngine<API>;
 	wrap(root: unknown, tree: unknown): API['root'];
 	hydrate?(node: unknown, tree: unknown): unknown;

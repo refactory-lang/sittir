@@ -24,10 +24,10 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
     let mut by_display = Vec::new();
     let mut by_grammar = Vec::new();
     let mut by_folded = Vec::new();
+    let mut displayed = Vec::new();
     let mut scalars = Vec::new();
     let mut read_table: Vec<TokenStream> = vec![quote!(__unadmitted); data.variants.len()];
     let mut boxed_table: Vec<TokenStream> = vec![quote!(__unadmitted); data.variants.len()];
-    let mut kind_table: Vec<TokenStream> = vec![quote!(::core::option::Option::None); data.variants.len()];
     let mut variant_fns = Vec::new();
     let mut sides = Vec::new();
     let mut blank = None;
@@ -85,18 +85,18 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             builds.push(quote!(if [#(#claims),*].iter().any(|k| k.0 == id) { return ::core::option::Option::Some(Self::#name); }));
         }
         let i = at as u16;
-        let first = kinds.kinds.first().or(kinds.shown.first()).or(kinds.folded.first()).cloned();
-        if let Some(kind) = &first {
-            kind_table[at] = quote!(::core::option::Option::Some(#kind));
-        }
         wire.push(codec::WireVariant {
             index: Some(i),
-            first,
+            first: kinds.kinds.first().or(kinds.shown.first()).or(kinds.folded.first()).cloned(),
             decodes: kinds.decodes.clone(),
             ..unread(payload)
         });
         let ids = &kinds.kinds;
         let shown = &kinds.shown;
+        displayed.extend(shown.iter().cloned());
+        if kinds.display {
+            displayed.extend(ids.iter().cloned());
+        }
         if !shown.is_empty() {
             by_display.push(quote!(if [#(#shown),*].contains(&display) { return ::core::option::Option::Some(#i); }));
         }
@@ -248,20 +248,15 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 #(#by_folded)*
                 ::core::option::Option::None
             }
-            const __KINDS: &[::core::option::Option<__Kind>] = &[#(#kind_table),*];
-            impl #ident {
-                /// The kind a node with these ids reads as through this choice: the kind of the variant the read picks.
-                #[allow(dead_code)]
-                pub fn read_kind(grammar: __Kind, display: __Kind) -> ::core::option::Option<__Kind> {
-                    __variant(grammar, display).and_then(|i| __KINDS[i as usize])
-                }
-            }
             impl __rt::ReadTransport for #ident {
                 fn admits(grammar: __Kind, display: __Kind) -> bool {
                     __variant(grammar, display).is_some()
                 }
                 fn takes_tagged(grammar: __Kind, display: __Kind, _named: bool) -> bool {
                     __variant(grammar, display).is_some()
+                }
+                fn shows(display: __Kind) -> bool {
+                    [#(#displayed),*].contains(&display)
                 }
                 fn scalar(grammar: __Kind, display: __Kind) -> bool {
                     match __variant(grammar, display) {

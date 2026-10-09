@@ -128,7 +128,15 @@ The `slice` step, with its bounds counted as an array counts them: truncated tow
 
 ### `packages/common/src/query.ts::ofTypeStep`
 
-The `ofType` step. Refuses a kind that is not a number, so a kind name passed by mistake fails at the call, not as an empty result.
+The `ofType` step. Refuses a kind that is not a number, so a kind name passed by mistake fails at the call, not as an empty result. It keeps a node whose type is the kind or a member of it (a supertype's member, a polymorph's arm), by the language's `membership`, the test its `is.*` guards make; nothing restamps a node's type to pass it.
+
+### `packages/common/src/query.ts::narrowed`
+
+The types a node can have after one more `ofType` step: every member of its kind for the first step, then those of the earlier steps' types that are members of it. An empty result means no node passes every step.
+
+### `packages/common/src/query.ts::isOfType`
+
+Whether a hydrated node passes an `ofType` step: its `$type` is a member of the step's kind.
 
 ### `packages/common/src/query.ts::whereStep`
 
@@ -148,7 +156,7 @@ The entries of a walk source. The steps `pushdown` takes go into the native walk
 
 ### `packages/common/src/query.ts::pushdown`
 
-The leading run of `ofType` and `where` steps that can go into the native walk. Kinds are intersected, and an empty intersection is `'none'`, which yields nothing without a call. Plans are joined by `and`. A `where` goes native only when every kind its elements can have compiles it to the same plan; the run stops at the first step that cannot.
+The leading run of `ofType` and `where` steps that can go into the native walk. Each `ofType` narrows the types the walk selects (`narrowed`), and an empty set is `'none'`, which yields nothing without a call. Plans are joined by `and`. A `where` goes native only when every kind its elements can have compiles it to the same plan; the run stops at the first step that cannot.
 
 ### `packages/common/src/query.ts::batches`
 

@@ -94,7 +94,7 @@ fn parse_rust(source: &str) -> tree_sitter::Tree {
 
 /// Read the tree's root into `T`, as tree 7.
 fn read<T: ReadTransport>(tree: &tree_sitter::Tree, source: &str, depth: Depth) -> Result<T, ReadError> {
-    T::read(&mut tree.walk(), &ReadCtx::new(source, 7), depth, Sides::root())
+    T::read(&mut tree.walk(), &ReadCtx::new(source, 7, T::shows), depth, Sides::root())
 }
 
 /// A cursor on the `nth` node of grammar kind `kind`, in pre-order.
@@ -121,7 +121,7 @@ fn read_nth<T: ReadTransport>(
     nth: usize,
     depth: Depth,
 ) -> Result<T, ReadError> {
-    T::read(&mut find(tree, kind, nth), &ReadCtx::new(source, 7), depth, Sides::root())
+    T::read(&mut find(tree, kind, nth), &ReadCtx::new(source, 7, T::shows), depth, Sides::root())
 }
 
 /// What the read placed on a node beside its own coordinate, which every read
@@ -588,7 +588,7 @@ fn a_list_owner_brings_its_list_and_the_list_knows_its_trailing_separator() {
 fn a_row_read_equals_the_same_node_in_a_whole_read_trivia_included() {
     let source = "// lead\nfn f() { fn g() {} } // trail\n";
     let tree = parse_rust(source);
-    let ctx = ReadCtx::new(source, 7);
+    let ctx = ReadCtx::new(source, 7, <File as ReadTransport>::shows);
     let whole: File = read(&tree, source, Depth::All).unwrap();
     let shallow: File = read(&tree, source, Depth::ONE).unwrap();
     let index = shallow.statements.as_ref().unwrap()[0].coord().unwrap().index;

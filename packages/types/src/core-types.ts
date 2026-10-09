@@ -109,7 +109,8 @@ export interface AnyUntypedNode {
 
 /**
  * A node a read left past its depth, or the node a read node came from: its
- * tree and descendant index packed in `$treeHandle`, its span, and its kind.
+ * tree and descendant index packed in `$treeHandle`, its span, and its type:
+ * the grammar id, except at an alias envelope, where it is the display id.
  * `$span` is a half-open range of UTF-8 byte offsets, not string indices: get
  * the text of a span through `sourceSpans` (or `sliceSpan`) from
  * `@sittir/common`, never `String.prototype.slice`.

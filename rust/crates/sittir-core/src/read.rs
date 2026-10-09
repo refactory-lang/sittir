@@ -56,17 +56,26 @@ impl Depth {
     }
 }
 
-/// What every read of one tree shares: the source its spans index into and
-/// the id its coordinates carry.
+/// What every read of one tree shares: the source its spans index into, the
+/// id its coordinates carry, and the display ids the grammar claims a node by
+/// (`ReadTransport::shows` of its transports).
 #[derive(Debug, Clone, Copy)]
 pub struct ReadCtx<'s> {
     pub source: &'s str,
     pub tree_id: u32,
+    pub shows: fn(KindId) -> bool,
 }
 
 impl<'s> ReadCtx<'s> {
-    pub fn new(source: &'s str, tree_id: u32) -> Self {
-        Self { source, tree_id }
+    pub fn new(source: &'s str, tree_id: u32, shows: fn(KindId) -> bool) -> Self {
+        Self { source, tree_id, shows }
+    }
+
+    /// The kind every coordinate of a node stamps as its `$type`, on every
+    /// route: the display id where the grammar claims the node by it (an alias
+    /// envelope), the grammar id everywhere else.
+    pub fn stamped_kind(&self, grammar: KindId, display: KindId) -> KindId {
+        if display != grammar && (self.shows)(display) { display } else { grammar }
     }
 
     /// The coordinate of the node the cursor is on: each transport's own
@@ -76,10 +85,10 @@ impl<'s> ReadCtx<'s> {
     }
 
     /// The coordinate of a surveyed child: its tree and index, its span and its
-    /// grammar kind.
+    /// stamped kind (`ReadCtx::stamped_kind`).
     pub fn coordinate_of(&self, child: &Child) -> NodeCoordinate {
         NodeCoordinate {
-            kind: Some(child.grammar),
+            kind: Some(self.stamped_kind(child.grammar, child.display)),
             ..NodeCoordinate::new(self.tree_id, child.index, Span { start: child.start, end: child.end })
         }
     }
@@ -96,7 +105,7 @@ impl<'s> ReadCtx<'s> {
             Span { start: range.start as u32, end: range.end as u32 }
         };
         NodeCoordinate {
-            kind: Some(KindId(node.grammar_id())),
+            kind: Some(self.stamped_kind(KindId(node.grammar_id()), display_id(node))),
             ..NodeCoordinate::new(self.tree_id, index, span)
         }
     }
@@ -318,6 +327,12 @@ pub trait ReadTransport: Sized {
     /// Whether a node with these ids is stored as a unit variant.
     fn scalar(grammar: KindId, display: KindId) -> bool {
         let _ = (grammar, display);
+        false
+    }
+    /// Whether this transport claims a node by its display id: an alias
+    /// envelope, or another alias kind the grammar models.
+    fn shows(display: KindId) -> bool {
+        let _ = display;
         false
     }
     /// What an optional slot of this type holds when no child came: the
@@ -1065,7 +1080,7 @@ mod tests {
             child(3, false, true, (0, 0), (3, 7)),   // // c
             child(4, true, false, (1, 1), (8, 9)),   // b
         ];
-        let ctx = ReadCtx::new("", 0);
+        let ctx = ReadCtx::new("", 0, |_| false);
         let placement = place(&ctx, &children, &owner_routes(&children), true, no_gap);
         assert_eq!(spans(&placement.sides[0].trailing), vec![(3, true, 1)]);
         assert!(placement.sides[3].leading.is_empty());
@@ -1079,7 +1094,7 @@ mod tests {
             child(2, false, true, (1, 1), (2, 6)),
             child(3, true, false, (2, 2), (7, 8)),
         ];
-        let placement = place(&ReadCtx::new("", 0), &children, &owner_routes(&children), true, no_gap);
+        let placement = place(&ReadCtx::new("", 0, |_| false), &children, &owner_routes(&children), true, no_gap);
         assert!(placement.sides[0].trailing.is_empty());
         assert_eq!(spans(&placement.sides[2].leading), vec![(2, false, 0)]);
     }
@@ -1087,7 +1102,7 @@ mod tests {
     #[test]
     fn an_extra_after_the_last_owner_trails_it() {
         let children = [child(1, true, false, (0, 0), (0, 1)), child(2, false, true, (1, 1), (2, 6))];
-        let placement = place(&ReadCtx::new("", 0), &children, &owner_routes(&children), true, no_gap);
+        let placement = place(&ReadCtx::new("", 0, |_| false), &children, &owner_routes(&children), true, no_gap);
         assert_eq!(spans(&placement.sides[0].trailing), vec![(2, false, 0)]);
     }
 
@@ -1100,7 +1115,7 @@ mod tests {
             child(3, false, true, (0, 0), (2, 6)),
         ];
         let routes = [Route::Slot { slot: 0, scalar: true }, Route::Slot { slot: 1, scalar: false }, Route::Trivia];
-        let placement = place(&ReadCtx::new("", 0), &children, &routes, true, no_gap);
+        let placement = place(&ReadCtx::new("", 0, |_| false), &children, &routes, true, no_gap);
         assert!(!placement.sides[0].owner && !placement.sides[1].owner);
         // no owner child: rule 4, a named child precedes, so the node's own trailing
         assert_eq!(spans(&placement.own_trailing), vec![(2, true, 0)]);
@@ -1117,7 +1132,7 @@ mod tests {
         fn gap(preceding: u16) -> Option<&'static str> {
             (preceding == 1).then_some("statements")
         }
-        let placement = place(&ReadCtx::new("", 0), &children, &owner_routes(&children), true, gap);
+        let placement = place(&ReadCtx::new("", 0, |_| false), &children, &owner_routes(&children), true, gap);
         assert_eq!(spans(&placement.inner["statements"]), vec![(2, false, 0)]);
         assert!(placement.own_leading.is_empty() && placement.own_trailing.is_empty());
     }
@@ -1125,7 +1140,7 @@ mod tests {
     #[test]
     fn a_node_that_owns_nothing_keeps_no_extra_of_its_own() {
         let children = [child(1, false, true, (0, 0), (0, 4))];
-        let placement = place(&ReadCtx::new("", 0), &children, &owner_routes(&children), false, no_gap);
+        let placement = place(&ReadCtx::new("", 0, |_| false), &children, &owner_routes(&children), false, no_gap);
         assert!(placement.own_leading.is_empty() && placement.own_trailing.is_empty() && placement.inner.is_empty());
     }
 
@@ -1133,7 +1148,7 @@ mod tests {
     fn an_error_child_is_placed_as_trivia() {
         // an ERROR is surveyed with `trivia: true`; it leads the next owner like an extra
         let children = [child(1, true, true, (0, 0), (0, 3)), child(2, true, false, (1, 1), (4, 5))];
-        let placement = place(&ReadCtx::new("", 0), &children, &owner_routes(&children), true, no_gap);
+        let placement = place(&ReadCtx::new("", 0, |_| false), &children, &owner_routes(&children), true, no_gap);
         assert_eq!(spans(&placement.sides[1].leading), vec![(0, false, 0)]);
     }
 
@@ -1141,7 +1156,7 @@ mod tests {
     fn the_parents_entries_come_before_the_nodes_own() {
         let children = [child(1, true, false, (0, 0), (0, 1)), child(2, false, true, (0, 0), (2, 6))];
         let routes = [Route::Slot { slot: 0, scalar: true }, Route::Trivia];
-        let placement = place(&ReadCtx::new("", 0), &children, &routes, true, no_gap);
+        let placement = place(&ReadCtx::new("", 0, |_| false), &children, &routes, true, no_gap);
         let parent = Sides {
             owner: true,
             leading: vec![],

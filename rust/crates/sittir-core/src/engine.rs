@@ -15,7 +15,7 @@
 use crate::format::{apply_format, extract_format};
 use crate::options::ResolvedOptions;
 use crate::query::{Address, DescendantBatch, Plan, QueryCoordinate};
-use crate::read::{survey, Child, ReadCtx, ReadError, Sides};
+use crate::read::{display_id, survey, Child, ReadCtx, ReadError, Sides};
 use crate::types::Span;
 use crate::render::SourceTable;
 use crate::slot::NodeCoordinate;
@@ -33,10 +33,9 @@ pub trait EngineGrammar: Copy {
     /// at descendant `index` (`ReadTransport::sides_of` of the grammar's
     /// transports, dispatched by the node's kind).
     fn sides_at(self, cursor: &mut tree_sitter::TreeCursor<'_>, ctx: &ReadCtx<'_>, index: u32) -> Result<Sides, ReadError>;
-    /// The kind `node` reads as: the grammar's `AnyTransport` picks it from the node's grammar and
-    /// display ids exactly as a read does (an alias envelope by its display id, any other node by its
-    /// grammar id or a folded one), so a query selects by the kind its results are read as.
-    fn read_kind(self, node: &tree_sitter::Node<'_>) -> Option<KindId>;
+    /// The display ids this grammar claims a node by (`ReadTransport::shows`
+    /// of its transports), which a coordinate stamps in place of the grammar id.
+    fn shows(self) -> fn(KindId) -> bool;
 }
 
 /// The node at descendant `index` of `tree`, or `None` past its last node.
@@ -426,7 +425,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// The node at `index` read into `T`, `depth` levels down, with the sides
     /// its parent's placement gives it; index 0 is the root.
     pub fn read<T: crate::read::ReadTransport>(&self, index: u32, depth: crate::read::Depth) -> Result<T, crate::read::ReadError> {
-        let ctx = crate::read::ReadCtx::new(&self.source, self.tree_id);
+        let ctx = crate::read::ReadCtx::new(&self.source, self.tree_id, self.grammar.shows());
         crate::read::read_at::<T, T>(&mut self.tree.walk(), &ctx, index, depth)
     }
 
@@ -434,7 +433,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// `None` when the node there is not an `ERROR`.
     pub fn read_error(&self, index: u32) -> Option<crate::ErrorRead> {
         let node = node_at_index(&self.tree, index).filter(|node| node.is_error())?;
-        let at = crate::read::ReadCtx::new(&self.source, self.tree_id).coordinate(&node, index);
+        let at = crate::read::ReadCtx::new(&self.source, self.tree_id, self.grammar.shows()).coordinate(&node, index);
         let text = self.source[at.span.start as usize..at.span.end as usize].to_owned();
         Some(crate::ErrorRead { text, at })
     }
@@ -523,7 +522,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
         let mut indexes: Vec<u32> = vec![index];
         let mut path: Vec<u32> = Vec::new();
         let mut coordinates = Vec::new();
-        let ctx = crate::read::ReadCtx::new(&self.source, self.tree_id);
+        let ctx = crate::read::ReadCtx::new(&self.source, self.tree_id, self.grammar.shows());
         if let Some(resume) = resume {
             for &child in resume {
                 if !cursor.goto_first_child() {
@@ -540,14 +539,12 @@ impl<G: EngineGrammar> ParsedTree<G> {
         }
         while Self::advance(&mut cursor, index, &mut indexes, &mut path, depth) {
             let node = cursor.node();
-            let read_kind = self.grammar.read_kind(&node);
             if node.is_named()
                 && !node.is_extra()
-                && (kinds.is_empty() || read_kind.is_some_and(|kind| kinds.contains(&kind.0)))
+                && (kinds.is_empty() || kinds.contains(&ctx.stamped_kind(KindId(node.grammar_id()), display_id(&node)).0))
                 && plan.is_none_or(|plan| plan.holds(&node, &self.source))
             {
-                let coordinate = QueryCoordinate::from(ctx.coordinate(&node, indexes[indexes.len() - 1]));
-                coordinates.push(QueryCoordinate { kind: read_kind.map_or(coordinate.kind, |kind| kind.0), ..coordinate });
+                coordinates.push(QueryCoordinate::from(ctx.coordinate(&node, indexes[indexes.len() - 1])));
                 if coordinates.len() as u32 >= limit {
                     return Ok(DescendantBatch { coordinates, resume: Some(path), origin });
                 }
@@ -603,7 +600,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     pub fn line_gaps_at(&self, handle: u64, classify: &dyn Fn(&str) -> Option<u16>) -> Result<LineGaps, String> {
         let index = self.local_index(handle)?;
         node_at_index(&self.tree, index).ok_or_else(|| format!("handle {handle} names no node of tree {}", self.tree_id))?;
-        let ctx = ReadCtx::new(&self.source, self.tree_id);
+        let ctx = ReadCtx::new(&self.source, self.tree_id, self.grammar.shows());
         let sides_at = |cursor: &mut tree_sitter::TreeCursor<'_>, child: u32| self.grammar.sides_at(cursor, &ctx, child);
         line_gaps(&self.tree, index, &self.source, &sides_at, classify).map_err(|refusal| refusal.describe(&|kind| self.grammar.kind_name(kind)))
     }
@@ -840,8 +837,8 @@ mod tests {
             Ok(Sides::default())
         }
 
-        fn read_kind(self, node: &tree_sitter::Node<'_>) -> Option<KindId> {
-            Some(KindId(node.grammar_id()))
+        fn shows(self) -> fn(KindId) -> bool {
+            |_| false
         }
     }
 

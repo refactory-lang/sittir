@@ -5,7 +5,7 @@
 
 import type { CamelCase } from 'type-fest';
 import type { NodeMethods } from './engine-api.ts';
-export type { Cond, QueryFacet, QueryPlan, QuerySlots, Recorder, SlotNameOf, SlotRef, SlotRoutes, View } from './query.ts';
+export type { Cond, KindMembership, QueryFacet, QueryPlan, QuerySlots, Recorder, SlotNameOf, SlotRef, SlotRoutes, View } from './query.ts';
 import type { Admit } from './node-surface.ts';
 
 // ---------------------------------------------------------------------------

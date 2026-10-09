@@ -202,6 +202,7 @@ function assembleEngine<API extends LanguageAPI>(
 	};
 	const queryHooks: QueryHooks = {
 		querySlots: hooks.querySlots,
+		membership: hooks.membership,
 		kindName: (kind) => hooks.trivia.kindName(kind),
 		wrap: hooks.wrap
 	};

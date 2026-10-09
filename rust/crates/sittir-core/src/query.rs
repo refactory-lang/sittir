@@ -16,8 +16,7 @@ pub struct DescendantBatch {
 }
 
 /// A node a walk found, as it crosses: `{ $treeHandle, $span, $type }`, its
-/// `$type` the kind the node reads as (`EngineGrammar::read_kind`), which is
-/// what a query's kind filter compares.
+/// `$type` stamped as every coordinate's is (`ReadCtx::stamped_kind`).
 #[derive(serde::Serialize, Debug, Clone, Copy, PartialEq, Eq)]
 pub struct QueryCoordinate {
     #[serde(rename = "$treeHandle")]
