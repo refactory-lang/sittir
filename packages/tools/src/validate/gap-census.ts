@@ -6,6 +6,15 @@ import { computeRunCensus, renderRunCensus } from './gap-runs.ts';
 import { gapClassOf, type GapClass } from '../exercise/default-diff.ts';
 import { loadCorpusEntries, type CorpusEntry, loadKindNameFromId, loadLanguageForGrammar, loadNativeEngine, type TSNode } from './common.ts';
 
+function adjacentPairs<T extends object>(items: readonly T[]): [T, T][] {
+	const pairs: [T, T][] = [];
+	items.reduce<T | undefined>((left, right) => {
+		if (left !== undefined) pairs.push([left, right]);
+		return right;
+	}, undefined);
+	return pairs;
+}
+
 export type LossyShape =
 	| 'crlf'
 	| 'tabs'
@@ -127,8 +136,7 @@ export function scanListGaps(root: TSNode, source: string): GapScan {
 			}
 		});
 		for (const [field, run] of runs) {
-			for (let pair = 0; pair + 1 < run.length; pair++) {
-				const [left, right] = [run[pair]!, run[pair + 1]!];
+			for (const [left, right] of adjacentPairs(run)) {
 				const between = node.children.slice(left.index + 1, right.index);
 				const separators = between.filter(isSeparatorToken);
 				const text = source.slice(left.item.endIndex, right.item.startIndex);
@@ -293,12 +301,12 @@ export async function createGapMeter(grammar: string): Promise<GapMeter> {
 				locateFailures += 1;
 				continue;
 			}
-			for (let pair = 0; pair + 1 < list.spans.length; pair++) {
-				const key = `${spans.toIndices(list.spans[pair]!).end}:${spans.toIndices(list.spans[pair + 1]!).start}`;
+			for (const [pair, [left, right]] of adjacentPairs(list.spans.map((span, index) => ({ span, at: located[index] }))).entries()) {
+				const key = `${spans.toIndices(left.span).end}:${spans.toIndices(right.span).start}`;
 				const gap = byOffsets.get(key);
-				if (gap === undefined || seen.has(key) || list.adjacent[pair] !== true) continue;
+				if (gap === undefined || seen.has(key) || list.adjacent[pair] !== true || left.at === undefined || right.at === undefined) continue;
 				seen.add(key);
-				const outcome = splitAtSeparator(list.rendered.slice(located[pair]![1], located[pair + 1]![0]), gap.separator);
+				const outcome = splitAtSeparator(list.rendered.slice(left.at[1], right.at[0]), gap.separator);
 				if (outcome === undefined) {
 					unmatched += 1;
 					continue;

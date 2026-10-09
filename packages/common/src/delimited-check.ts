@@ -63,13 +63,16 @@ function parseBack(
 	if (root.$errors.length > 0) return 'it does not parse';
 	const facet = engine.query(root) as Facet;
 	const candidates = [...facet.$descendants.ofType(spec.id), ...(root.$trivia?.inner?.() ?? []).filter((node) => node.$type === spec.id)];
-	const found = candidates.find((node) => spanOf(node)?.start === hosted.offset);
+	const found = candidates.flatMap((node) => {
+		const span = spanOf(node);
+		return span?.start === hosted.offset ? [{ node, span }] : [];
+	})[0];
 	if (found === undefined) return `no ${spec.kind} starts where it was rendered`;
-	const end = spanOf(found)!.end;
+	const end = found.span.end;
 	if (end !== hosted.offset + text.length) return `the ${spec.kind} ends early, at ${end - hosted.offset}`;
 	if (spec.nodeKinds.length === 0) return undefined;
 	const keep = new Set(spec.nodeKinds);
-	const actual = [...(engine.query(found) as Facet).$children].map((child) => child.$type).filter((kind) => keep.has(kind));
+	const actual = [...(engine.query(found.node) as Facet).$children].map((child) => child.$type).filter((kind) => keep.has(kind));
 	return actual.join() === expectedKinds.join() ? undefined : 'its children change';
 }
 

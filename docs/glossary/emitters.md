@@ -15679,6 +15679,10 @@ The `#[kind(…)]` arguments of a variant: the ids it claims, and `display` when
 
 Refuses a kind with two slots that take an untagged child of the same kind, naming the kind, both slots and the shared kind: the reader could not choose between them.
 
+### `packages/codegen/src/emitters/transport-projection.ts::PresenceKeyword`
+
+What `presenceKeyword` answers for a presence slot: `id`, the kind id the reader matches the keyword by, and `envelope`, whether that id is an alias envelope's display id (printed `display(KIND)` and matched by the child's display id) or a token's grammar id (printed with its folds and matched by the child's grammar id).
+
 ### `packages/codegen/src/emitters/transport-projection.ts::presenceKeyword`
 
 The keyword a presence slot reads, and how the reader matches it. A keyword the site aliases (`presenceIsAliased`) is an alias envelope: its id is the display id the alias shows, and `envelope` marks it to be matched by display id, as an envelope's admits are. Otherwise its id is the parser symbol of the slot's literal, else a hidden marker keyword's own literal id, else the fixed-literal kind the slot references, matched by grammar id with its folds. `slotArgs` prints it as `presence`, and the diagnostic that checks untagged slots takes the slot's admitted id from it, so one lookup answers both.

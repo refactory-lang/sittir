@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, ByteSpan, ErrorNode, LineGap, LineGapAddress, LineGaps, NodeLayout, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
+import type { AnyUntypedNode, ByteSpan, ErrorNode, LineGap, LineGapAddress, LineGaps, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
 import { carryPlacement, carryRead, carrySource, coordinateOf, detachCoordinate, holdsSlots, isRead, isStorageKey, sourceOf, triviaOf, type DerivedSides } from './transport-data.ts';
 import { Source } from './source.ts';
@@ -674,8 +674,7 @@ export function hasKind(v: object): v is { kind: string } & Record<string, unkno
 }
 
 function setTriviaData(node: AnyUntypedNode, triviaData: NodeTrivia): void {
-	const record = node as unknown as { $_layout?: NodeLayout };
-	record.$_layout = { ...record.$_layout, trivia: triviaData };
+	node.$_layout = { ...node.$_layout, trivia: triviaData };
 }
 
 const NO_CHILDREN: readonly never[] = Object.freeze([]);

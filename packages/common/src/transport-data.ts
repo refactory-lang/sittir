@@ -108,7 +108,7 @@ export function holdsSlots(node: object): boolean {
  * node names the tree, and what lies below it is carried by its bytes. A
  * descendant's attached comments do not keep an ancestor from folding: they
  * lie inside the ancestor's span, so its bytes carry them — only a node's OWN
- * trivia sits outside its span, which is why `canFold` refuses that node and
+ * trivia sits outside its span, which is why `foldedCoordinate` refuses that node and
  * no other.
  */
 function isUntouchedBelow(value: unknown): boolean {
@@ -131,10 +131,10 @@ function isUntouchedBelow(value: unknown): boolean {
  * registered, holding the coordinate is the proof, so nothing below is
  * walked; any other data is walked.
  */
-function canFold(record: Record<string, unknown>, trivia: unknown): boolean {
-	if (coordinateOf(record) === undefined) return false;
-	if (hasOutsideTrivia(trivia)) return false;
-	return holdsParse(record) || isUntouchedBelow(record);
+function foldedCoordinate(record: Record<string, unknown>, trivia: unknown): TransportCoordinate | undefined {
+	const coordinate = coordinateOf(record);
+	if (coordinate === undefined || hasOutsideTrivia(trivia)) return undefined;
+	return holdsParse(record) || isUntouchedBelow(record) ? coordinate : undefined;
 }
 
 /**
@@ -162,8 +162,8 @@ function plainCoordinate(coordinate: TransportCoordinate): Record<string, unknow
 }
 
 /** The coordinate a folded node crosses as: its `$_layout.at`, with the format stamp it carries. */
-function foldToCoordinate(record: Record<string, unknown>): Record<string, unknown> {
-	const out = carryPlacement(record, plainCoordinate(coordinateOf(record)!));
+function foldToCoordinate(record: Record<string, unknown>, coordinate: TransportCoordinate): Record<string, unknown> {
+	const out = carryPlacement(record, plainCoordinate(coordinate));
 	if (record.$format !== undefined) out.$format = record.$format;
 	return out;
 }
@@ -252,7 +252,7 @@ export function detachCoordinate(data: object): void {
  * coordinate that would slice its pre-edit text may not cross.
  *
  * A node that still names itself and was not rebuilt below crosses as its
- * coordinate alone (`canFold`): its `$_layout.at`, which the transport's slot
+ * coordinate alone (`foldedCoordinate`): its `$_layout.at`, which the transport's slot
  * carrier slices from the source the engine still holds. That is what keeps
  * an untouched subtree's original bytes while its rebuilt siblings render
  * canonically.
@@ -411,7 +411,7 @@ export interface SourceFlankEvidence {
  * crosses with it, and the source evidence a rebuilt node keeps, its gap
  * toward the list item before it and, for a list, its flanks. Absent when
  * the node has none of these. A node's own coordinate (`at`) never crosses
- * here: a node that keeps it crosses as it (`canFold`).
+ * here: a node that keeps it crosses as it (`foldedCoordinate`).
  */
 export interface TransportLayout {
 	trivia?: unknown;
@@ -503,9 +503,10 @@ function toTransportValue(
 	}
 	const bears = bearer === undefined || bearer === value;
 	const trivia = owner !== undefined && namesSameNode(owner, value) ? triviaOf(value) : crossingTrivia(value, view, bears ? changed : NO_EDGES);
-	if (fold && canFold(value, trivia)) {
+	const folded = fold ? foldedCoordinate(value, trivia) : undefined;
+	if (folded !== undefined) {
 		assertHoldsTree(value);
-		return foldToCoordinate(value);
+		return foldToCoordinate(value, folded);
 	}
 	// Trivia entries cross as they are, coordinates included.
 	if (fold && trivia != null) forEachTriviaList(trivia as TriviaSides<unknown>, assertTriviaHoldsTree);

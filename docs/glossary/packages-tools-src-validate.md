@@ -1714,3 +1714,6 @@ Every node a transport stores in its `_` slots, list items included, in key orde
 
 Every trivia entry a transport holds: its leading and trailing sides and each inner gap's entries, in that order.
 
+### `packages/tools/src/validate/gap-census.ts::adjacentPairs`
+
+Each item paired with the one after it, in order: the neighbouring list items whose gap the census measures, and the neighbouring field runs a separator sits between. Its items are objects, so a missing left neighbour is the only `undefined` it meets.
