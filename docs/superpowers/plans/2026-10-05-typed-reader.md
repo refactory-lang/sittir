@@ -6877,7 +6877,7 @@ Brainstorm's, 2026-10-09, unless marked otherwise.
 6. **The registry's seat is `hydrateWith` (design).** Every generated accessor (`hydrateSlot`, `hydrateSlots`, `hydrate`), the parse root and the query hydrate through it, so one function looks up and registers. The query's own `hooks.wrap(readNode(…))` path goes.
 7. **`end` crosses as `$end` on the object wire (design).** The reader fills `NodeCoordinate::end` (`index + descendant_count()`); the coordinate encoder writes `$end` and the decoder reads it. The record step retires the object codec (shared-arena spec, ruling 6.3) and its record carries `end` from the same field; only the encoder and decoder lines are temporary.
 8. **A built holder resolves a stored coordinate's tree by its token** (Q1, ruled (a)). The builder accessor applies render's guard (`assertHoldsTree`); no id table is added.
-9. **The registry key is the index and a role, `node` or `aliasContent`** (Q2, ruled (i)). The role comes from the route that hydrates, never from what is already registered: the envelope's content accessor passes `aliasContent`; any other route passes `node`, and a query passes a role only if Task 19's Step 1 finding shows a query can yield an alias's content (then from the match's own kind: the envelope's kind or the content's).
+9. **The registry key is the index and a role, `node` or `aliasContent`** (Q2, ruled (i)). The role never depends on registry state. A content takes `aliasContent` only when it shares its envelope's index, decided in one common helper by comparing the two values' stamped `at`; a content that is its own parser node registers as `node` from every route; the query passes no role (it yields each parser node once, as its envelope at a shared index).
 10. **`markEditedNode` is the only hook for an in-place write.** The trivia writer marks through it, and any future in-place verb (the node-query `$edit` verbs) marks through it too, so the fold stays correct when they land. `$with` mints a draft and marks nothing.
 11. **A `repeat1` list is `NonEmptyVec<T>` in Rust (design, on brainstorm's question).** The type states the fact TS states with `NonEmptyArray`: no `min` attribute, no `finish` parameter the other impls ignore, and the decoder refuses an empty one.
 
@@ -6888,6 +6888,11 @@ Brainstorm's, 2026-10-09, unless marked otherwise.
 **Q2 — one index, two wrappers: (i), a role in the key.** An alias envelope and its content name one parser node and share its index. A kind cannot separate them: a coordinate's `$type` is the node's grammar id (`ReadCtx::coordinate` stamps `node.grammar_id()`), while a transport's `$type` is its storage kind, which differs for a variant arm and for an envelope. The key is the index and the route's role. Two facts are established before the registry is written (Task 19, Step 1):
 - whether `$query()` can yield an alias's content, or yields each parser node once, as the envelope;
 - whether a tree, an index and a role always hold one storage kind. If so, `hydrateWith` has no kind check on either branch (a coordinate's grammar id never equals an arm's or an envelope's storage kind, so a kind check would miss every coordinate access to an arm and pay a native read each time). If not, the only kind check compares a coordinate's `$type` with the registered wrapper's own coordinate `$type`, the same fact space.
+
+The findings (`registry-facts.mts` at `218b9df3c`, every corpus entry, read at full depth; brainstorm's ruling on them, 2026-10-09):
+- **F1 — a query yields envelopes only.** At every envelope site the yield is the envelope: rust 381/381, typescript 599/599, python 13/13. Content placement is fixed per envelope kind: rust 465, 467, 468, typescript 460, 462, 463, 464, 467 and python 336, 337 share the envelope's index; python 335 (`as_pattern_target`) holds its content as its own parser node (6/6), which the query yields as itself.
+- **F2 — one storage kind per tree, index and role.** 0 counterexamples across the nested read, the standalone read at the index and the query yield (rust 4,643 standalone reads and 4,495 yields; typescript 3,406 and 3,291; python 5,597 and 5,481), with `aliasContent` meaning a content that shares its envelope's index. `hydrateWith` therefore has no kind check, and F2 is what justifies the registry's one `known as T`.
+- The 11 typescript 462 contents that hold no index stay unregistered; their identity is the envelope slot's write-back.
 
 ### File structure (1c-ii)
 
@@ -7201,9 +7206,19 @@ The parse root, in `create-engine.ts`'s `parse`, wraps through the same seat; th
 
 `wrapRegistered`'s `T` is inferred from `hooks.wrap`'s return, `API['root']`, so no cast is needed at the call.
 
-- [ ] **Step 6: The envelope's content accessor passes `aliasContent`**
+- [ ] **Step 6: The envelope's content accessor takes its role from placement**
 
-In `packages/codegen/src/emitters/wrap.ts`, the envelope branch's content accessor emits `hydrateSlot<…>(this, '<content key>', tree, 'aliasContent')`; the generated `hydrateSlot` wrapper takes and passes the role. Write here which case Step 1's finding 1 established: whether a query can yield an alias's content (and so passes `aliasContent` from `entryOfCoordinate` for a match of the content's kind), or yields each parser node once as its envelope (and so the content has one route, its envelope's accessor). Add the test to `packages/rust/tests/identity.test.ts` on a source holding an alias (at `12644d5df` rust `field_identifier` under `field_expression`): the envelope's content accessor returns one object twice; it is not `===` the envelope; and, if a query yields the content, a query matching the content's kind returns that same object. Regenerate.
+Step 1 established F1: a query yields each parser node once, as its envelope at a shared index, so `entryOfCoordinate` passes no role. In `utils.ts`, one helper decides the content's role from the two stamped indexes:
+
+```ts
+export function contentRole(envelope: object, content: unknown): Role {
+	if (content === null || typeof content !== 'object') return 'node';
+	const own = indexOf(envelope);
+	return own !== undefined && own === indexOf(content) ? 'aliasContent' : 'node';
+}
+```
+
+In `packages/codegen/src/emitters/wrap.ts`, the envelope branch's content accessor emits `hydrateSlot<…>(this, '<content key>', tree, contentRole(this, this['<content key>']))`; the generated `hydrateSlot` wrapper takes and passes the role. A content with no index (typescript 462's 11) is a plain value or an unregistered transport; its identity is the slot's write-back. Add the test to `packages/rust/tests/identity.test.ts` on a source holding an alias (at `12644d5df` rust `field_identifier` under `field_expression`): the envelope's content accessor returns one object twice; it is not `===` the envelope; and, if a query yields the content, a query matching the content's kind returns that same object. Regenerate.
 
 - [ ] **Step 7: Run the tests to verify they pass**
 
@@ -7213,7 +7228,7 @@ Run: `pnpm exec vitest run packages/rust/tests packages/python/tests packages/ty
 
 - [ ] **Step 8: Glossary, gates, commit**
 
-Glossary entries in `docs/glossary/packages-common-src.md`: `identity.ts::Role`, `keyOf`, `registered`, `register`; `transport-data.ts::indexOf`; `utils.ts::wrapRegistered`; `hydrateWith` and `hydrateSlotWith` updated (the lookup, the tree check, the role); `query.ts::sameOccurrence` removed; `entryOfCoordinate` updated. In `docs/glossary/emitters.md`, the envelope content accessor's role. Then `pnpm run validate:native` and `sittir validate history` against the base: rows unchanged.
+Glossary entries in `docs/glossary/packages-common-src.md`: `identity.ts::Role`, `keyOf`, `registered`, `register`; `transport-data.ts::indexOf`; `utils.ts::wrapRegistered`, `contentRole`; `hydrateWith` and `hydrateSlotWith` updated (the lookup, the tree check, the role); `query.ts::sameOccurrence` removed; `entryOfCoordinate` updated. In `docs/glossary/emitters.md`, the envelope content accessor's role. Then `pnpm run validate:native` and `sittir validate history` against the base: rows unchanged.
 
 ```bash
 git checkout -- .cursor/rules/infigraph.mdc .github/copilot-instructions.md GEMINI.md AGENTS.md
