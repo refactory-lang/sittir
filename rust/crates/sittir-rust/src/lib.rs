@@ -28,7 +28,7 @@ use sittir_core::engine::EngineGrammar;
 use render::{render_transport_parts, AnyTransport, RenderRoot, RENDER_MODULE_HASH};
 
 #[cfg(feature = "napi-bindings")]
-const NATIVE_RENDER_TRANSPORT_ABI: u32 = 20;
+const NATIVE_RENDER_TRANSPORT_ABI: u32 = 21;
 
 #[derive(Clone, Copy, Default)]
 pub struct RustGrammar;
@@ -49,20 +49,14 @@ impl EngineGrammar for RustGrammar {
     fn kind_name(self, kind: sittir_core::types::KindId) -> &'static str {
         render::kind_ids::kind_name_from_id(kind)
     }
-}
 
-impl sittir_core::read_untyped_node::ReadModel for RustGrammar {
-    fn inner_gap_key(&self, kind: sittir_core::types::KindId, preceding_tokens: u16) -> Option<&'static str> {
-        render::kind_ids::inner_gap_key(kind, preceding_tokens)
-    }
-
-    fn stores_scalar(
-        &self,
-        parent: sittir_core::types::KindId,
-        field: Option<&str>,
-        child: sittir_core::types::KindId,
-    ) -> bool {
-        render::kind_ids::stores_scalar(parent, field, child)
+    fn sides_at(
+        self,
+        cursor: &mut tree_sitter::TreeCursor<'_>,
+        ctx: &sittir_core::read::ReadCtx<'_>,
+        index: u32,
+    ) -> std::result::Result<sittir_core::read::Sides, sittir_core::read::ReadError> {
+        <AnyTransport as sittir_core::read::ReadTransport>::sides_of(cursor, ctx, index)
     }
 }
 

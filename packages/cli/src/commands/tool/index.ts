@@ -41,7 +41,6 @@ import { textKindOverlap } from './text-kind-overlap.ts';
 import { spelledTrivia } from './spelled-trivia.ts';
 import { triviaPlacement } from './trivia-placement.ts';
 import { triviaTiming } from './trivia-timing.ts';
-import { typedReadParity } from './typed-read-parity.ts';
 import { uncoveredContent } from './uncovered-content.ts';
 import { variantDerivationProbe } from './variant-derivation-probe.ts';
 import { walk } from './walk.ts';
@@ -87,7 +86,6 @@ export const toolModules: readonly CommandModule[] = [
 	spelledTrivia,
 	triviaPlacement,
 	triviaTiming,
-	typedReadParity,
 	uncoveredContent,
 	variantDerivationProbe,
 	walk,

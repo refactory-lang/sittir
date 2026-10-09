@@ -2860,64 +2860,9 @@ A row's member is named from its model kind (`modelKindOfEntry`, so a renamed ro
 
 One `kind_ids.rs` constant: its name and the kind id it holds.
 
-### `packages/codegen/src/emitters/kind-id-rust.ts::kindIdPattern`
-
-Prints the parser-derived scalar child-id set as a Rust match pattern.
-The context holds the output parts. Sorted contiguous runs of three or
-more ids use inclusive ranges; singletons and pairs remain explicit.
-Only exact consecutive ids are combined, so holes in the admitted set
-remain holes. This changes syntax, not model admission.
-
 ### `packages/codegen/src/emitters/kind-id-rust.ts::kindConstants`
 
 The constants of a grammar's kind table, one per kind row, plus one for each alias parse id that has no row of its own: the parser symbol an alias site is read under (`let_chain`, `lhs_expression`), named from its parse name so the reader names every id it matches by constant. An alias whose name another kind already holds is a diagnostic.
-
-### `packages/codegen/src/emitters/kind-id-rust.ts::innerGapRows`
-
-The `inner_gap_key` rows: every compound's `innerGaps`, under the compound's
-own kind id, which is the grammar symbol the reader stamps and passes in. The
-reader asks for a key only when a node has no owner child (named, not an
-extra, at least one byte wide, and not stored as a scalar per
-`stores_scalar`), so the rows cover the gaps an extra can reach inside an
-otherwise ownerless node: an empty block (rust `block`, after `{`, keys to
-`statements`) or an empty root (token-less, keyed to its first repeat slot).
-An extra in a gap with no row is the node's own entry: leading when no named
-child precedes it, trailing otherwise.
-
-### `packages/codegen/src/emitters/kind-id-rust.ts::InnerGapRow`
-
-One `inner_gap_key` arm: the kind id, the count of anonymous tokens before the
-extra, and the slot name the gap is keyed by.
-
-### `packages/codegen/src/emitters/kind-id-rust.ts::stores_scalar`
-
-The generated table behind the reader's owner test: whether the model stores
-a child as a scalar (a presence flag or a kind id) rather than a node. A
-scalar keeps no trivia, so the reader never makes that child an owner, and an
-extra beside it goes to the next owner outward (typescript `(/* c */ this)`
-reads the comment as the parenthesized expression's leading entry, since
-`this` is stored as a kind id). Keyed by `(parent kind id, tree-sitter field
-name or None, child kind id)`, the three facts `read_untyped_node::stored_as_scalar`
-has in hand. Rows come from `scalarChildRows`.
-
-### `packages/codegen/src/emitters/kind-id-rust.ts::scalarChildRows`
-
-The `stores_scalar` rows: for every slot of every catalogued parent whose
-`storageInfo` is a scalar kind (`SCALAR_STORAGE`), the kind ids in its
-`enumKindsById` under `(parent id, slot.fieldName)`. A `mixedEnum` slot lists
-only its kind-id arms; its node arms stay owners. Slots sharing a parent and
-field merge into one row.
-
-### `packages/codegen/src/emitters/kind-id-rust.ts::ScalarChildRow`
-
-One `stores_scalar` arm: the parent kind id, the field (absent for an
-untagged child), and the child kind ids stored as scalars there.
-
-### `packages/codegen/src/emitters/kind-id-rust.ts::SCALAR_STORAGE`
-
-The `FieldStorageKind`s whose value is not a node: `boolean` and `bitflag`
-presence, and the `kindEnum` / `mixedEnum` kind ids. `verbatim` stores the
-node.
 
 ### `packages/codegen/src/emitters/shared.ts::wireRoutesOf`
 
@@ -5120,8 +5065,8 @@ arms, so a gap prints once.
 ### `packages/codegen/src/emitters/render-body.ts::RustBodyPrinter.innerGap`
 
 Whether a slot name is one of the node's inner-trivia gaps
-(`AbstractAssembledCompound.innerGaps`), the keys the reader's
-`inner_gap_key` files ownerless extras under. `render-module.ts` supplies it
+(`AbstractAssembledCompound.innerGaps`), the keys the reader files ownerless
+extras under (each transport's `gap(n) = key` attributes). `render-module.ts` supplies it
 from the node the body renders.
 
 ### `packages/codegen/src/emitters/render-body.ts::escapeBraces`
@@ -15339,7 +15284,7 @@ Emits `TOKEN_INTERIORS`, the runtime table (`regex`, `slots`) of every lexed kin
 
 ### `packages/codegen/src/emitters/consts.ts::emitInnerGaps`
 
-Emits `INNER_GAPS`: for every compound with inner gaps, the gap keys in render order, from the node map's `innerGaps` rows (the same rows the Rust crate's `inner_gap_key` reads). `$trivia.inner` writes to the first key, and `$trivia.innerAt(key)` to a named one; a kind with no row has no inner position.
+Emits `INNER_GAPS`: for every compound with inner gaps, the gap keys in render order, from the node map's `innerGaps` rows (the same rows each Rust transport's `gap(n) = key` attributes print). `$trivia.inner` writes to the first key, and `$trivia.innerAt(key)` to a named one; a kind with no row has no inner position.
 
 The table and each row's key list are frozen.
 
@@ -15493,7 +15438,7 @@ The rest parameter of a spreading kind is typed from the slot's own cardinality,
 
 ### `packages/codegen/src/emitters/native-crate.ts::nativeCrateFiles`
 
-The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml`, `build.rs` (compiles the generated `.sittir/src/parser.c` and a C `scanner.c` as C11; a C++ `scanner.cc`, which transpile also copies, compiles in its own C++ build so `parser.c` never goes through the C++ compiler), the napi `package.json` (private: the crate is never published; its `build` scripts run `scripts/build-native.mts`, which writes the loader, typings and binary into the grammar package's `native/` directory), and `src/lib.rs` (the `LanguageFn`, `EngineGrammar`/`ReadModel` impls over the generated render module, and `sittir_core::napi_engine!`). `runCodegenInternal` writes these files on every `gen --all`, like the render module beside them, so a crate exists only alongside generated code it can compile and never lags its generator. No grammar edits its crate. A scanner that shares a header outside the generated sources (typescript's `scanner.c` includes `common/scanner.h`) needs no special case: `build.rs` follows each scanner source's quoted `#include`s at build time and has cargo rebuild when any of them changes. A new crate (no `Cargo.toml` yet) also triggers `pnpm install`. Pinned by a test: every grammar's crate files match the emitter.
+The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml`, `build.rs` (compiles the generated `.sittir/src/parser.c` and a C `scanner.c` as C11; a C++ `scanner.cc`, which transpile also copies, compiles in its own C++ build so `parser.c` never goes through the C++ compiler), the napi `package.json` (private: the crate is never published; its `build` scripts run `scripts/build-native.mts`, which writes the loader, typings and binary into the grammar package's `native/` directory), and `src/lib.rs` (the `LanguageFn`, the `EngineGrammar` impl over the generated render module, and `sittir_core::napi_engine!`). `runCodegenInternal` writes these files on every `gen --all`, like the render module beside them, so a crate exists only alongside generated code it can compile and never lags its generator. No grammar edits its crate. A scanner that shares a header outside the generated sources (typescript's `scanner.c` includes `common/scanner.h`) needs no special case: `build.rs` follows each scanner source's quoted `#include`s at build time and has cargo rebuild when any of them changes. A new crate (no `Cargo.toml` yet) also triggers `pnpm install`. Pinned by a test: every grammar's crate files match the emitter.
 
 ### `packages/codegen/src/emitters/native-crate.ts::NativeCrateFile`
 
@@ -15509,7 +15454,7 @@ The per-grammar runtime glue shared by every grammar package, emitted into `pack
 
 ### `packages/codegen/src/emitters/native-crate.ts::NATIVE_RENDER_TRANSPORT_ABI`
 
-The version of the wire between the JS packages and a native build: the render transport shape JS sends, the read shape the native reader sends back (`$type` / `$displayType`, which children and tokens arrive, when `$text` is present, which of `$handle` / `$parentHandle` / `$treeHandle` a node carries, and the error regions a parse returns beside its root), and the read calls' names and arguments (a read takes a level count; a descendant walk takes the address it starts from, kinds, a resume path, a limit, a plan and a depth, and returns its start's own handle with each batch; a plan is evaluated over a list of addresses in one call; the typed-read refusal call takes a tree id, the typed-read parity call takes a tree id and today's read of it, and the typed-read round-trip call takes a tree id). It is the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into each crate's generated `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. The render-module hash covers only the render templates, so a reader change with unchanged templates passes the hash check; bump this whenever any of these changes, and regenerate every grammar.
+The version of the wire between the JS packages and a native build: the render transport shape JS sends, the read shape the native reader sends back (`$type` / `$displayType`, which children and tokens arrive, when `$text` is present, which of `$handle` / `$parentHandle` / `$treeHandle` a node carries, and the error regions a parse returns beside its root), and the read calls' names and arguments (a read takes a level count; a descendant walk takes the address it starts from, kinds, a resume path, a limit, a plan and a depth, and returns its start's own handle with each batch; a plan is evaluated over a list of addresses in one call). It is the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into each crate's generated `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. The render-module hash covers only the render templates, so a reader change with unchanged templates passes the hash check; bump this whenever any of these changes, and regenerate every grammar.
 
 ### `packages/codegen/src/emitters/types.ts::emitNodeSurfaceInterfaces`
 
@@ -15655,9 +15600,15 @@ The literals a compound's render rule places directly under each field, keyed by
 
 The kind ids of a slot's drop set, for the reader: the `separatorKindId` stamped on each of the slot's separated values, and the kind id of each field-tagged literal. Each id is the public symbol link stamped; a separator with no stamp is an error naming it. The ids come out once each, the separators first and then the field-tagged literals.
 
-### `packages/codegen/src/emitters/kind-id-rust.ts::isScalarStorage`
+### `packages/codegen/src/emitters/transport-projection.ts::SCALAR_STORAGE`
 
-Whether a slot stores what it holds as a scalar (a presence flag, a bit flag or a kind id) over a non-empty set of kinds. `scalarChildRows` and the reader's `scalar` slot attribute both ask it, so a child a slot stores as a unit variant is one fact.
+The `FieldStorageKind`s whose value is not a node: `boolean` and `bitflag`
+presence, and the `kindEnum` / `mixedEnum` kind ids. `verbatim` stores the
+node.
+
+### `packages/codegen/src/emitters/transport-projection.ts::isScalarStorage`
+
+Whether a slot stores what it holds as a scalar (a presence flag, a bit flag or a kind id) over a non-empty set of kinds. The reader's `scalar` slot attribute asks it, so a child a slot stores as a unit variant keeps no trivia, and the trivia view's owners come from the same placement (`EngineGrammar::sides_at`).
 
 ### `packages/codegen/src/emitters/transport-projection.ts::ReadNames`
 

@@ -13,7 +13,7 @@ import {
 } from '../compiler/model/node-map.ts';
 import { findKindEntry, type KindEnumEntry } from './kind-discriminant.ts';
 import { DEDENT_TEXT, INDENT_TEXT } from '../dsl/primitives/spacing.ts';
-import { isScalarStorage, kindConstants } from './kind-id-rust.ts';
+import { kindConstants } from './kind-id-rust.ts';
 import { fieldConstName } from './field-id-rust.ts';
 import { queryRoutesOf } from './client-utils.ts';
 import { canonicalSeparatedListField, fieldTypeComponents, isTextLeaf, slotDropKindIds, slotKindNames } from './shared.ts';
@@ -23,6 +23,13 @@ import { STRING, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import type { RenderRule } from '../types/rule.ts';
 import { rustFieldIdent } from './transport-common.ts';
 import type { TransportSlotShape } from './render-module.ts';
+
+const SCALAR_STORAGE: ReadonlySet<string> = new Set(['boolean', 'bitflag', 'kindEnum', 'mixedEnum']);
+
+function isScalarStorage(slot: AssembledNonterminal): boolean {
+	const info = slot.storageInfo;
+	return info !== undefined && SCALAR_STORAGE.has(info.kind) && info.enumKindsById.size > 0;
+}
 
 export interface TransportLiteral {
 	readonly kind: string;

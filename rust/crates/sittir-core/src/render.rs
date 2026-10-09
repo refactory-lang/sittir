@@ -62,7 +62,7 @@ pub trait SourceTable {
 
     /// The kind of the last child that is not an extra of the list spanning
     /// `span` in the tree `handle` tags, the list's own kind being `kind`
-    /// (`read_untyped_node::last_list_child`). A table of bare sources cannot
+    /// (`engine::last_list_child`). A table of bare sources cannot
     /// answer and says so.
     fn last_list_child_kind(&self, handle: u64, span: crate::types::Span, kind: KindId) -> Option<KindId> {
         let _ = (handle, span, kind);

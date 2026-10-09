@@ -1,31 +1,41 @@
 use sittir_core::read::{Depth, ReadCtx, ReadRoot};
-use sittir_core::read_untyped_node::{read_untyped_node, NoMint, ReadDepth};
 use sittir_rust::render::RenderRoot;
 use std::process::Command;
 
 const TWO_MIB: usize = 2 * 1024 * 1024;
 
+/// The nesting levels the stack is measured at.
+const LEVELS: [usize; 4] = [1, 10, 40, 200];
+
 /// What the typed read may cost in stack, pinned per target and profile from
-/// the measured values rounded up to the search's granularity (frames are fixed
-/// at compile time, so there is no jitter to pad for). Each only tightens. A
-/// target with no row fails with its own measurement, so pinning it is one edit.
+/// the measured values (frames are fixed at compile time, so there is no jitter
+/// to pad for). Each only tightens. A target with no row fails with its own
+/// measurement, so pinning it is one edit.
 struct Ceilings {
     os: &'static str,
     arch: &'static str,
     release: bool,
-    bytes_per_level: f64,
-    root_kib: usize,
+    limit: Limit,
+}
+
+/// A row's gate. `Levels` pins the least stack, in KiB, at each of `LEVELS`;
+/// the slope between two levels is not gated, since one level's 8 KiB search
+/// granularity swings it. `Slope` is a row whose per-level values no run has
+/// reported yet: the bytes per level from 40 to 200 levels and the root (one
+/// level) cost.
+enum Limit {
+    Levels([usize; 4]),
+    Slope { bytes_per_level: f64, root_kib: usize },
 }
 
 const CEILINGS: &[Ceilings] = &[
-    Ceilings { os: "macos", arch: "aarch64", release: true, bytes_per_level: 1229.0, root_kib: 23 },
-    Ceilings { os: "macos", arch: "aarch64", release: false, bytes_per_level: 4301.0, root_kib: 151 },
-    Ceilings { os: "linux", arch: "x86_64", release: false, bytes_per_level: 5632.0, root_kib: 400 },
+    Ceilings { os: "macos", arch: "aarch64", release: true, limit: Limit::Levels([23, 39, 71, 263]) },
+    Ceilings { os: "macos", arch: "aarch64", release: false, limit: Limit::Levels([151, 183, 311, 999]) },
+    Ceilings { os: "linux", arch: "x86_64", release: false, limit: Limit::Slope { bytes_per_level: 5632.0, root_kib: 400 } },
 ];
 
 /// The deepest entry of the rust corpus by parse-tree depth, saved as a probe
-/// input by `corpus-depth.ts --write`.
-/// Its least stack is printed beside the nesting's, not gated.
+/// input by `corpus-depth.ts --write`. Its least stack is printed, not gated.
 const DEEPEST: &str = "rust-deepest.txt";
 
 /// What a stack probe reads: `n` nested parentheses, or a saved probe input.
@@ -71,67 +81,55 @@ fn parse(source: &str) -> tree_sitter::Tree {
     parser.parse(source, None).unwrap()
 }
 
-fn read_on_thread(reader: &'static str, probe: Probe, stack: usize) {
+fn read_on_thread(probe: Probe, stack: usize) {
     let source = probe.source();
     std::thread::Builder::new()
-        .name(reader.into())
         .stack_size(stack)
         .spawn(move || {
             let tree = parse(&source);
-            if reader == "today" {
-                read_untyped_node(&tree, &source, None, None, ReadDepth::Deep, &sittir_rust::RustGrammar, &mut NoMint);
-            } else {
-                let ctx = ReadCtx::new(&source, 1);
-                RenderRoot::read_root(&mut tree.walk(), &ctx, Depth::All).unwrap();
-            }
+            let ctx = ReadCtx::new(&source, 1);
+            RenderRoot::read_root(&mut tree.walk(), &ctx, Depth::All).unwrap();
         })
         .unwrap()
         .join()
-        .unwrap_or_else(|_| panic!("the {reader} read failed"));
+        .unwrap_or_else(|_| panic!("the typed read failed"));
 }
 
 #[test]
-fn a_nesting_today_reads_does_not_overflow_the_typed_read() {
-    let n = 250;
-    read_on_thread("today", Probe::Nested(n), TWO_MIB);
-    read_on_thread("typed", Probe::Nested(n), TWO_MIB);
+fn a_nesting_of_250_levels_reads_on_two_mib() {
+    read_on_thread(Probe::Nested(250), TWO_MIB);
 }
 
-/// A child of the depth test: reads `STACK_PROBE` with the reader
-/// `STACK_READER` on a thread of `STACK_KIB` KiB, and aborts if that
-/// overflows. A plain run of the suite has none of the variables and passes.
+/// A child of the depth test: reads `STACK_PROBE` on a thread of `STACK_KIB`
+/// KiB, and aborts if that overflows. A plain run of the suite has neither
+/// variable and passes.
 #[test]
 fn stack_probe_child() {
     let Ok(probe) = std::env::var("STACK_PROBE") else { return };
-    let reader = match std::env::var("STACK_READER").unwrap().as_str() {
-        "today" => "today",
-        _ => "typed",
-    };
     let kib: usize = std::env::var("STACK_KIB").unwrap().parse().unwrap();
-    read_on_thread(reader, Probe::from_env(&probe), kib * 1024);
+    read_on_thread(Probe::from_env(&probe), kib * 1024);
 }
 
-/// Whether `reader` reads `probe` on a stack of `kib` KiB: the child test ran
-/// (it reports one test passed) and did not overflow.
-fn survives(reader: &str, probe: Probe, kib: usize) -> bool {
+/// Whether the typed read reads `probe` on a stack of `kib` KiB: the child
+/// test ran (it reports one test passed) and did not overflow.
+fn survives(probe: Probe, kib: usize) -> bool {
     let output = Command::new(std::env::current_exe().unwrap())
         .args(["--exact", "stack_probe_child", "--test-threads=1"])
         .env("STACK_PROBE", probe.env())
-        .env("STACK_READER", reader)
         .env("STACK_KIB", kib.to_string())
         .output()
         .unwrap();
     output.status.success() && String::from_utf8_lossy(&output.stdout).contains("1 passed")
 }
 
-/// The least stack, in KiB, on which `reader` reads `probe`, found by running
-/// the child on smaller and larger stacks.
-fn least_stack_kib(reader: &str, probe: Probe) -> usize {
+/// The least stack, in KiB, on which the typed read reads `probe`, found by
+/// running the child on smaller and larger stacks.
+fn least_stack_kib(probe: Probe) -> usize {
     let (mut lo, mut hi) = (16, 16 * 1024);
-    assert!(survives(reader, probe, hi), "{reader} overflows {hi} KiB reading {probe:?}, or the probe did not run");
+    assert!(survives(probe, hi), "the typed read overflows {hi} KiB reading {probe:?}, or the probe did not run");
     while hi - lo > 8 {
         let mid = (lo + hi) / 2;
-        if survives(reader, probe, mid) {
+        if survives(probe, mid) {
             hi = mid;
         } else {
             lo = mid;
@@ -140,60 +138,35 @@ fn least_stack_kib(reader: &str, probe: Probe) -> usize {
     hi
 }
 
-/// The most nested parentheses `reader` reads on a stack of `kib` KiB.
-fn max_levels(reader: &str, kib: usize) -> usize {
-    let (mut lo, mut hi) = (1, 8192);
-    assert!(survives(reader, Probe::Nested(lo), kib), "{reader} overflows {kib} KiB at one level, or the probe did not run");
-    while hi - lo > 4 {
-        let mid = (lo + hi) / 2;
-        if survives(reader, Probe::Nested(mid), kib) {
-            lo = mid;
-        } else {
-            hi = mid;
-        }
-    }
-    lo
-}
-
-/// The measured guarantee, in both profiles: per nesting level the typed read
-/// costs no more stack than today's, and at 200 nested levels it needs no more
-/// stack than today's. In release it reads at least as deep on 2 MiB. Its
-/// fixed root cost is higher than today's, so a shallow source, the deepest
-/// corpus entry included, needs more stack than today's; that cost is printed,
-/// not gated. The root and per-level costs are pinned per target and profile
-/// as ceilings that only tighten.
+/// The typed read's least stack at each of `LEVELS`, held to its target's
+/// pinned ceilings. The measured levels, both slopes and the deepest corpus
+/// entry's least stack are printed, not gated.
 #[test]
-fn the_typed_read_costs_no_more_stack_per_level_than_today_s() {
-    let levels = [1, 10, 40, 200];
-    let cost = |reader: &str| levels.map(|n| least_stack_kib(reader, Probe::Nested(n)));
-    let (typed, today) = (cost("typed"), cost("today"));
-    let per_level = |kib: [usize; 4]| {
-        assert!(kib[3] > kib[2] && kib[2] > kib[0], "the least stack must grow with the nesting: {kib:?}");
-        (kib[3] - kib[2]) as f64 * 1024.0 / (levels[3] - levels[2]) as f64
-    };
-    let (typed_per_level, today_per_level) = (per_level(typed), per_level(today));
-    eprintln!("least stack KiB at {levels:?} levels: typed {typed:?}, today {today:?}");
-    eprintln!("bytes per level: typed {typed_per_level:.0}, today {today_per_level:.0}");
-    assert!(typed_per_level <= today_per_level, "typed {typed_per_level:.0} B per level, today {today_per_level:.0} B");
-    let deepest = |reader: &str| least_stack_kib(reader, Probe::Input(DEEPEST));
-    let (typed_deepest, today_deepest) = (deepest("typed"), deepest("today"));
-    eprintln!("least stack KiB reading the deepest corpus entry: typed {typed_deepest}, today {today_deepest}");
-    assert!(typed[3] <= today[3], "typed {} KiB at {} levels exceeds today's {} KiB", typed[3], levels[3], today[3]);
+fn the_typed_read_stays_within_its_pinned_stack_ceilings() {
+    let typed = LEVELS.map(|n| least_stack_kib(Probe::Nested(n)));
+    assert!(typed[3] > typed[2] && typed[2] > typed[0], "the least stack must grow with the nesting: {typed:?}");
+    let slope = |from: usize, to: usize| (typed[to] - typed[from]) as f64 * 1024.0 / (LEVELS[to] - LEVELS[from]) as f64;
     let release = !cfg!(debug_assertions);
     let (os, arch) = (std::env::consts::OS, std::env::consts::ARCH);
+    let profile = if release { "release" } else { "dev" };
+    println!(
+        "{os}/{arch} {profile}: least stack KiB at {LEVELS:?} levels: {typed:?}; {:.0} B per level from 40 to 200, {:.0} from 1 to 200",
+        slope(2, 3),
+        slope(0, 3)
+    );
+    println!("least stack KiB reading the deepest corpus entry: {}", least_stack_kib(Probe::Input(DEEPEST)));
     let Some(pinned) = CEILINGS.iter().find(|row| row.os == os && row.arch == arch && row.release == release) else {
-        panic!(
-            "no stack ceilings are pinned for {os}/{arch} ({} profile); measured typed root {} KiB, {typed_per_level:.0} B per level: add a row to CEILINGS",
-            if release { "release" } else { "dev" },
-            typed[0],
-        );
+        panic!("no stack ceilings are pinned for {os}/{arch} ({profile} profile); measured {typed:?} KiB at {LEVELS:?} levels: add a row to CEILINGS");
     };
-    let (per_level_ceiling, root_ceiling) = (pinned.bytes_per_level, pinned.root_kib);
-    assert!(typed_per_level <= per_level_ceiling, "typed {typed_per_level:.0} B per level exceeds {per_level_ceiling:.0} B");
-    assert!(typed[0] <= root_ceiling, "typed root cost {} KiB exceeds {root_ceiling} KiB", typed[0]);
-    if !cfg!(debug_assertions) {
-        let (typed_depth, today_depth) = (max_levels("typed", 2048), max_levels("today", 2048));
-        eprintln!("levels on 2 MiB: typed {typed_depth}, today {today_depth}");
-        assert!(typed_depth >= today_depth, "typed reads {typed_depth} levels on 2 MiB, today {today_depth}");
+    match pinned.limit {
+        Limit::Levels(ceilings) => {
+            for ((level, kib), ceiling) in LEVELS.iter().zip(typed).zip(ceilings) {
+                assert!(kib <= ceiling, "typed {kib} KiB at {level} levels exceeds {ceiling} KiB; measured {typed:?}");
+            }
+        }
+        Limit::Slope { bytes_per_level, root_kib } => {
+            assert!(slope(2, 3) <= bytes_per_level, "typed {:.0} B per level exceeds {bytes_per_level:.0} B; measured {typed:?}", slope(2, 3));
+            assert!(typed[0] <= root_kib, "typed root cost {} KiB exceeds {root_kib} KiB; measured {typed:?}", typed[0]);
+        }
     }
 }

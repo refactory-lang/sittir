@@ -436,6 +436,16 @@ jobs:
       - name: cargo test --workspace (skip cross-compiled targets)
         if: matrix.cross == false
         run: cargo test --workspace --no-default-features --target ${{ matrix.target }}
+      # The stack-ceiling test prints the least stack it measures at each
+      # nesting level, dev and release, so a target's row can be pinned from
+      # this log. A target with no release row fails here with its
+      # measurement; that does not fail the job.
+      - name: cargo test stack ceilings (prints the measured levels)
+        if: matrix.cross == false
+        continue-on-error: true
+        run: |
+          cargo test -p sittir-parity-tests --no-default-features --test typed_read_nesting --target ${{ matrix.target }} -- --nocapture the_typed_read_stays_within_its_pinned_stack_ceilings
+          cargo test -p sittir-parity-tests --no-default-features --release --test typed_read_nesting --target ${{ matrix.target }} -- --nocapture the_typed_read_stays_within_its_pinned_stack_ceilings
       # T061 — every platform job runs the parity suite (SC-006 gate).
       # On cross-compiled hosts we still invoke the test binary build
       # but skip execution (the resulting binary cannot run on the CI
@@ -444,8 +454,7 @@ jobs:
         if: matrix.cross == false
         run: cargo test -p sittir-parity-tests --test parity --target ${{ matrix.target }} -- --ignored --nocapture
       # `if: !cancelled()` — without this, a failure in either test step
-      # above (e.g. the pre-existing native_parser.rs failure that
-      # currently fails on every platform) skips this step entirely by
+      # above skips this step entirely by
       # GitHub Actions' default fail-fast-within-job behavior, even
       # though `napi build` already produced a valid, working `.node`.
       # regression-checker-native and perf-regression-checker both

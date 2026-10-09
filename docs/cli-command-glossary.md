@@ -538,7 +538,7 @@ pnpm exec tsx packages/cli/src/cli.ts tool phantom-kinds [grammars] [options]
 
 ### `tool probe-kind`
 
-Structured diagnostics for parse → readUntypedNode → render cycle
+Structured diagnostics for one parse → read → render cycle
 
 **Options**
 
@@ -548,7 +548,7 @@ Structured diagnostics for parse → readUntypedNode → render cycle
 - `-k, --kind <kind>` — Find first node of this kind and probe it
 - `--range <start,end>` — Probe node at byte range start,end
 - `--no-render` — Skip the render pass
-- `--no-wrap` — Use core readUntypedNode directly (skip grammar readNode)
+- `--no-wrap` — Read the transport unwrapped (skip the grammar wrap)
 - `--reparse` — Render → re-parse → include reparsed CST
 - `--validator-reparse` — Render → reparse using the validator's own wrapForReparse + offset lookup → include the selected wrapper, offset, located node, and structural diff
 - `--pretty` — Pretty-print JSON output (2-space indent)
@@ -616,7 +616,7 @@ Probe a corpus entry through read → wrap → render pipeline
 - `--trace` — Emit full multi-lane trace
 - `--pretty` — Pretty-print JSON output
 - `--no-render` — Skip the render pass
-- `--no-wrap` — Use core readUntypedNode directly (skip grammar readNode)
+- `--no-wrap` — Read the transport unwrapped (skip the grammar wrap)
 
 **Example**
 
@@ -765,22 +765,6 @@ Time reading every node's leading trivia after a deep parse of a file (one line-
 
 ```sh
 pnpm exec tsx packages/cli/src/cli.ts tool trivia-timing [options]
-```
-
-### `tool typed-read-parity`
-
-Compare the typed reader with today's read and wrap on every corpus entry, and send each typed read to JavaScript and back; exits 1 on any refusal, difference, failed round trip, stale listed row or entry today's pipeline cannot decode
-
-**Options**
-
-- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
-- `--all-grammars` — Run every stable grammar
-- `--json` — Print rows and summary as JSON
-
-**Example**
-
-```sh
-pnpm exec tsx packages/cli/src/cli.ts tool typed-read-parity [options]
 ```
 
 ### `tool uncovered-content`

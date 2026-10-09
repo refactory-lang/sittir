@@ -1374,9 +1374,7 @@ function commonRustUseImports(): string {
 	lines.push('');
 	lines.push('use ::sittir_core::view::{KindOf, KindTest, View, ListView, NO_ITEMS};');
 	lines.push('use ::sittir_core::render::Render;');
-	lines.push('use ::sittir_core::types::{');
-	lines.push('    FieldValue, OneOrMany, Source, Span, NodeTrivia,');
-	lines.push('};');
+	lines.push('use ::sittir_core::types::{Source, Span};');
 	lines.push('');
 	return lines.join('\n');
 }

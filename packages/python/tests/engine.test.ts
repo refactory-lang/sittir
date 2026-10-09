@@ -33,25 +33,6 @@ describe('engine', () => {
 						render(_node: Record<string, unknown>): string {
 							return 'ok';
 						}
-						parseAndRead(_source: string): string {
-							return JSON.stringify({
-								untypedNode: {
-									$type: TSKindId.Identifier,
-									$source: 0,
-									$named: true,
-									$text: 'x'
-								},
-								format: undefined
-							});
-						}
-						readUntypedNode(_nodeId: number): string {
-							return JSON.stringify({
-								$type: TSKindId.Identifier,
-								$source: 0,
-								$named: true,
-								$text: 'x'
-							});
-						}
 						dispose(): void {}
 					}
 				}

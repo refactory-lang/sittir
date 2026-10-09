@@ -12,31 +12,17 @@ export declare class SittirEngine {
    */
   get buildProfile(): string
   /**
-   * The line-break whitespace a read node owns as trivia: the node
-   * named by its `handle`, or by its tree's tag with its `span`
-   * (`[start, end]`) and stamped `kind` as a deep read leaves it.
-   * As JSON `{ leading, trailing, previous, next }`: `leading` and
-   * `trailing` are `{ kind, start }` runs in source order, each
-   * classified among the grammar's whitespace members whose text
-   * holds a line break; `previous` and `next` are the `{ start, end }`
-   * spans of the sibling owners before and after the outermost node
-   * spanning exactly the node's bytes, `null` when that node is its
-   * parent's first or last.
+   * The line-break whitespace the read node named by `handle` owns
+   * as trivia. As JSON `{ leading, trailing, previous, next }`:
+   * `leading` and `trailing` are `{ kind, start }` runs in source
+   * order, each classified among the grammar's whitespace members
+   * whose text holds a line break; `previous` and `next` are the
+   * `{ start, end }` spans of the sibling owners before and after the
+   * outermost node spanning exactly the node's bytes, `null` when that
+   * node is its parent's first or last.
    */
-  lineGapsOf(handle: number, span?: Array<number> | undefined | null, kind?: number | undefined | null): string
+  lineGapsOf(handle: number): string
   findAndRead(source: string, pattern: string): string
-  /**
-   * Parse `source` and read its root.
-   *
-   * `depth` is the number of levels the read expands (see
-   * [`depth_from_wire`]): absent is the lazy one-level read, `Infinity`
-   * expands the whole tree in one pass.
-   *
-   * The tree is retained under a fresh id so the handles this read
-   * hands out stay answerable; the id rides in those handles and is
-   * echoed as `treeId` for `disposeTree`.
-   */
-  parseAndRead(source: string, depth?: number | undefined | null): string
   /**
    * Parse `source` and keep its tree. As JSON `{ treeId, format,
    * errors }`: the id `read` and `disposeTree` take, the format the
@@ -52,15 +38,6 @@ export declare class SittirEngine {
    * child and the index.
    */
   read(treeId: number, index: number, depth?: number | undefined | null): object
-  /**
-   * Hydrate one child of the node named by `handle`.
-   *
-   * The handle names its own tree, so a handle from a tree that has
-   * been released — or one never minted on this thread — is refused rather
-   * than answered out of whichever tree happens to be present.
-   * `depth` counts the levels read, as for `parse_and_read`.
-   */
-  readUntypedNode(handle: number, childIndex: number, depth?: number | undefined | null): string
   /**
    * One batch of a pre-order walk of the named descendants under
    * the node `from` names (JSON, see `query::Address`), filtered to
@@ -80,37 +57,6 @@ export declare class SittirEngine {
    * pattern the native matcher cannot compile.
    */
   planHolds(addresses: string, plan: string): Array<boolean>
-  /**
-   * Read the root of a live tree again, `depth` levels down, so a
-   * caller holding a shallow root can ask for a deeper one without
-   * re-parsing. Refuses a tree that is not live, as
-   * `read_untyped_node` does.
-   */
-  readRoot(treeId: number, depth?: number | undefined | null): string
-  /**
-   * Transitional, while today's read and the typed read both exist:
-   * the refusal the typed reader meets reading tree `treeId` whole,
-   * or `null` when it reads it.
-   */
-  typedReadRefusal(treeId: number): string | null
-  /**
-   * Transitional, while today's read and the typed read both exist:
-   * compare the typed read of tree `treeId` with `today`, the detached
-   * root today's read and wrap give it. `null` when they agree;
-   * otherwise the refusal, a `normalized: <Kind>.<slot>` line for
-   * each slot the typed read fills with its empty value where today's
-   * read leaves it absent, and the first
-   * other place the two differ.
-   */
-  typedReadParity(treeId: number, today: object): string | null
-  /**
-   * Transitional, while today's read and the typed read both exist:
-   * encode the typed read of tree `treeId` to JavaScript and decode it
-   * back, read one level deep and then whole. `null` when both come
-   * back unchanged; otherwise the depth, and the refusal, the encoder's
-   * or decoder's error, or the first place the decoded read differs.
-   */
-  typedReadRoundTrip(treeId: number): string | null
   /**
    * Render a typed transport object (napi-native, numeric `$type`).
    *

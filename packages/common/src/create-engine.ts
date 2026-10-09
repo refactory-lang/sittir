@@ -214,10 +214,7 @@ function assembleEngine<API extends LanguageAPI>(
 		diagnostics: {
 			buildProfile: native.buildProfile,
 			parseAndRead: readAndBind,
-			lineGapsOf: (address) => native.lineGapsOf(address),
-			typedReadRefusal: (treeId) => native.typedReadRefusal(treeId),
-			typedReadParity: (treeId, today) => native.typedReadParity(treeId, today),
-			typedReadRoundTrip: (treeId) => native.typedReadRoundTrip(treeId)
+			lineGapsOf: (address) => native.lineGapsOf(address)
 		},
 		isNode: (value): value is API['node'] => isNode(value) && inLanguage(value),
 		isParsedNode: (value): value is API['node'] => isParsedNode(value) && inLanguage(value),

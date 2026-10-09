@@ -83,9 +83,6 @@ export interface NativeEngineLike<TTransport = unknown> {
 	 */
 	read(treeId: number, index: number, depth?: number): object;
 	lineGapsOf(handle: number): string;
-	typedReadRefusal?(treeId: number): string | null;
-	typedReadParity?(treeId: number, today: TTransport): string | null;
-	typedReadRoundTrip?(treeId: number): string | null;
 	descendants(
 		from: string,
 		kinds: number[] | undefined | null,
@@ -310,18 +307,6 @@ export function createNativeEngine<
 				diagnostics: {
 					buildProfile: engine.buildProfile,
 					lineGapsOf,
-					typedReadRefusal(treeId: number): string | null {
-						if (engine.typedReadRefusal === undefined) throw new Error('typedReadRefusal: this native binary has no typed reader');
-						return engine.typedReadRefusal(treeId);
-					},
-					typedReadParity(treeId: number, today: unknown): string | null {
-						if (engine.typedReadParity === undefined) throw new Error('typedReadParity: this native binary has no typed reader');
-						return engine.typedReadParity(treeId, today as TTransport);
-					},
-					typedReadRoundTrip(treeId: number): string | null {
-						if (engine.typedReadRoundTrip === undefined) throw new Error('typedReadRoundTrip: this native binary has no typed reader');
-						return engine.typedReadRoundTrip(treeId);
-					},
 					parseAndRead(source: string, parseOptions?: ParseOptions) {
 						const parsed = JSON.parse(engine.parse(source)) as NativeParseResult;
 						// Held by `read` below and by every parsed object a read
@@ -398,9 +383,6 @@ export function nativeLanguageEngine<API extends LanguageAPI, IndentChar extends
 		},
 		buildProfile: engine.diagnostics.buildProfile,
 		lineGapsOf: (handle) => engine.diagnostics.lineGapsOf(handle),
-		typedReadRefusal: (treeId) => engine.diagnostics.typedReadRefusal(treeId),
-		typedReadParity: (treeId, today) => engine.diagnostics.typedReadParity(treeId, today),
-		typedReadRoundTrip: (treeId) => engine.diagnostics.typedReadRoundTrip(treeId),
 		dispose() {
 			engine.dispose();
 		}

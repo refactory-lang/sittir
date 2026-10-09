@@ -10,9 +10,7 @@
 
 use ::sittir_core::view::{KindOf, KindTest, View, ListView, NO_ITEMS};
 use ::sittir_core::render::Render;
-use ::sittir_core::types::{
-    FieldValue, OneOrMany, Source, Span, NodeTrivia,
-};
+use ::sittir_core::types::{Source, Span};
 
 use ::sittir_core::layout::Layout as _;
 use ::sittir_core::options::Edged as _;

@@ -343,7 +343,7 @@ Whether a value is a group's config object rather than a node: a non-empty plain
 
 ### `packages/common/src/transport-data.ts::treeHandleOf`
 
-The tree a node's handle names, whichever of `$handle` (its own), `$parentHandle` (a stub's coordinate, beside `$childIndex`) or `$treeHandle` (a node nothing re-reads: a child a read expanded, a deep read's leaf, a trivia entry) it carries. Every handle is tagged with its tree, so each identifies it; this is the TypeScript side of the Rust `NodeHandle::raw`. The fold uses it to decide a node still names its tree and emits it as the coordinate's `$treeHandle`; the generated wrap uses it to recognize a node that arrived as a coordinate.
+The handle a node's coordinate names it by (`$_layout.at.$treeHandle`), which packs its tree and its descendant index; `undefined` for a node with no coordinate. The fold uses it to decide a node still names its tree and emits it as the coordinate's `$treeHandle`; the generated wrap uses it to recognize a node that arrived as a coordinate.
 
 ### `packages/common/src/transport-data.ts::canFold`
 

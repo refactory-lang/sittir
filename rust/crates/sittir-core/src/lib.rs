@@ -2,8 +2,8 @@
 //!
 //! Contract surface:
 //!
-//! - [`types`]    — primitive `UntypedNode` + wire-boundary serde attributes.
-//! - [`read_untyped_node`] — `tree_sitter::Tree` → `UntypedNode` traversal.
+//! - [`types`]    — the kind id, spans, provenance and format records.
+//! - [`read`]     — `tree_sitter::Tree` → the grammar's typed transports.
 //! - [`boundary`] — cross-FFI shape helpers: a wire object's properties,
 //!   read by static keys; serde attrs live alongside the structs in `types`.
 //! - [`view`]     — the render-time views (`View`, `ListView`) the generated
@@ -21,7 +21,6 @@ pub mod options;
 pub mod prepare;
 pub mod query;
 pub mod read;
-pub mod read_untyped_node;
 pub mod render;
 pub mod slot;
 pub mod spacing;
@@ -73,9 +72,5 @@ pub use render::{
 // structs name it at every slot position.
 pub use prepare::{Prepare, RenderContext};
 pub use slot::{NodeCoordinate, SlotValue};
-// Flat re-export for the read-expansion selector — grammar crates thread
-// it from the napi surface into `ParsedTree`.
-pub use read_untyped_node::{error_regions, ErrorRegion, ErrorRegionKind, HandleMint, NoMint, ReadDepth, ReadModel};
-// ParsedTree is the owned parse result; ParseResult is the JSON
-// envelope for parse_and_read. NodeCoords is an internal implementation detail.
-pub use engine::{apply_render_format, decode_handle, panic_msg, ParseResult, ParsedTree};
+// ParsedTree is the owned parse result.
+pub use engine::{apply_render_format, decode_handle, error_regions, panic_msg, ErrorRegion, ErrorRegionKind, ParsedTree};

@@ -1678,46 +1678,6 @@ An occurrence the read holds no node for is not a failure. The walk finds the fi
 
 A read leaf that carries `$text`, whose shown kind has a token interior and whose stored slots do not yet hold it, is projected through `projectInterior`, the one projection the wrap and the coercer share, and read under the shown kind. A leaf already wrapped as its own kind has its slots and takes the unchanged path.
 
-### `packages/tools/src/validate/typed-read-parity.ts::module`
-
-The gate behind `sittir tool typed-read-parity`. For every corpus entry of a grammar, parse errors included, the typed reader's read of the whole tree is compared with the detached data today's read and wrap give the render side, decoded into the same transport types by the engine's `typedReadParity`. It reports, never changes behaviour. An entry the typed reader refuses is `refused`; one whose two reads differ is `differs`, with both reads' debug text from their first difference; one whose detached data does not decode as today's render root is `today-failed`, which is today's pipeline failing and still fails the gate. The harness also sends each entry's typed read to JavaScript and back through the derive's codec (`typedReadRoundTrip`), read one level deep and then whole; an entry whose read does not come back unchanged is `round-trip`, with the depth and the codec's error or the first difference, and fails the gate. The two reads differ by construction in one class: a slot today's read leaves absent because its node has no named child, which the typed read fills with its empty value. The native comparison names each such slot, the harness accepts it only if its (entry, kind, slot) is a listed row, and counts it as an `emptySlots` sighting. A listed row the corpus no longer shows is `stale-listed`, so the list shrinks with a fix and never holds a row that does not occur. The command exits 1 on a refusal, a difference, a failed round trip, an undecodable entry or a stale row. It also reports the envelope pin, per pinned id of each variant: how many corpus nodes show that grammar id under the variant's display id.
-
-### `packages/tools/src/validate/typed-read-parity.ts::withoutLayoutEvidence`
-
-Today's detached data minus what the typed reader leaves to the render side: a layout's `gap` and `flank` (layout evidence), and a layout left empty. The trivia entries stay: they arrive as coordinates and decode as the coordinates the typed reader gives.
-
-### `packages/tools/src/validate/typed-read-parity.ts::parseReport`
-
-Splits the native comparison's report into the `normalized: <Kind>.<slot>` lines, each an empty slot with the entry that showed it, and the rest, which is a difference.
-
-### `packages/tools/src/validate/typed-read-parity.ts::emptySlotKey`
-
-The one spelling of an empty-slot row: entry, kind and slot, tab-separated.
-
-### `packages/tools/src/validate/typed-read-parity.ts::staleListedRows`
-
-The listed rows no sighting matches. Each is a finding: the listed rows are exact, so one that no longer occurs is removed with the fix that retired it.
-
-### `packages/tools/src/validate/typed-read-parity.ts::LISTED_EMPTY_SLOTS`
-
-Per grammar, the empty-slot rows the comparison accepts: slots today's read leaves absent that the typed read fills with its empty value. A row outside the list is a difference; a row the corpus no longer shows is stale.
-
-### `packages/tools/src/validate/typed-read-parity.ts::pinCounts`
-
-One zeroed counter per pinned id of each envelope variant of the grammar, keyed by variant, display id and id.
-
-### `packages/tools/src/validate/typed-read-parity.ts::countShownPins`
-
-Counts the nodes of one tree whose display id and grammar id are a pinned pair: the corpus evidence that a pinned id is reached.
-
-### `packages/tools/src/validate/typed-read-parity.ts::computeTypedReadParity`
-
-The census for one grammar: the agreed count, each refusal, difference, failed round trip and undecodable entry with its report, and the pin counts. A refusal is checked before the round trip and the comparison, so an entry today's pipeline cannot decode is still read by the typed reader. An entry agrees only when its comparison and its round trip both do.
-
-### `packages/tools/src/validate/typed-read-parity.ts::run`
-
-Runs the census for one grammar or every stable grammar and prints the rows, the pin counts and a summary per grammar, or JSON. Returns 1 when any grammar has a refusal, a difference, a failed round trip, an undecodable entry or a stale listed row.
-
 ### `packages/tools/src/validate/common.ts::loadScopedFactoryMap`
 
 The grammar's raw factory map with every builder run inside the validators' native engine, so a composite that checks its content parses it back the way a user's build would. The ir surface carries the same scope and dispatch enters it.

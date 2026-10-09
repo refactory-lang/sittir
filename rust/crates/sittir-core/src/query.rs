@@ -32,21 +32,13 @@ impl From<NodeCoordinate> for QueryCoordinate {
     }
 }
 
-/// A parsed node as a query names it: its own handle, the parent handle and
-/// child index a stub carries, or, for a node a deep read left without a
-/// handle, its tree's tag, its span and its stamped kind. The handle and span
-/// forms are spelled as the line-gap query spells them.
+/// A parsed node as a query names it: its own handle, as the line-gap query
+/// spells it, or a parent's handle and a child's position under it.
 #[derive(serde::Deserialize, Clone, Copy, Debug)]
 #[serde(untagged)]
 pub enum Address {
     Own { handle: u64 },
     Child { parent: u64, index: u32 },
-    Span {
-        #[serde(rename = "treeHandle")]
-        tree: u64,
-        span: crate::types::Span,
-        kind: u16,
-    },
 }
 
 impl Address {
@@ -55,7 +47,6 @@ impl Address {
         match *self {
             Address::Own { handle } => handle,
             Address::Child { parent, .. } => parent,
-            Address::Span { tree, .. } => tree,
         }
     }
 }

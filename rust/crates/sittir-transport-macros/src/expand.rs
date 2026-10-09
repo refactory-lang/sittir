@@ -595,7 +595,7 @@ fn common_inits(fields: &[Field<'_>], skip: &str) -> Vec<TokenStream> {
         .filter_map(|field| {
             let name = field.ident;
             match field.role {
-                Role::Layout => Some(quote!(#name: placement.into_layout(sides, __at),)),
+                Role::Layout => Some(quote!(#name: Some(placement.into_layout(sides, __at)),)),
                 Role::Other => Some(quote!(#name: ::core::default::Default::default(),)),
                 _ => None,
             }
@@ -707,7 +707,7 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             let mut content = <#inner as __rt::ReadTransport>::read(cursor, ctx, depth, sides.clone());
             #restore
             let mut content = content?;
-            let layout: #layout_ty = __rt::envelope_layout(<#inner as __rt::HasLayout<#layout_ty>>::take_layout(&mut content), sides, __at);
+            let layout: #layout_ty = Some(__rt::envelope_layout(<#inner as __rt::HasLayout<#layout_ty>>::take_layout(&mut content), sides, __at));
             ::core::result::Result::Ok(Self { #(#inits)* })
         },
         sides_of: quote!(<#inner as __rt::ReadTransport>::sides_of(cursor, ctx, index)),

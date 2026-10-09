@@ -169,9 +169,6 @@ export interface NativeLanguageEngine<API extends LanguageAPI> {
 	parseAndRead: EngineDiagnostics<AnyUntypedNode>['parseAndRead'];
 	readonly buildProfile?: EngineDiagnostics['buildProfile'];
 	lineGapsOf: EngineDiagnostics['lineGapsOf'];
-	typedReadRefusal: EngineDiagnostics['typedReadRefusal'];
-	typedReadParity: EngineDiagnostics['typedReadParity'];
-	typedReadRoundTrip: EngineDiagnostics['typedReadRoundTrip'];
 	dispose(): void;
 }
 
@@ -195,12 +192,6 @@ export interface EngineDiagnostics<TRoot = unknown, TTree extends object = objec
 	 * run starts at. Asked of the parse that read the node.
 	 */
 	lineGapsOf(address: LineGapAddress): LineGaps;
-	/** Transitional: the refusal the typed reader meets reading tree `treeId` whole, or `null`. */
-	typedReadRefusal(treeId: number): string | null;
-	/** Transitional: compare the typed read of tree `treeId` with `today`, detached render input for its root; `null` when they agree, else a `normalized: <Kind>.<slot>` line per slot today's read leaves absent that the typed read fills with its empty value and the first other difference. */
-	typedReadParity(treeId: number, today: unknown): string | null;
-	/** Transitional: encode the typed read of tree `treeId` to JavaScript and decode it back, read one level deep and then whole; `null` when both come back unchanged, else the depth and the refusal, the codec's error or the first difference. */
-	typedReadRoundTrip(treeId: number): string | null;
 }
 
 export interface Rendered extends Disposable {
