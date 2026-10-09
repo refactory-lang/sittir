@@ -31,7 +31,6 @@ export namespace Type {
 	export interface Constrained<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		readonly $kind: 'type.constrained';
 		readonly baseType: G['type'];
-		readonly constraint: G['type'];
 	}
 	export interface Dynamic<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		readonly $kind: 'type.dynamic';
@@ -43,14 +42,12 @@ export namespace Type {
 	export interface Function<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		readonly $kind: 'type.function';
 		readonly content?: G['slots']['type.function']['content'] | G['slots']['type.function']['content'][];
-		readonly forLifetimes?: V.Clause.Lifetimes<G>;
 		readonly parameters: G['slots']['type.function']['parameters'][];
 		readonly returnType?: G['slots']['type.function']['returnType'];
 	}
 	export namespace Function {
 		export interface Constructor<G extends GrammarContext> extends SubKindOf<V.Type.Function<G>> {
 			readonly $kind: 'type.function.constructor';
-			readonly abstract?: boolean;
 			readonly parameters: V.Declaration.Parameter.Any<G>[];
 			readonly type: G['slots']['type.function.constructor']['type'];
 		}
@@ -169,7 +166,6 @@ export namespace Type {
 	}
 	export interface Reference<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
 		readonly $kind: 'type.reference';
-		readonly lifetime?: V.Identifier.Lifetime<G>;
 		readonly mutable?: boolean;
 		readonly type: G['slots']['type.reference']['type'];
 	}

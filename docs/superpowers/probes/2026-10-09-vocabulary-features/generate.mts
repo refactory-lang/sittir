@@ -4,11 +4,11 @@
  * It materializes the snapshot vocabulary and writes under out/:
  * - today/: the snapshot as it is, each grammar's context over the kinds it claims;
  * - fold/: the snapshot with its `BaseContext` folded into the namespace map (lib.mts, fold), no features;
- * - gate/: the demonstration, folded, with the equality and property-facts proposals applied (lib.mts). The features in
- *   features/ own their kinds and members; the base keeps the rest and loads the generated augmentation that adds them
- *   back, each gated on its feature. The grammar contexts extend the compositions in compositions.ts. With them: a
- *   JavaScript context, each language's names, and demo.ts. It prints the plan's notes and each composition's
- *   diagnostics against the snapshot's claims and routes.
+ * - gate/: the demonstration, folded, with the equality, property-facts and visibility proposals applied (lib.mts).
+ *   The features in features/ own their kinds and members; the base keeps the rest and loads the generated augmentation
+ *   that adds them back, each gated on its feature. The grammar contexts extend the compositions in compositions.ts.
+ *   With them: a JavaScript context, each language's names, and demo.ts. It prints the plan's notes and each
+ *   composition's diagnostics against the snapshot's claims and routes.
  * - scale-gate/: the cost model, folded. Every member the snapshot tags as particular to some grammars, and every kind
  *   only some grammars claim, belongs to a feature named by those grammars, gated the same way.
  * - scale-registry/: the cost model with each level read off an augmentable kind registry instead of a generated union.
@@ -46,6 +46,7 @@ import {
 	readVocab,
 	realization,
 	restatingImports,
+	visibilityProposal,
 	writeConsumers,
 	writeFeatureTree,
 	writeGatedVocabulary,
@@ -204,6 +205,7 @@ function buildGate(snapshot: string): void {
 	const vdir = join(dir, 'vocabulary');
 	equalityProposal(vdir);
 	propertyFactsProposal(vdir);
+	visibilityProposal(vdir);
 	cpSync(join(HERE, 'features'), join(vdir, 'features'), { recursive: true });
 	const vocab = readVocab(vdir);
 	const features = readFeatures(join(vdir, 'features'));

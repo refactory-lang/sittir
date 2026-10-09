@@ -1037,6 +1037,8 @@ export const PROPERTY_FLAGS: Readonly<
 
 /** The kinds of a property's name the proposal removes, each a fact about the property that holds the name. */
 const PROPERTY_NAME_KINDS = /\bV\.Identifier\.Property\.(?:Computed|Private|Shorthand)<(?:G|BaseContext)>/;
+/** Rust's shorthand field initializer, which the proposal reads as a field initializer with no value. */
+const STRUCT_SHORTHAND = /\bV\.Element\.Struct\.Field\.Shorthand<(?:G|BaseContext)>/;
 
 /** `lines` less the union arms `arm` matches, a removed last arm's `;` moved to the arm before it. */
 function withoutArms(lines: readonly string[], arm: RegExp): string[] {
@@ -1071,8 +1073,9 @@ function editMember(vdir: string, path: string, name: string, edit: (line: strin
  * Rewrites the vocabulary under `vdir` so a property's name is a property identifier and what the name's kinds said
  * of the property is said by the property. `identifier.property.private` and `identifier.property.computed` become the
  * `private` and `computed` flags `PROPERTY_FLAGS` names, a computed key being its expression, and
- * `identifier.property.shorthand` a pair with no value. The identity and membership operators, which the snapshot
- * leaves unfilled at every level, are filled as the keyword text they are.
+ * `identifier.property.shorthand` a pair with no value; rust's `element.struct.field.shorthand` is likewise a field
+ * initializer with no value, its name the field. The identity and membership operators, which the snapshot leaves
+ * unfilled at every level, are filled as the keyword text they are.
  */
 export function propertyFactsProposal(vdir: string): void {
 	const identifier = join(vdir, 'identifier.ts');
@@ -1088,9 +1091,20 @@ export function propertyFactsProposal(vdir: string): void {
 		}
 	}
 	editMember(vdir, 'element.pair', 'value', (l) => l.replace('readonly value:', 'readonly value?:'));
+	const element = join(vdir, 'element.ts');
+	const els = readFileSync(element, 'utf8').split('\n');
+	const field = els.indexOf('\t\texport namespace Field {');
+	if (field < 0 || !els.slice(field, closing(els, field)).join('\n').includes("'element.struct.field.shorthand'")) {
+		throw new Error('property facts: element.ts has no Struct.Field namespace holding the shorthand');
+	}
+	writeFileSync(element, withoutArms(applyEdits(els, [{ start: field, end: closing(els, field), lines: [] }]), STRUCT_SHORTHAND).join('\n'));
+	editMember(vdir, 'element.struct.field', 'field', (l) => l.replace('V.Identifier.Field<G>', "G['identifier']"));
 
 	const context = join(vdir, 'context.ts');
-	const lines = withoutArms(readFileSync(context, 'utf8').replaceAll('V.Identifier.Property.Any<BaseContext>', 'V.Identifier.Property<BaseContext>').split('\n'), PROPERTY_NAME_KINDS);
+	const lines = withoutArms(
+		withoutArms(readFileSync(context, 'utf8').replaceAll('V.Identifier.Property.Any<BaseContext>', 'V.Identifier.Property<BaseContext>').split('\n'), PROPERTY_NAME_KINDS),
+		STRUCT_SHORTHAND
+	);
 	// A computed key widens the name's fill only at kinds a grammar that routes `computed` claims.
 	const named = Object.entries(PROPERTY_FLAGS.computed!.holders);
 	const routed = new Set(PROPERTY_FLAGS.computed!.grammars.flatMap((g) => Object.keys(realization[g].routes)));
@@ -1119,7 +1133,9 @@ export function propertyFactsProposal(vdir: string): void {
 	}
 	writeFileSync(context, applyEdits(lines, edits).join('\n'));
 	for (const file of readdirSync(vdir).filter((f) => f.endsWith('.ts'))) {
-		if (/\bIdentifier\.Property\.(?:Any|Computed|Private|Shorthand)\b/.test(readFileSync(join(vdir, file), 'utf8'))) throw new Error(`property facts: ${file} still names a removed kind`);
+		const text = readFileSync(join(vdir, file), 'utf8').replaceAll('V.Element.Struct.Field.Any<', 'V.Element.Struct.Field<');
+		if (/\bIdentifier\.Property\.(?:Any|Computed|Private|Shorthand)\b|\bStruct\.Field\.Shorthand\b/.test(text)) throw new Error(`property facts: ${file} still names a removed kind`);
+		writeFileSync(join(vdir, file), text);
 	}
 }
 
@@ -1129,6 +1145,71 @@ export function flagRoutes(vocab: Vocab, grammar: Grammar, path: string): string
 	return Object.entries(PROPERTY_FLAGS)
 		.filter(([, f]) => f.grammars.includes(grammar) && Object.keys(f.holders).some((h) => line.includes(h)))
 		.map(([flag]) => flag);
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// The visibility proposal
+
+/** The access levels `visibility` holds, from the widest to the narrowest (bindings spec §4.3). */
+export const ACCESS_LEVELS = ['open', 'public', 'package', 'internal', 'restricted', 'protected internal', 'protected', 'private protected', 'file', 'private'] as const;
+
+/** Rust's visibility modifier and its `pub` refinement, which the proposal removes. */
+const VISIBILITY_KINDS = /\bV\.Modifier\.Visibility(?:\.Pub)?<(?:G|BaseContext)>/;
+
+/**
+ * Rewrites the vocabulary under `vdir` so `visibility` is an access level, not rust's modifier kind or a language's
+ * text: `modifier.visibility` and its `pub` refinement go, and every `visibility` member and slot is an `AccessLevel`.
+ * Each kind whose member or slot admitted rust's modifier also has `visibilityScope`, the module `pub(in path)` names.
+ */
+export function visibilityProposal(vdir: string): void {
+	const modifier = join(vdir, 'modifier.ts');
+	const mods = readFileSync(modifier, 'utf8').split('\n');
+	const kind = mods.indexOf('\texport interface Visibility<G extends GrammarContext> extends SubKindOf<V.Modifier<G>> {');
+	const ns = mods.indexOf('\texport namespace Visibility {');
+	if (kind < 0 || ns < 0) throw new Error('visibility: modifier.ts declares no Visibility kind');
+	const edits = [kind, ns].map((start) => ({ start, end: closing(mods, start), lines: [] }));
+	writeFileSync(modifier, withoutArms(applyEdits(mods, edits), VISIBILITY_KINDS).join('\n'));
+	const levels = ACCESS_LEVELS.map((l) => `'${l}'`).join(' | ');
+	const utils = readFileSync(join(vdir, 'utils.ts'), 'utf8').trimEnd();
+	writeFileSync(join(vdir, 'utils.ts'), `${utils}\n\n/** An access level: what may see a declaration, whatever the language spells. */\nexport type AccessLevel = ${levels};\n`);
+	writeFileSync(join(vdir, 'index.ts'), `${readFileSync(join(vdir, 'index.ts'), 'utf8').trimEnd()}\nexport type { AccessLevel } from './utils.ts';\n`);
+
+	const context = join(vdir, 'context.ts');
+	const scoped = new Set<string>();
+	let entry: string | undefined;
+	const filled = readFileSync(context, 'utf8')
+		.split('\n')
+		.map((l) => {
+			entry = /^\t\treadonly '?([\w.]+)'?: \{$/.exec(l)?.[1] ?? entry;
+			const m = /^(\t{3}readonly visibility\??: )(.*);$/.exec(l);
+			if (!m) return l;
+			if (VISIBILITY_KINDS.test(m[2]!)) scoped.add(entry!);
+			return `${m[1]}V.AccessLevel;`;
+		});
+	writeFileSync(context, filled.join('\n'));
+	for (const ns of NAMESPACES) {
+		const file = join(vdir, `${ns}.ts`);
+		const lines = readFileSync(file, 'utf8').split('\n');
+		const out: string[] = [];
+		let path: string | undefined;
+		for (let i = 0; i < lines.length; i++) {
+			path = /^\s*readonly \$kind: '([\w.]+)';$/.exec(lines[i]!)?.[1] ?? path;
+			const m = /^(\s*)readonly visibility(\??): (.*);$/.exec(lines[i]!);
+			if (!m) {
+				out.push(lines[i]!);
+				continue;
+			}
+			const direct = VISIBILITY_KINDS.test(m[3]!);
+			out.push(direct ? `${m[1]}readonly visibility${m[2]}: V.AccessLevel;` : lines[i]!);
+			// A member's tag comment stays on the line after it.
+			if (/^\s*\/\/ [prt]+ only$/.test(lines[i + 1] ?? '')) out.push(lines[++i]!);
+			if (direct || scoped.has(path!)) out.push(`${m[1]}readonly visibilityScope?: G['identifier'];`);
+		}
+		writeFileSync(file, out.join('\n'));
+	}
+	for (const file of readdirSync(vdir).filter((f) => f.endsWith('.ts'))) {
+		if (/\bModifier\.Visibility\b/.test(readFileSync(join(vdir, file), 'utf8'))) throw new Error(`visibility: ${file} still names the modifier kind`);
+	}
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
