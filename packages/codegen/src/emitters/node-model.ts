@@ -2,7 +2,7 @@ import { type RuleListEntry } from '../dsl/rule-patterns.ts';
 import type { AuthoredCompound, FullForm } from '../compiler/model/node-map.ts';
 import { innerGapsKeyed, spelledTriviaTable, type SpelledTriviaTable } from '../compiler/model/trivia.ts';
 import type { RuleAnnotations } from '../types/rule.ts';
-import { seatOf, type Seat } from './overlays/sub-factories.ts';
+import { seatOf, type Seat } from '../compiler/model/sub-factories.ts';
 import { collectPolymorphWires, emittedArmPath, type PolymorphWires } from './overlays/polymorphs.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -24,7 +24,7 @@ import {
 	AssembledList
 } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
-import { flattenedVariantParents, hasOneSurface, variantRoutePaths } from './overlays/module.ts';
+import { flattenedVariantParents, hasOneSurface, variantRoutePaths } from '../compiler/model/ir-surface.ts';
 import { resolveFieldStorageInfo, compareOrdinal } from './shared.ts';
 import { anchoredLeafRegexLiteral } from '../compiler/model/leaf-pattern.ts';
 import { collectCatalogKinds, collectKindEntries } from './kind-discriminant.ts';

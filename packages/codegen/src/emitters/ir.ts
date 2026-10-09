@@ -12,7 +12,8 @@ import { isValidIdent, irNamespacesChildFactory, lexedContentSlot, isDeclaredSup
 import { supertypeMemberName } from '../dsl/arm-names.ts';
 import { lowerCamelCase } from '../compiler/model/casing.ts';
 import { collectKindEntries, collectCatalogKinds, hasCatalogEntry } from './kind-discriminant.ts';
-import { bundleEntries, flattenedVariantParents, hasFlatEntry, hasOneSurface, isFlatLeafOrKeyword, ownTextEntries } from './overlays/module.ts';
+import { bundleEntries, ownTextEntries } from './overlays/module.ts';
+import { flattenedVariantParents, hasFlatEntry, hasOneSurface, isFlatLeafOrKeyword } from '../compiler/model/ir-surface.ts';
 import type { GrammarRoles, Role } from '../scm/extract-roles.ts';
 
 export interface EmitIrConfig {

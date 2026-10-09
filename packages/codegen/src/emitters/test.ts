@@ -42,9 +42,9 @@ import { buildSeparatedListContentSlot } from './wrap.ts';
 import { refersTo, writesText, type Body } from './render-body.ts';
 import { valueStorageExpr, kindEnumTextExpr } from './factories.ts';
 import { classifyFactoryEmission, leadingOptionsOf, registeredSlots } from './shared.ts';
-import { seatsConfigChild, subFactoriesOf, type SubFactory } from './overlays/sub-factories.ts';
+import { seatsConfigChild, subFactoriesOf, type SubFactory } from '../compiler/model/sub-factories.ts';
 import { collectPolymorphWires, emittedArmPath, type PolymorphWires } from './overlays/polymorphs.ts';
-import { flattenedVariantParents, variantRoutePaths } from './overlays/module.ts';
+import { flattenedVariantParents, variantRoutePaths } from '../compiler/model/ir-surface.ts';
 
 export interface EmitTestsConfig {
 	grammar: string;

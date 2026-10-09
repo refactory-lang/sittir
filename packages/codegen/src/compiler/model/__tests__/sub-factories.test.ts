@@ -1,11 +1,11 @@
-import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT1, SEQ, STRING, SYMBOL } from '../../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
-import type { Rule } from '../../types/rule.ts';
-import type { RawGrammar } from '../../compiler/types.ts';
-import { link } from '../../compiler/link.ts';
-import { normalizeGrammar } from '../../compiler/normalize.ts';
-import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
-import type { NodeMap } from '../../compiler/types.ts';
+import type { Rule } from '../../../types/rule.ts';
+import type { RawGrammar } from '../../types.ts';
+import { link } from '../../link.ts';
+import { normalizeGrammar } from '../../normalize.ts';
+import { assemble, AssembleCtx } from '../../assemble.ts';
+import type { NodeMap } from '../../types.ts';
 import {
 	armConfigKeys,
 	elementsSeatOf,
@@ -13,7 +13,7 @@ import {
 	subFactoriesOf,
 	type NodeArm,
 	type SubFactory
-} from '../overlays/sub-factories.ts';
+} from '../sub-factories.ts';
 
 function nodeArmOf(entries: readonly SubFactory[], name: string): NodeArm {
 	const entry = entries.find((e) => e.name === name);

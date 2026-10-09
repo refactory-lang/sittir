@@ -5,7 +5,7 @@ import { snakeToCamel } from '../compiler/model/node-map.ts';
 import { expandToConcreteParseKinds, isDeclaredSupertype } from './shared.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { collectCatalogKinds, collectKindEntries, findKindEntry, kindDiscriminantExpr, type KindEnumEntry } from './kind-discriminant.ts';
-import { flattenedVariantParents, type FlattenedVariantRoute } from './overlays/module.ts';
+import { flattenedVariantParents, type FlattenedVariantRoute } from '../compiler/model/ir-surface.ts';
 
 export interface EmitIsConfig {
 	grammar: string;
