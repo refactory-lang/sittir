@@ -446,6 +446,20 @@ jobs:
         run: |
           cargo test -p sittir-parity-tests --no-default-features --test typed_read_nesting --target ${{ matrix.target }} -- --nocapture the_typed_read_stays_within_its_pinned_stack_ceilings
           cargo test -p sittir-parity-tests --no-default-features --release --test typed_read_nesting --target ${{ matrix.target }} -- --nocapture the_typed_read_stays_within_its_pinned_stack_ceilings
+      # Master's untyped read, measured per level by master's own harness at
+      # the branch's merge base on this runner: the reference a target's
+      # release row stays at or under. Its `today` line is printed before the
+      # harness looks for a ceiling row, so a target with none still reports.
+      - name: cargo test stack levels of master's untyped read (reference)
+        if: matrix.cross == false
+        continue-on-error: true
+        run: |
+          base=8cf77247672d020b9aae7db5378a71eb9b629a76
+          git fetch --no-tags --depth=1 origin "$base"
+          git worktree add --detach "$RUNNER_TEMP/base" "$base"
+          cd "$RUNNER_TEMP/base"
+          cargo test -p sittir-parity-tests --no-default-features --release --test typed_read_nesting --target ${{ matrix.target }} -- --nocapture the_typed_read_costs_no_more_stack_per_level_than_today_s || true
+          cargo test -p sittir-parity-tests --no-default-features --test typed_read_nesting --target ${{ matrix.target }} -- --nocapture the_typed_read_costs_no_more_stack_per_level_than_today_s
       # T061 — every platform job runs the parity suite (SC-006 gate).
       # On cross-compiled hosts we still invoke the test binary build
       # but skip execution (the resulting binary cannot run on the CI
