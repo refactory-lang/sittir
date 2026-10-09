@@ -161,7 +161,7 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
 		: undefined;
 	const factoryData = buildFactoryMap(nodeMap, kindEntries);
-	const wires = collectPolymorphWires(nodeMap, generatedIdTables, { silent: true });
+	const wires = collectPolymorphWires(nodeMap, { silent: true });
 	const bareAccepts = bareAcceptClosure(nodeMap, kindEntries);
 
 	const nodes: SerializedNode[] = [];
@@ -199,7 +199,7 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 		externals: nodeMap.externals ?? [],
 		extras: nodeMap.extras ?? [],
 		polymorphVariants: factoryData.polymorphVariants,
-		variantRoutes: Object.fromEntries([...variantRoutePaths(flattenedVariantParents(nodeMap, generatedIdTables))].sort(([a], [b]) => compareOrdinal(a, b))),
+		variantRoutes: Object.fromEntries([...variantRoutePaths(flattenedVariantParents(nodeMap))].sort(([a], [b]) => compareOrdinal(a, b))),
 		fieldAliasMap: factoryData.fieldAliasMap,
 		factorySlots: factoryData.factorySlots,
 		innerGapsKeyed: innerGapsKeyed(nodeMap),

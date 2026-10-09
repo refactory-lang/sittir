@@ -55,11 +55,11 @@ export interface BundleEntry {
 }
 
 export function bundleEntries(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): BundleEntry[] {
-	return withMaxArgs(bundleKeyedNodes(nodeMap, generatedIdTables), nodeMap, generatedIdTables);
+	return withMaxArgs(bundleKeyedNodes(nodeMap), nodeMap, generatedIdTables);
 }
 
 export function ownTextEntries(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): BundleEntry[] {
-	return withMaxArgs(ownTextKeyedNodes(nodeMap, generatedIdTables), nodeMap, generatedIdTables);
+	return withMaxArgs(ownTextKeyedNodes(nodeMap), nodeMap, generatedIdTables);
 }
 
 function withMaxArgs(entries: readonly IrKeyedNode[], nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): BundleEntry[] {
@@ -102,7 +102,7 @@ export function emitFactoriesIndex(
 	for (const { exportName } of bundleEntries(config.nodeMap, config.generatedIdTables)) {
 		lines.push(`export const ${exportName}: Hoisted<typeof O.${exportName}> = hoistAs<typeof O.${exportName}>(O.${exportName});`);
 	}
-	for (const { key } of flattenedVariantParents(config.nodeMap, config.generatedIdTables)) {
+	for (const { key } of flattenedVariantParents(config.nodeMap)) {
 		lines.push(`export const ${key}: Hoisted<typeof O.${key}> = hoistAs<typeof O.${key}>(O.${key});`);
 	}
 	lines.push('');

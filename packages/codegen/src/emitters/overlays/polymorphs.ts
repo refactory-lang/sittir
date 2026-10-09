@@ -187,12 +187,8 @@ export interface PolymorphWires {
 	readonly routes: Map<string, number | undefined>;
 }
 
-export function collectPolymorphWires(
-	nodeMap: NodeMap,
-	generatedIdTables?: GeneratedIdTables,
-	options: { silent?: boolean } = {}
-): PolymorphWires {
-	const routes = armRoutesOf(nodeMap, generatedIdTables);
+export function collectPolymorphWires(nodeMap: NodeMap, options: { silent?: boolean } = {}): PolymorphWires {
+	const routes = armRoutesOf(nodeMap);
 	const { kindEntries, isEmitted, keyByKind, bundledKinds, flattened } = routes;
 	const coerceEmitted: CoerceEmitted = (node) =>
 		node.fromFunctionName !== undefined && classifyFromEmission(node.kind, node, { nodeMap, kindEntries }) === 'emit';
@@ -1030,7 +1026,7 @@ function entryRowsByIrPath(
 
 export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTables?: GeneratedIdTables; wires?: PolymorphWires }): PolymorphsOverlay {
 	const { nodeMap, generatedIdTables } = config;
-	const wires = config.wires ?? collectPolymorphWires(nodeMap, generatedIdTables);
+	const wires = config.wires ?? collectPolymorphWires(nodeMap);
 	const rowKindByPath = new Map<string, string>();
 	const sharedSetByPath = new Map<string, string>();
 
@@ -1173,7 +1169,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 	}
 
 	const defaultRoutes = new Map<string, Pick<VariantRoute, 'kind' | 'strict' | 'coerce' | 'set' | 'max'>>();
-	for (const parent of flattenedVariantParents(nodeMap, generatedIdTables)) {
+	for (const parent of flattenedVariantParents(nodeMap)) {
 		const lines: string[] = [];
 		const types: string[] = [];
 		const uses = new Set<string>();

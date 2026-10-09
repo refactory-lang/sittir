@@ -362,7 +362,7 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	lines.push('// <TypeName>.Config / .Bound / .Parsed / .Loose alongside using <TypeName> as a type.');
 	const refineInfoByKind = new Map<string, RefineKindInfo>();
 	for (const info of refineInfos ?? []) refineInfoByKind.set(info.kind, info);
-	const wires = config.wires ?? collectPolymorphWires(nodeMap, generatedIdTables, { silent: true });
+	const wires = config.wires ?? collectPolymorphWires(nodeMap, { silent: true });
 	for (const kind of namespaceKinds) {
 		const node = nodeMap.nodes.get(kind)!;
 		emitNamespaceSugarBlock(

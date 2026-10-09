@@ -1,5 +1,6 @@
 import { evaluatePackage } from './evaluate-package.ts';
 import type { GrammarPackage } from '../grammars.ts';
+import { stampIrSurface } from './model/ir-surface.ts';
 import { hydrateSlotRefs, type AssembledNodeMap } from './assemble.ts';
 import { conflictRecords } from './diagnostics/conflicts.ts';
 import { dynamicPrecedenceRecords } from './diagnostics/dynamic-precedence.ts';
@@ -54,6 +55,7 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 		reportedAbsentNames: nodeMap.droppedKinds,
 		grammar
 	});
+	stampIrSurface(nodeMap, linked.generatedIdTables);
 
 	return {
 		grammar,

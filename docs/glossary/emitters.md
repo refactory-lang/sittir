@@ -2459,25 +2459,6 @@ Emits the role-named getters on `synonym` (`function`, `class`, `method`, `modul
  */
 ```
 
-### `packages/codegen/src/emitters/ir.ts::groupNameFor`
-
-```text
-/**
- * Supertype kind → group namespace name.
- *   `_expression`            → `expression`
- *   `_declaration_statement` → `declarationStatement`
- *   `_literal_pattern`       → `literalPattern`
- */
-```
-
-### `packages/codegen/src/emitters/ir.ts::memberKeyFor`
-
-`memberKind`'s short key within `supertypeKind`'s group namespace:
-`compiler/variant-structural.ts`'s `supertypeMemberName`, camelCased. A
-member that reduces to the empty string or to the supertype's own name
-falls back to the bare kind before camelCasing, so no member key is ever
-empty or a stutter of its group's name.
-
 ### `packages/codegen/src/emitters/ir.ts::resolveRoleNodes`
 
 ```text
@@ -11608,17 +11589,9 @@ The argument row of an own-text leaf, as both its `BuildArgs` and its `LooseArgs
 
 ### `packages/codegen/src/emitters/ir.ts::emitIr`
 
-No emitted code attaches properties to a factory: a factory is shared under
-every key that reaches it, so a mutation made for one key shows under all
-of them. Only a declared supertype gets a group. A flattened parent whose key is also
-a flat leaf's key throws (`flattenedVariantParents`), as does a supertype
-group whose name is a flat key: two surfaces never share one `ir` key.
+Prints the `ir` module from the model's plan (`irPlanOf`): the supertype groups and the standalone variant parents as top-level consts, then the frozen `ir` table — bundled node factories, the all-minted variant parents, keyword factories, own-text leaves, leaf node factories, the group namespaces and `synonym`. Which kinds appear, under what key and through which factory export is the plan's decision (`deriveIrPlan`); the emitter adds only the role synonyms, which come from the grammar's roles rather than the model.
 
-A group lists a surface-hidden member only when it is a punctuation leaf
-with a builder (`isBuilderTextLeaf`), which gives `ir.layout` its
-members; any other surface-hidden member stays out of the group.
-
-The `ir` namespace's node-factory members come from `bundleEntries` — the same SSOT the bundle module and the overlay wire map consume — so `ir`, the bundles, and `keyByKind` can never disagree on which kinds are surfaced or under what key. Aliased-hidden kinds therefore appear in `ir` under their visible-style keys the moment they qualify for a bundle; `ir` adds only the group-name dedupe on top. Keyword and leaf members keep their own loops (leaves have no coercers, so no bundle entry exists to consume).
+No emitted code attaches properties to a factory: a factory is shared under every key that reaches it, so a mutation made for one key shows under all of them.
 
 #### body
 
@@ -11672,20 +11645,6 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
 // Explicit typeof-composed surface — same TS7056 rationale as the
 // hoisted bundle consts above.
 ```
-
-A flattened parent's namespace is its variant routes. The supertype-group namespaces (`ir.expression.binary`) skip flattened parents — a group would name members by subtype suffix and shadow the routes — and a flattened parent that is a member of another supertype's group appears there as its route object (`ir.statement.impl` is `ir.implItem`).
-
-A flattened parent not already claimed as a group name gets one of three
-treatments, by whether every one of its routes is `minted` (§
-`compiler/model/ir-surface.ts::flattenedVariantParents`). All-minted: the parent's key
-is only recorded (`variantParentKeys`) and later placed straight into `ir`'s
-body as `<key>: F.<key>` — no standalone top-level export, since every
-variant is reachable only through this parent anyway. Any non-minted
-member: the parent gets a standalone top-level export like a grouped
-namespace, so a route to a shared kind stays reachable without going
-through `ir`. If that export's key collides with a flat leaf/keyword
-factory's own `ir` key, the parent's route object is attached onto that
-leaf's factory instead of shadowing it (`attachProps(<leaf>, F.<key>)`).
 
 `ir` and `synonym` are frozen tables: the emitted module is the one place each is built, and nothing writes to either afterwards.
 

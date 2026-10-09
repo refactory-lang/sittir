@@ -1,5 +1,6 @@
 import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { execFileSync } from 'node:child_process';
+import { stampIrSurface } from '../../compiler/model/ir-surface.ts';
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
@@ -59,12 +60,14 @@ function buildNodeMap(rules: Record<string, Rule<'evaluate'>>, generatedIdTables
 	};
 	const linked = link(raw, { generatedIdTables });
 	const normalized = normalizeGrammar(linked);
-	return assemble(AssembleCtx.from(normalized, generatedIdTables));
+	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
+	stampIrSurface(nodeMap, generatedIdTables);
+	return nodeMap;
 }
 
 function seatedRows(nodeMap: NodeMap, kind: string): { readonly buildArgs: string; readonly looseArgs: string } {
 	const node = nodeMap.nodes.get(kind)!;
-	const rows = seatedRowsOf(node, collectPolymorphWires(nodeMap, undefined, { silent: true }), builtTypeSurfaceOf(node, nodeMap, undefined)!);
+	const rows = seatedRowsOf(node, collectPolymorphWires(nodeMap, { silent: true }), builtTypeSurfaceOf(node, nodeMap, undefined)!);
 	if (rows === undefined) throw new Error(`'${kind}' has no seated rows`);
 	return rows;
 }
@@ -421,10 +424,10 @@ describe('a visible wrapper declared flattened seats on its parent', () => {
 		});
 
 	it('passes a value that is already the wrapper through and builds anything else into it', () => {
-		const out = emitPolymorphsOverlay({
-			nodeMap: wrapperGrammar(),
-			generatedIdTables: { kindIds: { root: 1, arm: 2, wrapper: 3 }, sourceArtifact: 'test' }
-		}).text;
+		const nodeMap = wrapperGrammar();
+		const generatedIdTables: GeneratedIdTables = { kindIds: { root: 1, arm: 2, wrapper: 3 }, sourceArtifact: 'test' };
+		stampIrSurface(nodeMap, generatedIdTables);
+		const out = emitPolymorphsOverlay({ nodeMap, generatedIdTables }).text;
 		expect(out).toContain('const arm$flatten$pattern =');
 		expect(out).toContain('(parent: PF, child: CF, wrapperId: number) =>');
 		expect(out).toContain('const own = _o(config)["pattern"];');
@@ -544,6 +547,7 @@ describe('a keyword literal arm named by its text', () => {
 			},
 			{ kindIds: { and_keyword: keyword(3, 'and_keyword', 'and'), or_keyword: keyword(4, 'or_keyword', 'or') }, sourceArtifact: 'test' }
 		);
+		stampIrSurface(nodeMap);
 		const out = emitPolymorphsOverlay({ nodeMap }).text;
 		expect(out).toContain("const junction$and$strict = junction$and(F.buildJunction, 'and');");
 		expect(out).toContain("const junction$or$strict = junction$or(F.buildJunction, 'or');");
@@ -565,6 +569,7 @@ describe('a keyword literal arm named by its text', () => {
 			},
 			{ kindIds: { and_keyword: keyword(3, 'and_keyword', 'and') }, sourceArtifact: 'test' }
 		);
+		stampIrSurface(nodeMap);
 		const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 		const out = emitPolymorphsOverlay({ nodeMap }).text;
 		expect(warn).toHaveBeenCalledWith(expect.stringMatching(/^\[codegen\] junction: sub-factory and skipped \(ambiguous\)/));

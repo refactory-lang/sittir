@@ -9,16 +9,20 @@ import {
 	AssembledSupertype,
 	FACTORY_NAME_RESERVED,
 	isBuilderTextLeaf,
+	isBuilderlessPunctuationLeaf,
 	isKindIdStored,
 	isNodeRef,
+	isSurfaceHiddenIn,
 	storageKindOfRef,
 	type AssembledNode
 } from './node-map.ts';
 import { collectCatalogKinds, collectKindEntries, hasCatalogEntry, type KindEnumEntry } from '../../emitters/kind-discriminant.ts';
 import { lowerCamelCase } from './casing.ts';
-import { polymorphVisibleName } from '../../dsl/arm-names.ts';
-import { classifyFactoryEmission, classifyFromEmission, isValidIdent, ownTextLeaf } from '../../emitters/shared.ts';
+import { polymorphVisibleName, supertypeMemberName } from '../../dsl/arm-names.ts';
+import { classifyFactoryEmission, classifyFromEmission, isDeclaredSupertype, isValidIdent, ownTextLeaf } from '../../emitters/shared.ts';
 import { subFactoriesOf, variantArmsOf, type SubFactory, type SubFactoryDiagnostic } from './sub-factories.ts';
+
+type KindEntries = ReturnType<typeof collectKindEntries> | undefined;
 
 export interface IrKeyedNode {
 	readonly key: string;
@@ -26,18 +30,15 @@ export interface IrKeyedNode {
 	readonly node: AssembledNode;
 }
 
-export function bundleKeyedNodes(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): IrKeyedNode[] {
-	return irKeyedNodes(nodeMap, generatedIdTables).filter((entry) => !hasOneSurface(entry.node));
+export function bundleKeyedNodes(nodeMap: NodeMap): readonly IrKeyedNode[] {
+	return irSurfaceOf(nodeMap).bundles;
 }
 
-export function ownTextKeyedNodes(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): IrKeyedNode[] {
-	return irKeyedNodes(nodeMap, generatedIdTables).filter((entry) => hasOneSurface(entry.node));
+export function ownTextKeyedNodes(nodeMap: NodeMap): readonly IrKeyedNode[] {
+	return irSurfaceOf(nodeMap).ownText;
 }
 
-function irKeyedNodes(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): IrKeyedNode[] {
-	const kindEntries = generatedIdTables
-		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
-		: undefined;
+function irKeyedNodes(nodeMap: NodeMap, kindEntries: KindEntries): IrKeyedNode[] {
 	const used = new Set<string>();
 	const out: IrKeyedNode[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
@@ -125,23 +126,28 @@ export function hasFlatEntry(
 	return isFlatLeafOrKeyword(kind, node, kindEntries) && node.annotations?.tokenForm !== true;
 }
 
-function flatLeafKindByKey(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): ReadonlyMap<string, string> {
-	const kindEntries = generatedIdTables
-		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
-		: undefined;
+function flatLeafKindByKey(nodeMap: NodeMap, kindEntries: KindEntries): ReadonlyMap<string, string> {
 	const out = new Map<string, string>();
 	for (const [kind, node] of nodeMap.nodes) if (isFlatLeafOrKeyword(kind, node, kindEntries)) out.set(node.irKey!, kind);
 	return out;
 }
 
-export function flattenedVariantParents(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): FlattenedVariantParent[] {
+export function flattenedVariantParents(nodeMap: NodeMap): readonly FlattenedVariantParent[] {
+	return irSurfaceOf(nodeMap).flattened;
+}
+
+function deriveFlattenedVariantParents(
+	nodeMap: NodeMap,
+	kindEntries: KindEntries,
+	bundles: readonly IrKeyedNode[]
+): FlattenedVariantParent[] {
 	const referrers = referrersOf(nodeMap);
 	const mintedBy = (parent: string, child: string, variant: string): boolean => {
 		const refs = referrers.get(child);
 		return child === polymorphVisibleName(parent, variant) && refs !== undefined && refs.size === 1 && refs.has(parent);
 	};
-	const taken = new Set(bundleKeyedNodes(nodeMap, generatedIdTables).map((entry) => entry.key));
-	const leafKinds = flatLeafKindByKey(nodeMap, generatedIdTables);
+	const taken = new Set(bundles.map((entry) => entry.key));
+	const leafKinds = flatLeafKindByKey(nodeMap, kindEntries);
 	const out: FlattenedVariantParent[] = [];
 	const keyByParent = new Map<string, string>();
 	const pending = [...nodeMap.nodes].filter(
@@ -252,22 +258,28 @@ export interface ArmRoutes {
 	readonly byKind: ReadonlyMap<string, ArmRouteSet>;
 }
 
-export function armRoutesOf(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): ArmRoutes {
-	const kindEntries = generatedIdTables
-		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
-		: undefined;
+export function armRoutesOf(nodeMap: NodeMap): ArmRoutes {
+	return irSurfaceOf(nodeMap).armRoutes;
+}
+
+function deriveArmRoutes(
+	nodeMap: NodeMap,
+	kindEntries: KindEntries,
+	bundles: readonly IrKeyedNode[],
+	flattenedParents: readonly FlattenedVariantParent[]
+): ArmRoutes {
 	const isEmitted = (kind: string): boolean => {
 		const node = nodeMap.nodes.get(kind);
 		return node !== undefined && classifyFactoryEmission(kind, node, { nodeMap, kindEntries }) === 'emit';
 	};
-	const keyByKind = new Map(bundleKeyedNodes(nodeMap, generatedIdTables).map((e) => [e.node.kind, e.exportName]));
+	const keyByKind = new Map(bundles.map((e) => [e.node.kind, e.exportName]));
 	const bundledKinds = new Set(keyByKind.keys());
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!isHoistedCompound(node) || node.factoryName === undefined || !isValidIdent(node.factoryName)) continue;
 		if (node.rawFactoryName === undefined || !isEmitted(kind) || keyByKind.has(kind)) continue;
 		keyByKind.set(kind, node.factoryName);
 	}
-	const flattened = new Map(flattenedVariantParents(nodeMap, generatedIdTables).map((parent) => [parent.node.kind, parent]));
+	const flattened = new Map(flattenedParents.map((parent) => [parent.node.kind, parent]));
 	for (const { key, node } of flattened.values()) if (!keyByKind.has(node.kind)) keyByKind.set(node.kind, key);
 
 	const byKind = new Map<string, ArmRouteSet>();
@@ -320,4 +332,164 @@ export function armRoutesOf(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTab
 
 	for (const node of nodeMap.nodes.values()) visit(node);
 	return { kindEntries, isEmitted, keyByKind, bundledKinds, flattened, byKind };
+}
+
+export interface IrMember {
+	readonly key: string;
+	readonly node: AssembledNode;
+	readonly factory: string;
+}
+
+export interface IrGroup {
+	readonly key: string;
+	readonly node: AssembledSupertype;
+	readonly members: readonly IrMember[];
+}
+
+export interface IrVariantParent {
+	readonly key: string;
+	readonly node: AssembledSupertype;
+	readonly standalone: boolean;
+}
+
+export interface IrPlan {
+	readonly groups: readonly IrGroup[];
+	readonly variantParents: readonly IrVariantParent[];
+	readonly bundles: readonly IrMember[];
+	readonly keywords: readonly IrMember[];
+	readonly ownText: readonly IrMember[];
+	readonly patterns: readonly IrMember[];
+}
+
+export function irPlanOf(nodeMap: NodeMap): IrPlan {
+	return irSurfaceOf(nodeMap).plan;
+}
+
+export function memberKeyFor(memberKind: string, supertypeKind: string): string {
+	return lowerCamelCase(supertypeMemberName(memberKind, supertypeKind));
+}
+
+function groupNameFor(supertypeKind: string): string {
+	const bare = supertypeKind.replace(/^_+/, '');
+	return lowerCamelCase(bare);
+}
+
+function deriveIrPlan(
+	nodeMap: NodeMap,
+	kindEntries: KindEntries,
+	bundles: readonly IrKeyedNode[],
+	ownText: readonly IrKeyedNode[],
+	flattenedParents: readonly FlattenedVariantParent[]
+): IrPlan {
+	const bundleKeyByKind = new Map(bundles.map((e) => [e.node.kind, e.exportName]));
+	const flatKeys = new Set([...bundles, ...ownText].map((entry) => entry.key));
+	for (const [kind, node] of nodeMap.nodes) if (isFlatLeafOrKeyword(kind, node, kindEntries)) flatKeys.add(node.irKey!);
+	const flattenedKinds = new Set(flattenedParents.map((parent) => parent.node.kind));
+	const flattenedKeyByKind = new Map(flattenedParents.map((parent) => [parent.node.kind, parent.key] as const));
+	const usedGroupNames = new Set<string>();
+
+	const groups: IrGroup[] = [];
+	for (const [kind, node] of nodeMap.nodes) {
+		if (!isDeclaredSupertype(node) || flattenedKinds.has(kind)) continue;
+		const groupName = groupNameFor(kind);
+		if (!isValidIdent(groupName) || usedGroupNames.has(groupName)) continue;
+		const members: IrMember[] = [];
+		const usedMemberKeys = new Set<string>();
+		for (const subKind of node.subtypeNames) {
+			const sub = nodeMap.nodes.get(subKind);
+			if (!sub) continue;
+			if (isSurfaceHiddenIn(subKind, nodeMap) && !isBuilderTextLeaf(sub)) continue;
+			const flattenedKey = flattenedKeyByKind.get(subKind);
+			if (flattenedKey !== undefined) {
+				const memberKey = memberKeyFor(subKind, kind);
+				if (!isValidIdent(memberKey) || usedMemberKeys.has(memberKey)) continue;
+				usedMemberKeys.add(memberKey);
+				members.push({ key: memberKey, node: sub, factory: flattenedKey });
+				continue;
+			}
+			if (sub.factoryInline) continue;
+			if (!sub.rawFactoryName) continue;
+			if (sub instanceof AssembledSupertype || isBuilderlessPunctuationLeaf(sub)) continue;
+			if ((sub instanceof AbstractAssembledCompound || sub instanceof AssembledList) && !hasOneSurface(sub) && !bundleKeyByKind.has(subKind))
+				continue;
+			if (kindEntries && !hasCatalogEntry(kindEntries, subKind)) continue;
+			const memberKey = memberKeyFor(subKind, kind);
+			if (!isValidIdent(memberKey) || usedMemberKeys.has(memberKey)) continue;
+			usedMemberKeys.add(memberKey);
+			if (hasOneSurface(sub)) {
+				members.push({ key: memberKey, node: sub, factory: sub.rawFactoryName });
+			} else if (sub instanceof AbstractAssembledCompound || sub instanceof AssembledList) {
+				if (!sub.fromFunctionName) continue;
+				const bundleKey = bundleKeyByKind.get(subKind);
+				if (bundleKey === undefined) {
+					throw new Error(`[ir] no bundle entry for kind '${subKind}' — flat/group emission and bundleEntries disagree`);
+				}
+				members.push({ key: memberKey, node: sub, factory: bundleKey });
+			}
+		}
+		if (members.length === 0) continue;
+		usedGroupNames.add(groupName);
+		if (flatKeys.has(groupName)) {
+			throw new Error(`ir: the supertype group '${groupName}' shares its key with a flat factory`);
+		}
+		groups.push({ key: groupName, node, members });
+	}
+
+	const variantParents: IrVariantParent[] = [];
+	for (const { key, node, variants } of flattenedParents) {
+		if (usedGroupNames.has(key)) continue;
+		if (variants.every((route) => route.minted === true)) {
+			variantParents.push({ key, node, standalone: false });
+			continue;
+		}
+		usedGroupNames.add(key);
+		variantParents.push({ key, node, standalone: true });
+	}
+
+	const flat = (entries: readonly IrKeyedNode[], factory: (entry: IrKeyedNode) => string): IrMember[] =>
+		entries.filter((entry) => !usedGroupNames.has(entry.key)).map((entry) => ({ key: entry.key, node: entry.node, factory: factory(entry) }));
+	const leaves = (admits: (node: AssembledNode) => boolean): IrMember[] => {
+		const out: IrMember[] = [];
+		for (const [kind, node] of nodeMap.nodes) {
+			if (!admits(node) || !hasFlatEntry(kind, node, kindEntries)) continue;
+			if (usedGroupNames.has(node.irKey!)) continue;
+			out.push({ key: node.irKey!, node, factory: node.rawFactoryName! });
+		}
+		return out;
+	};
+	return {
+		groups,
+		variantParents,
+		bundles: flat(bundles, (entry) => entry.exportName),
+		keywords: leaves(isBuilderTextLeaf),
+		ownText: flat(ownText, (entry) => entry.node.rawFactoryName!),
+		patterns: leaves((node) => node instanceof AssembledPattern)
+	};
+}
+
+export interface IrSurface {
+	readonly bundles: readonly IrKeyedNode[];
+	readonly ownText: readonly IrKeyedNode[];
+	readonly flattened: readonly FlattenedVariantParent[];
+	readonly armRoutes: ArmRoutes;
+	readonly plan: IrPlan;
+}
+
+export function stampIrSurface(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): void {
+	const kindEntries = generatedIdTables
+		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
+		: undefined;
+	const keyed = irKeyedNodes(nodeMap, kindEntries);
+	const bundles = keyed.filter((entry) => !hasOneSurface(entry.node));
+	const ownText = keyed.filter((entry) => hasOneSurface(entry.node));
+	const flattened = deriveFlattenedVariantParents(nodeMap, kindEntries, bundles);
+	const armRoutes = deriveArmRoutes(nodeMap, kindEntries, bundles, flattened);
+	const plan = deriveIrPlan(nodeMap, kindEntries, bundles, ownText, flattened);
+	nodeMap.irSurface = { bundles, ownText, flattened, armRoutes, plan };
+}
+
+export function irSurfaceOf(nodeMap: NodeMap): IrSurface {
+	const surface = nodeMap.irSurface;
+	if (surface === undefined) throw new Error(`ir surface: '${nodeMap.name}' was not stamped (compileGrammar stamps it once slot refs are hydrated)`);
+	return surface;
 }

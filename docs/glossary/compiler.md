@@ -1625,7 +1625,7 @@ Evaluates the grammar package through `evaluatePackage`
 and gates it through `diagnoseGrammar`, throwing `GrammarDiagnosticError` with the blocked
 records and every record the gate saw when it does not pass. The config names the package, not the grammar, so the
 caller resolves it once. Hydrate then runs on the collected grammar with
-`droppedKinds` as the names whose absence is already reported.
+`droppedKinds` as the names whose absence is already reported, and the `ir` surface is stamped on the hydrated node map (`stampIrSurface`).
 
 ### `packages/codegen/src/compiler/compile.ts::diagnoseGrammar`
 
@@ -2184,6 +2184,10 @@ evaluation: a base tree-sitter accepts always evaluates, and one it rejects is r
 
 The base evaluated with no wire config, before and after enrich (`EvaluationStages`); absent when the grammar does
 not depart from its base (`departsFromBase`).
+
+### `packages/codegen/src/compiler/types.ts::NodeMap.irSurface`
+
+What the model decided about `ir` (`IrSurface`), stamped once by `stampIrSurface` after slot refs are hydrated and read by every emitter through `irSurfaceOf`.
 
 ### `packages/codegen/src/compiler/types.ts::EvaluationStages`
 

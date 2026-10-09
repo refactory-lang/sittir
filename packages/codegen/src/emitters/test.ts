@@ -103,8 +103,8 @@ export function emitTests(config: EmitTestsConfig): string {
 	const kindEntries = config.generatedIdTables
 		? collectKindEntries(allKinds, nodeMap, config.generatedIdTables)
 		: undefined;
-	const polymorphWires = collectPolymorphWires(nodeMap, config.generatedIdTables, { silent: true });
-	const routePaths = variantRoutePaths(flattenedVariantParents(nodeMap, config.generatedIdTables));
+	const polymorphWires = collectPolymorphWires(nodeMap, { silent: true });
+	const routePaths = variantRoutePaths(flattenedVariantParents(nodeMap));
 	const { renderBodies } = config;
 	const writesTextOf = (kind: string): boolean => renderBodies === undefined || rendersText(kind, nodeMap, renderBodies, new Set());
 

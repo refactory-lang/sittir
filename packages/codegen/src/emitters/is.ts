@@ -141,7 +141,7 @@ export function emitIs(config: EmitIsConfig): string {
 		structuralKinds.push({ kind, typeName: node.typeName, guardKey, member, numericId });
 	}
 
-	const variantParents = kindEntries ? flattenedVariantParents(nodeMap, generatedIdTables) : [];
+	const variantParents = kindEntries ? flattenedVariantParents(nodeMap) : [];
 	const supertypeKindByKey = new Map(variantParents.map((parent) => [parent.key, parent.node.kind]));
 
 	const supertypes: Array<{
