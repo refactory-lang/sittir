@@ -196,6 +196,10 @@ function findNodeAt(node: TSNode, kind: string, offset: number): TSNode | null {
  * changed spelling or inserted character inside a leaf is a mismatch. Named
  * children with children recurse.
  *
+ * Extras (comments) are not children here: they are compared once, at the
+ * root, as one ordered sequence of (kind, text) over each subtree in source
+ * order, so a comment seated under another parent keeps its bytes' verdict.
+ *
  * Returns `null` if the subtrees match, otherwise a short human-
  * readable diff path explaining the first mismatch.
  */
@@ -210,7 +214,39 @@ function collectVisibleChildren(n: TSNode): TSNode[] {
 	return out;
 }
 
+function extrasOf(n: TSNode, out: [string, string][] = []): [string, string][] {
+	if (n.isNamed && n.isExtra) {
+		out.push([n.type, n.text]);
+		return out;
+	}
+	for (let i = 0; i < n.childCount; i++) {
+		const c = n.child(i);
+		if (c) extrasOf(c, out);
+	}
+	return out;
+}
+
+function extrasDiff(a: TSNode, b: TSNode): string | null {
+	const aExtras = extrasOf(a);
+	const bExtras = extrasOf(b);
+	const at = aExtras.findIndex(([kind, text], i) => bExtras[i]?.[0] !== kind || bExtras[i]?.[1] !== text);
+	if (at < 0 && aExtras.length === bExtras.length) return null;
+	const show = (e: [string, string] | undefined): string => (e === undefined ? 'none' : `${e[0]} ${JSON.stringify(e[1])}`);
+	const index = at < 0 ? Math.min(aExtras.length, bExtras.length) : at;
+	return `extras[${index}]: ${show(aExtras[index])} ≠ ${show(bExtras[index])}`;
+}
+
 export function astStructuralDiff(
+	a: TSNode,
+	b: TSNode,
+	path: string = '',
+	variantChildKinds?: ReadonlyMap<string, ReadonlySet<string>>
+): string | null {
+	const structural = structuralDiff(a, b, path, variantChildKinds);
+	return structural ?? (path === '' ? extrasDiff(a, b) : null);
+}
+
+function structuralDiff(
 	a: TSNode,
 	b: TSNode,
 	path: string = '',
@@ -286,7 +322,7 @@ export function astStructuralDiff(
 			continue;
 		}
 		// Named child — recurse.
-		const sub = astStructuralDiff(ac, bc, `${path || a.type}[${i}].${ac.type}`, variantChildKinds);
+		const sub = structuralDiff(ac, bc, `${path || a.type}[${i}].${ac.type}`, variantChildKinds);
 		if (sub) return sub;
 	}
 	return null;
