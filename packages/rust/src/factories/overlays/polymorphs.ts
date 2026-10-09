@@ -338,6 +338,24 @@ export const typeParameters = Object.freeze({
 	coerce: typeof typeParameters$seatedCoerce;
 };
 
+const useWildcard$flatten$useWildcardGroup =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: unknown, options?: unknown): ReturnType<PF> =>
+		config === undefined || _built(config)
+			? _fwd<ReturnType<PF>>(parent, config, options)
+			: _fwd<ReturnType<PF>>(parent, _c(child)(config), options);
+const useWildcard$seated: (...args: T.UseWildcard.BuildArgs) => ReturnType<typeof F.buildUseWildcard> =
+	useWildcard$flatten$useWildcardGroup(F.buildUseWildcard, F.buildUseWildcardGroup);
+const useWildcard$seatedCoerce: (...args: T.UseWildcard.LooseArgs) => ReturnType<typeof C.coerceToUseWildcard> =
+	useWildcard$flatten$useWildcardGroup(C.coerceToUseWildcard, C.coerceToUseWildcardGroup);
+export const useWildcard = Object.freeze({
+	...B.useWildcard,
+	...bundle(useWildcard$seated, useWildcard$seatedCoerce, { key: 'useWildcard', max: 1 })
+}) as unknown as Omit<typeof B.useWildcard, 'strict' | 'coerce'> & {
+	strict: typeof useWildcard$seated;
+	coerce: typeof useWildcard$seatedCoerce;
+};
+
 const functionType$traitForm =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(

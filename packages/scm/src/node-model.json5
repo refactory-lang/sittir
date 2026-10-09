@@ -1084,7 +1084,11 @@
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "grouping_group",
-              "parseKind": "grouping_group"
+              "parseKind": "grouping_group",
+              "seat": {
+                "kind": "grouping_group",
+                "shape": "elements"
+              }
             }
           ]
         },
@@ -1122,6 +1126,10 @@
       "factoryName": "groupingGroup",
       "irKey": "groupingGroup",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "seated": true,
       "slots": [
         {
           "name": "group_expression",
@@ -1171,6 +1179,7 @@
           ]
         }
       ],
+      "name": "grouping_group",
       "factoryShape": "config",
       "factoryFields": [
         "group_expression",
@@ -1302,6 +1311,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "quantifier",
@@ -1525,6 +1535,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "anchor",
@@ -1633,6 +1644,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "anchor",
@@ -1706,6 +1718,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "name",
@@ -1792,6 +1805,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "supertype",

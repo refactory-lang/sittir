@@ -237,9 +237,6 @@ export const patterns: Hoisted<typeof O.patterns> = hoistAs<typeof O.patterns>(O
 export const structPatternElements: Hoisted<typeof O.structPatternElements> = hoistAs<typeof O.structPatternElements>(
 	O.structPatternElements
 );
-export const useWildcardGroup: Hoisted<typeof O.useWildcardGroup> = hoistAs<typeof O.useWildcardGroup>(
-	O.useWildcardGroup
-);
 export const macroDefinition: Hoisted<typeof O.macroDefinition> = hoistAs<typeof O.macroDefinition>(O.macroDefinition);
 export const tokenTreePattern: Hoisted<typeof O.tokenTreePattern> = hoistAs<typeof O.tokenTreePattern>(
 	O.tokenTreePattern

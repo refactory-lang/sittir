@@ -308,15 +308,6 @@ export const ambientDeclarationModule: Hoisted<typeof O.ambientDeclarationModule
 export const objectTypeContent: Hoisted<typeof O.objectTypeContent> = hoistAs<typeof O.objectTypeContent>(
 	O.objectTypeContent
 );
-export const exportStatementNamespaceExport: Hoisted<typeof O.exportStatementNamespaceExport> = hoistAs<
-	typeof O.exportStatementNamespaceExport
->(O.exportStatementNamespaceExport);
-export const exportStatementTypeExport: Hoisted<typeof O.exportStatementTypeExport> = hoistAs<
-	typeof O.exportStatementTypeExport
->(O.exportStatementTypeExport);
-export const exportStatementEqualsExport: Hoisted<typeof O.exportStatementEqualsExport> = hoistAs<
-	typeof O.exportStatementEqualsExport
->(O.exportStatementEqualsExport);
 export const declaration: Hoisted<typeof O.declaration> = hoistAs<typeof O.declaration>(O.declaration);
 export const importSpecifier: Hoisted<typeof O.importSpecifier> = hoistAs<typeof O.importSpecifier>(O.importSpecifier);
 export const variableDeclarator: Hoisted<typeof O.variableDeclarator> = hoistAs<typeof O.variableDeclarator>(

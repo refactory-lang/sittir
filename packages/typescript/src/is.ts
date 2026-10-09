@@ -499,15 +499,6 @@ export interface IsGuards {
 	objectTypeContent<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ObjectTypeContent };
-	exportStatementNamespaceExport<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementNamespaceExport };
-	exportStatementTypeExport<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementTypeExport };
-	exportStatementEqualsExport<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementEqualsExport };
 	statementIdentifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StatementIdentifier };
@@ -1507,9 +1498,6 @@ export const is = Object.freeze({
 	ambientDeclarationGlobal: _g(TSKindId.AmbientDeclarationGlobal),
 	ambientDeclarationModule: _g(TSKindId.AmbientDeclarationModule),
 	objectTypeContent: _g(TSKindId.ObjectTypeContent),
-	exportStatementNamespaceExport: _g(TSKindId.ExportStatementNamespaceExport),
-	exportStatementTypeExport: _g(TSKindId.ExportStatementTypeExport),
-	exportStatementEqualsExport: _g(TSKindId.ExportStatementEqualsExport),
 	statementIdentifier: _g(TSKindId.StatementIdentifier),
 	shorthandPropertyIdentifier: _g(TSKindId.ShorthandPropertyIdentifier),
 	shorthandPropertyIdentifierPattern: _g(TSKindId.ShorthandPropertyIdentifierPattern),

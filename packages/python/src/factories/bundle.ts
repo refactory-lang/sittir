@@ -255,7 +255,6 @@ export const printStatementChevron = bundle(F.buildPrintStatementChevron, C.coer
 	max: 1
 });
 export const printStatementPlain = bundle(F.buildPrintStatementPlain, C.coerceToPrintStatementPlain);
-export const parenthesizedImportList = bundle(F.buildParenthesizedImportList, C.coerceToParenthesizedImportList);
 export const comprehensionClauses = bundle(F.buildComprehensionClauses, C.coerceToComprehensionClauses);
 export const expressionStatementTuple = bundle(F.buildExpressionStatementTuple, C.coerceToExpressionStatementTuple);
 export const withClauseBare = bundle(F.buildWithClauseBare, C.coerceToWithClauseBare);

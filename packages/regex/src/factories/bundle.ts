@@ -62,4 +62,3 @@ export const unicodePropertyValueExpression = bundle(
 	C.coerceToUnicodePropertyValueExpression,
 	{ key: 'unicodePropertyValueExpression', max: 1 }
 );
-export const termGroup = bundle(F.buildTermGroup, C.coerceToTermGroup, { key: 'termGroup', max: 1 });

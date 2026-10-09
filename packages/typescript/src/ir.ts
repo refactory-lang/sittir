@@ -392,9 +392,6 @@ export const ir: {
 	readonly ambientDeclarationGlobal: typeof F.ambientDeclarationGlobal;
 	readonly ambientDeclarationModule: typeof F.ambientDeclarationModule;
 	readonly objectTypeContent: typeof F.objectTypeContent;
-	readonly exportStatementNamespaceExport: typeof F.exportStatementNamespaceExport;
-	readonly exportStatementTypeExport: typeof F.exportStatementTypeExport;
-	readonly exportStatementEqualsExport: typeof F.exportStatementEqualsExport;
 	readonly importSpecifier: typeof F.importSpecifier;
 	readonly variableDeclarator: typeof F.variableDeclarator;
 	readonly forHeader: typeof F.forHeader;
@@ -610,9 +607,6 @@ export const ir: {
 	ambientDeclarationGlobal: F.ambientDeclarationGlobal,
 	ambientDeclarationModule: F.ambientDeclarationModule,
 	objectTypeContent: F.objectTypeContent,
-	exportStatementNamespaceExport: F.exportStatementNamespaceExport,
-	exportStatementTypeExport: F.exportStatementTypeExport,
-	exportStatementEqualsExport: F.exportStatementEqualsExport,
 	importSpecifier: F.importSpecifier,
 	variableDeclarator: F.variableDeclarator,
 	forHeader: F.forHeader,

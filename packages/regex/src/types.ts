@@ -631,7 +631,7 @@ export interface Term {
 	readonly $type: TSKindId.Term;
 	readonly _term_group: NonEmptyArray<TermGroup>;
 	readonly __slotHints__?: {
-		readonly termGroups: SlotHint<NonEmptyArray<T.TermGroup>, false, true>;
+		readonly termGroups: SlotHint<NonEmptyArray<T.TermGroup>, false, true, T.TermGroup.Config>;
 	};
 	termGroups(): NonEmptyArray<TermGroup>;
 }

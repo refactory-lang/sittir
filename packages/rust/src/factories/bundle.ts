@@ -322,7 +322,3 @@ export const fieldInitializerListElements = bundle(
 export const tuplePatternElements = bundle(F.buildTuplePatternElements, C.coerceToTuplePatternElements);
 export const patterns = bundle(F.buildPatterns, C.coerceToPatterns);
 export const structPatternElements = bundle(F.buildStructPatternElements, C.coerceToStructPatternElements);
-export const useWildcardGroup = bundle(F.buildUseWildcardGroup, C.coerceToUseWildcardGroup, {
-	key: 'useWildcardGroup',
-	max: 1
-});

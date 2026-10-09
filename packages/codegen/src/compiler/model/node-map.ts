@@ -29,7 +29,7 @@ import { isStringType, realizesEmpty, type EmptinessCtx } from '../../types/runt
 import { isDepthText } from '../../dsl/primitives/spacing.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
-import { findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, isAliasedHiddenStorage, surfaceHiddenOf } from '../../dsl/symbol-table.ts';
+import { findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, isAliasedHiddenStorage, seatedOf, surfaceHiddenOf } from '../../dsl/symbol-table.ts';
 import { stampDisplay, type DisplayStamp, type RowlessDisplaySource } from './display-name.ts';
 import { armNameOf, undisplayedKindAddress } from '../../dsl/arm-names.ts';
 import { tokenToName } from '../normalize.ts';
@@ -990,6 +990,7 @@ export type ModelType =
 export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	readonly kind: string;
 	readonly kindEntry?: GeneratedKindEntry;
+	readonly seated: boolean;
 	readonly display: DisplayStamp;
 	readonly wordMatcher: RegExp | undefined;
 	typeName: string;
@@ -1078,6 +1079,7 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		this.factoryName = this.hidden ? undefined : (opts?.factoryName ?? derived.factoryName);
 		this.irKey = opts?.irKey ?? derived.irKey;
 		this.kindEntry = findOwnKindEntry(opts?.kindEntries ?? [], kind);
+		this.seated = seatedOf(rule.annotations, this.kindEntry);
 		this.display = stampDisplay(kind, this.kindEntry, opts?.kindEntries ?? [], opts?.rowless ?? 'phantom');
 	}
 
@@ -1641,9 +1643,9 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		opts?: CompoundOpts,
 		rule: R = renderRule as R
 	) {
-		const hoisted = renderRule.annotations?.hoisted === true;
+		const seated = seatedOf(renderRule.annotations, findOwnKindEntry(opts?.kindEntries ?? [], kind));
 		const factoryName =
-			opts?.factoryName ?? (hoisted && kind.startsWith('_') ? `_${nameNode(kind).factoryName}` : undefined);
+			opts?.factoryName ?? (seated && kind.startsWith('_') ? `_${nameNode(kind).factoryName}` : undefined);
 		super(kind, rule, { ...opts, factoryName });
 		this.simplifiedRule = simplifiedRule;
 		this.renderRule = renderRule;

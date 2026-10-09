@@ -5,6 +5,8 @@ import * as C from '../coerce.js';
 import { bundle } from '@sittir/common/utils';
 import type { ArgsOf, OmitEach, OptionsArg } from '@sittir/types';
 import { TSKindId } from '../../types.js';
+import { isGroupConfig } from '@sittir/common/utils';
+import type * as T from '../../types.js';
 export * from './refines.js';
 
 // Erased applications, centralized: TS cannot infer a Cfg type parameter
@@ -739,135 +741,7 @@ const termGroup$namedCapturingGroup$lparenQmarkPLt$coerce = termGroup$namedCaptu
 	C.coerceToTermGroup,
 	namedCapturingGroup.lparenQmarkPLt.coerce
 );
-export const termGroup = Object.freeze({
-	...B.termGroup,
-	startAssertion: bundle(termGroup$startAssertion$strict, termGroup$startAssertion$coerce, {
-		key: 'termGroup.startAssertion',
-		max: 2
-	}),
-	endAssertion: bundle(termGroup$endAssertion$strict, termGroup$endAssertion$coerce, {
-		key: 'termGroup.endAssertion',
-		max: 2
-	}),
-	boundaryAssertion: bundle(termGroup$boundaryAssertion$strict, termGroup$boundaryAssertion$coerce, {
-		key: 'termGroup.boundaryAssertion',
-		max: 2
-	}),
-	nonBoundaryAssertion: bundle(termGroup$nonBoundaryAssertion$strict, termGroup$nonBoundaryAssertion$coerce, {
-		key: 'termGroup.nonBoundaryAssertion',
-		max: 2
-	}),
-	lookaroundAssertion: {
-		...bundle(termGroup$lookaroundAssertion$strict, termGroup$lookaroundAssertion$coerce, {
-			key: 'termGroup.lookaroundAssertion',
-			max: 2
-		}),
-		lookaheadAssertion: {
-			...bundle(
-				termGroup$lookaroundAssertion$lookaheadAssertion$strict,
-				termGroup$lookaroundAssertion$lookaheadAssertion$coerce,
-				{ key: 'termGroup.lookaroundAssertion.lookaheadAssertion', max: 2 }
-			),
-			eq: bundle(
-				termGroup$lookaroundAssertion$lookaheadAssertion$eq$strict,
-				termGroup$lookaroundAssertion$lookaheadAssertion$eq$coerce,
-				{ key: 'termGroup.lookaroundAssertion.lookaheadAssertion.eq', max: 2 }
-			),
-			bang: bundle(
-				termGroup$lookaroundAssertion$lookaheadAssertion$bang$strict,
-				termGroup$lookaroundAssertion$lookaheadAssertion$bang$coerce,
-				{ key: 'termGroup.lookaroundAssertion.lookaheadAssertion.bang', max: 2 }
-			)
-		},
-		lookbehindAssertion: {
-			...bundle(
-				termGroup$lookaroundAssertion$lookbehindAssertion$strict,
-				termGroup$lookaroundAssertion$lookbehindAssertion$coerce,
-				{ key: 'termGroup.lookaroundAssertion.lookbehindAssertion', max: 2 }
-			),
-			eq: bundle(
-				termGroup$lookaroundAssertion$lookbehindAssertion$eq$strict,
-				termGroup$lookaroundAssertion$lookbehindAssertion$eq$coerce,
-				{ key: 'termGroup.lookaroundAssertion.lookbehindAssertion.eq', max: 2 }
-			),
-			bang: bundle(
-				termGroup$lookaroundAssertion$lookbehindAssertion$bang$strict,
-				termGroup$lookaroundAssertion$lookbehindAssertion$bang$coerce,
-				{ key: 'termGroup.lookaroundAssertion.lookbehindAssertion.bang', max: 2 }
-			)
-		}
-	},
-	patternCharacter: bundle(termGroup$patternCharacter$strict, termGroup$patternCharacter$coerce, {
-		key: 'termGroup.patternCharacter',
-		max: 2
-	}),
-	characterClass: bundle(termGroup$characterClass$strict, termGroup$characterClass$coerce, {
-		key: 'termGroup.characterClass',
-		max: 2
-	}),
-	posixCharacterClass: bundle(termGroup$posixCharacterClass$strict, termGroup$posixCharacterClass$coerce, {
-		key: 'termGroup.posixCharacterClass',
-		max: 2
-	}),
-	anyCharacter: bundle(termGroup$anyCharacter$strict, termGroup$anyCharacter$coerce, {
-		key: 'termGroup.anyCharacter',
-		max: 2
-	}),
-	decimalEscape: bundle(termGroup$decimalEscape$strict, termGroup$decimalEscape$coerce, {
-		key: 'termGroup.decimalEscape',
-		max: 2
-	}),
-	characterClassEscape: {
-		...bundle(termGroup$characterClassEscape$strict, termGroup$characterClassEscape$coerce, {
-			key: 'termGroup.characterClassEscape',
-			max: 2
-		}),
-		arm: bundle(termGroup$characterClassEscape$arm$strict, termGroup$characterClassEscape$arm$coerce, {
-			key: 'termGroup.characterClassEscape.arm',
-			max: 2
-		}),
-		unicodeCharacterEscape: bundle(
-			termGroup$characterClassEscape$unicodeCharacterEscape$strict,
-			termGroup$characterClassEscape$unicodeCharacterEscape$coerce,
-			{ key: 'termGroup.characterClassEscape.unicodeCharacterEscape', max: 2 }
-		)
-	},
-	backreferenceEscape: bundle(termGroup$backreferenceEscape$strict, termGroup$backreferenceEscape$coerce, {
-		key: 'termGroup.backreferenceEscape',
-		max: 2
-	}),
-	namedGroupBackreference: bundle(termGroup$namedGroupBackreference$strict, termGroup$namedGroupBackreference$coerce, {
-		key: 'termGroup.namedGroupBackreference',
-		max: 2
-	}),
-	anonymousCapturingGroup: bundle(termGroup$anonymousCapturingGroup$strict, termGroup$anonymousCapturingGroup$coerce, {
-		key: 'termGroup.anonymousCapturingGroup',
-		max: 2
-	}),
-	namedCapturingGroup: {
-		...bundle(termGroup$namedCapturingGroup$strict, termGroup$namedCapturingGroup$coerce, {
-			key: 'termGroup.namedCapturingGroup',
-			max: 2
-		}),
-		lparenQmarkLt: bundle(
-			termGroup$namedCapturingGroup$lparenQmarkLt$strict,
-			termGroup$namedCapturingGroup$lparenQmarkLt$coerce,
-			{ key: 'termGroup.namedCapturingGroup.lparenQmarkLt', max: 2 }
-		),
-		lparenQmarkPLt: bundle(
-			termGroup$namedCapturingGroup$lparenQmarkPLt$strict,
-			termGroup$namedCapturingGroup$lparenQmarkPLt$coerce,
-			{ key: 'termGroup.namedCapturingGroup.lparenQmarkPLt', max: 2 }
-		)
-	},
-	nonCapturingGroup: bundle(termGroup$nonCapturingGroup$strict, termGroup$nonCapturingGroup$coerce, {
-		key: 'termGroup.nonCapturingGroup',
-		max: 2
-	}),
-	enable: bundle(termGroup$enable$strict, termGroup$enable$coerce, { key: 'termGroup.enable', max: 2 }),
-	toggle: bundle(termGroup$toggle$strict, termGroup$toggle$coerce, { key: 'termGroup.toggle', max: 2 }),
-	disable: bundle(termGroup$disable$strict, termGroup$disable$coerce, { key: 'termGroup.disable', max: 2 })
-}) as unknown as typeof B.termGroup & {
+const termGroup: {
 	startAssertion: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'>,
@@ -1239,13 +1113,162 @@ export const termGroup = Object.freeze({
 			options?: OptionsArg<typeof C.coerceToTermGroup>
 		) => ReturnType<typeof C.coerceToTermGroup>;
 	};
-};
+} = Object.freeze({
+	startAssertion: bundle(termGroup$startAssertion$strict, termGroup$startAssertion$coerce, {
+		key: 'termGroup.startAssertion',
+		max: 2
+	}),
+	endAssertion: bundle(termGroup$endAssertion$strict, termGroup$endAssertion$coerce, {
+		key: 'termGroup.endAssertion',
+		max: 2
+	}),
+	boundaryAssertion: bundle(termGroup$boundaryAssertion$strict, termGroup$boundaryAssertion$coerce, {
+		key: 'termGroup.boundaryAssertion',
+		max: 2
+	}),
+	nonBoundaryAssertion: bundle(termGroup$nonBoundaryAssertion$strict, termGroup$nonBoundaryAssertion$coerce, {
+		key: 'termGroup.nonBoundaryAssertion',
+		max: 2
+	}),
+	lookaroundAssertion: {
+		...bundle(termGroup$lookaroundAssertion$strict, termGroup$lookaroundAssertion$coerce, {
+			key: 'termGroup.lookaroundAssertion',
+			max: 2
+		}),
+		lookaheadAssertion: {
+			...bundle(
+				termGroup$lookaroundAssertion$lookaheadAssertion$strict,
+				termGroup$lookaroundAssertion$lookaheadAssertion$coerce,
+				{ key: 'termGroup.lookaroundAssertion.lookaheadAssertion', max: 2 }
+			),
+			eq: bundle(
+				termGroup$lookaroundAssertion$lookaheadAssertion$eq$strict,
+				termGroup$lookaroundAssertion$lookaheadAssertion$eq$coerce,
+				{ key: 'termGroup.lookaroundAssertion.lookaheadAssertion.eq', max: 2 }
+			),
+			bang: bundle(
+				termGroup$lookaroundAssertion$lookaheadAssertion$bang$strict,
+				termGroup$lookaroundAssertion$lookaheadAssertion$bang$coerce,
+				{ key: 'termGroup.lookaroundAssertion.lookaheadAssertion.bang', max: 2 }
+			)
+		},
+		lookbehindAssertion: {
+			...bundle(
+				termGroup$lookaroundAssertion$lookbehindAssertion$strict,
+				termGroup$lookaroundAssertion$lookbehindAssertion$coerce,
+				{ key: 'termGroup.lookaroundAssertion.lookbehindAssertion', max: 2 }
+			),
+			eq: bundle(
+				termGroup$lookaroundAssertion$lookbehindAssertion$eq$strict,
+				termGroup$lookaroundAssertion$lookbehindAssertion$eq$coerce,
+				{ key: 'termGroup.lookaroundAssertion.lookbehindAssertion.eq', max: 2 }
+			),
+			bang: bundle(
+				termGroup$lookaroundAssertion$lookbehindAssertion$bang$strict,
+				termGroup$lookaroundAssertion$lookbehindAssertion$bang$coerce,
+				{ key: 'termGroup.lookaroundAssertion.lookbehindAssertion.bang', max: 2 }
+			)
+		}
+	},
+	patternCharacter: bundle(termGroup$patternCharacter$strict, termGroup$patternCharacter$coerce, {
+		key: 'termGroup.patternCharacter',
+		max: 2
+	}),
+	characterClass: bundle(termGroup$characterClass$strict, termGroup$characterClass$coerce, {
+		key: 'termGroup.characterClass',
+		max: 2
+	}),
+	posixCharacterClass: bundle(termGroup$posixCharacterClass$strict, termGroup$posixCharacterClass$coerce, {
+		key: 'termGroup.posixCharacterClass',
+		max: 2
+	}),
+	anyCharacter: bundle(termGroup$anyCharacter$strict, termGroup$anyCharacter$coerce, {
+		key: 'termGroup.anyCharacter',
+		max: 2
+	}),
+	decimalEscape: bundle(termGroup$decimalEscape$strict, termGroup$decimalEscape$coerce, {
+		key: 'termGroup.decimalEscape',
+		max: 2
+	}),
+	characterClassEscape: {
+		...bundle(termGroup$characterClassEscape$strict, termGroup$characterClassEscape$coerce, {
+			key: 'termGroup.characterClassEscape',
+			max: 2
+		}),
+		arm: bundle(termGroup$characterClassEscape$arm$strict, termGroup$characterClassEscape$arm$coerce, {
+			key: 'termGroup.characterClassEscape.arm',
+			max: 2
+		}),
+		unicodeCharacterEscape: bundle(
+			termGroup$characterClassEscape$unicodeCharacterEscape$strict,
+			termGroup$characterClassEscape$unicodeCharacterEscape$coerce,
+			{ key: 'termGroup.characterClassEscape.unicodeCharacterEscape', max: 2 }
+		)
+	},
+	backreferenceEscape: bundle(termGroup$backreferenceEscape$strict, termGroup$backreferenceEscape$coerce, {
+		key: 'termGroup.backreferenceEscape',
+		max: 2
+	}),
+	namedGroupBackreference: bundle(termGroup$namedGroupBackreference$strict, termGroup$namedGroupBackreference$coerce, {
+		key: 'termGroup.namedGroupBackreference',
+		max: 2
+	}),
+	anonymousCapturingGroup: bundle(termGroup$anonymousCapturingGroup$strict, termGroup$anonymousCapturingGroup$coerce, {
+		key: 'termGroup.anonymousCapturingGroup',
+		max: 2
+	}),
+	namedCapturingGroup: {
+		...bundle(termGroup$namedCapturingGroup$strict, termGroup$namedCapturingGroup$coerce, {
+			key: 'termGroup.namedCapturingGroup',
+			max: 2
+		}),
+		lparenQmarkLt: bundle(
+			termGroup$namedCapturingGroup$lparenQmarkLt$strict,
+			termGroup$namedCapturingGroup$lparenQmarkLt$coerce,
+			{ key: 'termGroup.namedCapturingGroup.lparenQmarkLt', max: 2 }
+		),
+		lparenQmarkPLt: bundle(
+			termGroup$namedCapturingGroup$lparenQmarkPLt$strict,
+			termGroup$namedCapturingGroup$lparenQmarkPLt$coerce,
+			{ key: 'termGroup.namedCapturingGroup.lparenQmarkPLt', max: 2 }
+		)
+	},
+	nonCapturingGroup: bundle(termGroup$nonCapturingGroup$strict, termGroup$nonCapturingGroup$coerce, {
+		key: 'termGroup.nonCapturingGroup',
+		max: 2
+	}),
+	enable: bundle(termGroup$enable$strict, termGroup$enable$coerce, { key: 'termGroup.enable', max: 2 }),
+	toggle: bundle(termGroup$toggle$strict, termGroup$toggle$coerce, { key: 'termGroup.toggle', max: 2 }),
+	disable: bundle(termGroup$disable$strict, termGroup$disable$coerce, { key: 'termGroup.disable', max: 2 })
+});
 
+const term$termGroup = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['content', 'quantifier']);
+	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
+};
+const term$seated: (...args: T.Term.BuildArgs) => ReturnType<typeof F.buildTerm> = term$termGroup(
+	F.buildTerm,
+	F.buildTermGroup
+);
+const term$seatedCoerce: (...args: T.Term.LooseArgs) => ReturnType<typeof C.coerceToTerm> = term$termGroup(
+	C.coerceToTerm,
+	C.coerceToTermGroup
+);
 export const term = Object.freeze({
 	...B.term,
-	group: termGroup
-}) as unknown as typeof B.term & {
-	group: typeof termGroup;
+	...bundle(term$seated, term$seatedCoerce),
+	group: Object.freeze({
+		...bundle(F.buildTermGroup, C.coerceToTermGroup, { key: 'term.group', max: 1 }),
+		...termGroup
+	})
+}) as unknown as Omit<typeof B.term, 'strict' | 'coerce'> & {
+	strict: typeof term$seated;
+	coerce: typeof term$seatedCoerce;
+	group: { strict: typeof F.buildTermGroup; coerce: typeof C.coerceToTermGroup } & typeof termGroup;
 };
 
 const pattern$alternation =
@@ -1258,8 +1281,8 @@ const pattern$term =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const pattern$term$strict = pattern$term(F.buildPattern, F.buildTerm);
-const pattern$term$coerce = pattern$term(F.buildPattern, C.coerceToTerm);
+const pattern$term$strict = pattern$term(F.buildPattern, term.strict);
+const pattern$term$coerce = pattern$term(F.buildPattern, term.coerce);
 export const pattern = Object.freeze({
 	...B.pattern,
 	alternation: bundle(pattern$alternation$strict, pattern$alternation$coerce),
@@ -1270,8 +1293,8 @@ export const pattern = Object.freeze({
 		coerce: (...args: ArgsOf<typeof C.coerceToAlternation>) => ReturnType<typeof F.buildPattern>;
 	};
 	term: {
-		strict: (...args: ArgsOf<typeof F.buildTerm>) => ReturnType<typeof F.buildPattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToTerm>) => ReturnType<typeof F.buildPattern>;
+		strict: (...args: ArgsOf<typeof term.strict>) => ReturnType<typeof F.buildPattern>;
+		coerce: (...args: ArgsOf<typeof term.coerce>) => ReturnType<typeof F.buildPattern>;
 	};
 };
 

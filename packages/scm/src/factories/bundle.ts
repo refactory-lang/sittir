@@ -29,4 +29,3 @@ export const namedNodeExpressionArm = bundle(F.buildNamedNodeExpressionArm, C.co
 	key: 'namedNodeExpressionArm',
 	max: 1
 });
-export const groupingGroup = bundle(F.buildGroupingGroup, C.coerceToGroupingGroup, { key: 'groupingGroup', max: 1 });

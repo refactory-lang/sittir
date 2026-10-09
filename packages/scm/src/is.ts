@@ -59,9 +59,6 @@ export interface IsGuards {
 	namedNodeExpressionArm<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodeExpressionArm };
-	groupingGroup<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.GroupingGroup };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	readonly definition: {
 		<T extends { readonly $type: string | number } | number>(
@@ -202,7 +199,6 @@ export const is = Object.freeze({
 	predicate: _g(TSKindId.Predicate),
 	groupExpressionArm: _g(TSKindId.GroupExpressionArm),
 	namedNodeExpressionArm: _g(TSKindId.NamedNodeExpressionArm),
-	groupingGroup: _g(TSKindId.GroupingGroup),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
 	definition: _supertype_definition_guard,
 	namedNode: _supertype_namedNode_guard,

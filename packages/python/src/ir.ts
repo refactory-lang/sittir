@@ -313,7 +313,6 @@ export const ir: {
 	readonly printChevronArguments: typeof F.printChevronArguments;
 	readonly printStatementChevron: typeof F.printStatementChevron;
 	readonly printStatementPlain: typeof F.printStatementPlain;
-	readonly parenthesizedImportList: typeof F.parenthesizedImportList;
 	readonly comprehensionClauses: typeof F.comprehensionClauses;
 	readonly expressionStatementTuple: typeof F.expressionStatementTuple;
 	readonly withClauseBare: typeof F.withClauseBare;
@@ -485,7 +484,6 @@ export const ir: {
 	printChevronArguments: F.printChevronArguments,
 	printStatementChevron: F.printStatementChevron,
 	printStatementPlain: F.printStatementPlain,
-	parenthesizedImportList: F.parenthesizedImportList,
 	comprehensionClauses: F.comprehensionClauses,
 	expressionStatementTuple: F.expressionStatementTuple,
 	withClauseBare: F.withClauseBare,

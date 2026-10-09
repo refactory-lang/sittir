@@ -2040,13 +2040,19 @@ The public-symbol kind id link stamped on a list's separator string, or `undefin
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.annotations`
 
 The declarations stamped on the node's rule (`hoisted`, `variant`,
-`variantOf`, `default`, `preference`), read straight off the rule. This is
-the only representation of "hoisted": there is no model flag and no grammar
-set, so a base emitter cannot branch on hoisting by accident — the readers
-are the overlays (seating), the surface exclusions (bundle / `ir` / `is` /
-consts / generated tests, `irKey` phases) and the node model, which passes
-the bag through to the tools. `withKindFacts` keeps the bag on a root that
-a pass rebuilds.
+`variantOf`, `default`, `preference`), read straight off the rule.
+`withKindFacts` keeps the bag on a root that a pass rebuilds. Nothing
+downstream of the node reads `hoisted` here: whether the node seats on its
+parent is `seated`.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.seated`
+
+Whether the node seats on its parent: `seatedOf` its rule's annotations and
+its own kind entry, computed once when the node is built. It is the only
+representation of seating downstream of the rule. Its readers are the
+overlays (seating), the surface exclusions (bundle, `ir`, `is`, consts,
+generated tests, `irKey` phases) and the node model, which serializes it
+for the tools.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.diagnosticRule`
 

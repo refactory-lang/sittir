@@ -4562,65 +4562,6 @@ describe('object_type_content', () => {
 	});
 });
 
-describe('export_statement_namespace_export', () => {
-	it('factory produces correct type', () => {
-		const node = ir.exportStatementNamespaceExport(
-			{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			{ terminator: TSKindId.AutomaticSemicolon }
-		);
-		expect(node.$type).toBe(TSKindId.ExportStatementNamespaceExport);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.exportStatementNamespaceExport(
-			{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			{ terminator: TSKindId.AutomaticSemicolon }
-		);
-		const rendered = node.$render!();
-		expect(rendered.length).toBeGreaterThan(0);
-		expect(rendered).toContain('test');
-	});
-});
-
-describe('export_statement_type_export', () => {
-	it('factory produces correct type', () => {
-		const node = ir.exportStatementTypeExport(
-			{ exportClause: { $type: TSKindId.ExportClause, $text: 'test', $source: 2, $named: true } as any },
-			{ terminator: TSKindId.AutomaticSemicolon }
-		);
-		expect(node.$type).toBe(TSKindId.ExportStatementTypeExport);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.exportStatementTypeExport(
-			{ exportClause: { $type: TSKindId.ExportClause, $text: 'test', $source: 2, $named: true } as any },
-			{ terminator: TSKindId.AutomaticSemicolon }
-		);
-		const rendered = node.$render!();
-		expect(rendered.length).toBeGreaterThan(0);
-	});
-});
-
-describe('export_statement_equals_export', () => {
-	it('factory produces correct type', () => {
-		const node = ir.exportStatementEqualsExport(
-			{ $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			{ terminator: TSKindId.AutomaticSemicolon }
-		);
-		expect(node.$type).toBe(TSKindId.ExportStatementEqualsExport);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.exportStatementEqualsExport(
-			{ $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			{ terminator: TSKindId.AutomaticSemicolon }
-		);
-		const rendered = node.$render!();
-		expect(rendered.length).toBeGreaterThan(0);
-		expect(rendered).toContain('undefined');
-	});
-});
-
 describe('empty_member', () => {
 	it('is the kind id', () => {
 		expect(ir.emptyMember).toBe(TSKindId.EmptyMember);

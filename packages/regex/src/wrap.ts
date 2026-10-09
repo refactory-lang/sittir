@@ -19,6 +19,7 @@ import {
 	coerceBooleanKeywordStorage,
 	inTreeEngine,
 	currentHandle,
+	elementsWith,
 	rebuilt,
 	renderText,
 	queryOf,
@@ -31,6 +32,7 @@ import type { ParsedRoot } from '@sittir/common/engine';
 import type { AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';
 import { TSKindId, KIND_NAMES, KIND_DISPLAY_NAMES } from './types.js';
 import type * as T from './types-internal.js';
+import * as RAW from './factories/raw.js';
 
 // A hydrated read-layer TEXT LEAF: the reader modeled no addressable
 // structure (no `_<slot>` storage keys, no `$other`) and captured the
@@ -609,8 +611,15 @@ export function wrapTerm(data: T.Term, tree: TreeHandle): T.Term.Parsed {
 			return hydrateSlots<T.TermGroup>(this, '_term_group', tree);
 		},
 		$with: {
-			termGroups: (...v: NonEmptyArray<NonNullable<T.Term['_term_group']>[number]>) =>
-				rebuilt(node, handle, () => wrapTerm({ ...$edited(data), _term_group: restItems('termGroups', v) }, tree))
+			termGroups: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'termGroups', keys: ['content', 'quantifier'], make: RAW.buildTermGroup },
+						(...v: NonEmptyArray<NonNullable<T.Term['_term_group']>[number]>) =>
+							wrapTerm({ ...$edited(data), _term_group: restItems('termGroups', v) }, tree)
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		$trivia: {

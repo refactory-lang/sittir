@@ -442,9 +442,6 @@ export interface IsGuards {
 	structPatternElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StructPatternElements };
-	useWildcardGroup<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UseWildcardGroup };
 	typeIdentifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeIdentifier };
@@ -1465,7 +1462,6 @@ export const is = Object.freeze({
 	tuplePatternElements: _g(TSKindId.TuplePatternElements),
 	patterns: _g(TSKindId.Patterns),
 	structPatternElements: _g(TSKindId.StructPatternElements),
-	useWildcardGroup: _g(TSKindId.UseWildcardGroup),
 	typeIdentifier: _g(TSKindId.TypeIdentifier),
 	fieldIdentifier: _g(TSKindId.FieldIdentifier),
 	shorthandFieldIdentifier: _g(TSKindId.ShorthandFieldIdentifier),

@@ -55,7 +55,6 @@ export const ir: {
 	readonly predicate: typeof F.predicate;
 	readonly groupExpressionArm: typeof F.groupExpressionArm;
 	readonly namedNodeExpressionArm: typeof F.namedNodeExpressionArm;
-	readonly groupingGroup: typeof F.groupingGroup;
 	readonly namedNode: typeof F.namedNode;
 	readonly namedNodeGroup: typeof F.namedNodeGroup;
 	readonly anchor: typeof F.buildAnchor;
@@ -84,7 +83,6 @@ export const ir: {
 	predicate: F.predicate,
 	groupExpressionArm: F.groupExpressionArm,
 	namedNodeExpressionArm: F.namedNodeExpressionArm,
-	groupingGroup: F.groupingGroup,
 	namedNode: F.namedNode,
 	namedNodeGroup: F.namedNodeGroup,
 

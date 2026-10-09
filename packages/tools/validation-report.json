@@ -12745,22 +12745,6 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "ir: parenthesized_import_list",
-    "count": 2,
-    "entries": [
-      "Future import statements",
-      "Import-from statements"
-    ],
-    "stage": "built-render-parse-excluded",
-    "code": "built-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "ir: parenthesized_import_list"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
     "kind": "ir: relative_import",
     "count": 1,
     "entries": [
@@ -14758,57 +14742,6 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "ir: term"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "ir: term_group",
-    "count": 37,
-    "entries": [
-      "Hexadecimal digits escape sequence",
-      "Inline regex flags",
-      "POSIX Character Class",
-      "Unicode escape",
-      "Unicode escaped characters as atoms in character classes",
-      "\\u without hex codes treated as identity escape",
-      "a date regex",
-      "a multiline url regex",
-      "alternation w empty terms & assertions",
-      "alternations",
-      "alternations with empty terms",
-      "assertions - line start / end",
-      "assertions - word boundary",
-      "atom escapes - character class escapes",
-      "atom escapes - control escapes",
-      "atom escapes - decimal escapes",
-      "atom escapes - lone unicode property names",
-      "atom escapes - unicode property value expressions",
-      "capturing groups",
-      "character classes",
-      "character classes - '-' is an atom",
-      "character classes - 'a-' is atoms",
-      "character classes - /[---]/ is odd but valid",
-      "character classes - identity escapes",
-      "identity escapes",
-      "lookahead",
-      "lookbehind",
-      "named capturing groups",
-      "named capturing groups - backreferences",
-      "negative lookahead",
-      "negative lookbehind",
-      "non-capturing groups",
-      "open brace reads as a pattern character when not closed",
-      "quantifiers",
-      "quantifiers - count",
-      "sequence match",
-      "sequence match w/ '.' atom"
-    ],
-    "stage": "built-render-parse-excluded",
-    "code": "built-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "ir: term_group"
   },
   {
     "source": "validator",
@@ -21974,21 +21907,6 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "ir: use_wildcard_group",
-    "count": 1,
-    "entries": [
-      "Use declarations"
-    ],
-    "stage": "built-render-parse-excluded",
-    "code": "built-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "ir: use_wildcard_group"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
     "kind": "ir: struct_pattern_elements",
     "count": 3,
     "entries": [
@@ -24007,25 +23925,6 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "ir: grouping"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "ir: grouping_group",
-    "count": 5,
-    "entries": [
-      "Anchor Operator",
-      "Anonymous nodes (series)",
-      "Groups",
-      "Predicates",
-      "Strings"
-    ],
-    "stage": "built-render-parse-excluded",
-    "code": "built-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "ir: grouping_group"
   },
   {
     "source": "validator",

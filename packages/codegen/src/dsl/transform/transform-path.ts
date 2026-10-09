@@ -7,7 +7,6 @@ import {
 	isChoiceType,
 	isFieldType
 } from '../../types/runtime-shapes.ts';
-import type { RuleAnnotations } from '../../types/rule.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { readRuleMetadata } from '../rule-metadata.ts';
 import { wireGetLiftBody, wireSetLiftBody, wireWithLiftScope } from '../wire/wire.ts';
@@ -474,8 +473,8 @@ function isWalkableNode(rule: unknown): rule is RuntimeRule {
 
 export function reconstructContainer(rule: RuntimeRule, members: RuntimeRule[]): RuntimeRule {
 	const t = rule.type;
-	if (isSeqType(t)) return carryOverProperties(withoutHoisted(rule), nativeRequired('seq')(...members));
-	if (isChoiceType(t)) return carryOverProperties(withoutHoisted(rule), nativeRequired('choice')(...members));
+	if (isSeqType(t)) return carryOverProperties(rule, nativeRequired('seq')(...members));
+	if (isChoiceType(t)) return carryOverProperties(rule, nativeRequired('choice')(...members));
 	throw new Error(`reconstructContainer: unknown container type '${t}'`);
 }
 
@@ -499,13 +498,6 @@ export function reconstructWrapper(rule: RuntimeRule, newContent: RuntimeRule): 
 	throw new Error(
 		`reconstructWrapper: no native dsl reconstruction for wrapper type '${rule.type}' — this is a bug in the path-descent logic.`
 	);
-}
-
-function withoutHoisted(rule: RuntimeRule): RuntimeRule {
-	const { annotations, ...rest } = rule as RuntimeRule & { annotations?: RuleAnnotations };
-	if (annotations?.hoisted !== true) return rule;
-	const { hoisted: _hoisted, ...kept } = annotations;
-	return (Object.keys(kept).length === 0 ? rest : { ...rest, annotations: kept }) as RuntimeRule;
 }
 
 function carryOverProperties(rule: RuntimeRule, rebuilt: RuntimeRule): RuntimeRule {

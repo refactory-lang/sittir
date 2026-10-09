@@ -1,7 +1,7 @@
-rust: hoisted=80 seated=80 unseated=0
-typescript: hoisted=53 seated=53 unseated=0
-python: hoisted=33 seated=33 unseated=0
-scm: hoisted=5 seated=5 unseated=0
-regex: hoisted=7 seated=5 unseated=2
+rust: hoisted=81 seated=81 unseated=0
+typescript: hoisted=56 seated=56 unseated=0
+python: hoisted=34 seated=34 unseated=0
+scm: hoisted=6 seated=6 unseated=0
+regex: hoisted=8 seated=6 unseated=2
   count_quantifier_group
   unicode_property_value_expression_group

@@ -5,6 +5,8 @@ import * as C from '../coerce.js';
 import { bundle } from '@sittir/common/utils';
 import type { ArgsOf, OmitEach, OptionsArg } from '@sittir/types';
 import { TSKindId } from '../../types.js';
+import { isGroupConfig } from '@sittir/common/utils';
+import type * as T from '../../types.js';
 export * from './refines.js';
 
 export const stringContent = Object.freeze({
@@ -32,6 +34,36 @@ const _built = (v: unknown): boolean => typeof v === 'object' && v !== null && '
 // bare-text call must keep its one-argument arity.
 const _fwd = <R>(f: unknown, arg: unknown, options: unknown): R =>
 	options === undefined ? _s<R>(f)(arg) : _s<R>(f)(arg, options);
+
+const grouping$groupingGroup = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['groupExpression', 'anchor']);
+	return (config: unknown, options?: unknown): ReturnType<PF> => {
+		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
+		const seat = _o(config)['groupingGroup'];
+		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
+		return _fwd<ReturnType<PF>>(
+			parent,
+			{ ..._o(config), groupingGroup: seat.map((e) => (isConfig(e) ? _c(child)(e) : e)) },
+			options
+		);
+	};
+};
+const grouping$seated: (...args: T.Grouping.BuildArgs) => ReturnType<typeof F.buildGrouping> = grouping$groupingGroup(
+	F.buildGrouping,
+	F.buildGroupingGroup
+);
+const grouping$seatedCoerce: (...args: T.Grouping.LooseArgs) => ReturnType<typeof C.coerceToGrouping> =
+	grouping$groupingGroup(C.coerceToGrouping, C.coerceToGroupingGroup);
+export const grouping = Object.freeze({
+	...B.grouping,
+	...bundle(grouping$seated, grouping$seatedCoerce, { key: 'grouping', max: 1 })
+}) as unknown as Omit<typeof B.grouping, 'strict' | 'coerce'> & {
+	strict: typeof grouping$seated;
+	coerce: typeof grouping$seatedCoerce;
+};
 
 const namedNodePlain$underscore =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
@@ -333,7 +365,7 @@ export const definition: {
 	readonly namedNode: typeof namedNode;
 	readonly anonymousNode: typeof B.anonymousNode;
 	readonly missingNode: typeof B.missingNode;
-	readonly grouping: typeof B.grouping;
+	readonly grouping: typeof grouping;
 	readonly predicate: typeof B.predicate;
 	readonly list: typeof B.list;
 	readonly field: typeof B.fieldDefinition;
@@ -341,7 +373,7 @@ export const definition: {
 	namedNode: namedNode,
 	anonymousNode: B.anonymousNode,
 	missingNode: B.missingNode,
-	grouping: B.grouping,
+	grouping: grouping,
 	predicate: B.predicate,
 	list: B.list,
 	field: B.fieldDefinition

@@ -418,17 +418,3 @@ export const ambientDeclarationModule = bundle(F.buildAmbientDeclarationModule, 
 	max: 2
 });
 export const objectTypeContent = bundle(F.buildObjectTypeContent, C.coerceToObjectTypeContent);
-export const exportStatementNamespaceExport = bundle(
-	F.buildExportStatementNamespaceExport,
-	C.coerceToExportStatementNamespaceExport,
-	{ key: 'exportStatementNamespaceExport', max: 2 }
-);
-export const exportStatementTypeExport = bundle(F.buildExportStatementTypeExport, C.coerceToExportStatementTypeExport, {
-	key: 'exportStatementTypeExport',
-	max: 2
-});
-export const exportStatementEqualsExport = bundle(
-	F.buildExportStatementEqualsExport,
-	C.coerceToExportStatementEqualsExport,
-	{ key: 'exportStatementEqualsExport', max: 2 }
-);

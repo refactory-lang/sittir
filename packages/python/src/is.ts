@@ -392,9 +392,6 @@ export interface IsGuards {
 	printStatementPlain<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintStatementPlain };
-	parenthesizedImportList<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ParenthesizedImportList };
 	comprehensionClauses<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ComprehensionClauses };
@@ -1089,7 +1086,6 @@ export const is = Object.freeze({
 	printChevronArguments: _g(TSKindId.PrintChevronArguments),
 	printStatementChevron: _g(TSKindId.PrintStatementChevron),
 	printStatementPlain: _g(TSKindId.PrintStatementPlain),
-	parenthesizedImportList: _g(TSKindId.ParenthesizedImportList),
 	comprehensionClauses: _g(TSKindId.ComprehensionClauses),
 	expressionStatementTuple: _g(TSKindId.ExpressionStatementTuple),
 	withClauseBare: _g(TSKindId.WithClauseBare),

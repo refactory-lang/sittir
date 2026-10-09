@@ -4288,48 +4288,6 @@ describe('wildcard_pattern', () => {
 	});
 });
 
-describe('parenthesized_import_list', () => {
-	it('factory produces correct type', () => {
-		const node = ir.parenthesizedImportList({
-			$type: TSKindId.ImportList,
-			$text: 'test',
-			$source: 2,
-			$named: true,
-			_name: [
-				{
-					$type: TSKindId.DottedName,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_names: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
-				} as any
-			]
-		} as any);
-		expect(node.$type).toBe(TSKindId.ParenthesizedImportList);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.parenthesizedImportList({
-			$type: TSKindId.ImportList,
-			$text: 'test',
-			$source: 2,
-			$named: true,
-			_name: [
-				{
-					$type: TSKindId.DottedName,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_names: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
-				} as any
-			]
-		} as any);
-		const rendered = node.$render!();
-		expect(rendered.length).toBeGreaterThan(0);
-		expect(rendered).toContain('test');
-	});
-});
-
 describe('comprehension_clauses', () => {
 	it('factory produces correct type', () => {
 		const node = ir.comprehensionClauses({

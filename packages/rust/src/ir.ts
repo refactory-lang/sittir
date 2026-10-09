@@ -450,7 +450,6 @@ export const ir: {
 	readonly tuplePatternElements: typeof F.tuplePatternElements;
 	readonly patterns: typeof F.patterns;
 	readonly structPatternElements: typeof F.structPatternElements;
-	readonly useWildcardGroup: typeof F.useWildcardGroup;
 	readonly macroDefinition: typeof F.macroDefinition;
 	readonly tokenTreePattern: typeof F.tokenTreePattern;
 	readonly tokenTree: typeof F.tokenTree;
@@ -656,7 +655,6 @@ export const ir: {
 	tuplePatternElements: F.tuplePatternElements,
 	patterns: F.patterns,
 	structPatternElements: F.structPatternElements,
-	useWildcardGroup: F.useWildcardGroup,
 	macroDefinition: F.macroDefinition,
 	tokenTreePattern: F.tokenTreePattern,
 	tokenTree: F.tokenTree,

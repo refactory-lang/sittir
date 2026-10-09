@@ -207,9 +207,6 @@ export const printStatementChevron: Hoisted<typeof O.printStatementChevron> = ho
 export const printStatementPlain: Hoisted<typeof O.printStatementPlain> = hoistAs<typeof O.printStatementPlain>(
 	O.printStatementPlain
 );
-export const parenthesizedImportList: Hoisted<typeof O.parenthesizedImportList> = hoistAs<
-	typeof O.parenthesizedImportList
->(O.parenthesizedImportList);
 export const comprehensionClauses: Hoisted<typeof O.comprehensionClauses> = hoistAs<typeof O.comprehensionClauses>(
 	O.comprehensionClauses
 );

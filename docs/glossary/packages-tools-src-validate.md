@@ -1364,11 +1364,14 @@ Detaches read data in place and gives it back the tree it held. `detachCoordinat
 /** The exact arguments a positional parent takes, when a tuple seat filled its sole slot. */
 ```
 
-### `packages/tools/src/validate/common.ts::isFlattened`
+### `packages/tools/src/validate/common.ts::flattenedOf`
 
-```text
-/** Whether a projected config carries a spliced group's keys in place of the group. */
-```
+What a projected config that carries a spliced group's keys in place of the
+group records about that group, or `undefined` for a config with no spliced
+group: `true` when the group's factory takes a config (the spliced keys are
+that config), else the group's own call arguments. A direct parent takes a
+seated positional group the way its emitted factory does, as the group's own
+value (`wildcard_import_clause(path)`), never the spliced keys.
 
 ### `packages/tools/src/validate/common.ts::readValueKind`
 
@@ -1474,6 +1477,10 @@ The options are `undefined` when nothing is left to pass.
 ```
 
 A spread or list builder takes its options first: a list's come from the read node's separator and delimiter, a spread builder's from its registered slots, split off the config before the elements are read.
+
+A direct factory whose config carries a spliced group (`flattenedOf`) takes
+the spliced keys when the group is config-shaped and the group's own value
+otherwise.
 
 ### `packages/tools/src/validate/common.ts::walkMount`
 
@@ -1880,3 +1887,12 @@ Loads the generated raw factory map through the typed internal loader, scopes bu
 ### `packages/tools/src/validate/factory-storage.ts::buildFactoryUntypedNode`
 
 Dispatches materialized reference data through the existing factory calling convention, using the walked source kind so alias-source factories preserve their declared identities. Slot metadata, field aliases and CST hints pass through to `buildFactoryNodeFromReference`. A missing factory returns null; a thrown factory records the kind, corpus entry and source in the errors list and returns null so comparison can be skipped.
+
+### `packages/tools/src/validate/common.ts::projectSeatedSlot`
+
+Projects a seated slot's value into its parent's config by the seat's shape.
+A `flatten` seat splices the group's own config keys into the parent's and
+marks the config (`flattenedOf`): `true` for a config-shaped group, else the
+group's call arguments, so a direct parent can pass the group's positional
+value. An `elements` seat projects each element, and a `tuple` seat takes the
+group's call arguments as the slot's value.

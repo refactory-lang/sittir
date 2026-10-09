@@ -70,7 +70,7 @@ The validators whose pass count may fall when kinds leave the direct-render set,
 
 ### `packages/tools/src/scripts/collect-baseline.ts::GrammarEntry.hoistedKindCount`
 
-The hoisted kinds of the grammar's node model, list kinds included (`hoistedKindCount` in `census/hoisted.ts`). It differs from the hoisted census, which leaves list kinds out because it measures whether a hoisted compound has a public seat; this count measures how many hoisted kinds exist at all, which is what a validator's case count follows.
+The kinds of the grammar's node model that seat on their parent (`seated`), list kinds included (`hoistedKindCount` in `census/hoisted.ts`). It differs from the hoisted census, which leaves list kinds out because it measures whether a hoisted compound has a public seat; this count measures how many hoisted kinds exist at all, which is what a validator's case count follows.
 
 ### `packages/tools/src/scripts/required-slot-census.ts::admittingSlots`
 

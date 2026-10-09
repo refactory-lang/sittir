@@ -866,7 +866,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "named_node_group": {
       "type": "CHOICE",

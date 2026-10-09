@@ -3652,18 +3652,6 @@ describe('struct_pattern_elements', () => {
 	});
 });
 
-describe('use_wildcard_group', () => {
-	it('factory produces correct type', () => {
-		const node = ir.useWildcardGroup();
-		expect(node.$type).toBe(TSKindId.UseWildcardGroup);
-		expect(node.$source).toBe(2);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.useWildcardGroup();
-		expect(() => node.$render!()).not.toThrow();
-	});
-});
-
 describe('token_repetition_pattern_text', () => {
 	it('factory produces correct type', () => {
 		const node = ir.tokenRepetitionPatternText('test');

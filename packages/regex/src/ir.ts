@@ -45,7 +45,6 @@ export const ir: {
 	readonly namedGroupBackreference: typeof F.namedGroupBackreference;
 	readonly characterClassEscape: typeof F.characterClassEscape;
 	readonly unicodePropertyValueExpression: typeof F.unicodePropertyValueExpression;
-	readonly termGroup: typeof F.termGroup;
 	readonly inlineFlagsGroup: typeof F.inlineFlagsGroup;
 	readonly anyCharacter: typeof F.buildAnyCharacter;
 	readonly startAssertion: typeof F.buildStartAssertion;
@@ -90,7 +89,6 @@ export const ir: {
 	namedGroupBackreference: F.namedGroupBackreference,
 	characterClassEscape: F.characterClassEscape,
 	unicodePropertyValueExpression: F.unicodePropertyValueExpression,
-	termGroup: F.termGroup,
 	inlineFlagsGroup: F.inlineFlagsGroup,
 
 	// Keyword factories

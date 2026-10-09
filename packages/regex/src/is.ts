@@ -62,9 +62,6 @@ export interface IsGuards {
 	identityEscape<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IdentityEscape };
-	termGroup<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TermGroup };
 	lazy<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Lazy };
@@ -133,7 +130,6 @@ export const is = Object.freeze({
 	characterClassEscape: _g(TSKindId.CharacterClassEscape),
 	unicodePropertyValueExpression: _g(TSKindId.UnicodePropertyValueExpression),
 	identityEscape: _g(TSKindId.IdentityEscape),
-	termGroup: _g(TSKindId.TermGroup),
 	lazy: _g(TSKindId.Lazy),
 	unicodePropertyName: _g(TSKindId.UnicodePropertyName),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,

@@ -5,6 +5,7 @@ import { TSKindId } from '../types.js';
 import type { Admit, NonEmptyArray } from '@sittir/types';
 import {
 	currentHandle,
+	elementsWith,
 	rebuilt,
 	renderText,
 	triviaSide,
@@ -342,8 +343,15 @@ export function buildGrouping(config: T.Grouping.Config): T.Grouping.Bound {
 		_grouping_group,
 		_elements,
 		$with: {
-			groupingGroups: (...values: Admit<NonEmptyArray<T.GroupingGroup>>) =>
-				rebuilt(node, handle, () => buildGrouping({ ...config, groupingGroup: restItems('groupingGroups', values) })),
+			groupingGroups: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'groupingGroups', keys: ['groupExpression', 'anchor'], make: buildGroupingGroup },
+						(...values: Admit<NonEmptyArray<T.GroupingGroup>>) =>
+							buildGrouping({ ...config, groupingGroup: restItems('groupingGroups', values) })
+					)
+				),
 			elements: (...values: Admit<T.ListElement[]>) =>
 				rebuilt(node, handle, () => buildGrouping({ ...config, elements: restItems('elements', values) }))
 		},

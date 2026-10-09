@@ -7194,14 +7194,32 @@ export const literalType = Object.freeze({
 
 export const exportStatement: {
 	readonly default: typeof exportStatementDefault;
-	readonly typeExport: typeof B.exportStatementTypeExport;
-	readonly equalsExport: typeof B.exportStatementEqualsExport;
-	readonly namespaceExport: typeof B.exportStatementNamespaceExport;
+	readonly typeExport: {
+		strict: typeof F.buildExportStatementTypeExport;
+		coerce: typeof C.coerceToExportStatementTypeExport;
+	};
+	readonly equalsExport: {
+		strict: typeof F.buildExportStatementEqualsExport;
+		coerce: typeof C.coerceToExportStatementEqualsExport;
+	};
+	readonly namespaceExport: {
+		strict: typeof F.buildExportStatementNamespaceExport;
+		coerce: typeof C.coerceToExportStatementNamespaceExport;
+	};
 } = Object.freeze({
 	default: exportStatementDefault,
-	typeExport: B.exportStatementTypeExport,
-	equalsExport: B.exportStatementEqualsExport,
-	namespaceExport: B.exportStatementNamespaceExport
+	typeExport: bundle(F.buildExportStatementTypeExport, C.coerceToExportStatementTypeExport, {
+		key: 'exportStatement.typeExport',
+		max: 2
+	}),
+	equalsExport: bundle(F.buildExportStatementEqualsExport, C.coerceToExportStatementEqualsExport, {
+		key: 'exportStatement.equalsExport',
+		max: 2
+	}),
+	namespaceExport: bundle(F.buildExportStatementNamespaceExport, C.coerceToExportStatementNamespaceExport, {
+		key: 'exportStatement.namespaceExport',
+		max: 2
+	})
 });
 
 export const statement: {

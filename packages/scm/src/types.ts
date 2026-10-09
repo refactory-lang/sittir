@@ -11,6 +11,7 @@ import type {
 	BooleanKeyword as BaseBooleanKeyword,
 	KindEnum,
 	NodeOfNamespaces,
+	OmitEach,
 	GrammarTypeMap,
 	NodeMethods,
 	HoldsTree,
@@ -620,7 +621,7 @@ export interface Grouping {
 	readonly _grouping_group: NonEmptyArray<GroupingGroup>;
 	readonly _elements?: readonly ListElement[];
 	readonly __slotHints__?: {
-		readonly groupingGroups: SlotHint<NonEmptyArray<T.GroupingGroup>, false, true>;
+		readonly groupingGroups: SlotHint<NonEmptyArray<T.GroupingGroup>, false, true, T.GroupingGroup.Config>;
 		readonly elements: SlotHint<T.ListElement[], true, true>;
 	};
 	groupingGroups(): NonEmptyArray<GroupingGroup>;
@@ -1920,8 +1921,34 @@ export namespace Grouping {
 	}
 	export type Loose = LooseFor<TSKindId.Grouping>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Grouping>;
-	export type BuildArgs = [config: ConfigOf<T.Grouping>];
-	export type LooseArgs = [config: T.Grouping.Loose];
+	export type BuildArgs = [
+		config:
+			| ConfigOf<T.Grouping>
+			| (OmitEach<NonNullable<ConfigOf<T.Grouping>>, 'groupingGroup'> & {
+					groupingGroup: ReadonlyArray<
+						| T.GroupingGroup.BuildArgs[0]
+						| (NonNullable<ConfigOf<T.Grouping>> extends { readonly groupingGroup?: infer E }
+								? E extends readonly (infer I)[]
+									? I
+									: never
+								: never)
+					>;
+			  })
+	];
+	export type LooseArgs = [
+		config:
+			| T.Grouping.Loose
+			| (OmitEach<NonNullable<T.Grouping.Loose>, 'groupingGroup'> & {
+					groupingGroup: ReadonlyArray<
+						| T.GroupingGroup.LooseArgs[0]
+						| (NonNullable<T.Grouping.Loose> extends { readonly groupingGroup?: infer E }
+								? E extends readonly (infer I)[]
+									? I
+									: never
+								: never)
+					>;
+			  })
+	];
 	export type Kind = TSKindId.Grouping;
 }
 export namespace MissingNode {
