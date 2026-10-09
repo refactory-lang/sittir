@@ -1221,20 +1221,37 @@ export function isHiddenRule(name: string, rules: Readonly<Record<string, AnyRul
 	return rules[name]?.hidden === true;
 }
 
-export function isComplexBody(rule: Rule<'evaluate'>): boolean {
+export function isComplexBody(rule: { readonly type: string; readonly members?: unknown; readonly content?: unknown }): boolean {
 	switch (rule.type) {
 		case SEQ:
-			return (rule as SeqRule<'evaluate'>).members.length >= 2;
 		case CHOICE:
-			return (rule as ChoiceRule<'evaluate'>).members.length >= 2;
+			return Array.isArray(rule.members) && rule.members.length >= 2;
 		case REPEAT:
 		case REPEAT1: {
-			const content = (rule as RepeatRule<'evaluate'>).content;
+			const content = rule.content as { readonly type?: unknown } | undefined;
+			if (content === undefined || typeof content.type !== 'string') return false;
 			return content.type !== STRING && content.type !== SYMBOL && content.type !== PATTERN;
 		}
 		default:
 			return false;
 	}
+}
+
+export function onlyAliasedSymbols(bodies: Iterable<unknown>): ReadonlySet<string> {
+	const bare = new Set<string>();
+	const aliased = new Set<string>();
+	const visit = (node: unknown, underAlias: boolean): void => {
+		if (node === null || typeof node !== 'object') return;
+		const rule = node as { type?: unknown; name?: unknown; named?: unknown; members?: unknown; content?: unknown };
+		if (rule.type === SYMBOL && typeof rule.name === 'string') {
+			(underAlias ? aliased : bare).add(rule.name);
+			return;
+		}
+		if (Array.isArray(rule.members)) for (const member of rule.members) visit(member, false);
+		if (rule.content !== undefined) visit(rule.content, rule.type === ALIAS && rule.named !== false);
+	};
+	for (const body of bodies) visit(body, false);
+	return new Set([...aliased].filter((name) => !bare.has(name)));
 }
 
 export function deriveComplexAliasTargetHidden(rules: Record<string, AnyRule>): ReadonlySet<string> {

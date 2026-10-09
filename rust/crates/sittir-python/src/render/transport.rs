@@ -15942,20 +15942,20 @@ impl ::sittir_core::prepare::Prepare for CaseListPatternTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_PRINT_ARGUMENTS, list, item = argument)]
+#[transport(kind = kind::_PRINT_ARGUMENTS, list, item = item)]
 pub struct PrintArgumentsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[wire(key = "_argument")]
-    #[slot(field = field::ARGUMENT, separator = kind::COMMA)]
-    pub argument: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
+    #[wire(key = "_item")]
+    #[slot(field = field::ITEM, separator = kind::COMMA)]
+    pub item: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
-    #[wire(key = "_argument_separator_space_before")]
-    pub argument_separator_space_before: Option<u16>,
-    #[wire(key = "_argument_separator_space_after")]
-    pub argument_separator_space_after: Option<u16>,
+    #[wire(key = "_item_separator_space_before")]
+    pub item_separator_space_before: Option<u16>,
+    #[wire(key = "_item_separator_space_after")]
+    pub item_separator_space_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for PrintArgumentsTransport {
@@ -15980,12 +15980,12 @@ impl ::sittir_core::prepare::Prepare for PrintArgumentsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_list_gaps(self.argument.iter_mut().map(Some), ",", options::allowed(options::SITE_PRINT_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PRINT_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
-        self.argument_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PRINT_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_BEFORE].arm);
-        self.argument_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PRINT_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.argument.iter_mut().map(Some), options::SEATS_PRINT_ARGUMENTS_ARGUMENT, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(275), &[6], ctx.options.delimiter[options::DELIM_PRINT_ARGUMENTS_ARGUMENT], ctx));
-        self.argument.prepare(ctx)?;
+        ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_PRINT_ARGUMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PRINT_ARGUMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PRINT_ARGUMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
+        self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PRINT_ARGUMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_PRINT_ARGUMENTS_ITEM, ctx);
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(275), &[6], ctx.options.delimiter[options::DELIM_PRINT_ARGUMENTS_ITEM], ctx));
+        self.item.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -15997,20 +15997,20 @@ impl ::sittir_core::prepare::Prepare for PrintArgumentsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_PRINT_CHEVRON_ARGUMENTS, list, item = argument)]
+#[transport(kind = kind::_PRINT_CHEVRON_ARGUMENTS, list, item = item)]
 pub struct PrintChevronArgumentsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<TransportLayout>,
-    #[wire(key = "_argument")]
-    #[slot(field = field::ARGUMENT, separator = kind::COMMA)]
-    pub argument: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
+    #[wire(key = "_item")]
+    #[slot(field = field::ITEM, separator = kind::COMMA)]
+    pub item: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 1)]
     pub delimiter: Option<u8>,
-    #[wire(key = "_argument_separator_space_before")]
-    pub argument_separator_space_before: Option<u16>,
-    #[wire(key = "_argument_separator_space_after")]
-    pub argument_separator_space_after: Option<u16>,
+    #[wire(key = "_item_separator_space_before")]
+    pub item_separator_space_before: Option<u16>,
+    #[wire(key = "_item_separator_space_after")]
+    pub item_separator_space_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for PrintChevronArgumentsTransport {
@@ -16035,12 +16035,12 @@ impl ::sittir_core::prepare::Prepare for PrintChevronArgumentsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_list_gaps(self.argument.iter_mut().map(Some), ",", options::allowed(options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
-        self.argument_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_BEFORE].arm);
-        self.argument_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.argument.iter_mut().map(Some), options::SEATS_PRINT_CHEVRON_ARGUMENTS_ARGUMENT, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(276), &[6], ctx.options.delimiter[options::DELIM_PRINT_CHEVRON_ARGUMENTS_ARGUMENT], ctx));
-        self.argument.prepare(ctx)?;
+        ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_PRINT_CHEVRON_ARGUMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PRINT_CHEVRON_ARGUMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
+        self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_PRINT_CHEVRON_ARGUMENTS_ITEM, ctx);
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(276), &[6], ctx.options.delimiter[options::DELIM_PRINT_CHEVRON_ARGUMENTS_ITEM], ctx));
+        self.item.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -18218,19 +18218,19 @@ pub struct NamesTransport {
 
 impl ::sittir_core::view::KindOf for NamesTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(337)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(336)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for NamesTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(337) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(336) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for NamesTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(337)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_names(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(336)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_names(self, w))
     }
 }
 
@@ -18259,19 +18259,19 @@ pub struct AsPatternTargetTransport {
 
 impl ::sittir_core::view::KindOf for AsPatternTargetTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(335)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(334)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for AsPatternTargetTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(335) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(334) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for AsPatternTargetTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(335)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_as_pattern_target(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(334)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_as_pattern_target(self, w))
     }
 }
 
@@ -18300,19 +18300,19 @@ pub struct FormatExpressionTransport {
 
 impl ::sittir_core::view::KindOf for FormatExpressionTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(336)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(335)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for FormatExpressionTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(336) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(335) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for FormatExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(336)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_format_expression(self, w))
+        TransportLayout::render(self.layout.as_ref(), Some(::sittir_core::types::KindId(335)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_format_expression(self, w))
     }
 }
 
@@ -24047,34 +24047,34 @@ fn render_case_list_pattern(node: &CaseListPatternTransport, w: &mut dyn ::sitti
 }
 
 fn render_print_arguments(node: &PrintArgumentsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let argument = ListView {
-        items: &node.argument,
+    let item = ListView {
+        items: &node.item,
         template: "{}",
         token: ",",
-        before: node.argument_separator_space_before.unwrap_or(0),
-        after: node.argument_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(0),
+        after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         head: None,
         tail: None,
     };
-    argument.render(w)?;
+    item.render(w)?;
     Ok(())
 }
 
 fn render_print_chevron_arguments(node: &PrintChevronArgumentsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let argument = ListView {
-        items: &node.argument,
+    let item = ListView {
+        items: &node.item,
         template: "{}",
         token: ",",
-        before: node.argument_separator_space_before.unwrap_or(0),
-        after: node.argument_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(0),
+        after: node.item_separator_space_after.unwrap_or(0),
         leading: true,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         head: None,
         tail: None,
     };
-    argument.render(w)?;
+    item.render(w)?;
     Ok(())
 }
 

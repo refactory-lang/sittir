@@ -7194,3 +7194,7 @@ The precedence wrapper types, which carry no slot topology.
 ### `packages/codegen/src/dsl/symbol-table.ts::generatedFieldIds`
 
 The parser's field table as `{ name, id }` rows in id order, skipping entries without an id. It is the field-side counterpart of `collectGeneratedKindEntries` and the single source `field_ids.rs` is emitted from.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::onlyAliasedSymbols`
+
+The symbols a set of rule bodies references under a named alias and never by name. An authored hidden rule in that set is not a pattern candidate: its owner gave it a visible name at every reference, and the parser makes that alias the rule's own name only while every reference carries it. Folding an unrelated inline body of the same shape into a plain reference would add an unaliased reference, and the kind would stop being the aliased one. Evaluate's `applyPatternReplacement` and wire's `applyWirePatternReplacement` both ask it; a candidate that folds into an alias site (a declared group) is not subject to it.

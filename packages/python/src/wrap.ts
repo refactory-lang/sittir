@@ -9690,14 +9690,14 @@ export function wrapPrintArguments(
 	},
 	tree: TreeHandle
 ): T.PrintArguments.Parsed {
-	data = modelSlots(data, ['_argument']);
+	data = modelSlots(data, ['_item']);
 	const handle = currentHandle();
 	const _content = storeExpanded(
 		projectMixedEnumStorage(
-			normalizeRepeatedWrapSlot(data._argument, true, 'argument', {
+			normalizeRepeatedWrapSlot(data._item, true, 'item', {
 				tree,
 				nodeType: data.$type,
-				slotName: 'argument',
+				slotName: 'item',
 				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
@@ -9711,16 +9711,16 @@ export function wrapPrintArguments(
 	const node = {
 		...data,
 		$type: TSKindId.PrintArguments as const,
-		_argument: _content,
+		_item: _content,
 		_delimiter,
 
-		arguments() {
-			return hydrateSlots<T.Expression>(this, '_argument', tree);
+		items() {
+			return hydrateSlots<T.Expression>(this, '_item', tree);
 		},
 		$with: {},
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'arguments'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -9745,14 +9745,14 @@ export function wrapPrintChevronArguments(
 	},
 	tree: TreeHandle
 ): T.PrintChevronArguments.Parsed {
-	data = modelSlots(data, ['_argument']);
+	data = modelSlots(data, ['_item']);
 	const handle = currentHandle();
 	const _content = storeExpanded(
 		projectMixedEnumStorage(
-			normalizeRepeatedWrapSlot(data._argument, true, 'argument', {
+			normalizeRepeatedWrapSlot(data._item, true, 'item', {
 				tree,
 				nodeType: data.$type,
-				slotName: 'argument',
+				slotName: 'item',
 				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
@@ -9766,16 +9766,16 @@ export function wrapPrintChevronArguments(
 	const node = {
 		...data,
 		$type: TSKindId.PrintChevronArguments as const,
-		_argument: _content,
+		_item: _content,
 		_delimiter,
 
-		arguments() {
-			return hydrateSlots<T.Expression>(this, '_argument', tree);
+		items() {
+			return hydrateSlots<T.Expression>(this, '_item', tree);
 		},
 		$with: {},
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'arguments'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -9883,7 +9883,7 @@ export function wrapPrintStatementPlain(data: T.PrintStatementPlain, tree: TreeH
 		}),
 		tree
 	);
-	const listView = ownerView(_print_arguments, '_argument', (list) => hydrateChild(list, tree));
+	const listView = ownerView(_print_arguments, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.PrintStatementPlain as const,
@@ -9905,7 +9905,7 @@ export function wrapPrintStatementPlain(data: T.PrintStatementPlain, tree: TreeH
 		},
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.printArguments(), 'arguments'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.printArguments(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -12079,11 +12079,11 @@ function _wrapTrivia(trivia: _UntypedNode['$_trivia'], tree: TreeHandle): _Untyp
 	);
 }
 
-const _ALIAS_ENVELOPES: ReadonlySet<_UntypedNode['$type']> = new Set([335, 336, 337]);
+const _ALIAS_ENVELOPES: ReadonlySet<_UntypedNode['$type']> = new Set([334, 335, 336]);
 const _HIDDEN_KINDS: ReadonlySet<_UntypedNode['$type']> = new Set([
 	116, 117, 122, 123, 124, 125, 126, 128, 129, 143, 162, 183, 194, 195, 203, 204, 205, 215, 218, 250, 251, 254, 255,
 	282, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320,
-	321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334
+	321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333
 ]);
 function _displayOf(entry: _UntypedNode): _UntypedNode['$type'] {
 	return (entry as { readonly $displayType?: _UntypedNode['$type'] }).$displayType ?? entry.$type;

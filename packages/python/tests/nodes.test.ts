@@ -363,7 +363,7 @@ describe('print_statement', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_argument: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+				_item: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 			} as any
 		} as any);
 		expect(node.$type).toBe(TSKindId.PrintStatement);
@@ -387,7 +387,7 @@ describe('print_statement', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_argument: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+				_item: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 			} as any
 		} as any);
 		const rendered = node.$render!();
@@ -4263,7 +4263,7 @@ describe('print_statement_plain', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_argument: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+			_item: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 		} as any);
 		expect(node.$type).toBe(TSKindId.PrintStatementPlain);
 		expect(node.$source).toBe(2);
@@ -4274,7 +4274,7 @@ describe('print_statement_plain', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_argument: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+			_item: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 		} as any);
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);

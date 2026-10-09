@@ -2004,3 +2004,7 @@ Every `liftNames` key must be a rule enrich minted, else it throws. A renamed li
 ### `packages/codegen/src/dsl/wire/reparse-hosts.ts::ReparseHostsConfig`
 
 The grammar's `reparseHosts` block: a template per supertype or kind whose `$r` hole takes rendered text so it parses as a whole file, the priority order between reachable supertype hosts, and the kinds whose own host applies only when a variant is adopted. It passes through wire, evaluate and generate untouched and is emitted as data; the validator and the delimiter check both read it.
+
+### `packages/codegen/src/dsl/wire/wire.ts::applyWirePatternReplacement` (alias-only guard)
+
+Which candidates fold is decided on the first call of a folding wrapper made with the runtime's own builder: every authored rule's callback runs once then, its body is kept and handed back when that rule is asked for, and `onlyAliasedSymbols` over those bodies and the candidate bodies removes the candidates referenced only under an alias. The pattern-detection pass that evaluates authored hidden rules with the simple builder runs with folding switched off, so its throwaway bodies are never kept.

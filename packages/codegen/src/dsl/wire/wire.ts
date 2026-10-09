@@ -26,7 +26,7 @@ import {
 import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { assertNoRenamedExternal, liftRenames, resolveLiftNames, type LiftName } from './lift-names.ts';
-import { rulesEqual, type SymbolSource } from '../rule-patterns.ts';
+import { isComplexBody, onlyAliasedSymbols, rulesEqual, type SymbolSource } from '../rule-patterns.ts';
 import { predictedSymbolSourceOf } from '../symbol-table.ts';
 import { getEnrichElementSupertypes, getEnrichFieldBackings, getEnrichHiddenSubsequences, getEnrichMints, getEnrichTextTokens, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, type AuthoredFieldSite, type GrammarResult } from '../enrich.ts';
 import type { WhitespaceCollision } from '../whitespace.ts';
@@ -1153,7 +1153,7 @@ function declaredPatterns(groups: GroupsConfig | undefined, injects: GroupsConfi
 		} catch (e) {
 			throw new Error(`${section}['${key}']: failed to evaluate body fn: ${(e as Error).message}`);
 		}
-		if (!isComplexBodyRt(body)) {
+		if (!isComplexBody(body)) {
 			throw new Error(
 				`${section}['${key}']: body is not a complex structural pattern (need SEQ ≥2, CHOICE ≥2, or REPEAT with non-trivial content)`
 			);
@@ -1173,20 +1173,6 @@ export function makeSimpleDollarProxy(): Record<string, RuntimeRule> {
 			return symbol;
 		}
 	});
-}
-
-function isComplexBodyRt(rule: RuntimeRule): boolean {
-	const r = rule as { type: string; members?: unknown[]; content?: unknown };
-	const t = r.type;
-	if (typeEq(t, 'SEQ') || typeEq(t, 'CHOICE')) {
-		return Array.isArray(r.members) && r.members.length >= 2;
-	}
-	if (typeEq(t, 'REPEAT') || typeEq(t, 'REPEAT1')) {
-		const c = r.content as { type?: string } | undefined;
-		if (!c || typeof c.type !== 'string') return false;
-		return !typeEq(c.type, 'STRING') && !typeEq(c.type, 'SYMBOL') && !typeEq(c.type, 'PATTERN');
-	}
-	return false;
 }
 
 function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidate[], automatic: () => AutomaticVariants): unknown {
@@ -1230,10 +1216,19 @@ function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidat
 	return rule;
 }
 
-function buildPatternReplacingFn(fn: RuleFn, candidates: readonly WirePatternCandidate[], automatic: () => AutomaticVariants): RuleFn {
+let detectingPatterns = false;
+
+function buildPatternReplacingFn(
+	fn: RuleFn,
+	candidates: ($: Parameters<RuleFn>[0]) => readonly WirePatternCandidate[],
+	automatic: () => AutomaticVariants,
+	evaluated: () => { has(): boolean; get(): unknown }
+): RuleFn {
 	return function patternReplacingRuleFn($, previous) {
-		const result = fn($, previous);
-		return replaceInBodyRt(result, candidates, automatic);
+		if (detectingPatterns) return fn($, previous);
+		const active = candidates($);
+		const memo = evaluated();
+		return replaceInBodyRt(memo.has() ? memo.get() : fn($, previous), active, automatic);
 	};
 }
 
@@ -1356,13 +1351,16 @@ export function applyWirePatternReplacement(
 		if (!fn) continue;
 		let body: RuntimeRule;
 		try {
+			detectingPatterns = true;
 			const result = fn.call(undefined, $, undefined);
 			if (!result || typeof result !== 'object' || typeof (result as { type?: unknown }).type !== 'string') continue;
 			body = result as RuntimeRule;
 		} catch {
 			continue;
+		} finally {
+			detectingPatterns = false;
 		}
-		if (!isComplexBodyRt(body)) continue;
+		if (!isComplexBody(body)) continue;
 		candidates.push({ name, body });
 	}
 
@@ -1377,8 +1375,25 @@ export function applyWirePatternReplacement(
 	if (candidates.length === 0) return;
 
 	const candidateNames = new Set(candidates.map((c) => c.name));
-	for (const [name, fn] of Object.entries(rules)) {
+	const originals = new Map(Object.entries(rules));
+	const authored = [...authoredRuleNames].filter((name) => originals.has(name) && !candidateNames.has(name));
+	const authoredBodies = new Map<string, unknown>();
+	let folding: readonly WirePatternCandidate[] | undefined;
+	const foldingCandidates = (runtime$: Parameters<RuleFn>[0]): readonly WirePatternCandidate[] => {
+		if (folding === undefined) {
+			for (const name of authored) authoredBodies.set(name, originals.get(name)!(runtime$, context.baseRuleBodies[name]));
+			const aliasOnly = onlyAliasedSymbols([...authoredBodies.values(), ...candidates.map((c) => c.body)]);
+			folding = candidates.filter((c) => c.aliasAs !== undefined || !aliasOnly.has(c.name));
+		}
+		return folding;
+	};
+	for (const [name, fn] of originals) {
 		if (candidateNames.has(name)) continue;
-		rules[name] = buildPatternReplacingFn(fn, candidates, () => context.automaticVariants);
+		rules[name] = buildPatternReplacingFn(
+			fn,
+			foldingCandidates,
+			() => context.automaticVariants,
+			() => ({ has: () => authoredBodies.has(name), get: () => authoredBodies.get(name) })
+		);
 	}
 }
