@@ -3,7 +3,7 @@ import { applyHost } from '@sittir/common';
 import { findReparsedNodeAtOffset, hostlessReason, loadRenderReparseContext } from '../src/validate/read-render-parse.ts';
 import { loadLanguageForGrammar, loadNativeEngine, wrapForReparse } from '../src/validate/common.ts';
 
-async function contextFor(grammar: 'python' | 'rust' | 'typescript') {
+async function contextFor(grammar: 'python' | 'regex' | 'rust' | 'typescript') {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
@@ -18,6 +18,13 @@ describe('a kind with no declared host is hosted through a parent that is', () =
 		const ctx = await contextFor('python');
 		for (const kind of ['return_statement', 'match_statement', 'match_block', 'block', 'suite_block']) {
 			expect(hostFor('python', kind, ctx), kind).not.toBeNull();
+		}
+	}, 120_000);
+
+	it('regex: a kind whose corpus holds zero-width instances is still hosted through its parent', async () => {
+		const ctx = await contextFor('regex');
+		for (const kind of ['term_group', 'character_class', 'count_quantifier']) {
+			expect(hostFor('regex', kind, ctx), kind).not.toBeNull();
 		}
 	}, 120_000);
 

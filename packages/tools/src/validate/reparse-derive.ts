@@ -121,7 +121,7 @@ export function deriveReparseHosts(input: DeriveHostsInput): Record<string, stri
 		const byText = new Map<string, TSNode>();
 		for (const { entry, node } of occurrences.get(kind) ?? []) {
 			const text = relativeText(node, input.corpus[entry]!.source);
-			if (text !== null && !byText.has(text)) byText.set(text, node);
+			if (text !== null && text !== '' && !byText.has(text)) byText.set(text, node);
 		}
 		return [...byText].map(([text, node]) => ({ text, node })).sort((a, b) => a.text.length - b.text.length || (a.text < b.text ? -1 : a.text > b.text ? 1 : 0));
 	};
