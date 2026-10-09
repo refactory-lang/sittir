@@ -116,7 +116,7 @@ describe('deriveVocabulary', () => {
 		])
 			expect(d.members.get(v)?.get('attributes')?.grammars.has('rust'), v).toBe(true);
 		expect(d.members.get('declaration.parameter')?.has('attributes')).toBe(false);
-		for (const v of ['statement.block', 'declaration.function', 'declaration.class', 'declaration.variable.lexical'])
+		for (const v of ['statement.block', 'declaration.function', 'declaration.class', 'declaration.variable'])
 			expect(d.members.get(v)?.has('declare') ?? false, v).toBe(false);
 		expect(d.untargeted).toEqual([]);
 		expect(d.uncaptured).toEqual([]);
