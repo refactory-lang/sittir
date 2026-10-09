@@ -94,7 +94,14 @@ A node carries one claim. Rust's `if` is claimed as `statement.if`; that it sits
 
 - **A refinement narrows, never widens.** It may add members, narrow a member's kind-set and pin a literal; it never makes a parent's required member optional, and it never admits a kind its parent does not.
 - **Enumerations are const strings:** the token's text as the language spells it, `'const'`, `'&&'`, `'of'`, never a sittir kind name or a grammar's kind id, typed per language as a string-literal union. The const string is the literal's identity on the portable surface, as the kind id is on a grammar's (§9). A choice that is a refined leaf is carried by the kind, and its string is derived from it per language, so `logical.and` builds as `&&` in typescript and `and` in python. A fixed-literal leaf stays its const string (`'+='`); the semantic name lives on the parent's sub-kind (`expression.assignment.compound.add`), never on the leaf.
-- **Keyword modifiers decompose into members.** `async`, `static`, `readonly`, `abstract`, `declare`, `override`, `const`, `unsafe`, `move`, `mutable`, `accessor`, `optional`, `definite` and `generator` are booleans. `visibility` and `accessorKind` (`get`/`set`) are text where the language spells them as keywords; typescript's accessibility keywords are its `visibility`. Rust's modifier set projects to the same booleans. A modifier with structure (`pub(in path)`, `extern "C"`) is a kind.
+- **Keyword modifiers decompose into members.** `async`, `static`, `readonly`, `abstract`, `declare`, `override`, `const`, `unsafe`, `move`, `mutable`, `accessor`, `optional`, `definite` and `generator` are booleans. `accessorKind` (`get`/`set`) is text where the language spells it as a keyword. Rust's modifier set projects to the same booleans. A modifier with structure of its own (`extern "C"`) is a kind.
+- **`visibility` is an access level,** a value of the vocabulary's rather than the language's text (§4.3): typescript's `protected` and rust's `pub(crate)` are spellings of the levels `protected` and `internal`. A level that names a module, rust's `pub(in path)`, is `restricted`, with the path in `visibilityScope`.
+- **A fact about a property is the property's.** What a property's name says of the property sits on the node that declares or reads the property, never on a kind of the name:
+  - a private member (`#x`) is named by an `identifier.property`, and the field, method or member access that holds the name is `private: true`, a flag of `encapsulation` (§4.3). In a brand check (`#x in obj`) the private name is the left operand of a binary `in`, which admits it in a language that composes `encapsulation`, with no kind of its own;
+  - a computed key is its expression, and the property is `computed: true`, a flag of `computed-keys`;
+  - a shorthand property is a pair with no value (§6).
+
+  The rule also covers a language that declares access on the member rather than in the name: a C++ member's access is its `visibility`.
 - **A grammar's shape kinds are refinements that pin what they add.** Injectivity (no two kinds of one grammar share a leaf) makes python's typed, default and typed-default parameters, and typescript's optional parameter, abstract class, abstract method signature and generator function, refinements of their parent, each pinning the member it is named for (`optional: true`, `abstract: true`, `generator: true`).
 - **Placement: one test.** Compare two languages' constructs member by member, leaving out members a feature the other language does not compose would make absent (§4.4):
   - the same members under a different keyword: one kind, two terms (`type_alias`, `module`, `constructor`, `throw`, `extension`);
@@ -174,7 +181,9 @@ Nothing in the vocabulary is language-specific; it is feature-specific. A langua
 | parametric-polymorphism | type parameters, type arguments | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | bounded-quantification | bounds, constraints, concepts, where | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | accessors | getter, setter | † | ✓ | | ✓ | | | ✓ |
-| visibility | `visibility`, per-language shape | † | ✓ | ✓ | ✓ | † | ✓ | ✓ |
+| visibility | `visibility`, an access level (values below) | † | ✓ | ✓ | ✓ | † | ✓ | ✓ |
+| encapsulation | `private`: a member hidden from code outside its class, enforced at run time (`#x`) | | ✓ | | | | | |
+| computed-keys | `computed`: a property whose key is evaluated (`[k]: v`) | | ✓ | | | | | |
 | async-await | async functions, await | ✓ | ✓ | ✓ | ✓ | | ✓ | ✓ |
 | generators | yield | ✓ | ✓ | | ✓ | | ✓ | |
 | concurrency-syntax | `go`, channels, actors | | | | | ✓ | | ✓ |
@@ -194,7 +203,26 @@ Nothing in the vocabulary is language-specific; it is feature-specific. A langua
 | labeled-control-flow | labels on loops and blocks | | ✓ | ✓ | | ✓ | ✓ | ✓ |
 | modules | import, export, re-export, namespace | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 
-Decisions the table records: `enumerations` and `algebraic-data-types` are separate features, since a C# enum and a rust enum share a keyword and nothing else; `decorators` and `attributes` are separate, since Swift's `@` forms are never evaluated applications; `exceptions` and `error-propagation` are separate, since Swift has both and rust has only the second. `oop` as a superset reads as `classes`, one of the inheritance features, `interface-conformance`, `accessors` and `visibility`; that composition names typescript, C# and Swift exactly, and python and C++ with the other inheritance feature. `open-type-extension` is kept apart from `typeclasses` because C# and Go have the former without the latter. `comprehensions` and `jsx` are real features shaped by one language each and compose as leaves under `expression` without a row here.
+Decisions the table records: `enumerations` and `algebraic-data-types` are separate features, since a C# enum and a rust enum share a keyword and nothing else; `decorators` and `attributes` are separate, since Swift's `@` forms are never evaluated applications; `exceptions` and `error-propagation` are separate, since Swift has both and rust has only the second. `oop` as a superset reads as `classes`, one of the inheritance features, `interface-conformance`, `accessors` and `visibility`; that composition names typescript, C# and Swift exactly, and python and C++ with the other inheritance feature. `open-type-extension` is kept apart from `typeclasses` because C# and Go have the former without the latter. `visibility` and `encapsulation` are separate: typescript's `private` is a level the compiler checks, `#x` a name the runtime hides, and the two never mark the same member. A key that is always an expression, as in python's, Go's and Swift's dictionary literals, has nothing for `computed-keys` to flag. `comprehensions` and `jsx` are real features shaped by one language each and compose as leaves under `expression` without a row here.
+
+**Visibility's values.** `visibility` holds one of these levels, from the widest to the narrowest. A cell is the language's spelling of the level; † marks a level spelled by content rather than a keyword, by a naming convention or by C++'s unnamed namespace; blank, the language has no such level.
+
+| value | visible to | py | ts | rs | C# | Go | C++ | Swift |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `open` | everything, and subclassed or overridden outside its module | | | | | | | `open` |
+| `public` | everything | † `name` | `public` | `pub` | `public` | † `Name` | `public` | `public` |
+| `package` | the modules of its package | | | | | | | `package` |
+| `internal` | its compilation unit: crate, assembly, package or module | | | `pub(crate)`, `crate` | `internal` | † `name` | | `internal` |
+| `restricted` | the ancestor module `visibilityScope` names | | | `pub(super)`, `pub(in path)` | | | | |
+| `protected internal` | the types derived from its type, and its compilation unit | | | | `protected internal` | | | |
+| `protected` | its type and the types derived from it | † `_name` | `protected` | | `protected` | | `protected` | |
+| `private protected` | the types derived from its type within its compilation unit | | | | `private protected` | | | |
+| `file` | its file | | | | `file` | | † unnamed namespace | `fileprivate` |
+| `private` | its declaring scope: its type, or its module in rust | † `__name` | `private` | `pub(self)` | `private` | | `private` | `private` |
+
+- **The level is the source's.** A node has `visibility` where its source spells a level, in a keyword or, at a †, in its name. A level the language assumes when nothing is spelled (rust's private, Swift's `internal`, typescript's `public`) is a fact about the language, not about the node.
+- **Rust's paths reduce to the levels they mean.** `pub(crate)` and `pub(in crate)` are `internal`; `pub(self)` and `pub(in self)` are `private`; `pub(super)` is `restricted` to `super`.
+- **A level is not a seal.** Swift orders `open` above `public` because it lets other modules subclass; elsewhere that permission is the absence of a seal (C#'s `sealed`), which is not an access level.
 
 ### 4.4 Presence is gated, requiredness is restated
 
@@ -286,6 +314,7 @@ Names converge before kinds. The rules govern the names the vocabulary uses and 
 5. Exclusive markers decompose.
 6. Inclusion is a DAG with full-coverage admission and flattened unions.
 7. Refinements narrow, never widen.
+8. A shorthand is its longhand with the omitted member absent, never a kind of its own: typescript's `{ a }` is an `element.pair` with no value, and rust's `Foo { a }` an `element.struct.field` with no value.
 
 Where a grammar's set is narrower than the vocabulary's (rust's `body` required and a block only), the language's context carries the narrowing, through its sets and its restatements (§4.4); the vocabulary is not re-authored.
 
@@ -371,16 +400,12 @@ A portable node reads through the grammar's typed surface: its low-level node's 
      - the features of a primitive type or literal form: `complex-numbers`, `arbitrary-precision-integers`, `characters`, `byte-strings`, `regular-expressions`, `string-interpolation`.
   7. **Python's generators.** Python composes `generators`, but its bindings claim no generator kind and route no `generator` member, so the inventory reports the feature unreached. Python does delegate: `yield from` is tree-sitter's `yield` with a `from` token. Recommendation: python's bindings claim it as a refinement, `((yield "from") @expression.yield.delegate)`, which reaches `generators`; the composition stays.
   8. **TypeScript's other typing kinds.** The probe gates TypeScript's typing members and the `type` namespace, so a JavaScript context lacks them. TypeScript's other typing kinds are still base kinds: interfaces, type aliases, call and construct signatures, the assertion and `satisfies` casts, abstract classes and methods, optional fields and parameters. Recommendation: move each into the feature that owns its concept (`interfaces`, `type-aliases`, `structural-conformance`, `type-annotations`), so that TypeScript is exactly JavaScript plus its typing features.
-  9. **Refinements outside their parent, and facts about a property.** The namespace map checks every refinement's fill against its parent's (§10.16). Three refinements in the binding prototype's vocabulary fail, and the probe's property-facts proposal (`gate`) fixes all three:
-     - **The identity and membership operators.** `expression.binary.identity` and `.membership` leave `operator` `unknown`, outside `expression.binary`'s `string`, and so do their leaves (`.is`, `.is_not`, `.not_in`), though Python routes it there. The proposal fills it as `string`, the keyword text it is. Recommendation: fill it so in the vocabulary.
-     - **Privateness** (the maintainer's direction). `identifier.property.private` goes: a private name is an `identifier.property`. Privateness is a flag on the property node, the member that declares or reads the name, which also serves a language that declares access on the member rather than in its name, such as C++. The proposal puts `private?: boolean` on `declaration.field`, `declaration.method` and `expression.member`, owned by a new feature, `encapsulation`, which JavaScript composes.
-     - **Computed keys and shorthand** have the same shape: a fact about the property recorded as a kind of its name. `identifier.property.computed` goes: the key is its expression, and `computed?: boolean` sits on `declaration.field`, `declaration.method`, `element.pair` and `pattern.object.pair`, owned by a new `computed-keys`. `identifier.property.shorthand` goes too: a pair's `value` becomes optional, and a shorthand property is a pair with no value.
-
-     Refinements inherit each flag. TypeScript claims three kinds fewer, and the demo pins the result: a Rust field's `private` is `Absent<Encapsulation>`, and `TypeScript.Identifier.Property.Private` no longer exists. Open:
-     - **Privateness's member.** Recommendation: its own boolean, as prototyped. TypeScript's `private` keyword already fills `visibility`, but a private name has no keyword for `visibility` to hold, and `private` and `#name` enforce different things. The table's `visibility` row and `encapsulation` then sit side by side.
-     - **The two features' names and rows** (question 6). Recommendation: `encapsulation` and `computed-keys`, with grounding columns filled in this document.
-     - **Shorthand as an absent value.** A `shorthand` flag would state the same fact a second time. Python's pair, whose claims all have a value, keeps `value` required through its bindings (§4.4). Recommendation: as prototyped. Rust's `element.struct.field.shorthand` already sits on the property and can stay a refinement, or become a field with no value the same way.
-     - **A private name outside any member.** TypeScript's brand check `#x in obj` has a private name as an operand, with no property node to flag. Recommendation: flag the membership test (`expression.binary.membership.in`) the same way, so the name stays an `identifier.property` there too.
+  9. **Refinements outside their parent, and visibility's values.** The namespace map checks every refinement's fill against its parent's (§10.16). Of the three refinements in the binding prototype's vocabulary that fail, the property rule (§3.3) removes `identifier.property.private`. Open:
+     - **The identity and membership operators.** `expression.binary.identity` and `.membership` leave `operator` `unknown`, outside `expression.binary`'s `string`, and so do their leaves (`.is`, `.is_not`, `.not_in`), though python routes it there. Recommendation: fill it as `string`, the keyword text it is, as the features probe does.
+     - **Visibility's values** (§4.3). Recommendation: the table's ten levels. Three choices in it:
+       - rust's `pub(super)` and `pub(in path)` are one level, `restricted`, with the path in `visibilityScope`, rather than a level per form;
+       - `open` is a level, because Swift orders it above `public`, while elsewhere the same permission is the absence of a seal;
+       - a level spelled by naming convention (†) is read from the name, and a build that gives a level the name contradicts is refused rather than renaming the declaration.
   10. **Text in a role.** Every context must fit the namespace map over itself, and the map types each role by kinds: `identifier` is `V.Identifier.Any<G>`. Two contexts put text in a role:
       - The binding generator's contexts admit a grammar's keyword text where its grammar aliases a keyword to a role (`identifier: … | 'bool' | 'gen' | 'union'`).
       - §8's structure context types leaves as text.
