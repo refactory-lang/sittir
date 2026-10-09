@@ -2,6 +2,7 @@ import { applyHost, hostTemplateFor, lineStartsInsideTokens, type ReparseHosts }
 import type { TSNode, TSTree } from './common.ts';
 
 const HOLE = '$r';
+const WRAPPER_MODEL_TYPES: ReadonlySet<string> = new Set(['list', 'alias', 'envelope']);
 
 /** One corpus entry, parsed. */
 export interface DerivationTree {
@@ -20,6 +21,8 @@ export interface DeriveHostsInput {
 	readonly admits: ReadonlyMap<string, ReadonlySet<string>>;
 	/** The stamped kind ids of a model kind: every symbol the generated kind tables name with it. */
 	readonly kindIdsOf: (kind: string) => readonly number[];
+	/** The model type of a kind: a list, alias or envelope kind holds its content as the node itself. */
+	readonly modelTypeOf: (kind: string) => string | undefined;
 	readonly corpus: readonly DerivationTree[];
 	readonly parse: (text: string) => TSTree;
 	/** The reparsed node with the source node's grammar id at the hole's offset, or null. */
@@ -194,10 +197,11 @@ function admitsKind(input: DeriveHostsInput, ids: IdIndex, parent: TSNode, child
 					admittedUnstamped.add(admittedName);
 					continue;
 				}
+				const wrapper = WRAPPER_MODEL_TYPES.has(input.modelTypeOf(admittedName) ?? '');
 				for (const id of stamped) {
 					if (admitted.has(id)) continue;
 					admitted.add(id);
-					if (!ids.visible.has(id)) walk(ids.namesOf(id));
+					if (wrapper || !ids.visible.has(id)) walk(ids.namesOf(id));
 				}
 			}
 		}

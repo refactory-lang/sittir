@@ -768,19 +768,21 @@ function deriveHostsFor(grammar: string, parser: RenderReparseContext['parser'])
 			if (!tree.rootNode.hasError) corpus.push({ source: entry.source, tree });
 		}
 		const types = await importGrammarModule(grammar, 'types.ts');
-		if (types?.KIND_NAMES === undefined || types.KIND_DISPLAY_NAMES === undefined) throw new Error(`${grammar}: src/types.ts has no KIND_NAMES / KIND_DISPLAY_NAMES`);
+		if (types?.KIND_NAMES === undefined) throw new Error(`${grammar}: src/types.ts has no KIND_NAMES`);
 		const idsByName = new Map<string, number[]>();
-		for (const table of [types.KIND_NAMES, types.KIND_DISPLAY_NAMES] as ReadonlyMap<number, string>[]) {
+		for (const table of [types.KIND_NAMES] as ReadonlyMap<number, string>[]) {
 			for (const [id, name] of table) idsByName.set(name, [...new Set([...(idsByName.get(name) ?? []), id])]);
 		}
 		const kindIdsOf = (kind: string): readonly number[] => idsByName.get(kind) ?? [];
 		const admits = new Map(Object.entries(model.slotKinds).map(([kind, slots]) => [kind, new Set(Object.values(slots).flat())]));
+		for (const [kind, elements] of Object.entries(model.listElementKinds)) admits.set(kind, new Set([...(admits.get(kind) ?? []), ...elements]));
 		const derived = deriveReparseHosts({
 			declared,
 			root: model.root,
 			kindToSupertypes: buildKindToSupertypes(raw),
 			admits,
 			kindIdsOf,
+			modelTypeOf: (kind) => model.modelTypes[kind],
 			adoptedVariantKinds: await loadVariantAdoptedKinds(grammar),
 			corpus,
 			parse: (text) => parser.parse(text) as TSTree,
