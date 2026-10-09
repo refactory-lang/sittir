@@ -35,3 +35,16 @@ The workspace minimum remains Rust 1.88. Tree-id allocation uses a bounded
 compare-and-swap loop because `fetch_update` is deprecated on newer Rust,
 while its replacement `try_update` requires Rust 1.95. Exhaustion and
 concurrent uniqueness tests guard the allocation contract.
+
+## Kind ids
+
+`clippy.toml` disallows `tree_sitter::Node::kind_id`. Every flag table, edge
+row, seat table and transport is keyed by the grammar id (`grammar_id()`);
+`kind_id()` is the parser's display symbol, which differs for hidden and
+aliased nodes, so keying a table with it silently misses. The one sanctioned
+read of the display symbol is `sittir_core::read::display_id`, which carries
+the only `#[allow(clippy::disallowed_methods)]`. Call it only where an alias
+envelope is meant (a node's `display` field, a search that accepts either
+spelling, the transport expansion's variant match); everything else uses
+`grammar_id()`. The transport macro expands to `display_id`, never to
+`kind_id`.

@@ -12,6 +12,7 @@
 //! recursive `$fields` payloads no longer appear on native reads.
 
 use serde_json::Value;
+use sittir_core::read::display_id;
 use sittir_core::read_untyped_node::{read_untyped_node, HandleMint, NoMint, ReadDepth, ReadModel};
 use sittir_core::types::{FieldValue, KindId, UntypedNode, NodeHandle, Source, Span};
 use sittir_core::{ErrorRegion, ErrorRegionKind};
@@ -538,11 +539,11 @@ fn an_aliased_node_ships_its_grammar_symbol_and_its_display_id() {
     let source = "struct S { a: u8 }";
     let tree = parse_tree(tree_sitter_rust::LANGUAGE.into(), source);
     let field = find_first_ts_node_by_kind(tree.root_node(), "field_identifier").expect("field_identifier");
-    assert_ne!(field.kind_id(), field.grammar_id(), "the parser shows `a` under an alias");
+    assert_ne!(display_id(&field).0, field.grammar_id(), "the parser shows `a` under an alias");
     let node = read_untyped_node(&tree, source, Some(field), None, ReadDepth::Deep, &Plain, &mut NoMint);
     let json = serde_json::to_value(&node).expect("serialize");
     assert_eq!(json["$type"].as_u64(), Some(u64::from(field.grammar_id())));
-    assert_eq!(json["$displayType"].as_u64(), Some(u64::from(field.kind_id())));
+    assert_eq!(json["$displayType"].as_u64(), Some(u64::from(display_id(&field).0)));
 }
 
 #[test]
@@ -824,10 +825,10 @@ fn node_at_span_finds_the_first_node_a_pre_order_walk_meets_with_that_span_and_k
             }
         }
         for node in &nodes {
-            for kind in [node.grammar_id(), node.kind_id()] {
+            for kind in [node.grammar_id(), display_id(node).0] {
                 let expected = by_span[&(node.start_byte(), node.end_byte())]
                     .iter()
-                    .find(|candidate| candidate.grammar_id() == kind || candidate.kind_id() == kind)
+                    .find(|candidate| candidate.grammar_id() == kind || display_id(candidate).0 == kind)
                     .map(|found| found.id());
                 let found = node_at_span(&tree, node.start_byte(), node.end_byte(), kind).map(|found| found.id());
                 assert_eq!(found, expected, "{} at {}..{}", node.kind(), node.start_byte(), node.end_byte());

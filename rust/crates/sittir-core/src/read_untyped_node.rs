@@ -203,7 +203,7 @@ pub(crate) fn stamped_kind(node: &tree_sitter::Node<'_>) -> KindId {
 /// parsed the node, and the kind the parser shows it as when that differs.
 fn identity(node: &tree_sitter::Node<'_>) -> (KindId, Option<KindId>) {
     let grammar = stamped_kind(node);
-    let display = KindId(node.kind_id());
+    let display = crate::read::display_id(node);
     (grammar, (display != grammar).then_some(display))
 }
 
@@ -561,7 +561,7 @@ pub fn line_gaps(
 /// child forward, in source order, while it starts at or before `start`.
 pub fn node_at_span<'t>(tree: &'t tree_sitter::Tree, start: usize, end: usize, kind: u16) -> Option<tree_sitter::Node<'t>> {
     fn search<'t>(node: tree_sitter::Node<'t>, start: usize, end: usize, kind: u16) -> Option<tree_sitter::Node<'t>> {
-        if node.start_byte() == start && node.end_byte() == end && (stamped_kind(&node).0 == kind || node.kind_id() == kind) {
+        if node.start_byte() == start && node.end_byte() == end && (stamped_kind(&node).0 == kind || crate::read::display_id(&node).0 == kind) {
             return Some(node);
         }
         let mut walker = node.walk();
