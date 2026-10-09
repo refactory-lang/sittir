@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
-// Two regex sources, each holding a kind whose occurrence the typed read
-// stores without a node of its own.
+// Two regex sources, each holding a kind the typed read stores without a node
+// of its own: inside its parent's text, or as its parent's presence or unit.
 const SOURCES = { 'lazy quantifier': 'a*?', 'escaped dash in a class': '[\\-]' };
 
 vi.mock('../common.ts', async (importOriginal) => {
@@ -17,14 +17,13 @@ vi.mock('../common.ts', async (importOriginal) => {
 
 const { validateFrom } = await import('../from.ts');
 
-describe('validate-from: an occurrence the read holds no node for', () => {
-	it('is excluded with the model fact that explains it, not failed', async () => {
+describe('validate-from: a kind no entry reads as a node of its own', () => {
+	it('is tested through the nearest ancestor the read holds, not excluded', async () => {
 		const result = await validateFrom('regex');
-		const reasons = Object.fromEntries(
-			result.excluded.filter((skip) => skip.kind !== undefined).map((skip) => [skip.kind, skip.reason])
-		);
-		expect(reasons.lazy).toBe('folded-into-parent-text');
-		expect(reasons.identity_escape).toBe('read-as-unit-variant');
+		const unread = new Set(['lazy', 'identity_escape']);
+		expect(result.excluded.filter((skip) => skip.kind !== undefined && unread.has(skip.kind))).toEqual([]);
+		expect(result.errors.filter((error) => unread.has(error.kind))).toEqual([]);
 		expect(result.errors.filter((error) => error.severity === 'error')).toEqual([]);
+		expect(result.pass).toBe(result.total);
 	});
 });

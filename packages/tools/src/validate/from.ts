@@ -38,7 +38,8 @@ import {
 	type FactoryEntry,
 	type TSNode,
 	type TSTree,
-	type ValidatorSkip
+	type ValidatorSkip,
+	type CorpusEntry
 } from './common.ts';
 
 // ---------------------------------------------------------------------------
@@ -260,7 +261,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 	const skips: ValidatorSkip[] = [];
 	const excluded: ValidatorSkip[] = [];
 	const orphanedExtras = new Map<string, ValidatorSkip>();
-	const unreadKinds = new Map<string, ValidatorSkip>();
+	const unreadKinds = new Map<string, CorpusEntry>();
 	const storageKindOf = (kindId: number): string => storageKindNameFromId?.(kindId) ?? '';
 	const unreadReason = (node: TSNode): string | undefined => {
 		if (insideExtra(node)) return 'native-read-dropped-extra';
@@ -273,40 +274,267 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 	let undefinedCount = 0;
 	let divergentCount = 0;
 
+	const validateLeafByText = (kind: string, credited: string, text: string, leafShape: 'text' | 'constant'): void => {
+		try {
+			const fromResult = fromMap[kind]!(text as never) as AnyUntypedNode;
+			const factoryResult =
+				leafShape === 'constant'
+					? (factoryMap[kind] as AnyUntypedNode)
+					: (factoryMap[kind]! as (t: string) => AnyUntypedNode)(text);
+			const diffs =
+				kindIdDiffs(fromResult, factoryResult) ?? structuralDiff(fromResult, factoryResult);
+			if (diffs.length > 0) {
+				divergentCount++;
+				errors.push({
+					kind: credited,
+					severity: 'warning',
+					message: `from() diverges: ${diffs.join('; ')}`
+				});
+			} else {
+				pass++;
+			}
+		} catch (e) {
+			errors.push({
+				kind: credited,
+				severity: 'error',
+				message: `leaf text route throws: ${(e as Error).message}`
+			});
+		}
+	};
+
+	const validateAt = async (entry: CorpusEntry, node: TSNode, kind: string, credited: string): Promise<string | undefined> => {
+		let readData: AnyUntypedNode;
+		let readTree: TreeHandle | undefined;
+		try {
+			const handle = await buildReadHandle(grammar, entry.source);
+			readTree = handle;
+			// Native engine Rust-heap IDs differ from WASM linear-memory IDs.
+			// Resolve via the native data tree; if the kind is an alias target
+			// the native engine emits under a different rule name, skip rather
+			// than fall back to a mismatched WASM ID.
+			const nativeCoords = findNativeNodeId(
+				handle,
+				kind,
+				kindNameFromId,
+				node.parent === null ? undefined : sourceSpans(entry.source).toSpan({ start: node.startIndex, end: node.endIndex })
+			);
+			if (nativeCoords === null && handle.read) {
+				// The native read stores most leaf kinds SCALARIZED — collapsed
+				// to text inside parent storage, no node to locate — and alias
+				// targets emit under a different rule name. For a text-shaped
+				// kind that is not a locator failure: the sound comparison
+				// needs no native node at all. Feed the WASM node's text
+				// through both from() (the real leaf-coercion route, pattern
+				// guards included) and the factory, and compare the results.
+				const leafShape = factoryShapes[kind] ?? 'config';
+				if (leafShape === 'text' || leafShape === 'constant') {
+					validateLeafByText(kind, credited, node.text, leafShape);
+					return undefined;
+				}
+				const unread = unreadReason(node);
+				if (unread !== undefined) return unread;
+				errors.push({
+					kind: credited,
+					severity: 'error',
+					message: `native coords unresolved for alias target — comparing against a mismatched WASM id would be unsound`
+				});
+				return undefined;
+			}
+			if (nativeCoords?.embeddedData !== undefined) {
+				readData = wrapNode
+					? (wrapNode(nativeCoords.embeddedData, handle) as AnyUntypedNode)
+					: nativeCoords.embeddedData;
+			} else {
+				readData = readNode
+					? (readNode(handle, nativeCoords?.coordinate) as AnyUntypedNode)
+					: readNativeAt(handle, nativeCoords ?? {});
+			}
+		} catch (e) {
+			errors.push({
+				kind: credited,
+				severity: 'error',
+				message: `read/wrap throws: ${(e as Error).message}`
+			});
+			return undefined;
+		}
+
+		// The read node's $type is the storage stamp; in an alias context the
+		// CST face name (`kind`) differs from it (a decorator's member chain
+		// wears the member_expression face over the decorator_member_expression
+		// storage kind). Storage identity picks the from/factory pair — the
+		// face is only how the corpus walk found the node.
+		const readTypeName = typeof readData.$type === 'number' ? storageKindNameFromId?.(readData.$type) : undefined;
+		const readKind =
+			readTypeName !== undefined && readTypeName in fromMap && readTypeName in factoryMap ? readTypeName : kind;
+		const readKindId = kindIdFromName?.(readKind);
+		const aliasRead =
+			typeof readData.$text === 'string' &&
+			typeof readData.$type === 'number' &&
+			readKindId !== undefined &&
+			readData.$type !== readKindId;
+		try {
+			if (aliasRead && fromMap[readKind]!(readData) !== readData) {
+				errors.push({
+					kind: credited,
+					severity: 'error',
+					message: `from() rebuilt a read leaf of another kind instead of returning it`
+				});
+				return undefined;
+			}
+			const fromResult = fromMap[readKind]!(aliasRead ? (readData.$text as never) : readData) as AnyUntypedNode;
+			let factoryResult: AnyUntypedNode;
+			try {
+				// Route by the shape declared at codegen time — same
+				// pattern as validate-factory-roundtrip.ts. Guessing
+				// from `readData.fields` alone mis-routes empty
+				// containers (python `()` has promoted `(`/`)` fields
+				// but `children === undefined`, yet is a children-shape
+				// factory that must dispatch as `factory()` with no args).
+				const shape = factoryShapes[readKind] ?? 'config';
+				const factory = factoryMap[readKind]!;
+				if (shape === 'config' || shape === 'direct' || shape === 'forwarded') {
+					// ReadNode emits `_<name>` top-level keys, not
+					// `$fields`. Use `nodeToConfig` which handles both shapes
+					// and recursively resolves children through factories.
+					const config = nodeToConfig(readData, {
+						shownKind: readKind,
+						interiorOf,
+						factoryMap,
+						factoryShapes,
+						factoryFields,
+						factorySlots,
+						fieldAliasMap,
+						kindNameFromId
+					});
+					if (shape === 'direct' || shape === 'forwarded') {
+						// Direct-call shape: use the sole field when metadata
+						// names one, otherwise treat it as a single child call.
+						const fieldNames = factoryFields[readKind];
+						const rawName = fieldNames?.[0];
+						const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
+						const childArgs = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
+						const value = camelName ? (config as Record<string, unknown>)[camelName] : childArgs[0];
+						factoryResult = (factory as (v: unknown) => AnyUntypedNode)(
+							readTree !== undefined && readNode !== null && isCoordinate(value) ? readNode(readTree, value) : value
+						);
+					} else {
+						// Config-shaped factories with flank capture take `(config,
+						// options)` — factories without options ignore the extra argument.
+						factoryResult = (factory as (c: unknown, o?: unknown) => AnyUntypedNode)(
+							config,
+							separatedListFactoryOptions(readData)
+						);
+					}
+				} else if (shape === 'constant') {
+					factoryResult = factory as AnyUntypedNode;
+				} else if (shape === 'text') {
+					// A text-shaped factory takes the node's bytes, which its span
+					// addresses whether or not the reader captured them as `$text`.
+					const span = spanOf(readData);
+					const textForFactory = span ? sliceSpan(entry.source, span) : (readData.$text ?? '');
+					factoryResult = (factory as (text: string) => AnyUntypedNode)(textForFactory);
+				} else if (shape === 'elements') {
+					// separatedList factory: spread with a LEADING optional
+					// options bag — `(...elements)` / `({separatorKind?,
+					// leading?, trailing?}, ...elements)` — distinct calling
+					// convention from 'spread's plain rest-param factories (see
+					// classifyFactoryShape's separatedList case).
+					const config = nodeToConfig(readData, {
+						shownKind: readKind,
+						interiorOf,
+						factoryMap,
+						factoryShapes,
+						factoryFields,
+						factorySlots,
+						fieldAliasMap,
+						kindNameFromId
+					});
+					const elements = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
+					const options = separatedListFactoryOptions(readData);
+					const listFactory = factory as (...args: unknown[]) => AnyUntypedNode;
+					factoryResult = options !== undefined ? listFactory(options, ...elements) : listFactory(...elements);
+				} else {
+					const config = nodeToConfig(readData, {
+						shownKind: readKind,
+						interiorOf,
+						factoryMap,
+						factoryShapes,
+						factoryFields,
+						factorySlots,
+						fieldAliasMap,
+						kindNameFromId
+					});
+					const childArgs = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
+					factoryResult = (factory as (...args: unknown[]) => AnyUntypedNode)(...childArgs);
+				}
+			} catch (e) {
+				errors.push({
+					kind: credited,
+					severity: 'error',
+					message: `factory build throws: ${(e as Error).message}`
+				});
+				skips.push({ entry: entry.name, kind: credited, reason: 'factory-build-throws' });
+				return undefined;
+			}
+
+			// A kind stored as its id (a keyword) has no node: both sides are
+			// the id, and equality is the whole round-trip.
+			const idDiffs = kindIdDiffs(fromResult, factoryResult);
+			if (idDiffs !== undefined) {
+				if (idDiffs.length > 0) {
+					divergentCount++;
+					errors.push({
+						kind: credited,
+						severity: 'warning',
+						message: `from() diverges (face=${kind}, storage=${readKind}): ${idDiffs.join('; ')}`
+					});
+					return undefined;
+				}
+				pass++;
+				return undefined;
+			}
+
+			// Check for undefined nodes in from() output
+			const undefinedNodes = findUndefined(fromResult);
+			if (undefinedNodes.length > 0) {
+				undefinedCount++;
+				errors.push({
+					kind: credited,
+					severity: 'error',
+					message: `from() produces undefined nodes at: ${undefinedNodes.slice(0, 3).join(', ')}`
+				});
+				return undefined;
+			}
+
+			// Structural comparison
+			const diffs = structuralDiff(fromResult, factoryResult);
+			if (diffs.length > 0) {
+				divergentCount++;
+				errors.push({
+					kind: credited,
+					severity: 'warning',
+					message: `from() diverges (face=${kind}, storage=${readKind}, read $type=${String(readData.$type)}): ${diffs.slice(0, 3).join('; ')}`
+				});
+				return undefined;
+			}
+
+			pass++;
+		} catch (e) {
+			errors.push({
+				kind: credited,
+				severity: 'error',
+				message: `from() throws: ${(e as Error).message}`
+			});
+		}
+		return undefined;
+	};
+
 	for (const entry of entries) {
 		const tree1 = parser.parse(entry.source) as TSTree;
 		if (tree1.rootNode.hasError) {
 			excluded.push({ entry: entry.name, reason: 'parse-error', input: entry.source });
 			continue;
 		}
-
-		const validateLeafByText = (kind: string, text: string, leafShape: 'text' | 'constant'): void => {
-			try {
-				const fromResult = fromMap[kind]!(text as never) as AnyUntypedNode;
-				const factoryResult =
-					leafShape === 'constant'
-						? (factoryMap[kind] as AnyUntypedNode)
-						: (factoryMap[kind]! as (t: string) => AnyUntypedNode)(text);
-				const diffs =
-					kindIdDiffs(fromResult, factoryResult) ?? structuralDiff(fromResult, factoryResult);
-				if (diffs.length > 0) {
-					divergentCount++;
-					errors.push({
-						kind,
-						severity: 'warning',
-						message: `from() diverges: ${diffs.join('; ')}`
-					});
-				} else {
-					pass++;
-				}
-			} catch (e) {
-				errors.push({
-					kind,
-					severity: 'error',
-					message: `leaf text route throws: ${(e as Error).message}`
-				});
-			}
-		};
 
 		for (const kind of collectKinds(tree1.rootNode)) {
 			if (!(kind in fromMap) || !(kind in factoryMap)) {
@@ -329,242 +557,35 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 				errors.push({ kind, severity: 'error', message: `no node of kind '${kind}' found in entry '${entry.name}'` });
 				continue;
 			}
-
-			let readData: AnyUntypedNode;
-			let readTree: TreeHandle | undefined;
-			try {
-				const handle = await buildReadHandle(grammar, entry.source);
-				readTree = handle;
-				// Native engine Rust-heap IDs differ from WASM linear-memory IDs.
-				// Resolve via the native data tree; if the kind is an alias target
-				// the native engine emits under a different rule name, skip rather
-				// than fall back to a mismatched WASM ID.
-				const nativeCoords = findNativeNodeId(
-					handle,
-					kind,
-					kindNameFromId,
-					node1.id === tree1.rootNode.id ? undefined : sourceSpans(entry.source).toSpan({ start: node1.startIndex, end: node1.endIndex })
-				);
-				if (nativeCoords === null && handle.read) {
-					// The native read stores most leaf kinds SCALARIZED — collapsed
-					// to text inside parent storage, no node to locate — and alias
-					// targets emit under a different rule name. For a text-shaped
-					// kind that is not a locator failure: the sound comparison
-					// needs no native node at all. Feed the WASM node's text
-					// through both from() (the real leaf-coercion route, pattern
-					// guards included) and the factory, and compare the results.
-					const leafShape = factoryShapes[kind] ?? 'config';
-					if (leafShape === 'text' || leafShape === 'constant') {
-						validateLeafByText(kind, node1.text, leafShape);
-						continue;
-					}
-					const unread = unreadReason(node1);
-					if (unread !== undefined) {
-						total--;
-						testedKinds.delete(kind);
-						const unreadOf = unread === 'native-read-dropped-extra' ? orphanedExtras : unreadKinds;
-						if (!unreadOf.has(kind))
-							unreadOf.set(kind, { entry: entry.name, kind, reason: unread, input: entry.source });
-						continue;
-					}
-					errors.push({
-						kind,
-						severity: 'error',
-						message: `native coords unresolved for alias target — comparing against a mismatched WASM id would be unsound`
-					});
-					continue;
-				}
-				if (nativeCoords?.embeddedData !== undefined) {
-					readData = wrapNode
-						? (wrapNode(nativeCoords.embeddedData, handle) as AnyUntypedNode)
-						: nativeCoords.embeddedData;
-				} else {
-					readData = readNode
-						? (readNode(handle, nativeCoords?.coordinate) as AnyUntypedNode)
-						: readNativeAt(handle, nativeCoords ?? {});
-				}
-			} catch (e) {
-				errors.push({
-					kind,
-					severity: 'error',
-					message: `read/wrap throws: ${(e as Error).message}`
-				});
-				continue;
-			}
-
-			// The read node's $type is the storage stamp; in an alias context the
-			// CST face name (`kind`) differs from it (a decorator's member chain
-			// wears the member_expression face over the decorator_member_expression
-			// storage kind). Storage identity picks the from/factory pair — the
-			// face is only how the corpus walk found the node.
-			const readTypeName = typeof readData.$type === 'number' ? storageKindNameFromId?.(readData.$type) : undefined;
-			const readKind =
-				readTypeName !== undefined && readTypeName in fromMap && readTypeName in factoryMap ? readTypeName : kind;
-			const readKindId = kindIdFromName?.(readKind);
-			const aliasRead =
-				typeof readData.$text === 'string' &&
-				typeof readData.$type === 'number' &&
-				readKindId !== undefined &&
-				readData.$type !== readKindId;
-			try {
-				if (aliasRead && fromMap[readKind]!(readData) !== readData) {
-					errors.push({
-						kind,
-						severity: 'error',
-						message: `from() rebuilt a read leaf of another kind instead of returning it`
-					});
-					continue;
-				}
-				const fromResult = fromMap[readKind]!(aliasRead ? (readData.$text as never) : readData) as AnyUntypedNode;
-				let factoryResult: AnyUntypedNode;
-				try {
-					// Route by the shape declared at codegen time — same
-					// pattern as validate-factory-roundtrip.ts. Guessing
-					// from `readData.fields` alone mis-routes empty
-					// containers (python `()` has promoted `(`/`)` fields
-					// but `children === undefined`, yet is a children-shape
-					// factory that must dispatch as `factory()` with no args).
-					const shape = factoryShapes[readKind] ?? 'config';
-					const factory = factoryMap[readKind]!;
-					if (shape === 'config' || shape === 'direct' || shape === 'forwarded') {
-						// ReadNode emits `_<name>` top-level keys, not
-						// `$fields`. Use `nodeToConfig` which handles both shapes
-						// and recursively resolves children through factories.
-						const config = nodeToConfig(readData, {
-							shownKind: readKind,
-							interiorOf,
-							factoryMap,
-							factoryShapes,
-							factoryFields,
-							factorySlots,
-							fieldAliasMap,
-							kindNameFromId
-						});
-						if (shape === 'direct' || shape === 'forwarded') {
-							// Direct-call shape: use the sole field when metadata
-							// names one, otherwise treat it as a single child call.
-							const fieldNames = factoryFields[readKind];
-							const rawName = fieldNames?.[0];
-							const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
-							const childArgs = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
-							const value = camelName ? (config as Record<string, unknown>)[camelName] : childArgs[0];
-							factoryResult = (factory as (v: unknown) => AnyUntypedNode)(
-								readTree !== undefined && readNode !== null && isCoordinate(value) ? readNode(readTree, value) : value
-							);
-						} else {
-							// Config-shaped factories with flank capture take `(config,
-							// options)` — factories without options ignore the extra argument.
-							factoryResult = (factory as (c: unknown, o?: unknown) => AnyUntypedNode)(
-								config,
-								separatedListFactoryOptions(readData)
-							);
-						}
-					} else if (shape === 'constant') {
-						factoryResult = factory as AnyUntypedNode;
-					} else if (shape === 'text') {
-						// A text-shaped factory takes the node's bytes, which its span
-						// addresses whether or not the reader captured them as `$text`.
-						const span = spanOf(readData);
-						const textForFactory = span ? sliceSpan(entry.source, span) : (readData.$text ?? '');
-						factoryResult = (factory as (text: string) => AnyUntypedNode)(textForFactory);
-					} else if (shape === 'elements') {
-						// separatedList factory: spread with a LEADING optional
-						// options bag — `(...elements)` / `({separatorKind?,
-						// leading?, trailing?}, ...elements)` — distinct calling
-						// convention from 'spread's plain rest-param factories (see
-						// classifyFactoryShape's separatedList case).
-						const config = nodeToConfig(readData, {
-							shownKind: readKind,
-							interiorOf,
-							factoryMap,
-							factoryShapes,
-							factoryFields,
-							factorySlots,
-							fieldAliasMap,
-							kindNameFromId
-						});
-						const elements = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
-						const options = separatedListFactoryOptions(readData);
-						const listFactory = factory as (...args: unknown[]) => AnyUntypedNode;
-						factoryResult = options !== undefined ? listFactory(options, ...elements) : listFactory(...elements);
-					} else {
-						const config = nodeToConfig(readData, {
-							shownKind: readKind,
-							interiorOf,
-							factoryMap,
-							factoryShapes,
-							factoryFields,
-							factorySlots,
-							fieldAliasMap,
-							kindNameFromId
-						});
-						const childArgs = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
-						factoryResult = (factory as (...args: unknown[]) => AnyUntypedNode)(...childArgs);
-					}
-				} catch (e) {
-					errors.push({
-						kind,
-						severity: 'error',
-						message: `factory build throws: ${(e as Error).message}`
-					});
-					skips.push({ entry: entry.name, kind, reason: 'factory-build-throws' });
-					continue;
-				}
-
-				// A kind stored as its id (a keyword) has no node: both sides are
-				// the id, and equality is the whole round-trip.
-				const idDiffs = kindIdDiffs(fromResult, factoryResult);
-				if (idDiffs !== undefined) {
-					if (idDiffs.length > 0) {
-						divergentCount++;
-						errors.push({
-							kind,
-							severity: 'warning',
-							message: `from() diverges (face=${kind}, storage=${readKind}): ${idDiffs.join('; ')}`
-						});
-						continue;
-					}
-					pass++;
-					continue;
-				}
-
-				// Check for undefined nodes in from() output
-				const undefinedNodes = findUndefined(fromResult);
-				if (undefinedNodes.length > 0) {
-					undefinedCount++;
-					errors.push({
-						kind,
-						severity: 'error',
-						message: `from() produces undefined nodes at: ${undefinedNodes.slice(0, 3).join(', ')}`
-					});
-					continue;
-				}
-
-				// Structural comparison
-				const diffs = structuralDiff(fromResult, factoryResult);
-				if (diffs.length > 0) {
-					divergentCount++;
-					errors.push({
-						kind,
-						severity: 'warning',
-						message: `from() diverges (face=${kind}, storage=${readKind}, read $type=${String(readData.$type)}): ${diffs.slice(0, 3).join('; ')}`
-					});
-					continue;
-				}
-
-				pass++;
-			} catch (e) {
-				errors.push({
-					kind,
-					severity: 'error',
-					message: `from() throws: ${(e as Error).message}`
-				});
+			const unread = await validateAt(entry, node1, kind, kind);
+			if (unread === undefined) continue;
+			total--;
+			testedKinds.delete(kind);
+			if (unread === 'native-read-dropped-extra') {
+				if (!orphanedExtras.has(kind)) orphanedExtras.set(kind, { entry: entry.name, kind, reason: unread, input: entry.source });
+			} else if (!unreadKinds.has(kind)) {
+				unreadKinds.set(kind, entry);
 			}
 		}
 	}
 
-	const trivia = [...orphanedExtras.values()].filter((s) => !testedKinds.has(s.kind!));
-	excluded.push(...[...unreadKinds.values()].filter((s) => !testedKinds.has(s.kind!)));
+	for (const [kind, entry] of unreadKinds) {
+		if (testedKinds.has(kind)) continue;
+		testedKinds.add(kind);
+		total++;
+		const tree = parser.parse(entry.source) as TSTree;
+		let ancestor = findFirst(tree.rootNode, kind)?.parent ?? null;
+		while (ancestor !== null) {
+			const type = ancestor.type;
+			if (type in fromMap && type in factoryMap && (await validateAt(entry, ancestor, type, kind)) === undefined) break;
+			ancestor = ancestor.parent;
+		}
+		if (ancestor === null) {
+			errors.push({ kind, severity: 'error', message: `no ancestor of '${kind}' in entry '${entry.name}' is read as a node` });
+		}
+	}
+
+	const trivia = [...orphanedExtras].filter(([kind]) => !testedKinds.has(kind)).map(([, skip]) => skip);
 	emitValidatorMetrics();
 	return {
 		grammar,

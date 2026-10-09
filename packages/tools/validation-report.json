@@ -13206,21 +13206,6 @@
     "source": "validator",
     "grammar": "regex",
     "backend": "native",
-    "kind": "lazy",
-    "count": 1,
-    "entries": [
-      "quantifiers"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "folded-into-parent-text",
-    "label": "lazy"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
     "kind": "term",
     "count": 57,
     "entries": [
