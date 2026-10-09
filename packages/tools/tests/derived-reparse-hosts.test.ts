@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { hostlessReason, loadRenderReparseContext } from '../src/validate/read-render-parse.ts';
+import { findReparsedNodeAtOffset, hostlessReason, loadRenderReparseContext } from '../src/validate/read-render-parse.ts';
 import { loadLanguageForGrammar, loadNativeEngine, wrapForReparse } from '../src/validate/common.ts';
 
 async function contextFor(grammar: 'python' | 'rust' | 'typescript') {
@@ -15,7 +15,7 @@ const hostFor = (grammar: string, kind: string, ctx: Awaited<ReturnType<typeof c
 describe('a kind with no declared host is hosted through a parent that is', () => {
 	it('python: statements reach the declared statement hosts, a match block a derived one', async () => {
 		const ctx = await contextFor('python');
-		for (const kind of ['return_statement', 'match_statement', 'match_block']) {
+		for (const kind of ['return_statement', 'match_statement', 'match_block', 'block', 'suite_block']) {
 			expect(hostFor('python', kind, ctx), kind).not.toBeNull();
 		}
 	}, 120_000);
@@ -29,5 +29,33 @@ describe('a kind with no declared host is hosted through a parent that is', () =
 		const ctx = await contextFor('python');
 		expect(hostlessReason('_simple_statements', '_simple_statements', ctx)).toBe('hidden-kind');
 		expect(hostlessReason('return_statement', 'return_statement', ctx)).toBe('no-reparse-wrapper');
+	}, 120_000);
+});
+
+describe('the reparsed node is found by grammar id', () => {
+	it('python: the named yield and the yield keyword it wraps are told apart', async () => {
+		const { Parser, lang } = await loadLanguageForGrammar('python');
+		const parser = new Parser();
+		parser.setLanguage(lang);
+		const tree = parser.parse('yield\n')!;
+		const named = tree.rootNode.descendantsOfType('yield').find((n) => n.isNamed)!;
+		const keyword = named.child(0)!;
+		expect(keyword.isNamed).toBe(false);
+		const hosted = { text: 'yield\n', offset: 0 };
+		expect(findReparsedNodeAtOffset(tree, named.grammarId, hosted)?.isNamed).toBe(true);
+		expect(findReparsedNodeAtOffset(tree, keyword.grammarId, hosted)?.isNamed).toBe(false);
+	}, 120_000);
+
+	it('python: a node that starts at the line break before the hole is found', async () => {
+		const { Parser, lang } = await loadLanguageForGrammar('python');
+		const parser = new Parser();
+		parser.setLanguage(lang);
+		const text = 'match x:\n    case 1:\n        pass\n';
+		const tree = parser.parse(text)!;
+		const block = tree.rootNode.descendantsOfType('match_block')[0]!;
+		const offset = text.indexOf('case');
+		expect(block.startIndex).toBeLessThan(offset);
+		expect(findReparsedNodeAtOffset(tree, block.grammarId, { text, offset })).not.toBeNull();
+		expect(findReparsedNodeAtOffset(tree, 'match_block', { text, offset })?.type).toBe('match_block');
 	}, 120_000);
 });

@@ -18,8 +18,8 @@ export interface DeriveHostsInput {
 	readonly admits: ReadonlyMap<string, ReadonlySet<string>>;
 	readonly corpus: readonly DerivationTree[];
 	readonly parse: (text: string) => TSTree;
-	/** The reparsed node of `kind` at the hole's offset, or null. */
-	readonly findAt: (tree: TSTree, kind: string, hosted: { text: string; offset: number }) => TSNode | null;
+	/** The reparsed node with the source node's grammar id at the hole's offset, or null. */
+	readonly findAt: (tree: TSTree, source: TSNode, hosted: { text: string; offset: number }) => TSNode | null;
 	/** Whether the reparsed node is the source node, structurally. */
 	readonly same: (source: TSNode, reparsed: TSNode) => boolean;
 }
@@ -35,10 +35,39 @@ function* namedNodes(node: TSNode): Generator<TSNode> {
 }
 
 function layoutLead(node: TSNode): number {
+	const own = /^\s+/.exec(node.text);
+	if (own !== null) return own[0].length;
 	const first = node.child(0);
 	if (first === null || first.startIndex <= node.startIndex) return 0;
 	const lead = first.startIndex - node.startIndex;
 	return /^\s+$/.test(node.text.slice(0, lead)) ? lead : 0;
+}
+
+function hasMultiLineLeaf(node: TSNode): boolean {
+	return node.childCount === 0 ? node.text.includes('\n') : node.children.some(hasMultiLineLeaf);
+}
+
+/**
+ * The node's text as a host places it: without its layout lead and with every
+ * continuation line shifted left by the column its first character sat at, so
+ * the text reads from column 0 as a render does. Null when that shift is not
+ * lossless: a continuation line indented less than the first, or a token that
+ * itself spans lines (its inside would move with the shift).
+ */
+function relativeText(node: TSNode): string | null {
+	const lead = layoutLead(node);
+	const text = node.text.slice(lead);
+	const leadText = node.text.slice(0, lead);
+	const column = leadText.includes('\n') ? leadText.length - leadText.lastIndexOf('\n') - 1 : node.startPosition.column + lead;
+	const lines = text.split('\n');
+	if (lines.length === 1) return text;
+	if (hasMultiLineLeaf(node)) return null;
+	const shifted = lines.slice(1).map((line) => {
+		if (line.trim() === '') return '';
+		const indent = /^[ \t]*/.exec(line)![0].length;
+		return indent < column ? null : line.slice(column);
+	});
+	return shifted.includes(null) ? null : [lines[0], ...shifted].join('\n');
 }
 
 function contextOf(parent: TSNode, child: TSNode): string {
@@ -76,18 +105,19 @@ export function deriveReparseHosts(input: DeriveHostsInput): Record<string, stri
 	const samplesOf = (kind: string): { text: string; node: TSNode }[] => {
 		const byText = new Map<string, TSNode>();
 		for (const { node } of occurrences.get(kind) ?? []) {
-			const text = node.text.slice(layoutLead(node));
-			if (!byText.has(text)) byText.set(text, node);
+			const text = relativeText(node);
+			if (text !== null && !byText.has(text)) byText.set(text, node);
 		}
 		return [...byText].map(([text, node]) => ({ text, node })).sort((a, b) => a.text.length - b.text.length || (a.text < b.text ? -1 : a.text > b.text ? 1 : 0));
 	};
 
 	const verified = (kind: string, template: string, samples: readonly { text: string; node: TSNode }[]): boolean =>
+		samples.length > 0 &&
 		samples.every(({ text, node }) => {
 			const hosted = applyHost(template, text);
 			const tree = input.parse(hosted.text);
 			if (tree.rootNode.hasError) return false;
-			const reparsed = input.findAt(tree, kind, hosted);
+			const reparsed = input.findAt(tree, node, hosted);
 			return reparsed !== null && input.same(node, reparsed);
 		});
 

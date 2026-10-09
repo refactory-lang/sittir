@@ -173,8 +173,10 @@ export function firstParseDefect(node: TSNode): string | null {
 	return null;
 }
 
-function findNodeAt(node: TSNode, kind: string, offset: number): TSNode | null {
-	if (node.type === kind && node.startIndex === offset) return node;
+const isTarget = (node: TSNode, target: string | number): boolean => (typeof target === 'number' ? node.grammarId === target : node.type === target);
+
+function findNodeAt(node: TSNode, kind: string | number, offset: number): TSNode | null {
+	if (isTarget(node, kind) && node.startIndex === offset) return node;
 	for (let i = 0; i < node.childCount; i++) {
 		const c = node.child(i);
 		if (!c) continue;
@@ -183,8 +185,6 @@ function findNodeAt(node: TSNode, kind: string, offset: number): TSNode | null {
 		const hit = findNodeAt(c, kind, offset);
 		if (hit) return hit;
 	}
-	// Fallback: any node of the right kind whose range starts at offset.
-	if (node.type === kind && node.startIndex === offset) return node;
 	return null;
 }
 
@@ -518,20 +518,28 @@ export function selfContainedRenderInput(
  * the candidate has no leading trivia (the common case, no-op).
  *
  * @param tree2 - The reparsed tree-sitter tree after rendering.
- * @param targetKind - The tree-sitter kind to search for (raw, pre-alias kind).
+ * @param targetKind - The kind to search for: a grammar id (what separates a named rule from the keyword token of the same name), or a tree-sitter kind name.
  * @param wrapped - The wrap result carrying the splice offset.
  * @param offsetAdjust - Bytes to skip past the candidate's own leading trivia.
  * @returns The TSNode at the rendered offset, or null if not found.
  */
 export function findReparsedNodeAtOffset(
 	tree2: TSTree,
-	targetKind: string,
+	targetKind: string | number,
 	wrapped: { text: string; offset: number },
 	offsetAdjust = 0
 ): TSNode | null {
 	const adjusted = findNodeAt(tree2.rootNode, targetKind, wrapped.offset + offsetAdjust);
-	if (adjusted !== null || offsetAdjust === 0) return adjusted;
-	return findNodeAt(tree2.rootNode, targetKind, wrapped.offset);
+	if (adjusted !== null) return adjusted;
+	const plain = offsetAdjust === 0 ? null : findNodeAt(tree2.rootNode, targetKind, wrapped.offset);
+	if (plain !== null) return plain;
+	let lead = wrapped.offset;
+	while (lead > 0 && /\s/.test(wrapped.text[lead - 1] ?? 'x')) lead--;
+	for (let at = lead; at < wrapped.offset; at++) {
+		const hit = findNodeAt(tree2.rootNode, targetKind, at);
+		if (hit !== null && hit.endIndex > wrapped.offset) return hit;
+	}
+	return null;
 }
 
 /**
@@ -703,8 +711,10 @@ export function renderReparse(
 	const triviaOffsetAdjust = leadingTriviaRenderedWidth(data, ctx.render, ctx.triviaOf);
 	const reparsed = treeRoot
 		? tree2.rootNode
-		: (findReparsedNodeAtOffset(tree2, targetKind, wrapped, triviaOffsetAdjust) ??
-			(renderedKind !== targetKind ? findReparsedNodeAtOffset(tree2, renderedKind, wrapped, triviaOffsetAdjust) : null));
+		: source !== null
+			? findReparsedNodeAtOffset(tree2, source.grammarId, wrapped, triviaOffsetAdjust)
+			: (findReparsedNodeAtOffset(tree2, targetKind, wrapped, triviaOffsetAdjust) ??
+				(renderedKind !== targetKind ? findReparsedNodeAtOffset(tree2, renderedKind, wrapped, triviaOffsetAdjust) : null));
 	if (!reparsed) {
 		return {
 			status: 'failed',
@@ -747,7 +757,7 @@ function deriveHostsFor(grammar: string, parser: RenderReparseContext['parser'])
 			admits,
 			corpus,
 			parse: (text) => parser.parse(text) as TSTree,
-			findAt: (tree, kind, hosted) => findReparsedNodeAtOffset(tree, kind, hosted),
+			findAt: (tree, source, hosted) => findReparsedNodeAtOffset(tree, source.grammarId, hosted),
 			same: (source, reparsed) => astStructuralDiff(source, reparsed) === null
 		});
 		setDerivedReparseHosts(grammar, derived);
