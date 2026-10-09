@@ -2,9 +2,11 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans (or superpowers:subagent-driven-development when the user chooses it) to implement this plan task by task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** A list's gap where the item kind changes takes a run option: `(K)/run/after` for the run that ends there and `(J)/run/before` for the one that starts. `engine.styleFrom(...sources)` detects a file's own statement-gap pattern and applies it once, as ordinary engine options. Parsed statement gaps are spelled from options, not from their source text.
+**Status:** held. Do not start until the maintainer releases it.
 
-**Architecture:** Run patterns are resolved when the list is prepared, like seats. A boundary gap belongs to the item before it, so `prepare` writes `coalesce(run/after of K, run/before of J)` onto that item's `after` edge, ahead of the seat fill. Nothing here needs the layout table, which serves width only. Detection is one native walk per tree. It returns raw votes; the client sums them across sources, folds them into an options object, lays the `createEngine` keys over it, and hands the result to the native engine, which replaces its options. The tree's format record and the per-gap source stamps of statement lists go.
+**Goal:** A list's gap where the item kind changes takes the run option of the run that ends there, `(K)/run/after`. `engine.styleFrom(...sources)` detects a file's own statement-gap pattern and applies it once, as ordinary engine options. Parsed statement gaps are spelled from options, not from their source text.
+
+**Architecture:** Run patterns are resolved when the list is prepared, like seats. A boundary gap belongs to the item before it, so `prepare` writes `(K)/run/after` onto that item's `after` edge, ahead of the seat fill. Nothing here needs the layout table, which serves width only. Detection is one native walk per tree. It returns raw votes; the client sums them across sources, folds them into an options object, lays the `createEngine` keys over it, and hands the result to the native engine, which replaces its options. The tree's format record and the per-gap source stamps of statement lists go.
 
 **Tech Stack:** TypeScript (`@sittir/codegen` model and emitters, `@sittir/common` client, `@sittir/types`), Rust (`sittir-core`: `prepare`, `options`, `engine`, `napi_engine`, a new `detect` module), vitest and cargo.
 
@@ -12,12 +14,12 @@
 
 ## Rulings this plan carries
 
-1. **Run options are resolved at write time, not on the table** (maintainer, 2026-10-09). A boundary is stored on the preceding item's `after` edge: a sibling gap has one owner, so no `before` seat exists. `(J)/run/before` is an address resolved onto that edge.
+1. **Run options are resolved at write time, not on the table** (maintainer, 2026-10-09). A boundary is the preceding item's `after` edge, addressed by the ending run's kind: `run/after` only, no `run/before` (maintainer, 2026-10-09).
 2. **No source stamps for statement lists, and no interim that keeps them** (maintainer, 2026-10-09). Detection ships in the same plan, so an unedited file renders as itself wherever it follows its own pattern, after `styleFrom`.
 3. **"Same kind" is the parser kind** (Q17), with a non-seated wrapper answering for the node it wraps (the `SeatTarget` descent, maintainer, 2026-10-09). An attribute before its item is handled by `(attribute_item)/run/after`, not by a separate prefix concept (maintainer, 2026-10-09).
 4. **Boundary precedence is the existing seam law** (Q16): strength, then rank.
 5. **Option precedence.** It is decided per key: per-call options, then the `createEngine` keys, then detected options, then grammar defaults. Between different keys of one options object, the more specific address wins. `styleFrom` merges the detected options and the `createEngine` keys into one object, so a detected `(attribute_item)/run/after` beats an explicit `(_)/run/after`. A grammar default is a lower layer and does not.
-6. **Detection thresholds** (Q20): the majority wins; a tie or no occurrence leaves the key absent. A kind-specific key needs at least three gaps of support and must differ from the list's `(_)` value. `(J)/run/before` is detected only where J's predecessors agree and their `after` doesn't already explain it.
+6. **Detection thresholds** (Q20): the majority wins; a tie or no occurrence leaves the key absent. A kind-specific key needs at least three gaps of support and must differ from the list's `(_)` value.
 7. **`styleFrom` shape** (ruled 2026-10-08): `engine.styleFrom(...sources: (Tree | SourcePath<G>)[])`, with an `isSourcePath` guard and no run-time extension check. It returns the applied options with each key marked `detected`, `defaulted` or `set`.
 
 ## What exists, and what this plan builds on
@@ -37,7 +39,6 @@
 - Branch `feat/run-patterns` from `origin/master` **after the typed reader's 1c-i has merged**, in `scratchpad/wt-run-patterns`. `prepare.rs` and `engine.rs` change there. Commit with pathspecs.
 - Generated outputs are never hand-edited. No comments in `packages/codegen/src/`; every new declaration gets a `docs/glossary/` entry. No PR or issue numbers in code, glossary or commits.
 - DRY:
-  - one coalesce function (the seam law), called by the writer and by `prepare`;
   - one source for which lists have runs: the options block's run declarations (Task 1), read by the run tables, the stamping and detection;
   - one kind-of-item answer, reusing the wrapper descent `SeatTarget` already has.
 - **Byte-identical gate for Tasks 1–2:** with no run option set, every generated render and every validation row is unchanged.
@@ -59,8 +60,8 @@
 
 A site exists only where the grammar's `options` block names it, directly or through a label. That's the existing scope rule (maintainer, 2026-10-09). A list has runs because its grammar declares them, not because a fact is derived:
 
-- Each grammar declares the run addresses of its statement lists: rust `source_file`, `declaration_list` and `block`; typescript `program`, `statement_block` and `class_body`; python `module` and `block`. For example, `'(source_file)/statements:/(_)/run/after'` and `…/run/before`. They take **no default** (Global Constraints: unset marks nothing).
-- Declaring a list's wildcard run addresses mints that list's per-kind run sites, `(K)/run/after|before` for every kind its items admit, the way seated `(K)/after` sites are minted for a seated list.
+- Each grammar declares the run addresses of its statement lists: rust `source_file`, `declaration_list` and `block`; typescript `program`, `statement_block` and `class_body`; python `module` and `block`. For example, `'(source_file)/statements:/(_)/run/after'`. They take **no default** (Global Constraints: unset marks nothing).
+- Declaring a list's wildcard run addresses mints that list's per-kind run sites, `(K)/run/after` for every kind its items admit, the way seated `(K)/after` sites are minted for a seated list.
 - Rust also declares `'(source_file)/statements:/(attribute_item)/run/after': newline` (and the same for the other two lists) as a declared default.
 - How a declaration with no default is spelled is the resolver's call. Keep it to one spelling and add it to the options glossary.
 
@@ -69,20 +70,18 @@ A site exists only where the grammar's `options` block names it, directly or thr
 
 ### Task 2: Run sites and boundary fill
 
-**Files:** `packages/codegen/src/compiler/model/site-preferences.ts` (or wherever list sites are minted), `emitters/render-options-rs.ts`, `emitters/options.ts` (address type), `emitters/render-module.ts` (`prepare` emission), `rust/crates/sittir-core/src/prepare.rs`, `spacing.rs` (export the coalesce), tests per grammar.
+**Files:** `packages/codegen/src/compiler/model/site-preferences.ts` (or wherever list sites are minted), `emitters/render-options-rs.ts`, `emitters/options.ts` (address type), `emitters/render-module.ts` (`prepare` emission), `rust/crates/sittir-core/src/prepare.rs`, tests per grammar.
 
 - **Sites** come from Task 1's declarations. The address type prints them under the list slot as the seated `(K)/after` keys are printed. A run site with no declared default resolves to nothing when unset.
-- **Tables.** `RUNS_<LIST>_AFTER` and `RUNS_<LIST>_BEFORE`, dense by kind id like the seat tables, plus the list's wildcard site ids.
-- **Fill.** `fill_run_gaps(items, after_table, before_table, ctx)` runs after `fill_list_gaps` and before `fill_seated_gaps`. For each adjacent pair of present items, take K and J as the kinds `SeatTarget`'s descent answers (the wrapped node for a non-seated wrapper). If K ≠ J:
+- **Tables.** `RUNS_<LIST>`, dense by kind id like the seat tables, plus the list's wildcard site id.
+- **Fill.** `fill_run_gaps(items, table, ctx)` runs after `fill_list_gaps` and before `fill_seated_gaps`. For each adjacent pair of present items, take K and J as the kinds `SeatTarget`'s descent answers (the wrapped node for a non-seated wrapper). If K ≠ J:
 
   ```
-  a = run_after[K] ?? run_after[_]      // resolved option, or none
-  b = run_before[J] ?? run_before[_]
-  prev.after.get_or_insert(coalesce(a, b))   // only when a or b is set
+  if let Some(arm) = run_after[K].or(run_after[_]) { prev.after.get_or_insert(arm) }
   ```
 
-  `coalesce` is the seam law: strength first, then rank. It is the writer's own function, exported, not a copy.
-- [ ] Failing tests per grammar: with `(_)/run/after: blankline`, a built `[use, use, fn]` renders a blank line only before `fn`. Add `(fn_item)/run/before: double_blankline` and it gets two, by rank. With `(attribute_item)/run/after: newline` also set, `#[derive]` stays directly above `struct`. With nothing set, output is byte-identical.
+  The writer coalesces that edge with the next item's own `before` edge at the gap, by the seam law, as it does every gap.
+- [ ] Failing tests per grammar: with `(_)/run/after: blankline`, a built `[use, use, fn]` renders a blank line only before `fn`. `(use_declaration)/run/after: double_blankline` gives two, as the kind address beats the wildcard. With `(attribute_item)/run/after: newline` also set, `#[derive]` stays directly above `struct`. With nothing set, output is byte-identical.
 - [ ] Gate: no run option set means byte-identical generated output (besides the new tables) and identical rows. Run the full suite as its own call.
 
 ### Task 3: Statement lists drop source stamps
@@ -101,7 +100,7 @@ A site exists only where the grammar's `options` block names it, directly or thr
 `detect(tree) -> StyleVotes`. For every list in the tree that declares runs, classify each gap between adjacent items with `classify_whitespace` against the list's admitted arms:
 
 - **inside a run:** a vote for `(_)/after` and for `(K)/after`;
-- **at a K→J boundary:** a vote for `(K)/run/after`. The vote for `(J)/run/before` is kept per predecessor, so the uniformity test in ruling 6 can run after the sum.
+- **at a K→J boundary:** a vote for `(K)/run/after`.
 
 Also count the indent unit (the line-start consensus that `extract_format` uses today, moved here) and the line ending (the majority of logical breaks, once the line-endings plan has landed; until then it isn't counted). Gaps holding a comment are skipped. The votes are raw counts keyed by address, so they sum across trees.
 
@@ -144,7 +143,6 @@ For each grammar, over the corpus files listed in the gap census's statement-run
 - [ ] After `styleFrom(tree)`, an unedited render equals the source wherever its statement gaps follow the file's pattern. Report every file that differs, with the departing gaps; those are the "evened out" gaps the spec accepts.
 - [ ] A statement inserted mid-run takes the run's within gap; one inserted at a boundary takes the boundary gap.
 - [ ] An explicit per-call option wins over a detected one.
-- [ ] Python: imports followed by a class come out with two blank lines when a detected `(import_statement)/run/after` of one meets a `(class_definition)/run/before` of two.
 - [ ] Re-baseline the byte fixtures Task 3 named, through `styleFrom`, with a row diff first.
 
 ### Final gates
