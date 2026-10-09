@@ -25,7 +25,7 @@ import { emitIs } from './is.ts';
 import { emitTests } from './test.ts';
 import { TemplateEmitter, stampStaticSpacing } from './templates.ts';
 import { emitClientUtils } from './client-utils.ts';
-import { collectCatalogKinds, collectKindEntries } from './kind-discriminant.ts';
+import { collectCatalogKinds, collectKindEntries, type KindEnumEntry } from './kind-discriminant.ts';
 import { grammarRenderInputs, RenderModuleEmitter } from './render-module.ts';
 import { isGrammar } from '../grammars.ts';
 import {
@@ -82,6 +82,7 @@ export interface EmitAllResult {
 	reparseHosts?: string;
 	renderModule?: RenderModuleBundle;
 	rootTreeTypeName?: string;
+	kindEntries?: readonly KindEnumEntry[];
 }
 
 type RenderModuleEmission =
@@ -242,7 +243,8 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		utils,
 		reparseHosts: emitReparseHosts(reparseHosts),
 		renderModule,
-		rootTreeTypeName: wrapEmitter.rootTreeTypeName
+		rootTreeTypeName: wrapEmitter.rootTreeTypeName,
+		kindEntries
 	};
 }
 

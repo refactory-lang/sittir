@@ -145,7 +145,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	const nodes = ctx.nodes;
 	const kindEntries = ctx.kindEntries ?? collectGeneratedKindEntries(ctx.generatedIdTables);
 	const supertypeArms = supertypeArmsOf(normalized.supertypes, normalized.normalizedRules);
-	const facts: KindFacts = { kindEntries, supertypeArms };
+	const facts: KindFacts = { kindEntries, supertypeArms, provenance: normalized.provenance };
 	const assembleDiagnostics = ctx.assembleDiagnostics;
 	const droppedKinds = new Set<string>();
 	const variantChildrenByParent = normalized.variantChildren ?? new Map<string, readonly VariantChild[]>();
@@ -355,6 +355,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		wordMatcher: normalized.wordMatcher,
 		reserved: normalized.reserved,
 		fileTypes: normalized.fileTypes,
+		provenance: normalized.provenance,
 		externals: normalized.externals,
 		extras: normalized.extras,
 		nodelessExtrasRun: normalized.nodelessExtrasRun,

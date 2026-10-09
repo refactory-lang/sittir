@@ -4,7 +4,7 @@ import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isWordOrBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
-import { isFixedTextLeaf, isKindIdStored, kindIdText } from '../compiler/model/node-map.ts';
+import { isFixedTextLeaf, isKindIdStored } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { bareInteriorText, numberInputType, numericLeafInputTypes, numericLeafShape, numericSlotShape, widenNumericSlots } from './interior.ts';
@@ -15,6 +15,8 @@ import {
 	kindIdMemberName,
 	findKindEntry,
 	findKindEntryForLiteral,
+	fixedTextKinds,
+	hasKindId,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import { kindTypeName } from '../compiler/model/casing.ts';
@@ -28,10 +30,6 @@ export {
 	kindIdMemberName,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
-
-function hasKindId(kind: string, kindEntries: readonly KindEnumEntry[] | undefined): boolean {
-	return kindEntries !== undefined && findOwnKindEntry(kindEntries, kind) !== undefined;
-}
 
 function stampedDiscriminant(
 	kind: string,
@@ -333,11 +331,7 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 		lines.push('');
 	}
 
-	const fixedTextKindIds = new Set(
-		[...nodeMap.nodes]
-			.filter(([kind, node]) => kindIdText(node) !== undefined && hasKindId(kind, kindEntries))
-			.map(([kind]) => kindDiscriminantExpr(kind, nodeMap, kindEntries))
-	);
+	const fixedTextKindIds = new Set(fixedTextKinds(nodeMap, kindEntries).map(([kind]) => kindDiscriminantExpr(kind, nodeMap, kindEntries)));
 	lines.push(`export type FixedTextKindId = ${fixedTextKindIds.size > 0 ? [...fixedTextKindIds].join(' | ') : 'never'};`);
 	lines.push('');
 
@@ -732,10 +726,10 @@ function emitOptionsHints(
 		const root = kindRoots.get(displayNameOf(kind, nodeMap));
 		if (root === undefined || typeName === undefined || !generatedTypes.has(typeName)) continue;
 		const prior = homes.get(root.name);
-		if (prior !== undefined && ownsItsDisplay(prior.kind, nodeMap) === ownsItsDisplay(kind, nodeMap)) {
-			throw new Error(`types emitter: options root '${root.name}' names both '${prior.kind}' and '${kind}'`);
-		}
-		if (prior === undefined || ownsItsDisplay(kind, nodeMap)) homes.set(root.name, { kind, typeName, root, internal: internal === true });
+		const owns = ownsItsDisplay(kind, nodeMap);
+		const wins =
+			prior === undefined || (owns !== ownsItsDisplay(prior.kind, nodeMap) ? owns : kind < prior.kind);
+		if (wins) homes.set(root.name, { kind, typeName, root, internal: internal === true });
 	}
 	const homeless = [...kindRoots.keys()].filter((name) => !homes.has(name));
 	if (homeless.length > 0) throw new Error(`types emitter: options roots with no declared type to carry their hint: ${homeless.join(', ')}`);

@@ -7,6 +7,7 @@ import {
 	GRAMMAR_ENTRY,
 	NATIVE_LOADER,
 	REPO_ROOT,
+	allGrammars,
 	grammarPackageDir,
 	nativeBindingRelDir,
 	nativeCrateRelDir,
@@ -127,10 +128,17 @@ interface Manifest {
 const samePair = (a: GenerationPair, b: GenerationPair): boolean => a.source === b.source && a.outputs === b.outputs;
 
 const CODEGEN_SOURCE_DIR = 'packages/codegen/src';
+const BINDINGS_FILE = 'bindings.scm';
+const PIN_FILE = 'bootstrap.json';
 
-function grammarSourceInputs(grammar: GrammarName): string[] {
+function grammarSourceInputs(grammar: GrammarName, src: ManifestSource): string[] {
 	const dir = relative(REPO_ROOT, grammarPackageDir(grammar));
-	return [`${dir}/${GRAMMAR_ENTRY}`, `${dir}/package.json`];
+	const bindings = `${dir}/${BINDINGS_FILE}`;
+	return [`${dir}/${GRAMMAR_ENTRY}`, `${dir}/package.json`, ...(existsSync(join(src.root, bindings)) ? [bindings, PIN_FILE] : [])];
+}
+
+export function stagedInputPathspecs(): string[] {
+	return [CODEGEN_SOURCE_DIR, PIN_FILE, ...allGrammars().flatMap((grammar) => [`packages/${grammar}`, nativeCrateRelDir(grammar)])];
 }
 
 function isCodegenSourceInput(relPath: string): boolean {
@@ -181,7 +189,7 @@ function trustedCommits(checkout: string): string[] {
 }
 
 function differencesFromTrustedCommit(grammar: GrammarName, src: ManifestSource): string[] {
-	const sourceInputs = grammarSourceInputs(grammar);
+	const sourceInputs = grammarSourceInputs(grammar, src);
 	const roots = generatedRootsFor(grammar);
 	const pathspecs = [CODEGEN_SOURCE_DIR, ...sourceInputs, ...roots];
 	const matters = (rel: string): boolean =>
@@ -201,7 +209,7 @@ function differencesFromTrustedCommit(grammar: GrammarName, src: ManifestSource)
 
 export function computeSourceHash(grammar: GrammarName, src: ManifestSource = worktreeSource()): string {
 	const hash = createHash('sha256');
-	for (const rel of grammarSourceInputs(grammar)) {
+	for (const rel of grammarSourceInputs(grammar, src)) {
 		const input = join(src.root, rel);
 		if (existsSync(input)) {
 			hash.update(`${rel}\0`);
@@ -321,7 +329,7 @@ export function assertGeneratedManifestsClean(
 		lines.push(`  ${r.grammar}:`);
 		if (r.sourceChanged) {
 			lines.push(
-				`    SOURCE INPUTS CHANGED (grammar.sittir.ts, package.json, or packages/codegen/src/** edited since last regen)`
+				`    SOURCE INPUTS CHANGED (grammar.sittir.ts, package.json, bindings.scm, bootstrap.json, or packages/codegen/src/** edited since last regen)`
 			);
 		}
 		for (const f of r.modified) lines.push(`    MODIFIED: ${f}`);

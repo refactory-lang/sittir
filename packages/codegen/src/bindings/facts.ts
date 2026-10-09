@@ -1,5 +1,7 @@
+import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { grammarPackageDir, type GrammarName } from '../grammars.ts';
+import type { ErrorRegion } from '@sittir/types';
+import { allGrammars, grammarPackageDir, PACKAGES_DIR, type GrammarName } from '../grammars.ts';
 
 export const WILDCARD = '_';
 
@@ -11,15 +13,22 @@ export interface SlotSelector {
 
 export type PredicateArgument = { readonly capture: string } | { readonly text: string };
 
+export interface CaptureSite {
+	readonly up: number;
+	readonly down: readonly SlotSelector[];
+}
+
 export interface PredicateFact {
 	readonly operator: string;
 	readonly capture: string | null;
 	readonly arguments: readonly PredicateArgument[];
+	readonly subject: CaptureSite | null;
 }
 
 export interface ClaimFact {
 	readonly vocab: string;
 	readonly kind: string | null;
+	readonly field: string | null;
 	readonly predicates: readonly PredicateFact[];
 	readonly toplevel: boolean;
 	readonly within: readonly string[];
@@ -77,6 +86,20 @@ export interface TemplateFact {
 	readonly holes: readonly string[];
 }
 
+export type PatternReference = { readonly kind: 'field' | 'node' | 'token'; readonly name: string };
+
+export interface BindingPattern extends PatternOrigin {
+	readonly references: readonly PatternReference[];
+}
+
+export class BindingsSyntaxError extends Error {
+	readonly lines: readonly number[];
+	constructor(lines: readonly number[]) {
+		super(`bindings.scm does not parse at line ${lines.join(', ')}`);
+		this.lines = lines;
+	}
+}
+
 export interface BindingFacts {
 	readonly claims: readonly ClaimFact[];
 	readonly members: readonly MemberFact[];
@@ -122,3 +145,70 @@ export const KNOWN_PREDICATE_OPERATORS: ReadonlySet<string> = new Set([
 ]);
 
 export const bindingsPath = (grammar: GrammarName): string => join(grammarPackageDir(grammar), 'bindings.scm');
+
+export interface BindingsRoundTrip {
+	readonly errors: readonly ErrorRegion[];
+	readonly rendered: string;
+}
+
+export const bindingGrammars = (): readonly GrammarName[] => allGrammars().filter((grammar) => existsSync(bindingsPath(grammar)));
+
+export const VOCABULARY_DIR = join(PACKAGES_DIR, 'types', 'src', 'vocabulary');
+
+export type RefinementKind = 'predicate' | 'field-literal' | 'token' | 'child-pattern';
+
+export interface RefinedClaim extends ClaimFact {
+	readonly refines: string | null;
+	readonly refinement: RefinementKind | null;
+}
+
+function refinementKindOf(claim: ClaimFact): RefinementKind {
+	if (claim.predicates.length > 0) return 'predicate';
+	if (Object.keys(claim.fieldLiterals).length > 0) return 'field-literal';
+	if (claim.tokens.length > 0) return 'token';
+	return 'child-pattern';
+}
+
+export function refineClaims(claims: readonly ClaimFact[]): RefinedClaim[] {
+	return claims.map((claim, index) => {
+		const unrefined = { ...claim, refines: null, refinement: null };
+		if (claim.kind === null || claim.kind === WILDCARD) return unrefined;
+		const placement = claim.within.join('/');
+		const parent = claims
+			.slice(0, index)
+			.filter((p) => p.kind === claim.kind && p.within.join('/') === placement && claim.vocab.startsWith(`${p.vocab}.`))
+			.reduce<ClaimFact | undefined>((deepest, p) => (deepest === undefined || p.vocab.length > deepest.vocab.length ? p : deepest), undefined);
+		const refinement = refinementKindOf(claim);
+		if (parent !== undefined) return { ...claim, refines: parent.vocab, refinement };
+		return refinement === 'child-pattern' ? unrefined : { ...claim, refines: null, refinement };
+	});
+}
+
+function bindSelector<S extends SlotSelector>(selector: S, rename: (kind: string) => string): S {
+	return {
+		...selector,
+		kind: selector.kind === null ? null : rename(selector.kind),
+		after: selector.after === null ? null : bindSelector(selector.after, rename)
+	};
+}
+
+export function bindFacts(facts: BindingFacts, rename: (kind: string) => string): BindingFacts {
+	const kind = (k: string | null): string | null => (k === null || k === WILDCARD ? k : rename(k));
+	return {
+		claims: facts.claims.map((c) => ({ ...c, kind: kind(c.kind), within: c.within.map(rename) })),
+		members: facts.members.map((m): MemberFact => {
+			if (m.route === 'presence') return { ...m, owner: rename(m.owner), via: m.via.map(rename) };
+			if (m.route === 'nested') return { ...bindSelector(m, rename), owner: rename(m.owner), parent: rename(m.parent), via: m.via.map(rename) };
+			return { ...bindSelector(m, rename), owner: rename(m.owner) };
+		}),
+		containers: facts.containers.map((c) => ({
+			...c,
+			kind: rename(c.kind),
+			element: bindSelector(c.element, rename),
+			captures: c.captures.map((x) => bindSelector(x, rename)),
+			dropped: c.dropped.map((x) => bindSelector(x, rename))
+		})),
+		templates: facts.templates,
+		unclaimed: facts.unclaimed.map((u) => ({ ...u, kind: rename(u.kind) }))
+	};
+}

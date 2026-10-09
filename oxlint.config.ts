@@ -57,6 +57,7 @@ export default defineConfig({
 		'.claude/**',
 		'.specify/**',
 		'**/grammar.sittir.ts',
+		'**/grammar.bindings.ts',
 		'tests/format-roundtrip/fixtures/**',
 		// Render fixtures for emit-factory-source: deliberately not real code.
 		'packages/tools/tests/emit/__fixtures__/**',

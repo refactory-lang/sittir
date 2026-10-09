@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { BindingsSyntaxError, bindingPatterns, readBindings } from '../../src/inventory/bindings.ts';
+import { BindingsSyntaxError, bindingPatterns, readBindings } from '../index.ts';
 
 describe('readBindings', () => {
 	it('keeps a presence capture\'s token text beside its name', async () => {
@@ -8,16 +8,47 @@ describe('readBindings', () => {
 	});
 	it('keeps a property predicate that tests no capture', async () => {
 		const facts = await readBindings('((identifier) @identifier.local (#is-not? local))');
-		expect(facts.claims[0]?.predicates).toEqual([{ operator: 'is-not', capture: null, arguments: [{ text: 'local' }] }]);
+		expect(facts.claims[0]?.predicates).toEqual([{ operator: 'is-not', capture: null, arguments: [{ text: 'local' }], subject: null }]);
 	});
 	it('keeps every predicate with its operator, capture and arguments, and leaves directives out', async () => {
 		const facts = await readBindings(
 			'((identifier) @identifier.self (#match? @identifier.self "^self$") (#lua-match? @identifier.self "%a") (#eq? @identifier.self @identifier.self) (#set! reason "x"))'
 		);
 		expect(facts.claims[0]?.predicates).toEqual([
-			{ operator: 'match', capture: 'identifier.self', arguments: [{ text: '^self$' }] },
-			{ operator: 'lua-match', capture: 'identifier.self', arguments: [{ text: '%a' }] },
-			{ operator: 'eq', capture: 'identifier.self', arguments: [{ capture: 'identifier.self' }] }
+			{ operator: 'match', capture: 'identifier.self', arguments: [{ text: '^self$' }], subject: { up: 0, down: [] } },
+			{ operator: 'lua-match', capture: 'identifier.self', arguments: [{ text: '%a' }], subject: { up: 0, down: [] } },
+			{ operator: 'eq', capture: 'identifier.self', arguments: [{ capture: 'identifier.self' }], subject: { up: 0, down: [] } }
+		]);
+	});
+
+	it('places a predicate\'s capture relative to the claimed node: the claim itself, a node under it, or one under an enclosing node', async () => {
+		const facts = await readBindings(
+			[
+				'((boolean) @literal.boolean.true (#eq? @literal.boolean.true "true"))',
+				'((string (string_start) @_p) @literal.string.f (#match? @_p "^[fF]"))',
+				'((decorated_definition (decorator (identifier) @_d) (function_definition) @declaration.method.static) (#eq? @_d "staticmethod"))'
+			].join('\n')
+		);
+		expect(facts.claims.map((c) => c.predicates.map((p) => p.subject))).toEqual([
+			[{ up: 0, down: [] }],
+			[{ up: 0, down: [{ field: null, kind: 'string_start', after: null }] }],
+			[
+				{
+					up: 1,
+					down: [
+						{ field: null, kind: 'decorator', after: null },
+						{ field: null, kind: 'identifier', after: null }
+					]
+				}
+			]
+		]);
+	});
+
+	it('keeps the field a claimed node sits under in its enclosing node', async () => {
+		const facts = await readBindings(['(closure_parameters (_) @declaration.parameter)', '(let_declaration pattern: (_) @declaration.variable)'].join('\n'));
+		expect(facts.claims.map((c) => [c.kind, c.field, c.within])).toEqual([
+			['_', null, ['closure_parameters']],
+			['_', 'pattern', ['let_declaration']]
 		]);
 	});
 
@@ -36,7 +67,14 @@ describe('readBindings', () => {
 			[
 				'declaration.constructor',
 				'function_definition',
-				[{ operator: 'eq', capture: 'name', arguments: [{ text: '__init__' }] }],
+				[
+					{
+						operator: 'eq',
+						capture: 'name',
+						arguments: [{ text: '__init__' }],
+						subject: { up: 0, down: [{ field: 'name', kind: 'identifier', after: null }] }
+					}
+				],
 				true
 			]
 		]);

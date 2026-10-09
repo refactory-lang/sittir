@@ -77,6 +77,14 @@ describe('emitApi', () => {
 		expect(withComment).toContain("import { coerceToComment } from './factories/coerce.js';");
 	});
 
+	it('declares and hands over the portable surface only for a grammar with bindings', () => {
+		expect(output).not.toContain('portable');
+		const bound = emitApi({ grammar: 'python', rootTypeName: 'Module', rootTreeTypeName: 'ModuleTree', portable: true });
+		expect(bound).toContain("import { portable } from './portable.js';");
+		expect(bound).toContain('readonly portable: typeof portable;');
+		expect(bound).toContain('\tportable\n});');
+	});
+
 	it("hands the engine the package's render module hash", () => {
 		expect(output).toContain("import { RENDER_MODULE_HASH } from './hash.js';");
 		expect(output).toContain('renderModuleHash: RENDER_MODULE_HASH,');

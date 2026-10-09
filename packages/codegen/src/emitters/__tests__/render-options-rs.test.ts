@@ -49,7 +49,7 @@ describe('planRenderOptions', () => {
 			['SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_BEFORE', 167, 'elements_separator_space_before', '_elements_separator_space_before'],
 			['SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_AFTER', 168, 'elements_separator_space_after', '_elements_separator_space_after'],
 			['SITE_RETURN_STATEMENT_TERMINATOR_STATEMENT_TERMINATOR', 20, 'terminator_statement_terminator', '_terminator_statement_terminator'],
-			['SITE_STATEMENT_BLOCK_STATEMENTS_SEPARATOR_SPACE', 169, 'statements_separator_space', '_statements_separator_space']
+			['SITE__STATEMENT_BLOCK_STATEMENTS_SEPARATOR_SPACE', 169, 'statements_separator_space', '_statements_separator_space']
 		]);
 		expect(plan.delimiterSites.map((s) => [s.constName, s.allowed, s.defaultBits])).toEqual([['DELIM_FORMAL_PARAMETERS_ELEMENTS', 2, 0]]);
 	});
@@ -197,11 +197,11 @@ describe('renderOptionsRs', () => {
 			arms: SPACING,
 			defaultArm: 'space',
 			source: 'spacing',
-			seat: { kind: child, field: `${child}_after` }
+			seat: { kind: child, display: child, field: `${child}_after` }
 		});
 		const entries = [...kindEntries, { kind: 'zeta', member: 'Zeta', id: 300 }, { kind: 'alpha', member: 'Alpha', id: 200 }];
-		const plan = planRenderOptions([...sites, seat('zeta'), seat('alpha')], entries, makeSiteKindsNodeMap([...sites, seat('zeta'), seat('alpha')]), whitespaceText, undefined, 'rust');
-		const tables = seatTablesOf(plan, entries);
+		const plan = planRenderOptions([...sites, seat('zeta'), seat('alpha')], entries, makeSiteKindsNodeMap([...sites, seat('zeta'), seat('alpha')], entries as never), whitespaceText, undefined, 'rust');
+		const tables = seatTablesOf(plan);
 		expect(tables).toHaveLength(1);
 		expect(tables[0]!.name).toBe(seatTableName('arguments', 'elements'));
 		expect(tables[0]!.rows.map((r) => r.kindId)).toEqual([200, 300]);
@@ -213,7 +213,7 @@ describe('renderOptionsRs', () => {
 		expect(cells[300]).toBe(String(tables[0]!.rows[1]!.site));
 		expect(cells[250]).toBe('NO_SITE');
 		const missing = planRenderOptions([...sites, seat('nokind')], entries, makeSiteKindsNodeMap([...sites, seat('nokind')]), whitespaceText, undefined, 'rust');
-		expect(() => seatTablesOf(missing, entries)).toThrow(/nokind/);
+		expect(() => seatTablesOf(missing)).toThrow(/nokind/);
 	});
 
 	it("exposes each site's admitted arms to the prepare walk", () => {
@@ -272,7 +272,7 @@ describe('a kind edge over a choice of tokens', () => {
 		seam('lparen_before', { slot: 'lparen', edgeArm: { parent: 'bracket_before', token: 'lparen' } }),
 		seam('semi_before', { slot: 'semi', edgeArm: { parent: 'bracket_before', token: 'semi' } })
 	];
-	const plan = planRenderOptions(armSites, entries, makeSiteKindsNodeMap(armSites), whitespaceText, undefined, 'rust');
+	const plan = planRenderOptions(armSites, entries, makeSiteKindsNodeMap(armSites, entries), whitespaceText, undefined, 'rust');
 
 	it('keys its arm sites by the arm token\'s kind id under the kind\'s edge row', () => {
 		const row = edgeSitesOf(plan, entries)[0]!;
@@ -287,13 +287,13 @@ describe('a kind edge over a choice of tokens', () => {
 	});
 
 	it('prints the arm tables in the edge row', () => {
-		const text = renderOptionsRs(plan, deriveAddressTables(armSites, entries, makeSiteKindsNodeMap(armSites), kindIdArmType(entries as never), (() => []) as never), entries);
+		const text = renderOptionsRs(plan, deriveAddressTables(armSites, entries, makeSiteKindsNodeMap(armSites, entries), kindIdArmType(entries as never), (() => []) as never), entries);
 		expect(text).toMatch(/before_arms: &\[::sittir_core::options::ArmSite \{ arm: 21, site: \d+ \}, ::sittir_core::options::ArmSite \{ arm: 20, site: \d+ \}\], after_arms: &\[\]/);
 	});
 
 	it('refuses an arm token with no kind id', () => {
 		const lost = [armSites[0]!, { ...armSites[1]!, edgeArm: { parent: 'bracket_before', token: 'unknown_token' } }];
-		const lostPlan = planRenderOptions(lost, entries, makeSiteKindsNodeMap(lost), whitespaceText, undefined, 'rust');
+		const lostPlan = planRenderOptions(lost, entries, makeSiteKindsNodeMap(lost, entries), whitespaceText, undefined, 'rust');
 		expect(() => edgeSitesOf(lostPlan, entries)).toThrow(/unknown_token/);
 	});
 });

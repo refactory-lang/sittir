@@ -1630,6 +1630,9 @@ and gates it through `diagnoseGrammar`, throwing `GrammarDiagnosticError` with t
 records and every record the gate saw when it does not pass. The config names the package, not the grammar, so the
 caller resolves it once. Hydrate then runs on the collected grammar with
 `droppedKinds` as the names whose absence is already reported, and the `ir` surface is stamped on the hydrated node map (`stampIrSurface`).
+After the gate it refuses a stale bindings overlay (`bindings/hash.ts::assertBindingsFresh`
+over the package's committed `grammar.bindings.ts` and its `bindings.scm`), so
+codegen never runs with an overlay derived from other sources than the ones on disk.
 
 ### `packages/codegen/src/compiler/compile.ts::diagnoseGrammar`
 
@@ -2802,17 +2805,13 @@ source (`dsl-shape-fidelity.test.ts` holds each grammar to its shipped
 `grammar.json` under `rulesEqual`). `evaluate` is this plus the compile
 boundary; a caller that wants the DSL's own shape calls it directly.
 
+### `packages/codegen/src/compiler/evaluate.ts::evaluateUnboundDsl`
+
+`evaluateDsl` for the entry without its bindings overlay: the same extraction under the DSL globals, with the module imported through `importUnbound`. `evaluate` calls it when `EvaluateOptions.unbound` is set; the conflict-derivation child calls it directly.
+
 ### `packages/codegen/src/compiler/evaluate.ts::importAndExtractGrammar`
 
-```text
-/**
- * Import the grammar module at the given path and extract the RawGrammar
- * from its default or named export.
- *
- * @param entryPath - Absolute path to the grammar.js or grammar.sittir.ts file.
- * @returns The RawGrammar produced by the module's top-level `grammar()` call.
- */
-```
+Runs `load` (the grammar module's import: `evaluateDsl` passes a plain import, `evaluateUnboundDsl` passes `importUnbound`) and extracts the grammar from the module's default or named export, as its top-level `grammar()` call produced it.
 
 The dead enrich mints `sittirGrammar` blanked arrive as a non-enumerable sidecar on the grammar (`getDeadEnrichMints`); they become `orphanedSyntheticGroups` here, after the module's `grammar()` call has returned, since the dead set is computed from that call's result. The conflict-derivation records (`getDerivationRecords`) arrive the same way and become `derivationRecords`, and the text-token names `sittirGrammar` attached (`dsl/enrich.ts::getTextTokens`) become `textTokens`. The returned grammar is a spread copy, so a non-enumerable sidecar is read here or not at all.
 
@@ -10129,7 +10128,7 @@ The renames the parser catalog records for the grammar's rules and externals (`d
 
 ### `packages/codegen/src/compiler/link.ts::renameRules`
 
-Rewrites a grammar under a rename map, as `collapseRenamedRules` describes; an empty map returns the grammar unchanged. The rebuilt catalog keeps each renamed kind's source rule ids (`BuildRuleCatalogCtx.sourceKindOf`).
+Rewrites a grammar under a rename map, as `collapseRenamedRules` describes; an empty map returns the grammar unchanged. The rebuilt catalog keeps each renamed kind's source rule ids (`BuildRuleCatalogCtx.sourceKindOf`). The provenance maps follow the rename: `renamedFrom` keys, and both the keys and the source kinds of `splitFrom`, since a split's source is itself a kind of the grammar.
 
 ### `packages/codegen/src/compiler/link.ts::splicedRuleNames`
 
@@ -10208,3 +10207,15 @@ A literal that is itself the slot (a STRING stamped `nonterminal: true` with `al
 ### `packages/codegen/src/compiler/generated-metadata.ts::foldedSymbols`
 
 The raw symbols a parser folds onto another public symbol: the entries of `ts_symbol_map` whose two sides differ. A token the grammar writes twice gets a second raw symbol that the parser reports under the first one's id. The fold census test pins each grammar's count.
+
+### `packages/codegen/src/compiler/evaluate.ts::EvaluateOptions`
+
+`unbound`: evaluate the entry without its bindings overlay (`evaluateUnboundDsl`).
+
+### `packages/codegen/src/compiler/evaluate.ts::importUnbound`
+
+Imports a grammar entry with `sittir-grammar.ts::UNBOUND_ENV` set (the prior value restored after), so `sittirGrammar` skips the bindings overlay. The entry is imported under its own `?unbound` URL, which keeps the unbound module apart from a bound import of the same file in the module cache.
+
+### `packages/codegen/src/compiler/evaluate.ts::withDslGlobals`
+
+Runs a callback with the tree-sitter DSL globals (`grammar`, `seq`, `sym`, …) installed and the prior values restored after, under the evaluation mutex, so two imports never see each other's globals. `evaluateDsl` imports a grammar entry inside it; `bindings/module.ts::loadBindingsModule` imports a `grammar.bindings.ts`, whose authoring helpers call the globals.

@@ -43,6 +43,12 @@
 			"import": "./dist/grammars.js",
 			"default": "./dist/grammars.js"
 		},
+		"./bootstrap": {
+			"types": "./src/bootstrap/bootstrap.ts",
+			"source": "./src/bootstrap/bootstrap.ts",
+			"import": "./dist/bootstrap/bootstrap.js",
+			"default": "./dist/bootstrap/bootstrap.js"
+		},
 		"./bindings": {
 			"types": "./src/bindings/index.ts",
 			"source": "./src/bindings/index.ts",
@@ -75,6 +81,7 @@
 	},
 	"devDependencies": {
 		"@ast-grep/wasm": "^0.42.1",
+		"@sittir/scm": "workspace:*",
 		"@sittir/typescript": "workspace:*",
 		"@types/node": "^25.6.0",
 		"tree-sitter-c": "^0.24.1",

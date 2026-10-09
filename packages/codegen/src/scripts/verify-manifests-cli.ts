@@ -1,14 +1,10 @@
-import { assertGeneratedManifestsClean } from './generated-manifest.ts';
+import { assertGeneratedManifestsClean, stagedInputPathspecs } from './generated-manifest.ts';
 import { withIndexSnapshot } from './index-snapshot.ts';
-import { allGrammars, REPO_ROOT, stableGrammars, nativeCrateRelDir } from '../grammars.ts';
+import { REPO_ROOT, stableGrammars } from '../grammars.ts';
 
 try {
 	if (process.argv.includes('--staged')) {
-		const pathspecs = [
-			'packages/codegen/src',
-			...allGrammars().flatMap((g) => [`packages/${g}`, nativeCrateRelDir(g)])
-		];
-		await withIndexSnapshot(REPO_ROOT, pathspecs, ({ root, visible }) =>
+		await withIndexSnapshot(REPO_ROOT, stagedInputPathspecs(), ({ root, visible }) =>
 			assertGeneratedManifestsClean(stableGrammars(), { root, visible, checkout: REPO_ROOT })
 		);
 	} else {

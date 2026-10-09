@@ -9,16 +9,19 @@ import { readConflictResolutions, writeConflictResolutions } from './conflict-re
 import { reuseOrDeriveConflictResolutions, type DerivationResult } from './derive-conflicts.ts';
 import { evaluateForDerivation, type DerivationInputs } from './evaluate-for-derivation.ts';
 import { runTreeSitterCliCapturing } from './tree-sitter-cli.ts';
+import { UNBOUND_ENV } from '../dsl/sittir-grammar.ts';
 
 export interface ConflictResolutionsStore {
 	read(): ConflictResolutionsFile;
 	write(file: ConflictResolutionsFile): void;
 }
 
+export type GeneratedGrammar = 'base' | 'bound';
+
 export async function settleConflictResolutions(input: {
 	readonly store: ConflictResolutionsStore;
 	readonly inputs: DerivationInputs;
-	readonly runGenerate: () => Promise<GenerateOutcome>;
+	readonly runGenerate: (grammar: GeneratedGrammar) => Promise<GenerateOutcome>;
 }): Promise<DerivationResult> {
 	const { store, inputs } = input;
 	const result = await reuseOrDeriveConflictResolutions({
@@ -28,14 +31,14 @@ export async function settleConflictResolutions(input: {
 		upstream: inputs,
 		generate: async (resolutions) => {
 			store.write({ grammarHash: UNVERIFIED_GRAMMAR_HASH, resolutions });
-			return input.runGenerate();
+			return input.runGenerate('base');
 		},
-		generateSaved: input.runGenerate
+		generateSaved: () => input.runGenerate('bound')
 	});
-	if (result.kind === 'converged') {
-		store.write({ grammarHash: inputs.grammarHash, resolutions: result.resolutions });
-	}
-	return result;
+	if (result.kind !== 'converged') return result;
+	store.write({ grammarHash: inputs.grammarHash, resolutions: result.resolutions });
+	const bound = await input.runGenerate('bound');
+	return bound.kind === 'clean' ? result : { kind: 'stale', outcome: bound, resolutions: result.resolutions };
 }
 
 function stopRegen(sittirDir: string, blocking: GrammarDiagnostic): never {
@@ -51,8 +54,8 @@ export async function generateWithDerivedConflicts(pkg: GrammarPackage): Promise
 			write: (file) => writeConflictResolutions(pkg, file)
 		},
 		inputs: evaluateForDerivation(pkg),
-		runGenerate: async () => {
-			const run = runTreeSitterCliCapturing(['generate', '--json-summary'], sittirDir);
+		runGenerate: async (grammar) => {
+			const run = runTreeSitterCliCapturing(['generate', '--json-summary'], sittirDir, grammar === 'base' ? { [UNBOUND_ENV]: '1' } : {});
 			if (run.status === 0) process.stderr.write(run.stderr);
 			return parseGenerateOutcome(run.status, run.stderr);
 		}

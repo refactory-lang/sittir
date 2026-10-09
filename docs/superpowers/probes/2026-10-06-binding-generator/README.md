@@ -90,3 +90,23 @@ Rust, measured at `f4a78b7fb` on an Apple-silicon Mac.
 - **Demo:** `async fn add(a: i32, b: i32) -> i32 { a + b }` reads as `declaration.function` with `async: true`, two `declaration.parameter`s, a `type.primitive` return type and a `statement.block` whose tail is `expression.binary.arithmetic.add` with operator `+`. Building the view back renders the same text (the demo exits non-zero when it does not), and the structure `{ kind: 'expression.binary.arithmetic.add', … }` renders `x + y`.
 - **Backward:** excludes `function_item` and `function_signature_item`, 2 of 152 claimed kinds, the holders of the 5 contextual claims.
 - **Cost** (best of 5 over 200k): the low-level reader 105 ns; making the root's view 136 ns; reading a view's `name` 249 ns, the low-level read plus making the child's view.
+
+## Members a portable build cannot reach
+
+The generator's routes (`node-model-portable.json5`) give each member the slot path a build writes it through. These 13 members have no path. The list is a ratchet: `packages/tools/tests/inventory/unbuildable-routes.test.ts` fails when a member joins it, and when one leaves it without the list shrinking. By cause:
+
+| cause | members | stage |
+| --- | --- | --- |
+| the kind is the token: the presence's token is a fixed token of the kind, held by no slot | typescript `abstract_class_declaration.abstract`, `abstract_method_signature.abstract`, `generator_function.generator`, `generator_function_declaration.generator` (`*`), `variable_declarator_definite.definite` (`!`), `optional_parameter.optional` (`?`) | 7: the build picks the kind by input shape |
+| the route passes through a slot that holds many | rust `impl_item_body.receiver`, python `comparison_operator.operator` | 4/7 |
+| the route stops at `block`, which has no slot for `simple_statements` | python `function_definition.doc`, `class_definition.doc` | 4 |
+| no slot of the parent matches the member's selector | python `match_statement.subject`, `subscript.index` | 4 |
+| the route has a `_` step | rust `impl_item_body.implements` | 4 |
+
+## Required members a wildcard-claimed kind cannot route
+
+A wildcard claim (`(holder (_) @path)`) reads every concrete kind its holder admits there as the path, and folds none of their members, so the path's interface comes from its explicit claims. A read through such an entry still owes that interface. These kinds have no route for one of its required members. The list is a ratchet: `packages/tools/tests/inventory/wildcard-unrouted.test.ts`. By cause:
+
+| cause | entries | stage |
+| --- | --- | --- |
+| the node is the parameter: a bare closure pattern has no `name` slot, the name is the node itself | rust `(closure_parameters (_) @declaration.parameter)` on 51 kinds (the concrete kinds of `_pattern`: identifiers, literals, primitive-type keywords, every pattern kind, `macro_invocation`, `const_block`), each without `name` | 4 |

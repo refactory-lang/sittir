@@ -29,7 +29,7 @@ import {
 	type RoundTripFixture
 } from './read-render-parse.ts';
 import { load } from '../codegen-surface.ts';
-import { loadNativeEngine } from './common.ts';
+import { loadBoundNameOf, loadNativeEngine } from './common.ts';
 import type { AnyUntypedNode } from '@sittir/types';
 
 const { renderModuleFixturesPath, renderModuleLeftOutPath } = await load('renderModulePaths');
@@ -128,7 +128,8 @@ export async function extractParityFixtures(grammar: string): Promise<ExtractRes
 	// always through a variant child. Accepting either satisfies the
 	// corpus-coverage intent without regressing on the parent-only
 	// pre-adoption case.
-	const required = FR_011_REQUIRED[grammar] ?? [];
+	const boundNameOf = await loadBoundNameOf(grammar);
+	const required = (FR_011_REQUIRED[grammar] ?? []).map(boundNameOf);
 	const isCovered = (parent: string): boolean => {
 		if (coveredKinds.has(parent)) return true;
 		const variantPrefix = `_${parent}_`;

@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, Cond, QueryPlan, QuerySlots, Recorder, SlotRef, SlotRoutes, TransportCoordinate } from '@sittir/types';
+import type { AnyUntypedNode, Cond, QueryPlan, QuerySlots, QuerySubject, Recorder, SlotRef, SlotRoutes, TransportCoordinate } from '@sittir/types';
 import { inTreeEngine } from './engine-scope.ts';
 import { readNode, type TreeHandle } from './read.ts';
 import { treeOf, treeTokenOf } from './tree-token.ts';
@@ -218,10 +218,13 @@ function* run(context: Context, source: Source, steps: readonly Step[]): Iterabl
 }
 
 function* slotEntries(context: Context, source: { readonly slot: string; readonly node: object }, early: readonly Declarative[]): Iterable<readonly Entry[]> {
-	const read = (source.node as Record<string, unknown>)[source.slot];
-	const value = typeof read === 'function' ? (read as () => unknown).call(source.node) : read;
-	const items = Array.isArray(value) ? value : value === undefined ? [] : [value];
-	yield* declarativeSteps([items.map(entryOfItem)], early, context);
+	yield* declarativeSteps([slotItems(source.node, source.slot).map(entryOfItem)], early, context);
+}
+
+export function slotItems(node: object, accessor: string): readonly unknown[] {
+	const read = (node as Record<string, unknown>)[accessor];
+	const value = typeof read === 'function' ? (read as () => unknown).call(node) : read;
+	return Array.isArray(value) ? value : value === undefined ? [] : [value];
 }
 
 function* walkEntries(context: Context, source: { readonly from: NodeAddress; readonly depth: number | undefined }, early: readonly Declarative[]): Iterable<readonly Entry[]> {
@@ -564,7 +567,7 @@ function sameOccurrence(a: unknown, b: unknown): boolean {
 	return handle !== undefined && handle === treeHandleOf(b);
 }
 
-export function holds(plan: QueryPlan, texts: (routes: SlotRoutes) => readonly string[]): boolean {
+export function holds(plan: QueryPlan, texts: (subject: QuerySubject) => readonly string[]): boolean {
 	switch (plan.op) {
 		case 'eq':
 			return texts(plan).includes(plan.text);

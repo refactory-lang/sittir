@@ -9,10 +9,21 @@ export interface SlotRoutes {
 /** Each kind's slots, by kind id: the accessor a node reads a slot through and the slot's parser routes. */
 export type QuerySlots = Readonly<Record<number, readonly (readonly [accessor: string, routes: SlotRoutes])[]>>;
 
-/** A `where` condition as the native walk evaluates it, each slot compiled to its parser routes. */
+/** The node's own text as a condition's subject, in place of a slot's. */
+export interface SelfText {
+	readonly self: true;
+}
+
+/** What a comparison reads: a slot by its parser routes, or the node's own text. */
+export type QuerySubject = SlotRoutes | SelfText;
+
+/**
+ * A compiled condition, each slot it compares compiled to its parser routes. A `where` condition compares slots only and is
+ * evaluated by the native walk; a comparison of the node's own text (`SelfText`) is evaluated by `holds` alone.
+ */
 export type QueryPlan =
-	| ({ readonly op: 'eq'; readonly text: string } & SlotRoutes)
-	| ({ readonly op: 'match'; readonly pattern: string } & SlotRoutes)
+	| ({ readonly op: 'eq'; readonly text: string } & QuerySubject)
+	| ({ readonly op: 'match'; readonly pattern: string } & QuerySubject)
 	| { readonly op: 'not'; readonly of: QueryPlan }
 	| { readonly op: 'and' | 'or'; readonly of: readonly QueryPlan[] };
 

@@ -385,6 +385,10 @@ its argument and writes the marker and the derivation inputs as JSON to
 stdout.
 ```
 
+It evaluates the entry unbound, so the grammar hash, the upstream conflicts and
+the derived resolutions are those of the base grammar, in base names; a
+bindings overlay renames them with the grammar after `grammar()`.
+
 ### `packages/codegen/src/transpile/conflict-resolutions-file.ts::conflictResolutionsPath`
 
 ```text
@@ -443,6 +447,19 @@ file, and the next run derives again instead of reporting the partial set
 stale.
 ```
 
+
+The resolutions are derived against the base grammar: each derivation run
+generates with `GeneratedGrammar` `base`, so tree-sitter reports conflicts in
+the base names the resolutions are applied in. A converged set is then checked
+by one `bound` generate, which builds the parser that ships; a bound parser it
+does not settle is `stale` (a bindings overlay changed the parse), with the
+derived set kept. The reuse probe generates `bound` too.
+
+### `packages/codegen/src/transpile/conflict-driver.ts::GeneratedGrammar`
+
+Which grammar a `tree-sitter generate` run builds: `base` (with
+`UNBOUND_ENV` set, the bindings overlay skipped) or `bound`.
+
 ### `packages/codegen/src/transpile/conflict-driver.ts::generateWithDerivedConflicts`
 
 ```text
@@ -466,6 +483,9 @@ Runs the tree-sitter CLI like `runTreeSitterCli`, with stdout passed through
 and stderr captured, and returns the exit status with stderr: the
 `--json-summary` report is written to stderr.
 ```
+
+`env` adds variables to the inherited environment of the run (conflict
+derivation passes `UNBOUND_ENV` for a base generate).
 
 ### `packages/codegen/src/transpile/compile-parser.ts::buildParserWasm`
 

@@ -149,7 +149,7 @@ export default sittirGrammar(base, {
 			'"?"/before': preference('tight')
 		},
 
-		_bindings: {
+		_labels: {
 			'_/terminator:': 'statements/terminator',
 			'_/automatic_semicolon:': 'statements/terminator',
 			'string/variant': 'quotes/style',

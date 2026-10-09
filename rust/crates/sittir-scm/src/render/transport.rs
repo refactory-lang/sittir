@@ -1386,7 +1386,7 @@ impl ::sittir_core::view::KindOf for ImmediateIdentifierTransport {
 }
 
 impl ::sittir_core::options::Edged for ImmediateIdentifierTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(5) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(6) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }

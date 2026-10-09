@@ -19362,10 +19362,10 @@ impl ::sittir_core::render::Render for LetChainTransport {
 impl ::sittir_core::prepare::Prepare for LetChainTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        if let Some(gap_items) = self.right.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "&&", options::allowed(options::SITE_LET_CHAIN_RIGHT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_LET_CHAIN_RIGHT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx); }
-        self.right_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_LET_CHAIN_RIGHT_SEPARATOR_SPACE_BEFORE].arm);
-        self.right_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_LET_CHAIN_RIGHT_SEPARATOR_SPACE_AFTER].arm);
-        if let Some(seated_items) = self.right.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_LET_CHAIN_RIGHT, ctx); }
+        if let Some(gap_items) = self.right.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "&&", options::allowed(options::SITE__LET_CHAIN_RIGHT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE__LET_CHAIN_RIGHT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx); }
+        self.right_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE__LET_CHAIN_RIGHT_SEPARATOR_SPACE_BEFORE].arm);
+        self.right_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE__LET_CHAIN_RIGHT_SEPARATOR_SPACE_AFTER].arm);
+        if let Some(seated_items) = self.right.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS__LET_CHAIN_RIGHT, ctx); }
         self.left.prepare(ctx)?;
         self.right.prepare(ctx)?;
         Ok(())
@@ -22935,35 +22935,35 @@ impl ::sittir_core::view::KindOf for TokenKeywordsEnum {
 impl ::sittir_core::render::Render for TokenKeywordsEnum {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            Self::V27 => { w.site_at(options::SITE_TOKEN_KEYWORDS_SQUOTE_BEFORE); w.text("'")?; w.site_at(options::SITE_TOKEN_KEYWORDS_SQUOTE_AFTER); Ok(()) }
-            Self::AsKw => { w.site_at(options::SITE_TOKEN_KEYWORDS_AS_KEYWORD_BEFORE); w.text("as")?; w.site_at(options::SITE_TOKEN_KEYWORDS_AS_KEYWORD_AFTER); Ok(()) }
-            Self::AsyncKw => { w.site_at(options::SITE_TOKEN_KEYWORDS_ASYNC_KEYWORD_BEFORE); w.text("async")?; w.site_at(options::SITE_TOKEN_KEYWORDS_ASYNC_KEYWORD_AFTER); Ok(()) }
-            Self::AwaitKw => { w.site_at(options::SITE_TOKEN_KEYWORDS_AWAIT_KEYWORD_BEFORE); w.text("await")?; w.site_at(options::SITE_TOKEN_KEYWORDS_AWAIT_KEYWORD_AFTER); Ok(()) }
-            Self::BreakKw => { w.site_at(options::SITE_TOKEN_KEYWORDS_BREAK_KEYWORD_BEFORE); w.text("break")?; w.site_at(options::SITE_TOKEN_KEYWORDS_BREAK_KEYWORD_AFTER); Ok(()) }
-            Self::ConstKw => { w.site_at(options::SITE_TOKEN_KEYWORDS_CONST_KEYWORD_BEFORE); w.text("const")?; w.site_at(options::SITE_TOKEN_KEYWORDS_CONST_KEYWORD_AFTER); Ok(()) }
-            Self::ContinueKw => { w.site_at(options::SITE_TOKEN_KEYWORDS_CONTINUE_KEYWORD_BEFORE); w.text("continue")?; w.site_at(options::SITE_TOKEN_KEYWORDS_CONTINUE_KEYWORD_AFTER); Ok(()) }
-            Self::DefaultKw => { w.site_at(options::SITE_TOKEN_KEYWORDS_DEFAULT_KEYWORD_BEFORE); w.text("default")?; w.site_at(options::SITE_TOKEN_KEYWORDS_DEFAULT_KEYWORD_AFTER); Ok(()) }
-            Self::EnumKw => { w.site_at(options::SITE_TOKEN_KEYWORDS_ENUM_KEYWORD_BEFORE); w.text("enum")?; w.site_at(options::SITE_TOKEN_KEYWORDS_ENUM_KEYWORD_AFTER); Ok(()) }
-            Self::FnKw => { w.site_at(options::SITE_TOKEN_KEYWORDS_FN_KEYWORD_BEFORE); w.text("fn")?; w.site_at(options::SITE_TOKEN_KEYWORDS_FN_KEYWORD_AFTER); Ok(()) }
-            Self::ForKw => { w.site_at(options::SITE_TOKEN_KEYWORDS_FOR_KEYWORD_BEFORE); w.text("for")?; w.site_at(options::SITE_TOKEN_KEYWORDS_FOR_KEYWORD_AFTER); Ok(()) }
-            Self::Gen => { w.site_at(options::SITE_TOKEN_KEYWORDS_GEN_KEYWORD_BEFORE); w.text("gen")?; w.site_at(options::SITE_TOKEN_KEYWORDS_GEN_KEYWORD_AFTER); Ok(()) }
-            Self::IfKw => { w.site_at(options::SITE_TOKEN_KEYWORDS_IF_KEYWORD_BEFORE); w.text("if")?; w.site_at(options::SITE_TOKEN_KEYWORDS_IF_KEYWORD_AFTER); Ok(()) }
-            Self::ImplKw => { w.site_at(options::SITE_TOKEN_KEYWORDS_IMPL_KEYWORD_BEFORE); w.text("impl")?; w.site_at(options::SITE_TOKEN_KEYWORDS_IMPL_KEYWORD_AFTER); Ok(()) }
-            Self::LetKw => { w.site_at(options::SITE_TOKEN_KEYWORDS_LET_KEYWORD_BEFORE); w.text("let")?; w.site_at(options::SITE_TOKEN_KEYWORDS_LET_KEYWORD_AFTER); Ok(()) }
-            Self::LoopKw => { w.site_at(options::SITE_TOKEN_KEYWORDS_LOOP_KEYWORD_BEFORE); w.text("loop")?; w.site_at(options::SITE_TOKEN_KEYWORDS_LOOP_KEYWORD_AFTER); Ok(()) }
-            Self::MatchKw => { w.site_at(options::SITE_TOKEN_KEYWORDS_MATCH_KEYWORD_BEFORE); w.text("match")?; w.site_at(options::SITE_TOKEN_KEYWORDS_MATCH_KEYWORD_AFTER); Ok(()) }
-            Self::ModKw => { w.site_at(options::SITE_TOKEN_KEYWORDS_MOD_KEYWORD_BEFORE); w.text("mod")?; w.site_at(options::SITE_TOKEN_KEYWORDS_MOD_KEYWORD_AFTER); Ok(()) }
-            Self::PubKw => { w.site_at(options::SITE_TOKEN_KEYWORDS_PUB_KEYWORD_BEFORE); w.text("pub")?; w.site_at(options::SITE_TOKEN_KEYWORDS_PUB_KEYWORD_AFTER); Ok(()) }
-            Self::ReturnKw => { w.site_at(options::SITE_TOKEN_KEYWORDS_RETURN_KEYWORD_BEFORE); w.text("return")?; w.site_at(options::SITE_TOKEN_KEYWORDS_RETURN_KEYWORD_AFTER); Ok(()) }
-            Self::StaticKw => { w.site_at(options::SITE_TOKEN_KEYWORDS_STATIC_KEYWORD_BEFORE); w.text("static")?; w.site_at(options::SITE_TOKEN_KEYWORDS_STATIC_KEYWORD_AFTER); Ok(()) }
-            Self::StructKw => { w.site_at(options::SITE_TOKEN_KEYWORDS_STRUCT_KEYWORD_BEFORE); w.text("struct")?; w.site_at(options::SITE_TOKEN_KEYWORDS_STRUCT_KEYWORD_AFTER); Ok(()) }
-            Self::TraitKw => { w.site_at(options::SITE_TOKEN_KEYWORDS_TRAIT_KEYWORD_BEFORE); w.text("trait")?; w.site_at(options::SITE_TOKEN_KEYWORDS_TRAIT_KEYWORD_AFTER); Ok(()) }
-            Self::TypeKw => { w.site_at(options::SITE_TOKEN_KEYWORDS_TYPE_KEYWORD_BEFORE); w.text("type")?; w.site_at(options::SITE_TOKEN_KEYWORDS_TYPE_KEYWORD_AFTER); Ok(()) }
-            Self::Union => { w.site_at(options::SITE_TOKEN_KEYWORDS_UNION_KEYWORD_BEFORE); w.text("union")?; w.site_at(options::SITE_TOKEN_KEYWORDS_UNION_KEYWORD_AFTER); Ok(()) }
-            Self::UnsafeKw => { w.site_at(options::SITE_TOKEN_KEYWORDS_UNSAFE_KEYWORD_BEFORE); w.text("unsafe")?; w.site_at(options::SITE_TOKEN_KEYWORDS_UNSAFE_KEYWORD_AFTER); Ok(()) }
-            Self::UseKw => { w.site_at(options::SITE_TOKEN_KEYWORDS_USE_KEYWORD_BEFORE); w.text("use")?; w.site_at(options::SITE_TOKEN_KEYWORDS_USE_KEYWORD_AFTER); Ok(()) }
-            Self::WhereKw => { w.site_at(options::SITE_TOKEN_KEYWORDS_WHERE_KEYWORD_BEFORE); w.text("where")?; w.site_at(options::SITE_TOKEN_KEYWORDS_WHERE_KEYWORD_AFTER); Ok(()) }
-            Self::WhileKw => { w.site_at(options::SITE_TOKEN_KEYWORDS_WHILE_KEYWORD_BEFORE); w.text("while")?; w.site_at(options::SITE_TOKEN_KEYWORDS_WHILE_KEYWORD_AFTER); Ok(()) }
+            Self::V27 => { w.site_at(options::SITE__TOKEN_KEYWORDS_SQUOTE_BEFORE); w.text("'")?; w.site_at(options::SITE__TOKEN_KEYWORDS_SQUOTE_AFTER); Ok(()) }
+            Self::AsKw => { w.site_at(options::SITE__TOKEN_KEYWORDS_AS_KEYWORD_BEFORE); w.text("as")?; w.site_at(options::SITE__TOKEN_KEYWORDS_AS_KEYWORD_AFTER); Ok(()) }
+            Self::AsyncKw => { w.site_at(options::SITE__TOKEN_KEYWORDS_ASYNC_KEYWORD_BEFORE); w.text("async")?; w.site_at(options::SITE__TOKEN_KEYWORDS_ASYNC_KEYWORD_AFTER); Ok(()) }
+            Self::AwaitKw => { w.site_at(options::SITE__TOKEN_KEYWORDS_AWAIT_KEYWORD_BEFORE); w.text("await")?; w.site_at(options::SITE__TOKEN_KEYWORDS_AWAIT_KEYWORD_AFTER); Ok(()) }
+            Self::BreakKw => { w.site_at(options::SITE__TOKEN_KEYWORDS_BREAK_KEYWORD_BEFORE); w.text("break")?; w.site_at(options::SITE__TOKEN_KEYWORDS_BREAK_KEYWORD_AFTER); Ok(()) }
+            Self::ConstKw => { w.site_at(options::SITE__TOKEN_KEYWORDS_CONST_KEYWORD_BEFORE); w.text("const")?; w.site_at(options::SITE__TOKEN_KEYWORDS_CONST_KEYWORD_AFTER); Ok(()) }
+            Self::ContinueKw => { w.site_at(options::SITE__TOKEN_KEYWORDS_CONTINUE_KEYWORD_BEFORE); w.text("continue")?; w.site_at(options::SITE__TOKEN_KEYWORDS_CONTINUE_KEYWORD_AFTER); Ok(()) }
+            Self::DefaultKw => { w.site_at(options::SITE__TOKEN_KEYWORDS_DEFAULT_KEYWORD_BEFORE); w.text("default")?; w.site_at(options::SITE__TOKEN_KEYWORDS_DEFAULT_KEYWORD_AFTER); Ok(()) }
+            Self::EnumKw => { w.site_at(options::SITE__TOKEN_KEYWORDS_ENUM_KEYWORD_BEFORE); w.text("enum")?; w.site_at(options::SITE__TOKEN_KEYWORDS_ENUM_KEYWORD_AFTER); Ok(()) }
+            Self::FnKw => { w.site_at(options::SITE__TOKEN_KEYWORDS_FN_KEYWORD_BEFORE); w.text("fn")?; w.site_at(options::SITE__TOKEN_KEYWORDS_FN_KEYWORD_AFTER); Ok(()) }
+            Self::ForKw => { w.site_at(options::SITE__TOKEN_KEYWORDS_FOR_KEYWORD_BEFORE); w.text("for")?; w.site_at(options::SITE__TOKEN_KEYWORDS_FOR_KEYWORD_AFTER); Ok(()) }
+            Self::Gen => { w.site_at(options::SITE__TOKEN_KEYWORDS_GEN_KEYWORD_BEFORE); w.text("gen")?; w.site_at(options::SITE__TOKEN_KEYWORDS_GEN_KEYWORD_AFTER); Ok(()) }
+            Self::IfKw => { w.site_at(options::SITE__TOKEN_KEYWORDS_IF_KEYWORD_BEFORE); w.text("if")?; w.site_at(options::SITE__TOKEN_KEYWORDS_IF_KEYWORD_AFTER); Ok(()) }
+            Self::ImplKw => { w.site_at(options::SITE__TOKEN_KEYWORDS_IMPL_KEYWORD_BEFORE); w.text("impl")?; w.site_at(options::SITE__TOKEN_KEYWORDS_IMPL_KEYWORD_AFTER); Ok(()) }
+            Self::LetKw => { w.site_at(options::SITE__TOKEN_KEYWORDS_LET_KEYWORD_BEFORE); w.text("let")?; w.site_at(options::SITE__TOKEN_KEYWORDS_LET_KEYWORD_AFTER); Ok(()) }
+            Self::LoopKw => { w.site_at(options::SITE__TOKEN_KEYWORDS_LOOP_KEYWORD_BEFORE); w.text("loop")?; w.site_at(options::SITE__TOKEN_KEYWORDS_LOOP_KEYWORD_AFTER); Ok(()) }
+            Self::MatchKw => { w.site_at(options::SITE__TOKEN_KEYWORDS_MATCH_KEYWORD_BEFORE); w.text("match")?; w.site_at(options::SITE__TOKEN_KEYWORDS_MATCH_KEYWORD_AFTER); Ok(()) }
+            Self::ModKw => { w.site_at(options::SITE__TOKEN_KEYWORDS_MOD_KEYWORD_BEFORE); w.text("mod")?; w.site_at(options::SITE__TOKEN_KEYWORDS_MOD_KEYWORD_AFTER); Ok(()) }
+            Self::PubKw => { w.site_at(options::SITE__TOKEN_KEYWORDS_PUB_KEYWORD_BEFORE); w.text("pub")?; w.site_at(options::SITE__TOKEN_KEYWORDS_PUB_KEYWORD_AFTER); Ok(()) }
+            Self::ReturnKw => { w.site_at(options::SITE__TOKEN_KEYWORDS_RETURN_KEYWORD_BEFORE); w.text("return")?; w.site_at(options::SITE__TOKEN_KEYWORDS_RETURN_KEYWORD_AFTER); Ok(()) }
+            Self::StaticKw => { w.site_at(options::SITE__TOKEN_KEYWORDS_STATIC_KEYWORD_BEFORE); w.text("static")?; w.site_at(options::SITE__TOKEN_KEYWORDS_STATIC_KEYWORD_AFTER); Ok(()) }
+            Self::StructKw => { w.site_at(options::SITE__TOKEN_KEYWORDS_STRUCT_KEYWORD_BEFORE); w.text("struct")?; w.site_at(options::SITE__TOKEN_KEYWORDS_STRUCT_KEYWORD_AFTER); Ok(()) }
+            Self::TraitKw => { w.site_at(options::SITE__TOKEN_KEYWORDS_TRAIT_KEYWORD_BEFORE); w.text("trait")?; w.site_at(options::SITE__TOKEN_KEYWORDS_TRAIT_KEYWORD_AFTER); Ok(()) }
+            Self::TypeKw => { w.site_at(options::SITE__TOKEN_KEYWORDS_TYPE_KEYWORD_BEFORE); w.text("type")?; w.site_at(options::SITE__TOKEN_KEYWORDS_TYPE_KEYWORD_AFTER); Ok(()) }
+            Self::Union => { w.site_at(options::SITE__TOKEN_KEYWORDS_UNION_KEYWORD_BEFORE); w.text("union")?; w.site_at(options::SITE__TOKEN_KEYWORDS_UNION_KEYWORD_AFTER); Ok(()) }
+            Self::UnsafeKw => { w.site_at(options::SITE__TOKEN_KEYWORDS_UNSAFE_KEYWORD_BEFORE); w.text("unsafe")?; w.site_at(options::SITE__TOKEN_KEYWORDS_UNSAFE_KEYWORD_AFTER); Ok(()) }
+            Self::UseKw => { w.site_at(options::SITE__TOKEN_KEYWORDS_USE_KEYWORD_BEFORE); w.text("use")?; w.site_at(options::SITE__TOKEN_KEYWORDS_USE_KEYWORD_AFTER); Ok(()) }
+            Self::WhereKw => { w.site_at(options::SITE__TOKEN_KEYWORDS_WHERE_KEYWORD_BEFORE); w.text("where")?; w.site_at(options::SITE__TOKEN_KEYWORDS_WHERE_KEYWORD_AFTER); Ok(()) }
+            Self::WhileKw => { w.site_at(options::SITE__TOKEN_KEYWORDS_WHILE_KEYWORD_BEFORE); w.text("while")?; w.site_at(options::SITE__TOKEN_KEYWORDS_WHILE_KEYWORD_AFTER); Ok(()) }
         }
     }
 }
@@ -27173,7 +27173,7 @@ impl ::sittir_core::view::KindOf for RawStringLiteralContentTransport {
 }
 
 impl ::sittir_core::options::Edged for RawStringLiteralContentTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(158) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(160) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
@@ -34988,9 +34988,9 @@ fn render_let_chain(node: &LetChainTransport, w: &mut dyn ::sittir_core::render:
         tail: None,
     };
     left.render(w)?;
-    w.site_at(options::SITE_LET_CHAIN_AMP_AMP_BEFORE);
+    w.site_at(options::SITE__LET_CHAIN_AMP_AMP_BEFORE);
     w.text("&&")?;
-    w.site_at(options::SITE_LET_CHAIN_AMP_AMP_AFTER);
+    w.site_at(options::SITE__LET_CHAIN_AMP_AMP_AFTER);
     right.render(w)?;
     Ok(())
 }
