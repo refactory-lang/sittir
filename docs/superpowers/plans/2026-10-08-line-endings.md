@@ -13,7 +13,7 @@
 ## Rulings (user, 2026-10-08)
 
 1. The option is `render: { layout: { newline } }`, text-valued like `indent`, one of `'\n' | '\r\n' | '\r'`, typed from `_newline`'s arms. It is accepted per engine and per call. Default `'\n'`.
-   - The `layout` group (ruled 2026-10-09) holds every whole-render layout setting: `indent` and `newline` now, and the width setting's `width`, `tabWidth` and `breaking` when they land. `indent` moves from `render.indent` to `render.layout.indent` in Task 4, with no alias at the old key.
+   - The `layout` group (ruled 2026-10-09) holds every whole-render layout setting: `indent` and `newline` now, and the width setting's `width` and `breaking` when they land. `indent` moves from `render.indent` to `render.layout.indent` in Task 4, with no alias at the old key.
 2. Every line break in the output takes the preference: the writer's breaks, and the breaks inside source slices, comments and literals. A render has one line ending. This is safe for rust, typescript and python, because none of them lets a CR or CRLF inside a literal carry meaning:
    - rust normalizes CRLF to LF before lexing and refuses a bare CR in any string literal, raw ones included;
    - a JavaScript string literal cannot hold an unescaped line terminator (only a line continuation, which adds nothing to the value), and template literals normalize CR and CRLF to LF in both their cooked and raw values;

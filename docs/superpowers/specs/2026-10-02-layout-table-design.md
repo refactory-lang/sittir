@@ -341,15 +341,15 @@ A third candidate, hugging, is in question 3.
 
 ### Options and how they travel
 
-*Ruled 2026-10-09 (questions 7 and 8):* every whole-render layout setting sits in one `layout` group under `render`:
+*Ruled 2026-10-09 (questions 7 and 8; the tab count revised the same day):* every whole-render layout setting sits in one `layout` group under `render`:
 
 ```ts
-render: { layout: { width: 100, tabWidth: 4, breaking: 'group', indent: '\t', newline: '\n' } }
+render: { layout: { width: 100, breaking: 'group', indent: '\t', newline: '\n' } }
 ```
 
 - `width`: columns. Unset, and not detected, means no table.
 - `breaking`: `'group'` (default) or `'fill'`.
-- `tabWidth`: how many columns a tab counts as when a line is measured against `width`. Tabs are always written as `\t`; this setting only measures. Default 4.
+- No tab-width option (ruled 2026-10-09). Tabs are always written as `\t`, and a tab counts as 2 columns when a line is measured against `width`, fixed in the writer. A public option would read as if it changed the output. A detected width is measured with the same count, so the constant only matters against a `width` the caller sets.
 - `indent` and `newline` move into the group: `indent` from `render.indent`, and `newline` as the line-endings plan adds it there.
 
 They are not site addresses. They are accepted at engine level (`createEngine(language, { render: { layout: { width: 100 } } })`) and per call, read by `Options::read` and carried in the resolved options the writer already holds. A grammar that declares no bracket pair has no `width` key, as a grammar with no indent character has no `indent` key. The root dispatch chooses the table output when a width is set and the transport is the grammar's root kind ([Staging](#staging)).
@@ -755,7 +755,7 @@ Stages 3 and 4 do not depend on each other. Stage 6 needs 1, 2, 4 and 5.
    Recommend declared, in `grammar.sittir.ts`. In python the pairs are the contexts of newline's choice (question 19). In every grammar they also choose the lists the first rule breaks (question 14), which is the same declaration read by the rule, not a second one. Regex declares none.
 
 2. **An edited parsed list whose source gaps were inline: may width break it?** Ruled (maintainer, 2026-10-09): yes. Width applies to every list whenever it is set or detected, parsed lists included, as detection-not-preservation already holds for gaps. A source-read seam is no longer "not adjustable" by that fact alone; an explicitly set one still is.
-   - Detection gains `width` (ruled 2026-10-09): the file's longest line, measured with `tabWidth`, rounded up to the next multiple of 10. An unedited file gains no break, and inserted content breaks at the file's own width. A file whose longest line is one unbreakable piece (a long string or comment) detects a wide width and so breaks little; detection may later measure only lines that hold a breakable gap, if the corpora show such outliers.
+   - Detection gains `width` (ruled 2026-10-09): the file's longest line, with a tab counted as 2 columns, rounded up to the next multiple of 10. An unedited file gains no break, and inserted content breaks at the file's own width. A file whose longest line is one unbreakable piece (a long string or comment) detects a wide width and so breaks little; detection may later measure only lines that hold a breakable gap, if the corpora show such outliers.
 
 3. **The first rule: plain group, or group that hugs a single item?** Ruled (maintainer, 2026-10-09): plain group.
    Recommended plain group now and hugging as a later rule. Hugging is closer to rustfmt (`Ok(ParsedTree {` … `})`; 219 against 247 differing lines on `engine.rs`) but misfires on a closure whose body ends in a call (`.map(|node| KindId(` / `node.kind_id()` / `))`), and a clean condition needs a fact the table does not hold.
@@ -768,10 +768,9 @@ Stages 3 and 4 do not depend on each other. Stage 6 needs 1, 2, 4 and 5.
 6. **The conditional separator's name, and whether rust's defaults move to it.** Ruled (maintainer, 2026-10-09): only where the grammar spells an optional trailing separator, the same condition `Trailing` has; the grammar makes it legal and the option chooses whether to write it. Name and rust's defaults as recommended.
    Recommended `Delimiter.TrailingIfBroken`. Recommend moving rust's bracketed lists to it as a separate change after the table lands: it is what rustfmt writes, and with no width it changes bytes only for lists broken as written.
 
-7. **Tab width.** Ruled (maintainer, 2026-10-09): tabs are always written as `\t`; `tabWidth` only measures, default 4.
-   Recommended a `tabWidth` option defaulting to 4. The issue's table counted a tab as one; oxfmt here counts two.
+7. **Tab width.** Ruled (maintainer, 2026-10-09): no option. Tabs are always written as `\t`, and a tab counts as 2 columns when measuring, fixed in the writer; a public option would read as if it changed the output. The issue's table counted a tab as one; oxfmt here counts two.
 
-8. **Option names.** Ruled (maintainer, 2026-10-09): `render: { layout: { width, tabWidth, breaking, indent, newline } }`, with `indent` and `newline` in the group (see [Options and how they travel](#options-and-how-they-travel)).
+8. **Option names.** Ruled (maintainer, 2026-10-09): `render: { layout: { width, breaking, indent, newline } }`, with `indent` and `newline` in the group (see [Options and how they travel](#options-and-how-they-travel)).
 
 9. **Should a seam row record its site and arm now?**
    Recommend no: nothing reads them, and they would add a third to every row. Add them with a kept table.
