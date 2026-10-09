@@ -144,18 +144,6 @@ A grammar's corpus: every `upstream/*.txt` under
 naming `sittir tool fetch-corpus --grammar <grammar>`; an empty corpus
 would otherwise report a passing 0/0 run.
 
-### `packages/tools/src/validate/common.ts::treeHandle`
-
-#### body
-
-```text
-// NodeById removed. JS-side readUntypedNode now navigates via
-// nodes[handle].children()[childIndex]. The nodes[] array is populated
-// lazily by pushNode() inside readUntypedNode as it walks the tree.
-// Phase D: kindIdFromName is required for JS-side reads (readUntypedNode emits
-// numeric $type). Supply it from the grammar's types module.
-```
-
 ### `packages/tools/src/validate/common.ts::NativeEngine`
 
 The public engine a validator reads and renders through, typed for any grammar: `Engine<LanguageAPI>`. One engine per grammar per process, because a coordinate names the tree by the tag its engine minted.
@@ -233,36 +221,20 @@ Parses `source` in the engine and returns the raw `{ root, tree }` its diagnosti
  */
 ```
 
-### `packages/tools/src/validate/common.ts::readUntypedNodeAt`
-
-```text
-/**
- * Read a specific tree-sitter node via its adapted AnyTreeNode reference.
- *
- * ReadNode no longer accepts a nodeId. For the WASM/JS path,
- * validators use this helper to push the target node into the handle's
- * nodes[] array and call readUntypedNode with the resulting handle + childIndex=0.
- * For native handles (handle.read present), uses the native coords from
- * findNativeNodeId.
- */
-```
-
-#### body
-
-```text
-// WASM/JS path: temporarily set rootNode to the target node and read
-// with no navigation coords (readUntypedNode reads rootNode when handle is undefined).
-```
-
 ### `packages/tools/src/validate/common.ts::NativeNodeCoords`
 
-```text
-/**
- * Navigation coordinates for a native hydration.
- * `handle` is the parent's index in the tree's nodes[], `childIndex` is
- * the position in parent's child array.
- */
-```
+`coordinate` is the node's own coordinate (`$_layout.at`, or the node itself when the walk met it unread); `embeddedData` is the transport as the whole-tree read holds it. A trivia entry read whole can carry data and no coordinate. The root is `{}`.
+
+
+### `packages/tools/src/validate/common.ts::coordsOf`
+
+What `walkNativeForKind` records for a node it visits: an unread coordinate as the coordinate alone, a transport as its stamped `at` beside the transport itself, and a transport with no `at` (a trivia entry the read handed over whole) as its data alone.
+
+
+### `packages/tools/src/validate/common.ts::isUnitModelType`
+
+Whether a kind's model type stores it as its kind id alone: a `keyword` or `punctuation` kind has one fixed text, so a slot holding it holds the id and no node. The one predicate behind the leaf test (`loadIsLeafKind`), the arm projection's unit case (`projectArmSlot`) and from-validation's unit-variant exclusion (`validateFrom`).
+
 
 ### `packages/tools/src/validate/common.ts::NativeNodeCoords.embeddedData`
 
@@ -276,65 +248,14 @@ Parses `source` in the engine and returns the raw `{ root, tree }` its diagnosti
 	 */
 ```
 
-### `packages/tools/src/validate/common.ts::collectNativeChildNodes`
-
-```text
-/**
- * Native UntypedNode's addressable child positions: named-slot (`_foo`) and
- * legacy (`$fields`) values, the anonymous-token bucket (`$other`), and
- * attached trivia (`$_trivia.leading`/`.trailing` — comment/extras
- * nodes read_untyped_node.rs attaches to a SIBLING rather than re-parenting into
- * the normal field/children tree, so this is the only place they're
- * reachable from).
- */
-```
-
 ### `packages/tools/src/validate/common.ts::nativeNodeIsKind`
 
 Whether a node from the native read is of a given kind name, under either identity it carries: the grammar symbol that parsed it (`$type`), or the kind the parser shows it as (`$displayType`, present only at an alias). The corpus names an alias envelope by the shown kind (`property_identifier`, `field_identifier`), so a lookup by `$type` alone would never find one. `findNativeNodeId` and `walkNativeForKind` both locate nodes through it.
 
-### `packages/tools/src/validate/shown-kind.ts::nativeShownKindId`
-
-The kind a node from the native read is shown as: its `$displayType` when the reader sent one, and its `$type` otherwise. An in-place leaf alias reads as the token it aliases, for example regex `lazy` over `?`, which arrives as `$type` `?` with `$displayType` `lazy`. The model kind of such a node is the shown one. Every site that classifies a read node as a model kind reads it here: the factory-storage candidate walk and storage comparison, the read-render-parse leaf check, the exercise walk, the factory-source printer, and `nativeNodeIsKind`. Sites that compare two reads, or that name the grammar symbol that parsed a node, keep `$type`.
-
 ### `packages/tools/src/validate/common.ts::findNativeNodeId`
 
-```text
-/**
- * For a native TreeHandle (`handle.read` is present), walk the native
- * UntypedNode tree to find the parent-handle + child-index pair for the
- * first node whose `$type` equals `kind`. Native engine handles and
- * WASM/JS engine handles occupy different navigation spaces, so WASM
- * coordinates must never be passed to a native handle's
- * `readUntypedNode(handle, childIndex)`.
- *
- * Returns null when `handle` is a WASM handle (no `handle.read`) —
- * callers fall back to the JS tree's `node.id` in that case.
- *
- * Returns { handle, childIndex } instead of NodeId.
- */
-```
+The first `walkNativeForKind` candidate, narrowed to `span` when the caller passes one. The from validator passes its CST node's span converted to bytes (`sourceSpans(source).toSpan`), because a WASM node's indices count characters while a native span counts UTF-8 bytes; it passes none for the root. A span is a stamped read fact, so no text is compared, and a node found inside a trivia entry matches the same way.
 
-Every trivia side is walked (leading, trailing and inner), and a node found in a trivia entry or anywhere inside one is returned as `embeddedData`: an entry is read whole and has no handle and child index of its own. When the caller passes a `span` (the from validator passes its CST node's), a node inside trivia matches only at that `$span`, a stamped read fact, so no text is compared.
-
-#### body
-
-```text
-// No handle+child-index exists for this entry (see
-// `NativeNodeCoords.embeddedData`) — return the already-
-// materialized data directly instead of falling through to
-// the coordinate-based match/hydrate logic below, which can
-// never succeed for it.
-```
-
-#### body
-
-```text
-// A stub names its own coordinate: its parent's handle
-// (`$parentHandle`) beside its `$childIndex`. A child expanded inside
-// the read carries no handle, so its coordinate is its index under the
-// handle of the node it was read with (`d.$handle`).
-```
 
 ### `packages/tools/src/validate/common.ts::NativeCandidateCoords`
 
@@ -347,49 +268,8 @@ Every trivia side is walked (leading, trailing and inner), and a node found in a
 
 ### `packages/tools/src/validate/common.ts::walkNativeForKind`
 
-```text
-/**
- * Walk the native AnyUntypedNode tree rooted at `handle` and collect ALL nodes
- * whose kind matches `kind`, in DFS order. Returns one entry per matching
- * node with its navigation coordinates (`handle` + `childIndex`) and byte
- * span (when present in the native data, so callers can slice the source).
- *
- * This is the "walk-native-for-candidates" counterpart to `findNativeNodeId`
- * (which returns only the first match). Used by `read-render-parse.ts` to
- * replace WASM-tree-walk-then-bridge with a pure native iteration that gives
- * each candidate its own correct coords — no span-equality match across
- * WASM/native boundary needed.
- *
- * Returns an empty array when `handle` has no native `read` method (i.e. a
- * WASM/JS handle). Callers fall back to WASM iteration in that case.
- */
-```
+Reads the whole tree once (`handle.read(0, Infinity)`) and visits every transport in document order, each node's trivia entries (leading, trailing and inner) before its slot children. A coordinate met on the way (a child the read left unread) is read whole through `readNode` before its children are visited. Each candidate carries `coordsOf` the node: its own coordinate and the transport as the whole-tree read holds it, so a caller uses the data without reading it again; the root is `{}`, which `readNativeAt` reads as index 0. Empty for a handle with no native read.
 
-#### body
-
-```text
-// Root-level match: coords = {} (no parent/childIndex navigation).
-```
-
-#### body
-
-```text
-// Still recurse to find nested matches of the same kind within
-// the root's children (e.g. an impl_item contains impl_items).
-```
-
-#### body
-
-```text
-// See findNativeNodeId's walk() for why the child's
-// `$parentHandle` comes before `d.$handle`.
-```
-
-#### body
-
-```text
-// Hydrate when the child doesn't already carry its own sub-children.
-```
 
 ### `packages/tools/src/validate/common.ts::findFirst`
 
@@ -769,10 +649,6 @@ A native node is a kind when its `$type` or its shown kind id (`$displayType` wh
 
 One export of a grammar's generated wrap module, loaded through the typed internal loader: `readNode`, `wrapNode` or `hydrateChild`. The selected export determines the return type. A module that fails to load is reported on stderr and yields null, as does a missing export.
 
-### `packages/tools/src/validate/common.ts::hydrateChildOf`
-
-The grammar wrap's `hydrateChild`: the path a wrapped node's accessors take to hydrate a child, which reads a stub and wraps it so its children sit in the model's slots. A validator that turns read data into factory config hydrates stubs through it, never with a raw read.
-
 ### `packages/tools/src/validate/common.ts::readNodeOf`
 
 ```text
@@ -887,10 +763,10 @@ The grammar wrap's `hydrateChild`: the path a wrapped node's accessors take to h
  * One accessor-throw occurrence — a slot's declared getter threw instead of
  * returning a value, so `resolveWrappedStorageValue` fell back to the raw,
  * unwrapped stub for that slot (see its doc comment for what that masks).
- * Callers that care about these beyond the unconditional stderr line (e.g.
- * `validateReadRenderParse`, for folding into the unified validation report)
- * pass an `onAccessorThrow` collector through to receive one record per
- * occurrence, in addition to — not instead of — the stderr line.
+ * Callers that care about these beyond the unconditional stderr line pass an
+ * `onAccessorThrow` collector through to receive one record per occurrence,
+ * in addition to — not instead of — the stderr line. `validateReadRenderParse`
+ * fails the entry on any.
  */
 ```
 
@@ -1073,14 +949,14 @@ The grammar wrap's `hydrateChild`: the path a wrapped node's accessors take to h
 // nodeToConfig — UntypedNode → factory Config-shape conversion
 // ---------------------------------------------------------------------------
 //
-// Validators read tree-sitter output via `readUntypedNode` (snake_case `_<name>`
+// Validators read tree-sitter output through the typed read (snake_case `_<name>`
 // keys, $-prefixed metadata). The factory signatures take `ConfigOf<T>`:
 //   - top-level keys in camelCase (snake→camel on each `_<name>` entry)
 //   - `children` in place of $children
 //   - leaf values as bare strings (factory leaf signatures are `(text: string)`)
 //   - branch values as UntypedNode produced by THAT kind's factory — when
-//     `tree` + `factoryMap` are supplied, children are hydrated via
-//     `readUntypedNode` and reconstructed through their own factory before
+//     `tree` + `factoryMap` are supplied, children are hydrated
+//     (`hydrateForConfig`) and reconstructed through their own factory before
 //     being installed under the parent's config. This is what makes the
 //     factory layer actually exercise construction instead of passing
 //     data through verbatim; a declared-type mismatch (e.g. a
@@ -1138,7 +1014,7 @@ The grammar wrap's `hydrateChild`: the path a wrapped node's accessors take to h
 
 ```text
 /** Validator-supplied CST node-kind fallback for override polymorphs whose
-	 * readUntypedNode shape collapsed the discriminating wrapper before factory dispatch. */
+	 * read shape collapsed the discriminating wrapper before factory dispatch. */
 ```
 
 ### `packages/tools/src/validate/common.ts::NodeToConfigOpts.firstNamedChildKindHint`
@@ -1177,8 +1053,8 @@ The grammar wrap's `hydrateChild`: the path a wrapped node's accessors take to h
 ### `packages/tools/src/validate/common.ts::NodeToConfigOpts.kindNameFromId`
 
 ```text
-/** Phase D: resolver for numeric $type → string kind name. Required when
-	 * input nodes carry numeric $type (readUntypedNode output post-Phase-D). */
+/** Resolver for numeric $type → string kind name; every read transport
+	 * carries a numeric $type. */
 ```
 
 ### `packages/tools/src/validate/common.ts::NodeToConfigOpts.surface`
@@ -1208,7 +1084,7 @@ The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$t
  *
  * @remarks
  * Anonymous tokens (separators, delimiters, keywords promoted to `_<name>` by
- * readUntypedNode) must stay as UntypedNode. Render's `$named !== false` filter drops
+ * the reader) must stay as UntypedNode. Render's `$named !== false` filter drops
  * them from `$$$CHILDREN`, and flankSep probes their span/text to reconstruct
  * trailing separators. Converting them to bare strings bypasses those filters
  * and double-emits (e.g. struct_pattern's trailing `,` showed up twice in the
@@ -1558,29 +1434,6 @@ One entry of a factory map: the factory function of a kind, or, for a `constant`
  */
 ```
 
-### `packages/tools/src/validate/common.ts::shouldPromoteOrphanChildren`
-
-```text
-/**
- * Determine whether to promote orphan `$children` into declared factory fields
- * by position instead of routing them to `children`.
- *
- * @remarks
- * When the parent kind declares fields via `_factoryFields` but none of them
- * appear in the node's `_<name>` keys, tree-sitter likely elided the field label for this
- * GLR state (python `list_splat` at expression-statement position is the
- * canonical case). Route the named children into the declared fields by
- * position so the factory sees the expected slots instead of `children`. Fires
- * only when no declared field is already populated — otherwise children
- * genuinely belong in `$$$CHILDREN` (e.g. rust `impl_item`'s body).
- *
- * @param declaredFields - The factory's declared field names for the parent kind.
- * @param populatedOut - The config object built so far (to check if any field is already set).
- * @param namedChildren - The filtered list of named child nodes.
- * @returns `true` if the orphan-promotion path should be taken.
- */
-```
-
 ### `packages/tools/src/validate/common.ts::slotOrigin`
 
 ```text
@@ -1775,6 +1628,8 @@ Reads each corpus candidate, renders it, reparses the render inside its supertyp
 
 A kind passes when any of its candidates round-trips, so a candidate that only renders badly is outweighed by one that renders well. A candidate that throws is not: an error while its input is read, rendered, measured (`leadingTriviaRenderedWidth`) or captured as a fixture (`selfContainedRenderInput`) is reported with its message and fails the entry whatever its kind's other candidates do, so a broken trivia view or line-gap query surfaces as a failure instead of one fewer fixture.
 
+A read refused anywhere in an entry fails it the same way: a child whose hydration throws while the tree is walked for candidates, or while a candidate is materialized, reaches `onAccessorThrow`, and the entry's refusals are reported as `read:` errors. An entry whose refusal leaves it no candidate to test is a failure, not a `no-testable-kind` skip. The deep and shallow `read-render-parse` rows of `validate counts` therefore count every read refusal in the corpus.
+
 ### `packages/tools/src/validate/read-render-parse.ts::renderReparse`
 
 The render-and-reparse step every rendering row shares. It renders a node with the native engine, wraps the text in its kind's reparse wrapper (`wrapForReparse`), reparses it, finds the reparsed node of the target kind at the wrapper's offset (or the tree's root for a root candidate), and diffs its AST with the source node's (`astStructuralDiff`). It returns one outcome: excluded (no wrapper for the kind, or an empty render), failed (a reparse error, or the kind not at the offset), or round-tripped with the AST difference. A render that throws propagates, so each row reports it in its own terms. `loadRenderReparseContext` loads what it needs for a grammar once per run.
@@ -1814,6 +1669,8 @@ Shallow comparison of a `from()` result against the factory's: `$type`, the slot
 ### `packages/tools/src/validate/from.ts::validateFrom`
 
 A read leaf whose stored kind differs from the kind the corpus shows (an in-place leaf alias reads as the shared anonymous token) is validated by its text: `from(node.$text)` is compared with `factory(nodeToConfig(node))`, and `from(node)` must return the same object. Either the read identity is kept or the row is an error. The scalarized text and constant leaves, which have no node, keep comparing `from(text)` with `factory(text)` through the same closure.
+
+An occurrence the read holds no node for is not a failure. The walk finds the first occurrence of each kind in the WASM tree, and when the native read has no node at its span, `unreadReason` names the model fact that explains it: inside an extra (`native-read-dropped-extra`, reported as trivia); under a parent the model stores as its text (`folded-into-parent-text`, a parent of `factoryShape` `text`, such as regex `zero_or_more` holding its `lazy` `?`); or a grammar symbol the model stores as its kind id (`read-as-unit-variant`, `isUnitModelType`, such as the `\-` a regex class reads as `bslash_dash`). The kind is then retried in later entries, and a kind no entry tests lands in `excluded` with the reason. An occurrence none of these explains stays an error.
 
 ### `packages/tools/src/validate/common.ts::nodeToConfig`
 
@@ -1880,3 +1737,20 @@ Loads the generated raw factory map through the typed internal loader, scopes bu
 ### `packages/tools/src/validate/factory-storage.ts::buildFactoryUntypedNode`
 
 Dispatches materialized reference data through the existing factory calling convention, using the walked source kind so alias-source factories preserve their declared identities. Slot metadata, field aliases and CST hints pass through to `buildFactoryNodeFromReference`. A missing factory returns null; a thrown factory records the kind, corpus entry and source in the errors list and returns null so comparison can be skipped.
+
+### `packages/tools/src/grammar-internals.ts::Hydrate`
+
+The signature of a grammar's generated `hydrate` (`wrap.ts`): a stored value as an accessor would return it, a coordinate read `depth` levels down through the given tree and wrapped.
+
+### `packages/tools/src/validate/common.ts::hydrateOf`
+
+A grammar's generated `hydrate`, or `null` when the grammar has no wrap module, so a validator hydrates read data on the same path as the accessors.
+
+### `packages/tools/src/validate/common.ts::storedChildren`
+
+Every node a transport stores in its `_` slots, list items included, in key order: the children `walkNativeForKind` descends into. A kind id or a text value is not a node and is skipped.
+
+### `packages/tools/src/validate/common.ts::storedTriviaEntries`
+
+Every trivia entry a transport holds: its leading and trailing sides and each inner gap's entries, in that order.
+

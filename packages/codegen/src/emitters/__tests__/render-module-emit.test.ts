@@ -2,7 +2,7 @@
  * render-module-emit.test.ts — unit tests for Phase 1 typed transport emission.
  *
  * Tests cover:
- * - `classifySlot` / `buildSupertypeTransportSet` / `deriveChildrenKinds` exported helpers
+ * - `classifySlot` / `buildSupertypeTransportSet` exported helpers
  * - Phase 1: single-concrete-kind field and children slots emit typed Rust types
  * - Phase 1: render functions call typed `render_<kind>`, not `render_transport_dispatch`
  *
@@ -12,7 +12,7 @@
 
 import { beforeAll, describe, expect, it } from 'vitest';
 import { DEDENT_TEXT, INDENT_TEXT } from '../../dsl/primitives/spacing.ts';
-import { classifySlot, buildSupertypeTransportSet, deriveChildrenKinds, type SlotClass } from '../transport-common.ts';
+import { classifySlot, buildSupertypeTransportSet, type SlotClass } from '../transport-common.ts';
 import { emitRenderModule, grammarRenderInputs, payloadCeilingAssertions, rustTransportStructName, transportSlotShapeOf } from '../render-module.ts';
 import { BOXED_PAYLOADS, PAYLOAD_CEILING_BYTES } from '../boxed-payloads.ts';
 import { ENVELOPE_PINS } from '../envelope-claims.ts';
@@ -81,51 +81,6 @@ describe('buildSupertypeTransportSet', () => {
 		} as unknown as NodeMap;
 		const result = buildSupertypeTransportSet(nodeMap);
 		expect(result.size).toBe(0);
-	});
-});
-
-// ---------------------------------------------------------------------------
-// deriveChildrenKinds — exported helper
-// ---------------------------------------------------------------------------
-
-describe('deriveChildrenKinds', () => {
-	it('extracts resolved node-ref kinds from AssembledNonterminal.values', () => {
-		// Construct a minimal AssembledNonterminal-shaped object for testing.
-		const mockChild = {
-			values: [
-				{ kind: 'node-ref', node: { kind: 'identifier' }, multiplicity: 'array' },
-				{ kind: 'node-ref', node: { kind: 'call_expression' }, multiplicity: 'array' },
-				{ kind: 'terminal', value: ',', multiplicity: 'array' } // terminals ignored
-			]
-		};
-		const result = deriveChildrenKinds(mockChild as unknown as AssembledNonterminal);
-		expect(result).toEqual(['identifier', 'call_expression']);
-	});
-
-	it('deduplicates repeated kinds', () => {
-		const mockChild = {
-			values: [
-				{ kind: 'node-ref', node: { kind: 'identifier' }, multiplicity: 'array' },
-				{ kind: 'node-ref', node: { kind: 'identifier' }, multiplicity: 'array' }
-			]
-		};
-		const result = deriveChildrenKinds(mockChild as unknown as AssembledNonterminal);
-		expect(result).toEqual(['identifier']);
-	});
-
-	it('includes unresolved refs using their name (mirrors projection.kinds behaviour)', () => {
-		// Children are always stored as unresolved refs in the assembled IR.
-		// deriveChildrenKinds must use the ref's .name (grammar kind string)
-		// so classifySlotForEmit can look up the kind in nodeMap — the same
-		// approach AssembledField.projection.kinds uses in deriveSlotsRaw.
-		const mockChild = {
-			values: [
-				{ kind: 'node-ref', node: { kind: 'identifier' }, multiplicity: 'array' },
-				{ kind: 'node-ref', node: { kind: 'unresolved-ref', name: '_expression' }, multiplicity: 'array' }
-			]
-		};
-		const result = deriveChildrenKinds(mockChild as unknown as AssembledNonterminal);
-		expect(result).toEqual(['identifier', '_expression']);
 	});
 });
 

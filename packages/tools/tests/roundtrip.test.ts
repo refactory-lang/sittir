@@ -46,7 +46,7 @@ describe('exercise roundtrip helpers', () => {
 
 		const result = buildFactoryNode(
 			'direct_child',
-			{ $type: 'direct_child', $other: [leaf] },
+			{ $type: 'direct_child', _children: leaf } as never,
 			artifacts,
 			common,
 			undefined
@@ -81,7 +81,7 @@ describe('exercise roundtrip helpers', () => {
 
 		const result = buildFactoryNode(
 			'spread_child',
-			{ $type: 'spread_child', $other: [left, right] },
+			{ $type: 'spread_child', _children: [left, right] } as never,
 			artifacts,
 			common,
 			undefined

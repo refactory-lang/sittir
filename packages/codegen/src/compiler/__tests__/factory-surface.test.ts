@@ -8,7 +8,7 @@ import type { NodeMap } from '../types.ts';
 import { AssembledList, type AssembledNode } from '../model/node-map.ts';
 import {
 	factoryTakesSpreadChildren,
-	wrapExposesChildren,
+	fromForwardsToChildFactory,
 	classifyFactoryShape,
 	resolveFactoryFieldNames,
 	soleSlotFacts
@@ -43,7 +43,7 @@ beforeAll(async () => {
 });
 
 function expectDirect(node: AssembledNode, nodeMap: NodeMap): void {
-	expect(wrapExposesChildren(node, nodeMap)).toBe(true);
+	expect(fromForwardsToChildFactory(node, nodeMap)).toBe(true);
 	expect(factoryTakesSpreadChildren(node, nodeMap)).toBe(false);
 }
 
@@ -67,11 +67,11 @@ describe('child factory surface classification', () => {
 		// a direct unnamed child. expression_statement is a current
 		// inferred single-unnamed-slot branch.
 		expectDirect(nodeMap.nodes.get('expression_statement')!, nodeMap);
-		expect(wrapExposesChildren(nodeMap.nodes.get('attribute')!, nodeMap)).toBe(false);
+		expect(fromForwardsToChildFactory(nodeMap.nodes.get('attribute')!, nodeMap)).toBe(false);
 	});
 
 	it('excludes field-backed direct factories from the child surface', () => {
-		expect(wrapExposesChildren(nodeMap.nodes.get('binary_expression')!, nodeMap)).toBe(false);
+		expect(fromForwardsToChildFactory(nodeMap.nodes.get('binary_expression')!, nodeMap)).toBe(false);
 	});
 
 	it('keeps the config surface when markers accompany a sole named user slot', () => {

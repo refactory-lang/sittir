@@ -16,7 +16,7 @@ import type { IndentChar, Options } from './options.js';
 import { querySlots, triviaFacts } from './utils.js';
 import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type PatternRoot } from './render-engine.js';
-import { wrapNode, hydrateChild, type PatternTree } from './wrap.js';
+import { wrapNode, hydrate, type PatternTree } from './wrap.js';
 
 export interface RegexAPI extends LanguageAPI {
 	readonly name: 'regex';
@@ -42,5 +42,5 @@ export const hooks: LanguageHooks<RegexAPI> = Object.freeze<LanguageHooks<RegexA
 	querySlots,
 	createNative: (options) => nativeLanguageEngine<RegexAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as PatternRoot & ParsedRoot, tree as TreeHandle),
-	hydrate: (node, tree) => hydrateChild(node, tree as TreeHandle)
+	hydrate: (node, tree) => hydrate(node, tree as TreeHandle)
 });

@@ -13,10 +13,9 @@ import { writeSync } from 'node:fs';
 import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
 import { sourceSpans, spanSlicer, type TriviaSides } from '@sittir/common';
 import {
-	hydrateStub,
 	isStorageKey,
-	isStub,
 	mapTriviaEntries,
+	readNode as readTransport,
 	readTrivia,
 	spanOf,
 	toDetachedTransportData,
@@ -53,7 +52,6 @@ import {
 	loadNativeEngine,
 	triviaViewOf
 } from './common.ts';
-import { nativeShownKindId } from './shown-kind.ts';
 
 /**
  * The kinds that participate in variant() adoption (each override-defined
@@ -322,14 +320,6 @@ export interface ReadRenderParseResult {
 		start: number;
 		end: number;
 	}[];
-	/**
-	 * Accessor-throw occurrences hit while materializing wrapped nodes for
-	 * this run (see `AccessorThrowRecord`'s doc comment). Each throw masks
-	 * its whole slot behind a raw stub fallback — not necessarily a hard
-	 * round-trip failure on its own, but a real signal worth surfacing
-	 * beyond the transient stderr line.
-	 */
-	accessorThrows: AccessorThrowRecord[];
 	skips: ValidatorSkip[];
 	excluded: ValidatorSkip[];
 	trivia: ValidatorSkip[];
@@ -352,7 +342,11 @@ export interface ReadRenderParseResult {
  *
  * `triviaOf` is the trivia view the render itself uses (`readTrivia`), so the
  * width counts what the render printed: a leading comment and the whitespace
- * between it and the node, never the root's outer-edge whitespace.
+ * between it and the node, never the root's outer-edge whitespace. The
+ * stripped copy keeps an empty `leading` side rather than none: an empty side
+ * still refuses the fold to a coordinate, so both renders print the node from
+ * its storage and differ only by the leading trivia. Both are measured
+ * without trailing whitespace, which only the outer edge contributes.
  */
 export function leadingTriviaRenderedWidth(
 	data: AnyUntypedNode,
@@ -362,8 +356,8 @@ export function leadingTriviaRenderedWidth(
 	const trivia = triviaOf(data);
 	const leading = trivia?.leading;
 	if (!leading || leading.length === 0) return 0;
-	const stripped = { ...data, $_trivia: { ...trivia, leading: undefined } } as AnyUntypedNode;
-	return render(data).length - render(stripped).length;
+	const stripped = { ...data, $_layout: { ...data.$_layout, trivia: { ...trivia, leading: [] } } } as AnyUntypedNode;
+	return render(data).trimEnd().length - render(stripped).trimEnd().length;
 }
 
 /**
@@ -443,13 +437,12 @@ export function selfContainedRenderInput(
 		const record = value as Record<string, unknown>;
 		const out: Record<string, unknown> = {};
 		for (const [key, raw] of Object.entries(record)) {
-			if (key === '$handle' || key === '$parentHandle' || key === '$treeHandle' || key === '$childIndex' || key === '$textOnly') continue;
+			if (key === '$treeHandle') continue;
 			if (key === '$_layout') out.$_layout = layoutOf(raw as TransportLayout);
 			else out[key] = isStorageKey(key) ? walk(raw) : raw;
 		}
-		const shown = typeof out.$type === 'number' ? nativeShownKindId(out as { $type: number }) : undefined;
-		if (!hasStorage(out) && shown !== undefined && isLeafKind(shown) && out.$text === undefined) {
-			const text = textOf(out);
+		if (!hasStorage(out) && typeof out.$type === 'number' && isLeafKind(out.$type) && out.$text === undefined) {
+			const text = textOf(record);
 			if (text !== undefined) out.$text = text;
 		}
 		return out;
@@ -744,13 +737,21 @@ export async function validateReadRenderParse(
 		start: number;
 		end: number;
 	}[] = [];
-	const accessorThrows: AccessorThrowRecord[] = [];
 	const skips: ValidatorSkip[] = [];
 	const excluded: ValidatorSkip[] = [];
 	const trivia: ValidatorSkip[] = [];
+	// A read refused while an entry is walked or a candidate materialized
+	// fails that entry: no refusal is a warning.
+	let refused: AccessorThrowRecord[] = [];
 	const onAccessorThrow = (rec: AccessorThrowRecord): void => {
-		accessorThrows.push(rec);
+		refused.push(rec);
 	};
+	const refusalsOf = (entry: { name: string; source: string }): typeof errors =>
+		refused.splice(0).map((rec) => ({
+			name: `${entry.name} [${String(rec.type)}]`,
+			message: `read: ${rec.key} (${rec.accessor}): ${rec.message}`,
+			input: entry.source
+		}));
 	let pass = 0;
 	let astMatchPass = 0;
 	let total = 0;
@@ -759,6 +760,7 @@ export async function validateReadRenderParse(
 	for (const entry of entries) {
 		if (shouldStop) break;
 		total++;
+		refused = [];
 		try {
 			// Parse original
 			const tree1 = parser.parse(entry.source) as TSTree;
@@ -779,7 +781,7 @@ export async function validateReadRenderParse(
 			// wrappers; display names are resolved per candidate below, only at
 			// the WASM `.type` seams. Build the native read handle and walk the
 			// WRAPPED tree ONCE.
-			const handle = await buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
+			const handle = await buildReadHandle(grammar, entry.source);
 			const candidatesByKind = new Map<
 				string,
 				{ start: number; end: number; node: TypedNode; displayKind: string }[]
@@ -810,9 +812,12 @@ export async function validateReadRenderParse(
 					onAccessorThrow
 				);
 			}
+			const refusals = refusalsOf(entry);
+			errors.push(...refusals);
 			const testableKinds = [...candidatesByKind.keys()];
 
 			if (testableKinds.length === 0) {
+				if (refusals.length > 0) continue;
 				skips.push({ entry: entry.name, reason: 'no-testable-kind', input: entry.source });
 				if (process.env.SITTIR_VALIDATOR_ENTRY_LOG) {
 					console.log(`ENTRY\t${recursive ? 'deep' : 'shallow'}\t${entry.name}\tskip-no-testable\tast-fail`);
@@ -821,8 +826,8 @@ export async function validateReadRenderParse(
 			}
 
 			// Test round-trip for each testable kind found
-			let entryOk = true;
-			let entryAstMatch = true;
+			let entryOk = refusals.length === 0;
+			let entryAstMatch = entryOk;
 			// Tracks whether ANY kind in this entry ever reached a genuine
 			// round-trip attempt (kindHadCandidate=true below) — as opposed to
 			// every candidate silently `continue`-ing via a neutral skip
@@ -830,7 +835,7 @@ export async function validateReadRenderParse(
 			// where EVERY kind's candidates are all neutrally skipped falls
 			// through with entryOk/entryAstMatch still at their initial `true`,
 			// counting as a pass despite testing nothing at all.
-			let entryHadAnyCandidate = false;
+			let entryHadAnyCandidate = !entryOk;
 			// A candidate that throws while its input is read, rendered or
 			// captured is a failure in its own right: it is reported and fails
 			// the entry even when another candidate of its kind round-trips.
@@ -869,25 +874,20 @@ export async function validateReadRenderParse(
 					// kind. renderedKind (source) drives the render template; targetKind
 					// (display) drives the post-reparse node lookup.
 					//
-					// Shallow mode (`recursive !== true`): read the node's one-level
-					// native data via its coords instead — children stay `$parentHandle`
-					// stubs. This preserves the read-render-parse-shallow metric's
-					// meaning (render() fed stub-bearing data, the shape lazy callers
+					// Shallow mode (`recursive !== true`): read the node one level down
+					// through its coordinate instead — its children stay coordinates.
+					// This preserves the read-render-parse-shallow metric's meaning
+					// (render() fed coordinate-bearing data, the shape lazy callers
 					// send) as distinct from the deep run's full materialization.
 					// Falls back to deep materialization when the wrapped node carries
-					// no native coords.
+					// no coordinate.
 					const treeRoot = cand.displayKind === tree1.rootNode.type;
 					let data: AnyUntypedNode;
 					try {
-						// `$childIndex` is undefined for a candidate that IS the tree
-						// root (nothing above it to index into) — defaulting it to 0
-						// would make `handle.read(handle, 0)` hydrate into the root's
-						// FIRST CHILD, silently round-tripping the wrong node (the
-						// child mislabeled as the parent). Root candidates take the
-						// deep-materialization path instead of guessing an index.
+						const at = (cand.node as AnyUntypedNode).$_layout?.at;
 						data =
-							recursive !== true && isStub(cand.node) && handle.read
-								? (hydrateStub(cand.node, handle) as AnyUntypedNode)
+							recursive !== true && at !== undefined && handle.read
+								? (readTransport(handle, at) as AnyUntypedNode)
 								: (materializeDetached(cand.node, onAccessorThrow) as AnyUntypedNode);
 					} catch (e) {
 						reportThrown({
@@ -1072,6 +1072,7 @@ export async function validateReadRenderParse(
 					entryAstMatch = false;
 				}
 			}
+			for (const failure of refusalsOf(entry)) reportThrown(failure);
 
 			// An entry whose every kind was neutrally skipped (no genuine
 			// round-trip attempt ever succeeded past the read step) has tested
@@ -1119,7 +1120,6 @@ export async function validateReadRenderParse(
 		astMatchPass,
 		errors,
 		astMismatches: dedupeMismatchesByContainment(astMismatches),
-		accessorThrows,
 		skips,
 		excluded,
 		trivia

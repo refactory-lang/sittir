@@ -7,7 +7,13 @@ import type * as T from '../types-internal.js';
 import { TSKindId, KIND_NAMES } from '../types.js';
 import { Delimiter } from '@sittir/common/utils';
 import type { AnyUntypedNode, Admit, NonEmptyArray, NumericInput, SiblingLeadRefusal } from '@sittir/types';
-import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, isNodeOfKind } from '@sittir/common/utils';
+import {
+	coerceKindEnumStorage,
+	coerceMixedEnumStorage,
+	configFieldOr,
+	isCoordinate,
+	isNodeOfKind
+} from '@sittir/common/utils';
 import { isNode } from '../utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
@@ -491,7 +497,8 @@ function _fromOfTag(tag: unknown, candidates: readonly string[]): keyof _FromMap
 }
 
 function _splitTag(v: unknown): { readonly tag: unknown; readonly rest: _LooseFieldInput } | undefined {
-	if (typeof v !== 'object' || v === null || Array.isArray(v) || isNode(v) || !('$type' in v)) return undefined;
+	if (typeof v !== 'object' || v === null || Array.isArray(v) || isNode(v) || isCoordinate(v) || !('$type' in v))
+		return undefined;
 	const { $type, ...rest } = v as Record<string, unknown>;
 	return { tag: $type, rest };
 }
@@ -964,7 +971,8 @@ function _resolveOne<T>(
 	defaultArm?: string
 ): Admit<T> {
 	if (v === undefined || v === null) return v as Admit<T>;
-	const kindId = isNode(v) ? v.$type : typeof v === 'number' && _KIND_ID_STORED.has(v) ? v : undefined;
+	const kindId =
+		isNode(v) || isCoordinate(v) ? v.$type : typeof v === 'number' && _KIND_ID_STORED.has(v) ? v : undefined;
 	if (typeof kindId === 'number') {
 		const kindName = KIND_NAMES.get(kindId);
 		if (
@@ -977,7 +985,7 @@ function _resolveOne<T>(
 		const arms = branchKinds.filter((b) => _BARE_ACCEPTS[b]?.has(kindId) === true);
 		const arm = arms.length <= 1 ? arms[0] : undefined;
 		if (arm !== undefined && _isFromKind(arm)) return _resolveByKind(arm, v) as Admit<T>;
-		if (isNode(v)) return v as Admit<T>;
+		if (isNode(v) || isCoordinate(v)) return v as Admit<T>;
 		if (arms.length > 1) {
 			throw new Error(
 				`_resolveOne: a bare ${kindName ?? kindId} fits more than one arm: [${arms.join(', ')}]; name the arm explicitly`

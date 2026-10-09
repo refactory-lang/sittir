@@ -1,17 +1,35 @@
 //! The native half of a node query: the `where` plan a query compiles to, and
 //! the batch a descendant walk returns.
 
-use crate::types::UntypedNode;
+use crate::slot::NodeCoordinate;
+use crate::types::Span;
 
-/// One batch of [`crate::engine::ParsedTree::descendants`]: the stubs found,
-/// each carrying the coordinate it is hydrated at, the path to resume after
-/// (`None` once the walk is done), and the walk's start as its own handle, so
-/// the next batch names it without minting it again.
+/// One batch of [`crate::engine::ParsedTree::descendants`]: the coordinates of
+/// the nodes found, each the coordinate a read of its parent hands out, the
+/// path to resume after (`None` once the walk is done), and the walk's start
+/// as its own handle, so the next batch names it without minting it again.
 #[derive(serde::Serialize)]
 pub struct DescendantBatch {
-    pub stubs: Vec<UntypedNode>,
+    pub coordinates: Vec<QueryCoordinate>,
     pub resume: Option<Vec<u32>>,
     pub origin: u64,
+}
+
+/// A node a walk found, as it crosses: `{ $treeHandle, $span, $type }`.
+#[derive(serde::Serialize, Debug, Clone, Copy, PartialEq, Eq)]
+pub struct QueryCoordinate {
+    #[serde(rename = "$treeHandle")]
+    pub handle: u64,
+    #[serde(rename = "$span")]
+    pub span: Span,
+    #[serde(rename = "$type")]
+    pub kind: u16,
+}
+
+impl From<NodeCoordinate> for QueryCoordinate {
+    fn from(coord: NodeCoordinate) -> Self {
+        QueryCoordinate { handle: coord.handle, span: coord.span, kind: coord.kind.map_or(0, |kind| kind.0) }
+    }
 }
 
 /// A parsed node as a query names it: its own handle, the parent handle and

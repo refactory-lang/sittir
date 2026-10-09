@@ -46,9 +46,10 @@ export declare class SittirEngine {
   /**
    * The node at `index` of tree `treeId` read into its transport,
    * `depth` levels down (one when absent, `Infinity` for all); index 0
-   * is the root. Refuses a tree that is not live, an index past its
-   * last node, and a node the model has no route for, naming the
-   * kind, the child and the index.
+   * is the root. An `ERROR` node reads as its text and coordinate.
+   * Refuses a tree that is not live, an index past its last node,
+   * and a node the model has no route for, naming the kind, the
+   * child and the index.
    */
   read(treeId: number, index: number, depth?: number | undefined | null): object
   /**

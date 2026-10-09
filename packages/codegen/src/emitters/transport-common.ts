@@ -91,20 +91,6 @@ export function acceptedTransportKinds(
 	return [...out];
 }
 
-export function deriveChildrenKinds(
-	child: AssembledNonterminal,
-	nodeMap?: NodeMap,
-	seen: Set<string> = new Set()
-): string[] {
-	const kinds = new Set<string>();
-	for (const v of child.values) {
-		if (!isNodeRef(v)) continue;
-		const kind = storageKindOfRef(v.node);
-		for (const expanded of expandWrapRuntimeKinds(kind, nodeMap, seen)) kinds.add(expanded);
-	}
-	return [...kinds];
-}
-
 export const RUST_KEYWORDS = new Set([
 	'as',
 	'break',

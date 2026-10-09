@@ -10,8 +10,9 @@
  */
 
 import type { AnyUntypedNode } from '@sittir/types';
-import { sliceSpan } from '@sittir/common';
-import { hydrateStub, isStub, spanOf } from '@sittir/common/utils';
+import { sliceSpan, sourceSpans } from '@sittir/common';
+import { isCoordinate } from '@sittir/common/utils';
+import { spanOf } from '@sittir/common/utils';
 import type { TokenInterior, TreeHandle } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { importGrammarModule, requireGrammarModule, type GrammarModules } from '../grammar-internals.ts';
@@ -25,14 +26,15 @@ import {
 	buildReadHandle,
 	findFirst,
 	findNativeNodeId,
-	readUntypedNodeAt,
-	adaptNode,
+	readNativeAt,
+	readNodeOf,
 	collectKinds,
 	emitValidatorMetrics,
 	getChildFactoryArgs,
 	nodeToConfig,
 	loadNodeModel,
 	loadScopedFactoryMap,
+	isUnitModelType,
 	type FactoryEntry,
 	type TSNode,
 	type TSTree,
@@ -70,15 +72,6 @@ function findUndefined(node: AnyUntypedNode, path = ''): string[] {
 		} else if (typeof value === 'object' && value !== null && '$type' in value) {
 			results.push(...findUndefined(value as AnyUntypedNode, `${path}.${key}`));
 		}
-	}
-
-	if (node.$other) {
-		const children = Array.isArray(node.$other) ? node.$other : [node.$other];
-		children.forEach((c, i) => {
-			if (typeof c === 'object' && c !== null) {
-				results.push(...findUndefined(c, `${path}.children[${i}]`));
-			}
-		});
 	}
 
 	return results;
@@ -130,36 +123,6 @@ export function structuralDiff(
 			diffs.push(`${key}: ${JSON.stringify(va)} vs ${JSON.stringify(vb)}`);
 		}
 	}
-
-	// Compare only named children — anonymous tokens (delimiters, separators)
-	// are reconstructed from templates, not carried in factory output.
-	// After commit 15c4c195 (child hoisting), anonymous leaf children scalarize
-	// to numeric kind IDs on the wire. Numbers have no `$named` property, so
-	// `c?.$named !== false` evaluates true for them — exclude explicitly.
-	// Polymorph wrapper children (whose name starts with "{parent}_") are
-	// produced differently by read vs factory — filter them from both sides to
-	// avoid false divergence on the wrapper/unwrapper split.
-	// $type is a numeric kind ID after child hoisting, so resolve parent name
-	// through kindNameFromId before building the prefix. Hidden-rule types are
-	// stored with a leading `_` (e.g. `_mod_item_external`); strip it before
-	// the prefix comparison so the filter matches both underscored and plain names.
-	const resolveTypeName = (t: string | number | undefined): string | undefined =>
-		typeof t === 'string' ? t : t != null ? kindNameFromId?.(t) : undefined;
-	const parentName = resolveTypeName(a.$type);
-	const polymorphPrefix = parentName ? parentName + '_' : null;
-	const resolveChildName = (t: string | number | undefined): string | undefined => {
-		const name = resolveTypeName(t);
-		return name?.startsWith('_') ? name.slice(1) : name;
-	};
-	const isRealNamedChild = (c: any) =>
-		typeof c !== 'number' &&
-		c?.$named !== false &&
-		!(polymorphPrefix && resolveChildName(c?.$type)?.startsWith(polymorphPrefix));
-	const aChildren = a.$other === undefined ? [] : Array.isArray(a.$other) ? a.$other : [a.$other];
-	const bChildren = b.$other === undefined ? [] : Array.isArray(b.$other) ? b.$other : [b.$other];
-	const aNamed = aChildren.filter(isRealNamedChild);
-	const bNamed = bChildren.filter(isRealNamedChild);
-	if (aNamed.length !== bNamed.length) diffs.push(`named children: ${aNamed.length} vs ${bNamed.length}`);
 
 	return diffs;
 }
@@ -231,10 +194,10 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	let fromMap: Record<string, (input: object) => unknown> = {};
 	let factoryMap: Record<string, FactoryEntry> = {};
 	let factoryShapes: Record<string, FactoryShape> = {};
+	let modelTypes: Record<string, string> = {};
 	let factoryFields: Record<string, readonly string[]> = {};
 	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
-	let readNode: GrammarModules['wrap.ts']['readNode'] | undefined;
 	let wrapNode: GrammarModules['wrap.ts']['wrapNode'] | undefined;
 	const errors: FromValidationError[] = [];
 	try {
@@ -254,6 +217,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 		// factorySlots) lives in node-model.json5.
 		const model = await loadNodeModel(grammar);
 		factoryShapes = model.factoryShapes;
+		modelTypes = model.modelTypes;
 		factoryFields = model.factoryFields;
 		factorySlots = model.factorySlots;
 		fieldAliasMap = model.fieldAliasMap;
@@ -266,11 +230,11 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	}
 	try {
 		const wrapModule = await requireGrammarModule(grammar, 'wrap.ts');
-		readNode = wrapModule.readNode;
 		wrapNode = wrapModule.wrapNode;
 	} catch {
-		/* wrap module unavailable — readNode falls back to raw readUntypedNode below */
+		/* wrap module unavailable — the read crosses unwrapped */
 	}
+	const readNode = await readNodeOf(grammar);
 
 	// Without fromMap/factoryMap, every kind fails `kind in fromMap && kind
 	// in factoryMap` below and total stays 0 — silently reporting a passing
@@ -300,6 +264,15 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	const skips: ValidatorSkip[] = [];
 	const excluded: ValidatorSkip[] = [];
 	const orphanedExtras = new Map<string, ValidatorSkip>();
+	const unreadKinds = new Map<string, ValidatorSkip>();
+	const storageKindOf = (kindId: number): string => storageKindNameFromId?.(kindId) ?? '';
+	const unreadReason = (node: TSNode): string | undefined => {
+		if (insideExtra(node)) return 'native-read-dropped-extra';
+		if (node.parent !== null && factoryShapes[storageKindOf(node.parent.typeId)] === 'text')
+			return 'folded-into-parent-text';
+		if (isUnitModelType(modelTypes[storageKindOf(node.grammarId)])) return 'read-as-unit-variant';
+		return undefined;
+	};
 	const excludedKinds = new Set<string>();
 	let undefinedCount = 0;
 	let divergentCount = 0;
@@ -364,16 +337,18 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 			let readData: AnyUntypedNode;
 			let readTree: TreeHandle | undefined;
 			try {
-				const handle = await buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
+				const handle = await buildReadHandle(grammar, entry.source);
 				readTree = handle;
 				// Native engine Rust-heap IDs differ from WASM linear-memory IDs.
 				// Resolve via the native data tree; if the kind is an alias target
 				// the native engine emits under a different rule name, skip rather
 				// than fall back to a mismatched WASM ID.
-				const nativeCoords = findNativeNodeId(handle, kind, kindNameFromId, {
-					start: node1.startIndex,
-					end: node1.endIndex
-				});
+				const nativeCoords = findNativeNodeId(
+					handle,
+					kind,
+					kindNameFromId,
+					node1.id === tree1.rootNode.id ? undefined : sourceSpans(entry.source).toSpan({ start: node1.startIndex, end: node1.endIndex })
+				);
 				if (nativeCoords === null && handle.read) {
 					// The native read stores most leaf kinds SCALARIZED — collapsed
 					// to text inside parent storage, no node to locate — and alias
@@ -387,16 +362,13 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 						validateLeafByText(kind, node1.text, leafShape);
 						continue;
 					}
-					if (insideExtra(node1)) {
+					const unread = unreadReason(node1);
+					if (unread !== undefined) {
 						total--;
 						testedKinds.delete(kind);
-						if (!orphanedExtras.has(kind))
-							orphanedExtras.set(kind, {
-								entry: entry.name,
-								kind,
-								reason: 'native-read-dropped-extra',
-								input: entry.source
-							});
+						const unreadOf = unread === 'native-read-dropped-extra' ? orphanedExtras : unreadKinds;
+						if (!unreadOf.has(kind))
+							unreadOf.set(kind, { entry: entry.name, kind, reason: unread, input: entry.source });
 						continue;
 					}
 					errors.push({
@@ -406,34 +378,14 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 					});
 					continue;
 				}
-				// Use readNode (wrapped via per-kind dispatch) when available,
-				// so `.from()` sees a fluent UntypedNode — the supported input shape
-				// per spec 008 US3. Fall back to raw readUntypedNode if the wrap module
-				// isn't loaded (bootstrap scenarios).
-				// For the WASM/JS path, temporarily swap rootNode to target then
-				// call with no navigation coords (reads rootNode).
 				if (nativeCoords?.embeddedData !== undefined) {
-					// A trivia entry — already fully materialized, no
-					// handle+child-index to read through. Apply the same
-					// fluent-view wrap readNode would, so `.from()` sees
-					// the same input shape as every other candidate.
 					readData = wrapNode
 						? (wrapNode(nativeCoords.embeddedData, handle) as AnyUntypedNode)
 						: nativeCoords.embeddedData;
-				} else if (nativeCoords && handle.read) {
-					readData = readNode
-						? (readNode(handle, nativeCoords.handle, nativeCoords.childIndex) as AnyUntypedNode)
-						: readUntypedNodeAt(handle, adaptNode(node1), nativeCoords);
 				} else {
-					const prev = handle.rootNode;
-					(handle as { rootNode: typeof prev }).rootNode = adaptNode(node1);
-					try {
-						readData = readNode
-							? (readNode(handle) as AnyUntypedNode)
-							: readUntypedNodeAt(handle, adaptNode(node1), null);
-					} finally {
-						(handle as { rootNode: typeof prev }).rootNode = prev;
-					}
+					readData = readNode
+						? (readNode(handle, nativeCoords?.coordinate) as AnyUntypedNode)
+						: readNativeAt(handle, nativeCoords ?? {});
 				}
 			} catch (e) {
 				errors.push({
@@ -501,7 +453,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							const childArgs = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
 							const value = camelName ? (config as Record<string, unknown>)[camelName] : childArgs[0];
 							factoryResult = (factory as (v: unknown) => AnyUntypedNode)(
-								readTree !== undefined && isStub(value) ? hydrateStub(value, readTree) : value
+								readTree !== undefined && readNode !== null && isCoordinate(value) ? readNode(readTree, value) : value
 							);
 						} else {
 							// Config-shaped factories with flank capture take `(config,
@@ -616,6 +568,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	}
 
 	const trivia = [...orphanedExtras.values()].filter((s) => !testedKinds.has(s.kind!));
+	excluded.push(...[...unreadKinds.values()].filter((s) => !testedKinds.has(s.kind!)));
 	emitValidatorMetrics();
 	return {
 		grammar,

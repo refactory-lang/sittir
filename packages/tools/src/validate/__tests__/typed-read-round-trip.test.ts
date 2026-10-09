@@ -4,7 +4,7 @@ import { loadNativeEngine } from '../common.ts';
 
 async function roundTrip(grammar: string, source: string): Promise<string | null> {
 	const engine = await loadNativeEngine(grammar);
-	const treeId = treeTokenOf(engine.parse(source, { deep: true }) as object)?.treeId;
+	const treeId = treeTokenOf(engine.parse(source, { depth: Infinity }) as object)?.treeId;
 	if (treeId === undefined) throw new Error(`${grammar}: the parsed root holds no tree`);
 	return engine.diagnostics.typedReadRoundTrip(treeId);
 }

@@ -480,7 +480,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
         quote! {
             impl __rt::HasLayout<#ty> for #ident {
                 fn take_layout(&mut self) -> #ty {
-                    ::core::mem::take(&mut self.#name)
+                    __rt::take_layout_keeping_at(&mut self.#name)
                 }
             }
         }

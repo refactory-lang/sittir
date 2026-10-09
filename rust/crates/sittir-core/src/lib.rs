@@ -12,6 +12,7 @@
 pub mod boundary;
 pub mod classify;
 pub mod engine;
+pub mod error_read;
 pub mod format;
 pub mod layout;
 #[cfg(feature = "napi-bindings")]
@@ -60,6 +61,7 @@ macro_rules! napi_codec {
 }
 
 pub use verbatim::VerbatimTransport;
+pub use error_read::ErrorRead;
 // Flat re-export for the typed render sink: the sink a render writes into,
 // the trait a rendered value implements against it, and the one-writer
 // one-render root call.

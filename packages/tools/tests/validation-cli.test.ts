@@ -26,11 +26,6 @@ vi.mock('../src/run.ts', () => ({
 		astMatchPass: 8,
 		errors: [],
 		astMismatches: [],
-		// Without this field collectValidatorFailuresForGrammar throws
-		// ("accessorThrows is not iterable") and every test below silently
-		// exercises runCountsCli's whole-grammar CATCH path instead of the
-		// happy path it means to pin.
-		accessorThrows: [],
 		skips: [],
 		excluded: [],
 		trivia: []
@@ -175,7 +170,6 @@ describe('@sittir/validator cli surface — runCountsCli behavior', () => {
 				astMatchPass: 8,
 				errors: [],
 				astMismatches: [],
-				accessorThrows: [],
 				skips: [],
 				excluded: [],
 				trivia: []
@@ -189,7 +183,6 @@ describe('@sittir/validator cli surface — runCountsCli behavior', () => {
 				astMatchPass: 5,
 				errors: [],
 				astMismatches: [],
-				accessorThrows: [],
 				skips: [],
 				excluded: [],
 				trivia: []

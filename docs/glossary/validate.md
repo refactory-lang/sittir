@@ -28,7 +28,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *     to `"none"`.
  *   - Cluster B: visible alias targets absent from NodeMap entirely
  *     (e.g. `impl_item_semi`). `node-types.json` lists them as pure
- *     leaves; `readUntypedNode` captures `$text` and the fast-path renders.
+ *     leaves; the read captures `$text` and the fast-path renders.
  */
 ```
 

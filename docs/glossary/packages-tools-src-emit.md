@@ -604,12 +604,6 @@ The no-argument call of a config-shaped node whose config printed empty.
 /** On the loose surface, whether a nested compound prints as its builder call or as a config object. */
 ```
 
-### `packages/tools/src/emit/factory-source.ts::EmitSurfaceOptions.backend`
-
-```text
-/** The read backend; the native engine unless a caller has none to offer. */
-```
-
 ### `packages/tools/src/emit/factory-source.ts::emitFactorySourceText`
 
 The generated file binds the engine once to a variable named by `engineBinding`, `const rs = await rust.createEngine();`, and calls through it: every printed factory path is `<engine>.build.<path>` and every kind id `<engine>.kinds.<Member>` (`buildPath`, `kindsPath`, read by the kind-id printer, the loose kind tag and the path resolver). A body that uses neither awaits the engine unbound. The call that creates the engine is printed by `engineCall` alone, so a different entry point is one change there.

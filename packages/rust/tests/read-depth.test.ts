@@ -1,11 +1,12 @@
-// Read depth: `engine.parse(source)` expands one level and leaves each child
-// with substructure as a stub the accessors hydrate on demand;
-// `engine.parse(source, { deep: true })` expands the whole tree up front.
+// Read depth: `engine.parse(source)` reads one level and leaves each child
+// below it as a coordinate the accessors read on demand;
+// `engine.parse(source, { depth: Infinity })` reads the whole tree up front.
 // Nothing was rebuilt under either, so both fold back to the root's
 // coordinate and render the source byte for byte.
 import { describe, expect, it } from 'vitest';
-import { createEngine, treeHandleOf } from '@sittir/common';
-import { isStub, type TreeHandle } from '@sittir/common/utils';
+import { createEngine } from '@sittir/common';
+import { isCoordinate, readNode, type TreeHandle } from '@sittir/common/utils';
+import type { AnyUntypedNode, TransportCoordinate } from '@sittir/types';
 import rust from '../src/index.ts';
 
 const SOURCE = 'pub fn main() { let x = 1; }\nstruct S { a: u8 }\n';
@@ -15,67 +16,49 @@ const SOURCE = 'pub fn main() { let x = 1; }\nstruct S { a: u8 }\n';
 const kindOf = (statement: { readonly $type: number } | number): number =>
 	typeof statement === 'number' ? statement : statement.$type;
 
-/** Every node in `value` that is still an unhydrated read stub: it carries the
- *  coordinates to read one more level and none of the storage that read would
- *  produce. */
-function countStubs(value: unknown): number {
-	if (Array.isArray(value)) return value.reduce<number>((total, entry) => total + countStubs(entry), 0);
-	if (value === null || typeof value !== 'object') return 0;
-	const record = value as Record<string, unknown>;
-	let total = isStub(record) ? 1 : 0;
-	for (const [key, child] of Object.entries(record)) {
-		if (key.startsWith('_') || key === '$other') total += countStubs(child);
-	}
-	return total;
-}
-
-type Stub = Record<string, unknown> & { readonly $type: number; readonly $parentHandle: number; readonly $childIndex: number };
-
-/** The unhydrated read stubs directly under `value`'s slots, in slot order. */
-function stubsOf(value: Record<string, unknown>): Stub[] {
-	const children = Object.entries(value)
+/** The slot values directly under `value`, flattened. */
+function slotValues(value: object): unknown[] {
+	return Object.entries(value)
 		.filter(([key]) => key.startsWith('_'))
 		.flatMap(([, child]) => (Array.isArray(child) ? child : [child]));
-	return children.filter(
-		(child): child is Stub =>
-			typeof child === 'object' && child !== null && (child as Stub).$parentHandle != null && countStubs(child) === 1
-	);
 }
 
+/** Every coordinate in `value`'s slots, at any depth: a child past the read's depth. */
+function countCoordinates(value: unknown): number {
+	if (Array.isArray(value)) return value.reduce<number>((total, entry) => total + countCoordinates(entry), 0);
+	if (value === null || typeof value !== 'object') return 0;
+	if (isCoordinate(value)) return 1;
+	return countCoordinates(slotValues(value));
+}
+
+/** The coordinates directly under `value`'s slots, in slot order. */
+const coordinatesOf = (value: object): TransportCoordinate[] => slotValues(value).filter(isCoordinate);
+
 describe('read depth', () => {
-	it('leaves children unexpanded by default', async () => {
+	it('leaves children unread by default', async () => {
 		const native = (await rust.load()).createNative();
 		const { root } = native.parseAndRead(SOURCE);
-		expect(countStubs(root)).toBeGreaterThan(0);
+		expect(countCoordinates(root)).toBeGreaterThan(0);
 	});
 
-	it('expands every child under { deep: true }', async () => {
+	it('reads every child under { depth: Infinity }', async () => {
 		const native = (await rust.load()).createNative();
-		const { root } = native.parseAndRead(SOURCE, { deep: true });
-		expect(countStubs(root)).toBe(0);
+		const { root } = native.parseAndRead(SOURCE, { depth: Infinity });
+		expect(countCoordinates(root)).toBe(0);
 	});
 
-	it('reads a counted number of levels, each expanded child keeping its own stubs re-readable', async () => {
+	it('reads a counted number of levels, each child past them a coordinate that reads again', async () => {
 		const native = (await rust.load()).createNative();
 		const { root, tree } = native.parseAndRead(SOURCE);
-		const read = (tree as TreeHandle).read!;
-		const [item] = stubsOf(root as unknown as Record<string, unknown>);
-		const two = read(item!.$parentHandle, item!.$childIndex, 2) as unknown as Record<string, unknown>;
-		const expanded = Object.entries(two)
-			.filter(([key]) => key.startsWith('_'))
-			.map(([, child]) => child as Record<string, unknown>)
-			.filter((child) => Object.keys(child).some((key) => key.startsWith('_')));
+		const [item] = coordinatesOf(root);
+		const two = readNode(tree as TreeHandle, item!, 2) as AnyUntypedNode;
+		expect(item).toMatchObject(two.$_layout!.at!);
+		const expanded = slotValues(two).filter((child): child is AnyUntypedNode => typeof child === 'object' && child !== null && !isCoordinate(child) && slotValues(child).length > 0);
 		expect(expanded.length).toBeGreaterThan(0);
-		const treeOf = (handle: unknown): number => Math.floor((handle as number) / 2 ** 32);
-		for (const child of expanded) {
-			expect(treeOf(child.$treeHandle)).toBe(treeOf(treeHandleOf(root as unknown as Record<string, unknown>)));
-			expect([child.$handle, child.$parentHandle]).toEqual([undefined, undefined]);
-		}
-		const grandchildren = expanded.flatMap(stubsOf);
+		const grandchildren = expanded.flatMap(coordinatesOf);
 		expect(grandchildren.length).toBeGreaterThan(0);
-		for (const stub of grandchildren) {
-			const reread = read(stub.$parentHandle, stub.$childIndex);
-			expect([reread.$type, reread.$span]).toEqual([stub.$type, stub.$span]);
+		for (const coordinate of grandchildren) {
+			expect(coordinate).toMatchObject((readNode(tree as TreeHandle, coordinate) as AnyUntypedNode).$_layout!.at!);
 		}
 	});
 
@@ -83,25 +66,23 @@ describe('read depth', () => {
 		const native = (await rust.load()).createNative();
 		const { root, tree } = native.parseAndRead(SOURCE);
 		const read = (tree as TreeHandle).read!;
-		const shallow = read(undefined);
-		expect(shallow).toBe(root);
-		const deep = read(undefined, undefined, Infinity);
-		expect(countStubs(deep)).toBe(0);
-		expect([deep.$type, deep.$span]).toEqual([shallow.$type, shallow.$span]);
+		expect(read(0)).toBe(root);
+		const deep = read(0, Infinity) as AnyUntypedNode;
+		expect(countCoordinates(deep)).toBe(0);
+		expect(deep.$_layout?.at).toEqual(root.$_layout?.at);
 	});
 
 	it('refuses a depth that is not a whole number of levels', async () => {
 		const native = (await rust.load()).createNative();
 		const { root, tree } = native.parseAndRead(SOURCE);
-		const read = (tree as TreeHandle).read!;
-		const [item] = stubsOf(root as unknown as Record<string, unknown>);
-		expect(() => read(item!.$parentHandle, item!.$childIndex, 0)).toThrow(/whole number of levels/);
+		const [item] = coordinatesOf(root);
+		expect(() => readNode(tree as TreeHandle, item!, 0)).toThrow(/whole number of levels/);
 	});
 
 	it('gives a deep-parsed root the same accessor surface as a shallow one', async () => {
 		const engine = await createEngine(rust);
 		const shallow = engine.parse(SOURCE).statements();
-		const deep = engine.parse(SOURCE, { deep: true }).statements();
+		const deep = engine.parse(SOURCE, { depth: Infinity }).statements();
 
 		expect(Array.isArray(deep)).toBe(true);
 		expect(deep.length).toBe(shallow.length);
@@ -118,13 +99,13 @@ describe('read depth', () => {
 	it('renders a deep-parsed root byte for byte, like a shallow one', async () => {
 		const engine = await createEngine(rust);
 		expect(engine.parse(SOURCE).$render()).toBe(SOURCE);
-		expect(engine.parse(SOURCE, { deep: true }).$render()).toBe(SOURCE);
+		expect(engine.parse(SOURCE, { depth: Infinity }).$render()).toBe(SOURCE);
 	});
 
 	it('re-parses both renders to the same statement kinds', async () => {
 		const engine = await createEngine(rust);
 		const kinds = (text: string) => engine.parse(text).statements().map(kindOf);
-		expect(kinds(engine.parse(SOURCE, { deep: true }).$render())).toEqual(kinds(SOURCE));
+		expect(kinds(engine.parse(SOURCE, { depth: Infinity }).$render())).toEqual(kinds(SOURCE));
 		expect(kinds(engine.parse(SOURCE).$render())).toEqual(kinds(SOURCE));
 	});
 });
@@ -133,7 +114,7 @@ describe('a rebuilt deep-read node', () => {
 	/** The first item of `source`, read at the given depth, renamed to `g` and rendered. */
 	async function renamed(source: string, deep: boolean): Promise<string> {
 		const engine = await createEngine(rust);
-		const item = engine.parse(source, { deep }).statements()[0];
+		const item = engine.parse(source, { depth: deep ? Infinity : 1 }).statements()[0];
 		if (item === undefined || typeof item === 'number' || !engine.is.functionItem(item))
 			throw new Error('expected a function item');
 		return String(engine.render(item.$with.name(engine.build.identifier('g'))));

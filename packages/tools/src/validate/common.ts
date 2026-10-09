@@ -1,4 +1,3 @@
-import { nativeShownKindId } from './shown-kind.ts';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -14,7 +13,7 @@ import {
 	type HostedText,
 	type ReparseHosts
 } from '@sittir/common';
-import { inEngine, type EngineHandle } from '@sittir/common/utils';
+import { hydrateTriviaEntry, inEngine, type EngineHandle } from '@sittir/common/utils';
 import {
 	carryRead,
 	carrySource,
@@ -26,8 +25,8 @@ import {
 	type TriviaView
 } from '@sittir/common/utils';
 import {
-	isStub,
-	readUntypedNode,
+	isCoordinate,
+	readNode,
 	metricsEnabled,
 	mapTriviaEntries,
 	projectInterior,
@@ -36,9 +35,8 @@ import {
 	type TokenInterior
 } from '@sittir/common/utils';
 import type * as TS from 'web-tree-sitter';
-import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
 
-import type { AnyUntypedNode, AnyTreeNode, Engine, LanguageAPI, NodeTrivia, ParseOptions } from '@sittir/types';
+import type { AnyUntypedNode, Engine, LanguageAPI, NodeLayout, NodeTrivia, ParseOptions, TransportCoordinate } from '@sittir/types';
 import type { TriviaSides } from '@sittir/common';
 import type { TreeHandle } from '@sittir/common/utils';
 import { load } from '../codegen-surface.ts';
@@ -48,7 +46,7 @@ import {
 	importGrammarModule,
 	type FactoryEntry,
 	type GrammarModules,
-	type HydrateChild
+	type Hydrate
 } from '../grammar-internals.ts';
 import { grammarPackageDir, grammarRequire, isGrammar, upstreamPackage } from '@sittir/codegen/grammars';
 import { CORPUS_ROOT, localCorpusPath, upstreamCorpusDir } from '../corpus/layout.ts';
@@ -76,14 +74,6 @@ interface SlotModel {
 }
 function createNamedSlotModel(name: string, arity: SlotArity): SlotModel {
 	return { name, storageKey: `_${name}`, arity, metadata: opaqueFacts({ origin: 'field' satisfies SlotOrigin }) };
-}
-function createUnnamedChildrenSlotModel(arity: SlotArity): SlotModel {
-	return {
-		name: 'children',
-		storageKey: '$other',
-		arity,
-		metadata: opaqueFacts({ origin: 'kind' satisfies SlotOrigin })
-	};
 }
 
 export interface CorpusEntry {
@@ -149,60 +139,6 @@ export function loadCorpusEntries(grammar: string): CorpusEntry[] {
 }
 
 export { loadWebTreeSitter };
-
-export function adaptNode(node: TS.Node): AnyTreeNode {
-	return {
-		type: node.type,
-		id: () => node.id,
-		text: () => node.text,
-		isNamed: () => node.isNamed,
-		field: (name: string) => {
-			const child = node.childForFieldName(name);
-			return child ? adaptNode(child) : null;
-		},
-		fieldChildren: (name: string) => {
-			const result: AnyTreeNode[] = [];
-			for (let i = 0; i < node.childCount; i++) {
-				if (node.fieldNameForChild(i) === name) {
-					const child = node.child(i);
-					if (child) result.push(adaptNode(child));
-				}
-			}
-			return result;
-		},
-
-		fieldNameForChild: (index: number) => node.fieldNameForChild(index),
-		children(): AnyTreeNode[] {
-			return node.children.map(adaptNode);
-		},
-		range: () =>
-			({
-				start: {
-					index: node.startIndex,
-					line: node.startPosition.row,
-					column: node.startPosition.column
-				},
-				end: {
-					index: node.endIndex,
-					line: node.endPosition.row,
-					column: node.endPosition.column
-				}
-			}) as unknown as Range
-	};
-}
-
-export function treeHandle(
-	tree: TS.Tree,
-	source?: string,
-	kindIdFromName?: (kind: string) => number | undefined
-): TreeHandle {
-	const handle: TreeHandle = {
-		rootNode: adaptNode(tree.rootNode),
-		source,
-		kindIdFromName
-	};
-	return handle;
-}
 
 export type NativeEngine = Engine<LanguageAPI>;
 
@@ -282,103 +218,44 @@ export function readNativeTree(
 	return engine.diagnostics.parseAndRead(source, options) as { root: AnyUntypedNode; tree: TreeHandle };
 }
 
-export async function buildReadHandle(
-	grammar: string,
-	tree: TS.Tree,
-	source: string,
-	backend?: 'native' | 'js',
-	kindIdFromName?: (kind: string) => number | undefined
-): Promise<TreeHandle> {
-	const effectiveBackend = backend ?? process.env.SITTIR_BACKEND;
-	if (effectiveBackend === 'native') {
-		const engine = await loadNativeEngine(grammar);
-		return readNativeTree(engine, source).tree;
-	}
-	return treeHandle(tree, source, kindIdFromName);
+export async function buildReadHandle(grammar: string, source: string): Promise<TreeHandle> {
+	return readNativeTree(await loadNativeEngine(grammar), source).tree;
 }
 
-export function readUntypedNodeAt(
-	handle: TreeHandle,
-	node: AnyTreeNode,
-	nativeCoords: NativeNodeCoords | null
-): AnyUntypedNode {
-	if (nativeCoords && handle.read) {
-		if (nativeCoords.embeddedData !== undefined) {
-			return nativeCoords.embeddedData;
-		}
-		if (nativeCoords.handle === undefined) {
-			return handle.read();
-		}
-		return handle.read(nativeCoords.handle, nativeCoords.childIndex);
-	}
-	const prev = handle.rootNode;
-	(handle as { rootNode: AnyTreeNode }).rootNode = node;
-	try {
-		return readUntypedNode(handle);
-	} finally {
-		(handle as { rootNode: AnyTreeNode }).rootNode = prev;
-	}
-}
-
+/** Where a native search found a node: its coordinate when it has one, and the transport as the whole-tree read holds it, or neither for the root. */
 export interface NativeNodeCoords {
-	handle?: number;
-	childIndex?: number;
+	coordinate?: TransportCoordinate;
 	embeddedData?: AnyUntypedNode;
 }
 
-function childEntries(value: unknown | readonly unknown[] | undefined): readonly unknown[] {
-	if (value === undefined) return [];
-	return Array.isArray(value) ? value : [value];
+/** The node a native search found, read one level down. */
+export function readNativeAt(handle: TreeHandle, coords: NativeNodeCoords): AnyUntypedNode {
+	if (coords.embeddedData !== undefined) return coords.embeddedData;
+	if (handle.read === undefined) throw new Error('readNativeAt: the tree has no native read');
+	return (coords.coordinate === undefined ? handle.read(0) : readNode(handle, coords.coordinate)) as AnyUntypedNode;
 }
 
-function isNativeUntypedNode(value: unknown): value is AnyUntypedNode {
-	return value != null && typeof value === 'object' && '$type' in value;
-}
-
-function pushNativeCandidates(value: unknown, out: AnyUntypedNode[]): void {
-	for (const entry of childEntries(value)) {
-		if (isNativeUntypedNode(entry)) out.push(entry);
-	}
-}
-
-function collectNativeChildNodes(d: AnyUntypedNode): AnyUntypedNode[] {
+function storedChildren(d: AnyUntypedNode): readonly AnyUntypedNode[] {
 	const out: AnyUntypedNode[] = [];
-	const rec = d as unknown as Record<string, unknown>;
-	for (const key of Object.keys(rec)) {
-		if (key.startsWith('_')) pushNativeCandidates(rec[key], out);
-	}
-	const legacyFields = rec.$fields;
-	if (legacyFields != null && typeof legacyFields === 'object') {
-		for (const value of Object.values(legacyFields as Record<string, unknown>)) {
-			pushNativeCandidates(value, out);
+	for (const [key, value] of Object.entries(d)) {
+		if (!key.startsWith('_')) continue;
+		for (const entry of Array.isArray(value) ? value : [value]) {
+			if (entry !== null && typeof entry === 'object' && '$type' in entry) out.push(entry as AnyUntypedNode);
 		}
 	}
-	pushNativeCandidates(d.$other, out);
 	return out;
 }
 
-function nativeTriviaEntries(d: AnyUntypedNode): AnyUntypedNode[] {
-	const out: AnyUntypedNode[] = [];
-	const trivia = d.$_trivia;
-	if (trivia) {
-		pushNativeCandidates(trivia.leading, out);
-		pushNativeCandidates(trivia.trailing, out);
-		for (const entries of Object.values(trivia.inner ?? {})) pushNativeCandidates(entries, out);
-	}
-	return out;
+function storedTriviaEntries(d: AnyUntypedNode): readonly AnyUntypedNode[] {
+	const trivia = d.$_layout?.trivia;
+	if (trivia === undefined) return [];
+	return [trivia.leading, trivia.trailing, ...Object.values(trivia.inner ?? {})].flatMap((entries) => (entries ?? []) as AnyUntypedNode[]);
 }
 
-function hasEmbeddedNativeChildren(d: AnyUntypedNode): boolean {
-	if (d.$other !== undefined) return true;
-	const rec = d as unknown as Record<string, unknown>;
-	for (const key of Object.keys(rec)) {
-		if (key.startsWith('_')) return true;
-	}
-	const legacyFields = rec.$fields;
-	if (legacyFields != null && typeof legacyFields === 'object') {
-		return Object.keys(legacyFields as Record<string, unknown>).length > 0;
-	}
-	return false;
+function coordsOf(d: AnyUntypedNode): NativeNodeCoords {
+	if (isCoordinate(d)) return { coordinate: d };
+	const at = d.$_layout?.at;
+	return at === undefined ? { embeddedData: d } : { coordinate: at, embeddedData: d };
 }
 
 export function nativeNodeIsKind(
@@ -386,104 +263,43 @@ export function nativeNodeIsKind(
 	kind: string,
 	kindNameFromId: ((id: number) => string | undefined) | undefined
 ): boolean {
-	const nameOf = (type: AnyUntypedNode['$type']): string =>
-		typeof type === 'number' ? (kindNameFromId?.(type) ?? String(type)) : type;
-	return nameOf(d.$type) === kind || nameOf(nativeShownKindId(d)) === kind;
+	return (typeof d.$type === 'number' ? (kindNameFromId?.(d.$type) ?? String(d.$type)) : d.$type) === kind;
 }
 
+/** Every node of `kind` in the tree, in document order, each with where it was found and its span. */
+export function walkNativeForKind(
+	handle: TreeHandle,
+	kind: string,
+	kindNameFromId?: (id: number) => string | undefined
+): NativeCandidateCoords[] {
+	if (handle.read === undefined) return [];
+	const results: NativeCandidateCoords[] = [];
+	const visit = (d: AnyUntypedNode, coords: NativeNodeCoords): void => {
+		if (nativeNodeIsKind(d, kind, kindNameFromId)) results.push({ coords, span: spanOf(d) });
+		const node = isCoordinate(d) ? (readNode(handle, d, Infinity) as AnyUntypedNode) : d;
+		for (const entry of storedTriviaEntries(node)) visit(entry, coordsOf(entry));
+		for (const child of storedChildren(node)) visit(child, coordsOf(child));
+	};
+	visit(handle.read(0, Infinity) as AnyUntypedNode, {});
+	return results;
+}
+
+/** The first node of `kind` (at `span` when given), or null. */
 export function findNativeNodeId(
 	handle: TreeHandle,
 	kind: string,
 	kindNameFromId?: (id: number) => string | undefined,
 	span?: { readonly start: number; readonly end: number }
 ): NativeNodeCoords | null {
-	if (!handle.read) return null;
-	const read = handle.read;
-	const root = handle.read();
-
-	const isKind = (d: AnyUntypedNode): boolean => nativeNodeIsKind(d, kind, kindNameFromId);
-
-	if (isKind(root)) {
-		return {};
-	}
-
-	function spanMatches(d: AnyUntypedNode): boolean {
-		const own = spanOf(d);
-		return span === undefined || (own?.start === span.start && own?.end === span.end);
-	}
-
-	function findEmbedded(d: AnyUntypedNode): NativeNodeCoords | null {
-		if (isKind(d) && spanMatches(d)) return { embeddedData: d };
-		for (const child of collectNativeChildNodes(d)) {
-			const found = findEmbedded(child);
-			if (found !== null) return found;
-		}
-		return null;
-	}
-
-	function walk(d: AnyUntypedNode): NativeNodeCoords | null {
-		for (const entry of nativeTriviaEntries(d)) {
-			const found = findEmbedded(entry);
-			if (found !== null) return found;
-		}
-		for (const child of collectNativeChildNodes(d)) {
-			const handleForChild = child.$parentHandle ?? d.$handle;
-			if (isKind(child) && handleForChild !== undefined && child.$childIndex !== undefined) {
-				return { handle: handleForChild, childIndex: child.$childIndex };
-			}
-			let hydrated = child;
-			if (!hasEmbeddedNativeChildren(hydrated) && handleForChild !== undefined && hydrated.$childIndex !== undefined) {
-				hydrated = read(handleForChild, hydrated.$childIndex) as AnyUntypedNode;
-			}
-			const found = walk(hydrated);
-			if (found !== null) return found;
-		}
-		return null;
-	}
-
-	return walk(root);
+	const found = walkNativeForKind(handle, kind, kindNameFromId).find(
+		(candidate) => span === undefined || (candidate.span?.start === span.start && candidate.span?.end === span.end)
+	);
+	return found?.coords ?? null;
 }
 
 export interface NativeCandidateCoords {
 	coords: NativeNodeCoords;
 	span: { start: number; end: number } | undefined;
-}
-
-export function walkNativeForKind(
-	handle: TreeHandle,
-	kind: string,
-	kindNameFromId?: (id: number) => string | undefined
-): NativeCandidateCoords[] {
-	if (!handle.read) return [];
-	const read = handle.read;
-	const root = read();
-	const results: NativeCandidateCoords[] = [];
-
-	const isKind = (d: AnyUntypedNode): boolean => nativeNodeIsKind(d, kind, kindNameFromId);
-
-	if (isKind(root)) {
-		results.push({ coords: {}, span: spanOf(root) });
-	}
-
-	function walk(d: AnyUntypedNode): void {
-		for (const child of collectNativeChildNodes(d)) {
-			const handleForChild = child.$parentHandle ?? d.$handle;
-			if (isKind(child) && handleForChild !== undefined && child.$childIndex !== undefined) {
-				results.push({
-					coords: { handle: handleForChild, childIndex: child.$childIndex },
-					span: spanOf(child)
-				});
-			}
-			let hydrated = child;
-			if (!hasEmbeddedNativeChildren(hydrated) && handleForChild !== undefined && hydrated.$childIndex !== undefined) {
-				hydrated = read(handleForChild, hydrated.$childIndex) as AnyUntypedNode;
-			}
-			walk(hydrated);
-		}
-	}
-
-	walk(root);
-	return results;
 }
 
 export function findFirst(node: TS.Node, kind: string): TS.Node | null {
@@ -571,18 +387,25 @@ async function wrapExportOf<K extends keyof GrammarModules['wrap.ts']>(
 	}
 }
 
-export function readNodeOf(
+/** The grammar's wrapped read: the root (or the node a coordinate names) read `depth` levels down (one when absent) and wrapped. */
+export async function readNodeOf(
 	grammar: string
-): Promise<((handle: TreeHandle, parentHandle?: number, childIndex?: number) => unknown) | null> {
-	return wrapExportOf(grammar, 'readNode');
+): Promise<((tree: TreeHandle, coordinate?: TransportCoordinate, depth?: number) => unknown) | null> {
+	const [wrapNode, hydrate] = await Promise.all([wrapExportOf(grammar, 'wrapNode'), wrapExportOf(grammar, 'hydrate')]);
+	if (wrapNode === null || hydrate === null) return null;
+	return (tree, coordinate, depth) => {
+		if (coordinate !== undefined) return hydrate(coordinate, tree, depth);
+		if (tree.read === undefined) throw new Error('readNodeOf: the tree has no native read');
+		return wrapNode(tree.read(0, depth), tree);
+	};
 }
 
 export function loadWrapNode(grammar: string): Promise<((data: AnyUntypedNode, tree: TreeHandle) => unknown) | null> {
 	return wrapExportOf(grammar, 'wrapNode');
 }
 
-export function hydrateChildOf(grammar: string): Promise<HydrateChild | null> {
-	return wrapExportOf(grammar, 'hydrateChild');
+export function hydrateOf(grammar: string): Promise<Hydrate | null> {
+	return wrapExportOf(grammar, 'hydrate');
 }
 
 export interface Seat {
@@ -807,17 +630,16 @@ export function walkWrappedTree(
 	visit: (w: TypedNode) => void,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): void {
-	const seen = new Set<string>();
+	const seen = new Set<number>();
 	const recurse = (w: unknown): void => {
 		if (!hasNumericType(w)) return;
-		if (isStub(w)) {
-			const key = `${w.$parentHandle}:${w.$childIndex}`;
-			if (seen.has(key)) return;
-			seen.add(key);
+		if (isCoordinate(w)) {
+			if (seen.has(w.$treeHandle)) return;
+			seen.add(w.$treeHandle);
 		}
 		visit(w);
 		for (const k of Object.keys(w)) {
-			if (k !== '$other' && !k.startsWith('_')) continue;
+			if (!k.startsWith('_')) continue;
 			const v = resolveWrappedStorageValue(w, k, onAccessorThrow);
 			if (hasNumericType(v)) recurse(v);
 			else if (Array.isArray(v)) for (const x of v) if (hasNumericType(x)) recurse(x);
@@ -884,16 +706,17 @@ function materializeValue(value: unknown, onAccessorThrow?: (rec: AccessorThrowR
 		if (!isDataKey(key)) continue;
 		const raw = (value as Record<string, unknown>)[key];
 		if (typeof raw === 'function') continue;
-		if (key === '$_trivia' && raw != null) {
-			materialized.$_trivia = mapTriviaEntries(raw as TriviaSides<unknown>, (entries) =>
-				entries.map((entry) => materializeValue(entry, onAccessorThrow))
-			);
-			continue;
-		}
-		if (key === '$other') {
-			const resolved = resolveWrappedStorageValue(value, key, onAccessorThrow);
-			if (resolved === undefined) continue;
-			materialized.$other = materializeValue(resolved, onAccessorThrow);
+		if (key === '$_layout' && raw != null) {
+			const layout = raw as NodeLayout;
+			materialized.$_layout =
+				layout.trivia === undefined
+					? layout
+					: {
+							...layout,
+							trivia: mapTriviaEntries(layout.trivia as TriviaSides<unknown>, (entries) =>
+								entries.map((entry) => materializeValue(hydrateTriviaEntry(entry), onAccessorThrow))
+							)
+						};
 			continue;
 		}
 		if (key.startsWith('_')) {
@@ -913,9 +736,7 @@ function resolveWrappedStorageValue(
 	storageKey: string,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): unknown {
-	if (storageKey !== '$other' && !storageKey.startsWith('_')) {
-		return node[storageKey];
-	}
+	if (!storageKey.startsWith('_')) return node[storageKey];
 	for (const accessorName of accessorCandidatesForStorageKey(storageKey)) {
 		const accessor = storedSlotReader(node, accessorName);
 		if (typeof accessor === 'function' && accessor.length === 0) {
@@ -936,7 +757,6 @@ function resolveWrappedStorageValue(
 }
 
 export function accessorCandidatesForStorageKey(storageKey: string): readonly string[] {
-	if (storageKey === '$other') return ['children'];
 	if (!storageKey.startsWith('_')) return [];
 	const base = snakeToCamel(storageKey.slice(1));
 	const plural = pluralize(base);
@@ -945,8 +765,6 @@ export function accessorCandidatesForStorageKey(storageKey: string): readonly st
 
 export interface TypedNode {
 	readonly $type: number;
-	readonly $parentHandle?: number;
-	readonly $childIndex?: number;
 	readonly [k: string]: unknown;
 }
 function hasNumericType(v: unknown): v is TypedNode {
@@ -1032,8 +850,12 @@ export async function loadIsLeafKind(grammar: string): Promise<(kindId: number) 
 	return (kindId) => {
 		const name = kindNameFromId?.(kindId);
 		const modelType = name === undefined ? undefined : modelTypes[name];
-		return modelType === 'pattern' || modelType === 'keyword' || modelType === 'punctuation' || modelType === 'enum';
+		return modelType === 'pattern' || modelType === 'enum' || isUnitModelType(modelType);
 	};
+}
+
+export function isUnitModelType(modelType: string | undefined): boolean {
+	return modelType === 'keyword' || modelType === 'punctuation';
 }
 
 export async function loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined> {
@@ -1105,13 +927,13 @@ export async function loadLanguageForGrammar(grammar: string): Promise<{
 	return { Parser, Language, lang, isOverride: false };
 }
 
-export type { FactoryEntry, HydrateChild } from '../grammar-internals.ts';
+export type { FactoryEntry, Hydrate } from '../grammar-internals.ts';
 
 export interface NodeToConfigOpts {
 	readonly shownKind?: string;
 	readonly interiorOf?: (kind: string) => TokenInterior | undefined;
 	readonly tree?: TreeHandle;
-	readonly hydrateChild?: HydrateChild;
+	readonly hydrate?: Hydrate;
 	readonly factoryMap?: Record<string, FactoryEntry>;
 	readonly factoryShapes?: Record<string, FactoryShape>;
 	readonly fieldAliasMap?: Record<string, Record<string, string>>;
@@ -1131,11 +953,8 @@ export interface NodeToConfigOpts {
 export interface ReadNodeLike {
 	readonly $type?: string | number;
 	readonly $text?: string;
-	readonly $parentHandle?: number;
-	readonly $childIndex?: number;
-	readonly $other?: unknown | readonly unknown[];
 	readonly $named?: boolean;
-	readonly $_trivia?: NodeTrivia;
+	readonly $_layout?: NodeLayout;
 }
 
 function isAnonTokenPassthrough(c: ReadNodeLike): boolean {
@@ -1217,20 +1036,9 @@ function readNodeText(node: ReadNodeLike, opts: NodeToConfigOpts): string {
 	return span !== undefined && source !== undefined ? sliceSpan(source, span) : '';
 }
 
-function carriesOwnContents(c: ReadNodeLike): boolean {
-	if (c.$text !== undefined || c.$other !== undefined) return true;
-	const rec = c as unknown as Record<string, unknown>;
-	return Object.keys(rec).some((k) => k.startsWith('_') || k === '$children');
-}
-
 function hydrateForConfig(c: ReadNodeLike, opts: NodeToConfigOpts): ReadNodeLike {
-	const { tree, hydrateChild } = opts;
-	if (!tree || !hydrateChild || carriesOwnContents(c)) return c;
-	try {
-		return hydrateChild(c, tree) as ReadNodeLike;
-	} catch {
-		return c;
-	}
+	const { tree, hydrate } = opts;
+	return tree !== undefined && hydrate !== undefined && isCoordinate(c) ? (hydrate(c, tree) as ReadNodeLike) : c;
 }
 
 const ARM_ROUTE = Symbol('armRoute');
@@ -1281,16 +1089,6 @@ function seatForSlotValue(
 	return kind === undefined ? undefined : table[kind];
 }
 
-function elementsSeatOfKind(parentKind: string | undefined, opts: NodeToConfigOpts): Seat | undefined {
-	const slots = parentKind === undefined ? undefined : opts.surface?.seats[parentKind];
-	if (slots === undefined) return undefined;
-	for (const table of Object.values(slots)) {
-		const seat = Object.values(table).find((s) => s.shape === 'elements');
-		if (seat !== undefined) return seat;
-	}
-	return undefined;
-}
-
 export function withSeatKind<C extends Record<string, unknown>>(config: C, seatKind: string): C {
 	Object.defineProperty(config, SEAT_KIND, { value: seatKind, enumerable: false });
 	return config;
@@ -1326,7 +1124,7 @@ function carryElementTrivia(
 	config: Record<string, unknown>,
 	opts: NodeToConfigOpts
 ): Record<string, unknown> {
-	if (element.$_trivia === undefined) return config;
+	if (element.$_layout?.trivia === undefined) return config;
 	const built = Object.values(config).filter((v) => v !== null && typeof v === 'object' && !Array.isArray(v));
 	if (built.length === 1) carryTrivia(element, built[0], opts);
 	return config;
@@ -1352,7 +1150,7 @@ function projectArmSlot(
 		});
 	};
 	const modelType = opts.surface?.modelTypes[seat.kind];
-	if (typeof value === 'number' || modelType === 'keyword' || modelType === 'punctuation')
+	if (typeof value === 'number' || isUnitModelType(modelType))
 		return setRoute(seat.mount, undefined);
 	const childShape = opts.factoryShapes?.[seat.kind] ?? 'config';
 	if (typeof value === 'string' || modelType === 'pattern' || childShape === 'text') {
@@ -1410,7 +1208,7 @@ function projectSeatedSlot(
 			return;
 		}
 		case 'elements':
-			out[key] = projectElements(childEntries(value), seat, parentKind, slot.name, opts);
+			out[key] = projectElements(Array.isArray(value) ? value : value === undefined ? [] : [value], seat, parentKind, slot.name, opts);
 			return;
 		case 'tuple': {
 			const child = hydrateForConfig(value as ReadNodeLike, opts);
@@ -1525,11 +1323,13 @@ function buildWithFactory(
 }
 
 function carryTrivia(source: ReadNodeLike, built: unknown, opts: NodeToConfigOpts): unknown {
-	const trivia = source.$_trivia;
+	const trivia = source.$_layout?.trivia;
 	if (trivia === undefined || built === null || typeof built !== 'object') return built;
-	(built as Record<string, unknown>).$_trivia = mapTriviaEntries(trivia as TriviaSides<unknown>, (entries) =>
-		entries.map((entry) => resolveChild(entry, childOpts(opts)))
-	);
+	const record = built as { $_layout?: NodeLayout };
+	record.$_layout = {
+		...record.$_layout,
+		trivia: mapTriviaEntries(trivia as TriviaSides<unknown>, (entries) => entries.map((entry) => resolveChild(entry, childOpts(opts)))) as NodeTrivia
+	};
 	return built;
 }
 
@@ -1549,20 +1349,6 @@ function directFactoryValue(
 
 function isIdentifierShapedFieldKey(key: string): boolean {
 	return /^[a-zA-Z_][\w]*$/.test(key);
-}
-
-function shouldPromoteOrphanChildren(
-	declaredFields: readonly string[] | undefined,
-	populatedOut: Record<string, unknown>,
-	namedChildren: readonly unknown[]
-): boolean {
-	if (!declaredFields || namedChildren.length === 0) return false;
-	if (namedChildren.length > declaredFields.length) return false;
-	const noFieldMatched = declaredFields.every((name) => {
-		const camel = snakeToCamel(name);
-		return populatedOut[camel] === undefined;
-	});
-	return noFieldMatched;
 }
 
 function slotOrigin(slot: SlotModel): SlotOrigin {
@@ -1609,14 +1395,6 @@ function createNamedConfigSlotModel(
 ): SlotModel {
 	const slotMeta = parentKind ? factorySlots?.[parentKind]?.[name] : undefined;
 	return createNamedSlotModel(name, slotModelArityFromMeta(slotMeta, false));
-}
-
-function createChildrenConfigSlotModel(
-	parentKind: string | undefined,
-	factorySlots: NodeToConfigOpts['factorySlots']
-): SlotModel {
-	const slotMeta = parentKind ? factorySlots?.[parentKind]?.children : undefined;
-	return createUnnamedChildrenSlotModel(slotModelArityFromMeta(slotMeta, true));
 }
 
 function hasDeclaredFactorySlot(parentKind: string | undefined, name: string, opts: NodeToConfigOpts): boolean {
@@ -1733,10 +1511,6 @@ function assignSlotToConfig(
 	}
 }
 
-function isAnonymousPromotableField(name: string): boolean {
-	return name === 'semicolon' || name === 'opening' || name === 'closing';
-}
-
 function getMissingDeclaredFields(
 	declaredFields: readonly string[] | undefined,
 	out: Record<string, unknown>
@@ -1750,25 +1524,6 @@ function getMissingDeclaredFields(
 
 function isAnonymousTokenNode(value: unknown): value is ReadNodeLike {
 	return value != null && typeof value === 'object' && (value as ReadNodeLike).$named === false;
-}
-
-function filterStructuralChildren(children: unknown | readonly unknown[] | undefined): readonly unknown[] {
-	return childEntries(children).filter(
-		(child) => child != null && typeof child === 'object' && !isAnonymousTokenNode(child)
-	);
-}
-
-function shouldOmitResidualScalarChildren(
-	parentKind: string | undefined,
-	structuralChildren: readonly unknown[],
-	opts: NodeToConfigOpts,
-	out: Record<string, unknown>
-): boolean {
-	if (!parentKind || structuralChildren.length === 0) return false;
-	if (Object.keys(out).length === 0) return false;
-	const slotMeta = opts.factorySlots?.[parentKind]?.children;
-	if (!slotMeta || slotMeta.required || slotMeta.multiple) return false;
-	return structuralChildren.every((child) => child == null || typeof child !== 'object');
 }
 
 function isOpeningDelimiter(text: string | undefined): boolean {
@@ -1824,78 +1579,6 @@ function promoteAnonymousTokenFields(
 	}
 }
 
-function promoteNamedChildrenToMissingFields(
-	declaredFields: readonly string[] | undefined,
-	parentKind: string | undefined,
-	namedChildren: readonly unknown[],
-	opts: NodeToConfigOpts,
-	out: Record<string, unknown>
-): boolean {
-	if (!declaredFields || !parentKind || namedChildren.length === 0) return false;
-	const missing = getMissingDeclaredFields(declaredFields, out).filter(
-		(name) => name !== 'opening' && name !== 'closing' && name !== 'semicolon'
-	);
-	if (missing.length === 0) return false;
-	if (missing.length === 1) {
-		const name = missing[0]!;
-		const slot = createNamedConfigSlotModel(parentKind, name, opts.factorySlots);
-		if (slot.arity === 'many') {
-			assignSlotToConfig(slot, namedChildren, memberValueOpts(opts, parentKind, name), out);
-			return true;
-		}
-		if (namedChildren.length === 1) {
-			assignSlotToConfig(slot, namedChildren[0]!, memberValueOpts(opts, parentKind, name), out);
-			return true;
-		}
-		return false;
-	}
-	if (namedChildren.length > missing.length) return false;
-	namedChildren.forEach((child, index) => {
-		const name = missing[index]!;
-		assignSlotToConfig(createNamedSlotModel(name, 'one'), child, memberValueOpts(opts, parentKind, name), out);
-	});
-	return true;
-}
-
-function assignPositionPromotedChildren(
-	declaredFields: readonly string[],
-	parentKind: string,
-	namedChildren: readonly unknown[],
-	opts: NodeToConfigOpts,
-	out: Record<string, unknown>
-): void {
-	namedChildren.forEach((child, i) => {
-		const name = declaredFields[i]!;
-		assignSlotToConfig(createNamedSlotModel(name, 'one'), child, memberValueOpts(opts, parentKind, name), out);
-	});
-}
-
-function promoteAnonymousChildrenToMissingFields(
-	declaredFields: readonly string[] | undefined,
-	parentKind: string | undefined,
-	children: unknown | readonly unknown[] | undefined,
-	opts: NodeToConfigOpts,
-	out: Record<string, unknown>
-): boolean {
-	if (!declaredFields || !parentKind) return false;
-	const anonymousChildren = childEntries(children).filter(
-		(child): child is ReadNodeLike =>
-			child != null && typeof child === 'object' && (child as ReadNodeLike).$named === false
-	);
-	if (anonymousChildren.length === 0) return false;
-	const missingFields = declaredFields.filter((name) => {
-		const camel = name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
-		return out[camel] === undefined && isAnonymousPromotableField(name);
-	});
-	if (missingFields.length === 0) return false;
-	if (anonymousChildren.length !== missingFields.length) return false;
-	anonymousChildren.forEach((child, index) => {
-		const name = missingFields[index]!;
-		assignSlotToConfig(createNamedSlotModel(name, 'one'), child, memberValueOpts(opts, parentKind, name), out);
-	});
-	return true;
-}
-
 export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): Record<string, unknown> {
 	const out: Record<string, unknown> = {};
 	const rec = data as unknown as Record<string, unknown>;
@@ -1941,30 +1624,6 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 		parentKind,
 		out
 	);
-	if (data.$other) {
-		const declaredFields = parentKind ? opts.factoryFields?.[parentKind] : undefined;
-		const structuralChildren = filterStructuralChildren(data.$other);
-		const namedChildren = structuralChildren.filter(
-			(c) => c != null && typeof c === 'object' && (c as { $named?: boolean }).$named !== false
-		);
-		const childrenOpts = memberValueOpts(opts, parentKind, undefined);
-		if (promoteNamedChildrenToMissingFields(declaredFields, parentKind, namedChildren, opts, out)) {
-		} else if (shouldPromoteOrphanChildren(declaredFields, out, namedChildren)) {
-			assignPositionPromotedChildren(declaredFields!, parentKind!, namedChildren, opts, out);
-		} else if (promoteAnonymousChildrenToMissingFields(declaredFields, parentKind, data.$other, opts, out)) {
-		} else if (shouldOmitResidualScalarChildren(parentKind, structuralChildren, opts, out)) {
-		} else {
-			const elementsSeat = elementsSeatOfKind(parentKind, opts);
-			assignSlotToConfig(
-				createChildrenConfigSlotModel(parentKind, opts.factorySlots),
-				elementsSeat === undefined
-					? structuralChildren
-					: projectElements(structuralChildren, elementsSeat, parentKind, undefined, opts),
-				childrenOpts,
-				out
-			);
-		}
-	}
 	return out;
 }
 
@@ -2012,7 +1671,7 @@ export interface FactoryDispatchOpts {
 	readonly namedChildKindHints?: readonly string[];
 	readonly kindNameFromId?: (id: number) => string | undefined;
 	readonly tree?: unknown;
-	readonly hydrateChild?: HydrateChild;
+	readonly hydrate?: Hydrate;
 }
 
 export function buildFactoryNodeFromReference(
@@ -2038,7 +1697,7 @@ export function buildFactoryNodeFromReference(
 		namedChildKindHints: opts.namedChildKindHints,
 		kindNameFromId: opts.kindNameFromId,
 		tree: opts.tree,
-		hydrateChild: opts.hydrateChild
+		hydrate: opts.hydrate
 	} as NodeToConfigOpts;
 	const build = () => buildWithFactory(referenceData, kind, factory, configOpts);
 	return surface?.scope === undefined ? build() : inEngine(surface.scope, build);

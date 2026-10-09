@@ -9,7 +9,7 @@ const ts = await createEngine(typescript);
 type Stored = Record<string, unknown>;
 
 function read(source: string): unknown {
-	return ts.parse(source, { deep: true });
+	return ts.parse(source, { depth: Infinity });
 }
 
 function storedOfKind(node: unknown, kind: number): Stored | undefined {

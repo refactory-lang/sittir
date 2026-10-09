@@ -8,7 +8,7 @@ import type {
 	Rendered
 } from '@sittir/types';
 import { treeOf } from './tree-token.ts';
-import { isStub } from './readUntypedNode.ts';
+import { isCoordinate } from './read.ts';
 
 export interface LiveEngine extends EngineIdentity {
 	render(node: AnyUntypedNode | number, options?: object): Rendered;
@@ -60,7 +60,7 @@ export function bindTree(tree: object, handle: EngineHandle): void {
 }
 
 export function hydrateListStorage(value: unknown): unknown {
-	if (!isStub(value)) return value;
+	if (!isCoordinate(value)) return value;
 	const tree = treeOf(value);
 	if (tree === undefined) return value;
 	const handle = treeHandles.get(tree);

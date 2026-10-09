@@ -149,7 +149,7 @@ export async function computeTypedReadParity(grammar: string): Promise<TypedRead
 	for (const entry of entries) {
 		const parsed = parser.parse(entry.source) as TSTree;
 		countShownPins(parsed.rootNode, pins, byShown);
-		const root = engine.parse(entry.source, { deep: true }) as object;
+		const root = engine.parse(entry.source, { depth: Infinity }) as object;
 		const treeId = treeTokenOf(root)?.treeId;
 		if (treeId === undefined) throw new Error(`typed-read-parity: ${entry.name}'s parsed root holds no tree`);
 		const refusal = engine.diagnostics.typedReadRefusal(treeId);

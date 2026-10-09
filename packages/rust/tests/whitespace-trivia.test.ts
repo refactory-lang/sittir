@@ -1,12 +1,14 @@
 import { describe, expect, it } from 'vitest';
+import type { TransportCoordinate } from '@sittir/types';
 import { createEngine } from '@sittir/common';
+import { isCoordinate, readNode } from '../../common/src/read.ts';
 import rust from '../src/index.ts';
 
 const rs = await createEngine(rust);
 const { Blankline: blankline, Newline: newline } = rs.kinds;
 
 const statementsOf = (source: string, deep = false) => {
-	const item = rs.parse(source, { deep }).statements()[0];
+	const item = rs.parse(source, { depth: deep ? Infinity : 1 }).statements()[0];
 	if (item === undefined || !rs.is.functionItem(item)) throw new Error('expected a function item');
 	return [...item.body().statements()].filter((statement) => rs.is.expressionStatement(statement));
 };
@@ -63,7 +65,7 @@ describe('a read node carries the line breaks before it as whitespace trivia', (
 	});
 
 	it('reads the trivia of an aliased node of a deep read', () => {
-		const item = rs.parse('fn f(\n    x: Foo,\n) {}\n', { deep: true }).statements()[0];
+		const item = rs.parse('fn f(\n    x: Foo,\n) {}\n', { depth: Infinity }).statements()[0];
 		if (item === undefined || !rs.is.functionItem(item)) throw new Error('expected a function item');
 		const parameter = item.parameters().elements()?.items()[0]?.content();
 		if (parameter === undefined || !rs.is.parameter(parameter)) throw new Error('expected a parameter');
@@ -74,22 +76,25 @@ describe('a read node carries the line breaks before it as whitespace trivia', (
 
 	it('finds every node of a deep read by its coordinate, a zero-width comment content included', () => {
 		const source = '\n//!\n\n/*!*/\n\n//\n\n///\nlet x;\n';
-		const addresses: { treeHandle: number; span: { start: number; end: number }; kind: number }[] = [];
+		const { root, tree } = rs.diagnostics.parseAndRead(source, { depth: Infinity });
+		const coordinates: TransportCoordinate[] = [];
 		const visit = (value: unknown): void => {
 			if (Array.isArray(value)) return value.forEach(visit);
 			if (value === null || typeof value !== 'object') return;
-			const node = value as Record<string, unknown>;
-			const span = node.$span as { start: number; end: number } | undefined;
-			if (typeof node.$treeHandle === 'number' && span !== undefined && typeof node.$type === 'number') {
-				addresses.push({ treeHandle: node.$treeHandle, span, kind: node.$type });
+			if (isCoordinate(value)) {
+				coordinates.push(value);
+				return;
 			}
+			const node = value as Record<string, unknown>;
 			for (const key of Object.keys(node)) if (key.startsWith('_')) visit(node[key]);
-			const trivia = node.$_trivia as { leading?: unknown[]; trailing?: unknown[] } | undefined;
-			visit(trivia?.leading);
-			visit(trivia?.trailing);
+			const layout = node.$_layout as { at?: TransportCoordinate; trivia?: { leading?: unknown[]; trailing?: unknown[] } } | undefined;
+			if (layout?.at !== undefined) coordinates.push(layout.at);
+			for (const entry of [...(layout?.trivia?.leading ?? []), ...(layout?.trivia?.trailing ?? [])]) {
+				if (isCoordinate(entry)) visit(readNode(tree, entry, Infinity));
+			}
 		};
-		visit(rs.parse(source, { deep: true }));
-		expect(addresses.some(({ span }) => span.start === span.end)).toBe(true);
-		for (const address of addresses) expect(() => rs.diagnostics.lineGapsOf(address)).not.toThrow();
+		visit(root);
+		expect(coordinates.some(({ $span }) => $span.start === $span.end)).toBe(true);
+		for (const { $treeHandle } of coordinates) expect(() => rs.diagnostics.lineGapsOf({ handle: $treeHandle })).not.toThrow();
 	});
 });

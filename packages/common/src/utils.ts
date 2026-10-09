@@ -1,11 +1,11 @@
-import type { AnyUntypedNode, ByteSpan, ErrorNode, LineGap, LineGapAddress, LineGaps, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
+import type { AnyUntypedNode, ByteSpan, ErrorNode, LineGap, LineGapAddress, LineGaps, NodeLayout, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
-import { carryRead, carrySource, detachCoordinate, holdsSlots, isRead, isStorageKey, sourceOf, type DerivedSides } from './transport-data.ts';
+import { carryPlacement, carryRead, carrySource, coordinateOf, detachCoordinate, holdsSlots, isRead, isStorageKey, sourceOf, triviaOf, type DerivedSides } from './transport-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
-import { currentHandle, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
+import { currentHandle, hydrateListStorage, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
 import { Delimiter } from './delimiter.ts';
-import { isStub } from './readUntypedNode.ts';
+import { isCoordinate, readNode, type TreeHandle } from './read.ts';
 import { holdsParse } from './tree-token.ts';
 import { spelledForm } from './interior.ts';
 
@@ -63,7 +63,7 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 		const wrappers = handle?.current.trivia.rebuildWrappers;
 		if (wrappers !== undefined) carryRebuiltSlots(node as unknown as Record<string, unknown>, result as unknown as Record<string, unknown>, wrappers);
 	}
-	const trivia = node.$_trivia;
+	const trivia = triviaOf(node);
 	if (trivia === undefined || !isNode(result)) return result;
 	if (Object.values(trivia.inner ?? {}).some((entries) => (entries?.length ?? 0) > 0) && !isEmptyNode(result)) {
 		const kind = handle?.current.trivia.kindName(node.$type) ?? String(node.$type);
@@ -132,18 +132,28 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 	};
 	const innerAt = (gap: string, items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] => {
 		if (!gapsOf().includes(gap)) throw new Error(`trivia: ${kind()} has no gap '${gap}'`);
-		if (items.length === 0) return node.$_trivia?.inner?.[gap] ?? [];
+		if (items.length === 0) return hydratedEntries(triviaOf(node)?.inner?.[gap] ?? []);
 		refuseUnheld();
-		return store({ ...node.$_trivia, inner: writeInner({ ...node.$_trivia?.inner, [gap]: entriesOf(items) }) }, 'inner');
+		return store({ ...triviaOf(node), inner: writeInner({ ...triviaOf(node)?.inner, [gap]: entriesOf(items) }) }, 'inner');
 	};
 	return {
 		side: (position: 'leading' | 'trailing', items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] =>
 			items.length === 0
-				? (readTrivia(node, handle.lineGapsOf)?.[position] ?? [])
-				: (refuseUnheld(), store({ ...node.$_trivia, [position]: entriesOf(items) }, position)),
+				? hydratedEntries(readTrivia(node, handle.lineGapsOf)?.[position] ?? [])
+				: (refuseUnheld(), store({ ...triviaOf(node), [position]: entriesOf(items) }, position)),
 		inner: (items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] => innerAt(gapsOf()[0]!, items),
 		innerAt
 	};
+}
+
+function hydratedEntries(entries: readonly TriviaEntry[]): readonly TriviaEntry[] {
+	return entries.some(isCoordinate) ? entries.map(hydrateTriviaEntry) : entries;
+}
+
+export function hydrateTriviaEntry(entry: unknown): TriviaEntry {
+	if (!isCoordinate(entry)) return entry as TriviaEntry;
+	const node = hydrateListStorage(entry);
+	return (node !== null && typeof node === 'object' ? carryPlacement(entry, node) : node) as TriviaEntry;
 }
 
 type TriviaSideName = 'leading' | 'trailing' | 'inner';
@@ -213,7 +223,7 @@ function isDerivedSide(node: object, side: 'leading' | 'trailing'): boolean {
  */
 export function readTrivia(target: object, lineGapsOf: ((address: LineGapAddress) => LineGaps) | undefined): NodeTrivia | undefined {
 	const node = target as AnyUntypedNode;
-	const stored = node.$_trivia;
+	const stored = triviaOf(node);
 	const gaps = lineGapsRead(node, lineGapsOf);
 	if (gaps === undefined || (gaps.leading.length === 0 && gaps.trailing.length === 0)) return stored;
 	if (composedTrivia.has(node)) return composedTrivia.get(node);
@@ -250,25 +260,15 @@ function lineGapsRead(target: object, lineGapsOf: ((address: LineGapAddress) => 
 	return gaps;
 }
 
-/** How the line-gap query names a read node: its handle, else its tree's tag, span and kind; `undefined` for a node no read gave. */
+/** How the line-gap query and a query name a read node: the handle its coordinate names it by; `undefined` for a node no read gave. */
 function lineGapAddressOf(node: AnyUntypedNode): LineGapAddress | undefined {
-	const record = node as unknown as { readonly $handle?: unknown; readonly $treeHandle?: unknown; readonly $span?: { readonly start: number; readonly end: number } };
-	if (typeof record.$handle === 'number') return { handle: record.$handle };
-	if (typeof record.$treeHandle === 'number' && record.$span !== undefined && typeof node.$type === 'number') {
-		return { treeHandle: record.$treeHandle, span: record.$span, kind: node.$type };
-	}
-	const source = sourceOf(node);
-	if (source === undefined) return undefined;
-	return source.handle === undefined ? { treeHandle: source.treeHandle, span: source.span, kind: source.kind } : { handle: source.handle };
+	const handle = coordinateOf(node)?.$treeHandle ?? sourceOf(node)?.treeHandle;
+	return handle === undefined ? undefined : { handle };
 }
 
-export type NodeAddress = LineGapAddress | { readonly parent: number; readonly index: number };
+export type NodeAddress = LineGapAddress;
 
 export function nodeAddressOf(node: AnyUntypedNode): NodeAddress | undefined {
-	const record = node as unknown as { readonly $handle?: unknown; readonly $parentHandle?: unknown; readonly $childIndex?: unknown };
-	if (typeof record.$handle !== 'number' && typeof record.$parentHandle === 'number' && typeof record.$childIndex === 'number') {
-		return { parent: record.$parentHandle, index: record.$childIndex };
-	}
 	return lineGapAddressOf(node);
 }
 
@@ -277,7 +277,7 @@ function interleaved(entries: readonly TriviaEntry[] | undefined, gaps: readonly
 	const positioned: { readonly at: number; readonly entry: TriviaEntry }[] = [];
 	let at = -1;
 	for (const entry of entries ?? []) {
-		const start = typeof entry === 'number' ? undefined : (entry as { readonly $span?: { readonly start: number } }).$span?.start;
+		const start = typeof entry === 'number' ? undefined : coordinateOf(entry as object)?.$span.start;
 		at = start ?? at;
 		positioned.push({ at, entry });
 	}
@@ -453,7 +453,7 @@ export interface OwnerView {
 export function ownerView(stored: unknown, count: string, hydrate?: (list: object) => unknown): OwnerView {
 	const list = stored as (object & Partial<AnyUntypedNode>) | null | undefined;
 	if (list == null) return { list: undefined, stored: [] };
-	const source = count in list || !isStub(list) ? list : hydrate?.(list);
+	const source = count in list || !isCoordinate(list) ? list : hydrate?.(list);
 	if (source === undefined) return { list: undefined, stored: undefined };
 	const elements = (source as Record<string, unknown>)[count];
 	return {
@@ -618,7 +618,7 @@ export function isNode(v: unknown): v is AnyUntypedNode {
 	return (
 		holdsSlots(o) ||
 		typeof o.$text === 'string' ||
-		o.$other !== undefined ||
+		o.$_layout !== undefined ||
 		o.$source === Source.Ts ||
 		o.$source === Source.Sg ||
 		o.$source === Source.Factory
@@ -648,84 +648,9 @@ export function configFieldOr(input: unknown, key: string, orElse: () => unknown
 		: orElse();
 }
 
-export function modelSlots<T extends object>(
-	data: T,
-	keys: readonly string[],
-	routes?: Readonly<Record<string, string>>
-): T {
-	const src = data as Record<string, unknown>;
-	let routed = false;
-	if (routes !== undefined) {
-		for (const key in routes) {
-			if (src[key] !== undefined) {
-				routed = true;
-				break;
-			}
-		}
-	}
-	if (!routed) {
-		const kept: Record<string, unknown> = { ...src };
-		for (const key of Object.keys(kept)) {
-			if (key.charCodeAt(0) === 95 && !keys.includes(key)) delete kept[key];
-		}
-		return kept as T;
-	}
-	const names = Object.keys(src);
-	const targets: string[] = [];
-	let shared = false;
-	for (const key of names) {
-		if (key.charCodeAt(0) !== 95) continue;
-		const target = routes![key] ?? key;
-		if (targets.includes(target)) shared = true;
-		else targets.push(target);
-	}
-	const order = src.$slotOrder as readonly string[] | undefined;
-	const out: Record<string, unknown> = {};
-	for (const key of names) {
-		if (key.charCodeAt(0) !== 95) {
-			if (key === '$slotOrder') {
-				if (order !== undefined && targets.length >= 2) out.$slotOrder = order.map((name) => routes![`_${name}`]?.slice(1) ?? name);
-				continue;
-			}
-			out[key] = src[key];
-			continue;
-		}
-		const target = routes![key] ?? key;
-		if (!keys.includes(target)) continue;
-		if (shared) {
-			if (target in out) continue;
-			const sources = names.filter((name) => name.charCodeAt(0) === 95 && (routes![name] ?? name) === target);
-			out[target] = sources.length === 1 ? src[key] : interleaveBuckets(src, sources, order);
-			continue;
-		}
-		out[target] = src[key];
-	}
-	for (const symbol of Object.getOwnPropertySymbols(src)) {
-		if (Object.prototype.propertyIsEnumerable.call(src, symbol)) (out as Record<symbol, unknown>)[symbol] = (src as Record<symbol, unknown>)[symbol];
-	}
-	return out as T;
-}
-
-function interleaveBuckets(src: Record<string, unknown>, keys: readonly string[], order: readonly string[] | undefined): unknown[] {
-	const buckets = new Map<string, { readonly items: readonly unknown[]; at: number }>();
-	for (const key of keys) {
-		const value = src[key];
-		buckets.set(key.slice(1), { items: Array.isArray(value) ? value : [value], at: 0 });
-	}
-	const merged: unknown[] = [];
-	if (order === undefined) {
-		for (const bucket of buckets.values()) merged.push(...bucket.items);
-		return merged;
-	}
-	for (const name of order) {
-		const bucket = buckets.get(name);
-		if (bucket !== undefined && bucket.at < bucket.items.length) merged.push(bucket.items[bucket.at++]);
-	}
-	return merged;
-}
-
+/** Whether a read produced `v`, or rebuilt it from a node a read produced. */
 export function isParsedNode(v: unknown): v is AnyUntypedNode {
-	return isNode(v) && (v.$source === Source.Ts || v.$source === Source.Sg);
+	return isNode(v) && isRead(v);
 }
 
 export function isFactoryNode(v: unknown): v is AnyUntypedNode {
@@ -736,11 +661,8 @@ export function isFactoryNode(v: unknown): v is AnyUntypedNode {
  * The byte range of a parsed node in the source its tree was read from, or `undefined` for a node that was built. Internal: a node's position is not part of the public node surface, and the range belongs to the version of the tree the node was read from, so it says nothing about the node after an edit.
  */
 export function spanOf(node: object): ByteSpan | undefined {
-	if (!('$span' in node)) return undefined;
-	const span = node.$span;
-	return typeof span === 'object' && span !== null && 'start' in span && 'end' in span && typeof span.start === 'number' && typeof span.end === 'number'
-		? { start: span.start, end: span.end }
-		: undefined;
+	const span = coordinateOf(node)?.$span;
+	return span === undefined ? undefined : { start: span.start, end: span.end };
 }
 
 export function isErrorNode(v: unknown): v is ErrorNode {
@@ -751,49 +673,54 @@ export function hasKind(v: object): v is { kind: string } & Record<string, unkno
 	return 'kind' in v && typeof (v as Record<string, unknown>).kind === 'string';
 }
 
-export function coerceBooleanKeywordStorage(value: unknown): true | undefined {
-	if (value === undefined || value === null || value === false) return undefined;
-	if (Array.isArray(value)) return value.length > 0 ? true : undefined;
-	return true;
-}
-
-export function coerceBitflagStorage(value: unknown, texts: readonly string[]): number | undefined {
-	if (value === undefined || value === null || value === false) return undefined;
-	if (typeof value === 'number') return value === 0 ? undefined : value;
-	if (Array.isArray(value)) {
-		let acc = 0;
-		for (const item of value) {
-			const bits = coerceBitflagStorage(item, texts) ?? 0;
-			acc |= bits;
-		}
-		return acc === 0 ? undefined : acc;
-	}
-	const text = extractNodeText(value);
-	if (text === undefined) return undefined;
-	const index = texts.indexOf(text);
-	if (index < 0) return undefined;
-	return 1 << index;
-}
-
-function extractNodeText(value: unknown): string | undefined {
-	if (typeof value === 'string') return value;
-	if (isNode(value)) {
-		return typeof value.$text === 'string' ? value.$text : undefined;
-	}
-	if (isRecord(value) && typeof value.$text === 'string') return value.$text;
-	return undefined;
-}
-
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
 function setTriviaData(node: AnyUntypedNode, triviaData: NodeTrivia): void {
-	(node as unknown as Record<string, unknown>).$_trivia = triviaData;
+	const record = node as unknown as { $_layout?: NodeLayout };
+	record.$_layout = { ...record.$_layout, trivia: triviaData };
+}
+
+const NO_CHILDREN: readonly never[] = Object.freeze([]);
+
+/** How a hydrate turns a transport into its kind's node: the grammar's `wrapNode`. */
+export type WrapTransport = (data: object, tree: TreeHandle) => unknown;
+
+/**
+ * One stored value as an accessor returns it: a coordinate read `depth` levels down (one when absent) and
+ * wrapped, a transport not yet wrapped wrapped, and anything else (a wrapped node, a kind id, a boolean, text)
+ * as it is.
+ */
+export function hydrateWith(value: unknown, tree: TreeHandle, wrap: WrapTransport, depth?: number): unknown {
+	if (value === null || typeof value !== 'object' || Array.isArray(value)) return value;
+	if (isCoordinate(value)) return wrap(readNode(tree, value, depth), tree);
+	return isTypedNode(value) || typeof (value as { readonly $type?: unknown }).$type !== 'number' ? value : wrap(value, tree);
+}
+
+/** The value of slot `key` of a wrapped node, hydrated by `hydrateWith`, written back into the slot and adopted by the node. */
+export function hydrateSlotWith(node: object, key: string, tree: TreeHandle, wrap: WrapTransport): unknown {
+	const slots = node as Record<string, unknown>;
+	const child = hydrateWith(slots[key], tree, wrap);
+	if (child !== slots[key]) slots[key] = child;
+	adoptChild(node, child);
+	return child;
+}
+
+/** `hydrateSlotWith` for a list slot: every item hydrated once, the slot then holding the frozen items. */
+export function hydrateSlotsWith(node: object, key: string, tree: TreeHandle, wrap: WrapTransport): readonly unknown[] {
+	const slots = node as Record<string, unknown>;
+	const stored = slots[key];
+	if (!Array.isArray(stored)) return stored == null ? NO_CHILDREN : [hydrateSlotWith(node, key, tree, wrap)];
+	if (Object.isFrozen(stored)) return stored;
+	const children = Object.freeze(stored.map((entry) => hydrateWith(entry, tree, wrap)));
+	for (const child of children) adoptChild(node, child);
+	slots[key] = children;
+	return children;
 }
 
 export { numberText, type NumberBase } from './number.ts';
-export { hydrateStub, isStub, readUntypedNode, type Stub, type TreeHandle } from './readUntypedNode.ts';
+export { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle } from './read.ts';
 export { currentHandle, inEngine, hydrateListStorage, type EngineHandle } from './engine-scope.ts';
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';

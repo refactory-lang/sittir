@@ -6,7 +6,7 @@ describe('a rebuilt deep-read node', () => {
 	/** The first statement of `source`, read at the given depth, renamed to `g` and rendered. */
 	async function renamed(source: string, deep: boolean): Promise<string> {
 		const engine = await createEngine(python);
-		const statement = engine.parse(source, { deep }).statements()[0];
+		const statement = engine.parse(source, { depth: deep ? Infinity : 1 }).statements()[0];
 		if (statement === undefined || typeof statement === 'number' || !engine.is.functionDefinition(statement))
 			throw new Error('expected a function definition');
 		return String(engine.render(statement.$with.name(engine.build.identifier('g'))));

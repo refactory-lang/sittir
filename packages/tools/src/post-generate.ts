@@ -102,7 +102,7 @@ export async function emitParityFixtures(grammar: string): Promise<void> {
 }
 
 /**
- * Run the corpus round-trip validator probes (read-projection, read-render-parse,
+ * Run the corpus round-trip validator probes (read-render-parse,
  * factory-storage, from).
  *
  * Returns the total render-parse / from() failure count so the orchestrator can
@@ -111,17 +111,10 @@ export async function emitParityFixtures(grammar: string): Promise<void> {
 export async function runRoundtripProbes(grammar: string): Promise<number> {
 	console.log('\nRunning validator probes...');
 
-	const { validateReadProjection, formatReadProjectionReport } = await import('./validate/read-projection.ts');
 	const { validateReadRenderParse, formatReadRenderParseReport } = await import('./validate/read-render-parse.ts');
 	const { validateFactoryStorage, formatFactoryStorageReport } =
 		await import('./validate/factory-storage.ts');
 	const { validateFrom, formatFromReport } = await import('./validate/from.ts');
-
-	// read projection (structural) — upstream of render/factory. A regression
-	// here means readUntypedNode is losing content between tree-sitter's parse tree and
-	// the UntypedNode shape, so every downstream validator will mis-report.
-	const readProjectionResult = await validateReadProjection(grammar);
-	console.log(formatReadProjectionReport(readProjectionResult));
 
 	const readRenderParseResult = await validateReadRenderParse(grammar, {
 		backend: 'native'

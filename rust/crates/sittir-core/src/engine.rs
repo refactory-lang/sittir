@@ -14,8 +14,8 @@
 
 use crate::format::{apply_format, extract_format};
 use crate::options::ResolvedOptions;
-use crate::query::{Address, DescendantBatch, Plan};
-use crate::read_untyped_node::{error_regions, read_untyped_node, stub_of, ErrorRegion, HandleMint, ReadDepth, ReadModel};
+use crate::query::{Address, DescendantBatch, Plan, QueryCoordinate};
+use crate::read_untyped_node::{error_regions, read_untyped_node, ErrorRegion, HandleMint, ReadDepth, ReadModel};
 use crate::render::SourceTable;
 use crate::slot::NodeCoordinate;
 use crate::types::{FormatRecord, KindId, UntypedNode, Source};
@@ -169,6 +169,15 @@ impl<G: EngineGrammar> ParsedTree<G> {
         crate::read::read_at::<T, T>(&mut self.tree.walk(), &ctx, index, depth)
     }
 
+    /// The `ERROR` node at `index` read as the bytes its coordinate spans, or
+    /// `None` when the node there is not an `ERROR`.
+    pub fn read_error(&self, index: u32) -> Option<crate::ErrorRead> {
+        let node = node_at_index(&self.tree, index).filter(|node| node.is_error())?;
+        let at = crate::read::ReadCtx::new(&self.source, self.tree_id).coordinate(&node, index);
+        let text = self.source[at.span.start as usize..at.span.end as usize].to_owned();
+        Some(crate::ErrorRead { text, at })
+    }
+
     /// The whole tree read into the grammar's typed transports, `depth`
     /// levels down, or the refusal that stopped the read. Without `at`, no
     /// layout names its node, as in today's read.
@@ -272,15 +281,14 @@ impl<G: EngineGrammar> ParsedTree<G> {
         }
     }
 
-    /// Walk the subtree under `from` in pre-order and return up to `limit`
-    /// stubs of the named, non-extra descendants whose grammar symbol is in
-    /// `kinds` (every one when `kinds` is empty) and that satisfy `plan`, each
-    /// carrying the coordinate it is hydrated at. `resume` is the path of
+    /// Walk the subtree under `from` in pre-order and return the coordinates
+    /// of up to `limit` named, non-extra descendants whose grammar symbol is
+    /// in `kinds` (every one when `kinds` is empty) and that satisfy `plan`,
+    /// each the coordinate a read hands out for it. `resume` is the path of
     /// child indices, from the node at `handle`, of the last node an earlier
     /// batch visited; the walk continues after it. `depth` bounds the levels
     /// walked below `from` (every level when absent). An extra is trivia: the
-    /// walk neither returns nor enters it. A handle is minted only for the
-    /// parent of a stub returned.
+    /// walk neither returns nor enters it.
     pub fn descendants(
         &self,
         from: Address,
@@ -299,7 +307,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
         // `start`. path[k - 1]: that node's child index within its parent.
         let mut indexes: Vec<u32> = vec![index];
         let mut path: Vec<u32> = Vec::new();
-        let mut stubs = Vec::new();
+        let mut coordinates = Vec::new();
+        let ctx = crate::read::ReadCtx::new(&self.source, self.tree_id);
         if let Some(resume) = resume {
             for &child in resume {
                 if !cursor.goto_first_child() {
@@ -321,16 +330,13 @@ impl<G: EngineGrammar> ParsedTree<G> {
                 && (kinds.is_empty() || kinds.contains(&node.grammar_id()))
                 && plan.is_none_or(|plan| plan.holds(&node, &self.source))
             {
-                let depth = indexes.len() - 1;
-                let parent = encode_handle(self.tree_id, indexes[depth - 1]);
-                let child_index = path[depth - 1] as u16;
-                stubs.push(stub_of(node, &self.source, Some(parent), child_index));
-                if stubs.len() as u32 >= limit {
-                    return Ok(DescendantBatch { stubs, resume: Some(path), origin });
+                coordinates.push(QueryCoordinate::from(ctx.coordinate(&node, indexes[indexes.len() - 1])));
+                if coordinates.len() as u32 >= limit {
+                    return Ok(DescendantBatch { coordinates, resume: Some(path), origin });
                 }
             }
         }
-        Ok(DescendantBatch { stubs, resume: None, origin })
+        Ok(DescendantBatch { coordinates, resume: None, origin })
     }
 
     /// Step `cursor` to the next node in pre-order below the walk's start, at
@@ -726,26 +732,33 @@ mod tests {
         (tree, handle)
     }
 
-    fn texts(tree: &ParsedTree<TestGrammar>, stubs: &[UntypedNode]) -> Vec<String> {
-        stubs
+    #[test]
+    fn an_error_node_reads_as_the_bytes_its_coordinate_spans() {
+        let (tree, _) = parsed("fn f() {} @@ fn g() {}");
+        let index = (0..64).find(|&i| node_at_index(tree.tree(), i).is_some_and(|node| node.is_error())).expect("the parse holds an ERROR");
+        let error = tree.read_error(index).expect("an ERROR reads");
+        assert_eq!((error.text.as_str(), error.at.span.start, error.at.span.end), ("@@", 10, 12));
+        assert_eq!((error.at.kind, error.at.tree_id()), (Some(KindId(u16::MAX)), 1));
+        assert_eq!(tree.read_error(0), None);
+    }
+
+    fn texts(tree: &ParsedTree<TestGrammar>, found: &[QueryCoordinate]) -> Vec<String> {
+        found
             .iter()
-            .map(|stub| {
-                let span = stub.span.expect("a stub carries its span");
-                tree.source()[span.start as usize..span.end as usize].lines().next().unwrap_or("").to_string()
-            })
+            .map(|coord| tree.source()[coord.span.start as usize..coord.span.end as usize].lines().next().unwrap_or("").to_string())
             .collect()
     }
 
-    fn walk(tree: &ParsedTree<TestGrammar>, root: u64, kinds: &[u16], plan: Option<&Plan>, limit: u32) -> Vec<UntypedNode> {
-        let mut stubs = Vec::new();
+    fn walk(tree: &ParsedTree<TestGrammar>, root: u64, kinds: &[u16], plan: Option<&Plan>, limit: u32) -> Vec<QueryCoordinate> {
+        let mut found = Vec::new();
         let mut resume: Option<Vec<u32>> = None;
         loop {
             let batch = tree.descendants(crate::query::Address::Own { handle: root }, kinds, plan, resume.as_deref(), limit, None).expect("walk");
-            assert!(batch.stubs.len() as u32 <= limit);
-            stubs.extend(batch.stubs);
+            assert!(batch.coordinates.len() as u32 <= limit);
+            found.extend(batch.coordinates);
             match batch.resume {
                 Some(path) => resume = Some(path),
-                None => return stubs,
+                None => return found,
             }
         }
     }
@@ -775,19 +788,14 @@ mod tests {
     }
 
     #[test]
-    fn a_stub_hydrates_with_its_own_descendant_index() {
+    fn each_coordinate_names_its_own_node_by_its_descendant_index() {
         let (tree, root) = parsed(FNS);
         let expected = indexes(&tree.tree);
-        for stub in walk(&tree, root, &[], None, u32::MAX) {
-            let Some(crate::types::NodeHandle::Parent(parent)) = stub.handle else { panic!("a stub names its parent") };
-            let parent_node = node_at_index(&tree.tree, decode_handle(parent).1).expect("the parent names a node");
-            assert_eq!(Some(&decode_handle(parent).1), expected.get(&parent_node.id()));
-            let json = tree.read_at(parent, stub.child_index.expect("a stub names its index"), ReadDepth::SHALLOW).expect("hydrate");
-            let read: serde_json::Value = serde_json::from_str(&json).expect("read json");
-            let own = read["$handle"].as_u64().expect("a hydrated node has its own handle");
-            let node = node_at_index(&tree.tree, decode_handle(own).1).expect("the handle names a node");
-            assert_eq!(read["$span"]["start"], serde_json::json!(node.start_byte()));
-            assert_eq!(Some(&decode_handle(own).1), expected.get(&node.id()));
+        for coord in walk(&tree, root, &[], None, u32::MAX) {
+            let index = decode_handle(coord.handle).1;
+            let node = node_at_index(&tree.tree, index).expect("the coordinate names a node");
+            assert_eq!(Some(&index), expected.get(&node.id()));
+            assert_eq!((node.start_byte() as u32, node.end_byte() as u32, node.grammar_id()), (coord.span.start, coord.span.end, coord.kind));
         }
     }
 
@@ -803,16 +811,13 @@ mod tests {
         let (tree, root) = parsed(FNS);
         let expected = indexes(&tree.tree);
         let module = tree.descendants(Address::Own { handle: root }, &[kind_id("mod_item")], None, None, 1, None).expect("walk");
-        let Some(crate::types::NodeHandle::Parent(parent)) = module.stubs[0].handle else { panic!("a stub names its parent") };
-        let start = Address::Child { parent, index: u32::from(module.stubs[0].child_index.expect("a stub names its index")) };
+        let start = Address::Own { handle: module.coordinates[0].handle };
         let inner = tree.descendants(start, &[kind_id("function_item")], None, None, 16, None).expect("walk");
-        assert_eq!(inner.stubs.len(), 2, "fn b and fn _c");
-        for stub in &inner.stubs {
-            let Some(crate::types::NodeHandle::Parent(parent)) = stub.handle else { panic!("a stub names its parent") };
-            let node = node_at_index(&tree.tree, decode_handle(parent).1).expect("the parent names a node");
-            assert_eq!(Some(&decode_handle(parent).1), expected.get(&node.id()));
-            let child = node.child(u32::from(stub.child_index.expect("a stub names its index"))).expect("the stub's child");
-            assert_eq!(Some(child.start_byte() as u32), stub.span.map(|span| span.start));
+        assert_eq!(inner.coordinates.len(), 2, "fn b and fn _c");
+        for coord in &inner.coordinates {
+            let node = node_at_index(&tree.tree, decode_handle(coord.handle).1).expect("the coordinate names a node");
+            assert_eq!(Some(&decode_handle(coord.handle).1), expected.get(&node.id()));
+            assert_eq!((node.start_byte() as u32, node.end_byte() as u32, node.grammar_id()), (coord.span.start, coord.span.end, coord.kind));
         }
     }
 
@@ -830,19 +835,6 @@ mod tests {
         for limit in [1, 2, 3, 4, 16] {
             let batched = walk(&tree, root, &[], None, limit);
             assert_eq!(texts(&tree, &batched), texts(&tree, &all), "limit {limit}");
-        }
-    }
-
-    #[test]
-    fn each_stub_hydrates_to_the_kind_and_span_it_reports() {
-        let (tree, root) = parsed(FNS);
-        for stub in walk(&tree, root, &[], None, 2) {
-            let Some(crate::types::NodeHandle::Parent(parent)) = stub.handle else { panic!("a stub names its parent") };
-            let json = tree.read_at(parent, stub.child_index.expect("a stub names its index"), ReadDepth::SHALLOW).expect("hydrate");
-            let read: serde_json::Value = serde_json::from_str(&json).expect("read json");
-            assert_eq!(read["$type"], serde_json::json!(stub.type_.0));
-            let span = stub.span.expect("span");
-            assert_eq!(read["$span"], serde_json::json!({ "start": span.start, "end": span.end }));
         }
     }
 
@@ -874,34 +866,25 @@ mod tests {
 
     fn walk_from(tree: &ParsedTree<TestGrammar>, from: crate::query::Address, kinds: &[u16]) -> Vec<String> {
         let batch = tree.descendants(from, kinds, None, None, u32::MAX, None).expect("walk");
-        texts(tree, &batch.stubs)
+        texts(tree, &batch.coordinates)
     }
 
     #[test]
-    fn a_walk_starts_from_a_stub_or_a_span_address() {
+    fn a_walk_starts_from_a_coordinate_or_a_span_address() {
         let (tree, root) = parsed(FNS);
         let fns = [kind_id("function_item")];
         let module = walk(&tree, root, &[kind_id("mod_item")], None, u32::MAX).remove(0);
-        let Some(crate::types::NodeHandle::Parent(parent)) = module.handle else { panic!("a stub names its parent") };
-        let child = crate::query::Address::Child { parent, index: module.child_index.expect("index") as u32 };
-        assert_eq!(walk_from(&tree, child, &fns), ["fn b() -> u8 { 0 }", "fn _c() {}"]);
+        assert_eq!(walk_from(&tree, crate::query::Address::Own { handle: module.handle }, &fns), ["fn b() -> u8 { 0 }", "fn _c() {}"]);
         let outer = walk(&tree, root, &fns, None, u32::MAX).remove(3);
-        let span = outer.span.expect("span");
-        let at = crate::query::Address::Span { tree: root, span, kind: outer.type_.0 };
+        let at = crate::query::Address::Span { tree: root, span: outer.span, kind: outer.kind };
         assert_eq!(walk_from(&tree, at, &fns), ["fn e() {}"]);
     }
 
     #[test]
     fn a_plan_holds_over_a_list_of_addresses_in_order() {
         let (tree, root) = parsed(FNS);
-        let stubs = walk(&tree, root, &[kind_id("function_item")], None, u32::MAX);
-        let addresses: Vec<crate::query::Address> = stubs
-            .iter()
-            .map(|stub| match stub.handle {
-                Some(crate::types::NodeHandle::Parent(parent)) => crate::query::Address::Child { parent, index: stub.child_index.expect("index") as u32 },
-                ref other => panic!("a stub names its parent, not {other:?}"),
-            })
-            .collect();
+        let found = walk(&tree, root, &[kind_id("function_item")], None, u32::MAX);
+        let addresses: Vec<crate::query::Address> = found.iter().map(|coord| crate::query::Address::Own { handle: coord.handle }).collect();
         let private = plan(r#"{ "op": "match", "fields": ["name"], "kinds": [], "pattern": "^_" }"#);
         assert_eq!(tree.plan_holds(&addresses, &private).expect("holds"), [false, false, true, true, false]);
         let elsewhere = crate::query::Address::Own { handle: encode_handle(9, 0) };
@@ -912,24 +895,24 @@ mod tests {
     fn a_depth_limit_stops_the_walk_below_it() {
         let (tree, root) = parsed(FNS);
         let children = tree.descendants(crate::query::Address::Own { handle: root }, &[], None, None, u32::MAX, Some(1)).expect("walk");
-        assert_eq!(texts(&tree, &children.stubs), ["fn a() {}", "mod m { fn b() -> u8 { 0 } fn _c() {} }", "fn _d() { fn e() {} }"]);
+        assert_eq!(texts(&tree, &children.coordinates), ["fn a() {}", "mod m { fn b() -> u8 { 0 } fn _c() {} }", "fn _d() { fn e() {} }"]);
         let mut resumed = Vec::new();
         let mut resume: Option<Vec<u32>> = None;
         loop {
             let batch = tree.descendants(crate::query::Address::Own { handle: root }, &[], None, resume.as_deref(), 1, Some(1)).expect("walk");
-            resumed.extend(batch.stubs);
+            resumed.extend(batch.coordinates);
             match batch.resume {
                 Some(path) => resume = Some(path),
                 None => break,
             }
         }
-        assert_eq!(texts(&tree, &resumed), texts(&tree, &children.stubs));
+        assert_eq!(texts(&tree, &resumed), texts(&tree, &children.coordinates));
     }
 
     #[test]
     fn an_extra_and_its_interior_are_never_descendants() {
         let (tree, root) = parsed("/// doc\nfn a() {}\n");
-        let kinds: Vec<u16> = walk(&tree, root, &[], None, u32::MAX).iter().map(|stub| stub.type_.0).collect();
+        let kinds: Vec<u16> = walk(&tree, root, &[], None, u32::MAX).iter().map(|coord| coord.kind).collect();
         for extra in ["line_comment", "doc_comment", "outer_doc_comment_marker"] {
             assert!(!kinds.contains(&kind_id(extra)), "{extra} walked");
         }

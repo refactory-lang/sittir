@@ -212,11 +212,11 @@ A lazily rendered text: the render runs on first use and its text is cached. `sa
 
 ### `packages/common/src/engine.ts::NativeEngineDiagnostics`
 
-The public `EngineDiagnostics` fixed to the native engine's types (a root that carries the whole-file span, a `TreeHandle`), plus `readUntypedNode`, the hydration read only the native engine has. Reached through `SittirEngine.diagnostics` rather than the engine's own surface, because it returns raw node data with reader stubs for children; the public entry point is `parse`, which wraps what these produce.
+The public `EngineDiagnostics` fixed to the native engine's types (a root that carries the whole-file span, a `TreeHandle`). Reached through `SittirEngine.diagnostics` rather than the engine's own surface, because it returns raw read data, transports holding a coordinate for each child past the read's depth; the public entry point is `parse`, which wraps what these produce.
 
 ### `packages/common/src/engine.ts::depthOf`
 
-The level count a native read takes for a set of parse options: absent (one level) by default, `Infinity` (the whole tree) under `deep`. `parseAndRead` and the diagnostics `readUntypedNode` both pass through it, so `deep` has one meaning at the boundary.
+The level count a native read takes for a set of parse options: one by default, else the options' `depth` (`Infinity` reads the whole tree). The parse reads its root at that depth and caches the root under it, so `depth` has one meaning at the boundary.
 
 ### `packages/common/src/engine.ts::nativeLanguageEngine`
 
@@ -321,14 +321,6 @@ Whether a value is a node of one kind id. It answers a boolean and never narrows
 
 The value of the key `key` when the input is a config object (not a node) that carries it, else `orElse()`. The fallback is a thunk so it runs only when no config was given, which keeps a bare-input refusal from firing for a config. It takes and returns `unknown` for the reason `isNodeOfKind` never narrows: the `in` and `!isNode` narrowing it replaces relates the members of a `.Bound`-bearing union.
 
-### `packages/common/src/utils.ts::modelSlots`
-
-A read node reduced to its model's slots, the first step of every generated wrap: `keys` are the model's storage keys, and a `_` key outside them (a child the model has no slot for, such as a literal the template prints) is dropped; every other member, symbol-keyed ones included, is kept. The reader hands each child over under its tree-sitter field or its kind name; `routes` re-keys those names onto the model slot that stores them, which is how the model's slot names reach a read node at all. Keys routed to one slot merge in document order, read off `$slotOrder`, and a merged bucket of one stays a single value. `$slotOrder` itself is renamed to the model's slots and dropped when routing leaves fewer than two buckets, so it reads exactly as a read of model slots would. A node none of whose keys is routed is copied as a plain filter: the route check reads the table's keys, not the node's.
-
-### `packages/common/src/utils.ts::interleaveBuckets`
-
-The values of several keys merged into one array in document order: each `$slotOrder` entry takes the next item of its key's bucket, through a cursor per bucket. Without a stamp the buckets are concatenated in key order.
-
 ### `packages/common/src/utils.ts::orDefault`
 
 The value, or the default's when it is absent. The default's type is not an inference site (`NoInfer`), so the result is the value's own type and the checker never reduces the value's union against the default's, which is what a `??` expression does and what exceeds the depth on a union that holds a node's `.Bound` beside its storage type.
@@ -348,14 +340,6 @@ The accessor that reads a slot's stored value as a node, for a caller that walks
 ### `packages/common/src/utils.ts::isGroupConfig`
 
 Whether a value is a group's config object rather than a node: a non-empty plain object without a `$type` whose keys are all among the group's config keys. The overlay factories, the elements setters (`elementsWith`) and the list-slot setters share it, so a config object means the same thing on every surface.
-
-### `packages/common/src/readUntypedNode.ts::isStub`
-
-Whether a node is a stub: a child a read left at its coordinate, `$parentHandle` beside `$childIndex`. A read stamps `$parentHandle` only with its index, so the pair is the whole test; every consumer that asks "is this unhydrated" asks this.
-
-### `packages/common/src/readUntypedNode.ts::hydrateStub`
-
-The node a stub names, read `depth` levels (one when absent) and left unwrapped; anything that is not a stub comes back as it is. The list view sizes a stubbed list with it and the tools hydrate read nodes with it. The generated wrap module's own `hydrateSelf` wraps instead: it reads the same coordinate through `readNode`, so its result is typed.
 
 ### `packages/common/src/transport-data.ts::treeHandleOf`
 
@@ -450,6 +434,11 @@ The flank's wire shape (`$_layout.flank`): `$treeHandle`, `$span`, `$before`, `$
 ### `packages/common/src/transport-data.ts::toDetachedTransportData`
 
 The transport for data leaving the tree it was read from, such as a render fixture's input. It is the same walk as `toTransportData`: each entry's changed edges, the trivia that crosses, the bearer a rebuilt wrapper's edges pass to, the gaps and the flanks are all judged the same way, so a detached render lays out what a live render of the same data does. The one difference is that no node folds to a coordinate, and trivia coordinates are not asserted to hold their tree, because the caller turns every range into the text it names before the data leaves.
+
+### `packages/common/src/transport-data.ts::toTransportValue`
+
+The walk behind `toTransportData` and `toDetachedTransportData`. A node that already holds a `gap` or a `flank` in its `$_layout` crosses with them: data a tool detached from its tree keeps the layout evidence the tree would have given, and without its tree nothing else could recompute it. Evidence the walk derives replaces a carried value: the flank the source gives (`sourceFlankOf`), and the gap an owner sets on each element after converting it (`sourceGapOf`).
+
 
 ### `packages/common/src/transport-data.ts::crossingTrivia`
 
@@ -600,3 +589,32 @@ The host template that reparses a rendered kind: its own, its target kind's, or 
 ### `packages/common/src/delimited-check.ts::checkDelimited`
 
 Refuses a delimited composite whose content would not read back inside its own delimiters. Content free of the spec's excluded characters passes on its own. A delimiter pair a parse has not confirmed is confirmed by parsing the empty composite through the engine in scope, memoized per kind and pair. Anything else is parsed back in its host and must parse with no error, show a node of the kind starting where it was rendered and ending where the text ends, and show the same node arms among its children. Extras are found among the root's inner trivia. With no engine in scope, a varying pair that has not been confirmed, or content that needs the parse, is refused ("needs an engine").
+
+### `packages/common/src/query.ts::entryOfCoordinate`
+
+A query result the native matcher returned as a coordinate, as a query entry: its kind and handle, and a `hydrate` that reads the node through `readNode` on the result's tree and wraps it under that tree's engine (`inTreeEngine`), so a match is read only when the caller asks for the node.
+
+### `packages/common/src/runtime.ts::coerceBitflagStorage`
+
+A bitflag slot's loose input as the number the slot stores: a number as it is (0 as absent), an array as the union of its items' bits, and a node or text as the bit of its text's position in `texts`. Absent, `false`, an unknown text or no bits at all store as `undefined`. The factories call it.
+
+### `packages/common/src/runtime.ts::coerceBooleanKeywordStorage`
+
+A keyword-presence slot's loose input as what the slot stores: `true` for any present value (a non-empty array included) and `undefined` for absent, `false` or an empty array. The factories call it for every keyword marker slot.
+
+### `packages/common/src/utils.ts::NO_CHILDREN`
+
+The one frozen empty list `hydrateSlotsWith` answers for an absent list slot, so a read of an empty slot writes nothing and allocates nothing.
+
+### `packages/common/src/utils.ts::hydrateTriviaEntry`
+
+A trivia entry as a reader of trivia gets it: a coordinate entry read and wrapped through the tree it holds (`hydrateListStorage`, which finds the tree by the coordinate's tree token), with the entry's placement facts carried onto the node (`carryPlacement`); any other entry as it is.
+
+### `packages/common/src/utils.ts::hydratedEntries`
+
+A trivia side with its coordinate entries hydrated (`hydrateTriviaEntry`); the same array when none is a coordinate.
+
+### `packages/common/src/read.ts::INDEX_RANGE`
+
+The size of the index field a packed handle holds (`2 ** 32`): the native `encode_handle` multiplies the tree id by it and adds the descendant index, inside a double's exact integer range.
+

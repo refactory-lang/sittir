@@ -117,14 +117,10 @@ describe('loop-driven emitters', () => {
 		expect(wrap).toContain("'_assignment_eq': (d, t) => wrapAssignmentEq(d as unknown as T.AssignmentEq, t),");
 	});
 
-	it('emitAll routes supertype nodes through the wrap emitter', () => {
+	it('emitAll emits no wrap for a supertype node', () => {
 		const { wrap } = emitAll({ grammar: 'synth', nodeMap: makeHiddenSupertypeNodeMap() });
 
-		expect(wrap).toContain(
-			'export function wrapExportStatementDefault(data: T.ExportStatementDefault & { readonly $other?: T.ExportStatementDefault | readonly T.ExportStatementDefault[]; }, tree: TreeHandle): SupertypeSurface<T.ExportStatementDefault, T.ParsedByKindId> {'
-		);
-		expect(wrap).toContain(
-			"'_export_statement_default': (d, t) => wrapExportStatementDefault(d as unknown as T.ExportStatementDefault, t),"
-		);
+		expect(wrap).not.toContain('wrapExportStatementDefault');
+		expect(wrap).not.toContain("'_export_statement_default'");
 	});
 });

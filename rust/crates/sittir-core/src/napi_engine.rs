@@ -295,11 +295,12 @@ macro_rules! napi_engine {
 
             /// The node at `index` of tree `treeId` read into its transport,
             /// `depth` levels down (one when absent, `Infinity` for all); index 0
-            /// is the root. Refuses a tree that is not live, an index past its
-            /// last node, and a node the model has no route for, naming the
-            /// kind, the child and the index.
+            /// is the root. An `ERROR` node reads as its text and coordinate.
+            /// Refuses a tree that is not live, an index past its last node,
+            /// and a node the model has no route for, naming the kind, the
+            /// child and the index.
             #[::napi_derive::napi(ts_return_type = "object")]
-            pub fn read(&self, tree_id: f64, index: f64, depth: Option<f64>) -> ::napi::Result<$any> {
+            pub fn read(&self, tree_id: f64, index: f64, depth: Option<f64>) -> ::napi::Result<::napi::Either<$any, $crate::ErrorRead>> {
                 let tree_id = u32::try_from($crate::napi_engine::checked_index(tree_id, "treeId")?)
                     .map_err(|_| ::napi::Error::from_reason(format!("treeId {tree_id} names no tree")))?;
                 let index = u32::try_from($crate::napi_engine::checked_index(index, "index")?)
@@ -311,9 +312,13 @@ macro_rules! napi_engine {
                     if $crate::engine::node_at_index(parsed.tree(), index).is_none() {
                         return Err(::napi::Error::from_reason(format!("index {index} names no node of tree {tree_id}")));
                     }
+                    if let Some(error) = parsed.read_error(index) {
+                        return Ok(::napi::Either::B(error));
+                    }
                     let grammar = <$grammar as ::std::default::Default>::default();
                     ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.read::<$any>(index, depth)))
                         .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(payload, "read panicked")))?
+                        .map(::napi::Either::A)
                         .map_err(|refusal| ::napi::Error::from_reason(refusal.describe(&|kind| $crate::engine::EngineGrammar::kind_name(grammar, kind))))
                 })
             }

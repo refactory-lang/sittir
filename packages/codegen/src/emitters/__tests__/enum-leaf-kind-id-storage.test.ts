@@ -16,10 +16,8 @@ import {
 	classifyValueStorage,
 	enumArmsOf,
 	fieldTypeComponents,
-	kindEnumOwnSymbolIds,
 	resolveFieldStorageInfo
 } from '../shared.ts';
-import { emitWrap } from '../../__tests__/helpers/emit-wrap.ts';
 import type { KindEnumEntry } from '../kind-discriminant.ts';
 
 const kindEntries = [
@@ -180,13 +178,5 @@ describe('a visible enum leaf reads as its own parser symbol', () => {
 	it('the walk records the enum symbol of a visible enum arm', () => {
 		const { nodeMap, slot } = makeMixedEnumNodeMap('primitive_type');
 		expect(enumArmsOf(slot, nodeMap).ownSymbolIds).toEqual([346]);
-		expect(kindEnumOwnSymbolIds(slot, nodeMap)).toEqual([346]);
-	});
-
-	it('the wrap projection folds a read enum node onto its member id by text', () => {
-		const { nodeMap } = makeMixedEnumNodeMap('primitive_type');
-		const source = emitWrap({ grammar: 'synth', nodeMap, kindEntries: wrapKindEntries });
-		expect(source).toContain('ownSymbols?.includes(kind) ? _spelledText(entry) : undefined');
-		expect(source).toMatch(/projectMixedEnumStorage\([\s\S]*?\{ "?u8"?: 1, "?bool"?: 2 \}, undefined, \[346\]/);
 	});
 });

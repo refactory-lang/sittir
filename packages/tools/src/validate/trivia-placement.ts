@@ -63,13 +63,13 @@ function readPlacements(root: unknown): Map<string, Placement> {
 		}
 		if (value === null || typeof value !== 'object') return;
 		const node = value as Record<string, unknown>;
-		const trivia = node.$_trivia as ReadTrivia | undefined;
+		const trivia = (node.$_layout as { readonly trivia?: ReadTrivia } | undefined)?.trivia;
 		if (trivia !== undefined && typeof node.$type === 'number') {
 			place(trivia.leading, node.$type, 'leading');
 			place(trivia.trailing, node.$type, 'trailing');
 			for (const [key, entries] of Object.entries(trivia.inner ?? {})) place(entries, node.$type, `inner:${key}`);
 		}
-		for (const [key, child] of Object.entries(node)) if (key !== '$_trivia') visit(child);
+		for (const [key, child] of Object.entries(node)) if (key !== '$_layout') visit(child);
 	};
 	visit(root);
 	return placements;
@@ -88,7 +88,7 @@ async function placementReader(grammar: string): Promise<PlacementReader> {
 	return {
 		parse: (source) => parser.parse(source) as TSTree,
 		place: (entry, source, parsed) => {
-			const placements = readPlacements(readNativeTree(engine, source, { deep: true }).root);
+			const placements = readPlacements(readNativeTree(engine, source, { depth: Infinity }).root);
 			return parsedExtras(parsed.rootNode).map((extra) => {
 				const placement = placements.get(`${extra.startIndex}:${extra.endIndex}`);
 				return {

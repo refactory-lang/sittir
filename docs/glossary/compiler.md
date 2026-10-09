@@ -3423,7 +3423,7 @@ ordinary union.
  *   `${parentKind}_${child}` (the alias target tree-sitter creates). Emitting
  *   each as a derivation records in the derivation log what the parse
  *   tree carries vs what sittir's typed surface presents. Without this,
- *   `readUntypedNode` would have to infer polymorph-internal shape from
+ *   the reader would have to infer polymorph-internal shape from
  *   grammar-specific knowledge.
  */
 ```

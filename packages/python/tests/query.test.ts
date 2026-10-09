@@ -23,15 +23,15 @@ const SOURCE = [
 	''
 ].join('\n');
 
-type Spanned = { readonly $type: number; readonly $span?: { readonly start: number; readonly end: number } };
+type Spanned = { readonly $type: number; readonly $_layout: { readonly at: { readonly $span: { readonly start: number; readonly end: number } } } };
 
+const spanOf = (node: unknown) => (node as Spanned).$_layout.at.$span;
 const textOf = (source: string, node: unknown): string => {
-	const span = (node as Spanned).$span!;
+	const span = spanOf(node);
 	return source.slice(span.start, span.end);
 };
 const firstLine = (source: string, node: unknown): string => textOf(source, node).split('\n')[0]!;
-const occurrence = (node: unknown): string =>
-	`${(node as Spanned).$type}@${(node as Spanned).$span!.start}-${(node as Spanned).$span!.end}`;
+const occurrence = (node: unknown): string => `${(node as Spanned).$type}@${spanOf(node).start}-${spanOf(node).end}`;
 
 const root = py.parse(SOURCE);
 const descendants = () => root.$query().$descendants;
@@ -97,7 +97,7 @@ describe('traversal', () => {
 
 	it('never yields a comment', () => {
 		const source = '# lead\ndef f():\n    # inside\n    pass\n';
-		const kinds = [...py.parse(source).$query().$descendants].map((node) => (node as Spanned).$type);
+		const kinds = [...py.parse(source).$query().$descendants].map((node) => node.$type);
 		expect(kinds).not.toContain(K.Comment);
 		expect(kinds).toContain(K.FunctionDefinition);
 	});
@@ -130,7 +130,9 @@ describe('traversal', () => {
 		limits.length = 0;
 		const all = [...wrapped.$query().$descendants];
 		expect(limits.slice(0, 6)).toEqual([1, 4, 16, 64, 256, 256]);
-		expect(new Set(all.map(occurrence)).size).toBe(all.length);
+		const nodes = all.filter((item) => typeof item === 'object');
+		expect(all.filter((item) => typeof item !== 'object').every((item) => typeof item === 'number')).toBe(true);
+		expect(new Set(nodes.map(occurrence)).size).toBe(nodes.length);
 	});
 
 	it('sends the kind filter and a where condition into the native walk', () => {
@@ -219,7 +221,7 @@ describe('where', () => {
 		expect(after).toEqual(before);
 		const typedLate = [
 			...descendants()
-				.filter((node) => (node as Spanned).$type !== K.Block)
+				.filter((node) => node.$type !== K.Block)
 				.ofType(K.FunctionDefinition)
 		].map(occurrence);
 		expect(typedLate).toEqual([...descendants().ofType(K.FunctionDefinition)].map(occurrence));

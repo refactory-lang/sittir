@@ -1,5 +1,4 @@
-import type { AnyUntypedNode, NodeChildValue, NodeMemberValue } from '@sittir/types';
-import { HANDLE_KEYS } from './transport-data.ts';
+import type { AnyUntypedNode, NodeMemberValue } from '@sittir/types';
 
 const ASSERT_ENABLED = typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production';
 
@@ -61,45 +60,24 @@ function assertNativeFieldValue(value: unknown, path: string): asserts value is 
 	assertNativeUntypedNodeInternal(value, path);
 }
 
-function assertNativeChildren(value: unknown, path: string): void {
-	if (!Array.isArray(value)) {
-		assertNativeChildValue(value, path);
-		return;
-	}
-	for (const [index, child] of value.entries()) {
-		assertNativeChildValue(child, `${path}[${index}]`);
-	}
-}
-
-function assertNativeChildValue(value: unknown, path: string): asserts value is NodeChildValue {
-	if (typeof value === 'string') return;
-	if (typeof value === 'number') {
-		assertFiniteNumber(value, path);
-		return;
-	}
-	assertNativeUntypedNodeInternal(value, path);
-}
-
 /**
  * Internal recursive validator for the native render boundary.
  *
- * Checks all runtime invariants required before passing an UntypedNode tree to the
+ * Checks all runtime invariants required before passing node data to the
  * native (napi) render engine:
- *  - `$type` is a finite number (parser.c-derived numeric KindId, Phase D)
- *  - `$source` is one of `0 | 1 | 2` (ts, sg, factory)
- *  - `$named` is a boolean
+ *  - `$type` is a finite number (a parser kind id)
+ *  - `$source`, when present (a built node), is one of `0 | 1 | 2`, and `$named` a boolean
  *  - `$format` is absent (must be passed separately via TreeHandle.format)
  *  - no function-valued properties (methods like `render()` cannot cross napi)
- *  - nested `_<name>` storage keys and `$other` satisfy the same constraints
- *    Recursively (`$fields` wrapper no longer emitted by readUntypedNode)
- *  - finite numeric `_<name>` storage is allowed for kind-enum projection
+ *  - a coordinate (`$treeHandle`) names its handle as a finite number and carries its `$span`
+ *  - `$_layout`, when present, is an object
+ *  - nested `_<name>` storage satisfies the same constraints; finite numbers
+ *    (kind ids) and booleans are storage too
  */
 function assertNativeUntypedNodeInternal(value: unknown, path: string): asserts value is AnyUntypedNode {
 	if (!isRecord(value)) {
 		throw new TypeError(`${path} must be an object, got ${describe(value)}`);
 	}
-	// Reject any property whose value is a function — methods like `render()`
-	// can't cross the napi boundary.
 	for (const [key, v] of Object.entries(value)) {
 		if (typeof v === 'function') {
 			throw new TypeError(
@@ -107,43 +85,26 @@ function assertNativeUntypedNodeInternal(value: unknown, path: string): asserts 
 			);
 		}
 	}
-	// Phase D: $type must be a numeric KindId. String $type is no longer accepted.
 	if (typeof value.$type !== 'number') {
 		throw new TypeError(`${path}.$type must be a number, got ${describe(value.$type)}`);
 	}
-	assertNativeSource(value.$source, `${path}.$source`);
-	assertBoolean(value.$named, `${path}.$named`);
+	if (value.$source !== undefined) assertNativeSource(value.$source, `${path}.$source`);
+	if (value.$named !== undefined) assertBoolean(value.$named, `${path}.$named`);
 	if (value.$format !== undefined) {
 		throw new TypeError(`${path}.$format is not supported by the native render boundary; pass format separately`);
 	}
-	// Validate `_<name>` storage keys (de-hoisted surface).
 	for (const key of Object.keys(value)) {
 		if (!key.startsWith('_')) continue;
 		if (value[key] === undefined) continue;
 		assertNativeFieldValue(value[key], `${path}.${key}`);
 	}
-	if (value.$slotOrder !== undefined) {
-		if (!Array.isArray(value.$slotOrder)) {
-			throw new TypeError(`${path}.$slotOrder must be an array, got ${describe(value.$slotOrder)}`);
-		}
-		for (const [index, route] of value.$slotOrder.entries()) {
-			assertString(route, `${path}.$slotOrder[${index}]`);
-		}
-	}
-	if (value.$other !== undefined) assertNativeChildren(value.$other, `${path}.$other`);
 	if (value.$text !== undefined) assertString(value.$text, `${path}.$text`);
-	if (value.$span !== undefined) assertNativeSpan(value.$span, `${path}.$span`);
-	const handles = HANDLE_KEYS.filter((key) => value[key] !== undefined);
-	for (const key of handles) assertFiniteNumber(value[key], `${path}.${key}`);
-	if (handles.length > 1) {
-		throw new TypeError(`${path} names more than one of ${HANDLE_KEYS.join(', ')}`);
+	if (value.$treeHandle !== undefined) {
+		assertFiniteNumber(value.$treeHandle, `${path}.$treeHandle`);
+		assertNativeSpan(value.$span, `${path}.$span`);
 	}
-	if (value.$parentHandle !== undefined && value.$childIndex === undefined) {
-		throw new TypeError(`${path}.$parentHandle needs a $childIndex: a stub is addressed by the pair`);
-	}
-	if (value.$childIndex !== undefined) assertFiniteNumber(value.$childIndex, `${path}.$childIndex`);
-	if (value.$textOnly !== undefined && typeof value.$textOnly !== 'boolean') {
-		throw new TypeError(`${path}.$textOnly must be a boolean, got ${describe(value.$textOnly)}`);
+	if (value.$_layout !== undefined && !isRecord(value.$_layout)) {
+		throw new TypeError(`${path}.$_layout must be an object, got ${describe(value.$_layout)}`);
 	}
 }
 
@@ -151,15 +112,8 @@ function assertNativeUntypedNodeInternal(value: unknown, path: string): asserts 
  * Assertion — throws `TypeError` if `node` violates any runtime invariant
  * required by the native (napi) render boundary.
  *
- * Checks performed:
- *  - `$type` is a finite number
- *  - `$source` is one of `0 | 1 | 2` (ts, sg, factory)
- *  - `$named` is a boolean
- *  - `$format` is absent
- *  - at most one of `$handle`, `$parentHandle`, `$treeHandle`, and a
- *    `$parentHandle` only beside the `$childIndex` it pairs with
- *  - no function-valued properties
- *  - `_<name>` storage keys and `$other` satisfy the same constraints recursively
+ * Checks performed: those of the recursive validator above, on `node` and
+ * everything stored under it.
  */
 export function assertRenderableUntypedNode(node: AnyUntypedNode): asserts node is AnyUntypedNode {
 	if (!ASSERT_ENABLED) return;

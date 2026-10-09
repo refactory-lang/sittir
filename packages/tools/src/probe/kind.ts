@@ -25,7 +25,7 @@
  *                text / field-name / children). Shows EXACTLY what tree-sitter
  *                emits, including anonymous tokens and field assignments.
  * - `untypedNode`:  output of `readNode(root)` — sittir's UntypedNode view.
- *                Shows `$fields` / `$other` / `$type` (the grammar-symbol
+ *                Shows `$type` (the grammar-symbol
  *                wire identity stamped by the read).
  * - `rendered`:  output of `render(untypedNode)` — the text re-emitted by the
  *                render pipeline.
@@ -76,15 +76,11 @@
 
 import {
 	loadLanguageForGrammar,
-	loadKindIdFromName,
 	loadKindNameFromId,
 	loadCanonicalKindNameFromId,
 	loadWebTreeSitter,
-	treeHandle,
-	adaptNode,
 	loadNativeEngine,
 	readNativeTree,
-	type NativeEngine,
 	detachedHoldingTree,
 	holdingTreeOf,
 	materializeDetached,
@@ -109,9 +105,9 @@ import {
 } from '../validate/read-render-parse.ts';
 import { load } from '../codegen-surface.ts';
 import type * as TS from 'web-tree-sitter';
-import type { AnyUntypedNode, AnyTreeNode } from '@sittir/types';
+import type { AnyUntypedNode, TransportCoordinate } from '@sittir/types';
 import { sourceSpans, type ByteSpan, type SourceSpans } from '@sittir/common';
-import { spanOf, isStub, readUntypedNode, STORED_TRIVIA, toTransportData } from '@sittir/common/utils';
+import { spanOf, readNode as readTransport, STORED_TRIVIA, toTransportData, type TreeHandle } from '@sittir/common/utils';
 // ---------------------------------------------------------------------------
 // CLI
 // ---------------------------------------------------------------------------
@@ -562,83 +558,19 @@ export async function probe(
 	// tree owns the id space — the per-handle dispatch keeps reads
 	// inside that engine. Wasm parser above is kept only so the
 	// (informational) `cst` dump is comparable across paths.
-	let untypedNode: unknown;
-	let nativeEngine: NativeEngine | undefined;
-	if (opts.engine === 'native' && !opts.noWrap) {
-		nativeEngine = await loadNativeEngine(grammar);
-		const readNode = await readNodeOf(grammar);
-		const handle = readNativeTree(nativeEngine, source).tree;
-		if (isRoot) {
-			untypedNode = readNode ? readNode(handle) : handle.read?.();
-		} else {
-			// For --kind / --range, the wasm `targetNode.id` does not
-			// address the native engine's tree (separate id spaces).
-			// Read root via the native handle, walk its UntypedNode to
-			// find the matching subtree, then re-read THAT node by its
-			// native `$nodeId` so hydration fires under napi.
-			const root = readNode ? readNode(handle) : handle.read?.();
-			const target = opts.kind
-				? findInUntypedNode(root, opts.kind, await loadKindNameFromId(grammar))
-				: findInUntypedNodeByRange(root, opts.range!.start, opts.range!.end);
-			if (!target) {
-				throw new Error(`probe-kind: --engine native: no node match in UntypedNode tree`);
-			}
-			// `$nodeId` is a retired field name (replaced by
-			// `$parentHandle`+`$childIndex`) — kept as a defensive optional
-			// check, not a live path: current UntypedNode shapes never carry
-			// it, so this is always `undefined` and `target` (the wrap-read
-			// match from `root` above, already fully materialized) is what
-			// actually gets used. Native --kind/--range currently fails
-			// earlier in the pipeline regardless (unrelated transport bug),
-			// so this branch isn't independently testable right now.
-			const targetId = (target as { $nodeId?: number }).$nodeId;
-			untypedNode = targetId !== undefined && readNode ? readNode(handle, targetId) : target;
-		}
-	} else {
-		const readNode = opts.noWrap
-			? null
-			: opts.baselineDir
-				? await readNodeOfPath(resolveBaselinePath(opts.baselineDir, 'src/wrap.ts'))
-				: await readNodeOf(grammar);
-		// kindIdFromName is required for JS-side reads (readUntypedNode emits numeric
-		// $type — see common.ts's treeHandle doc). Wrap so an unknown kind name
-		// returns undefined instead of throwing, matching run()'s own pattern.
-		// Kind IDs can differ across generated versions — the exact scenario
-		// --baseline compares — so load from the baseline package's own
-		// types.ts, not the current package's, whenever a baseline is set.
-		const rawKindIdFromName = opts.baselineDir
-			? await loadKindIdFromNameFromPath(resolveBaselinePath(opts.baselineDir, 'src/types.ts'))
-			: await loadKindIdFromName(grammar);
-		const kindIdFromName = rawKindIdFromName
-			? (name: string): number | undefined => {
-					try {
-						return rawKindIdFromName(name);
-					} catch {
-						return undefined;
-					}
-				}
-			: undefined;
-		const handle = treeHandle(tree, source, kindIdFromName);
-		// targetNode.id is tree-sitter wasm's own internal id, not a
-		// $parentHandle/$childIndex pair (that pair replaced $nodeId;
-		// readUntypedNode/readNode navigate ONLY via handle+childIndex —
-		// see readUntypedNode.ts: `if (handle != null && childIndex != null...)`,
-		// else it falls back to reading `tree.rootNode`). Passing just
-		// targetNode.id as a single positional arg can never satisfy that
-		// check, so --kind/--range silently read/render the root instead of
-		// the selected node. Swap the handle's rootNode instead, matching
-		// readSelectedNode's already-correct pattern elsewhere in this file.
-		if (isRoot) {
-			untypedNode = readNode ? readNode(handle) : readUntypedNode(handle);
-		} else {
-			const prev = handle.rootNode;
-			(handle as { rootNode: typeof prev }).rootNode = adaptNode(targetNode);
-			try {
-				untypedNode = readNode ? readNode(handle) : readUntypedNode(handle);
-			} finally {
-				(handle as { rootNode: typeof prev }).rootNode = prev;
-			}
-		}
+	const handle = readNativeTree(await loadNativeEngine(grammar), source).tree;
+	const readNode = opts.noWrap
+		? null
+		: opts.baselineDir
+			? await readNodeOfPath(resolveBaselinePath(opts.baselineDir, 'src/wrap.ts'))
+			: await readNodeOf(grammar);
+	const root = readNode ? readNode(handle, undefined, Infinity) : handle.read?.(0, Infinity);
+	let untypedNode: unknown = root;
+	if (!isRoot) {
+		untypedNode = opts.kind
+			? findInUntypedNode(root, opts.kind, await loadKindNameFromId(grammar))
+			: findInUntypedNodeByRange(root, opts.range!.start, opts.range!.end);
+		if (!untypedNode) throw new Error(`probe-kind: no node match in the read tree`);
 	}
 
 	let rendered: string | undefined;
@@ -792,7 +724,7 @@ export async function probeTrace(
 	const buildEngineTrace = async (engine: 'js' | 'native'): Promise<ProbeTraceEngineReport> => {
 		let read: Awaited<ReturnType<typeof readProbeLanes>>;
 		try {
-			read = await readProbeLanes(grammar, source, tree, targetNode, isRoot, engine, opts.kind, onAccessorThrow);
+			read = await readProbeLanes(grammar, source, targetNode, isRoot, opts.kind, onAccessorThrow);
 		} catch (e) {
 			return { wrapError: String((e as Error)?.message ?? e) };
 		}
@@ -869,112 +801,28 @@ export function resolveNativeTraceUntypedNode(
 async function readProbeLanes(
 	grammar: string,
 	source: string,
-	tree: TS.Tree,
 	targetNode: any,
 	isRoot: boolean,
-	engine: 'js' | 'native',
 	targetKind?: string,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): Promise<{ shallow: unknown; deep: unknown; deepTyped?: unknown; deepUntypedNode?: unknown }> {
-	if (engine === 'native') {
-		const nativeEngine = await loadNativeEngine(grammar);
-		const readNode = await readNodeOf(grammar);
-		const handle = readNativeTree(nativeEngine, source).tree;
-		if (isRoot) {
-			const shallow = stripBigInts(handle.read?.());
-			const deepUntypedNode = detachedHoldingTree(readUntypedNode(handle, undefined, undefined, Infinity));
-			const deepTyped = readNode ? readNode(handle) : undefined;
-			const deep = resolveNativeTraceUntypedNode(deepTyped, deepUntypedNode, onAccessorThrow);
-			return { shallow, deep, deepTyped, deepUntypedNode };
-		}
-		if (targetKind) {
-			const kindNameFromId = await loadKindNameFromId(grammar);
-			const targetSpan = spanOfNode(sourceSpans(source), targetNode);
-			const targetCandidate =
-				walkNativeForKind(handle, targetKind, kindNameFromId).find(
-					(candidate) => candidate.span?.start === targetSpan.start && candidate.span?.end === targetSpan.end
-				) ?? null;
-			if (targetCandidate?.coords.handle !== undefined && targetCandidate.coords.childIndex !== undefined) {
-				const shallow = handle.read?.(targetCandidate.coords.handle, targetCandidate.coords.childIndex);
-				const deepUntypedNode = detachedHoldingTree(
-					readUntypedNode(handle, targetCandidate.coords.handle, targetCandidate.coords.childIndex, Infinity)
-				);
-				const deepTyped = readNode
-					? readNode(handle, targetCandidate.coords.handle, targetCandidate.coords.childIndex)
-					: undefined;
-				const deep = resolveNativeTraceUntypedNode(deepTyped, deepUntypedNode, onAccessorThrow);
-				return { shallow, deep, deepTyped, deepUntypedNode };
-			}
-		}
-		const root = readNode
-			? materializeDetached(readNode(handle), onAccessorThrow)
-			: readUntypedNode(handle, undefined, undefined, Infinity);
-		const rootTargetSpan = spanOfNode(sourceSpans(source), targetNode);
-		const target = findInUntypedNodeByRange(root, rootTargetSpan.start, rootTargetSpan.end);
-		if (!target) throw new Error('probe-kind: no native node match in UntypedNode tree');
-		const targetHandle = getTargetHandle(target);
-		const shallow = targetHandle ? handle.read?.(targetHandle.handle, targetHandle.childIndex) : target;
-		const deepUntypedNode = detachedHoldingTree(
-			targetHandle ? readUntypedNode(handle, targetHandle.handle, targetHandle.childIndex, Infinity) : target
-		);
-		const deepTyped =
-			targetHandle && readNode ? readNode(handle, targetHandle.handle, targetHandle.childIndex) : undefined;
-		const deep =
-			readNode && !targetHandle
-				? target
-				: resolveNativeTraceUntypedNode(deepTyped, deepUntypedNode, onAccessorThrow);
-		return { shallow, deep, deepTyped, deepUntypedNode };
-	}
-	const rawKindIdFromName = await loadKindIdFromName(grammar);
-	const kindIdFromName = rawKindIdFromName
-		? (name: string): number | undefined => {
-				try {
-					return rawKindIdFromName(name);
-				} catch {
-					return undefined;
-				}
-			}
-		: undefined;
-	const handle = treeHandle(tree, source, kindIdFromName);
-	const shallow = isRoot ? readUntypedNode(handle) : await readSelectedNode(handle, targetNode);
-	const deepTyped = await deepReadSelectedNode(grammar, handle, targetNode, isRoot, shallow);
-	const deep = deepTyped;
-	return { shallow, deep, deepTyped };
-}
-
-async function readSelectedNode(handle: ReturnType<typeof treeHandle>, targetNode: TS.Node): Promise<unknown> {
-	const prev = handle.rootNode;
-	(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = adaptNode(targetNode);
-	try {
-		return readUntypedNode(handle);
-	} finally {
-		(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = prev;
-	}
-}
-
-async function deepReadSelectedNode(
-	grammar: string,
-	handle: ReturnType<typeof treeHandle>,
-	targetNode: TS.Node,
-	isRoot: boolean,
-	fallback: unknown
-): Promise<unknown> {
+	const handle = readNativeTree(await loadNativeEngine(grammar), source).tree;
 	const readNode = await readNodeOf(grammar);
-	if (!readNode) return fallback;
-	if (isRoot) return readNode(handle);
-	const prev = handle.rootNode;
-	(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = adaptNode(targetNode);
-	try {
-		return readNode(handle);
-	} finally {
-		(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = prev;
+	let coordinate: TransportCoordinate | undefined;
+	if (!isRoot) {
+		const kindNameFromId = await loadKindNameFromId(grammar);
+		const targetSpan = spanOfNode(sourceSpans(source), targetNode);
+		coordinate = walkNativeForKind(handle, targetKind ?? targetNode.type, kindNameFromId).find(
+			(candidate) => candidate.span?.start === targetSpan.start && candidate.span?.end === targetSpan.end
+		)?.coords.coordinate;
+		if (coordinate === undefined) throw new Error('probe-kind: no native node at the target span');
 	}
-}
-
-function getTargetHandle(target: unknown): { handle: number; childIndex: number } | null {
-	if (!target || typeof target !== 'object') return null;
-	const record = target as Record<string, unknown>;
-	return isStub(record) ? { handle: record.$parentHandle, childIndex: record.$childIndex } : null;
+	const read = (depth?: number): unknown => (coordinate === undefined ? handle.read!(0, depth) : readTransport(handle, coordinate, depth));
+	const shallow = stripBigInts(read());
+	const deepUntypedNode = detachedHoldingTree(read(Infinity));
+	const deepTyped = readNode ? readNode(handle, coordinate) : undefined;
+	const deep = resolveNativeTraceUntypedNode(deepTyped, deepUntypedNode, onAccessorThrow);
+	return { shallow, deep, deepTyped, deepUntypedNode };
 }
 
 async function buildTraceLane(
@@ -1127,26 +975,19 @@ async function renderUntypedNodeNative(grammar: string, untypedNode: unknown): P
  *  without the kind-name registry — caller passes the absolute path. */
 async function readNodeOfPath(
 	wrapTsPath: string
-): Promise<((handle: unknown, nodeId?: number) => unknown) | null> {
+): Promise<((tree: TreeHandle, coordinate?: TransportCoordinate, depth?: number) => unknown) | null> {
 	try {
-		const mod = await import(wrapTsPath);
-		return (mod as { readNode?: (h: unknown, id?: number) => unknown }).readNode ?? null;
+		const mod = (await import(wrapTsPath)) as {
+			wrapNode?: (data: unknown, tree: TreeHandle) => unknown;
+			hydrate?: (value: unknown, tree: TreeHandle, depth?: number) => unknown;
+		};
+		const { wrapNode, hydrate } = mod;
+		if (wrapNode === undefined || hydrate === undefined) return null;
+		return (tree, coordinate, depth) =>
+			coordinate === undefined ? wrapNode(tree.read!(0, depth), tree) : hydrate(coordinate, tree, depth);
 	} catch (e) {
 		process.stderr.write(`probe-kind: failed to load baseline wrap module at ${wrapTsPath}: ${(e as Error).message}\n`);
 		return null;
-	}
-}
-
-/** @internal — load `kindIdFromName` from an explicit `src/types.ts`
- *  path. Mirrors `loadKindIdFromName` in `validate/common.ts` but reads
- *  the baseline package's own table — kind IDs can differ across
- *  generated versions, the exact scenario --baseline compares. */
-async function loadKindIdFromNameFromPath(typesTsPath: string): Promise<((name: string) => number) | undefined> {
-	try {
-		const mod = await import(typesTsPath);
-		return (mod as { kindIdFromName?: (name: string) => number }).kindIdFromName;
-	} catch {
-		return undefined;
 	}
 }
 
@@ -1231,12 +1072,6 @@ export function findInUntypedNode(
 			if (found) return found;
 		}
 	}
-	if (Array.isArray(n.$other)) {
-		for (const c of n.$other as unknown[]) {
-			const found = findInUntypedNode(c, kind, kindNameFromId);
-			if (found) return found;
-		}
-	}
 	return null;
 }
 
@@ -1262,12 +1097,6 @@ function findInUntypedNodeByRange(node: unknown, start: number, end: number): un
 			}
 		} else {
 			const f = recurseInto(v);
-			if (f) return f;
-		}
-	}
-	if (Array.isArray(n.$other)) {
-		for (const c of n.$other) {
-			const f = recurseInto(c);
 			if (f) return f;
 		}
 	}
@@ -1314,6 +1143,4 @@ async function readStdin(): Promise<string> {
 	return Buffer.concat(chunks).toString('utf-8');
 }
 
-// silence unused warnings on adaptNode / AnyTreeNode (used indirectly in treeHandle path)
-void adaptNode;
-type _AnyTreeNode = AnyTreeNode;
+

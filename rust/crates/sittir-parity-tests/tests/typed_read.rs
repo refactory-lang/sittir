@@ -681,6 +681,13 @@ fn a_token_interior_reads_its_slots_from_its_text() {
     assert_eq!((decimal.content.as_str(), decimal.suffix.as_deref()), ("1_000", Some("u8")));
 }
 
+/// The layout an envelope's content keeps: the coordinate the envelope holds, which names the content's node, and nothing else.
+fn coordinate_only<T>(envelope: &Option<Box<sittir_core::layout::TransportLayout<T>>>) -> Option<Box<sittir_core::layout::TransportLayout<T>>> {
+    let at = envelope.as_ref().and_then(|layout| layout.at.clone());
+    assert!(at.is_some(), "the envelope holds the content's coordinate");
+    Some(Box::new(sittir_core::layout::TransportLayout { at, ..sittir_core::layout::TransportLayout::default() }))
+}
+
 #[test]
 fn an_envelope_holds_its_content_and_the_trivia_its_content_was_given() {
     let source = "fn f() -> T /* c */ {}";
@@ -688,7 +695,7 @@ fn an_envelope_holds_its_content_and_the_trivia_its_content_was_given() {
     let f: Named = read_nth(&tree, source, kind::FUNCTION_ITEM, 0, Depth::All).unwrap();
     let Some(SlotValue::Transport(NamedType::TypeIdentifier(envelope))) = &f.return_type else { panic!("{:?}", f.return_type) };
     assert_eq!(envelope.content.transport().unwrap().text, "T");
-    assert_eq!(envelope.content.transport().unwrap().layout, None);
+    assert_eq!(envelope.content.transport().unwrap().layout, coordinate_only(&envelope.layout));
     assert_eq!(trivia_spans(&envelope.layout, "trailing"), vec![(12, 19, true, 0)]);
 }
 
@@ -805,6 +812,6 @@ fn an_envelope_over_a_choice_holds_the_trivia_its_content_variant_was_given() {
     let Some(SlotValue::Transport(NamedTypeOfChoice::TypeIdentifier(envelope))) = &f.return_type else { panic!("{:?}", f.return_type) };
     let Some(Name::Ident(ident)) = envelope.content.transport() else { panic!("{:?}", envelope.content) };
     assert_eq!(ident.text, "T");
-    assert_eq!(ident.layout, None);
+    assert_eq!(ident.layout, coordinate_only(&envelope.layout));
     assert_eq!(trivia_spans(&envelope.layout, "trailing"), vec![(12, 19, true, 0)]);
 }

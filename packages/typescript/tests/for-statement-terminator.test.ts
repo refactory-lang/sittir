@@ -26,11 +26,6 @@ describe('for_statement.condition', () => {
 		expect(sliceSpan(SOURCE, spanOf(node)!)).toBe('i < 3');
 	});
 
-	it('orders its slots without the dropped `;`', () => {
-		const forStatement = ts.parse(SOURCE).statements()[0] as unknown as { readonly $slotOrder?: readonly string[] };
-		expect(forStatement.$slotOrder).toEqual(['initializer', 'condition', 'increment', 'body']);
-	});
-
 	it('builds `for (let i = 0; i < 3; i++) {}` with both terminators from the factory', () => {
 		const built = ts.build.program.strict({
 			statements: [

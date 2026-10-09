@@ -1,19 +1,13 @@
 import type { AnyUntypedNode } from '@sittir/types';
-import { isStub } from '@sittir/common/utils';
+import { isCoordinate, type TreeHandle } from '@sittir/common/utils';
 
 import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
-import { nativeShownKindId } from '../validate/shown-kind.ts';
 import { accessorCandidatesForStorageKey } from '../validate/common.ts';
 
 interface CommonModule {
-	loadLanguageForGrammar(grammar: string): Promise<{
-		Parser: new () => { setLanguage(language: unknown): void; parse(source: string): { rootNode: unknown } | null };
-		lang: unknown;
-	}>;
-	treeHandle(tree: unknown, source?: string, kindIdFromName?: (kind: string) => number | undefined): unknown;
+	buildReadHandle(grammar: string, source: string): Promise<TreeHandle>;
 	loadNativeRender(grammar: string): Promise<(node: AnyUntypedNode) => string>;
-	readNodeOf(grammar: string): Promise<((handle: unknown, parentHandle?: number, childIndex?: number) => unknown) | null>;
-	loadKindIdFromName(grammar: string): Promise<((name: string) => number) | undefined>;
+	readNodeOf(grammar: string): Promise<((tree: TreeHandle) => unknown) | null>;
 	loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined>;
 	loadKindNames(grammar: string): Promise<ReadonlyMap<number, string> | undefined>;
 	materialize(root: unknown, onAccessorThrow?: (rec: AccessorThrowRecord) => void): AnyUntypedNode;
@@ -28,8 +22,6 @@ interface AccessorThrowRecord {
 
 interface WalkNode {
 	readonly $type: string | number;
-	readonly $parentHandle?: number;
-	readonly $childIndex?: number;
 	readonly [key: string]: unknown;
 }
 
@@ -62,8 +54,7 @@ function isWalkNode(value: unknown): value is WalkNode {
 }
 
 function resolveKindName(node: WalkNode, kindNameFromId: ((id: number) => string | undefined) | undefined): string {
-	const shown = nativeShownKindId(node);
-	return typeof shown === 'number' ? (kindNameFromId?.(shown) ?? String(shown)) : shown;
+	return typeof node.$type === 'number' ? (kindNameFromId?.(node.$type) ?? String(node.$type)) : node.$type;
 }
 
 export function collectChildren(node: WalkNode): unknown[] {
@@ -83,7 +74,7 @@ export function collectChildren(node: WalkNode): unknown[] {
 }
 
 function walkTree(root: unknown, visit: (node: WalkNode) => void): void {
-	const seenCoords = new Set<string>();
+	const seenCoords = new Set<number>();
 	const seenRefs = new WeakSet<object>();
 
 	const visitValue = (value: unknown): void => {
@@ -94,7 +85,7 @@ function walkTree(root: unknown, visit: (node: WalkNode) => void): void {
 		if (!isWalkNode(value)) return;
 		const ref = value as object;
 		if (seenRefs.has(ref)) return;
-		const coordKey = isStub(value) ? `${value.$parentHandle}:${value.$childIndex}` : undefined;
+		const coordKey = isCoordinate(value) ? value.$treeHandle : undefined;
 		if (coordKey !== undefined && seenCoords.has(coordKey)) return;
 		seenRefs.add(ref);
 		if (coordKey !== undefined) seenCoords.add(coordKey);
@@ -119,32 +110,12 @@ export async function run(opts: WalkOptions): Promise<number> {
 		return 1;
 	}
 
-	const rawKindIdFromName = await common.loadKindIdFromName(grammar);
-	const kindIdFromName =
-		rawKindIdFromName === undefined
-			? undefined
-			: (kind: string): number | undefined => {
-					try {
-						return rawKindIdFromName(kind);
-					} catch {
-						return undefined;
-					}
-				};
 	const kindNameFromId = await common.loadKindNameFromId(grammar);
 	// Native engine render — same engine the validators use; the
 	// removed legacy-core renderer had no SpacingWriter, so its output was
 	// seam-less garbage for any grammar with word-word seams.
 	const renderNode = await common.loadNativeRender(grammar);
-	const { Parser, lang } = await common.loadLanguageForGrammar(grammar);
-	const parser = new Parser();
-	parser.setLanguage(lang);
-	const tree = parser.parse(source);
-	if (tree === null) {
-		process.stderr.write('walk: parse returned null\n');
-		return 1;
-	}
-
-	const handle = common.treeHandle(tree, source, kindIdFromName);
+	const handle = await common.buildReadHandle(grammar, source);
 	const root = readNode(handle);
 	const counts = new Map<string, number>();
 	let total = 0;

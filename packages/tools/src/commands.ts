@@ -478,16 +478,6 @@ export function collectValidatorFailuresForGrammar(counts: GrammarCounts): Valid
 				severity: 'error',
 				label: entryKindLabel(m)
 			});
-		// Slot-masking, not necessarily a hard round-trip failure on its own —
-		// 'warning' like the literal-leak coverage issues below, not 'error'.
-		for (const t of result.accessorThrows)
-			failures.push({
-				...t,
-				stage: `${stage}-accessor-throw`,
-				code: 'accessor-throw',
-				severity: 'warning',
-				label: `${t.key} (${t.accessor}, type=${t.type})`
-			});
 		pushSkips(stage, result);
 	}
 

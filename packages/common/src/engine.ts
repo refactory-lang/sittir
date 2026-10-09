@@ -15,7 +15,7 @@ import type {
 	RenderCallOptions,
 	Rendered
 } from '@sittir/types';
-import type { TreeHandle } from './readUntypedNode.ts';
+import type { TreeHandle } from './read.ts';
 import { holdReadTree, toTransportData, type TriviaView } from './transport-data.ts';
 import { readDerivedSides, readTrivia } from './utils.ts';
 import { mintTreeToken, registerTree } from './tree-token.ts';
@@ -61,13 +61,12 @@ export function createRenderHandle(renderText: () => string, saveImpl?: (path: s
 	};
 }
 
-/** The level count a read takes: one by default, the whole tree under `deep`. */
-function depthOf(options: ParseOptions | undefined): number | undefined {
-	return options?.deep === true ? Infinity : undefined;
+/** The level count a read takes: one by default. */
+function depthOf(options: ParseOptions | undefined): number {
+	return options?.depth ?? 1;
 }
 
 export interface NativeEngineLike<TTransport = unknown> {
-	parseAndRead(source: string, depth?: number): string;
 	/**
 	 * Parse `source` and keep its tree.
 	 *
@@ -83,9 +82,7 @@ export interface NativeEngineLike<TTransport = unknown> {
 	 *   route for a child, naming the kind, the child and the index.
 	 */
 	read(treeId: number, index: number, depth?: number): object;
-	readUntypedNode(handle: number, childIndex: number, depth?: number): string;
-	readRoot(treeId: number, depth?: number): string;
-	lineGapsOf(handle: number, span?: number[], kind?: number): string;
+	lineGapsOf(handle: number): string;
 	typedReadRefusal?(treeId: number): string | null;
 	typedReadParity?(treeId: number, today: TTransport): string | null;
 	typedReadRoundTrip?(treeId: number): string | null;
@@ -159,15 +156,7 @@ export type { ParseOptions };
  * from inside the wrap layer or from validator/diagnostic tooling.
  */
 export interface NativeEngineDiagnostics<TRoot extends AnyUntypedNode = AnyUntypedNode>
-	extends EngineDiagnostics<TRoot & ParsedRoot, TreeHandle> {
-	/**
-	 * Reads one node by handle, for inspection. The data it returns does not
-	 * hold its tree: the tree lives only as long as the tree handle of the
-	 * parse that made it, and a render refuses the data. Read through that
-	 * tree handle's `read` for data that renders.
-	 */
-	readUntypedNode(handle: number, childIndex?: number, options?: ParseOptions): AnyUntypedNode;
-}
+	extends EngineDiagnostics<TRoot & ParsedRoot, TreeHandle> {}
 
 /**
  * The render half of the public surface: turning node DATA back into source,
@@ -265,12 +254,7 @@ export function createNativeEngine<
 			...(options?.options ? { options: options.options } : {})
 		};
 		const engine = new status.native.SittirEngine(Object.keys(nativeOptions).length > 0 ? nativeOptions : undefined);
-		const lineGapsOf = (address: LineGapAddress): LineGaps =>
-			JSON.parse(
-				'handle' in address
-					? engine.lineGapsOf(address.handle)
-					: engine.lineGapsOf(address.treeHandle, [address.span.start, address.span.end], address.kind)
-			) as LineGaps;
+		const lineGapsOf = (address: LineGapAddress): LineGaps => JSON.parse(engine.lineGapsOf(address.handle)) as LineGaps;
 		const triviaView: TriviaView = {
 			trivia: (record) => readTrivia(record, lineGapsOf),
 			derived: (record) => readDerivedSides(record, lineGapsOf),
@@ -339,44 +323,36 @@ export function createNativeEngine<
 						return engine.typedReadRoundTrip(treeId);
 					},
 					parseAndRead(source: string, parseOptions?: ParseOptions) {
-						const json = engine.parseAndRead(source, depthOf(parseOptions));
-						const parsed = JSON.parse(json) as NativeParseResult;
-						// Boundary assertion: the native reader returns the grammar's
-						// root kind for a whole-source parse, stamped with its span; the
-						// parse's error regions ride beside it and are stamped here.
-						const root = Object.assign(parsed.untypedNode, { $errors: Object.freeze(parsed.errors) }) as TRoot & ParsedRoot;
-						// One root per depth: the parse's own read seeds it, and a
-						// root asked for at another depth is read natively once.
-						const roots = new Map<number, AnyUntypedNode>([[depthOf(parseOptions) ?? 1, root]]);
+						const parsed = JSON.parse(engine.parse(source)) as NativeParseResult;
 						// Held by `read` below and by every parsed object a read
 						// returns, so it stays reachable exactly as long as
 						// something can still read from this tree or names it.
 						// Its collection is what releases the tree.
 						const liveToken = mintTreeToken(parsed.treeId);
-						holdReadTree(root, liveToken);
 						treeDisposalRegistry.register(liveToken, {
 							release: status.native.disposeTree,
 							treeId: parsed.treeId
 						});
+						const readAt = (index: number, depth: number): object => {
+							const node = engine.read(parsed.treeId, index, depth);
+							holdReadTree(node, liveToken);
+							return node;
+						};
+						// The parse's error regions ride beside the root and are stamped here.
+						const root = Object.assign(readAt(0, depthOf(parseOptions)), { $errors: Object.freeze(parsed.errors) }) as TRoot & ParsedRoot;
+						// One root per depth: the parse's own read seeds it, and a
+						// root asked for at another depth is read once.
+						const roots = new Map<number, object>([[depthOf(parseOptions), root]]);
 						const tree: TreeHandle = {
-							get rootNode(): never {
-								throw new Error('rootNode unavailable on native engine handle; use tree.read()');
-							},
 							source,
-							read: (handle, childIndex, depth) => {
-								if (handle === undefined) {
-									const levels = depth ?? 1;
-									let cached = roots.get(levels);
-									if (cached === undefined) {
-										cached = JSON.parse(engine.readRoot(parsed.treeId, depth)) as AnyUntypedNode;
-										holdReadTree(cached, liveToken);
-										roots.set(levels, cached);
-									}
-									return cached;
+							read: (index, depth = 1) => {
+								if (index !== 0) return readAt(index, depth);
+								let cached = roots.get(depth);
+								if (cached === undefined) {
+									cached = readAt(0, depth);
+									roots.set(depth, cached);
 								}
-								const node = JSON.parse(engine.readUntypedNode(handle, childIndex ?? 0, depth)) as AnyUntypedNode;
-								holdReadTree(node, liveToken);
-								return node;
+								return cached;
 							},
 							format: parsed.format,
 							query: {
@@ -396,11 +372,6 @@ export function createNativeEngine<
 						};
 						registerTree(liveToken, tree);
 						return { root, tree };
-					},
-
-					readUntypedNode(handle: number, childIndex = 0, parseOptions?: ParseOptions) {
-						const json = engine.readUntypedNode(handle, childIndex, depthOf(parseOptions));
-						return JSON.parse(json) as AnyUntypedNode;
 					}
 				}
 			}

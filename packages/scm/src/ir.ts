@@ -6,10 +6,6 @@
 //
 // Both surfaces resolve to the same callable bundle: calling an entry
 // coerces its input; `.strict` is the strict factory.
-//
-// Edge case: `readUntypedNode()` output has no `$source` provenance. To pass it
-// straight to an entry, use the typed wrapper (`readNode`) so the
-// entry sees a wrapped node and takes the identity quick-return path.
 
 import * as F from './factories/index.js';
 

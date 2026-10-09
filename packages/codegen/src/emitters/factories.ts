@@ -1688,18 +1688,6 @@ export function kindEnumTextExpr(text: string, kindEntries: readonly KindEnumEnt
 	return entry === undefined ? `'${escForSource(text)}'` : `TSKindId.${entry.member}`;
 }
 
-export function childrenSetterRestType(
-	children: readonly AssembledNonterminal[],
-	childElem: string,
-	childRest: string
-): string {
-	const anyMultiple = children.some((c) => isMultiple(c));
-	const anyNonEmpty = children.some((c) => isNonEmpty(c));
-	if (!anyMultiple) return `readonly [${childRest}]`;
-	if (anyNonEmpty) return `NonEmptyArray<${childElem}>`;
-	return `${childRest}[]`;
-}
-
 function renameUnusedConfigParam(lines: string[]): string {
 	const idx = lines.findIndex((l) => /^(?:export )?function \w+\(config\??:/.test(l));
 	if (idx === -1) return lines.join('\n');

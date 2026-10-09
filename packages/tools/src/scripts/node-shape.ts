@@ -12,7 +12,7 @@ const root = resolve(import.meta.dirname, '../../../..');
 
 interface Engine {
 	readonly build: any;
-	parse(source: string, options?: { deep?: boolean }): unknown;
+	parse(source: string, options?: { depth?: number }): unknown;
 	render(node: unknown): unknown;
 }
 
@@ -69,7 +69,7 @@ const built = async (): Promise<void> => {
 
 const parsed = async (grammar: string, file: string): Promise<void> => {
 	const engine = await engineOf(grammar);
-	const tree = engine.parse(readFileSync(resolve(root, file), 'utf8'), { deep: true });
+	const tree = engine.parse(readFileSync(resolve(root, file), 'utf8'), { depth: Infinity });
 	const nodes = typedNodesOf(tree);
 	console.log(`${grammar} ${file}: ${nodes.length} nodes, ${nodes.filter(hasFastProperties).length} with fast properties`);
 	console.log(`  toTransportData(root): ${(best(() => toTransportData(tree as Parameters<typeof toTransportData>[0], STORED_TRIVIA), 8) * 1000).toFixed(0)} us`);

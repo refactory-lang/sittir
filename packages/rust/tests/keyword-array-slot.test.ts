@@ -6,10 +6,10 @@ const rs = await createEngine(rust);
 const rsNative = (await rust.load()).createNative();
 
 function readModifiers(text: string): number[] {
-	const { root } = rsNative.parseAndRead(`${text} fn f() {}`, { deep: true });
-	const modifiers = (root as unknown as { _statements: { _function_modifiers: { _modifier: unknown } } })._statements
+	const { root } = rsNative.parseAndRead(`${text} fn f() {}`, { depth: Infinity });
+	const modifiers = (root as unknown as { _statements: { _function_modifiers: { _modifier: unknown } }[] })._statements[0]!
 		._function_modifiers._modifier;
-	return [modifiers].flat().map((modifier) => (modifier as { $type: number }).$type);
+	return [modifiers].flat() as number[];
 }
 
 describe('keyword extraction at an array slot', () => {

@@ -84,15 +84,20 @@ impl<'s> ReadCtx<'s> {
         }
     }
 
-    /// The coordinate of the node at `index`.
+    /// The coordinate of the node at `index`. The root (index 0) spans the
+    /// whole source: tree-sitter's root starts at the first token, and the
+    /// root stands for the file, whose leading and trailing bytes its
+    /// coordinate render must keep.
     pub fn coordinate(&self, node: &Node<'_>, index: u32) -> NodeCoordinate {
         let range = node.byte_range();
+        let span = if index == 0 {
+            Span { start: 0, end: self.source.len() as u32 }
+        } else {
+            Span { start: range.start as u32, end: range.end as u32 }
+        };
         NodeCoordinate {
             kind: Some(KindId(node.grammar_id())),
-            ..NodeCoordinate::new(
-                encode_handle(self.tree_id, index),
-                Span { start: range.start as u32, end: range.end as u32 },
-            )
+            ..NodeCoordinate::new(encode_handle(self.tree_id, index), span)
         }
     }
 
@@ -357,11 +362,22 @@ impl<T: ReadTransport> ReadTransport for Box<T> {
 }
 
 /// A transport an envelope takes the layout of: the layout its content was
-/// read with. A struct holds it in its layout field, a choice takes it from
+/// read with, all but the coordinate, which names the content's own node and
+/// stays on it. A struct holds it in its layout field, a choice takes it from
 /// the variant it holds, and a transport with no layout (a unit variant, an
 /// enum kind's member) gives the default.
 pub trait HasLayout<L> {
     fn take_layout(&mut self) -> L;
+}
+
+/// A struct's layout taken for its envelope: the whole layout, with the
+/// coordinate left behind on the struct when it has one.
+pub fn take_layout_keeping_at<T>(layout: &mut Option<Box<TransportLayout<T>>>) -> Option<Box<TransportLayout<T>>> {
+    let taken = layout.take();
+    if let Some(at) = taken.as_ref().and_then(|layout| layout.at.clone()) {
+        *layout = Some(Box::new(TransportLayout { at: Some(at), ..TransportLayout::default() }));
+    }
+    taken
 }
 
 impl<L, T: HasLayout<L>> HasLayout<L> for Box<T> {
