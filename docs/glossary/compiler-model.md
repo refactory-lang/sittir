@@ -4348,6 +4348,18 @@ The grammar root's edge defaults: `tight` before; after, a line break when the g
 
 The seam arms of a site that admits only line breaks, the after edge of a line-terminated trivia kind: the spacing arms whose whitespace kind's literal text contains a line break (read from the `_layout` members' own text, never from the arm names), and the site's stated default, the arm spelled by `_newline` (`NEWLINE_MEMBER`). A grammar that lists no `_newline` stops codegen, since such a site would have no default.
 
+### `packages/codegen/src/compiler/model/layout-kinds.ts::LAYOUT_KIND_BITS`
+
+The bit each gap kind takes in a `LayoutKinds` set (`_tight` 1, `_space` 2, `_tab` 4, `_newline` 8, `_blankline` 16, `_double_blankline` 32). The runtime's `LayoutKinds` constants spell the same positions, with bit 64 held for a line continuation. `indent` and `dedent` move depth and have no bit.
+
+### `packages/codegen/src/compiler/model/layout-kinds.ts::LeafEdges`
+
+The two sets a leaf kind is stamped with: `leading`, the gap kinds that may stand before its text, and `trailing`, those that may stand after it, each as `LAYOUT_KIND_BITS` bits.
+
+### `packages/codegen/src/compiler/model/layout-kinds.ts::leafEdgesOf`
+
+A leaf's `LeafEdges`, or nothing when both edges take every gap kind the grammar admits. A gap kind is refused at an edge when its text is not empty and every character of it is one the pattern can begin (or end) with: written there, the lexer would read the text as part of the leaf. `_tight` has no characters and is always taken. A `token.immediate` leaf takes only `_tight` before it. A leaf with no pattern, or one the automaton cannot read, takes every kind at the edge it cannot decide. A grammar that declares no whitespace has no sets.
+
 ### `packages/codegen/src/compiler/model/layout-kinds.ts::indentChars`
 
 The characters a render's `indent` unit may be made of: the literal texts of the `INDENT_MEMBERS` (`_space`, `_tab`) the grammar's `_layout` supertype lists, in that order. rust, typescript, python and scm give `' '` and `'\t'`; regex, which admits neither, gives none and has no `indent` option. A node map with no `_layout` supertype (`declaresWhitespace`) admits no member, so none either. The one fact behind the `IndentChar` type in `options.ts` (`renderOptionsModule`) and the runtime's `OptionTables.indent_chars` (`planRenderOptions`), so the type and the runtime check cannot disagree.
@@ -5322,6 +5334,10 @@ The stamped delimited fact: `open` and `close` (a literal `text` or the `slot` h
 ### `packages/codegen/src/compiler/model/pattern-automaton.ts::leadingChars`
 
 The characters a pattern's accepted texts can start with: the live edges out of the start state.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::trailingChars`
+
+The characters a pattern's accepted texts can end with: the edges into an accepting state that a match can still stop after. The mirror of `leadingChars`; `leafEdgesOf` reads the two to decide which layout a leaf's pattern would swallow at each edge.
 
 ### `packages/codegen/src/compiler/model/pattern-automaton.ts::shortestAccepted`
 

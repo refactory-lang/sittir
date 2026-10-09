@@ -442,9 +442,6 @@
 			"text": "("
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "lparen_after"
 		},
@@ -495,9 +492,6 @@
 		{
 			"kind": "text",
 			"text": "("
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -561,9 +555,6 @@
 		{
 			"kind": "text",
 			"text": "!"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",

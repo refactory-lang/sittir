@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { astStructuralDiff } from '../read-render-parse.ts';
-import type { TSNode } from '../common.ts';
+import { loadLanguageForGrammar, type TSNode } from '../common.ts';
 
 const GRAMMAR_IDS: Record<string, number> = {
 	identifier: 1,
@@ -57,4 +57,31 @@ describe('astStructuralDiff compares grammar types, not display names', () => {
 		const b = node('member_expression', 'super.x', [node('super', 'super'), node('property_identifier', 'x')]);
 		expect(astStructuralDiff(a, b)).toMatch(/member_expression\[0\]\.identifier: grammar type identifier ≠ super/);
 	});
+});
+
+describe('astStructuralDiff compares the text of named leaves', () => {
+	it('fails a named leaf whose text changed under the same kind', () => {
+		const a = node('call_expression', 'f(x)', [node('identifier', 'x')]);
+		const b = node('call_expression', 'f(y)', [node('identifier', 'y')]);
+		expect(astStructuralDiff(a, b)).toMatch(/call_expression\[0\]\.identifier: text "x" ≠ "y"/);
+	});
+
+	it('fails a candidate that is itself a named leaf whose text changed', () => {
+		expect(astStructuralDiff(node('identifier', 'x'), node('identifier', 'y'))).toBe('identifier: text "x" ≠ "y"');
+	});
+
+	it('passes a named leaf whose text is unchanged', () => {
+		const a = node('call_expression', 'f(x)', [node('identifier', 'x')]);
+		expect(astStructuralDiff(a, node('call_expression', 'f(x)', [node('identifier', 'x')]))).toBeNull();
+	});
+
+	it('fails the rust string whose content gained a space', async () => {
+		const { Parser, lang } = await loadLanguageForGrammar('rust');
+		const parser = new Parser();
+		parser.setLanguage(lang);
+		const original = parser.parse('fn f() { let s = "foo\\x42\\x43bar"; }')!.rootNode;
+		const respelled = parser.parse('fn f() { let s = "foo\\x42\\x43 bar"; }')!.rootNode;
+		expect(astStructuralDiff(original, original)).toBeNull();
+		expect(astStructuralDiff(original, respelled)).toMatch(/string_content: text "bar" ≠ " bar"/);
+	}, 60_000);
 });

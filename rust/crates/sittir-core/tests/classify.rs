@@ -21,7 +21,7 @@ fn text_of(kind: u16) -> &'static str {
 const TABLE: WhitespaceTable = WhitespaceTable {
     text_of,
     indent: INDENT,
-    dedent: DEDENT,
+    dedent: DEDENT, leaf_edges: &[], gaps: &[(1, 167), (2, 168), (8, 169), (16, 170)]
 };
 const ALL: &[u16] = &[TIGHT, SPACE, NEWLINE, BLANKLINE, INDENT, DEDENT];
 

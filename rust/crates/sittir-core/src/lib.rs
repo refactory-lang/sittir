@@ -14,6 +14,7 @@ pub mod classify;
 pub mod engine;
 pub mod format;
 pub mod layout;
+pub mod layout_kinds;
 #[cfg(feature = "napi-bindings")]
 pub mod napi_engine;
 pub mod options;
