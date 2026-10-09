@@ -255,7 +255,36 @@ export const printStatementChevron = bundle(F.buildPrintStatementChevron, C.coer
 	max: 1
 });
 export const printStatementPlain = bundle(F.buildPrintStatementPlain, C.coerceToPrintStatementPlain);
-export const parenthesizedImportList = bundle(F.buildParenthesizedImportList, C.coerceToParenthesizedImportList);
 export const comprehensionClauses = bundle(F.buildComprehensionClauses, C.coerceToComprehensionClauses);
+export const integerHex = bundle(F.buildIntegerHex, C.coerceToIntegerHex, { key: 'integerHex', max: 2 });
+export const integerOctal = bundle(F.buildIntegerOctal, C.coerceToIntegerOctal, { key: 'integerOctal', max: 2 });
+export const integerBinary = bundle(F.buildIntegerBinary, C.coerceToIntegerBinary, { key: 'integerBinary', max: 2 });
+export const floatPoint = bundle(F.buildFloatPoint, C.coerceToFloatPoint, { key: 'floatPoint', max: 1 });
+export const floatLeadingPoint = bundle(F.buildFloatLeadingPoint, C.coerceToFloatLeadingPoint, {
+	key: 'floatLeadingPoint',
+	max: 1
+});
+export const floatScientific = bundle(F.buildFloatScientific, C.coerceToFloatScientific, {
+	key: 'floatScientific',
+	max: 1
+});
+export const assignmentEq = bundle(F.buildAssignmentEq, C.coerceToAssignmentEq, { key: 'assignmentEq', max: 1 });
+export const assignmentType = bundle(F.buildAssignmentType, C.coerceToAssignmentType, {
+	key: 'assignmentType',
+	max: 1
+});
+export const assignmentTyped = bundle(F.buildAssignmentTyped, C.coerceToAssignmentTyped, {
+	key: 'assignmentTyped',
+	max: 1
+});
 export const expressionStatementTuple = bundle(F.buildExpressionStatementTuple, C.coerceToExpressionStatementTuple);
 export const withClauseBare = bundle(F.buildWithClauseBare, C.coerceToWithClauseBare);
+export const withClauseParen = bundle(F.buildWithClauseParen, C.coerceToWithClauseParen);
+export const matchBlockBlock = bundle(F.buildMatchBlockBlock, C.coerceToMatchBlockBlock);
+export const matchBlockEmpty = bundle(F.buildMatchBlockEmpty, C.coerceToMatchBlockEmpty, {
+	key: 'matchBlockEmpty',
+	max: 1
+});
+export const suiteInline = bundle(F.buildSuiteInline, C.coerceToSuiteInline);
+export const suiteBlock = bundle(F.buildSuiteBlock, C.coerceToSuiteBlock);
+export const suiteEmpty = bundle(F.buildSuiteEmpty, C.coerceToSuiteEmpty, { key: 'suiteEmpty', max: 1 });

@@ -17,13 +17,25 @@ export const anonymousNode: Hoisted<typeof O.anonymousNode> = hoistAs<typeof O.a
 export const fieldDefinition: Hoisted<typeof O.fieldDefinition> = hoistAs<typeof O.fieldDefinition>(O.fieldDefinition);
 export const negatedField: Hoisted<typeof O.negatedField> = hoistAs<typeof O.negatedField>(O.negatedField);
 export const predicate: Hoisted<typeof O.predicate> = hoistAs<typeof O.predicate>(O.predicate);
+export const listElementQuantifier: Hoisted<typeof O.listElementQuantifier> = hoistAs<typeof O.listElementQuantifier>(
+	O.listElementQuantifier
+);
 export const groupExpressionArm: Hoisted<typeof O.groupExpressionArm> = hoistAs<typeof O.groupExpressionArm>(
 	O.groupExpressionArm
 );
 export const namedNodeExpressionArm: Hoisted<typeof O.namedNodeExpressionArm> = hoistAs<
 	typeof O.namedNodeExpressionArm
 >(O.namedNodeExpressionArm);
-export const groupingGroup: Hoisted<typeof O.groupingGroup> = hoistAs<typeof O.groupingGroup>(O.groupingGroup);
+export const namedNodePlain: Hoisted<typeof O.namedNodePlain> = hoistAs<typeof O.namedNodePlain>(O.namedNodePlain);
+export const namedNodeSupertyped: Hoisted<typeof O.namedNodeSupertyped> = hoistAs<typeof O.namedNodeSupertyped>(
+	O.namedNodeSupertyped
+);
+export const namedNodeGroupChildren: Hoisted<typeof O.namedNodeGroupChildren> = hoistAs<
+	typeof O.namedNodeGroupChildren
+>(O.namedNodeGroupChildren);
+export const namedNodeGroupAnchoredLast: Hoisted<typeof O.namedNodeGroupAnchoredLast> = hoistAs<
+	typeof O.namedNodeGroupAnchoredLast
+>(O.namedNodeGroupAnchoredLast);
 export const namedNode: Hoisted<typeof O.namedNode> = hoistAs<typeof O.namedNode>(O.namedNode);
 export const listElement: Hoisted<typeof O.listElement> = hoistAs<typeof O.listElement>(O.listElement);
 export const namedNodeGroup: Hoisted<typeof O.namedNodeGroup> = hoistAs<typeof O.namedNodeGroup>(O.namedNodeGroup);

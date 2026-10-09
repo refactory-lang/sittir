@@ -5,6 +5,7 @@ import { TSKindId } from '../types.js';
 import type { Admit, NonEmptyArray, NumericLiteral } from '@sittir/types';
 import {
 	currentHandle,
+	elementsWith,
 	rebuilt,
 	renderText,
 	triviaSide,
@@ -100,8 +101,14 @@ export function buildTerm(...children: NonEmptyArray<Admit<T.TermGroup>>): T.Ter
 		$named: true as const,
 		_term_group,
 		$with: {
-			termGroups: (...vs: NonEmptyArray<Admit<T.TermGroup>>) =>
-				rebuilt(node, handle, () => buildTerm(...restItems('termGroups', vs)))
+			termGroups: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'termGroups', keys: ['content', 'quantifier'], make: buildTermGroup },
+						(...vs: NonEmptyArray<Admit<T.TermGroup>>) => buildTerm(...restItems('termGroups', vs))
+					)
+				)
 		},
 		termGroups: () => _term_group,
 		$render: () => renderText(handle, node),

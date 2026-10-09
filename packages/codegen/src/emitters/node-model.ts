@@ -71,6 +71,7 @@ interface SerializedNodeBase {
 	irKey?: string;
 	hidden: boolean;
 	annotations?: RuleAnnotations;
+	seated?: true;
 	isParameterless?: boolean;
 	stampExpression?: string;
 	oneSurface?: true;
@@ -216,6 +217,7 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 		irKey: node.irKey,
 		hidden: node.hidden,
 		...(node.annotations !== undefined ? { annotations: node.annotations } : {}),
+		...(node.seated ? { seated: true } : {}),
 		...(node.parameterless ? { isParameterless: true } : {}),
 		...(node.stampExpression !== undefined ? { stampExpression: node.stampExpression } : {})
 	};
@@ -297,7 +299,7 @@ function serializeCompoundNode(
 		modelType: node.modelType,
 		slots: node.slots.map((slot) => serializeSlot(node, slot, nodeMap, wires))
 	};
-	if (node.annotations?.hoisted === true) out.name = node.kind;
+	if (node.seated) out.name = node.kind;
 	if (node.separator !== undefined) out.separator = node.separator;
 	const interior = interiorOf(node);
 	if (interior !== undefined) out.interior = interior;

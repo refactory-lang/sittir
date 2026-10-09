@@ -72,6 +72,6 @@ describe('a hoisted builder refuses more arguments than it takes', () => {
 	it('rust: a flattened-variant route takes its full arity and refuses one more', () => {
 		expect(rust.render(rust.build.charLiteral.plain('a')).toString()).toBe("'a'");
 		const call = rust.build.charLiteral.plain as (...args: unknown[]) => unknown;
-		expect(() => call('a', {})).toThrow('charLiteral.plain: takes at most 1 argument, got 2');
+		expect(() => call('a', {})).toThrow('charLiteralPlain: takes at most 1 argument, got 2');
 	});
 });

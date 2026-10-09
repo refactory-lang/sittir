@@ -73,10 +73,9 @@ describe('group()', () => {
 			}
 		});
 
-		it('drops hoisted and keeps the rest', () => {
+		it('keeps hoisted with the rest', () => {
 			for (const out of patched(container({ hoisted: true, variantOf: 'p' }))) {
-				expect((out as unknown as Annotated).annotations?.hoisted).toBeUndefined();
-				expect(out).toMatchObject({ annotations: { variantOf: 'p' }, metadata: { fieldSource: 'override' } });
+				expect(out).toMatchObject({ annotations: { hoisted: true, variantOf: 'p' }, metadata: { fieldSource: 'override' } });
 			}
 		});
 	});

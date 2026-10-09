@@ -3233,6 +3233,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -3533,6 +3534,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "left",
@@ -3634,6 +3636,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "left",
@@ -3700,6 +3703,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "left",
@@ -4861,6 +4865,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -5455,6 +5460,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "operators",
@@ -6320,6 +6326,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -6495,6 +6502,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -7066,6 +7074,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "content",
@@ -7132,6 +7141,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "content",
@@ -7198,6 +7208,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "content",
@@ -7264,6 +7275,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "content",
@@ -7330,6 +7342,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "content",
@@ -7396,6 +7409,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "content",
@@ -7462,6 +7476,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "content",
@@ -7607,6 +7622,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "content",
@@ -7716,6 +7732,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "value",
@@ -8062,6 +8079,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -8306,6 +8324,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "integer",
@@ -8463,6 +8482,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "integer",
@@ -8620,6 +8640,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "integer",
@@ -9252,7 +9273,13 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "parenthesized_import_list",
-              "parseKind": "parenthesized_import_list"
+              "parseKind": "parenthesized_import_list",
+              "seat": {
+                "kind": "parenthesized_import_list",
+                "shape": "arm",
+                "mount": "parenthesizedImportList",
+                "seated": true
+              }
             }
           ]
         }
@@ -9731,7 +9758,13 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "parenthesized_import_list",
-              "parseKind": "parenthesized_import_list"
+              "parseKind": "parenthesized_import_list",
+              "seat": {
+                "kind": "parenthesized_import_list",
+                "shape": "arm",
+                "mount": "parenthesizedImportList",
+                "seated": true
+              }
             }
           ]
         }
@@ -9866,6 +9899,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "prefix",
@@ -9980,6 +10014,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "leafPattern": "/^(?:(?:(?:[0-9]+_?))+(?:[jJ]))$/u",
       "oneSurface": true,
       "factoryShape": "text"
@@ -9995,6 +10030,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "leafPattern": "/^(?:(?:(?:[0-9]+_?))+(?:[Ll]))$/u",
       "oneSurface": true,
       "factoryShape": "text"
@@ -10010,6 +10046,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "pattern": "[0-9]+_?",
       "leafPattern": "/^(?:(?:(?:[0-9]+_?))+)$/u",
       "oneSurface": true,
@@ -10026,6 +10063,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "prefix",
@@ -10124,6 +10162,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "prefix",
@@ -11004,6 +11043,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "leafPattern": "/^(?:\\\\(?:\\r)?\\n)$/u",
       "oneSurface": true,
       "factoryShape": "text"
@@ -11019,6 +11059,7 @@
         "tokenForm": true,
         "hoisted": true
       },
+      "seated": true,
       "isParameterless": true,
       "stampExpression": "\"\\\\\\u0000\" as const",
       "text": "\\\u0000",
@@ -11233,6 +11274,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -11578,6 +11620,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "alternative",
@@ -11616,6 +11659,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "isParameterless": true,
       "slots": [
         {
@@ -12401,6 +12445,10 @@
       "factoryName": "parenthesizedImportList",
       "irKey": "parenthesizedImportList",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "seated": true,
       "slots": [
         {
           "name": "import_list",
@@ -12423,6 +12471,7 @@
           ]
         }
       ],
+      "name": "parenthesized_import_list",
       "factoryShape": "forwarded",
       "forwardsTo": "import_list",
       "factoryFields": [
@@ -13608,6 +13657,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "sign",
@@ -13672,6 +13722,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -13901,6 +13952,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "expression",
@@ -14334,6 +14386,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -14473,6 +14526,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -14555,6 +14609,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "block",
@@ -14597,6 +14652,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "isParameterless": true,
       "slots": [
         {
@@ -14640,6 +14696,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "elements",
@@ -15609,6 +15666,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -16087,6 +16145,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -16168,6 +16227,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "with_items",
@@ -16266,6 +16326,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -16634,6 +16695,7 @@
       "annotations": {
         "hoisted": true
       },
+      "seated": true,
       "slots": [
         {
           "name": "expression",

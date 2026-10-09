@@ -6711,6 +6711,12 @@ grammar that never ran through `wire()`; then no label is automatic.
 /** Derived field provenances to KEEP. Defaults to all. */
 ```
 
+### `packages/codegen/src/compiler/types.ts::KindProvenance`
+
+Where the bindings overlay's kinds came from: `renamedFrom` maps a renamed kind to its base kind, and `splitFrom` maps a split clone to the kind it was cloned from. `bindGrammar` writes both maps onto the evaluated grammar; link carries them under linked names, and every stage after it passes the one object through to the nodes.
+
+A `splitFrom` value is the source kind's bound name, never a base name: `bindGrammar` splits after it renames, and link renames the values with the keys. A clone of a renamed kind therefore names the renamed kind (rust `method_declaration` → `function_declaration`), and the base name is one more step through `renamedFrom` (`function_declaration` → `function_item`).
+
 ### `packages/codegen/src/compiler/types.ts::LinkedGrammar`
 
 There is no hoisted set on the grammar: the fact is the rule's
@@ -8609,15 +8615,17 @@ whose choice holds none of the children's own members (typescript's
 // Other hidden rules survive as-is — Assemble classifies by structure
 ```
 
-A hidden rule whose `annotations.hoisted` is stamped is a hoisted form of the
-kind that references it; the rule is left as it is. The stamp is declared by the route that minted
+A hidden rule that seats on its parent (`seatedOf`: stamped `hoisted`, and
+not a parser supertype) is a hoisted form of the kind that references it; the
+rule is left as it is. A hoisted rule the parser declares a supertype has no
+node to seat, so it is classified like any other hidden choice. The stamp is declared by the route that minted
 the rule — the variant lift, a `groups:` entry, enrich's clause-hoist and
 promoted-arm mints, a `group()` patch, the group lift here — never inferred
 from the body's shape: a hidden sequence with a `field()` that no route
 stamped (an upstream rule, or an authored rule a parent merely aliases) is an
 ordinary hidden rule. The annotation is the one source of the hoisted fact: nothing collects it
 into a set and nothing re-derives it; `withKindFacts` carries the bag across
-every root rebuild so the assembled node still reads it.
+every root rebuild so the assembled node can compute `seated` from it.
 
 ### `packages/codegen/src/compiler/link.ts::flattenNestedChoiceMembers`
 

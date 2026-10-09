@@ -2040,13 +2040,32 @@ The public-symbol kind id link stamped on a list's separator string, or `undefin
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.annotations`
 
 The declarations stamped on the node's rule (`hoisted`, `variant`,
-`variantOf`, `default`, `preference`), read straight off the rule. This is
-the only representation of "hoisted": there is no model flag and no grammar
-set, so a base emitter cannot branch on hoisting by accident — the readers
-are the overlays (seating), the surface exclusions (bundle / `ir` / `is` /
-consts / generated tests, `irKey` phases) and the node model, which passes
-the bag through to the tools. `withKindFacts` keeps the bag on a root that
-a pass rebuilds.
+`variantOf`, `default`, `preference`), read straight off the rule.
+`withKindFacts` keeps the bag on a root that a pass rebuilds. Nothing
+downstream of the node reads `hoisted` here: whether the node seats on its
+parent is `seated`.
+
+### `packages/codegen/src/compiler/model/node-map.ts::KindFacts`
+
+The grammar-wide facts every node constructor reads about its kind: the
+parser's kind entries and the direct arms of the declared supertypes
+(`supertypeArmsOf`).
+`assemble` builds one per grammar and hands the same object to each
+construction, so a fact added here reaches every node without another
+parameter at each site.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.seated`
+
+Whether the node seats on its parent: `seatedOf` its rule's annotations and
+its own kind entry, computed once when the node is built. It is the only
+representation of seating downstream of the rule. Its readers are the
+overlays (seating), wrap and the node model, which serializes it for the
+tools. The surface exclusions read `ownSurface`, which follows it for every
+node but a direct supertype arm.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.ownSurface`
+
+Whether the node has entries of its own on the generated surface: a bundle entry, an `ir` key, an `is` guard, generated tests and a key from the `irKey` phases. A node that does not seat has one. A seated node has none, being built through its parent, unless it is a direct arm of a parser-declared supertype (`KindFacts.supertypeArms`): such an arm keeps its seat and its parent route and also gets its own entries, so the low-level surface reaches it two ways. Stamped once in the constructor; the surface readers read it, and the seating readers (overlays, node model, wrap) read `seated`.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.diagnosticRule`
 

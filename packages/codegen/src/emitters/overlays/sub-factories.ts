@@ -277,7 +277,7 @@ function subFactoriesInternal(
 }
 
 function isHoistedAt(value: NodeBackedRef, group: AssembledNode | undefined): boolean {
-	return group?.annotations?.hoisted === true || value.flattened === true;
+	return group?.seated === true || value.flattened === true;
 }
 
 export interface FlattenKey {
@@ -359,7 +359,7 @@ export function elementsSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly 
 		for (const value of slot.values) {
 			if (!isNodeRef(value)) continue;
 			const child = nodeMap.nodes.get(storageKindOfRef(value.node));
-			if (!(child instanceof AbstractAssembledCompound) || child.annotations?.hoisted !== true) continue;
+			if (!(child instanceof AbstractAssembledCompound) || !child.seated) continue;
 			if (child.rawFactoryName === undefined || classifyFactoryShape(child, nodeMap) !== 'config') continue;
 			groups.push(child);
 		}
@@ -378,7 +378,7 @@ export function tupleSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly Fla
 		const value = slot.values[0]!;
 		if (!isNodeRef(value)) continue;
 		const group = nodeMap.nodes.get(storageKindOfRef(value.node));
-		if (group === undefined || group.annotations?.hoisted !== true) continue;
+		if (group === undefined || !group.seated) continue;
 		if (group.rawFactoryName === undefined) continue;
 		const shape = classifyFactoryShape(group, nodeMap);
 		if (shape !== 'spread' && shape !== 'elements') continue;

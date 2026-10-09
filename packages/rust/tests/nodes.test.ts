@@ -3652,18 +3652,6 @@ describe('struct_pattern_elements', () => {
 	});
 });
 
-describe('use_wildcard_group', () => {
-	it('factory produces correct type', () => {
-		const node = ir.useWildcardGroup();
-		expect(node.$type).toBe(TSKindId.UseWildcardGroup);
-		expect(node.$source).toBe(2);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.useWildcardGroup();
-		expect(() => node.$render!()).not.toThrow();
-	});
-});
-
 describe('token_repetition_pattern_text', () => {
 	it('factory produces correct type', () => {
 		const node = ir.tokenRepetitionPatternText('test');
@@ -3682,9 +3670,362 @@ describe('string_open', () => {
 	});
 });
 
+describe('integer_literal_decimal', () => {
+	it('factory produces correct type', () => {
+		const node = ir.integerLiteralDecimal({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.integerLiteralDecimal({ content: '1' });
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('integer_literal_hex', () => {
+	it('factory produces correct type', () => {
+		const node = ir.integerLiteralHex({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.integerLiteralHex({ content: '0x1' });
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('integer_literal_binary', () => {
+	it('factory produces correct type', () => {
+		const node = ir.integerLiteralBinary({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.integerLiteralBinary({ content: '0b0' });
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('integer_literal_octal', () => {
+	it('factory produces correct type', () => {
+		const node = ir.integerLiteralOctal({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.integerLiteralOctal({ content: '0o0' });
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('char_literal_plain', () => {
+	it('factory produces correct type', () => {
+		const node = ir.charLiteralPlain({ content: 'a' });
+		expect(node.$type).toBe(TSKindId.CharLiteralPlain);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.charLiteralPlain({ content: 'a' });
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('char_literal_escaped_simple', () => {
+	it('factory produces correct type', () => {
+		const node = ir.charLiteralEscapedSimple({ content: '\\n' });
+		expect(node.$type).toBe(TSKindId.CharLiteralEscapedSimple);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.charLiteralEscapedSimple({ content: '\\n' });
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('char_literal_escaped_unicode_fixed', () => {
+	it('factory produces correct type', () => {
+		const node = ir.charLiteralEscapedUnicodeFixed({ content: '\\u0000' });
+		expect(node.$type).toBe(TSKindId.CharLiteralEscapedUnicodeFixed);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.charLiteralEscapedUnicodeFixed({ content: '\\u0000' });
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('char_literal_escaped_unicode_braced', () => {
+	it('factory produces correct type', () => {
+		const node = ir.charLiteralEscapedUnicodeBraced({ content: '\\u{0}' });
+		expect(node.$type).toBe(TSKindId.CharLiteralEscapedUnicodeBraced);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.charLiteralEscapedUnicodeBraced({ content: '\\u{0}' });
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('char_literal_escaped_hex', () => {
+	it('factory produces correct type', () => {
+		const node = ir.charLiteralEscapedHex({ content: '\\x00' });
+		expect(node.$type).toBe(TSKindId.CharLiteralEscapedHex);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.charLiteralEscapedHex({ content: '\\x00' });
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('escape_sequence_simple', () => {
+	it('factory produces correct type', () => {
+		const node = ir.escapeSequenceSimple('a');
+		expect(node.$type).toBe(TSKindId.EscapeSequenceSimple);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.escapeSequenceSimple('a');
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('escape_sequence_unicode_fixed', () => {
+	it('factory produces correct type', () => {
+		const node = ir.escapeSequenceUnicodeFixed('u0000');
+		expect(node.$type).toBe(TSKindId.EscapeSequenceUnicodeFixed);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.escapeSequenceUnicodeFixed('u0000');
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('escape_sequence_unicode_braced', () => {
+	it('factory produces correct type', () => {
+		const node = ir.escapeSequenceUnicodeBraced('u{0}');
+		expect(node.$type).toBe(TSKindId.EscapeSequenceUnicodeBraced);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.escapeSequenceUnicodeBraced('u{0}');
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('escape_sequence_hex', () => {
+	it('factory produces correct type', () => {
+		const node = ir.escapeSequenceHex('x00');
+		expect(node.$type).toBe(TSKindId.EscapeSequenceHex);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.escapeSequenceHex('x00');
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('array_expression_semi', () => {
+	it('factory produces correct type', () => {
+		const node = ir.arrayExpressionSemi({
+			element: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			length: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ArrayExpressionSemi);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.arrayExpressionSemi({
+			element: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			length: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('array_expression_list', () => {
+	it('factory produces correct type', () => {
+		const node = ir.arrayExpressionList({});
+		expect(node.$type).toBe(TSKindId.ArrayExpressionList);
+		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.arrayExpressionList({});
+		expect(() => node.$render!()).not.toThrow();
+	});
+});
+
+describe('closure_expression_block', () => {
+	it('factory produces correct type', () => {
+		const node = ir.closureExpressionBlock({
+			parameters: { $type: TSKindId.ClosureParameters, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ClosureExpressionBlock);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.closureExpressionBlock({
+			parameters: { $type: TSKindId.ClosureParameters, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('closure_expression_expr', () => {
+	it('factory produces correct type', () => {
+		const node = ir.closureExpressionExpr({
+			parameters: { $type: TSKindId.ClosureParameters, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ClosureExpressionExpr);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.closureExpressionExpr({
+			parameters: { $type: TSKindId.ClosureParameters, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('reference_expression_raw_const', () => {
+	it('factory produces correct type', () => {
+		const node = ir.referenceExpressionRawConst({
+			$type: TSKindId.Identifier,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
+		expect(node.$type).toBe(TSKindId.ReferenceExpressionRawConst);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.referenceExpressionRawConst({
+			$type: TSKindId.Identifier,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('test');
+	});
+});
+
+describe('reference_expression_raw_mut', () => {
+	it('factory produces correct type', () => {
+		const node = ir.referenceExpressionRawMut({
+			$type: TSKindId.Identifier,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
+		expect(node.$type).toBe(TSKindId.ReferenceExpressionRawMut);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.referenceExpressionRawMut({
+			$type: TSKindId.Identifier,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('test');
+	});
+});
+
+describe('reference_expression_mut', () => {
+	it('factory produces correct type', () => {
+		const node = ir.referenceExpressionMut({
+			$type: TSKindId.Identifier,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
+		expect(node.$type).toBe(TSKindId.ReferenceExpressionMut);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.referenceExpressionMut({
+			$type: TSKindId.Identifier,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('test');
+	});
+});
+
+describe('reference_expression_bare', () => {
+	it('factory produces correct type', () => {
+		const node = ir.referenceExpressionBare({
+			$type: TSKindId.Identifier,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
+		expect(node.$type).toBe(TSKindId.ReferenceExpressionBare);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.referenceExpressionBare({
+			$type: TSKindId.Identifier,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('test');
+	});
+});
+
+describe('impl_item_body', () => {
+	it('factory produces correct type', () => {
+		const node = ir.implItemBody({
+			type: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any,
+			declarationList: { $type: TSKindId.DeclarationList, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ImplItemBody);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.implItemBody({
+			type: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any,
+			declarationList: { $type: TSKindId.DeclarationList, $text: 'test', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
 describe('impl_item_body sub-factories', () => {
 	it('positiveClause builds the parent', () => {
-		const node = ir.implItem.body.positiveClause.coerce({
+		const node = ir.implItemBody.positiveClause({
 			type: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any,
 			declarationList: { $type: TSKindId.DeclarationList, $text: 'test', $source: 2, $named: true } as any,
 			traitClause: {
@@ -3700,7 +4041,7 @@ describe('impl_item_body sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('negativeClause builds the parent', () => {
-		const node = ir.implItem.body.negativeClause.coerce({
+		const node = ir.implItemBody.negativeClause({
 			type: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any,
 			declarationList: { $type: TSKindId.DeclarationList, $text: 'test', $source: 2, $named: true } as any,
 			traitClause: {
@@ -3717,9 +4058,22 @@ describe('impl_item_body sub-factories', () => {
 	});
 });
 
+describe('impl_item_semi', () => {
+	it('factory produces correct type', () => {
+		const node = ir.implItemSemi({ type: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any });
+		expect(node.$type).toBe(TSKindId.ImplItemSemi);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.implItemSemi({ type: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any });
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
 describe('impl_item_semi sub-factories', () => {
 	it('positiveClause builds the parent', () => {
-		const node = ir.implItem.semi.positiveClause.coerce({
+		const node = ir.implItemSemi.positiveClause({
 			type: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any,
 			traitClause: {
 				$type: TSKindId.TypeIdentifier,
@@ -3734,7 +4088,7 @@ describe('impl_item_semi sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('negativeClause builds the parent', () => {
-		const node = ir.implItem.semi.negativeClause.coerce({
+		const node = ir.implItemSemi.negativeClause({
 			type: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any,
 			traitClause: {
 				$type: TSKindId.TypeIdentifier,
@@ -3747,6 +4101,306 @@ describe('impl_item_semi sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.ImplItemSemi);
 		expect((node as any).traitClause()?.$type).toBe(TSKindId.ImplItemNegativeClause);
 		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('mod_item_external', () => {
+	it('factory produces correct type', () => {
+		const node = ir.modItemExternal({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ModItemExternal);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.modItemExternal({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('mod_item_inline', () => {
+	it('factory produces correct type', () => {
+		const node = ir.modItemInline({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.DeclarationList, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ModItemInline);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.modItemInline({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.DeclarationList, $text: 'test', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('or_pattern_binary', () => {
+	it('factory produces correct type', () => {
+		const node = ir.orPatternBinary({
+			left: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any,
+			right: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.OrPatternBinary);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.orPatternBinary({
+			left: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any,
+			right: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('or_pattern_prefix', () => {
+	it('factory produces correct type', () => {
+		const node = ir.orPatternPrefix({ $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any);
+		expect(node.$type).toBe(TSKindId.OrPatternPrefix);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.orPatternPrefix({ $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any);
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('u8');
+	});
+});
+
+describe('pointer_type_const', () => {
+	it('factory produces correct type', () => {
+		const node = ir.pointerTypeConst({ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any);
+		expect(node.$type).toBe(TSKindId.PointerTypeConst);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.pointerTypeConst({ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any);
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('()');
+	});
+});
+
+describe('pointer_type_mut', () => {
+	it('factory produces correct type', () => {
+		const node = ir.pointerTypeMut({ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any);
+		expect(node.$type).toBe(TSKindId.PointerTypeMut);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.pointerTypeMut({ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any);
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('()');
+	});
+});
+
+describe('range_expression_binary', () => {
+	it('factory produces correct type', () => {
+		const node = ir.rangeExpressionBinary({
+			start: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			operator: '..',
+			end: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.RangeExpressionBinary);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.rangeExpressionBinary({
+			start: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			operator: '..',
+			end: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('range_expression_postfix', () => {
+	it('factory produces correct type', () => {
+		const node = ir.rangeExpressionPostfix({
+			$type: TSKindId.Identifier,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
+		expect(node.$type).toBe(TSKindId.RangeExpressionPostfix);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.rangeExpressionPostfix({
+			$type: TSKindId.Identifier,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('test');
+	});
+});
+
+describe('range_expression_prefix', () => {
+	it('factory produces correct type', () => {
+		const node = ir.rangeExpressionPrefix({
+			$type: TSKindId.Identifier,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
+		expect(node.$type).toBe(TSKindId.RangeExpressionPrefix);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.rangeExpressionPrefix({
+			$type: TSKindId.Identifier,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('test');
+	});
+});
+
+describe('range_expression_bare', () => {
+	it('factory produces correct type', () => {
+		const node = ir.rangeExpressionBare({
+			$type: TSKindId._RangeExpressionBare,
+			$text: '..',
+			$source: 2,
+			$named: true
+		} as any);
+		expect(node.$type).toBe(TSKindId.RangeExpressionBare);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.rangeExpressionBare({
+			$type: TSKindId._RangeExpressionBare,
+			$text: '..',
+			$source: 2,
+			$named: true
+		} as any);
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('..');
+	});
+});
+
+describe('foreign_mod_item_semi', () => {
+	it('factory produces correct type', () => {
+		const node = ir.foreignModItemSemi({
+			externModifier: { $type: TSKindId.ExternModifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ForeignModItemSemi);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.foreignModItemSemi({
+			externModifier: { $type: TSKindId.ExternModifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('foreign_mod_item_body', () => {
+	it('factory produces correct type', () => {
+		const node = ir.foreignModItemBody({
+			externModifier: { $type: TSKindId.ExternModifier, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.DeclarationList, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ForeignModItemBody);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.foreignModItemBody({
+			externModifier: { $type: TSKindId.ExternModifier, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.DeclarationList, $text: 'test', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('match_arm_with_comma', () => {
+	it('factory produces correct type', () => {
+		const node = ir.matchArmWithComma({
+			pattern: {
+				$type: TSKindId.MatchPattern,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_pattern: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any
+			} as any,
+			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.MatchArmWithComma);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.matchArmWithComma({
+			pattern: {
+				$type: TSKindId.MatchPattern,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_pattern: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any
+			} as any,
+			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('match_arm_block_ending', () => {
+	it('factory produces correct type', () => {
+		const node = ir.matchArmBlockEnding({
+			pattern: {
+				$type: TSKindId.MatchPattern,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_pattern: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any
+			} as any,
+			value: {
+				$type: TSKindId.UnsafeBlock,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_body: { $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.MatchArmBlockEnding);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.matchArmBlockEnding({
+			pattern: {
+				$type: TSKindId.MatchPattern,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_pattern: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any
+			} as any,
+			value: {
+				$type: TSKindId.UnsafeBlock,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_body: { $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any
+			} as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
 	});
 });
 
@@ -3777,9 +4431,247 @@ describe('block_comment_regular', () => {
 	});
 });
 
+describe('token_tree_pattern_paren', () => {
+	it('factory produces correct type', () => {
+		const node = ir.tokenTreePatternParen();
+		expect(node.$type).toBe(TSKindId.TokenTreePatternParen);
+		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.tokenTreePatternParen();
+		expect(() => node.$render!()).not.toThrow();
+	});
+});
+
+describe('token_tree_pattern_bracket', () => {
+	it('factory produces correct type', () => {
+		const node = ir.tokenTreePatternBracket();
+		expect(node.$type).toBe(TSKindId.TokenTreePatternBracket);
+		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.tokenTreePatternBracket();
+		expect(() => node.$render!()).not.toThrow();
+	});
+});
+
+describe('token_tree_pattern_brace', () => {
+	it('factory produces correct type', () => {
+		const node = ir.tokenTreePatternBrace();
+		expect(node.$type).toBe(TSKindId.TokenTreePatternBrace);
+		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.tokenTreePatternBrace();
+		expect(() => node.$render!()).not.toThrow();
+	});
+});
+
+describe('token_tree_paren', () => {
+	it('factory produces correct type', () => {
+		const node = ir.tokenTreeParen();
+		expect(node.$type).toBe(TSKindId.TokenTreeParen);
+		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.tokenTreeParen();
+		expect(() => node.$render!()).not.toThrow();
+	});
+});
+
+describe('token_tree_bracket', () => {
+	it('factory produces correct type', () => {
+		const node = ir.tokenTreeBracket();
+		expect(node.$type).toBe(TSKindId.TokenTreeBracket);
+		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.tokenTreeBracket();
+		expect(() => node.$render!()).not.toThrow();
+	});
+});
+
+describe('token_tree_brace', () => {
+	it('factory produces correct type', () => {
+		const node = ir.tokenTreeBrace();
+		expect(node.$type).toBe(TSKindId.TokenTreeBrace);
+		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.tokenTreeBrace();
+		expect(() => node.$render!()).not.toThrow();
+	});
+});
+
+describe('delim_token_tree_paren', () => {
+	it('factory produces correct type', () => {
+		const node = ir.delimTokenTreeParen();
+		expect(node.$type).toBe(TSKindId.DelimTokenTreeParen);
+		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.delimTokenTreeParen();
+		expect(() => node.$render!()).not.toThrow();
+	});
+});
+
+describe('delim_token_tree_bracket', () => {
+	it('factory produces correct type', () => {
+		const node = ir.delimTokenTreeBracket();
+		expect(node.$type).toBe(TSKindId.DelimTokenTreeBracket);
+		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.delimTokenTreeBracket();
+		expect(() => node.$render!()).not.toThrow();
+	});
+});
+
+describe('delim_token_tree_brace', () => {
+	it('factory produces correct type', () => {
+		const node = ir.delimTokenTreeBrace();
+		expect(node.$type).toBe(TSKindId.DelimTokenTreeBrace);
+		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.delimTokenTreeBrace();
+		expect(() => node.$render!()).not.toThrow();
+	});
+});
+
+describe('field_pattern_shorthand', () => {
+	it('factory produces correct type', () => {
+		const node = ir.fieldPatternShorthand({
+			name: {
+				$type: TSKindId.ShorthandFieldIdentifier,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.FieldPatternShorthand);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.fieldPatternShorthand({
+			name: {
+				$type: TSKindId.ShorthandFieldIdentifier,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('field_pattern_named', () => {
+	it('factory produces correct type', () => {
+		const node = ir.fieldPatternNamed({
+			name: {
+				$type: TSKindId.FieldIdentifier,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any,
+			pattern: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.FieldPatternNamed);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.fieldPatternNamed({
+			name: {
+				$type: TSKindId.FieldIdentifier,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any,
+			pattern: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('macro_definition_paren', () => {
+	it('factory produces correct type', () => {
+		const node = ir.macroDefinitionParen({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.MacroDefinitionParen);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.macroDefinitionParen({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('macro_definition_bracket', () => {
+	it('factory produces correct type', () => {
+		const node = ir.macroDefinitionBracket({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.MacroDefinitionBracket);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.macroDefinitionBracket({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('macro_definition_brace', () => {
+	it('factory produces correct type', () => {
+		const node = ir.macroDefinitionBrace({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.MacroDefinitionBrace);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.macroDefinitionBrace({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('range_pattern_prefix', () => {
+	it('factory produces correct type', () => {
+		const node = ir.rangePatternPrefix({
+			content: '..=',
+			right: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.RangePatternPrefix);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.rangePatternPrefix({
+			content: '..=',
+			right: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
 describe('range_pattern_prefix sub-factories', () => {
 	it('dotDotEq builds the parent', () => {
-		const node = ir.rangePattern.prefix.dotDotEq.coerce({
+		const node = ir.rangePatternPrefix.dotDotEq({
 			right: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.RangePatternPrefix);
@@ -3788,7 +4680,7 @@ describe('range_pattern_prefix sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('dotDot builds the parent', () => {
-		const node = ir.rangePattern.prefix.dotDot.coerce({
+		const node = ir.rangePatternPrefix.dotDot({
 			right: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.RangePatternPrefix);
@@ -3804,9 +4696,28 @@ describe('range_pattern_with_left_bare', () => {
 	});
 });
 
+describe('range_pattern_with_left', () => {
+	it('factory produces correct type', () => {
+		const node = ir.rangePatternWithLeft({
+			left: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any,
+			content: { $type: TSKindId.RangePatternWithLeftBare, $text: '..', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.RangePatternWithLeft);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.rangePatternWithLeft({
+			left: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any,
+			content: { $type: TSKindId.RangePatternWithLeftBare, $text: '..', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
 describe('range_pattern_with_left sub-factories', () => {
 	it('withRight builds the parent', () => {
-		const node = ir.rangePattern.withLeft.withRight.coerce({
+		const node = ir.rangePatternWithLeft.withRight({
 			left: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any,
 			content: '...',
 			right: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any
@@ -3816,7 +4727,7 @@ describe('range_pattern_with_left sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('bare builds the parent', () => {
-		const node = ir.rangePattern.withLeft.bare.coerce({
+		const node = ir.rangePatternWithLeft.bare({
 			left: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.RangePatternWithLeft);
@@ -3825,7 +4736,7 @@ describe('range_pattern_with_left sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('withRight.dotDotDot builds the parent', () => {
-		const node = ir.rangePattern.withLeft.withRight.dotDotDot.coerce({
+		const node = ir.rangePatternWithLeft.withRight.dotDotDot({
 			left: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any,
 			content: [{ right: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any }]
 		});
@@ -3834,7 +4745,7 @@ describe('range_pattern_with_left sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('withRight.dotDotEq builds the parent', () => {
-		const node = ir.rangePattern.withLeft.withRight.dotDotEq.coerce({
+		const node = ir.rangePatternWithLeft.withRight.dotDotEq({
 			left: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any,
 			content: [{ right: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any }]
 		});
@@ -3843,13 +4754,104 @@ describe('range_pattern_with_left sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('withRight.dotDot builds the parent', () => {
-		const node = ir.rangePattern.withLeft.withRight.dotDot.coerce({
+		const node = ir.rangePatternWithLeft.withRight.dotDot({
 			left: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any,
 			content: [{ right: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any }]
 		});
 		expect(node.$type).toBe(TSKindId.RangePatternWithLeft);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('struct_item_brace', () => {
+	it('factory produces correct type', () => {
+		const node = ir.structItemBrace({
+			name: {
+				$type: TSKindId.TypeIdentifier,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any,
+			body: { $type: TSKindId.FieldDeclarationList, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.StructItemBrace);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.structItemBrace({
+			name: {
+				$type: TSKindId.TypeIdentifier,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any,
+			body: { $type: TSKindId.FieldDeclarationList, $text: 'test', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('struct_item_tuple', () => {
+	it('factory produces correct type', () => {
+		const node = ir.structItemTuple({
+			name: {
+				$type: TSKindId.TypeIdentifier,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any,
+			body: { $type: TSKindId.OrderedFieldDeclarationList, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.StructItemTuple);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.structItemTuple({
+			name: {
+				$type: TSKindId.TypeIdentifier,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any,
+			body: { $type: TSKindId.OrderedFieldDeclarationList, $text: 'test', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('struct_item_unit', () => {
+	it('factory produces correct type', () => {
+		const node = ir.structItemUnit({
+			name: {
+				$type: TSKindId.TypeIdentifier,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.StructItemUnit);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.structItemUnit({
+			name: {
+				$type: TSKindId.TypeIdentifier,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
 	});
 });
 

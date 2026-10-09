@@ -5869,26 +5869,49 @@ export function wrapUseAsClause(data: T.UseAsClause, tree: TreeHandle): T.UseAsC
 export function wrapUseWildcard(data: T.UseWildcard, tree: TreeHandle): T.UseWildcard.Parsed {
 	data = modelSlots(data, ['_use_wildcard_group']);
 	const handle = currentHandle();
+	const _use_wildcard_group = storeExpanded(
+		normalizeSingularWrapSlot(data._use_wildcard_group, 'use_wildcard_group', false, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'use_wildcard_group',
+			span: (data as _UntypedNode).$span
+		}),
+		tree
+	);
+	const readGroup_useWildcardGroup = () =>
+		hydrateSlot<T.UseWildcardGroup | undefined>(node, '_use_wildcard_group', tree);
 	const node = {
 		...data,
 		$type: TSKindId.UseWildcard as const,
-		_use_wildcard_group: storeExpanded(
-			normalizeSingularWrapSlot(data._use_wildcard_group, 'use_wildcard_group', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'use_wildcard_group',
-				span: (data as _UntypedNode).$span
-			}),
-			tree
-		),
+		_use_wildcard_group,
 
 		useWildcardGroup() {
 			return hydrateSlot<T.UseWildcardGroup | undefined>(this, '_use_wildcard_group', tree);
 		},
 		$with: {
 			useWildcardGroup: (v: NonNullable<T.UseWildcard['_use_wildcard_group']>) =>
-				rebuilt(node, handle, () => wrapUseWildcard({ ...$edited(data), _use_wildcard_group: v }, tree))
+				rebuilt(node, handle, () => wrapUseWildcard({ ...$edited(data), _use_wildcard_group: v }, tree)),
+			path: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'useWildcardGroup',
+							stored: '_use_wildcard_group',
+							kind: TSKindId.UseWildcardGroup as const,
+							make: RAW.buildUseWildcardGroup,
+							keys: [{ name: 'path', rest: false }]
+						},
+						'path',
+						args,
+						(v: NonNullable<T.UseWildcard['_use_wildcard_group']>) =>
+							wrapUseWildcard({ ...$edited(data), _use_wildcard_group: v }, tree),
+						() => readGroup_useWildcardGroup.call(node)
+					)
+				)
 		},
+		path:
+			_use_wildcard_group === undefined ? undefined : () => groupField(readGroup_useWildcardGroup.call(node), 'path'),
+		[STORED_SLOT_READERS]: { useWildcardGroup: readGroup_useWildcardGroup },
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),

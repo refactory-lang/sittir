@@ -6123,6 +6123,13 @@ export interface UseWildcard {
 	};
 	readonly __slotHints__?: {
 		readonly useWildcardGroup: SlotHint<T.UseWildcardGroup, true>;
+		readonly $flat: FlatHint<
+			'useWildcardGroup',
+			T.UseWildcardGroup,
+			{ readonly path: 'path' },
+			true,
+			'_use_wildcard_group'
+		>;
 	};
 	useWildcardGroup(): UseWildcardGroup | undefined;
 }
@@ -20772,50 +20779,21 @@ export namespace UseAsClause {
 }
 export namespace UseWildcard {
 	export type Config = ConfigFor<TSKindId.UseWildcard>;
-	export interface Bound extends BoundOf<T.UseWildcard, BoundByKindId>, NodeMethodsOf {
+	interface BoundSurface extends BoundOf<T.UseWildcard, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.UseWildcard['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
+		readonly $with: BoundWithNode<Bound, BoundByKindId, BoundSurface>;
 	}
-	export interface Parsed extends ParsedOf<T.UseWildcard, ParsedByKindId>, NodeMethodsOf, HoldsTree {
+	export type Bound = BoundSurface & FlatShapesOf<BoundSurface, T.UseWildcard, BoundByKindId>;
+	interface ParsedSurface extends ParsedOf<T.UseWildcard, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.UseWildcard['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $with: WithNode<Parsed, BoundByKindId, ParsedSurface>;
+		readonly $query: () => QueryFacet<Parsed, ParsedByKindId>;
 	}
+	export type Parsed = ParsedSurface & FlatShapesOf<ParsedSurface, T.UseWildcard, ParsedByKindId>;
 	export type Loose = LooseFor<TSKindId.UseWildcard>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UseWildcard>;
-	export type BuildArgs =
-		| [value?: Admit<T.UseWildcardGroup>]
-		| [
-				value?: Admit<
-					| TSKindId.Self
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
-					| T.Metavariable
-					| TSKindId.Super
-					| TSKindId.Crate
-					| T.Identifier
-					| T.ScopedIdentifier
-					| TSKindId.DefaultKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.GenKeyword
-				>
-		  ];
-	export type LooseArgs = [value?: T.UseWildcard.Loose];
+	export type BuildArgs = [value?: Admit<T.UseWildcardGroup> | T.UseWildcardGroup.BuildArgs[0]];
+	export type LooseArgs = [value?: T.UseWildcard.Loose | T.UseWildcardGroup.LooseArgs[0]];
 	export type Kind = TSKindId.UseWildcard;
 }
 export namespace Parameters {

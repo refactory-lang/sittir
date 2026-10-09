@@ -17,7 +17,7 @@ interface CensusSlot {
 interface CensusNode {
 	readonly kind: string;
 	readonly modelType?: string;
-	readonly annotations?: { readonly hoisted?: true };
+	readonly seated?: true;
 	readonly slots?: readonly CensusSlot[];
 	readonly elementSeats?: readonly { readonly kind: string }[];
 }
@@ -36,7 +36,7 @@ export interface CensusModel {
 export function hoistedCensus(model: CensusModel): HoistedCensus {
 	const nodes = Array.isArray(model.nodes) ? model.nodes : Object.values(model.nodes);
 	const hoisted = nodes
-		.filter((n) => n.annotations?.hoisted === true && n.modelType !== 'list')
+		.filter((n) => n.seated === true && n.modelType !== 'list')
 		.map((n) => n.kind)
 		.sort();
 	const seatedSet = new Set<string>();
@@ -57,7 +57,7 @@ export function hoistedCensus(model: CensusModel): HoistedCensus {
 /** Every hoisted kind of the model, list kinds included. */
 export function hoistedKindCount(model: CensusModel): number {
 	const nodes = Array.isArray(model.nodes) ? model.nodes : Object.values(model.nodes);
-	return nodes.filter((n) => n.annotations?.hoisted === true).length;
+	return nodes.filter((n) => n.seated === true).length;
 }
 
 export interface HoistedCensusOptions {

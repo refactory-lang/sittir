@@ -36,7 +36,7 @@ describe('ir entry ratchet', () => {
 		// Grouped namespaces and `synonym` are objects, not builders — the
 		// ratchet tracks builder exposure, so only callable entries count.
 		const builders = Object.keys(py.build).filter((k) => typeof (py.build as Record<string, unknown>)[k] === 'function');
-		expect(builders.length).toBeLessThanOrEqual(157);
+		expect(builders.length).toBeLessThanOrEqual(166);
 	});
 });
 

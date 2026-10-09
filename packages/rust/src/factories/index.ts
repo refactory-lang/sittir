@@ -237,9 +237,138 @@ export const patterns: Hoisted<typeof O.patterns> = hoistAs<typeof O.patterns>(O
 export const structPatternElements: Hoisted<typeof O.structPatternElements> = hoistAs<typeof O.structPatternElements>(
 	O.structPatternElements
 );
-export const useWildcardGroup: Hoisted<typeof O.useWildcardGroup> = hoistAs<typeof O.useWildcardGroup>(
-	O.useWildcardGroup
+export const integerLiteralDecimal: Hoisted<typeof O.integerLiteralDecimal> = hoistAs<typeof O.integerLiteralDecimal>(
+	O.integerLiteralDecimal
 );
+export const integerLiteralHex: Hoisted<typeof O.integerLiteralHex> = hoistAs<typeof O.integerLiteralHex>(
+	O.integerLiteralHex
+);
+export const integerLiteralBinary: Hoisted<typeof O.integerLiteralBinary> = hoistAs<typeof O.integerLiteralBinary>(
+	O.integerLiteralBinary
+);
+export const integerLiteralOctal: Hoisted<typeof O.integerLiteralOctal> = hoistAs<typeof O.integerLiteralOctal>(
+	O.integerLiteralOctal
+);
+export const charLiteralPlain: Hoisted<typeof O.charLiteralPlain> = hoistAs<typeof O.charLiteralPlain>(
+	O.charLiteralPlain
+);
+export const charLiteralEscapedSimple: Hoisted<typeof O.charLiteralEscapedSimple> = hoistAs<
+	typeof O.charLiteralEscapedSimple
+>(O.charLiteralEscapedSimple);
+export const charLiteralEscapedUnicodeFixed: Hoisted<typeof O.charLiteralEscapedUnicodeFixed> = hoistAs<
+	typeof O.charLiteralEscapedUnicodeFixed
+>(O.charLiteralEscapedUnicodeFixed);
+export const charLiteralEscapedUnicodeBraced: Hoisted<typeof O.charLiteralEscapedUnicodeBraced> = hoistAs<
+	typeof O.charLiteralEscapedUnicodeBraced
+>(O.charLiteralEscapedUnicodeBraced);
+export const charLiteralEscapedHex: Hoisted<typeof O.charLiteralEscapedHex> = hoistAs<typeof O.charLiteralEscapedHex>(
+	O.charLiteralEscapedHex
+);
+export const arrayExpressionSemi: Hoisted<typeof O.arrayExpressionSemi> = hoistAs<typeof O.arrayExpressionSemi>(
+	O.arrayExpressionSemi
+);
+export const arrayExpressionList: Hoisted<typeof O.arrayExpressionList> = hoistAs<typeof O.arrayExpressionList>(
+	O.arrayExpressionList
+);
+export const closureExpressionBlock: Hoisted<typeof O.closureExpressionBlock> = hoistAs<
+	typeof O.closureExpressionBlock
+>(O.closureExpressionBlock);
+export const closureExpressionExpr: Hoisted<typeof O.closureExpressionExpr> = hoistAs<typeof O.closureExpressionExpr>(
+	O.closureExpressionExpr
+);
+export const referenceExpressionRawConst: Hoisted<typeof O.referenceExpressionRawConst> = hoistAs<
+	typeof O.referenceExpressionRawConst
+>(O.referenceExpressionRawConst);
+export const referenceExpressionRawMut: Hoisted<typeof O.referenceExpressionRawMut> = hoistAs<
+	typeof O.referenceExpressionRawMut
+>(O.referenceExpressionRawMut);
+export const referenceExpressionMut: Hoisted<typeof O.referenceExpressionMut> = hoistAs<
+	typeof O.referenceExpressionMut
+>(O.referenceExpressionMut);
+export const referenceExpressionBare: Hoisted<typeof O.referenceExpressionBare> = hoistAs<
+	typeof O.referenceExpressionBare
+>(O.referenceExpressionBare);
+export const implItemBody: Hoisted<typeof O.implItemBody> = hoistAs<typeof O.implItemBody>(O.implItemBody);
+export const implItemSemi: Hoisted<typeof O.implItemSemi> = hoistAs<typeof O.implItemSemi>(O.implItemSemi);
+export const modItemExternal: Hoisted<typeof O.modItemExternal> = hoistAs<typeof O.modItemExternal>(O.modItemExternal);
+export const modItemInline: Hoisted<typeof O.modItemInline> = hoistAs<typeof O.modItemInline>(O.modItemInline);
+export const orPatternBinary: Hoisted<typeof O.orPatternBinary> = hoistAs<typeof O.orPatternBinary>(O.orPatternBinary);
+export const orPatternPrefix: Hoisted<typeof O.orPatternPrefix> = hoistAs<typeof O.orPatternPrefix>(O.orPatternPrefix);
+export const pointerTypeConst: Hoisted<typeof O.pointerTypeConst> = hoistAs<typeof O.pointerTypeConst>(
+	O.pointerTypeConst
+);
+export const pointerTypeMut: Hoisted<typeof O.pointerTypeMut> = hoistAs<typeof O.pointerTypeMut>(O.pointerTypeMut);
+export const rangeExpressionBinary: Hoisted<typeof O.rangeExpressionBinary> = hoistAs<typeof O.rangeExpressionBinary>(
+	O.rangeExpressionBinary
+);
+export const rangeExpressionPostfix: Hoisted<typeof O.rangeExpressionPostfix> = hoistAs<
+	typeof O.rangeExpressionPostfix
+>(O.rangeExpressionPostfix);
+export const rangeExpressionPrefix: Hoisted<typeof O.rangeExpressionPrefix> = hoistAs<typeof O.rangeExpressionPrefix>(
+	O.rangeExpressionPrefix
+);
+export const rangeExpressionBare: Hoisted<typeof O.rangeExpressionBare> = hoistAs<typeof O.rangeExpressionBare>(
+	O.rangeExpressionBare
+);
+export const foreignModItemSemi: Hoisted<typeof O.foreignModItemSemi> = hoistAs<typeof O.foreignModItemSemi>(
+	O.foreignModItemSemi
+);
+export const foreignModItemBody: Hoisted<typeof O.foreignModItemBody> = hoistAs<typeof O.foreignModItemBody>(
+	O.foreignModItemBody
+);
+export const matchArmWithComma: Hoisted<typeof O.matchArmWithComma> = hoistAs<typeof O.matchArmWithComma>(
+	O.matchArmWithComma
+);
+export const matchArmBlockEnding: Hoisted<typeof O.matchArmBlockEnding> = hoistAs<typeof O.matchArmBlockEnding>(
+	O.matchArmBlockEnding
+);
+export const tokenTreePatternParen: Hoisted<typeof O.tokenTreePatternParen> = hoistAs<typeof O.tokenTreePatternParen>(
+	O.tokenTreePatternParen
+);
+export const tokenTreePatternBracket: Hoisted<typeof O.tokenTreePatternBracket> = hoistAs<
+	typeof O.tokenTreePatternBracket
+>(O.tokenTreePatternBracket);
+export const tokenTreePatternBrace: Hoisted<typeof O.tokenTreePatternBrace> = hoistAs<typeof O.tokenTreePatternBrace>(
+	O.tokenTreePatternBrace
+);
+export const tokenTreeParen: Hoisted<typeof O.tokenTreeParen> = hoistAs<typeof O.tokenTreeParen>(O.tokenTreeParen);
+export const tokenTreeBracket: Hoisted<typeof O.tokenTreeBracket> = hoistAs<typeof O.tokenTreeBracket>(
+	O.tokenTreeBracket
+);
+export const tokenTreeBrace: Hoisted<typeof O.tokenTreeBrace> = hoistAs<typeof O.tokenTreeBrace>(O.tokenTreeBrace);
+export const delimTokenTreeParen: Hoisted<typeof O.delimTokenTreeParen> = hoistAs<typeof O.delimTokenTreeParen>(
+	O.delimTokenTreeParen
+);
+export const delimTokenTreeBracket: Hoisted<typeof O.delimTokenTreeBracket> = hoistAs<typeof O.delimTokenTreeBracket>(
+	O.delimTokenTreeBracket
+);
+export const delimTokenTreeBrace: Hoisted<typeof O.delimTokenTreeBrace> = hoistAs<typeof O.delimTokenTreeBrace>(
+	O.delimTokenTreeBrace
+);
+export const fieldPatternShorthand: Hoisted<typeof O.fieldPatternShorthand> = hoistAs<typeof O.fieldPatternShorthand>(
+	O.fieldPatternShorthand
+);
+export const fieldPatternNamed: Hoisted<typeof O.fieldPatternNamed> = hoistAs<typeof O.fieldPatternNamed>(
+	O.fieldPatternNamed
+);
+export const macroDefinitionParen: Hoisted<typeof O.macroDefinitionParen> = hoistAs<typeof O.macroDefinitionParen>(
+	O.macroDefinitionParen
+);
+export const macroDefinitionBracket: Hoisted<typeof O.macroDefinitionBracket> = hoistAs<
+	typeof O.macroDefinitionBracket
+>(O.macroDefinitionBracket);
+export const macroDefinitionBrace: Hoisted<typeof O.macroDefinitionBrace> = hoistAs<typeof O.macroDefinitionBrace>(
+	O.macroDefinitionBrace
+);
+export const rangePatternPrefix: Hoisted<typeof O.rangePatternPrefix> = hoistAs<typeof O.rangePatternPrefix>(
+	O.rangePatternPrefix
+);
+export const rangePatternWithLeft: Hoisted<typeof O.rangePatternWithLeft> = hoistAs<typeof O.rangePatternWithLeft>(
+	O.rangePatternWithLeft
+);
+export const structItemBrace: Hoisted<typeof O.structItemBrace> = hoistAs<typeof O.structItemBrace>(O.structItemBrace);
+export const structItemTuple: Hoisted<typeof O.structItemTuple> = hoistAs<typeof O.structItemTuple>(O.structItemTuple);
+export const structItemUnit: Hoisted<typeof O.structItemUnit> = hoistAs<typeof O.structItemUnit>(O.structItemUnit);
 export const macroDefinition: Hoisted<typeof O.macroDefinition> = hoistAs<typeof O.macroDefinition>(O.macroDefinition);
 export const tokenTreePattern: Hoisted<typeof O.tokenTreePattern> = hoistAs<typeof O.tokenTreePattern>(
 	O.tokenTreePattern

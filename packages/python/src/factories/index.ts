@@ -207,16 +207,30 @@ export const printStatementChevron: Hoisted<typeof O.printStatementChevron> = ho
 export const printStatementPlain: Hoisted<typeof O.printStatementPlain> = hoistAs<typeof O.printStatementPlain>(
 	O.printStatementPlain
 );
-export const parenthesizedImportList: Hoisted<typeof O.parenthesizedImportList> = hoistAs<
-	typeof O.parenthesizedImportList
->(O.parenthesizedImportList);
 export const comprehensionClauses: Hoisted<typeof O.comprehensionClauses> = hoistAs<typeof O.comprehensionClauses>(
 	O.comprehensionClauses
 );
+export const integerHex: Hoisted<typeof O.integerHex> = hoistAs<typeof O.integerHex>(O.integerHex);
+export const integerOctal: Hoisted<typeof O.integerOctal> = hoistAs<typeof O.integerOctal>(O.integerOctal);
+export const integerBinary: Hoisted<typeof O.integerBinary> = hoistAs<typeof O.integerBinary>(O.integerBinary);
+export const floatPoint: Hoisted<typeof O.floatPoint> = hoistAs<typeof O.floatPoint>(O.floatPoint);
+export const floatLeadingPoint: Hoisted<typeof O.floatLeadingPoint> = hoistAs<typeof O.floatLeadingPoint>(
+	O.floatLeadingPoint
+);
+export const floatScientific: Hoisted<typeof O.floatScientific> = hoistAs<typeof O.floatScientific>(O.floatScientific);
+export const assignmentEq: Hoisted<typeof O.assignmentEq> = hoistAs<typeof O.assignmentEq>(O.assignmentEq);
+export const assignmentType: Hoisted<typeof O.assignmentType> = hoistAs<typeof O.assignmentType>(O.assignmentType);
+export const assignmentTyped: Hoisted<typeof O.assignmentTyped> = hoistAs<typeof O.assignmentTyped>(O.assignmentTyped);
 export const expressionStatementTuple: Hoisted<typeof O.expressionStatementTuple> = hoistAs<
 	typeof O.expressionStatementTuple
 >(O.expressionStatementTuple);
 export const withClauseBare: Hoisted<typeof O.withClauseBare> = hoistAs<typeof O.withClauseBare>(O.withClauseBare);
+export const withClauseParen: Hoisted<typeof O.withClauseParen> = hoistAs<typeof O.withClauseParen>(O.withClauseParen);
+export const matchBlockBlock: Hoisted<typeof O.matchBlockBlock> = hoistAs<typeof O.matchBlockBlock>(O.matchBlockBlock);
+export const matchBlockEmpty: Hoisted<typeof O.matchBlockEmpty> = hoistAs<typeof O.matchBlockEmpty>(O.matchBlockEmpty);
+export const suiteInline: Hoisted<typeof O.suiteInline> = hoistAs<typeof O.suiteInline>(O.suiteInline);
+export const suiteBlock: Hoisted<typeof O.suiteBlock> = hoistAs<typeof O.suiteBlock>(O.suiteBlock);
+export const suiteEmpty: Hoisted<typeof O.suiteEmpty> = hoistAs<typeof O.suiteEmpty>(O.suiteEmpty);
 export const simpleStatement: Hoisted<typeof O.simpleStatement> = hoistAs<typeof O.simpleStatement>(O.simpleStatement);
 export const compoundStatement: Hoisted<typeof O.compoundStatement> = hoistAs<typeof O.compoundStatement>(
 	O.compoundStatement

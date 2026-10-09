@@ -7439,7 +7439,10 @@
           "type": "STRING",
           "value": ")"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "comprehension_clauses": {
       "type": "FIELD",

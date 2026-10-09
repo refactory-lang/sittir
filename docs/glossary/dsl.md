@@ -4808,6 +4808,8 @@ a stamp made there would be lost. The stamp is the declaration link collects
 `hoistedKinds` from; enrich is one of its minting routes.
 
 
+A config may carry a `bindings` overlay (`bind.ts::Bindings`). `checkBindingPatches` checks its alias patches against the enriched grammar, `withBindingPatches` joins its patch sets to wire's patch stage (base names, enriched paths), and after `applyConflictResolutions` the result's grammar goes through `bindGrammar` with the effects wire recorded (`wire.ts::wireBindingEffects`). Resolutions therefore stay in base names, and `bindGrammar`'s renames carry them along. Under an unbound evaluation (`UNBOUND_ENV`) the overlay is skipped.
+
 ### `packages/codegen/src/dsl/enrich.ts::applyFieldWrapPasses`
 
 #### body
@@ -6763,6 +6765,28 @@ Whether a kind is hidden on the generated surface, from the two parser symbol fl
 
 - parser-hidden (`.visible = false`, `parserHiddenOf`) and not a supertype. Tree-sitter compiles every supertype as an invisible symbol, but a supertype is the user-facing polymorph parent, so it keeps its namespace, `ir` key and type;
 - or a grammar rule the parser issues as an anonymous token (`.named = false`, the row's `anon`, on a `literalRule` row): typescript `_ternary_qmark`, python `_not_in`/`_is_not`. Its node stays in the model, so an enum slot keeps its own kind id, but it has no factory or `ir` key. Keyword and punctuation leaves minted from anonymous literals are not rules and stay on the surface. This is the one predicate every surface emitter and the link `hidden` stamps read; link's inline decision reads the plain parser fact.
+
+### `packages/codegen/src/dsl/symbol-table.ts::seatedOf`
+
+A kind seats on its parent when its rule is `hoisted` and its content lands
+in a node its parent emits. A kind the parser declares a supertype (`supertype` on its
+kind entry) has no node: its subtypes reach the parent's slot directly,
+the way any supertype's do, so there is nothing to seat. Typescript
+`export_statement_default` is the case: a variant parent nested in
+`export_statement`'s variants, both supertypes to the parser, so link
+classifies it a supertype and its transport claims its arms.
+
+Link reads it to decide whether a hidden rule is left as a hoisted form
+(`classifyHiddenRule`), assemble to classify the kind before the node exists,
+and the node for `seated`, so all three read the same fact.
+
+### `packages/codegen/src/dsl/symbol-table.ts::supertypeArmsOf`
+
+The kinds a parser-declared supertype's rule names directly: a `SUPERTYPE`
+rule's subtypes, or a `CHOICE` rule's members, kept where they are symbols.
+Assemble derives it once from the normalized rules and hands it to every node
+construction (`KindFacts.supertypeArms`), where it decides `ownSurface`. Seating
+does not read it: an arm seats on its parent like any hoisted kind.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::isAliasedHiddenStorage`
 

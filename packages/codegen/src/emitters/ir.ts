@@ -225,7 +225,7 @@ function memberKeyFor(memberKind: string, supertypeKind: string): string {
 
 
 function isPolymorphTextParent(node: AssembledNode): boolean {
-	return node instanceof AssembledSupertype && node.irKey !== undefined && node.annotations?.hoisted !== true;
+	return node instanceof AssembledSupertype && node.irKey !== undefined && !node.seated;
 }
 
 function isTextRoleTarget(node: AssembledNode): boolean {
