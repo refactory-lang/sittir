@@ -407495,6 +407495,29 @@
   {
     "kind": "render",
     "grammar": "rust",
+    "pattern": "shebang",
+    "input": {
+      "$type": 124,
+      "$source": 0,
+      "$named": true,
+      "_content": "/usr/bin/env -S cargo +nightly -Zscript"
+    },
+    "expectedOutput": "#!/usr/bin/env -S cargo +nightly -Zscript\n"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "#!/usr/bin/env -S cargo +nightly -Zscript\n",
+    "pattern": "shebang",
+    "edits": [],
+    "expectedSourceOut": "#!/usr/bin/env -S cargo +nightly -Zscript\n",
+    "expectedReparseTree": "(shebang)",
+    "wrappedText": "#!/usr/bin/env -S cargo +nightly -Zscript\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
     "pattern": "source_file",
     "input": {
       "$type": 176,
@@ -407579,6 +407602,29 @@
     "expectedSourceOut": "#!\nfn main() {}\n",
     "expectedReparseTree": "(source_file shebang: (shebang) statements: (function_item name: (identifier) parameters: (parameters) body: (block)))",
     "wrappedText": "#!\nfn main() {}\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "shebang",
+    "input": {
+      "$type": 124,
+      "$source": 0,
+      "$named": true,
+      "_content": ""
+    },
+    "expectedOutput": "#!\n"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "#!\n",
+    "pattern": "shebang",
+    "edits": [],
+    "expectedSourceOut": "#!\n",
+    "expectedReparseTree": "(shebang)",
+    "wrappedText": "#!\n",
     "wrappedOffset": 0
   },
   {

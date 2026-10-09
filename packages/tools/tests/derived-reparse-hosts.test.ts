@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { applyHost } from '@sittir/common';
 import { findReparsedNodeAtOffset, hostlessReason, loadRenderReparseContext } from '../src/validate/read-render-parse.ts';
 import { loadLanguageForGrammar, loadNativeEngine, wrapForReparse } from '../src/validate/common.ts';
 
@@ -57,5 +58,15 @@ describe('the reparsed node is found by grammar id', () => {
 		expect(block.startIndex).toBeLessThan(offset);
 		expect(findReparsedNodeAtOffset(tree, block.grammarId, { text, offset })).not.toBeNull();
 		expect(findReparsedNodeAtOffset(tree, 'match_block', { text, offset })?.type).toBe('match_block');
+	}, 120_000);
+
+	it('python: a multi-line string keeps its inside when the render is indented into a block', async () => {
+		const { Parser, lang } = await loadLanguageForGrammar('python');
+		const parser = new Parser();
+		parser.setLanguage(lang);
+		const rendered = 'x = 1\nreturn f\"\"\"\n{y}\n  tail\"\"\"';
+		const parse = (text: string) => parser.parse(text);
+		expect(applyHost('def f():\n    $r', rendered).text).toBe('def f():\n    x = 1\n    return f\"\"\"\n    {y}\n      tail\"\"\"');
+		expect(applyHost('def f():\n    $r', rendered, parse).text).toBe('def f():\n    x = 1\n    return f\"\"\"\n{y}\n  tail\"\"\"');
 	}, 120_000);
 });

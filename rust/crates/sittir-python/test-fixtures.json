@@ -118888,6 +118888,283 @@
         "$named": true,
         "_item": [
           {
+            "$type": 144,
+            "$source": 0,
+            "$named": true,
+            "_expressions": {
+              "$type": 247,
+              "$source": 0,
+              "$named": true,
+              "_string_start": {
+                "$type": 118,
+                "$source": 0,
+                "$named": true,
+                "$text": "f\"\"\"",
+                "$span": {
+                  "start": 179,
+                  "end": 183
+                }
+              },
+              "_content": [
+                {
+                  "$type": 248,
+                  "$source": 0,
+                  "$named": true,
+                  "_content": [
+                    {
+                      "$type": 119,
+                      "$source": 0,
+                      "$named": true,
+                      "$text": "\n",
+                      "$span": {
+                        "start": 183,
+                        "end": 184
+                      }
+                    }
+                  ]
+                },
+                {
+                  "$type": 249,
+                  "$source": 0,
+                  "$named": true,
+                  "_expression": {
+                    "$type": 245,
+                    "$source": 0,
+                    "$named": true,
+                    "_body": {
+                      "$type": 247,
+                      "$source": 0,
+                      "$named": true,
+                      "_string_start": {
+                        "$type": 118,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "\"",
+                        "$span": {
+                          "start": 185,
+                          "end": 186
+                        }
+                      },
+                      "_content": [
+                        {
+                          "$type": 248,
+                          "$source": 0,
+                          "$named": true,
+                          "_content": [
+                            {
+                              "$type": 119,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "string1",
+                              "$span": {
+                                "start": 186,
+                                "end": 193
+                              }
+                            }
+                          ]
+                        }
+                      ],
+                      "_string_end": {
+                        "$type": 121,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "\"",
+                        "$span": {
+                          "start": 193,
+                          "end": 194
+                        }
+                      },
+                      "$slotOrder": [
+                        "string_start",
+                        "content",
+                        "string_end"
+                      ]
+                    },
+                    "_condition": 70,
+                    "_alternative": {
+                      "$type": 247,
+                      "$source": 0,
+                      "$named": true,
+                      "_string_start": {
+                        "$type": 118,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "\"",
+                        "$span": {
+                          "start": 209,
+                          "end": 210
+                        }
+                      },
+                      "_content": [
+                        {
+                          "$type": 248,
+                          "$source": 0,
+                          "$named": true,
+                          "_content": [
+                            {
+                              "$type": 119,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "string2",
+                              "$span": {
+                                "start": 210,
+                                "end": 217
+                              }
+                            }
+                          ]
+                        }
+                      ],
+                      "_string_end": {
+                        "$type": 121,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "\"",
+                        "$span": {
+                          "start": 217,
+                          "end": 218
+                        }
+                      },
+                      "$slotOrder": [
+                        "string_start",
+                        "content",
+                        "string_end"
+                      ],
+                      "$_layout": {
+                        "trivia": {
+                          "leading": [
+                            115
+                          ]
+                        }
+                      }
+                    },
+                    "$other": [
+                      {
+                        "$type": 18,
+                        "$source": 0,
+                        "$named": false,
+                        "$span": {
+                          "start": 195,
+                          "end": 197
+                        }
+                      },
+                      {
+                        "$type": 21,
+                        "$source": 0,
+                        "$named": false,
+                        "$span": {
+                          "start": 203,
+                          "end": 207
+                        }
+                      }
+                    ],
+                    "$slotOrder": [
+                      "body",
+                      "condition",
+                      "alternative"
+                    ]
+                  },
+                  "$other": [
+                    {
+                      "$type": 46,
+                      "$source": 0,
+                      "$named": false,
+                      "$span": {
+                        "start": 184,
+                        "end": 185
+                      }
+                    },
+                    {
+                      "$type": 47,
+                      "$source": 0,
+                      "$named": false,
+                      "$span": {
+                        "start": 218,
+                        "end": 219
+                      }
+                    }
+                  ],
+                  "$_layout": {
+                    "gap": {
+                      "$text": ""
+                    }
+                  }
+                }
+              ],
+              "_string_end": {
+                "$type": 121,
+                "$source": 0,
+                "$named": true,
+                "$text": "\"\"\"",
+                "$span": {
+                  "start": 219,
+                  "end": 222
+                }
+              },
+              "$slotOrder": [
+                "string_start",
+                "content",
+                "content",
+                "string_end"
+              ]
+            },
+            "$other": [
+              {
+                "$type": 12,
+                "$source": 0,
+                "$named": false,
+                "$span": {
+                  "start": 172,
+                  "end": 178
+                }
+              }
+            ]
+          }
+        ],
+        "_delimiter": 0,
+        "$_layout": {
+          "flank": {
+            "$text": "def function():\n    return f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\"\n\nd",
+            "$span": {
+              "start": 20,
+              "end": 70
+            },
+            "$before": true,
+            "$after": true
+          }
+        }
+      },
+      "$slotOrder": [
+        "elements",
+        "newline"
+      ]
+    },
+    "expectedOutput": "return f\"\"\"\n{\"string1\" if True else\n\"string2\"}\"\"\"\n"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "return f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\"",
+    "pattern": "_simple_statements",
+    "edits": [],
+    "expectedSourceOut": "return f\"\"\"\n{\"string1\" if True else\n\"string2\"}\"\"\"\n",
+    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (return_statement (string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (conditional_expression body: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) condition: (true) alternative: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)))) string_end: (string_end)))) (newline)))",
+    "wrappedText": "if a:\n  \n  return f\"\"\"\n{\"string1\" if True else\n  \"string2\"}\"\"\"\n  ",
+    "wrappedOffset": 11
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "_simple_statements",
+    "input": {
+      "$type": 129,
+      "$source": 0,
+      "$named": true,
+      "_elements": {
+        "$type": 259,
+        "$source": 0,
+        "$named": true,
+        "_item": [
+          {
             "$type": 141,
             "$source": 0,
             "$named": true,
@@ -129031,6 +129308,302 @@
               "$named": true,
               "_item": [
                 {
+                  "$type": 144,
+                  "$source": 0,
+                  "$named": true,
+                  "_expressions": {
+                    "$type": 247,
+                    "$source": 0,
+                    "$named": true,
+                    "_string_start": {
+                      "$type": 118,
+                      "$source": 0,
+                      "$named": true,
+                      "$text": "f\"\"\"",
+                      "$span": {
+                        "start": 179,
+                        "end": 183
+                      }
+                    },
+                    "_content": [
+                      {
+                        "$type": 248,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": [
+                          {
+                            "$type": 119,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "\n",
+                            "$span": {
+                              "start": 183,
+                              "end": 184
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "$type": 249,
+                        "$source": 0,
+                        "$named": true,
+                        "_expression": {
+                          "$type": 245,
+                          "$source": 0,
+                          "$named": true,
+                          "_body": {
+                            "$type": 247,
+                            "$source": 0,
+                            "$named": true,
+                            "_string_start": {
+                              "$type": 118,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "\"",
+                              "$span": {
+                                "start": 185,
+                                "end": 186
+                              }
+                            },
+                            "_content": [
+                              {
+                                "$type": 248,
+                                "$source": 0,
+                                "$named": true,
+                                "_content": [
+                                  {
+                                    "$type": 119,
+                                    "$source": 0,
+                                    "$named": true,
+                                    "$text": "string1",
+                                    "$span": {
+                                      "start": 186,
+                                      "end": 193
+                                    }
+                                  }
+                                ]
+                              }
+                            ],
+                            "_string_end": {
+                              "$type": 121,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "\"",
+                              "$span": {
+                                "start": 193,
+                                "end": 194
+                              }
+                            },
+                            "$slotOrder": [
+                              "string_start",
+                              "content",
+                              "string_end"
+                            ]
+                          },
+                          "_condition": 70,
+                          "_alternative": {
+                            "$type": 247,
+                            "$source": 0,
+                            "$named": true,
+                            "_string_start": {
+                              "$type": 118,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "\"",
+                              "$span": {
+                                "start": 209,
+                                "end": 210
+                              }
+                            },
+                            "_content": [
+                              {
+                                "$type": 248,
+                                "$source": 0,
+                                "$named": true,
+                                "_content": [
+                                  {
+                                    "$type": 119,
+                                    "$source": 0,
+                                    "$named": true,
+                                    "$text": "string2",
+                                    "$span": {
+                                      "start": 210,
+                                      "end": 217
+                                    }
+                                  }
+                                ]
+                              }
+                            ],
+                            "_string_end": {
+                              "$type": 121,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "\"",
+                              "$span": {
+                                "start": 217,
+                                "end": 218
+                              }
+                            },
+                            "$slotOrder": [
+                              "string_start",
+                              "content",
+                              "string_end"
+                            ],
+                            "$_layout": {
+                              "trivia": {
+                                "leading": [
+                                  115
+                                ]
+                              }
+                            }
+                          },
+                          "$other": [
+                            {
+                              "$type": 18,
+                              "$source": 0,
+                              "$named": false,
+                              "$span": {
+                                "start": 195,
+                                "end": 197
+                              }
+                            },
+                            {
+                              "$type": 21,
+                              "$source": 0,
+                              "$named": false,
+                              "$span": {
+                                "start": 203,
+                                "end": 207
+                              }
+                            }
+                          ],
+                          "$slotOrder": [
+                            "body",
+                            "condition",
+                            "alternative"
+                          ]
+                        },
+                        "$other": [
+                          {
+                            "$type": 46,
+                            "$source": 0,
+                            "$named": false,
+                            "$span": {
+                              "start": 184,
+                              "end": 185
+                            }
+                          },
+                          {
+                            "$type": 47,
+                            "$source": 0,
+                            "$named": false,
+                            "$span": {
+                              "start": 218,
+                              "end": 219
+                            }
+                          }
+                        ],
+                        "$_layout": {
+                          "gap": {
+                            "$text": ""
+                          }
+                        }
+                      }
+                    ],
+                    "_string_end": {
+                      "$type": 121,
+                      "$source": 0,
+                      "$named": true,
+                      "$text": "\"\"\"",
+                      "$span": {
+                        "start": 219,
+                        "end": 222
+                      }
+                    },
+                    "$slotOrder": [
+                      "string_start",
+                      "content",
+                      "content",
+                      "string_end"
+                    ]
+                  },
+                  "$other": [
+                    {
+                      "$type": 12,
+                      "$source": 0,
+                      "$named": false,
+                      "$span": {
+                        "start": 172,
+                        "end": 178
+                      }
+                    }
+                  ]
+                }
+              ],
+              "_delimiter": 0,
+              "$_layout": {
+                "flank": {
+                  "$text": "def function():\n    return f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\"\n\nd",
+                  "$span": {
+                    "start": 20,
+                    "end": 70
+                  },
+                  "$before": true,
+                  "$after": true
+                }
+              }
+            },
+            "$slotOrder": [
+              "elements",
+              "newline"
+            ]
+          }
+        ],
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              115
+            ]
+          }
+        }
+      }
+    },
+    "expectedOutput": "\n    return f\"\"\"\n{\"string1\" if True else\n    \"string2\"}\"\"\"\n"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "\n    return f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\"",
+    "pattern": "suite_block",
+    "edits": [],
+    "expectedSourceOut": "\n    return f\"\"\"\n{\"string1\" if True else\n    \"string2\"}\"\"\"\n",
+    "expectedReparseTree": "(suite_block (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement (string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (conditional_expression body: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) condition: (true) alternative: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)))) string_end: (string_end)))) (newline))))",
+    "wrappedText": "if a:\n  \n      return f\"\"\"\n{\"string1\" if True else\n      \"string2\"}\"\"\"\n  ",
+    "wrappedOffset": 8
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "suite_block",
+    "input": {
+      "$type": 295,
+      "$source": 0,
+      "$named": true,
+      "_block": {
+        "$type": 179,
+        "$source": 0,
+        "$named": true,
+        "_statements": [
+          {
+            "$type": 129,
+            "$source": 0,
+            "$named": true,
+            "_elements": {
+              "$type": 259,
+              "$source": 0,
+              "$named": true,
+              "_item": [
+                {
                   "$type": 141,
                   "$source": 0,
                   "$named": true,
@@ -129346,6 +129919,290 @@
     "expectedReparseTree": "(suite_block (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_elements item: (string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (integer_decimal_plain) (comment)) string_end: (string_end)) item: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))))) (newline))))",
     "wrappedText": "if a:\n  \n      self.assertEqual(f'''A complex trick: {\n      2 # two\n      }''', 'A complex trick: 2')\n  ",
     "wrappedOffset": 8
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "block",
+    "input": {
+      "$type": 179,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 129,
+          "$source": 0,
+          "$named": true,
+          "_elements": {
+            "$type": 259,
+            "$source": 0,
+            "$named": true,
+            "_item": [
+              {
+                "$type": 144,
+                "$source": 0,
+                "$named": true,
+                "_expressions": {
+                  "$type": 247,
+                  "$source": 0,
+                  "$named": true,
+                  "_string_start": {
+                    "$type": 118,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "f\"\"\"",
+                    "$span": {
+                      "start": 179,
+                      "end": 183
+                    }
+                  },
+                  "_content": [
+                    {
+                      "$type": 248,
+                      "$source": 0,
+                      "$named": true,
+                      "_content": [
+                        {
+                          "$type": 119,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "\n",
+                          "$span": {
+                            "start": 183,
+                            "end": 184
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "$type": 249,
+                      "$source": 0,
+                      "$named": true,
+                      "_expression": {
+                        "$type": 245,
+                        "$source": 0,
+                        "$named": true,
+                        "_body": {
+                          "$type": 247,
+                          "$source": 0,
+                          "$named": true,
+                          "_string_start": {
+                            "$type": 118,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "\"",
+                            "$span": {
+                              "start": 185,
+                              "end": 186
+                            }
+                          },
+                          "_content": [
+                            {
+                              "$type": 248,
+                              "$source": 0,
+                              "$named": true,
+                              "_content": [
+                                {
+                                  "$type": 119,
+                                  "$source": 0,
+                                  "$named": true,
+                                  "$text": "string1",
+                                  "$span": {
+                                    "start": 186,
+                                    "end": 193
+                                  }
+                                }
+                              ]
+                            }
+                          ],
+                          "_string_end": {
+                            "$type": 121,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "\"",
+                            "$span": {
+                              "start": 193,
+                              "end": 194
+                            }
+                          },
+                          "$slotOrder": [
+                            "string_start",
+                            "content",
+                            "string_end"
+                          ]
+                        },
+                        "_condition": 70,
+                        "_alternative": {
+                          "$type": 247,
+                          "$source": 0,
+                          "$named": true,
+                          "_string_start": {
+                            "$type": 118,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "\"",
+                            "$span": {
+                              "start": 209,
+                              "end": 210
+                            }
+                          },
+                          "_content": [
+                            {
+                              "$type": 248,
+                              "$source": 0,
+                              "$named": true,
+                              "_content": [
+                                {
+                                  "$type": 119,
+                                  "$source": 0,
+                                  "$named": true,
+                                  "$text": "string2",
+                                  "$span": {
+                                    "start": 210,
+                                    "end": 217
+                                  }
+                                }
+                              ]
+                            }
+                          ],
+                          "_string_end": {
+                            "$type": 121,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "\"",
+                            "$span": {
+                              "start": 217,
+                              "end": 218
+                            }
+                          },
+                          "$slotOrder": [
+                            "string_start",
+                            "content",
+                            "string_end"
+                          ],
+                          "$_layout": {
+                            "trivia": {
+                              "leading": [
+                                115
+                              ]
+                            }
+                          }
+                        },
+                        "$other": [
+                          {
+                            "$type": 18,
+                            "$source": 0,
+                            "$named": false,
+                            "$span": {
+                              "start": 195,
+                              "end": 197
+                            }
+                          },
+                          {
+                            "$type": 21,
+                            "$source": 0,
+                            "$named": false,
+                            "$span": {
+                              "start": 203,
+                              "end": 207
+                            }
+                          }
+                        ],
+                        "$slotOrder": [
+                          "body",
+                          "condition",
+                          "alternative"
+                        ]
+                      },
+                      "$other": [
+                        {
+                          "$type": 46,
+                          "$source": 0,
+                          "$named": false,
+                          "$span": {
+                            "start": 184,
+                            "end": 185
+                          }
+                        },
+                        {
+                          "$type": 47,
+                          "$source": 0,
+                          "$named": false,
+                          "$span": {
+                            "start": 218,
+                            "end": 219
+                          }
+                        }
+                      ],
+                      "$_layout": {
+                        "gap": {
+                          "$text": ""
+                        }
+                      }
+                    }
+                  ],
+                  "_string_end": {
+                    "$type": 121,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "\"\"\"",
+                    "$span": {
+                      "start": 219,
+                      "end": 222
+                    }
+                  },
+                  "$slotOrder": [
+                    "string_start",
+                    "content",
+                    "content",
+                    "string_end"
+                  ]
+                },
+                "$other": [
+                  {
+                    "$type": 12,
+                    "$source": 0,
+                    "$named": false,
+                    "$span": {
+                      "start": 172,
+                      "end": 178
+                    }
+                  }
+                ]
+              }
+            ],
+            "_delimiter": 0,
+            "$_layout": {
+              "flank": {
+                "$text": "def function():\n    return f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\"\n\nd",
+                "$span": {
+                  "start": 20,
+                  "end": 70
+                },
+                "$before": true,
+                "$after": true
+              }
+            }
+          },
+          "$slotOrder": [
+            "elements",
+            "newline"
+          ]
+        }
+      ]
+    },
+    "expectedOutput": "return f\"\"\"\n{\"string1\" if True else\n\"string2\"}\"\"\"\n"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "return f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\"",
+    "pattern": "block",
+    "edits": [],
+    "expectedSourceOut": "return f\"\"\"\n{\"string1\" if True else\n\"string2\"}\"\"\"\n",
+    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (return_statement (string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (conditional_expression body: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) condition: (true) alternative: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)))) string_end: (string_end)))) (newline)))",
+    "wrappedText": "if a:\n  \n  return f\"\"\"\n{\"string1\" if True else\n  \"string2\"}\"\"\"\n  ",
+    "wrappedOffset": 11
   },
   {
     "kind": "render",

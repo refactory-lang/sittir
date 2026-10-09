@@ -695,7 +695,8 @@ export function renderReparse(
 	const wrapped = wrapForReparse(rendered, renderedKind, ctx.grammar, ctx.kindToSupertypes, {
 		adoptedVariantKinds: ctx.adoptedVariantKinds,
 		targetKind,
-		root: ctx.root
+		root: ctx.root,
+		parse: (text) => ctx.parser.parse(text) as TSTree
 	});
 	if (wrapped === null) return { status: 'excluded', reason: hostlessReason(renderedKind, targetKind, ctx), rendered };
 	if (rendered.trim() === '') return { status: 'excluded', reason: 'empty-render', rendered };

@@ -550,7 +550,7 @@ export function wrapForReparse(
 	if (hosts === undefined)
 		throw new Error(`reparse hosts for '${grammar}' are not loaded; await loadReparseHosts('${grammar}') first`);
 	const template = hostTemplateFor(kind, hosts, kindToSupertypes, opts);
-	return template === undefined ? null : applyHost(template, rendered);
+	return template === undefined ? null : applyHost(template, rendered, opts?.parse);
 }
 
 export function upstreamWasmPath(grammar: string): string | undefined {

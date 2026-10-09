@@ -1,4 +1,4 @@
-import { applyHost, hostTemplateFor, type ReparseHosts } from '@sittir/common';
+import { applyHost, hostTemplateFor, lineStartsInsideTokens, type ReparseHosts } from '@sittir/common';
 import type { TSNode, TSTree } from './common.ts';
 
 const HOLE = '$r';
@@ -45,29 +45,26 @@ function layoutLead(node: TSNode): number {
 	return /^\s+$/.test(node.text.slice(0, lead)) ? lead : 0;
 }
 
-function hasMultiLineLeaf(node: TSNode): boolean {
-	return node.childCount === 0 ? node.text.includes('\n') : node.children.some(hasMultiLineLeaf);
-}
-
 /**
  * The node's text as a host places it: without its layout lead and with every
  * continuation line shifted left by the indentation of the line its first
- * character sits on, so the text reads from column 0 as a render does. Null
- * when that shift is not lossless: a continuation line indented less than
- * that line, or a token that itself spans lines (its inside would move with
- * the shift).
+ * character sits on, so the text reads from column 0 as a render does. Lines
+ * inside a token spanning lines stay as they are, as in `applyHost`. Null when
+ * a continuation line is indented less than that line.
  */
 function relativeText(node: TSNode, source: string): string | null {
 	const lead = layoutLead(node);
 	const text = node.text.slice(lead);
 	const lines = text.split('\n');
 	if (lines.length === 1) return text;
-	if (hasMultiLineLeaf(node)) return null;
 	const at = node.startIndex + lead;
-	const own = source.slice(source.lastIndexOf('\n', at - 1) + 1, at);
-	const column = /^[ \t]*/.exec(own)![0].length;
+	const column = /^[ \t]*/.exec(source.slice(source.lastIndexOf('\n', at - 1) + 1, at))![0].length;
+	const inside = lineStartsInsideTokens(node, source);
+	let lineAt = at + lines[0]!.length + 1;
 	const shifted = lines.slice(1).map((line) => {
-		if (line.trim() === '') return '';
+		const start = lineAt;
+		lineAt += line.length + 1;
+		if (inside.has(start) || line.trim() === '') return line;
 		const indent = /^[ \t]*/.exec(line)![0].length;
 		return indent < column ? null : line.slice(column);
 	});
@@ -129,7 +126,7 @@ export function deriveReparseHosts(input: DeriveHostsInput): Record<string, stri
 	const verified = (kind: string, template: string, samples: readonly { text: string; node: TSNode }[]): boolean =>
 		samples.length > 0 &&
 		samples.every(({ text, node }) => {
-			const hosted = applyHost(template, text);
+			const hosted = applyHost(template, text, input.parse);
 			const tree = input.parse(hosted.text);
 			if (tree.rootNode.hasError) return false;
 			const reparsed = input.findAt(tree, node, hosted);

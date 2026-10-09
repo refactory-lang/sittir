@@ -599,7 +599,11 @@ The host template that reparses a rendered kind: its own, its target kind's, or 
 
 ### `packages/common/src/reparse.ts::applyHost`
 
-Splices rendered text into a host template's `$r` hole and reports the hole's offset. When only whitespace precedes the hole on its line, every continuation line of the rendered text is indented to the hole's column, so a multi-line render stays a block of the same indentation in indentation-sensitive grammars.
+Splices rendered text into a host template's `$r` hole and reports the hole's offset. When only whitespace precedes the hole on its line, every continuation line of the rendered text is indented to the hole's column, so a multi-line render stays a block of the same indentation in indentation-sensitive grammars. Given a parser for the host language, lines `lineStartsInsideTokens` finds on the unindented text are left where they are.
+
+### `packages/common/src/reparse.ts::lineStartsInsideTokens`
+
+The offsets of the lines that begin inside a token spanning lines (a multi-line string or comment), or right after a token that ends in a line break with the next token starting at that very offset (a string's content continuing past an interpolation). Shifting such a line changes the token's content, so hosts leave it alone. One function serves both sides of a host: `applyHost` for rendered text and the derivation's render-form samples for source text.
 
 ### `packages/common/src/delimited-check.ts::checkDelimited`
 
