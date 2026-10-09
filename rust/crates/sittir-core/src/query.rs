@@ -28,7 +28,7 @@ pub struct QueryCoordinate {
 
 impl From<NodeCoordinate> for QueryCoordinate {
     fn from(coord: NodeCoordinate) -> Self {
-        QueryCoordinate { handle: coord.handle, span: coord.span, kind: coord.kind.map_or(0, |kind| kind.0) }
+        QueryCoordinate { handle: coord.handle(), span: coord.span, kind: coord.kind.map_or(0, |kind| kind.0) }
     }
 }
 

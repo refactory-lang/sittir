@@ -355,7 +355,7 @@ The trivia a node crosses to the render with, and which of its sides the read de
 
 ### `packages/common/src/transport-data.ts::detachCoordinates`
 
-Drops the pre-edit spelling and the coordinate that would slice it from every node that holds storage, in place, for data that reached a render by a path other than `toTransportData`. A coordinate that survives (a leaf whose slots are projected from its text) addresses that text and nothing of the layout around it, so it is stamped `$textOnly`, and whichever handle it carries is re-keyed to `$treeHandle`, the only coordinate key the render side reads. The root's edge flanks and a list's source gaps are read from tree bytes, and only a coordinate that names its tree position is evidence for them; a text-only one is not, so a render of such data takes the grammar's defaults where a tree-bound render keeps the source's layout.
+Drops the pre-edit spelling and the coordinate that would slice it from every node that holds storage, in place, for data that reached a render by a path other than `toTransportData`. A coordinate that survives, on a text leaf or a node past the read's depth, names that node in its tree, so the bytes around it are the node's own layout: the root's edge flanks are read from them as from any read coordinate.
 
 The result holds no tree: the hold is removed from every node and trivia entry, while a surviving coordinate keeps its `$treeHandle` and `$span`. `toTransportData` refuses a coordinate that holds no tree, so a caller that still renders the detached data gives it the tree again with `holdTree`, and the data then renders for as long as it is held.
 

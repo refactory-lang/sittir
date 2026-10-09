@@ -129,8 +129,8 @@ pub fn source_trailing_delimiter(
     ctx: &RenderContext<'_>,
 ) -> u8 {
     let Some(flank) = flank.filter(|flank| flank.after) else { return default };
-    let crate::slot::FlankSource::Tree(handle) = flank.source else { return default };
-    let Some(last) = ctx.sources.last_list_child_kind(handle, flank.span, kind) else { return default };
+    let crate::slot::FlankSource::Tree(tree) = flank.source else { return default };
+    let Some(last) = ctx.sources.last_list_child_kind(tree, flank.span, kind) else { return default };
     (default & !2) | if separators.contains(&last.0) { 2 } else { 0 }
 }
 
@@ -190,9 +190,8 @@ impl<X: EdgeItems> EdgeItems for Vec<X> {
 /// A root transport's edges read from its tree's own flanks: the bytes
 /// before its first item and after its last, when that item is still a
 /// coordinate, classified into the arm the edge site admits exactly as a
-/// list gap is. An edge item that was rebuilt, one whose coordinate addresses
-/// its text only, or bytes that are not whitespace, leave that side unset for
-/// the options and the grammar default.
+/// list gap is. An edge item that was rebuilt, or bytes that are not whitespace,
+/// leave that side unset for the options and the grammar default.
 pub fn root_flanks(
     first: Option<Option<&crate::NodeCoordinate>>,
     last: Option<Option<&crate::NodeCoordinate>>,
@@ -202,8 +201,8 @@ pub fn root_flanks(
     ctx: &RenderContext<'_>,
 ) -> Edges {
     let flank = |coord: Option<&crate::NodeCoordinate>, side: Side, allowed: &[u16]| {
-        let coord = coord.filter(|coord| coord.is_layout_evidence())?;
-        let source = ctx.sources.source_of(coord.tree_id())?;
+        let coord = coord?;
+        let source = ctx.sources.source_of(coord.tree)?;
         let bytes = match side {
             Side::Before => source.get(..coord.span.start as usize)?,
             Side::After => source.get(coord.span.end as usize..)?,
@@ -449,7 +448,6 @@ inert!(String, bool, u8, u16);
 mod tests {
     use super::{fill_list_gaps, root_flanks};
     use crate::slot::{SlotValue, SourceGap};
-    use crate::engine::encode_handle;
     use crate::options::ResolvedOptions;
     use crate::render::{SourceTable, WhitespaceTable};
     use crate::RenderContext;
@@ -482,11 +480,8 @@ mod tests {
         dedent: 8,
     };
 
-    fn coordinate(start: u32, end: u32, text_only: bool) -> NodeCoordinate {
-        NodeCoordinate {
-            text_only,
-            ..NodeCoordinate::new(encode_handle(3, 0), Span { start, end })
-        }
+    fn coordinate(start: u32, end: u32) -> NodeCoordinate {
+        NodeCoordinate::new(3, 0, Span { start, end })
     }
 
     fn before_flank(first: &NodeCoordinate, source: &str) -> Option<u16> {
@@ -503,16 +498,11 @@ mod tests {
 
     #[test]
     fn a_tree_addressed_edge_item_gives_the_root_its_source_flank() {
-        assert_eq!(before_flank(&coordinate(1, 4, false), "\n#!\n"), Some(NEWLINE));
-    }
-
-    #[test]
-    fn an_edge_item_that_addresses_its_text_only_gives_the_root_no_flank() {
-        assert_eq!(before_flank(&coordinate(1, 4, true), "\n#!\n"), None);
+        assert_eq!(before_flank(&coordinate(1, 4), "\n#!\n"), Some(NEWLINE));
     }
 
     fn after_and_before(source: &str, second_gap: Option<(u32, u32)>) -> (Option<u16>, Option<u16>) {
-        let gap = second_gap.map(|(start, end)| SourceGap::Range { handle: encode_handle(3, 0), span: Span { start, end } });
+        let gap = second_gap.map(|(start, end)| SourceGap::Range { tree: 3, span: Span { start, end } });
         filled(source, gap)
     }
 
@@ -524,10 +514,10 @@ mod tests {
             sources: &sources,
         };
         let end = source.len() as u32;
-        let first = coordinate(0, 1, false);
+        let first = coordinate(0, 1);
         let second = NodeCoordinate {
             gap: second_gap,
-            ..coordinate(end - 1, end, false)
+            ..coordinate(end - 1, end)
         };
         let mut items: Vec<SlotValue<String>> = vec![SlotValue::Coord(first), SlotValue::Coord(second)];
         fill_list_gaps(items.iter_mut().map(Some), ",", &[TIGHT, NEWLINE], &[TIGHT, NEWLINE], &TABLE, &ctx);
@@ -577,7 +567,7 @@ mod tests {
     fn flanks(source: &str, list: &str, before: bool, after: bool) -> (Option<u16>, Option<u16>) {
         let start = source.find(list).unwrap() as u32;
         let span = Span { start, end: start + list.len() as u32 };
-        flanks_from(source, crate::slot::FlankSource::Tree(encode_handle(3, 0)), span, before, after)
+        flanks_from(source, crate::slot::FlankSource::Tree(3), span, before, after)
     }
 
     fn flanks_from(source: &str, from: crate::slot::FlankSource, span: Span, before: bool, after: bool) -> (Option<u16>, Option<u16>) {
@@ -654,7 +644,7 @@ mod tests {
         let source = "g(\n    a,\n    b)";
         let start = source.find('a').unwrap() as u32;
         let span = Span { start, end: source.find(')').unwrap() as u32 };
-        let edges = flank_edges(source, crate::slot::FlankSource::Tree(encode_handle(3, 0)), span, true, true);
+        let edges = flank_edges(source, crate::slot::FlankSource::Tree(3), span, true, true);
         assert_eq!(edges.before.map(|edge| edge.arm), Some(INDENT));
         assert_eq!(edges.after.map(|edge| (edge.arm, edge.dedent)), Some((TIGHT, Some(true))));
     }
@@ -672,7 +662,7 @@ mod tests {
         fn source_of(&self, _: u32) -> Option<&Arc<str>> {
             None
         }
-        fn last_list_child_kind(&self, _: u64, _: Span, _: crate::types::KindId) -> Option<crate::types::KindId> {
+        fn last_list_child_kind(&self, _: u32, _: Span, _: crate::types::KindId) -> Option<crate::types::KindId> {
             self.0.map(crate::types::KindId)
         }
     }
@@ -684,7 +674,7 @@ mod tests {
         let options = ResolvedOptions::default();
         let ctx = RenderContext { options: &options, sources: &sources };
         let flank = SourceFlank {
-            source: crate::slot::FlankSource::Tree(encode_handle(3, 0)),
+            source: crate::slot::FlankSource::Tree(3),
             span: Span { start: 2, end: 7 },
             before: false,
             after,

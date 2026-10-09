@@ -4,8 +4,9 @@
 //! rebuilt node keeps of the source it was read from (the gap toward the list
 //! item before it and, for a list, its source flanks) and, for a read node,
 //! its own coordinate. The wire sends it as
-//! `$_layout`, absent when the node has none, and never sends the edges: the
-//! prepare walk fills them. A transport stores it boxed in an `Option`, so it
+//! `$_layout`, absent when the node has none. The edges never cross: the
+//! prepare walk fills them. The gap and the flanks cross toward the native
+//! side only: JavaScript writes them, and a read never does. A transport stores it boxed in an `Option`, so it
 //! costs a payload one pointer, and reads it through `Layout`, so an absent
 //! layout reads as an empty one.
 
@@ -185,15 +186,13 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNap
 
 #[cfg(feature = "napi-bindings")]
 impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for TransportLayout<T> {
-    /// `{ trivia?, gap?, flank?, at? }`, each only when present. The edges are
-    /// the prepare walk's and never cross.
+    /// `{ trivia?, at? }`, each only when present: what a read writes. The
+    /// edges, the gap and the flanks never cross back.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         use crate::boundary::{object_with_present, present, present_with};
         unsafe {
             object_with_present(env, &[
                 present(env, c"trivia", val.trivia)?,
-                present(env, c"gap", val.gap)?,
-                present(env, c"flank", val.flank)?,
                 present_with(c"at", val.at, |at| crate::slot::coordinate_to_napi(env, at))?,
             ])
         }

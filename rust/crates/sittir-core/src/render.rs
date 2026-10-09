@@ -61,11 +61,11 @@ pub trait SourceTable {
     }
 
     /// The kind of the last child that is not an extra of the list spanning
-    /// `span` in the tree `handle` tags, the list's own kind being `kind`
+    /// `span` in `tree`, the list's own kind being `kind`
     /// (`engine::last_list_child`). A table of bare sources cannot
     /// answer and says so.
-    fn last_list_child_kind(&self, handle: u64, span: crate::types::Span, kind: KindId) -> Option<KindId> {
-        let _ = (handle, span, kind);
+    fn last_list_child_kind(&self, tree: u32, span: crate::types::Span, kind: KindId) -> Option<KindId> {
+        let _ = (tree, span, kind);
         None
     }
 
@@ -176,8 +176,8 @@ pub trait RenderSink {
     /// a coordinate, and answering it as empty would silently delete source.
     fn slice(&mut self, coord: &crate::slot::NodeCoordinate) -> RenderResult {
         Err(CoordinateError::UnknownTree {
-            handle: coord.handle,
-            tree_id: coord.tree_id(),
+            handle: coord.handle(),
+            tree_id: coord.tree,
         }
         .into())
     }

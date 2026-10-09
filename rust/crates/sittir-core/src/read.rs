@@ -7,7 +7,6 @@
 //! kind. A child no route takes refuses the read. No grammar fact lives here:
 //! each one reaches the reader through a generated attribute.
 
-use crate::engine::encode_handle;
 use crate::layout::TransportLayout;
 use crate::slot::{NodeCoordinate, SlotValue};
 use crate::trivia::{TransportTrivia, TriviaEntry};
@@ -72,7 +71,7 @@ impl<'s> ReadCtx<'s> {
     pub fn coordinate_of(&self, child: &Child) -> NodeCoordinate {
         NodeCoordinate {
             kind: Some(child.grammar),
-            ..NodeCoordinate::new(encode_handle(self.tree_id, child.index), Span { start: child.start, end: child.end })
+            ..NodeCoordinate::new(self.tree_id, child.index, Span { start: child.start, end: child.end })
         }
     }
 
@@ -89,7 +88,7 @@ impl<'s> ReadCtx<'s> {
         };
         NodeCoordinate {
             kind: Some(KindId(node.grammar_id())),
-            ..NodeCoordinate::new(encode_handle(self.tree_id, index), span)
+            ..NodeCoordinate::new(self.tree_id, index, span)
         }
     }
 
@@ -1136,9 +1135,9 @@ mod tests {
         let parent = Sides {
             owner: true,
             leading: vec![],
-            trailing: vec![Entry { coord: NodeCoordinate::new(0, Span { start: 40, end: 44 }), same_line: true, tokens_between: 0 }],
+            trailing: vec![Entry { coord: NodeCoordinate::new(0, 0, Span { start: 40, end: 44 }), same_line: true, tokens_between: 0 }],
         };
-        let layout = placement.into_layout::<()>(parent, NodeCoordinate::new(0, Span { start: 0, end: 6 }));
+        let layout = placement.into_layout::<()>(parent, NodeCoordinate::new(0, 0, Span { start: 0, end: 6 }));
         let trailing = layout.trivia.unwrap().trailing.unwrap();
         assert_eq!(trailing.iter().map(|e| e.value.coord().unwrap().span.start).collect::<Vec<_>>(), vec![40, 2]);
     }

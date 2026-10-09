@@ -662,8 +662,8 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         let sources = self
             .sources
             .ok_or(crate::render::CoordinateError::UnknownTree {
-                handle: coord.handle,
-                tree_id: coord.tree_id(),
+                handle: coord.handle(),
+                tree_id: coord.tree,
             })?;
         let text = coord.resolve(sources)?;
         let token = crate::render::RenderSink::kind_of(self, coord)

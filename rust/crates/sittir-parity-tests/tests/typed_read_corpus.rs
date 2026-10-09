@@ -47,7 +47,7 @@ fn every_statement_read_at_its_row_equals_the_statement_in_the_whole_read() {
         let shallow = root(&tree, &source, Depth::ONE).statements.unwrap();
         assert_eq!(whole.len(), shallow.len());
         for (i, (whole, shallow)) in whole.iter().zip(&shallow).enumerate() {
-            let index = sittir_core::decode_handle(shallow.coord().unwrap().handle).1;
+            let index = shallow.coord().unwrap().index;
             let at: StatementTransport = read_at::<StatementTransport, AnyTransport>(&mut tree.walk(), &ctx, index, Depth::All).unwrap();
             assert_eq!(Some(&at), whole.transport(), "{name}: statement {i} at index {index}");
         }
@@ -62,12 +62,12 @@ fn every_read_transport_names_its_own_node() {
         let ctx = ReadCtx::new(&source, 1);
         let file = root(&tree, &source, Depth::ONE);
         let at = file.layout.as_ref().and_then(|layout| layout.at.as_ref()).expect("the root names itself");
-        assert_eq!((at.tree_id(), at.index(), at.span.start, at.span.end), (1, 0, 0, source.len() as u32));
+        assert_eq!((at.tree, at.index, at.span.start, at.span.end), (1, 0, 0, source.len() as u32));
         let functions = file.statements.unwrap().into_iter().filter_map(|s| s.coord().cloned()).filter(|c| c.kind == Some(kind_ids::FUNCTION_ITEM));
         for coord in functions {
-            let read: FunctionItemTransport = read_at::<FunctionItemTransport, AnyTransport>(&mut tree.walk(), &ctx, coord.index(), Depth::ONE).unwrap();
+            let read: FunctionItemTransport = read_at::<FunctionItemTransport, AnyTransport>(&mut tree.walk(), &ctx, coord.index, Depth::ONE).unwrap();
             let at = read.layout.as_ref().and_then(|layout| layout.at.as_ref()).expect("a read function names itself");
-            assert_eq!((at.tree_id(), at.index(), at.span, at.kind), (coord.tree_id(), coord.index(), coord.span, coord.kind), "{name}");
+            assert_eq!((at.tree, at.index, at.span, at.kind), (coord.tree, coord.index, coord.span, coord.kind), "{name}");
         }
     }
 }

@@ -192,7 +192,7 @@ fn past_the_depth_a_child_with_structure_is_its_coordinate() {
     let shallow: File = read(&tree, source, Depth::ONE).unwrap();
     let coord = shallow.statements.as_ref().unwrap()[0].coord().expect("a coordinate at depth one");
     assert_eq!((coord.span.start, coord.span.end, coord.kind), (0, 20, Some(kind::FUNCTION_ITEM)));
-    assert_eq!(coord.tree_id(), 7);
+    assert_eq!(coord.tree, 7);
     let two: File = read(&tree, source, Depth::Levels(std::num::NonZeroU32::new(2).unwrap())).unwrap();
     let f = function(&two, 0);
     assert_eq!(f.name.transport().unwrap().text, "f", "a leaf is inline");
@@ -591,7 +591,7 @@ fn a_row_read_equals_the_same_node_in_a_whole_read_trivia_included() {
     let ctx = ReadCtx::new(source, 7);
     let whole: File = read(&tree, source, Depth::All).unwrap();
     let shallow: File = read(&tree, source, Depth::ONE).unwrap();
-    let index = sittir_core::decode_handle(shallow.statements.as_ref().unwrap()[0].coord().unwrap().handle).1;
+    let index = shallow.statements.as_ref().unwrap()[0].coord().unwrap().index;
     let outer: Function = sittir_core::read::read_at::<Function, File>(&mut tree.walk(), &ctx, index, Depth::All).unwrap();
     assert_eq!(&outer, function(&whole, 0));
     assert_eq!(trivia_spans(&outer.layout, "leading"), vec![(0, 7, false, 0)]);

@@ -50,7 +50,6 @@ const TRANSPORT_METADATA = new Set([
 	'$text',
 	'$other',
 	'$span',
-	'$textOnly',
 	'$treeHandle',
 	'$format',
 	'$_trivia',
