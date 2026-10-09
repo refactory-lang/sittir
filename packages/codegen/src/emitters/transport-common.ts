@@ -1,6 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
-import { AssembledSupertype, concreteKindsOf, isNodeRef, kindsOf, storageKindOfRef } from '../compiler/model/node-map.ts';
+import { AssembledSupertype, concreteKindsOf, kindsOf } from '../compiler/model/node-map.ts';
 
 export type SlotClass =
 	| { readonly tag: 'concrete'; readonly kind: string; readonly typeName: string }
@@ -55,23 +55,6 @@ export function buildSupertypeTransportSet(nodeMap: NodeMap): Map<string, Readon
 		result.set(node.typeName, expandSupertypeKinds(node.kind));
 	}
 	return result;
-}
-
-function expandWrapRuntimeKinds(kind: string, nodeMap: NodeMap | undefined, seen: Set<string>): string[] {
-	if (seen.has(kind)) return [];
-	seen.add(kind);
-	if (!nodeMap) return [kind];
-	const node = nodeMap.nodes.get(kind);
-	if (!node) return [kind];
-	if (node instanceof AssembledSupertype) {
-		const members = new Set<string>([kind]);
-		for (const subtype of node.subtypeNames) {
-			members.add(subtype);
-			for (const member of expandWrapRuntimeKinds(subtype, nodeMap, seen)) members.add(member);
-		}
-		return [...members];
-	}
-	return [kind];
 }
 
 export function acceptedTransportKinds(

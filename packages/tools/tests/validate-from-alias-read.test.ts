@@ -17,7 +17,7 @@ describe('structuralDiff compares stored slot values', () => {
 
 describe('validateFrom — a read leaf whose stored kind differs from its shown kind', () => {
 	it('regex identity_escape (`\\-` in a class reads as the anonymous token) passes on projected content', async () => {
-		const result = await validateFrom('regex', 'native');
+		const result = await validateFrom('regex');
 		expect(result.errors.filter((e) => e.kind === 'identity_escape')).toEqual([]);
 		expect(result.pass).toBe(result.total);
 	}, 120000);

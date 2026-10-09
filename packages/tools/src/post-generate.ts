@@ -126,7 +126,7 @@ export async function runRoundtripProbes(grammar: string): Promise<number> {
 	console.log(formatFactoryStorageReport(factoryStorageResult));
 
 	// from() correctness (structural comparison: from() vs factory())
-	const fromResult = await validateFrom(grammar, 'native');
+	const fromResult = await validateFrom(grammar);
 	console.log(formatFromReport(fromResult));
 
 	const { render } = factoryStorageResult;

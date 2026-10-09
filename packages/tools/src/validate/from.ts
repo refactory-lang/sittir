@@ -92,11 +92,7 @@ function findUndefined(node: AnyUntypedNode, path = ''): string[] {
  * access can't distinguish `{a: undefined}` from `{}`, so the structural
  * comparison shouldn't either.
  */
-export function structuralDiff(
-	a: AnyUntypedNode,
-	b: AnyUntypedNode,
-	kindNameFromId?: ((id: number) => string | undefined) | undefined
-): string[] {
+export function structuralDiff(a: AnyUntypedNode, b: AnyUntypedNode): string[] {
 	const diffs: string[] = [];
 	if (a.$type !== b.$type) diffs.push(`$type: ${a.$type} vs ${b.$type}`);
 
@@ -160,7 +156,7 @@ export function kindIdDiffs(fromResult: unknown, factoryResult: unknown): string
 	return fromResult === factoryResult ? [] : [`kind id ${String(fromResult)} vs ${String(factoryResult)}`];
 }
 
-export async function validateFrom(grammar: string, backend?: 'native' | 'js'): Promise<FromValidationResult> {
+export async function validateFrom(grammar: string): Promise<FromValidationResult> {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
@@ -292,7 +288,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 						? (factoryMap[kind] as AnyUntypedNode)
 						: (factoryMap[kind]! as (t: string) => AnyUntypedNode)(text);
 				const diffs =
-					kindIdDiffs(fromResult, factoryResult) ?? structuralDiff(fromResult, factoryResult, kindNameFromId);
+					kindIdDiffs(fromResult, factoryResult) ?? structuralDiff(fromResult, factoryResult);
 				if (diffs.length > 0) {
 					divergentCount++;
 					errors.push({
@@ -545,7 +541,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 				}
 
 				// Structural comparison
-				const diffs = structuralDiff(fromResult, factoryResult, kindNameFromId);
+				const diffs = structuralDiff(fromResult, factoryResult);
 				if (diffs.length > 0) {
 					divergentCount++;
 					errors.push({

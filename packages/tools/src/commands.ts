@@ -81,7 +81,7 @@ export async function collectGrammarCounts(grammar: GrammarName, backend: Backen
 	// native. Warn loudly rather than mislead.
 	if (backend === 'native') warnIfNativeBinaryStale(grammar);
 	const [from, coverage, factoryStorage, irStorage] = await Promise.all([
-		runFrom(grammar, backend),
+		runFrom(grammar),
 		runCoverage(grammar),
 		runFactory(grammar, backend),
 		runFactory(grammar, backend, 'ir')

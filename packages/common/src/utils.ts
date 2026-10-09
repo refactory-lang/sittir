@@ -673,10 +673,6 @@ export function hasKind(v: object): v is { kind: string } & Record<string, unkno
 	return 'kind' in v && typeof (v as Record<string, unknown>).kind === 'string';
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-	return value !== null && typeof value === 'object' && !Array.isArray(value);
-}
-
 function setTriviaData(node: AnyUntypedNode, triviaData: NodeTrivia): void {
 	const record = node as unknown as { $_layout?: NodeLayout };
 	record.$_layout = { ...record.$_layout, trivia: triviaData };

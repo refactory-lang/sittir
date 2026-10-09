@@ -1,5 +1,4 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { TSKindId } from '../src/types.ts';
 import { createEngine } from '@sittir/common';
 
 const descriptor = async () => (await import('../src/index.ts')).default;

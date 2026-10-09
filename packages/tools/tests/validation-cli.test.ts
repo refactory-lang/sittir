@@ -192,7 +192,7 @@ describe('@sittir/validator cli surface — runCountsCli behavior', () => {
 	it('defaults to native backend for each requested grammar', async () => {
 		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 		await runCountsCli(['rust']);
-		expect(vi.mocked(runFrom)).toHaveBeenCalledWith('rust', 'native');
+		expect(vi.mocked(runFrom)).toHaveBeenCalledWith('rust');
 		expect(vi.mocked(runRt)).toHaveBeenNthCalledWith(1, 'rust', 'native', { recursive: true });
 		expect(vi.mocked(runRt)).toHaveBeenNthCalledWith(2, 'rust', 'native', { recursive: false });
 		expect(vi.mocked(runCoverage)).toHaveBeenCalled();

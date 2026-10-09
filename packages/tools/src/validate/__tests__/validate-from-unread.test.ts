@@ -19,7 +19,7 @@ const { validateFrom } = await import('../from.ts');
 
 describe('validate-from: an occurrence the read holds no node for', () => {
 	it('is excluded with the model fact that explains it, not failed', async () => {
-		const result = await validateFrom('regex', 'native');
+		const result = await validateFrom('regex');
 		const reasons = Object.fromEntries(
 			result.excluded.filter((skip) => skip.kind !== undefined).map((skip) => [skip.kind, skip.reason])
 		);

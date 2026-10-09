@@ -33,7 +33,6 @@ import {
 	loadLanguageForGrammar,
 	loadKindNameFromId,
 	loadCanonicalKindNameFromId,
-	loadKindIdFromName,
 	buildReadHandle,
 	buildKindToSupertypes,
 	loadReparseHosts,
@@ -751,20 +750,6 @@ export async function validateReadRenderParse(
 	const readNode = await readNodeOf(grammar);
 	const isLeafKind = await loadIsLeafKind(grammar);
 	const canonicalKindNameFromId = await loadCanonicalKindNameFromId(grammar);
-	const rawKindIdFromName = await loadKindIdFromName(grammar);
-	// Wrap so unknown kind names return undefined (instead of throwing).
-	// The generated kindIdFromName throws on missing entries; readUntypedNode's
-	// resolveKindId falls back to the string kind only when the function
-	// returns undefined, not when it throws.
-	const kindIdFromName = rawKindIdFromName
-		? (name: string): number | undefined => {
-				try {
-					return rawKindIdFromName(name);
-				} catch {
-					return undefined;
-				}
-			}
-		: rawKindIdFromName;
 	const { recursive } = options;
 	const entries = loadCorpusEntries(grammar);
 	const errors: {
