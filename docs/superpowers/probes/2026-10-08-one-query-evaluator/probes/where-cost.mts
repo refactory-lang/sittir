@@ -11,6 +11,12 @@
  *               cost of a JavaScript evaluator fed each stub's slot texts by
  *               the walk: same batches, one answer per stub per batch (texts
  *               in place of booleans are a few bytes more per stub);
+ *   spans       the proposal: the walk filters by kind and returns, with
+ *               each stub in the same call, the byte spans of the values each
+ *               subject of the plan admits; JavaScript slices them, evaluates
+ *               the plan compiled once, and hydrates only passing stubs.
+ *               Needs the walk's `subjects` argument
+ *               (`../prototype-spans.patch`); prints n/a without it;
  *   span        every kind match is hydrated, each slot is read through its
  *               accessor and its values' text is the source slice of their
  *               byte span in the source (a leaf's `$text` where it has
@@ -27,7 +33,8 @@
  * Run (from the root of a checkout whose native addons are built):
  *   ./node_modules/.bin/tsx <this file> [runs]   default: 7
  * Prints: per file, one row per condition: kind matches, median ms per
- *   variant, result counts native/batch/span/$text, per-call µs native/JS.
+ *   variant, spans over native, result counts native/spans/batch/span/$text,
+ *   per-call µs native/JS.
  */
 import { readFileSync } from 'node:fs';
 
@@ -38,6 +45,34 @@ const { treeOf } = await import(`${ROOT}packages/common/src/tree-token.ts`);
 const { inTreeEngine } = await import(`${ROOT}packages/common/src/engine-scope.ts`);
 const { holds, BATCH_LIMITS } = await import(`${ROOT}packages/common/src/query.ts`);
 const { nodeAddressOf } = await import(`${ROOT}packages/common/src/utils.ts`);
+const { spanSlicer } = await import(`${ROOT}packages/common/src/span.ts`);
+
+// The proposal's evaluator: a plan compiled once (each `match` holds its
+// RegExp), reading each subject's texts by the subject's index.
+type Compiled = (texts: (subject: number) => readonly string[]) => boolean;
+function compilePlan(plan: any, subjects: string[]): Compiled {
+	switch (plan.op) {
+		case 'eq':
+		case 'match': {
+			const key = 'self' in plan ? '{"self":true}' : JSON.stringify({ fields: plan.fields, kinds: plan.kinds });
+			let at = subjects.indexOf(key);
+			if (at < 0) at = subjects.push(key) - 1;
+			if (plan.op === 'eq') return (texts) => texts(at).includes(plan.text);
+			const pattern = new RegExp(plan.pattern, 'u');
+			return (texts) => texts(at).some((text) => pattern.test(text));
+		}
+		case 'not': {
+			const of = compilePlan(plan.of, subjects);
+			return (texts) => !of(texts);
+		}
+		case 'and':
+		case 'or': {
+			const of = plan.of.map((p: any) => compilePlan(p, subjects));
+			return plan.op === 'and' ? (texts) => of.every((p: Compiled) => p(texts)) : (texts) => of.some((p: Compiled) => p(texts));
+		}
+	}
+	throw new Error(`plan op ${plan.op}`);
+}
 
 const PY = '/opt/homebrew/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/lib/python3.14';
 
@@ -128,8 +163,9 @@ for (const { grammar, files, queries } of CASES) {
 			return (Array.isArray(value) ? value : value == null ? [] : [value]).flatMap((v: unknown) => textOf(v) ?? []);
 		};
 		console.log(`\n## ${grammar} ${file.split('/').slice(-2).join('/')} (${source.length} bytes), median of ${RUNS}`);
-		console.log('| condition | kind matches | native ms | batch ms | span ms | $text ms | results native/batch/span/$text | per call native µs | per call JS µs |');
-		console.log('| --- | --- | --- | --- | --- | --- | --- | --- | --- |');
+		const slicer = spanSlicer(source);
+		console.log('| condition | kind matches | native ms | spans ms | spans/native | batch ms | span ms | $text ms | results native/spans/batch/span/$text | per call native µs | per call JS µs |');
+		console.log('| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |');
 		for (const q of queries) {
 			const kind = kindIdOf(q.kind);
 			const routesOf = (slot: string): Routes => {
@@ -138,7 +174,7 @@ for (const { grammar, files, queries } of CASES) {
 				return row[1];
 			};
 			if (kind === undefined) {
-				console.log(`| ${q.label} | no kind ${q.kind} | | | | | | | |`);
+				console.log(`| ${q.label} | no kind ${q.kind} | | | | | | | | | |`);
 				continue;
 			}
 			const planOf = (c: Cond): any =>
@@ -175,6 +211,34 @@ for (const { grammar, files, queries } of CASES) {
 				}
 				return kept;
 			});
+			const subjectKeys: string[] = [];
+			const compiled = compilePlan(plan, subjectKeys);
+			const subjects = subjectKeys.map((key) => JSON.parse(key));
+			let spansSupported = true;
+			const spans = time(() => {
+				let kept = 0;
+				let at = from;
+				let resume: readonly number[] | undefined;
+				for (let call = 0; ; call++) {
+					const limit = BATCH_LIMITS[Math.min(call, BATCH_LIMITS.length - 1)];
+					const b = tree.query.descendants({ from: at, limit, kinds: [kind], subjects, ...(resume === undefined ? {} : { resume }) });
+					if (b.stubs.length > 0 && b.spans === undefined) {
+						spansSupported = false;
+						return -1;
+					}
+					for (let i = 0; i < b.stubs.length; i++) {
+						const values = b.spans[i];
+						if (compiled((subject) => values[subject].map(([start, end]: [number, number]) => slicer({ start, end })))) {
+							const stub = b.stubs[i];
+							if (hydrateStub(stub.$parentHandle, stub.$childIndex) !== undefined) kept++;
+						}
+					}
+					if (b.resume === null) break;
+					at = { handle: b.origin };
+					resume = b.resume;
+				}
+				return kept;
+			});
 			const span = time(() => [...root.$query().$descendants.ofType(kind)].filter((n: Node) => holds(plan, provider(n, sliceText))).length);
 			const leaf = time(() => [...root.$query().$descendants.ofType(kind)].filter((n: Node) => holds(plan, provider(n, leafText))).length);
 
@@ -202,7 +266,7 @@ for (const { grammar, files, queries } of CASES) {
 			const callNative = perCall((i) => tree.query.planHolds([addresses[i]], plan));
 			const callJs = perCall((i) => holds(plan, provider(nodes[i]!, sliceText)));
 			console.log(
-				`| ${q.label} | ${matches} | ${native.ms.toFixed(2)} | ${batch.ms.toFixed(2)} | ${span.ms.toFixed(2)} | ${leaf.ms.toFixed(2)} | ${native.count}/${batch.count}/${span.count}/${leaf.count} | ${callNative.toFixed(2)} | ${callJs.toFixed(2)} |`
+				`| ${q.label} | ${matches} | ${native.ms.toFixed(2)} | ${spansSupported ? spans.ms.toFixed(2) : 'n/a'} | ${spansSupported ? `${(spans.ms / native.ms).toFixed(2)}×` : 'n/a'} | ${batch.ms.toFixed(2)} | ${span.ms.toFixed(2)} | ${leaf.ms.toFixed(2)} | ${native.count}/${spansSupported ? spans.count : 'n/a'}/${batch.count}/${span.count}/${leaf.count} | ${callNative.toFixed(2)} | ${callJs.toFixed(2)} |`
 			);
 		}
 	}
@@ -225,7 +289,7 @@ for (const { grammar, files, queries } of CASES) {
 	console.log('\n## regex dialect, python function names: café, x٣, plain, naïve_ünïcode');
 	console.log('| pattern | native (Rust regex) | JavaScript (u flag) |');
 	console.log('| --- | --- | --- |');
-	for (const pattern of ['^\\w+$', '\\d', '^na', '^[a-z]+$']) {
+	for (const pattern of ['^\\w+$', '\\d', '^[\\p{L}\\p{N}_]+$', '\\p{Nd}', '^na', '^[a-z]+$']) {
 		const plan = { op: 'match', pattern, ...routes };
 		const native = tree.query.planHolds(nodes.map((n) => nodeAddressOf(n)), plan).filter(Boolean).length;
 		const js = nodes.filter((n) => holds(plan, () => [n.name().$text])).length;

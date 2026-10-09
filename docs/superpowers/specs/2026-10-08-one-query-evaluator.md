@@ -4,7 +4,7 @@
 **Date:** 2026-10-08
 **Scope:** where a `QueryPlan` is evaluated. Two consumers compile plans: the query facet's `where` and the portable `is` guards.
 **Supersedes:** in the node query design (`2026-10-02-node-query-traversal-modification-api-design.md`), the §7.2 sentence "There is one native evaluator, and the JavaScript evaluator is kept only as the test oracle", and the §7.3 paragraph on Rust's `regex` crate.
-**Measurements:** `docs/superpowers/probes/2026-10-08-one-query-evaluator/` (`where-cost.mts`). The `is` numbers come from the binding-generator prototype's `is-cost` probe.
+**Measurements:** `docs/superpowers/probes/2026-10-08-one-query-evaluator/` (`where-cost.mts`, and `prototype-spans.patch` for the proposal's walk). The `is` numbers come from the binding-generator prototype's `is-cost` probe.
 
 ## What is there today
 
@@ -76,49 +76,53 @@ The dialect becomes ECMAScript with the `u` flag everywhere. Rust `regex` remain
 
 ## 3. Cost against today
 
-`where-cost` runs on master's release addons. Every variant ends with the passing nodes hydrated and wrapped, and the times are medians of 7.
+`where-cost` runs on master's release addons, rebuilt with `prototype-spans.patch`. The patch only adds the walk's `subjects` argument; every other variant runs today's code. Every variant ends with the passing nodes hydrated and wrapped, and the times are medians of 7.
 
-**Caveat on load.** The load average was between 27 and 513 during the run. Compare columns within a row, not absolute times. Implementation reruns the probe as its gate.
+**Caveat on load.** The load average was about 50 during the run. Compare columns within a row, not absolute times. Implementation reruns the probe as its gate.
 
 The variants:
 
 | variant | what it measures |
 | --- | --- |
 | native | today: the walk evaluates the plan, and only passing stubs cross |
-| batch | the proposal's crossing pattern: the walk filters by kind; one more native call per batch answers each stub, and only passing stubs hydrate |
-| span | the JavaScript path without pushdown: every kind match is hydrated, and `holds` runs through accessors with `$text`, else the span slice |
-
-**How close batch is to the proposal.** Batch has one more call per batch than the proposal, and returns one boolean per stub where the proposal returns spans. So it is an upper bound on calls and a lower bound on bytes per stub.
+| spans | the proposal: the walk filters by kind and returns each stub's subject spans in the same call; JavaScript slices them, evaluates the plan compiled once, and hydrates only passing stubs |
+| batch | the walk filters by kind, then one more native call per batch answers each stub (the earlier stand-in for the proposal) |
+| span | no pushdown: every kind match is hydrated, and `holds` runs through accessors with `$text`, else the span slice |
 
 python `argparse.py` (the query design's §7.4 conditions):
 
-| condition | kind matches | results | native ms | batch ms | span ms |
-| --- | --- | --- | --- | --- | --- |
-| def: name eq format_help | 144 | 3 | 1.42 | 1.49 | 5.58 |
-| def: name match ^_ | 144 | 107 | 3.72 | 3.97 | 6.31 |
-| def: name match ^_ and not ^__ | 144 | 68 | 2.92 | 2.51 | 6.75 |
-| def: name eq add_argument or returnType . | 144 | 2 | 1.45 | 2.93 | 6.04 |
-| call: function eq isinstance | 657 | 9 | 1.40 | 3.25 | 20.49 |
-| call: function match ^self\. | 657 | 155 | 3.07 | 4.76 | 20.19 |
+| condition | kind matches | results | native ms | spans ms | spans / native | batch ms | span ms |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| def: name eq format_help | 144 | 3 | 1.53 | 1.47 | 0.96× | 1.53 | 4.51 |
+| def: name match ^_ | 144 | 107 | 3.15 | 2.93 | 0.93× | 3.05 | 4.17 |
+| def: name match ^_ and not ^__ | 144 | 68 | 2.38 | 2.43 | 1.02× | 2.47 | 4.32 |
+| def: name eq add_argument or returnType . | 144 | 2 | 1.35 | 1.42 | 1.05× | 1.52 | 4.48 |
+| call: function eq isinstance | 657 | 9 | 1.36 | 1.88 | 1.38× | 2.34 | 14.93 |
+| call: function match ^self\. | 657 | 155 | 2.94 | 3.34 | 1.14× | 4.33 | 14.80 |
 
 The other files:
 
-| file | condition | kind matches | results | native ms | batch ms | span ms |
-| --- | --- | --- | --- | --- | --- | --- |
-| python `json/decoder.py` | call: function match ^self\. | 75 | 2 | 0.23 | 0.77 | 1.65 |
-| typescript `emitters/wrap.ts` | member: property eq length | 687 | 34 | 1.52 | 2.30 | 19.63 |
-| typescript `emitters/wrap.ts` | member: object match ^this\. | 687 | 14 | 1.27 | 3.31 | 24.41 |
-| rust `read_untyped_node.rs` | fn: name match ^read | 33 | 4 | 2.78 | 1.99 | 8.82 |
-| rust `read_untyped_node.rs` | field: field eq kind | 251 | 2 | 0.96 | 0.95 | 9.43 |
+| file | condition | kind matches | results | native ms | spans ms | spans / native | batch ms | span ms |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| python `json/decoder.py` | call: function eq isinstance | 75 | 0 | 0.18 | 0.25 | 1.33× | 0.28 | 1.56 |
+| typescript `emitters/wrap.ts` | member: property eq length | 687 | 34 | 1.55 | 1.92 | 1.24× | 2.36 | 15.70 |
+| typescript `emitters/wrap.ts` | member: object match ^this\. | 687 | 14 | 1.21 | 1.70 | 1.41× | 2.05 | 14.93 |
+| rust `read_untyped_node.rs` | fn: name match ^read | 33 | 4 | 1.73 | 1.56 | 0.90× | 1.68 | 6.37 |
+| rust `read_untyped_node.rs` | field: field eq kind | 251 | 2 | 0.49 | 0.66 | 1.36× | 0.94 | 7.72 |
 
-The full table, with typescript `engine.ts` and rust `render.rs`, is in the probe's `outputs/where-cost.txt`.
+The full table, with every python `json/decoder.py` row, typescript `engine.ts` and rust `render.rs`, is in the probe's `outputs/where-cost.txt`. Spans, batch and span return native's result count on all 20 rows.
 
-- **Batch** runs from 0.7× to 3.3× native. The worst ratio is python `json/decoder.py`'s `^self\.` row: 0.77 ms against 0.23 ms. The cost grows with kind matches that fail, because each one crosses as a stub.
-- **Hydrating every match** (span) costs 1.4× to 19× native, the same gap the query design measured. Dropping pushdown is not an option.
+- **Spans run at 0.87× to 1.41× native.** The three rows the stop rule would have tripped under batch come in at:
+  - `isinstance`: 1.38×;
+  - typescript `object match ^this\.`: 1.41×;
+  - `add_argument or returnType .`: 1.05×.
+- **Why spans beat batch (0.97× to 1.92× in this run).** The spans ride on the walk's own call, so a batch makes one crossing, not two.
+- **What spans still pay over native.** Every kind match crosses as a stub with its spans, not only the passing ones, and JavaScript slices and evaluates each. So the gap grows with kind matches that fail: the 1.3–1.4× rows pass 9 of 657, 14 of 687 and 2 of 251.
+- **Hydrating every match** (span) costs 1.3× to 16× native, the same gap the query design measured. Dropping pushdown is not an option.
 - **Per node already in hand** (the shape of an `is` call), the same plans cost:
   - one native `planHolds` call: 1.3–19 µs, because it parses the plan and compiles its regexes on each call;
-  - JavaScript `holds`: 0.4–1.4 µs, through a linear accessor scan.
-- **`is` itself:**
+  - JavaScript `holds`: 0.4–1.2 µs, through a linear accessor scan.
+- **`is` itself** (coordinate's first run, at high load):
   - 35–80 ns per admitted node on an exact path;
   - 0.5–3.5 µs on a refined one (operator pins, placed and hidden captures);
   - 564 ns per built node.
@@ -129,10 +133,23 @@ The full table, with typescript `engine.ts` and rust `render.rs`, is in the prob
 
 These follow from the choice. Q1 and Q2 change behaviour or surface that users see.
 
-- **`where` patterns run as ECMAScript `u`.** `\w`, `\d`, `\b` and `\s` become ASCII-only.
+- **`where` patterns run as ECMAScript `u`.**
+  - `\w`, `\d` and `\b` become ASCII-only.
+  - `\s` stays Unicode in both dialects. JavaScript also counts U+FEFF as space, and Rust does not.
   - Patterns that Rust refused (look-around, back-references) are accepted.
+  - A user who wants today's Unicode meaning writes it out under `u`:
+
+    | Rust today | ECMAScript `u` |
+    | --- | --- |
+    | `\w` | `[\p{L}\p{N}_]` (letters, digits and underscore; Rust also counts combining marks and connector punctuation) |
+    | `\d` | `\p{Nd}` |
+    | `\b` before or after a word | `(?<![\p{L}\p{N}_])` / `(?![\p{L}\p{N}_])`, a look-around Rust would have refused |
+
+    On the probe's names (`café`, `x٣`, `plain`, `naïve_ünïcode`), `^[\p{L}\p{N}_]+$` matches all 4 and `\p{Nd}` matches 1, as Rust's `^\w+$` and `\d` do today.
   - All 12 `#match?` patterns in the three grammars' `bindings.scm` are in the subset where the two dialects agree. The 7 `#eq?` predicates have no dialect. The only `.` (python's `^__(?<stem>.*)__$`) differs only on `\r`, U+2028 and U+2029, which no identifier contains.
-  - **Q1 (user):** accept ECMAScript `u` as the one dialect? Recommended: yes. The alternative is refusing the escapes whose meaning differs, which keeps a second dialect alive as a rule.
+  - **Q1 (user):** accept ECMAScript `u` as the one dialect? Recommended: yes.
+    - The trade: a `where` written with `\w` or `\d` over non-ASCII names finds fewer nodes than today, and the fix is the spelled-out class above.
+    - The alternative is refusing `\w`, `\d` and `\b` so that no pattern changes meaning silently. That keeps the second dialect alive as a rule users must learn.
 - **`match` flags.** `slotRef.match` refuses every flag but `u`, because the native side had no equivalent. With one JavaScript evaluator, `i`, `s` and `m` could cross.
   - **Q2 (user):** admit them? Recommended: not in this change. Keep the refusal, and decide it as a surface question of its own.
 - **The walk's limit counts kind matches, not passing stubs.** A selective `where` takes more batches. The first-result latency the geometric batch limits protect is unchanged for `ofType` alone.
@@ -141,7 +158,9 @@ These follow from the choice. Q1 and Q2 change behaviour or surface that users s
 
 One branch, five tasks.
 
-**Depends on:** the typed reader's 1c-i and the binding generator's Stage 3, both on master. 1c-i turns the walk's stubs into coordinates; Stage 3 adds `SelfText`, `PortableCondition` and the `is` tables.
+**Depends on:** the typed reader's 1c-i and the binding generator's Stage 3, both merged.
+- 1c-i turns the walk's stubs into coordinates.
+- Stage 3 adds `SelfText`, `PortableCondition` and the `is` tables. It is not on master yet: it is gated in the prototype, waiting on a type-checker stack-depth fix. The branch starts after Stage 3 lands.
 
 **Gates:**
 - The full unit suite and the cargo workspace pass after every task.
