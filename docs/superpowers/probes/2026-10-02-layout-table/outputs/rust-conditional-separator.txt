@@ -1,0 +1,64 @@
+--- width off
+ 78 [89]             return Err(SpliceError::InvalidRange { start: e.start_pos, end: e.end_pos });
+ 81 [80]             return Err(SpliceError::OutOfBounds { end: e.end_pos, source_len });
+ 84 [92]             return Err(SpliceError::NonCharBoundary { start: e.start_pos, end: e.end_pos });
+ 94 [7]     });
+--- width 100
+ 76 [68] /// - [`SpliceError::NonCharBoundary`] if any edit's start or end is
+ 84 [89]             return Err(SpliceError::InvalidRange { start: e.start_pos, end: e.end_pos });
+ 87 [80]             return Err(SpliceError::OutOfBounds { end: e.end_pos, source_len });
+ 92 [92]             return Err(SpliceError::NonCharBoundary { start: e.start_pos, end: e.end_pos });
+--- width 90
+ 76 [68] /// - [`SpliceError::NonCharBoundary`] if any edit's start or end is
+ 84 [89]             return Err(SpliceError::InvalidRange { start: e.start_pos, end: e.end_pos });
+ 87 [80]             return Err(SpliceError::OutOfBounds { end: e.end_pos, source_len });
+ 93 [83]                 SpliceError::NonCharBoundary { start: e.start_pos, end: e.end_pos }
+--- width 80
+ 76 [68] /// - [`SpliceError::NonCharBoundary`] if any edit's start or end is
+ 88 [80]                 SpliceError::InvalidRange { start: e.start_pos, end: e.end_pos }
+ 92 [80]             return Err(SpliceError::OutOfBounds { end: e.end_pos, source_len });
+--- width 90
+[ 21]     for e in &edits {
+[ 36]         if e.end_pos < e.start_pos {
+[ 89]             return Err(SpliceError::InvalidRange { start: e.start_pos, end: e.end_pos });
+[  9]         }
+[ 46]         if (e.end_pos as usize) > source_len {
+[ 80]             return Err(SpliceError::OutOfBounds { end: e.end_pos, source_len });
+[  9]         }
+[ 86]         if !source.is_char_boundary(e.start_pos as usize) || !source.is_char_boundary(
+[ 30]             e.end_pos as usize
+[ 11]         ) {
+[ 23]             return Err(
+[ 83]                 SpliceError::NonCharBoundary { start: e.start_pos, end: e.end_pos }
+[ 14]             );
+[  9]         }
+[  5]     }
+--- width 70
+[ 21]     for e in &edits {
+[ 36]         if e.end_pos < e.start_pos {
+[ 23]             return Err(
+[ 43]                 SpliceError::InvalidRange {
+[ 39]                     start: e.start_pos,
+[ 35]                     end: e.end_pos,
+[ 17]                 }
+[ 14]             );
+[  9]         }
+[ 46]         if (e.end_pos as usize) > source_len {
+[ 23]             return Err(
+[ 42]                 SpliceError::OutOfBounds {
+[ 35]                     end: e.end_pos,
+[ 31]                     source_len,
+[ 17]                 }
+[ 14]             );
+[  9]         }
+[ 36]         if !source.is_char_boundary(
+[ 32]             e.start_pos as usize
+[ 59]         ) || !source.is_char_boundary(e.end_pos as usize) {
+[ 23]             return Err(
+[ 46]                 SpliceError::NonCharBoundary {
+[ 39]                     start: e.start_pos,
+[ 35]                     end: e.end_pos,
+[ 17]                 }
+[ 14]             );
+[  9]         }
+[  5]     }

@@ -85271,7 +85271,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "\"\";\n\"abc\";\nc\"foo\";\nb\"foo\\n bar\";\n\"foo\\\n    bar\";\n\"\\\"foo\\\"\";\n\"/* foo bar */ foo bar\";\n\"foo\\x42\\x43 bar\";\n\"foo \\x42  \\x43 bar\";\n"
+    "expectedOutput": "\"\";\n\"abc\";\nc\"foo\";\nb\"foo\\nbar\";\n\"foo\\\n    bar\";\n\"\\\"foo\\\"\";\n\"/* foo bar */ foo bar\";\n\"foo\\x42\\x43bar\";\n\"foo \\x42  \\x43 bar\";\n"
   },
   {
     "kind": "roundtrip",
@@ -85279,9 +85279,9 @@
     "sourceIn": "\n\"\";\n\"abc\";\nc\"foo\";\nb\"foo\\nbar\";\n\"foo\\\n    bar\";\n\"\\\"foo\\\"\";\n\"/* foo bar */ foo bar\";\n\"foo\\x42\\x43bar\";\n\"foo \\x42  \\x43 bar\";\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "\"\";\n\"abc\";\nc\"foo\";\nb\"foo\\n bar\";\n\"foo\\\n    bar\";\n\"\\\"foo\\\"\";\n\"/* foo bar */ foo bar\";\n\"foo\\x42\\x43 bar\";\n\"foo \\x42  \\x43 bar\";\n",
+    "expectedSourceOut": "\"\";\n\"abc\";\nc\"foo\";\nb\"foo\\nbar\";\n\"foo\\\n    bar\";\n\"\\\"foo\\\"\";\n\"/* foo bar */ foo bar\";\n\"foo\\x42\\x43bar\";\n\"foo \\x42  \\x43 bar\";\n",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (string_literal string_open: (string_open)))) statements: (expression_statement (expression_statement_with_semi expression: (string_literal string_open: (string_open) elements: (string_content)))) statements: (expression_statement (expression_statement_with_semi expression: (string_literal string_open: (string_open) elements: (string_content)))) statements: (expression_statement (expression_statement_with_semi expression: (string_literal string_open: (string_open) elements: (string_content) elements: (escape_sequence_simple) elements: (string_content)))) statements: (expression_statement (expression_statement_with_semi expression: (string_literal string_open: (string_open) elements: (string_content) elements: (escape_sequence_simple) elements: (string_content)))) statements: (expression_statement (expression_statement_with_semi expression: (string_literal string_open: (string_open) elements: (escape_sequence_simple) elements: (string_content) elements: (escape_sequence_simple)))) statements: (expression_statement (expression_statement_with_semi expression: (string_literal string_open: (string_open) elements: (string_content)))) statements: (expression_statement (expression_statement_with_semi expression: (string_literal string_open: (string_open) elements: (string_content) elements: (escape_sequence_hex) elements: (escape_sequence_hex) elements: (string_content)))) statements: (expression_statement (expression_statement_with_semi expression: (string_literal string_open: (string_open) elements: (string_content) elements: (escape_sequence_hex) elements: (string_content) elements: (escape_sequence_hex) elements: (string_content)))))",
-    "wrappedText": "\"\";\n\"abc\";\nc\"foo\";\nb\"foo\\n bar\";\n\"foo\\\n    bar\";\n\"\\\"foo\\\"\";\n\"/* foo bar */ foo bar\";\n\"foo\\x42\\x43 bar\";\n\"foo \\x42  \\x43 bar\";\n",
+    "wrappedText": "\"\";\n\"abc\";\nc\"foo\";\nb\"foo\\nbar\";\n\"foo\\\n    bar\";\n\"\\\"foo\\\"\";\n\"/* foo bar */ foo bar\";\n\"foo\\x42\\x43bar\";\n\"foo \\x42  \\x43 bar\";\n",
     "wrappedOffset": 0
   },
   {
@@ -85404,7 +85404,7 @@
         }
       ]
     },
-    "expectedOutput": "b\"foo\\n bar\""
+    "expectedOutput": "b\"foo\\nbar\""
   },
   {
     "kind": "roundtrip",
@@ -85412,9 +85412,9 @@
     "sourceIn": "b\"foo\\nbar\"",
     "pattern": "string_literal",
     "edits": [],
-    "expectedSourceOut": "b\"foo\\n bar\"",
+    "expectedSourceOut": "b\"foo\\nbar\"",
     "expectedReparseTree": "(string_literal string_open: (string_open) elements: (string_content) elements: (escape_sequence_simple) elements: (string_content))",
-    "wrappedText": "fn _f() { let _ = b\"foo\\n bar\"; }",
+    "wrappedText": "fn _f() { let _ = b\"foo\\nbar\"; }",
     "wrappedOffset": 18
   },
   {
@@ -85587,7 +85587,7 @@
         }
       ]
     },
-    "expectedOutput": "\"foo\\x42\\x43 bar\""
+    "expectedOutput": "\"foo\\x42\\x43bar\""
   },
   {
     "kind": "roundtrip",
@@ -85595,9 +85595,9 @@
     "sourceIn": "\"foo\\x42\\x43bar\"",
     "pattern": "string_literal",
     "edits": [],
-    "expectedSourceOut": "\"foo\\x42\\x43 bar\"",
+    "expectedSourceOut": "\"foo\\x42\\x43bar\"",
     "expectedReparseTree": "(string_literal string_open: (string_open) elements: (string_content) elements: (escape_sequence_hex) elements: (escape_sequence_hex) elements: (string_content))",
-    "wrappedText": "fn _f() { let _ = \"foo\\x42\\x43 bar\"; }",
+    "wrappedText": "fn _f() { let _ = \"foo\\x42\\x43bar\"; }",
     "wrappedOffset": 18
   },
   {
@@ -90242,7 +90242,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "macro_rules! say_hello {() =>(\nprintln!(\"Hello!\");\n)\n}\n\nmacro_rules! four {\n    () => {1 + 3};\n}\n\nmacro_rules! foo {\n    (x => $e:expr) =>(println!(\"mode X: {}\", $e));\n    (y => $e:expr) =>(println!(\"mode Y: {}\", $e))\n}\n\nmacro_rules! o_O {(\n$($x:expr; [$($y:expr) , *]) ; *\n) => {\n$($($x + $e) , *) , *\n}\n}\n\nmacro_rules! zero_or_one {\n    ($($e:expr) , ?) => {\n    $($e) , ?\n    };\n}\n\nmacro_rules! empty[\n    () => {};\n];\n"
+    "expectedOutput": "macro_rules! say_hello {() =>(\nprintln!(\"Hello!\");\n)\n}\n\nmacro_rules! four {\n    () => {1 + 3};\n}\n\nmacro_rules! foo {\n    (x => $e:expr) =>(println!(\"mode X: {}\", $e));\n    (y => $e:expr) =>(println!(\"mode Y: {}\", $e))\n}\n\nmacro_rules! o_O {(\n$($x:expr; [$($y:expr),*]);*\n) => {\n$($($x + $e),*),*\n}\n}\n\nmacro_rules! zero_or_one {\n    ($($e:expr),?) => {\n    $($e),?\n    };\n}\n\nmacro_rules! empty[\n    () => {};\n];\n"
   },
   {
     "kind": "roundtrip",
@@ -90250,9 +90250,9 @@
     "sourceIn": "\nmacro_rules! say_hello {\n    () => (\n        println!(\"Hello!\");\n    )\n}\n\nmacro_rules! four {\n    () => {1 + 3};\n}\n\nmacro_rules! foo {\n    (x => $e:expr) => (println!(\"mode X: {}\", $e));\n    (y => $e:expr) => (println!(\"mode Y: {}\", $e))\n}\n\nmacro_rules! o_O {\n    (\n      $($x:expr; [ $( $y:expr ),* ]);*\n    ) => {\n      $($($x + $e),*),*\n    }\n}\n\nmacro_rules! zero_or_one {\n    ($($e:expr),?) => {\n        $($e),?\n    };\n}\n\nmacro_rules! empty [\n    () => {};\n];\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "macro_rules! say_hello {() =>(\nprintln!(\"Hello!\");\n)\n}\n\nmacro_rules! four {\n    () => {1 + 3};\n}\n\nmacro_rules! foo {\n    (x => $e:expr) =>(println!(\"mode X: {}\", $e));\n    (y => $e:expr) =>(println!(\"mode Y: {}\", $e))\n}\n\nmacro_rules! o_O {(\n$($x:expr; [$($y:expr) , *]) ; *\n) => {\n$($($x + $e) , *) , *\n}\n}\n\nmacro_rules! zero_or_one {\n    ($($e:expr) , ?) => {\n    $($e) , ?\n    };\n}\n\nmacro_rules! empty[\n    () => {};\n];\n",
+    "expectedSourceOut": "macro_rules! say_hello {() =>(\nprintln!(\"Hello!\");\n)\n}\n\nmacro_rules! four {\n    () => {1 + 3};\n}\n\nmacro_rules! foo {\n    (x => $e:expr) =>(println!(\"mode X: {}\", $e));\n    (y => $e:expr) =>(println!(\"mode Y: {}\", $e))\n}\n\nmacro_rules! o_O {(\n$($x:expr; [$($y:expr),*]);*\n) => {\n$($($x + $e),*),*\n}\n}\n\nmacro_rules! zero_or_one {\n    ($($e:expr),?) => {\n    $($e),?\n    };\n}\n\nmacro_rules! empty[\n    () => {};\n];\n",
     "expectedReparseTree": "(source_file statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))) tokens: (non_special_token (token_tree_punctuation)))))) statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren) right: (token_tree_brace tokens: (non_special_token (integer_literal_decimal)) tokens: (non_special_token (token_tree_punctuation)) tokens: (non_special_token (integer_literal_decimal)))))) statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))) item: (macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))))) statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (token_repetition tokens: (metavariable) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable) separator: (token_repetition_pattern_text)) separator: (token_repetition_pattern_text)))))) statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (metavariable) separator: (token_repetition_pattern_text)))))) statements: (macro_definition_bracket name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren) right: (token_tree_brace)))))",
-    "wrappedText": "macro_rules! say_hello {() =>(\nprintln!(\"Hello!\");\n)\n}\n\nmacro_rules! four {\n    () => {1 + 3};\n}\n\nmacro_rules! foo {\n    (x => $e:expr) =>(println!(\"mode X: {}\", $e));\n    (y => $e:expr) =>(println!(\"mode Y: {}\", $e))\n}\n\nmacro_rules! o_O {(\n$($x:expr; [$($y:expr) , *]) ; *\n) => {\n$($($x + $e) , *) , *\n}\n}\n\nmacro_rules! zero_or_one {\n    ($($e:expr) , ?) => {\n    $($e) , ?\n    };\n}\n\nmacro_rules! empty[\n    () => {};\n];\n",
+    "wrappedText": "macro_rules! say_hello {() =>(\nprintln!(\"Hello!\");\n)\n}\n\nmacro_rules! four {\n    () => {1 + 3};\n}\n\nmacro_rules! foo {\n    (x => $e:expr) =>(println!(\"mode X: {}\", $e));\n    (y => $e:expr) =>(println!(\"mode Y: {}\", $e))\n}\n\nmacro_rules! o_O {(\n$($x:expr; [$($y:expr),*]);*\n) => {\n$($($x + $e),*),*\n}\n}\n\nmacro_rules! zero_or_one {\n    ($($e:expr),?) => {\n    $($e),?\n    };\n}\n\nmacro_rules! empty[\n    () => {};\n];\n",
     "wrappedOffset": 0
   },
   {
@@ -90862,7 +90862,7 @@
         }
       }
     },
-    "expectedOutput": "macro_rules! o_O {(\n$($x:expr; [$($y:expr) , *]) ; *\n) => {\n$($($x + $e) , *) , *\n}\n}"
+    "expectedOutput": "macro_rules! o_O {(\n$($x:expr; [$($y:expr),*]);*\n) => {\n$($($x + $e),*),*\n}\n}"
   },
   {
     "kind": "roundtrip",
@@ -90870,9 +90870,9 @@
     "sourceIn": "macro_rules! o_O {\n    (\n      $($x:expr; [ $( $y:expr ),* ]);*\n    ) => {\n      $($($x + $e),*),*\n    }\n}",
     "pattern": "macro_definition_brace",
     "edits": [],
-    "expectedSourceOut": "macro_rules! o_O {(\n$($x:expr; [$($y:expr) , *]) ; *\n) => {\n$($($x + $e) , *) , *\n}\n}",
+    "expectedSourceOut": "macro_rules! o_O {(\n$($x:expr; [$($y:expr),*]);*\n) => {\n$($($x + $e),*),*\n}\n}",
     "expectedReparseTree": "(macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (token_repetition tokens: (metavariable) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable) separator: (token_repetition_pattern_text)) separator: (token_repetition_pattern_text))))))",
-    "wrappedText": "macro_rules! o_O {(\n$($x:expr; [$($y:expr) , *]) ; *\n) => {\n$($($x + $e) , *) , *\n}\n}",
+    "wrappedText": "macro_rules! o_O {(\n$($x:expr; [$($y:expr),*]);*\n) => {\n$($($x + $e),*),*\n}\n}",
     "wrappedOffset": 0
   },
   {
@@ -90958,7 +90958,7 @@
         }
       }
     },
-    "expectedOutput": "macro_rules! zero_or_one {\n    ($($e:expr) , ?) => {\n    $($e) , ?\n    };\n}"
+    "expectedOutput": "macro_rules! zero_or_one {\n    ($($e:expr),?) => {\n    $($e),?\n    };\n}"
   },
   {
     "kind": "roundtrip",
@@ -90966,9 +90966,9 @@
     "sourceIn": "macro_rules! zero_or_one {\n    ($($e:expr),?) => {\n        $($e),?\n    };\n}",
     "pattern": "macro_definition_brace",
     "edits": [],
-    "expectedSourceOut": "macro_rules! zero_or_one {\n    ($($e:expr) , ?) => {\n    $($e) , ?\n    };\n}",
+    "expectedSourceOut": "macro_rules! zero_or_one {\n    ($($e:expr),?) => {\n    $($e),?\n    };\n}",
     "expectedReparseTree": "(macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (metavariable) separator: (token_repetition_pattern_text))))))",
-    "wrappedText": "macro_rules! zero_or_one {\n    ($($e:expr) , ?) => {\n    $($e) , ?\n    };\n}",
+    "wrappedText": "macro_rules! zero_or_one {\n    ($($e:expr),?) => {\n    $($e),?\n    };\n}",
     "wrappedOffset": 0
   },
   {
@@ -91571,7 +91571,7 @@
         }
       ]
     },
-    "expectedOutput": "{\n$($($x + $e) , *) , *\n}"
+    "expectedOutput": "{\n$($($x + $e),*),*\n}"
   },
   {
     "kind": "roundtrip",
@@ -91579,9 +91579,9 @@
     "sourceIn": "{\n      $($($x + $e),*),*\n    }",
     "pattern": "token_tree_brace",
     "edits": [],
-    "expectedSourceOut": "{\n$($($x + $e) , *) , *\n}",
+    "expectedSourceOut": "{\n$($($x + $e),*),*\n}",
     "expectedReparseTree": "(token_tree_brace tokens: (token_repetition tokens: (token_repetition tokens: (metavariable) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable) separator: (token_repetition_pattern_text)) separator: (token_repetition_pattern_text)))",
-    "wrappedText": "macro_rules! _m { () => {\n$($($x + $e) , *) , *\n} }",
+    "wrappedText": "macro_rules! _m { () => {\n$($($x + $e),*),*\n} }",
     "wrappedOffset": 24
   },
   {
@@ -91617,7 +91617,7 @@
         }
       ]
     },
-    "expectedOutput": "{\n$($e) , ?\n}"
+    "expectedOutput": "{\n$($e),?\n}"
   },
   {
     "kind": "roundtrip",
@@ -91625,9 +91625,9 @@
     "sourceIn": "{\n        $($e),?\n    }",
     "pattern": "token_tree_brace",
     "edits": [],
-    "expectedSourceOut": "{\n$($e) , ?\n}",
+    "expectedSourceOut": "{\n$($e),?\n}",
     "expectedReparseTree": "(token_tree_brace tokens: (token_repetition tokens: (metavariable) separator: (token_repetition_pattern_text)))",
-    "wrappedText": "macro_rules! _m { () => {\n$($e) , ?\n} }",
+    "wrappedText": "macro_rules! _m { () => {\n$($e),?\n} }",
     "wrappedOffset": 24
   },
   {

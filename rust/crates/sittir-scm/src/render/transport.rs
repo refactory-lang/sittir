@@ -385,13 +385,13 @@ impl ::sittir_core::render::Render for TriviaTransport {
 }
 
 impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {
-    fn seam_text(&self) -> Option<&str> {
+    fn seam_gap(&self) -> Option<(::sittir_core::layout_kinds::LayoutKinds, Option<&str>)> {
         match self {
-            TriviaTransport::Space => Some(" "),
-            TriviaTransport::Tab => Some("\t"),
-            TriviaTransport::Newline => Some("\n"),
-            TriviaTransport::Blankline => Some("\n\n"),
-            TriviaTransport::DoubleBlankline => Some("\n\n\n"),
+            TriviaTransport::Space => Some((::sittir_core::layout_kinds::LayoutKinds::SPACE, None)),
+            TriviaTransport::Tab => Some((::sittir_core::layout_kinds::LayoutKinds::TAB, None)),
+            TriviaTransport::Newline => Some((::sittir_core::layout_kinds::LayoutKinds::NEWLINE, None)),
+            TriviaTransport::Blankline => Some((::sittir_core::layout_kinds::LayoutKinds::BLANKLINE, None)),
+            TriviaTransport::DoubleBlankline => Some((::sittir_core::layout_kinds::LayoutKinds::DOUBLE_BLANKLINE, None)),
             _ => None,
         }
     }
@@ -667,8 +667,8 @@ impl ::sittir_core::render::Render for StringContentContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             StringContentContentTransportSlot::StringContentText(inner) => inner.render(w),
-            StringContentContentTransportSlot::EscapeSequence(inner) => { w.adjacent(); inner.render(w) },
-            StringContentContentTransportSlot::Verbatim(inner) => { w.adjacent(); inner.render(w) },
+            StringContentContentTransportSlot::EscapeSequence(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringContentContentTransportSlot::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
         }
     }
 }
@@ -1190,8 +1190,8 @@ impl ::sittir_core::render::Render for NamedNodeSupertypedNameTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             NamedNodeSupertypedNameTransportSlot::ImmediateIdentifier(inner) => inner.render(w),
-            NamedNodeSupertypedNameTransportSlot::ImmediateString(inner) => { w.adjacent(); inner.render(w) },
-            NamedNodeSupertypedNameTransportSlot::Verbatim(inner) => { w.adjacent(); inner.render(w) },
+            NamedNodeSupertypedNameTransportSlot::ImmediateString(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            NamedNodeSupertypedNameTransportSlot::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
         }
     }
 }
@@ -1393,7 +1393,7 @@ impl ::sittir_core::options::Edged for ImmediateIdentifierTransport {
 
 impl ::sittir_core::render::Render for ImmediateIdentifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(6)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(6)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(6)); w.text(&self.text) })
     }
 }
 
@@ -2301,7 +2301,7 @@ impl ::sittir_core::options::Edged for StringContentTextTransport {
 
 impl ::sittir_core::render::Render for StringContentTextTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(23)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.adjacent(); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(23)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(23)); w.text(&self.text) })
     }
 }
 
@@ -3442,7 +3442,7 @@ fn render_program(node: &ProgramTransport, w: &mut dyn ::sittir_core::render::Re
 fn render_escape_sequence(node: &EscapeSequenceTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     w.text("\\")?;
-    w.adjacent();
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     content.render(w)?;
     Ok(())
 }
@@ -3456,7 +3456,7 @@ fn render_identifier(t: &IdentifierTransport, w: &mut dyn ::sittir_core::render:
 }
 
 fn render_immediate_identifier(t: &ImmediateIdentifierTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.adjacent();
+    w.leaf_kind(::sittir_core::types::KindId(6));
     w.text(&t.text)
 }
 
@@ -3464,7 +3464,7 @@ fn render_capture(node: &CaptureTransport, w: &mut dyn ::sittir_core::render::Re
     let name = &node.name;
     w.edge(::sittir_core::types::KindId(39), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("@")?;
-    w.adjacent();
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     name.render(w)?;
     w.edge(::sittir_core::types::KindId(39), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
@@ -3526,7 +3526,7 @@ fn render_parameters(node: &ParametersTransport, w: &mut dyn ::sittir_core::rend
 fn render_comment(node: &CommentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     w.text(";")?;
-    w.adjacent();
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     content.render(w)?;
     Ok(())
 }
@@ -3667,7 +3667,6 @@ fn render_negated_field(node: &NegatedFieldTransport, w: &mut dyn ::sittir_core:
     let identifier = &node.identifier;
     w.edge(::sittir_core::types::KindId(51), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("!")?;
-    w.adjacent();
     w.site_at(options::SITE_NEGATED_FIELD_BANG_AFTER);
     identifier.render(w)?;
     w.edge(::sittir_core::types::KindId(51), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -3685,7 +3684,7 @@ fn render_predicate(node: &PredicateTransport, w: &mut dyn ::sittir_core::render
     w.site_at(options::SITE_PREDICATE_PREFIX_BEFORE);
     prefix.render(w)?;
     name.render(w)?;
-    w.adjacent();
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     type_.render(w)?;
     parameters.render(w)?;
     w.site_at(options::SITE_PREDICATE_RPAREN_BEFORE);
@@ -3695,7 +3694,7 @@ fn render_predicate(node: &PredicateTransport, w: &mut dyn ::sittir_core::render
 }
 
 fn render_predicate_type(t: &PredicateTypeEnum, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.adjacent();
+    w.leaf_kind(::sittir_core::types::KindId(53));
     t.render(w)
 }
 
@@ -3745,7 +3744,7 @@ fn render_grouping_group(node: &GroupingGroupTransport, w: &mut dyn ::sittir_cor
 }
 
 fn render_string_content_text(t: &StringContentTextTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.adjacent();
+    w.leaf_kind(::sittir_core::types::KindId(23));
     w.text(&t.text)
 }
 
@@ -3765,7 +3764,6 @@ fn render_named_node_plain(node: &NamedNodePlainTransport, w: &mut dyn ::sittir_
     let named_node_group = View::new(&node.named_node_group, "{}");
     w.edge(::sittir_core::types::KindId(61), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
-    w.adjacent();
     w.site_at(options::SITE_NAMED_NODE_PLAIN_LPAREN_AFTER);
     name.render(w)?;
     named_node_group.render(w)?;
@@ -3794,11 +3792,10 @@ fn render_named_node_supertyped(node: &NamedNodeSupertypedTransport, w: &mut dyn
     let supertype = &node.supertype;
     w.edge(::sittir_core::types::KindId(62), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
-    w.adjacent();
     w.site_at(options::SITE_NAMED_NODE_SUPERTYPED_LPAREN_AFTER);
     supertype.render(w)?;
     w.text("/")?;
-    w.adjacent();
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     name.render(w)?;
     named_node_group.render(w)?;
     w.site_at(options::SITE_NAMED_NODE_SUPERTYPED_RPAREN_BEFORE);
@@ -3864,35 +3861,35 @@ fn render_anchor(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core
 }
 
 fn render_tight(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(25)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.token_seam(""); Ok::<(), ::sittir_core::render::RenderError>(()) })
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(25)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); Ok::<(), ::sittir_core::render::RenderError>(()) })
 }
 
 fn render_space(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(26)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.token_seam(" "); Ok::<(), ::sittir_core::render::RenderError>(()) })
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(26)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.seam(::sittir_core::layout_kinds::LayoutKinds::SPACE); Ok::<(), ::sittir_core::render::RenderError>(()) })
 }
 
 fn render_tab(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(27)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.token_seam("\t"); Ok::<(), ::sittir_core::render::RenderError>(()) })
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(27)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.seam(::sittir_core::layout_kinds::LayoutKinds::TAB); Ok::<(), ::sittir_core::render::RenderError>(()) })
 }
 
 fn render_newline(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(28)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) })
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(28)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.seam(::sittir_core::layout_kinds::LayoutKinds::NEWLINE); Ok::<(), ::sittir_core::render::RenderError>(()) })
 }
 
 fn render_blankline(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(29)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.token_seam("\n\n"); Ok::<(), ::sittir_core::render::RenderError>(()) })
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(29)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.seam(::sittir_core::layout_kinds::LayoutKinds::BLANKLINE); Ok::<(), ::sittir_core::render::RenderError>(()) })
 }
 
 fn render_double_blankline(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(30)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.token_seam("\n\n\n"); Ok::<(), ::sittir_core::render::RenderError>(()) })
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(30)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.seam(::sittir_core::layout_kinds::LayoutKinds::DOUBLE_BLANKLINE); Ok::<(), ::sittir_core::render::RenderError>(()) })
 }
 
 fn render_indent(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(31)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.indent(); w.seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) })
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(31)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.indent(); w.seam(::sittir_core::layout_kinds::LayoutKinds::from_bits(120)); Ok::<(), ::sittir_core::render::RenderError>(()) })
 }
 
 fn render_dedent(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(32)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.dedent("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) })
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(32)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.dedent(::sittir_core::layout_kinds::LayoutKinds::NEWLINE); Ok::<(), ::sittir_core::render::RenderError>(()) })
 }
 
 fn render_star(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {

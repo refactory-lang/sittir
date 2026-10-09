@@ -526,6 +526,14 @@ export function leadingChars(dfa: PatternDfa): CharSet {
 	return CharSet.of(dfa.states[0]!.edges.filter((edge) => live.has(edge.to)).flatMap((edge) => edge.set.ranges));
 }
 
+export function trailingChars(dfa: PatternDfa): CharSet {
+	const live = coaccessible(dfa);
+	const reached = reachableFrom(dfa, [0], () => true);
+	return CharSet.of(
+		[...reached].flatMap((at) => dfa.states[at]!.edges.filter((edge) => dfa.states[edge.to]!.accepting && live.has(edge.to)).flatMap((edge) => edge.set.ranges))
+	);
+}
+
 export function shortestAccepted(dfa: PatternDfa): string | undefined {
 	const paths = new Map<number, string>([[0, '']]);
 	const queue = [0];

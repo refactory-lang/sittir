@@ -40,6 +40,7 @@ import { testHistory } from './test-history.ts';
 import { textKindOverlap } from './text-kind-overlap.ts';
 import { spelledTrivia } from './spelled-trivia.ts';
 import { triviaPlacement } from './trivia-placement.ts';
+import { gapCensus } from './gap-census.ts';
 import { triviaTiming } from './trivia-timing.ts';
 import { uncoveredContent } from './uncovered-content.ts';
 import { variantDerivationProbe } from './variant-derivation-probe.ts';
@@ -85,6 +86,7 @@ export const toolModules: readonly CommandModule[] = [
 	textKindOverlap,
 	spelledTrivia,
 	triviaPlacement,
+	gapCensus,
 	triviaTiming,
 	uncoveredContent,
 	variantDerivationProbe,

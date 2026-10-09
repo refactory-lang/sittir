@@ -313,9 +313,6 @@
 			"text": "global"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "global_keyword_after"
 		},
@@ -630,9 +627,6 @@
 		{
 			"kind": "text",
 			"text": ":"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -2383,9 +2377,6 @@
 			"text": "export"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "export_keyword_after"
 		},
@@ -2606,9 +2597,6 @@
 			"text": "type"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "type_keyword_after"
 		},
@@ -2761,9 +2749,6 @@
 			"text": "finally"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "finally_keyword_after"
 		},
@@ -2806,9 +2791,6 @@
 		{
 			"kind": "text",
 			"text": "("
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -3894,9 +3876,6 @@
 		{
 			"kind": "slot",
 			"name": "attribute_kind"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -7595,9 +7574,6 @@
 		{
 			"kind": "text",
 			"text": "try"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",

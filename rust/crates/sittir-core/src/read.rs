@@ -18,6 +18,15 @@ use tree_sitter::{Node, TreeCursor};
 
 pub use regex::Captures;
 
+/// The kind the parser shows `node` as: the alias target at an alias site,
+/// else the grammar id. Every flag, edge and seat table is keyed on the
+/// grammar id (`grammar_id()`), never on this one; the display id is for the
+/// places that carry an alias envelope. The one call of `Node::kind_id`.
+#[allow(clippy::disallowed_methods)]
+pub fn display_id(node: &Node<'_>) -> KindId {
+    KindId(node.kind_id())
+}
+
 /// How many levels a read expands below the node it starts at.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Depth {
@@ -167,7 +176,7 @@ pub fn survey(cursor: &mut TreeCursor<'_>) -> Vec<Child> {
             children.push(Child {
                 index: index_of(cursor),
                 grammar: KindId(node.grammar_id()),
-                display: KindId(node.kind_id()),
+                display: display_id(&node),
                 field: cursor.field_id().map(|field| FieldId(field.get())),
                 named: node.is_named(),
                 trivia: node.is_extra() || node.is_error(),
@@ -780,7 +789,7 @@ pub fn read_at<T: ReadTransport, P: ReadTransport>(
     cursor.goto_descendant(index as usize);
     let sides = if cursor.goto_parent() {
         let parent = cursor.node();
-        if !P::admits(KindId(parent.grammar_id()), KindId(parent.kind_id())) {
+        if !P::admits(KindId(parent.grammar_id()), display_id(&parent)) {
             return Err(ReadError::Unadmitted { kind: KindId(parent.grammar_id()), index: index_of(cursor) });
         }
         let sides = P::sides_of(cursor, ctx, index)?;

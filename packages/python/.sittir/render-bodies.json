@@ -15,9 +15,6 @@
 			"name": "elements"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "tokenSeam",
 			"text": "\n"
 		},
@@ -1012,9 +1009,6 @@
 		{
 			"kind": "slot",
 			"name": "expression"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "tokenSeam",
@@ -2966,9 +2960,6 @@
 			"text": ":"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "colon_after"
 		},
@@ -3251,9 +3242,6 @@
 			"text": "("
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "lparen_after"
 		},
@@ -3312,9 +3300,6 @@
 		{
 			"kind": "text",
 			"text": "print"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -3847,9 +3832,6 @@
 		{
 			"kind": "slot",
 			"name": "elements"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "tokenSeam",

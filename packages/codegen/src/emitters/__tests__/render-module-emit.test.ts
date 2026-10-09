@@ -497,7 +497,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 	it('reads a depth token off its kind and not off a sentinel default', async () => {
 		const transportRs = await getRustTemplatesRs();
 		expect(transportRs).not.toMatch(/[\u{FFFE}\u{FDD0}-\u{FDD3}]/u);
-		expect(transportRs).toContain('{ w.dedent("\\n"); Ok::<(), ::sittir_core::render::RenderError>(()) }');
+		expect(transportRs).toContain('{ w.dedent(::sittir_core::layout_kinds::LayoutKinds::NEWLINE); Ok::<(), ::sittir_core::render::RenderError>(()) }');
 	});
 
 	it('prepares every transport through the render context and renders with its sources', async () => {
@@ -709,7 +709,7 @@ describe('a slot whose only scalar source is an enum of immediate tokens', () =>
 	it('keeps its adjacency flag and the renderer writes it', async () => {
 		const scm = await getTransportRsForGrammar('scm');
 		expect(extractStructBody(scm, 'PredicateTransport')).toContain('pub type_: ::sittir_core::SlotValue<PredicateTypeEnum, true>,');
-		expect(extractFnBody(scm, 'render_predicate_type')).toContain('w.adjacent();');
+		expect(extractFnBody(scm, 'render_predicate_type')).toContain('w.leaf_kind(');
 	}, 120_000);
 });
 

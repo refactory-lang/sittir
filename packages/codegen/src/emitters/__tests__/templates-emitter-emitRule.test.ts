@@ -194,7 +194,7 @@ describe('emitRule — seq', () => {
 		expect(shown(rule, makeCtx())).toBe('fn main');
 	});
 
-	it('a whitespace-only STRING member is a token seam, glued to the literal before it with an adjacency call', () => {
+	it('a whitespace-only STRING member is a token seam, the one seam at its flank (no join beside it)', () => {
 		// literalBody classifies a whitespace-only literal as a tokenSeam
 		// regardless of which render-body site produced it (STRING, SYMBOL's
 		// own literal, or a hidden kind's fixed text) — no real grammar's
@@ -209,7 +209,7 @@ describe('emitRule — seq', () => {
 				{ type: STRING, value: 'main' }
 			]
 		};
-		expect(shown(rule, makeCtx())).toBe('fn⟨adjacent⟩⟨tokenSeam " "⟩main');
+		expect(shown(rule, makeCtx())).toBe('fn⟨tokenSeam " "⟩main');
 	});
 
 	it('recurses into nested seqs, defaulting every undeclared literal seam to a space', () => {

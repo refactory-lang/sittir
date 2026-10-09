@@ -1,0 +1,1251 @@
+diff --git a/rust/crates/sittir-core/src/layout.rs b/rust/crates/sittir-core/src/layout.rs
+new file mode 100644
+index 000000000..7635cb4ae
+--- /dev/null
++++ b/rust/crates/sittir-core/src/layout.rs
+@@ -0,0 +1,690 @@
++//! PROTOTYPE (throwaway, for measurements): a transient layout table filled by
++//! `SpacingWriter` during one render, adjusted by a breaking rule, and
++//! flattened to text.
++
++use std::fmt;
++
++pub const NO_LIST: u32 = u32::MAX;
++pub const NO_ROW: u32 = u32::MAX;
++
++/// Row kinds and marks.
++pub const SEAM: u8 = 1;
++/// The writer owed indentation before this row (it starts a line).
++pub const STARTS_LINE: u8 = 2;
++/// Written only when its list is broken (a conditional trailing separator).
++pub const CONDITIONAL: u8 = 4;
++/// Set by the pass: this seam is a line break.
++pub const BREAK: u8 = 8;
++/// The row's flat bytes contain a line break.
++pub const HAS_NEWLINE: u8 = 16;
++/// A space the writer put between two word characters.
++pub const LEXICAL: u8 = 32;
++
++/// A seam's place in its list (`fact & ROLE_MASK`).
++pub const ROLE_MASK: u8 = 7;
++pub const ROLE_NONE: u8 = 0;
++pub const ROLE_HEAD: u8 = 1;
++pub const ROLE_BEFORE: u8 = 2;
++pub const ROLE_AFTER: u8 = 3;
++pub const ROLE_TAIL: u8 = 4;
++
++/// Why a seam is not adjustable (`fact >> 3`), as bits; 0 means nothing at the
++/// gap itself forbids it.
++pub const WHY_SET: u8 = 1;
++pub const WHY_SOURCE: u8 = 2;
++pub const WHY_FIXED: u8 = 4;
++pub const WHY_ROOT: u8 = 8;
++
++/// Site flags (`ResolvedOptions::site_flags`).
++pub const SITE_AFTER_OPEN_BRACKET: u8 = 1;
++pub const SITE_BEFORE_CLOSE_BRACKET: u8 = 2;
++
++/// List flags.
++pub const LIST_SEPARATED: u8 = 1;
++pub const LIST_OPENS_AT_BRACKET: u8 = 2;
++pub const LIST_CLOSES_AT_BRACKET: u8 = 4;
++pub const LIST_HOLDS_BREAK: u8 = 8;
++pub const LIST_BROKEN: u8 = 16;
++pub const LIST_SHIFTED: u8 = 32;
++
++#[derive(Clone, Copy, Debug)]
++pub struct Row {
++    /// One past this row's bytes in `text`; it starts where the previous row ends.
++    pub end: u32,
++    /// Seam: the list whose gap this is. Conditional text: the list it waits on.
++    pub list: u32,
++    /// The writer's depth when the row was written.
++    pub depth: u16,
++    pub kind: u8,
++    /// Seam: role in its list and why it is not adjustable.
++    pub fact: u8,
++}
++
++#[derive(Clone, Copy, Debug)]
++pub struct List {
++    pub parent: u32,
++    pub head: u32,
++    pub tail: u32,
++    pub flags: u8,
++}
++
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub enum Breaking {
++    Group,
++    Fill,
++}
++
++#[derive(Clone, Default)]
++pub struct GapNote {
++    list: u32,
++    role: u8,
++    why: u8,
++    brackets: u8,
++    heads: Vec<u32>,
++    tails: Vec<u32>,
++}
++
++pub struct Layout {
++    pub text: String,
++    pub rows: Vec<Row>,
++    pub lists: Vec<List>,
++    open: Vec<u32>,
++    gap: GapNote,
++    line_start: bool,
++    in_seam: bool,
++    conditional: u32,
++    pub limit: u32,
++    pub rule: Breaking,
++    pub tab: u32,
++}
++
++#[derive(Debug, Default, Clone, Copy)]
++pub struct LayoutStats {
++    pub text_bytes: usize,
++    pub rows: usize,
++    pub seam_rows: usize,
++    pub lists: usize,
++    pub breakable_lists: usize,
++    pub broken_lists: usize,
++    pub table_bytes: usize,
++    pub out_bytes: usize,
++}
++
++impl Layout {
++    pub fn new(limit: u32, rule: Breaking, tab: u32) -> Self {
++        Self {
++            text: String::new(),
++            rows: Vec::new(),
++            lists: Vec::new(),
++            open: Vec::new(),
++            gap: GapNote { list: NO_LIST, ..GapNote::default() },
++            line_start: false,
++            in_seam: false,
++            conditional: NO_LIST,
++            limit,
++            rule,
++            tab,
++        }
++    }
++
++    /// Bytes from the writer's `emit`: a piece of text, or the bytes of the
++    /// seam being flushed.
++    pub fn bytes(&mut self, s: &str, depth: usize) {
++        self.text.push_str(s);
++        if self.in_seam {
++            return;
++        }
++        let end = self.text.len() as u32;
++        let newline = if s.contains('\n') { HAS_NEWLINE } else { 0 };
++        let merge = !self.line_start && self.conditional == NO_LIST;
++        match self.rows.last_mut() {
++            Some(last) if merge && last.kind & (SEAM | CONDITIONAL) == 0 => {
++                last.end = end;
++                last.kind |= newline;
++            }
++            _ => {
++                let starts = if std::mem::take(&mut self.line_start) { STARTS_LINE } else { 0 };
++                let conditional = if self.conditional == NO_LIST { 0 } else { CONDITIONAL };
++                self.rows.push(Row { end, list: self.conditional, depth: depth as u16, kind: starts | conditional | newline, fact: 0 });
++            }
++        }
++    }
++
++    pub fn lexical_space(&mut self, depth: usize) {
++        self.text.push(' ');
++        let conditional = if self.conditional == NO_LIST { 0 } else { CONDITIONAL };
++        self.rows.push(Row { end: self.text.len() as u32, list: self.conditional, depth: depth as u16, kind: SEAM | LEXICAL | conditional, fact: 0 });
++    }
++
++    pub fn owe_indent(&mut self) {
++        self.line_start = true;
++    }
++
++    pub fn seam_begin(&mut self) -> usize {
++        self.in_seam = true;
++        self.text.len()
++    }
++
++    /// The gap's seam was flushed (`marked`), or there was none: record its
++    /// row when it holds a mark or a list role.
++    pub fn seam_end(&mut self, start: usize, marked: bool, depth: usize) {
++        self.in_seam = false;
++        let gap = std::mem::replace(&mut self.gap, GapNote { list: NO_LIST, ..GapNote::default() });
++        if !marked && gap.role == ROLE_NONE && gap.heads.is_empty() && gap.tails.is_empty() {
++            return;
++        }
++        let end = self.text.len() as u32;
++        let newline = if self.text[start..].contains('\n') { HAS_NEWLINE } else { 0 };
++        let starts = if std::mem::take(&mut self.line_start) { STARTS_LINE } else { 0 };
++        let conditional = if self.conditional == NO_LIST { 0 } else { CONDITIONAL };
++        let index = self.rows.len() as u32;
++        let (list, role) = if self.conditional != NO_LIST { (self.conditional, ROLE_BEFORE) } else { (gap.list, gap.role) };
++        self.rows.push(Row { end, list, depth: depth as u16, kind: SEAM | starts | conditional | newline, fact: role | (gap.why << 3) });
++        for &l in &gap.heads {
++            let entry = &mut self.lists[l as usize];
++            entry.head = index;
++            if gap.brackets & SITE_AFTER_OPEN_BRACKET != 0 {
++                entry.flags |= LIST_OPENS_AT_BRACKET;
++            }
++        }
++        for &l in &gap.tails {
++            let entry = &mut self.lists[l as usize];
++            entry.tail = index;
++            if gap.brackets & SITE_BEFORE_CLOSE_BRACKET != 0 {
++                entry.flags |= LIST_CLOSES_AT_BRACKET;
++            }
++        }
++        if newline != 0 && list != NO_LIST && (role == ROLE_BEFORE || role == ROLE_AFTER) && conditional == 0 {
++            self.lists[list as usize].flags |= LIST_HOLDS_BREAK;
++        }
++    }
++
++    pub fn note(&mut self, why: u8) {
++        self.gap.why |= why;
++    }
++
++    pub fn note_site(&mut self, flags: u8, set: bool) {
++        self.gap.brackets |= flags;
++        if set {
++            self.gap.why |= WHY_SET;
++        }
++    }
++
++    pub fn list_open(&mut self, separated: bool) {
++        let index = self.lists.len() as u32;
++        let parent = self.open.last().copied().unwrap_or(NO_LIST);
++        self.lists.push(List { parent, head: NO_ROW, tail: NO_ROW, flags: if separated { LIST_SEPARATED } else { 0 } });
++        self.open.push(index);
++        self.gap.heads.push(index);
++        if self.gap.role == ROLE_NONE {
++            self.gap.role = ROLE_HEAD;
++            self.gap.list = index;
++        }
++    }
++
++    pub fn list_gap(&mut self, role: u8) {
++        if let Some(&list) = self.open.last() {
++            self.gap.role = role;
++            self.gap.list = list;
++        }
++    }
++
++    pub fn list_close(&mut self) {
++        if let Some(list) = self.open.pop() {
++            self.gap.tails.push(list);
++            self.gap.role = ROLE_TAIL;
++            self.gap.list = list;
++        }
++    }
++
++    pub fn current_list(&self) -> u32 {
++        self.open.last().copied().unwrap_or(NO_LIST)
++    }
++
++    pub fn take_gap(&mut self) -> GapNote {
++        std::mem::replace(&mut self.gap, GapNote { list: NO_LIST, ..GapNote::default() })
++    }
++
++    pub fn put_gap(&mut self, gap: GapNote) {
++        self.gap = gap;
++    }
++
++    pub fn set_conditional(&mut self, list: u32) {
++        self.conditional = list;
++    }
++
++    fn start_of(&self, row: usize) -> usize {
++        if row == 0 { 0 } else { self.rows[row - 1].end as usize }
++    }
++
++    fn bytes_of(&self, row: usize) -> &str {
++        &self.text[self.start_of(row)..self.rows[row].end as usize]
++    }
++
++    fn columns(&self, s: &str) -> u32 {
++        if s.is_ascii() {
++            let tabs = s.bytes().filter(|&b| b == b'\t').count() as u32;
++            s.len() as u32 + tabs * (self.tab.saturating_sub(1))
++        } else {
++            s.chars().map(|c| if c == '\t' { self.tab } else { 1 }).sum()
++        }
++    }
++
++    /// Whether nothing at the row itself, or at its list, forbids turning it
++    /// into a line break.
++    pub fn adjustable(&self, row: usize) -> bool {
++        let r = &self.rows[row];
++        if r.kind & SEAM == 0 || r.kind & (HAS_NEWLINE | CONDITIONAL | LEXICAL) != 0 || r.list == NO_LIST {
++            return false;
++        }
++        let role = r.fact & ROLE_MASK;
++        if !(role == ROLE_HEAD || role == ROLE_AFTER || role == ROLE_TAIL) || r.fact >> 3 != 0 {
++            return false;
++        }
++        let need = LIST_SEPARATED | LIST_OPENS_AT_BRACKET | LIST_CLOSES_AT_BRACKET;
++        self.lists[r.list as usize].flags & need == need
++    }
++
++    /// A list the pass may break as a whole: bracketed, separated, and each
++    /// flank either adjustable or already a line break.
++    fn breakable(&self, list: usize) -> bool {
++        let l = &self.lists[list];
++        let need = LIST_SEPARATED | LIST_OPENS_AT_BRACKET | LIST_CLOSES_AT_BRACKET;
++        if l.flags & need != need || l.head == NO_ROW || l.tail == NO_ROW {
++            return false;
++        }
++        let flank = |row: u32| self.adjustable(row as usize) || self.rows[row as usize].kind & HAS_NEWLINE != 0;
++        flank(l.head) && flank(l.tail)
++    }
++
++    fn indent_width(&self, depth: u32, indent: &str) -> u32 {
++        depth * self.columns(indent)
++    }
++
++    /// Group breaking: a list stays on its line when it and what follows it,
++    /// up to the next place the line can end, fit; otherwise every adjustable
++    /// seam of the list becomes a line break.
++    fn lay_out_group(&mut self, indent: &str) {
++        self.mark_broken_as_written();
++        let mut col: u32 = 0;
++        let mut shift: u32 = 0;
++        let mut owed = false;
++        for i in 0..self.rows.len() {
++            let row = self.rows[i];
++            if row.kind & CONDITIONAL != 0 && self.lists[row.list as usize].flags & LIST_BROKEN == 0 {
++                continue;
++            }
++            if row.kind & SEAM != 0 && row.kind & CONDITIONAL == 0 && row.list != NO_LIST {
++                let l = row.list as usize;
++                if self.lists[l].head == i as u32 && self.lists[l].flags & LIST_BROKEN == 0 && self.breakable(l) && !self.fits(i, col) {
++                    self.lists[l].flags |= LIST_BROKEN;
++                }
++                if self.lists[l].flags & LIST_BROKEN != 0 && self.breakable(l) && self.adjustable(i) {
++                    self.rows[i].kind |= BREAK;
++                    let role = row.fact & ROLE_MASK;
++                    if role == ROLE_HEAD {
++                        self.lists[l].flags |= LIST_SHIFTED;
++                        shift += 1;
++                    }
++                    if role == ROLE_TAIL && self.lists[l].flags & LIST_SHIFTED != 0 {
++                        shift -= 1;
++                    }
++                    col = 0;
++                    owed = true;
++                    continue;
++                }
++                if row.fact & ROLE_MASK == ROLE_TAIL && self.lists[l].flags & LIST_SHIFTED != 0 {
++                    shift -= 1;
++                }
++            }
++            let starts = row.kind & STARTS_LINE != 0 || (owed && row.kind & LEXICAL == 0);
++            if owed && row.kind & LEXICAL != 0 {
++                continue;
++            }
++            if starts {
++                col = self.indent_width(row.depth as u32 + shift, indent);
++                owed = false;
++            }
++            let bytes = self.bytes_of(i);
++            if row.kind & HAS_NEWLINE != 0 {
++                col = self.columns(&bytes[bytes.rfind('\n').map_or(0, |at| at + 1)..]);
++            } else {
++                col += self.columns(bytes);
++            }
++        }
++    }
++
++    /// A list is broken as written when a gap between its items holds a line
++    /// break, or when a flank that sits at its bracket does.
++    fn mark_broken_as_written(&mut self) {
++        for l in 0..self.lists.len() {
++            let list = self.lists[l];
++            let flank = |row: u32, at_bracket: u8| row != NO_ROW && list.flags & at_bracket != 0 && self.rows[row as usize].kind & HAS_NEWLINE != 0;
++            if list.flags & LIST_HOLDS_BREAK != 0 || flank(list.head, LIST_OPENS_AT_BRACKET) || flank(list.tail, LIST_CLOSES_AT_BRACKET) {
++                self.lists[l].flags |= LIST_BROKEN;
++            }
++        }
++    }
++
++    /// Whether the list whose head gap is row `head` fits on the line that
++    /// stands at `col`: its rows flat, then what follows it up to the next
++    /// place the line can end. A line break inside the list ends the
++    /// measurement there.
++    fn fits(&self, head: usize, col: u32) -> bool {
++        let list = self.rows[head].list;
++        let tail = self.lists[list as usize].tail as usize;
++        let mut used = col;
++        let mut i = head;
++        while i < self.rows.len() {
++            let row = &self.rows[i];
++            if row.kind & CONDITIONAL != 0 {
++                i += 1;
++                continue;
++            }
++            if i > tail && row.kind & SEAM != 0 && row.list != NO_LIST {
++                let l = row.list as usize;
++                let opens = self.lists[l].head == i as u32 && self.breakable(l);
++                let ends = self.lists[l].flags & LIST_BROKEN != 0 && self.adjustable(i);
++                if opens || ends {
++                    return used <= self.limit;
++                }
++            }
++            let bytes = self.bytes_of(i);
++            if row.kind & HAS_NEWLINE != 0 {
++                used += self.columns(&bytes[..bytes.find('\n').unwrap_or(bytes.len())]);
++                return used <= self.limit;
++            }
++            used += self.columns(bytes);
++            if used > self.limit {
++                return false;
++            }
++            i += 1;
++        }
++        used <= self.limit
++    }
++
++    /// Fill breaking: a separator gap becomes a line break only when the item
++    /// after it would cross the limit.
++    fn lay_out_fill(&mut self, indent: &str) {
++        self.mark_broken_as_written();
++        let mut col: u32 = 0;
++        let mut shift: u32 = 0;
++        let mut owed = false;
++        for i in 0..self.rows.len() {
++            let row = self.rows[i];
++            if row.kind & CONDITIONAL != 0 {
++                continue;
++            }
++            if row.kind & SEAM != 0 && row.list != NO_LIST {
++                let l = row.list as usize;
++                let role = row.fact & ROLE_MASK;
++                if role == ROLE_AFTER && self.adjustable(i) && !self.item_fits(i, col) {
++                    self.rows[i].kind |= BREAK;
++                    if self.lists[l].flags & LIST_SHIFTED == 0 {
++                        self.lists[l].flags |= LIST_SHIFTED;
++                        shift += 1;
++                    }
++                    col = 0;
++                    owed = true;
++                    continue;
++                }
++                if role == ROLE_TAIL && self.lists[l].flags & LIST_SHIFTED != 0 {
++                    shift -= 1;
++                }
++            }
++            if owed && row.kind & LEXICAL != 0 {
++                continue;
++            }
++            if row.kind & STARTS_LINE != 0 || owed {
++                col = self.indent_width(row.depth as u32 + shift, indent);
++                owed = false;
++            }
++            let bytes = self.bytes_of(i);
++            if row.kind & HAS_NEWLINE != 0 {
++                col = self.columns(&bytes[bytes.rfind('\n').map_or(0, |at| at + 1)..]);
++            } else {
++                col += self.columns(bytes);
++            }
++        }
++    }
++
++    /// Whether the item after separator gap `gap` fits on the line at `col`:
++    /// its rows up to the next gap of the same list, and after the last item
++    /// what follows the list up to the next place the line can end.
++    fn item_fits(&self, gap: usize, col: u32) -> bool {
++        let list = self.rows[gap].list;
++        let tail = self.lists[list as usize].tail as usize;
++        let mut used = col;
++        let mut i = gap;
++        while i < self.rows.len() {
++            let row = &self.rows[i];
++            if row.kind & CONDITIONAL != 0 {
++                i += 1;
++                continue;
++            }
++            if i > gap && row.kind & SEAM != 0 && row.list != NO_LIST {
++                let l = row.list as usize;
++                let next_gap = row.list == list && row.fact & ROLE_MASK == ROLE_AFTER;
++                let past = i > tail && self.adjustable(i);
++                let _ = l;
++                if next_gap || past {
++                    return used <= self.limit;
++                }
++            }
++            let bytes = self.bytes_of(i);
++            if row.kind & HAS_NEWLINE != 0 {
++                used += self.columns(&bytes[..bytes.find('\n').unwrap_or(bytes.len())]);
++                return used <= self.limit;
++            }
++            used += self.columns(bytes);
++            if used > self.limit {
++                return false;
++            }
++            i += 1;
++        }
++        used <= self.limit
++    }
++
++    /// Lay the table out and write its text.
++    pub fn finish(mut self, out: &mut (impl fmt::Write + ?Sized), indent: &str) -> Result<LayoutStats, fmt::Error> {
++        match self.rule {
++            Breaking::Group => self.lay_out_group(indent),
++            Breaking::Fill => self.lay_out_fill(indent),
++        }
++        let mut written = 0usize;
++        let mut shift: u32 = 0;
++        let mut owed = false;
++        let mut active = vec![false; self.lists.len()];
++        let mut start = 0usize;
++        for i in 0..self.rows.len() {
++            let row = self.rows[i];
++            let end = row.end as usize;
++            let bytes = &self.text[start..end];
++            start = end;
++            if row.kind & CONDITIONAL != 0 && self.lists[row.list as usize].flags & LIST_BROKEN == 0 {
++                continue;
++            }
++            if row.kind & SEAM != 0 && row.kind & CONDITIONAL == 0 && row.list != NO_LIST {
++                let l = row.list as usize;
++                let role = row.fact & ROLE_MASK;
++                if row.kind & BREAK != 0 {
++                    if self.lists[l].flags & LIST_SHIFTED != 0 && !active[l] && role != ROLE_TAIL {
++                        active[l] = true;
++                        shift += 1;
++                    }
++                    if role == ROLE_TAIL && active[l] {
++                        active[l] = false;
++                        shift -= 1;
++                    }
++                    out.write_str("\n")?;
++                    written += 1;
++                    owed = true;
++                    continue;
++                }
++                if role == ROLE_TAIL && active[l] {
++                    active[l] = false;
++                    shift -= 1;
++                }
++            }
++            if owed && row.kind & LEXICAL != 0 {
++                continue;
++            }
++            if row.kind & STARTS_LINE != 0 || owed {
++                for _ in 0..(row.depth as u32 + shift) {
++                    out.write_str(indent)?;
++                    written += indent.len();
++                }
++                owed = false;
++            }
++            out.write_str(bytes)?;
++            written += bytes.len();
++        }
++        let need = LIST_SEPARATED | LIST_OPENS_AT_BRACKET | LIST_CLOSES_AT_BRACKET;
++        Ok(LayoutStats {
++            text_bytes: self.text.len(),
++            rows: self.rows.len(),
++            seam_rows: self.rows.iter().filter(|r| r.kind & SEAM != 0).count(),
++            lists: self.lists.len(),
++            breakable_lists: self.lists.iter().filter(|l| l.flags & need == need).count(),
++            broken_lists: self.lists.iter().filter(|l| l.flags & LIST_BROKEN != 0).count(),
++            table_bytes: self.text.capacity() + self.rows.capacity() * std::mem::size_of::<Row>() + self.lists.capacity() * std::mem::size_of::<List>(),
++            out_bytes: written,
++        })
++    }
++}
++
++/// PROTOTYPE: what the spacing writer writes to. Text output writes every
++/// call straight through; a table records the calls and lays out at `finish`.
++pub trait Output {
++    /// Whether this output lays lists out after the render, so the writer
++    /// leaves the conditional trailing separator to it.
++    const LAYS_OUT: bool;
++    /// Text, or the bytes of the seam being flushed.
++    fn bytes(&mut self, s: &str, depth: usize) -> fmt::Result;
++    /// The space the writer inserts between two word characters.
++    fn lexical_space(&mut self, depth: usize) -> fmt::Result;
++    /// Indentation owed before the next text.
++    fn owe_indent(&mut self, depth: usize, unit: &str) -> fmt::Result;
++    fn seam_begin(&mut self) -> usize;
++    fn seam_end(&mut self, start: usize, marked: bool, depth: usize);
++    /// A fact about the pending gap.
++    fn note(&mut self, why: u8);
++    fn note_site(&mut self, flags: u8, set: bool);
++    fn list_open(&mut self, separated: bool);
++    fn list_gap(&mut self, role: u8);
++    fn list_close(&mut self);
++    /// What is written until `conditional_end` exists only when the innermost
++    /// open list breaks; the pending gap's note is set aside meanwhile.
++    fn conditional_begin(&mut self) -> GapNote;
++    fn conditional_end(&mut self, gap: GapNote);
++    fn finish(&mut self, indent: &str) -> Result<Option<LayoutStats>, fmt::Error>;
++}
++
++impl<W: fmt::Write + ?Sized> Output for W {
++    const LAYS_OUT: bool = false;
++    #[inline(always)]
++    fn bytes(&mut self, s: &str, _depth: usize) -> fmt::Result {
++        self.write_str(s)
++    }
++    #[inline(always)]
++    fn lexical_space(&mut self, _depth: usize) -> fmt::Result {
++        self.write_str(" ")
++    }
++    #[inline(always)]
++    fn owe_indent(&mut self, depth: usize, unit: &str) -> fmt::Result {
++        for _ in 0..depth {
++            self.write_str(unit)?;
++        }
++        Ok(())
++    }
++    #[inline(always)]
++    fn seam_begin(&mut self) -> usize {
++        0
++    }
++    #[inline(always)]
++    fn seam_end(&mut self, _start: usize, _marked: bool, _depth: usize) {}
++    #[inline(always)]
++    fn note(&mut self, _why: u8) {}
++    #[inline(always)]
++    fn note_site(&mut self, _flags: u8, _set: bool) {}
++    #[inline(always)]
++    fn list_open(&mut self, _separated: bool) {}
++    #[inline(always)]
++    fn list_gap(&mut self, _role: u8) {}
++    #[inline(always)]
++    fn list_close(&mut self) {}
++    #[inline(always)]
++    fn conditional_begin(&mut self) -> GapNote {
++        GapNote::default()
++    }
++    #[inline(always)]
++    fn conditional_end(&mut self, _gap: GapNote) {}
++    #[inline(always)]
++    fn finish(&mut self, _indent: &str) -> Result<Option<LayoutStats>, fmt::Error> {
++        Ok(None)
++    }
++}
++
++/// PROTOTYPE: the table output. Rows are recorded during the render; `finish`
++/// lays them out and writes the text to `out`.
++pub struct Table<'a, W: fmt::Write + ?Sized> {
++    out: &'a mut W,
++    layout: Layout,
++}
++
++impl<'a, W: fmt::Write + ?Sized> Table<'a, W> {
++    pub fn new(out: &'a mut W, layout: Layout) -> Self {
++        Self { out, layout }
++    }
++}
++
++impl<W: fmt::Write + ?Sized> Output for Table<'_, W> {
++    const LAYS_OUT: bool = true;
++    fn bytes(&mut self, s: &str, depth: usize) -> fmt::Result {
++        self.layout.bytes(s, depth);
++        Ok(())
++    }
++    fn lexical_space(&mut self, depth: usize) -> fmt::Result {
++        self.layout.lexical_space(depth);
++        Ok(())
++    }
++    fn owe_indent(&mut self, _depth: usize, _unit: &str) -> fmt::Result {
++        self.layout.owe_indent();
++        Ok(())
++    }
++    fn seam_begin(&mut self) -> usize {
++        self.layout.seam_begin()
++    }
++    fn seam_end(&mut self, start: usize, marked: bool, depth: usize) {
++        self.layout.seam_end(start, marked, depth);
++    }
++    fn note(&mut self, why: u8) {
++        self.layout.note(why);
++    }
++    fn note_site(&mut self, flags: u8, set: bool) {
++        self.layout.note_site(flags, set);
++    }
++    fn list_open(&mut self, separated: bool) {
++        self.layout.list_open(separated);
++    }
++    fn list_gap(&mut self, role: u8) {
++        self.layout.list_gap(role);
++    }
++    fn list_close(&mut self) {
++        self.layout.list_close();
++    }
++    fn conditional_begin(&mut self) -> GapNote {
++        let list = self.layout.current_list();
++        let gap = self.layout.take_gap();
++        self.layout.set_conditional(list);
++        gap
++    }
++    fn conditional_end(&mut self, gap: GapNote) {
++        self.layout.set_conditional(NO_LIST);
++        self.layout.put_gap(gap);
++    }
++    fn finish(&mut self, indent: &str) -> Result<Option<LayoutStats>, fmt::Error> {
++        let layout = std::mem::replace(&mut self.layout, Layout::new(0, Breaking::Group, 1));
++        layout.finish(&mut *self.out, indent).map(Some)
++    }
++}
+diff --git a/rust/crates/sittir-core/src/lib.rs b/rust/crates/sittir-core/src/lib.rs
+index da0a774c4..258d64df7 100644
+--- a/rust/crates/sittir-core/src/lib.rs
++++ b/rust/crates/sittir-core/src/lib.rs
+@@ -14,6 +14,7 @@ pub mod boundary;
+ pub mod classify;
+ pub mod engine;
+ pub mod format;
++pub mod layout;
+ pub mod macros;
+ #[cfg(feature = "napi-bindings")]
+ pub mod napi_engine;
+diff --git a/rust/crates/sittir-core/src/options.rs b/rust/crates/sittir-core/src/options.rs
+index 124c7db30..6c6694541 100644
+--- a/rust/crates/sittir-core/src/options.rs
++++ b/rust/crates/sittir-core/src/options.rs
+@@ -31,6 +31,28 @@ pub struct ResolvedOptions {
+     pub sites: &'static [SiteSpec],
+     /// Per kind id, the kind's flags (`KIND_ANON`, `KIND_LINE_TERMINATED`, `KIND_LINE_BREAK_TERMINATED`, `KIND_ROOT`).
+     pub kind_flags: &'static [u8],
++    /// PROTOTYPE: per spacing site, whether an options object set it.
++    pub set: Vec<bool>,
++    /// PROTOTYPE: per spacing site, `layout::SITE_AFTER_OPEN_BRACKET` / `SITE_BEFORE_CLOSE_BRACKET`.
++    pub site_flags: Vec<u8>,
++    /// PROTOTYPE: the line width a root render lays lists out to.
++    pub width: Option<u32>,
++    /// PROTOTYPE: 0 group, 1 fill.
++    pub breaking: u8,
++    /// PROTOTYPE: the columns a tab counts as.
++    pub tab_width: u32,
++}
++
++/// PROTOTYPE: the bracket-inner seams, read off the site labels. The real
++/// table is emitted from the model.
++pub fn bracket_site_flags<'a>(labels: impl Iterator<Item = &'a str>) -> Vec<u8> {
++    labels
++        .map(|label| match label {
++            "lparen_after" | "lbrace_after" | "lbrack_after" => crate::layout::SITE_AFTER_OPEN_BRACKET,
++            "rparen_before" | "rbrace_before" | "rbrack_before" => crate::layout::SITE_BEFORE_CLOSE_BRACKET,
++            _ => 0,
++        })
++        .collect()
+ }
+ 
+ /// The parser's anonymous kind: a token, never an owner of trivia.
+@@ -129,6 +151,10 @@ impl ResolvedOptions {
+     /// it, so it must win a seam merge the default would lose.
+     pub fn set_arm(&mut self, site: usize, arm: u16) {
+         self.spacing[site] = crate::slot::SeamArm { arm, strength: crate::spacing::SEAM_DECLARED };
++        if self.set.len() < self.spacing.len() {
++            self.set.resize(self.spacing.len(), false);
++        }
++        self.set[site] = true;
+     }
+ 
+     /// What one side of a kind's edge writes: the stamp when one is set (at its
+@@ -180,6 +206,11 @@ impl Default for ResolvedOptions {
+             edge_rows: &[],
+             sites: &[],
+             kind_flags: &[],
++            set: Vec::new(),
++            site_flags: Vec::new(),
++            width: None,
++            breaking: 0,
++            tab_width: 1,
+         }
+     }
+ }
+@@ -239,6 +270,9 @@ pub trait OptionObject: Sized {
+ /// trie and applied over a base table by `resolve`.
+ #[derive(Debug, Clone, Default, PartialEq, Eq)]
+ pub struct Options<S> {
++    pub width: Option<u32>,
++    pub breaking: Option<String>,
++    pub tab_width: Option<u32>,
+     pub indent: Option<String>,
+     pub spacing: Vec<(SiteRef, u32)>,
+     pub delimiter: Vec<(SiteRef, u32)>,
+@@ -248,6 +282,9 @@ pub struct Options<S> {
+ impl<S: OptionSites> Options<S> {
+     pub fn read<O: OptionObject>(obj: &O) -> Result<Self, String> {
+         let mut options = Self {
++            width: obj.number("width")?,
++            breaking: obj.string("breaking")?,
++            tab_width: obj.number("tabWidth")?,
+             indent: if S::TABLES.indent_chars.is_empty() { None } else { obj.string("indent")? },
+             spacing: Vec::new(),
+             delimiter: Vec::new(),
+@@ -262,6 +299,9 @@ impl<S: OptionSites> Options<S> {
+             if at.is_empty() && key == "indent" && !S::TABLES.indent_chars.is_empty() {
+                 continue;
+             }
++            if at.is_empty() && (key == "width" || key == "breaking" || key == "tabWidth") {
++                continue;
++            }
+             let Some(node) = nodes.iter().find(|n| n.key() == key) else {
+                 return Err(if at.is_empty() {
+                     format!("options: unknown key {key}")
+@@ -295,6 +335,19 @@ impl<S: OptionSites> Options<S> {
+     pub fn resolve(&self, base: &ResolvedOptions) -> Result<ResolvedOptions, String> {
+         let tables = S::TABLES;
+         let mut table = base.clone();
++        if let Some(width) = self.width {
++            table.width = Some(width);
++        }
++        if let Some(rule) = &self.breaking {
++            table.breaking = match rule.as_str() {
++                "group" => 0,
++                "fill" => 1,
++                other => return Err(format!("options: breaking {other:?} is not one of \"group\", \"fill\"")),
++            };
++        }
++        if let Some(tab) = self.tab_width {
++            table.tab_width = tab;
++        }
+         if let Some(indent) = &self.indent {
+             if indent.is_empty() || !indent.chars().all(|c| tables.indent_chars.contains(c)) {
+                 return Err(format!(
+diff --git a/rust/crates/sittir-core/src/render.rs b/rust/crates/sittir-core/src/render.rs
+index 025c1fcd4..88319f061 100644
+--- a/rust/crates/sittir-core/src/render.rs
++++ b/rust/crates/sittir-core/src/render.rs
+@@ -171,6 +171,23 @@ pub trait RenderSink {
+             self.end_line_after(kind);
+         }
+     }
++    /// PROTOTYPE: a list's items begin; the gap now pending is its head.
++    fn list_open(&mut self, separated: bool) {
++        let _ = separated;
++    }
++    /// PROTOTYPE: the gap now pending lies before (`after == false`) or after
++    /// a separator of the innermost open list.
++    fn list_gap(&mut self, after: bool) {
++        let _ = after;
++    }
++    /// PROTOTYPE: the innermost open list's items have ended; the gap now
++    /// pending is its tail.
++    fn list_close(&mut self) {}
++    /// PROTOTYPE: a trailing separator written only when the list is broken.
++    fn list_trailing(&mut self, before: u16, token: &str, after: u16) -> RenderResult {
++        let _ = (before, token, after);
++        Ok(())
++    }
+     fn indent(&mut self);
+     /// Shallows the depth and merges `seam` after it. A dedent that arrives
+     /// while the indent before it has had no text written cancels that
+diff --git a/rust/crates/sittir-core/src/spacing.rs b/rust/crates/sittir-core/src/spacing.rs
+index ce5fda9d5..f63059b54 100644
+--- a/rust/crates/sittir-core/src/spacing.rs
++++ b/rust/crates/sittir-core/src/spacing.rs
+@@ -138,8 +138,8 @@ pub fn seam_rank(text: &str) -> SeamRank {
+ /// `RenderSink` call, never as a character in the text stream.
+ ///
+ /// a seam following `"fn "` has `last = ' '` (not word-class) → no insert.
+-pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
+-    inner: &'a mut W,
++pub struct SpacingWriter<'a, O: crate::layout::Output + ?Sized> {
++    inner: &'a mut O,
+     last: Option<char>,
+     adjacent_next: bool,
+     word: &'a WordMatcher,
+@@ -159,6 +159,20 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
+     deferring: Option<String>,
+     deferred: Vec<DeferredRun>,
+     line_end_held: Option<crate::render::LineHold>,
++    started: Option<std::time::Instant>,
++}
++
++/// PROTOTYPE: whether `SITTIR_LAYOUT_STATS` asks for per-render figures on stderr.
++fn stats_wanted() -> bool {
++    static WANTED: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
++    *WANTED.get_or_init(|| std::env::var_os("SITTIR_LAYOUT_STATS").is_some())
++}
++
++/// PROTOTYPE: `SITTIR_LAYOUT_WIDTH` forces the table on every render, to
++/// compare its flattened bytes with the direct writer's.
++fn forced_width() -> Option<u32> {
++    static FORCED: std::sync::OnceLock<Option<u32>> = std::sync::OnceLock::new();
++    *FORCED.get_or_init(|| std::env::var("SITTIR_LAYOUT_WIDTH").ok().and_then(|v| v.parse().ok()))
+ }
+ 
+ /// A trailing run rendered ahead of where it is written: its text, and the
+@@ -186,8 +200,8 @@ struct HeldContext {
+     line_end_held: Option<crate::render::LineHold>,
+ }
+ 
+-impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
+-    pub fn new(inner: &'a mut W, word: &'a WordMatcher) -> Self {
++impl<'a, O: crate::layout::Output + ?Sized> SpacingWriter<'a, O> {
++    pub fn new(inner: &'a mut O, word: &'a WordMatcher) -> Self {
+         Self {
+             inner,
+             last: None,
+@@ -209,9 +223,58 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
+             deferring: None,
+             deferred: Vec::new(),
+             line_end_held: None,
++            started: stats_wanted().then(std::time::Instant::now),
+         }
+     }
++}
+ 
++impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
++
++    /// PROTOTYPE: one render and its `finish`, through the table output when
++    /// the attached options set a width.
++    pub fn render_root(self, value: &dyn crate::render::Render) -> crate::render::RenderResult {
++        let forced = forced_width();
++        match self.options.and_then(|options| options.width.or(forced).map(|width| (width, options))) {
++            Some((width, options)) => {
++                let rule = if options.breaking == 1 { crate::layout::Breaking::Fill } else { crate::layout::Breaking::Group };
++                let mut table = crate::layout::Table::new(self.inner, crate::layout::Layout::new(width, rule, options.tab_width));
++                let mut w = SpacingWriter {
++                    inner: &mut table,
++                    last: self.last,
++                    adjacent_next: self.adjacent_next,
++                    word: self.word,
++                    table: self.table,
++                    indent: self.indent,
++                    depth: self.depth,
++                    indent_pending: self.indent_pending,
++                    indent_armed: self.indent_armed,
++                    seam: self.seam,
++                    seam_strength: self.seam_strength,
++                    seam_text: self.seam_text,
++                    seam_is_token: self.seam_is_token,
++                    seam_is_flank: self.seam_is_flank,
++                    seam_is_root: self.seam_is_root,
++                    sources: self.sources,
++                    options: self.options,
++                    deferring: self.deferring,
++                    deferred: self.deferred,
++                    line_end_held: self.line_end_held,
++                    started: self.started,
++                };
++                value.render(&mut w)?;
++                w.finish()?;
++            }
++            None => {
++                let mut w = self;
++                value.render(&mut w)?;
++                w.finish()?;
++            }
++        }
++        Ok(())
++    }
++}
++
++impl<'a, O: crate::layout::Output + ?Sized> SpacingWriter<'a, O> {
+     /// The resolved options [`crate::render::RenderSink::site_at`] and
+     /// [`crate::render::RenderSink::edge`] read. A render that writes option
+     /// sites must attach them; a writer with none attached is a debug-mode
+@@ -221,6 +284,30 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
+         self
+     }
+ 
++    /// PROTOTYPE: a clone of the spacing state `hold_context` would take.
++    fn peek_context(&self) -> HeldContext {
++        HeldContext {
++            last: self.last,
++            adjacent_next: self.adjacent_next,
++            indent_pending: self.indent_pending,
++            indent_armed: self.indent_armed,
++            seam: self.seam,
++            seam_strength: self.seam_strength,
++            seam_text: self.seam_text.clone(),
++            seam_is_token: self.seam_is_token,
++            seam_is_flank: self.seam_is_flank,
++            seam_is_root: self.seam_is_root,
++            line_end_held: self.line_end_held,
++        }
++    }
++
++    /// PROTOTYPE: note a fact about the pending gap on the layout table.
++    fn note_gap(&mut self, why: u8) {
++        if self.deferring.is_none() {
++            self.inner.note(why);
++        }
++    }
++
+     /// The text written once per depth level after every newline.
+     pub fn with_indent(mut self, indent: &'a str) -> Self {
+         self.indent = indent;
+@@ -251,8 +338,12 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
+             return Ok(());
+         }
+         self.indent_pending = false;
+-        for _ in 0..self.depth {
+-            self.emit(self.indent)?;
++        if self.deferring.is_none() {
++            self.inner.owe_indent(self.depth, self.indent)?;
++        } else {
++            for _ in 0..self.depth {
++                self.emit(self.indent)?;
++            }
+         }
+         if self.depth > 0 {
+             self.last = self.indent.chars().next_back();
+@@ -271,7 +362,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
+                 buffer.push_str(s);
+                 Ok(())
+             }
+-            None => self.inner.write_str(s),
++            None => self.inner.bytes(s, self.depth),
+         }
+     }
+ 
+@@ -333,6 +424,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
+         if let Some(DeferredRun { end: Some((strength, text)), line_end, .. }) = last {
+             let text = if self.at_line_start() { text.strip_prefix('\n').unwrap_or(&text) } else { &text };
+             if !next.starts_with('\n') && !text.is_empty() {
++                self.note_gap(crate::layout::WHY_SOURCE);
+                 self.merge_seam_with(text, strength);
+                 if let Some(hold) = line_end {
+                     crate::render::RenderSink::hold_line_end(self, hold);
+@@ -363,7 +455,11 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
+                 // nested generics is never such a pair and stays tight.
+                 let symbol_seam = self.word.is_literal_merge_pair(last, first);
+                 if word_seam || symbol_seam {
+-                    self.emit(" ")?;
++                    if self.deferring.is_none() {
++                        self.inner.lexical_space(self.depth)?;
++                    } else {
++                        self.emit(" ")?;
++                    }
+                 }
+             }
+         }
+@@ -380,7 +476,15 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
+     /// following seam has a ready allocation to merge into.
+     fn flush_seam(&mut self) -> std::fmt::Result {
+         self.line_end_held = None;
++        let table = O::LAYS_OUT && self.deferring.is_none();
++        if table && self.at_line_start() {
++            self.note_gap(crate::layout::WHY_FIXED);
++        }
+         let Some(rank) = self.seam.take() else {
++            if table {
++                let at = self.inner.seam_begin();
++                self.inner.seam_end(at, false, self.depth);
++            }
+             return Ok(());
+         };
+         let token = std::mem::replace(&mut self.seam_is_token, false);
+@@ -395,10 +499,18 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
+         let redundant = self.last.is_none() || (rank == 1 && self.last == Some('\n'));
+         if !token && !root && redundant {
+             self.seam_text.clear();
++            if table {
++                let at = self.inner.seam_begin();
++                self.inner.seam_end(at, false, self.depth);
++            }
+             return Ok(());
+         }
+         let text = std::mem::take(&mut self.seam_text);
++        let start = if table { Some(self.inner.seam_begin()) } else { None };
+         let result = self.write_text(&text);
++        if let Some(start) = start {
++            self.inner.seam_end(start, true, self.depth);
++        }
+         self.seam_text = text;
+         result
+     }
+@@ -427,6 +539,9 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
+             return;
+         };
+         let crate::slot::SeamArm { arm, strength } = options.site_arm(site);
++        if O::LAYS_OUT && self.deferring.is_none() {
++            self.inner.note_site(options.site_flags.get(site).copied().unwrap_or(0), options.set.get(site).copied().unwrap_or(false));
++        }
+         self.site_mark(arm, strength, flank);
+     }
+ 
+@@ -477,6 +592,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
+             self.seam_text = text;
+         }
+         self.seam_is_root = true;
++        self.note_gap(crate::layout::WHY_ROOT);
+     }
+ 
+     fn merge_mark(&mut self, text: &str, strength: u8, flank: bool) {
+@@ -542,11 +658,23 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
+         self.seam_is_root = false;
+         self.seam_text.clear();
+         debug_assert_eq!(self.depth, 0, "a render must dedent every indent it opens");
++        let walked = self.started.map(|at| at.elapsed());
++        let stats = self.inner.finish(self.indent)?;
++        if let (Some(at), Some(walked)) = (self.started, walked) {
++            let total = at.elapsed();
++            match stats {
++                Some(s) => eprintln!(
++                    "LAYOUT on walk_ns={} finish_ns={} total_ns={} out={} text={} rows={} seams={} lists={} breakable={} broken={} table_bytes={}",
++                    walked.as_nanos(), (total - walked).as_nanos(), total.as_nanos(), s.out_bytes, s.text_bytes, s.rows, s.seam_rows, s.lists, s.breakable_lists, s.broken_lists, s.table_bytes
++                ),
++                None => eprintln!("LAYOUT off total_ns={}", total.as_nanos()),
++            }
++        }
+         Ok(())
+     }
+ }
+ 
+-impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_, W> {
++impl<O: crate::layout::Output + ?Sized> crate::render::RenderSink for SpacingWriter<'_, O> {
+     fn text(&mut self, s: &str) -> crate::render::RenderResult {
+         self.write_chunk(s)?;
+         Ok(())
+@@ -592,19 +720,59 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
+     }
+ 
+     fn seam(&mut self, text: &str) {
++        self.note_gap(crate::layout::WHY_FIXED);
+         self.merge_seam(text);
+     }
+ 
+     fn token_seam(&mut self, text: &str) {
++        self.note_gap(crate::layout::WHY_SOURCE);
+         self.merge_seam(text);
+         self.seam_is_token = true;
+     }
+ 
+     fn trivia_seam(&mut self, text: &str) {
++        self.note_gap(crate::layout::WHY_SOURCE);
+         self.merge_seam_with(text, SEAM_TRIVIA);
+         self.seam_is_token = true;
+     }
+ 
++    fn list_open(&mut self, separated: bool) {
++        if self.deferring.is_none() {
++            self.inner.list_open(separated);
++        }
++    }
++
++    fn list_gap(&mut self, after: bool) {
++        if self.deferring.is_none() {
++            self.inner.list_gap(if after { crate::layout::ROLE_AFTER } else { crate::layout::ROLE_BEFORE });
++        }
++    }
++
++    fn list_close(&mut self) {
++        if self.deferring.is_none() {
++            self.inner.list_close();
++        }
++    }
++
++    fn list_trailing(&mut self, before: u16, token: &str, after: u16) -> crate::render::RenderResult {
++        if !O::LAYS_OUT || self.deferring.is_some() {
++            let broken = self.table.is_some_and(|table| (table.text_of)(after).contains('\n'));
++            if broken {
++                self.site_mark(before, SEAM_DECLARED, false);
++                self.write_chunk(token)?;
++            }
++            return Ok(());
++        }
++        let held = self.peek_context();
++        let gap = self.inner.conditional_begin();
++        self.site_mark(before, SEAM_DECLARED, false);
++        let result = self.write_chunk(token);
++        self.inner.conditional_end(gap);
++        self.restore_context(held);
++        result?;
++        Ok(())
++    }
++
+     fn kind_of(&self, coord: &crate::slot::NodeCoordinate) -> Option<crate::types::KindId> {
+         coord.kind.or_else(|| self.sources.and_then(|sources| sources.kind_of(coord)))
+     }
+diff --git a/rust/crates/sittir-core/src/view.rs b/rust/crates/sittir-core/src/view.rs
+index 5b53654ba..069c36c58 100644
+--- a/rust/crates/sittir-core/src/view.rs
++++ b/rust/crates/sittir-core/src/view.rs
+@@ -244,6 +244,8 @@ pub struct ListView<'a, E: Slot> {
+     pub after: u16,
+     pub leading: bool,
+     pub trailing: bool,
++    /// PROTOTYPE: a trailing separator only when the list is broken.
++    pub when_broken: bool,
+     /// Spacing site read from the resolved options inside the template, before the first item.
+     pub head: Option<usize>,
+     /// Spacing site read from the resolved options inside the template, after the last item.
+@@ -263,6 +265,7 @@ impl<E: Slot> Render for ListView<'_, E> {
+         }
+         let (prefix, suffix) = split_template(self.template);
+         write_literal(prefix, w)?;
++        w.list_open(!self.token.is_empty());
+         if let Some(head) = self.head {
+             w.flank_at(head);
+         }
+@@ -273,18 +276,23 @@ impl<E: Slot> Render for ListView<'_, E> {
+         for (i, item) in self.items.iter().enumerate() {
+             if i > 0 {
+                 w.site(self.before);
++                w.list_gap(false);
+                 w.text(self.token)?;
+                 w.site(self.after);
++                w.list_gap(true);
+             }
+             item.write_slot("", "", w)?;
+         }
+         if self.trailing {
+             w.site(self.before);
+             w.text(self.token)?;
++        } else if self.when_broken {
++            w.list_trailing(self.before, self.token, self.after)?;
+         }
+         if let Some(tail) = self.tail {
+             w.flank_at(tail);
+         }
++        w.list_close();
+         write_literal(suffix, w)
+     }
+ }
+diff --git a/rust/crates/sittir-core/tests/view.rs b/rust/crates/sittir-core/tests/view.rs
+index 4400add6d..05a904c65 100644
+--- a/rust/crates/sittir-core/tests/view.rs
++++ b/rust/crates/sittir-core/tests/view.rs
+@@ -145,6 +145,7 @@ fn list<'a>(
+         after,
+         leading,
+         trailing,
++        when_broken: false,
+         head: None,
+         tail: None,
+     }
+@@ -212,6 +213,7 @@ fn an_empty_list_writes_nothing_even_with_flanks_head_tail_and_template() {
+         after: SPACE,
+         leading: true,
+         trailing: true,
++        when_broken: false,
+         head: Some(0),
+         tail: Some(1),
+     };
+@@ -224,6 +226,7 @@ fn an_empty_list_writes_nothing_even_with_flanks_head_tail_and_template() {
+         after: TIGHT,
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };
+@@ -241,6 +244,7 @@ fn template_is_outside_head_and_tail() {
+         after: TIGHT,
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: Some(0),
+         tail: Some(1),
+     };
+@@ -258,6 +262,7 @@ fn optional_elements_still_take_separators() {
+         after: TIGHT,
+         leading: false,
+         trailing: false,
++        when_broken: false,
+         head: None,
+         tail: None,
+     };

@@ -3124,15 +3124,7 @@ The dedent arm hands the sink the break it should merge (`w.dedent("\n")`), so t
 
 The render function for a pattern, token or enum kind: an enum transport
 writes through its own `Render`, every other leaf writes `t.text` through
-`leafTextWrite`.
-
-#### body
-
-Grammar-declared immediacy (`token.immediate`, or an immediate-declared
-external's renderAs body): no whitespace may precede this token, so the
-function calls `w.adjacent()` before its body. That call is inside the
-trivia-wrapped render function so factory-attached leading trivia still
-seams normally before adjacency applies to the token text itself.
+`leafTextWrite`, after the leaf's edge call (`leafEdgesCall`).
 
 ### `packages/codegen/src/emitters/render-module.ts::isImmediateLeaf`
 
@@ -3143,9 +3135,19 @@ whether adjacency is marked.
 
 ### `packages/codegen/src/emitters/render-module.ts::leafRenderExpr`
 
-The leaf's own `Render` body: its text write, preceded by `w.adjacent()` for
-an immediate leaf. Without the mark, a fragment following an escape sequence
-inside a string is separated by the word-hazard space.
+The leaf's own `Render` body: its text write, preceded by its edge call. A
+fragment following an escape sequence inside a string is kept from the
+word-hazard space by that call.
+
+### `packages/codegen/src/emitters/render-module.ts::leafEdgesCall`
+
+The sink call a leaf makes before its text. A stamped leaf (`leafEdgesOf`)
+names its kind to the writer (`leaf_kind`), which reads the stamp from the
+whitespace table, so the typed render path and a leaf sliced from the source
+read one table. A leaf declared immediate that carries no stamp marks
+adjacency alone (`w.adjacent()`): no whitespace may precede it. A call made
+here, inside the trivia-wrapped render function, lets factory-attached
+leading trivia seam normally before the edge applies to the leaf's own text.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderTypedBranchFn`
 
@@ -5416,18 +5418,14 @@ The one place a statically resolved seam becomes body nodes. Spaced: a
 `space` node — the writer then sees a whitespace flank and has nothing to
 decide — unless the boundary carries token seam nodes, which then stand in
 for the space (their default arm is `space` there, so the bytes hold).
-Glued: the seam nodes, if any, follow the adjacency mark and precede the
-segment. Glued otherwise: when the next segment is an expression (a separate write at
-render time), the `adjacent` mark right before it, which `SpacingWriter`
-strips and takes as "no seam space before the text that follows"; a glued
-literal-to-literal seam needs nothing, because both literals are one write
-and the writer only checks between writes. The mark rides in the stream,
-so its position is the write order regardless of how the printer orders
-its expression evaluation; it replaced the `| markSeam` filter, whose
-thread-local side effect askama evaluated before earlier writes
-(typescript's `_import_statement_arm` rendered `importsomething` the moment
-its `from{{ source }}` seam went static). Runtime-varying seams get neither
-— the writer decides them from the characters.
+Glued: a gap that carries seam nodes (a declared site) gets only those, the
+site's valid set being the gap's one seam. Glued with none: when the next
+segment is an expression (a separate write at render time), a tight join
+(`seam(TIGHT)`) right before it, so no seam space and no word-collision space
+falls before the text that follows; a glued literal-to-literal seam needs
+nothing, because both literals are one write and the writer only checks
+between writes. The join rides in the stream, so its position is the write
+order regardless of how the printer orders its expression evaluation.
 
 ### `packages/codegen/src/emitters/templates.ts::pickConditionalKey`
 
@@ -14736,6 +14734,10 @@ array read instead of a search.
 
 `pub static NAME: &[u8]`, a table indexed by kind id up to the highest flagged id, `0` in every gap, thirty-two cells to a line. `KIND_FLAGS` is written through it. It is separate from `denseTable` because a flag cell's empty value is `0`, not `NO_SITE`.
 
+### `packages/codegen/src/emitters/render-options-rs.ts::leafEdgesTable`
+
+Per kind id, the leaf's `LeafEdges` packed into one cell: the leading set in the low byte, the trailing set in the high byte. Only a stamped leaf (`leafEdgesOf`) has a row; the dense table's other cells are 0, which no stamp can be (`_tight` is always taken). A kind's id is found through its node's kind name (`findEntryForKindName`): the entry a parser keys by an external's symbol name and the node keyed by its display name are one kind. The table rides in the whitespace table (`WHITESPACE.leaf_edges`), which every writer holds, rather than the resolved options, which a render built from factories may not carry.
+
 ### `packages/codegen/src/emitters/render-options-rs.ts::kindFlagsOf`
 
 Per kind id, the OR of its flags over every kind entry that carries that id: `KIND_ANON` when the entry is the parser's anonymous token (`anon`), `KIND_LINE_TERMINATED` when it is an outermost line-terminated kind (`lineTerminatedKinds`), `KIND_LINE_BREAK_TERMINATED` when it is an outermost kind ending in the declared newline token (`lineBreakTerminatedKinds`), `KIND_ROOT` for the grammar root (`grammarRoot`), whose edges the writer writes at a render's two ends. The bit values match `sittir_core::options`. The sink reads them by kind id. A coordinate onto an anonymous token is a token, not an owner, so the writer seats no held trailing entries before it. A node of a line-terminated kind, whether a transport, a coordinate or detached trivia text, holds its line end (`RenderSink::end_line_after`) as a `LineHold::Terminated`; a node of a kind ending in the declared newline token holds it as a `LineHold::Break`, which the end of a render drops.
@@ -15319,12 +15321,15 @@ content may then equal the whole text (rust integer_literal). See "affixed leave
 
 ### `packages/codegen/src/emitters/render-body.ts::adjacentInto`
 
-```text
-Puts an adjacency mark before every slot, seam and literal of a body, descending into the arms of a gate so
-the mark is only written when the gated member is. A lexed token's interior joins its parts through this:
-tree-sitter lexes the token as one unit, so no join inside it may take the word-boundary space, a literal
-after a slot (a bigint's `n`) included.
-```
+Puts a tight join (`adjacent`, printed as `seam(TIGHT)`) before every slot and literal of a body, descending into the arms of a gate so the join is only written when the gated member is. A node that follows a site or token seam gets none: that seam is the flank's one seam. A lexed token's interior joins its parts through this: tree-sitter lexes the token as one unit, so no join inside it may take the word-boundary space, a literal after a slot (a bigint's `n`) included.
+
+### `packages/codegen/src/emitters/render-body.ts::doubledFlanks`
+
+The one-seam-per-flank check: every internal gap and each edge of a template carries at most one seam, decided in codegen, and coalescing (strength, then rank) happens only where flanks of different templates meet. It lists each run of seam-class nodes in a body (descending into gates) that holds a join (`adjacent`) or a static word seam (`wordSeam`) beside another, and generation fails naming the kind and the run. Two declared sites at one gap, or a site beside a whitespace token, are legal and permanent: each is an option address of its own, and the writer's coalescing resolves them. With `SEAM_FLANK_CENSUS` set the run is logged instead of failing, for counting.
+
+### `packages/codegen/src/emitters/render-body.ts::RustBodyPrinter.optional`
+
+Whether a slot may be absent at render time (its transport field is not required). A join printed after such a slot is written inside the slot's presence test, since the gap between a slot and what follows exists only when the slot does: a join with no left neighbour would otherwise coalesce with the seam of the template before it.
 
 ### `packages/codegen/src/emitters/factories.ts::slotGuardKey`
 

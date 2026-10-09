@@ -2,6 +2,7 @@
 //! kind name, the regions of a source that did not parse, and a list's last
 //! child.
 
+use sittir_core::read::display_id;
 use sittir_core::types::Span;
 use sittir_core::{ErrorRegion, ErrorRegionKind};
 
@@ -46,10 +47,10 @@ fn node_at_span_finds_the_first_node_a_pre_order_walk_meets_with_that_span_and_k
             }
         }
         for node in &nodes {
-            for kind in [node.grammar_id(), node.kind_id()] {
+            for kind in [node.grammar_id(), display_id(node).0] {
                 let expected = by_span[&(node.start_byte(), node.end_byte())]
                     .iter()
-                    .find(|candidate| candidate.grammar_id() == kind || candidate.kind_id() == kind)
+                    .find(|candidate| candidate.grammar_id() == kind || display_id(candidate).0 == kind)
                     .map(|found| found.id());
                 let found = node_at_span(&tree, node.start_byte(), node.end_byte(), kind).map(|found| found.id());
                 assert_eq!(found, expected, "{} at {}..{}", node.kind(), node.start_byte(), node.end_byte());

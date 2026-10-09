@@ -1,0 +1,92 @@
+
+## rust, corpus: 148 of 148 sources parsed
+### source_file
+| keying | within: blank share | at a boundary: blank share | within | boundary |
+| --- | --- | --- | --- | --- |
+| kind |  19.9% |  61.5% | sl:1 0:165 1:41 2:0 3+:0 | sl:1 0:20 1:32 2:0 3+:0 |
+| through |  19.9% |  61.5% | sl:1 0:165 1:41 2:0 3+:0 | sl:1 0:20 1:32 2:0 3+:0 |
+| role |  20.9% |  61.7% | sl:2 0:167 1:44 2:0 3+:0 | sl:0 0:18 1:29 2:0 3+:0 |
+| seated |  20.7% |  69.0% | sl:1 0:165 1:43 2:0 3+:0 | sl:1 0:13 1:29 2:0 3+:0 |
+### block
+| keying | within: blank share | at a boundary: blank share | within | boundary |
+| --- | --- | --- | --- | --- |
+| kind |   0.0% |   0.0% | sl:0 0:6 1:0 2:0 3+:0 | sl:0 0:3 1:0 2:0 3+:0 |
+| through |   0.0% |   0.0% | sl:0 0:6 1:0 2:0 3+:0 | sl:0 0:3 1:0 2:0 3+:0 |
+| role |   0.0% |   0.0% | sl:0 0:6 1:0 2:0 3+:0 | sl:0 0:3 1:0 2:0 3+:0 |
+| seated |   0.0% |   0.0% | sl:0 0:6 1:0 2:0 3+:0 | sl:0 0:3 1:0 2:0 3+:0 |
+
+## rust, real-world (156 picked of 13879): 139 of 156 sources parsed
+### source_file
+| keying | within: blank share | at a boundary: blank share | within | boundary |
+| --- | --- | --- | --- | --- |
+| kind |  19.6% |  28.8% | sl:0 0:1807 1:441 2:0 3+:0 | sl:85 0:1440 1:582 2:1 3+:0 |
+| through |  19.6% |  28.8% | sl:0 0:1807 1:441 2:0 3+:0 | sl:85 0:1440 1:582 2:1 3+:0 |
+| role |  21.1% |  27.3% | sl:0 0:1812 1:485 2:0 3+:0 | sl:85 0:1435 1:538 2:1 3+:0 |
+| seated |  24.8% |  71.3% | sl:0 0:1997 1:658 2:0 3+:0 | sl:0 0:147 1:364 2:1 3+:0 |
+### block
+| keying | within: blank share | at a boundary: blank share | within | boundary |
+| --- | --- | --- | --- | --- |
+| kind |  16.4% |  30.0% | sl:6 0:1702 1:334 2:0 3+:0 | sl:6 0:740 1:317 2:0 3+:0 |
+| through |  16.4% |  30.0% | sl:6 0:1702 1:334 2:0 3+:0 | sl:6 0:740 1:317 2:0 3+:0 |
+| role |  16.4% |  30.2% | sl:12 0:1708 1:334 2:0 3+:0 | sl:0 0:734 1:317 2:0 3+:0 |
+| seated |  16.4% |  32.2% | sl:6 0:1727 1:338 2:0 3+:0 | sl:6 0:658 1:313 2:0 3+:0 |
+
+## typescript, corpus: 113 of 115 sources parsed
+### program
+| keying | within: blank share | at a boundary: blank share | within | boundary |
+| --- | --- | --- | --- | --- |
+| kind |  32.8% |  68.4% | sl:0 0:82 1:40 2:0 3+:0 | sl:2 0:6 1:13 2:0 3+:0 |
+| through |  32.8% |  63.6% | sl:0 0:80 1:39 2:0 3+:0 | sl:2 0:8 1:14 2:0 3+:0 |
+| role |  35.9% |  53.8% | sl:0 0:82 1:46 2:0 3+:0 | sl:2 0:6 1:7 2:0 3+:0 |
+### statement_block
+| keying | within: blank share | at a boundary: blank share | within | boundary |
+| --- | --- | --- | --- | --- |
+| kind |   0.0% |  10.7% | sl:0 0:9 1:0 2:0 3+:0 | sl:0 0:25 1:3 2:0 3+:0 |
+| through |   0.0% |   9.4% | sl:0 0:5 1:0 2:0 3+:0 | sl:0 0:29 1:3 2:0 3+:0 |
+| role |   3.3% |  28.6% | sl:0 0:29 1:1 2:0 3+:0 | sl:0 0:5 1:2 2:0 3+:0 |
+
+## typescript, real-world (156 picked of 1226): 139 of 156 sources parsed
+### program
+| keying | within: blank share | at a boundary: blank share | within | boundary |
+| --- | --- | --- | --- | --- |
+| kind |  46.7% |  95.0% | sl:0 0:645 1:565 2:0 3+:0 | sl:0 0:23 1:439 2:1 3+:0 |
+| through |  47.2% |  97.2% | sl:0 0:656 1:586 2:0 3+:0 | sl:0 0:12 1:418 2:1 3+:0 |
+| role |  49.5% |  97.3% | sl:0 0:658 1:644 2:0 3+:0 | sl:0 0:10 1:360 2:1 3+:0 |
+### statement_block
+| keying | within: blank share | at a boundary: blank share | within | boundary |
+| --- | --- | --- | --- | --- |
+| kind |  18.5% |  19.4% | sl:0 0:1750 1:397 2:0 3+:0 | sl:0 0:1926 1:464 2:0 3+:0 |
+| through |  18.9% |  19.0% | sl:0 0:1702 1:397 2:0 3+:0 | sl:0 0:1974 1:464 2:0 3+:0 |
+| role |  18.4% |  20.0% | sl:0 0:2318 1:522 2:0 3+:0 | sl:0 0:1358 1:339 2:0 3+:0 |
+
+## python, corpus: 115 of 116 sources parsed
+### module
+| keying | within: blank share | at a boundary: blank share | within | boundary |
+| --- | --- | --- | --- | --- |
+| kind |  14.4% |  40.0% | sl:0 0:202 1:34 2:0 3+:0 | sl:0 0:6 1:4 2:0 3+:0 |
+| through |  14.3% |  33.3% | sl:0 0:198 1:33 2:0 3+:0 | sl:0 0:10 1:5 2:0 3+:0 |
+| role |  14.0% |  45.5% | sl:0 0:202 1:33 2:0 3+:0 | sl:0 0:6 1:5 2:0 3+:0 |
+### block
+| keying | within: blank share | at a boundary: blank share | within | boundary |
+| --- | --- | --- | --- | --- |
+| kind |  16.7% |  40.0% | sl:0 0:15 1:2 2:1 3+:0 | sl:0 0:3 1:0 2:2 3+:0 |
+| through |  21.4% |  22.2% | sl:0 0:11 1:2 2:1 3+:0 | sl:0 0:7 1:0 2:2 3+:0 |
+| role |  15.0% |  66.7% | sl:0 0:17 1:2 2:1 3+:0 | sl:0 0:1 1:0 2:2 3+:0 |
+python module, import run to a def or class: sl:0 0:0 1:0 2:0 3+:0 (blank share   n/a)
+python module, import run to anything else:  sl:0 0:0 1:0 2:0 3+:0 (blank share   n/a)
+
+## python, real-world (97 picked of 97): 81 of 97 sources parsed
+### module
+| keying | within: blank share | at a boundary: blank share | within | boundary |
+| --- | --- | --- | --- | --- |
+| kind |  53.3% |  90.2% | sl:0 0:521 1:344 2:246 3+:5 | sl:0 0:33 1:145 2:158 3+:1 |
+| through |  51.6% |  83.4% | sl:0 0:476 1:260 2:243 3+:5 | sl:0 0:78 1:229 2:161 3+:1 |
+| role |  53.7% |  92.2% | sl:0 0:530 1:357 2:253 3+:5 | sl:0 0:24 1:132 2:151 3+:1 |
+### block
+| keying | within: blank share | at a boundary: blank share | within | boundary |
+| --- | --- | --- | --- | --- |
+| kind |  22.9% |  21.1% | sl:0 0:3123 1:906 2:24 3+:0 | sl:0 0:2098 1:558 2:2 3+:0 |
+| through |  28.8% |  15.7% | sl:0 0:2369 1:936 2:24 3+:0 | sl:0 0:2852 1:528 2:2 3+:0 |
+| role |  22.6% |  20.8% | sl:0 0:4069 1:1163 2:24 3+:0 | sl:0 0:1152 1:301 2:2 3+:0 |
+python module, import run to a def or class: sl:0 0:0 1:3 2:4 3+:0 (blank share 100.0%)
+python module, import run to anything else:  sl:0 0:4 1:43 2:6 3+:0 (blank share  92.5%)

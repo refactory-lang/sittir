@@ -265,7 +265,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     sides: __rt::Sides,
                 ) -> ::core::result::Result<Self, __rt::ReadError> {
                     let node = cursor.node();
-                    let (grammar, display) = (__Kind(node.grammar_id()), __Kind(node.kind_id()));
+                    let (grammar, display) = (__Kind(node.grammar_id()), __rt::display_id(&node));
                     match __variant(grammar, display) {
                         ::core::option::Option::Some(i) => __READS[i as usize](cursor, ctx, depth, sides),
                         ::core::option::Option::None => ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: grammar, index: __rt::index_of(cursor) }),
@@ -279,7 +279,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     sides: __rt::Sides,
                 ) -> ::core::result::Result<::std::boxed::Box<Self>, __rt::ReadError> {
                     let node = cursor.node();
-                    let (grammar, display) = (__Kind(node.grammar_id()), __Kind(node.kind_id()));
+                    let (grammar, display) = (__Kind(node.grammar_id()), __rt::display_id(&node));
                     match __variant(grammar, display) {
                         ::core::option::Option::Some(i) => __READS_BOXED[i as usize](cursor, ctx, depth, sides),
                         ::core::option::Option::None => ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: grammar, index: __rt::index_of(cursor) }),
@@ -292,7 +292,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     index: u32,
                 ) -> ::core::result::Result<__rt::Sides, __rt::ReadError> {
                     let node = cursor.node();
-                    match __variant(__Kind(node.grammar_id()), __Kind(node.kind_id())) {
+                    match __variant(__Kind(node.grammar_id()), __rt::display_id(&node)) {
                         #(#sides)*
                         _ => ::core::result::Result::Ok(__rt::Sides::default()),
                     }
@@ -356,7 +356,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
                     _sides: __rt::Sides,
                 ) -> ::core::result::Result<Self, __rt::ReadError> {
                     let node = cursor.node();
-                    if let ::core::option::Option::Some(member) = __member(__Kind(node.grammar_id()), __Kind(node.kind_id())) {
+                    if let ::core::option::Option::Some(member) = __member(__Kind(node.grammar_id()), __rt::display_id(&node)) {
                         return ::core::result::Result::Ok(member);
                     }
                     #spelled
@@ -365,7 +365,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
                 fn sides_of(
                     _cursor: &mut ::tree_sitter::TreeCursor<'_>,
                     _ctx: &__rt::ReadCtx<'_>,
-                    _row: u32,
+                    _index: u32,
                 ) -> ::core::result::Result<__rt::Sides, __rt::ReadError> {
                     ::core::result::Result::Ok(__rt::Sides::default())
                 }
@@ -527,7 +527,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
                     sides: __rt::Sides,
                 ) -> ::core::result::Result<Self, __rt::ReadError> {
                     let __node = cursor.node();
-                    if !<Self as __rt::ReadTransport>::admits(__Kind(__node.grammar_id()), __Kind(__node.kind_id())) {
+                    if !<Self as __rt::ReadTransport>::admits(__Kind(__node.grammar_id()), __rt::display_id(&__node)) {
                         return ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: __Kind(__node.grammar_id()), index: __rt::index_of(cursor) });
                     }
                     #read
@@ -958,7 +958,7 @@ mod tests {
         });
         assert!(has(
             &out,
-            "if !<Self as __rt::ReadTransport>::admits(__Kind(__node.grammar_id()), __Kind(__node.kind_id())) {
+            "if !<Self as __rt::ReadTransport>::admits(__Kind(__node.grammar_id()), __rt::display_id(&__node)) {
                 return ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: __Kind(__node.grammar_id()), index: __rt::index_of(cursor) });
             }"
         ));

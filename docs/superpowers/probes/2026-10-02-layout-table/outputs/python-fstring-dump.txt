@@ -1,0 +1,50 @@
+--- width off
+label = f"{first_value_name, second_value_name}"
+pairs = (first_value_name, second_value_name)
+
+--- width 30
+DUMP   0 | seam    | "" |     0 | L0  | head   | no: fixed                                | 
+DUMP   1 | text    | "label" |     0 |     |        |                                          | 
+DUMP   2 | seam    | " " |     0 |     |        | no: not a list gap                       | 
+DUMP   3 | text    | "=" |     0 |     |        |                                          | 
+DUMP   4 | seam    | " " |     0 |     |        | no: not a list gap                       | 
+DUMP   5 | text    | "f\"" |     0 |     |        |                                          | 
+DUMP   6 | seam    | "" |     0 | L2  | head   | no: its list is not bracketed and separated | 
+DUMP   7 | text    | "{" |     0 |     |        |                                          | 
+DUMP   8 | seam    | "" |     0 |     |        | no: not a list gap                       | 
+DUMP   9 | text    | "first_value_name" |     0 |     |        |                                          | 
+DUMP  10 | seam    | "" |     0 | L3  | head   | no: its list is not bracketed and separated | 
+DUMP  11 | text    | "," |     0 |     |        |                                          | 
+DUMP  12 | seam    | " " |     0 |     |        | no: not a list gap                       | 
+DUMP  13 | text    | "second_value_name" |     0 |     |        |                                          | 
+DUMP  14 | seam    | "" |     0 | L3  | tail   | no: its list is not bracketed and separated | 
+DUMP  15 | text    | "}" |     0 |     |        |                                          | 
+DUMP  16 | seam    | "" |     0 | L2  | tail   | no: its list is not bracketed and separated | 
+DUMP  17 | text    | "\"" |     0 |     |        |                                          | 
+DUMP  18 | seam    | "\n" |     0 | L0  | after  | no: from source                          | 
+DUMP  19 | text    | "pairs" |     0 |     |        |                                          | starts-line 
+DUMP  20 | seam    | " " |     0 |     |        | no: not a list gap                       | 
+DUMP  21 | text    | "=" |     0 |     |        |                                          | 
+DUMP  22 | seam    | " " |     0 |     |        | no: not a list gap                       | 
+DUMP  23 | text    | "(" |     0 |     |        |                                          | 
+DUMP  24 | seam    | "" |     0 | L5  | head   | yes                                      | BROKEN
+DUMP  25 | text    | "first_value_name" |     0 |     |        |                                          | 
+DUMP  26 | seam    | "" |     0 | L5  | before | no: before a separator                   | 
+DUMP  27 | text    | "," |     0 |     |        |                                          | 
+DUMP  28 | seam    | " " |     0 | L5  | after  | yes                                      | BROKEN
+DUMP  29 | text    | "second_value_name" |     0 |     |        |                                          | 
+DUMP  30 | seam    | "" |     0 | L5  | tail   | yes                                      | BROKEN
+DUMP  31 | text    | ")" |     0 |     |        |                                          | 
+DUMP  32 | seam    | "\n" |     0 | L0  | tail   | no: from source                          | 
+DUMPL L0 parent=- head=0 tail=32 separated=false opens_at_bracket=false closes_at_bracket=false broken=true
+DUMPL L1 parent=L0 head=0 tail=18 separated=true opens_at_bracket=false closes_at_bracket=false broken=false
+DUMPL L2 parent=L1 head=6 tail=16 separated=false opens_at_bracket=false closes_at_bracket=false broken=false
+DUMPL L3 parent=L2 head=10 tail=14 separated=true opens_at_bracket=false closes_at_bracket=true broken=false
+DUMPL L4 parent=L0 head=18 tail=32 separated=true opens_at_bracket=false closes_at_bracket=false broken=false
+DUMPL L5 parent=L4 head=24 tail=30 separated=true opens_at_bracket=true closes_at_bracket=true broken=true
+label = f"{first_value_name, second_value_name}"
+pairs = (
+    first_value_name,
+    second_value_name
+)
+

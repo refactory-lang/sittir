@@ -140,7 +140,7 @@ pub fn error_regions(tree: &tree_sitter::Tree) -> Vec<ErrorRegion> {
 /// child forward, in source order, while it starts at or before `start`.
 pub fn node_at_span<'t>(tree: &'t tree_sitter::Tree, start: usize, end: usize, kind: u16) -> Option<tree_sitter::Node<'t>> {
     fn search<'t>(node: tree_sitter::Node<'t>, start: usize, end: usize, kind: u16) -> Option<tree_sitter::Node<'t>> {
-        if node.start_byte() == start && node.end_byte() == end && (node.grammar_id() == kind || node.kind_id() == kind) {
+        if node.start_byte() == start && node.end_byte() == end && (node.grammar_id() == kind || crate::read::display_id(&node).0 == kind) {
             return Some(node);
         }
         let mut walker = node.walk();
@@ -734,7 +734,7 @@ impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
 
     fn kind_of(&self, coord: &NodeCoordinate) -> Option<KindId> {
         let tree = self.get(&coord.tree)?;
-        node_at_index(&tree.tree, coord.index).map(|node| KindId(node.kind_id()))
+        node_at_index(&tree.tree, coord.index).map(|node| KindId(node.grammar_id()))
     }
 
     fn last_list_child_kind(&self, tree: u32, span: crate::types::Span, kind: KindId) -> Option<KindId> {
@@ -752,7 +752,7 @@ impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
             n.start_byte() == coord.span.start as usize && n.end_byte() == coord.span.end as usize
         });
         while let Some(current) = node {
-            f(KindId(current.kind_id()));
+            f(KindId(current.grammar_id()));
             if !exact {
                 return;
             }

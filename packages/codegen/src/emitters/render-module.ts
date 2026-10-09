@@ -1,6 +1,7 @@
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
 import { isFixedTextLeaf, isTerminalNode } from '../compiler/model/node-map.ts';
+import { CONTINUATION_KINDS, NEWLINE_KINDS, breakingKindsOfText, TIGHT_KINDS, layoutKindsOfText, leafEdgesOf } from '../compiler/model/layout-kinds.ts';
 import { STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import { wordCharAsciiTable } from '../util/word-matcher.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -117,6 +118,7 @@ import {
 } from '../compiler/model/render-rules.ts';
 import {
 	escapeBraces,
+	doubledFlanks,
 	liftGates,
 	mentions,
 	printRustBody,
@@ -570,11 +572,11 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 function literalWrite(valueExpr: string, fixed: string | undefined): string {
 	if (fixed !== undefined && isDepthText(fixed)) {
 		return fixed === INDENT_TEXT
-			? `{ w.indent(); w.seam(${rustStringLiteral(DEPTH_BREAK)}); Ok::<(), ::sittir_core::render::RenderError>(()) }`
-			: `{ w.dedent(${rustStringLiteral(DEPTH_BREAK)}); Ok::<(), ::sittir_core::render::RenderError>(()) }`;
+			? `{ w.indent(); w.seam(${breakingKindsOfText(DEPTH_BREAK)}); Ok::<(), ::sittir_core::render::RenderError>(()) }`
+			: `{ w.dedent(${NEWLINE_KINDS}); Ok::<(), ::sittir_core::render::RenderError>(()) }`;
 	}
 	if (fixed !== undefined && isWhitespaceOnly(fixed)) {
-		return `{ w.token_seam(${valueExpr}); Ok::<(), ::sittir_core::render::RenderError>(()) }`;
+		return `{ w.seam(${layoutKindsOfText(fixed)}); Ok::<(), ::sittir_core::render::RenderError>(()) }`;
 	}
 	return `w.text(${valueExpr})`;
 }
@@ -725,7 +727,7 @@ function renderTypedKindFn(
 		case 'keyword':
 		case 'punctuation':
 		case 'enum':
-			return renderTypedLeafFn(node);
+			return renderTypedLeafFn(node, nodeMap, kindIdByKind.get(node.kind));
 		default:
 			return [];
 	}
@@ -782,19 +784,27 @@ function isImmediateLeaf(node: AssembledNode): boolean {
 	return node instanceof AssembledLeaf && node.immediate;
 }
 
-function leafRenderExpr(node: AssembledNode, on: string): string {
-	const write = leafTextWrite(node, on);
-	return isImmediateLeaf(node) ? `{ w.adjacent(); ${write} }` : write;
+function leafEdgesCall(node: AssembledNode, nodeMap: NodeMap, kindId: number | undefined): string | undefined {
+	if (node instanceof AssembledLeaf && kindId !== undefined && leafEdgesOf(node, nodeMap) !== undefined) {
+		return `w.leaf_kind(::sittir_core::types::KindId(${kindId}));`;
+	}
+	return undefined;
 }
 
-function renderTypedLeafFn(node: AssembledNode): string[] {
+function leafRenderExpr(node: AssembledNode, on: string, nodeMap: NodeMap, kindId: number | undefined): string {
+	const write = leafTextWrite(node, on);
+	const edges = leafEdgesCall(node, nodeMap, kindId);
+	return edges === undefined ? write : `{ ${edges} ${write} }`;
+}
+
+function renderTypedLeafFn(node: AssembledNode, nodeMap: NodeMap, kindId: number | undefined): string[] {
 	const fnName = rustTypedRenderFnName(node.typeName);
 	const typeName = rustTransportStructName(node);
 	const body = node instanceof AssembledEnum ? `t.render(w)` : leafTextWrite(node, 't');
-	const adjacent = isImmediateLeaf(node) ? [`    w.adjacent();`] : [];
+	const edges = leafEdgesCall(node, nodeMap, kindId);
 	return [
 		`fn ${fnName}(t: &${typeName}, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,
-		...adjacent,
+		...(edges === undefined ? [] : [`    ${edges}`]),
 		`    ${body}`,
 		`}`,
 		``
@@ -982,9 +992,14 @@ function buildTypedTemplateBody(
 			`render body for '${struct.kind}' names seam '${name}', which its transport has no spacing site for`
 		);
 	}
+	for (const flank of doubledFlanks(struct.body)) {
+		if (process.env.SEAM_FLANK_CENSUS) console.error(`SEAM2 ${struct.kind} ${flank}`);
+		else throw new Error(`render body for '${struct.kind}' emits two seams at one flank: ${flank}`);
+	}
 	lines.push(
 		...printRustBody(struct.body, {
 			field: rustFieldIdent,
+			optional: (name) => struct.fields.some((f) => rustFieldIdent(f.name) === rustFieldIdent(name) && !f.required),
 			edge: kindEdgeWriterOf(plan, node, kindEntries),
 			site: (name) => {
 				if (node === undefined)
@@ -1078,6 +1093,8 @@ const EMPTY_PLAN: RenderPlan = {
 	dedentId: 0,
 	whitespaceText: [],
 	kindFlags: [],
+			leafEdges: [],
+			gaps: [],
 	indentChars: [],
 	indent: ''
 };
@@ -1335,7 +1352,7 @@ function supertypeVerbatimIsImmediate(supertypeNode: AssembledSupertype, nodeMap
 
 function verbatimRenderArm(enumName: string, immediate: boolean): string {
 	const call = 'inner.render(w)';
-	return `${enumName}::Verbatim(inner) => ${immediate ? `{ w.adjacent(); ${call} }` : call},`;
+	return `${enumName}::Verbatim(inner) => ${immediate ? `{ w.seam(${TIGHT_KINDS}); ${call} }` : call},`;
 }
 
 function pruneUnreferencedBridges(rendered: string): string {
@@ -2058,7 +2075,7 @@ function choiceUnitsOf(
 
 function choiceUnitArm(enumName: string, unit: ChoiceUnit): string[] {
 	const call = `${unit.fixed.renderFn}(w)`;
-	const write = unit.siteImmediate ? `{ w.adjacent(); ${call} }` : call;
+	const write = unit.siteImmediate ? `{ w.seam(${TIGHT_KINDS}); ${call} }` : call;
 	return unit.seams === undefined
 		? [`            ${enumName}::${unit.fixed.variant} => ${write},`]
 		: literalSeamedArm(enumName, unit.fixed.variant, write, unit.seams);
@@ -2229,7 +2246,7 @@ function emitPerSlotChildEnum(
 		const innerExpr = isBoxed(node) ? 'inner.as_ref()' : 'inner';
 		const call = `${innerExpr}.render(w)`;
 		const arm =
-			!(node instanceof AssembledLeaf) && isLeftImmediateKind(kind, nodeMap) ? `{ w.adjacent(); ${call} }` : call;
+			!(node instanceof AssembledLeaf) && isLeftImmediateKind(kind, nodeMap) ? `{ w.seam(${TIGHT_KINDS}); ${call} }` : call;
 		lines.push(`            ${enumName}::${variant}(inner) => ${arm},`);
 	}
 	for (const unit of units.values()) lines.push(...choiceUnitArm(enumName, unit));
@@ -2379,7 +2396,7 @@ function renderTriviaTransportSupport(
 
 	const whitespaceKinds = new Set(whitespaceTriviaKinds(nodeMap));
 	lines.push('impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {');
-	lines.push('    fn seam_text(&self) -> Option<&str> {');
+	lines.push('    fn seam_gap(&self) -> Option<(::sittir_core::layout_kinds::LayoutKinds, Option<&str>)> {');
 	lines.push('        match self {');
 	const continuationKinds = new Set(continuationTriviaKinds(nodeMap));
 	for (const node of extrasNodes) {
@@ -2387,14 +2404,14 @@ function renderTriviaTransportSupport(
 			const unit = unitOf(node);
 			lines.push(
 				unit === undefined
-					? `            TriviaTransport::${rustTransportVariantName(node)}(t) => Some(&t.text),`
-					: `            TriviaTransport::${unit.variant} => Some(${rustStringLiteral(unit.text)}),`
+					? `            TriviaTransport::${rustTransportVariantName(node)}(t) => Some((${CONTINUATION_KINDS}, Some(&t.text))),`
+					: `            TriviaTransport::${unit.variant} => Some((${CONTINUATION_KINDS}, Some(${rustStringLiteral(unit.text)}))),`
 			);
 			continue;
 		}
 		if (!whitespaceKinds.has(node.kind)) continue;
 		const unit = fixedLiteralOf(fixed, node.kind);
-		lines.push(`            TriviaTransport::${unit.variant} => Some(${rustStringLiteral(unit.text)}),`);
+		lines.push(`            TriviaTransport::${unit.variant} => Some((${layoutKindsOfText(unit.text)}, None)),`);
 	}
 	lines.push('            _ => None,');
 	lines.push('        }');
@@ -3091,7 +3108,7 @@ function renderTransportDataStruct(
 	lines.push(
 		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
 	);
-	const body = isLeafNode ? leafRenderExpr(node, 'self') : `${rustTypedRenderFnName(node.typeName)}(self, w)`;
+	const body = isLeafNode ? leafRenderExpr(node, 'self', nodeMap, ownId) : `${rustTypedRenderFnName(node.typeName)}(self, w)`;
 	const owner = !isLeafNode || ownsTrivia(kindEntries, node.kind);
 	lines.push(`        ${layoutRenderCall('self.layout.as_deref()', ownKind, owner, body)}`);
 	lines.push(`    }`);
@@ -3185,7 +3202,7 @@ function fixedLiteralOf(fixed: FixedLiterals, kind: string, text?: string): Fixe
 
 function renderFixedLiteralFn(fixed: FixedLiteral): string[] {
 	const write = literalWrite(rustStringLiteral(fixed.text), fixed.text);
-	const body = fixed.immediate ? `{ w.adjacent(); ${write} }` : write;
+	const body = fixed.immediate ? `{ w.seam(${TIGHT_KINDS}); ${write} }` : write;
 	const ownKind = fixed.ownId === undefined ? 'None' : `Some(::sittir_core::types::KindId(${fixed.ownId}))`;
 	return [
 		`fn ${fixed.renderFn}(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,

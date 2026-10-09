@@ -238,7 +238,7 @@ describe('renderOptionsRs', () => {
 		expect(source).toContain('        169 => "\\n",');
 		expect(source).not.toContain('\\u{FDD2}');
 		expect(source).toContain(
-			'pub const WHITESPACE: ::sittir_core::render::WhitespaceTable = ::sittir_core::render::WhitespaceTable { text_of: spacing_text, indent: INDENT_KIND, dedent: DEDENT_KIND };'
+			'pub const WHITESPACE: ::sittir_core::render::WhitespaceTable = ::sittir_core::render::WhitespaceTable { text_of: spacing_text, indent: INDENT_KIND, dedent: DEDENT_KIND, leaf_edges: LEAF_EDGES, gaps: GAPS };'
 		);
 	});
 

@@ -1,0 +1,73 @@
+WIDTH 100
+DUMP   0 | seam    | "" |     0 | L0  | head   | no: fixed                                | 
+DUMP   1 | text    | "fn" |     0 |     |        |                                          | 
+DUMP   2 | seam    | " " |     0 |     |        | no: not a list gap                       | 
+DUMP   3 | text    | "f" |     0 |     |        |                                          | 
+DUMP   4 | seam    | "" |     0 |     |        | no: not a list gap                       | 
+DUMP   5 | text    | "(" |     0 |     |        |                                          | 
+DUMP   6 | seam    | "" |     0 |     |        | no: not a list gap                       | 
+DUMP   7 | text    | ")" |     0 |     |        |                                          | 
+DUMP   8 | seam    | " " |     0 |     |        | no: not a list gap                       | 
+DUMP   9 | text    | "{" |     0 |     |        |                                          | 
+DUMP  10 | seam    | "\n" |     1 | L1  | head   | no: already a line break                 | 
+DUMP  11 | text    | "send" |     1 |     |        |                                          | starts-line 
+DUMP  12 | seam    | "" |     1 |     |        | no: not a list gap                       | 
+DUMP  13 | text    | "(" |     1 |     |        |                                          | 
+DUMP  14 | seam    | "" |     1 | L2  | head   | yes                                      | 
+DUMP  15 | text    | "alpha" |     1 |     |        |                                          | 
+DUMP  16 | seam    | "" |     1 | L2  | before | no: before a separator                   | 
+DUMP  17 | text    | "," |     1 |     |        |                                          | 
+DUMP  18 | seam    | " " |     1 | L2  | after  | yes                                      | 
+DUMP  19 | text    | "beta" |     1 |     |        |                                          | 
+DUMP  20 | seam    | "" |     1 | L2  | tail   | yes                                      | 
+DUMP  21 | text    | ")" |     1 |     |        |                                          | 
+DUMP  22 | seam    | "" |     1 |     |        | no: not a list gap                       | 
+DUMP  23 | text    | ";" |     1 |     |        |                                          | 
+DUMP  24 | seam    | "\n" |     0 | L1  | tail   | no: already a line break                 | 
+DUMP  25 | text    | "}" |     0 |     |        |                                          | starts-line 
+DUMP  26 | seam    | "\n" |     0 | L0  | tail   | no: fixed                                | 
+DUMPL L0 parent=- head=0 tail=26 separated=false opens_at_bracket=false closes_at_bracket=false broken=false
+DUMPL L1 parent=L0 head=10 tail=24 separated=false opens_at_bracket=true closes_at_bracket=true broken=true
+DUMPL L2 parent=L1 head=14 tail=20 separated=true opens_at_bracket=true closes_at_bracket=true broken=false
+fn f() {
+    send(alpha, beta);
+}
+
+WIDTH 20
+DUMP   0 | seam    | "" |     0 | L0  | head   | no: fixed                                | 
+DUMP   1 | text    | "fn" |     0 |     |        |                                          | 
+DUMP   2 | seam    | " " |     0 |     |        | no: not a list gap                       | 
+DUMP   3 | text    | "f" |     0 |     |        |                                          | 
+DUMP   4 | seam    | "" |     0 |     |        | no: not a list gap                       | 
+DUMP   5 | text    | "(" |     0 |     |        |                                          | 
+DUMP   6 | seam    | "" |     0 |     |        | no: not a list gap                       | 
+DUMP   7 | text    | ")" |     0 |     |        |                                          | 
+DUMP   8 | seam    | " " |     0 |     |        | no: not a list gap                       | 
+DUMP   9 | text    | "{" |     0 |     |        |                                          | 
+DUMP  10 | seam    | "\n" |     1 | L1  | head   | no: already a line break                 | 
+DUMP  11 | text    | "send" |     1 |     |        |                                          | starts-line 
+DUMP  12 | seam    | "" |     1 |     |        | no: not a list gap                       | 
+DUMP  13 | text    | "(" |     1 |     |        |                                          | 
+DUMP  14 | seam    | "" |     1 | L2  | head   | yes                                      | BROKEN
+DUMP  15 | text    | "alpha" |     1 |     |        |                                          | 
+DUMP  16 | seam    | "" |     1 | L2  | before | no: before a separator                   | 
+DUMP  17 | text    | "," |     1 |     |        |                                          | 
+DUMP  18 | seam    | " " |     1 | L2  | after  | yes                                      | BROKEN
+DUMP  19 | text    | "beta" |     1 |     |        |                                          | 
+DUMP  20 | seam    | "" |     1 | L2  | tail   | yes                                      | BROKEN
+DUMP  21 | text    | ")" |     1 |     |        |                                          | 
+DUMP  22 | seam    | "" |     1 |     |        | no: not a list gap                       | 
+DUMP  23 | text    | ";" |     1 |     |        |                                          | 
+DUMP  24 | seam    | "\n" |     0 | L1  | tail   | no: already a line break                 | 
+DUMP  25 | text    | "}" |     0 |     |        |                                          | starts-line 
+DUMP  26 | seam    | "\n" |     0 | L0  | tail   | no: fixed                                | 
+DUMPL L0 parent=- head=0 tail=26 separated=false opens_at_bracket=false closes_at_bracket=false broken=false
+DUMPL L1 parent=L0 head=10 tail=24 separated=false opens_at_bracket=true closes_at_bracket=true broken=true
+DUMPL L2 parent=L1 head=14 tail=20 separated=true opens_at_bracket=true closes_at_bracket=true broken=true
+fn f() {
+    send(
+        alpha,
+        beta
+    );
+}
+

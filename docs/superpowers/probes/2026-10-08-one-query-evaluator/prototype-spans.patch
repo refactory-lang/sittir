@@ -1,0 +1,198 @@
+diff --git a/packages/common/src/engine.ts b/packages/common/src/engine.ts
+index 052ccac4c..045ff912f 100644
+--- a/packages/common/src/engine.ts
++++ b/packages/common/src/engine.ts
+@@ -80,7 +80,8 @@ export interface NativeEngineLike<TTransport = unknown> {
+ 		resume: number[] | undefined | null,
+ 		limit: number,
+ 		plan?: string | null,
+-		depth?: number | null
++		depth?: number | null,
++		subjects?: string | null
+ 	): string;
+ 	planHolds(addresses: string, plan: string): boolean[];
+ 	render(node: TTransport, treeId?: number, options?: object): string;
+@@ -373,7 +374,8 @@ export function createNativeEngine<
+ 											walk.resume === undefined ? undefined : [...walk.resume],
+ 											walk.limit,
+ 											walk.plan === undefined ? undefined : JSON.stringify(walk.plan),
+-											walk.depth
++											walk.depth,
++											walk.subjects === undefined ? undefined : JSON.stringify(walk.subjects)
+ 										)
+ 									) as DescendantBatch,
+ 								planHolds: (addresses, plan) => engine.planHolds(JSON.stringify(addresses), JSON.stringify(plan))
+diff --git a/packages/common/src/query.ts b/packages/common/src/query.ts
+index 2b2277495..6e4bb549c 100644
+--- a/packages/common/src/query.ts
++++ b/packages/common/src/query.ts
+@@ -11,12 +11,14 @@ export interface DescendantWalk {
+ 	readonly resume?: readonly number[];
+ 	readonly limit: number;
+ 	readonly depth?: number;
++	readonly subjects?: readonly unknown[];
+ }
+ 
+ export interface DescendantBatch {
+ 	readonly stubs: readonly AnyUntypedNode[];
+ 	readonly resume: readonly number[] | null;
+ 	readonly origin: number;
++	readonly spans?: readonly (readonly (readonly [number, number])[])[][];
+ }
+ 
+ export interface TreeQuery {
+diff --git a/packages/python/native/index.d.ts b/packages/python/native/index.d.ts
+index 21191098f..9872bc169 100644
+--- a/packages/python/native/index.d.ts
++++ b/packages/python/native/index.d.ts
+@@ -56,7 +56,7 @@ export declare class SittirEngine {
+    * a tree that is not live and a plan whose pattern the native
+    * matcher cannot compile.
+    */
+-  descendants(from: string, kinds: Array<number> | undefined | null, resume: Array<number> | undefined | null, limit: number, plan?: string | undefined | null, depth?: number | undefined | null): string
++  descendants(from: string, kinds: Array<number> | undefined | null, resume: Array<number> | undefined | null, limit: number, plan?: string | undefined | null, depth?: number | undefined | null, subjects?: string | undefined | null): string
+   /**
+    * Whether each node `addresses` names (a JSON array of
+    * `query::Address`, all in one tree) satisfies the `where` plan
+diff --git a/packages/rust/native/index.d.ts b/packages/rust/native/index.d.ts
+index 21191098f..9872bc169 100644
+--- a/packages/rust/native/index.d.ts
++++ b/packages/rust/native/index.d.ts
+@@ -56,7 +56,7 @@ export declare class SittirEngine {
+    * a tree that is not live and a plan whose pattern the native
+    * matcher cannot compile.
+    */
+-  descendants(from: string, kinds: Array<number> | undefined | null, resume: Array<number> | undefined | null, limit: number, plan?: string | undefined | null, depth?: number | undefined | null): string
++  descendants(from: string, kinds: Array<number> | undefined | null, resume: Array<number> | undefined | null, limit: number, plan?: string | undefined | null, depth?: number | undefined | null, subjects?: string | undefined | null): string
+   /**
+    * Whether each node `addresses` names (a JSON array of
+    * `query::Address`, all in one tree) satisfies the `where` plan
+diff --git a/packages/typescript/native/index.d.ts b/packages/typescript/native/index.d.ts
+index 21191098f..9872bc169 100644
+--- a/packages/typescript/native/index.d.ts
++++ b/packages/typescript/native/index.d.ts
+@@ -56,7 +56,7 @@ export declare class SittirEngine {
+    * a tree that is not live and a plan whose pattern the native
+    * matcher cannot compile.
+    */
+-  descendants(from: string, kinds: Array<number> | undefined | null, resume: Array<number> | undefined | null, limit: number, plan?: string | undefined | null, depth?: number | undefined | null): string
++  descendants(from: string, kinds: Array<number> | undefined | null, resume: Array<number> | undefined | null, limit: number, plan?: string | undefined | null, depth?: number | undefined | null, subjects?: string | undefined | null): string
+   /**
+    * Whether each node `addresses` names (a JSON array of
+    * `query::Address`, all in one tree) satisfies the `where` plan
+diff --git a/rust/crates/sittir-core/src/engine.rs b/rust/crates/sittir-core/src/engine.rs
+index 8851397fd..a6a55bea6 100644
+--- a/rust/crates/sittir-core/src/engine.rs
++++ b/rust/crates/sittir-core/src/engine.rs
+@@ -361,6 +361,19 @@ impl<G: EngineGrammar> ParsedTree<G> {
+         resume: Option<&[u32]>,
+         limit: u32,
+         depth: Option<u32>,
++    ) -> Result<DescendantBatch, String> {
++        self.descendants_with(from, kinds, plan, None, resume, limit, depth)
++    }
++
++    pub fn descendants_with(
++        &mut self,
++        from: Address,
++        kinds: &[u16],
++        plan: Option<&Plan>,
++        subjects: Option<&[crate::query::Subject]>,
++        resume: Option<&[u32]>,
++        limit: u32,
++        depth: Option<u32>,
+     ) -> Result<DescendantBatch, String> {
+         let depth = depth.map_or(usize::MAX, |levels| levels as usize);
+         let index = self.index_of(from)?;
+@@ -374,6 +387,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
+         let mut frames: Vec<Option<u32>> = vec![Some(index)];
+         let mut path: Vec<u32> = Vec::new();
+         let mut stubs = Vec::new();
++        let mut spans = Vec::new();
+         if let Some(resume) = resume {
+             for &child in resume {
+                 if !cursor.goto_first_child() {
+@@ -399,12 +413,15 @@ impl<G: EngineGrammar> ParsedTree<G> {
+                 let parent = Self::mint_frame(&mut self.nodes, &mut frames, &path, depth - 1);
+                 let child_index = path[depth - 1] as u16;
+                 stubs.push(stub_of(node, &self.source, Some(encode_handle(self.tree_id, parent)), child_index));
++                if let Some(subjects) = subjects {
++                    spans.push(crate::query::subject_spans(&node, subjects));
++                }
+                 if stubs.len() as u32 >= limit {
+-                    return Ok(DescendantBatch { stubs, resume: Some(path), origin });
++                    return Ok(DescendantBatch { stubs, resume: Some(path), origin, spans });
+                 }
+             }
+         }
+-        Ok(DescendantBatch { stubs, resume: None, origin })
++        Ok(DescendantBatch { stubs, resume: None, origin, spans })
+     }
+ 
+     /// Step `cursor` to the next node in pre-order below the walk's start, at
+diff --git a/rust/crates/sittir-core/src/napi_engine.rs b/rust/crates/sittir-core/src/napi_engine.rs
+index 78748770f..f7570bcc9 100644
+--- a/rust/crates/sittir-core/src/napi_engine.rs
++++ b/rust/crates/sittir-core/src/napi_engine.rs
+@@ -326,8 +326,12 @@ macro_rules! napi_engine {
+                 limit: u32,
+                 plan: Option<String>,
+                 depth: Option<u32>,
++                subjects: Option<String>,
+             ) -> ::napi::Result<String> {
+                 let plan = plan.map(|json| $crate::napi_engine::compile_plan(&json)).transpose()?;
++                let subjects: Option<Vec<$crate::query::Subject>> = subjects
++                    .map(|json| ::serde_json::from_str(&json).map_err(|e| ::napi::Error::from_reason(e.to_string())))
++                    .transpose()?;
+                 let from = $crate::napi_engine::address_from_json(&from)?;
+                 let kinds = kinds
+                     .unwrap_or_default()
+@@ -339,7 +343,7 @@ macro_rules! napi_engine {
+                     let mut trees = trees.borrow_mut();
+                     let parsed = trees.get_mut(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                     let batch = parsed
+-                        .descendants(from, &kinds, plan.as_ref(), resume.as_deref(), limit.max(1), depth)
++                        .descendants_with(from, &kinds, plan.as_ref(), subjects.as_deref(), resume.as_deref(), limit.max(1), depth)
+                         .map_err(::napi::Error::from_reason)?;
+                     ::serde_json::to_string(&batch).map_err(|e| ::napi::Error::from_reason(e.to_string()))
+                 })
+diff --git a/rust/crates/sittir-core/src/query.rs b/rust/crates/sittir-core/src/query.rs
+index d384eed7f..45985cf5e 100644
+--- a/rust/crates/sittir-core/src/query.rs
++++ b/rust/crates/sittir-core/src/query.rs
+@@ -12,6 +12,35 @@ pub struct DescendantBatch {
+     pub stubs: Vec<UntypedNode>,
+     pub resume: Option<Vec<u32>>,
+     pub origin: u64,
++    #[serde(skip_serializing_if = "Vec::is_empty")]
++    pub spans: Vec<Vec<Vec<[usize; 2]>>>,
++}
++
++/// What a condition reads: a slot by its parser routes, or the node's own text.
++#[derive(serde::Deserialize)]
++#[serde(untagged)]
++pub enum Subject {
++    Slot(Routes),
++    Own {
++        #[serde(rename = "self")]
++        _own: bool,
++    },
++}
++
++/// The byte spans of each subject's values on `node`, in subject order.
++pub fn subject_spans(node: &tree_sitter::Node<'_>, subjects: &[Subject]) -> Vec<Vec<[usize; 2]>> {
++    subjects
++        .iter()
++        .map(|subject| match subject {
++            Subject::Own { .. } => vec![[node.start_byte(), node.end_byte()]],
++            Subject::Slot(routes) => (0..node.child_count() as u32)
++                .filter_map(|i| {
++                    let child = node.child(i)?;
++                    (!child.is_extra() && routes.admits(node.field_name_for_child(i), &child)).then(|| [child.start_byte(), child.end_byte()])
++                })
++                .collect(),
++        })
++        .collect()
+ }
+ 
+ /// A parsed node as a query names it: its own handle, the parent handle and

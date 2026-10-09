@@ -526,3 +526,33 @@ must cover direct and transitive references, repeated references, explicit
 site overrides, token lowering, all three spellings and CRLF break counting.
 
 Related issue: [#608 — exact source-gap spelling, including CRLF](https://github.com/refactory-lang/sittir/issues/608). This contract informs its line-ending model; it does not implement preservation of arbitrary source-gap bytes.
+
+### Addendum: the line ending (2026-10-08)
+
+**Maintainer ruling.** The line ending is one global preference, owned by
+`newline`'s choice over `'\n' | '\r\n' | '\r'` and set as the render option
+`newline`, text-valued like `indent`. Every line break a render writes takes
+it: the writer's own breaks, and the breaks inside source slices, comments and
+literals. A render therefore has one line ending.
+
+- **No site overrides.** A file has one line ending, so the "explicit site
+  overrides" item of the test list above does not apply to it.
+- **Transitive references and token lowering do not arise.** Inside the
+  whitespace vocabulary, every reference names `newline` directly, and no
+  member is lowered to a parser token (see Parser lowering). Those two items
+  of the test list stay with the general reference mechanism; the line
+  ending tests references, all three spellings and break counting.
+- **References.** `blankline` is `seq(newline, newline)` and
+  `double_blankline` is `seq(newline, newline, newline)`. They keep their
+  names as layout arms. There is no general whitespace-count primitive.
+- **Spelling.** The spelling is applied where the render's text leaves it:
+  a `fmt::Write` adapter treats `\r\n`, `\r` and `\n` as one logical break
+  each, including a CR and LF that arrive in separate pieces, and writes the
+  preferred ending. Everything before it works in one internal spelling.
+- **Parser lowering.** The whitespace members are externals no scanner
+  emits, so parser lowering never splits a CRLF made of them. A source token
+  whose pattern swallows the CR (python's `#.*` comment) is the case that
+  matters: the adapter joins that CR with the break after it.
+
+Inferring a tree's own line ending belongs to the layout-inference design,
+which supplies the option's value.

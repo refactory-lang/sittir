@@ -477,7 +477,7 @@ mod tests {
     const TABLE: WhitespaceTable = WhitespaceTable {
         text_of,
         indent: 7,
-        dedent: 8,
+        dedent: 8, leaf_edges: &[], gaps: &[(8, 1)]
     };
 
     fn coordinate(start: u32, end: u32) -> NodeCoordinate {
