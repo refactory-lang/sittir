@@ -28,11 +28,12 @@ One file per grammar package, `packages/<grammar>/bindings.scm`, written in tree
 
 - **Sixteen sections in a fixed order,** identical in every file, an empty section left visible where a grammar has nothing: `module`, `declaration`, `statement`, `clause`, `argument`, `element`, `expression`, `pattern`, `type`, `literal`, `identifier`, `modifier`, `attribute`, `comment`, `keyword / punctuation`, `unclaimed`.
 - **One claim per line,** the parent before its refinements, refinements in the order of the vocabulary.
-- **Kind claims** are dotted captures on nodes: `(binary_expression) @expression.binary`. A single-segment capture on a pattern's top node claims the namespace's root kind: `(identifier) @identifier`.
-- **Member captures are constructive and exhaustive.** A claim's members are exactly its single-segment captures on nested nodes or tokens; a grammar slot no capture names is not a member and has no route in the map.
+- **Kind claims** are dotted captures on nodes: `(binary_expression) @expression.binary`. A single-segment capture alone on a pattern's top node claims the namespace's root kind: `(identifier) @identifier`.
+- **Member captures are constructive and exhaustive.** A claim's members are exactly its single-segment captures on nested nodes, on tokens, and beside the claim on the claimed node; a grammar slot no capture names is not a member and has no route in the map.
   - The capture's name is the converged member name (§6), whether or not the upstream field already spells it: `(class_definition superclasses: (_)? @bases)`.
   - A deep capture reaches through a wrapper to the node that matters, so nesting artefacts (`content`, body wrappers, hidden arms) exist only where a capture names them: `(class_declaration (class_heritage (extends_clause (_) @extends)))`.
-  - A capture on a token is the token's presence: `"async" @async`.
+  - A capture on a token is the token's presence: `"async" @async`. A second single-segment capture on a node is the presence of that node's kind in the slot the first capture names: `name: (private_property_identifier) @name @private` reads `private` as whether the name is a private name, and builds a private name when it is true.
+  - A single-segment capture on a claimed node, beside its claim, is a member the node supplies by being the node (§2.3): `(shorthand_property_identifier) @element.pair @key`, and python's bare parameter, `(parameters (parameters_elements (identifier) @declaration.parameter @name))`.
   - A captured node finds its slot by its field, else by its kind, else by position: an unfielded wildcard names the first node slot after the slot of the node pattern before it, so `(index_expression (_) @object (_) @index)` names both slots in order and a token before a wildcard does not count.
   - The slot model types a captured member (kinds, multiplicity, requiredness) and confirms that the capture resolves to a slot; it never adds a member.
   A claim is unconditional, so an optional member named in a claim carries a quantifier (`?`, `*`, `+`) and the claim matches whether or not the member is present.
@@ -266,7 +267,7 @@ For one grammar:
 
 - **Read entries,** per grammar kind: the vocabulary kinds it can be, most specific first, each with what selects it: field literals the node must have (`operator: "+"`), predicates on captured nodes (`#eq?`, `#match?`), the template's holes.
 - **Build entries,** per vocabulary kind: the factories that build it, each with the literals it pins.
-- **Member routes,** per entry: for each member capture, the slot it lands in, as a path from the claimed node through any transparent wrapper to the slot (`class_heritage` → `extends_clause` → value), and whether the member is a slot's value or a token's presence.
+- **Member routes,** per entry: for each member capture, the slot it lands in, as a path from the claimed node through any transparent wrapper to the slot (`class_heritage` → `extends_clause` → value), and whether the member is a slot's value, a token's presence, the presence of a kind in a slot, or the claimed node itself.
 - **Container assignments:** for a container pattern, which captures it assigns to the element it wraps, and the route to each.
 - **The language's context:** it extends the namespace map over itself (§3.4) and the language's composition (§4.1), and holds per namespace the vocabulary kinds the grammar claims that the composition has, with the sets admitted whole under §3.2 and the restatements of §4.4 applied. This is the `G` the language's interfaces are instantiated with.
 - **Token classes:** the keyword and punctuation classes of §2.1, for highlighting.
@@ -359,7 +360,7 @@ A portable node reads through the grammar's typed surface: its low-level node's 
 
 ## 10. Verification
 
-1. **Totality and injectivity,** computed from `grammar.json` and the bindings by the inventory: every meaningful visible kind claimed or unclaimed with a reason; no two kinds of one grammar share a leaf; the unclaimed count only falls.
+1. **Totality and injectivity,** computed from `grammar.json` and the bindings by the inventory: every meaningful visible kind claimed or unclaimed with a reason; no two kinds of one grammar share a leaf unless, in every slot that admits both, a holder's flag or a member's absence tells them apart (a private name and a public one; a shorthand pair and a pair); the unclaimed count only falls.
 2. **The bindings compile:** each `bindings.scm` compiles as a query against its grammar's parser, and a bad node or field name is reported with tree-sitter's own error and the line; the set of compiling grammars is a ratchet.
 3. **The bindings read:** each `bindings.scm` reads through `@sittir/scm` with no error node and renders back byte-identical.
 4. **The map type-checks** against the low-level API (§5.2), and the inventory's checks of the map against the vocabulary pass.
