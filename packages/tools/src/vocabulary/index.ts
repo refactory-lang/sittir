@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { formatSource } from '@sittir/codegen/run-codegen';
-import { type Plan, plan } from './plan.ts';
+import { type Plan, type ValueSet, plan } from './plan.ts';
 import { AUGMENTATION, readVocabularySource, VOCABULARY_DIR } from './read.ts';
 import { augmentation, FEATURES_INDEX, featuresIndex } from './write.ts';
 
@@ -37,12 +37,18 @@ export async function vocabularyFeatureIssues(dir: string = VOCABULARY_DIR): Pro
 	return p.issues.length > 0 ? [...p.issues] : drift(dir, files);
 }
 
+export function vocabularyValueSets(dir: string = VOCABULARY_DIR): ReadonlyMap<string, ValueSet> {
+	return plan(readVocabularySource(dir)).valueSets;
+}
+
 export async function run(options: VocabularyFeaturesOptions = {}): Promise<number> {
 	const dir = options.dir ?? VOCABULARY_DIR;
 	const { plan: p, files } = await generate(dir);
 	const owned = [...p.owned.values()].reduce((n, members) => n + members.size, 0);
 	const added = [...p.kinds.values()].filter((k) => k.feature !== undefined).length;
-	console.log(`${p.features.size} features add ${added} kinds and own ${owned} members; ${p.kinds.size} kinds in ${p.levels.size} levels`);
+	console.log(
+		`${p.features.size} features add ${added} kinds and own ${owned} members; ${p.kinds.size} kinds and ${p.values.size} value refinements in ${p.levels.size} levels`
+	);
 	for (const note of p.notes) console.log(`note: ${note}`);
 	if (p.issues.length > 0) {
 		for (const issue of p.issues) console.error(issue);

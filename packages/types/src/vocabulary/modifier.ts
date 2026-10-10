@@ -1,6 +1,10 @@
 import type { GrammarContext } from './context.ts';
-import type { SubKindOf } from './utils.ts';
+import type { Beneath, SubKindOf } from './utils.ts';
 import type * as V from './index.ts';
+
+/** An access level: the path of a kind beneath `modifier.visibility`. */
+export type AccessLevel = Beneath<V.Modifier.Visibility.Any<never>, 'modifier.visibility'>;
+
 export interface Modifier<G extends GrammarContext<G>> {
 	readonly $kind: 'modifier';
 }

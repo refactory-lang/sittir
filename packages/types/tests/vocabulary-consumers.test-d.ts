@@ -11,7 +11,18 @@
  * bounds the context.
  */
 
-import type { Accessors, Declaration, Expression, GrammarContext, Identifier, Statement, UnsafeCode } from '../src/vocabulary/index.ts';
+import type {
+	AccessLevel,
+	Accessors,
+	Declaration,
+	EnumLeaf,
+	Expression,
+	GrammarContext,
+	Identifier,
+	Statement,
+	UnsafeCode,
+	Visibility
+} from '../src/vocabulary/index.ts';
 
 // An ordinary function needs a name and parameters, nothing accessor-shaped.
 export function fn<G extends GrammarContext<G>>(name: G['identifier']): Declaration.Function<G> {
@@ -32,7 +43,7 @@ export function parameterless<G extends GrammarContext<G>>(name: G['identifier']
 }
 
 // A context composing the features whose members the checks below set, and one composing none.
-interface Composed extends GrammarContext<Composed>, Accessors, UnsafeCode {}
+interface Composed extends GrammarContext<Composed>, Accessors, UnsafeCode, Visibility {}
 interface Bare extends GrammarContext<Bare> {}
 
 // A getter pins the converged accessor member, which `accessors` owns.
@@ -109,6 +120,32 @@ export function nameKind<G extends GrammarContext<G>>(f: Declaration.Function<G>
 export function yields<G extends GrammarContext<G>>(y: Expression.Yield<G>): Expression.Any<G> {
 	return y;
 }
+
+// A value refinement pins its member to the values at or beneath its value, and a deeper value refines it further.
+export function crateFn(name: Composed['identifier']): Declaration.Function.Public.Internal<Composed> {
+	return { $kind: 'declaration.function.public.internal', name, parameters: [], visibility: 'modifier.visibility.public.internal' };
+}
+export const anyPublic: Declaration.Function.Public.Any<Composed> = crateFn({ $kind: 'identifier' });
+export function notPublic(name: Composed['identifier']): Declaration.Function.Public<Composed> {
+	return {
+		$kind: 'declaration.function.public',
+		name,
+		parameters: [],
+		// @ts-expect-error a public function's visibility is a public level
+		visibility: 'modifier.visibility.private'
+	};
+}
+
+// Structural refinements come first and values last: a public getter is a getter's value refinement.
+export function publicGetter(name: Composed['identifier']): Declaration.Method.Getter.Public<Composed> {
+	return { $kind: 'declaration.method.getter.public', name, parameters: [], accessor: 'get', visibility: 'modifier.visibility.public' };
+}
+
+// A value's short form is its path beneath the enumeration's root.
+export const shortForms: readonly EnumLeaf<AccessLevel>[] = ['private', 'protected', 'public', 'public.internal', 'public.restricted'];
+export const crateLevel: EnumLeaf<AccessLevel, 'modifier.visibility.public.internal'> = 'public.internal';
+// @ts-expect-error a nested level's short form keeps its parent's segment
+export const notALevel: EnumLeaf<AccessLevel> = 'internal';
 
 // A grammar's context extends the map over itself and narrows it to what the grammar realizes: here the identifier
 // role to the plain identifier, and a function's parameters to identifiers.

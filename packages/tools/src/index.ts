@@ -124,6 +124,7 @@ export { run as hoistedCensus, type HoistedCensusOptions } from './census/hoiste
 export { run as spelledTrivia, type SpelledTriviaOptions } from './census/spelled-trivia.ts';
 export { run as textKindOverlap, type TextKindOverlapOptions } from './census/text-kind-overlap.ts';
 export { run as bindingsInventory, type BindingsInventoryOptions } from './inventory/index.ts';
-export { run as vocabularyFeatures, type VocabularyFeaturesOptions } from './vocabulary/index.ts';
+export { run as vocabularyFeatures, type VocabularyFeaturesOptions, vocabularyValueSets } from './vocabulary/index.ts';
+export type { Enumerated, Enumeration, Flag, ValueSet } from './vocabulary/plan.ts';
 export { bootstrapGrammar, type BootstrapGrammarOptions } from './bootstrap/grammar.ts';
 export { fetchUpstreamCorpus, type CorpusSource, type FetchCorpusOptions } from './corpus/fetch.ts';

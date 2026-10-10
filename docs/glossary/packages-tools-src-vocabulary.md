@@ -7,7 +7,7 @@ The vocabulary feature tool, `sittir tool vocabulary-features`. The vocabulary u
 
 The tool reads both and plans which feature owns which kind and member. It then generates the two files the folders imply:
 
-- `augment.ts` merges each feature's kinds and gated members into the base namespaces and declares every level's `Any`.
+- `augment.ts` merges each feature's kinds and gated members into the base namespaces, declares each kind's value refinements, and declares every level's `Any`.
 - `features/index.ts` exports every marker.
 
 `--write` writes them. `--check` reports a planning issue or a generated file that differs from what the folders generate; the tool's test holds the same check at a ceiling of none. The bindings inventory reads the vocabulary through the same reader.
@@ -24,7 +24,16 @@ Reads the vocabulary's declarations with the TypeScript parser, never by matchin
 
 - **Base kinds:** the namespace files (every top-level `.ts` except the augmentation) give the base kinds, each an interface with a `$kind` literal. An interface there without one (the context's typemap, `Unmapped`) is not a kind.
 - **`modules`:** maps each top-level namespace to the file that declares it. That file is the module the augmentation's `declare module` block for the namespace names.
+- **`enumerations`:** each enumeration a namespace file declares (`readEnumerations`), by name, with the root its values lie beneath.
 - **Feature folders:** read whenever `features/` exists.
+
+### `packages/tools/src/vocabulary/read.ts::ENUMERATION`
+
+The type an enumeration is declared with, `Beneath`. A top-level alias of it in a namespace file declares one: `type AccessLevel = Beneath<V.Modifier.Visibility.Any<never>, 'modifier.visibility'>` declares `AccessLevel`, whose values are the paths of the kinds beneath `modifier.visibility`.
+
+### `packages/tools/src/vocabulary/read.ts::readEnumerations`
+
+The enumerations one namespace file declares: each top-level alias of `ENUMERATION` whose second argument is a string literal, the root. A member typed by the alias (`V.AccessLevel`) is an enumerated member.
 
 ### `packages/tools/src/vocabulary/read.ts::Declared`
 
@@ -72,7 +81,7 @@ An interface's parent: the first `V.`-qualified type reference in its heritage c
 
 ### `packages/tools/src/vocabulary/plan.ts::plan`
 
-The planner. It works in four parts.
+The planner. It works in five parts.
 
 **Kinds.** Every base kind and every kind a feature declares, keyed by path. These are issues:
 - a path declared twice;
@@ -90,7 +99,48 @@ A feature kind under another feature's kind is only a note, when its own feature
 
 A member that some kinds gate while base kinds leave it ungated is a note naming those kinds; it is probably one feature's member left in the base.
 
-**Levels.** Computed by `levels`.
+**Values.** Each enumeration's values are the paths of the kinds beneath its root, in codepoint order; an enumeration with none is an issue. `memberValues` lists each kind's enumerated members and flags, and `valueRefinements` refines each kind by every value of each enumerated member.
+
+**Levels.** Computed by `levels`, over the kinds and the value refinements.
+
+### `packages/tools/src/vocabulary/plan.ts::Enumeration`
+
+An enumeration: the alias that declares it, its root, and its values, the paths of the kinds beneath the root. A nested value is a value of its own: `AccessLevel`'s values include both `modifier.visibility.public` and `modifier.visibility.public.internal`.
+
+### `packages/tools/src/vocabulary/plan.ts::ValueSet`
+
+The values a kind's members take: its enumerated members (`Enumerated`) and its flags (`Flag`), each sorted by member name. Inherited members are included. The bindings take a kind's sugar inputs from it, through `vocabularyValueSets`.
+
+### `packages/tools/src/vocabulary/plan.ts::Enumerated`
+
+A member typed by an enumeration's alias: its name, the enumeration, and the feature that owns it, if a feature does.
+
+### `packages/tools/src/vocabulary/plan.ts::Flag`
+
+A member typed `boolean`: its name and the feature that owns it, if a feature does.
+
+### `packages/tools/src/vocabulary/plan.ts::memberValues`
+
+Each kind's `ValueSet`. It walks the kind's inheritance line nearest first and takes each member once, from the nearest kind that declares it: the feature that owns it there, or else its ungated declaration. A member whose printed type names an enumeration (`V.AccessLevel`) is enumerated, and a member typed `boolean` is a flag. A kind with neither is left out.
+
+### `packages/tools/src/vocabulary/plan.ts::ValueRefinement`
+
+A kind refined by one value of one of its enumerated members:
+- its path, the kind's path plus the value's segments beneath the root;
+- its qualified name, the kind's plus those segments in Pascal case;
+- its parent's qualified name;
+- the value;
+- the enumerated member it pins.
+
+### `packages/tools/src/vocabulary/plan.ts::valueRefinements`
+
+One `ValueRefinement` for every kind, enumerated member and value. Its parent is the kind, or, for a nested value, the refinement by the value above it: `declaration.function.public.internal` refines `declaration.function.public`.
+
+Structural refinements come first and values last. Every kind is refined, the structural refinements included, so a getter's public refinement is `declaration.method.getter.public`, under `declaration.method.getter`, and never `declaration.method.public.getter`.
+
+These are issues:
+- a value nested beneath a path that is not itself a value;
+- a refinement whose path or qualified name a kind or another refinement already has.
 
 ### `packages/tools/src/vocabulary/plan.ts::ownership`
 
@@ -113,7 +163,7 @@ The levels are every proper prefix of each kind's qualified name, plus each top-
 
 A level's path is the path of the kind with its name. When no kind has that name, it is the parent level's path plus the last segment in snake case.
 
-A level's arms are every kind at or under its path, ordered by qualified name in codepoint order. Abstract kinds and the kinds features add are included.
+A level's arms are every kind at or under its path, ordered by qualified name in codepoint order. Abstract kinds, the kinds features add and value refinements are included, so `Declaration.Function.Any` holds `declaration.function.public` and `Declaration.Function.Public.Any` holds each public level's refinement.
 
 ### `packages/tools/src/vocabulary/plan.ts::checkedFeatures`
 
@@ -151,6 +201,7 @@ The files the tool writes, relative to the vocabulary directory. Everything else
 The augmentation.
 - **Feature kinds:** each kind a feature adds is declared again in its namespace's module, extending the feature's stub (`interface X<G> extends alias.Q<G> {}`), so the base namespace exports it.
 - **Owned members:** each member a feature owns at a kind is merged into that kind as `readonly m?: gate.In<G, features.F, alias.Q<G>['m']>`. Its type is the stub's, and it is present only in a context that composes the feature.
+- **Value refinements:** each is declared in its kind's namespace as an interface that extends `gate.SubKindOf` its parent, with its `$kind` and its member pinned, required, to the values at or beneath its value: `readonly m: gate.AtOrBeneath<V.E, 'value'>`. A member a feature owns has its pin gated by the same feature.
 - **Levels:** every level gets `type Any<G>`, the union of its arms.
 
 Entries are grouped by the module of their top-level namespace and nested into namespace blocks by `nest`. The imports name only what the file uses.
@@ -175,10 +226,14 @@ Each generated file that is missing, or that differs from what the folders gener
 
 The gate: the plan's issues, or the drift when there are none. Empty means the vocabulary is consistent and its generated files are current.
 
+### `packages/tools/src/vocabulary/index.ts::vocabularyValueSets`
+
+The bindings' sugar inputs: each kind's `ValueSet` by path, from the plan of the vocabulary as declared. `@sittir/tools` exports it with its types.
+
 ### `packages/tools/src/vocabulary/index.ts::run`
 
 `sittir tool vocabulary-features`. It prints:
-- the counts: features, the kinds they add, the members they own, kinds and levels;
+- the counts: features, the kinds they add, the members they own, kinds, value refinements and levels;
 - the notes;
 - the issues, exiting 1 if there are any.
 

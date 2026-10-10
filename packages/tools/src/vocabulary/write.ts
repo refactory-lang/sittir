@@ -16,6 +16,8 @@ interface Node {
 	readonly children: Map<string, Node>;
 }
 
+const lastSegment = (qname: string): string => qname.slice(qname.lastIndexOf('.') + 1);
+
 const levelsLast = (a: string, b: string): number => (a === 'Any') === (b === 'Any') ? byCodepoint(a, b) : a === 'Any' ? 1 : -1;
 
 function nest(entries: readonly Entry[], indent: string): string[] {
@@ -61,19 +63,29 @@ export function augmentation(source: VocabularySource, p: Plan): string {
 		const members = [...(p.owned.get(kind.path) ?? new Map<string, Owned>())].sort(([a], [b]) => byCodepoint(a, b));
 		if (kind.feature === undefined && members.length === 0) continue;
 		gated ||= members.length > 0;
-		const last = kind.qname.slice(kind.qname.lastIndexOf('.') + 1);
-		const head = `interface ${last}<G extends GrammarContext<G>>${kind.feature === undefined ? '' : ` extends ${alias(kind.feature)}.${kind.qname}<G>`}`;
+		const head = `interface ${lastSegment(kind.qname)}<G extends GrammarContext<G>>${kind.feature === undefined ? '' : ` extends ${alias(kind.feature)}.${kind.qname}<G>`}`;
 		const lines = members.map(
 			([name, o]) =>
 				`readonly ${name}${o.member.optional ? '?' : ''}: gate.In<G, features.${o.feature.name}, ${alias(o.feature)}.${kind.qname}<G>['${name}']>;`
 		);
 		add(kind.qname, lines.length === 0 ? [`${head} {}`] : [`${head} {`, ...lines, '}']);
 	}
+	for (const v of p.values.values()) {
+		const { member, enumeration, feature } = v.enumerated;
+		const pin = `gate.AtOrBeneath<V.${enumeration.name}, '${v.value}'>`;
+		gated ||= feature !== undefined;
+		add(v.qname, [
+			`interface ${lastSegment(v.qname)}<G extends GrammarContext<G>> extends gate.SubKindOf<V.${v.parent}<G>> {`,
+			`readonly $kind: '${v.path}';`,
+			`readonly ${member}: ${feature === undefined ? pin : `gate.In<G, features.${feature.name}, ${pin}>`};`,
+			'}'
+		]);
+	}
 	for (const [ns, arms] of p.levels) add(`${ns}.Any`, [`type Any<G extends GrammarContext<G>> = ${arms.map((q) => `V.${q}<G>`).join(' | ')};`]);
 	return [
 		HEADER,
 		"import type { GrammarContext } from './context.ts';",
-		...(gated ? ["import type * as gate from './utils.ts';"] : []),
+		...(gated || p.values.size > 0 ? ["import type * as gate from './utils.ts';"] : []),
 		"import type * as V from './index.ts';",
 		...(gated ? [`import type * as features from './${FEATURES_INDEX}';`] : []),
 		...[...used]

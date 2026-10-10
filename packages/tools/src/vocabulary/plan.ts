@@ -13,10 +13,43 @@ export interface Owned {
 	readonly member: Member;
 }
 
+export interface Enumeration {
+	readonly name: string;
+	readonly root: string;
+	readonly values: readonly string[];
+}
+
+export interface Enumerated {
+	readonly member: string;
+	readonly enumeration: Enumeration;
+	readonly feature: Feature | undefined;
+}
+
+export interface Flag {
+	readonly member: string;
+	readonly feature: Feature | undefined;
+}
+
+export interface ValueSet {
+	readonly enumerated: readonly Enumerated[];
+	readonly flags: readonly Flag[];
+}
+
+export interface ValueRefinement {
+	readonly qname: string;
+	readonly path: string;
+	readonly parent: string;
+	readonly value: string;
+	readonly enumerated: Enumerated;
+}
+
 export interface Plan {
 	readonly features: ReadonlyMap<string, Feature>;
 	readonly kinds: ReadonlyMap<string, Kind>;
 	readonly owned: ReadonlyMap<string, ReadonlyMap<string, Owned>>;
+	readonly enumerations: ReadonlyMap<string, Enumeration>;
+	readonly valueSets: ReadonlyMap<string, ValueSet>;
+	readonly values: ReadonlyMap<string, ValueRefinement>;
 	readonly levels: ReadonlyMap<string, readonly string[]>;
 	readonly issues: readonly string[];
 	readonly notes: readonly string[];
@@ -133,10 +166,88 @@ export function plan(source: VocabularySource): Plan {
 		if (left.length > 0) notes.push(`${name} is gated at some kinds and stays in the base at ${left.length}: ${left.join(', ')}`);
 	}
 
-	return { features, kinds, owned, levels: levels(kinds, byQname), issues, notes };
+	const enumerations = new Map(
+		[...source.enumerations].map(([name, root]): [string, Enumeration] => [
+			name,
+			{ name, root, values: [...kinds.keys()].filter((path) => path.startsWith(`${root}.`)).sort(byCodepoint) }
+		])
+	);
+	for (const e of enumerations.values()) if (e.values.length === 0) issues.push(`${e.name}: no kind lies beneath its root ${e.root}`);
+	const valueSets = memberValues(kinds, lines, declarations, owned, enumerations);
+	const values = valueRefinements(kinds, byQname, valueSets, issues);
+	return { features, kinds, owned, enumerations, valueSets, values, levels: levels([...kinds.values(), ...values.values()]), issues, notes };
 }
 
 const topSegment = (path: string): string => path.replace(/\..*$/, '');
+const pascal = (segment: string): string =>
+	segment
+		.split('_')
+		.map((w) => `${w.charAt(0).toUpperCase()}${w.slice(1)}`)
+		.join('');
+
+function memberValues(
+	kinds: ReadonlyMap<string, Kind>,
+	lines: ReadonlyMap<string, readonly string[]>,
+	declarations: ReadonlyMap<string, ReadonlyMap<string, readonly Declaration[]>>,
+	owned: ReadonlyMap<string, ReadonlyMap<string, Owned>>,
+	enumerations: ReadonlyMap<string, Enumeration>
+): Map<string, ValueSet> {
+	const byType = new Map([...enumerations.values()].map((e) => [`V.${e.name}`, e]));
+	const out = new Map<string, ValueSet>();
+	for (const path of [...kinds.keys()].sort(byCodepoint)) {
+		const enumerated: Enumerated[] = [];
+		const flags: Flag[] = [];
+		const seen = new Set<string>();
+		for (const at of lines.get(path) ?? []) {
+			for (const [name, list] of declarations.get(at) ?? []) {
+				if (seen.has(name)) continue;
+				seen.add(name);
+				const o = owned.get(at)?.get(name);
+				const member = o?.member ?? list.find((d) => !d.gated)?.member;
+				const enumeration = member === undefined ? undefined : byType.get(member.type);
+				if (enumeration !== undefined) enumerated.push({ member: name, enumeration, feature: o?.feature });
+				else if (member?.type === 'boolean') flags.push({ member: name, feature: o?.feature });
+			}
+		}
+		const byMember = (a: { readonly member: string }, b: { readonly member: string }): number => byCodepoint(a.member, b.member);
+		if (enumerated.length > 0 || flags.length > 0) out.set(path, { enumerated: enumerated.sort(byMember), flags: flags.sort(byMember) });
+	}
+	return out;
+}
+
+function valueRefinements(
+	kinds: ReadonlyMap<string, Kind>,
+	byQname: ReadonlyMap<string, Kind>,
+	valueSets: ReadonlyMap<string, ValueSet>,
+	issues: string[]
+): Map<string, ValueRefinement> {
+	const out = new Map<string, ValueRefinement>();
+	const qnames = new Set<string>();
+	for (const kind of kinds.values()) {
+		for (const enumerated of valueSets.get(kind.path)?.enumerated ?? []) {
+			const { name, root, values } = enumerated.enumeration;
+			const nested = (leaf: string): string => `${kind.qname}.${leaf.split('.').map(pascal).join('.')}`;
+			for (const value of values) {
+				const leaf = value.slice(root.length + 1);
+				const path = `${kind.path}.${leaf}`;
+				const qname = nested(leaf);
+				const dot = leaf.lastIndexOf('.');
+				const above = dot < 0 ? undefined : leaf.slice(0, dot);
+				if (above !== undefined && !values.includes(`${root}.${above}`)) {
+					issues.push(`${name}: ${value} lies beneath ${root}.${above}, which is not one of its values`);
+					continue;
+				}
+				if (kinds.has(path) || out.has(path) || byQname.has(qname) || qnames.has(qname)) {
+					issues.push(`${path}: ${kind.path}'s ${enumerated.member} ${value} refines it there, and another kind already has that path or name`);
+					continue;
+				}
+				qnames.add(qname);
+				out.set(path, { qname, path, parent: above === undefined ? kind.qname : nested(above), value, enumerated });
+			}
+		}
+	}
+	return out;
+}
 
 function checkedFeatures(source: VocabularySource, issues: string[]): Map<string, Feature> {
 	const features = new Map<string, Feature>();
@@ -203,10 +314,11 @@ function ownership(
 	return owned;
 }
 
-function levels(kinds: ReadonlyMap<string, Kind>, byQname: ReadonlyMap<string, Kind>): Map<string, readonly string[]> {
+function levels(kinds: readonly { readonly qname: string; readonly path: string }[]): Map<string, readonly string[]> {
+	const byQname = new Map(kinds.map((k) => [k.qname, k.path]));
 	const paths = new Map<string, string>();
 	const levelPath = (ns: string): string => {
-		const known = byQname.get(ns)?.path ?? paths.get(ns);
+		const known = byQname.get(ns) ?? paths.get(ns);
 		if (known !== undefined) return known;
 		const dot = ns.lastIndexOf('.');
 		const path = dot < 0 ? snake(ns) : `${levelPath(ns.slice(0, dot))}.${snake(ns.slice(dot + 1))}`;
@@ -214,12 +326,12 @@ function levels(kinds: ReadonlyMap<string, Kind>, byQname: ReadonlyMap<string, K
 		return path;
 	};
 	const namespaces = new Set<string>();
-	for (const kind of kinds.values()) {
+	for (const kind of kinds) {
 		const segments = kind.qname.split('.');
 		namespaces.add(topSegment(kind.qname));
 		for (let i = 1; i < segments.length; i++) namespaces.add(segments.slice(0, i).join('.'));
 	}
-	const sorted = [...kinds.values()].sort((a, b) => byCodepoint(a.qname, b.qname));
+	const sorted = [...kinds].sort((a, b) => byCodepoint(a.qname, b.qname));
 	return new Map(
 		[...namespaces].sort(byCodepoint).map((ns) => {
 			const at = levelPath(ns);

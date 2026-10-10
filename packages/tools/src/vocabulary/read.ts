@@ -41,28 +41,43 @@ export interface Feature {
 export interface VocabularySource {
 	readonly kinds: readonly DeclaredKind[];
 	readonly modules: ReadonlyMap<string, string>;
+	readonly enumerations: ReadonlyMap<string, string>;
 	readonly features: readonly Feature[];
 }
+
+export const ENUMERATION = 'Beneath';
 
 export function readVocabularySource(dir: string): VocabularySource {
 	const kinds: DeclaredKind[] = [];
 	const modules = new Map<string, string>();
+	const enumerations = new Map<string, string>();
 	for (const file of readdirSync(dir)
 		.filter((f) => f.endsWith('.ts') && f !== AUGMENTATION)
 		.sort(byCodepoint)) {
-		for (const d of readDeclared(file, readFileSync(join(dir, file), 'utf8')).filter(isKind)) {
+		const source = parse(file, readFileSync(join(dir, file), 'utf8'));
+		for (const d of readDeclared(source).filter(isKind)) {
 			kinds.push(d);
 			modules.set(d.qname.replace(/\..*$/, ''), file);
 		}
+		for (const [name, root] of readEnumerations(source)) enumerations.set(name, root);
 	}
 	const root = join(dir, FEATURES);
-	return { kinds, modules, features: existsSync(root) ? readFeatures(root) : [] };
+	return { kinds, modules, enumerations, features: existsSync(root) ? readFeatures(root) : [] };
 }
 
 const printer = ts.createPrinter({ removeComments: true });
 
-function readDeclared(file: string, text: string): Declared[] {
-	const source = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true);
+const parse = (file: string, text: string): ts.SourceFile => ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true);
+
+function readEnumerations(source: ts.SourceFile): [string, string][] {
+	return source.statements.flatMap((s): [string, string][] => {
+		if (!ts.isTypeAliasDeclaration(s) || !ts.isTypeReferenceNode(s.type) || !ts.isIdentifier(s.type.typeName) || s.type.typeName.text !== ENUMERATION) return [];
+		const root = s.type.typeArguments?.[1];
+		return root !== undefined && ts.isLiteralTypeNode(root) && ts.isStringLiteral(root.literal) ? [[s.name.text, root.literal.text]] : [];
+	});
+}
+
+function readDeclared(source: ts.SourceFile): Declared[] {
 	const out: Declared[] = [];
 	const visit = (statements: ts.NodeArray<ts.Statement>, scope: readonly string[]): void => {
 		for (const statement of statements) {
@@ -130,7 +145,7 @@ function readFeatures(root: string): Feature[] {
 
 function readFeature(root: string, dir: string): Feature {
 	const abs = join(root, dir);
-	const index = ts.createSourceFile('index.ts', readFileSync(join(abs, 'index.ts'), 'utf8'), ts.ScriptTarget.Latest, true);
+	const index = parse('index.ts', readFileSync(join(abs, 'index.ts'), 'utf8'));
 	const [marker] = index.statements.filter(ts.isInterfaceDeclaration).flatMap((declaration) => {
 		const key = markerKey(declaration);
 		return key === undefined ? [] : [{ declaration, key }];
@@ -151,7 +166,7 @@ function readFeature(root: string, dir: string): Feature {
 		key: marker.key,
 		parents: (marker.declaration.heritageClauses ?? []).flatMap((clause) => clause.types.map((type) => type.expression.getText(index))),
 		dir,
-		stubs: files.flatMap((file) => readDeclared(file, readFileSync(join(abs, file), 'utf8'))),
+		stubs: files.flatMap((file) => readDeclared(parse(file, readFileSync(join(abs, file), 'utf8')))),
 		unexported: files.filter((file) => !exported.has(`./${file}`))
 	};
 }

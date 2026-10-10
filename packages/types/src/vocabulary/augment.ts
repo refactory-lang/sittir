@@ -359,6 +359,61 @@ declare module './declaration.ts' {
 			readonly type: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Constant<G>['type']>;
 			readonly visibility?: gate.In<G, features.Visibility, visibility.Declaration.Constant<G>['visibility']>;
 		}
+		namespace Constant {
+			interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Constant<G>> {
+				readonly $kind: 'declaration.constant.private';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+				>;
+			}
+			interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Constant<G>> {
+				readonly $kind: 'declaration.constant.protected';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+				>;
+			}
+			interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Constant<G>> {
+				readonly $kind: 'declaration.constant.public';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+				>;
+			}
+			namespace Public {
+				interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Constant.Public<G>> {
+					readonly $kind: 'declaration.constant.public.internal';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+					>;
+				}
+				interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Constant.Public<G>> {
+					readonly $kind: 'declaration.constant.public.restricted';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+					>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Constant.Public<G>
+					| V.Declaration.Constant.Public.Internal<G>
+					| V.Declaration.Constant.Public.Restricted<G>;
+			}
+			type Any<G extends GrammarContext<G>> =
+				| V.Declaration.Constant<G>
+				| V.Declaration.Constant.Private<G>
+				| V.Declaration.Constant.Protected<G>
+				| V.Declaration.Constant.Public<G>
+				| V.Declaration.Constant.Public.Internal<G>
+				| V.Declaration.Constant.Public.Restricted<G>;
+		}
 		interface Constructor<G extends GrammarContext<G>> extends classes.Declaration.Constructor<G> {}
 		interface Enum<G extends GrammarContext<G>> extends enumerations.Declaration.Enum<G> {
 			readonly typeParameters?: gate.In<
@@ -373,11 +428,112 @@ declare module './declaration.ts' {
 				boundedQuantification.Declaration.Enum<G>['whereClause']
 			>;
 		}
+		namespace Enum {
+			interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Enum<G>> {
+				readonly $kind: 'declaration.enum.private';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+				>;
+			}
+			interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Enum<G>> {
+				readonly $kind: 'declaration.enum.protected';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+				>;
+			}
+			interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Enum<G>> {
+				readonly $kind: 'declaration.enum.public';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+				>;
+			}
+			namespace Public {
+				interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Enum.Public<G>> {
+					readonly $kind: 'declaration.enum.public.internal';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+					>;
+				}
+				interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Enum.Public<G>> {
+					readonly $kind: 'declaration.enum.public.restricted';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+					>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Enum.Public<G>
+					| V.Declaration.Enum.Public.Internal<G>
+					| V.Declaration.Enum.Public.Restricted<G>;
+			}
+			type Any<G extends GrammarContext<G>> =
+				| V.Declaration.Enum<G>
+				| V.Declaration.Enum.Private<G>
+				| V.Declaration.Enum.Protected<G>
+				| V.Declaration.Enum.Public<G>
+				| V.Declaration.Enum.Public.Internal<G>
+				| V.Declaration.Enum.Public.Restricted<G>;
+		}
 		interface EnumMember<G extends GrammarContext<G>> extends enumerations.Declaration.EnumMember<G> {
 			readonly attributes?: gate.In<G, features.Attributes, attributes.Declaration.EnumMember<G>['attributes']>;
 			readonly visibility?: gate.In<G, features.Visibility, visibility.Declaration.EnumMember<G>['visibility']>;
 		}
 		namespace EnumMember {
+			interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.EnumMember<G>> {
+				readonly $kind: 'declaration.enum_member.private';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+				>;
+			}
+			interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.EnumMember<G>> {
+				readonly $kind: 'declaration.enum_member.protected';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+				>;
+			}
+			interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.EnumMember<G>> {
+				readonly $kind: 'declaration.enum_member.public';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+				>;
+			}
+			namespace Public {
+				interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.EnumMember.Public<G>> {
+					readonly $kind: 'declaration.enum_member.public.internal';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+					>;
+				}
+				interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.EnumMember.Public<G>> {
+					readonly $kind: 'declaration.enum_member.public.restricted';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+					>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.EnumMember.Public<G>
+					| V.Declaration.EnumMember.Public.Internal<G>
+					| V.Declaration.EnumMember.Public.Restricted<G>;
+			}
 			interface Struct<G extends GrammarContext<G>> extends algebraicDataTypes.Declaration.EnumMember.Struct<G> {
 				readonly visibility?: gate.In<
 					G,
@@ -385,13 +541,146 @@ declare module './declaration.ts' {
 					visibility.Declaration.EnumMember.Struct<G>['visibility']
 				>;
 			}
+			namespace Struct {
+				interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.EnumMember.Struct<G>> {
+					readonly $kind: 'declaration.enum_member.struct.private';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+					>;
+				}
+				interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.EnumMember.Struct<G>> {
+					readonly $kind: 'declaration.enum_member.struct.protected';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+					>;
+				}
+				interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.EnumMember.Struct<G>> {
+					readonly $kind: 'declaration.enum_member.struct.public';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+					>;
+				}
+				namespace Public {
+					interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.EnumMember.Struct.Public<G>
+					> {
+						readonly $kind: 'declaration.enum_member.struct.public.internal';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+						>;
+					}
+					interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.EnumMember.Struct.Public<G>
+					> {
+						readonly $kind: 'declaration.enum_member.struct.public.restricted';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+						>;
+					}
+					type Any<G extends GrammarContext<G>> =
+						| V.Declaration.EnumMember.Struct.Public<G>
+						| V.Declaration.EnumMember.Struct.Public.Internal<G>
+						| V.Declaration.EnumMember.Struct.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.EnumMember.Struct<G>
+					| V.Declaration.EnumMember.Struct.Private<G>
+					| V.Declaration.EnumMember.Struct.Protected<G>
+					| V.Declaration.EnumMember.Struct.Public<G>
+					| V.Declaration.EnumMember.Struct.Public.Internal<G>
+					| V.Declaration.EnumMember.Struct.Public.Restricted<G>;
+			}
 			interface Tuple<G extends GrammarContext<G>> extends algebraicDataTypes.Declaration.EnumMember.Tuple<G> {
 				readonly visibility?: gate.In<G, features.Visibility, visibility.Declaration.EnumMember.Tuple<G>['visibility']>;
 			}
+			namespace Tuple {
+				interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.EnumMember.Tuple<G>> {
+					readonly $kind: 'declaration.enum_member.tuple.private';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+					>;
+				}
+				interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.EnumMember.Tuple<G>> {
+					readonly $kind: 'declaration.enum_member.tuple.protected';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+					>;
+				}
+				interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.EnumMember.Tuple<G>> {
+					readonly $kind: 'declaration.enum_member.tuple.public';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+					>;
+				}
+				namespace Public {
+					interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.EnumMember.Tuple.Public<G>
+					> {
+						readonly $kind: 'declaration.enum_member.tuple.public.internal';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+						>;
+					}
+					interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.EnumMember.Tuple.Public<G>
+					> {
+						readonly $kind: 'declaration.enum_member.tuple.public.restricted';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+						>;
+					}
+					type Any<G extends GrammarContext<G>> =
+						| V.Declaration.EnumMember.Tuple.Public<G>
+						| V.Declaration.EnumMember.Tuple.Public.Internal<G>
+						| V.Declaration.EnumMember.Tuple.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.EnumMember.Tuple<G>
+					| V.Declaration.EnumMember.Tuple.Private<G>
+					| V.Declaration.EnumMember.Tuple.Protected<G>
+					| V.Declaration.EnumMember.Tuple.Public<G>
+					| V.Declaration.EnumMember.Tuple.Public.Internal<G>
+					| V.Declaration.EnumMember.Tuple.Public.Restricted<G>;
+			}
 			type Any<G extends GrammarContext<G>> =
 				| V.Declaration.EnumMember<G>
+				| V.Declaration.EnumMember.Private<G>
+				| V.Declaration.EnumMember.Protected<G>
+				| V.Declaration.EnumMember.Public<G>
+				| V.Declaration.EnumMember.Public.Internal<G>
+				| V.Declaration.EnumMember.Public.Restricted<G>
 				| V.Declaration.EnumMember.Struct<G>
-				| V.Declaration.EnumMember.Tuple<G>;
+				| V.Declaration.EnumMember.Struct.Private<G>
+				| V.Declaration.EnumMember.Struct.Protected<G>
+				| V.Declaration.EnumMember.Struct.Public<G>
+				| V.Declaration.EnumMember.Struct.Public.Internal<G>
+				| V.Declaration.EnumMember.Struct.Public.Restricted<G>
+				| V.Declaration.EnumMember.Tuple<G>
+				| V.Declaration.EnumMember.Tuple.Private<G>
+				| V.Declaration.EnumMember.Tuple.Protected<G>
+				| V.Declaration.EnumMember.Tuple.Public<G>
+				| V.Declaration.EnumMember.Tuple.Public.Internal<G>
+				| V.Declaration.EnumMember.Tuple.Public.Restricted<G>;
 		}
 		interface Extension<G extends GrammarContext<G>> extends openTypeExtension.Declaration.Extension<G> {
 			readonly typeParameters?: gate.In<
@@ -439,6 +728,52 @@ declare module './declaration.ts' {
 			readonly visibility?: gate.In<G, features.Visibility, visibility.Declaration.Field<G>['visibility']>;
 		}
 		namespace Field {
+			interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Field<G>> {
+				readonly $kind: 'declaration.field.private';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+				>;
+			}
+			interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Field<G>> {
+				readonly $kind: 'declaration.field.protected';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+				>;
+			}
+			interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Field<G>> {
+				readonly $kind: 'declaration.field.public';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+				>;
+			}
+			namespace Public {
+				interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Field.Public<G>> {
+					readonly $kind: 'declaration.field.public.internal';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+					>;
+				}
+				interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Field.Public<G>> {
+					readonly $kind: 'declaration.field.public.restricted';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+					>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Field.Public<G>
+					| V.Declaration.Field.Public.Internal<G>
+					| V.Declaration.Field.Public.Restricted<G>;
+			}
 			interface Signature<G extends GrammarContext<G>> extends interfaces.Declaration.Field.Signature<G> {
 				readonly optional?: gate.In<
 					G,
@@ -458,7 +793,78 @@ declare module './declaration.ts' {
 				readonly type?: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Field.Signature<G>['type']>;
 				readonly visibility?: gate.In<G, features.Visibility, visibility.Declaration.Field.Signature<G>['visibility']>;
 			}
-			type Any<G extends GrammarContext<G>> = V.Declaration.Field<G> | V.Declaration.Field.Signature<G>;
+			namespace Signature {
+				interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Field.Signature<G>> {
+					readonly $kind: 'declaration.field.signature.private';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+					>;
+				}
+				interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Field.Signature<G>> {
+					readonly $kind: 'declaration.field.signature.protected';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+					>;
+				}
+				interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Field.Signature<G>> {
+					readonly $kind: 'declaration.field.signature.public';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+					>;
+				}
+				namespace Public {
+					interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Field.Signature.Public<G>
+					> {
+						readonly $kind: 'declaration.field.signature.public.internal';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+						>;
+					}
+					interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Field.Signature.Public<G>
+					> {
+						readonly $kind: 'declaration.field.signature.public.restricted';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+						>;
+					}
+					type Any<G extends GrammarContext<G>> =
+						| V.Declaration.Field.Signature.Public<G>
+						| V.Declaration.Field.Signature.Public.Internal<G>
+						| V.Declaration.Field.Signature.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Field.Signature<G>
+					| V.Declaration.Field.Signature.Private<G>
+					| V.Declaration.Field.Signature.Protected<G>
+					| V.Declaration.Field.Signature.Public<G>
+					| V.Declaration.Field.Signature.Public.Internal<G>
+					| V.Declaration.Field.Signature.Public.Restricted<G>;
+			}
+			type Any<G extends GrammarContext<G>> =
+				| V.Declaration.Field<G>
+				| V.Declaration.Field.Private<G>
+				| V.Declaration.Field.Protected<G>
+				| V.Declaration.Field.Public<G>
+				| V.Declaration.Field.Public.Internal<G>
+				| V.Declaration.Field.Public.Restricted<G>
+				| V.Declaration.Field.Signature<G>
+				| V.Declaration.Field.Signature.Private<G>
+				| V.Declaration.Field.Signature.Protected<G>
+				| V.Declaration.Field.Signature.Public<G>
+				| V.Declaration.Field.Signature.Public.Internal<G>
+				| V.Declaration.Field.Signature.Public.Restricted<G>;
 		}
 		interface Function<G extends GrammarContext<G>> {
 			readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Declaration.Function<G>['async']>;
@@ -501,6 +907,111 @@ declare module './declaration.ts' {
 					parametricPolymorphism.Declaration.Function.Generator<G>['typeParameters']
 				>;
 			}
+			namespace Generator {
+				interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Function.Generator<G>> {
+					readonly $kind: 'declaration.function.generator.private';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+					>;
+				}
+				interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Function.Generator<G>> {
+					readonly $kind: 'declaration.function.generator.protected';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+					>;
+				}
+				interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Function.Generator<G>> {
+					readonly $kind: 'declaration.function.generator.public';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+					>;
+				}
+				namespace Public {
+					interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Function.Generator.Public<G>
+					> {
+						readonly $kind: 'declaration.function.generator.public.internal';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+						>;
+					}
+					interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Function.Generator.Public<G>
+					> {
+						readonly $kind: 'declaration.function.generator.public.restricted';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+						>;
+					}
+					type Any<G extends GrammarContext<G>> =
+						| V.Declaration.Function.Generator.Public<G>
+						| V.Declaration.Function.Generator.Public.Internal<G>
+						| V.Declaration.Function.Generator.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Function.Generator<G>
+					| V.Declaration.Function.Generator.Private<G>
+					| V.Declaration.Function.Generator.Protected<G>
+					| V.Declaration.Function.Generator.Public<G>
+					| V.Declaration.Function.Generator.Public.Internal<G>
+					| V.Declaration.Function.Generator.Public.Restricted<G>;
+			}
+			interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Function<G>> {
+				readonly $kind: 'declaration.function.private';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+				>;
+			}
+			interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Function<G>> {
+				readonly $kind: 'declaration.function.protected';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+				>;
+			}
+			interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Function<G>> {
+				readonly $kind: 'declaration.function.public';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+				>;
+			}
+			namespace Public {
+				interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Function.Public<G>> {
+					readonly $kind: 'declaration.function.public.internal';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+					>;
+				}
+				interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Function.Public<G>> {
+					readonly $kind: 'declaration.function.public.restricted';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+					>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Function.Public<G>
+					| V.Declaration.Function.Public.Internal<G>
+					| V.Declaration.Function.Public.Restricted<G>;
+			}
 			interface Signature<G extends GrammarContext<G>> {
 				readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Declaration.Function.Signature<G>['async']>;
 				readonly returnType?: gate.In<
@@ -524,10 +1035,84 @@ declare module './declaration.ts' {
 					boundedQuantification.Declaration.Function.Signature<G>['whereClause']
 				>;
 			}
+			namespace Signature {
+				interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Function.Signature<G>> {
+					readonly $kind: 'declaration.function.signature.private';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+					>;
+				}
+				interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Function.Signature<G>> {
+					readonly $kind: 'declaration.function.signature.protected';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+					>;
+				}
+				interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Function.Signature<G>> {
+					readonly $kind: 'declaration.function.signature.public';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+					>;
+				}
+				namespace Public {
+					interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Function.Signature.Public<G>
+					> {
+						readonly $kind: 'declaration.function.signature.public.internal';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+						>;
+					}
+					interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Function.Signature.Public<G>
+					> {
+						readonly $kind: 'declaration.function.signature.public.restricted';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+						>;
+					}
+					type Any<G extends GrammarContext<G>> =
+						| V.Declaration.Function.Signature.Public<G>
+						| V.Declaration.Function.Signature.Public.Internal<G>
+						| V.Declaration.Function.Signature.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Function.Signature<G>
+					| V.Declaration.Function.Signature.Private<G>
+					| V.Declaration.Function.Signature.Protected<G>
+					| V.Declaration.Function.Signature.Public<G>
+					| V.Declaration.Function.Signature.Public.Internal<G>
+					| V.Declaration.Function.Signature.Public.Restricted<G>;
+			}
 			type Any<G extends GrammarContext<G>> =
 				| V.Declaration.Function<G>
 				| V.Declaration.Function.Generator<G>
-				| V.Declaration.Function.Signature<G>;
+				| V.Declaration.Function.Generator.Private<G>
+				| V.Declaration.Function.Generator.Protected<G>
+				| V.Declaration.Function.Generator.Public<G>
+				| V.Declaration.Function.Generator.Public.Internal<G>
+				| V.Declaration.Function.Generator.Public.Restricted<G>
+				| V.Declaration.Function.Private<G>
+				| V.Declaration.Function.Protected<G>
+				| V.Declaration.Function.Public<G>
+				| V.Declaration.Function.Public.Internal<G>
+				| V.Declaration.Function.Public.Restricted<G>
+				| V.Declaration.Function.Signature<G>
+				| V.Declaration.Function.Signature.Private<G>
+				| V.Declaration.Function.Signature.Protected<G>
+				| V.Declaration.Function.Signature.Public<G>
+				| V.Declaration.Function.Signature.Public.Internal<G>
+				| V.Declaration.Function.Signature.Public.Restricted<G>;
 		}
 		interface Interface<G extends GrammarContext<G>> extends interfaces.Declaration.Interface<G> {
 			readonly typeParameters?: gate.In<
@@ -551,7 +1136,73 @@ declare module './declaration.ts' {
 					boundedQuantification.Declaration.Interface.Trait<G>['whereClause']
 				>;
 			}
-			type Any<G extends GrammarContext<G>> = V.Declaration.Interface<G> | V.Declaration.Interface.Trait<G>;
+			namespace Trait {
+				interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Interface.Trait<G>> {
+					readonly $kind: 'declaration.interface.trait.private';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+					>;
+				}
+				interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Interface.Trait<G>> {
+					readonly $kind: 'declaration.interface.trait.protected';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+					>;
+				}
+				interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Interface.Trait<G>> {
+					readonly $kind: 'declaration.interface.trait.public';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+					>;
+				}
+				namespace Public {
+					interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Interface.Trait.Public<G>
+					> {
+						readonly $kind: 'declaration.interface.trait.public.internal';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+						>;
+					}
+					interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Interface.Trait.Public<G>
+					> {
+						readonly $kind: 'declaration.interface.trait.public.restricted';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+						>;
+					}
+					type Any<G extends GrammarContext<G>> =
+						| V.Declaration.Interface.Trait.Public<G>
+						| V.Declaration.Interface.Trait.Public.Internal<G>
+						| V.Declaration.Interface.Trait.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Interface.Trait<G>
+					| V.Declaration.Interface.Trait.Private<G>
+					| V.Declaration.Interface.Trait.Protected<G>
+					| V.Declaration.Interface.Trait.Public<G>
+					| V.Declaration.Interface.Trait.Public.Internal<G>
+					| V.Declaration.Interface.Trait.Public.Restricted<G>;
+			}
+			type Any<G extends GrammarContext<G>> =
+				| V.Declaration.Interface<G>
+				| V.Declaration.Interface.Trait<G>
+				| V.Declaration.Interface.Trait.Private<G>
+				| V.Declaration.Interface.Trait.Protected<G>
+				| V.Declaration.Interface.Trait.Public<G>
+				| V.Declaration.Interface.Trait.Public.Internal<G>
+				| V.Declaration.Interface.Trait.Public.Restricted<G>;
 		}
 		interface Macro<G extends GrammarContext<G>> extends syntacticMetaprogramming.Declaration.Macro<G> {}
 		interface Method<G extends GrammarContext<G>> extends methods.Declaration.Method<G> {
@@ -586,12 +1237,292 @@ declare module './declaration.ts' {
 		}
 		namespace Method {
 			interface Class<G extends GrammarContext<G>> extends methods.Declaration.Method.Class<G> {}
+			namespace Class {
+				interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Method.Class<G>> {
+					readonly $kind: 'declaration.method.class.private';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+					>;
+				}
+				interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Method.Class<G>> {
+					readonly $kind: 'declaration.method.class.protected';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+					>;
+				}
+				interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Method.Class<G>> {
+					readonly $kind: 'declaration.method.class.public';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+					>;
+				}
+				namespace Public {
+					interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Method.Class.Public<G>> {
+						readonly $kind: 'declaration.method.class.public.internal';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+						>;
+					}
+					interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Method.Class.Public<G>
+					> {
+						readonly $kind: 'declaration.method.class.public.restricted';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+						>;
+					}
+					type Any<G extends GrammarContext<G>> =
+						| V.Declaration.Method.Class.Public<G>
+						| V.Declaration.Method.Class.Public.Internal<G>
+						| V.Declaration.Method.Class.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Method.Class<G>
+					| V.Declaration.Method.Class.Private<G>
+					| V.Declaration.Method.Class.Protected<G>
+					| V.Declaration.Method.Class.Public<G>
+					| V.Declaration.Method.Class.Public.Internal<G>
+					| V.Declaration.Method.Class.Public.Restricted<G>;
+			}
 			interface Dunder<G extends GrammarContext<G>> extends methods.Declaration.Method.Dunder<G> {}
+			namespace Dunder {
+				interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Method.Dunder<G>> {
+					readonly $kind: 'declaration.method.dunder.private';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+					>;
+				}
+				interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Method.Dunder<G>> {
+					readonly $kind: 'declaration.method.dunder.protected';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+					>;
+				}
+				interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Method.Dunder<G>> {
+					readonly $kind: 'declaration.method.dunder.public';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+					>;
+				}
+				namespace Public {
+					interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Method.Dunder.Public<G>
+					> {
+						readonly $kind: 'declaration.method.dunder.public.internal';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+						>;
+					}
+					interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Method.Dunder.Public<G>
+					> {
+						readonly $kind: 'declaration.method.dunder.public.restricted';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+						>;
+					}
+					type Any<G extends GrammarContext<G>> =
+						| V.Declaration.Method.Dunder.Public<G>
+						| V.Declaration.Method.Dunder.Public.Internal<G>
+						| V.Declaration.Method.Dunder.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Method.Dunder<G>
+					| V.Declaration.Method.Dunder.Private<G>
+					| V.Declaration.Method.Dunder.Protected<G>
+					| V.Declaration.Method.Dunder.Public<G>
+					| V.Declaration.Method.Dunder.Public.Internal<G>
+					| V.Declaration.Method.Dunder.Public.Restricted<G>;
+			}
 			interface Getter<G extends GrammarContext<G>> extends methods.Declaration.Method.Getter<G> {
 				readonly accessor: gate.In<G, features.Accessors, accessors.Declaration.Method.Getter<G>['accessor']>;
 			}
+			namespace Getter {
+				interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Method.Getter<G>> {
+					readonly $kind: 'declaration.method.getter.private';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+					>;
+				}
+				interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Method.Getter<G>> {
+					readonly $kind: 'declaration.method.getter.protected';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+					>;
+				}
+				interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Method.Getter<G>> {
+					readonly $kind: 'declaration.method.getter.public';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+					>;
+				}
+				namespace Public {
+					interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Method.Getter.Public<G>
+					> {
+						readonly $kind: 'declaration.method.getter.public.internal';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+						>;
+					}
+					interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Method.Getter.Public<G>
+					> {
+						readonly $kind: 'declaration.method.getter.public.restricted';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+						>;
+					}
+					type Any<G extends GrammarContext<G>> =
+						| V.Declaration.Method.Getter.Public<G>
+						| V.Declaration.Method.Getter.Public.Internal<G>
+						| V.Declaration.Method.Getter.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Method.Getter<G>
+					| V.Declaration.Method.Getter.Private<G>
+					| V.Declaration.Method.Getter.Protected<G>
+					| V.Declaration.Method.Getter.Public<G>
+					| V.Declaration.Method.Getter.Public.Internal<G>
+					| V.Declaration.Method.Getter.Public.Restricted<G>;
+			}
+			interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Method<G>> {
+				readonly $kind: 'declaration.method.private';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+				>;
+			}
+			interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Method<G>> {
+				readonly $kind: 'declaration.method.protected';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+				>;
+			}
+			interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Method<G>> {
+				readonly $kind: 'declaration.method.public';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+				>;
+			}
+			namespace Public {
+				interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Method.Public<G>> {
+					readonly $kind: 'declaration.method.public.internal';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+					>;
+				}
+				interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Method.Public<G>> {
+					readonly $kind: 'declaration.method.public.restricted';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+					>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Method.Public<G>
+					| V.Declaration.Method.Public.Internal<G>
+					| V.Declaration.Method.Public.Restricted<G>;
+			}
 			interface Setter<G extends GrammarContext<G>> extends methods.Declaration.Method.Setter<G> {
 				readonly accessor: gate.In<G, features.Accessors, accessors.Declaration.Method.Setter<G>['accessor']>;
+			}
+			namespace Setter {
+				interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Method.Setter<G>> {
+					readonly $kind: 'declaration.method.setter.private';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+					>;
+				}
+				interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Method.Setter<G>> {
+					readonly $kind: 'declaration.method.setter.protected';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+					>;
+				}
+				interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Method.Setter<G>> {
+					readonly $kind: 'declaration.method.setter.public';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+					>;
+				}
+				namespace Public {
+					interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Method.Setter.Public<G>
+					> {
+						readonly $kind: 'declaration.method.setter.public.internal';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+						>;
+					}
+					interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Method.Setter.Public<G>
+					> {
+						readonly $kind: 'declaration.method.setter.public.restricted';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+						>;
+					}
+					type Any<G extends GrammarContext<G>> =
+						| V.Declaration.Method.Setter.Public<G>
+						| V.Declaration.Method.Setter.Public.Internal<G>
+						| V.Declaration.Method.Setter.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Method.Setter<G>
+					| V.Declaration.Method.Setter.Private<G>
+					| V.Declaration.Method.Setter.Protected<G>
+					| V.Declaration.Method.Setter.Public<G>
+					| V.Declaration.Method.Setter.Public.Internal<G>
+					| V.Declaration.Method.Setter.Public.Restricted<G>;
 			}
 			interface Signature<G extends GrammarContext<G>> extends methods.Declaration.Method.Signature<G> {
 				readonly accessor?: gate.In<G, features.Accessors, accessors.Declaration.Method.Signature<G>['accessor']>;
@@ -657,9 +1588,134 @@ declare module './declaration.ts' {
 						visibility.Declaration.Method.Signature.Abstract<G>['visibility']
 					>;
 				}
+				namespace Abstract {
+					interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Method.Signature.Abstract<G>
+					> {
+						readonly $kind: 'declaration.method.signature.abstract.private';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+						>;
+					}
+					interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Method.Signature.Abstract<G>
+					> {
+						readonly $kind: 'declaration.method.signature.abstract.protected';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+						>;
+					}
+					interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Method.Signature.Abstract<G>
+					> {
+						readonly $kind: 'declaration.method.signature.abstract.public';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+						>;
+					}
+					namespace Public {
+						interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<
+							V.Declaration.Method.Signature.Abstract.Public<G>
+						> {
+							readonly $kind: 'declaration.method.signature.abstract.public.internal';
+							readonly visibility: gate.In<
+								G,
+								features.Visibility,
+								gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+							>;
+						}
+						interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<
+							V.Declaration.Method.Signature.Abstract.Public<G>
+						> {
+							readonly $kind: 'declaration.method.signature.abstract.public.restricted';
+							readonly visibility: gate.In<
+								G,
+								features.Visibility,
+								gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+							>;
+						}
+						type Any<G extends GrammarContext<G>> =
+							| V.Declaration.Method.Signature.Abstract.Public<G>
+							| V.Declaration.Method.Signature.Abstract.Public.Internal<G>
+							| V.Declaration.Method.Signature.Abstract.Public.Restricted<G>;
+					}
+					type Any<G extends GrammarContext<G>> =
+						| V.Declaration.Method.Signature.Abstract<G>
+						| V.Declaration.Method.Signature.Abstract.Private<G>
+						| V.Declaration.Method.Signature.Abstract.Protected<G>
+						| V.Declaration.Method.Signature.Abstract.Public<G>
+						| V.Declaration.Method.Signature.Abstract.Public.Internal<G>
+						| V.Declaration.Method.Signature.Abstract.Public.Restricted<G>;
+				}
+				interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Method.Signature<G>> {
+					readonly $kind: 'declaration.method.signature.private';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+					>;
+				}
+				interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Method.Signature<G>> {
+					readonly $kind: 'declaration.method.signature.protected';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+					>;
+				}
+				interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Method.Signature<G>> {
+					readonly $kind: 'declaration.method.signature.public';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+					>;
+				}
+				namespace Public {
+					interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Method.Signature.Public<G>
+					> {
+						readonly $kind: 'declaration.method.signature.public.internal';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+						>;
+					}
+					interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Method.Signature.Public<G>
+					> {
+						readonly $kind: 'declaration.method.signature.public.restricted';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+						>;
+					}
+					type Any<G extends GrammarContext<G>> =
+						| V.Declaration.Method.Signature.Public<G>
+						| V.Declaration.Method.Signature.Public.Internal<G>
+						| V.Declaration.Method.Signature.Public.Restricted<G>;
+				}
 				type Any<G extends GrammarContext<G>> =
 					| V.Declaration.Method.Signature<G>
-					| V.Declaration.Method.Signature.Abstract<G>;
+					| V.Declaration.Method.Signature.Abstract<G>
+					| V.Declaration.Method.Signature.Abstract.Private<G>
+					| V.Declaration.Method.Signature.Abstract.Protected<G>
+					| V.Declaration.Method.Signature.Abstract.Public<G>
+					| V.Declaration.Method.Signature.Abstract.Public.Internal<G>
+					| V.Declaration.Method.Signature.Abstract.Public.Restricted<G>
+					| V.Declaration.Method.Signature.Private<G>
+					| V.Declaration.Method.Signature.Protected<G>
+					| V.Declaration.Method.Signature.Public<G>
+					| V.Declaration.Method.Signature.Public.Internal<G>
+					| V.Declaration.Method.Signature.Public.Restricted<G>;
 			}
 			interface Static<G extends GrammarContext<G>> extends methods.Declaration.Method.Static<G> {
 				readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Declaration.Method.Static<G>['async']>;
@@ -691,15 +1747,114 @@ declare module './declaration.ts' {
 					boundedQuantification.Declaration.Method.Static<G>['whereClause']
 				>;
 			}
+			namespace Static {
+				interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Method.Static<G>> {
+					readonly $kind: 'declaration.method.static.private';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+					>;
+				}
+				interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Method.Static<G>> {
+					readonly $kind: 'declaration.method.static.protected';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+					>;
+				}
+				interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Method.Static<G>> {
+					readonly $kind: 'declaration.method.static.public';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+					>;
+				}
+				namespace Public {
+					interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Method.Static.Public<G>
+					> {
+						readonly $kind: 'declaration.method.static.public.internal';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+						>;
+					}
+					interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Method.Static.Public<G>
+					> {
+						readonly $kind: 'declaration.method.static.public.restricted';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+						>;
+					}
+					type Any<G extends GrammarContext<G>> =
+						| V.Declaration.Method.Static.Public<G>
+						| V.Declaration.Method.Static.Public.Internal<G>
+						| V.Declaration.Method.Static.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Method.Static<G>
+					| V.Declaration.Method.Static.Private<G>
+					| V.Declaration.Method.Static.Protected<G>
+					| V.Declaration.Method.Static.Public<G>
+					| V.Declaration.Method.Static.Public.Internal<G>
+					| V.Declaration.Method.Static.Public.Restricted<G>;
+			}
 			type Any<G extends GrammarContext<G>> =
 				| V.Declaration.Method<G>
 				| V.Declaration.Method.Class<G>
+				| V.Declaration.Method.Class.Private<G>
+				| V.Declaration.Method.Class.Protected<G>
+				| V.Declaration.Method.Class.Public<G>
+				| V.Declaration.Method.Class.Public.Internal<G>
+				| V.Declaration.Method.Class.Public.Restricted<G>
 				| V.Declaration.Method.Dunder<G>
+				| V.Declaration.Method.Dunder.Private<G>
+				| V.Declaration.Method.Dunder.Protected<G>
+				| V.Declaration.Method.Dunder.Public<G>
+				| V.Declaration.Method.Dunder.Public.Internal<G>
+				| V.Declaration.Method.Dunder.Public.Restricted<G>
 				| V.Declaration.Method.Getter<G>
+				| V.Declaration.Method.Getter.Private<G>
+				| V.Declaration.Method.Getter.Protected<G>
+				| V.Declaration.Method.Getter.Public<G>
+				| V.Declaration.Method.Getter.Public.Internal<G>
+				| V.Declaration.Method.Getter.Public.Restricted<G>
+				| V.Declaration.Method.Private<G>
+				| V.Declaration.Method.Protected<G>
+				| V.Declaration.Method.Public<G>
+				| V.Declaration.Method.Public.Internal<G>
+				| V.Declaration.Method.Public.Restricted<G>
 				| V.Declaration.Method.Setter<G>
+				| V.Declaration.Method.Setter.Private<G>
+				| V.Declaration.Method.Setter.Protected<G>
+				| V.Declaration.Method.Setter.Public<G>
+				| V.Declaration.Method.Setter.Public.Internal<G>
+				| V.Declaration.Method.Setter.Public.Restricted<G>
 				| V.Declaration.Method.Signature<G>
 				| V.Declaration.Method.Signature.Abstract<G>
-				| V.Declaration.Method.Static<G>;
+				| V.Declaration.Method.Signature.Abstract.Private<G>
+				| V.Declaration.Method.Signature.Abstract.Protected<G>
+				| V.Declaration.Method.Signature.Abstract.Public<G>
+				| V.Declaration.Method.Signature.Abstract.Public.Internal<G>
+				| V.Declaration.Method.Signature.Abstract.Public.Restricted<G>
+				| V.Declaration.Method.Signature.Private<G>
+				| V.Declaration.Method.Signature.Protected<G>
+				| V.Declaration.Method.Signature.Public<G>
+				| V.Declaration.Method.Signature.Public.Internal<G>
+				| V.Declaration.Method.Signature.Public.Restricted<G>
+				| V.Declaration.Method.Static<G>
+				| V.Declaration.Method.Static.Private<G>
+				| V.Declaration.Method.Static.Protected<G>
+				| V.Declaration.Method.Static.Public<G>
+				| V.Declaration.Method.Static.Public.Internal<G>
+				| V.Declaration.Method.Static.Public.Restricted<G>;
 		}
 		interface Module<G extends GrammarContext<G>> extends moduleDeclarations.Declaration.Module<G> {}
 		namespace Module {
@@ -731,6 +1886,65 @@ declare module './declaration.ts' {
 					defaultArguments.Declaration.Parameter.Default<G>['default']
 				>;
 			}
+			namespace Default {
+				interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Parameter.Default<G>> {
+					readonly $kind: 'declaration.parameter.default.private';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+					>;
+				}
+				interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Parameter.Default<G>> {
+					readonly $kind: 'declaration.parameter.default.protected';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+					>;
+				}
+				interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Parameter.Default<G>> {
+					readonly $kind: 'declaration.parameter.default.public';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+					>;
+				}
+				namespace Public {
+					interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Parameter.Default.Public<G>
+					> {
+						readonly $kind: 'declaration.parameter.default.public.internal';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+						>;
+					}
+					interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Parameter.Default.Public<G>
+					> {
+						readonly $kind: 'declaration.parameter.default.public.restricted';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+						>;
+					}
+					type Any<G extends GrammarContext<G>> =
+						| V.Declaration.Parameter.Default.Public<G>
+						| V.Declaration.Parameter.Default.Public.Internal<G>
+						| V.Declaration.Parameter.Default.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Parameter.Default<G>
+					| V.Declaration.Parameter.Default.Private<G>
+					| V.Declaration.Parameter.Default.Protected<G>
+					| V.Declaration.Parameter.Default.Public<G>
+					| V.Declaration.Parameter.Default.Public.Internal<G>
+					| V.Declaration.Parameter.Default.Public.Restricted<G>;
+			}
 			interface Optional<G extends GrammarContext<G>> extends optionalMembers.Declaration.Parameter.Optional<G> {
 				readonly decorators?: gate.In<
 					G,
@@ -759,12 +1973,235 @@ declare module './declaration.ts' {
 					visibility.Declaration.Parameter.Optional<G>['visibility']
 				>;
 			}
+			namespace Optional {
+				interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Parameter.Optional<G>> {
+					readonly $kind: 'declaration.parameter.optional.private';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+					>;
+				}
+				interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Parameter.Optional<G>> {
+					readonly $kind: 'declaration.parameter.optional.protected';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+					>;
+				}
+				interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Parameter.Optional<G>> {
+					readonly $kind: 'declaration.parameter.optional.public';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+					>;
+				}
+				namespace Public {
+					interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Parameter.Optional.Public<G>
+					> {
+						readonly $kind: 'declaration.parameter.optional.public.internal';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+						>;
+					}
+					interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Parameter.Optional.Public<G>
+					> {
+						readonly $kind: 'declaration.parameter.optional.public.restricted';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+						>;
+					}
+					type Any<G extends GrammarContext<G>> =
+						| V.Declaration.Parameter.Optional.Public<G>
+						| V.Declaration.Parameter.Optional.Public.Internal<G>
+						| V.Declaration.Parameter.Optional.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Parameter.Optional<G>
+					| V.Declaration.Parameter.Optional.Private<G>
+					| V.Declaration.Parameter.Optional.Protected<G>
+					| V.Declaration.Parameter.Optional.Public<G>
+					| V.Declaration.Parameter.Optional.Public.Internal<G>
+					| V.Declaration.Parameter.Optional.Public.Restricted<G>;
+			}
+			interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Parameter<G>> {
+				readonly $kind: 'declaration.parameter.private';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+				>;
+			}
+			interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Parameter<G>> {
+				readonly $kind: 'declaration.parameter.protected';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+				>;
+			}
+			interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Parameter<G>> {
+				readonly $kind: 'declaration.parameter.public';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+				>;
+			}
+			namespace Public {
+				interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Parameter.Public<G>> {
+					readonly $kind: 'declaration.parameter.public.internal';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+					>;
+				}
+				interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Parameter.Public<G>> {
+					readonly $kind: 'declaration.parameter.public.restricted';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+					>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Parameter.Public<G>
+					| V.Declaration.Parameter.Public.Internal<G>
+					| V.Declaration.Parameter.Public.Restricted<G>;
+			}
 			interface Self<G extends GrammarContext<G>> extends methods.Declaration.Parameter.Self<G> {
 				readonly lifetime?: gate.In<G, features.Lifetimes, lifetimes.Declaration.Parameter.Self<G>['lifetime']>;
 				readonly reference?: gate.In<G, features.References, references.Declaration.Parameter.Self<G>['reference']>;
 			}
+			namespace Self {
+				interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Parameter.Self<G>> {
+					readonly $kind: 'declaration.parameter.self.private';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+					>;
+				}
+				interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Parameter.Self<G>> {
+					readonly $kind: 'declaration.parameter.self.protected';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+					>;
+				}
+				interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Parameter.Self<G>> {
+					readonly $kind: 'declaration.parameter.self.public';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+					>;
+				}
+				namespace Public {
+					interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Parameter.Self.Public<G>
+					> {
+						readonly $kind: 'declaration.parameter.self.public.internal';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+						>;
+					}
+					interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Parameter.Self.Public<G>
+					> {
+						readonly $kind: 'declaration.parameter.self.public.restricted';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+						>;
+					}
+					type Any<G extends GrammarContext<G>> =
+						| V.Declaration.Parameter.Self.Public<G>
+						| V.Declaration.Parameter.Self.Public.Internal<G>
+						| V.Declaration.Parameter.Self.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Parameter.Self<G>
+					| V.Declaration.Parameter.Self.Private<G>
+					| V.Declaration.Parameter.Self.Protected<G>
+					| V.Declaration.Parameter.Self.Public<G>
+					| V.Declaration.Parameter.Self.Public.Internal<G>
+					| V.Declaration.Parameter.Self.Public.Restricted<G>;
+			}
 			interface Typed<G extends GrammarContext<G>> {
 				readonly type: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Parameter.Typed<G>['type']>;
+			}
+			namespace Typed {
+				interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Parameter.Typed<G>> {
+					readonly $kind: 'declaration.parameter.typed.private';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+					>;
+				}
+				interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Parameter.Typed<G>> {
+					readonly $kind: 'declaration.parameter.typed.protected';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+					>;
+				}
+				interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Parameter.Typed<G>> {
+					readonly $kind: 'declaration.parameter.typed.public';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+					>;
+				}
+				namespace Public {
+					interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Parameter.Typed.Public<G>
+					> {
+						readonly $kind: 'declaration.parameter.typed.public.internal';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+						>;
+					}
+					interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Parameter.Typed.Public<G>
+					> {
+						readonly $kind: 'declaration.parameter.typed.public.restricted';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+						>;
+					}
+					type Any<G extends GrammarContext<G>> =
+						| V.Declaration.Parameter.Typed.Public<G>
+						| V.Declaration.Parameter.Typed.Public.Internal<G>
+						| V.Declaration.Parameter.Typed.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Parameter.Typed<G>
+					| V.Declaration.Parameter.Typed.Private<G>
+					| V.Declaration.Parameter.Typed.Protected<G>
+					| V.Declaration.Parameter.Typed.Public<G>
+					| V.Declaration.Parameter.Typed.Public.Internal<G>
+					| V.Declaration.Parameter.Typed.Public.Restricted<G>;
 			}
 			interface TypedDefault<G extends GrammarContext<G>> {
 				readonly default: gate.In<
@@ -778,16 +2215,171 @@ declare module './declaration.ts' {
 					typeAnnotations.Declaration.Parameter.TypedDefault<G>['type']
 				>;
 			}
+			namespace TypedDefault {
+				interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Parameter.TypedDefault<G>> {
+					readonly $kind: 'declaration.parameter.typed_default.private';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+					>;
+				}
+				interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<
+					V.Declaration.Parameter.TypedDefault<G>
+				> {
+					readonly $kind: 'declaration.parameter.typed_default.protected';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+					>;
+				}
+				interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Parameter.TypedDefault<G>> {
+					readonly $kind: 'declaration.parameter.typed_default.public';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+					>;
+				}
+				namespace Public {
+					interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Parameter.TypedDefault.Public<G>
+					> {
+						readonly $kind: 'declaration.parameter.typed_default.public.internal';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+						>;
+					}
+					interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Parameter.TypedDefault.Public<G>
+					> {
+						readonly $kind: 'declaration.parameter.typed_default.public.restricted';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+						>;
+					}
+					type Any<G extends GrammarContext<G>> =
+						| V.Declaration.Parameter.TypedDefault.Public<G>
+						| V.Declaration.Parameter.TypedDefault.Public.Internal<G>
+						| V.Declaration.Parameter.TypedDefault.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Parameter.TypedDefault<G>
+					| V.Declaration.Parameter.TypedDefault.Private<G>
+					| V.Declaration.Parameter.TypedDefault.Protected<G>
+					| V.Declaration.Parameter.TypedDefault.Public<G>
+					| V.Declaration.Parameter.TypedDefault.Public.Internal<G>
+					| V.Declaration.Parameter.TypedDefault.Public.Restricted<G>;
+			}
 			interface Variadic<G extends GrammarContext<G>> extends foreignFunctionInterface.Declaration.Parameter
 				.Variadic<G> {}
+			namespace Variadic {
+				interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Parameter.Variadic<G>> {
+					readonly $kind: 'declaration.parameter.variadic.private';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+					>;
+				}
+				interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Parameter.Variadic<G>> {
+					readonly $kind: 'declaration.parameter.variadic.protected';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+					>;
+				}
+				interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Parameter.Variadic<G>> {
+					readonly $kind: 'declaration.parameter.variadic.public';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+					>;
+				}
+				namespace Public {
+					interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Parameter.Variadic.Public<G>
+					> {
+						readonly $kind: 'declaration.parameter.variadic.public.internal';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+						>;
+					}
+					interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Parameter.Variadic.Public<G>
+					> {
+						readonly $kind: 'declaration.parameter.variadic.public.restricted';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+						>;
+					}
+					type Any<G extends GrammarContext<G>> =
+						| V.Declaration.Parameter.Variadic.Public<G>
+						| V.Declaration.Parameter.Variadic.Public.Internal<G>
+						| V.Declaration.Parameter.Variadic.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Parameter.Variadic<G>
+					| V.Declaration.Parameter.Variadic.Private<G>
+					| V.Declaration.Parameter.Variadic.Protected<G>
+					| V.Declaration.Parameter.Variadic.Public<G>
+					| V.Declaration.Parameter.Variadic.Public.Internal<G>
+					| V.Declaration.Parameter.Variadic.Public.Restricted<G>;
+			}
 			type Any<G extends GrammarContext<G>> =
 				| V.Declaration.Parameter<G>
 				| V.Declaration.Parameter.Default<G>
+				| V.Declaration.Parameter.Default.Private<G>
+				| V.Declaration.Parameter.Default.Protected<G>
+				| V.Declaration.Parameter.Default.Public<G>
+				| V.Declaration.Parameter.Default.Public.Internal<G>
+				| V.Declaration.Parameter.Default.Public.Restricted<G>
 				| V.Declaration.Parameter.Optional<G>
+				| V.Declaration.Parameter.Optional.Private<G>
+				| V.Declaration.Parameter.Optional.Protected<G>
+				| V.Declaration.Parameter.Optional.Public<G>
+				| V.Declaration.Parameter.Optional.Public.Internal<G>
+				| V.Declaration.Parameter.Optional.Public.Restricted<G>
+				| V.Declaration.Parameter.Private<G>
+				| V.Declaration.Parameter.Protected<G>
+				| V.Declaration.Parameter.Public<G>
+				| V.Declaration.Parameter.Public.Internal<G>
+				| V.Declaration.Parameter.Public.Restricted<G>
 				| V.Declaration.Parameter.Self<G>
+				| V.Declaration.Parameter.Self.Private<G>
+				| V.Declaration.Parameter.Self.Protected<G>
+				| V.Declaration.Parameter.Self.Public<G>
+				| V.Declaration.Parameter.Self.Public.Internal<G>
+				| V.Declaration.Parameter.Self.Public.Restricted<G>
 				| V.Declaration.Parameter.Typed<G>
+				| V.Declaration.Parameter.Typed.Private<G>
+				| V.Declaration.Parameter.Typed.Protected<G>
+				| V.Declaration.Parameter.Typed.Public<G>
+				| V.Declaration.Parameter.Typed.Public.Internal<G>
+				| V.Declaration.Parameter.Typed.Public.Restricted<G>
 				| V.Declaration.Parameter.TypedDefault<G>
-				| V.Declaration.Parameter.Variadic<G>;
+				| V.Declaration.Parameter.TypedDefault.Private<G>
+				| V.Declaration.Parameter.TypedDefault.Protected<G>
+				| V.Declaration.Parameter.TypedDefault.Public<G>
+				| V.Declaration.Parameter.TypedDefault.Public.Internal<G>
+				| V.Declaration.Parameter.TypedDefault.Public.Restricted<G>
+				| V.Declaration.Parameter.Variadic<G>
+				| V.Declaration.Parameter.Variadic.Private<G>
+				| V.Declaration.Parameter.Variadic.Protected<G>
+				| V.Declaration.Parameter.Variadic.Public<G>
+				| V.Declaration.Parameter.Variadic.Public.Internal<G>
+				| V.Declaration.Parameter.Variadic.Public.Restricted<G>;
 		}
 		interface Signature<G extends GrammarContext<G>> extends structuralConformance.Declaration.Signature<G> {}
 		namespace Signature {
@@ -850,7 +2442,124 @@ declare module './declaration.ts' {
 					boundedQuantification.Declaration.TypeAlias.Associated<G>['whereClause']
 				>;
 			}
-			type Any<G extends GrammarContext<G>> = V.Declaration.TypeAlias<G> | V.Declaration.TypeAlias.Associated<G>;
+			namespace Associated {
+				interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.TypeAlias.Associated<G>> {
+					readonly $kind: 'declaration.type_alias.associated.private';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+					>;
+				}
+				interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.TypeAlias.Associated<G>> {
+					readonly $kind: 'declaration.type_alias.associated.protected';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+					>;
+				}
+				interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.TypeAlias.Associated<G>> {
+					readonly $kind: 'declaration.type_alias.associated.public';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+					>;
+				}
+				namespace Public {
+					interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.TypeAlias.Associated.Public<G>
+					> {
+						readonly $kind: 'declaration.type_alias.associated.public.internal';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+						>;
+					}
+					interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.TypeAlias.Associated.Public<G>
+					> {
+						readonly $kind: 'declaration.type_alias.associated.public.restricted';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+						>;
+					}
+					type Any<G extends GrammarContext<G>> =
+						| V.Declaration.TypeAlias.Associated.Public<G>
+						| V.Declaration.TypeAlias.Associated.Public.Internal<G>
+						| V.Declaration.TypeAlias.Associated.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.TypeAlias.Associated<G>
+					| V.Declaration.TypeAlias.Associated.Private<G>
+					| V.Declaration.TypeAlias.Associated.Protected<G>
+					| V.Declaration.TypeAlias.Associated.Public<G>
+					| V.Declaration.TypeAlias.Associated.Public.Internal<G>
+					| V.Declaration.TypeAlias.Associated.Public.Restricted<G>;
+			}
+			interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.TypeAlias<G>> {
+				readonly $kind: 'declaration.type_alias.private';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+				>;
+			}
+			interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.TypeAlias<G>> {
+				readonly $kind: 'declaration.type_alias.protected';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+				>;
+			}
+			interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.TypeAlias<G>> {
+				readonly $kind: 'declaration.type_alias.public';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+				>;
+			}
+			namespace Public {
+				interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.TypeAlias.Public<G>> {
+					readonly $kind: 'declaration.type_alias.public.internal';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+					>;
+				}
+				interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.TypeAlias.Public<G>> {
+					readonly $kind: 'declaration.type_alias.public.restricted';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+					>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.TypeAlias.Public<G>
+					| V.Declaration.TypeAlias.Public.Internal<G>
+					| V.Declaration.TypeAlias.Public.Restricted<G>;
+			}
+			type Any<G extends GrammarContext<G>> =
+				| V.Declaration.TypeAlias<G>
+				| V.Declaration.TypeAlias.Associated<G>
+				| V.Declaration.TypeAlias.Associated.Private<G>
+				| V.Declaration.TypeAlias.Associated.Protected<G>
+				| V.Declaration.TypeAlias.Associated.Public<G>
+				| V.Declaration.TypeAlias.Associated.Public.Internal<G>
+				| V.Declaration.TypeAlias.Associated.Public.Restricted<G>
+				| V.Declaration.TypeAlias.Private<G>
+				| V.Declaration.TypeAlias.Protected<G>
+				| V.Declaration.TypeAlias.Public<G>
+				| V.Declaration.TypeAlias.Public.Internal<G>
+				| V.Declaration.TypeAlias.Public.Restricted<G>;
 		}
 		interface TypeParameter<G extends GrammarContext<G>> extends parametricPolymorphism.Declaration.TypeParameter<G> {
 			readonly attributes?: gate.In<G, features.Attributes, attributes.Declaration.TypeParameter<G>['attributes']>;
@@ -893,6 +2602,61 @@ declare module './declaration.ts' {
 				boundedQuantification.Declaration.Union<G>['whereClause']
 			>;
 		}
+		namespace Union {
+			interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Union<G>> {
+				readonly $kind: 'declaration.union.private';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+				>;
+			}
+			interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Union<G>> {
+				readonly $kind: 'declaration.union.protected';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+				>;
+			}
+			interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Union<G>> {
+				readonly $kind: 'declaration.union.public';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+				>;
+			}
+			namespace Public {
+				interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Union.Public<G>> {
+					readonly $kind: 'declaration.union.public.internal';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+					>;
+				}
+				interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Union.Public<G>> {
+					readonly $kind: 'declaration.union.public.restricted';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+					>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Union.Public<G>
+					| V.Declaration.Union.Public.Internal<G>
+					| V.Declaration.Union.Public.Restricted<G>;
+			}
+			type Any<G extends GrammarContext<G>> =
+				| V.Declaration.Union<G>
+				| V.Declaration.Union.Private<G>
+				| V.Declaration.Union.Protected<G>
+				| V.Declaration.Union.Public<G>
+				| V.Declaration.Union.Public.Internal<G>
+				| V.Declaration.Union.Public.Restricted<G>;
+		}
 		interface Variable<G extends GrammarContext<G>> {
 			readonly definite?: gate.In<G, features.NonNullAssertions, nonNullAssertions.Declaration.Variable<G>['definite']>;
 			readonly type?: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Variable<G>['type']>;
@@ -910,13 +2674,77 @@ declare module './declaration.ts' {
 				readonly type: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Variable.Static<G>['type']>;
 				readonly visibility?: gate.In<G, features.Visibility, visibility.Declaration.Variable.Static<G>['visibility']>;
 			}
+			namespace Static {
+				interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Variable.Static<G>> {
+					readonly $kind: 'declaration.variable.static.private';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+					>;
+				}
+				interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Variable.Static<G>> {
+					readonly $kind: 'declaration.variable.static.protected';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+					>;
+				}
+				interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Variable.Static<G>> {
+					readonly $kind: 'declaration.variable.static.public';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+					>;
+				}
+				namespace Public {
+					interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Variable.Static.Public<G>
+					> {
+						readonly $kind: 'declaration.variable.static.public.internal';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+						>;
+					}
+					interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Declaration.Variable.Static.Public<G>
+					> {
+						readonly $kind: 'declaration.variable.static.public.restricted';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+						>;
+					}
+					type Any<G extends GrammarContext<G>> =
+						| V.Declaration.Variable.Static.Public<G>
+						| V.Declaration.Variable.Static.Public.Internal<G>
+						| V.Declaration.Variable.Static.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Variable.Static<G>
+					| V.Declaration.Variable.Static.Private<G>
+					| V.Declaration.Variable.Static.Protected<G>
+					| V.Declaration.Variable.Static.Public<G>
+					| V.Declaration.Variable.Static.Public.Internal<G>
+					| V.Declaration.Variable.Static.Public.Restricted<G>;
+			}
 			type Any<G extends GrammarContext<G>> =
 				| V.Declaration.Variable<G>
 				| V.Declaration.Variable.Constant<G>
 				| V.Declaration.Variable.Pattern<G>
 				| V.Declaration.Variable.Reassignable<G>
 				| V.Declaration.Variable.Reassignable.FunctionScoped<G>
-				| V.Declaration.Variable.Static<G>;
+				| V.Declaration.Variable.Static<G>
+				| V.Declaration.Variable.Static.Private<G>
+				| V.Declaration.Variable.Static.Protected<G>
+				| V.Declaration.Variable.Static.Public<G>
+				| V.Declaration.Variable.Static.Public.Internal<G>
+				| V.Declaration.Variable.Static.Public.Restricted<G>;
 		}
 		type Any<G extends GrammarContext<G>> =
 			| V.Declaration<G>
@@ -924,40 +2752,170 @@ declare module './declaration.ts' {
 			| V.Declaration.Class<G>
 			| V.Declaration.Class.Abstract<G>
 			| V.Declaration.Constant<G>
+			| V.Declaration.Constant.Private<G>
+			| V.Declaration.Constant.Protected<G>
+			| V.Declaration.Constant.Public<G>
+			| V.Declaration.Constant.Public.Internal<G>
+			| V.Declaration.Constant.Public.Restricted<G>
 			| V.Declaration.Constructor<G>
 			| V.Declaration.Enum<G>
+			| V.Declaration.Enum.Private<G>
+			| V.Declaration.Enum.Protected<G>
+			| V.Declaration.Enum.Public<G>
+			| V.Declaration.Enum.Public.Internal<G>
+			| V.Declaration.Enum.Public.Restricted<G>
 			| V.Declaration.EnumMember<G>
+			| V.Declaration.EnumMember.Private<G>
+			| V.Declaration.EnumMember.Protected<G>
+			| V.Declaration.EnumMember.Public<G>
+			| V.Declaration.EnumMember.Public.Internal<G>
+			| V.Declaration.EnumMember.Public.Restricted<G>
 			| V.Declaration.EnumMember.Struct<G>
+			| V.Declaration.EnumMember.Struct.Private<G>
+			| V.Declaration.EnumMember.Struct.Protected<G>
+			| V.Declaration.EnumMember.Struct.Public<G>
+			| V.Declaration.EnumMember.Struct.Public.Internal<G>
+			| V.Declaration.EnumMember.Struct.Public.Restricted<G>
 			| V.Declaration.EnumMember.Tuple<G>
+			| V.Declaration.EnumMember.Tuple.Private<G>
+			| V.Declaration.EnumMember.Tuple.Protected<G>
+			| V.Declaration.EnumMember.Tuple.Public<G>
+			| V.Declaration.EnumMember.Tuple.Public.Internal<G>
+			| V.Declaration.EnumMember.Tuple.Public.Restricted<G>
 			| V.Declaration.Extension<G>
 			| V.Declaration.Extension.Conformance<G>
 			| V.Declaration.Field<G>
+			| V.Declaration.Field.Private<G>
+			| V.Declaration.Field.Protected<G>
+			| V.Declaration.Field.Public<G>
+			| V.Declaration.Field.Public.Internal<G>
+			| V.Declaration.Field.Public.Restricted<G>
 			| V.Declaration.Field.Signature<G>
+			| V.Declaration.Field.Signature.Private<G>
+			| V.Declaration.Field.Signature.Protected<G>
+			| V.Declaration.Field.Signature.Public<G>
+			| V.Declaration.Field.Signature.Public.Internal<G>
+			| V.Declaration.Field.Signature.Public.Restricted<G>
 			| V.Declaration.Function<G>
 			| V.Declaration.Function.Generator<G>
+			| V.Declaration.Function.Generator.Private<G>
+			| V.Declaration.Function.Generator.Protected<G>
+			| V.Declaration.Function.Generator.Public<G>
+			| V.Declaration.Function.Generator.Public.Internal<G>
+			| V.Declaration.Function.Generator.Public.Restricted<G>
+			| V.Declaration.Function.Private<G>
+			| V.Declaration.Function.Protected<G>
+			| V.Declaration.Function.Public<G>
+			| V.Declaration.Function.Public.Internal<G>
+			| V.Declaration.Function.Public.Restricted<G>
 			| V.Declaration.Function.Signature<G>
+			| V.Declaration.Function.Signature.Private<G>
+			| V.Declaration.Function.Signature.Protected<G>
+			| V.Declaration.Function.Signature.Public<G>
+			| V.Declaration.Function.Signature.Public.Internal<G>
+			| V.Declaration.Function.Signature.Public.Restricted<G>
 			| V.Declaration.Interface<G>
 			| V.Declaration.Interface.Trait<G>
+			| V.Declaration.Interface.Trait.Private<G>
+			| V.Declaration.Interface.Trait.Protected<G>
+			| V.Declaration.Interface.Trait.Public<G>
+			| V.Declaration.Interface.Trait.Public.Internal<G>
+			| V.Declaration.Interface.Trait.Public.Restricted<G>
 			| V.Declaration.Macro<G>
 			| V.Declaration.Method<G>
 			| V.Declaration.Method.Class<G>
+			| V.Declaration.Method.Class.Private<G>
+			| V.Declaration.Method.Class.Protected<G>
+			| V.Declaration.Method.Class.Public<G>
+			| V.Declaration.Method.Class.Public.Internal<G>
+			| V.Declaration.Method.Class.Public.Restricted<G>
 			| V.Declaration.Method.Dunder<G>
+			| V.Declaration.Method.Dunder.Private<G>
+			| V.Declaration.Method.Dunder.Protected<G>
+			| V.Declaration.Method.Dunder.Public<G>
+			| V.Declaration.Method.Dunder.Public.Internal<G>
+			| V.Declaration.Method.Dunder.Public.Restricted<G>
 			| V.Declaration.Method.Getter<G>
+			| V.Declaration.Method.Getter.Private<G>
+			| V.Declaration.Method.Getter.Protected<G>
+			| V.Declaration.Method.Getter.Public<G>
+			| V.Declaration.Method.Getter.Public.Internal<G>
+			| V.Declaration.Method.Getter.Public.Restricted<G>
+			| V.Declaration.Method.Private<G>
+			| V.Declaration.Method.Protected<G>
+			| V.Declaration.Method.Public<G>
+			| V.Declaration.Method.Public.Internal<G>
+			| V.Declaration.Method.Public.Restricted<G>
 			| V.Declaration.Method.Setter<G>
+			| V.Declaration.Method.Setter.Private<G>
+			| V.Declaration.Method.Setter.Protected<G>
+			| V.Declaration.Method.Setter.Public<G>
+			| V.Declaration.Method.Setter.Public.Internal<G>
+			| V.Declaration.Method.Setter.Public.Restricted<G>
 			| V.Declaration.Method.Signature<G>
 			| V.Declaration.Method.Signature.Abstract<G>
+			| V.Declaration.Method.Signature.Abstract.Private<G>
+			| V.Declaration.Method.Signature.Abstract.Protected<G>
+			| V.Declaration.Method.Signature.Abstract.Public<G>
+			| V.Declaration.Method.Signature.Abstract.Public.Internal<G>
+			| V.Declaration.Method.Signature.Abstract.Public.Restricted<G>
+			| V.Declaration.Method.Signature.Private<G>
+			| V.Declaration.Method.Signature.Protected<G>
+			| V.Declaration.Method.Signature.Public<G>
+			| V.Declaration.Method.Signature.Public.Internal<G>
+			| V.Declaration.Method.Signature.Public.Restricted<G>
 			| V.Declaration.Method.Static<G>
+			| V.Declaration.Method.Static.Private<G>
+			| V.Declaration.Method.Static.Protected<G>
+			| V.Declaration.Method.Static.Public<G>
+			| V.Declaration.Method.Static.Public.Internal<G>
+			| V.Declaration.Method.Static.Public.Restricted<G>
 			| V.Declaration.Module<G>
 			| V.Declaration.Module.External<G>
 			| V.Declaration.Module.Foreign<G>
 			| V.Declaration.ModuleProperty<G>
 			| V.Declaration.Parameter<G>
 			| V.Declaration.Parameter.Default<G>
+			| V.Declaration.Parameter.Default.Private<G>
+			| V.Declaration.Parameter.Default.Protected<G>
+			| V.Declaration.Parameter.Default.Public<G>
+			| V.Declaration.Parameter.Default.Public.Internal<G>
+			| V.Declaration.Parameter.Default.Public.Restricted<G>
 			| V.Declaration.Parameter.Optional<G>
+			| V.Declaration.Parameter.Optional.Private<G>
+			| V.Declaration.Parameter.Optional.Protected<G>
+			| V.Declaration.Parameter.Optional.Public<G>
+			| V.Declaration.Parameter.Optional.Public.Internal<G>
+			| V.Declaration.Parameter.Optional.Public.Restricted<G>
+			| V.Declaration.Parameter.Private<G>
+			| V.Declaration.Parameter.Protected<G>
+			| V.Declaration.Parameter.Public<G>
+			| V.Declaration.Parameter.Public.Internal<G>
+			| V.Declaration.Parameter.Public.Restricted<G>
 			| V.Declaration.Parameter.Self<G>
+			| V.Declaration.Parameter.Self.Private<G>
+			| V.Declaration.Parameter.Self.Protected<G>
+			| V.Declaration.Parameter.Self.Public<G>
+			| V.Declaration.Parameter.Self.Public.Internal<G>
+			| V.Declaration.Parameter.Self.Public.Restricted<G>
 			| V.Declaration.Parameter.Typed<G>
+			| V.Declaration.Parameter.Typed.Private<G>
+			| V.Declaration.Parameter.Typed.Protected<G>
+			| V.Declaration.Parameter.Typed.Public<G>
+			| V.Declaration.Parameter.Typed.Public.Internal<G>
+			| V.Declaration.Parameter.Typed.Public.Restricted<G>
 			| V.Declaration.Parameter.TypedDefault<G>
+			| V.Declaration.Parameter.TypedDefault.Private<G>
+			| V.Declaration.Parameter.TypedDefault.Protected<G>
+			| V.Declaration.Parameter.TypedDefault.Public<G>
+			| V.Declaration.Parameter.TypedDefault.Public.Internal<G>
+			| V.Declaration.Parameter.TypedDefault.Public.Restricted<G>
 			| V.Declaration.Parameter.Variadic<G>
+			| V.Declaration.Parameter.Variadic.Private<G>
+			| V.Declaration.Parameter.Variadic.Protected<G>
+			| V.Declaration.Parameter.Variadic.Public<G>
+			| V.Declaration.Parameter.Variadic.Public.Internal<G>
+			| V.Declaration.Parameter.Variadic.Public.Restricted<G>
 			| V.Declaration.Signature<G>
 			| V.Declaration.Signature.Call<G>
 			| V.Declaration.Signature.Construct<G>
@@ -965,16 +2923,36 @@ declare module './declaration.ts' {
 			| V.Declaration.Struct<G>
 			| V.Declaration.TypeAlias<G>
 			| V.Declaration.TypeAlias.Associated<G>
+			| V.Declaration.TypeAlias.Associated.Private<G>
+			| V.Declaration.TypeAlias.Associated.Protected<G>
+			| V.Declaration.TypeAlias.Associated.Public<G>
+			| V.Declaration.TypeAlias.Associated.Public.Internal<G>
+			| V.Declaration.TypeAlias.Associated.Public.Restricted<G>
+			| V.Declaration.TypeAlias.Private<G>
+			| V.Declaration.TypeAlias.Protected<G>
+			| V.Declaration.TypeAlias.Public<G>
+			| V.Declaration.TypeAlias.Public.Internal<G>
+			| V.Declaration.TypeAlias.Public.Restricted<G>
 			| V.Declaration.TypeParameter<G>
 			| V.Declaration.TypeParameter.Const<G>
 			| V.Declaration.TypeParameter.Lifetime<G>
 			| V.Declaration.Union<G>
+			| V.Declaration.Union.Private<G>
+			| V.Declaration.Union.Protected<G>
+			| V.Declaration.Union.Public<G>
+			| V.Declaration.Union.Public.Internal<G>
+			| V.Declaration.Union.Public.Restricted<G>
 			| V.Declaration.Variable<G>
 			| V.Declaration.Variable.Constant<G>
 			| V.Declaration.Variable.Pattern<G>
 			| V.Declaration.Variable.Reassignable<G>
 			| V.Declaration.Variable.Reassignable.FunctionScoped<G>
-			| V.Declaration.Variable.Static<G>;
+			| V.Declaration.Variable.Static<G>
+			| V.Declaration.Variable.Static.Private<G>
+			| V.Declaration.Variable.Static.Protected<G>
+			| V.Declaration.Variable.Static.Public<G>
+			| V.Declaration.Variable.Static.Public.Internal<G>
+			| V.Declaration.Variable.Static.Public.Restricted<G>;
 	}
 }
 
@@ -1896,13 +3874,246 @@ declare module './statement.ts' {
 			interface Crate<G extends GrammarContext<G>> extends modules.Statement.Import.Crate<G> {
 				readonly visibility?: gate.In<G, features.Visibility, visibility.Statement.Import.Crate<G>['visibility']>;
 			}
+			namespace Crate {
+				interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Statement.Import.Crate<G>> {
+					readonly $kind: 'statement.import.crate.private';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+					>;
+				}
+				interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Statement.Import.Crate<G>> {
+					readonly $kind: 'statement.import.crate.protected';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+					>;
+				}
+				interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Statement.Import.Crate<G>> {
+					readonly $kind: 'statement.import.crate.public';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+					>;
+				}
+				namespace Public {
+					interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<V.Statement.Import.Crate.Public<G>> {
+						readonly $kind: 'statement.import.crate.public.internal';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+						>;
+					}
+					interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<V.Statement.Import.Crate.Public<G>> {
+						readonly $kind: 'statement.import.crate.public.restricted';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+						>;
+					}
+					type Any<G extends GrammarContext<G>> =
+						| V.Statement.Import.Crate.Public<G>
+						| V.Statement.Import.Crate.Public.Internal<G>
+						| V.Statement.Import.Crate.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Statement.Import.Crate<G>
+					| V.Statement.Import.Crate.Private<G>
+					| V.Statement.Import.Crate.Protected<G>
+					| V.Statement.Import.Crate.Public<G>
+					| V.Statement.Import.Crate.Public.Internal<G>
+					| V.Statement.Import.Crate.Public.Restricted<G>;
+			}
 			interface From<G extends GrammarContext<G>> extends modules.Statement.Import.From<G> {}
+			namespace From {
+				interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Statement.Import.From<G>> {
+					readonly $kind: 'statement.import.from.private';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+					>;
+				}
+				interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Statement.Import.From<G>> {
+					readonly $kind: 'statement.import.from.protected';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+					>;
+				}
+				interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Statement.Import.From<G>> {
+					readonly $kind: 'statement.import.from.public';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+					>;
+				}
+				namespace Public {
+					interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<V.Statement.Import.From.Public<G>> {
+						readonly $kind: 'statement.import.from.public.internal';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+						>;
+					}
+					interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<V.Statement.Import.From.Public<G>> {
+						readonly $kind: 'statement.import.from.public.restricted';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+						>;
+					}
+					type Any<G extends GrammarContext<G>> =
+						| V.Statement.Import.From.Public<G>
+						| V.Statement.Import.From.Public.Internal<G>
+						| V.Statement.Import.From.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Statement.Import.From<G>
+					| V.Statement.Import.From.Private<G>
+					| V.Statement.Import.From.Protected<G>
+					| V.Statement.Import.From.Public<G>
+					| V.Statement.Import.From.Public.Internal<G>
+					| V.Statement.Import.From.Public.Restricted<G>;
+			}
 			interface Future<G extends GrammarContext<G>> extends modules.Statement.Import.Future<G> {}
+			namespace Future {
+				interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Statement.Import.Future<G>> {
+					readonly $kind: 'statement.import.future.private';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+					>;
+				}
+				interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Statement.Import.Future<G>> {
+					readonly $kind: 'statement.import.future.protected';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+					>;
+				}
+				interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Statement.Import.Future<G>> {
+					readonly $kind: 'statement.import.future.public';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+					>;
+				}
+				namespace Public {
+					interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<V.Statement.Import.Future.Public<G>> {
+						readonly $kind: 'statement.import.future.public.internal';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+						>;
+					}
+					interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<
+						V.Statement.Import.Future.Public<G>
+					> {
+						readonly $kind: 'statement.import.future.public.restricted';
+						readonly visibility: gate.In<
+							G,
+							features.Visibility,
+							gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+						>;
+					}
+					type Any<G extends GrammarContext<G>> =
+						| V.Statement.Import.Future.Public<G>
+						| V.Statement.Import.Future.Public.Internal<G>
+						| V.Statement.Import.Future.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Statement.Import.Future<G>
+					| V.Statement.Import.Future.Private<G>
+					| V.Statement.Import.Future.Protected<G>
+					| V.Statement.Import.Future.Public<G>
+					| V.Statement.Import.Future.Public.Internal<G>
+					| V.Statement.Import.Future.Public.Restricted<G>;
+			}
+			interface Private<G extends GrammarContext<G>> extends gate.SubKindOf<V.Statement.Import<G>> {
+				readonly $kind: 'statement.import.private';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.private'>
+				>;
+			}
+			interface Protected<G extends GrammarContext<G>> extends gate.SubKindOf<V.Statement.Import<G>> {
+				readonly $kind: 'statement.import.protected';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.protected'>
+				>;
+			}
+			interface Public<G extends GrammarContext<G>> extends gate.SubKindOf<V.Statement.Import<G>> {
+				readonly $kind: 'statement.import.public';
+				readonly visibility: gate.In<
+					G,
+					features.Visibility,
+					gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public'>
+				>;
+			}
+			namespace Public {
+				interface Internal<G extends GrammarContext<G>> extends gate.SubKindOf<V.Statement.Import.Public<G>> {
+					readonly $kind: 'statement.import.public.internal';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.internal'>
+					>;
+				}
+				interface Restricted<G extends GrammarContext<G>> extends gate.SubKindOf<V.Statement.Import.Public<G>> {
+					readonly $kind: 'statement.import.public.restricted';
+					readonly visibility: gate.In<
+						G,
+						features.Visibility,
+						gate.AtOrBeneath<V.AccessLevel, 'modifier.visibility.public.restricted'>
+					>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Statement.Import.Public<G>
+					| V.Statement.Import.Public.Internal<G>
+					| V.Statement.Import.Public.Restricted<G>;
+			}
 			type Any<G extends GrammarContext<G>> =
 				| V.Statement.Import<G>
 				| V.Statement.Import.Crate<G>
+				| V.Statement.Import.Crate.Private<G>
+				| V.Statement.Import.Crate.Protected<G>
+				| V.Statement.Import.Crate.Public<G>
+				| V.Statement.Import.Crate.Public.Internal<G>
+				| V.Statement.Import.Crate.Public.Restricted<G>
 				| V.Statement.Import.From<G>
-				| V.Statement.Import.Future<G>;
+				| V.Statement.Import.From.Private<G>
+				| V.Statement.Import.From.Protected<G>
+				| V.Statement.Import.From.Public<G>
+				| V.Statement.Import.From.Public.Internal<G>
+				| V.Statement.Import.From.Public.Restricted<G>
+				| V.Statement.Import.Future<G>
+				| V.Statement.Import.Future.Private<G>
+				| V.Statement.Import.Future.Protected<G>
+				| V.Statement.Import.Future.Public<G>
+				| V.Statement.Import.Future.Public.Internal<G>
+				| V.Statement.Import.Future.Public.Restricted<G>
+				| V.Statement.Import.Private<G>
+				| V.Statement.Import.Protected<G>
+				| V.Statement.Import.Public<G>
+				| V.Statement.Import.Public.Internal<G>
+				| V.Statement.Import.Public.Restricted<G>;
 		}
 		interface Labeled<G extends GrammarContext<G>> extends labeledControlFlow.Statement.Labeled<G> {}
 		interface Loop<G extends GrammarContext<G>> {
@@ -1953,8 +4164,28 @@ declare module './statement.ts' {
 			| V.Statement.If<G>
 			| V.Statement.Import<G>
 			| V.Statement.Import.Crate<G>
+			| V.Statement.Import.Crate.Private<G>
+			| V.Statement.Import.Crate.Protected<G>
+			| V.Statement.Import.Crate.Public<G>
+			| V.Statement.Import.Crate.Public.Internal<G>
+			| V.Statement.Import.Crate.Public.Restricted<G>
 			| V.Statement.Import.From<G>
+			| V.Statement.Import.From.Private<G>
+			| V.Statement.Import.From.Protected<G>
+			| V.Statement.Import.From.Public<G>
+			| V.Statement.Import.From.Public.Internal<G>
+			| V.Statement.Import.From.Public.Restricted<G>
 			| V.Statement.Import.Future<G>
+			| V.Statement.Import.Future.Private<G>
+			| V.Statement.Import.Future.Protected<G>
+			| V.Statement.Import.Future.Public<G>
+			| V.Statement.Import.Future.Public.Internal<G>
+			| V.Statement.Import.Future.Public.Restricted<G>
+			| V.Statement.Import.Private<G>
+			| V.Statement.Import.Protected<G>
+			| V.Statement.Import.Public<G>
+			| V.Statement.Import.Public.Internal<G>
+			| V.Statement.Import.Public.Restricted<G>
 			| V.Statement.Labeled<G>
 			| V.Statement.Loop<G>
 			| V.Statement.Loop.Counted<G>

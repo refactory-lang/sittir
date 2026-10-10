@@ -2,7 +2,7 @@ import { afterAll, describe, expect, it } from 'vitest';
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { drift, generate, vocabularyFeatureIssues } from '../../src/vocabulary/index.ts';
+import { drift, generate, vocabularyFeatureIssues, vocabularyValueSets } from '../../src/vocabulary/index.ts';
 import { plan } from '../../src/vocabulary/plan.ts';
 import { readVocabularySource } from '../../src/vocabulary/read.ts';
 import { augmentation, featuresIndex } from '../../src/vocabulary/write.ts';
@@ -100,6 +100,25 @@ describe('the vocabulary', () => {
 	it('has no feature issues, and its generated files are what its feature folders generate', async () => {
 		expect(await vocabularyFeatureIssues()).toEqual([]);
 	}, 60_000);
+
+	it('lists each kind’s enumerated members with their values, and its flags', () => {
+		const fn = vocabularyValueSets().get('declaration.function');
+		expect(fn?.enumerated.map((e) => [e.member, e.enumeration.name, e.enumeration.values, e.feature?.name])).toEqual([
+			[
+				'visibility',
+				'AccessLevel',
+				[
+					'modifier.visibility.private',
+					'modifier.visibility.protected',
+					'modifier.visibility.public',
+					'modifier.visibility.public.internal',
+					'modifier.visibility.public.restricted'
+				],
+				'Visibility'
+			]
+		]);
+		expect(fn?.flags.find((f) => f.member === 'async')?.feature?.name).toBe('AsyncAwait');
+	});
 });
 
 describe('plan', () => {
@@ -212,6 +231,122 @@ describe('plan', () => {
 
 	it('reports a kind in a namespace no base file declares', () => {
 		expect(issues({ ...CLEAN, ...MACROS })).toEqual(['macro.rule: Macros declares it in Macro, a namespace no base file declares']);
+	});
+});
+
+const LEVELS: Readonly<Record<string, string>> = {
+	'modifier.ts': `export type Level = Beneath<V.Modifier.Level.Any<never>, 'modifier.level'>;
+export interface Modifier<G extends GrammarContext<G>> {
+	readonly $kind: 'modifier';
+}
+export namespace Modifier {
+	export interface Level<G extends GrammarContext<G>> extends SubKindOf<V.Modifier<G>> {
+		readonly $kind: 'modifier.level';
+	}
+	export namespace Level {
+		export interface High<G extends GrammarContext<G>> extends SubKindOf<V.Modifier.Level<G>> {
+			readonly $kind: 'modifier.level.high';
+		}
+		export namespace High {
+			export interface Top<G extends GrammarContext<G>> extends SubKindOf<V.Modifier.Level.High<G>> {
+				readonly $kind: 'modifier.level.high.top';
+			}
+		}
+		export interface Low<G extends GrammarContext<G>> extends SubKindOf<V.Modifier.Level<G>> {
+			readonly $kind: 'modifier.level.low';
+		}
+	}
+}
+`,
+	'declaration.ts': `export interface Declaration<G extends GrammarContext<G>> {
+	readonly $kind: 'declaration';
+}
+export namespace Declaration {
+	export interface Function<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
+		readonly $kind: 'declaration.function';
+		readonly async?: boolean;
+		readonly level?: V.Level;
+	}
+	export namespace Function {
+		export interface Arrow<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Function<G>> {
+			readonly $kind: 'declaration.function.arrow';
+		}
+	}
+}
+`
+};
+
+describe('values', () => {
+	const source = readVocabularySource(vocabulary(LEVELS));
+	const p = plan(source);
+	const lines = augmentation(source, p)
+		.split('\n')
+		.map((l) => l.trim());
+
+	it('take an enumeration’s values from the kinds beneath its root', () => {
+		expect([...p.issues, ...p.notes]).toEqual([]);
+		expect(Object.fromEntries(p.enumerations)).toEqual({
+			Level: { name: 'Level', root: 'modifier.level', values: ['modifier.level.high', 'modifier.level.high.top', 'modifier.level.low'] }
+		});
+	});
+
+	it('list each kind’s enumerated members and flags, inherited ones included', () => {
+		const sets = Object.fromEntries(
+			[...p.valueSets].map(([path, s]) => [path, { enumerated: s.enumerated.map((e) => `${e.member}:${e.enumeration.name}`), flags: s.flags.map((f) => f.member) }])
+		);
+		expect(sets).toEqual({
+			'declaration.function': { enumerated: ['level:Level'], flags: ['async'] },
+			'declaration.function.arrow': { enumerated: ['level:Level'], flags: ['async'] }
+		});
+	});
+
+	it('refine every owner by every value, structural refinements first and values nested', () => {
+		expect(Object.fromEntries([...p.values].map(([path, v]) => [path, v.parent]))).toEqual({
+			'declaration.function.arrow.high': 'Declaration.Function.Arrow',
+			'declaration.function.arrow.high.top': 'Declaration.Function.Arrow.High',
+			'declaration.function.arrow.low': 'Declaration.Function.Arrow',
+			'declaration.function.high': 'Declaration.Function',
+			'declaration.function.high.top': 'Declaration.Function.High',
+			'declaration.function.low': 'Declaration.Function'
+		});
+		expect(p.levels.get('Declaration.Function.High')).toEqual(['Declaration.Function.High', 'Declaration.Function.High.Top']);
+	});
+
+	it('write a value refinement as a named interface that pins its member to the values at or beneath its value', () => {
+		expect(lines).toContain('interface Top<G extends GrammarContext<G>> extends gate.SubKindOf<V.Declaration.Function.High<G>> {');
+		expect(lines).toContain("readonly $kind: 'declaration.function.high.top';");
+		expect(lines).toContain("readonly level: gate.AtOrBeneath<V.Level, 'modifier.level.high.top'>;");
+	});
+
+	it('gate the pin as the owner’s member is gated', () => {
+		const gatedSource = readVocabularySource(
+			vocabulary({
+				...LEVELS,
+				'declaration.ts': LEVELS['declaration.ts']!.replace('\t\treadonly level?: V.Level;\n', ''),
+				...feature('levels', 'export interface Levels {\n\treadonly levels: true;\n}', {
+					'declaration.ts': `export namespace Declaration {
+	export interface Function<G extends GrammarContext<G>> {
+		readonly level?: V.Level;
+	}
+}
+`
+				})
+			})
+		);
+		const gatedLines = augmentation(gatedSource, plan(gatedSource))
+			.split('\n')
+			.map((l) => l.trim());
+		expect(gatedLines).toContain("readonly level: gate.In<G, features.Levels, gate.AtOrBeneath<V.Level, 'modifier.level.low'>>;");
+	});
+
+	it('report a value refinement whose path a kind already has', () => {
+		const taken = LEVELS['declaration.ts']!.replace(
+			"\t\t\treadonly $kind: 'declaration.function.arrow';\n\t\t}\n",
+			"\t\t\treadonly $kind: 'declaration.function.arrow';\n\t\t}\n\t\texport interface Low<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Function<G>> {\n\t\t\treadonly $kind: 'declaration.function.low';\n\t\t}\n"
+		);
+		expect(issues({ ...LEVELS, 'declaration.ts': taken })).toEqual([
+			"declaration.function.low: declaration.function's level modifier.level.low refines it there, and another kind already has that path or name"
+		]);
 	});
 });
 
