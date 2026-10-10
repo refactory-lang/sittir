@@ -71,9 +71,9 @@ describe('the reparsed node is found by grammar id', () => {
 		const { Parser, lang } = await loadLanguageForGrammar('python');
 		const parser = new Parser();
 		parser.setLanguage(lang);
-		const rendered = 'x = 1\nreturn f\"\"\"\n{y}\n  tail\"\"\"';
+		const rendered = 'x = 1\nreturn f"""\n{y}\n  tail"""';
 		const parse = (text: string) => parser.parse(text);
-		expect(applyHost('def f():\n    $r', rendered).text).toBe('def f():\n    x = 1\n    return f\"\"\"\n    {y}\n      tail\"\"\"');
-		expect(applyHost('def f():\n    $r', rendered, parse).text).toBe('def f():\n    x = 1\n    return f\"\"\"\n{y}\n  tail\"\"\"');
+		expect(applyHost('def f():\n    $r', rendered).text).toBe('def f():\n    x = 1\n    return f"""\n    {y}\n      tail"""');
+		expect(applyHost('def f():\n    $r', rendered, parse).text).toBe('def f():\n    x = 1\n    return f"""\n{y}\n  tail"""');
 	}, 120_000);
 });
