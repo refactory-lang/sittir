@@ -70,11 +70,11 @@ Everything portable is emitted by one overlay, `packages/codegen/src/emitters/ov
 
 - Per bound grammar, a namespace tree by vocabulary path, built from the stage-2 routes: `kinds.<path>` and `is.<path>`.
 - Short aliases: a path also appears under each ancestor where its last segment is unique among all that ancestor's descendants (`is.expression.add` beside `is.expression.binary.add`). It is the same object, a real child of the same name wins, and it is derived from the path tree, not listed. A segment that is not unique gets no alias, and is reported in the overlay's dropped list with the paths that have no realized kind.
-- `is.<path>` is compiled from the read entries under the path into a kind set plus a `QueryPlan`, evaluated with `holds`, and a mask of the path's flags, tested against the node's bitflag. A flag's guard sits under every path of its kind. It takes a node from either engine. Its overloads narrow a grammar node to the row's grammar types and, once stage 6 gives portable nodes, a portable node to the vocabulary interface.
+- `is.<path>` is compiled from the read entries under the path into a kind set plus a `QueryPlan`, evaluated with `holds`, and a mask of the path's flags, tested against the node's bitflag. It tests each fact its path names, not the path as a prefix (bindings spec §3.3), so it sits under every path that names its facts: `is.declaration.method.public` passes a public getter, and a flag's guard sits under every path of its kind. A claim a child's kind decides compiles to the plan's `is` op, and a step toward a captured child may carry a `first` or `last` anchor (one-query-evaluator spec §1). It takes a node from either engine. Its overloads narrow a grammar node to the row's grammar types and, once stage 6 gives portable nodes, a portable node to the vocabulary interface.
 - `createEngine(lang, { api: 'portable' })` is accepted and exposes `kinds` and `is`; `parse`, `render` and `build` refuse until their stages land.
 - Emitted for every bound grammar, whatever its rejection count.
 - Gate:
-  - `is.<path>` holds for exactly the nodes whose read entries classify them under the path, on both surfaces, and tells `identifier` from `type_identifier` where their roles differ; the narrowing is checked at compile time;
+  - `is.<path>` holds for exactly the nodes whose read entries classify them under the path, on both surfaces, and tells `identifier` from `type_identifier` where their roles differ; a guard holds alongside every refinement its path does not name; the narrowing is checked at compile time;
   - the alias derivation has unit tests (a unique segment aliases, a colliding one is dropped, a real child wins);
   - per-level counts (paths, kinds, refinements, aliases) and the dropped list are recorded per grammar.
 
@@ -118,14 +118,14 @@ The causes the probe reports, each on the side that owns it:
 ## Stage 7: build
 
 - Build entries per vocabulary kind under `build.<path>`, with the same short aliases as stage 3. Where one path maps to several grammar kinds, the build picks the kind from the input's shape (which members are present, and the kinds of their values), then builds through the low-level API and its mount routing. There is no default arm and no inference from text. Kinds whose shapes cannot be told apart are stage-4 conformance items, cleared by giving each its own vocabulary path (`expression.update.prefix` / `.postfix`, `comment.block` / `comment.line`), so the input's `$kind` picks the call.
-- Refinement builders and flag steps, the only form a refinement or a flag takes in a build. A step per flag on each builder of its kind, in any order, sets its bit and builds its token or kind. One refinement builder per refinement path:
+- Refinement builders and flag steps, the only form a refinement or a flag takes in a build. A step per flag on each builder of its kind, in any order, sets its bit and builds its token or kind. A step's type leaves out the steps its flag excludes, and a refinement's builder those its value excludes, from exclusions derived once per kind from the grammar's rule (bindings spec §3.3); a structure's `$kind` and `$flags` are checked against the same exclusions. One refinement builder per refinement path:
   - a literal or token refinement presets the literal (`build.expression.binary.add` fills `operator: '+'`);
   - a child-kind refinement narrows the slot's type to that child kind;
   - a text refinement (`#match?`, `#eq?`) narrows the type and runs the predicate as a guard when the node is built, always on like a leaf guard, refusing text it rejects.
   - a template predicate (a pattern with holes, such as a dunder name) builds from its holes; any other `#match?` checks the given text against the pattern and refuses a mismatch.
 - The portable `build` is typed per kind from the vocabulary; the low-level generic build is keyed by `$type`.
 - A portable round-trip lane joins `validate:native`: parse with the portable engine, build every node again from its members, render, and parse-equal over the corpus.
-- Gate: the existing rows are equal; the new lane's row is recorded as its baseline.
+- Gate: the existing rows are equal; the new lane's row is recorded as its baseline. Type tests: a typescript field's `.optional` step offers no `.definite`, and a getter's builder no `.generator`; a structure stating an excluded pair is refused, naming both.
 
 ## Stage 8: crossing
 

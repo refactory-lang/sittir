@@ -12,13 +12,16 @@
  * - scale-gate/: the cost model, folded. Every member the snapshot tags as particular to some grammars, and every kind
  *   only some grammars claim, belongs to a feature named by those grammars, gated the same way.
  * - scale-registry/: the cost model with each level read off an augmentable kind registry instead of a generated union.
+ * - flags-enum/, flags-const/, flags-names/, flags-registry/: gate with its flags written as flags, not members, in each
+ *   flag encoding (lib.mts, FlagEncoding), and each consumer checking a kind's builder steps.
  *
  * One rule writes every variant's consumers, so the variants compare like for like (lib.mts, writeConsumers).
  *
  * Usage: `tsx generate.mts`; then `tsc -p out/<variant>/tsconfig.json`, `tsc -p out/gate/tsconfig.demo.json`, and
- * `tsc -p out/gate/tsconfig.errors.json` for the messages of the demo's negatives. `tsx cost.mts` measures.
+ * `tsc -p out/gate/tsconfig.errors.json` for the messages of the demo's negatives, and `tsc -p out/<flags variant>/tsconfig.check.json`
+ * for the flag checks. `tsx cost.mts` measures.
  */
-import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { appendFileSync, cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { languages } from './compositions.ts';
 import {
@@ -28,6 +31,8 @@ import {
 	contextLines,
 	EQUALITY_CLAIMS,
 	equalityProposal,
+	flagDecls,
+	flagRegistryAugmentation,
 	flagRoutes,
 	fold,
 	GRAMMARS,
@@ -46,13 +51,16 @@ import {
 	readVocab,
 	realization,
 	restatingImports,
+	under,
 	visibilityProposal,
 	writeConsumers,
 	writeFeatureTree,
+	writeFlags,
 	writeGatedVocabulary,
 	writeTsconfig,
 	type Feature,
 	type FeatureSpec,
+	type FlagEncoding,
 	type Grammar,
 	type Language,
 	type Levels,
@@ -200,8 +208,8 @@ function diagnose(vocab: Vocab, p: Plan, features: ReadonlyMap<string, Feature>,
 	}
 }
 
-function buildGate(snapshot: string): void {
-	const dir = freshVariant(snapshot, 'gate');
+function buildGate(snapshot: string, variant = 'gate', flags: FlagEncoding | null = null): void {
+	const dir = freshVariant(snapshot, variant);
 	const vdir = join(dir, 'vocabulary');
 	equalityProposal(vdir);
 	propertyFactsProposal(vdir);
@@ -210,7 +218,14 @@ function buildGate(snapshot: string): void {
 	const vocab = readVocab(vdir);
 	const features = readFeatures(join(vdir, 'features'));
 	const p = plan(vocab, features);
-	writeGatedVocabulary(vdir, vocab, features, p, 'unions');
+	writeGatedVocabulary(vdir, vocab, features, p, 'unions', flags);
+	const decls = flags === null ? [] : flagDecls(vocab, p);
+	if (flags !== null) {
+		const count = writeFlags(vdir, vocab, decls, flags);
+		if (flags === 'enum-registry') appendFileSync(join(vdir, 'augment.ts'), flagRegistryAugmentation(decls).join('\n'));
+		const prefixOnly = [...vocab.byPath.keys()].filter((path) => decls.some((d) => under(path, d.path) && !lineage(vocab, path).includes(d.path)));
+		console.log(`${variant}: ${count} flags, ${decls.length} declarations; kinds a prefix flag reaches off their line: ${prefixOnly.join(', ') || '-'}`);
+	}
 	cpSync(join(HERE, 'compositions.ts'), join(dir, 'compositions.ts'));
 	const compositions = readCompositions(readFileSync(join(HERE, 'compositions.ts'), 'utf8'));
 	const composed = composeLanguages(
@@ -221,7 +236,7 @@ function buildGate(snapshot: string): void {
 		Object.entries(languages).map(([key, l]) => [key, l.claims, l.terms, EQUALITY_CLAIMS[l.claims]] as const),
 		(grammar, path) => flagRoutes(vocab, grammar, path)
 	);
-	diagnose(vocab, p, features, composed);
+	if (flags === null) diagnose(vocab, p, features, composed);
 
 	const grammars = composed.filter((c) => c.lang.key !== 'javascript').map((c) => c.lang);
 	const javascript = composed.find((c) => c.lang.key === 'javascript')!.lang;
@@ -245,9 +260,22 @@ function buildGate(snapshot: string): void {
 			...grammars.flatMap((l) => namesLines(vocab, p, features, l)),
 		].join('\n')
 	);
-	const members = (lang: Language, path: string): string[] => composedMembers(vocab, p, path, lang.has);
-	const consumers = writeConsumers(dir, vocab, p, features, grammars, members);
+	const flagsAt = (path: string): Set<string> => new Set(decls.filter((d) => lineage(vocab, path).includes(d.path)).map((d) => d.name));
+	const members = (lang: Language, path: string): string[] => {
+		const all = composedMembers(vocab, p, path, lang.has);
+		if (flags === null) return all;
+		const own = flagsAt(path);
+		return all.filter((m) => !own.has(m));
+	};
+	const consumers = writeConsumers(dir, vocab, p, features, grammars, members, flags !== null);
 	writeTsconfig(join(dir, 'tsconfig.json'), ['languages.ts', ...consumers]);
+	if (flags !== null) {
+		cpSync(join(HERE, 'flags/check.ts'), join(dir, 'check.ts'));
+		writeTsconfig(join(dir, 'tsconfig.check.json'), ['languages.ts', 'check.ts'], './tsconfig.json');
+		fold(dir, vocab, {});
+		report(variant, grammars, members);
+		return;
+	}
 	const demo = readFileSync(join(HERE, 'demo.ts'), 'utf8');
 	writeFileSync(join(dir, 'demo.ts'), demo);
 	writeFileSync(join(dir, 'demo-errors.ts'), demo.replace(/^\s*\/\/ @ts-expect-error.*\n/gm, ''));
@@ -380,5 +408,9 @@ const snapshot = materialize();
 buildUngated(snapshot, 'today');
 buildUngated(snapshot, 'fold');
 buildGate(snapshot);
+buildGate(snapshot, 'flags-enum', 'enum');
+buildGate(snapshot, 'flags-const', 'const');
+buildGate(snapshot, 'flags-names', 'names');
+buildGate(snapshot, 'flags-registry', 'enum-registry');
 buildScale(snapshot, 'scale-gate', 'unions');
 buildScale(snapshot, 'scale-registry', 'registry');

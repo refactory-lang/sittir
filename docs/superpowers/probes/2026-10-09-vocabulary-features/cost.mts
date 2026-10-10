@@ -19,7 +19,7 @@ const FIGURES = ['Types', 'Instantiations', 'Memory used', 'Check time', 'Total 
 const TSC = join(ROOT, 'node_modules/.bin/tsc');
 
 const scratch = resolve(process.argv[2] ?? mkdtempSync(join(tmpdir(), 'vocabulary-features-cost-')));
-const variants = process.argv.length > 3 ? process.argv.slice(3) : ['today', 'fold', 'gate', 'scale-gate', 'scale-registry'].filter((v) => readdirSync(OUT).includes(v));
+const variants = process.argv.length > 3 ? process.argv.slice(3) : ['today', 'fold', 'gate', 'scale-gate', 'scale-registry', 'flags-enum', 'flags-const', 'flags-names', 'flags-registry'].filter((v) => readdirSync(OUT).includes(v));
 
 const median = (xs: readonly number[]): number => [...xs].sort((a, b) => a - b)[Math.floor(xs.length / 2)]!;
 const load = (): string => loadavg().map((l) => l.toFixed(2)).join(' ');
