@@ -868,11 +868,15 @@ The slots from an owner kind outward through the `via` steps (walked farthest fi
 
 ### `packages/codegen/src/bindings/routes.ts::resolveRoutes`
 
-Resolves one grammar's routes. Renames are collected per owner kind first, since a pin's member name and a slot route's name both follow them. A claim's read entries go on the kinds the reader produces for the claimed node (`readKinds`), so a claim on an enum kind is entered on its members' kinds. A kind's default vocabulary kind is its first top-level claim with no predicate and no pin, else its first top-level claim, in file order; the read entries are then sorted by `specificity`. Member routes are resolved for every claimed kind and container unwraps for every kind of the model.
+Resolves one grammar's routes. A claim on a kind reaches the kind and each of its forms (`formsOf`) that has no claim of its own: a self-claimed form reads by its own claim, and `is` still passes it for the supertype's path by the kind table. Renames are collected first on every kind their claim reaches, since a pin's member name and a slot route's name both follow them, so a supertype claim's field rename names the field on each form. A claim's read entries go on the kinds the reader produces for each kind it reaches (`readKinds`), so a claim on an enum kind is entered on its members' kinds; an entry's `claimed` is the kind the claim names. A kind's default vocabulary kind is its first top-level claim with no predicate and no pin, else its first top-level claim, in file order; the read entries are then sorted by `specificity`. Member routes are resolved for every claimed kind and container unwraps for every kind of the model.
 
 ### `packages/codegen/src/bindings/input.ts::module`
 
 How one grammar's routes input is assembled, for codegen and the inventory alike. Codegen hands it the node-model record it is about to write and its evaluated grammar; the inventory hands it the committed `node-model.json5` and the grammar it evaluates. One assembly, so the routes codegen writes are the routes the inventory folds.
+
+### `packages/codegen/src/bindings/routes.ts::formsOf`
+
+The kind and, when it is a supertype, every kind the model stamps as its owned variant (`ModelNode.variantOf`): the forms a node of the kind takes in the tree. A variant of a branch or polymorph sits under its owner as a part, so a kind that is not a supertype is its only form.
 
 ### `packages/codegen/src/bindings/routes.ts::readKinds`
 
@@ -888,7 +892,7 @@ The part of a node-model record the bindings read: each node's kind, model type,
 
 ### `packages/codegen/src/bindings/input.ts::slotModelOf`
 
-The slot model of a node-model record: per kind its slots, a slot's terminals being the values it stores as terminal text, and an enum's members as `enumMembers`, with the record's omissions filled (`branch`, not required, single, `verbatim`, no members).
+The slot model of a node-model record: per kind its slots, a slot's terminals being the values it stores as terminal text, and an enum's members as `enumMembers`, with the record's omissions filled (`branch`, not required, single, `verbatim`, no members, no `variantOf`).
 
 ### `packages/codegen/src/bindings/input.ts::renamedFromOf`
 
@@ -1012,7 +1016,7 @@ A slot of the node model as the bindings read it: its name and property name, wh
 
 ### `packages/codegen/src/bindings/facts.ts::ModelNode`
 
-A kind of the node model as the bindings read it: its model type, its slots, its supertype arms, a list's element kinds, an enum's members, a fixed leaf's text and a pattern leaf's pattern.
+A kind of the node model as the bindings read it: its model type, its slots, its supertype arms, a list's element kinds, an enum's members, a fixed leaf's text, a pattern leaf's pattern, and the kind it is an owned variant of (`variantOf`).
 
 ### `packages/codegen/src/bindings/facts.ts::SlotModel`
 

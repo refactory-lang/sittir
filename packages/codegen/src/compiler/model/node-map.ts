@@ -998,9 +998,12 @@ export interface KindFacts {
 	readonly provenance?: KindProvenance;
 }
 
-function provenanceOf(kind: string, ctx: KindFacts | undefined): { readonly renamedFrom?: string; readonly splitFrom?: string } {
+function provenanceOf(
+	kind: string,
+	ctx: KindFacts | undefined
+): { readonly renamedFrom?: string; readonly splitFrom?: string; readonly variantOf?: string } {
 	const own = (map: Readonly<Record<string, string>> | undefined): string | undefined => (map !== undefined && Object.hasOwn(map, kind) ? map[kind] : undefined);
-	return { renamedFrom: own(ctx?.provenance?.renamedFrom), splitFrom: own(ctx?.provenance?.splitFrom) };
+	return { renamedFrom: own(ctx?.provenance?.renamedFrom), splitFrom: own(ctx?.provenance?.splitFrom), variantOf: own(ctx?.provenance?.variantOf) };
 }
 
 export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
@@ -1010,6 +1013,7 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	readonly ownSurface: boolean;
 	readonly renamedFrom: string | undefined;
 	readonly splitFrom: string | undefined;
+	readonly variantOf: string | undefined;
 	readonly display: DisplayStamp;
 	readonly wordMatcher: RegExp | undefined;
 	typeName: string;
@@ -1102,7 +1106,7 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		this.kindEntry = findOwnKindEntry(opts?.kindEntries ?? [], kind);
 		this.seated = seatedOf(rule.annotations, this.kindEntry);
 		this.ownSurface = !this.seated || opts?.supertypeArms?.has(kind) === true;
-		({ renamedFrom: this.renamedFrom, splitFrom: this.splitFrom } = provenanceOf(kind, opts));
+		({ renamedFrom: this.renamedFrom, splitFrom: this.splitFrom, variantOf: this.variantOf } = provenanceOf(kind, opts));
 		this.display = stampDisplay(kind, this.kindEntry, opts?.kindEntries ?? [], opts?.rowless ?? 'phantom');
 	}
 

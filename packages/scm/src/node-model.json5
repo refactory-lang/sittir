@@ -693,6 +693,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "definition",
       "slots": [
         {
           "name": "name",
@@ -951,6 +952,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "string_content",
       "slots": [
         {
           "name": "content",
@@ -1021,6 +1023,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "definition",
       "slots": [
         {
           "name": "name",
@@ -1079,6 +1082,7 @@
         "groupExpressionArm"
       ],
       "hidden": false,
+      "variantOf": "_group_expression",
       "slots": [
         {
           "name": "left",
@@ -1157,6 +1161,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "definition",
       "slots": [
         {
           "name": "grouping_group",
@@ -1356,6 +1361,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "definition",
       "slots": [
         {
           "name": "definitions",
@@ -1424,6 +1430,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "_list_element",
       "slots": [
         {
           "name": "quantifier",
@@ -1483,6 +1490,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "definition",
       "slots": [
         {
           "name": "name",
@@ -1553,6 +1561,7 @@
         ]
       ],
       "hidden": true,
+      "variantOf": "definition",
       "transparent": true,
       "subtypes": [
         "named_node_plain",
@@ -1569,6 +1578,7 @@
         "namedNodeExpressionArm"
       ],
       "hidden": false,
+      "variantOf": "_named_node_expression",
       "slots": [
         {
           "name": "left",
@@ -1680,6 +1690,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "named_node_group",
       "slots": [
         {
           "name": "anchor",
@@ -1798,6 +1809,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "named_node_group",
       "slots": [
         {
           "name": "anchor",
@@ -1886,6 +1898,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "named_node",
       "slots": [
         {
           "name": "name",
@@ -1987,6 +2000,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "named_node",
       "slots": [
         {
           "name": "supertype",
@@ -2095,6 +2109,7 @@
         "negatedField"
       ],
       "hidden": false,
+      "variantOf": "_named_node_expression",
       "slots": [
         {
           "name": "identifier",
@@ -2223,6 +2238,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "definition",
       "slots": [
         {
           "name": "prefix",

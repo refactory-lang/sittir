@@ -21,6 +21,7 @@ const node = (kind: string, slots: readonly ModelSlot[] = [], extra: Partial<Mod
 	enumMembers: [],
 	text: null,
 	pattern: null,
+	variantOf: null,
 	...extra
 });
 
@@ -61,6 +62,12 @@ const MODEL = [
 		]
 	}),
 	node('true_keyword', [], { modelType: 'keyword', text: 'true' }),
+	node('_struct', [], { modelType: 'supertype', subtypes: ['struct_unit', 'struct_tuple', 'struct_named'] }),
+	node('struct_unit', [slot('name', ['identifier'])], { variantOf: '_struct' }),
+	node('struct_tuple', [slot('name', ['identifier']), slot('fields', ['identifier'], { multiple: true })], { variantOf: '_struct' }),
+	node('struct_named', [slot('name', ['identifier'])], { variantOf: '_struct' }),
+	node('arrow', [slot('param', ['arrow_param'])]),
+	node('arrow_param', [slot('name', ['identifier'])], { variantOf: 'arrow' }),
 	node('false_keyword', [], { modelType: 'keyword', text: 'false' })
 ];
 
@@ -252,6 +259,25 @@ describe('resolveRoutes', () => {
 		expect(routes.readEntries.get('true_keyword')?.map((e) => e.claimed)).toEqual(['bool', 'bool']);
 		expect(routes.readEntries.get('true_keyword')?.map((e) => e.vocab)).toEqual(['literal.boolean.true', 'literal.boolean']);
 		expect(routes.readEntries.get('false_keyword')?.map((e) => e.vocab)).toEqual(['literal.boolean']);
+	});
+
+	it('enters a claim on a kind on each variant the kind owns, unless the variant has a claim of its own', async () => {
+		const routes = resolveRoutes(await grammar(['(_struct) @declaration.struct', '(struct_named) @declaration.struct.named'].join('\n')));
+		expect(routes.readEntries.get('struct_unit')?.map((e) => [e.claimed, e.vocab])).toEqual([['_struct', 'declaration.struct']]);
+		expect(routes.readEntries.get('struct_tuple')?.map((e) => [e.claimed, e.vocab])).toEqual([['_struct', 'declaration.struct']]);
+		expect(routes.members.get('struct_tuple')?.map((r) => r.name)).toEqual(['name', 'fields']);
+		expect(routes.readEntries.get('struct_named')?.map((e) => e.vocab)).toEqual(['declaration.struct.named']);
+	});
+
+	it('enters no claim on a variant of a branch: the variant is a part of its owner, not a form', async () => {
+		const routes = resolveRoutes(await grammar('(arrow) @expression.lambda'));
+		expect(routes.readEntries.has('arrow_param')).toBe(false);
+	});
+
+	it('carries a supertype claim\'s field renames to each form it reaches', async () => {
+		const routes = resolveRoutes(await grammar('(_struct name: (_) @title) @declaration.struct'));
+		expect(routes.members.get('struct_unit')?.map((r) => r.name)).toEqual(['title']);
+		expect(routes.members.get('struct_tuple')?.map((r) => r.name)).toEqual(['title', 'fields']);
 	});
 
 	it('enters a claim pinning an enum kind\'s token only on the member that is that token', async () => {

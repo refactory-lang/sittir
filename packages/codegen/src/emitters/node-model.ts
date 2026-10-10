@@ -76,6 +76,7 @@ interface SerializedNodeBase {
 	seated?: true;
 	renamedFrom?: string;
 	splitFrom?: string;
+	variantOf?: string;
 	isParameterless?: boolean;
 	stampExpression?: string;
 	oneSurface?: true;
@@ -234,6 +235,7 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 		...(node.seated ? { seated: true } : {}),
 		...(node.renamedFrom !== undefined ? { renamedFrom: node.renamedFrom } : {}),
 		...(node.splitFrom !== undefined ? { splitFrom: node.splitFrom } : {}),
+		...(node.variantOf !== undefined ? { variantOf: node.variantOf } : {}),
 		...(node.parameterless ? { isParameterless: true } : {}),
 		...(node.stampExpression !== undefined ? { stampExpression: node.stampExpression } : {})
 	};

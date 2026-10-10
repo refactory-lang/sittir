@@ -23,6 +23,7 @@ export type RulePathSegment =
 export interface KindProvenance {
 	readonly renamedFrom?: Readonly<Record<string, string>>;
 	readonly splitFrom?: Readonly<Record<string, string>>;
+	readonly variantOf?: Readonly<Record<string, string>>;
 }
 
 export interface RuleCatalogEntry {

@@ -5335,6 +5335,10 @@ A label's stamped provenance. A label without one was minted after `stampLabelPr
 `{parent -> VariantChild[]}` for every rule in `rules` that has at least one
 variant, by `variantChildrenOf`, with `definedBy` read from each label's stamp.
 
+### `packages/codegen/src/compiler/variant-structural.ts::ownedVariants`
+
+`{variant -> owner}` for every variant its owner owns: the variant's one reference in the grammar is the owner's arm stamped `variantOf` that owner. A variant referenced anywhere else is a kind of its own that the arm only names (rust `pointer_type`'s `mutable_specifier`), and gets no entry. `undefined` when no variant is owned. The owned variant of a supertype is a form of it: a node of the variant stands where a node of the supertype would.
+
 ### `packages/codegen/src/compiler/variant-structural.ts::variantChildrenOf`
 
 The variants of `parentKind` in `rule`, in tree-walk order and listed once
@@ -6734,7 +6738,7 @@ grammar that never ran through `wire()`; then no label is automatic.
 
 ### `packages/codegen/src/compiler/types.ts::KindProvenance`
 
-Where the bindings overlay's kinds came from: `renamedFrom` maps a renamed kind to its base kind, and `splitFrom` maps a split clone to the kind it was cloned from. `bindGrammar` writes both maps onto the evaluated grammar; link carries them under linked names, and every stage after it passes the one object through to the nodes.
+Where a kind came from: `renamedFrom` maps a renamed kind to its base kind, `splitFrom` maps a split clone to the kind it was cloned from, and `variantOf` maps an owned variant to the kind it is a variant of (`ownedVariants`). `bindGrammar` writes the first two maps onto the evaluated grammar and link derives the third from the linked rules; link carries them under linked names, and every stage after it passes the one object through to the nodes.
 
 A `splitFrom` value is the source kind's bound name, never a base name: `bindGrammar` splits after it renames, and link renames the values with the keys. A clone of a renamed kind therefore names the renamed kind (rust `method_declaration` → `function_declaration`), and the base name is one more step through `renamedFrom` (`function_declaration` → `function_item`).
 

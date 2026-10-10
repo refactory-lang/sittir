@@ -25,6 +25,8 @@ export interface PortableIds {
 		| TSKindId.RelativeImport
 		| TSKindId.WildcardImport
 		| TSKindId.WithClause
+		| TSKindId.WithClauseBare
+		| TSKindId.WithClauseParen
 		| TSKindId.WithItem;
 	'clause.case': TSKindId.CaseClause;
 	'clause.comprehension': TSKindId.ComprehensionClauses | TSKindId.ForInClause | TSKindId.IfClause;
@@ -41,7 +43,7 @@ export interface PortableIds {
 	'clause.import.wildcard': TSKindId.WildcardImport;
 	'clause.print': TSKindId.Chevron;
 	'clause.print.chevron': TSKindId.Chevron;
-	'clause.with': TSKindId.WithClause | TSKindId.WithItem;
+	'clause.with': TSKindId.WithClause | TSKindId.WithClauseBare | TSKindId.WithClauseParen | TSKindId.WithItem;
 	'clause.with.item': TSKindId.WithItem;
 	comment: TSKindId.Comment;
 	'comment.line': TSKindId.Comment;
@@ -205,6 +207,13 @@ export interface PortableIds {
 		| TSKindId.Ellipsis
 		| TSKindId.EscapeInterpolation
 		| TSKindId.EscapeSequence
+		| TSKindId.EscapeSequenceHex
+		| TSKindId.EscapeSequenceLineBreak
+		| TSKindId.EscapeSequenceNamed
+		| TSKindId.EscapeSequenceOctal
+		| TSKindId.EscapeSequenceSimple
+		| TSKindId.EscapeSequenceUnicodeFixed
+		| TSKindId.EscapeSequenceUnicodeWide
 		| TSKindId.False
 		| TSKindId.FloatLeadingPoint
 		| TSKindId.FloatPoint
@@ -252,10 +261,26 @@ export interface PortableIds {
 		| TSKindId.ConcatenatedString
 		| TSKindId.EscapeInterpolation
 		| TSKindId.EscapeSequence
+		| TSKindId.EscapeSequenceHex
+		| TSKindId.EscapeSequenceLineBreak
+		| TSKindId.EscapeSequenceNamed
+		| TSKindId.EscapeSequenceOctal
+		| TSKindId.EscapeSequenceSimple
+		| TSKindId.EscapeSequenceUnicodeFixed
+		| TSKindId.EscapeSequenceUnicodeWide
 		| TSKindId.String;
 	'literal.string.bytes': TSKindId.String;
 	'literal.string.concatenated': TSKindId.ConcatenatedString;
-	'literal.string.escape': TSKindId.EscapeInterpolation | TSKindId.EscapeSequence;
+	'literal.string.escape':
+		| TSKindId.EscapeInterpolation
+		| TSKindId.EscapeSequence
+		| TSKindId.EscapeSequenceHex
+		| TSKindId.EscapeSequenceLineBreak
+		| TSKindId.EscapeSequenceNamed
+		| TSKindId.EscapeSequenceOctal
+		| TSKindId.EscapeSequenceSimple
+		| TSKindId.EscapeSequenceUnicodeFixed
+		| TSKindId.EscapeSequenceUnicodeWide;
 	'literal.string.f': TSKindId.String;
 	'literal.string.raw': TSKindId.String;
 	'literal.string.triple': TSKindId.String;
@@ -1852,6 +1877,8 @@ const table: PortableTable = {
 				TSKindId.RelativeImport,
 				TSKindId.WildcardImport,
 				TSKindId.WithClause,
+				TSKindId.WithClauseBare,
+				TSKindId.WithClauseParen,
 				TSKindId.WithItem
 			],
 			exact: true
@@ -1877,7 +1904,10 @@ const table: PortableTable = {
 		'clause.import.wildcard': { ids: [TSKindId.WildcardImport], exact: true },
 		'clause.print': { ids: [TSKindId.Chevron], exact: true },
 		'clause.print.chevron': { ids: [TSKindId.Chevron], exact: true },
-		'clause.with': { ids: [TSKindId.WithClause, TSKindId.WithItem], exact: true },
+		'clause.with': {
+			ids: [TSKindId.WithClause, TSKindId.WithClauseBare, TSKindId.WithClauseParen, TSKindId.WithItem],
+			exact: true
+		},
 		'clause.with.item': { ids: [TSKindId.WithItem], exact: true },
 		comment: { ids: [TSKindId.Comment], exact: true },
 		'comment.line': { ids: [TSKindId.Comment], exact: true },
@@ -2069,6 +2099,13 @@ const table: PortableTable = {
 				TSKindId.Ellipsis,
 				TSKindId.EscapeInterpolation,
 				TSKindId.EscapeSequence,
+				TSKindId.EscapeSequenceHex,
+				TSKindId.EscapeSequenceLineBreak,
+				TSKindId.EscapeSequenceNamed,
+				TSKindId.EscapeSequenceOctal,
+				TSKindId.EscapeSequenceSimple,
+				TSKindId.EscapeSequenceUnicodeFixed,
+				TSKindId.EscapeSequenceUnicodeWide,
 				TSKindId.False,
 				TSKindId.FloatLeadingPoint,
 				TSKindId.FloatPoint,
@@ -2127,12 +2164,37 @@ const table: PortableTable = {
 		'literal.number.integer.imaginary': { ids: [TSKindId.IntegerDecimalImaginary], exact: true },
 		'literal.number.integer.octal': { ids: [TSKindId.IntegerOctal], exact: true },
 		'literal.string': {
-			ids: [TSKindId.ConcatenatedString, TSKindId.EscapeInterpolation, TSKindId.EscapeSequence, TSKindId.String],
+			ids: [
+				TSKindId.ConcatenatedString,
+				TSKindId.EscapeInterpolation,
+				TSKindId.EscapeSequence,
+				TSKindId.EscapeSequenceHex,
+				TSKindId.EscapeSequenceLineBreak,
+				TSKindId.EscapeSequenceNamed,
+				TSKindId.EscapeSequenceOctal,
+				TSKindId.EscapeSequenceSimple,
+				TSKindId.EscapeSequenceUnicodeFixed,
+				TSKindId.EscapeSequenceUnicodeWide,
+				TSKindId.String
+			],
 			exact: true
 		},
 		'literal.string.bytes': { ids: [TSKindId.String], exact: false },
 		'literal.string.concatenated': { ids: [TSKindId.ConcatenatedString], exact: true },
-		'literal.string.escape': { ids: [TSKindId.EscapeInterpolation, TSKindId.EscapeSequence], exact: true },
+		'literal.string.escape': {
+			ids: [
+				TSKindId.EscapeInterpolation,
+				TSKindId.EscapeSequence,
+				TSKindId.EscapeSequenceHex,
+				TSKindId.EscapeSequenceLineBreak,
+				TSKindId.EscapeSequenceNamed,
+				TSKindId.EscapeSequenceOctal,
+				TSKindId.EscapeSequenceSimple,
+				TSKindId.EscapeSequenceUnicodeFixed,
+				TSKindId.EscapeSequenceUnicodeWide
+			],
+			exact: true
+		},
 		'literal.string.f': { ids: [TSKindId.String], exact: false },
 		'literal.string.raw': { ids: [TSKindId.String], exact: false },
 		'literal.string.triple': { ids: [TSKindId.String], exact: false },
@@ -2725,6 +2787,13 @@ const table: PortableTable = {
 		[TSKindId.ElseClause]: [{ path: 'clause.else', within: [], test: [] }],
 		[TSKindId.EscapeInterpolation]: [{ path: 'literal.string.escape', within: [], test: [] }],
 		[TSKindId.EscapeSequence]: [{ path: 'literal.string.escape', within: [], test: [] }],
+		[TSKindId.EscapeSequenceHex]: [{ path: 'literal.string.escape', within: [], test: [] }],
+		[TSKindId.EscapeSequenceLineBreak]: [{ path: 'literal.string.escape', within: [], test: [] }],
+		[TSKindId.EscapeSequenceNamed]: [{ path: 'literal.string.escape', within: [], test: [] }],
+		[TSKindId.EscapeSequenceOctal]: [{ path: 'literal.string.escape', within: [], test: [] }],
+		[TSKindId.EscapeSequenceSimple]: [{ path: 'literal.string.escape', within: [], test: [] }],
+		[TSKindId.EscapeSequenceUnicodeFixed]: [{ path: 'literal.string.escape', within: [], test: [] }],
+		[TSKindId.EscapeSequenceUnicodeWide]: [{ path: 'literal.string.escape', within: [], test: [] }],
 		[TSKindId.ExceptClause]: [{ path: 'clause.except', within: [], test: [] }],
 		[TSKindId.ExecStatement]: [{ path: 'statement.exec', within: [], test: [] }],
 		[TSKindId.ExpressionList]: [{ path: 'expression.collection.tuple.bare', within: [], test: [] }],
@@ -2884,6 +2953,8 @@ const table: PortableTable = {
 		[TSKindId.WhileStatement]: [{ path: 'statement.loop.while', within: [], test: [] }],
 		[TSKindId.WildcardImport]: [{ path: 'clause.import.wildcard', within: [], test: [] }],
 		[TSKindId.WithClause]: [{ path: 'clause.with', within: [], test: [] }],
+		[TSKindId.WithClauseBare]: [{ path: 'clause.with', within: [], test: [] }],
+		[TSKindId.WithClauseParen]: [{ path: 'clause.with', within: [], test: [] }],
 		[TSKindId.WithItem]: [{ path: 'clause.with.item', within: [], test: [] }],
 		[TSKindId.WithStatement]: [{ path: 'statement.with', within: [], test: [] }],
 		[TSKindId.Yield]: [{ path: 'expression.yield', within: [], test: [] }]

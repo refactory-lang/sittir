@@ -10260,6 +10260,10 @@ The node's `renamedFrom`, written only when the kind was renamed. Tools read the
 
 The node's `splitFrom`, written only on a split clone. The validators place a split kind's render inside its owner from it.
 
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.variantOf`
+
+The node's `variantOf`, written only on an owned variant. Route derivation reaches a supertype's forms by it (`formsOf`).
+
 ### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.oneSurface`
 
 Set on a kind with one builder and no strict/coerce pair (`hasOneSurface`). The predicate is the emitter's own, stamped here so a tool that spells calls reads it and does not re-derive it from the kind's shape.

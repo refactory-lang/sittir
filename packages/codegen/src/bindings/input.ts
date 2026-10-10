@@ -32,6 +32,7 @@ export interface NodeModelNode {
 	readonly members?: readonly EnumMember[];
 	readonly text?: string;
 	readonly pattern?: string;
+	readonly variantOf?: string;
 }
 
 export interface NodeModelRecord {
@@ -60,7 +61,8 @@ export function slotModelOf(record: NodeModelRecord): SlotModel {
 			elementKinds: n.elementKinds ?? [],
 			enumMembers: n.members ?? [],
 			text: n.text ?? null,
-			pattern: n.pattern ?? null
+			pattern: n.pattern ?? null,
+			variantOf: n.variantOf ?? null
 		});
 	}
 	return out;

@@ -263,6 +263,11 @@ function ownTextEquals(claim: ClaimFact): readonly string[] {
 	];
 }
 
+export function formsOf(model: SlotModel, kind: string): readonly string[] {
+	if (modelNode(model, kind)?.modelType !== 'supertype') return [kind];
+	return [kind, ...[...model.values()].filter((node) => node.variantOf === kind).map((node) => node.kind)];
+}
+
 function readKinds(model: SlotModel, kind: string, claim: ClaimFact): readonly string[] {
 	const members = modelNode(model, kind)?.enumMembers ?? [];
 	if (members.length === 0) return [kind];
@@ -271,21 +276,30 @@ function readKinds(model: SlotModel, kind: string, claim: ClaimFact): readonly s
 }
 
 export function resolveRoutes(input: GrammarInput): GrammarRoutes {
+	const named = input.bindings.claims.flatMap((c) => (c.kind === null || c.kind === WILDCARD ? [] : [c]));
+	const claimsOwn = new Set(named.map((c) => `${c.kind} ${c.vocab}`));
+	const selfClaimed = new Set(named.map((c) => c.kind));
+	const reached = (owner: string): readonly string[] => formsOf(input.model, owner).filter((form) => form === owner || !selfClaimed.has(form));
+
 	const renames = new Map<string, Map<string, string>>();
 	for (const member of input.bindings.members) {
 		if (member.route !== 'rename') continue;
-		const slot = slotFor(input.model, modelNode(input.model, member.owner)?.slots ?? [], member);
-		if (slot !== undefined)
-			(renames.get(member.owner) ?? renames.set(member.owner, new Map<string, string>()).get(member.owner))?.set(slot.name, member.name);
+		for (const form of reached(member.owner)) {
+			const slot = slotFor(input.model, modelNode(input.model, form)?.slots ?? [], member);
+			if (slot !== undefined) (renames.get(form) ?? renames.set(form, new Map<string, string>()).get(form))?.set(slot.name, member.name);
+		}
 	}
 	const renamesOf = (kind: string): ReadonlyMap<string, string> => renames.get(kind) ?? new Map<string, string>();
 
 	const readEntries = new Map<string, ReadEntry[]>();
-	const claimsOwn = new Set(input.bindings.claims.flatMap((c) => (c.kind === null || c.kind === WILDCARD ? [] : [`${c.kind} ${c.vocab}`])));
 	input.bindings.claims.forEach((claim, index) => {
-		if (claim.kind === null) return;
-		const kinds = claim.kind === WILDCARD ? admittedKinds(input.model, claim).filter((kind) => !claimsOwn.has(`${kind} ${claim.vocab}`)) : [claim.kind];
-		for (const [claimed, kind] of kinds.flatMap((k) => readKinds(input.model, k, claim).map((read) => [k, read] as const))) {
+		const owner = claim.kind;
+		if (owner === null) return;
+		const forms =
+			owner === WILDCARD
+				? admittedKinds(input.model, claim).filter((kind) => !claimsOwn.has(`${kind} ${claim.vocab}`))
+				: reached(owner);
+		for (const [claimed, kind] of forms.flatMap((form) => readKinds(input.model, form, claim).map((read) => [owner === WILDCARD ? form : owner, read] as const))) {
 			const entry: ReadEntry = {
 				kind,
 				claimed,

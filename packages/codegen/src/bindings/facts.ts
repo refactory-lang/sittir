@@ -135,6 +135,7 @@ export interface ModelNode {
 	readonly enumMembers: readonly EnumMember[];
 	readonly text: string | null;
 	readonly pattern: string | null;
+	readonly variantOf: string | null;
 }
 
 export type SlotModel = ReadonlyMap<string, ModelNode>;

@@ -166,6 +166,12 @@ describe('portable is: typescript', async () => {
 		const [member, context] = find('enum E { A, B = 1 }\n', 'enum_assignment');
 		expect(at('declaration.enum_member')(member, context)).toBe(true);
 	});
+
+	it('holds a supertype\'s path for a variant that reads by a claim of its own', () => {
+		const [hex] = find('let x = 0x1F;\n', 'number_hex');
+		expect(at('literal.number.integer.hex')(hex)).toBe(true);
+		expect(at('literal.number')(hex)).toBe(true);
+	});
 });
 
 describe('portable is agrees with one classification', () => {

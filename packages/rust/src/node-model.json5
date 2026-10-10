@@ -4788,6 +4788,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_type",
       "slots": [
         {
           "name": "type_parameters",
@@ -5194,6 +5195,7 @@
         ]
       ],
       "hidden": true,
+      "variantOf": "_expression_except_range",
       "transparent": true,
       "subtypes": [
         "array_expression_list",
@@ -5225,6 +5227,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "array_expression",
       "slots": [
         {
           "name": "attributes",
@@ -5303,6 +5306,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "array_expression",
       "slots": [
         {
           "name": "attributes",
@@ -5463,6 +5467,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "left",
@@ -5531,6 +5536,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_declaration_statement",
       "slots": [
         {
           "name": "name",
@@ -5637,6 +5643,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_ending_with_block",
       "slots": [
         {
           "name": "move",
@@ -5934,6 +5941,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "attribute",
       "slots": [
         {
           "name": "value",
@@ -6473,6 +6481,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "expression",
@@ -6755,6 +6764,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "left",
@@ -7025,6 +7035,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "comment",
       "slots": [
         {
           "name": "content",
@@ -7118,6 +7129,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "block_comment",
       "slots": [
         {
           "name": "doc",
@@ -7183,6 +7195,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "block_comment",
       "slots": [
         {
           "name": "doc",
@@ -7237,6 +7250,7 @@
         "blockCommentRegular"
       ],
       "hidden": false,
+      "variantOf": "block_comment",
       "pattern": "[^]*",
       "leafPattern": "/^(?:(?:[^]*))$/u",
       "oneSurface": true,
@@ -7473,6 +7487,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "label",
@@ -7547,6 +7562,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "function",
@@ -7997,6 +8013,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_pattern",
       "slots": [
         {
           "name": "name",
@@ -8126,6 +8143,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "char_literal",
       "leafPattern": "/^(?:(?:b)?'')$/u",
       "oneSurface": true,
       "factoryShape": "text"
@@ -8158,6 +8176,7 @@
       "annotations": {
         "tokenForm": true
       },
+      "variantOf": "char_literal",
       "transparent": true,
       "subtypes": [
         "char_literal_escaped_hex",
@@ -8204,6 +8223,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "char_literal_escaped",
       "slots": [
         {
           "name": "b",
@@ -8314,6 +8334,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "char_literal_escaped",
       "slots": [
         {
           "name": "b",
@@ -8424,6 +8445,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "char_literal_escaped",
       "slots": [
         {
           "name": "b",
@@ -8534,6 +8556,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "char_literal_escaped",
       "slots": [
         {
           "name": "b",
@@ -8637,6 +8660,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "char_literal",
       "slots": [
         {
           "name": "b",
@@ -8755,6 +8779,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "closure_expression",
       "slots": [
         {
           "name": "static",
@@ -8907,6 +8932,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "closure_expression",
       "slots": [
         {
           "name": "static",
@@ -9121,6 +9147,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "left",
@@ -9313,6 +9340,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_declaration_statement",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -9529,6 +9557,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "label",
@@ -9697,6 +9726,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "delim_token_tree",
       "slots": [
         {
           "name": "delim_tokens",
@@ -9758,6 +9788,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "delim_token_tree",
       "slots": [
         {
           "name": "delim_tokens",
@@ -9819,6 +9850,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "delim_token_tree",
       "slots": [
         {
           "name": "delim_tokens",
@@ -9955,6 +9987,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_type",
       "slots": [
         {
           "name": "trait",
@@ -10135,6 +10168,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_declaration_statement",
       "isParameterless": true,
       "stampExpression": "\";\" as const",
       "text": ";",
@@ -10161,6 +10195,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_declaration_statement",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -10561,6 +10596,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "escape_sequence",
       "slots": [
         {
           "name": "content",
@@ -10637,6 +10673,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "escape_sequence",
       "slots": [
         {
           "name": "content",
@@ -10713,6 +10750,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "escape_sequence",
       "slots": [
         {
           "name": "content",
@@ -10789,6 +10827,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "escape_sequence",
       "slots": [
         {
           "name": "content",
@@ -10880,6 +10919,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_statement",
       "slots": [
         {
           "name": "content",
@@ -11099,6 +11139,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "expression_statement",
       "slots": [
         {
           "name": "expression",
@@ -11370,6 +11411,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_declaration_statement",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -12217,6 +12259,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "field_pattern",
       "slots": [
         {
           "name": "ref",
@@ -12326,6 +12369,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "field_pattern",
       "slots": [
         {
           "name": "ref",
@@ -12445,6 +12489,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_ending_with_block",
       "slots": [
         {
           "name": "label",
@@ -12607,6 +12652,7 @@
         ]
       ],
       "hidden": true,
+      "variantOf": "_declaration_statement",
       "transparent": true,
       "subtypes": [
         "foreign_mod_item_body",
@@ -12643,6 +12689,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "foreign_mod_item",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -12743,6 +12790,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "foreign_mod_item",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -12882,6 +12930,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_declaration_statement",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -13144,6 +13193,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_declaration_statement",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -13449,6 +13499,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "function_type",
       "slots": [
         {
           "name": "function_modifiers",
@@ -13504,6 +13555,7 @@
         "definedBy": "enrich"
       },
       "seated": true,
+      "variantOf": "function_type",
       "slots": [
         {
           "name": "trait",
@@ -13560,6 +13612,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_ending_with_block",
       "slots": [
         {
           "name": "move",
@@ -13632,6 +13685,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "function",
@@ -13710,6 +13764,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_pattern",
       "slots": [
         {
           "name": "name",
@@ -14226,6 +14281,7 @@
         ]
       ],
       "hidden": true,
+      "variantOf": "_declaration_statement",
       "transparent": true,
       "subtypes": [
         "impl_item_body",
@@ -14262,6 +14318,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "impl_item",
       "slots": [
         {
           "name": "unsafe",
@@ -14561,6 +14618,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "impl_item",
       "slots": [
         {
           "name": "unsafe",
@@ -14729,6 +14787,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "object",
@@ -14918,6 +14977,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "integer_literal",
       "slots": [
         {
           "name": "content",
@@ -15095,6 +15155,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "integer_literal",
       "slots": [
         {
           "name": "content",
@@ -15272,6 +15333,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "integer_literal",
       "slots": [
         {
           "name": "content",
@@ -15449,6 +15511,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "integer_literal",
       "slots": [
         {
           "name": "content",
@@ -15873,6 +15936,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_declaration_statement",
       "slots": [
         {
           "name": "mutable",
@@ -16184,6 +16248,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "comment",
       "slots": [
         {
           "name": "content",
@@ -16290,6 +16355,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "line_comment",
       "slots": [
         {
           "name": "doc",
@@ -16355,6 +16421,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "line_comment",
       "slots": [
         {
           "name": "doc",
@@ -16424,6 +16491,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "line_comment",
       "leafPattern": "/^(?:(?:\\/\\/)(?:.*))$/u",
       "oneSurface": true,
       "factoryShape": "text"
@@ -16438,6 +16506,7 @@
         "lineCommentRegular"
       ],
       "hidden": false,
+      "variantOf": "line_comment",
       "pattern": ".*",
       "leafPattern": "/^(?:(?:.*))$/u",
       "oneSurface": true,
@@ -16469,6 +16538,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_ending_with_block",
       "slots": [
         {
           "name": "label",
@@ -16591,6 +16661,7 @@
         ]
       ],
       "hidden": true,
+      "variantOf": "_declaration_statement",
       "transparent": true,
       "subtypes": [
         "macro_definition_brace",
@@ -16628,6 +16699,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "macro_definition",
       "slots": [
         {
           "name": "name",
@@ -16729,6 +16801,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "macro_definition",
       "slots": [
         {
           "name": "name",
@@ -16830,6 +16903,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "macro_definition",
       "slots": [
         {
           "name": "name",
@@ -17160,6 +17234,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "match_arm",
       "slots": [
         {
           "name": "attributes",
@@ -17331,6 +17406,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "match_arm",
       "slots": [
         {
           "name": "attributes",
@@ -17532,6 +17608,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_ending_with_block",
       "slots": [
         {
           "name": "value",
@@ -17765,6 +17842,7 @@
         ]
       ],
       "hidden": true,
+      "variantOf": "_declaration_statement",
       "transparent": true,
       "subtypes": [
         "mod_item_external",
@@ -17801,6 +17879,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "mod_item",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -17880,6 +17959,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "mod_item",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -17986,6 +18066,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_pattern",
       "slots": [
         {
           "name": "pattern",
@@ -18165,6 +18246,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_type",
       "isParameterless": true,
       "stampExpression": "\"!\" as const",
       "text": "!",
@@ -18395,6 +18477,7 @@
         ]
       ],
       "hidden": true,
+      "variantOf": "_pattern",
       "transparent": true,
       "subtypes": [
         "or_pattern_binary",
@@ -18426,6 +18509,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "or_pattern",
       "slots": [
         {
           "name": "left",
@@ -18502,6 +18586,7 @@
         "definedBy": "enrich"
       },
       "seated": true,
+      "variantOf": "or_pattern",
       "slots": [
         {
           "name": "right",
@@ -19093,6 +19178,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "expression",
@@ -19458,6 +19544,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "pointer_type",
       "slots": [
         {
           "name": "type",
@@ -19551,6 +19638,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "pointer_type",
       "slots": [
         {
           "name": "type",
@@ -19798,6 +19886,7 @@
         ]
       ],
       "hidden": true,
+      "variantOf": "_expression",
       "transparent": true,
       "subtypes": [
         "range_expression_bare",
@@ -19831,6 +19920,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "range_expression",
       "isParameterless": true,
       "slots": [
         {
@@ -19890,6 +19980,7 @@
         "definedBy": "enrich"
       },
       "seated": true,
+      "variantOf": "range_expression",
       "slots": [
         {
           "name": "start",
@@ -19997,6 +20088,7 @@
         "definedBy": "enrich"
       },
       "seated": true,
+      "variantOf": "range_expression",
       "slots": [
         {
           "name": "start",
@@ -20139,6 +20231,7 @@
         "definedBy": "enrich"
       },
       "seated": true,
+      "variantOf": "range_expression",
       "slots": [
         {
           "name": "end",
@@ -20269,6 +20362,7 @@
         ]
       ],
       "hidden": true,
+      "variantOf": "_pattern",
       "transparent": true,
       "subtypes": [
         "range_pattern_prefix",
@@ -20300,6 +20394,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "range_pattern",
       "slots": [
         {
           "name": "content",
@@ -20540,6 +20635,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "range_pattern",
       "slots": [
         {
           "name": "left",
@@ -20773,6 +20869,7 @@
         "rangePatternWithLeftBare"
       ],
       "hidden": false,
+      "variantOf": "range_pattern_with_left",
       "isParameterless": true,
       "stampExpression": "\"..\" as const",
       "text": "..",
@@ -20806,6 +20903,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "range_pattern_with_left",
       "slots": [
         {
           "name": "content",
@@ -21215,6 +21313,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_pattern",
       "slots": [
         {
           "name": "pattern",
@@ -21320,6 +21419,7 @@
         ]
       ],
       "hidden": true,
+      "variantOf": "_expression_except_range",
       "transparent": true,
       "subtypes": [
         "reference_expression_bare",
@@ -21353,6 +21453,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "reference_expression",
       "slots": [
         {
           "name": "value",
@@ -21493,6 +21594,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "reference_expression",
       "slots": [
         {
           "name": "value",
@@ -21633,6 +21735,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "reference_expression",
       "slots": [
         {
           "name": "value",
@@ -21773,6 +21876,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "reference_expression",
       "slots": [
         {
           "name": "value",
@@ -21904,6 +22008,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_pattern",
       "slots": [
         {
           "name": "mutable",
@@ -22158,6 +22263,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "expression",
@@ -23005,6 +23111,7 @@
         "scopedUseList"
       ],
       "hidden": false,
+      "variantOf": "_use_clause",
       "slots": [
         {
           "name": "path",
@@ -23529,6 +23636,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_pattern",
       "slots": [
         {
           "name": "patterns",
@@ -23734,6 +23842,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_declaration_statement",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -24015,6 +24124,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "name",
@@ -24096,6 +24206,7 @@
         ]
       ],
       "hidden": true,
+      "variantOf": "_declaration_statement",
       "transparent": true,
       "subtypes": [
         "struct_item_brace",
@@ -24133,6 +24244,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "struct_item",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -24275,6 +24387,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "struct_item",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -24417,6 +24530,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "struct_item",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -24513,6 +24627,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_pattern",
       "slots": [
         {
           "name": "type",
@@ -24660,6 +24775,7 @@
         "tokenBindingPattern"
       ],
       "hidden": false,
+      "variantOf": "_token_pattern",
       "slots": [
         {
           "name": "name",
@@ -24718,6 +24834,7 @@
         "tokenRepetition"
       ],
       "hidden": false,
+      "variantOf": "_tokens",
       "slots": [
         {
           "name": "tokens",
@@ -24828,6 +24945,7 @@
         "tokenRepetitionPattern"
       ],
       "hidden": false,
+      "variantOf": "_token_pattern",
       "slots": [
         {
           "name": "token_patterns",
@@ -24986,6 +25104,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "token_tree",
       "slots": [
         {
           "name": "tokens",
@@ -25055,6 +25174,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "token_tree",
       "slots": [
         {
           "name": "tokens",
@@ -25124,6 +25244,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "token_tree",
       "slots": [
         {
           "name": "tokens",
@@ -25209,6 +25330,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "token_tree_pattern",
       "slots": [
         {
           "name": "token_patterns",
@@ -25285,6 +25407,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "token_tree_pattern",
       "slots": [
         {
           "name": "token_patterns",
@@ -25361,6 +25484,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "token_tree_pattern",
       "slots": [
         {
           "name": "token_patterns",
@@ -25674,6 +25798,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_declaration_statement",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -25861,6 +25986,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_ending_with_block",
       "slots": [
         {
           "name": "body",
@@ -25908,6 +26034,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "value",
@@ -26058,6 +26185,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "attributes",
@@ -26126,6 +26254,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_pattern",
       "slots": [
         {
           "name": "elements",
@@ -26353,6 +26482,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_pattern",
       "slots": [
         {
           "name": "type",
@@ -26913,6 +27043,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "value",
@@ -27017,6 +27148,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_declaration_statement",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -27505,6 +27637,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "operator",
@@ -27593,6 +27726,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_declaration_statement",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -27730,6 +27864,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "isParameterless": true,
       "stampExpression": "\"()\" as const",
       "text": "()",
@@ -27752,6 +27887,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_type",
       "isParameterless": true,
       "stampExpression": "\"()\" as const",
       "text": "()",
@@ -27774,6 +27910,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_ending_with_block",
       "slots": [
         {
           "name": "body",
@@ -27825,6 +27962,7 @@
         "useAsClause"
       ],
       "hidden": false,
+      "variantOf": "_use_clause",
       "slots": [
         {
           "name": "path",
@@ -28409,6 +28547,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_declaration_statement",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -28712,6 +28851,7 @@
         "useWildcard"
       ],
       "hidden": false,
+      "variantOf": "_use_clause",
       "slots": [
         {
           "name": "use_wildcard_group",
@@ -29107,6 +29247,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "visibility_modifier",
       "slots": [
         {
           "name": "visibility_modifier_pub_scope",
@@ -29167,6 +29308,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "visibility_modifier_pub",
       "slots": [
         {
           "name": "content",
@@ -29247,6 +29389,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "visibility_modifier_pub_scope",
       "slots": [
         {
           "name": "path",
@@ -29679,6 +29822,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_ending_with_block",
       "slots": [
         {
           "name": "label",
@@ -29788,6 +29932,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_pattern",
       "isParameterless": true,
       "stampExpression": "\"_\" as const",
       "text": "_",
@@ -29810,6 +29955,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "expression",

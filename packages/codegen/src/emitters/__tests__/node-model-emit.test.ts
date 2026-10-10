@@ -43,6 +43,15 @@ describe('node-model emitter', () => {
 		expect(byKind.get('plain')).not.toHaveProperty('splitFrom');
 	});
 
+	it('serializes the kind an owned variant is a form of', () => {
+		const provenance = { variantOf: { struct_unit: 'struct' } };
+		const pattern = (kind: string) => new AssembledPattern(kind, { type: PATTERN, value: '[a-z]+' }, { provenance });
+		const model = buildNodeModel(makeNodeMapWith(new Map([['struct_unit', pattern('struct_unit')], ['plain', pattern('plain')]])));
+		const byKind = new Map(model.nodes.map((node) => [node.kind, node]));
+		expect(byKind.get('struct_unit')).toMatchObject({ variantOf: 'struct' });
+		expect(byKind.get('plain')).not.toHaveProperty('variantOf');
+	});
+
 	it('serializes per-value parseKind without slot-level aliasSources', () => {
 		const rule: SeqRule<'link'> = {
 			type: SEQ,

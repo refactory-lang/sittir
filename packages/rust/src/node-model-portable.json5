@@ -68,6 +68,89 @@
       ],
       "members": []
     },
+    "array_expression_list": {
+      "vocab": "expression.collection.list",
+      "read": [
+        {
+          "vocab": "expression.collection.list",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "attributes",
+          "route": "slot",
+          "slot": "attributes",
+          "path": [
+            {
+              "owner": "array_expression_list",
+              "slot": "attributes"
+            }
+          ]
+        },
+        {
+          "name": "elements",
+          "route": "slot",
+          "slot": "elements",
+          "path": [
+            {
+              "owner": "array_expression_list",
+              "slot": "elements"
+            }
+          ]
+        }
+      ]
+    },
+    "array_expression_semi": {
+      "vocab": "expression.collection.list",
+      "read": [
+        {
+          "vocab": "expression.collection.list",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "attributes",
+          "route": "slot",
+          "slot": "attributes",
+          "path": [
+            {
+              "owner": "array_expression_semi",
+              "slot": "attributes"
+            }
+          ]
+        },
+        {
+          "name": "element",
+          "route": "slot",
+          "slot": "element",
+          "path": [
+            {
+              "owner": "array_expression_semi",
+              "slot": "element"
+            }
+          ]
+        },
+        {
+          "name": "length",
+          "route": "slot",
+          "slot": "length",
+          "path": [
+            {
+              "owner": "array_expression_semi",
+              "slot": "length"
+            }
+          ]
+        }
+      ]
+    },
     "array_type": {
       "vocab": "type.array",
       "read": [
@@ -1310,6 +1393,7 @@
       "members": []
     },
     "char_literal_empty": {
+      "vocab": "literal.char",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -1317,6 +1401,26 @@
           "within": [
             "closure_parameters"
           ],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "literal.char",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
+    "char_literal_escaped": {
+      "vocab": "literal.char",
+      "read": [
+        {
+          "vocab": "literal.char",
+          "toplevel": true,
+          "within": [],
           "pins": [],
           "test": []
         }
@@ -1472,6 +1576,7 @@
       ]
     },
     "char_literal_plain": {
+      "vocab": "literal.char",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -1479,6 +1584,13 @@
           "within": [
             "closure_parameters"
           ],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "literal.char",
+          "toplevel": true,
+          "within": [],
           "pins": [],
           "test": []
         }
@@ -1520,6 +1632,155 @@
         }
       ],
       "members": []
+    },
+    "closure_expression_block": {
+      "vocab": "expression.lambda",
+      "read": [
+        {
+          "vocab": "expression.lambda",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "static",
+          "route": "slot",
+          "slot": "static",
+          "path": [
+            {
+              "owner": "closure_expression_block",
+              "slot": "static"
+            }
+          ]
+        },
+        {
+          "name": "async",
+          "route": "slot",
+          "slot": "async",
+          "path": [
+            {
+              "owner": "closure_expression_block",
+              "slot": "async"
+            }
+          ]
+        },
+        {
+          "name": "move",
+          "route": "slot",
+          "slot": "move",
+          "path": [
+            {
+              "owner": "closure_expression_block",
+              "slot": "move"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "slot",
+          "slot": "parameters",
+          "path": [
+            {
+              "owner": "closure_expression_block",
+              "slot": "parameters"
+            }
+          ]
+        },
+        {
+          "name": "returnType",
+          "route": "slot",
+          "slot": "return_type",
+          "path": [
+            {
+              "owner": "closure_expression_block",
+              "slot": "return_type"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "closure_expression_block",
+              "slot": "body"
+            }
+          ]
+        }
+      ]
+    },
+    "closure_expression_expr": {
+      "vocab": "expression.lambda",
+      "read": [
+        {
+          "vocab": "expression.lambda",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "static",
+          "route": "slot",
+          "slot": "static",
+          "path": [
+            {
+              "owner": "closure_expression_expr",
+              "slot": "static"
+            }
+          ]
+        },
+        {
+          "name": "async",
+          "route": "slot",
+          "slot": "async",
+          "path": [
+            {
+              "owner": "closure_expression_expr",
+              "slot": "async"
+            }
+          ]
+        },
+        {
+          "name": "move",
+          "route": "slot",
+          "slot": "move",
+          "path": [
+            {
+              "owner": "closure_expression_expr",
+              "slot": "move"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "slot",
+          "slot": "parameters",
+          "path": [
+            {
+              "owner": "closure_expression_expr",
+              "slot": "parameters"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "closure_expression_expr",
+              "slot": "body"
+            }
+          ]
+        }
+      ]
     },
     "closure_parameters": {
       "container": {
@@ -2075,6 +2336,29 @@
       "members": []
     },
     "delim_token_tree_brace": {
+      "vocab": "element.macro.token_tree.delimited",
+      "read": [
+        {
+          "vocab": "element.macro.token_tree.delimited",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "delimTokens",
+          "route": "slot",
+          "slot": "delim_tokens",
+          "path": [
+            {
+              "owner": "delim_token_tree_brace",
+              "slot": "delim_tokens"
+            }
+          ]
+        }
+      ],
       "container": {
         "kinds": [
           "non_special_token",
@@ -2087,6 +2371,29 @@
       }
     },
     "delim_token_tree_bracket": {
+      "vocab": "element.macro.token_tree.delimited",
+      "read": [
+        {
+          "vocab": "element.macro.token_tree.delimited",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "delimTokens",
+          "route": "slot",
+          "slot": "delim_tokens",
+          "path": [
+            {
+              "owner": "delim_token_tree_bracket",
+              "slot": "delim_tokens"
+            }
+          ]
+        }
+      ],
       "container": {
         "kinds": [
           "non_special_token",
@@ -2099,6 +2406,29 @@
       }
     },
     "delim_token_tree_paren": {
+      "vocab": "element.macro.token_tree.delimited",
+      "read": [
+        {
+          "vocab": "element.macro.token_tree.delimited",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "delimTokens",
+          "route": "slot",
+          "slot": "delim_tokens",
+          "path": [
+            {
+              "owner": "delim_token_tree_paren",
+              "slot": "delim_tokens"
+            }
+          ]
+        }
+      ],
       "container": {
         "kinds": [
           "non_special_token",
@@ -2344,6 +2674,106 @@
         }
       ],
       "members": []
+    },
+    "escape_sequence_hex": {
+      "vocab": "literal.string.escape",
+      "read": [
+        {
+          "vocab": "literal.string.escape",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "escape_sequence_hex",
+              "slot": "content"
+            }
+          ]
+        }
+      ]
+    },
+    "escape_sequence_simple": {
+      "vocab": "literal.string.escape",
+      "read": [
+        {
+          "vocab": "literal.string.escape",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "escape_sequence_simple",
+              "slot": "content"
+            }
+          ]
+        }
+      ]
+    },
+    "escape_sequence_unicode_braced": {
+      "vocab": "literal.string.escape",
+      "read": [
+        {
+          "vocab": "literal.string.escape",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "escape_sequence_unicode_braced",
+              "slot": "content"
+            }
+          ]
+        }
+      ]
+    },
+    "escape_sequence_unicode_fixed": {
+      "vocab": "literal.string.escape",
+      "read": [
+        {
+          "vocab": "literal.string.escape",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "escape_sequence_unicode_fixed",
+              "slot": "content"
+            }
+          ]
+        }
+      ]
     },
     "expr_2021_keyword": {
       "vocab": "element.macro.fragment",
@@ -2795,6 +3225,111 @@
       ],
       "members": []
     },
+    "field_pattern_named": {
+      "vocab": "pattern.struct.field",
+      "read": [
+        {
+          "vocab": "pattern.struct.field",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "ref",
+          "route": "slot",
+          "slot": "ref",
+          "path": [
+            {
+              "owner": "field_pattern_named",
+              "slot": "ref"
+            }
+          ]
+        },
+        {
+          "name": "mutable",
+          "route": "slot",
+          "slot": "mutable",
+          "path": [
+            {
+              "owner": "field_pattern_named",
+              "slot": "mutable"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "field_pattern_named",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "pattern",
+          "route": "slot",
+          "slot": "pattern",
+          "path": [
+            {
+              "owner": "field_pattern_named",
+              "slot": "pattern"
+            }
+          ]
+        }
+      ]
+    },
+    "field_pattern_shorthand": {
+      "vocab": "pattern.struct.field",
+      "read": [
+        {
+          "vocab": "pattern.struct.field",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "ref",
+          "route": "slot",
+          "slot": "ref",
+          "path": [
+            {
+              "owner": "field_pattern_shorthand",
+              "slot": "ref"
+            }
+          ]
+        },
+        {
+          "name": "mutable",
+          "route": "slot",
+          "slot": "mutable",
+          "path": [
+            {
+              "owner": "field_pattern_shorthand",
+              "slot": "mutable"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "field_pattern_shorthand",
+              "slot": "name"
+            }
+          ]
+        }
+      ]
+    },
     "float_literal": {
       "vocab": "literal.number.float",
       "read": [
@@ -2919,6 +3454,89 @@
         }
       ],
       "members": []
+    },
+    "foreign_mod_item_body": {
+      "vocab": "declaration.module.foreign",
+      "read": [
+        {
+          "vocab": "declaration.module.foreign",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "visibility",
+          "route": "slot",
+          "slot": "visibility_modifier",
+          "path": [
+            {
+              "owner": "foreign_mod_item_body",
+              "slot": "visibility_modifier"
+            }
+          ]
+        },
+        {
+          "name": "extern",
+          "route": "slot",
+          "slot": "extern_modifier",
+          "path": [
+            {
+              "owner": "foreign_mod_item_body",
+              "slot": "extern_modifier"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "foreign_mod_item_body",
+              "slot": "body"
+            }
+          ]
+        }
+      ]
+    },
+    "foreign_mod_item_semi": {
+      "vocab": "declaration.module.foreign",
+      "read": [
+        {
+          "vocab": "declaration.module.foreign",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "visibility",
+          "route": "slot",
+          "slot": "visibility_modifier",
+          "path": [
+            {
+              "owner": "foreign_mod_item_semi",
+              "slot": "visibility_modifier"
+            }
+          ]
+        },
+        {
+          "name": "extern",
+          "route": "slot",
+          "slot": "extern_modifier",
+          "path": [
+            {
+              "owner": "foreign_mod_item_semi",
+              "slot": "extern_modifier"
+            }
+          ]
+        }
+      ]
     },
     "function_item": {
       "vocab": "declaration.function",
@@ -4819,6 +5437,114 @@
       ],
       "members": []
     },
+    "macro_definition_brace": {
+      "vocab": "declaration.macro",
+      "read": [
+        {
+          "vocab": "declaration.macro",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "macro_definition_brace",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "macroRules",
+          "route": "slot",
+          "slot": "macro_rules",
+          "path": [
+            {
+              "owner": "macro_definition_brace",
+              "slot": "macro_rules"
+            }
+          ]
+        }
+      ]
+    },
+    "macro_definition_bracket": {
+      "vocab": "declaration.macro",
+      "read": [
+        {
+          "vocab": "declaration.macro",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "macro_definition_bracket",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "macroRules",
+          "route": "slot",
+          "slot": "macro_rules",
+          "path": [
+            {
+              "owner": "macro_definition_bracket",
+              "slot": "macro_rules"
+            }
+          ]
+        }
+      ]
+    },
+    "macro_definition_paren": {
+      "vocab": "declaration.macro",
+      "read": [
+        {
+          "vocab": "declaration.macro",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "macro_definition_paren",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "macroRules",
+          "route": "slot",
+          "slot": "macro_rules",
+          "path": [
+            {
+              "owner": "macro_definition_paren",
+              "slot": "macro_rules"
+            }
+          ]
+        }
+      ]
+    },
     "macro_invocation": {
       "vocab": "expression.call.macro",
       "read": [
@@ -4921,6 +5647,100 @@
         }
       ],
       "members": []
+    },
+    "match_arm_block_ending": {
+      "vocab": "clause.match.arm",
+      "read": [
+        {
+          "vocab": "clause.match.arm",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "attributes",
+          "route": "slot",
+          "slot": "attributes",
+          "path": [
+            {
+              "owner": "match_arm_block_ending",
+              "slot": "attributes"
+            }
+          ]
+        },
+        {
+          "name": "pattern",
+          "route": "slot",
+          "slot": "pattern",
+          "path": [
+            {
+              "owner": "match_arm_block_ending",
+              "slot": "pattern"
+            }
+          ]
+        },
+        {
+          "name": "value",
+          "route": "slot",
+          "slot": "value",
+          "path": [
+            {
+              "owner": "match_arm_block_ending",
+              "slot": "value"
+            }
+          ]
+        }
+      ]
+    },
+    "match_arm_with_comma": {
+      "vocab": "clause.match.arm",
+      "read": [
+        {
+          "vocab": "clause.match.arm",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "attributes",
+          "route": "slot",
+          "slot": "attributes",
+          "path": [
+            {
+              "owner": "match_arm_with_comma",
+              "slot": "attributes"
+            }
+          ]
+        },
+        {
+          "name": "pattern",
+          "route": "slot",
+          "slot": "pattern",
+          "path": [
+            {
+              "owner": "match_arm_with_comma",
+              "slot": "pattern"
+            }
+          ]
+        },
+        {
+          "name": "value",
+          "route": "slot",
+          "slot": "value",
+          "path": [
+            {
+              "owner": "match_arm_with_comma",
+              "slot": "value"
+            }
+          ]
+        }
+      ]
     },
     "match_block": {
       "container": {
@@ -5054,6 +5874,89 @@
       ],
       "members": []
     },
+    "mod_item_external": {
+      "vocab": "declaration.module",
+      "read": [
+        {
+          "vocab": "declaration.module",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "visibility",
+          "route": "slot",
+          "slot": "visibility_modifier",
+          "path": [
+            {
+              "owner": "mod_item_external",
+              "slot": "visibility_modifier"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "mod_item_external",
+              "slot": "name"
+            }
+          ]
+        }
+      ]
+    },
+    "mod_item_inline": {
+      "vocab": "declaration.module",
+      "read": [
+        {
+          "vocab": "declaration.module",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "visibility",
+          "route": "slot",
+          "slot": "visibility_modifier",
+          "path": [
+            {
+              "owner": "mod_item_inline",
+              "slot": "visibility_modifier"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "mod_item_inline",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "mod_item_inline",
+              "slot": "body"
+            }
+          ]
+        }
+      ]
+    },
     "mut_pattern": {
       "vocab": "pattern.mutable",
       "read": [
@@ -5173,6 +6076,7 @@
       "members": []
     },
     "or_pattern_binary": {
+      "vocab": "pattern.or",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -5180,6 +6084,13 @@
           "within": [
             "closure_parameters"
           ],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "pattern.or",
+          "toplevel": true,
+          "within": [],
           "pins": [],
           "test": []
         }
@@ -5210,6 +6121,7 @@
       ]
     },
     "or_pattern_prefix": {
+      "vocab": "pattern.or",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -5217,6 +6129,13 @@
           "within": [
             "closure_parameters"
           ],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "pattern.or",
+          "toplevel": true,
+          "within": [],
           "pins": [],
           "test": []
         }
@@ -5419,6 +6338,29 @@
       "members": []
     },
     "pointer_type_const": {
+      "vocab": "type.pointer",
+      "read": [
+        {
+          "vocab": "type.pointer",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "type",
+          "route": "slot",
+          "slot": "type",
+          "path": [
+            {
+              "owner": "pointer_type_const",
+              "slot": "type"
+            }
+          ]
+        }
+      ],
       "container": {
         "kinds": [
           "_type"
@@ -5428,6 +6370,29 @@
       }
     },
     "pointer_type_mut": {
+      "vocab": "type.pointer",
+      "read": [
+        {
+          "vocab": "type.pointer",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "type",
+          "route": "slot",
+          "slot": "type",
+          "path": [
+            {
+              "owner": "pointer_type_mut",
+              "slot": "type"
+            }
+          ]
+        }
+      ],
       "container": {
         "kinds": [
           "_type"
@@ -5486,6 +6451,29 @@
       "members": []
     },
     "range_expression_bare": {
+      "vocab": "expression.range",
+      "read": [
+        {
+          "vocab": "expression.range",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "rangeExpressionBare",
+          "route": "slot",
+          "slot": "range_expression_bare",
+          "path": [
+            {
+              "owner": "range_expression_bare",
+              "slot": "range_expression_bare"
+            }
+          ]
+        }
+      ],
       "container": {
         "kinds": [
           "_range_expression_bare"
@@ -5494,7 +6482,77 @@
         "list": false
       }
     },
+    "range_expression_binary": {
+      "vocab": "expression.range",
+      "read": [
+        {
+          "vocab": "expression.range",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "start",
+          "route": "slot",
+          "slot": "start",
+          "path": [
+            {
+              "owner": "range_expression_binary",
+              "slot": "start"
+            }
+          ]
+        },
+        {
+          "name": "operator",
+          "route": "slot",
+          "slot": "operator",
+          "path": [
+            {
+              "owner": "range_expression_binary",
+              "slot": "operator"
+            }
+          ]
+        },
+        {
+          "name": "end",
+          "route": "slot",
+          "slot": "end",
+          "path": [
+            {
+              "owner": "range_expression_binary",
+              "slot": "end"
+            }
+          ]
+        }
+      ]
+    },
     "range_expression_postfix": {
+      "vocab": "expression.range",
+      "read": [
+        {
+          "vocab": "expression.range",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "start",
+          "route": "slot",
+          "slot": "start",
+          "path": [
+            {
+              "owner": "range_expression_postfix",
+              "slot": "start"
+            }
+          ]
+        }
+      ],
       "container": {
         "kinds": [
           "_expression"
@@ -5504,6 +6562,29 @@
       }
     },
     "range_expression_prefix": {
+      "vocab": "expression.range",
+      "read": [
+        {
+          "vocab": "expression.range",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "end",
+          "route": "slot",
+          "slot": "end",
+          "path": [
+            {
+              "owner": "range_expression_prefix",
+              "slot": "end"
+            }
+          ]
+        }
+      ],
       "container": {
         "kinds": [
           "_expression"
@@ -5526,6 +6607,7 @@
       "members": []
     },
     "range_pattern_prefix": {
+      "vocab": "pattern.range",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -5533,6 +6615,13 @@
           "within": [
             "closure_parameters"
           ],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "pattern.range",
+          "toplevel": true,
+          "within": [],
           "pins": [],
           "test": []
         }
@@ -5563,6 +6652,7 @@
       ]
     },
     "range_pattern_with_left": {
+      "vocab": "pattern.range",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -5570,6 +6660,13 @@
           "within": [
             "closure_parameters"
           ],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "pattern.range",
+          "toplevel": true,
+          "within": [],
           "pins": [],
           "test": []
         }
@@ -5688,6 +6785,29 @@
       "members": []
     },
     "reference_expression_bare": {
+      "vocab": "expression.reference",
+      "read": [
+        {
+          "vocab": "expression.reference",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "argument",
+          "route": "slot",
+          "slot": "value",
+          "path": [
+            {
+              "owner": "reference_expression_bare",
+              "slot": "value"
+            }
+          ]
+        }
+      ],
       "container": {
         "kinds": [
           "_expression"
@@ -5697,6 +6817,29 @@
       }
     },
     "reference_expression_mut": {
+      "vocab": "expression.reference",
+      "read": [
+        {
+          "vocab": "expression.reference",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "argument",
+          "route": "slot",
+          "slot": "value",
+          "path": [
+            {
+              "owner": "reference_expression_mut",
+              "slot": "value"
+            }
+          ]
+        }
+      ],
       "container": {
         "kinds": [
           "_expression"
@@ -5706,6 +6849,29 @@
       }
     },
     "reference_expression_raw_const": {
+      "vocab": "expression.reference",
+      "read": [
+        {
+          "vocab": "expression.reference",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "argument",
+          "route": "slot",
+          "slot": "value",
+          "path": [
+            {
+              "owner": "reference_expression_raw_const",
+              "slot": "value"
+            }
+          ]
+        }
+      ],
       "container": {
         "kinds": [
           "_expression"
@@ -5715,6 +6881,29 @@
       }
     },
     "reference_expression_raw_mut": {
+      "vocab": "expression.reference",
+      "read": [
+        {
+          "vocab": "expression.reference",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "argument",
+          "route": "slot",
+          "slot": "value",
+          "path": [
+            {
+              "owner": "reference_expression_raw_mut",
+              "slot": "value"
+            }
+          ]
+        }
+      ],
       "container": {
         "kinds": [
           "_expression"
@@ -6434,6 +7623,191 @@
       ],
       "members": []
     },
+    "struct_item_brace": {
+      "vocab": "declaration.struct",
+      "read": [
+        {
+          "vocab": "declaration.struct",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "visibility",
+          "route": "slot",
+          "slot": "visibility_modifier",
+          "path": [
+            {
+              "owner": "struct_item_brace",
+              "slot": "visibility_modifier"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "struct_item_brace",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "slot",
+          "slot": "type_parameters",
+          "path": [
+            {
+              "owner": "struct_item_brace",
+              "slot": "type_parameters"
+            }
+          ]
+        },
+        {
+          "name": "whereClause",
+          "route": "slot",
+          "slot": "where_clause",
+          "path": [
+            {
+              "owner": "struct_item_brace",
+              "slot": "where_clause"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "struct_item_brace",
+              "slot": "body"
+            }
+          ]
+        }
+      ]
+    },
+    "struct_item_tuple": {
+      "vocab": "declaration.struct",
+      "read": [
+        {
+          "vocab": "declaration.struct",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "visibility",
+          "route": "slot",
+          "slot": "visibility_modifier",
+          "path": [
+            {
+              "owner": "struct_item_tuple",
+              "slot": "visibility_modifier"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "struct_item_tuple",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "slot",
+          "slot": "type_parameters",
+          "path": [
+            {
+              "owner": "struct_item_tuple",
+              "slot": "type_parameters"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "struct_item_tuple",
+              "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "whereClause",
+          "route": "slot",
+          "slot": "where_clause",
+          "path": [
+            {
+              "owner": "struct_item_tuple",
+              "slot": "where_clause"
+            }
+          ]
+        }
+      ]
+    },
+    "struct_item_unit": {
+      "vocab": "declaration.struct",
+      "read": [
+        {
+          "vocab": "declaration.struct",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "visibility",
+          "route": "slot",
+          "slot": "visibility_modifier",
+          "path": [
+            {
+              "owner": "struct_item_unit",
+              "slot": "visibility_modifier"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "struct_item_unit",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "slot",
+          "slot": "type_parameters",
+          "path": [
+            {
+              "owner": "struct_item_unit",
+              "slot": "type_parameters"
+            }
+          ]
+        }
+      ]
+    },
     "struct_pattern": {
       "vocab": "pattern.struct",
       "read": [
@@ -6624,6 +7998,29 @@
       "members": []
     },
     "token_tree_brace": {
+      "vocab": "element.macro.token_tree",
+      "read": [
+        {
+          "vocab": "element.macro.token_tree",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "tokens",
+          "route": "slot",
+          "slot": "tokens",
+          "path": [
+            {
+              "owner": "token_tree_brace",
+              "slot": "tokens"
+            }
+          ]
+        }
+      ],
       "container": {
         "kinds": [
           "token_tree",
@@ -6636,6 +8033,29 @@
       }
     },
     "token_tree_bracket": {
+      "vocab": "element.macro.token_tree",
+      "read": [
+        {
+          "vocab": "element.macro.token_tree",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "tokens",
+          "route": "slot",
+          "slot": "tokens",
+          "path": [
+            {
+              "owner": "token_tree_bracket",
+              "slot": "tokens"
+            }
+          ]
+        }
+      ],
       "container": {
         "kinds": [
           "token_tree",
@@ -6648,6 +8068,29 @@
       }
     },
     "token_tree_paren": {
+      "vocab": "element.macro.token_tree",
+      "read": [
+        {
+          "vocab": "element.macro.token_tree",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "tokens",
+          "route": "slot",
+          "slot": "tokens",
+          "path": [
+            {
+              "owner": "token_tree_paren",
+              "slot": "tokens"
+            }
+          ]
+        }
+      ],
       "container": {
         "kinds": [
           "token_tree",
@@ -6673,6 +8116,29 @@
       "members": []
     },
     "token_tree_pattern_brace": {
+      "vocab": "element.macro.token_tree.pattern",
+      "read": [
+        {
+          "vocab": "element.macro.token_tree.pattern",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "tokenPatterns",
+          "route": "slot",
+          "slot": "token_patterns",
+          "path": [
+            {
+              "owner": "token_tree_pattern_brace",
+              "slot": "token_patterns"
+            }
+          ]
+        }
+      ],
       "container": {
         "kinds": [
           "token_tree_pattern",
@@ -6686,6 +8152,29 @@
       }
     },
     "token_tree_pattern_bracket": {
+      "vocab": "element.macro.token_tree.pattern",
+      "read": [
+        {
+          "vocab": "element.macro.token_tree.pattern",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "tokenPatterns",
+          "route": "slot",
+          "slot": "token_patterns",
+          "path": [
+            {
+              "owner": "token_tree_pattern_bracket",
+              "slot": "token_patterns"
+            }
+          ]
+        }
+      ],
       "container": {
         "kinds": [
           "token_tree_pattern",
@@ -6699,6 +8188,29 @@
       }
     },
     "token_tree_pattern_paren": {
+      "vocab": "element.macro.token_tree.pattern",
+      "read": [
+        {
+          "vocab": "element.macro.token_tree.pattern",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "tokenPatterns",
+          "route": "slot",
+          "slot": "token_patterns",
+          "path": [
+            {
+              "owner": "token_tree_pattern_paren",
+              "slot": "token_patterns"
+            }
+          ]
+        }
+      ],
       "container": {
         "kinds": [
           "token_tree_pattern",
@@ -8397,21 +9909,21 @@
       {
         "depth": 2,
         "paths": 102,
-        "kinds": 132,
+        "kinds": 153,
         "refinements": 12,
         "aliases": 86
       },
       {
         "depth": 3,
         "paths": 74,
-        "kinds": 78,
+        "kinds": 93,
         "refinements": 46,
         "aliases": 34
       },
       {
         "depth": 4,
         "paths": 40,
-        "kinds": 14,
+        "kinds": 20,
         "refinements": 22,
         "aliases": 0
       }
