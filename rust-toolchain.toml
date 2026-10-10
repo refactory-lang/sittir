@@ -1,0 +1,5 @@
+# The one Rust version builds and CI use. The stack ceilings in
+# sittir-parity-tests/tests/typed_read_nesting.rs are measured with it, so a
+# change of version re-measures them in the same change.
+[toolchain]
+channel = "1.99.0"
