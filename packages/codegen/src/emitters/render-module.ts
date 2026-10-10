@@ -2391,6 +2391,15 @@ function renderTriviaTransportSupport(
 	lines.push('}');
 	lines.push('');
 
+	lines.push(
+		'impl ::sittir_core::trivia::FromTriviaText for TriviaTransport {',
+		'    fn from_text(text: ::sittir_core::trivia::TriviaText) -> Self {',
+		'        TriviaTransport::Text(text)',
+		'    }',
+		'}',
+		''
+	);
+
 	const whitespaceKinds = new Set(whitespaceTriviaKinds(nodeMap));
 	lines.push('impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {');
 	lines.push('    fn seam_gap(&self) -> Option<(::sittir_core::layout_kinds::LayoutKinds, Option<&str>)> {');

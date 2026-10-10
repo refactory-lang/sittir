@@ -39,6 +39,22 @@ export declare class SittirEngine {
    */
   read(treeId: number, index: number, depth?: number | undefined | null): object
   /**
+   * A snapshot of the node at `index` of the live tree `treeId`: the
+   * node read at every depth into plain data with no tree, each
+   * node with its span (`$_layout.span`) from the transport that
+   * holds it and each placed extra with its text, the node itself
+   * measured from the byte `holderByte`, or from its own start when
+   * absent. Refuses as `read` does.
+   */
+  snapshot(treeId: number, index: number, holderByte?: number | undefined | null): object
+  /**
+   * The spans of byte `ranges` (start and end pairs) of the live
+   * tree `treeId`, measured from the byte `holderByte`, as row and
+   * column pairs, flat. Refuses a tree that is not live, an odd
+   * length, and a byte past the source or before the holder.
+   */
+  snapshotSpans(treeId: number, holderByte: number, ranges: Array<number>): Array<number>
+  /**
    * One batch of a pre-order walk of the named descendants under
    * the node `from` names (JSON, see `query::Address`), filtered to
    * `kinds` when given and to the `where` plan (JSON, see

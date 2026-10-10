@@ -808,6 +808,7 @@ export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
 export { toTransportData, toDetachedTransportData, STORED_TRIVIA, carrySource, type SourceGapEvidence, type SourceFlankEvidence, type TransportLayout, type TriviaView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, sourceOf } from './transport-data.ts';
 export { carryTree, treeTokenOf, type TreeToken } from './tree-token.ts';
+export { snapshotOf } from './snapshot.ts';
 export {
 	projectInterior,
 	lexedConfig,

@@ -1,6 +1,6 @@
 import type { AnyUntypedNode, ErrorNode, ErrorRegion, FormatRecord, GrammarTriviaEntry, RenderCallOptions, TriviaItem, TriviaSetter } from './core-types.ts';
 import type { IndentOption } from './options.ts';
-import type { Admit } from './node-surface.ts';
+import type { Admit, Snapshot } from './node-surface.ts';
 import type { KindMembership, QueryFacet, QuerySlots } from './query.ts';
 
 /** One line-break run a read node owns as trivia: the whitespace member it reads as and the byte its run starts at. */
@@ -266,7 +266,7 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	 */
 	readonly query: <N extends API['node']>(node: N) => FacetOf<N>;
 	readonly read: (path: string, options?: ParseOptions) => Promise<API['root']>;
-	readonly render: RenderCall<API, Draft<API>> & RenderCall<API, StoredInput<API> | RenderBuilder<API>>;
+	readonly render: RenderCall<API, Draft<API>> & RenderCall<API, StoredInput<API> | RenderBuilder<API> | SnapshotInput<API>>;
 	readonly create: (path: string, fn: (build: API['build']) => API['root']) => Pending;
 	readonly edit: (path: string, fn: (root: API['root']) => API['root']) => Pending;
 	readonly write: (path: string, node: API['root']) => Pending;
@@ -292,7 +292,9 @@ type StoredInput<API extends LanguageAPI> = API['node'] | API['fixedTextKindId']
 
 type RenderBuilder<API extends LanguageAPI> = (build: API['build']) => API['node'];
 
-type RenderInput<API extends LanguageAPI> = StoredInput<API> | Draft<API>;
+type SnapshotInput<API extends LanguageAPI> = Snapshot<Extract<API['node']['$type'], number>>;
+
+type RenderInput<API extends LanguageAPI> = StoredInput<API> | Draft<API> | SnapshotInput<API>;
 
 export type RenderArgument<API extends LanguageAPI> = RenderInput<API> | RenderBuilder<API>;
 

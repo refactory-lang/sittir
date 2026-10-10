@@ -119,6 +119,30 @@ impl<T: HasTrivia> HasTrivia for Box<T> {
     type Trivia = T::Trivia;
 }
 
+/// A grammar's trivia type built from an extra's text and kind: what a
+/// snapshot read makes of each extra it places. Codegen implements it once per
+/// grammar, as the variant that takes a `TriviaText`.
+pub trait FromTriviaText {
+    fn from_text(text: TriviaText) -> Self;
+}
+
+/// A transport family that keeps no trivia drops what a snapshot read places.
+impl FromTriviaText for () {
+    fn from_text(_: TriviaText) -> Self {}
+}
+
+impl FromTriviaText for TriviaText {
+    fn from_text(text: TriviaText) -> Self {
+        text
+    }
+}
+
+impl<T: FromTriviaText> FromTriviaText for Box<T> {
+    fn from_text(text: TriviaText) -> Self {
+        Box::new(T::from_text(text))
+    }
+}
+
 /// What a grammar's trivia type provides to frame a coordinate: its render,
 /// its prepare walk and, with the bindings, its wire decode.
 #[cfg(not(feature = "napi-bindings"))]

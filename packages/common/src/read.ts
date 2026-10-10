@@ -12,6 +12,10 @@ export interface TreeHandle {
 	/** Format record inferred from the source file by the native reader. */
 	format?: FormatRecord;
 	query?: TreeQuery;
+	/** A snapshot of the node at descendant `index`, measured from the byte `holderByte`, or from its own start (`snapshotOf`). */
+	snapshot?(index: number, holderByte?: number): unknown;
+	/** The spans of byte `ranges` (start and end pairs) measured from the byte `holderByte`, as row and column pairs, flat. */
+	snapshotSpans?(holderByte: number, ranges: number[]): number[];
 }
 
 const INDEX_RANGE = 2 ** 32;
