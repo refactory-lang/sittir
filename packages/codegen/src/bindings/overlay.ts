@@ -1,7 +1,6 @@
 import { childFields, fieldRenameGrammar, fieldRenameIssue, fieldWrapGrammar, fieldWrapIssue, isRecord, symbolNames, type FieldRename, type FieldWrap, type GrammarRecord, type Split } from '../dsl/bind.ts';
 import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import type { RawGrammar } from '../compiler/types.ts';
-import type { GrammarName } from '../grammars.ts';
 import { type BindingFacts, type MemberFact, type RefinedClaim, WILDCARD, refineClaims } from './facts.ts';
 import type { MemberRoute } from './routes.ts';
 
@@ -37,16 +36,11 @@ export interface OverlayReport {
 }
 
 export interface OverlayInput {
-	readonly grammar: GrammarName;
 	readonly facts: BindingFacts;
 	readonly base: RawGrammar;
 	readonly vocabMembers: ReadonlyMap<string, ReadonlySet<string>>;
 	readonly routedMembers: ReadonlyMap<string, readonly MemberRoute[]>;
 }
-
-const CONTAINER_MEMBER_OVERRIDES: Readonly<Record<string, Readonly<Record<string, string>>>> = {
-	rust: { impl_item_body: 'body' }
-};
 
 export const boundKindName = (vocab: string, hidden: boolean): string => `${hidden ? '_' : ''}${vocab.split('.').reverse().join('_')}`;
 
@@ -90,7 +84,7 @@ function sameShapeAs(kinds: readonly string[], members: readonly MemberFact[], r
 }
 
 export function deriveOverlay(input: OverlayInput): { overlay: BindingsOverlay; report: OverlayReport } {
-	const { grammar, facts, base, vocabMembers, routedMembers } = input;
+	const { facts, base, vocabMembers, routedMembers } = input;
 	const rules = base.rules as Record<string, unknown>;
 	const ruleNames = new Set(Object.keys(rules));
 	const residue: OverlayResidue[] = [];
@@ -134,7 +128,7 @@ export function deriveOverlay(input: OverlayInput): { overlay: BindingsOverlay; 
 			}
 			const outer = c.within[c.within.length - 1]!;
 			const reference = c.within[c.within.length - 2] ?? c.kind;
-			const member = CONTAINER_MEMBER_OVERRIDES[grammar]?.[outer] ?? fieldOfReference(rules, outer, reference);
+			const member = fieldOfReference(rules, outer, reference);
 			if (member === undefined) {
 				left('placement container has no member name', row);
 				continue;
