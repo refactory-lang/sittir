@@ -8,7 +8,7 @@ Trivia is every extra the grammar declares: comments, whitespace runs and line b
 
 - **Address.** An entry's address is the gap it sits in: gap *k* lies between leaf token *k* and leaf token *k + 1*, and gap −1 and gap *n* are the file's two edges. A gap has exactly one address. "The leading side of a node" is not an address: a parent and its first child share one leading gap, so a key such as (node, side) would give the same gap several names.
 - **Owner.** An entry's owner follows tree-sitter's convention for extras. An extra is a child of the smallest node that contains tokens on both sides of it, and a child of the root at the file edges. The parser does this itself: a reduce pops trailing extras back out of the node it builds, and leading extras are never popped into it, so a node never starts or ends with an extra. The owner is derived from the address and the tree. It is never stored.
-- **Values.** An entry is a value: its kind (comment kind, whitespace member, verbatim) and its text. Two reads of a gap return equal entries, not the same object, and nothing depends on an entry's identity.
+- **Values.** An entry is a comment or whitespace node of the grammar, held as a value: its kind and its fields. Comments are built with the grammar's own builders (`ir.lineComment(…)`, `ir.comment.lineComment.docOuter(…)`, `ir.blockComment(…)`), the same factories, coercion and sibling-lead refusals as today. A write stores the built node's value. A read returns comment nodes rebuilt from the stored value, as built nodes with the same surface as any other. Two reads of a gap return equal nodes, not the same object, and nothing depends on an entry's identity.
 - **One table.** Parsed trees and built nodes both keep their trivia in native tables. A parsed tree's table is filled by the reader from the source. A built node's table lives with its native storage and is filled by its factory and by writes. The renderer reads trivia from the table and from nowhere else.
 
 ## 2. The surface
@@ -17,8 +17,8 @@ Trivia is every extra the grammar declares: comments, whitespace runs and line b
 
 - `leading`, `trailing`: the gap before the node's first token and the gap after its last. Reading either from any node that shares that gap returns the same entries. A write through any of them changes the one gap.
 - `inner`: the gaps strictly inside the node's token range whose owner is the node. These are its own extras, in tree-sitter's sense.
-- **Writes** are one native call that replaces a gap's entries. The written gap is marked edited.
-- **Reads** are one native call that returns the entries as data.
+- **Writes** take comment nodes built by the grammar's builders, as today (`fn.$trivia.leading(ir.lineComment(' note'))`), plus text and whitespace kinds where the writer admits them today. Each write is one native call that replaces the gap's entries. The written gap is marked edited.
+- **Reads** are one native call that returns the gap's entries as data. The client turns each one into a comment or whitespace node of the grammar.
 
 The wrapper holds no trivia. The wrapper registry is an identity cache only: dropping a wrapper, or reaching a node by a different route, changes nothing that renders.
 
@@ -37,7 +37,7 @@ When a parsed node is placed in a new parent, a `$with`, or a built holder, it c
 
 - the reader's attachment step (`place()`) with `$sameLine` and `$tokensBetween`, and owner seats for trivia;
 - trivia stored on wrappers (`$_layout.trivia`, the written-sides map, the composed-trivia cache) and the client-side line-gap composition (`lineGapsOf`);
-- `carryPlacement`, `carryElementTrivia` and the ir lane's edge-carrier rule. A projection carries no trivia, because trivia isn't on nodes;
+- `carryPlacement`, `carryElementTrivia` and the ir lane's edge-carrier rule. A projection copies no trivia from node to node; the ir lane spells a source's comments by writing comment nodes, built with the grammar's builders, to the gaps the table names;
 - the client edited set, `markIndexEdited` and the refusal of writes through a query;
 - the framed coordinate's trivia payload (`OutsideTrivia` on `SlotValue::Coord`). The renderer reads the gap from the table.
 
