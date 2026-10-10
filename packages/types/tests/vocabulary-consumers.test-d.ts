@@ -4,10 +4,11 @@
  * claiming grammar carries, and a refinement pins what it says it pins. A
  * member only a refinement carries must never be required on the ancestor.
  * Each check is generic over the context, as portable code is: the roles it
- * fills arrive typed by the namespace map.
+ * fills arrive typed by the namespace map. A concrete context, as a grammar
+ * declares one, narrows the map and instantiates them.
  */
 
-import type { Declaration, Expression, GrammarContext, Statement } from '../src/vocabulary/index.ts';
+import type { Declaration, Expression, GrammarContext, Identifier, Statement } from '../src/vocabulary/index.ts';
 
 // An ordinary function needs a name and parameters, nothing accessor-shaped.
 export function fn<G extends GrammarContext<G>>(name: G['identifier']): Declaration.Function<G> {
@@ -91,3 +92,19 @@ export function forIn<G extends GrammarContext<G>>(right: G['identifier'], body:
 export function nameKind<G extends GrammarContext<G>>(f: Declaration.Function<G>): string {
 	return f.name.$kind;
 }
+
+// A grammar's context extends the map over itself and narrows it to what the grammar realizes: here the identifier
+// role to the plain identifier, and a function's parameters to identifiers.
+interface Narrowed extends GrammarContext<Narrowed> {
+	readonly identifier: Identifier<Narrowed>;
+	readonly slots: GrammarContext<Narrowed>['slots'] & {
+		readonly 'declaration.function': { readonly parameters: Identifier<Narrowed> };
+	};
+}
+const self: Narrowed['identifier'] = { $kind: 'identifier' };
+export const narrowed: Declaration.Function<Narrowed> = { ...fn<Narrowed>(self), parameters: [self] };
+export const narrowedName: string = nameKind<Narrowed>(narrowed);
+// @ts-expect-error the narrowed identifier role refuses a kind the grammar leaves out
+export const crate = fn<Narrowed>({ $kind: 'identifier.crate' });
+// @ts-expect-error the narrowed parameters slot refuses an arm the grammar leaves out
+export const textParameter: Declaration.Function<Narrowed> = { ...narrowed, parameters: ['self'] };
