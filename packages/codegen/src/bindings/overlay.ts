@@ -1,4 +1,4 @@
-import { childFields, fieldRenameGrammar, fieldRenameIssue, fieldWrapGrammar, fieldWrapIssue, isRecord, symbolNames, type FieldRename, type FieldWrap, type Split } from '../dsl/bind.ts';
+import { childFields, fieldRenameGrammar, fieldRenameIssue, fieldWrapGrammar, fieldWrapIssue, isRecord, symbolNames, type FieldRename, type FieldWrap, type GrammarRecord, type Split } from '../dsl/bind.ts';
 import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import type { RawGrammar } from '../compiler/types.ts';
 import type { GrammarName } from '../grammars.ts';
@@ -52,14 +52,12 @@ export const boundKindName = (vocab: string, hidden: boolean): string => `${hidd
 
 export const memberFieldName = (member: string): string => member.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
 
-type Rule = Record<string, unknown>;
-type GrammarRecord = Record<string, unknown>;
 type FieldRequest = FieldRename | FieldWrap;
 
 const SINGLE = new Set(['OPTIONAL', 'REPEAT', 'REPEAT1', 'FIELD', 'TOKEN', 'IMMEDIATE_TOKEN', 'ALIAS']);
-const metaOf = (r: Rule): Rule => (isRecord(r.metadata) ? r.metadata : {});
-const isLift = (r: Rule): boolean => r.type === 'SYMBOL' && metaOf(r).symbolSource === 'group-lift' && !(isRecord(r.annotations) && 'variant' in r.annotations);
-const isGroupAlias = (r: Rule): boolean => r.type === 'ALIAS' && metaOf(r).aliasSource === 'visible-group';
+const metaOf = (r: GrammarRecord): GrammarRecord => (isRecord(r.metadata) ? r.metadata : {});
+const isLift = (r: GrammarRecord): boolean => r.type === 'SYMBOL' && metaOf(r).symbolSource === 'group-lift' && !(isRecord(r.annotations) && 'variant' in r.annotations);
+const isGroupAlias = (r: GrammarRecord): boolean => r.type === 'ALIAS' && metaOf(r).aliasSource === 'visible-group';
 
 function fieldOfReference(rules: Readonly<Record<string, unknown>>, owner: string, child: string): string | undefined {
 	let found: string | undefined;
@@ -386,7 +384,7 @@ function overlayPatches(
 		const length = Array.isArray(node.members) ? node.members.length : 1;
 		return patches.map((p) => ({ ...p, path: String(Number(p.path) - length) }));
 	};
-	const patchesBetween = (b0: Record<string, unknown>, a0: Record<string, unknown>, site: (b: Rule, a: Rule) => OverlayEdit | undefined): Map<string, OverlayPatch[]> => {
+	const patchesBetween = (b0: Record<string, unknown>, a0: Record<string, unknown>, site: (b: GrammarRecord, a: GrammarRecord) => OverlayEdit | undefined): Map<string, OverlayPatch[]> => {
 		const out = new Map<string, OverlayPatch[]>();
 		const reached = new Set<string>();
 		for (const root of roots) {
@@ -421,8 +419,8 @@ function overlayPatches(
 	const aliasPatches = patchesBetween(fielded, fielded, (b) =>
 		b.type === 'SYMBOL' && typeof b.name === 'string' && Object.hasOwn(aliases, b.name) ? { alias: { from: b.name, to: aliases[b.name]! } } : undefined
 	);
-	const at = (r: unknown): Rule =>
-		isRecord(r) && (isPrecWrapper(r as { type: string }) || isGroupAlias(r)) ? at(r.content) : isRecord(r) && isLift(r) ? at(fielded[r.name as string]) : (r as Rule);
+	const at = (r: unknown): GrammarRecord =>
+		isRecord(r) && (isPrecWrapper(r as { type: string }) || isGroupAlias(r)) ? at(r.content) : isRecord(r) && isLift(r) ? at(fielded[r.name as string]) : (r as GrammarRecord);
 	for (const [root, patches] of aliasPatches) {
 		const kept = patches.filter((p) => {
 			if (p.path === '.') return true;

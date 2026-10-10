@@ -15268,3 +15268,7 @@ Builds an isolated assembled list whose repeated element choice includes the lis
 ### `packages/codegen/src/emitters/node-model.ts::printNodeModel`
 
 The text of `node-model.json5`. `generate` builds the record once (`buildNodeModel`), prints it, and hands the same record to the bindings' routes input.
+### `packages/codegen/src/emitters/node-model.ts::enumMembersOf`
+
+An enum's members as the model records them, each its kind and text. Every value the enum admits must be some member's text; a value no member resolves is an error, so the serialized model carries members only.
+

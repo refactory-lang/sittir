@@ -41,3 +41,19 @@ The build, in order: a detached worktree of the pinned commit, added with the re
 ### `packages/codegen/src/bootstrap/bootstrap.ts::bootstrap`
 
 Builds the pin unless it is already built, and returns its directory. A directory left by an interrupted build is kept and the steps after the checkout run again; the marker is written last.
+### `packages/codegen/src/bootstrap/bootstrap.ts::BootstrapPackage`
+
+A workspace package the bootstrap builds at the pinned commit.
+
+### `packages/codegen/src/bootstrap/bootstrap.ts::COMPLETE`
+
+The marker file a finished bootstrap writes into its directory, holding the pinned commit. A directory without it is a bootstrap that did not finish.
+
+### `packages/codegen/src/bootstrap/bootstrap.ts::PIN_FILE`
+
+The file at the repository root that pins the bootstrap commit (`{ "sha": … }`). The manifest check reads the same name as a source input of every grammar with bindings.
+
+### `packages/codegen/src/bootstrap/bootstrap.ts::BootstrapStep`
+
+One command of a bootstrap: the program, its arguments and the directory it runs in.
+

@@ -506,3 +506,11 @@ The pinned build's `@sittir/scm`, `@sittir/common` and `@sittir/common/utils`, l
 ### `packages/codegen/src/scm/pinned.ts::loadPinnedScm`
 
 Imports the pinned build once (`bootstrap/bootstrap.ts::bootstrapDir`) and shares it; a missing build is refused with `BOOTSTRAP_COMMAND`, and a failed load is forgotten so the next call tries again. It must run in a process whose module resolution maps no workspace paths (`bindings/read.ts::module`).
+### `packages/codegen/src/scm/pinned.ts::loaded`
+
+The pinned build's modules, imported once and shared.
+
+### `packages/codegen/src/scm/pinned.ts::importPinned`
+
+Imports the pinned build's `@sittir/scm`, `@sittir/common` and its utils from the bootstrap directory. A directory the bootstrap did not finish is an error that names the command to build it.
+

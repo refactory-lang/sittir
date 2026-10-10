@@ -138,6 +138,78 @@ The kind paths that declare their own members: every claimed kind and prefix exc
 
 Every member the language context states, one per kind path and member, in path then member order: the members of `levelsWithMembers` that `directKinds` leaves `undefined`.
 
+### `packages/codegen/src/bindings/derive.ts::Resolution`
+
+What a grammar kind or slot resolves to as a member type: its type tokens (vocabulary paths, `text:` and `literal:` spellings, `boolean`, and `<grammar:kind>` for an unmapped kind), and whether it holds a list or a single value.
+
+### `packages/codegen/src/bindings/derive.ts::MemberFacts`
+
+One member of one vocabulary path as the grammars together describe it: the union of its type tokens, whether any grammar leaves it optional, whether it is a list anywhere or a single value anywhere, and which grammars supply it. It is mutable while the derivation folds the grammars in.
+
+### `packages/codegen/src/bindings/derive.ts::Refinement`
+
+A vocabulary path that refines its parent by literals rather than members: the parent path, and per member the literal texts its pins fix.
+
+### `packages/codegen/src/bindings/derive.ts::Derivation`
+
+Everything the vocabulary derivation finds across the bound grammars, which the inventory prints and checks against the authored vocabulary: the claimed paths and their prefixes, who claims each, the paths derived from content predicates, refinements, template holes, members per path, set-inclusion cycles, and the report lists (untargeted containers, uncaptured slots, unmapped references with their counts, unknown predicates, wildcard containers, wildcard claims with unrouted members).
+
+### `packages/codegen/src/bindings/derive.ts::commonPrefix`
+
+The longest dotted prefix every path shares, or `null` when they share none.
+
+### `packages/codegen/src/bindings/derive.ts::facts`
+
+A fresh, empty `MemberFacts`.
+
+### `packages/codegen/src/bindings/derive.ts::isVocabularyKind`
+
+Whether a member type token names a vocabulary kind, as opposed to an unmapped kind, a text or literal spelling, or `boolean`.
+
+### `packages/codegen/src/bindings/derive.ts::scalarOf`
+
+A single-value `Resolution` over the given tokens; it is a scalar only when it has a token.
+
+### `packages/codegen/src/bindings/derive.ts::collect`
+
+Folds one grammar's templates and claims into the derivation's path set: each template's target and holes become the holes of the paths it serves, every claimed path is recorded, and a claim with predicates marks its path as content-derived for that grammar.
+
+### `packages/codegen/src/bindings/derive.ts::KEY_SEPARATOR`
+
+The separator in an inclusion key, a character no grammar or kind name contains.
+
+### `packages/codegen/src/bindings/derive.ts::inclusionKey`
+
+The key of one grammar's kind in the set-inclusion graph, so the same kind name in two grammars stays two nodes.
+
+### `packages/codegen/src/bindings/derive.ts::childrenOf`
+
+The paths one segment below a path, among the claimed paths and their prefixes, sorted.
+
+### `packages/codegen/src/bindings/derive.ts::claimedBeneath`
+
+The path itself and every claimed path beneath it that is not a refinement, sorted: the kinds a namespace's union spans.
+
+### `packages/codegen/src/bindings/derive.ts::ArmClass`
+
+How a member type token takes part in a union: a scalar, a role (a top-level vocabulary kind), a ref (a path or a set), a text or literal spelling, or unmapped.
+
+### `packages/codegen/src/bindings/derive.ts::Scalar`
+
+The member types that are plain values rather than kinds.
+
+### `packages/codegen/src/bindings/derive.ts::SCALARS`
+
+The `Scalar` names as a set, for `isScalar`.
+
+### `packages/codegen/src/bindings/derive.ts::isScalar`
+
+Whether a member type token is a `Scalar`.
+
+### `packages/codegen/src/bindings/derive.ts::SlotEntry`
+
+One member of one path that the language context states: its path, its member name and its facts.
+
 ### `packages/codegen/src/bindings/facts.ts::VOCABULARY_DIR`
 
 The authored vocabulary's directory, `packages/types/src/vocabulary`. The inventory reads the vocabulary from it, and the bindings hash covers its sources.
@@ -229,6 +301,18 @@ A group lift at the patch stage: the symbol enrich's group lift leaves in a rule
 ### `packages/codegen/src/bindings/overlay.ts::isGroupAlias`
 
 The alias enrich wraps a visible group in.
+
+### `packages/codegen/src/bindings/overlay.ts::FieldRequest`
+
+A field edit the derivation asks bind for: a rename of an existing field or a wrap of an unfielded child.
+
+### `packages/codegen/src/bindings/overlay.ts::SINGLE`
+
+The rule types with one `content` child, which the patch walk descends at path index `0`.
+
+### `packages/codegen/src/bindings/overlay.ts::metaOf`
+
+A rule's `metadata` record, or an empty one.
 
 ### `packages/codegen/src/bindings/overlay.ts::fieldOfReference`
 
@@ -323,6 +407,14 @@ One rule's patch set as an object of patch paths to authoring calls.
 
 Printed entries as an array, `[]` when there are none.
 
+### `packages/codegen/src/bindings/module.ts::BINDINGS_MODULE`
+
+The file name of a grammar's committed bindings overlay, beside its `grammar.sittir.ts`.
+
+### `packages/codegen/src/bindings/module.ts::q`
+
+A string as a quoted TypeScript literal, for the emitted overlay module.
+
 ### `packages/codegen/src/bindings/pinned-reader.ts::module`
 
 The `bindings.scm` reader, over the pinned `@sittir/scm` build (`loadPinnedScm`). It imports `@sittir/scm` and `@sittir/common` for types only: every value it uses comes from the pinned build, so the facts depend on the pin and not on the workspace's packages.
@@ -396,9 +488,197 @@ A predicate capture's `CaptureSite` for one claim. It walks from the claimed nod
 
 Parses a `bindings.scm` with the pinned engine and renders the parsed root back (`BindingsRoundTrip`). The test over every grammar's `bindings.scm` is the gate a change of pin runs.
 
+### `packages/codegen/src/bindings/pinned-reader.ts::Kinds`
+
+The pinned scm build's kind-id table, whose members the reader compares `$type` against.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::Engine`
+
+The scm language engine type, over the `ScmAPI` the type-only import names.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::K`
+
+The pinned build's kinds, set by `ready`. Every kind comparison in the reader goes through it, so the ids come from the pin and not from the workspace's `@sittir/scm`.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::engine`
+
+The pinned build's scm engine, created once by `ready` and shared by every read.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::sourceSpans`
+
+The pinned build's span helper, which converts UTF-8 byte spans to string indices for slicing a pattern's text and counting its line.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::isErrorNode`
+
+The pinned build's test for an ERROR region carried as trivia; `unparsed` uses it.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::spanOf`
+
+The pinned build's span of a parsed node or trivia item.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::loaded`
+
+The pending load `ready` shares across reads; cleared when the load fails so a later read retries it.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::Expression`
+
+What a named node's or grouping's group holds: a definition, a negated field, or an alternation arm.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::PatternNode`
+
+A node the reader visits as part of a pattern: a named node, an anonymous token or a grouping.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::ParsedPattern`
+
+A top-level definition with its origin (line and source text).
+
+### `packages/codegen/src/bindings/pinned-reader.ts::Visit`
+
+One visited pattern node: the node, the field it sits under, its parent visit, whether it is one option of an alternation (`alternative`), the list elements (captures, quantifiers) an enclosing alternation hands it (`inherited`), and its child visits in order.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::Pattern`
+
+A pattern as read: its top visit, every visit in order, and the predicates it carries.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::Facts`
+
+The mutable fact lists `readBindings` fills, one per fact kind, returned as `BindingFacts`.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::stringValue`
+
+A query string's value, with escape sequences resolved to the characters they stand for.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::lineOf`
+
+The 1-based line a byte offset falls on, counted over the string index the span helper converts it to.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::unparsed`
+
+The start offsets of the ERROR regions a node carries as trivia: where the parse absorbed text it could not read.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::definitionsOf`
+
+The file's top-level definitions, parsed to full depth by the pinned engine.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::captures`
+
+The capture names on a visit, its own and those an enclosing alternation hands it.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::quantified`
+
+Whether a visit repeats: a `*` or `+` on it or handed to it.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::kindOf`
+
+The kind a visit names: a named node's name (`WILDCARD` for `(_)`), a supertyped node's subtype, `WILDCARD` for an anonymous `_`, and `null` for a token or a grouping.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::namedKind`
+
+`kindOf` with a wildcard read as no kind.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::tokenText`
+
+An anonymous token's text, or `null` for anything else.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::isGroup`
+
+Whether a visit is a grouping.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::atTop`
+
+Whether a visit is the pattern's top node, or a direct child of a top-level grouping: the positions where a single-segment capture is a claim.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::UNCLAIMED`
+
+The capture that declares the captured kind unclaimed.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::DROPPED`
+
+The capture that marks a container's slot as left out on purpose.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::isPath`
+
+Whether a capture names a vocabulary path (it has a `.`).
+
+### `packages/codegen/src/bindings/pinned-reader.ts::TOKEN_CLASSES`
+
+The capture namespaces that classify tokens (`keyword`, `punctuation`) and name no vocabulary kind.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::inClaimPosition`
+
+Whether a capture sits where it would claim a kind: a path anywhere, or a non-`_` single segment at the top.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::isTokenClass`
+
+Whether a capture is in a token-class namespace.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::isClaim`
+
+Whether a capture is a claim: in claim position and not a token class.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::selector`
+
+The `SlotSelector` that finds a visit's slot in its parent: its field, else its named kind, else (a wildcard or grouping) the selector of the nearest earlier sibling that is not a token, as `after`, or no anchor at all when nothing precedes it.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::expressionsOf`
+
+The expressions a pattern node holds: a named node's group (with the anchored-last variant's `last` appended), a grouping's group expressions, and none for a token. The ERROR regions on the group are recorded as it goes.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::readPattern`
+
+A pattern as a tree of visits. A field definition places its definition under the field; an alternation places each option as an alternative carrying the alternation's elements; an arm places both sides; predicates are collected; a negated field and a missing node place nothing.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::templateOf`
+
+A `#match?` predicate as a template, when its regex is anchored at both ends and has named holes: the regex with each hole replaced by `${string}`, and the hole names in order.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::claimFact`
+
+The `ClaimFact` for a claim capture on a visit: its kind (a grouping's first child's), field, the pattern's predicates placed for this claim (`captureSite`), whether it is at the top, the kinds enclosing it (nearest first), its field literals (the literal a field pins, outside a grouping) and its unfielded uncaptured tokens. An alternative's tokens are not pins.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::memberFact`
+
+The `MemberFact` for a member capture on a visit. On a child of the top (or under a top grouping) it renames the slot its selector finds, or marks an unfielded token's presence. Deeper, it is a nested member of the top kind (or the presence of a token) routed through the kinds between. A capture directly under a grouping names no member.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::containerFact`
+
+The `ContainerFact` for a container pattern: the container kind, its element's selector, each other capture (its name, token text, quantifier and selector), the selectors of the `@dropped` slots, the reason, and the pattern's origin.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::reasonOf`
+
+The text of a pattern's `#set! reason "…"`, or `null`.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::patternFacts`
+
+Reads one pattern into the fact lists. An `@unclaimed` pattern only declares kinds unclaimed. A pattern whose single top owner carries no claim and captures `@element` is a container. Otherwise every template predicate is a template over the pattern's vocabulary captures, and each visit's captures are claims or members in order, a further single-segment member on a node being that node's kind presence (`kindPresence`, `slotNamed`).
+
+### `packages/codegen/src/bindings/pinned-reader.ts::patternsOf`
+
+The patterns a top-level definition holds: itself, or each option of a top-level alternation carrying the alternation's elements.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::referencesIn`
+
+Every node kind, token and field an expression references, in order, for the inventory's check against the parser. `ERROR` and the wildcard are not references.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::groupReferences`
+
+The references in a named node's group, its anchored-last `last` included.
+
 ### `packages/codegen/src/bindings/pinned-reader.child.ts::module`
 
 The reader's process. It reads requests from stdin, one JSON `PinnedReaderRequest` per line, answers them in order with the read their mode names, and writes each reply as `PINNED_READER_MARKER` and one JSON `PinnedReaderReply` line on stdout. A `BindingsSyntaxError` is replied as its lines and any other failure as its stack, so one bad file does not stop the reads after it. It exits once stdin closes and the last reply is written.
+
+### `packages/codegen/src/bindings/pinned-reader.child.ts::READS`
+
+The read each request mode runs in the child process.
+
+### `packages/codegen/src/bindings/pinned-reader.child.ts::answer`
+
+One request's reply: its value, the syntax error's lines, or any other error's stack, so the parent can rebuild the error it would have thrown in process.
+
+### `packages/codegen/src/bindings/pinned-reader.child.ts::queue`
+
+The chain of pending answers, so replies leave in request order and the process exits only after the last one when its input closes.
 
 ### `packages/codegen/src/bindings/read.ts::module`
 
@@ -444,6 +724,26 @@ A `bindings.scm`'s top-level patterns as `BindingPattern`s, read by the pinned r
 
 A `bindings.scm` parsed and rendered back by the pinned engine (`BindingsRoundTrip`).
 
+### `packages/codegen/src/bindings/read.ts::PinnedReaderMode`
+
+Which read a request asks the child for: the facts, the pattern summaries, or a round trip.
+
+### `packages/codegen/src/bindings/read.ts::PendingRead`
+
+A request waiting on its reply: the promise callbacks it settles.
+
+### `packages/codegen/src/bindings/read.ts::PinnedReader`
+
+The running child: the process, the requests waiting by id, the next id, and the stderr it has written, which a failure reports.
+
+### `packages/codegen/src/bindings/read.ts::requireFromHere`
+
+A `require` resolved from this module, used to locate the files the child is started with.
+
+### `packages/codegen/src/bindings/read.ts::reader`
+
+The one child every read shares, started by the first read and replaced if it exits.
+
 ### `packages/codegen/src/bindings/facts.ts::bindingsPathIn`
 
 The `bindings.scm` of the grammar package in a directory. The one spelling of the file's name; compile and generate reach it through the package they were given.
@@ -459,6 +759,18 @@ The grammars that ship a `bindings.scm`, in `allGrammars` order.
 ### `packages/codegen/src/bindings/names.ts::module`
 
 The naming rules the bindings share: `snake` and `camel` between a grammar's field and slot spellings and member names, and `tsname` for a vocabulary path segment as a type name.
+
+### `packages/codegen/src/bindings/names.ts::snake`
+
+A camelCase name in snake_case: a member's field name.
+
+### `packages/codegen/src/bindings/names.ts::camel`
+
+A snake_case name in camelCase, leading underscores dropped: a slot or capture name as a member name.
+
+### `packages/codegen/src/bindings/names.ts::tsname`
+
+A snake_case path segment as a PascalCase type name.
 
 ### `packages/codegen/src/bindings/routes.ts::module`
 
@@ -564,6 +876,26 @@ The layout slots of a grammar: each slot an options block's `_labels` address na
 
 A grammar's `GrammarInput`, or `undefined` when it ships no `bindings.scm`: its facts read by the pinned reader and bound to the record's kind names, the record's slot model, the grammar's minted text tokens, and its layout slots.
 
+### `packages/codegen/src/bindings/input.ts::NodeModelValue`
+
+One admitted value of a serialized slot: its kind (`terminal` for literal text) and the text.
+
+### `packages/codegen/src/bindings/input.ts::NodeModelSlot`
+
+A slot as `node-model.json5` serializes it, every fact but its names optional, as written.
+
+### `packages/codegen/src/bindings/input.ts::NodeModelNode`
+
+A kind as `node-model.json5` serializes it, including the base name it was renamed from.
+
+### `packages/codegen/src/bindings/input.ts::nodesOf`
+
+The serialized model's kinds, whether it stores them as a list or keyed by kind.
+
+### `packages/codegen/src/bindings/input.ts::EvaluatedGrammarFacts`
+
+The facts of the evaluated grammar the bindings input needs beside the model: its text tokens and its options block.
+
 ### `packages/codegen/src/bindings/routes.ts::admittedKinds`
 
 The kinds a wildcard claim (`(holder (_) @path)`) reads: the concrete named kinds its nearest enclosing kind admits where the wildcard sits. Under a field, that field's slot; otherwise every slot holding nodes and, for a list, its element kinds. Supertypes expand to their concrete subtypes (`concreteKinds`). `resolveRoutes` enters the claim once on each, so a wildcard claim takes its place in each kind's ruled order like any other, except on a kind that claims the same path itself, where the kind's own claim already reads it. A wildcard claim names a role by position, not a shape, so its entries take part in read dispatch and `is` but fold no members into the path (`derive.ts::derive`); a path's members come from its explicit claims. A wildcard claim with no enclosing kind has nothing to read its kinds from and fails resolution.
@@ -571,6 +903,34 @@ The kinds a wildcard claim (`(holder (_) @path)`) reads: the concrete named kind
 ### `packages/codegen/src/bindings/routes.ts::concreteKinds`
 
 A kind's concrete kinds: itself, or its subtypes' concrete kinds when it is a supertype.
+
+### `packages/codegen/src/bindings/routes.ts::LayoutSlot`
+
+A slot the options block addresses as layout (or every list separator, `kind: null`): not content, so no member names it.
+
+### `packages/codegen/src/bindings/routes.ts::SlotStep`
+
+One step of a member's build path: a slot of an owning kind.
+
+### `packages/codegen/src/bindings/routes.ts::slotByField`
+
+The slot a field name finds: by the slot's name, or by its property name in snake_case.
+
+### `packages/codegen/src/bindings/routes.ts::reaches`
+
+Whether a kind is, or is reached through supertype arms from, another kind.
+
+### `packages/codegen/src/bindings/routes.ts::holdsNodes`
+
+Whether a slot holds nodes: it is not a presence flag and it admits at least one kind.
+
+### `packages/codegen/src/bindings/routes.ts::TRANSPARENT_MODEL_TYPES`
+
+The model types whose single content slot stands for the kind itself when it is a container's element.
+
+### `packages/codegen/src/bindings/routes.ts::pinsOf`
+
+A claim's pins on its kind: each field literal, plus each unfielded token a slot's terminals admit (unless that field is already pinned), as the member, slot and text the read tests.
 
 ### `packages/codegen/src/bindings/derive.ts::wildcardContainers`
 
@@ -583,6 +943,54 @@ One member of an enum kind as the assembled model stamps it: the member's kind, 
 ### `packages/codegen/src/bindings/facts.ts::ClaimFact`
 
 A vocabulary capture on a node: its path, its grammar kind (`_` for a wildcard), the field it sits under in its enclosing node (`null` for none), its predicates, whether it is top-level, the kinds enclosing it nearest first (`within`), and the field literals and tokens it pins. A wildcard claim's kinds are read from its enclosing kind and field (`routes.ts::admittedKinds`).
+
+### `packages/codegen/src/bindings/facts.ts::WILDCARD`
+
+The kind a wildcard pattern node (`(_)`, `_`) stands for in the facts: any kind its position admits.
+
+### `packages/codegen/src/bindings/facts.ts::PredicateArgument`
+
+One argument of a predicate: a capture by name, or text.
+
+### `packages/codegen/src/bindings/facts.ts::UnclaimedFact`
+
+A kind `bindings.scm` declares unclaimed (`@unclaimed`), with the pattern's `#set! reason`.
+
+### `packages/codegen/src/bindings/facts.ts::MemberFact`
+
+A member capture as read. `rename` names the slot its selector finds on the owner. `presence` marks an unfielded token's presence on the owner, through the kinds in `via` when it sits deeper. `kind` is the presence of a node's kind in the slot another member names (a flag). `nested` is a member of the top kind that sits below a child, reached through `via`, in `parent`'s slot the selector finds, repeated when `multiple`.
+
+### `packages/codegen/src/bindings/facts.ts::ContainerCapture`
+
+A capture in a container pattern other than `@element`: its name, its token text when it captures a token, whether it repeats, and the selector of its slot.
+
+### `packages/codegen/src/bindings/facts.ts::PatternOrigin`
+
+Where a pattern sits in `bindings.scm`: its first line and its source text.
+
+### `packages/codegen/src/bindings/facts.ts::ContainerFact`
+
+A container pattern as read: the container kind, the selector of its element slot, its other captures, the selectors of the slots it drops on purpose, the reason it gives, and where the pattern sits.
+
+### `packages/codegen/src/bindings/facts.ts::TemplateFact`
+
+An anchored `#match?` with named holes as a template: the vocabulary paths the pattern claims, the capture it tests, the regex as a template literal with each hole `${string}`, and the hole names.
+
+### `packages/codegen/src/bindings/facts.ts::ModelSlot`
+
+A slot of the node model as the bindings read it: its name and property name, whether it is required and repeated, its storage, the kinds it holds and the terminal texts it admits.
+
+### `packages/codegen/src/bindings/facts.ts::ModelNode`
+
+A kind of the node model as the bindings read it: its model type, its slots, its supertype arms, a list's element kinds, an enum's members, a fixed leaf's text and a pattern leaf's pattern.
+
+### `packages/codegen/src/bindings/facts.ts::SlotModel`
+
+The node model as the bindings read it, keyed by kind.
+
+### `packages/codegen/src/bindings/facts.ts::BINDINGS_FILE`
+
+The name of a grammar package's bindings file. The bindings path, compile, generate and the manifest check all spell it through this.
 
 ### `packages/codegen/src/bindings/derive.ts::wildcardUnrouted`
 

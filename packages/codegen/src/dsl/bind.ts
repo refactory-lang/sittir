@@ -62,7 +62,7 @@ export function split(kind: string, as: string, placement: Pick<Split, 'within' 
 	return { kind, as, within: placement.within, containers: placement.containers };
 }
 
-type GrammarRecord = Record<string, unknown>;
+export type GrammarRecord = Record<string, unknown>;
 
 const LIST_FIELDS = ['supertypes', 'inline', 'factoryInline', 'textTokens', 'protectedRuleNames', 'undeclaredRules'];
 const RULE_FIELDS = ['extras', 'externals', 'precedences', 'reserved', 'conflicts'];
