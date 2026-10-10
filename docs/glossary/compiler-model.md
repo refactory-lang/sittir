@@ -3643,7 +3643,9 @@ separator or flank the kind whose rule carries the multiplicity, the slot
 the rule id maps to, the label, the side and the resolved default; for a
 token seam the kind whose seq holds the choice, the token's kind name as
 the slot, the field name (`<token>_<side>`) as the address, the declared
-or default label, and side `seam`. Rule order is what the depth walk
+or default label, and side `seam`. A seam whose token is the kind's own
+display is the kind's edge, and its site is stamped `kindEdge` here, where
+that is known. Rule order is what the depth walk
 (`validateIndentDepth`, `DEPTH_SITES`) relies on: a flank's start precedes
 its array's sites and its end follows them. One entry per kind × transport
 field; two seams of one token in one kind resolving to different defaults
@@ -3653,7 +3655,8 @@ A kind edge that opens or closes with a choice of two or more tokens
 (`edgeLiterals`), where the member beside the seam is a slot with no
 multiplicity, also gets one arm site per token: address `<token>_<side>`, the
 edge's own arms and default, and `edgeArm` naming the edge's address as its
-parent and the token. A face on one token then resolves that arm alone, and the
+parent, the token, and the token's kind id (stamped where the render rules
+recorded the arm's default from the token's catalog entry). A face on one token then resolves that arm alone, and the
 edge's own address reaches the edge and every arm. An edge whose first or last
 member is optional or a run has no slot to read an arm from and keeps its single
 site.

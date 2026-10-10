@@ -10,6 +10,7 @@ import { displayNameOf } from './display-name.ts';
 import type { AddressLabel, PathDeclaration } from '../../dsl/wire/options-block.ts';
 import type { SupertypeMembers } from './supertype-members.ts';
 import type { SeamOrigin } from '../../types/rule.ts';
+import type { EdgeArm } from './render-rules.ts';
 
 export interface SiteAddressInput {
 	readonly kind: string;
@@ -18,7 +19,7 @@ export interface SiteAddressInput {
 	readonly label: string;
 	readonly path?: readonly PreferenceSegment[];
 	readonly edgeLiterals?: readonly string[];
-	readonly edgeArm?: { readonly parent: string; readonly token: string };
+	readonly edgeArm?: EdgeArm;
 }
 
 export type AddressedSite<T extends SiteAddressInput = SiteAddressInput> = T & {

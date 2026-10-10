@@ -8,7 +8,7 @@ import { LAYOUT_KIND_BITS, leafEdgesOf } from '../compiler/model/layout-kinds.ts
 import { BLANK_ARM, BLANK_KIND_ID, type PreferenceArm, type SitePreference, type SpacingSide } from '../compiler/model/site-preferences.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { displayNameOf } from '../compiler/model/display-name.ts';
-import { admitsDepth } from '../compiler/model/render-rules.ts';
+import { admitsDepth, type EdgeArm } from '../compiler/model/render-rules.ts';
 import { DEDENT_TEXT, INDENT_TEXT, depthBreakOf, parseSeamLabel, seamLabel } from '../dsl/primitives/spacing.ts';
 import { pathOf } from '../compiler/model/site-addresses.ts';
 import { comparePreferencePaths, formatPreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
@@ -41,7 +41,7 @@ export function seamStrength(origin: SeamOrigin | undefined): SeamStrength {
 }
 
 export interface SpacingSite {
-	readonly kind: string;
+	readonly display: string;
 	readonly source: string;
 	readonly kindId?: number;
 	readonly slot: string;
@@ -58,11 +58,12 @@ export interface SpacingSite {
 	readonly defaultText?: string;
 	readonly seat?: { readonly kind: string; readonly display: string; readonly field: string; readonly kindId?: number };
 	readonly path?: readonly PreferenceSegment[];
-	readonly edgeArm?: { readonly parent: string; readonly token: string };
+	readonly edgeArm?: EdgeArm;
+	readonly kindEdge?: true;
 }
 
 export interface DelimiterSite {
-	readonly kind: string;
+	readonly display: string;
 	readonly source: string;
 	readonly slot: string;
 	readonly constName: string;
@@ -173,13 +174,13 @@ export function planRenderOptions(
 		paths.set(row, pathOf(site, kindEntries, nodeMap));
 	};
 	for (const site of sites) {
-		const kind = displayNameOf(site.kind, nodeMap);
+		const display = displayNameOf(site.kind, nodeMap);
 		const source = site.kind;
-		const kindId = nodeMap.nodes.get(source)?.kindId;
-		const at = `${kind}.${site.slot}`;
+		const stamp = stampOf(nodeMap, source);
+		const at = `${display}.${site.slot}`;
 		if (site.source === 'delimiter') {
 			const allowed = site.arms.reduce((acc, arm) => acc | (DELIMITER_BITS[arm.value] ?? 0), 0);
-			const row: DelimiterSite = { kind, source, slot: site.slot, constName: `DELIM_${screaming(source)}_${screaming(site.slot)}`, allowed, defaultBits: DELIMITER_BITS[site.defaultArm] ?? 0 };
+			const row: DelimiterSite = { display, source, slot: site.slot, constName: `DELIM_${screaming(source)}_${screaming(site.slot)}`, allowed, defaultBits: DELIMITER_BITS[site.defaultArm] ?? 0 };
 			delimiters.push(row);
 			delimiterPaths.set(row, pathOf(site, kindEntries, nodeMap));
 			continue;
@@ -188,9 +189,9 @@ export function planRenderOptions(
 			const defaultEntry = findEntryForKindName(kindEntries, site.defaultArm);
 			if (defaultEntry?.literalText === undefined) throw new Error(`options.rs: ${at} separator default '${site.defaultArm}' has no token text`);
 			pushSpacing({
-				kind,
+				display,
 				source,
-				...(kindId === undefined ? {} : { kindId }),
+				...stamp,
 				slot: site.slot,
 				address: site.address,
 				label: site.label,
@@ -210,16 +211,15 @@ export function planRenderOptions(
 		if (defaultArm === undefined) throw new Error(`options.rs: ${at} default '${site.defaultArm}' is not one of its arms`);
 		const isFlank = site.side === 'start' || site.side === 'end';
 		const seatEdge = site.seat === undefined ? undefined : parseSeamLabel(site.seat.field);
-		const seatKindId = site.seat === undefined ? undefined : nodeMap.nodes.get(site.seat.kind)?.kindId;
 		const field = isFlank
 			? `${site.slot}_${site.side}`
 			: site.seat !== undefined && seatEdge !== undefined
 				? `${site.slot}_${seamLabel(site.seat.kind, seatEdge.side)}`
 				: site.address;
 		pushSpacing({
-			kind,
+			display,
 			source,
-			...(kindId === undefined ? {} : { kindId }),
+			...stamp,
 			slot: site.slot,
 			address: site.address,
 			label: site.label,
@@ -230,16 +230,17 @@ export function planRenderOptions(
 			allowedIds,
 			strength: seamStrength(site.origin),
 			...(site.side === undefined ? {} : { side: site.side }),
-			...(site.seat === undefined ? {} : { seat: { ...site.seat, ...(seatKindId === undefined ? {} : { kindId: seatKindId }) } }),
+			...(site.seat === undefined ? {} : { seat: { ...site.seat, ...stampOf(nodeMap, site.seat.kind) } }),
 			...(site.path === undefined ? {} : { path: site.path }),
-			...(site.edgeArm === undefined ? {} : { edgeArm: site.edgeArm })
+			...(site.edgeArm === undefined ? {} : { edgeArm: site.edgeArm }),
+			...(site.kindEdge === undefined ? {} : { kindEdge: site.kindEdge })
 		}, site);
 		if (admitsDepth({ arms: site.arms.map((arm) => arm.value) })) depthCapable.push(spacing[spacing.length - 1]!);
 	}
 	spacing.sort((a, b) => comparePreferencePaths(paths.get(a)!, paths.get(b)!));
-	delimiters.sort((a, b) => byTuple([a.kind, a.slot], [b.kind, b.slot]));
+	delimiters.sort((a, b) => byTuple([a.display, a.slot], [b.display, b.slot]));
 	const depthSites = new Map<string, number[]>();
-	for (const s of depthCapable) depthSites.set(s.kind, [...(depthSites.get(s.kind) ?? []), spacing.indexOf(s)]);
+	for (const s of depthCapable) depthSites.set(s.display, [...(depthSites.get(s.display) ?? []), spacing.indexOf(s)]);
 	const idOfText = (text: string): number => {
 		const kind = [...whitespaceText].find(([, t]) => t === text)?.[0];
 		return kind === undefined ? 0 : idOf(kindEntries, kind, 'visibleExternals');
@@ -499,14 +500,15 @@ export function carriesPerNodeValue(site: SpacingSite): boolean {
 }
 
 export function isKindEdge(site: SpacingSite): boolean {
-	return parseSeamLabel(site.address)?.token === site.kind;
+	return site.kindEdge === true;
 }
 
-export function edgeKindId(kindEntries: readonly IdEntry[], kind: string): number | undefined {
-	return findEntryForKindName(kindEntries, kind)?.id;
+function stampOf(nodeMap: NodeMap, kind: string): { readonly kindId?: number } {
+	const kindId = nodeMap.nodes.get(kind)?.kindId;
+	return kindId === undefined ? {} : { kindId };
 }
 
-export function edgeSitesOf(plan: RenderOptionsPlan, kindEntries: readonly IdEntry[]): EdgeSiteRow[] {
+export function edgeSitesOf(plan: RenderOptionsPlan): EdgeSiteRow[] {
 	const byKind = new Map<number, { before?: number; after?: number; beforeArms: EdgeArmRow[]; afterArms: EdgeArmRow[] }>();
 	const ambiguous = new Set<number>();
 	const rowOf = (id: number) => {
@@ -526,9 +528,9 @@ export function edgeSitesOf(plan: RenderOptionsPlan, kindEntries: readonly IdEnt
 	plan.spacingSites.forEach((row, site) => {
 		if (row.edgeArm === undefined) return;
 		const id = row.kindId;
-		const arm = edgeKindId(kindEntries, row.edgeArm.token);
+		const arm = row.edgeArm.kindId;
 		if (id === undefined || arm === undefined) {
-			throw new Error(`options.rs: edge arm site '${row.address}' of '${row.kind}' names '${row.edgeArm.token}', which has no kind id`);
+			throw new Error(`options.rs: edge arm site '${row.address}' of '${row.source}' names '${row.edgeArm.token}', which has no kind id`);
 		}
 		const side = parseSeamLabel(row.edgeArm.parent)!.side;
 		rowOf(id)[side === 'before' ? 'beforeArms' : 'afterArms'].push({ arm, site });
@@ -586,10 +588,10 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('/// (kind, address, label, allowed kind ids), in canonical path order.');
 	L.push('pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[');
 	for (const s of plan.spacingSites) {
-		L.push(`    (${q(s.kind)}, ${q(s.address)}, ${q(s.label)}, &[${s.allowedIds.join(', ')}]),`);
+		L.push(`    (${q(s.display)}, ${q(s.address)}, ${q(s.label)}, &[${s.allowedIds.join(', ')}]),`);
 	}
 	L.push('];', '');
-	const edgeRows = edgeSitesOf(plan, kindEntries);
+	const edgeRows = edgeSitesOf(plan);
 	L.push('/// The before and after site of every kind that owns edge seams, in kind id order.');
 	L.push('pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[');
 	const armSites = (arms: readonly EdgeArmRow[]): string =>
@@ -608,7 +610,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push(...denseFlags('LEAF_EDGES', plan.leafEdges, 'u16').map((line) => line.replace('pub static', 'pub const')));
 	L.push('/// (kind, `<slot>_delimiter` key, allowed bitflag union, default bitflag), in site order.');
 	L.push('pub static DELIMITER_SITES: &[(&str, &str, u8, u8)] = &[');
-	for (const s of plan.delimiterSites) L.push(`    (${q(s.kind)}, ${q(`${s.slot}_delimiter`)}, ${s.allowed}, ${s.defaultBits}),`);
+	for (const s of plan.delimiterSites) L.push(`    (${q(s.display)}, ${q(`${s.slot}_delimiter`)}, ${s.allowed}, ${s.defaultBits}),`);
 	L.push('];', '');
 	L.push(`pub const INDENT_KIND: u16 = ${plan.indentId};`);
 	L.push(`pub const DEDENT_KIND: u16 = ${plan.dedentId};`, '');

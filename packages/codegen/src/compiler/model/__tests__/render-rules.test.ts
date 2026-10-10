@@ -537,8 +537,14 @@ describe('seamRenderRules', () => {
 		const sites = spacingSitesOf(out, nodeMap);
 		const arms = sites.filter((site) => site.edgeArm !== undefined);
 		expect(arms.map((site) => [site.kind, site.address, site.edgeArm])).toEqual([
-			['range', 'dot_dot_before', { parent: 'range_before', token: 'dot_dot' }],
-			['range', 'dot_dot_eq_before', { parent: 'range_before', token: 'dot_dot_eq' }]
+			['range', 'dot_dot_before', { parent: 'range_before', token: 'dot_dot', kindId: 30 }],
+			['range', 'dot_dot_eq_before', { parent: 'range_before', token: 'dot_dot_eq', kindId: 31 }]
+		]);
+		expect(sites.filter((site) => site.kindEdge === true).map((site) => [site.kind, site.address])).toEqual([
+			['range', 'range_before'],
+			['range', 'range_after'],
+			['call', 'call_before'],
+			['call', 'call_after']
 		]);
 		expect(arms.map((site) => site.defaultArm)).toEqual(sites.filter((site) => site.address === 'range_before').map((site) => site.defaultArm).flatMap((arm) => [arm, arm]));
 		expect(sites.filter((site) => site.kind === 'call' && site.edgeArm !== undefined)).toEqual([]);

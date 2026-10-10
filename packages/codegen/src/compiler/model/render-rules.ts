@@ -66,6 +66,7 @@ export interface SpacedSeparator {
 export interface EdgeArmDefault {
 	readonly arm: Layout;
 	readonly origin: SeamOrigin;
+	readonly kindId?: number;
 }
 
 export interface RenderRules {
@@ -76,7 +77,7 @@ export interface RenderRules {
 
 export interface RenderRulesConfig {
 	readonly nodeMap: NodeMap;
-	readonly kindEntries: readonly KindEntryLike[];
+	readonly kindEntries: readonly (KindEntryLike & { readonly id: number })[];
 	readonly options?: OptionsConfig;
 	readonly whitespaceText?: ReadonlyMap<string, string>;
 	readonly normalizedRules?: Record<string, RenderRule>;
@@ -115,11 +116,13 @@ export interface RuleSpacingSite {
 	readonly path?: readonly PreferenceSegment[];
 	readonly edgeLiterals?: readonly string[];
 	readonly edgeArm?: EdgeArm;
+	readonly kindEdge?: true;
 }
 
 export interface EdgeArm {
 	readonly parent: string;
 	readonly token: string;
+	readonly kindId?: number;
 }
 
 type Bag = {
@@ -828,9 +831,10 @@ function withKindEdges(
 		if (first.size < 2) return;
 		for (const token of first) {
 			const address = seamLabel(token, side);
-			const text = findEntryForKindName(config.kindEntries, token)?.literalText;
+			const entry = findEntryForKindName(config.kindEntries, token);
+			const text = entry?.literalText;
 			const { arm, origin } = resolver.resolveSeam(kind, address, seamsOf(side), text !== undefined && isKeywordText(text, config));
-			edgeArms.set(edgeArmKey(kind, address), { arm, origin });
+			edgeArms.set(edgeArmKey(kind, address), { arm, origin, ...(entry === undefined ? {} : { kindId: entry.id }) });
 		}
 	};
 	if (!isImmediateRight(rule, config)) recordArms('before');
@@ -932,7 +936,7 @@ export function declaredOptionArms(
 export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): RuleSpacingSite[] {
 	const out = new Map<string, RuleSpacingSite>();
 	const seats: Seat[] = [];
-	const add = (kind: string, slot: string, part: SpacingPart, address: string, edgeArm?: EdgeArm): void => {
+	const add = (kind: string, slot: string, part: SpacingPart, address: string, stamp: Pick<RuleSpacingSite, 'edgeArm' | 'kindEdge'> = {}): void => {
 		const key = `${kind} ${part.fieldName}`;
 		const prior = out.get(key);
 		if (prior !== undefined && prior.defaultArm !== part.defaultArm) {
@@ -949,7 +953,7 @@ export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): Rule
 				arms: part.arms,
 				...(part.origin === 'word-default' ? { origin: part.origin } : {}),
 				...(part.edgeLiterals === undefined ? {} : { edgeLiterals: part.edgeLiterals }),
-				...(edgeArm === undefined ? {} : { edgeArm })
+				...stamp
 			});
 		}
 	};
@@ -976,8 +980,9 @@ export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): Rule
 			}
 			const part = seamPartOf(m);
 			const seam = parseSeamLabel(part.fieldName)!;
-			add(kind, seam.token, part, part.fieldName);
-			if (seam.token !== displayNameOf(kind, nodeMap)) continue;
+			const kindEdge = seam.token === displayNameOf(kind, nodeMap);
+			add(kind, seam.token, part, part.fieldName, kindEdge ? { kindEdge } : {});
+			if (!kindEdge) continue;
 			for (const token of part.edgeLiterals ?? []) {
 				const address = seamLabel(token, seam.side);
 				const armDefault = renderRules.edgeArms?.get(edgeArmKey(kind, address));
@@ -987,7 +992,7 @@ export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): Rule
 					token,
 					{ ...part, fieldName: address, label: address, defaultArm: armDefault.arm, origin: armDefault.origin, edgeLiterals: undefined },
 					address,
-					{ parent: part.fieldName, token }
+					{ edgeArm: { parent: part.fieldName, token, ...(armDefault.kindId === undefined ? {} : { kindId: armDefault.kindId }) } }
 				);
 			}
 		}
