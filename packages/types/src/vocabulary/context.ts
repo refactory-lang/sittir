@@ -335,7 +335,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['type'];
 		};
 		readonly 'declaration.field': {
-			readonly name: G['identifier'] | G['literal'] | string;
+			readonly name: G['expression'] | G['identifier'] | G['literal'] | string;
 			readonly optionality: string;
 			readonly type:
 				| V.Clause.Bounds.Removed<G>
@@ -350,7 +350,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly visibility: V.Modifier.Visibility<G>;
 		};
 		readonly 'declaration.field.signature': {
-			readonly name: G['literal'] | V.Identifier.Property.Any<G> | string;
+			readonly name: G['expression'] | G['literal'] | V.Identifier.Property<G> | string;
 			readonly type: G['identifier'] | G['type'];
 			readonly visibility: V.Modifier.Visibility<G>;
 		};
@@ -406,7 +406,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		readonly 'declaration.method': {
 			readonly accessor: string;
 			readonly body: V.Declaration.TypeAlias<G> | G['statement'];
-			readonly name: G['identifier'] | G['literal'] | string;
+			readonly name: G['expression'] | G['identifier'] | G['literal'] | string;
 			readonly parameters:
 				| V.Clause.Bounds.Removed<G>
 				| V.Expression.Call.Macro<G>
@@ -425,7 +425,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		readonly 'declaration.method.signature': {
 			readonly accessor: string;
 			readonly functionModifiers: V.Modifier.Extern<G> | string;
-			readonly name: G['identifier'] | G['literal'] | string;
+			readonly name: G['expression'] | G['identifier'] | G['literal'] | string;
 			readonly parameters:
 				| V.Clause.Bounds.Removed<G>
 				| V.Expression.Call.Macro<G>
@@ -442,7 +442,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'declaration.method.signature.abstract': {
 			readonly accessorKind: string;
-			readonly name: G['literal'] | V.Identifier.Property.Any<G> | string;
+			readonly name: G['expression'] | G['literal'] | V.Identifier.Property<G> | string;
 			readonly returnType: G['identifier'] | G['type'];
 			readonly visibility: V.Modifier.Visibility<G>;
 		};
@@ -932,7 +932,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly properties:
 				| V.Declaration.Method<G>
 				| G['element']
-				| V.Identifier.Property.Shorthand<G>
 				| string;
 		};
 		readonly 'expression.collection.set': {
@@ -1152,16 +1151,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		readonly 'identifier.metavariable': {
 			readonly name: unknown;
 		};
-		readonly 'identifier.property.computed': {
-			readonly expression:
-				| V.Declaration.Module<G>
-				| G['expression']
-				| G['identifier']
-				| G['literal'];
-		};
-		readonly 'identifier.property.private': {
-			readonly content: unknown;
-		};
 		readonly 'identifier.scoped': {
 			readonly path: G['identifier'] | string | G['type'];
 		};
@@ -1342,7 +1331,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['literal'];
 		};
 		readonly 'pattern.object.pair': {
-			readonly key: G['literal'] | V.Identifier.Property.Any<G> | string;
+			readonly key: G['expression'] | G['literal'] | V.Identifier.Property<G> | string;
 			readonly value:
 				| G['expression']
 				| G['identifier']

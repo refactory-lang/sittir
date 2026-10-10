@@ -67,8 +67,10 @@ export namespace Element {
 	export interface Pair<G extends GrammarContext<G>> extends SubKindOf<V.Element<G>> {
 		// claimed by pt
 		readonly $kind: 'element.pair';
+		readonly computed?: boolean;
+		// t only
 		readonly key: G['slots']['element.pair']['key'];
-		readonly value: G['slots']['element.pair']['value'];
+		readonly value?: G['slots']['element.pair']['value'];
 	}
 	export interface Splat<G extends GrammarContext<G>> extends SubKindOf<V.Element<G>> {
 		// claimed by pt
