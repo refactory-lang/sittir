@@ -161901,6 +161901,147 @@
     "wrappedOffset": 23
   },
   {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "case_patterns",
+    "input": {
+      "$type": 261,
+      "_item": [
+        {
+          "$type": 182,
+          "_content": {
+            "$type": 183,
+            "_content": {
+              "$type": 190,
+              "_name": {
+                "$type": 181,
+                "_names": [
+                  {
+                    "$type": 1,
+                    "$text": "Click"
+                  }
+                ]
+              },
+              "_arguments": {
+                "$type": 265,
+                "_item": [
+                  {
+                    "$type": 182,
+                    "_content": {
+                      "$type": 183,
+                      "_content": {
+                        "$type": 273,
+                        "_list_pattern_case_patterns": {
+                          "$type": 265,
+                          "_item": [
+                            {
+                              "$type": 182,
+                              "_content": {
+                                "$type": 183,
+                                "_content": {
+                                  "$type": 181,
+                                  "_names": [
+                                    {
+                                      "$type": 1,
+                                      "$text": "x"
+                                    }
+                                  ]
+                                }
+                              }
+                            },
+                            {
+                              "$type": 182,
+                              "_content": {
+                                "$type": 183,
+                                "_content": {
+                                  "$type": 181,
+                                  "_names": [
+                                    {
+                                      "$type": 1,
+                                      "$text": "y"
+                                    }
+                                  ]
+                                }
+                              },
+                              "$_layout": {
+                                "gap": {
+                                  "$text": ", "
+                                }
+                              }
+                            }
+                          ],
+                          "_delimiter": 0,
+                          "$_layout": {
+                            "flank": {
+                              "$text": "    case Click((x, y)",
+                              "$span": {
+                                "start": 16,
+                                "end": 20
+                              },
+                              "$before": true,
+                              "$after": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "$type": 182,
+                    "_content": {
+                      "$type": 188,
+                      "_name": {
+                        "$type": 1,
+                        "$text": "button"
+                      },
+                      "_value": {
+                        "$type": 181,
+                        "_names": [
+                          {
+                            "$type": 1,
+                            "$text": "Button"
+                          },
+                          {
+                            "$type": 1,
+                            "$text": "LEFT",
+                            "$_layout": {
+                              "gap": {
+                                "$text": "."
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "$_layout": {
+                      "gap": {
+                        "$text": ", "
+                      }
+                    }
+                  }
+                ],
+                "_delimiter": 0,
+                "$_layout": {
+                  "flank": {
+                    "$text": "    case Click((x, y), button=Button.LEFT)",
+                    "$span": {
+                      "start": 15,
+                      "end": 41
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "_delimiter": 0
+    },
+    "expectedOutput": "Click((x, y), button = Button.LEFT)"
+  },
+  {
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "Click((x, y), button=Button.LEFT)",
@@ -203583,6 +203724,36 @@
     "wrappedOffset": 23
   },
   {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "case_patterns",
+    "input": {
+      "$type": 261,
+      "_item": [
+        {
+          "$type": 182,
+          "_content": {
+            "$type": 183,
+            "_content": {
+              "$type": 190,
+              "_name": {
+                "$type": 181,
+                "_names": [
+                  {
+                    "$type": 1,
+                    "$text": "Something"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "_delimiter": 0
+    },
+    "expectedOutput": "Something()"
+  },
+  {
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "Something()",
@@ -203592,6 +203763,45 @@
     "expectedReparseTree": "(case_patterns item: (case_pattern (simple_pattern (class_pattern name: (dotted_name names: (identifier))))))",
     "wrappedText": "match 0:\n    \n    \n    case Something(): pass",
     "wrappedOffset": 28
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "case_patterns",
+    "input": {
+      "$type": 261,
+      "_item": [
+        {
+          "$type": 182,
+          "_content": {
+            "$type": 183,
+            "_content": {
+              "$type": 190,
+              "_name": {
+                "$type": 181,
+                "_names": [
+                  {
+                    "$type": 1,
+                    "$text": "Something"
+                  },
+                  {
+                    "$type": 1,
+                    "$text": "Else",
+                    "$_layout": {
+                      "gap": {
+                        "$text": "."
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "_delimiter": 0
+    },
+    "expectedOutput": "Something.Else()"
   },
   {
     "kind": "roundtrip",
@@ -203605,6 +203815,102 @@
     "wrappedOffset": 28
   },
   {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "case_patterns",
+    "input": {
+      "$type": 261,
+      "_item": [
+        {
+          "$type": 182,
+          "_content": {
+            "$type": 183,
+            "_content": {
+              "$type": 190,
+              "_name": {
+                "$type": 181,
+                "_names": [
+                  {
+                    "$type": 1,
+                    "$text": "Point2D"
+                  }
+                ]
+              },
+              "_arguments": {
+                "$type": 265,
+                "_item": [
+                  {
+                    "$type": 182,
+                    "_content": {
+                      "$type": 183,
+                      "_content": {
+                        "$type": 283,
+                        "_value": {
+                          "$type": 95,
+                          "$text": "0"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "$type": 182,
+                    "_content": {
+                      "$type": 183,
+                      "_content": {
+                        "$type": 283,
+                        "_value": {
+                          "$type": 95,
+                          "$text": "1"
+                        }
+                      }
+                    },
+                    "$_layout": {
+                      "gap": {
+                        "$text": ", "
+                      }
+                    }
+                  },
+                  {
+                    "$type": 182,
+                    "_content": {
+                      "$type": 183,
+                      "_content": {
+                        "$type": 283,
+                        "_value": {
+                          "$type": 95,
+                          "$text": "2"
+                        }
+                      }
+                    },
+                    "$_layout": {
+                      "gap": {
+                        "$text": ", "
+                      }
+                    }
+                  }
+                ],
+                "_delimiter": 0,
+                "$_layout": {
+                  "flank": {
+                    "$text": "    case Point2D(0, 1, 2)",
+                    "$span": {
+                      "start": 17,
+                      "end": 24
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "_delimiter": 0
+    },
+    "expectedOutput": "Point2D(0, 1, 2)"
+  },
+  {
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "Point2D(0, 1, 2)",
@@ -203614,6 +203920,114 @@
     "expectedReparseTree": "(case_patterns item: (case_pattern (simple_pattern (class_pattern name: (dotted_name names: (identifier)) arguments: (list_pattern_case_patterns item: (case_pattern (simple_pattern (simple_pattern_negative value: (integer_decimal_plain)))) item: (case_pattern (simple_pattern (simple_pattern_negative value: (integer_decimal_plain)))) item: (case_pattern (simple_pattern (simple_pattern_negative value: (integer_decimal_plain)))))))))",
     "wrappedText": "match 0:\n    \n    \n    case Point2D(0, 1, 2): pass",
     "wrappedOffset": 28
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "case_patterns",
+    "input": {
+      "$type": 261,
+      "_item": [
+        {
+          "$type": 182,
+          "_content": {
+            "$type": 183,
+            "_content": {
+              "$type": 190,
+              "_name": {
+                "$type": 181,
+                "_names": [
+                  {
+                    "$type": 1,
+                    "$text": "Point3D"
+                  }
+                ]
+              },
+              "_arguments": {
+                "$type": 265,
+                "_item": [
+                  {
+                    "$type": 182,
+                    "_content": {
+                      "$type": 188,
+                      "_name": {
+                        "$type": 1,
+                        "$text": "x"
+                      },
+                      "_value": {
+                        "$type": 283,
+                        "_value": {
+                          "$type": 95,
+                          "$text": "0"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "$type": 182,
+                    "_content": {
+                      "$type": 188,
+                      "_name": {
+                        "$type": 1,
+                        "$text": "y"
+                      },
+                      "_value": {
+                        "$type": 283,
+                        "_value": {
+                          "$type": 95,
+                          "$text": "0"
+                        }
+                      }
+                    },
+                    "$_layout": {
+                      "gap": {
+                        "$text": ", "
+                      }
+                    }
+                  },
+                  {
+                    "$type": 182,
+                    "_content": {
+                      "$type": 188,
+                      "_name": {
+                        "$type": 1,
+                        "$text": "z"
+                      },
+                      "_value": {
+                        "$type": 283,
+                        "_value": {
+                          "$type": 95,
+                          "$text": "0"
+                        }
+                      }
+                    },
+                    "$_layout": {
+                      "gap": {
+                        "$text": ", "
+                      }
+                    }
+                  }
+                ],
+                "_delimiter": 0,
+                "$_layout": {
+                  "flank": {
+                    "$text": "    case Point3D(x=0, y=0, z=0)",
+                    "$span": {
+                      "start": 17,
+                      "end": 30
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "_delimiter": 0
+    },
+    "expectedOutput": "Point3D(x = 0, y = 0, z = 0)"
   },
   {
     "kind": "roundtrip",
@@ -203627,6 +204041,132 @@
     "wrappedOffset": 28
   },
   {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "case_patterns",
+    "input": {
+      "$type": 261,
+      "_item": [
+        {
+          "$type": 182,
+          "_content": {
+            "$type": 183,
+            "_content": {
+              "$type": 190,
+              "_name": {
+                "$type": 181,
+                "_names": [
+                  {
+                    "$type": 1,
+                    "$text": "Point3D"
+                  }
+                ]
+              },
+              "_arguments": {
+                "$type": 265,
+                "_item": [
+                  {
+                    "$type": 182,
+                    "_content": {
+                      "$type": 183,
+                      "_content": {
+                        "$type": 283,
+                        "_value": {
+                          "$type": 95,
+                          "$text": "34"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "$type": 182,
+                    "_content": {
+                      "$type": 188,
+                      "_name": {
+                        "$type": 1,
+                        "$text": "x"
+                      },
+                      "_value": {
+                        "$type": 283,
+                        "_value": {
+                          "$type": 95,
+                          "$text": "0"
+                        }
+                      }
+                    },
+                    "$_layout": {
+                      "gap": {
+                        "$text": ", "
+                      }
+                    }
+                  },
+                  {
+                    "$type": 182,
+                    "_content": {
+                      "$type": 188,
+                      "_name": {
+                        "$type": 1,
+                        "$text": "y"
+                      },
+                      "_value": {
+                        "$type": 283,
+                        "_value": {
+                          "$type": 95,
+                          "$text": "0"
+                        }
+                      }
+                    },
+                    "$_layout": {
+                      "gap": {
+                        "$text": ", "
+                      }
+                    }
+                  },
+                  {
+                    "$type": 182,
+                    "_content": {
+                      "$type": 188,
+                      "_name": {
+                        "$type": 1,
+                        "$text": "z"
+                      },
+                      "_value": {
+                        "$type": 283,
+                        "_value": {
+                          "$type": 95,
+                          "$text": "0"
+                        }
+                      }
+                    },
+                    "$_layout": {
+                      "gap": {
+                        "$text": ", "
+                      }
+                    }
+                  }
+                ],
+                "_delimiter": 0,
+                "$_layout": {
+                  "flank": {
+                    "$text": "    case Point3D(34, x=0, y=0, z=0)",
+                    "$span": {
+                      "start": 17,
+                      "end": 34
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "_delimiter": 0
+    },
+    "expectedOutput": "Point3D(34, x = 0, y = 0, z = 0)"
+  },
+  {
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "Point3D(34, x=0, y=0, z=0)",
@@ -203636,6 +204176,102 @@
     "expectedReparseTree": "(case_patterns item: (case_pattern (simple_pattern (class_pattern name: (dotted_name names: (identifier)) arguments: (list_pattern_case_patterns item: (case_pattern (simple_pattern (simple_pattern_negative value: (integer_decimal_plain)))) item: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative value: (integer_decimal_plain)))) item: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative value: (integer_decimal_plain)))) item: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative value: (integer_decimal_plain)))))))))",
     "wrappedText": "match 0:\n    \n    \n    case Point3D(34, x = 0, y = 0, z = 0): pass",
     "wrappedOffset": 28
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "case_patterns",
+    "input": {
+      "$type": 261,
+      "_item": [
+        {
+          "$type": 182,
+          "_content": {
+            "$type": 183,
+            "_content": {
+              "$type": 190,
+              "_name": {
+                "$type": 181,
+                "_names": [
+                  {
+                    "$type": 1,
+                    "$text": "Point2D"
+                  }
+                ]
+              },
+              "_arguments": {
+                "$type": 265,
+                "_item": [
+                  {
+                    "$type": 182,
+                    "_content": {
+                      "$type": 183,
+                      "_content": {
+                        "$type": 283,
+                        "_value": {
+                          "$type": 95,
+                          "$text": "0"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "$type": 182,
+                    "_content": {
+                      "$type": 183,
+                      "_content": {
+                        "$type": 283,
+                        "_value": {
+                          "$type": 95,
+                          "$text": "1"
+                        }
+                      }
+                    },
+                    "$_layout": {
+                      "gap": {
+                        "$text": ", "
+                      }
+                    }
+                  },
+                  {
+                    "$type": 182,
+                    "_content": {
+                      "$type": 183,
+                      "_content": {
+                        "$type": 283,
+                        "_value": {
+                          "$type": 95,
+                          "$text": "2"
+                        }
+                      }
+                    },
+                    "$_layout": {
+                      "gap": {
+                        "$text": ", "
+                      }
+                    }
+                  }
+                ],
+                "_delimiter": 2,
+                "$_layout": {
+                  "flank": {
+                    "$text": "    case Point2D(0, 1, 2,)",
+                    "$span": {
+                      "start": 17,
+                      "end": 25
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "_delimiter": 0
+    },
+    "expectedOutput": "Point2D(0, 1, 2,)"
   },
   {
     "kind": "roundtrip",
@@ -203649,6 +204285,114 @@
     "wrappedOffset": 28
   },
   {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "case_patterns",
+    "input": {
+      "$type": 261,
+      "_item": [
+        {
+          "$type": 182,
+          "_content": {
+            "$type": 183,
+            "_content": {
+              "$type": 190,
+              "_name": {
+                "$type": 181,
+                "_names": [
+                  {
+                    "$type": 1,
+                    "$text": "Point3D"
+                  }
+                ]
+              },
+              "_arguments": {
+                "$type": 265,
+                "_item": [
+                  {
+                    "$type": 182,
+                    "_content": {
+                      "$type": 188,
+                      "_name": {
+                        "$type": 1,
+                        "$text": "x"
+                      },
+                      "_value": {
+                        "$type": 283,
+                        "_value": {
+                          "$type": 95,
+                          "$text": "0"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "$type": 182,
+                    "_content": {
+                      "$type": 188,
+                      "_name": {
+                        "$type": 1,
+                        "$text": "y"
+                      },
+                      "_value": {
+                        "$type": 283,
+                        "_value": {
+                          "$type": 95,
+                          "$text": "0"
+                        }
+                      }
+                    },
+                    "$_layout": {
+                      "gap": {
+                        "$text": ", "
+                      }
+                    }
+                  },
+                  {
+                    "$type": 182,
+                    "_content": {
+                      "$type": 188,
+                      "_name": {
+                        "$type": 1,
+                        "$text": "z"
+                      },
+                      "_value": {
+                        "$type": 283,
+                        "_value": {
+                          "$type": 95,
+                          "$text": "0"
+                        }
+                      }
+                    },
+                    "$_layout": {
+                      "gap": {
+                        "$text": ", "
+                      }
+                    }
+                  }
+                ],
+                "_delimiter": 2,
+                "$_layout": {
+                  "flank": {
+                    "$text": "    case Point3D(x=0, y=0, z=0,)",
+                    "$span": {
+                      "start": 17,
+                      "end": 31
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "_delimiter": 0
+    },
+    "expectedOutput": "Point3D(x = 0, y = 0, z = 0,)"
+  },
+  {
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "Point3D(x=0, y=0, z=0,)",
@@ -203658,6 +204402,132 @@
     "expectedReparseTree": "(case_patterns item: (case_pattern (simple_pattern (class_pattern name: (dotted_name names: (identifier)) arguments: (list_pattern_case_patterns item: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative value: (integer_decimal_plain)))) item: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative value: (integer_decimal_plain)))) item: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative value: (integer_decimal_plain)))))))))",
     "wrappedText": "match 0:\n    \n    \n    case Point3D(x = 0, y = 0, z = 0,): pass",
     "wrappedOffset": 28
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "case_patterns",
+    "input": {
+      "$type": 261,
+      "_item": [
+        {
+          "$type": 182,
+          "_content": {
+            "$type": 183,
+            "_content": {
+              "$type": 190,
+              "_name": {
+                "$type": 181,
+                "_names": [
+                  {
+                    "$type": 1,
+                    "$text": "Point3D"
+                  }
+                ]
+              },
+              "_arguments": {
+                "$type": 265,
+                "_item": [
+                  {
+                    "$type": 182,
+                    "_content": {
+                      "$type": 183,
+                      "_content": {
+                        "$type": 283,
+                        "_value": {
+                          "$type": 95,
+                          "$text": "34"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "$type": 182,
+                    "_content": {
+                      "$type": 188,
+                      "_name": {
+                        "$type": 1,
+                        "$text": "x"
+                      },
+                      "_value": {
+                        "$type": 283,
+                        "_value": {
+                          "$type": 95,
+                          "$text": "0"
+                        }
+                      }
+                    },
+                    "$_layout": {
+                      "gap": {
+                        "$text": ", "
+                      }
+                    }
+                  },
+                  {
+                    "$type": 182,
+                    "_content": {
+                      "$type": 188,
+                      "_name": {
+                        "$type": 1,
+                        "$text": "y"
+                      },
+                      "_value": {
+                        "$type": 283,
+                        "_value": {
+                          "$type": 95,
+                          "$text": "0"
+                        }
+                      }
+                    },
+                    "$_layout": {
+                      "gap": {
+                        "$text": ", "
+                      }
+                    }
+                  },
+                  {
+                    "$type": 182,
+                    "_content": {
+                      "$type": 188,
+                      "_name": {
+                        "$type": 1,
+                        "$text": "z"
+                      },
+                      "_value": {
+                        "$type": 283,
+                        "_value": {
+                          "$type": 95,
+                          "$text": "0"
+                        }
+                      }
+                    },
+                    "$_layout": {
+                      "gap": {
+                        "$text": ", "
+                      }
+                    }
+                  }
+                ],
+                "_delimiter": 2,
+                "$_layout": {
+                  "flank": {
+                    "$text": "    case Point3D(34, x=0, y=0, z=0,)",
+                    "$span": {
+                      "start": 17,
+                      "end": 35
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "_delimiter": 0
+    },
+    "expectedOutput": "Point3D(34, x = 0, y = 0, z = 0,)"
   },
   {
     "kind": "roundtrip",

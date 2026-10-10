@@ -1164,7 +1164,7 @@ export async function validateReadRenderParse(
 									kind: 'render',
 									grammar,
 									pattern: renderedKind,
-									input: selfContainedRenderInput(data, entry.source, isLeafKind, view),
+									input: selfContainedRenderInput(candidateData(data, renderReparseContext.triviaOf), entry.source, isLeafKind, view),
 									expectedOutput: rendered
 								});
 								options.onFixture({

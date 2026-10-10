@@ -1759,7 +1759,7 @@ The reparsed node of a kind at the splice offset. The kind is a grammar id where
 
 ### `packages/tools/src/validate/read-render-parse.ts::candidateData`
 
-The candidate as its own source span has it. A trailing entry held past tokens that follow the node (`$tokensBetween` above zero) sits outside the span, where the parent renders it after those tokens, so a candidate rendered alone leaves it out. `renderReparse` applies it first, so the read-render-parse, factory and ir lanes prepare a candidate in one place.
+The candidate as its own source span has it. A trailing entry held past tokens that follow the node (`$tokensBetween` above zero) sits outside the span, where the parent renders it after those tokens, so a candidate rendered alone leaves it out. `renderReparse` applies it first, so the read-render-parse, factory and ir lanes prepare a candidate in one place. The render fixtures the validator captures take their input through it too, so a fixture's input renders to the output it records.
 
 value. An `elements` seat projects each element, a `tuple` seat takes the
 group's call arguments as the slot's value, and a `forwarded` seat assigns the
