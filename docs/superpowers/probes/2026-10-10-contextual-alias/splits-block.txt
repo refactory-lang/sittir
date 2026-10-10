@@ -1,0 +1,5 @@
+	splits: [
+		split("function_signature_item", "signature_method_declaration", { within: ["declaration_list", "trait_item"], containers: [{ name: "trait_interface_declaration_body", field: "body" }] }),
+		split("function_item", "method_declaration", { within: ["declaration_list", "impl_item_body"], containers: [{ name: "extension_declaration_body", field: "body" }] }),
+		split("function_item", "method_declaration", { within: ["declaration_list", "trait_item"], containers: [{ name: "trait_interface_declaration_body", field: "body" }] })
+	]

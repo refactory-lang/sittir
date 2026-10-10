@@ -1,0 +1,117 @@
+diff --git a/packages/codegen/src/dsl/bind.ts b/packages/codegen/src/dsl/bind.ts
+index dc115306c..7a0e32428 100644
+--- a/packages/codegen/src/dsl/bind.ts
++++ b/packages/codegen/src/dsl/bind.ts
+@@ -13,6 +13,7 @@ export interface Split {
+ 	readonly within: readonly string[];
+ 	readonly as: string;
+ 	readonly containers: readonly { readonly name: string; readonly field: string }[];
++	readonly alias?: boolean;
+ }
+ 
+ export interface FieldRename {
+@@ -57,8 +58,8 @@ export function rename(from: string, to: string): Rename {
+ 	return { from, to };
+ }
+ 
+-export function split(kind: string, as: string, placement: Pick<Split, 'within' | 'containers'>): Split {
+-	return { kind, as, within: placement.within, containers: placement.containers };
++export function split(kind: string, as: string, placement: Pick<Split, 'within' | 'containers' | 'alias'>): Split {
++	return { kind, as, within: placement.within, containers: placement.containers, ...(placement.alias === true ? { alias: true } : {}) };
+ }
+ 
+ type GrammarRecord = Record<string, unknown>;
+@@ -180,12 +181,19 @@ function symbolNames(rule: unknown, out: Set<string> = new Set()): Set<string> {
+ 	return out;
+ }
+ 
+-function replaceSymbols(rule: unknown, replace: (name: string) => string): unknown {
+-	if (Array.isArray(rule)) return rule.map((r) => replaceSymbols(r, replace));
++type Replacement = string | GrammarRecord;
++
++function replaceSymbols(rule: unknown, replace: (name: string) => Replacement, inAlias = false): unknown {
++	if (Array.isArray(rule)) return rule.map((r) => replaceSymbols(r, replace, inAlias));
+ 	if (!isRecord(rule)) return rule;
+-	if (rule.type === 'SYMBOL' && typeof rule.name === 'string') return { ...rule, name: replace(rule.name) };
++	if (rule.type === 'SYMBOL' && typeof rule.name === 'string') {
++		const to = replace(rule.name);
++		if (typeof to === 'string') return { ...rule, name: to };
++		if (inAlias) throw new Error(`bind: alias split of '${rule.name}' lands inside an alias`);
++		return to;
++	}
+ 	const out: GrammarRecord = {};
+-	for (const [key, value] of Object.entries(rule)) out[key] = replaceSymbols(value, replace);
++	for (const [key, value] of Object.entries(rule)) out[key] = replaceSymbols(value, replace, inAlias || rule.type === 'ALIAS');
+ 	return out;
+ }
+ 
+@@ -454,7 +462,7 @@ export function splitGrammar(grammar: GrammarRecord, splits: readonly Split[]):
+ 	const visiting = new Set<string>();
+ 	const clones = new Map<string, string>();
+ 	const containerFields = new Map<string, string>();
+-	const cloneToward = (name: string, target: string, replacement: string, outer: string, container?: Split['containers'][number]): string => {
++	const cloneToward = (name: string, target: string, replacement: Replacement, outer: string, container?: Split['containers'][number]): string => {
+ 		const base = mappedName(splitFrom, name);
+ 		const key = `${base}\u0000${outer}`;
+ 		const clone = clones.get(key) ?? (isTransparent(base) || container === undefined ? `${base}_${outer}` : container.name);
+@@ -475,9 +483,13 @@ export function splitGrammar(grammar: GrammarRecord, splits: readonly Split[]):
+ 		if (split.kind.startsWith('_') !== split.as.startsWith('_')) throw new Error(`bind: split '${split.kind}' → '${split.as}' flips hiddenness`);
+ 		const outer = split.within[split.within.length - 1];
+ 		if (outer === undefined) throw new Error(`bind: split '${split.kind}' → '${split.as}' names no placement`);
+-		mint(split.kind, split.as, rules[split.kind]);
+ 		let target = split.kind;
+-		let replacement = split.as;
++		let replacement: Replacement = split.as;
++		if (split.alias === true) {
++			if (split.as in rules) throw new Error(`bind: alias split '${split.kind}' → '${split.as}', which the grammar already names`);
++			splitFrom[split.as] = split.kind;
++			replacement = { type: 'ALIAS', named: true, value: split.as, content: { type: 'SYMBOL', name: split.kind } };
++		} else mint(split.kind, split.as, rules[split.kind]);
+ 		split.within.slice(0, -1).forEach((ancestor, index) => {
+ 			replacement = cloneToward(ancestor, target, replacement, outer, split.containers[index]);
+ 			target = ancestor;
+diff --git a/packages/codegen/src/emitters/render-module.ts b/packages/codegen/src/emitters/render-module.ts
+index 25fc3c1c8..93558b713 100644
+--- a/packages/codegen/src/emitters/render-module.ts
++++ b/packages/codegen/src/emitters/render-module.ts
+@@ -1,3 +1,4 @@
++import { readFileSync, writeFileSync } from 'node:fs';
+ import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
+ import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
+ import { isFixedTextLeaf, isTerminalNode } from '../compiler/model/node-map.ts';
+@@ -160,7 +161,9 @@ export interface RenderOptionsInputs {
+ }
+ 
+ export function grammarRenderInputs(grammar: GrammarName, inputs: RenderOptionsInputs): RenderOptionsInputs {
+-	return { ...inputs, boxedPayloads: BOXED_PAYLOADS[grammar] ?? [], envelopePins: ENVELOPE_PINS[grammar] ?? {} };
++	const scratchPins = process.env.SITTIR_SCRATCH_PINS;
++	const boxedPayloads = scratchPins !== undefined && grammar === 'rust' ? (JSON.parse(readFileSync(scratchPins, 'utf8')) as string[]) : (BOXED_PAYLOADS[grammar] ?? []);
++	return { ...inputs, boxedPayloads, envelopePins: ENVELOPE_PINS[grammar] ?? {} };
+ }
+ 
+ export interface RenderModuleEmitterConfig extends RenderOptionsInputs {
+@@ -1481,6 +1484,11 @@ function choicePayloadType(node: AssembledNode, read: ReadPrint): string {
+ }
+ 
+ export function payloadCeilingAssertions(pinned: readonly string[], payloads: ReadonlySet<string>): string[] {
++	const dump = process.env.SITTIR_SCRATCH_PAYLOADS;
++	if (dump !== undefined) {
++		writeFileSync(dump, JSON.stringify({ pinned, payloads: [...payloads].sort() }, null, 1));
++		pinned = pinned.filter((name) => payloads.has(name));
++	}
+ 	const stale = pinned.find((name) => !payloads.has(name));
+ 	if (stale !== undefined) throw new Error(`${stale} is pinned in boxed-payloads.ts but no choice holds it: unpin it`);
+ 	const n = PAYLOAD_CEILING_BYTES;
+diff --git a/packages/rust/grammar.bindings.ts b/packages/rust/grammar.bindings.ts
+index 459319ad3..909b98031 100644
+--- a/packages/rust/grammar.bindings.ts
++++ b/packages/rust/grammar.bindings.ts
+@@ -7,7 +7,7 @@ export default bindings({
+ 	patches: {
+ 		attribute_item: { "2": field("content") },
+ 		field_expression: { "0": field("object"), "2": field("property") },
+-		field_initializer: { "0/0": field("attributes") },
++		field_initializer: { "0": field("attributes") },
+ 		for_expression: { "2": field("left"), "4": field("right") },
+ 		for_lifetimes: { "2": field("lifetimes") },
+ 		inner_attribute_item: { "3": field("content") },
