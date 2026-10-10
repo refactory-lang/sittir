@@ -112,7 +112,7 @@ export function siblingLeads(nodeMap: NodeMap, node: AssembledNode): TriviaSibli
 	return node.arms.flatMap((ref) => {
 		if (ref.type !== SYMBOL || ref.annotations?.default === true) return [];
 		const arm = nodeMap.nodes.get(ref.name);
-		if (arm?.irKey === undefined) throw new Error(`trivia: '${node.kind}' arm '${ref.name}' has no builder`);
+		if (arm?.builderPath === undefined) throw new Error(`trivia: '${node.kind}' arm '${ref.name}' has no builder`);
 		const leads = leadSources(nodeMap, ref.name, new Set());
 		const sources = leads.map((lead) => ('literal' in lead ? escapeRegexLiteral(lead.literal) : `(?:${lead.pattern})`));
 		const texts = leads.flatMap((lead) => ('literal' in lead ? [lead.literal] : []));
@@ -120,7 +120,7 @@ export function siblingLeads(nodeMap: NodeMap, node: AssembledNode): TriviaSibli
 			{
 				lead: leadingRegex(ref.name, sources.join('|')),
 				...(texts.length === leads.length ? { texts } : {}),
-				builder: `ir.${arm.irKey}`
+				builder: `ir.${arm.builderPath.join('.')}`
 			}
 		];
 	});

@@ -52,6 +52,7 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 
 	hydrateSlotRefs(nodeMap, {
 		inline: new Set(raw.inline),
+		spliced: linked.splicedNames,
 		reportedAbsentNames: nodeMap.droppedKinds,
 		grammar
 	});

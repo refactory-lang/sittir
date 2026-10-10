@@ -37,7 +37,7 @@ import {
 	type SubFactory
 } from '../../compiler/model/sub-factories.ts';
 import { bundleEntries, bundleExpr, overlayFrame, overlayImportPath } from './module.ts';
-import { armRoutesOf, flattenedVariantParents, hasOneSurface, isHoistedCompound, type AliasWire, type FlattenedVariantParent } from '../../compiler/model/ir-surface.ts';
+import { armRoutesOf, flattenedVariantParents, hasOneSurface, isHoistedCompound, isNamespaceArm, type AliasWire, type FlattenedVariantParent } from '../../compiler/model/ir-surface.ts';
 
 interface FlavorRefs {
 	readonly strict: string;
@@ -318,9 +318,6 @@ interface ArmEntry {
 	readonly children: Map<string, ArmEntry>;
 }
 
-function isNamespaceArm(sub: SubFactory): boolean {
-	return sub.arm.via === 'node' && sub.arm.path.length === 0 && sub.arm.child instanceof AssembledSupertype && sub.arm.child.defaultVariantSubtype === undefined;
-}
 
 function pairExpr(pair: ArmPair, path: string, routes: Map<string, number | undefined>): string {
 	routes.set(path, pair.max);

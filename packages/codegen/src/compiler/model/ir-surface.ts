@@ -18,7 +18,7 @@ import {
 } from './node-map.ts';
 import { collectCatalogKinds, collectKindEntries, hasCatalogEntry, type KindEnumEntry } from '../../emitters/kind-discriminant.ts';
 import { lowerCamelCase } from './casing.ts';
-import { polymorphVisibleName, supertypeMemberName } from '../../dsl/arm-names.ts';
+import { supertypeMemberName } from '../../dsl/arm-names.ts';
 import { classifyFactoryEmission, classifyFromEmission, isDeclaredSupertype, isValidIdent, ownTextLeaf } from '../../emitters/shared.ts';
 import { subFactoriesOf, variantArmsOf, type SubFactory, type SubFactoryDiagnostic } from './sub-factories.ts';
 
@@ -49,8 +49,8 @@ function irKeyedNodes(nodeMap: NodeMap, kindEntries: KindEntries): IrKeyedNode[]
 		if (node instanceof AssembledAlias) continue;
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		if (classifyFromEmission(kind, node, { nodeMap, kindEntries }) !== 'emit') continue;
-		const key = node.irKey ?? lowerCamelCase(kind);
-		if (!isValidIdent(key) || used.has(key)) continue;
+		const key = node.irKey;
+		if (key === undefined || !isValidIdent(key) || used.has(key)) continue;
 		used.add(key);
 		out.push({ key, exportName: FACTORY_NAME_RESERVED.has(key) ? `${key}_` : key, node });
 	}
@@ -62,7 +62,6 @@ export interface FlattenedVariantRoute {
 	readonly child: AssembledNode;
 	readonly nestedParentKey?: string;
 	readonly default?: true;
-	readonly minted?: true;
 	readonly leaf?: true;
 }
 
@@ -72,35 +71,18 @@ export interface FlattenedVariantParent {
 	readonly variants: readonly FlattenedVariantRoute[];
 }
 
-export function variantRoutePaths(parents: readonly FlattenedVariantParent[]): ReadonlyMap<string, string> {
-	const paths = new Map<string, string>();
-	const mintedPaths = new Map<string, string>();
-	for (const parent of [...parents].reverse()) {
-		const base = mintedPaths.get(parent.node.kind) ?? parent.key;
-		for (const route of parent.variants) {
-			if (route.minted !== true) continue;
-			const path = `${base}.${route.name}`;
-			if (!paths.has(route.child.kind)) paths.set(route.child.kind, path);
-			if (!mintedPaths.has(route.child.kind)) mintedPaths.set(route.child.kind, path);
-		}
-	}
-	return paths;
-}
-
-function referrersOf(nodeMap: NodeMap): ReadonlyMap<string, ReadonlySet<string>> {
+function containersOf(nodeMap: NodeMap): ReadonlyMap<string, ReadonlySet<string>> {
 	const out = new Map<string, Set<string>>();
-	const add = (child: string, parent: string): void => {
-		const set = out.get(child) ?? new Set<string>();
-		set.add(parent);
-		out.set(child, set);
-	};
 	for (const [kind, node] of nodeMap.nodes) {
-		if (node instanceof AssembledSupertype) for (const sub of node.subtypeNames) add(sub, kind);
-		if (node instanceof AbstractAssembledCompound) {
-			for (const slot of node.slots) for (const value of slot.values) if (isNodeRef(value)) add(storageKindOfRef(value.node), kind);
-		}
+		if (!(node instanceof AbstractAssembledCompound)) continue;
+		for (const slot of node.slots) for (const value of slot.values) if (isNodeRef(value)) addReferrer(out, storageKindOfRef(value.node), kind);
 	}
 	return out;
+}
+function addReferrer(out: Map<string, Set<string>>, child: string, parent: string): void {
+	const set = out.get(child) ?? new Set<string>();
+	set.add(parent);
+	out.set(child, set);
 }
 
 export function hasOneSurface(node: AssembledNode): boolean {
@@ -141,11 +123,6 @@ function deriveFlattenedVariantParents(
 	kindEntries: KindEntries,
 	bundles: readonly IrKeyedNode[]
 ): FlattenedVariantParent[] {
-	const referrers = referrersOf(nodeMap);
-	const mintedBy = (parent: string, child: string, variant: string): boolean => {
-		const refs = referrers.get(child);
-		return child === polymorphVisibleName(parent, variant) && refs !== undefined && refs.size === 1 && refs.has(parent);
-	};
 	const taken = new Set(bundles.map((entry) => entry.key));
 	const leafKinds = flatLeafKindByKey(nodeMap, kindEntries);
 	const out: FlattenedVariantParent[] = [];
@@ -162,10 +139,7 @@ function deriveFlattenedVariantParents(
 			const child = nodeMap.nodes.get(childKind);
 			if (ref.variantOf !== kind || ref.variant === undefined || child === undefined) return null;
 			const nestedParentKey = keyByParent.get(childKind);
-			const facts = {
-				...(ref.default ? { default: true as const } : {}),
-				...(mintedBy(kind, childKind, ref.variant) ? { minted: true as const } : {})
-			};
+			const facts = ref.default ? { default: true as const } : {};
 			if (nestedParentKey !== undefined) {
 				routes.push({ name: lowerCamelCase(ref.variant), child, nestedParentKey, ...facts });
 			} else if (child.rawFactoryName !== undefined) {
@@ -237,6 +211,10 @@ export function variantAliasWires(
 		aliases.push({ name, child });
 	}
 	return aliases;
+}
+
+export function isNamespaceArm(sub: SubFactory): boolean {
+	return sub.arm.via === 'node' && sub.arm.path.length === 0 && sub.arm.child instanceof AssembledSupertype && sub.arm.child.defaultVariantSubtype === undefined;
 }
 
 export interface ArmRouteSet {
@@ -349,7 +327,6 @@ export interface IrGroup {
 export interface IrVariantParent {
 	readonly key: string;
 	readonly node: AssembledSupertype;
-	readonly standalone: boolean;
 }
 
 export interface IrPlan {
@@ -369,11 +346,6 @@ export function memberKeyFor(memberKind: string, supertypeKind: string): string 
 	return lowerCamelCase(supertypeMemberName(memberKind, supertypeKind));
 }
 
-function groupNameFor(supertypeKind: string): string {
-	const bare = supertypeKind.replace(/^_+/, '');
-	return lowerCamelCase(bare);
-}
-
 function deriveIrPlan(
 	nodeMap: NodeMap,
 	kindEntries: KindEntries,
@@ -391,8 +363,8 @@ function deriveIrPlan(
 	const groups: IrGroup[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!isDeclaredSupertype(node) || flattenedKinds.has(kind)) continue;
-		const groupName = groupNameFor(kind);
-		if (!isValidIdent(groupName) || usedGroupNames.has(groupName)) continue;
+		const groupName = node.irKey;
+		if (groupName === undefined || !isValidIdent(groupName) || usedGroupNames.has(groupName)) continue;
 		const members: IrMember[] = [];
 		const usedMemberKeys = new Set<string>();
 		for (const subKind of node.subtypeNames) {
@@ -436,14 +408,8 @@ function deriveIrPlan(
 	}
 
 	const variantParents: IrVariantParent[] = [];
-	for (const { key, node, variants } of flattenedParents) {
-		if (usedGroupNames.has(key)) continue;
-		if (variants.every((route) => route.minted === true)) {
-			variantParents.push({ key, node, standalone: false });
-			continue;
-		}
-		usedGroupNames.add(key);
-		variantParents.push({ key, node, standalone: true });
+	for (const { key, node } of flattenedParents) {
+		if (!usedGroupNames.has(key)) variantParents.push({ key, node });
 	}
 
 	const flat = (entries: readonly IrKeyedNode[], factory: (entry: IrKeyedNode) => string): IrMember[] =>
@@ -486,6 +452,90 @@ export function stampIrSurface(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 	const armRoutes = deriveArmRoutes(nodeMap, kindEntries, bundles, flattened);
 	const plan = deriveIrPlan(nodeMap, kindEntries, bundles, ownText, flattened);
 	nodeMap.irSurface = { bundles, ownText, flattened, armRoutes, plan };
+	const exported = exportedNodesOf(plan);
+	for (const node of nodeMap.nodes.values()) if (!exported.has(node)) node.irKey = undefined;
+	stampBuilderPaths(nodeMap, flattened, armRoutes, plan);
+}
+
+function exportedNodesOf(plan: IrPlan): ReadonlySet<AssembledNode> {
+	return new Set<AssembledNode>([
+		...plan.groups.map((group) => group.node),
+		...plan.variantParents.map((parent) => parent.node),
+		...[plan.bundles, plan.keywords, plan.ownText, plan.patterns].flatMap((members) => members.map((member) => member.node))
+	]);
+}
+
+interface OwnerRoute {
+	readonly parent: AssembledNode;
+	readonly name: string;
+}
+interface OwnerRoutes {
+	readonly declared: ReadonlyMap<string, readonly OwnerRoute[]>;
+	readonly contained: ReadonlyMap<string, OwnerRoute>;
+}
+function ownerRoutesOf(nodeMap: NodeMap, flattened: readonly FlattenedVariantParent[], armRoutes: ArmRoutes): OwnerRoutes {
+	const containers = containersOf(nodeMap);
+	const declared = new Map<string, OwnerRoute[]>();
+	const contained = new Map<string, OwnerRoute[]>();
+	const offer = (into: Map<string, OwnerRoute[]>, child: AssembledNode, route: OwnerRoute): void => {
+		into.set(child.kind, [...(into.get(child.kind) ?? []), route]);
+	};
+	const offerArm = (child: AssembledNode, route: OwnerRoute, declares: boolean): void => {
+		if (!child.seated) return;
+		if (declares) offer(declared, child, route);
+		if (isSoleContainer(containers, route.parent.kind, child.kind)) offer(contained, child, route);
+	};
+	for (const parent of flattened) {
+		for (const route of parent.variants) offer(declared, route.child, { parent: parent.node, name: route.name });
+	}
+	for (const set of armRoutes.byKind.values()) {
+		for (const sub of set.subs) {
+			if (sub.arm.via !== 'node' || sub.arm.path.length > 0 || isNamespaceArm(sub)) continue;
+			offerArm(sub.arm.child, { parent: set.node, name: sub.name }, sub.arm.variantOf === set.node.kind);
+		}
+		for (const alias of set.aliases) offerArm(alias.child, { parent: set.node, name: alias.name }, true);
+	}
+	const order = new Map([...nodeMap.nodes.keys()].map((kind, index) => [kind, index]));
+	const byDeclaration = (a: OwnerRoute, b: OwnerRoute): number => order.get(a.parent.kind)! - order.get(b.parent.kind)!;
+	return { declared: new Map([...declared].map(([kind, routes]) => [kind, [...routes].sort(byDeclaration)])), contained: soleRoutes(contained) };
+}
+function soleRoutes(candidates: ReadonlyMap<string, readonly OwnerRoute[]>): ReadonlyMap<string, OwnerRoute> {
+	return new Map([...candidates].flatMap(([kind, routes]) => (routes.length === 1 ? [[kind, routes[0]!] as const] : [])));
+}
+function isSoleContainer(containers: ReadonlyMap<string, ReadonlySet<string>>, parent: string, child: string): boolean {
+	const set = containers.get(child);
+	return set?.size === 1 && set.has(parent);
+}
+
+function stampBuilderPaths(nodeMap: NodeMap, flattened: readonly FlattenedVariantParent[], armRoutes: ArmRoutes, plan: IrPlan): void {
+	const owners = ownerRoutesOf(nodeMap, flattened, armRoutes);
+	const grouped = groupPathsOf(plan);
+	const paths = new Map<string, readonly (readonly string[])[]>();
+	const pathsOf = (node: AssembledNode, visiting: ReadonlySet<string>): readonly (readonly string[])[] => {
+		const known = paths.get(node.kind);
+		if (known !== undefined) return known;
+		const through = (route: OwnerRoute | undefined): readonly string[] | undefined => {
+			if (route === undefined || visiting.has(route.parent.kind)) return undefined;
+			const base = pathsOf(route.parent, new Set([...visiting, node.kind]))[0];
+			return base === undefined ? undefined : [...base, route.name];
+		};
+		const declared = (owners.declared.get(node.kind) ?? []).map(through).filter((path) => path !== undefined);
+		const own = node.irKey === undefined ? [] : [[node.irKey]];
+		const fallback = declared.length > 0 || own.length > 0 ? undefined : (through(owners.contained.get(node.kind)) ?? (node.seated ? grouped.get(node.kind) : undefined));
+		const found = [...own, ...declared, ...(fallback === undefined ? [] : [fallback])];
+		paths.set(node.kind, found);
+		return found;
+	};
+	for (const node of nodeMap.nodes.values()) {
+		const [path, ...alternates] = pathsOf(node, new Set());
+		node.builderPath = path;
+		node.builderPathAlternates = alternates.length > 0 ? alternates : undefined;
+	}
+}
+function groupPathsOf(plan: IrPlan): ReadonlyMap<string, readonly string[]> {
+	const paths = new Map<string, (readonly string[])[]>();
+	for (const group of plan.groups) for (const member of group.members) paths.set(member.node.kind, [...(paths.get(member.node.kind) ?? []), [group.key, member.key]]);
+	return new Map([...paths].flatMap(([kind, list]) => (list.length === 1 ? [[kind, list[0]!] as const] : [])));
 }
 
 export function irSurfaceOf(nodeMap: NodeMap): IrSurface {

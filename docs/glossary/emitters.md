@@ -8763,7 +8763,7 @@ The types module of `emitTypesModules`, for callers that need only the public su
 
 `FixedTextKindId` is the union of the kind ids `kindIdText` gives a text, so it holds exactly the kinds whose leaf transport renders a bare kind id. `engine.render` accepts it beside the language's nodes.
 
-`IrKeyOf` is emitted from exactly the kinds `NamespaceMap` is emitted from that have a kind id, mapping each id to the kind's stamped `irKey`, so the engine's kind-to-type map keys each kind as the builder table does, never by re-casing a kind-id name.
+`IrKeyOf` is emitted from exactly the kinds `NamespaceMap` is emitted from that have a kind id, mapping each id to the kind's stamped `typeKey`, so the engine's kind-to-type map keys every kind with an id, whether or not `ir` exports a builder for it, never by re-casing a kind-id name.
 
 #### body
 
@@ -11589,7 +11589,7 @@ The argument row of an own-text leaf, as both its `BuildArgs` and its `LooseArgs
 
 ### `packages/codegen/src/emitters/ir.ts::emitIr`
 
-Prints the `ir` module from the model's plan (`irPlanOf`): the supertype groups and the standalone variant parents as top-level consts, then the frozen `ir` table — bundled node factories, the all-minted variant parents, keyword factories, own-text leaves, leaf node factories, the group namespaces and `synonym`. Which kinds appear, under what key and through which factory export is the plan's decision (`deriveIrPlan`); the emitter adds only the role synonyms, which come from the grammar's roles rather than the model.
+Prints the `ir` module from the model's plan (`irPlanOf`): the supertype groups as top-level consts, then the frozen `ir` table — bundled node factories, the variant parents, keyword factories, own-text leaves, leaf node factories, the group namespaces and `synonym`. Which kinds appear, under what key and through which factory export is the plan's decision (`deriveIrPlan`); the emitter adds only the role synonyms, which come from the grammar's roles rather than the model.
 
 No emitted code attaches properties to a factory: a factory is shared under every key that reaches it, so a mutation made for one key shows under all of them.
 
@@ -13362,10 +13362,6 @@ that has methods.
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::inDependencyOrder`
 
 Orders the overlay's chunks so each const is declared before any chunk that reads it. Each chunk is keyed by the node kind it provides, and a chunk waits until every kind in its `uses` that another chunk provides has been placed. Among ready chunks the original order wins, so chunks with no such dependency keep the order the overlay built them in. A sub-factory set that routes an arm through a flattened parent's const is placed after that const, and a flattened parent after the nested parents it names.
-
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::isNamespaceArm`
-
-Whether a direct arm is a namespace with no call of its own: its child is a variant-bearing supertype with no default variant. Such an arm is emitted as an object holding only its nested arms, the shape the flattened-parent const of a defaultless supertype has, so the arm is never a call through a `.strict` that does not exist.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::renderArm`
 

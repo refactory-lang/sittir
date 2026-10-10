@@ -56,11 +56,7 @@ export function emitIr(config: EmitIrConfig): string {
 		groupBlocks.push('};');
 		groupBlocks.push('');
 	}
-	for (const { key, standalone } of plan.variantParents) {
-		if (!standalone) continue;
-		groupNames.push(key);
-		groupBlocks.push(`export const ${key}: typeof F.${key} = F.${key};`, '');
-	}
+	for (const { key } of plan.variantParents) groupBlocks.push(`export const ${key}: typeof F.${key} = F.${key};`, '');
 	if (groupBlocks.length > 0) {
 		body.push('// Supertype-grouped sub-namespaces — tree-shakeable top-level consts.');
 		body.push('// Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).');
@@ -77,7 +73,7 @@ export function emitIr(config: EmitIrConfig): string {
 	};
 	irValueLines.push('  // Node factories');
 	flat(plan.bundles);
-	flat(plan.variantParents.filter((parent) => !parent.standalone).map((parent) => ({ key: parent.key, node: parent.node, factory: parent.key })));
+	flat(plan.variantParents.map((parent) => ({ key: parent.key, node: parent.node, factory: parent.key })));
 	irValueLines.push('');
 
 	irValueLines.push('  // Keyword factories');

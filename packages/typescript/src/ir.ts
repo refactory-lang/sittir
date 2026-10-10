@@ -219,13 +219,41 @@ export const layout: {
 
 export const declaration: typeof F.declaration = F.declaration;
 
+export const importSpecifier: typeof F.importSpecifier = F.importSpecifier;
+
+export const variableDeclarator: typeof F.variableDeclarator = F.variableDeclarator;
+
+export const forHeader: typeof F.forHeader = F.forHeader;
+
+export const parenthesizedExpression: typeof F.parenthesizedExpression = F.parenthesizedExpression;
+
+export const callExpression: typeof F.callExpression = F.callExpression;
+
+export const updateExpression: typeof F.updateExpression = F.updateExpression;
+
+export const string: typeof F.string = F.string;
+
+export const comment: typeof F.comment = F.comment;
+
+export const metaProperty: typeof F.metaProperty = F.metaProperty;
+
 export const pattern: typeof F.pattern = F.pattern;
+
+export const indexSignature: typeof F.indexSignature = F.indexSignature;
 
 export const classBodyMember: typeof F.classBodyMember = F.classBodyMember;
 
 export const enumBodyElement: typeof F.enumBodyElement = F.enumBodyElement;
 
+export const exportStatementDefault: typeof F.exportStatementDefault = F.exportStatementDefault;
+
+export const numberBigint: typeof F.numberBigint = F.numberBigint;
+
+export const exportStatement: typeof F.exportStatement = F.exportStatement;
+
 export const statement: typeof F.statement = F.statement;
+
+export const number: typeof F.number = F.number;
 
 export const ir: {
 	readonly program: typeof F.program;
@@ -421,6 +449,7 @@ export const ir: {
 	readonly forHeaderLhs: typeof F.forHeaderLhs;
 	readonly forHeaderVarKind: typeof F.forHeaderVarKind;
 	readonly forHeaderLetConstKind: typeof F.forHeaderLetConstKind;
+	readonly declaration: typeof F.declaration;
 	readonly importSpecifier: typeof F.importSpecifier;
 	readonly variableDeclarator: typeof F.variableDeclarator;
 	readonly forHeader: typeof F.forHeader;
@@ -430,10 +459,14 @@ export const ir: {
 	readonly string: typeof F.string;
 	readonly comment: typeof F.comment;
 	readonly metaProperty: typeof F.metaProperty;
+	readonly pattern: typeof F.pattern;
 	readonly indexSignature: typeof F.indexSignature;
+	readonly classBodyMember: typeof F.classBodyMember;
+	readonly enumBodyElement: typeof F.enumBodyElement;
 	readonly exportStatementDefault: typeof F.exportStatementDefault;
 	readonly numberBigint: typeof F.numberBigint;
 	readonly exportStatement: typeof F.exportStatement;
+	readonly statement: typeof F.statement;
 	readonly number: typeof F.number;
 	readonly import: typeof F.buildImport;
 	readonly emptyStatement: typeof F.buildEmptyStatement;
@@ -474,11 +507,6 @@ export const ir: {
 	readonly type: typeof type;
 	readonly primaryType: typeof primaryType;
 	readonly layout: typeof layout;
-	readonly declaration: typeof declaration;
-	readonly pattern: typeof pattern;
-	readonly classBodyMember: typeof classBodyMember;
-	readonly enumBodyElement: typeof enumBodyElement;
-	readonly statement: typeof statement;
 	readonly synonym: typeof synonym;
 } = Object.freeze({
 	// Node factories
@@ -675,6 +703,7 @@ export const ir: {
 	forHeaderLhs: F.forHeaderLhs,
 	forHeaderVarKind: F.forHeaderVarKind,
 	forHeaderLetConstKind: F.forHeaderLetConstKind,
+	declaration: F.declaration,
 	importSpecifier: F.importSpecifier,
 	variableDeclarator: F.variableDeclarator,
 	forHeader: F.forHeader,
@@ -684,10 +713,14 @@ export const ir: {
 	string: F.string,
 	comment: F.comment,
 	metaProperty: F.metaProperty,
+	pattern: F.pattern,
 	indexSignature: F.indexSignature,
+	classBodyMember: F.classBodyMember,
+	enumBodyElement: F.enumBodyElement,
 	exportStatementDefault: F.exportStatementDefault,
 	numberBigint: F.numberBigint,
 	exportStatement: F.exportStatement,
+	statement: F.statement,
 	number: F.number,
 
 	// Keyword factories
@@ -736,10 +769,5 @@ export const ir: {
 	type,
 	primaryType,
 	layout,
-	declaration,
-	pattern,
-	classBodyMember,
-	enumBodyElement,
-	statement,
 	synonym
 });

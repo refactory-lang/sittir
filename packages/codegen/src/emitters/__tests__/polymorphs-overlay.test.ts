@@ -41,7 +41,7 @@ function labelArms(rules: Record<string, Rule<'evaluate'>>): Record<string, Rule
 	return stamped as Record<string, Rule<'evaluate'>>;
 }
 
-function buildNodeMap(rules: Record<string, Rule<'evaluate'>>, generatedIdTables?: GeneratedIdTables): NodeMap {
+function assembledNodeMap(rules: Record<string, Rule<'evaluate'>>, generatedIdTables?: GeneratedIdTables): NodeMap {
 	const raw: RawGrammar = {
 		name: 'synth',
 		fileTypes: [],
@@ -60,7 +60,11 @@ function buildNodeMap(rules: Record<string, Rule<'evaluate'>>, generatedIdTables
 	};
 	const linked = link(raw, { generatedIdTables });
 	const normalized = normalizeGrammar(linked);
-	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
+	return assemble(AssembleCtx.from(normalized, generatedIdTables));
+}
+
+function buildNodeMap(rules: Record<string, Rule<'evaluate'>>, generatedIdTables?: GeneratedIdTables): NodeMap {
+	const nodeMap = assembledNodeMap(rules, generatedIdTables);
 	stampIrSurface(nodeMap, generatedIdTables);
 	return nodeMap;
 }
@@ -533,7 +537,7 @@ describe('a keyword literal arm named by its text', () => {
 	});
 
 	it('mounts each keyword literal of an unfielded choice under its source text', () => {
-		const nodeMap = buildNodeMap(
+		const nodeMap = assembledNodeMap(
 			{
 				junction: {
 					type: SEQ,
@@ -554,7 +558,7 @@ describe('a keyword literal arm named by its text', () => {
 	});
 
 	it('reports a keyword arm whose text names a node arm of the same owner as ambiguous', () => {
-		const nodeMap = buildNodeMap(
+		const nodeMap = assembledNodeMap(
 			{
 				junction: {
 					type: SEQ,

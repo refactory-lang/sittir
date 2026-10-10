@@ -432,7 +432,8 @@ export interface LoadedNodeModel {
 	readonly factorySlots: Record<string, Record<string, FactorySlotMeta>>;
 	readonly fieldAliasMap: Record<string, Record<string, string>>;
 	readonly polymorphVariants: PolymorphVariantMap;
-	readonly variantRoutes: Readonly<Record<string, string>>;
+	readonly builderPaths: Readonly<Record<string, readonly string[]>>;
+	readonly builderPathAlternates: Readonly<Record<string, readonly (readonly string[])[]>>;
 	readonly subtypes: Record<string, readonly string[]>;
 	readonly slotRequired: Record<string, Record<string, boolean>>;
 	readonly slotMultiple: Record<string, Record<string, boolean>>;
@@ -456,6 +457,8 @@ interface ParsedNodeModel {
 	nodes?: ReadonlyArray<{
 		kind: string;
 		irKey?: string;
+		builderPath?: readonly string[];
+		builderPathAlternates?: readonly (readonly string[])[];
 		modelType?: string;
 		seated?: true;
 		slots?: ReadonlyArray<{
@@ -484,7 +487,6 @@ interface ParsedNodeModel {
 	factorySlots?: Record<string, Record<string, FactorySlotMeta>>;
 	fieldAliasMap?: Record<string, Record<string, string>>;
 	polymorphVariants?: PolymorphVariantMap;
-	variantRoutes?: Record<string, string>;
 }
 
 const EMPTY_NODE_MODEL: LoadedNodeModel = {
@@ -502,7 +504,8 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	factorySlots: {},
 	fieldAliasMap: {},
 	polymorphVariants: {},
-	variantRoutes: {},
+	builderPaths: {},
+	builderPathAlternates: {},
 	subtypes: {},
 	slotRequired: {},
 	slotMultiple: {},
@@ -536,6 +539,8 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 	if (raw === undefined) return EMPTY_NODE_MODEL;
 	const model = JSON.parse(raw) as ParsedNodeModel;
 	const irKeys: Record<string, string> = {};
+	const builderPaths: Record<string, readonly string[]> = {};
+	const builderPathAlternates: Record<string, readonly (readonly string[])[]> = {};
 	const modelTypes: Record<string, string> = {};
 	const leafPatterns: Record<string, RegExp> = {};
 	const hoistedKinds = new Set<string>();
@@ -560,6 +565,8 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 	const fullForms: Record<string, ModelFullForm> = {};
 	for (const node of model.nodes ?? []) {
 		if (node.irKey !== undefined) irKeys[node.kind] = node.irKey;
+		if (node.builderPath !== undefined) builderPaths[node.kind] = node.builderPath;
+		if (node.builderPathAlternates !== undefined) builderPathAlternates[node.kind] = node.builderPathAlternates;
 		if (node.modelType !== undefined) modelTypes[node.kind] = node.modelType;
 		if (node.leafPattern !== undefined) leafPatterns[node.kind] = regexOfLiteral(node.leafPattern);
 		if (node.seated === true) hoistedKinds.add(node.kind);
@@ -610,7 +617,8 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		factorySlots: model.factorySlots ?? {},
 		fieldAliasMap: model.fieldAliasMap ?? {},
 		polymorphVariants: model.polymorphVariants ?? {},
-		variantRoutes: model.variantRoutes ?? {},
+		builderPaths,
+		builderPathAlternates,
 		subtypes,
 		slotRequired,
 		slotMultiple,

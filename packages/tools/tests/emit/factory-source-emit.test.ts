@@ -44,7 +44,7 @@ describe('emitFactorySourceText (real rust grammar)', () => {
 	});
 	it('prints a token tree through its form with kind-id punctuation', async () => {
 		const source = await emitFactorySourceText('rust', '#[derive(Debug, Clone)]\nstruct S;\n', 'rebuildDerive');
-		expect(source).toContain('rs.build.delimTokenTree.paren.strict(');
+		expect(source).toContain('rs.build.delimTokenTreeParen.strict(');
 		expect(source).toContain('rs.kinds.Comma');
 		expect(source).not.toContain('tokenTreePunctuation');
 	});

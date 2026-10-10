@@ -246,7 +246,7 @@ arm's name reaches the same ambiguous-name diagnostic as any other clash.
 ### `packages/codegen/src/compiler/model/node-map.ts::armFactsOf`
 
 The per-arm annotations a slot value carries: the declared `variant`/`variantOf`
-pair, `default`, and `flattened`. A `variantOf`-only literal arm has no display of
+pair, its provenance (`definedBy`, carried for overlays and read by no compiler pass), `default`, and `flattened`. A `variantOf`-only literal arm has no display of
 its own, so it is named from the resolved catalog kind it carries
 (`resolvedKind`): `armNameOf(variantOf, literalArmDisplayOf(resolvedKind, ctx),
 <owner is a SUPERTYPE>)`, where the owner's classification is read from the
@@ -2017,6 +2017,18 @@ The public-symbol kind id link stamped on a list's separator string, or `undefin
 	 * effectively immutable.
 	 */
 ```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.typeKey`
+
+The kind's key in the engine's kind-type map (`IrKeyOf`, `engine.types`), stamped by `resolveIrKeys` for every node. It is the key `irKey` resolved to before the plan narrowed `irKey` to exported builders, so a kind with a parser id keeps its type key whether or not `ir` builds it.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.builderPath`
+
+The path from `ir` to the builder for this kind (`ir.lineComment.docOuter` is `['lineComment', 'docOuter']`), undefined when no builder exists. `stampIrSurface` stamps it once the plan is known (`stampBuilderPaths`); consumers read it rather than resolving a path from names.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.builderPathAlternates`
+
+The other paths that build this kind, present only when there is more than one: a kind two owners declare (python `parenthesized_import_list`, under `futureImportStatement` and `importFromStatement`) builds through either.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.rule`
 
@@ -5395,28 +5407,23 @@ Does this leaf or keyword get its own flat `ir.<irKey>` entry: `isFlatLeafOrKeyw
 token form. The predicate of ir's two flat emission loops.
 ```
 
-### `packages/codegen/src/compiler/model/ir-surface.ts::referrersOf`
+### `packages/codegen/src/compiler/model/ir-surface.ts::containersOf`
 
-Every node's referrers, purely structurally: for a supertype, the supertype
-itself against each of its subtype names; for a slot-bearing compound, the
-compound itself against the storage kind of each node-ref slot value. No
-variant facts enter this walk — it answers "who can reach this kind at
-all", the question `flattenedVariantParents` asks to decide whether a child
-is reachable ONLY through one parent's variant arm.
+Every node's containing referrers: each slot-bearing compound against the storage kind of each node-ref slot value. A supertype's edge to its member is classification, not containment, so it is not counted.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::addReferrer`
+
+Records `parent` as a referrer of `child` in a referrer map.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::isSoleContainer`
+
+Whether `parent` is the one containing referrer of `child`.
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::deriveFlattenedVariantParents`
 
 The supertypes that stand in for a flattened polymorph parent, each with its variant routes, so `ir.<parent>.<variant>` survives the parent losing its own node. A supertype qualifies when the grammar declares it (an undeclared hidden choice gets no ir namespace; see `ir.ts::module`), it has at least two subtypes, every subtype ref carries the `variant` / `variantOf` arm facts naming this supertype, and its ir key is a valid identifier not already taken. Each subtype must resolve to a kind with a raw factory, to another qualifying flattened parent (a nested parent routes to that parent's own route object, `ir.exportStatement.default.from`), or — when it has no factory at all — to a kind-id-stored leaf (a keyword/punctuation kind, not an enum), which gets `leaf: true` instead of a `child`-factory route. A subtype that resolves to none of these (and isn't a pending flattened parent) disqualifies the whole parent. Parents are accepted in rounds until nothing changes, so a nested parent is always listed, and emitted, before the parent that routes to it. The route name is the stamped `variant`, never a suffix recovered from the subtype's name. A route also carries `default` when the arm was declared with `arm.default` — at most one per parent, checked here (a second throws). A nested parent's default only propagates when the nested parent itself resolved a default; an undeclared default at any hop in the chain simply leaves the outer parent with none.
 
-A route also carries `minted` when the child kind is exactly the name
-`polymorphVisibleName(parent, variant)` would mint for this variant AND
-`referrersOf` finds exactly one referrer of that child kind — this parent
-itself. Name-matching alone isn't enough: the child must be reachable from
-nowhere else (no other supertype's subtype list, no other compound's slot)
-for its route to be the child's only public address. `variantRoutePaths`
-nests one parent's routes under another parent's path only through a
-`minted` relationship, never through a parent that merely happens to route
-to the same kind elsewhere.
+Every route is the child's declared route (`ownerRoutesOf`): the subtype's stamped `variantOf` names this parent, the same fact that admits the parent.
 
 
 A parent key that is also a flat leaf's key throws, whether or not the
@@ -5427,30 +5434,10 @@ parent's key never stands for one of its arms.
 
 Each flat leaf's ir key mapped to its kind, by `isFlatLeafOrKeyword`.
 
-### `packages/codegen/src/compiler/model/ir-surface.ts::variantRoutePaths`
-
-The public path of every `minted` variant a flattened parent routes to,
-keyed by the variant kind (`assignment_eq` → `assignment.eq`) — a
-non-minted route (the child is reachable some other way too) gets no entry
-here. Parents are walked in reverse, and a parent's own base path is
-whatever path a shallower parent already recorded for it as a `minted`
-route (`mintedPaths`), falling back to the parent's own bundle key when
-nothing minted it — so a nested parent's variants compose through the
-parent that actually minted it as a variant (`exportStatement.default.from`),
-never through a parent that merely routes to the same kind some other way.
-Each child kind's path is recorded once, and — again only for a `minted`
-route — recorded a second time as that child's own base path for whichever
-parent is walked next. Codegen's single derivation of these paths: the test
-emitter addresses sub-factory tests through it, and `node-model.json5`'s
-`variantRoutes` publishes it for tools (the hoisted census, the
-factory-source printer).
-
 ### `packages/codegen/src/compiler/model/ir-surface.ts::FlattenedVariantRoute`
 
 One variant route of a flattened parent: its name, the child kind, whether it
-is `arm.default`, whether it is `minted` (the child is reachable only through
-this parent's arm — `referrersOf` finds no other referrer — and is named
-exactly what this variant would mint), whether it is `leaf` (the child has
+is `arm.default`, whether it is `leaf` (the child has
 no factory of its own; `emitPolymorphsOverlay` spells the route as the
 child's kind-id expression instead of a factory reference), and — when the
 child is itself a flattened parent — that parent's route key.
@@ -5499,6 +5486,7 @@ nested when the arm reaches more than one hop down.
 `child` is the leaf); outer levels name their nested entries from it, so
 `visibility_modifier` calls the in-path form `inPath` even though the arm's
 direct child is the pub hop.
+`variantOf` is the owner the labelled slot value names (a direct arm only), the stamp `ownerRoutesOf` reads to tell the arm's declaring host from a container that only carries it.
 
 ### `packages/codegen/src/compiler/model/sub-factories.ts::SubFactory`
 
@@ -5951,7 +5939,7 @@ A supertype's group namespace (`ir.<key>`): the supertype and its members, each 
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::IrVariantParent`
 
-A flattened variant parent placed on `ir` under its key. `standalone` is whether it also gets a top-level export: a parent with any non-minted route does, so a route to a shared kind stays reachable without going through `ir`; an all-minted parent is only a member of `ir`, since every variant is reachable only through it anyway.
+A flattened variant parent placed on `ir` under its key, on the same path as every other bundle.
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::IrPlan`
 
@@ -5967,7 +5955,7 @@ The single derivation of what `ir` exposes. Only a declared supertype gets a gro
 
 A group lists a surface-hidden member only when it is a punctuation leaf with a builder (`isBuilderTextLeaf`), which gives `ir.layout` its members; any other surface-hidden member stays out of the group. A member's factory is the flattened parent's const, the member's own raw factory when it has one surface, or its bundle export.
 
-A group whose name is a flat key throws, as does a flattened parent whose key is a flat leaf's key (`deriveFlattenedVariantParents`): two surfaces never share one `ir` key. A flat member whose key a group or standalone variant parent took stays off the flat table.
+A group whose name is a flat key throws, as does a flattened parent whose key is a flat leaf's key (`deriveFlattenedVariantParents`): two surfaces never share one `ir` key. A flat member whose key a group took stays off the flat table.
 
 The flat node-factory members come from the same keyed nodes the bundle module and the overlay wires consume (`irKeyedNodes`), so `ir`, the bundles and the wires' key map can never disagree on which kinds are surfaced or under what key. Keyword and leaf members are the flat leaves (`hasFlatEntry`): leaves have no coercers, so no bundle entry exists for them.
 
@@ -5977,7 +5965,39 @@ What the model decided about `ir`: the keyed kinds (bundled and own-text), the f
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::stampIrSurface`
 
-Derives the `ir` surface once and stores it on the node map (`NodeMap.irSurface`). The derivations read hydrated slot values (the sub-factory walk's merge and seat shapes do), so the stamp follows `hydrateSlotRefs`. Each derivation takes the previous ones' results rather than reading the stamp, which does not exist yet.
+Derives the `ir` surface once and stores it on the node map (`NodeMap.irSurface`). The derivations read hydrated slot values (the sub-factory walk's merge and seat shapes do), so the stamp follows `hydrateSlotRefs`. Each derivation takes the previous ones' results rather than reading the stamp, which does not exist yet. Once the plan is known, a node the plan does not export (`exportedNodesOf`) loses its `irKey`, so the key names exactly the `ir` member that exists, and every node gets its builder paths (`stampBuilderPaths`).
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::exportedNodesOf`
+
+The nodes the plan exports under a key of their own: the supertype groups, the flattened variant parents, and the bundle, keyword, own-text and pattern members.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::OwnerRoute`
+
+One step of a builder path: the node that builds a child and the name the child takes under it.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::OwnerRoutes`
+
+A node's routes to its builders. `declared` holds every route through an owner that declares the child as its own form, in grammar declaration order (node-map order, never the order a walk visits them). `contained` holds the one route through the child's sole containing referrer, for a child no owner declares.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::ownerRoutesOf`
+
+Collects `OwnerRoutes`. A flattened parent declares each of its variant routes. A direct node arm (no path, not a namespace arm) declares its child when the arm's stamped `variantOf` names the arm's own host. An alias wire is a whole-rule alternative of its host, so it always declares. Only seated children are routed through arms. An arm whose host is the child's sole containing referrer (`isSoleContainer`) is also the child's contained route; a child with more than one such route has none.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::soleRoutes`
+
+The kinds with exactly one candidate route, each with that route.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::stampBuilderPaths`
+
+Stamps every node's `builderPath` and `builderPathAlternates`. A node's paths are its own `irKey`, then its declared routes composed through each owner's own first path (every hop must resolve, and a route back into a node being resolved does not). A node with neither takes its contained route, else, when it is seated, the one supertype group it is a member of (`groupPathsOf`). The first path is the builder path and the rest are its alternates.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::groupPathsOf`
+
+The `[group, member]` path of each kind that is a member of exactly one supertype group.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::isNamespaceArm`
+
+Whether a direct arm is a namespace with no call of its own: its child is a variant-bearing supertype with no default variant. Such an arm is emitted as an object holding only its nested arms, the shape the flattened-parent const of a defaultless supertype has, so the arm is never a call through a `.strict` that does not exist. It is never an owner route.
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::irSurfaceOf`
 

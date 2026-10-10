@@ -24,7 +24,7 @@ import {
 	AssembledList
 } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
-import { flattenedVariantParents, hasOneSurface, variantRoutePaths } from '../compiler/model/ir-surface.ts';
+import { hasOneSurface } from '../compiler/model/ir-surface.ts';
 import { resolveFieldStorageInfo, compareOrdinal } from './shared.ts';
 import { anchoredLeafRegexLiteral } from '../compiler/model/leaf-pattern.ts';
 import { collectCatalogKinds, collectKindEntries } from './kind-discriminant.ts';
@@ -69,6 +69,7 @@ interface SerializedNodeBase {
 	typeName: string;
 	factoryName?: string;
 	irKey?: string;
+	builderPath?: readonly string[];
 	hidden: boolean;
 	annotations?: RuleAnnotations;
 	seated?: true;
@@ -142,7 +143,6 @@ interface SerializedNodeModel {
 	externals: readonly RuleListEntry[];
 	extras: readonly RuleListEntry[];
 	polymorphVariants: PolymorphVariantMap;
-	variantRoutes: Readonly<Record<string, string>>;
 	fieldAliasMap: Readonly<Record<string, Readonly<Record<string, string>>>>;
 	factorySlots: Readonly<Record<string, Readonly<Record<string, FactorySlotMeta>>>>;
 	innerGapsKeyed: boolean;
@@ -199,7 +199,6 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 		externals: nodeMap.externals ?? [],
 		extras: nodeMap.extras ?? [],
 		polymorphVariants: factoryData.polymorphVariants,
-		variantRoutes: Object.fromEntries([...variantRoutePaths(flattenedVariantParents(nodeMap))].sort(([a], [b]) => compareOrdinal(a, b))),
 		fieldAliasMap: factoryData.fieldAliasMap,
 		factorySlots: factoryData.factorySlots,
 		innerGapsKeyed: innerGapsKeyed(nodeMap),
@@ -215,6 +214,8 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 		typeName: node.typeName,
 		factoryName: node.factoryName,
 		irKey: node.irKey,
+		...(node.builderPath === undefined ? {} : { builderPath: node.builderPath }),
+		...(node.builderPathAlternates === undefined ? {} : { builderPathAlternates: node.builderPathAlternates }),
 		hidden: node.hidden,
 		...(node.annotations !== undefined ? { annotations: node.annotations } : {}),
 		...(node.seated ? { seated: true } : {}),

@@ -344,8 +344,8 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	lines.push('export interface IrKeyOf {');
 	for (const kind of namespaceMapKinds) {
 		const node = nodeMap.nodes.get(kind)!;
-		if (node.irKey === undefined || !hasKindId(kind, kindEntries)) continue;
-		lines.push(`  [${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)}]: ${JSON.stringify(node.irKey)};`);
+		if (node.typeKey === undefined || !hasKindId(kind, kindEntries)) continue;
+		lines.push(`  [${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)}]: ${JSON.stringify(node.typeKey)};`);
 	}
 	lines.push('}');
 	lines.push('');

@@ -35,6 +35,7 @@ export interface NodeArm {
 	readonly child: AssembledNode;
 	readonly path: readonly string[];
 	readonly leaf?: AssembledNode;
+	readonly variantOf?: string;
 }
 
 export interface SubFactory {
@@ -189,7 +190,8 @@ function derive(
 			}
 			const child = isNodeRef(value) ? nodeMap.nodes.get(storageKindOfRef(value.node)) : undefined;
 			if (child !== undefined && isCallableArm(child, isEmitted)) {
-				direct.push({ name, slot, residual, arm: { via: 'node', child, path: [] }, depth: DIRECT, merges: false });
+				const arm: NodeArm = { via: 'node', child, path: [], ...(value.variantOf === undefined ? {} : { variantOf: value.variantOf }) };
+				direct.push({ name, slot, residual, arm, depth: DIRECT, merges: false });
 			}
 		}
 	}

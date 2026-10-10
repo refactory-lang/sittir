@@ -233,52 +233,6 @@
       }
     }
   },
-  "variantRoutes": {
-    "call_expression_call": "callExpression.call",
-    "call_expression_member": "callExpression.member",
-    "call_expression_template_call": "callExpression.templateCall",
-    "class_body_member_declaration": "classBodyMember.declaration",
-    "class_body_member_method": "classBodyMember.method",
-    "class_body_member_method_sig": "classBodyMember.methodSig",
-    "comment_block": "comment.block",
-    "comment_line": "comment.line",
-    "enum_body_element_name": "enumBodyElement.name",
-    "export_statement_default": "exportStatement.default",
-    "export_statement_default_declaration": "exportStatement.default.declaration",
-    "export_statement_default_from": "exportStatement.default.from",
-    "export_statement_equals_export": "exportStatement.equalsExport",
-    "export_statement_namespace_export": "exportStatement.namespaceExport",
-    "export_statement_type_export": "exportStatement.typeExport",
-    "for_header_let_const_kind": "forHeader.letConstKind",
-    "for_header_lhs": "forHeader.lhs",
-    "for_header_var_kind": "forHeader.varKind",
-    "import_specifier_as": "importSpecifier.as",
-    "import_specifier_name": "importSpecifier.name",
-    "index_signature_colon": "indexSignature.colon",
-    "index_signature_mapped_type_clause": "indexSignature.mappedTypeClause",
-    "meta_property_import_meta": "metaProperty.importMeta",
-    "meta_property_new_target": "metaProperty.newTarget",
-    "number_bigint": "number.bigint",
-    "number_bigint_binary": "number.bigint.binary",
-    "number_bigint_decimal": "number.bigint.decimal",
-    "number_bigint_hex": "number.bigint.hex",
-    "number_bigint_octal": "number.bigint.octal",
-    "number_binary": "number.binary",
-    "number_decimal": "number.decimal",
-    "number_float_leading_point": "number.floatLeadingPoint",
-    "number_float_point": "number.floatPoint",
-    "number_float_scientific": "number.floatScientific",
-    "number_hex": "number.hex",
-    "number_octal": "number.octal",
-    "parenthesized_expression_sequence": "parenthesizedExpression.sequence",
-    "parenthesized_expression_typed": "parenthesizedExpression.typed",
-    "string_double": "string.double",
-    "string_single": "string.single",
-    "update_expression_postfix": "updateExpression.postfix",
-    "update_expression_prefix": "updateExpression.prefix",
-    "variable_declarator_definite": "variableDeclarator.definite",
-    "variable_declarator_plain": "variableDeclarator.plain"
-  },
   "fieldAliasMap": {
     "assignment_pattern.left": {
       "lhs_expression": "_lhs_expression"
@@ -4377,7 +4331,6 @@
       "modelType": "pattern",
       "typeName": "ErrorRecovery",
       "factoryName": "errorRecovery",
-      "irKey": "errorRecovery",
       "hidden": false,
       "oneSurface": true
     },
@@ -4385,7 +4338,6 @@
       "kind": "_augmented_assignment_lhs",
       "modelType": "supertype",
       "typeName": "AugmentedAssignmentLhs",
-      "irKey": "augmentedAssignmentLhs",
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -4424,6 +4376,9 @@
       "typeName": "AutomaticSemicolon",
       "factoryName": "automaticSemicolon",
       "irKey": "automaticSemicolon",
+      "builderPath": [
+        "automaticSemicolon"
+      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
@@ -4436,7 +4391,6 @@
       "modelType": "punctuation",
       "typeName": "Blankline",
       "factoryName": "blankline",
-      "irKey": "blankline",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\" as const",
@@ -4449,6 +4403,9 @@
       "modelType": "supertype",
       "typeName": "ClassBodyMember",
       "irKey": "classBodyMember",
+      "builderPath": [
+        "classBodyMember"
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -4464,7 +4421,6 @@
       "modelType": "punctuation",
       "typeName": "Dedent",
       "factoryName": "dedent",
-      "irKey": "dedent",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"﷑\\n\" as const",
@@ -4476,7 +4432,6 @@
       "kind": "_destructuring_pattern",
       "modelType": "supertype",
       "typeName": "DestructuringPattern",
-      "irKey": "destructuringPattern",
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -4489,7 +4444,6 @@
       "modelType": "punctuation",
       "typeName": "DoubleBlankline",
       "factoryName": "doubleBlankline",
-      "irKey": "doubleBlankline",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\\n\" as const",
@@ -4502,6 +4456,9 @@
       "modelType": "supertype",
       "typeName": "EnumBodyElement",
       "irKey": "enumBodyElement",
+      "builderPath": [
+        "enumBodyElement"
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -4513,7 +4470,6 @@
       "kind": "_expressions",
       "modelType": "supertype",
       "typeName": "Expressions",
-      "irKey": "expressions",
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -4526,6 +4482,9 @@
       "modelType": "supertype",
       "typeName": "ForHeader",
       "irKey": "forHeader",
+      "builderPath": [
+        "forHeader"
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -4538,7 +4497,6 @@
       "kind": "_formal_parameter",
       "modelType": "supertype",
       "typeName": "FormalParameter",
-      "irKey": "formalParameter",
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -4552,6 +4510,9 @@
       "typeName": "FunctionSignatureAutomaticSemicolon",
       "factoryName": "functionSignatureAutomaticSemicolon",
       "irKey": "functionSignatureAutomaticSemicolon",
+      "builderPath": [
+        "functionSignatureAutomaticSemicolon"
+      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
@@ -4563,7 +4524,6 @@
       "kind": "_identifier",
       "modelType": "supertype",
       "typeName": "_Identifier",
-      "irKey": "identifier",
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -4575,7 +4535,6 @@
       "kind": "_import_identifier",
       "modelType": "supertype",
       "typeName": "ImportIdentifier",
-      "irKey": "importIdentifier",
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -4588,7 +4547,6 @@
       "modelType": "punctuation",
       "typeName": "Indent",
       "factoryName": "indent",
-      "irKey": "indent",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"﷐\\n\" as const",
@@ -4601,6 +4559,9 @@
       "modelType": "supertype",
       "typeName": "Layout",
       "irKey": "layout",
+      "builderPath": [
+        "layout"
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -4620,6 +4581,15 @@
       "typeName": "LhsExpression",
       "factoryName": "lhsExpression",
       "irKey": "lhsExpression",
+      "builderPath": [
+        "lhsExpression"
+      ],
+      "builderPathAlternates": [
+        [
+          "pattern",
+          "lhs"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -4911,7 +4881,6 @@
       "kind": "_module_export_name",
       "modelType": "supertype",
       "typeName": "ModuleExportName",
-      "irKey": "moduleExportName",
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -4924,7 +4893,6 @@
       "modelType": "punctuation",
       "typeName": "Newline",
       "factoryName": "newline",
-      "irKey": "newline",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
@@ -4936,7 +4904,6 @@
       "kind": "_property_name",
       "modelType": "supertype",
       "typeName": "PropertyName",
-      "irKey": "propertyName",
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -4952,7 +4919,6 @@
       "modelType": "punctuation",
       "typeName": "Space",
       "factoryName": "space",
-      "irKey": "space",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\" \" as const",
@@ -4965,7 +4931,6 @@
       "modelType": "punctuation",
       "typeName": "Tab",
       "factoryName": "tab",
-      "irKey": "tab",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\t\" as const",
@@ -4979,6 +4944,9 @@
       "typeName": "TemplateChars",
       "factoryName": "templateChars",
       "irKey": "templateChars",
+      "builderPath": [
+        "templateChars"
+      ],
       "hidden": false,
       "pattern": "[^`\\\\$]+",
       "leafPattern": "/^(?:(?:[^`\\\\$]+))$/u",
@@ -4990,7 +4958,6 @@
       "modelType": "pattern",
       "typeName": "TernaryQmark",
       "factoryName": "ternaryQmark",
-      "irKey": "ternaryQmark",
       "hidden": false,
       "oneSurface": true
     },
@@ -4999,7 +4966,6 @@
       "modelType": "punctuation",
       "typeName": "Tight",
       "factoryName": "tight",
-      "irKey": "tight",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\" as const",
@@ -5011,7 +4977,6 @@
       "kind": "_tuple_type_member",
       "modelType": "supertype",
       "typeName": "TupleTypeMember",
-      "irKey": "tupleTypeMember",
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -5028,6 +4993,15 @@
       "typeName": "AbstractClassDeclaration",
       "factoryName": "abstractClassDeclaration",
       "irKey": "abstractClassDeclaration",
+      "builderPath": [
+        "abstractClassDeclaration"
+      ],
+      "builderPathAlternates": [
+        [
+          "declaration",
+          "abstractClass"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -5144,7 +5118,6 @@
       "kind": "abstract_keyword",
       "modelType": "keyword",
       "typeName": "AbstractKeyword",
-      "irKey": "abstractKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"abstract\" as const",
@@ -5157,6 +5130,9 @@
       "typeName": "AbstractMethodSignature",
       "factoryName": "abstractMethodSignature",
       "irKey": "abstractMethodSignature",
+      "builderPath": [
+        "abstractMethodSignature"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -5519,7 +5495,6 @@
       "modelType": "enum",
       "typeName": "AccessibilityModifier",
       "factoryName": "accessibilityModifier",
-      "irKey": "accessibilityModifier",
       "hidden": false,
       "values": [
         "public",
@@ -5532,7 +5507,6 @@
       "kind": "accessor_keyword",
       "modelType": "keyword",
       "typeName": "AccessorKeyword",
-      "irKey": "accessorKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"accessor\" as const",
@@ -5545,6 +5519,9 @@
       "typeName": "AddingTypeAnnotation",
       "factoryName": "addingTypeAnnotation",
       "irKey": "addingTypeAnnotation",
+      "builderPath": [
+        "addingTypeAnnotation"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -5644,6 +5621,15 @@
       "typeName": "AmbientDeclaration",
       "factoryName": "ambientDeclaration",
       "irKey": "ambientDeclaration",
+      "builderPath": [
+        "ambientDeclaration"
+      ],
+      "builderPathAlternates": [
+        [
+          "declaration",
+          "ambient"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -5711,6 +5697,9 @@
       "typeName": "AmbientDeclarationGlobal",
       "factoryName": "ambientDeclarationGlobal",
       "irKey": "ambientDeclarationGlobal",
+      "builderPath": [
+        "ambientDeclarationGlobal"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -5749,6 +5738,9 @@
       "typeName": "AmbientDeclarationModule",
       "factoryName": "ambientDeclarationModule",
       "irKey": "ambientDeclarationModule",
+      "builderPath": [
+        "ambientDeclarationModule"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -5828,7 +5820,6 @@
       "kind": "amp",
       "modelType": "punctuation",
       "typeName": "Amp",
-      "irKey": "amp",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"&\" as const",
@@ -5838,7 +5829,6 @@
       "kind": "amp_amp",
       "modelType": "punctuation",
       "typeName": "AmpAmp",
-      "irKey": "ampAmp",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"&&\" as const",
@@ -5848,7 +5838,6 @@
       "kind": "amp_amp_eq",
       "modelType": "punctuation",
       "typeName": "AmpAmpEq",
-      "irKey": "ampAmpEq",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"&&=\" as const",
@@ -5858,7 +5847,6 @@
       "kind": "amp_eq",
       "modelType": "punctuation",
       "typeName": "AmpEq",
-      "irKey": "ampEq",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"&=\" as const",
@@ -5868,7 +5856,6 @@
       "kind": "any_keyword",
       "modelType": "keyword",
       "typeName": "AnyKeyword",
-      "irKey": "anyKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"any\" as const",
@@ -5881,6 +5868,9 @@
       "typeName": "Arguments",
       "factoryName": "arguments_",
       "irKey": "arguments",
+      "builderPath": [
+        "arguments"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -5922,6 +5912,9 @@
       "typeName": "Array",
       "factoryName": "array",
       "irKey": "array",
+      "builderPath": [
+        "array"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -5963,6 +5956,9 @@
       "typeName": "ArrayPattern",
       "factoryName": "arrayPattern",
       "irKey": "arrayPattern",
+      "builderPath": [
+        "arrayPattern"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -6004,6 +6000,9 @@
       "typeName": "ArrayType",
       "factoryName": "arrayType",
       "irKey": "arrayType",
+      "builderPath": [
+        "arrayType"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -6103,6 +6102,9 @@
       "typeName": "ArrowFunction",
       "factoryName": "arrowFunction",
       "irKey": "arrowFunction",
+      "builderPath": [
+        "arrowFunction"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -6196,7 +6198,10 @@
       "modelType": "branch",
       "typeName": "ArrowFunctionParameter",
       "factoryName": "arrowFunctionParameter",
-      "irKey": "arrowFunctionParameter",
+      "builderPath": [
+        "arrowFunction",
+        "parameter"
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -6371,6 +6376,9 @@
       "typeName": "AsExpression",
       "factoryName": "asExpression",
       "irKey": "asExpression",
+      "builderPath": [
+        "asExpression"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -6430,7 +6438,6 @@
       "kind": "as_keyword",
       "modelType": "keyword",
       "typeName": "AsKeyword",
-      "irKey": "asKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"as\" as const",
@@ -6441,7 +6448,6 @@
       "kind": "assert_keyword",
       "modelType": "keyword",
       "typeName": "AssertKeyword",
-      "irKey": "assertKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"assert\" as const",
@@ -6454,6 +6460,9 @@
       "typeName": "Asserts",
       "factoryName": "asserts",
       "irKey": "asserts",
+      "builderPath": [
+        "asserts"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -6507,6 +6516,9 @@
       "typeName": "AssertsAnnotation",
       "factoryName": "assertsAnnotation",
       "irKey": "assertsAnnotation",
+      "builderPath": [
+        "assertsAnnotation"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -6546,7 +6558,6 @@
       "kind": "asserts_keyword",
       "modelType": "keyword",
       "typeName": "AssertsKeyword",
-      "irKey": "assertsKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"asserts\" as const",
@@ -6559,6 +6570,9 @@
       "typeName": "AssignmentExpression",
       "factoryName": "assignmentExpression",
       "irKey": "assignmentExpression",
+      "builderPath": [
+        "assignmentExpression"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -6640,6 +6654,9 @@
       "typeName": "AssignmentPattern",
       "factoryName": "assignmentPattern",
       "irKey": "assignmentPattern",
+      "builderPath": [
+        "assignmentPattern"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -6693,7 +6710,6 @@
       "kind": "async_keyword",
       "modelType": "keyword",
       "typeName": "AsyncKeyword",
-      "irKey": "asyncKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"async\" as const",
@@ -6704,7 +6720,6 @@
       "kind": "at",
       "modelType": "punctuation",
       "typeName": "At",
-      "irKey": "at",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"@\" as const",
@@ -6716,6 +6731,9 @@
       "typeName": "AugmentedAssignmentExpression",
       "factoryName": "augmentedAssignmentExpression",
       "irKey": "augmentedAssignmentExpression",
+      "builderPath": [
+        "augmentedAssignmentExpression"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -7034,6 +7052,9 @@
       "typeName": "AwaitExpression",
       "factoryName": "awaitExpression",
       "irKey": "awaitExpression",
+      "builderPath": [
+        "awaitExpression"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -7145,7 +7166,6 @@
       "kind": "await_keyword",
       "modelType": "keyword",
       "typeName": "AwaitKeyword",
-      "irKey": "awaitKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"await\" as const",
@@ -7156,7 +7176,6 @@
       "kind": "bang",
       "modelType": "punctuation",
       "typeName": "Bang",
-      "irKey": "bang",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"!\" as const",
@@ -7166,7 +7185,6 @@
       "kind": "bang_eq",
       "modelType": "punctuation",
       "typeName": "BangEq",
-      "irKey": "bangEq",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"!=\" as const",
@@ -7176,7 +7194,6 @@
       "kind": "bang_eq_eq",
       "modelType": "punctuation",
       "typeName": "BangEqEq",
-      "irKey": "bangEqEq",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"!==\" as const",
@@ -7188,6 +7205,9 @@
       "typeName": "BinaryExpression",
       "factoryName": "binaryExpression",
       "irKey": "binaryExpression",
+      "builderPath": [
+        "binaryExpression"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -7426,7 +7446,10 @@
       "modelType": "branch",
       "typeName": "BinaryExpressionIn",
       "factoryName": "binaryExpressionIn",
-      "irKey": "binaryExpressionIn",
+      "builderPath": [
+        "binaryExpression",
+        "in"
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -7492,7 +7515,6 @@
       "kind": "boolean_keyword",
       "modelType": "keyword",
       "typeName": "BooleanKeyword",
-      "irKey": "booleanKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"boolean\" as const",
@@ -7503,7 +7525,6 @@
       "kind": "bquote",
       "modelType": "punctuation",
       "typeName": "Bquote",
-      "irKey": "bquote",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"`\" as const",
@@ -7513,7 +7534,6 @@
       "kind": "break_keyword",
       "modelType": "keyword",
       "typeName": "BreakKeyword",
-      "irKey": "breakKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"break\" as const",
@@ -7526,6 +7546,15 @@
       "typeName": "BreakStatement",
       "factoryName": "breakStatement",
       "irKey": "breakStatement",
+      "builderPath": [
+        "breakStatement"
+      ],
+      "builderPathAlternates": [
+        [
+          "statement",
+          "break"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -7590,6 +7619,9 @@
       "modelType": "supertype",
       "typeName": "CallExpression",
       "irKey": "callExpression",
+      "builderPath": [
+        "callExpression"
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -7604,6 +7636,15 @@
       "typeName": "CallExpressionCall",
       "factoryName": "callExpressionCall",
       "irKey": "callExpressionCall",
+      "builderPath": [
+        "callExpressionCall"
+      ],
+      "builderPathAlternates": [
+        [
+          "callExpression",
+          "call"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -7692,6 +7733,15 @@
       "typeName": "CallExpressionMember",
       "factoryName": "callExpressionMember",
       "irKey": "callExpressionMember",
+      "builderPath": [
+        "callExpressionMember"
+      ],
+      "builderPathAlternates": [
+        [
+          "callExpression",
+          "member"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -7773,6 +7823,15 @@
       "typeName": "CallExpressionTemplateCall",
       "factoryName": "callExpressionTemplateCall",
       "irKey": "callExpressionTemplateCall",
+      "builderPath": [
+        "callExpressionTemplateCall"
+      ],
+      "builderPathAlternates": [
+        [
+          "callExpression",
+          "templateCall"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -7840,6 +7899,9 @@
       "typeName": "CallSignature",
       "factoryName": "callSignature",
       "irKey": "callSignature",
+      "builderPath": [
+        "callSignature"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -7928,7 +7990,6 @@
       "kind": "caret",
       "modelType": "punctuation",
       "typeName": "Caret",
-      "irKey": "caret",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"^\" as const",
@@ -7938,7 +7999,6 @@
       "kind": "caret_eq",
       "modelType": "punctuation",
       "typeName": "CaretEq",
-      "irKey": "caretEq",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"^=\" as const",
@@ -7948,7 +8008,6 @@
       "kind": "case_keyword",
       "modelType": "keyword",
       "typeName": "CaseKeyword",
-      "irKey": "caseKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"case\" as const",
@@ -7961,6 +8020,9 @@
       "typeName": "CatchClause",
       "factoryName": "catchClause",
       "irKey": "catchClause",
+      "builderPath": [
+        "catchClause"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -8019,7 +8081,6 @@
       "modelType": "branch",
       "typeName": "CatchClauseGroup",
       "factoryName": "catchClauseGroup",
-      "irKey": "catchClauseGroup",
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -8092,7 +8153,6 @@
       "kind": "catch_keyword",
       "modelType": "keyword",
       "typeName": "CatchKeyword",
-      "irKey": "catchKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"catch\" as const",
@@ -8105,6 +8165,9 @@
       "typeName": "Class",
       "factoryName": "class_",
       "irKey": "class",
+      "builderPath": [
+        "class"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -8223,6 +8286,9 @@
       "typeName": "ClassBody",
       "factoryName": "classBody",
       "irKey": "classBody",
+      "builderPath": [
+        "classBody"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -8257,6 +8323,15 @@
       "typeName": "ClassBodyMemberDeclaration",
       "factoryName": "classBodyMemberDeclaration",
       "irKey": "classBodyMemberDeclaration",
+      "builderPath": [
+        "classBodyMemberDeclaration"
+      ],
+      "builderPathAlternates": [
+        [
+          "classBodyMember",
+          "declaration"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -8356,6 +8431,15 @@
       "typeName": "ClassBodyMemberMethod",
       "factoryName": "classBodyMemberMethod",
       "irKey": "classBodyMemberMethod",
+      "builderPath": [
+        "classBodyMemberMethod"
+      ],
+      "builderPathAlternates": [
+        [
+          "classBodyMember",
+          "method"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -8442,6 +8526,15 @@
       "typeName": "ClassBodyMemberMethodSig",
       "factoryName": "classBodyMemberMethodSig",
       "irKey": "classBodyMemberMethodSig",
+      "builderPath": [
+        "classBodyMemberMethodSig"
+      ],
+      "builderPathAlternates": [
+        [
+          "classBodyMember",
+          "methodSig"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -8508,6 +8601,15 @@
       "typeName": "ClassDeclaration",
       "factoryName": "classDeclaration",
       "irKey": "classDeclaration",
+      "builderPath": [
+        "classDeclaration"
+      ],
+      "builderPathAlternates": [
+        [
+          "declaration",
+          "class"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -8646,6 +8748,9 @@
       "typeName": "ClassHeritage",
       "factoryName": "classHeritage",
       "irKey": "classHeritage",
+      "builderPath": [
+        "classHeritage"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -8695,7 +8800,10 @@
       "modelType": "branch",
       "typeName": "ClassHeritageExtendsClause",
       "factoryName": "classHeritageExtendsClause",
-      "irKey": "classHeritageExtendsClause",
+      "builderPath": [
+        "classHeritage",
+        "extendsClause"
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -8754,7 +8862,6 @@
       "kind": "class_keyword",
       "modelType": "keyword",
       "typeName": "ClassKeyword",
-      "irKey": "classKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"class\" as const",
@@ -8767,6 +8874,15 @@
       "typeName": "ClassStaticBlock",
       "factoryName": "classStaticBlock",
       "irKey": "classStaticBlock",
+      "builderPath": [
+        "classStaticBlock"
+      ],
+      "builderPathAlternates": [
+        [
+          "classBodyMember",
+          "staticBlock"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -8823,7 +8939,6 @@
       "kind": "colon",
       "modelType": "punctuation",
       "typeName": "Colon",
-      "irKey": "colon",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\":\" as const",
@@ -8833,7 +8948,6 @@
       "kind": "comma",
       "modelType": "punctuation",
       "typeName": "Comma",
-      "irKey": "comma",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\",\" as const",
@@ -8844,6 +8958,9 @@
       "modelType": "supertype",
       "typeName": "Comment",
       "irKey": "comment",
+      "builderPath": [
+        "comment"
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -8857,6 +8974,15 @@
       "typeName": "CommentBlock",
       "factoryName": "commentBlock",
       "irKey": "commentBlock",
+      "builderPath": [
+        "commentBlock"
+      ],
+      "builderPathAlternates": [
+        [
+          "comment",
+          "block"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "tokenForm": true,
@@ -8927,6 +9053,15 @@
       "typeName": "CommentLine",
       "factoryName": "commentLine",
       "irKey": "commentLine",
+      "builderPath": [
+        "commentLine"
+      ],
+      "builderPathAlternates": [
+        [
+          "comment",
+          "line"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "tokenForm": true,
@@ -8994,6 +9129,9 @@
       "typeName": "ComputedPropertyName",
       "factoryName": "computedPropertyName",
       "irKey": "computedPropertyName",
+      "builderPath": [
+        "computedPropertyName"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -9107,6 +9245,9 @@
       "typeName": "ConditionalType",
       "factoryName": "conditionalType",
       "irKey": "conditionalType",
+      "builderPath": [
+        "conditionalType"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -9202,7 +9343,6 @@
       "kind": "const_keyword",
       "modelType": "keyword",
       "typeName": "ConstKeyword",
-      "irKey": "constKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"const\" as const",
@@ -9215,6 +9355,9 @@
       "typeName": "Constraint",
       "factoryName": "constraint",
       "irKey": "constraint",
+      "builderPath": [
+        "constraint"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -9274,6 +9417,9 @@
       "typeName": "ConstructSignature",
       "factoryName": "constructSignature",
       "irKey": "constructSignature",
+      "builderPath": [
+        "constructSignature"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -9369,6 +9515,9 @@
       "typeName": "ConstructorType",
       "factoryName": "constructorType",
       "irKey": "constructorType",
+      "builderPath": [
+        "constructorType"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -9462,7 +9611,6 @@
       "kind": "continue_keyword",
       "modelType": "keyword",
       "typeName": "ContinueKeyword",
-      "irKey": "continueKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"continue\" as const",
@@ -9475,6 +9623,15 @@
       "typeName": "ContinueStatement",
       "factoryName": "continueStatement",
       "irKey": "continueStatement",
+      "builderPath": [
+        "continueStatement"
+      ],
+      "builderPathAlternates": [
+        [
+          "statement",
+          "continue"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -9538,7 +9695,6 @@
       "kind": "dash",
       "modelType": "punctuation",
       "typeName": "Dash",
-      "irKey": "dash",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"-\" as const",
@@ -9548,7 +9704,6 @@
       "kind": "dash_dash",
       "modelType": "punctuation",
       "typeName": "DashDash",
-      "irKey": "dashDash",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"--\" as const",
@@ -9558,7 +9713,6 @@
       "kind": "dash_eq",
       "modelType": "punctuation",
       "typeName": "DashEq",
-      "irKey": "dashEq",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"-=\" as const",
@@ -9568,7 +9722,6 @@
       "kind": "dash_qmark_colon",
       "modelType": "punctuation",
       "typeName": "DashQmarkColon",
-      "irKey": "dashQmarkColon",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"-?:\" as const",
@@ -9578,7 +9731,6 @@
       "kind": "debugger_keyword",
       "modelType": "keyword",
       "typeName": "DebuggerKeyword",
-      "irKey": "debuggerKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"debugger\" as const",
@@ -9591,6 +9743,15 @@
       "typeName": "DebuggerStatement",
       "factoryName": "debuggerStatement",
       "irKey": "debuggerStatement",
+      "builderPath": [
+        "debuggerStatement"
+      ],
+      "builderPathAlternates": [
+        [
+          "statement",
+          "debugger"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -9633,6 +9794,15 @@
       "modelType": "supertype",
       "typeName": "Declaration",
       "irKey": "declaration",
+      "builderPath": [
+        "declaration"
+      ],
+      "builderPathAlternates": [
+        [
+          "statement",
+          "declaration"
+        ]
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -9656,7 +9826,6 @@
       "kind": "declare_keyword",
       "modelType": "keyword",
       "typeName": "DeclareKeyword",
-      "irKey": "declareKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"declare\" as const",
@@ -9669,6 +9838,9 @@
       "typeName": "Decorator",
       "factoryName": "decorator",
       "irKey": "decorator",
+      "builderPath": [
+        "decorator"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -9730,6 +9902,9 @@
       "typeName": "DecoratorCallExpression",
       "factoryName": "decoratorCallExpression",
       "irKey": "decoratorCallExpression",
+      "builderPath": [
+        "decoratorCallExpression"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -9813,6 +9988,9 @@
       "typeName": "DecoratorMemberExpression",
       "factoryName": "decoratorMemberExpression",
       "irKey": "decoratorMemberExpression",
+      "builderPath": [
+        "decoratorMemberExpression"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -9875,6 +10053,9 @@
       "typeName": "DecoratorParenthesizedExpression",
       "factoryName": "decoratorParenthesizedExpression",
       "irKey": "decoratorParenthesizedExpression",
+      "builderPath": [
+        "decoratorParenthesizedExpression"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -9926,7 +10107,6 @@
       "kind": "default_keyword",
       "modelType": "keyword",
       "typeName": "DefaultKeyword",
-      "irKey": "defaultKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"default\" as const",
@@ -9939,6 +10119,9 @@
       "typeName": "DefaultType",
       "factoryName": "defaultType",
       "irKey": "defaultType",
+      "builderPath": [
+        "defaultType"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -10036,7 +10219,6 @@
       "kind": "delete_keyword",
       "modelType": "keyword",
       "typeName": "DeleteKeyword",
-      "irKey": "deleteKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"delete\" as const",
@@ -10047,7 +10229,6 @@
       "kind": "do_keyword",
       "modelType": "keyword",
       "typeName": "DoKeyword",
-      "irKey": "doKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"do\" as const",
@@ -10060,6 +10241,15 @@
       "typeName": "DoStatement",
       "factoryName": "doStatement",
       "irKey": "doStatement",
+      "builderPath": [
+        "doStatement"
+      ],
+      "builderPathAlternates": [
+        [
+          "statement",
+          "do"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -10139,7 +10329,6 @@
       "kind": "dollar_lbrace",
       "modelType": "punctuation",
       "typeName": "DollarLbrace",
-      "irKey": "dollarLbrace",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"${\" as const",
@@ -10149,7 +10338,6 @@
       "kind": "dot",
       "modelType": "punctuation",
       "typeName": "Dot",
-      "irKey": "dot",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\".\" as const",
@@ -10159,7 +10347,6 @@
       "kind": "dot_dot_dot",
       "modelType": "punctuation",
       "typeName": "DotDotDot",
-      "irKey": "dotDotDot",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"...\" as const",
@@ -10169,7 +10356,6 @@
       "kind": "dquote",
       "modelType": "punctuation",
       "typeName": "Dquote",
-      "irKey": "dquote",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\\"\" as const",
@@ -10181,6 +10367,9 @@
       "typeName": "ElseClause",
       "factoryName": "elseClause",
       "irKey": "elseClause",
+      "builderPath": [
+        "elseClause"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -10338,7 +10527,6 @@
       "kind": "else_keyword",
       "modelType": "keyword",
       "typeName": "ElseKeyword",
-      "irKey": "elseKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"else\" as const",
@@ -10351,6 +10539,15 @@
       "typeName": "EmptyMember",
       "factoryName": "emptyMember",
       "irKey": "emptyMember",
+      "builderPath": [
+        "emptyMember"
+      ],
+      "builderPathAlternates": [
+        [
+          "classBodyMember",
+          "empty"
+        ]
+      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\";\" as const",
@@ -10364,6 +10561,15 @@
       "typeName": "EmptyStatement",
       "factoryName": "emptyStatement",
       "irKey": "emptyStatement",
+      "builderPath": [
+        "emptyStatement"
+      ],
+      "builderPathAlternates": [
+        [
+          "statement",
+          "empty"
+        ]
+      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\";\" as const",
@@ -10377,6 +10583,15 @@
       "typeName": "EnumAssignment",
       "factoryName": "enumAssignment",
       "irKey": "enumAssignment",
+      "builderPath": [
+        "enumAssignment"
+      ],
+      "builderPathAlternates": [
+        [
+          "enumBodyElement",
+          "assignment"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -10592,6 +10807,9 @@
       "typeName": "EnumBody",
       "factoryName": "enumBody",
       "irKey": "enumBody",
+      "builderPath": [
+        "enumBody"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -10712,6 +10930,15 @@
       "typeName": "EnumBodyElementName",
       "factoryName": "enumBodyElementName",
       "irKey": "enumBodyElementName",
+      "builderPath": [
+        "enumBodyElementName"
+      ],
+      "builderPathAlternates": [
+        [
+          "enumBodyElement",
+          "name"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -10993,6 +11220,9 @@
       "typeName": "EnumBodyElements",
       "factoryName": "enumBodyElements",
       "irKey": "enumBodyElements",
+      "builderPath": [
+        "enumBodyElements"
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -11101,6 +11331,15 @@
       "typeName": "EnumDeclaration",
       "factoryName": "enumDeclaration",
       "irKey": "enumDeclaration",
+      "builderPath": [
+        "enumDeclaration"
+      ],
+      "builderPathAlternates": [
+        [
+          "declaration",
+          "enum"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -11173,7 +11412,6 @@
       "kind": "enum_keyword",
       "modelType": "keyword",
       "typeName": "EnumKeyword",
-      "irKey": "enumKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"enum\" as const",
@@ -11184,7 +11422,6 @@
       "kind": "eq",
       "modelType": "punctuation",
       "typeName": "Eq",
-      "irKey": "eq",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"=\" as const",
@@ -11194,7 +11431,6 @@
       "kind": "eq_eq",
       "modelType": "punctuation",
       "typeName": "EqEq",
-      "irKey": "eqEq",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"==\" as const",
@@ -11204,7 +11440,6 @@
       "kind": "eq_eq_eq",
       "modelType": "punctuation",
       "typeName": "EqEqEq",
-      "irKey": "eqEqEq",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"===\" as const",
@@ -11214,7 +11449,6 @@
       "kind": "eq_gt",
       "modelType": "punctuation",
       "typeName": "EqGt",
-      "irKey": "eqGt",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"=>\" as const",
@@ -11226,6 +11460,9 @@
       "typeName": "EscapeSequence",
       "factoryName": "escapeSequence",
       "irKey": "escapeSequence",
+      "builderPath": [
+        "escapeSequence"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -11287,6 +11524,9 @@
       "typeName": "ExistentialType",
       "factoryName": "existentialType",
       "irKey": "existentialType",
+      "builderPath": [
+        "existentialType"
+      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"*\" as const",
@@ -11300,6 +11540,9 @@
       "typeName": "ExportClause",
       "factoryName": "exportClause",
       "irKey": "exportClause",
+      "builderPath": [
+        "exportClause"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -11340,7 +11583,6 @@
       "kind": "export_keyword",
       "modelType": "keyword",
       "typeName": "ExportKeyword",
-      "irKey": "exportKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"export\" as const",
@@ -11353,6 +11595,9 @@
       "typeName": "ExportSpecifier",
       "factoryName": "exportSpecifier",
       "irKey": "exportSpecifier",
+      "builderPath": [
+        "exportSpecifier"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -11447,6 +11692,9 @@
       "typeName": "ExportSpecifiers",
       "factoryName": "exportSpecifiers",
       "irKey": "exportSpecifiers",
+      "builderPath": [
+        "exportSpecifiers"
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -11476,6 +11724,15 @@
       "modelType": "supertype",
       "typeName": "ExportStatement",
       "irKey": "exportStatement",
+      "builderPath": [
+        "exportStatement"
+      ],
+      "builderPathAlternates": [
+        [
+          "statement",
+          "export"
+        ]
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -11490,6 +11747,15 @@
       "modelType": "supertype",
       "typeName": "ExportStatementDefault",
       "irKey": "exportStatementDefault",
+      "builderPath": [
+        "exportStatementDefault"
+      ],
+      "builderPathAlternates": [
+        [
+          "exportStatement",
+          "default"
+        ]
+      ],
       "hidden": true,
       "annotations": {
         "hoisted": true
@@ -11506,6 +11772,15 @@
       "typeName": "ExportStatementDefaultDeclaration",
       "factoryName": "exportStatementDefaultDeclaration",
       "irKey": "exportStatementDefaultDeclaration",
+      "builderPath": [
+        "exportStatementDefaultDeclaration"
+      ],
+      "builderPathAlternates": [
+        [
+          "exportStatementDefault",
+          "declaration"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -11578,7 +11853,10 @@
       "modelType": "polymorph",
       "typeName": "ExportStatementDefaultDeclarationDefaultKw",
       "factoryName": "exportStatementDefaultDeclarationDefaultKw",
-      "irKey": "exportStatementDefaultDeclarationDefaultKw",
+      "builderPath": [
+        "exportStatementDefaultDeclaration",
+        "defaultKw"
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -11726,7 +12004,11 @@
       "modelType": "branch",
       "typeName": "ExportStatementDefaultDeclarationDefaultKwValue",
       "factoryName": "exportStatementDefaultDeclarationDefaultKwValue",
-      "irKey": "exportStatementDefaultDeclarationDefaultKwValue",
+      "builderPath": [
+        "exportStatementDefaultDeclaration",
+        "defaultKw",
+        "value"
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -11871,6 +12153,15 @@
       "typeName": "ExportStatementDefaultFrom",
       "factoryName": "exportStatementDefaultFrom",
       "irKey": "exportStatementDefaultFrom",
+      "builderPath": [
+        "exportStatementDefaultFrom"
+      ],
+      "builderPathAlternates": [
+        [
+          "exportStatementDefault",
+          "from"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -11983,7 +12274,10 @@
       "modelType": "branch",
       "typeName": "ExportStatementDefaultFromClauseFrom",
       "factoryName": "exportStatementDefaultFromClauseFrom",
-      "irKey": "exportStatementDefaultFromClauseFrom",
+      "builderPath": [
+        "exportStatementDefaultFrom",
+        "clauseFrom"
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -12043,7 +12337,10 @@
       "modelType": "branch",
       "typeName": "ExportStatementDefaultFromNsFrom",
       "factoryName": "exportStatementDefaultFromNsFrom",
-      "irKey": "exportStatementDefaultFromNsFrom",
+      "builderPath": [
+        "exportStatementDefaultFrom",
+        "nsFrom"
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -12103,7 +12400,10 @@
       "modelType": "envelope",
       "typeName": "ExportStatementDefaultFromStarFrom",
       "factoryName": "exportStatementDefaultFromStarFrom",
-      "irKey": "exportStatementDefaultFromStarFrom",
+      "builderPath": [
+        "exportStatementDefaultFrom",
+        "starFrom"
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -12147,6 +12447,15 @@
       "typeName": "ExportStatementEqualsExport",
       "factoryName": "exportStatementEqualsExport",
       "irKey": "exportStatementEqualsExport",
+      "builderPath": [
+        "exportStatementEqualsExport"
+      ],
+      "builderPathAlternates": [
+        [
+          "exportStatement",
+          "equalsExport"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -12291,6 +12600,15 @@
       "typeName": "ExportStatementNamespaceExport",
       "factoryName": "exportStatementNamespaceExport",
       "irKey": "exportStatementNamespaceExport",
+      "builderPath": [
+        "exportStatementNamespaceExport"
+      ],
+      "builderPathAlternates": [
+        [
+          "exportStatement",
+          "namespaceExport"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -12360,6 +12678,15 @@
       "typeName": "ExportStatementTypeExport",
       "factoryName": "exportStatementTypeExport",
       "irKey": "exportStatementTypeExport",
+      "builderPath": [
+        "exportStatementTypeExport"
+      ],
+      "builderPathAlternates": [
+        [
+          "exportStatement",
+          "typeExport"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -12445,6 +12772,9 @@
       "modelType": "supertype",
       "typeName": "Expression",
       "irKey": "expression",
+      "builderPath": [
+        "expression"
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -12471,6 +12801,15 @@
       "typeName": "ExpressionStatement",
       "factoryName": "expressionStatement",
       "irKey": "expressionStatement",
+      "builderPath": [
+        "expressionStatement"
+      ],
+      "builderPathAlternates": [
+        [
+          "statement",
+          "expression"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -12617,6 +12956,9 @@
       "typeName": "ExtendsClause",
       "factoryName": "extendsClause",
       "irKey": "extendsClause",
+      "builderPath": [
+        "extendsClause"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -12651,6 +12993,9 @@
       "typeName": "ExtendsClauseSingle",
       "factoryName": "extendsClauseSingle",
       "irKey": "extendsClauseSingle",
+      "builderPath": [
+        "extendsClauseSingle"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -12704,7 +13049,6 @@
       "kind": "extends_keyword",
       "modelType": "keyword",
       "typeName": "ExtendsKeyword",
-      "irKey": "extendsKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"extends\" as const",
@@ -12717,6 +13061,9 @@
       "typeName": "ExtendsTypeClause",
       "factoryName": "extendsTypeClause",
       "irKey": "extendsTypeClause",
+      "builderPath": [
+        "extendsTypeClause"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -12765,6 +13112,9 @@
       "typeName": "False",
       "factoryName": "false_",
       "irKey": "false",
+      "builderPath": [
+        "false"
+      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"false\" as const",
@@ -12778,6 +13128,9 @@
       "typeName": "FinallyClause",
       "factoryName": "finallyClause",
       "irKey": "finallyClause",
+      "builderPath": [
+        "finallyClause"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -12814,7 +13167,6 @@
       "kind": "finally_keyword",
       "modelType": "keyword",
       "typeName": "FinallyKeyword",
-      "irKey": "finallyKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"finally\" as const",
@@ -12827,6 +13179,9 @@
       "typeName": "FlowMaybeType",
       "factoryName": "flowMaybeType",
       "irKey": "flowMaybeType",
+      "builderPath": [
+        "flowMaybeType"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -12926,6 +13281,15 @@
       "typeName": "ForHeaderLetConstKind",
       "factoryName": "forHeaderLetConstKind",
       "irKey": "forHeaderLetConstKind",
+      "builderPath": [
+        "forHeaderLetConstKind"
+      ],
+      "builderPathAlternates": [
+        [
+          "forHeader",
+          "letConstKind"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -13077,6 +13441,15 @@
       "typeName": "ForHeaderLhs",
       "factoryName": "forHeaderLhs",
       "irKey": "forHeaderLhs",
+      "builderPath": [
+        "forHeaderLhs"
+      ],
+      "builderPathAlternates": [
+        [
+          "forHeader",
+          "lhs"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -13176,6 +13549,15 @@
       "typeName": "ForHeaderVarKind",
       "factoryName": "forHeaderVarKind",
       "irKey": "forHeaderVarKind",
+      "builderPath": [
+        "forHeaderVarKind"
+      ],
+      "builderPathAlternates": [
+        [
+          "forHeader",
+          "varKind"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -13303,6 +13685,15 @@
       "typeName": "ForInStatement",
       "factoryName": "forInStatement",
       "irKey": "forInStatement",
+      "builderPath": [
+        "forInStatement"
+      ],
+      "builderPathAlternates": [
+        [
+          "statement",
+          "forIn"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -13375,7 +13766,6 @@
       "kind": "for_keyword",
       "modelType": "keyword",
       "typeName": "ForKeyword",
-      "irKey": "forKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"for\" as const",
@@ -13388,6 +13778,15 @@
       "typeName": "ForStatement",
       "factoryName": "forStatement",
       "irKey": "forStatement",
+      "builderPath": [
+        "forStatement"
+      ],
+      "builderPathAlternates": [
+        [
+          "statement",
+          "for"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -13534,6 +13933,9 @@
       "typeName": "FormalParameters",
       "factoryName": "formalParameters",
       "irKey": "formalParameters",
+      "builderPath": [
+        "formalParameters"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -13574,6 +13976,9 @@
       "typeName": "FormalParametersElements",
       "factoryName": "formalParametersElements",
       "irKey": "formalParametersElements",
+      "builderPath": [
+        "formalParametersElements"
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -13601,7 +14006,6 @@
       "kind": "from_keyword",
       "modelType": "keyword",
       "typeName": "FromKeyword",
-      "irKey": "fromKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"from\" as const",
@@ -13614,6 +14018,15 @@
       "typeName": "FunctionDeclaration",
       "factoryName": "functionDeclaration",
       "irKey": "functionDeclaration",
+      "builderPath": [
+        "functionDeclaration"
+      ],
+      "builderPathAlternates": [
+        [
+          "declaration",
+          "function"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -13785,6 +14198,9 @@
       "typeName": "FunctionExpression",
       "factoryName": "functionExpression",
       "irKey": "functionExpression",
+      "builderPath": [
+        "functionExpression"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -13934,7 +14350,6 @@
       "kind": "function_keyword",
       "modelType": "keyword",
       "typeName": "FunctionKeyword",
-      "irKey": "functionKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"function\" as const",
@@ -13947,6 +14362,15 @@
       "typeName": "FunctionSignature",
       "factoryName": "functionSignature",
       "irKey": "functionSignature",
+      "builderPath": [
+        "functionSignature"
+      ],
+      "builderPathAlternates": [
+        [
+          "declaration",
+          "functionSignature"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -14110,6 +14534,9 @@
       "typeName": "FunctionType",
       "factoryName": "functionType",
       "irKey": "functionType",
+      "builderPath": [
+        "functionType"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -14200,6 +14627,9 @@
       "typeName": "GeneratorFunction",
       "factoryName": "generatorFunction",
       "irKey": "generatorFunction",
+      "builderPath": [
+        "generatorFunction"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -14351,6 +14781,15 @@
       "typeName": "GeneratorFunctionDeclaration",
       "factoryName": "generatorFunctionDeclaration",
       "irKey": "generatorFunctionDeclaration",
+      "builderPath": [
+        "generatorFunctionDeclaration"
+      ],
+      "builderPathAlternates": [
+        [
+          "declaration",
+          "generatorFunction"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -14522,6 +14961,9 @@
       "typeName": "GenericType",
       "factoryName": "genericType",
       "irKey": "genericType",
+      "builderPath": [
+        "genericType"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -14582,7 +15024,6 @@
       "kind": "get_keyword",
       "modelType": "keyword",
       "typeName": "GetKeyword",
-      "irKey": "getKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"get\" as const",
@@ -14593,7 +15034,6 @@
       "kind": "global_keyword",
       "modelType": "keyword",
       "typeName": "GlobalKeyword",
-      "irKey": "globalKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"global\" as const",
@@ -14604,7 +15044,6 @@
       "kind": "gt",
       "modelType": "punctuation",
       "typeName": "Gt",
-      "irKey": "gt",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\">\" as const",
@@ -14614,7 +15053,6 @@
       "kind": "gt_eq",
       "modelType": "punctuation",
       "typeName": "GtEq",
-      "irKey": "gtEq",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\">=\" as const",
@@ -14624,7 +15062,6 @@
       "kind": "gt_gt",
       "modelType": "punctuation",
       "typeName": "GtGt",
-      "irKey": "gtGt",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\">>\" as const",
@@ -14634,7 +15071,6 @@
       "kind": "gt_gt_eq",
       "modelType": "punctuation",
       "typeName": "GtGtEq",
-      "irKey": "gtGtEq",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\">>=\" as const",
@@ -14644,7 +15080,6 @@
       "kind": "gt_gt_gt",
       "modelType": "punctuation",
       "typeName": "GtGtGt",
-      "irKey": "gtGtGt",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\">>>\" as const",
@@ -14654,7 +15089,6 @@
       "kind": "gt_gt_gt_eq",
       "modelType": "punctuation",
       "typeName": "GtGtGtEq",
-      "irKey": "gtGtGtEq",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\">>>=\" as const",
@@ -14666,6 +15100,9 @@
       "typeName": "HashBangLine",
       "factoryName": "hashBangLine",
       "irKey": "hashBangLine",
+      "builderPath": [
+        "hashBangLine"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -14727,6 +15164,9 @@
       "typeName": "HtmlComment",
       "factoryName": "htmlComment",
       "irKey": "htmlComment",
+      "builderPath": [
+        "htmlComment"
+      ],
       "hidden": false,
       "pattern": "<!--[\\s\\S]*?-->",
       "leafPattern": "/^(?:(?:<!--[\\s\\S]*?-->))$/u",
@@ -14739,6 +15179,9 @@
       "typeName": "Identifier",
       "factoryName": "identifier",
       "irKey": "identifier",
+      "builderPath": [
+        "identifier"
+      ],
       "hidden": false,
       "leafPattern": "/^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$/u",
       "oneSurface": true,
@@ -14748,7 +15191,6 @@
       "kind": "if_keyword",
       "modelType": "keyword",
       "typeName": "IfKeyword",
-      "irKey": "ifKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"if\" as const",
@@ -14761,6 +15203,15 @@
       "typeName": "IfStatement",
       "factoryName": "ifStatement",
       "irKey": "ifStatement",
+      "builderPath": [
+        "ifStatement"
+      ],
+      "builderPathAlternates": [
+        [
+          "statement",
+          "if"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -14837,6 +15288,9 @@
       "typeName": "ImplementsClause",
       "factoryName": "implementsClause",
       "irKey": "implementsClause",
+      "builderPath": [
+        "implementsClause"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -14869,7 +15323,6 @@
       "kind": "implements_keyword",
       "modelType": "keyword",
       "typeName": "ImplementsKeyword",
-      "irKey": "implementsKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"implements\" as const",
@@ -14882,6 +15335,9 @@
       "typeName": "Import",
       "factoryName": "import_",
       "irKey": "import",
+      "builderPath": [
+        "import"
+      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"import\" as const",
@@ -14895,6 +15351,15 @@
       "typeName": "ImportAlias",
       "factoryName": "importAlias",
       "irKey": "importAlias",
+      "builderPath": [
+        "importAlias"
+      ],
+      "builderPathAlternates": [
+        [
+          "declaration",
+          "importAlias"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -14983,6 +15448,9 @@
       "typeName": "ImportAttribute",
       "factoryName": "importAttribute",
       "irKey": "importAttribute",
+      "builderPath": [
+        "importAttribute"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -15042,6 +15510,9 @@
       "typeName": "ImportClause",
       "factoryName": "importClause",
       "irKey": "importClause",
+      "builderPath": [
+        "importClause"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -15103,7 +15574,10 @@
       "modelType": "branch",
       "typeName": "ImportClauseDefaultImport",
       "factoryName": "importClauseDefaultImport",
-      "irKey": "importClauseDefaultImport",
+      "builderPath": [
+        "importClause",
+        "defaultImport"
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -15175,7 +15649,11 @@
       "modelType": "polymorph",
       "typeName": "ImportClauseGroup",
       "factoryName": "importClauseGroup",
-      "irKey": "importClauseGroup",
+      "builderPath": [
+        "importClause",
+        "defaultImport",
+        "importClauseGroup"
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -15228,7 +15706,6 @@
       "kind": "import_keyword",
       "modelType": "keyword",
       "typeName": "ImportKeyword",
-      "irKey": "importKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"import\" as const",
@@ -15241,6 +15718,9 @@
       "typeName": "ImportRequireClause",
       "factoryName": "importRequireClause",
       "irKey": "importRequireClause",
+      "builderPath": [
+        "importRequireClause"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -15295,6 +15775,9 @@
       "modelType": "supertype",
       "typeName": "ImportSpecifier",
       "irKey": "importSpecifier",
+      "builderPath": [
+        "importSpecifier"
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -15308,6 +15791,15 @@
       "typeName": "ImportSpecifierAs",
       "factoryName": "importSpecifierAs",
       "irKey": "importSpecifierAs",
+      "builderPath": [
+        "importSpecifierAs"
+      ],
+      "builderPathAlternates": [
+        [
+          "importSpecifier",
+          "as"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -15412,6 +15904,15 @@
       "typeName": "ImportSpecifierName",
       "factoryName": "importSpecifierName",
       "irKey": "importSpecifierName",
+      "builderPath": [
+        "importSpecifierName"
+      ],
+      "builderPathAlternates": [
+        [
+          "importSpecifier",
+          "name"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -15482,6 +15983,9 @@
       "typeName": "ImportSpecifiers",
       "factoryName": "importSpecifiers",
       "irKey": "importSpecifiers",
+      "builderPath": [
+        "importSpecifiers"
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -15510,6 +16014,15 @@
       "typeName": "ImportStatement",
       "factoryName": "importStatement",
       "irKey": "importStatement",
+      "builderPath": [
+        "importStatement"
+      ],
+      "builderPathAlternates": [
+        [
+          "statement",
+          "import"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -15635,7 +16148,10 @@
       "modelType": "branch",
       "typeName": "ImportStatementClauseFrom",
       "factoryName": "importStatementClauseFrom",
-      "irKey": "importStatementClauseFrom",
+      "builderPath": [
+        "importStatement",
+        "clauseFrom"
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -15694,7 +16210,6 @@
       "kind": "in_keyword",
       "modelType": "keyword",
       "typeName": "InKeyword",
-      "irKey": "inKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"in\" as const",
@@ -15706,6 +16221,9 @@
       "modelType": "supertype",
       "typeName": "IndexSignature",
       "irKey": "indexSignature",
+      "builderPath": [
+        "indexSignature"
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -15719,6 +16237,15 @@
       "typeName": "IndexSignatureColon",
       "factoryName": "indexSignatureColon",
       "irKey": "indexSignatureColon",
+      "builderPath": [
+        "indexSignatureColon"
+      ],
+      "builderPathAlternates": [
+        [
+          "indexSignature",
+          "colon"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -15997,6 +16524,15 @@
       "typeName": "IndexSignatureMappedTypeClause",
       "factoryName": "indexSignatureMappedTypeClause",
       "irKey": "indexSignatureMappedTypeClause",
+      "builderPath": [
+        "indexSignatureMappedTypeClause"
+      ],
+      "builderPathAlternates": [
+        [
+          "indexSignature",
+          "mappedTypeClause"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -16122,6 +16658,9 @@
       "typeName": "IndexTypeQuery",
       "factoryName": "indexTypeQuery",
       "irKey": "indexTypeQuery",
+      "builderPath": [
+        "indexTypeQuery"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -16219,7 +16758,6 @@
       "kind": "infer_keyword",
       "modelType": "keyword",
       "typeName": "InferKeyword",
-      "irKey": "inferKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"infer\" as const",
@@ -16232,6 +16770,9 @@
       "typeName": "InferType",
       "factoryName": "inferType",
       "irKey": "inferType",
+      "builderPath": [
+        "inferType"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -16285,7 +16826,6 @@
       "kind": "instanceof_keyword",
       "modelType": "keyword",
       "typeName": "InstanceofKeyword",
-      "irKey": "instanceofKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"instanceof\" as const",
@@ -16298,6 +16838,9 @@
       "typeName": "InstantiationExpression",
       "factoryName": "instantiationExpression",
       "irKey": "instantiationExpression",
+      "builderPath": [
+        "instantiationExpression"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -16352,7 +16895,6 @@
       "modelType": "alias",
       "typeName": "InterfaceBody",
       "factoryName": "interfaceBody",
-      "irKey": "interfaceBody",
       "hidden": false,
       "slots": [
         {
@@ -16390,6 +16932,15 @@
       "typeName": "InterfaceDeclaration",
       "factoryName": "interfaceDeclaration",
       "irKey": "interfaceDeclaration",
+      "builderPath": [
+        "interfaceDeclaration"
+      ],
+      "builderPathAlternates": [
+        [
+          "declaration",
+          "interface"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -16485,7 +17036,6 @@
       "kind": "interface_keyword",
       "modelType": "keyword",
       "typeName": "InterfaceKeyword",
-      "irKey": "interfaceKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"interface\" as const",
@@ -16498,6 +17048,15 @@
       "typeName": "InternalModule",
       "factoryName": "internalModule",
       "irKey": "internalModule",
+      "builderPath": [
+        "internalModule"
+      ],
+      "builderPathAlternates": [
+        [
+          "declaration",
+          "internalModule"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -16567,6 +17126,9 @@
       "typeName": "IntersectionType",
       "factoryName": "intersectionType",
       "irKey": "intersectionType",
+      "builderPath": [
+        "intersectionType"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -16620,7 +17182,6 @@
       "kind": "is_keyword",
       "modelType": "keyword",
       "typeName": "IsKeyword",
-      "irKey": "isKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"is\" as const",
@@ -16633,6 +17194,9 @@
       "typeName": "JsxText",
       "factoryName": "jsxText",
       "irKey": "jsxText",
+      "builderPath": [
+        "jsxText"
+      ],
       "hidden": false,
       "pattern": "[^{}<>]+",
       "leafPattern": "/^(?:(?:[^{}<>]+))$/u",
@@ -16643,7 +17207,6 @@
       "kind": "keyof_keyword",
       "modelType": "keyword",
       "typeName": "KeyofKeyword",
-      "irKey": "keyofKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"keyof\" as const",
@@ -16656,6 +17219,15 @@
       "typeName": "LabeledStatement",
       "factoryName": "labeledStatement",
       "irKey": "labeledStatement",
+      "builderPath": [
+        "labeledStatement"
+      ],
+      "builderPathAlternates": [
+        [
+          "statement",
+          "labeled"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -16841,7 +17413,6 @@
       "kind": "lbrace",
       "modelType": "punctuation",
       "typeName": "Lbrace",
-      "irKey": "lbrace",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"{\" as const",
@@ -16851,7 +17422,6 @@
       "kind": "lbrace_pipe",
       "modelType": "punctuation",
       "typeName": "LbracePipe",
-      "irKey": "lbracePipe",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"{|\" as const",
@@ -16861,7 +17431,6 @@
       "kind": "lbrack",
       "modelType": "punctuation",
       "typeName": "Lbrack",
-      "irKey": "lbrack",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"[\" as const",
@@ -16871,7 +17440,6 @@
       "kind": "let_keyword",
       "modelType": "keyword",
       "typeName": "LetKeyword",
-      "irKey": "letKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"let\" as const",
@@ -16884,6 +17452,15 @@
       "typeName": "LexicalDeclaration",
       "factoryName": "lexicalDeclaration",
       "irKey": "lexicalDeclaration",
+      "builderPath": [
+        "lexicalDeclaration"
+      ],
+      "builderPathAlternates": [
+        [
+          "declaration",
+          "lexical"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -16969,6 +17546,9 @@
       "typeName": "LiteralType",
       "factoryName": "literalType",
       "irKey": "literalType",
+      "builderPath": [
+        "literalType"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -17069,7 +17649,10 @@
       "modelType": "branch",
       "typeName": "LiteralTypeNegativeNumber",
       "factoryName": "literalTypeNegativeNumber",
-      "irKey": "literalTypeNegativeNumber",
+      "builderPath": [
+        "literalType",
+        "negativeNumber"
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -17134,6 +17717,9 @@
       "typeName": "LookupType",
       "factoryName": "lookupType",
       "irKey": "lookupType",
+      "builderPath": [
+        "lookupType"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -17187,7 +17773,6 @@
       "kind": "lparen",
       "modelType": "punctuation",
       "typeName": "Lparen",
-      "irKey": "lparen",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"(\" as const",
@@ -17197,7 +17782,6 @@
       "kind": "lt",
       "modelType": "punctuation",
       "typeName": "Lt",
-      "irKey": "lt",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"<\" as const",
@@ -17207,7 +17791,6 @@
       "kind": "lt_eq",
       "modelType": "punctuation",
       "typeName": "LtEq",
-      "irKey": "ltEq",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"<=\" as const",
@@ -17217,7 +17800,6 @@
       "kind": "lt_lt",
       "modelType": "punctuation",
       "typeName": "LtLt",
-      "irKey": "ltLt",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"<<\" as const",
@@ -17227,7 +17809,6 @@
       "kind": "lt_lt_eq",
       "modelType": "punctuation",
       "typeName": "LtLtEq",
-      "irKey": "ltLtEq",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"<<=\" as const",
@@ -17239,6 +17820,9 @@
       "typeName": "MappedTypeClause",
       "factoryName": "mappedTypeClause",
       "irKey": "mappedTypeClause",
+      "builderPath": [
+        "mappedTypeClause"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -17315,6 +17899,9 @@
       "typeName": "MemberExpression",
       "factoryName": "memberExpression",
       "irKey": "memberExpression",
+      "builderPath": [
+        "memberExpression"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -17416,7 +18003,6 @@
       "kind": "meta_keyword",
       "modelType": "keyword",
       "typeName": "MetaKeyword",
-      "irKey": "metaKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"meta\" as const",
@@ -17428,6 +18014,9 @@
       "modelType": "supertype",
       "typeName": "MetaProperty",
       "irKey": "metaProperty",
+      "builderPath": [
+        "metaProperty"
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -17441,6 +18030,15 @@
       "typeName": "MetaPropertyImportMeta",
       "factoryName": "metaPropertyImportMeta",
       "irKey": "metaPropertyImportMeta",
+      "builderPath": [
+        "metaPropertyImportMeta"
+      ],
+      "builderPathAlternates": [
+        [
+          "metaProperty",
+          "importMeta"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -17458,6 +18056,15 @@
       "typeName": "MetaPropertyNewTarget",
       "factoryName": "metaPropertyNewTarget",
       "irKey": "metaPropertyNewTarget",
+      "builderPath": [
+        "metaPropertyNewTarget"
+      ],
+      "builderPathAlternates": [
+        [
+          "metaProperty",
+          "newTarget"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -17475,6 +18082,9 @@
       "typeName": "MethodDefinition",
       "factoryName": "methodDefinition",
       "irKey": "methodDefinition",
+      "builderPath": [
+        "methodDefinition"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -17916,6 +18526,9 @@
       "typeName": "MethodSignature",
       "factoryName": "methodSignature",
       "irKey": "methodSignature",
+      "builderPath": [
+        "methodSignature"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -18336,6 +18949,15 @@
       "typeName": "Module",
       "factoryName": "module",
       "irKey": "module",
+      "builderPath": [
+        "module"
+      ],
+      "builderPathAlternates": [
+        [
+          "declaration",
+          "module"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -18403,7 +19025,6 @@
       "kind": "module_keyword",
       "modelType": "keyword",
       "typeName": "ModuleKeyword",
-      "irKey": "moduleKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"module\" as const",
@@ -18416,6 +19037,9 @@
       "typeName": "NamedImports",
       "factoryName": "namedImports",
       "irKey": "namedImports",
+      "builderPath": [
+        "namedImports"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -18456,6 +19080,9 @@
       "typeName": "NamespaceExport",
       "factoryName": "namespaceExport",
       "irKey": "namespaceExport",
+      "builderPath": [
+        "namespaceExport"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -18502,6 +19129,9 @@
       "typeName": "NamespaceImport",
       "factoryName": "namespaceImport",
       "irKey": "namespaceImport",
+      "builderPath": [
+        "namespaceImport"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -18538,7 +19168,6 @@
       "kind": "namespace_keyword",
       "modelType": "keyword",
       "typeName": "NamespaceKeyword",
-      "irKey": "namespaceKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"namespace\" as const",
@@ -18551,6 +19180,9 @@
       "typeName": "NestedIdentifier",
       "factoryName": "nestedIdentifier",
       "irKey": "nestedIdentifier",
+      "builderPath": [
+        "nestedIdentifier"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -18613,6 +19245,9 @@
       "typeName": "NestedTypeIdentifier",
       "factoryName": "nestedTypeIdentifier",
       "irKey": "nestedTypeIdentifier",
+      "builderPath": [
+        "nestedTypeIdentifier"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -18673,7 +19308,6 @@
       "kind": "never_keyword",
       "modelType": "keyword",
       "typeName": "NeverKeyword",
-      "irKey": "neverKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"never\" as const",
@@ -18686,6 +19320,9 @@
       "typeName": "NewExpression",
       "factoryName": "newExpression",
       "irKey": "newExpression",
+      "builderPath": [
+        "newExpression"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -18760,7 +19397,6 @@
       "kind": "new_keyword",
       "modelType": "keyword",
       "typeName": "NewKeyword",
-      "irKey": "newKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"new\" as const",
@@ -18773,6 +19409,9 @@
       "typeName": "NonNullExpression",
       "factoryName": "nonNullExpression",
       "irKey": "nonNullExpression",
+      "builderPath": [
+        "nonNullExpression"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -18886,6 +19525,9 @@
       "typeName": "Null",
       "factoryName": "null_",
       "irKey": "null",
+      "builderPath": [
+        "null"
+      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"null\" as const",
@@ -18898,6 +19540,9 @@
       "modelType": "supertype",
       "typeName": "Number",
       "irKey": "number",
+      "builderPath": [
+        "number"
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -18916,6 +19561,15 @@
       "modelType": "supertype",
       "typeName": "NumberBigint",
       "irKey": "numberBigint",
+      "builderPath": [
+        "numberBigint"
+      ],
+      "builderPathAlternates": [
+        [
+          "number",
+          "bigint"
+        ]
+      ],
       "hidden": true,
       "annotations": {
         "tokenForm": true
@@ -18934,6 +19588,15 @@
       "typeName": "NumberBigintBinary",
       "factoryName": "numberBigintBinary",
       "irKey": "numberBigintBinary",
+      "builderPath": [
+        "numberBigintBinary"
+      ],
+      "builderPathAlternates": [
+        [
+          "numberBigint",
+          "binary"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "tokenForm": true,
@@ -19001,6 +19664,15 @@
       "typeName": "NumberBigintDecimal",
       "factoryName": "numberBigintDecimal",
       "irKey": "numberBigintDecimal",
+      "builderPath": [
+        "numberBigintDecimal"
+      ],
+      "builderPathAlternates": [
+        [
+          "numberBigint",
+          "decimal"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "tokenForm": true,
@@ -19068,6 +19740,15 @@
       "typeName": "NumberBigintHex",
       "factoryName": "numberBigintHex",
       "irKey": "numberBigintHex",
+      "builderPath": [
+        "numberBigintHex"
+      ],
+      "builderPathAlternates": [
+        [
+          "numberBigint",
+          "hex"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "tokenForm": true,
@@ -19135,6 +19816,15 @@
       "typeName": "NumberBigintOctal",
       "factoryName": "numberBigintOctal",
       "irKey": "numberBigintOctal",
+      "builderPath": [
+        "numberBigintOctal"
+      ],
+      "builderPathAlternates": [
+        [
+          "numberBigint",
+          "octal"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "tokenForm": true,
@@ -19202,6 +19892,15 @@
       "typeName": "NumberBinary",
       "factoryName": "numberBinary",
       "irKey": "numberBinary",
+      "builderPath": [
+        "numberBinary"
+      ],
+      "builderPathAlternates": [
+        [
+          "number",
+          "binary"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "tokenForm": true,
@@ -19300,7 +19999,10 @@
       "modelType": "pattern",
       "typeName": "NumberDecimal",
       "factoryName": "numberDecimal",
-      "irKey": "numberDecimal",
+      "builderPath": [
+        "number",
+        "decimal"
+      ],
       "hidden": false,
       "annotations": {
         "tokenForm": true,
@@ -19318,6 +20020,15 @@
       "typeName": "NumberFloatLeadingPoint",
       "factoryName": "numberFloatLeadingPoint",
       "irKey": "numberFloatLeadingPoint",
+      "builderPath": [
+        "numberFloatLeadingPoint"
+      ],
+      "builderPathAlternates": [
+        [
+          "number",
+          "floatLeadingPoint"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "tokenForm": true,
@@ -19467,6 +20178,15 @@
       "typeName": "NumberFloatPoint",
       "factoryName": "numberFloatPoint",
       "irKey": "numberFloatPoint",
+      "builderPath": [
+        "numberFloatPoint"
+      ],
+      "builderPathAlternates": [
+        [
+          "number",
+          "floatPoint"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "tokenForm": true,
@@ -19642,6 +20362,15 @@
       "typeName": "NumberFloatScientific",
       "factoryName": "numberFloatScientific",
       "irKey": "numberFloatScientific",
+      "builderPath": [
+        "numberFloatScientific"
+      ],
+      "builderPathAlternates": [
+        [
+          "number",
+          "floatScientific"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "tokenForm": true,
@@ -19787,6 +20516,15 @@
       "typeName": "NumberHex",
       "factoryName": "numberHex",
       "irKey": "numberHex",
+      "builderPath": [
+        "numberHex"
+      ],
+      "builderPathAlternates": [
+        [
+          "number",
+          "hex"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "tokenForm": true,
@@ -19884,7 +20622,6 @@
       "kind": "number_keyword",
       "modelType": "keyword",
       "typeName": "NumberKeyword",
-      "irKey": "numberKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"number\" as const",
@@ -19897,6 +20634,15 @@
       "typeName": "NumberOctal",
       "factoryName": "numberOctal",
       "irKey": "numberOctal",
+      "builderPath": [
+        "numberOctal"
+      ],
+      "builderPathAlternates": [
+        [
+          "number",
+          "octal"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "tokenForm": true,
@@ -19996,6 +20742,9 @@
       "typeName": "Object",
       "factoryName": "object",
       "irKey": "object",
+      "builderPath": [
+        "object"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -20183,6 +20932,9 @@
       "typeName": "ObjectAssignmentPattern",
       "factoryName": "objectAssignmentPattern",
       "irKey": "objectAssignmentPattern",
+      "builderPath": [
+        "objectAssignmentPattern"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -20382,7 +21134,6 @@
       "kind": "object_keyword",
       "modelType": "keyword",
       "typeName": "ObjectKeyword",
-      "irKey": "objectKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"object\" as const",
@@ -20395,6 +21146,9 @@
       "typeName": "ObjectPattern",
       "factoryName": "objectPattern",
       "irKey": "objectPattern",
+      "builderPath": [
+        "objectPattern"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -20582,6 +21336,9 @@
       "typeName": "ObjectType",
       "factoryName": "objectType",
       "irKey": "objectType",
+      "builderPath": [
+        "objectType"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -20666,6 +21423,9 @@
       "typeName": "ObjectTypeContent",
       "factoryName": "objectTypeContent",
       "irKey": "objectTypeContent",
+      "builderPath": [
+        "objectTypeContent"
+      ],
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": true,
@@ -20785,7 +21545,6 @@
       "kind": "of_keyword",
       "modelType": "keyword",
       "typeName": "OfKeyword",
-      "irKey": "ofKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"of\" as const",
@@ -20798,6 +21557,9 @@
       "typeName": "OmittingTypeAnnotation",
       "factoryName": "omittingTypeAnnotation",
       "irKey": "omittingTypeAnnotation",
+      "builderPath": [
+        "omittingTypeAnnotation"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -20897,6 +21659,9 @@
       "typeName": "OptingTypeAnnotation",
       "factoryName": "optingTypeAnnotation",
       "irKey": "optingTypeAnnotation",
+      "builderPath": [
+        "optingTypeAnnotation"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -20996,6 +21761,9 @@
       "typeName": "OptionalChain",
       "factoryName": "optionalChain",
       "irKey": "optionalChain",
+      "builderPath": [
+        "optionalChain"
+      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"?.\" as const",
@@ -21009,6 +21777,9 @@
       "typeName": "OptionalChainMarker",
       "factoryName": "optionalChainMarker",
       "irKey": "optionalChainMarker",
+      "builderPath": [
+        "optionalChainMarker"
+      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"?.\" as const",
@@ -21022,6 +21793,9 @@
       "typeName": "OptionalParameter",
       "factoryName": "optionalParameter",
       "irKey": "optionalParameter",
+      "builderPath": [
+        "optionalParameter"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -21187,6 +21961,9 @@
       "typeName": "OptionalTupleParameter",
       "factoryName": "optionalTupleParameter",
       "irKey": "optionalTupleParameter",
+      "builderPath": [
+        "optionalTupleParameter"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -21242,6 +22019,9 @@
       "typeName": "OptionalType",
       "factoryName": "optionalType",
       "irKey": "optionalType",
+      "builderPath": [
+        "optionalType"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -21339,7 +22119,6 @@
       "kind": "override_keyword",
       "modelType": "keyword",
       "typeName": "OverrideKeyword",
-      "irKey": "overrideKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"override\" as const",
@@ -21352,6 +22131,9 @@
       "typeName": "OverrideModifier",
       "factoryName": "overrideModifier",
       "irKey": "overrideModifier",
+      "builderPath": [
+        "overrideModifier"
+      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"override\" as const",
@@ -21365,6 +22147,9 @@
       "typeName": "Pair",
       "factoryName": "pair",
       "irKey": "pair",
+      "builderPath": [
+        "pair"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -21580,6 +22365,9 @@
       "typeName": "PairPattern",
       "factoryName": "pairPattern",
       "irKey": "pairPattern",
+      "builderPath": [
+        "pairPattern"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -21801,6 +22589,9 @@
       "modelType": "supertype",
       "typeName": "ParenthesizedExpression",
       "irKey": "parenthesizedExpression",
+      "builderPath": [
+        "parenthesizedExpression"
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -21814,6 +22605,15 @@
       "typeName": "ParenthesizedExpressionSequence",
       "factoryName": "parenthesizedExpressionSequence",
       "irKey": "parenthesizedExpressionSequence",
+      "builderPath": [
+        "parenthesizedExpressionSequence"
+      ],
+      "builderPathAlternates": [
+        [
+          "parenthesizedExpression",
+          "sequence"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -21857,6 +22657,15 @@
       "typeName": "ParenthesizedExpressionTyped",
       "factoryName": "parenthesizedExpressionTyped",
       "irKey": "parenthesizedExpressionTyped",
+      "builderPath": [
+        "parenthesizedExpressionTyped"
+      ],
+      "builderPathAlternates": [
+        [
+          "parenthesizedExpression",
+          "typed"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -21917,6 +22726,9 @@
       "typeName": "ParenthesizedType",
       "factoryName": "parenthesizedType",
       "irKey": "parenthesizedType",
+      "builderPath": [
+        "parenthesizedType"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -22015,6 +22827,9 @@
       "modelType": "supertype",
       "typeName": "Pattern",
       "irKey": "pattern",
+      "builderPath": [
+        "pattern"
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -22026,7 +22841,6 @@
       "kind": "percent",
       "modelType": "punctuation",
       "typeName": "Percent",
-      "irKey": "percent",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"%\" as const",
@@ -22036,7 +22850,6 @@
       "kind": "percent_eq",
       "modelType": "punctuation",
       "typeName": "PercentEq",
-      "irKey": "percentEq",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"%=\" as const",
@@ -22046,7 +22859,6 @@
       "kind": "pipe",
       "modelType": "punctuation",
       "typeName": "Pipe",
-      "irKey": "pipe",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"|\" as const",
@@ -22056,7 +22868,6 @@
       "kind": "pipe_eq",
       "modelType": "punctuation",
       "typeName": "PipeEq",
-      "irKey": "pipeEq",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"|=\" as const",
@@ -22066,7 +22877,6 @@
       "kind": "pipe_pipe",
       "modelType": "punctuation",
       "typeName": "PipePipe",
-      "irKey": "pipePipe",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"||\" as const",
@@ -22076,7 +22886,6 @@
       "kind": "pipe_pipe_eq",
       "modelType": "punctuation",
       "typeName": "PipePipeEq",
-      "irKey": "pipePipeEq",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"||=\" as const",
@@ -22086,7 +22895,6 @@
       "kind": "pipe_rbrace",
       "modelType": "punctuation",
       "typeName": "PipeRbrace",
-      "irKey": "pipeRbrace",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"|}\" as const",
@@ -22096,7 +22904,6 @@
       "kind": "plus",
       "modelType": "punctuation",
       "typeName": "Plus",
-      "irKey": "plus",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"+\" as const",
@@ -22106,7 +22913,6 @@
       "kind": "plus_eq",
       "modelType": "punctuation",
       "typeName": "PlusEq",
-      "irKey": "plusEq",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"+=\" as const",
@@ -22116,7 +22922,6 @@
       "kind": "plus_plus",
       "modelType": "punctuation",
       "typeName": "PlusPlus",
-      "irKey": "plusPlus",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"++\" as const",
@@ -22126,7 +22931,6 @@
       "kind": "plus_qmark_colon",
       "modelType": "punctuation",
       "typeName": "PlusQmarkColon",
-      "irKey": "plusQmarkColon",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"+?:\" as const",
@@ -22137,7 +22941,6 @@
       "modelType": "enum",
       "typeName": "PredefinedType",
       "factoryName": "predefinedType",
-      "irKey": "predefinedType",
       "hidden": false,
       "values": [
         "any",
@@ -22158,6 +22961,9 @@
       "modelType": "supertype",
       "typeName": "PrimaryExpression",
       "irKey": "primaryExpression",
+      "builderPath": [
+        "primaryExpression"
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -22213,6 +23019,9 @@
       "modelType": "supertype",
       "typeName": "PrimaryType",
       "irKey": "primaryType",
+      "builderPath": [
+        "primaryType"
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -22241,7 +23050,6 @@
       "kind": "private_keyword",
       "modelType": "keyword",
       "typeName": "PrivateKeyword",
-      "irKey": "privateKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"private\" as const",
@@ -22254,6 +23062,9 @@
       "typeName": "PrivatePropertyIdentifier",
       "factoryName": "privatePropertyIdentifier",
       "irKey": "privatePropertyIdentifier",
+      "builderPath": [
+        "privatePropertyIdentifier"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -22315,6 +23126,9 @@
       "typeName": "Program",
       "factoryName": "program",
       "irKey": "program",
+      "builderPath": [
+        "program"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -22369,7 +23183,6 @@
       "modelType": "alias",
       "typeName": "PropertyIdentifier",
       "factoryName": "propertyIdentifier",
-      "irKey": "propertyIdentifier",
       "hidden": false,
       "slots": [
         {
@@ -22539,6 +23352,9 @@
       "typeName": "PropertySignature",
       "factoryName": "propertySignature",
       "irKey": "propertySignature",
+      "builderPath": [
+        "propertySignature"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -22851,7 +23667,6 @@
       "kind": "protected_keyword",
       "modelType": "keyword",
       "typeName": "ProtectedKeyword",
-      "irKey": "protectedKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"protected\" as const",
@@ -22864,6 +23679,9 @@
       "typeName": "PublicFieldDefinition",
       "factoryName": "publicFieldDefinition",
       "irKey": "publicFieldDefinition",
+      "builderPath": [
+        "publicFieldDefinition"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -23281,7 +24099,6 @@
       "kind": "public_keyword",
       "modelType": "keyword",
       "typeName": "PublicKeyword",
-      "irKey": "publicKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"public\" as const",
@@ -23292,7 +24109,6 @@
       "kind": "qmark",
       "modelType": "punctuation",
       "typeName": "Qmark",
-      "irKey": "qmark",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"?\" as const",
@@ -23302,7 +24118,6 @@
       "kind": "qmark_colon",
       "modelType": "punctuation",
       "typeName": "QmarkColon",
-      "irKey": "qmarkColon",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"?:\" as const",
@@ -23312,7 +24127,6 @@
       "kind": "qmark_dot",
       "modelType": "punctuation",
       "typeName": "QmarkDot",
-      "irKey": "qmarkDot",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"?.\" as const",
@@ -23322,7 +24136,6 @@
       "kind": "qmark_qmark",
       "modelType": "punctuation",
       "typeName": "QmarkQmark",
-      "irKey": "qmarkQmark",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"??\" as const",
@@ -23332,7 +24145,6 @@
       "kind": "qmark_qmark_eq",
       "modelType": "punctuation",
       "typeName": "QmarkQmarkEq",
-      "irKey": "qmarkQmarkEq",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"??=\" as const",
@@ -23342,7 +24154,6 @@
       "kind": "rbrace",
       "modelType": "punctuation",
       "typeName": "Rbrace",
-      "irKey": "rbrace",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"}\" as const",
@@ -23352,7 +24163,6 @@
       "kind": "rbrack",
       "modelType": "punctuation",
       "typeName": "Rbrack",
-      "irKey": "rbrack",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"]\" as const",
@@ -23362,7 +24172,6 @@
       "kind": "readonly_keyword",
       "modelType": "keyword",
       "typeName": "ReadonlyKeyword",
-      "irKey": "readonlyKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"readonly\" as const",
@@ -23375,6 +24184,9 @@
       "typeName": "ReadonlyType",
       "factoryName": "readonlyType",
       "irKey": "readonlyType",
+      "builderPath": [
+        "readonlyType"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -23474,6 +24286,9 @@
       "typeName": "Regex",
       "factoryName": "regex",
       "irKey": "regex",
+      "builderPath": [
+        "regex"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -23529,6 +24344,9 @@
       "typeName": "RegexFlags",
       "factoryName": "regexFlags",
       "irKey": "regexFlags",
+      "builderPath": [
+        "regexFlags"
+      ],
       "hidden": false,
       "pattern": "[a-z]+",
       "leafPattern": "/^(?:(?:[a-z]+))$/u",
@@ -23541,6 +24359,9 @@
       "typeName": "RegexPattern",
       "factoryName": "regexPattern",
       "irKey": "regexPattern",
+      "builderPath": [
+        "regexPattern"
+      ],
       "hidden": false,
       "leafPattern": "/^(?:(?:(?:\\[(?:(?:\\\\(?:.)|(?:[^\\]\\n\\\\])))*\\]|\\\\(?:.)|(?:[^/\\\\[\\n])))+)$/u",
       "oneSurface": true,
@@ -23550,7 +24371,6 @@
       "kind": "require_keyword",
       "modelType": "keyword",
       "typeName": "RequireKeyword",
-      "irKey": "requireKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"require\" as const",
@@ -23563,6 +24383,9 @@
       "typeName": "RequiredParameter",
       "factoryName": "requiredParameter",
       "irKey": "requiredParameter",
+      "builderPath": [
+        "requiredParameter"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -23728,6 +24551,15 @@
       "typeName": "RestPattern",
       "factoryName": "restPattern",
       "irKey": "restPattern",
+      "builderPath": [
+        "restPattern"
+      ],
+      "builderPathAlternates": [
+        [
+          "pattern",
+          "rest"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -24017,6 +24849,9 @@
       "typeName": "RestType",
       "factoryName": "restType",
       "irKey": "restType",
+      "builderPath": [
+        "restType"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -24114,7 +24949,6 @@
       "kind": "return_keyword",
       "modelType": "keyword",
       "typeName": "ReturnKeyword",
-      "irKey": "returnKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"return\" as const",
@@ -24127,6 +24961,15 @@
       "typeName": "ReturnStatement",
       "factoryName": "returnStatement",
       "irKey": "returnStatement",
+      "builderPath": [
+        "returnStatement"
+      ],
+      "builderPathAlternates": [
+        [
+          "statement",
+          "return"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -24271,7 +25114,6 @@
       "kind": "rparen",
       "modelType": "punctuation",
       "typeName": "Rparen",
-      "irKey": "rparen",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\")\" as const",
@@ -24283,6 +25125,9 @@
       "typeName": "SatisfiesExpression",
       "factoryName": "satisfiesExpression",
       "irKey": "satisfiesExpression",
+      "builderPath": [
+        "satisfiesExpression"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -24336,7 +25181,6 @@
       "kind": "satisfies_keyword",
       "modelType": "keyword",
       "typeName": "SatisfiesKeyword",
-      "irKey": "satisfiesKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"satisfies\" as const",
@@ -24347,7 +25191,6 @@
       "kind": "semi",
       "modelType": "punctuation",
       "typeName": "Semi",
-      "irKey": "semi",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\";\" as const",
@@ -24359,6 +25202,9 @@
       "typeName": "SequenceExpression",
       "factoryName": "sequenceExpression",
       "irKey": "sequenceExpression",
+      "builderPath": [
+        "sequenceExpression"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -24391,7 +25237,6 @@
       "kind": "set_keyword",
       "modelType": "keyword",
       "typeName": "SetKeyword",
-      "irKey": "setKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"set\" as const",
@@ -24403,7 +25248,6 @@
       "modelType": "alias",
       "typeName": "ShorthandPropertyIdentifier",
       "factoryName": "shorthandPropertyIdentifier",
-      "irKey": "shorthandPropertyIdentifier",
       "hidden": false,
       "slots": [
         {
@@ -24572,7 +25416,6 @@
       "modelType": "alias",
       "typeName": "ShorthandPropertyIdentifierPattern",
       "factoryName": "shorthandPropertyIdentifierPattern",
-      "irKey": "shorthandPropertyIdentifierPattern",
       "hidden": false,
       "slots": [
         {
@@ -24740,7 +25583,6 @@
       "kind": "slash",
       "modelType": "punctuation",
       "typeName": "Slash",
-      "irKey": "slash",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"/\" as const",
@@ -24750,7 +25592,6 @@
       "kind": "slash_eq",
       "modelType": "punctuation",
       "typeName": "SlashEq",
-      "irKey": "slashEq",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"/=\" as const",
@@ -24762,6 +25603,9 @@
       "typeName": "SpreadElement",
       "factoryName": "spreadElement",
       "irKey": "spreadElement",
+      "builderPath": [
+        "spreadElement"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -24873,7 +25717,6 @@
       "kind": "squote",
       "modelType": "punctuation",
       "typeName": "Squote",
-      "irKey": "squote",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"'\" as const",
@@ -24883,7 +25726,6 @@
       "kind": "star",
       "modelType": "punctuation",
       "typeName": "Star",
-      "irKey": "star",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"*\" as const",
@@ -24893,7 +25735,6 @@
       "kind": "star_eq",
       "modelType": "punctuation",
       "typeName": "StarEq",
-      "irKey": "starEq",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"*=\" as const",
@@ -24903,7 +25744,6 @@
       "kind": "star_star",
       "modelType": "punctuation",
       "typeName": "StarStar",
-      "irKey": "starStar",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"**\" as const",
@@ -24913,7 +25753,6 @@
       "kind": "star_star_eq",
       "modelType": "punctuation",
       "typeName": "StarStarEq",
-      "irKey": "starStarEq",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"**=\" as const",
@@ -24924,6 +25763,9 @@
       "modelType": "supertype",
       "typeName": "Statement",
       "irKey": "statement",
+      "builderPath": [
+        "statement"
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -24955,6 +25797,15 @@
       "typeName": "StatementBlock",
       "factoryName": "statementBlock",
       "irKey": "statementBlock",
+      "builderPath": [
+        "statementBlock"
+      ],
+      "builderPathAlternates": [
+        [
+          "statement",
+          "block"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -25008,7 +25859,6 @@
       "modelType": "alias",
       "typeName": "StatementIdentifier",
       "factoryName": "statementIdentifier",
-      "irKey": "statementIdentifier",
       "hidden": false,
       "slots": [
         {
@@ -25176,7 +26026,6 @@
       "kind": "static_keyword",
       "modelType": "keyword",
       "typeName": "StaticKeyword",
-      "irKey": "staticKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"static\" as const",
@@ -25188,6 +26037,9 @@
       "modelType": "supertype",
       "typeName": "String",
       "irKey": "string",
+      "builderPath": [
+        "string"
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -25201,6 +26053,15 @@
       "typeName": "StringDouble",
       "factoryName": "stringDouble",
       "irKey": "stringDouble",
+      "builderPath": [
+        "stringDouble"
+      ],
+      "builderPathAlternates": [
+        [
+          "string",
+          "double"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -25245,7 +26106,6 @@
       "kind": "string_keyword",
       "modelType": "keyword",
       "typeName": "StringKeyword",
-      "irKey": "stringKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"string\" as const",
@@ -25258,6 +26118,15 @@
       "typeName": "StringSingle",
       "factoryName": "stringSingle",
       "irKey": "stringSingle",
+      "builderPath": [
+        "stringSingle"
+      ],
+      "builderPathAlternates": [
+        [
+          "string",
+          "single"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -25304,6 +26173,9 @@
       "typeName": "SubscriptExpression",
       "factoryName": "subscriptExpression",
       "irKey": "subscriptExpression",
+      "builderPath": [
+        "subscriptExpression"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -25394,6 +26266,9 @@
       "typeName": "Super",
       "factoryName": "super",
       "irKey": "super",
+      "builderPath": [
+        "super"
+      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"super\" as const",
@@ -25407,6 +26282,9 @@
       "typeName": "SwitchBody",
       "factoryName": "switchBody",
       "irKey": "switchBody",
+      "builderPath": [
+        "switchBody"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -25448,6 +26326,9 @@
       "typeName": "SwitchCase",
       "factoryName": "switchCase",
       "irKey": "switchCase",
+      "builderPath": [
+        "switchCase"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -25510,6 +26391,9 @@
       "typeName": "SwitchDefault",
       "factoryName": "switchDefault",
       "irKey": "switchDefault",
+      "builderPath": [
+        "switchDefault"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -25542,7 +26426,6 @@
       "kind": "switch_keyword",
       "modelType": "keyword",
       "typeName": "SwitchKeyword",
-      "irKey": "switchKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"switch\" as const",
@@ -25555,6 +26438,15 @@
       "typeName": "SwitchStatement",
       "factoryName": "switchStatement",
       "irKey": "switchStatement",
+      "builderPath": [
+        "switchStatement"
+      ],
+      "builderPathAlternates": [
+        [
+          "statement",
+          "switch"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -25608,7 +26500,6 @@
       "kind": "symbol_keyword",
       "modelType": "keyword",
       "typeName": "SymbolKeyword",
-      "irKey": "symbolKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"symbol\" as const",
@@ -25619,7 +26510,6 @@
       "kind": "target_keyword",
       "modelType": "keyword",
       "typeName": "TargetKeyword",
-      "irKey": "targetKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"target\" as const",
@@ -25632,6 +26522,9 @@
       "typeName": "TemplateLiteralType",
       "factoryName": "templateLiteralType",
       "irKey": "templateLiteralType",
+      "builderPath": [
+        "templateLiteralType"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -25673,6 +26566,9 @@
       "typeName": "TemplateString",
       "factoryName": "templateString",
       "irKey": "templateString",
+      "builderPath": [
+        "templateString"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -25721,6 +26617,9 @@
       "typeName": "TemplateSubstitution",
       "factoryName": "templateSubstitution",
       "irKey": "templateSubstitution",
+      "builderPath": [
+        "templateSubstitution"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -25841,6 +26740,9 @@
       "typeName": "TemplateType",
       "factoryName": "templateType",
       "irKey": "templateType",
+      "builderPath": [
+        "templateType"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -25947,6 +26849,9 @@
       "typeName": "TernaryExpression",
       "factoryName": "ternaryExpression",
       "irKey": "ternaryExpression",
+      "builderPath": [
+        "ternaryExpression"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -26023,6 +26928,9 @@
       "typeName": "This",
       "factoryName": "this",
       "irKey": "this",
+      "builderPath": [
+        "this"
+      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"this\" as const",
@@ -26034,7 +26942,6 @@
       "kind": "throw_keyword",
       "modelType": "keyword",
       "typeName": "ThrowKeyword",
-      "irKey": "throwKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"throw\" as const",
@@ -26047,6 +26954,15 @@
       "typeName": "ThrowStatement",
       "factoryName": "throwStatement",
       "irKey": "throwStatement",
+      "builderPath": [
+        "throwStatement"
+      ],
+      "builderPathAlternates": [
+        [
+          "statement",
+          "throw"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -26191,7 +27107,6 @@
       "kind": "tilde",
       "modelType": "punctuation",
       "typeName": "Tilde",
-      "irKey": "tilde",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"~\" as const",
@@ -26203,6 +27118,9 @@
       "typeName": "True",
       "factoryName": "true_",
       "irKey": "true",
+      "builderPath": [
+        "true"
+      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"true\" as const",
@@ -26214,7 +27132,6 @@
       "kind": "try_keyword",
       "modelType": "keyword",
       "typeName": "TryKeyword",
-      "irKey": "tryKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"try\" as const",
@@ -26227,6 +27144,15 @@
       "typeName": "TryStatement",
       "factoryName": "tryStatement",
       "irKey": "tryStatement",
+      "builderPath": [
+        "tryStatement"
+      ],
+      "builderPathAlternates": [
+        [
+          "statement",
+          "try"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -26303,6 +27229,9 @@
       "typeName": "TupleParameter",
       "factoryName": "tupleParameter",
       "irKey": "tupleParameter",
+      "builderPath": [
+        "tupleParameter"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -26365,6 +27294,9 @@
       "typeName": "TupleType",
       "factoryName": "tupleType",
       "irKey": "tupleType",
+      "builderPath": [
+        "tupleType"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -26465,6 +27397,9 @@
       "typeName": "TupleTypeMembers",
       "factoryName": "tupleTypeMembers",
       "irKey": "tupleTypeMembers",
+      "builderPath": [
+        "tupleTypeMembers"
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -26557,6 +27492,9 @@
       "modelType": "supertype",
       "typeName": "Type",
       "irKey": "type",
+      "builderPath": [
+        "type"
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -26575,6 +27513,15 @@
       "typeName": "TypeAliasDeclaration",
       "factoryName": "typeAliasDeclaration",
       "irKey": "typeAliasDeclaration",
+      "builderPath": [
+        "typeAliasDeclaration"
+      ],
+      "builderPathAlternates": [
+        [
+          "declaration",
+          "typeAlias"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -26677,6 +27624,9 @@
       "typeName": "TypeAnnotation",
       "factoryName": "typeAnnotation",
       "irKey": "typeAnnotation",
+      "builderPath": [
+        "typeAnnotation"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -26776,6 +27726,9 @@
       "typeName": "TypeArguments",
       "factoryName": "typeArguments",
       "irKey": "typeArguments",
+      "builderPath": [
+        "typeArguments"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -26877,6 +27830,9 @@
       "typeName": "TypeAssertion",
       "factoryName": "typeAssertion",
       "irKey": "typeAssertion",
+      "builderPath": [
+        "typeAssertion"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -26931,7 +27887,6 @@
       "modelType": "alias",
       "typeName": "TypeIdentifier",
       "factoryName": "typeIdentifier",
-      "irKey": "typeIdentifier",
       "hidden": false,
       "slots": [
         {
@@ -26967,7 +27922,6 @@
       "kind": "type_keyword",
       "modelType": "keyword",
       "typeName": "TypeKeyword",
-      "irKey": "typeKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"type\" as const",
@@ -26980,6 +27934,9 @@
       "typeName": "TypeParameter",
       "factoryName": "typeParameter",
       "irKey": "typeParameter",
+      "builderPath": [
+        "typeParameter"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -27075,6 +28032,9 @@
       "typeName": "TypeParameters",
       "factoryName": "typeParameters",
       "irKey": "typeParameters",
+      "builderPath": [
+        "typeParameters"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -27116,6 +28076,9 @@
       "typeName": "TypeParametersElements",
       "factoryName": "typeParametersElements",
       "irKey": "typeParametersElements",
+      "builderPath": [
+        "typeParametersElements"
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -27145,6 +28108,9 @@
       "typeName": "TypePredicate",
       "factoryName": "typePredicate",
       "irKey": "typePredicate",
+      "builderPath": [
+        "typePredicate"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -27214,6 +28180,9 @@
       "typeName": "TypePredicateAnnotation",
       "factoryName": "typePredicateAnnotation",
       "irKey": "typePredicateAnnotation",
+      "builderPath": [
+        "typePredicateAnnotation"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -27252,6 +28221,9 @@
       "typeName": "TypeQuery",
       "factoryName": "typeQuery",
       "irKey": "typeQuery",
+      "builderPath": [
+        "typeQuery"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -27329,6 +28301,9 @@
       "typeName": "TypeQueryCallExpression",
       "factoryName": "typeQueryCallExpression",
       "irKey": "typeQueryCallExpression",
+      "builderPath": [
+        "typeQueryCallExpression"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -27405,6 +28380,9 @@
       "typeName": "TypeQueryCallExpressionInTypeAnnotation",
       "factoryName": "typeQueryCallExpressionInTypeAnnotation",
       "irKey": "typeQueryCallExpressionInTypeAnnotation",
+      "builderPath": [
+        "typeQueryCallExpressionInTypeAnnotation"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -27467,6 +28445,9 @@
       "typeName": "TypeQueryInstantiationExpression",
       "factoryName": "typeQueryInstantiationExpression",
       "irKey": "typeQueryInstantiationExpression",
+      "builderPath": [
+        "typeQueryInstantiationExpression"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -27543,6 +28524,9 @@
       "typeName": "TypeQueryMemberExpression",
       "factoryName": "typeQueryMemberExpression",
       "irKey": "typeQueryMemberExpression",
+      "builderPath": [
+        "typeQueryMemberExpression"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -27658,6 +28642,9 @@
       "typeName": "TypeQueryMemberExpressionInTypeAnnotation",
       "factoryName": "typeQueryMemberExpressionInTypeAnnotation",
       "irKey": "typeQueryMemberExpressionInTypeAnnotation",
+      "builderPath": [
+        "typeQueryMemberExpressionInTypeAnnotation"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -27734,6 +28721,9 @@
       "typeName": "TypeQuerySubscriptExpression",
       "factoryName": "typeQuerySubscriptExpression",
       "irKey": "typeQuerySubscriptExpression",
+      "builderPath": [
+        "typeQuerySubscriptExpression"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -27850,7 +28840,6 @@
       "kind": "typeof_keyword",
       "modelType": "keyword",
       "typeName": "TypeofKeyword",
-      "irKey": "typeofKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"typeof\" as const",
@@ -27863,6 +28852,9 @@
       "typeName": "Types",
       "factoryName": "types",
       "irKey": "types",
+      "builderPath": [
+        "types"
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -27952,6 +28944,9 @@
       "typeName": "UnaryExpression",
       "factoryName": "unaryExpression",
       "irKey": "unaryExpression",
+      "builderPath": [
+        "unaryExpression"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -28041,6 +29036,9 @@
       "typeName": "Undefined",
       "factoryName": "undefined_",
       "irKey": "undefined",
+      "builderPath": [
+        "undefined"
+      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"undefined\" as const",
@@ -28054,6 +29052,9 @@
       "typeName": "UnescapedDoubleStringFragment",
       "factoryName": "unescapedDoubleStringFragment",
       "irKey": "unescapedDoubleStringFragment",
+      "builderPath": [
+        "unescapedDoubleStringFragment"
+      ],
       "hidden": false,
       "pattern": "[^\"\\\\\\r\\n]+",
       "leafPattern": "/^(?:(?:[^\"\\\\\\r\\n]+))$/u",
@@ -28066,6 +29067,9 @@
       "typeName": "UnescapedSingleStringFragment",
       "factoryName": "unescapedSingleStringFragment",
       "irKey": "unescapedSingleStringFragment",
+      "builderPath": [
+        "unescapedSingleStringFragment"
+      ],
       "hidden": false,
       "pattern": "[^'\\\\\\r\\n]+",
       "leafPattern": "/^(?:(?:[^'\\\\\\r\\n]+))$/u",
@@ -28078,6 +29082,9 @@
       "typeName": "UnionType",
       "factoryName": "unionType",
       "irKey": "unionType",
+      "builderPath": [
+        "unionType"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -28131,7 +29138,6 @@
       "kind": "unique",
       "modelType": "punctuation",
       "typeName": "Unique",
-      "irKey": "unique",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"unique symbol\" as const",
@@ -28141,7 +29147,6 @@
       "kind": "unknown_keyword",
       "modelType": "keyword",
       "typeName": "UnknownKeyword",
-      "irKey": "unknownKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"unknown\" as const",
@@ -28153,6 +29158,9 @@
       "modelType": "supertype",
       "typeName": "UpdateExpression",
       "irKey": "updateExpression",
+      "builderPath": [
+        "updateExpression"
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -28166,6 +29174,15 @@
       "typeName": "UpdateExpressionPostfix",
       "factoryName": "updateExpressionPostfix",
       "irKey": "updateExpressionPostfix",
+      "builderPath": [
+        "updateExpressionPostfix"
+      ],
+      "builderPathAlternates": [
+        [
+          "updateExpression",
+          "postfix"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -28230,6 +29247,15 @@
       "typeName": "UpdateExpressionPrefix",
       "factoryName": "updateExpressionPrefix",
       "irKey": "updateExpressionPrefix",
+      "builderPath": [
+        "updateExpressionPrefix"
+      ],
+      "builderPathAlternates": [
+        [
+          "updateExpression",
+          "prefix"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -28292,7 +29318,6 @@
       "kind": "using_keyword",
       "modelType": "keyword",
       "typeName": "UsingKeyword",
-      "irKey": "usingKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"using\" as const",
@@ -28303,7 +29328,6 @@
       "kind": "var_keyword",
       "modelType": "keyword",
       "typeName": "VarKeyword",
-      "irKey": "varKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"var\" as const",
@@ -28316,6 +29340,15 @@
       "typeName": "VariableDeclaration",
       "factoryName": "variableDeclaration",
       "irKey": "variableDeclaration",
+      "builderPath": [
+        "variableDeclaration"
+      ],
+      "builderPathAlternates": [
+        [
+          "declaration",
+          "variable"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -28375,6 +29408,9 @@
       "modelType": "supertype",
       "typeName": "VariableDeclarator",
       "irKey": "variableDeclarator",
+      "builderPath": [
+        "variableDeclarator"
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -28388,6 +29424,15 @@
       "typeName": "VariableDeclaratorDefinite",
       "factoryName": "variableDeclaratorDefinite",
       "irKey": "variableDeclaratorDefinite",
+      "builderPath": [
+        "variableDeclaratorDefinite"
+      ],
+      "builderPathAlternates": [
+        [
+          "variableDeclarator",
+          "definite"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -28448,6 +29493,15 @@
       "typeName": "VariableDeclaratorPlain",
       "factoryName": "variableDeclaratorPlain",
       "irKey": "variableDeclaratorPlain",
+      "builderPath": [
+        "variableDeclaratorPlain"
+      ],
+      "builderPathAlternates": [
+        [
+          "variableDeclarator",
+          "plain"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -28541,7 +29595,6 @@
       "kind": "void_keyword",
       "modelType": "keyword",
       "typeName": "VoidKeyword",
-      "irKey": "voidKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"void\" as const",
@@ -28552,7 +29605,6 @@
       "kind": "while_keyword",
       "modelType": "keyword",
       "typeName": "WhileKeyword",
-      "irKey": "whileKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"while\" as const",
@@ -28565,6 +29617,15 @@
       "typeName": "WhileStatement",
       "factoryName": "whileStatement",
       "irKey": "whileStatement",
+      "builderPath": [
+        "whileStatement"
+      ],
+      "builderPathAlternates": [
+        [
+          "statement",
+          "while"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -28618,7 +29679,6 @@
       "kind": "with_keyword",
       "modelType": "keyword",
       "typeName": "WithKeyword",
-      "irKey": "withKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"with\" as const",
@@ -28631,6 +29691,15 @@
       "typeName": "WithStatement",
       "factoryName": "withStatement",
       "irKey": "withStatement",
+      "builderPath": [
+        "withStatement"
+      ],
+      "builderPathAlternates": [
+        [
+          "statement",
+          "with"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -28686,6 +29755,9 @@
       "typeName": "YieldExpression",
       "factoryName": "yieldExpression",
       "irKey": "yieldExpression",
+      "builderPath": [
+        "yieldExpression"
+      ],
       "hidden": false,
       "slots": [
         {
@@ -28811,11 +29883,15 @@
       "modelType": "envelope",
       "typeName": "YieldExpressionDelegate",
       "factoryName": "yieldExpressionDelegate",
-      "irKey": "yieldExpressionDelegate",
+      "builderPath": [
+        "yieldExpression",
+        "delegate"
+      ],
       "hidden": false,
       "annotations": {
         "variantOf": "yield_expression",
-        "hoisted": true
+        "hoisted": true,
+        "definedBy": "enrich"
       },
       "seated": true,
       "slots": [
@@ -28929,7 +30005,6 @@
       "kind": "yield_keyword",
       "modelType": "keyword",
       "typeName": "YieldKeyword",
-      "irKey": "yieldKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"yield\" as const",
