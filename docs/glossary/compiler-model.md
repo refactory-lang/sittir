@@ -5709,8 +5709,12 @@ wrapper takes its config whole under the slot key rather than merging its
 keys (`seatsConfigChild`), which is how the validator knows to spell the
 call), `flatten` when the slot
 is one of the wire set's flatten seats, `elements` when the slot is one of its
-elements seats; `undefined` for a value that is not a hoisted kind, or
-whose parent has no wire set, or that no seating reaches. The validators' `ir-storage` and the example emitter consume
+elements seats, and `forwarded` when none of those reaches a group whose own
+builder forwards to another kind's (`classifyFactoryShape` is `forwarded`):
+the parent's builder takes that group whole under the slot key, so the group
+needs no wire of its own, and the stamp holds whether or not the parent has a
+wire set. `undefined` for a value that is not a hoisted kind, or that no
+seating reaches. The validators' `ir-storage` and the example emitter consume
 the stamp rather than re-deriving it; the census reports every hoisted kind
 no seat names.
 

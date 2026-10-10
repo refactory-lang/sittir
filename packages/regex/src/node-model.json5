@@ -1372,7 +1372,11 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "count_quantifier_group",
-              "parseKind": "count_quantifier_group"
+              "parseKind": "count_quantifier_group",
+              "seat": {
+                "kind": "count_quantifier_group",
+                "shape": "forwarded"
+              }
             }
           ]
         }
@@ -2938,7 +2942,11 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "unicode_property_value_expression_group",
-              "parseKind": "unicode_property_value_expression_group"
+              "parseKind": "unicode_property_value_expression_group",
+              "seat": {
+                "kind": "unicode_property_value_expression_group",
+                "shape": "forwarded"
+              }
             }
           ]
         },
