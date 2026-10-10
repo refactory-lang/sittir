@@ -6,7 +6,7 @@ Loads a language's hooks once per descriptor object: later engines for the same 
 
 ### `packages/common/src/create-engine.ts::refuseUnimplemented`
 
-Refuses, before anything loads, an engine option whose behaviour does not exist: any `api` other than `'default'` (the portable surface is reserved; the strict surface is not implemented). Each message names the option that is not implemented.
+Refuses, before anything loads, an engine option whose behaviour does not exist: an `api` of `'strict'`, which is not implemented. The portable surface never reaches it; `createEngine` assembles a portable engine before refusing. Each message names the option that is not implemented.
 
 ### `packages/common/src/create-engine.ts::nativeEngineOptions`
 
@@ -18,7 +18,7 @@ The error a file verb (`read`, `create`, `edit`, `write`) raises while file chan
 
 ### `packages/common/src/create-engine.ts::languageGuards`
 
-Composes every function on a language's `is` table with the engine's language check: the guard runs only for a value whose stamped engine is of the engine's language (the check the node guards use), and the extra arguments of a guard such as `kind` pass through. A node of another grammar whose kind id the guard would accept is rejected, a value with no stamp is rejected, and a node of a disposed engine is accepted, since only the stamped language is read. It is one composition over the table, so a per-kind guard, a supertype guard, its variant guards and `kind` are all covered without each carrying the check; the result is frozen and keeps the table's type.
+Composes every function on a language's `is` table with the engine's language check: the guard runs only for a value whose stamped engine is of the engine's language (the check the node guards use), and the extra arguments of a guard such as `kind` pass through. A node of another grammar whose kind id the guard would accept is rejected, a value with no stamp is rejected, and a node of a disposed engine is accepted, since only the stamped language is read. It is one composition over the table, so a per-kind guard, a supertype guard, its variant guards and `kind` are all covered without each carrying the check; the result is frozen and keeps the table's type. One composition shares a map from each guard to its composed guard (`wrapped`), so a guard reached under several names, as a portable path is under its aliases, is composed once and stays one object.
 
 ### `packages/common/src/create-engine.ts::languageGuard`
 
@@ -54,9 +54,17 @@ A lazy output handle whose text is produced through render middleware. The hook 
 
 Produces text from an already captured native handle and, when enabled, records the native materialization duration and input/output sizes. Render middleware reaches it through `next`; the direct path retains its existing immediate measurement when metrics are enabled.
 
+### `packages/common/src/create-engine.ts::inLanguageOf`
+
+The language check an engine's guards use: a value whose stamped engine is of the identity's language (`engineOf`, `sameLanguage`), or a kind-id leaf. A kind-id leaf is a bare number the typed reader stores for a keyword, token or enum member; it carries no stamp, so it is read in the language of the engine asking, and a number read from one grammar and asked of another engine is that engine's kind id. The default engine and the portable engine compose their guards with it.
+
+### `packages/common/src/create-engine.ts::assemblePortableEngine`
+
+The portable engine: the language's identity, its portable `kinds` as the language's hooks carry them, and its portable `is` composed with the language check (`languageGuards`), so a node of another language whose kind id a guard would read is rejected. It has no native engine, so it holds nothing to dispose. A language whose hooks carry no portable surface (its grammar has no bindings) is refused with its name.
+
 ### `packages/common/src/create-engine.ts::createEngine`
 
-The entry point: refuses unimplemented options, loads the language (once per descriptor), and assembles an engine. Engines share no state: each owns its native engine and its options. Its `render` option is inferred `const` and checked by `RenderOptionsCheck`, so an indent unit outside the language's indent characters, or a key the language's options do not declare, fails to compile.
+The entry point. `{ api: 'portable' }` loads the language and assembles a portable engine (`assemblePortableEngine`); otherwise it refuses unimplemented options, loads the language (once per descriptor), and assembles an engine. Engines share no state: each owns its native engine and its options. Its `render` option is inferred `const` and checked by `RenderOptionsCheck`, so an indent unit outside the language's indent characters, or a key the language's options do not declare, fails to compile.
 
 ### `packages/common/src/engine-scope.ts::LiveEngine`
 
@@ -137,6 +145,10 @@ The `where` step. Compiles the condition when the step is added, so a malformed 
 ### `packages/common/src/query.ts::run`
 
 Iterates a view. It splits the plan, runs the early steps over entries (a kind, an address and a way to hydrate) from the source, and hydrates only what survives them. It then runs the late steps over nodes. Being a generator, it stops pulling as soon as the consumer stops.
+
+### `packages/common/src/query.ts::slotItems`
+
+The items a node's slot holds, read through its accessor: the accessor's value, called when it is a method, as an array (a single item wrapped, an absent one empty). The query facet's slot views and the portable guards read slots through it.
 
 ### `packages/common/src/query.ts::slotEntries`
 
@@ -622,3 +634,10 @@ A trivia side with its coordinate entries hydrated (`hydrateTriviaEntry`); the s
 
 The size of the index field a packed handle holds (`2 ** 32`): the native `encode_handle` multiplies the tree id by it and adds the descendant index, inside a double's exact integer range.
 
+### `packages/common/src/portable.ts::portableSurface`
+
+A bound grammar's portable `kinds` and `is`, built once from its generated `PortableTable` and slot table. Each path gets a frozen `kinds` node holding its `$ids` and a guard, and every path and alias is linked under its parent as an own, non-writable property, so a segment named like a function property (`call`, `name`) shadows it and an alias is the very object of its path. A guard takes a node or a kind-id leaf, which the typed reader stores as a bare number and which is a node of that kind, and first requires its kind among the path's ids. On an exact path (`PortablePath.exact`) that decides it. Otherwise the node's path decides: its `$subType` where it carries one (stamped by the read dispatch and the portable build, which choose a vocabulary kind), or else, for a node no vocabulary kind was chosen for (one a low-level builder made), the first of its kind's read entries, in order, whose placement the context matches (`placed`) and whose every condition holds; the guard holds when that path is its own or one under it. A condition runs `holds`, the one evaluator of a `QueryPlan`, on each node its `via` slots reach from the holder (the node, or the context node `up` places out). Texts come from a slot's items through `query.ts::slotItems`, the slot found by its parser routes in the slot table. A value's text is a kind-id leaf's `fixedText` entry, a leaf's `$text`, and otherwise, for a parsed structured node, the slice of its tree's source its span covers (`span.ts::spanSlicer`, one slicer per tree); a built structured node has none.
+
+### `packages/common/src/portable.ts::placed`
+
+Whether a read entry's placement holds for the context: no placement always does; otherwise the context's nearest nodes, nearest first, must have the placement's kinds (`null` admits any). Without context a placed entry never matches, so the node falls to its next entry.

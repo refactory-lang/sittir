@@ -38,7 +38,7 @@ Compatibility entry point for `compileNodeMap`. Tools that need an assembled nod
 
 ### `packages/tools/src/codegen-surface.ts::compileNodeMap`
 
-Loads the package and generated ID tables, then returns `compileGrammar`'s node map. Canonical grammar diagnosis resolves declared preferences through the existing site resolver, and compilation hydrates slot references. Both tool loader names share this path; phase-specific tools retain `evaluateGrammar` and `buildSimplifiedGrammar`.
+Loads the package and generated ID tables, then returns `compileGrammar`'s node map. With `unbound`, it compiles the grammar without its bindings overlay and without the generated ID tables, which name the bound kinds: the base grammar's model, which the overlay is derived against. Canonical grammar diagnosis resolves declared preferences through the existing site resolver, and compilation hydrates slot references. Both tool loader names share this path; phase-specific tools retain `evaluateGrammar` and `buildSimplifiedGrammar`.
 
 ### `packages/tools/src/sync-base.ts::syncBase`
 

@@ -7,7 +7,7 @@ import {
 import { findEntryForKindName, type KindEntryLike } from '../../dsl/symbol-table.ts';
 import type { NodeMap } from '../types.ts';
 import { displayNameOf } from './display-name.ts';
-import type { AddressBinding, PathDeclaration } from '../../dsl/wire/options-block.ts';
+import type { AddressLabel, PathDeclaration } from '../../dsl/wire/options-block.ts';
 import type { SupertypeMembers } from './supertype-members.ts';
 import type { SeamOrigin } from '../../types/rule.ts';
 
@@ -127,10 +127,10 @@ export function matchAddressWith<T extends SiteAddressInput>(
 	const out: AddressHit<T>[] = [];
 	const cascades = isWildcardHead(address);
 	for (const site of sites) {
-		if (isPrefixOf(address, site.path, membersOf) || (site.parentPath !== undefined && isPrefixOf(address, site.parentPath, membersOf))) {
+		if (isPrefixOf(address, site.path, membersOf, site.kind) || (site.parentPath !== undefined && isPrefixOf(address, site.parentPath, membersOf, site.kind))) {
 			out.push({ site, cascade: false });
 		} else if (cascades && site.cascadePaths !== undefined) {
-			const token = site.cascadePaths.findIndex((path) => isPrefixOf(address, path, membersOf));
+			const token = site.cascadePaths.findIndex((path) => isPrefixOf(address, path, membersOf, site.kind));
 			if (token >= 0) out.push({ site, cascade: true, token });
 		}
 	}
@@ -145,11 +145,14 @@ function isWildcardHead(address: readonly PreferenceSegment[]): boolean {
 function isPrefixOf(
 	address: readonly PreferenceSegment[],
 	path: readonly PreferenceSegment[],
-	membersOf: SupertypeMembers
+	membersOf: SupertypeMembers,
+	owner: string
 ): boolean {
 	if (address.length > path.length) return false;
 	for (let i = 0; i < address.length; i++) {
-		if (!segmentMatches(address[i]!, path[i]!, membersOf)) return false;
+		const segment = address[i]!;
+		const ownerMatch = i === 0 && segment.kind === 'kind-match' && segment.name === owner;
+		if (!ownerMatch && !segmentMatches(segment, path[i]!, membersOf)) return false;
 	}
 	return true;
 }
@@ -180,16 +183,16 @@ function originOf(address: string): PreferenceOrigin {
 	return addressSegments(address)[0]?.kind === 'wildcard' ? 'literal-default' : 'preference';
 }
 
-export function resolveBindings(
+export function resolveLabels(
 	declarations: readonly PathDeclaration[],
-	bindings: readonly AddressBinding[],
+	labels: readonly AddressLabel[],
 	sites: readonly AddressedSite[],
 	membersOf: SupertypeMembers,
 	requireHit: boolean = true
 ): Map<number, { readonly arm: string; readonly origin: PreferenceOrigin }> {
 	const indexOf = new Map(sites.map((site, i) => [site, i]));
 	const armOfLabel = new Map(declarations.map((declaration) => [declaration.path, declaration.arm]));
-	const labelled = new Set(bindings.map((binding) => binding.label));
+	const labelled = new Set(labels.map((label) => label.label));
 
 	const hitsOf = (address: string): { hits: Set<number>; cascaded: Map<number, number> } => {
 		const hits = new Set<number>();
@@ -204,15 +207,15 @@ export function resolveBindings(
 
 	const entries: { address: string; arm: string; declared: boolean; hits: Set<number>; cascaded: Map<number, number> }[] = [];
 
-	for (const binding of bindings) {
-		const arm = armOfLabel.get(binding.label);
-		if (arm === undefined) throw new Error(`options: '${binding.address}' resolves to no arm`);
-		const { hits, cascaded } = hitsOf(binding.address);
+	for (const label of labels) {
+		const arm = armOfLabel.get(label.label);
+		if (arm === undefined) throw new Error(`options: '${label.address}' resolves to no arm`);
+		const { hits, cascaded } = hitsOf(label.address);
 		if (hits.size === 0) {
 			if (!requireHit) continue;
-			throw new Error(`options: '${binding.address}' names no site`);
+			throw new Error(`options: '${label.address}' names no site`);
 		}
-		entries.push({ address: binding.address, arm, declared: false, hits, cascaded });
+		entries.push({ address: label.address, arm, declared: false, hits, cascaded });
 	}
 
 	for (const declaration of declarations) {

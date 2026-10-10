@@ -958,6 +958,69 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 		return { kindIds, sourceArtifact: 'test' };
 	}
 
+	describe('provenance', () => {
+		const provenanced = () => ({
+			...makeNormalized({
+				binding: { type: PATTERN, value: '[a-z]+' },
+				method: { type: PATTERN, value: '[A-Z]+' },
+				plain: { type: PATTERN, value: '[0-9]+' }
+			}),
+			provenance: { renamedFrom: { binding: 'let_item' }, splitFrom: { method: 'function' } }
+		});
+
+		it('stamps the base kind a renamed kind came from', () => {
+			const nodeMap = assemble(AssembleCtx.from(provenanced(), makeIdTables({})));
+			expect(nodeMap.nodes.get('binding')?.renamedFrom).toBe('let_item');
+			expect(nodeMap.nodes.get('binding')?.splitFrom).toBeUndefined();
+		});
+
+		it('stamps the kind a split kind was cloned from', () => {
+			const nodeMap = assemble(AssembleCtx.from(provenanced(), makeIdTables({})));
+			expect(nodeMap.nodes.get('method')?.splitFrom).toBe('function');
+			expect(nodeMap.nodes.get('method')?.renamedFrom).toBeUndefined();
+		});
+
+		it('stamps nothing on a kind the overlay left alone', () => {
+			const nodeMap = assemble(AssembleCtx.from(provenanced(), makeIdTables({})));
+			expect(nodeMap.nodes.get('plain')?.renamedFrom).toBeUndefined();
+			expect(nodeMap.nodes.get('plain')?.splitFrom).toBeUndefined();
+		});
+	});
+
+	describe('seating', () => {
+		const groupRules = () =>
+			makeNormalized({
+				_sig: {
+					type: SEQ,
+					members: [{ type: FIELD, name: 'params', content: { type: SYMBOL, name: 'parameters' } }],
+					annotations: { hoisted: true }
+				},
+				parameters: { type: PATTERN, value: '[a-z]+' }
+			});
+		const groupEntry = (supertype: boolean): GeneratedIdEntry => ({
+			id: 3,
+			parser: {
+				cSymbol: 'sym__sig',
+				parserName: '_sig',
+				anon: false,
+				aux: false,
+				alias: false,
+				hidden: true,
+				...(supertype ? { supertype: true as const } : {})
+			}
+		});
+
+		it('seats a hoisted group the parser emits a node for', () => {
+			const nodeMap = assemble(AssembleCtx.from(groupRules(), makeIdTables({ _sig: groupEntry(false) })));
+			expect(nodeMap.nodes.get('_sig')?.seated).toBe(true);
+		});
+
+		it('does not seat a hoisted group the parser declares a supertype: it has no node', () => {
+			const nodeMap = assemble(AssembleCtx.from(groupRules(), makeIdTables({ _sig: groupEntry(true) })));
+			expect(nodeMap.nodes.get('_sig')?.seated).toBe(false);
+		});
+	});
+
 	function anonEntry(id: number, symbolName: string): GeneratedIdEntry {
 		return {
 			id,

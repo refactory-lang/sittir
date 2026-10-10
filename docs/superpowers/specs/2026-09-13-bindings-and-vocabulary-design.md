@@ -398,7 +398,7 @@ A portable node reads through the grammar's typed surface: its low-level node's 
 
 ## 11. Open questions
 
-- **One word, two mechanisms.** "Bindings" names `bindings.scm` and also the `_bindings` key of each grammar's `options` block, which groups option addresses under a user-facing key. One of them should be renamed before the portable API ships; the read-side consumer surface (`roles.as/is/find`) is named by the same decision.
+- **The read-side surface's name.** The `options` block's address-to-label key is `_labels`, so "bindings" names only `bindings.scm` and its overlay. Whether the read-side consumer surface (`roles.as/is/find`) takes its name from the bindings is open.
 - **Trivia and provenance through `build`.** A parsed node that crosses keeps its tree row, and with it its coordinates, but `build` builds from members alone, and a structure has no coordinates. `doc` survives as a member; free trivia needs a `trivia` member or is declared lost.
 - **A user's own bindings.** Whether a user's bindings file compiles to a map composed after the package's, by the seed's per-kind override rule, and whether that happens at generation or at load. Also whether a user's own features can add kinds to the vocabulary's levels: generated unions take kinds only from features inside the vocabulary package (§4.4).
 - **Features (§4).** What the features probe (`docs/superpowers/probes/2026-10-09-vocabulary-features/`) and the value refinements (§3.3) leave for a ruling, each with a recommendation:

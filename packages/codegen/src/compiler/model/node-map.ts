@@ -30,6 +30,7 @@ import { isStringType, realizesEmpty, type EmptinessCtx } from '../../types/runt
 import { isDepthText } from '../../dsl/primitives/spacing.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
+import type { KindProvenance } from '../types.ts';
 import { findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, isAliasedHiddenStorage, seatedOf, surfaceHiddenOf } from '../../dsl/symbol-table.ts';
 import { stampDisplay, type DisplayStamp, type RowlessDisplaySource } from './display-name.ts';
 import { armNameOf, undisplayedKindAddress } from '../../dsl/arm-names.ts';
@@ -994,6 +995,12 @@ export type ModelType =
 export interface KindFacts {
 	readonly kindEntries?: readonly GeneratedKindEntry[];
 	readonly supertypeArms?: ReadonlySet<string>;
+	readonly provenance?: KindProvenance;
+}
+
+function provenanceOf(kind: string, ctx: KindFacts | undefined): { readonly renamedFrom?: string; readonly splitFrom?: string } {
+	const own = (map: Readonly<Record<string, string>> | undefined): string | undefined => (map !== undefined && Object.hasOwn(map, kind) ? map[kind] : undefined);
+	return { renamedFrom: own(ctx?.provenance?.renamedFrom), splitFrom: own(ctx?.provenance?.splitFrom) };
 }
 
 export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
@@ -1001,6 +1008,8 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	readonly kindEntry?: GeneratedKindEntry;
 	readonly seated: boolean;
 	readonly ownSurface: boolean;
+	readonly renamedFrom: string | undefined;
+	readonly splitFrom: string | undefined;
 	readonly display: DisplayStamp;
 	readonly wordMatcher: RegExp | undefined;
 	typeName: string;
@@ -1093,6 +1102,7 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		this.kindEntry = findOwnKindEntry(opts?.kindEntries ?? [], kind);
 		this.seated = seatedOf(rule.annotations, this.kindEntry);
 		this.ownSurface = !this.seated || opts?.supertypeArms?.has(kind) === true;
+		({ renamedFrom: this.renamedFrom, splitFrom: this.splitFrom } = provenanceOf(kind, opts));
 		this.display = stampDisplay(kind, this.kindEntry, opts?.kindEntries ?? [], opts?.rowless ?? 'phantom');
 	}
 
@@ -2090,9 +2100,9 @@ export class AssembledPunctuation extends AssembledLeaf<StringRule> {
 	constructor(
 		kind: string,
 		rule: StringRule,
-		opts?: { hidden?: boolean; kindEntries?: readonly GeneratedKindEntry[] }
+		opts?: KindFacts & { hidden?: boolean }
 	) {
-		super(kind, rule, { hidden: opts?.hidden ?? true, kindEntries: opts?.kindEntries });
+		super(kind, rule, { ...opts, hidden: opts?.hidden ?? true });
 		if (rule.resolvedKindId !== undefined) {
 			this.resolvedKindId = rule.resolvedKindId;
 			this.resolvedKind = findKindEntryById({ entries: opts?.kindEntries ?? [], id: rule.resolvedKindId })?.kind;
@@ -2227,9 +2237,9 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 		kind: string,
 		rule: SupertypeRule | ChoiceRule,
 		subtypes: readonly SubtypeRef[],
-		opts?: { kindEntries?: readonly GeneratedKindEntry[] }
+		opts?: KindFacts
 	) {
-		super(kind, rule, { hidden: true, kindEntries: opts?.kindEntries, rowless: 'supertype' });
+		super(kind, rule, { ...opts, hidden: true, rowless: 'supertype' });
 		this.#subtypes = subtypes.map(
 			({ name, storageKindId, ...armFacts }): NodeOrTerminal => ({
 				node: { kind: 'unresolved-ref', name },
@@ -2320,14 +2330,14 @@ export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, '
 			parseKindCollisionContext?: ParseKindCollisionContext;
 		}
 	) {
+		const { separatorRule, simplifiedRule, renderRule, ...compound } = opts;
 		super(
 			kind,
-			opts.simplifiedRule,
-			opts.renderRule,
+			simplifiedRule,
+			renderRule,
 			{
+				...compound,
 				factoryName: nameNode(kind).factoryName,
-				kindEntries: opts.kindEntries,
-				parseKindCollisionContext: opts.parseKindCollisionContext,
 				assembleDiagnostics: ctx?.diagnostics,
 				simplifiedRules: ctx?.simplifiedRules
 			},
@@ -2339,8 +2349,8 @@ export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, '
 			{ ...ctx, stampArmFieldNamesAsParseName: true },
 			rule.multiplicity === 'nonEmptyArray' ? 'nonEmptyArray' : 'array'
 		);
-		this.separatorRule = opts.separatorRule;
-		this.separatorTokenArms = opts.separatorRule === undefined ? [] : separatorArmsOf(opts.separatorRule).tokens;
+		this.separatorRule = separatorRule;
+		this.separatorTokenArms = separatorRule === undefined ? [] : separatorArmsOf(separatorRule).tokens;
 		this.leadingDelimiter = sep?.leading ?? 'none';
 		this.trailingDelimiter = sep?.trailing ?? 'none';
 	}

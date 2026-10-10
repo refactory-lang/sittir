@@ -498,3 +498,11 @@ repo reads its parents from its own dependency tree.
  * string literals, and alternation brackets are recognised and skipped.
  */
 ```
+
+### `packages/codegen/src/scm/pinned.ts::PinnedScm`
+
+The pinned build's `@sittir/scm`, `@sittir/common` and `@sittir/common/utils`, loaded from its compiled output. The three come from one build, so the engine, its kinds and the span helpers agree.
+
+### `packages/codegen/src/scm/pinned.ts::loadPinnedScm`
+
+Imports the pinned build once (`bootstrap/bootstrap.ts::bootstrapDir`) and shares it; a missing build is refused with `BOOTSTRAP_COMMAND`, and a failed load is forgotten so the next call tries again. It must run in a process whose module resolution maps no workspace paths (`bindings/read.ts::module`).

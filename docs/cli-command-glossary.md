@@ -39,6 +39,18 @@ pnpm exec tsx packages/cli/src/cli.ts gen [options]
 
 ---
 
+## `bootstrap`
+
+Build the pinned sittir the generator reads with (the commit in bootstrap.json), once per commit
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts bootstrap [options]
+```
+
+---
+
 ## `validate`
 
 Validation utilities for sittir grammar packages
@@ -353,6 +365,7 @@ Compile the bindings, derive the vocabulary they imply, and check it against the
 
 - `--check` — Compile every bindings.scm against its parser, report totality diagnostics, and report where the bindings and the vocabulary disagree
 - `--members` — Print member names and kinds per shared kind
+- `--write` — Write each grammar.bindings.ts: the bindings overlay and the hash of the sources it was derived from
 
 **Example**
 

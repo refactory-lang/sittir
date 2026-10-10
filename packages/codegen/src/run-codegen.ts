@@ -307,6 +307,10 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 	}
 
 	await writeFile(join(outDir, 'node-model.json5'), result.nodeModel);
+	if (result.portableNodeModel === undefined) rmSync(join(outDir, 'node-model-portable.json5'), { force: true });
+	else await writeFile(join(outDir, 'node-model-portable.json5'), result.portableNodeModel);
+	if (result.portable === undefined) rmSync(join(outDir, 'portable.ts'), { force: true });
+	else await writeFile(join(outDir, 'portable.ts'), result.portable);
 
 	const testsDirResolved = testsDir ?? join(dirname(outDir), 'tests');
 	await writeFile(join(testsDirResolved, 'nodes.test.ts'), result.tests);

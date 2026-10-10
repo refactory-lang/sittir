@@ -73,6 +73,7 @@ const FunctionItemAsDeclarationFunction = (n: T.FunctionItem.Parsed): VocabViews
 - **Leaf text:** a leaf whose text varies carries a `$value` closure; a fixed-literal leaf is its const string, with no `$value`.
 - **The low-level node** `n` is captured by the closures and never exposed.
 - **`$kind` is type-only:** the literal's type carries it, selecting its interface, and the literal holds no `$kind` value; a role is tested at run time with `is`.
+- **`$subType` is the role at run time where `$type` does not decide it:** for a refinement, or one grammar kind read as several kinds (rust's `function_item` as `declaration.function` or `declaration.method`), the low-level node carries `$subType`, the whole vocabulary path it was read or built as (`'declaration.method.static'`). It is stamped when a node is read or built through the portable build: the read dispatch stamps the entry that dispatched it, evaluating the kind's read entries once against the parent it knows, and the portable build stamps the role it chose on the low-level build function's output before returning it to its caller, so the low-level builders' surface does not change. A node a low-level builder made directly carries none. Placing any node through the portable API (a portable `$with`) stamps a copy with the role its new parent gives it, replacing a role the node already carried; the placed node itself is unchanged, and a copy of a parsed node keeps the parsed node's coordinates. It is client-side only, never crosses to native, and no interface declares it: portable interfaces keep `$kind` type-only, and `$type` stays the grammar kind id. `$kind` is `$subType` where it is present, and otherwise the one kind the `$type` maps to (a generated table). `is.<path>` on an exact path, one whose kinds all read at or under it with one of them unconditional, is the `$ids` test on `$type`; on any other path it reads `$subType`, and holds when that is the path or a path under it. `is` takes the node alone: no read entry is evaluated when it is called.
 
 ### 2.3 The read dispatch
 
@@ -116,6 +117,8 @@ Two facts the bindings reader drops have to be kept:
 
 - **A predicate claim's predicate** (operator, capture, argument). Without it a read entry cannot test the claim and a build entry cannot pin it.
 - **A presence member's token text.** Without it a capture named otherwise than its token (`"async" @isAsync`) loses the token.
+
+A predicate's operator is kept as written; one the derivation does not know is a derivation diagnostic, never dropped, and directives (`#set!`) are not predicates. A presence member's token is its authored text, which codegen resolves to a kind id through the stamped public symbol.
 
 ## 4. Conformance: what the locked vocabulary must admit
 

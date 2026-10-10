@@ -103,9 +103,12 @@ function tokenParserRow(kind: string, text: string): KindParserMetadata {
 	};
 }
 
-export function makeSiteKindsNodeMap<T extends { readonly kind: string; readonly seat?: { readonly kind: string } }>(sites: readonly T[]): NodeMap {
+export function makeSiteKindsNodeMap<T extends { readonly kind: string; readonly seat?: { readonly kind: string } }>(
+	sites: readonly T[],
+	kindEntries?: readonly GeneratedKindEntry[]
+): NodeMap {
 	const kinds = new Set(sites.flatMap((site) => (site.seat === undefined ? [site.kind] : [site.kind, site.seat.kind])));
-	return makeNodeMapWith(new Map([...kinds].map((kind) => [kind, new AssembledPattern(kind, { type: PATTERN, value: kind })])));
+	return makeNodeMapWith(new Map([...kinds].map((kind) => [kind, new AssembledPattern(kind, { type: PATTERN, value: kind }, { kindEntries })])));
 }
 
 export function makeMinimalNodeMap(): NodeMap {

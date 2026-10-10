@@ -26,6 +26,7 @@ import {
 } from '../../types/rule-types.ts';
 import { assertNever } from '../../polymorph-variant.ts';
 import type { RawGrammar } from '../types.ts';
+import { mappedName } from '../../dsl/bind.ts';
 import type { StageDiagnosis } from '../stage.ts';
 import type { WhitespaceCollision } from '../../dsl/whitespace.ts';
 
@@ -57,7 +58,7 @@ const WHITESPACE_COLLISION_MESSAGES: Readonly<Record<WhitespaceCollision['site']
 
 export interface RuleCausesInput {
 	readonly grammar: string;
-	readonly raw: Pick<RawGrammar, 'ruleCauses' | 'undeclaredRules' | 'renderAs' | 'whitespaceCollisions'>;
+	readonly raw: Pick<RawGrammar, 'ruleCauses' | 'undeclaredRules' | 'renderAs' | 'renamedFrom' | 'whitespaceCollisions'>;
 	readonly enriched?: StageDiagnosis;
 	readonly upstreamRules?: UpstreamRules;
 }
@@ -91,7 +92,7 @@ export function diagnoseRuleCauses(input: RuleCausesInput): GrammarDiagnostic[] 
 		)
 	];
 	for (const name of Object.keys(raw.renderAs ?? {})) {
-		if (enriched.externalNames.has(name)) continue;
+		if (enriched.externalNames.has(mappedName(raw.renamedFrom, name))) continue;
 		out.push(
 			blocking(
 				grammar,

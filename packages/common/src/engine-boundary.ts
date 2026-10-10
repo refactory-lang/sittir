@@ -14,3 +14,4 @@ export type {
 	SittirEngine,
 	ParsedRoot
 } from './engine.ts';
+export { portableSurface } from './portable.ts';

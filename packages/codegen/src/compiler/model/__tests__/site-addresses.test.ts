@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { addressSites, matchAddress, matchAddressWith, resolveBindings } from '../site-addresses.ts';
+import { addressSites, matchAddress, matchAddressWith, resolveLabels } from '../site-addresses.ts';
 import { CHOICE, PATTERN, STRING, SYMBOL } from '../../../types/rule-types.ts'; // @rule-type-consts
 import { assemble, AssembleCtx } from '../../assemble.ts';
 import { makeNormalized } from '../../__tests__/make-normalized.ts';
@@ -162,18 +162,18 @@ describe('matchAddress', () => {
 	});
 });
 
-describe('resolveBindings', () => {
+describe('resolveLabels', () => {
 	const punctuation = (): ReturnType<typeof addressSites> =>
 		addressSites(
 			[site('token_tree_punctuation', 'comma_after'), site('token_tree_punctuation', 'colon_after')],
 			ENTRIES
 		, makeSiteKindsNodeMap([site('token_tree_punctuation', 'comma_after'), site('token_tree_punctuation', 'colon_after')]));
-	const armsOf = (out: ReturnType<typeof resolveBindings>, sites: ReturnType<typeof addressSites>): Map<string, string> =>
+	const armsOf = (out: ReturnType<typeof resolveLabels>, sites: ReturnType<typeof addressSites>): Map<string, string> =>
 		new Map([...out].map(([i, { arm }]) => [sites[i]!.address, arm]));
 
 	it('applies a broad binding to every site it matches', () => {
 		const sites = punctuation();
-		const out = resolveBindings(
+		const out = resolveLabels(
 			[{ path: 'punctuation/after', arm: 'space' }],
 			[{ address: 'token_tree_punctuation', label: 'punctuation/after' }],
 			sites, NO_SUPERTYPES
@@ -183,7 +183,7 @@ describe('resolveBindings', () => {
 
 	it('lets a narrower declaration win over a broader binding', () => {
 		const sites = punctuation();
-		const out = resolveBindings(
+		const out = resolveLabels(
 			[
 				{ path: 'punctuation/after', arm: 'space' },
 				{ path: 'token_tree_punctuation/":"/after', arm: 'tight' }
@@ -198,7 +198,7 @@ describe('resolveBindings', () => {
 
 	it('lets a declaration win over a binding at the identical address', () => {
 		const sites = addressSites([site('keyword_argument', 'eq_before')], [...ENTRIES, { kind: 'eq', symbolName: '=', literalText: '=', anon: true }], makeSiteKindsNodeMap([site('keyword_argument', 'eq_before')]));
-		const out = resolveBindings(
+		const out = resolveLabels(
 			[
 				{ path: 'assignment/before', arm: 'space' },
 				{ path: 'keyword_argument/"="/before', arm: 'tight' }
@@ -212,7 +212,7 @@ describe('resolveBindings', () => {
 	it('rejects two addresses whose site sets overlap without nesting', () => {
 		const wide = addressSites([site('a', 'x_after'), site('a', 'y_after'), site('b', 'x_after')], ENTRIES, makeSiteKindsNodeMap([site('a', 'x_after'), site('a', 'y_after'), site('b', 'x_after')]));
 		expect(() =>
-			resolveBindings(
+			resolveLabels(
 				[
 					{ path: 'a/after', arm: 'space' },
 					{ path: 'wildcard/after', arm: 'tight' }
@@ -228,19 +228,19 @@ describe('resolveBindings', () => {
 
 	it('rejects a binding naming no site', () => {
 		expect(() =>
-			resolveBindings([{ path: 'l/after', arm: 'space' }], [{ address: 'nowhere', label: 'l/after' }], punctuation(), NO_SUPERTYPES)
+			resolveLabels([{ path: 'l/after', arm: 'space' }], [{ address: 'nowhere', label: 'l/after' }], punctuation(), NO_SUPERTYPES)
 		).toThrow(/names no site/);
 	});
 
 	it('rejects a declaration naming no site and bound to nothing', () => {
-		expect(() => resolveBindings([{ path: 'nowhere/after', arm: 'space' }], [], punctuation(), NO_SUPERTYPES)).toThrow(
+		expect(() => resolveLabels([{ path: 'nowhere/after', arm: 'space' }], [], punctuation(), NO_SUPERTYPES)).toThrow(
 			/names no site/
 		);
 	});
 
 	it('allows a label declaration to name no site', () => {
 		const sites = punctuation();
-		const out = resolveBindings(
+		const out = resolveLabels(
 			[{ path: 'punctuation/after', arm: 'space' }],
 			[{ address: 'token_tree_punctuation', label: 'punctuation/after' }],
 			sites, NO_SUPERTYPES
@@ -292,7 +292,7 @@ describe('a separator gap names its token', () => {
 				site('arguments', 'elements_separator_space_before', 'elements', 'comma_separator_space_before'),
 				site('tuple_type', 'types_separator_space_before', 'types', 'comma_separator_space_before')
 			]));
-		const arms = resolveBindings(
+		const arms = resolveLabels(
 			[
 				{ path: 'comma/before', arm: 'tight' },
 				{ path: 'tuple_type/types:/separator/","/before', arm: 'space' }
@@ -330,7 +330,7 @@ describe('a kind edge answers to its edge token’s face as a cascaded address',
 		expect(hits).toEqual([]);
 	});
 	it('resolves a cascaded hit with origin cascade and lets the kind’s own row win over it', () => {
-		const resolved = resolveBindings(
+		const resolved = resolveLabels(
 			[
 				{ path: '_/"("/before', arm: 'tight' },
 				{ path: 'args/before', arm: 'space' }
@@ -343,7 +343,7 @@ describe('a kind edge answers to its edge token’s face as a cascaded address',
 		const byAddress = new Map([...resolved].map(([i, v]) => [sites[i]!.address, v]));
 		expect(byAddress.get('args_before')).toEqual({ arm: 'space', origin: 'preference' });
 		expect(byAddress.get('lparen_before')).toEqual({ arm: 'tight', origin: 'literal-default' });
-		const cascadedOnly = resolveBindings([{ path: '_/"("/before', arm: 'tight' }], [], sites, NO_SUPERTYPES, false);
+		const cascadedOnly = resolveLabels([{ path: '_/"("/before', arm: 'tight' }], [], sites, NO_SUPERTYPES, false);
 		expect(new Map([...cascadedOnly].map(([i, v]) => [sites[i]!.address, v])).get('args_before')).toEqual({ arm: 'tight', origin: 'cascade' });
 	});
 });
@@ -355,7 +355,7 @@ describe('a kind edge over a choice of tokens cascades only a unanimous face', (
 	] as unknown as KindEntryLike[];
 	const sites = addressSites([{ kind: 'range', slot: 'range', address: 'range_before', label: 'range_before', edgeLiterals: ['dot_dot', 'dot_dot_eq'] }], kindEntries, makeSiteKindsNodeMap([{ kind: 'range', slot: 'range', address: 'range_before', label: 'range_before', edgeLiterals: ['dot_dot', 'dot_dot_eq'] }]));
 	const resolve = (rows: { path: string; arm: string }[]) =>
-		[...resolveBindings(rows, [], sites, NO_SUPERTYPES, false)].map(([i, v]) => `${sites[i]!.address}=${v.arm}/${v.origin}`);
+		[...resolveLabels(rows, [], sites, NO_SUPERTYPES, false)].map(([i, v]) => `${sites[i]!.address}=${v.arm}/${v.origin}`);
 
 	it('gives the edge one cascade path per token', () => {
 		expect(sites[0]!.cascadePaths).toHaveLength(2);
@@ -386,7 +386,7 @@ describe('a kind edge over a choice of tokens has one arm site per token', () =>
 	];
 	const sites = addressSites(inputs, kindEntries, makeSiteKindsNodeMap(inputs));
 	const resolve = (rows: { path: string; arm: string }[]) =>
-		[...resolveBindings(rows, [], sites, NO_SUPERTYPES, false)].map(([i, v]) => `${sites[i]!.address}=${v.arm}/${v.origin}`).sort();
+		[...resolveLabels(rows, [], sites, NO_SUPERTYPES, false)].map(([i, v]) => `${sites[i]!.address}=${v.arm}/${v.origin}`).sort();
 
 	it('gives an arm site the path of its token and the kind edge as its parent', () => {
 		const arm = sites.find((site) => site.address === 'dot_dot_before')!;

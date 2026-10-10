@@ -4587,6 +4587,124 @@
         "where",
         "while"
       ],
+      "members": [
+        {
+          "kind": "squote",
+          "text": "'"
+        },
+        {
+          "kind": "as_keyword",
+          "text": "as"
+        },
+        {
+          "kind": "async_keyword",
+          "text": "async"
+        },
+        {
+          "kind": "await_keyword",
+          "text": "await"
+        },
+        {
+          "kind": "break_keyword",
+          "text": "break"
+        },
+        {
+          "kind": "const_keyword",
+          "text": "const"
+        },
+        {
+          "kind": "continue_keyword",
+          "text": "continue"
+        },
+        {
+          "kind": "default_keyword",
+          "text": "default"
+        },
+        {
+          "kind": "enum_keyword",
+          "text": "enum"
+        },
+        {
+          "kind": "fn_keyword",
+          "text": "fn"
+        },
+        {
+          "kind": "for_keyword",
+          "text": "for"
+        },
+        {
+          "kind": "gen_keyword",
+          "text": "gen"
+        },
+        {
+          "kind": "if_keyword",
+          "text": "if"
+        },
+        {
+          "kind": "impl_keyword",
+          "text": "impl"
+        },
+        {
+          "kind": "let_keyword",
+          "text": "let"
+        },
+        {
+          "kind": "loop_keyword",
+          "text": "loop"
+        },
+        {
+          "kind": "match_keyword",
+          "text": "match"
+        },
+        {
+          "kind": "mod_keyword",
+          "text": "mod"
+        },
+        {
+          "kind": "pub_keyword",
+          "text": "pub"
+        },
+        {
+          "kind": "return_keyword",
+          "text": "return"
+        },
+        {
+          "kind": "static_keyword",
+          "text": "static"
+        },
+        {
+          "kind": "struct_keyword",
+          "text": "struct"
+        },
+        {
+          "kind": "trait_keyword",
+          "text": "trait"
+        },
+        {
+          "kind": "type_keyword",
+          "text": "type"
+        },
+        {
+          "kind": "union_keyword",
+          "text": "union"
+        },
+        {
+          "kind": "unsafe_keyword",
+          "text": "unsafe"
+        },
+        {
+          "kind": "use_keyword",
+          "text": "use"
+        },
+        {
+          "kind": "where_keyword",
+          "text": "where"
+        },
+        {
+          "kind": "while_keyword",
+          "text": "while"
+        }
+      ],
       "factoryShape": "text"
     },
     {
@@ -7158,6 +7276,16 @@
       "values": [
         "true",
         "false"
+      ],
+      "members": [
+        {
+          "kind": "true_keyword",
+          "text": "true"
+        },
+        {
+          "kind": "false_keyword",
+          "text": "false"
+        }
       ],
       "factoryShape": "text"
     },
@@ -12585,6 +12713,68 @@
         "tt",
         "ty",
         "vis"
+      ],
+      "members": [
+        {
+          "kind": "block_keyword",
+          "text": "block"
+        },
+        {
+          "kind": "expr_keyword",
+          "text": "expr"
+        },
+        {
+          "kind": "expr_2021_keyword",
+          "text": "expr_2021"
+        },
+        {
+          "kind": "ident_keyword",
+          "text": "ident"
+        },
+        {
+          "kind": "item_keyword",
+          "text": "item"
+        },
+        {
+          "kind": "lifetime_keyword",
+          "text": "lifetime"
+        },
+        {
+          "kind": "literal_keyword",
+          "text": "literal"
+        },
+        {
+          "kind": "meta_keyword",
+          "text": "meta"
+        },
+        {
+          "kind": "pat_keyword",
+          "text": "pat"
+        },
+        {
+          "kind": "pat_param_keyword",
+          "text": "pat_param"
+        },
+        {
+          "kind": "path_keyword",
+          "text": "path"
+        },
+        {
+          "kind": "stmt_keyword",
+          "text": "stmt"
+        },
+        {
+          "kind": "tt_keyword",
+          "text": "tt"
+        },
+        {
+          "kind": "ty_keyword",
+          "text": "ty"
+        },
+        {
+          "kind": "vis_keyword",
+          "text": "vis"
+        }
       ],
       "factoryShape": "text"
     },
@@ -19261,6 +19451,76 @@
         "str",
         "char"
       ],
+      "members": [
+        {
+          "kind": "u8_keyword",
+          "text": "u8"
+        },
+        {
+          "kind": "i8_keyword",
+          "text": "i8"
+        },
+        {
+          "kind": "u16_keyword",
+          "text": "u16"
+        },
+        {
+          "kind": "i16_keyword",
+          "text": "i16"
+        },
+        {
+          "kind": "u32_keyword",
+          "text": "u32"
+        },
+        {
+          "kind": "i32_keyword",
+          "text": "i32"
+        },
+        {
+          "kind": "u64_keyword",
+          "text": "u64"
+        },
+        {
+          "kind": "i64_keyword",
+          "text": "i64"
+        },
+        {
+          "kind": "u128_keyword",
+          "text": "u128"
+        },
+        {
+          "kind": "i128_keyword",
+          "text": "i128"
+        },
+        {
+          "kind": "isize_keyword",
+          "text": "isize"
+        },
+        {
+          "kind": "usize_keyword",
+          "text": "usize"
+        },
+        {
+          "kind": "f32_keyword",
+          "text": "f32"
+        },
+        {
+          "kind": "f64_keyword",
+          "text": "f64"
+        },
+        {
+          "kind": "bool_keyword",
+          "text": "bool"
+        },
+        {
+          "kind": "str_keyword",
+          "text": "str"
+        },
+        {
+          "kind": "char_keyword",
+          "text": "char"
+        }
+      ],
       "factoryShape": "text"
     },
     {
@@ -24996,6 +25256,184 @@
         "=>",
         "#",
         "?"
+      ],
+      "members": [
+        {
+          "kind": "plus",
+          "text": "+"
+        },
+        {
+          "kind": "dash",
+          "text": "-"
+        },
+        {
+          "kind": "star",
+          "text": "*"
+        },
+        {
+          "kind": "slash",
+          "text": "/"
+        },
+        {
+          "kind": "percent",
+          "text": "%"
+        },
+        {
+          "kind": "caret",
+          "text": "^"
+        },
+        {
+          "kind": "bang",
+          "text": "!"
+        },
+        {
+          "kind": "amp",
+          "text": "&"
+        },
+        {
+          "kind": "pipe",
+          "text": "|"
+        },
+        {
+          "kind": "amp_amp",
+          "text": "&&"
+        },
+        {
+          "kind": "pipe_pipe",
+          "text": "||"
+        },
+        {
+          "kind": "lt_lt",
+          "text": "<<"
+        },
+        {
+          "kind": "gt_gt",
+          "text": ">>"
+        },
+        {
+          "kind": "plus_eq",
+          "text": "+="
+        },
+        {
+          "kind": "dash_eq",
+          "text": "-="
+        },
+        {
+          "kind": "star_eq",
+          "text": "*="
+        },
+        {
+          "kind": "slash_eq",
+          "text": "/="
+        },
+        {
+          "kind": "percent_eq",
+          "text": "%="
+        },
+        {
+          "kind": "caret_eq",
+          "text": "^="
+        },
+        {
+          "kind": "amp_eq",
+          "text": "&="
+        },
+        {
+          "kind": "pipe_eq",
+          "text": "|="
+        },
+        {
+          "kind": "lt_lt_eq",
+          "text": "<<="
+        },
+        {
+          "kind": "gt_gt_eq",
+          "text": ">>="
+        },
+        {
+          "kind": "eq",
+          "text": "="
+        },
+        {
+          "kind": "eq_eq",
+          "text": "=="
+        },
+        {
+          "kind": "bang_eq",
+          "text": "!="
+        },
+        {
+          "kind": "gt",
+          "text": ">"
+        },
+        {
+          "kind": "lt",
+          "text": "<"
+        },
+        {
+          "kind": "gt_eq",
+          "text": ">="
+        },
+        {
+          "kind": "lt_eq",
+          "text": "<="
+        },
+        {
+          "kind": "at",
+          "text": "@"
+        },
+        {
+          "kind": "underscore",
+          "text": "_"
+        },
+        {
+          "kind": "dot",
+          "text": "."
+        },
+        {
+          "kind": "dot_dot",
+          "text": ".."
+        },
+        {
+          "kind": "dot_dot_dot",
+          "text": "..."
+        },
+        {
+          "kind": "dot_dot_eq",
+          "text": "..="
+        },
+        {
+          "kind": "comma",
+          "text": ","
+        },
+        {
+          "kind": "semi",
+          "text": ";"
+        },
+        {
+          "kind": "colon",
+          "text": ":"
+        },
+        {
+          "kind": "colon_colon",
+          "text": "::"
+        },
+        {
+          "kind": "dash_gt",
+          "text": "->"
+        },
+        {
+          "kind": "eq_gt",
+          "text": "=>"
+        },
+        {
+          "kind": "pound",
+          "text": "#"
+        },
+        {
+          "kind": "qmark",
+          "text": "?"
+        }
       ],
       "factoryShape": "text"
     },

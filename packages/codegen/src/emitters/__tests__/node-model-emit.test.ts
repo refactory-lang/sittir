@@ -17,6 +17,18 @@ describe('node-model emitter', () => {
 		expect(buildNodeModel({ ...makeNodeMapWith(new Map()), root: 'program' }).root).toBe('program');
 	});
 
+	it('serializes the kind each renamed or split kind came from', () => {
+		const provenance = { renamedFrom: { binding: 'let_item' }, splitFrom: { method: 'function' } };
+		const pattern = (kind: string) => new AssembledPattern(kind, { type: PATTERN, value: '[a-z]+' }, { provenance });
+		const model = buildNodeModel(makeNodeMapWith(new Map([['binding', pattern('binding')], ['method', pattern('method')], ['plain', pattern('plain')]])));
+		const byKind = new Map(model.nodes.map((node) => [node.kind, node]));
+		expect(byKind.get('binding')).toMatchObject({ renamedFrom: 'let_item' });
+		expect(byKind.get('method')).toMatchObject({ splitFrom: 'function' });
+		expect(byKind.get('binding')).not.toHaveProperty('splitFrom');
+		expect(byKind.get('plain')).not.toHaveProperty('renamedFrom');
+		expect(byKind.get('plain')).not.toHaveProperty('splitFrom');
+	});
+
 	it('serializes per-value parseKind without slot-level aliasSources', () => {
 		const rule: SeqRule<'link'> = {
 			type: SEQ,

@@ -673,7 +673,7 @@ describe('the options block reaches a site', () => {
 		const out = resolved({
 			options: {
 				indented: { before: preference('newline') },
-				_bindings: { 'block/"{"/after': 'indented/before' }
+				_labels: { 'block/"{"/after': 'indented/before' }
 			}
 		});
 		expect(armOf(out, 'lbrace_after')).toBe('newline');
@@ -684,7 +684,7 @@ describe('the options block reaches a site', () => {
 			resolved({
 				options: {
 					body: { before: preference('newline') },
-					_bindings: { 'block/"{"/after': 'body/before' }
+					_labels: { 'block/"{"/after': 'body/before' }
 				}
 			})
 		).toThrow(/names the kind 'body'/);

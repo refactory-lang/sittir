@@ -72,6 +72,9 @@ jobs:
         run: pnpm run format:check
         continue-on-error: true
 
+      - name: Bootstrap the pinned build
+        uses: ./.github/actions/bootstrap
+
       - name: Test
         # `-- --coverage` instruments this same whole-suite run instead of
         # running it a second time — test-and-record.ts treats --coverage
@@ -323,6 +326,8 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: Cache cargo registry + target
         uses: Swatinem/rust-cache@v2
+      - name: Bootstrap the pinned build
+        uses: ./.github/actions/bootstrap
       - name: Regenerate every grammar
         # `gen --all` rebuilds each grammar's release binding before it
         # extracts fixtures. The workspace cargo check is the `rust` job's.

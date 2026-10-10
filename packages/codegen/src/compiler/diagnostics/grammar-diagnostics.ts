@@ -11,6 +11,7 @@ import { undeclaredSeparatorSites, type SitePreferencesConfig } from '../model/s
 import { makeSlotGroupingCollector } from '../simplify.ts';
 import { diagnoseRepeatedSeqGrouping, type SlotGroupingDiagnostic } from './slot-grouping.ts';
 import { isLiteralOnlyRule, isTerminalRootRule } from '../../dsl/rule-transforms.ts';
+import { boundNameOf } from '../../dsl/bind.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter, DesugarDivergenceEvent, ReservedWordsets, RuleCatalog } from '../types.ts';
 import {
 	kindCatalogOf,
@@ -141,6 +142,14 @@ const BLOCKING_SHAPE_CODES: ReadonlySet<string> = new Set([
 	'separator-pattern',
 	'delimited-closer-unguarded'
 ]);
+
+export function expectationsInEitherSpelling(
+	raw: Pick<RawGrammar, 'expectDiagnostics' | 'renamedFrom'>
+): Readonly<Record<string, readonly string[]>> | undefined {
+	if (raw.expectDiagnostics === undefined || raw.renamedFrom === undefined) return raw.expectDiagnostics;
+	const bound = boundNameOf(raw.renamedFrom);
+	return Object.fromEntries(Object.entries(raw.expectDiagnostics).map(([code, kinds]) => [code, kinds.flatMap((kind) => [kind, bound(kind)])]));
+}
 
 export function isExpectedDiagnostic(
 	expectDiagnostics: Readonly<Record<string, readonly string[]>> | undefined,

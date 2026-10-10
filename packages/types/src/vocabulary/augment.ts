@@ -3533,13 +3533,6 @@ declare module './identifier.ts' {
 		interface Metavariable<G extends GrammarContext<G>> extends syntacticMetaprogramming.Identifier.Metavariable<G> {
 			readonly attributes?: gate.In<G, features.Attributes, attributes.Identifier.Metavariable<G>['attributes']>;
 		}
-		namespace Property {
-			type Any<G extends GrammarContext<G>> =
-				| V.Identifier.Property<G>
-				| V.Identifier.Property.Computed<G>
-				| V.Identifier.Property.Private<G>
-				| V.Identifier.Property.Shorthand<G>;
-		}
 		interface Self<G extends GrammarContext<G>> extends methods.Identifier.Self<G> {}
 		type Any<G extends GrammarContext<G>> =
 			| V.Identifier<G>
@@ -3551,9 +3544,6 @@ declare module './identifier.ts' {
 			| V.Identifier.Metavariable<G>
 			| V.Identifier.Nested<G>
 			| V.Identifier.Property<G>
-			| V.Identifier.Property.Computed<G>
-			| V.Identifier.Property.Private<G>
-			| V.Identifier.Property.Shorthand<G>
 			| V.Identifier.Scoped<G>
 			| V.Identifier.Self<G>
 			| V.Identifier.Super<G>

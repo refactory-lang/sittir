@@ -1,10 +1,13 @@
+import { join } from 'node:path';
 import { evaluatePackage } from './evaluate-package.ts';
+import { assertBindingsFresh } from '../bindings/hash.ts';
+import { loadBindingsModule } from '../bindings/module.ts';
 import type { GrammarPackage } from '../grammars.ts';
 import { stampIrSurface } from './model/ir-surface.ts';
 import { hydrateSlotRefs, type AssembledNodeMap } from './assemble.ts';
 import { conflictRecords } from './diagnostics/conflicts.ts';
 import { dynamicPrecedenceRecords } from './diagnostics/dynamic-precedence.ts';
-import { blockedRecords, collectGrammarDiagnosticsForGrammar, evaluateRecords, GrammarDiagnosticError } from './diagnostics/grammar-diagnostics.ts';
+import { blockedRecords, expectationsInEitherSpelling, collectGrammarDiagnosticsForGrammar, evaluateRecords, GrammarDiagnosticError } from './diagnostics/grammar-diagnostics.ts';
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import { DiagnosticSink, EmitHaltedError, type GrammarDiagnostic } from '../types/diagnostics.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter } from './types.ts';
@@ -34,11 +37,12 @@ export interface CompileGrammarConfig {
 	readonly include?: IncludeFilter;
 	readonly generatedIdTables?: GeneratedIdTables;
 	readonly allowDiagnostics?: ReadonlySet<string>;
+	readonly unbound?: boolean;
 }
 
 export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compilation> {
 	const grammar = cfg.package.name;
-	const evaluated = await evaluatePackage(cfg.package);
+	const evaluated = await evaluatePackage(cfg.package, { unbound: cfg.unbound });
 	const diagnosis = diagnoseGrammar({
 		grammar,
 		evaluated,
@@ -47,6 +51,7 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 		allowDiagnostics: cfg.allowDiagnostics
 	});
 	if (!diagnosis.passed) throw new GrammarDiagnosticError(diagnosis.blocked, diagnosis.grammarDiagnostics);
+	if (cfg.unbound !== true) assertBindingsFresh(grammar, (await loadBindingsModule(cfg.package.dir))?.hash, join(cfg.package.dir, 'bindings.scm'));
 	const { stages, grammarDiagnostics, diagnosticRecords } = diagnosis;
 	const { raw, linked, normalized, nodeMap, compilerDiagnostics, slotGroupingDiagnostics } = diagnosis.collected;
 
@@ -111,7 +116,8 @@ export function diagnoseGrammar(cfg: DiagnoseGrammarConfig): GrammarDiagnosis {
 		...conflictRecords(evaluated),
 		...dynamicPrecedenceRecords(evaluated)
 	];
-	const evaluateBlocked = blockedRecords(evaluateDiagnostics, evaluated.expectDiagnostics, allowDiagnostics);
+	const expectations = expectationsInEitherSpelling(evaluated);
+	const evaluateBlocked = blockedRecords(evaluateDiagnostics, expectations, allowDiagnostics);
 	if (evaluateBlocked.length > 0) return { passed: false, stages, grammarDiagnostics: evaluateDiagnostics, blocked: evaluateBlocked };
 
 	const collected = collectGrammarDiagnosticsForGrammar({
@@ -131,7 +137,7 @@ export function diagnoseGrammar(cfg: DiagnoseGrammarConfig): GrammarDiagnosis {
 	const patchSiteDiagnostics =
 		stages === undefined ? [] : diagnosePatchSites({ grammar, sites: labelPatchSites(evaluated.patchSites ?? [], diagnosticRecords) });
 	const grammarDiagnostics = [...evaluateDiagnostics, ...patchSiteDiagnostics, ...collected.diagnostics];
-	const blocked = blockedRecords(grammarDiagnostics, collected.raw.expectDiagnostics, allowDiagnostics);
+	const blocked = blockedRecords(grammarDiagnostics, expectations, allowDiagnostics);
 	if (blocked.length > 0) return { passed: false, stages, grammarDiagnostics, blocked };
 	return { passed: true, stages, grammarDiagnostics, blocked, collected, diagnosticRecords };
 }

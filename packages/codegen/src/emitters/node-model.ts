@@ -74,6 +74,8 @@ interface SerializedNodeBase {
 	hidden: boolean;
 	annotations?: RuleAnnotations;
 	seated?: true;
+	renamedFrom?: string;
+	splitFrom?: string;
 	isParameterless?: boolean;
 	stampExpression?: string;
 	oneSurface?: true;
@@ -108,6 +110,7 @@ interface SerializedFixedText extends SerializedNodeBase {
 interface SerializedEnum extends SerializedNodeBase {
 	modelType: 'enum';
 	values: string[];
+	members: { kind: string; text: string }[];
 }
 
 interface SerializedSupertype extends SerializedNodeBase {
@@ -135,7 +138,7 @@ type SerializedNode =
 	| SerializedSupertype
 	| SerializedList;
 
-interface SerializedNodeModel {
+export interface SerializedNodeModel {
 	name: string;
 	root: string | null;
 	nodeCount: number;
@@ -152,8 +155,10 @@ interface SerializedNodeModel {
 }
 
 export function emitNodeModel(config: EmitNodeModelConfig): string {
-	const { nodeMap, generatedIdTables } = config;
-	const data = buildNodeModel(nodeMap, generatedIdTables);
+	return printNodeModel(buildNodeModel(config.nodeMap, config.generatedIdTables));
+}
+
+export function printNodeModel(data: SerializedNodeModel): string {
 	return JSON.stringify(data, null, 2) + '\n';
 }
 
@@ -220,6 +225,8 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 		hidden: node.hidden,
 		...(node.annotations !== undefined ? { annotations: node.annotations } : {}),
 		...(node.seated ? { seated: true } : {}),
+		...(node.renamedFrom !== undefined ? { renamedFrom: node.renamedFrom } : {}),
+		...(node.splitFrom !== undefined ? { splitFrom: node.splitFrom } : {}),
 		...(node.parameterless ? { isParameterless: true } : {}),
 		...(node.stampExpression !== undefined ? { stampExpression: node.stampExpression } : {})
 	};
@@ -251,7 +258,8 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 			return {
 				...base,
 				modelType: 'enum',
-				values: [...node.values]
+				values: [...node.values],
+				members: node.members.map(({ kind, text }) => ({ kind, text }))
 			};
 		case 'list':
 			return {

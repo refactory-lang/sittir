@@ -12,6 +12,9 @@ import type {
 	LanguageHooks,
 	NativeEngineOptions,
 	ParseOptions,
+	PortableEngine,
+	PortableEngineOptions,
+	PortableLanguageAPI,
 	Pending,
 	Rendered,
 	RenderArgument,
@@ -141,22 +144,36 @@ function interceptedRender<Call>(
 	};
 }
 
-function languageGuards<G extends object>(guards: G, inLanguage: (value: unknown) => boolean): Readonly<G> {
+function inLanguageOf(identity: EngineIdentity<LanguageAPI>): (value: unknown) => boolean {
+	return (value) => {
+		if (typeof value === 'number') return true;
+		const stamp = engineOf(value);
+		return stamp !== undefined && sameLanguage(stamp, identity);
+	};
+}
+
+type Guard = (...args: unknown[]) => boolean;
+
+function languageGuards<G extends object>(
+	guards: G,
+	inLanguage: (value: unknown) => boolean,
+	wrapped: Map<Guard, Guard> = new Map()
+): Readonly<G> {
 	const entries = Object.entries(guards).map(([name, guard]): [string, unknown] => [
 		name,
-		languageGuard(guard as (...args: unknown[]) => boolean, inLanguage)
+		languageGuard(guard as Guard, inLanguage, wrapped)
 	]);
 	return Object.freeze(Object.fromEntries(entries) as G);
 }
 
-function languageGuard(
-	guard: (...args: unknown[]) => boolean,
-	inLanguage: (value: unknown) => boolean
-): (...args: unknown[]) => boolean {
+function languageGuard(guard: Guard, inLanguage: (value: unknown) => boolean, wrapped: Map<Guard, Guard>): Guard {
+	const known = wrapped.get(guard);
+	if (known !== undefined) return known;
 	const checked = (value: unknown, ...rest: unknown[]): boolean => inLanguage(value) && guard(value, ...rest);
+	wrapped.set(guard, checked);
 	if (Object.keys(guard).length === 0) return checked;
 	return Object.freeze(
-		Object.defineProperties(checked, Object.getOwnPropertyDescriptors(languageGuards(guard, inLanguage)))
+		Object.defineProperties(checked, Object.getOwnPropertyDescriptors(languageGuards(guard, inLanguage, wrapped)))
 	);
 }
 
@@ -196,10 +213,7 @@ function assembleEngine<API extends LanguageAPI>(
 		bindTree(read.tree, handle);
 		return read;
 	};
-	const inLanguage = (value: unknown): boolean => {
-		const stamp = engineOf(value);
-		return stamp !== undefined && sameLanguage(stamp, identity);
-	};
+	const inLanguage = inLanguageOf(identity);
 	const queryHooks: QueryHooks = {
 		querySlots: hooks.querySlots,
 		kindName: (kind) => hooks.trivia.kindName(kind),
@@ -285,10 +299,40 @@ function assembleEngine<API extends LanguageAPI>(
 	return Object.freeze(engine);
 }
 
+function assemblePortableEngine<API extends PortableLanguageAPI>(language: Language<API>, hooks: LanguageHooks<API>): PortableEngine<API> {
+	const portable = hooks.portable;
+	if (portable === undefined) throw new Error(`language "${language.name}" has no portable surface: its grammar has no bindings`);
+	const identity: EngineIdentity<API> = { language, renderModuleHash: hooks.renderModuleHash, options: undefined, trivia: hooks.trivia };
+	return Object.freeze({ ...identity, kinds: portable.kinds, is: languageGuards(portable.is, inLanguageOf(identity)) });
+}
+
+/**
+ * Creates an engine for `language`.
+ *
+ * @param options - Engine options. `render` sets the engine's render options and is checked against the language's options.
+ * @returns The engine, once the language has loaded.
+ * @throws When an option the engine does not implement yet is set, or the language fails to load.
+ */
 export async function createEngine<API extends LanguageAPI, const R extends API['options'] = API['options']>(
 	language: Language<API>,
 	options?: CreateEngineOptions<API, R>
-): Promise<Engine<API>> {
+): Promise<Engine<API>>;
+/**
+ * Creates an engine for `language` over its portable vocabulary, the same as `createEngine(language, { api: 'portable' })`.
+ *
+ * @param options - `{ api: 'portable' }`.
+ * @returns The portable engine, once the language has loaded.
+ * @throws When the language's grammar has no bindings, or the language fails to load.
+ */
+export async function createEngine<API extends PortableLanguageAPI>(language: Language<API>, options: PortableEngineOptions): Promise<PortableEngine<API>>;
+export async function createEngine<API extends LanguageAPI>(
+	language: Language<API>,
+	options?: CreateEngineOptions<API> | PortableEngineOptions
+): Promise<Engine<API> | PortableEngine<API & PortableLanguageAPI>> {
+	if (options?.api === 'portable') {
+		const portableLanguage = language as unknown as Language<API & PortableLanguageAPI>;
+		return assemblePortableEngine(portableLanguage, await loadLanguage(portableLanguage));
+	}
 	refuseUnimplemented(options);
 	return assembleEngine(language, await loadLanguage(language), options);
 }

@@ -5554,6 +5554,20 @@
         "private",
         "protected"
       ],
+      "members": [
+        {
+          "kind": "public_keyword",
+          "text": "public"
+        },
+        {
+          "kind": "private_keyword",
+          "text": "private"
+        },
+        {
+          "kind": "protected_keyword",
+          "text": "protected"
+        }
+      ],
       "factoryShape": "text"
     },
     {
@@ -23598,6 +23612,48 @@
         "unknown",
         "never",
         "object"
+      ],
+      "members": [
+        {
+          "kind": "any_keyword",
+          "text": "any"
+        },
+        {
+          "kind": "number_keyword",
+          "text": "number"
+        },
+        {
+          "kind": "boolean_keyword",
+          "text": "boolean"
+        },
+        {
+          "kind": "string_keyword",
+          "text": "string"
+        },
+        {
+          "kind": "symbol_keyword",
+          "text": "symbol"
+        },
+        {
+          "kind": "unique",
+          "text": "unique symbol"
+        },
+        {
+          "kind": "void_keyword",
+          "text": "void"
+        },
+        {
+          "kind": "unknown_keyword",
+          "text": "unknown"
+        },
+        {
+          "kind": "never_keyword",
+          "text": "never"
+        },
+        {
+          "kind": "object_keyword",
+          "text": "object"
+        }
       ],
       "factoryShape": "text"
     },
