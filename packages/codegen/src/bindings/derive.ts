@@ -297,10 +297,6 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 		}
 		return scalarOf([unmappedToken(g, k)]);
 	};
-	const leafText = (input: GrammarInput, k: string): string => {
-		const node = modelNode(input.model, k);
-		return input.textTokens.has(k) && node?.pattern != null ? `text:${node.pattern}` : unmappedToken(input.grammar, k);
-	};
 	const slotResolution = (input: GrammarInput, owner: string, slot: ModelSlot): Resolution => {
 		if (slot.storage === 'boolean') return scalarOf(['boolean']);
 		const tokens = slot.terminals.map((t) => `text:${t}`);
@@ -358,12 +354,6 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 					if (route.route === 'kind') {
 						f.kinds.add('boolean');
 						f.optional = true;
-						f.scalar = true;
-						f.grammars.add(input.grammar);
-						continue;
-					}
-					if (route.route === 'self') {
-						f.kinds.add(leafText(input, gk));
 						f.scalar = true;
 						f.grammars.add(input.grammar);
 						continue;

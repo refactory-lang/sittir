@@ -4,7 +4,7 @@ The bindings facts and the derivation over them. The facts are what a grammar's 
 
 ### `packages/codegen/src/bindings/facts.ts::BindingFacts`
 
-What a bindings file says, before the slot model is consulted: the claims (`ClaimFact`, with the kinds enclosing a claim made below the top), the member captures (`MemberFact`: a `rename` of the slot its selector finds, the `presence` of a token, the presence of a `kind` in the slot another member names (a flag), a `self` member the claimed node supplies by being the node, or a `nested` member with the kinds it routes through and the selector of its slot), the containers (`ContainerFact`: the element's selector, every other capture, the selectors of the slots it drops on purpose with the pattern's reason, and the line and text of its pattern), the templates (`TemplateFact`) and the unclaimed kinds (`UnclaimedFact`, each with its reason). Facts come in file order and, within a pattern, in pre-order, which the derivation's first-claim and rename rules rely on. A presence member keeps its token's text (`"async" @isAsync` has the name `isAsync` and the token `async`); codegen resolves the text to a kind id through the stamped public symbol, never by a text lookup of its own.
+What a bindings file says, before the slot model is consulted: the claims (`ClaimFact`, with the kinds enclosing a claim made below the top), the member captures (`MemberFact`: a `rename` of the slot its selector finds, the `presence` of a token, the presence of a `kind` in the slot another member names (a flag), or a `nested` member with the kinds it routes through and the selector of its slot), the containers (`ContainerFact`: the element's selector, every other capture, the selectors of the slots it drops on purpose with the pattern's reason, and the line and text of its pattern), the templates (`TemplateFact`) and the unclaimed kinds (`UnclaimedFact`, each with its reason). Facts come in file order and, within a pattern, in pre-order, which the derivation's first-claim and rename rules rely on. A presence member keeps its token's text (`"async" @isAsync` has the name `isAsync` and the token `async`); codegen resolves the text to a kind id through the stamped public symbol, never by a text lookup of its own.
 
 ### `packages/codegen/src/bindings/facts.ts::SlotSelector`
 
@@ -50,8 +50,7 @@ each grammar's routes (`routes.ts::resolveRoutes`: read entries with their pins,
 member routes, container unwraps), and make templates hole members of every
 claim in their pattern; fold each claimed kind's member routes, claim by claim
 in file order, into member types (a slot route's slot resolved, a presence or
-a flag an optional `boolean`, a self route the claimed node's own text
-(`leafText`), a nested member its named kind or the kinds of the slot its
+a flag an optional `boolean`, a nested member its named kind or the kinds of the slot its
 selector finds in its parent); fold pinned claims into refinements, each pin
 named by the kind's converged member (a capture on the field renames it)
 rather than by the grammar's field; assign container captures to
@@ -88,10 +87,6 @@ A layout slot is never a member (`routes.ts::isLayout`). A resolution is a
 list when the container is a list or a part is, and scalar when a part is
 scalar, so a member admitting both reads `T | T[]`.
 ```
-
-### `packages/codegen/src/bindings/derive.ts::leafText`
-
-A self route's member type: the claimed node's own text, `text:<pattern>` when the node is a text token with a pattern, otherwise the node's `<grammar:kind>` placeholder (`unmappedToken`). Resolving the node by its claim would name the very kind that owns the member.
 
 ### `packages/codegen/src/bindings/derive.ts::unmappedToken`
 
@@ -273,7 +268,7 @@ clashing ones are dropped until stable, and a kind claiming its own parent's
 path is realized by the parent, its arms staying the parent's variants.
 
 Members: a member the vocabulary kind naming its owner does not declare stays
-a mapping. A flag or a self route reads structure the grammar already has and
+a mapping. A flag reads structure the grammar already has and
 needs no field; every other member becomes a field. A member routed to a whole field
 renames that field; a member routed to an unfielded child, or to a token's
 presence, wraps the child or token in a field of the member's name. A child or
@@ -290,7 +285,7 @@ Everything not turned into a grammar change is residue, with its cause.
 
 ### `packages/codegen/src/bindings/overlay.ts::sameShapeAs`
 
-The kinds one path names that the overlay may merge under the path's name: the path's first kind and every further kind that supplies the same member names, where neither is read as a kind (a flag's kind or a self route's owner). A kind's members are its routed members (`OverlayInput.routedMembers`): its captures, renamed, and every other non-layout slot by its property name, so a slot no claim captures still tells two kinds apart (python's `assignment_typed` carries a `type` that `assignment_eq` lacks). A form restricted to a context is a legitimate merge: python's `lambda_within_for_in_clause` supplies `lambda`'s `parameters` and `body`, and differs only in what its body admits. It is the other face of injectivity: two kinds share a vocabulary leaf only where a holder's flag or a member's absence tells them apart, and a kind told apart that way keeps its own grammar kind so the reader and the builder can tell it. Containment is no distinction: a container member admitting both kinds does not keep them apart.
+The kinds one path names that the overlay may merge under the path's name: the path's first kind and every further kind that supplies the same member names, where neither is read as a kind (a flag's kind). A kind's members are its routed members (`OverlayInput.routedMembers`): its captures, renamed, and every other non-layout slot by its property name, so a slot no claim captures still tells two kinds apart (python's `assignment_typed` carries a `type` that `assignment_eq` lacks). A form restricted to a context is a legitimate merge: python's `lambda_within_for_in_clause` supplies `lambda`'s `parameters` and `body`, and differs only in what its body admits. It is the other face of injectivity: two kinds share a vocabulary leaf only where a holder's flag or a member's absence tells them apart, and a kind told apart that way keeps its own grammar kind so the reader and the builder can tell it. Containment is no distinction: a container member admitting both kinds does not keep them apart.
 
 ### `packages/codegen/src/bindings/overlay.ts::overlayPatches`
 
@@ -352,9 +347,7 @@ engine into the query grammar's typed tree, and each top-level pattern (a named
 node, a token or a grouping) is read; a top-level alternation reads as one
 pattern per option, each carrying the alternation's captures. In a pattern, a
 dotted capture, or a capture on the top node that does not start with `_`, is
-in claim position, unless the top node also carries a dotted claim: then a
-single-segment capture beside it is a member the node supplies by being the
-node (a self route). There, a capture in the `keyword` or `punctuation`
+in claim position. There, a capture in the `keyword` or `punctuation`
 namespace is a token class, which names no vocabulary kind; any other is a
 claim: its kind is the node's (`_` for a wildcard), a grouping's first
 child's, and none on a token, and it records the kinds enclosing it, nearest
@@ -385,7 +378,7 @@ The scm engine behind it is the pinned build's (`ready`), created by the first r
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::kindPresence`
 
-The flag a further single-segment capture on a node makes: the presence of the node's kind in the slot the node's first member capture names, owned by that member's owner. A node whose first capture is a token's presence or a self route has no slot to name, so its further captures are read as ordinary members.
+The flag a further single-segment capture on a node makes: the presence of the node's kind in the slot the node's first member capture names, owned by that member's owner. A node whose first capture is a token's presence has no slot to name, so its further captures are read as ordinary members.
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::slotNamed`
 
@@ -525,7 +518,7 @@ The order read entries are tried in: a claim both placed (made below enclosing k
 
 ### `packages/codegen/src/bindings/routes.ts::membersOf`
 
-A kind's member routes: one `slot` route per slot of the model node (minus layout slots, and minus the kinds a `presence` or `nested` route reaches through), then the member facts the bindings state for it (`kind`, `self`, `presence`, `nested`). A kind with a `self` route takes no slot routes: the self route says the node is the member's value, so its own slots describe that value, not the claimed kind. Typescript's shorthand property is a sittir alias envelope with a `content` slot; claimed as `element.pair` with `@key`, it supplies `key` and nothing else.
+A kind's member routes: one `slot` route per slot of the model node (minus layout slots, and minus the kinds a `presence` or `nested` route reaches through), then the member facts the bindings state for it (`kind`, `presence`, `nested`).
 
 ### `packages/codegen/src/bindings/routes.ts::viaPath`
 

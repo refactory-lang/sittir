@@ -92,7 +92,7 @@ const targetKey = (r: FieldRequest): string =>
 const fieldKey = (r: FieldRequest): string => `${r.owner}\u0000${'from' in r ? r.to : r.field}`;
 
 function sameShapeAs(kinds: readonly string[], members: readonly MemberFact[], routed: ReadonlyMap<string, readonly MemberRoute[]>): readonly string[] {
-	const readAsKind = new Set(members.flatMap((m) => (m.route === 'kind' ? [m.kind] : m.route === 'self' ? [m.owner] : [])));
+	const readAsKind = new Set(members.flatMap((m) => (m.route === 'kind' ? [m.kind] : [])));
 	const supplied = (kind: string): string =>
 		(routed.get(kind) ?? [])
 			.map((m) => m.name)
@@ -233,7 +233,7 @@ export function deriveOverlay(input: OverlayInput): { overlay: BindingsOverlay; 
 			continue;
 		}
 		const to = memberFieldName(m.name);
-		if (m.route === 'kind' || m.route === 'self') {
+		if (m.route === 'kind') {
 			realizedMembers.push(row);
 			continue;
 		}

@@ -418,16 +418,13 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 		if (template !== null) facts.templates.push({ vocabs, ...template });
 	}
 	const claimPredicates = predicates.flatMap((p) => predicateFact(p) ?? []);
-	const topClaimed = captures(top).some((name) => isPath(name) && !isTokenClass(name));
 	for (const v of nodes) {
 		const members: MemberFact[] = [];
 		for (const name of captures(v)) {
-			const selfRoute = v === top && topClaimed && !isPath(name);
-			if (!selfRoute && inClaimPosition(name, v === top)) {
+			if (inClaimPosition(name, v === top)) {
 				if (isClaim(name, v === top)) facts.claims.push(claimFact(v, name, top, nodes, claimPredicates));
 			} else if (!name.startsWith('_') && name !== 'element') {
-				const member: MemberFact | null =
-					selfRoute && topKind !== null ? { route: 'self', owner: topKind, name } : (kindPresence(members[0], v, name) ?? memberFact(v, name, top, topKind));
+				const member: MemberFact | null = kindPresence(members[0], v, name) ?? memberFact(v, name, top, topKind);
 				if (member !== null) members.push(member);
 			}
 		}
@@ -437,7 +434,7 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 
 function kindPresence(first: MemberFact | undefined, v: Visit, name: string): MemberFact | null {
 	const kind = namedKind(v);
-	if (first === undefined || kind === null || first.route === 'self' || first.route === 'presence') return null;
+	if (first === undefined || kind === null || first.route === 'presence') return null;
 	return { route: 'kind', owner: first.owner, name, member: first.name, kind };
 }
 

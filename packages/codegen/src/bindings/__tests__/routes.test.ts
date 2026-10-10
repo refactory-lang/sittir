@@ -187,15 +187,6 @@ describe('resolveRoutes', () => {
 		});
 	});
 
-	it('routes a member the claimed node supplies by being the node', async () => {
-		const routes = resolveRoutes(await grammar('(identifier) @element.pair @key'));
-		expect(routes.members.get('identifier')).toEqual([{ route: 'self', name: 'key', path: [] }]);
-	});
-
-	it('gives a node a self route takes no members from its own slots: they describe the member\'s value', async () => {
-		const routes = resolveRoutes(await grammar('(middle) @element.pair @key'));
-		expect(routes.members.get('middle')).toEqual([{ route: 'self', name: 'key', path: [] }]);
-	});
 
 	it('builds a nested member back from the owner outward, though the facts name its route nearest first', async () => {
 		const routes = resolveRoutes(await grammar('(outer (middle (binary left: (_) @lhs))) @expression.outer'));
@@ -266,15 +257,6 @@ describe('derive', () => {
 		const flag = d.members.get('declaration.function')?.get('private');
 		expect([...(flag?.kinds ?? [])]).toEqual(['boolean']);
 		expect(flag?.optional).toBe(true);
-	});
-
-	it('types a self route by the node\'s own text, required wherever the node is claimed', async () => {
-		const model = new Map(MODEL.map((n) => [n.kind, n]));
-		model.set('shorthand', node('shorthand', [], { modelType: 'pattern', pattern: '[a-z]+' }));
-		const input = { ...(await grammar('(shorthand) @element.pair @key')), model, textTokens: new Set(['shorthand']) };
-		const key = derive([input]).members.get('element.pair')?.get('key');
-		expect([...(key?.kinds ?? [])]).toEqual(['text:[a-z]+']);
-		expect(key?.optional).toBe(false);
 	});
 });
 

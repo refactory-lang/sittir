@@ -44,7 +44,6 @@ export type MemberRoute =
 			readonly path: readonly SlotStep[];
 	  }
 	| { readonly route: 'kind'; readonly name: string; readonly kind: string; readonly path: readonly SlotStep[] | undefined }
-	| { readonly route: 'self'; readonly name: string; readonly path: readonly SlotStep[] }
 	| {
 			readonly route: 'presence';
 			readonly name: string;
@@ -173,8 +172,7 @@ function membersOf(input: GrammarInput, kind: string, renames: ReadonlyMap<strin
 	const deep = input.bindings.members.filter((m) => m.owner === kind && m.route !== 'rename');
 	const via = new Set(deep.flatMap((m) => (m.route === 'presence' || m.route === 'nested' ? m.via : [])));
 	const routes: MemberRoute[] = [];
-	const ownSlots = deep.some((m) => m.route === 'self') ? [] : node.slots;
-	for (const slot of ownSlots) {
+	for (const slot of node.slots) {
 		if (isLayout(input, kind, slot)) continue;
 		const except = slot.kinds.filter((k) => via.has(k));
 		if (except.length > 0 && except.length === slot.kinds.length) continue;
@@ -194,9 +192,6 @@ function membersOf(input: GrammarInput, kind: string, renames: ReadonlyMap<strin
 				routes.push({ route: 'kind', name: camel(member.name), kind: member.kind, path: named?.route === 'slot' ? named.path : undefined });
 				break;
 			}
-			case 'self':
-				routes.push({ route: 'self', name: camel(member.name), path: [] });
-				break;
 			case 'presence': {
 				const leaf = chain?.at.slots.find((s) => s.terminals.includes(member.token));
 				routes.push({

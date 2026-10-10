@@ -9,10 +9,21 @@ describe('readBindings', () => {
 			{ route: 'kind', owner: 'public_field_definition', name: 'private', member: 'name', kind: 'private_property_identifier' }
 		]);
 	});
-	it('reads a single-segment capture beside the top node\'s claim as a member the node supplies by being the node', async () => {
+	it('reads a single-segment capture beside the top node\'s claim as a further claim: no member sits on the claimed node itself', async () => {
 		const facts = await readBindings('(shorthand_property_identifier) @element.pair @key');
-		expect(facts.claims.map((c) => [c.vocab, c.kind])).toEqual([['element.pair', 'shorthand_property_identifier']]);
-		expect(facts.members).toEqual([{ route: 'self', owner: 'shorthand_property_identifier', name: 'key' }]);
+		expect(facts.claims.map((c) => [c.vocab, c.kind])).toEqual([
+			['element.pair', 'shorthand_property_identifier'],
+			['key', 'shorthand_property_identifier']
+		]);
+		expect(facts.members).toEqual([]);
+	});
+	it('reads a single-segment capture beside a claim on a nested node as a member of the top claim', async () => {
+		const facts = await readBindings('(function_definition body: (block (expression_statement (string) @doc @literal.string.docstring))) @declaration.function');
+		expect(facts.claims.map((c) => [c.vocab, c.kind])).toEqual([
+			['declaration.function', 'function_definition'],
+			['literal.string.docstring', 'string']
+		]);
+		expect(facts.members.map((m) => [m.route, m.owner, m.name])).toEqual([['nested', 'function_definition', 'doc']]);
 	});
 	it('still reads a lone single-segment capture on the top node as a claim', async () => {
 		const facts = await readBindings('(source_file) @module');

@@ -30,7 +30,7 @@ const FACTS: BindingFacts = {
 	templates: [],
 	unclaimed: []
 };
-const named = (...names: string[]): MemberRoute[] => names.map((name) => ({ route: 'self', name, path: [] }));
+const named = (...names: string[]): MemberRoute[] => names.map((name) => ({ route: 'kind', name, kind: name, path: undefined }));
 const NO_MEMBERS: ReadonlyMap<string, readonly MemberRoute[]> = new Map();
 const VOCABULARY = new Map([
 	['declaration.variable', new Set(['name'])],
@@ -130,20 +130,11 @@ describe('deriveOverlay', () => {
 			expect(report.residue).toContainEqual({ cause: 'kind kept apart by its shape', row: 'let_item → expression.call' });
 		});
 
-		it('keeps the further kind apart when it is a self route', () => {
-			const { overlay, report } = derive(sharing([{ route: 'self', owner: 'let_item', name: 'key' }]), routed([], []));
-			expect(report.aliases).toEqual({});
-			expect(overlay.renames).toEqual({ call: 'call_expression' });
-		});
-
-		it('realizes a flag and a self route without a field edit', () => {
-			const facts = sharing([
-				{ route: 'kind', owner: 'call', name: 'private', member: 'callee', kind: 'let_item' },
-				{ route: 'self', owner: 'let_item', name: 'key' }
-			]);
+		it('realizes a flag without a field edit', () => {
+			const facts = sharing([{ route: 'kind', owner: 'call', name: 'private', member: 'callee', kind: 'let_item' }]);
 			const { overlay, report } = derive(facts, routed([], []));
 			expect(overlay.patches.size).toBe(0);
-			expect(report.residue.filter((r) => r.row === 'call.private' || r.row === 'let_item.key')).toEqual([]);
+			expect(report.residue.filter((r) => r.row === 'call.private')).toEqual([]);
 		});
 	});
 

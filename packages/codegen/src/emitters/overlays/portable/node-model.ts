@@ -19,8 +19,6 @@ function memberRecord(route: MemberRoute) {
 			return { name: route.name, route: route.route, slot: route.slot.name, ...(route.except === undefined ? {} : { except: route.except }), path: route.path };
 		case 'kind':
 			return { name: route.name, route: route.route, kind: route.kind, path: route.path ?? null };
-		case 'self':
-			return { name: route.name, route: route.route, path: route.path };
 		case 'presence':
 			return { name: route.name, route: route.route, via: route.via, token: route.token, path: route.path ?? null };
 		case 'nested':
