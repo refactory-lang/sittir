@@ -186,6 +186,17 @@ describe('resolveRoutes', () => {
 	});
 
 
+	it('gives an alias envelope of a leaf no members: its text is its own value', async () => {
+		const model = new Map(MODEL.map((n) => [n.kind, n]));
+		model.set('word', node('word', [], { modelType: 'pattern', pattern: '[a-z]+' }));
+		model.set('field_name', node('field_name', [slot('content', ['word'])], { modelType: 'alias' }));
+		model.set('wrapped', node('wrapped', [slot('content', ['binary'])], { modelType: 'alias' }));
+		const input = { ...(await grammar('(field_name) @identifier.field\n(wrapped) @expression.wrapped')), model };
+		const routes = resolveRoutes(input);
+		expect(routes.members.get('field_name')).toEqual([]);
+		expect(routes.members.get('wrapped')?.map((m) => m.name)).toEqual(['content']);
+	});
+
 	it('builds a nested member back from the owner outward, though the facts name its route nearest first', async () => {
 		const routes = resolveRoutes(await grammar('(outer (middle (binary left: (_) @lhs))) @expression.outer'));
 		const member = routes.members.get('outer')?.find((m) => m.name === 'lhs');

@@ -3098,14 +3098,12 @@
       }
     },
     "enum_body_element_name": {
+      "vocab": "declaration.enum_member",
       "read": [
         {
           "vocab": "declaration.enum_member",
-          "toplevel": false,
-          "within": [
-            "enum_body_elements",
-            "enum_body"
-          ],
+          "toplevel": true,
+          "within": [],
           "pins": [],
           "test": []
         }
@@ -6797,19 +6795,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "property_identifier",
-              "slot": "content"
-            }
-          ]
-        }
-      ],
+      "members": [],
       "container": {
         "kinds": [
           "identifier"
@@ -7558,6 +7544,17 @@
       }
     },
     "shorthand_property_identifier": {
+      "vocab": "identifier.property.shorthand",
+      "read": [
+        {
+          "vocab": "identifier.property.shorthand",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [],
       "container": {
         "kinds": [
           "identifier"
@@ -7590,6 +7587,17 @@
       }
     },
     "shorthand_property_identifier_pattern": {
+      "vocab": "identifier.property.shorthand",
+      "read": [
+        {
+          "vocab": "identifier.property.shorthand",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [],
       "container": {
         "kinds": [
           "identifier"
@@ -7689,19 +7697,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "statement_identifier",
-              "slot": "content"
-            }
-          ]
-        }
-      ],
+      "members": [],
       "container": {
         "kinds": [
           "identifier"
@@ -8421,19 +8417,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "type_identifier",
-              "slot": "content"
-            }
-          ]
-        }
-      ],
+      "members": [],
       "container": {
         "kinds": [
           "identifier"
@@ -9346,20 +9330,20 @@
         "paths": 13,
         "kinds": 5,
         "refinements": 0,
-        "aliases": 147
+        "aliases": 148
       },
       {
         "depth": 2,
         "paths": 111,
         "kinds": 116,
         "refinements": 8,
-        "aliases": 94
+        "aliases": 95
       },
       {
         "depth": 3,
-        "paths": 81,
-        "kinds": 67,
-        "refinements": 55,
+        "paths": 82,
+        "kinds": 69,
+        "refinements": 56,
         "aliases": 41
       },
       {

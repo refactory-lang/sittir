@@ -166,13 +166,17 @@ function viaPath(model: SlotModel, owner: string, via: readonly string[]): { rea
 	return at === undefined ? undefined : { steps, at };
 }
 
+function isLeafAlias(input: GrammarInput, node: ModelNode): boolean {
+	return node.modelType === 'alias' && node.slots.every((slot) => slot.kinds.length > 0 && slot.kinds.every((k) => modelNode(input.model, k)?.modelType === 'pattern'));
+}
+
 function membersOf(input: GrammarInput, kind: string, renames: ReadonlyMap<string, string>): MemberRoute[] {
 	const node = modelNode(input.model, kind);
 	if (node === undefined) return [];
 	const deep = input.bindings.members.filter((m) => m.owner === kind && m.route !== 'rename');
 	const via = new Set(deep.flatMap((m) => (m.route === 'presence' || m.route === 'nested' ? m.via : [])));
 	const routes: MemberRoute[] = [];
-	for (const slot of node.slots) {
+	for (const slot of isLeafAlias(input, node) ? [] : node.slots) {
 		if (isLayout(input, kind, slot)) continue;
 		const except = slot.kinds.filter((k) => via.has(k));
 		if (except.length > 0 && except.length === slot.kinds.length) continue;
