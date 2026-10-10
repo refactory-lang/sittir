@@ -370,7 +370,8 @@ for extras, derived and never stored; an entry is a value; and `$trivia` is a vi
 
 - **A parsed tree's table** is on the native `ParsedTree`. One token walk builds it from the
   source and the tree, and it holds every write to the tree's trivia, each marking its gap edited.
-  It lands after the typed reader's identity step; the typed-reader plan holds the order.
+  It lands in step 3, ahead of the record wire, which it does not need; the arena-tables plan
+  (`docs/superpowers/plans/2026-10-10-arena-tables.md`) holds the order.
 - **A built node's table** sits beside its record in arena storage and holds the gaps between its
   children; its edges belong to its holder. It lands with the record step (ruling 6.3), when
   built nodes get arena storage. Until then a built node keeps its trivia on the node, and
@@ -602,6 +603,9 @@ raised (11).
       gate on the record step (§ The wire).
       Extended on 2026-10-09 (the maintainer): built nodes' trivia tables land in this step,
       beside their records (§ Trivia).
+      Extended on 2026-10-10 (the maintainer): the parsed tree's table lands in this step too, ahead
+      of the record wire. The typed reader's feature carries steps 1 and 2, and step 3 with both
+      tables is a feature of its own.
 
    Relative coordinates come after the typed reader so that they are designed against rows, not
    the handles the reader removes, and before the record wire so that the record layout, which

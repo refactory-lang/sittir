@@ -247,15 +247,17 @@ appends (one child record may sit under two parents), and how records nothing na
 | step | lands |
 | --- | --- |
 | **one reader** (the typed reader's last step) | the index replaces handles (`row` becomes `index`); the registry and the edited set replace the query path walk, `adoptChild` and `detachAncestors`; the fold check by range replaces `canFold`; the native query returns indexes from the root |
-| **trivia** | superseded on 2026-10-09 by the trivia table (`2026-10-09-trivia-table-design.md`), which the typed-reader plan lands as 1d. Planned here: the ownership rule by token side; the closing gap; the line table; joins resolved at prepare; the `$sameLine` and `$tokensBetween` stamps go |
+| **trivia** | superseded on 2026-10-09 by the trivia table (`2026-10-09-trivia-table-design.md`), which lands in the shared arena's step 3, after the snapshots. Planned here: the ownership rule by token side; the closing gap; the line table; joins resolved at prepare; the `$sameLine` and `$tokensBetween` stamps go |
 | **snapshots** | `$snapshot()` with relative points; snapshot seams from geometry; fixtures as snapshots; `$cst()` by index |
 | **record wire** | arena storage for both kinds of node, as § The record wire states |
 
 The trivia step comes apart from the snapshot step because it can move validation rows: a moved row
 then has one cause. Snapshots need the trivia step's joins.
 
-Superseded on 2026-10-09 with the trivia row: the line table lands with the snapshot step, and that
-step is re-planned against the trivia table, which holds each gap's line breaks.
+Superseded on 2026-10-09 with the trivia row: the line table lands with the snapshot step. The trivia
+table lands after the snapshots, in the shared arena's step 3, so a snapshot carries the reader's
+placed trivia with its `$sameLine` and `$tokensBetween` stamps, as a parity fixture does today, until
+the table gives it its range's gaps.
 
 ## What is removed
 
@@ -299,7 +301,7 @@ step is re-planned against the trivia table, which holds each gap's line breaks.
 
 **Trivia:**
 
-Superseded on 2026-10-09 with the trivia step: the typed-reader plan's 1d verifies the trivia table.
+Superseded on 2026-10-09 with the trivia step: the arena-tables plan's 3a verifies the trivia table.
 
 7. `f(a /* x */, b)`, `f(a, /* x */ b)`, `f(a, // x⏎ b)`, `a + /* x */ b` and `[a, b, // c⏎]` keep each
    comment on its side of the token, built with the matching sides and, after the snapshot step, as

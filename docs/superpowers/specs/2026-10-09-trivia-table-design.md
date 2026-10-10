@@ -43,7 +43,7 @@ When a parsed node is placed in a new parent, a `$with`, or a built holder, it c
 
 ## 6. Order
 
-The typed reader's identity stage lands first, with the refusal of writes through a query back in place. The table follows as its own plan.
+The table lands in the shared arena's step 3, ahead of the record wire, in its own plan (`docs/superpowers/plans/2026-10-10-arena-tables.md`). The typed reader's steps 1 and 2 land first, with the refusal of writes through a query in place until the table.
 
 ## 7. Rulings on the open questions
 
