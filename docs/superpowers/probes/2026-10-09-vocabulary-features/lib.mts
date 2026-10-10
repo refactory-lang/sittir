@@ -670,8 +670,15 @@ export type Levels = 'unions' | 'registry';
  * features/: the base less what features own and less its `Any` unions, the gate, the features registry, and the
  * generated augmentation, which adds back the members and kinds features own and declares the levels.
  */
-export function writeGatedVocabulary(vdir: string, vocab: Vocab, features: ReadonlyMap<string, Feature>, p: Plan, levels: Levels): void {
-	// The base: owned members, added kinds and the level unions out.
+export function writeGatedVocabulary(
+	vdir: string,
+	vocab: Vocab,
+	features: ReadonlyMap<string, Feature>,
+	p: Plan,
+	levels: Levels,
+	flags: FlagEncoding | null = null
+): void {
+	// The base: owned members, added kinds and the level unions out, and with a flag encoding the flag members.
 	for (const [file, nf] of vocab.files) {
 		const edits: Edit[] = [];
 		for (const it of nf.ifaces) {
@@ -679,7 +686,9 @@ export function writeGatedVocabulary(vdir: string, vocab: Vocab, features: Reado
 				edits.push({ start: it.start, end: it.end, lines: [] });
 				continue;
 			}
-			for (const m of it.members) if (p.owned.has(key(it.path!, m.name))) edits.push({ start: m.start, end: m.end, lines: [] });
+			for (const m of it.members) {
+				if (p.owned.has(key(it.path!, m.name)) || (flags !== null && isFlagMember(m))) edits.push({ start: m.start, end: m.end, lines: [] });
+			}
 		}
 		for (const a of nf.aliases) {
 			const indent = /^\s*/.exec(nf.lines[a.start]!)![0];
@@ -743,7 +752,8 @@ export function writeGatedVocabulary(vdir: string, vocab: Vocab, features: Reado
 			.map((f) => `export type { ${f.name} } from './${f.dir}/index.ts';`)
 			.join('\n')}\n`
 	);
-	writeFileSync(join(vdir, 'augment.ts'), augmentation(vocab, features, p, levels).join('\n'));
+	if (flags !== null) dropFlagMembers(join(vdir, 'features'));
+	writeFileSync(join(vdir, 'augment.ts'), augmentation(vocab, features, p, levels, flags !== null).join('\n'));
 	writeFileSync(join(vdir, 'index.ts'), `${readFileSync(join(vdir, 'index.ts'), 'utf8').trimEnd()}\nexport type * from './augment.ts';\n`);
 }
 
@@ -752,7 +762,7 @@ export function writeGatedVocabulary(vdir: string, vocab: Vocab, features: Reado
  * every level's `Any`, the vocabulary's whole level, kinds features add included; for `registry`, the registry entries
  * of the kinds features add.
  */
-function augmentation(vocab: Vocab, features: ReadonlyMap<string, Feature>, p: Plan, levels: Levels): string[] {
+function augmentation(vocab: Vocab, features: ReadonlyMap<string, Feature>, p: Plan, levels: Levels, flagless: boolean): string[] {
 	const alias = (name: string): string => stubAlias(features.get(name)!);
 	const used = new Set<string>();
 	const byFile = new Map<string, Entry[]>();
@@ -769,7 +779,7 @@ function augmentation(vocab: Vocab, features: ReadonlyMap<string, Feature>, p: P
 		const added = p.kinds.get(path);
 		const gated = it.members
 			.map((m) => p.owned.get(key(path, m.name)))
-			.filter((o): o is Owned => o !== undefined)
+			.filter((o): o is Owned => o !== undefined && !(flagless && isFlagMember(o.member)))
 			.map((o) => {
 				used.add(o.feature);
 				return `readonly ${o.member.name}${o.member.optional ? '?' : ''}: gate.In<G, features.${o.feature}, ${alias(o.feature)}.${o.stub.qname}<G>['${o.member.name}']>;`;
@@ -800,6 +810,125 @@ function augmentation(vocab: Vocab, features: ReadonlyMap<string, Feature>, p: P
 		...(levels === 'registry'
 			? ["declare module './kinds.ts' {", '\tinterface Kinds<G extends GrammarContext> {', ...registry, '\t}', '}', '']
 			: []),
+	];
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Flag encodings
+
+/**
+ * How a variant writes flags, which are no members: `enum`, a numeric enum of bits; `const`, an erasable object of
+ * bits; `names`, the flags' names, with the bits beside them; `enum-registry`, the enum, with each kind's flags read
+ * off a registry that a feature augments with the flags it adds.
+ */
+export type FlagEncoding = 'enum' | 'const' | 'names' | 'enum-registry';
+
+/** A flag the vocabulary declares at a kind, with the feature that owns it there, or null for the base. */
+export interface FlagDecl {
+	readonly path: string;
+	readonly name: string;
+	readonly feature: string | null;
+}
+
+/** The snapshot writes a flag as an optional boolean member. */
+export const isFlagMember = (m: Member): boolean => m.type.trim() === 'boolean';
+
+const pascal = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1);
+
+/** Every flag at the kind that declares it: the base's, those features own, and those of the kinds features add. */
+export function flagDecls(vocab: Vocab, p: Plan): FlagDecl[] {
+	return vocab.ifaces.flatMap((it) =>
+		it.members.filter(isFlagMember).map((m) => ({
+			path: it.path!,
+			name: m.name,
+			feature: p.owned.get(key(it.path!, m.name))?.feature ?? p.kinds.get(it.path!)?.feature ?? null,
+		}))
+	);
+}
+
+/** Removes the flag members from the feature stubs under `dir`. */
+function dropFlagMembers(dir: string): void {
+	for (const rel of readdirSync(dir, { recursive: true, encoding: 'utf8' }).filter((f) => f.endsWith('.ts'))) {
+		const path = join(dir, rel);
+		const text = readFileSync(path, 'utf8');
+		const out = text.replace(/^\s*readonly '?\w+'?\??: boolean;\n/gm, '');
+		if (out !== text) writeFileSync(path, out);
+	}
+}
+
+/**
+ * Writes a variant's `vocabulary/flags.ts`: the bits, one per flag name in name order, so a flag has one bit in every
+ * context; each bit's name; each kind's flags, its own and those of the kinds above it, each gated on the feature that
+ * owns it; and `Steps`, a kind's builder steps in a context, one per flag it admits there. For `enum-registry`, the
+ * base's flags are the registry's entries and augment.ts adds those features own. Returns the number of flags.
+ */
+export function writeFlags(vdir: string, vocab: Vocab, decls: readonly FlagDecl[], encoding: FlagEncoding): number {
+	const names = [...new Set(decls.map((d) => d.name))].sort();
+	if (names.length > 31) throw new Error(`${names.length} flags: a number's bitwise operations hold 31`);
+	const enumLike = encoding === 'enum' || encoding === 'enum-registry';
+	const value = (n: string): string => (encoding === 'names' ? `'${n}'` : enumLike ? `Flag.${pascal(n)}` : `(typeof Flag)['${pascal(n)}']`);
+	const gated = (d: FlagDecl): string => (d.feature === null ? value(d.name) : `gate.In<G, features.${d.feature}, ${value(d.name)}, never>`);
+	const lines = [
+		"import type { GrammarContext } from './context.ts';",
+		"import type * as gate from './utils.ts';",
+		"import type * as features from './features/index.ts';",
+		'',
+		'/** The bits: one per flag the vocabulary declares, in name order. */',
+		...(enumLike
+			? ['export enum Flag {', ...names.map((n, i) => `\t${pascal(n)} = 1 << ${i},`), '}']
+			: [`export const ${encoding === 'names' ? 'FlagBit' : 'Flag'} = {`, ...names.map((n, i) => `\t${encoding === 'names' ? n : pascal(n)}: ${1 << i},`), '} as const;']),
+		'',
+	];
+	if (encoding !== 'names') lines.push("/** Each bit's name. */", 'export type FlagName = {', ...names.map((n) => `\treadonly [Flag.${pascal(n)}]: '${n}';`), '};', '');
+	if (encoding === 'enum-registry') {
+		lines.push(
+			'/** Each flag a kind declares, keyed by the kind and the flag. A feature adds the flags it owns by augmentation. */',
+			'export interface FlagRegistry<G extends GrammarContext> {',
+			...decls.filter((d) => d.feature === null).map((d) => `\treadonly '${d.path}#${d.name}': ${value(d.name)};`),
+			'}',
+			'',
+			'/** The flags of the kind at `P`: those it declares and those the kinds above it declare. */',
+			'type Admitted<G extends GrammarContext, P extends string> = {',
+			'\t[K in keyof FlagRegistry<G>]: K extends `${infer D}#${string}` ? (P extends D | `${D}.${string}` ? FlagRegistry<G>[K] : never) : never;',
+			'}[keyof FlagRegistry<G>];',
+			'',
+			"/** A kind's builder steps in the context `G`: one per flag it admits there. */",
+			'export type Steps<G extends GrammarContext, P extends string> = { readonly [N in FlagName[Admitted<G, P> & keyof FlagName]]: () => void };',
+			''
+		);
+		writeFileSync(join(vdir, 'flags.ts'), lines.join('\n'));
+		return names.length;
+	}
+	const admitted = [...vocab.byPath.keys()]
+		.sort()
+		.map((path) => [path, [...new Set(decls.filter((d) => under(path, d.path)).map(gated))]] as const)
+		.filter(([, arms]) => arms.length > 0);
+	lines.push(
+		'/** Each kind\'s flags: those it declares and those the kinds above it declare, each gated on its owner. */',
+		'export interface KindFlags<G extends GrammarContext> {',
+		...admitted.map(([path, arms]) => `\treadonly '${path}': ${arms.join(' | ')};`),
+		'}',
+		'',
+		"/** A kind's builder steps in the context `G`: one per flag it admits there. */",
+		encoding === 'names'
+			? 'export type Steps<G extends GrammarContext, P extends string> = P extends keyof KindFlags<G> ? { readonly [N in KindFlags<G>[P] & string]: () => void } : {};'
+			: 'export type Steps<G extends GrammarContext, P extends string> = P extends keyof KindFlags<G> ? { readonly [N in FlagName[KindFlags<G>[P] & keyof FlagName]]: () => void } : {};',
+		''
+	);
+	writeFileSync(join(vdir, 'flags.ts'), lines.join('\n'));
+	return names.length;
+}
+
+/** The registry entries of the flags features own, as augment.ts declares them for `enum-registry`. */
+export function flagRegistryAugmentation(decls: readonly FlagDecl[]): string[] {
+	const owned = decls.filter((d) => d.feature !== null);
+	return [
+		"declare module './flags.ts' {",
+		'\tinterface FlagRegistry<G extends GrammarContext> {',
+		...owned.map((d) => `\t\treadonly '${d.path}#${d.name}': gate.In<G, features.${d.feature}, Flag.${pascal(d.name)}, never>;`),
+		'\t}',
+		'}',
+		'',
 	];
 }
 
@@ -899,7 +1028,8 @@ export function writeConsumers(
 	p: Plan | null,
 	features: ReadonlyMap<string, Feature>,
 	langs: readonly Language[],
-	members: (lang: Language, path: string) => readonly string[]
+	members: (lang: Language, path: string) => readonly string[],
+	steps = false
 ): string[] {
 	writeFileSync(join(dir, 'view-form.ts'), viewForm.join('\n'));
 	const files: string[] = [];
@@ -909,6 +1039,7 @@ export function writeConsumers(
 			"import type * as V from './vocabulary/index.ts';",
 			...restatingImports(p, features, [lang], './vocabulary/features/'),
 			"import type { ViewForm } from './view-form.ts';",
+			...(steps ? ["import type { Steps } from './vocabulary/flags.ts';"] : []),
 			'',
 		];
 		let n = 0;
@@ -917,6 +1048,7 @@ export function writeConsumers(
 			const closures = members(lang, path).map((m) => `${/^[\w$]+$/.test(m) ? m : `'${m}'`}: () => null!`);
 			lines.push(`export const v${n}: ViewForm<${ref}> = { ${closures.join(', ')} };`);
 			lines.push(`export const b${n}: ${lang.ctx}['${path.split('.')[0]}'] = null! as ${ref};`);
+			if (steps) lines.push(`export const s${n}: Steps<${lang.ctx}, '${path}'> = null!;`);
 			n++;
 		}
 		const file = `consumer-${lang.key}.ts`;
