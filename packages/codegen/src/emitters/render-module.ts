@@ -921,7 +921,7 @@ function buildTypedTemplateBody(
 						? 'true'
 						: 'false';
 			const trailingExpr = separatedList?.singleElementNeedsTrailing
-				? `(${items}).len() == 1 || ${trailingOption}`
+				? `${f.hasTransportField ? `node.${rIdent}` : 'NO_ITEMS'}.len() == 1 || ${trailingOption}`
 				: trailingOption;
 			const separatorSite = separatedList === undefined ? undefined : separatorSiteOf(plan, separatedList);
 			const fallback =

@@ -443,6 +443,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		);
 		return pruneUnusedImports(lines, [
 			'Delimiter',
+			'contentRole',
 			'restItems',
 			'listSlotWith',
 			'elementsWith',

@@ -35780,7 +35780,7 @@ fn render_expressions(node: &ExpressionsTransport, w: &mut dyn ::sittir_core::re
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
-        trailing: (&node.item).len() == 1 || node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        trailing: node.item.len() == 1 || node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         head: Some(options::SITE_EXPRESSIONS_ITEM_START),
         tail: Some(options::SITE_EXPRESSIONS_ITEM_END),
     };

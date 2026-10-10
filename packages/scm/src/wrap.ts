@@ -8,7 +8,6 @@ import {
 	hydrateWith,
 	hydrateSlotWith,
 	hydrateSlotsWith,
-	contentRole,
 	inTreeEngine,
 	currentHandle,
 	elementsWith,
