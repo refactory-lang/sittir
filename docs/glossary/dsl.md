@@ -7292,9 +7292,17 @@ The grammar's top-level fields whose entries are rules or lists of rules and nam
 
 The grammar's top-level records keyed by kind name (`rules`, `renderAs`, `visibleExternals`, `groups`); a rename maps each key and walks each value.
 
+### `packages/codegen/src/dsl/bind.ts::KIND_KEYS`
+
+The record keys outside a rule's own reference that name a kind: an arm's `variantOf`. An arm's `variant` is a label, not a kind, even when it spells one.
+
+### `packages/codegen/src/dsl/bind.ts::namesKind`
+
+Whether a record's string at a key names a kind: a `SYMBOL` or `FIELD_ALIAS` name, a named `ALIAS`'s value, or a `KIND_KEYS` key.
+
 ### `packages/codegen/src/dsl/bind.ts::renameValue`
 
-A grammar value with every kind name in it renamed: strings, a `SYMBOL` or `FIELD_ALIAS` name, and a named `ALIAS`'s value. It leaves a rule's `type`, `value` and `id`, and any other record's `name`, as written. It renames every other string it meets, which is why it is applied only to fields that hold kind names.
+A grammar value with every kind name in it renamed: a bare string or a list of them (the list fields name kinds), and, inside a record, only the strings `namesKind` picks out. A label, a metadata source or any other string that happens to spell a renamed kind is left as written.
 
 ### `packages/codegen/src/dsl/bind.ts::mappedName`
 

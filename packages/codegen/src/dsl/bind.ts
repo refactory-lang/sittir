@@ -70,17 +70,23 @@ const KEYED_FIELDS = ['rules', 'renderAs', 'visibleExternals', 'groups'];
 
 export const isRecord = (value: unknown): value is GrammarRecord => typeof value === 'object' && value !== null && !Array.isArray(value);
 
+const KIND_KEYS: ReadonlySet<string> = new Set(['variantOf']);
+
+function namesKind(record: GrammarRecord, key: string): boolean {
+	if (key === 'name') return record.type === 'SYMBOL' || record.type === 'FIELD_ALIAS';
+	if (key === 'value') return record.type === 'ALIAS' && record.named === true;
+	return KIND_KEYS.has(key);
+}
+
 function renameValue(value: unknown, rename: (name: string) => string): unknown {
 	if (typeof value === 'string') return rename(value);
 	if (Array.isArray(value)) return value.map((v) => renameValue(v, rename));
 	if (!isRecord(value)) return value;
 	const out: GrammarRecord = {};
 	for (const [key, v] of Object.entries(value)) {
-		if (key === 'type' || key === 'value' || key === 'id') out[key] = v;
-		else if (key === 'name' && value.type !== 'SYMBOL' && value.type !== 'FIELD_ALIAS') out[key] = v;
+		if (typeof v === 'string') out[key] = namesKind(value, key) ? rename(v) : v;
 		else out[key] = renameValue(v, rename);
 	}
-	if (value.type === 'ALIAS' && value.named === true && typeof value.value === 'string') out.value = rename(value.value);
 	return out;
 }
 
