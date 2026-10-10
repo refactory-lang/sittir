@@ -152,7 +152,7 @@ export default sittirGrammar(base, {
 		interpolation: { before: preference('tight'), after: preference('tight') },
 		comprehension_clauses: { 'content:/separator': preference('space') },
 
-		_bindings: {
+		_labels: {
 			'block/statements:/separator': 'gap/separator',
 			'comparison_operator/comparators:/separator': 'gap/separator',
 			'concatenated_string/string:/separator': 'gap/separator',

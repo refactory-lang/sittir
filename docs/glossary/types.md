@@ -447,7 +447,7 @@ meant to influence rendering. Its type, `SeamOrigin` (`'preference'` |
 this file — the lower layer, so `compiler/model/site-addresses.ts` and
 `compiler/model/render-rules.ts` both import it rather than each declaring
 their own copy (`site-addresses.ts`'s `PreferenceOrigin` is
-`Exclude<SeamOrigin, 'fallback' | 'word-default'>`, the subset `resolveBindings`
+`Exclude<SeamOrigin, 'fallback' | 'word-default'>`, the subset `resolveLabels`
 itself ever produces).
 
 ```text

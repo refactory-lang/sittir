@@ -17,7 +17,7 @@ import {
 } from './node-map.ts';
 import { spacingSitesOf, type RenderRules, type SeatedChild, type SpacingSide } from './render-rules.ts';
 import { readOptionsBlock, type OptionsConfig } from '../../dsl/wire/options-block.ts';
-import { addressSegments, addressSites, matchAddress, resolveBindings } from './site-addresses.ts';
+import { addressSegments, addressSites, matchAddress, resolveLabels } from './site-addresses.ts';
 import { supertypeMembersByDisplayName } from './supertype-members.ts';
 import type { PreferenceSegment } from '../../dsl/primitives/preference-path.ts';
 
@@ -174,7 +174,7 @@ function withDeclaredArms(
 ): SitePreference[] {
 	if (config.options === undefined) return [...sites];
 	const kinds = displayedKinds(config.nodeMap);
-	const { declarations, bindings } = readOptionsBlock(config.options, kinds);
+	const { declarations, labels } = readOptionsBlock(config.options, kinds);
 	if (declarations.length === 0) return [...sites];
 
 	const addressed = addressSites(
@@ -187,7 +187,7 @@ function withDeclaredArms(
 	const armOfLabel = new Map(declarations.map((declaration) => [declaration.path, declaration.arm]));
 	for (const { address, arm } of [
 		...declarations.map((declaration) => ({ address: declaration.path, arm: declaration.arm })),
-		...bindings.map((binding) => ({ address: binding.address, arm: armOfLabel.get(binding.label)! }))
+		...labels.map((label) => ({ address: label.address, arm: armOfLabel.get(label.label)! }))
 	]) {
 		const hits = matchAddress(addressSegments(address), addressed, membersOf);
 		if (hits.length > 0 && !hits.some((site) => admitsArm(site, arm))) {
@@ -198,7 +198,7 @@ function withDeclaredArms(
 	}
 
 	const out = [...sites];
-	for (const [index, { arm, origin }] of resolveBindings(declarations, bindings, addressed, membersOf, requireHit)) {
+	for (const [index, { arm, origin }] of resolveLabels(declarations, labels, addressed, membersOf, requireHit)) {
 		const site = addressed[index]!;
 		if (!admitsArm(site, arm)) continue;
 		if (site.siteIndex === undefined) {

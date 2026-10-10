@@ -170,7 +170,7 @@ export default sittirGrammar(base, {
 			'"..."/after': preference('space')
 		},
 
-		_bindings: {
+		_labels: {
 			'block/"{"/after': 'body/before',
 			'block/"}"/before': 'body/after',
 			'match_block/"{"/after': 'body/before',

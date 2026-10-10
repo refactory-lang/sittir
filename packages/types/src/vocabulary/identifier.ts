@@ -51,29 +51,6 @@ export namespace Identifier {
 		readonly $kind: 'identifier.property';
 		readonly content?: G['identifier'];
 	}
-	export namespace Property {
-		export interface Computed<G extends GrammarContext<G>> extends SubKindOf<V.Identifier.Property<G>> {
-			// claimed by t
-			readonly $kind: 'identifier.property.computed';
-			readonly expression: G['slots']['identifier.property.computed']['expression'];
-		}
-		// @ts-expect-error identifier.property.private: its content fill is unknown, outside identifier.property's identifier role.
-		export interface Private<G extends GrammarContext<G>> extends SubKindOf<V.Identifier.Property<G>> {
-			// claimed by t
-			readonly $kind: 'identifier.property.private';
-			readonly content: G['slots']['identifier.property.private']['content'];
-		}
-		export interface Shorthand<G extends GrammarContext<G>> extends SubKindOf<V.Identifier.Property<G>> {
-			// claimed by t
-			readonly $kind: 'identifier.property.shorthand';
-			readonly content: G['identifier'];
-		}
-		export type Any<G extends GrammarContext<G>> =
-			| V.Identifier.Property<G>
-			| V.Identifier.Property.Computed<G>
-			| V.Identifier.Property.Private<G>
-			| V.Identifier.Property.Shorthand<G>;
-	}
 	export interface Scoped<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
 		// claimed by r
 		readonly $kind: 'identifier.scoped';
@@ -104,9 +81,6 @@ export namespace Identifier {
 		| V.Identifier.Metavariable<G>
 		| V.Identifier.Nested<G>
 		| V.Identifier.Property<G>
-		| V.Identifier.Property.Computed<G>
-		| V.Identifier.Property.Private<G>
-		| V.Identifier.Property.Shorthand<G>
 		| V.Identifier.Scoped<G>
 		| V.Identifier.Self<G>
 		| V.Identifier.Super<G>

@@ -1,3 +1,4 @@
+import { join } from 'node:path';
 import { computeTransportSCC } from './scc.ts';
 import { tracePhaseRules, traceAssembleNodes } from './trace.ts';
 import { compileGrammar, assertCompilation, type Compilation } from './compile.ts';
@@ -7,7 +8,9 @@ import { emitFieldIdRust } from '../emitters/field-id-rust.ts';
 import { emitConfig } from '../emitters/config.ts';
 import { grammarPackage, isStableGrammar, type GrammarPackage } from '../grammars.ts';
 import { emitIndex } from '../emitters/index-file.ts';
-import { emitNodeModel } from '../emitters/node-model.ts';
+import { buildNodeModel, printNodeModel } from '../emitters/node-model.ts';
+import { grammarInput } from '../bindings/input.ts';
+import { emitPortable } from '../emitters/overlays/portable/index.ts';
 import { emitApi, emitRenderEngine, spelledTriviaBuilders } from '../emitters/engine.ts';
 import { emitBackend } from '../emitters/grammar-runtime.ts';
 import { emitAll } from '../emitters/emit.ts';
@@ -49,6 +52,8 @@ export interface GeneratedFiles {
 	tests: string;
 	config: string;
 	nodeModel: string;
+	portableNodeModel: string | undefined;
+	portable: string | undefined;
 	is: string;
 	kindIds: string;
 	fieldIds: string;
@@ -133,7 +138,10 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 
 		assertCompilation(compilation);
 
-		const nodeModel = emitNodeModel({ grammar: cfg.grammar, nodeMap, generatedIdTables });
+		const nodeModelData = buildNodeModel(nodeMap, generatedIdTables);
+		const nodeModel = printNodeModel(nodeModelData);
+		const routesInput = await grammarInput(cfg.grammar, raw, nodeModelData, join(pkg.dir, 'bindings.scm'));
+		const portable = routesInput === undefined ? undefined : emitPortable(routesInput, nodeMap, emitted.kindEntries);
 
 		const rootTypeName = nodeMap.nodes.get(grammarRoles.get('root')[0]!)?.typeName;
 		if (rootTypeName === undefined) {
@@ -155,7 +163,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 				rootTypeName,
 				rootTreeTypeName,
 				commentCoercer: defaultTriviaForm(nodeMap)?.coercer,
-				spelledTrivia: spelledTriviaBuilders(nodeMap)
+				spelledTrivia: spelledTriviaBuilders(nodeMap),
+				portable: portable !== undefined
 			}),
 			backend: emitBackend({ grammar: cfg.grammar }),
 			types: emitted.types,
@@ -176,6 +185,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			tests: emitted.tests,
 			config: emitConfig({ grammar: cfg.grammar, stable: isStableGrammar(cfg.grammar) }),
 			nodeModel,
+			portableNodeModel: portable?.nodeModel,
+			portable: portable?.surface,
 			is: emitted.is,
 			kindIds: generatedIdTables ? emitKindIdRust({ grammar: cfg.grammar, nodeMap, generatedIdTables }) : '',
 			fieldIds: generatedIdTables ? emitFieldIdRust(cfg.grammar, generatedIdTables) : '',

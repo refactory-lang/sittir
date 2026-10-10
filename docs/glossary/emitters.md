@@ -139,7 +139,7 @@ The name of a grammar's type map, `<Prefix>TypeMap` (`RustTypeMap`), from the sa
 
 ### `packages/codegen/src/emitters/engine.ts::emitApi`
 
-The grammar's `api.ts`: the implementation a language descriptor loads. It declares the grammar's `LanguageAPI` (the builder table, guards, kind ids, the kind-to-node-type map keyed by each kind's ir key, the parsed root, the node union, the render options, and `indentChar`, which names the grammar's `IndentChar` alias from `options.ts`, and `empty`, the grammar's type-map member naming each kind's empty form) and exports `hooks`, which wire the package's render module hash, the builder table, guards, kind ids and trivia facts (joined by the grammar's comment coercer, `commentCoercer`, when it has a default trivia form, so a loose trivia string builds a comment), a native engine per engine through the shared `nativeLanguageEngine` adapter over `createRenderEngine`, and `wrapNode` for a parsed root and its tree. The `hydrate` hook points to the existing `hydrateChild`, so factories resolve bound list stubs through the grammar's single child-hydration implementation.
+The grammar's `api.ts`: the implementation a language descriptor loads. It declares the grammar's `LanguageAPI` (the builder table, guards, kind ids, the kind-to-node-type map keyed by each kind's ir key, the parsed root, the node union, the render options, and `indentChar`, which names the grammar's `IndentChar` alias from `options.ts`, and `empty`, the grammar's type-map member naming each kind's empty form) and exports `hooks`, which wire the package's render module hash, the builder table, guards, kind ids and trivia facts (joined by the grammar's comment coercer, `commentCoercer`, when it has a default trivia form, so a loose trivia string builds a comment), a native engine per engine through the shared `nativeLanguageEngine` adapter over `createRenderEngine`, and `wrapNode` for a parsed root and its tree. The `hydrate` hook points to the existing `hydrateChild`, so factories resolve bound list stubs through the grammar's single child-hydration implementation. A grammar with bindings (`portable`) also declares its `portable` surface and hands over `portable.ts`'s `portable`; the others carry none.
 
 
 ```text
@@ -2746,6 +2746,10 @@ A row's member is named from its model kind (`modelKindOfEntry`, so a renamed ro
  * @param kind - The nodeMap kind name to check.
  */
 ```
+
+### `packages/codegen/src/emitters/kind-discriminant.ts::fixedTextKinds`
+
+Every kind with a parser id that a kind id alone renders as text (`compiler/model/node-map.ts::kindIdText`), with that text. `FixedTextKindId` is typed from it and the portable table's `fixedText` is written from it, so the two cannot disagree.
 
 ### `packages/codegen/src/emitters/kind-discriminant.ts::kindDiscriminantExpr`
 
@@ -8725,7 +8729,7 @@ The inventory is the set of literals a parser token spells: a literal counts onl
 // constructor-target resolution here adds no cycle.
 ```
 
-### `packages/codegen/src/emitters/types.ts::hasKindId`
+### `packages/codegen/src/emitters/kind-discriminant.ts::hasKindId`
 
 ```text
 /** Whether the parser issues an id for this kind. `NamespaceMap` is keyed by
@@ -9183,7 +9187,7 @@ Prints the type-only `__slotHints__` member of a kind interface: one `SlotHint` 
  * seam faces (a token's `after` face and the next token's `before`
  * face), the record reports the more specific of the two
  * (`preference` > `literal-default` > `fallback`) — the same specificity
- * order `resolveBindings` already uses to pick a winning declaration.
+ * order `resolveLabels` already uses to pick a winning declaration.
  * Never re-derived from address text here or anywhere the record is
  * read; it is read off the `origin` annotation
  * `render-rules.ts::whitespaceChoice` stamps on the seam's resolved
@@ -10243,6 +10247,14 @@ The factory imports the trivia hook needs, one line per module: raw builders for
 /** Companion fact to factoryShape 'forwarded': the kind whose constructor
 	 *  this kind's factory forwards (see buildFactoryMap.forwardsTo). */
 ```
+
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.renamedFrom`
+
+The node's `renamedFrom`, written only when the kind was renamed. Tools read the base-to-bound name mapping from it rather than evaluating the grammar again.
+
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.splitFrom`
+
+The node's `splitFrom`, written only on a split clone. The validators place a split kind's render inside its owner from it.
 
 ### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.oneSurface`
 
@@ -15257,3 +15269,7 @@ Writes the grammar's `reparseHosts` block as the generated `reparse-hosts.ts`: t
 ### `packages/codegen/src/emitters/__tests__/self-containing-list-types.test.ts::selfContainingList`
 
 Builds an isolated assembled list whose repeated element choice includes the list itself. The emitted modules are compiled with TypeScript 6 and 7 to pin own-kind built and parsed inputs, recursive loose configurations, setters, and namespace argument-row resolution without changing a language grammar.
+
+### `packages/codegen/src/emitters/node-model.ts::printNodeModel`
+
+The text of `node-model.json5`. `generate` builds the record once (`buildNodeModel`), prints it, and hands the same record to the bindings' routes input.

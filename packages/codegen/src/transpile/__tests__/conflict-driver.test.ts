@@ -86,4 +86,32 @@ describe('settleConflictResolutions', () => {
 		expect(store.writes).toEqual([]);
 		expect(store.read()).toBe(saved);
 	});
+
+	it('derives against the base grammar, then generates the bound parser once', async () => {
+		const store = memoryStore(EMPTY_CONFLICT_RESOLUTIONS);
+		const grammars: string[] = [];
+		const derive = oneConflictThenClean(store);
+		const runGenerate = async (grammar: 'base' | 'bound'): Promise<GenerateOutcome> => {
+			grammars.push(grammar);
+			return grammar === 'bound' ? { kind: 'clean' } : derive();
+		};
+		expect(await settleConflictResolutions({ store, inputs, runGenerate })).toMatchObject({ kind: 'converged', iterations: 2 });
+		expect(grammars).toEqual(['base', 'base', 'bound']);
+	});
+
+	it('reports a bound parser the base resolutions do not settle as stale, keeping the derived set', async () => {
+		const store = memoryStore(EMPTY_CONFLICT_RESOLUTIONS);
+		const derive = oneConflictThenClean(store);
+		const runGenerate = async (grammar: 'base' | 'bound'): Promise<GenerateOutcome> =>
+			grammar === 'bound' ? { kind: 'conflict', report: reportFor('c', 'd') } : derive();
+		expect(await settleConflictResolutions({ store, inputs, runGenerate })).toMatchObject({ kind: 'stale', outcome: { kind: 'conflict' } });
+		expect(store.read().grammarHash).toBe('h1');
+	});
+
+	it('generates the bound parser when it reuses the saved set', async () => {
+		const store = memoryStore({ grammarHash: 'h1', resolutions: [] });
+		const grammars: string[] = [];
+		await settleConflictResolutions({ store, inputs, runGenerate: async (grammar: 'base' | 'bound') => (grammars.push(grammar), { kind: 'clean' }) });
+		expect(grammars).toEqual(['bound']);
+	});
 });

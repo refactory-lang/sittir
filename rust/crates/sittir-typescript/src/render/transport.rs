@@ -21093,7 +21093,7 @@ impl ::sittir_core::view::KindOf for UnescapedSingleStringFragmentTransport {
 }
 
 impl ::sittir_core::options::Edged for UnescapedSingleStringFragmentTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(109) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(110) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
@@ -29627,7 +29627,7 @@ impl ::sittir_core::view::KindOf for TemplateCharsTransport {
 }
 
 impl ::sittir_core::options::Edged for TemplateCharsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(109) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(174) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
@@ -29954,6 +29954,12 @@ impl ::sittir_core::view::KindOf for ErrorRecoveryTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(179)].iter().any(|k| kinds.contains(k))
     }
+}
+
+impl ::sittir_core::options::Edged for ErrorRecoveryTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(179) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ErrorRecoveryTransport {

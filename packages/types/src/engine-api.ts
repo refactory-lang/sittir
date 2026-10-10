@@ -2,6 +2,7 @@ import type { AnyUntypedNode, ErrorNode, ErrorRegion, FormatRecord, GrammarTrivi
 import type { IndentOption } from './options.ts';
 import type { Admit } from './node-surface.ts';
 import type { QueryFacet, QuerySlots } from './query.ts';
+import type { PortableSurface } from './portable.ts';
 
 /** One line-break run a read node owns as trivia: the whitespace member it reads as and the byte its run starts at. */
 export interface LineGap {
@@ -119,6 +120,7 @@ export interface LanguageAPI {
 	readonly options: object;
 	readonly indentChar: string;
 	readonly empty: GrammarTypeMap['empty'];
+	readonly portable?: PortableSurface;
 }
 
 /** What names a language and what an engine records of it: a `Language` without its engine constructor. Unlike `Language`, it is assignable across `LanguageAPI`s. */
@@ -162,6 +164,7 @@ export interface LanguageHooks<API extends LanguageAPI> {
 	createNative(options?: NativeEngineOptions<API['options']>): NativeLanguageEngine<API>;
 	wrap(root: unknown, tree: unknown): API['root'];
 	hydrate?(node: unknown, tree: unknown): unknown;
+	readonly portable?: API['portable'];
 }
 
 export interface NativeLanguageEngine<API extends LanguageAPI> {
@@ -309,6 +312,29 @@ type LayoutKeysCheck<API extends LanguageAPI, R> = R extends { readonly layout?:
 	: unknown;
 
 type IsExactly<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
+
+/** A language whose grammar has bindings, so it has a portable surface. */
+export type PortableLanguageAPI = LanguageAPI & { readonly portable: PortableSurface };
+
+/** The options of a portable engine. */
+export interface PortableEngineOptions {
+	readonly api: 'portable';
+}
+
+/**
+ * An engine over a language's portable vocabulary: what a node of the language reads as, by vocabulary path.
+ * Parsing, rendering and building are not part of it yet; a node to classify comes from the language's default engine.
+ */
+export interface PortableEngine<API extends PortableLanguageAPI> extends EngineIdentity<API> {
+	/** Per vocabulary path, the grammar kind ids that read as it or a path under it (`$ids`), and the paths under it. */
+	readonly kinds: API['portable']['kinds'];
+	/**
+	 * Per vocabulary path, a guard that holds for a node of this language reading as it or a path under it, and the guards of
+	 * the paths under it. A path segment can shadow a function property (`call`, `name`), so the guards are called directly,
+	 * never through `call`, `apply` or `bind`.
+	 */
+	readonly is: API['portable']['is'];
+}
 
 export interface EngineOptions<API extends LanguageAPI, M extends ApiSurface = 'default'> {
 	readonly api?: M;

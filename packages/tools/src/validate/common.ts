@@ -39,7 +39,7 @@ import type * as TS from 'web-tree-sitter';
 import type { AnyUntypedNode, Engine, LanguageAPI, NodeLayout, NodeTrivia, ParseOptions, TransportCoordinate } from '@sittir/types';
 import type { TriviaSides } from '@sittir/common';
 import type { TreeHandle } from '@sittir/common/utils';
-import { load } from '../codegen-surface.ts';
+import { invoke, load } from '../codegen-surface.ts';
 import { languageByName } from '../languages.ts';
 import {
 	grammarModulePath,
@@ -421,6 +421,9 @@ export interface LoadedNodeModel {
 	readonly root: string | undefined;
 	readonly irKeys: Record<string, string>;
 	readonly modelTypes: Record<string, string>;
+	readonly typeNames: Record<string, string>;
+	readonly renamedFrom: Record<string, string>;
+	readonly splitFrom: Record<string, string>;
 	readonly leafPatterns: Record<string, RegExp>;
 	readonly hoistedKinds: ReadonlySet<string>;
 	readonly oneSurfaceKinds: ReadonlySet<string>;
@@ -460,7 +463,10 @@ interface ParsedNodeModel {
 		builderPath?: readonly string[];
 		builderPathAlternates?: readonly (readonly string[])[];
 		modelType?: string;
+		typeName?: string;
 		seated?: true;
+		renamedFrom?: string;
+		splitFrom?: string;
 		slots?: ReadonlyArray<{
 			name: string;
 			propertyName: string;
@@ -493,6 +499,9 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	root: undefined,
 	irKeys: {},
 	modelTypes: {},
+	typeNames: {},
+	renamedFrom: {},
+	splitFrom: {},
 	leafPatterns: {},
 	hoistedKinds: new Set(),
 	oneSurfaceKinds: new Set(),
@@ -536,12 +545,22 @@ function regexOfLiteral(literal: string): RegExp {
 
 export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 	const raw = readNodeModelFile(grammar);
-	if (raw === undefined) return EMPTY_NODE_MODEL;
-	const model = JSON.parse(raw) as ParsedNodeModel;
+	return raw === undefined ? EMPTY_NODE_MODEL : parseNodeModel(raw);
+}
+
+export async function loadBoundNameOf(grammar: string): Promise<(name: string) => string> {
+	return invoke('bind', 'boundNameOf', (await loadNodeModel(grammar)).renamedFrom);
+}
+
+export function parseNodeModel(text: string): LoadedNodeModel {
+	const model = JSON.parse(text) as ParsedNodeModel;
+	const renamedFrom: Record<string, string> = {};
+	const splitFrom: Record<string, string> = {};
 	const irKeys: Record<string, string> = {};
 	const builderPaths: Record<string, readonly string[]> = {};
 	const builderPathAlternates: Record<string, readonly (readonly string[])[]> = {};
 	const modelTypes: Record<string, string> = {};
+	const typeNames: Record<string, string> = {};
 	const leafPatterns: Record<string, RegExp> = {};
 	const hoistedKinds = new Set<string>();
 	const oneSurfaceKinds = new Set<string>();
@@ -568,6 +587,9 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		if (node.builderPath !== undefined) builderPaths[node.kind] = node.builderPath;
 		if (node.builderPathAlternates !== undefined) builderPathAlternates[node.kind] = node.builderPathAlternates;
 		if (node.modelType !== undefined) modelTypes[node.kind] = node.modelType;
+		if (node.typeName !== undefined) typeNames[node.kind] = node.typeName;
+		if (node.renamedFrom !== undefined) renamedFrom[node.kind] = node.renamedFrom;
+		if (node.splitFrom !== undefined) splitFrom[node.kind] = node.splitFrom;
 		if (node.leafPattern !== undefined) leafPatterns[node.kind] = regexOfLiteral(node.leafPattern);
 		if (node.seated === true) hoistedKinds.add(node.kind);
 		if (node.oneSurface === true) oneSurfaceKinds.add(node.kind);
@@ -606,6 +628,9 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		root: model.root ?? undefined,
 		irKeys,
 		modelTypes,
+		typeNames,
+		renamedFrom,
+		splitFrom,
 		leafPatterns,
 		hoistedKinds,
 		oneSurfaceKinds,

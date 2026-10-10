@@ -30,8 +30,12 @@ export function runTreeSitterCli(args: readonly string[], cwd: string, stdio: St
 	execFileSync(process.execPath, [treeSitterCliPath(), ...args], { cwd, stdio });
 }
 
-export function runTreeSitterCliCapturing(args: readonly string[], cwd: string): { readonly status: number | null; readonly stderr: string } {
-	const run = spawnSync(process.execPath, [treeSitterCliPath(), ...args], { cwd, encoding: 'utf8', maxBuffer: 1 << 28 });
+export function runTreeSitterCliCapturing(
+	args: readonly string[],
+	cwd: string,
+	env: Readonly<Record<string, string>> = {}
+): { readonly status: number | null; readonly stderr: string } {
+	const run = spawnSync(process.execPath, [treeSitterCliPath(), ...args], { cwd, encoding: 'utf8', maxBuffer: 1 << 28, env: { ...process.env, ...env } });
 	if (run.error) throw run.error;
 	process.stdout.write(run.stdout);
 	return { status: run.status, stderr: run.stderr };

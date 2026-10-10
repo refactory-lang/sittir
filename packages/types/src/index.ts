@@ -5,7 +5,8 @@
 
 import type { CamelCase } from 'type-fest';
 import type { NodeMethods } from './engine-api.ts';
-export type { Cond, QueryFacet, QueryPlan, QuerySlots, Recorder, SlotNameOf, SlotRef, SlotRoutes, View } from './query.ts';
+export type { Cond, QueryFacet, QueryPlan, QuerySlots, QuerySubject, Recorder, SelfText, SlotNameOf, SlotRef, SlotRoutes, View } from './query.ts';
+export type { PortableCondition, PortableGuard, PortablePath, PortableReadEntry, PortableSurface, PortableTable } from './portable.ts';
 import type { Admit } from './node-surface.ts';
 
 // ---------------------------------------------------------------------------
@@ -1270,6 +1271,9 @@ export type {
 	FacetOf,
 	EngineIdentity,
 	CreateEngineOptions,
+	PortableEngine,
+	PortableEngineOptions,
+	PortableLanguageAPI,
 	EngineOptions,
 	FileChange,
 	GrammarInnerTrivia,

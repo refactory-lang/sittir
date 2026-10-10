@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { inclusionCycles } from '../../src/inventory/derive.ts';
+import { inclusionCycles } from '@sittir/codegen/bindings';
 
 const key = (grammar: string, kind: string): string => `${grammar}${String.fromCharCode(0)}${kind}`;
 

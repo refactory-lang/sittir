@@ -1,6 +1,7 @@
 import type { KindParserMetadata, NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
-import { findEntryForKindName, findEntryForLiteralText, modelKindOfEntry, symbolNameIsNotable } from '../dsl/symbol-table.ts';
+import { findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, modelKindOfEntry, symbolNameIsNotable } from '../dsl/symbol-table.ts';
+import { kindIdText } from '../compiler/model/node-map.ts';
 import { compareOrdinal } from './shared.ts';
 import { kindTypeName } from '../compiler/model/casing.ts';
 
@@ -82,6 +83,17 @@ export function findKindEntryForLiteral(
 export function hasCatalogEntry(kindEntries: readonly KindEnumEntry[] | undefined, kind: string): boolean {
 	if (!kindEntries) return false;
 	return findKindEntry(kindEntries, kind) !== undefined;
+}
+
+export function hasKindId(kind: string, kindEntries: readonly KindEnumEntry[] | undefined): boolean {
+	return kindEntries !== undefined && findOwnKindEntry(kindEntries, kind) !== undefined;
+}
+
+export function fixedTextKinds(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): (readonly [kind: string, text: string])[] {
+	return [...nodeMap.nodes].flatMap(([kind, node]) => {
+		const text = kindIdText(node);
+		return text !== undefined && hasKindId(kind, kindEntries) ? [[kind, text] as const] : [];
+	});
 }
 
 export function kindDiscriminantExpr(kind: string, nodeMap: NodeMap, kindEntries?: readonly KindEnumEntry[]): string {

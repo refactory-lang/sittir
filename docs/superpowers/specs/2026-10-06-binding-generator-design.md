@@ -134,6 +134,8 @@ Two facts the bindings reader drops have to be kept:
 - **A predicate claim's predicate** (operator, capture, argument). Without it a read entry cannot test the claim and a build entry cannot pin it.
 - **A flag's token text.** Without it a capture named otherwise than its token (`"async" @isAsync`) loses the token.
 
+A predicate's operator is kept as written; one the derivation does not know is a derivation diagnostic, never dropped, and directives (`#set!`) are not predicates. A presence member's token is its authored text, which codegen resolves to a kind id through the stamped public symbol.
+
 ## 4. Conformance: what the locked vocabulary must admit
 
 The generated module is type-checked against the vocabulary, and the target is zero rejected members. Measured against today's vocabulary (rust, 374 members over 190 read entries), the rejections fall into these causes, each with the side that owns the fix:

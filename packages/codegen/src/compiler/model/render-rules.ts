@@ -9,7 +9,7 @@ import { type AssembledNode, AbstractAssembledCompound, AssembledEnum, Assembled
 import { slotElementKinds } from '../../emitters/transport-common.ts';
 import { supertypeMembersByDisplayName } from './supertype-members.ts';
 import { lineTerminatedKinds, triviaKinds } from './trivia.ts';
-import { addressSites, resolveBindings, type PreferenceOrigin } from './site-addresses.ts';
+import { addressSites, resolveLabels, type PreferenceOrigin } from './site-addresses.ts';
 import type { PreferenceSegment } from '../../dsl/primitives/preference-path.ts';
 import { readOptionsBlock, type OptionsConfig } from '../../dsl/wire/options-block.ts';
 import { defaultWhitespaceKindOf, lineBreakingKinds, rootEdgeKinds, whitespaceKindsOf, layoutKindsOf, layoutSymbolsOf } from './layout-kinds.ts';
@@ -98,6 +98,7 @@ function isImmediateWhenPresent(rule: RenderRule, config: RenderRulesConfig): bo
 
 export interface SeatedChild {
 	readonly kind: string;
+	readonly display: string;
 	readonly field: string;
 }
 
@@ -917,11 +918,11 @@ export function declaredOptionArms(
 	const block: OptionsConfig | undefined = config.options;
 	if (block === undefined) return undefined;
 	const kinds = displayedKinds(config.nodeMap);
-	const { declarations, bindings } = readOptionsBlock(block, kinds);
+	const { declarations, labels } = readOptionsBlock(block, kinds);
 	if (declarations.length === 0) return undefined;
 	const addressed = addressSites(sites, config.kindEntries, config.nodeMap);
 	const arms = new Map<string, DeclaredArm>();
-	for (const [index, { arm, origin }] of resolveBindings(declarations, bindings, addressed, supertypeMembersByDisplayName(config.nodeMap), false)) {
+	for (const [index, { arm, origin }] of resolveLabels(declarations, labels, addressed, supertypeMembersByDisplayName(config.nodeMap), false)) {
 		const site = addressed[index]!;
 		arms.set(declaredKey(site.kind, site.address), { arm, origin });
 	}
@@ -1018,13 +1019,12 @@ function seatedSites(
 ): RuleSpacingSite[] {
 	const edgeOf = new Map<string, RuleSpacingSite>();
 	for (const site of sites) {
-		const own = displayNameOf(site.kind, nodeMap);
-		if (site.side === 'seam' && site.address === seamLabel(own, 'after')) edgeOf.set(own, site);
+		if (site.side === 'seam' && site.address === seamLabel(displayNameOf(site.kind, nodeMap), 'after')) edgeOf.set(site.kind, site);
 	}
 	const renderedKinds = (kind: string, seen: Set<string>): string[] => {
 		if (seen.has(kind)) return [];
 		seen.add(kind);
-		if (edgeOf.has(displayNameOf(kind, nodeMap))) return [kind];
+		if (edgeOf.has(kind)) return [kind];
 		const node = nodeMap.nodes.get(kind);
 		if (node instanceof AssembledPolymorph) {
 			return node.slots.flatMap((slot) => slotElementKinds(slot, nodeMap)).flatMap((arm) => renderedKinds(arm, seen));
@@ -1038,7 +1038,7 @@ function seatedSites(
 		const key = `${seat.kind}\u0000${seat.slot}`;
 		const entry = admitted.get(key) ?? { kind: seat.kind, slot: seat.slot, children: new Set<string>() };
 		for (const c of slotElementKinds(slot, nodeMap)) {
-			for (const rendered of renderedKinds(c, new Set())) entry.children.add(displayNameOf(rendered, nodeMap));
+			for (const rendered of renderedKinds(c, new Set())) entry.children.add(rendered);
 		}
 		admitted.set(key, entry);
 	}
@@ -1062,11 +1062,11 @@ function seatedSites(
 				side: edge.side,
 				defaultArm: arm === undefined ? edge.defaultArm : (arm as Layout),
 				arms: edge.arms,
-				seat: { kind: child, field: edge.address },
+				seat: { kind: child, display: displayNameOf(child, nodeMap), field: edge.address },
 				path: [
 					{ kind: 'kind-match', name: parent },
 					{ kind: 'fieldName', name: seat.slot },
-					{ kind: 'kind-match', name: child },
+					{ kind: 'kind-match', name: displayNameOf(child, nodeMap) },
 					{ kind: 'name', name: 'after' }
 				]
 			});

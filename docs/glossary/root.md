@@ -508,6 +508,8 @@ value rather than clearing the flag out from under it.
 ```text
 Writes every TS-side derived artifact (grammar/engine/types/factories/wrap/
 consts/index, render-bodies.json, seam-census.json, `node-model.json5`,
+`node-model-portable.json5` for a grammar that ships a `bindings.scm` (removed
+for one that does not),
 `nodes.test.ts`, `vitest.config.ts`) BEFORE the Rust render module block
 that triggers the native N-API build and `cargo check --workspace` — both
 of which `throw` on failure and abort the rest of the function. Writing the

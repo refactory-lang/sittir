@@ -20,6 +20,11 @@ export type RulePathSegment =
 	| { readonly edge: 'members'; readonly index: number }
 	| { readonly edge: 'forms'; readonly index: number };
 
+export interface KindProvenance {
+	readonly renamedFrom?: Readonly<Record<string, string>>;
+	readonly splitFrom?: Readonly<Record<string, string>>;
+}
+
 export interface RuleCatalogEntry {
 	readonly id: RuleId;
 	readonly ownerKind: string;
@@ -138,6 +143,8 @@ export interface RawGrammar {
 	readonly bodyPatternZeroMatches?: readonly string[];
 	readonly desugarDivergences?: readonly DesugarDivergenceEvent[];
 	readonly derivationRecords?: DerivationRecords;
+	readonly renamedFrom?: Readonly<Record<string, string>>;
+	readonly splitFrom?: Readonly<Record<string, string>>;
 }
 
 export interface StageEvaluation<G = RawGrammar> {
@@ -221,6 +228,7 @@ export interface LinkedGrammar {
 	readonly word: string | null;
 	readonly reserved?: ReservedWordsets;
 	readonly fileTypes: readonly string[];
+	readonly provenance?: KindProvenance;
 	readonly references: SymbolRef[];
 	readonly derivations: DerivationLog;
 	readonly displayUnions?: DisplayUnions;
@@ -254,6 +262,7 @@ export interface NormalizedGrammar {
 	readonly wordMatcher?: RegExp;
 	readonly reserved?: ReservedWordsets;
 	readonly fileTypes: readonly string[];
+	readonly provenance?: KindProvenance;
 	readonly externals?: readonly RuleListEntry[];
 	readonly extras?: readonly RuleListEntry[];
 	readonly nodelessExtrasRun?: RegExp;
@@ -288,6 +297,7 @@ export interface SimplifiedGrammar {
 	readonly wordMatcher?: RegExp;
 	readonly reserved?: ReservedWordsets;
 	readonly fileTypes: readonly string[];
+	readonly provenance?: KindProvenance;
 	readonly externals?: readonly RuleListEntry[];
 	readonly extras?: readonly RuleListEntry[];
 	readonly nodelessExtrasRun?: RegExp;
@@ -329,6 +339,7 @@ export interface NodeMap {
 	readonly wordMatcher?: RegExp;
 	readonly reserved?: ReservedWordsets;
 	readonly fileTypes: readonly string[];
+	readonly provenance?: KindProvenance;
 	readonly externals?: readonly RuleListEntry[];
 	readonly extras?: readonly RuleListEntry[];
 	readonly nodelessExtrasRun?: RegExp;

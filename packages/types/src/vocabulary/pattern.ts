@@ -136,8 +136,9 @@ export namespace Pattern {
 		export interface Pair<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Object<G>> {
 			// claimed by t
 			readonly $kind: 'pattern.object.pair';
+			readonly computed?: boolean;
 			readonly key: G['slots']['pattern.object.pair']['key'];
-			readonly value: G['slots']['pattern.object.pair']['value'];
+			readonly value?: G['slots']['pattern.object.pair']['value'];
 		}
 		export type Any<G extends GrammarContext<G>> =
 			| V.Pattern.Object<G>

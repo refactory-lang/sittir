@@ -1,7 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { readBindings } from '../../src/inventory/bindings.ts';
-import { type GrammarInput, derive } from '../../src/inventory/derive.ts';
-import type { ModelNode, ModelSlot } from '../../src/inventory/model.ts';
+import { type GrammarInput, type ModelNode, type ModelSlot, derive, readBindings } from '@sittir/codegen/bindings';
 
 const slot = (name: string, kinds: readonly string[], multiple = false): ModelSlot => ({
 	name,
@@ -30,6 +28,7 @@ const node = (kind: string, slots: readonly ModelSlot[] = [], subtypes: readonly
 	subtypes,
 	elementKinds: [],
 	enumValues: [],
+	enumMembers: [],
 	text: null,
 	pattern: null
 });
@@ -108,5 +107,54 @@ describe('container captures', () => {
 		const d = derive([await grammar([...CLAIMS, '(declared) @declaration.declared'].join('\n'))]);
 		expect(d.untargeted).toEqual([]);
 		expect([...(d.members.get('declaration.declared')?.keys() ?? [])]).toEqual(['content']);
+	});
+});
+
+describe('derive: predicates', () => {
+	it('reports a claim predicate whose operator the derivation does not know, and accepts the known ones', async () => {
+		const d = derive([
+			await grammar(
+				'((mark) @identifier.mark (#lua-match? @identifier.mark "%a"))\n((mark) @identifier.other (#match? @identifier.other "^a$"))'
+			)
+		]);
+		expect(d.unknownPredicates).toEqual(['g: #lua-match? on @identifier.mark (identifier.mark)']);
+		expect(derive([await grammar('((mark) @identifier.mark (#is-not? local))')]).unknownPredicates).toEqual([
+			'g: #is-not? (identifier.mark)'
+		]);
+	});
+});
+
+describe('derive: wildcard claims', () => {
+	it('reports a wildcard claim that lands on a list kind, since the list stands between the holder and its members', async () => {
+		const input = await grammar('(holder (_) @declaration.member)');
+		const model = new Map(input.model);
+		model.set('holder', node('holder', [slot('items', ['holder_items'])]));
+		model.set('holder_items', { ...node('holder_items'), modelType: 'list', elementKinds: ['leaf_a'] });
+		expect(derive([{ ...input, model }]).wildcardContainers).toEqual(['g: (holder (_) @declaration.member) lands on list holder_items']);
+	});
+
+	it('accepts a wildcard claim that lands on the members themselves', async () => {
+		const input = await grammar('(declared (_) @declaration.member)');
+		expect(derive([input]).wildcardContainers).toEqual([]);
+	});
+});
+
+describe('derive: wildcard claims and members', () => {
+	const placedModel = async (bindings: string): Promise<GrammarInput> => {
+		const input = await grammar(bindings);
+		const model = new Map(input.model);
+		model.set('holder', node('holder', [slot('items', ['shaped'], true)]));
+		model.set('shaped', node('shaped', [slot('extra', ['leaf_a'])]));
+		return { ...input, model };
+	};
+
+	it('folds no members from a kind a wildcard claim reaches; the path keeps its explicit claims\' members', async () => {
+		const d = derive([await placedModel(['(declared) @declaration.d', '(holder (_) @declaration.d)'].join('\n'))]);
+		expect([...(d.members.get('declaration.d')?.keys() ?? [])]).toEqual(['content']);
+	});
+
+	it('records each required member of the path a wildcard-reached kind has no route for', async () => {
+		const d = derive([await placedModel(['(declared) @declaration.d', '(holder (_) @declaration.d)'].join('\n'))]);
+		expect(d.wildcardUnrouted).toEqual(['g: shaped as declaration.d has no route for content']);
 	});
 });

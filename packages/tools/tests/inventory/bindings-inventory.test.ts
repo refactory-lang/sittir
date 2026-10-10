@@ -3,15 +3,16 @@ import { mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSyn
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { bindingIssues, bindingPatterns } from '../../src/inventory/bindings.ts';
+import { bindingGrammars } from '@sittir/codegen/bindings';
+import { bindingIssues } from '../../src/inventory/bindings.ts';
 import {
 	VOCABULARY_DIR,
 	compileBindings,
 	deriveVocabulary,
-	inventoryGrammars,
-	vocabularyDisagreements
+	vocabularyDisagreements,
+	vocabularyMembers
 } from '../../src/inventory/index.ts';
-import { type Derivation, levelMembers } from '../../src/inventory/derive.ts';
+import { type Derivation, bindingPatterns, levelMembers } from '@sittir/codegen/bindings';
 import { readVocabulary } from '../../src/inventory/vocabulary.ts';
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
@@ -44,8 +45,8 @@ describe('bindingIssues', () => {
 
 describe('compileBindings', () => {
 	it('reports each bindings file against its parser and never loses a compiling grammar', async () => {
-		const reports = await compileBindings(inventoryGrammars());
-		expect(reports.map((r) => r.grammar)).toEqual([...inventoryGrammars()]);
+		const reports = await compileBindings(bindingGrammars());
+		expect(reports.map((r) => r.grammar)).toEqual([...bindingGrammars()]);
 		for (const report of reports) {
 			if (CEILING.compiling.includes(report.grammar)) expect(report.error, report.grammar).toBeNull();
 		}
@@ -235,5 +236,9 @@ describe('readVocabulary', () => {
 			body: { optional: true },
 			name: { optional: false }
 		});
+	});
+
+	it('gives the overlay derivation every member a kind declares or inherits', () => {
+		expect(vocabularyMembers(vocabulary).get('declaration.function')).toEqual(new Set(['body', 'name']));
 	});
 });

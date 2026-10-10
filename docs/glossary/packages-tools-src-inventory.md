@@ -1,58 +1,8 @@
 # `packages/tools/src/inventory` — Function Glossary
 
-The bindings inventory: `sittir tool bindings-inventory`. It reads each grammar's `packages/<grammar>/bindings.scm` through `@sittir/scm` and each grammar's slot model, checks that the bindings compile against the grammar's parser, and derives the vocabulary the bindings imply: its kinds, members, refinements and the members the language context types. The vocabulary under `packages/types/src/vocabulary/` is authored; `--check` reports where it and the derivation disagree, and each disagreement is fixed on the side that is wrong, a feature extending the vocabulary or a binding dropping a claim.
+The bindings inventory: `sittir tool bindings-inventory`. It reads each grammar's `packages/<grammar>/bindings.scm` through `@sittir/scm` and each grammar's slot model, checks that the bindings compile against the grammar's parser, and derives the vocabulary the bindings imply through codegen's derivation (`packages/codegen/src/bindings/`): its kinds, members, refinements and the members the language context types. The vocabulary under `packages/types/src/vocabulary/` is authored; `--check` reports where it and the derivation disagree, and each disagreement is fixed on the side that is wrong, a feature extending the vocabulary or a binding dropping a claim.
 
 ---
-
-### `packages/tools/src/inventory/bindings.ts::readBindings`
-
-```text
-Reads a bindings file into binding facts. The file is parsed with the scm
-engine into the query grammar's typed tree, and each top-level pattern (a named
-node, a token or a grouping) is read; a top-level alternation reads as one
-pattern per option, each carrying the alternation's captures. In a pattern, a
-dotted capture, or a capture on the top node that does not start with `_`, is
-in claim position. There, a capture in the `keyword` or `punctuation`
-namespace is a token class, which names no vocabulary kind; any other is a
-claim: its kind is the node's (`_` for a wildcard), a grouping's first
-child's, and none on a token, and it records the kinds enclosing it, nearest
-first, which place a claim made below the top. Another capture names a
-member. On a child of the top node, or on any node of a grouping, it renames
-the member its slot selector finds, or, on an unfielded token, marks that
-token's presence; deeper inside a named top it is a nested member of the top
-kind, routed through the kinds in between. A pattern that captures
-`@unclaimed` declares each captured kind unclaimed, with the reason its
-`#set! reason` gives, and says nothing else. A pattern whose top node (the
-pattern, or the one node of a grouping that also holds the pattern's
-directives) carries no claim and that captures `@element` is a container; a
-child it captures `@dropped` is a slot the container leaves out on purpose,
-and the pattern's `#set! reason` is recorded as the reason, and a capture on a
-token keeps the token's text. A `#match?` whose regex is
-anchored and has named holes is a template. Inside a node, a field's literal
-pins that field, an unfielded and uncaptured literal is a pin candidate the
-derivation resolves by the slots' terminals, and an alternation's options take
-the alternation's field, captures and quantifier.
-```
-
-The parse reports no errors of its own. A file is refused with `BindingsSyntaxError` when an ERROR region surfaces as trivia on a node the reader visits, or when a non-blank file parses to no pattern; a malformed pattern the parse absorbs without a trace passes here and is caught by the compile gate (`compileQuery`).
-
-The scm engine behind it is created by the first read and shared by the rest, so loading the module costs nothing and only a command that reads bindings needs a native scm build; the read is asynchronous for that reason.
-
-### `packages/tools/src/inventory/bindings.ts::BindingFacts`
-
-What a bindings file says, before the slot model is consulted: the claims (`ClaimFact`, with the kinds enclosing a claim made below the top), the member captures (`MemberFact`: a `rename` of the slot its selector finds, the `presence` of a token, or a `nested` member with the kinds it routes through and the selector of its slot), the containers (`ContainerFact`: the element's selector, every other capture, the selectors of the slots it drops on purpose with the pattern's reason, and the line and text of its pattern), the templates (`TemplateFact`) and the unclaimed kinds (`UnclaimedFact`, each with its reason). Facts come in file order and, within a pattern, in pre-order, which the derivation's first-claim and rename rules rely on.
-
-### `packages/tools/src/inventory/bindings.ts::SlotSelector`
-
-How a captured node finds its slot in a model node: by its field when it has one, otherwise by its named kind, otherwise (a wildcard or a grouping) by position: the first slot that holds nodes after the slot of the nearest node pattern before it in the same parent (`after`), or the first such slot when nothing precedes it. A token before it holds no slot and does not count, so `(unary_expression "-" (_) @argument)` names the operand and `(index_expression (_) @object (_) @index)` names both slots in order.
-
-### `packages/tools/src/inventory/bindings.ts::bindingPatterns`
-
-Each top-level definition with the line it starts on and its source text, sliced by the node's byte span. Spans count UTF-8 bytes and the bindings files carry multibyte comment rules, so slicing and line numbers go through `sourceSpans`. It is the unit `bindingIssues` compiles on its own, and `readBindings` reads the file through it, so a container's facts record the line and text given here. It shares `readBindings`'s lazily created engine and is asynchronous.
-
-### `packages/tools/src/inventory/bindings.ts::BindingsSyntaxError`
-
-The refusal of a bindings file that does not parse, with the lines of the regions that did not.
 
 ### `packages/tools/src/inventory/bindings.ts::compileQuery`
 
@@ -76,7 +26,7 @@ grammar's parser, and a pattern whose names all exist is then compiled, so a
 structurally impossible pattern (a field or child the parent never has) is
 reported with tree-sitter's own message. `compileQuery` stops at the first
 failure of the whole file; this is what turns a failing compile into a list
-that can be worked through.
+that can be worked through. The patterns and the names each one references come from the pinned reader (`bindingPatterns`).
 
 ### `packages/tools/src/inventory/model.ts::loadSlotModel`
 
@@ -90,113 +40,31 @@ nothing from the generated `types.ts`.
 
 ### `packages/tools/src/inventory/index.ts::loadInputs`
 
-Each grammar's binding facts (`readBindings`), slot model, the text tokens its evaluation minted (`RawGrammar.textTokens`), and its layout slots. A minted text kind is the same fact as the inline token it replaced, so `derive` reads it as that token's text (`text:<pattern>`), not as an unmapped kind. The layout slots are every address in the grammar options' bindings block that names an owner and a field (`readOptionsBlock`, parsed by `parsePreferencePath`; the owner `_` stands for any kind), plus the separator slot of every separated list (`SEPARATOR_LABEL`), the name the compiler gives it.
-
-### `packages/tools/src/inventory/derive.ts::derive`
-
-```text
-The derivation over every grammar's binding facts and model. In order: resolve
-the facts against the model (a claim's pin candidates become field literals
-through the slot whose terminals hold them; a nested member takes its named
-kind, or the kinds of the slot its selector finds in its parent; a rename is
-kept per owner kind against the slot its selector finds; templates become hole
-members of every claim in their pattern); build the members of every claimed
-kind from its slots, renamed by the captures and otherwise by the marker and
-modifier names rules, a nested member replacing the slot it routes through,
-and no layout slot ever a member; fold field-literal claims into refinements,
-each literal named by the kind's converged member (a capture on the field
-renames it) rather than by the grammar's field; assign container captures to
-the kinds the element slot names directly; collapse a namespace's leaves when
-the namespace itself is admitted; and report inclusion cycles, the containers
-whose captures have no direct target, the container slots no capture names,
-and the unmapped placeholders.
-
-A container's captures land only on the kinds its element slot names directly,
-by their direct claim (the first two steps of the resolution below), never on a
-kind reached through a supertype or a further container: a capture spread
-through a supertype would give every kind of a namespace a member only one
-wrapper carries. A container whose element slot names no directly claimed kind
-carries information of its own, so its captures are reported (`untargeted`)
-instead of placed, and the bindings claim the container as a vocabulary kind.
-A container also reads as its element only when nothing else it holds is lost:
-every non-layout slot besides the element is captured (a token capture keeps
-the slot whose terminals hold its text) or dropped on purpose, and each other
-slot is reported with its pattern (`uncaptured`). A drop is on purpose only with
-a reason: a `@dropped` slot whose pattern gives no non-blank `#set! reason`, and
-a `@dropped` node that names no slot, are reported the same way. A wrapper that keeps a slot
-of its own beside its element is claimed as a kind instead.
-
-A grammar kind in a slot resolves to the first of: a claim placed by the
-enclosing kinds it sits in; its own claim; nothing, when it is unclaimed; a
-minted text, the enum's texts, or a keyword or punctuation literal; its
-element, when it is a container; its supertype's subtypes, each resolved the
-same way, when at least half of them resolve (a whole namespace is admitted
-only when every claimed kind in it is covered); otherwise an `<grammar:kind>`
-placeholder. A container is a kind the bindings declare with `@element`, a
-list (its element kinds), or an envelope, alias or polymorph whose one
-non-layout slot holds nodes; a branch is never one implicitly, since a kind
-with its own structure (`impl !Trait`) loses a fact when read as its content.
-The element slot's terminals and kinds resolve with the container added to
-the chain of enclosing kinds, and a container never resolves through itself.
-A layout slot is one an options-block address or the separator names, or one
-whose kinds are all unclaimed and that has no terminals. A resolution is a
-list when the container is a list or a part is, and scalar when a part is
-scalar, so a member admitting both reads `T | T[]`.
-```
-
-### `packages/tools/src/inventory/derive.ts::inclusionCycles`
-
-```text
-The cycles in the per-grammar set-inclusion graph (a union admitting a namespace
-that admits the first back), of any length: every strongly connected component
-of more than one union is reported once, as `<grammar>: a <-> b <-> c`.
-```
-
-### `packages/tools/src/inventory/derive.ts::levelMembers`
-
-```text
-A level's members: the union over every kind beneath it by path and every
-refinement that names it as parent, `T | T[]` where multiplicity disagrees. A
-member is required only when the level's own claim carries it in every
-claiming grammar and every claimed child by path carries it required; a
-literal refinement declares only its pin and so inherits the rest. A claim a
-content predicate determines (`#eq?`, `#match?`) declares no members of its own
-and inherits the level's, so it neither relaxes a member nor counts as a grammar
-that fails to carry it. A level no
-grammar claims takes a member as required when every claimed child does.
-```
+Each grammar's binding facts (`readBindings`), named by their bound kinds through the node model's stamped `renamedFrom` (`bindFacts` over `loadBoundNameOf`, the identity with the overlay off), slot model, the text tokens its evaluation minted (`RawGrammar.textTokens`), and its layout slots. A minted text kind is the same fact as the inline token it replaced, so `derive` reads it as that token's text (`text:<pattern>`), not as an unmapped kind. The layout slots are every address in the grammar options' bindings block that names an owner and a field (`readOptionsBlock`, parsed by `parsePreferencePath`; the owner `_` stands for any kind), plus the separator slot of every separated list (`SEPARATOR_LABEL`), the name the compiler gives it.
 
 ### `packages/tools/src/inventory/index.ts::vocabularyDisagreements`
 
 Where the bindings and the authored vocabulary disagree, one line each: a claimed path no vocabulary interface has as its `$kind`, a member the bindings route to a kind whose interface (its own members and its parents') does not declare it, a refinement's pinned field its interface does not declare, and a template hole its interface does not declare. The vocabulary is authored, so a disagreement is fixed on whichever side is wrong: a feature adds the kind or member, or the binding drops it.
 
-### `packages/tools/src/inventory/derive.ts::armClass`
-
-What one collapsed member kind stands for: a `scalar` keyword (`boolean`, `string`, `number`), a `role` (a top-level namespace), a `ref` (a dotted vocabulary kind or a `set:` prefix), `text` (a `text:` or `literal:` token), or `unmapped` (a `<grammar:kind>` no binding claims).
-
-### `packages/tools/src/inventory/derive.ts::collapsedKinds`
-
-A member's kinds collapsed to the smallest covering set: a namespace's leaves fold into the namespace when it is itself admitted or their common prefix is the namespace root, and into a `set:<prefix>` when that prefix is a claimed one; other kinds stand as they are. The slot table's entries and a grammar's fill of them both collapse through it, so they agree.
-
-### `packages/tools/src/inventory/derive.ts::soleRole`
-
-The one role a member's collapsed kinds state, with the text beside it, when every other arm is text: the member is typed as the role, and the text is keyword text a grammar aliases into that role, which the grammar's context admits under the role rather than the vocabulary naming it.
-
-### `packages/tools/src/inventory/derive.ts::directKinds`
-
-A member typed without the language context: its `soleRole`, or its collapsed kinds when they are all refs or all scalars. Anything else, differing roles, roles beside refs, text alone or nothing, is `undefined`, and the member is typed through its slot entry.
-
-### `packages/tools/src/inventory/derive.ts::levelsWithMembers`
-
-The kind paths that declare their own members: every claimed kind and prefix except refinements and template holes, which pin literals or holes over their parent's members. Sorted, so the slot table's order is stable.
-
-### `packages/tools/src/inventory/derive.ts::slotEntries`
-
-Every member the language context states, one per kind path and member, in path then member order: the members of `levelsWithMembers` that `directKinds` leaves `undefined`.
-
 ### `packages/tools/src/inventory/vocabulary.ts::readVocabulary`
 
 Reads the authored vocabulary structurally, with the TypeScript parser, never by matching lines: every interface under its namespaces, keyed by its `$kind` literal, with its own members (each marked optional or required) and its parent, the interface its `extends` clause names through `V.`. `members(path)` adds the inherited members, nearest first. An interface with no `$kind` literal is not a vocabulary kind (the context's typemap and `Unmapped`).
+
+### `packages/tools/src/inventory/index.ts::BindingsModule`
+
+A grammar's `grammar.bindings.ts` text, with the overlay and the derivation report it was printed from.
+
+### `packages/tools/src/inventory/index.ts::vocabularyMembers`
+
+Each vocabulary path's members as the overlay derivation reads them: every member its interface declares or inherits (`Vocabulary.members`), by name.
+
+### `packages/tools/src/inventory/index.ts::bindingsModule`
+
+The one writer of a grammar's `grammar.bindings.ts`: its binding facts read from `bindings.scm` by the pinned reader (`@sittir/codegen/bindings::readBindings`), the overlay derived from them against the grammar evaluated without the overlay, each vocabulary path's members (`vocabularyMembers`) and each claimed kind's member routes over the model of the grammar compiled without the overlay (`compileNodeMap` with `unbound`, `buildNodeModel`, `resolveRoutes`; `deriveOverlay`), printed with the hash of the sources it was derived from (`printBindingsModule`, `grammarBindingsHash`). A test holds every committed module equal to what this writes.
+
+### `packages/tools/src/inventory/index.ts::overlaySummary`
+
+A grammar's convergence as `--write` prints it: the renames, aliases, field renames, field wraps, splits and patch sites; the claims realized as kinds and the members realized as field names, with the implicit routes fielded; and the residue by cause, most frequent first, four rows each.
 
 ### `packages/tools/src/inventory/index.ts::run`
 
@@ -206,7 +74,9 @@ problem per file (`bindingIssues`) rather than the first; the
 derivation summary always prints (kinds, prefixes, members, refinements,
 unmapped references, cycles, container captures with no direct target,
 container slots left uncaptured);
-`--members` prints member names and kinds per shared kind. `--check` also
+`--members` prints member names and kinds per shared kind. `--write` first
+writes each grammar's `grammar.bindings.ts` (`bindingsModule`) and prints its
+convergence (`overlaySummary`). `--check` also
 reports where the bindings and the authored vocabulary disagree
 (`vocabularyDisagreements`). A cycle, a container capture with no direct
 target, a container slot left uncaptured, a failed compile or a disagreement is

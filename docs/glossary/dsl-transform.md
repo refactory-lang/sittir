@@ -1813,3 +1813,19 @@ The precedence wrappers above a rule, outermost first, and the rule beneath them
 
 Rewrites `choice(optional(x), optional(y), …, optional(n))` to `optional(choice(x, y, …, n))` wherever every member of a choice (two or more) is optional, bottom-up, so a choice nested in a choice is factored first. The two spellings match the same text; the factored one keeps the blank case in one place, so the token-form hoist splits the inner choice into disjoint arms plus one blank arm, instead of one arm per optional member that each also accepts the blank. A mixed choice is left alone. The result of a rewrite no longer matches (its members are the inner choice and a blank), so the rewrite is idempotent; an unchanged rule is returned as the same object. Enrich runs it on every rule, so the rewrite reaches both the parser and the IR, and the DSL builders stay faithful to what the grammar wrote.
 
+
+### `packages/codegen/src/dsl/transform/transform.ts::applyPatchSet`
+
+Applies one patch set: records its sites, then applies it in path mode when any key is a path or any value a placeholder of the listed kinds, and flat otherwise. A flat set indexes the members of the first SEQ under the rule; on a CHOICE it indexes inside every arm, so a plain index there never selects an arm.
+
+### `packages/codegen/src/dsl/transform/transform.ts::isAliasOfSymbol`
+
+Whether a patch is an `alias()` of the same symbol the patched member is. `resolvePatch` then aliases the member itself, so the site keeps what it carries (variant labels, metadata) instead of taking the patch's bare symbol.
+
+### `packages/codegen/src/dsl/transform/transform.ts::recordFieldEffect`
+
+The option-path segment a `field()` patch renames on the patched kind: an existing field's `name:`, a wrapped symbol's `kind:`, or a wrapped token's quoted text, each becoming the new field's `name:`. Recorded only while a binding set applies.
+
+### `packages/codegen/src/dsl/transform/transform.ts::recordAliasEffect`
+
+A named `alias()` of a symbol renames that kind in option paths; recorded only while a binding set applies.

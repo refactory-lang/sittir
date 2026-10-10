@@ -724,6 +724,8 @@ export namespace Expression {
 		// claimed by prt
 		readonly $kind: 'expression.member';
 		readonly object: G['slots']['expression.member']['object'];
+		readonly private?: boolean;
+		// t only
 		readonly property: G['slots']['expression.member']['property'];
 	}
 	export interface Meta<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {

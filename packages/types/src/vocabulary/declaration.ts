@@ -139,6 +139,8 @@ export namespace Declaration {
 		// t only
 		readonly attributes?: G['attribute'][];
 		// r only
+		readonly computed?: boolean;
+		// t only
 		readonly declare?: boolean;
 		// t only
 		readonly decorators?: V.Attribute.Decorator<G>[];
@@ -151,6 +153,8 @@ export namespace Declaration {
 		readonly optionality?: G['slots']['declaration.field']['optionality'];
 		// t only
 		readonly override?: boolean;
+		// t only
+		readonly private?: boolean;
 		// t only
 		readonly readonly?: boolean;
 		// t only
@@ -274,6 +278,8 @@ export namespace Declaration {
 		// t only
 		readonly async?: boolean;
 		readonly body?: G['slots']['declaration.method']['body'];
+		readonly computed?: boolean;
+		// t only
 		readonly const?: boolean;
 		// rt only
 		readonly decorators?: V.Attribute.Decorator<G>[];
@@ -292,6 +298,8 @@ export namespace Declaration {
 		readonly override?: boolean;
 		// t only
 		readonly parameters: G['slots']['declaration.method']['parameters'][];
+		readonly private?: boolean;
+		// t only
 		readonly readonly?: boolean;
 		// t only
 		readonly returnType?: G['slots']['declaration.method']['returnType'];
