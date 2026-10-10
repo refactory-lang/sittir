@@ -9086,9 +9086,9 @@ export function buildImplItemBody(config: T.ImplItemBody.Config): T.ImplItemBody
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const _where_clause = rejectBareText(config.whereClause, 'ImplItemBody.whereClause', 'a built WhereClause');
-	const _declaration_list = rejectBareText(
-		orDefault(config.declarationList, () => buildDeclarationList()),
-		'ImplItemBody.declarationList',
+	const _body = rejectBareText(
+		orDefault(config.body, () => buildDeclarationList()),
+		'ImplItemBody.body',
 		'a built DeclarationList'
 	);
 	const handle = currentHandle();
@@ -9101,7 +9101,7 @@ export function buildImplItemBody(config: T.ImplItemBody.Config): T.ImplItemBody
 		_trait_clause,
 		_type,
 		_where_clause,
-		_declaration_list,
+		_body,
 		$with: {
 			unsafe: (value?: Admit<NonNullable<T.ImplItemBody.Config>['unsafe']>) =>
 				rebuilt(node, handle, () => buildImplItemBody({ ...config, unsafe: value })),
@@ -9130,15 +9130,15 @@ export function buildImplItemBody(config: T.ImplItemBody.Config): T.ImplItemBody
 						(value?: Admit<T.WhereClause>) => buildImplItemBody({ ...config, whereClause: value })
 					)
 				),
-			declarationList: (value: Admit<T.DeclarationList>) =>
-				rebuilt(node, handle, () => buildImplItemBody({ ...config, declarationList: value }))
+			body: (value: Admit<T.DeclarationList>) =>
+				rebuilt(node, handle, () => buildImplItemBody({ ...config, body: value }))
 		},
 		unsafe: () => _unsafe,
 		typeParameters: () => _type_parameters,
 		traitClause: () => _trait_clause,
 		type: () => _type,
 		whereClause: () => _where_clause,
-		declarationList: () => _declaration_list,
+		body: () => _body,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),

@@ -3352,7 +3352,7 @@
     "type": "print_arguments",
     "named": true,
     "fields": {
-      "argument": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -3368,7 +3368,7 @@
     "type": "print_chevron_arguments",
     "named": true,
     "fields": {
-      "argument": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [

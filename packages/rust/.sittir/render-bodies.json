@@ -3519,7 +3519,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "declaration_list"
+			"name": "body"
 		},
 		{
 			"kind": "seam",

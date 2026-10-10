@@ -70,8 +70,25 @@ index dc115306c..7a0e32428 100644
  		split.within.slice(0, -1).forEach((ancestor, index) => {
  			replacement = cloneToward(ancestor, target, replacement, outer, split.containers[index]);
  			target = ancestor;
+diff --git a/packages/codegen/src/emitters/overlays/portable/read-tests.ts b/packages/codegen/src/emitters/overlays/portable/read-tests.ts
+index 29bda56c9..2896d5064 100644
+--- a/packages/codegen/src/emitters/overlays/portable/read-tests.ts
++++ b/packages/codegen/src/emitters/overlays/portable/read-tests.ts
+@@ -68,6 +68,11 @@ export function readTestOf(entry: ReadEntry, model: SlotModel, routesOf: SlotRou
+ 	});
+ 	const conditions = [...pins, ...entry.claim.predicates.map((p) => conditionOf(entry, p, model, routesOf))];
+ 	const refused = conditions.filter((c) => typeof c === 'string');
+-	if (refused.length > 0) throw new Error(`portable: cannot test ${entry.kind} as ${entry.vocab}: ${refused.join('; ')}`);
++	if (refused.length > 0) {
++		const message = `portable: cannot test ${entry.kind} as ${entry.vocab}: ${refused.join('; ')}`;
++		if (process.env.SITTIR_SCRATCH_LENIENT_READ_TESTS === undefined) throw new Error(message);
++		console.warn(`[scratch] ${message}`);
++		return conditions.filter((c): c is PortableCondition => typeof c !== 'string');
++	}
+ 	return conditions as PortableCondition[];
+ }
 diff --git a/packages/codegen/src/emitters/render-module.ts b/packages/codegen/src/emitters/render-module.ts
-index 25fc3c1c8..93558b713 100644
+index 25fc3c1c8..f32935f96 100644
 --- a/packages/codegen/src/emitters/render-module.ts
 +++ b/packages/codegen/src/emitters/render-module.ts
 @@ -1,3 +1,4 @@
@@ -85,7 +102,7 @@ index 25fc3c1c8..93558b713 100644
  export function grammarRenderInputs(grammar: GrammarName, inputs: RenderOptionsInputs): RenderOptionsInputs {
 -	return { ...inputs, boxedPayloads: BOXED_PAYLOADS[grammar] ?? [], envelopePins: ENVELOPE_PINS[grammar] ?? {} };
 +	const scratchPins = process.env.SITTIR_SCRATCH_PINS;
-+	const boxedPayloads = scratchPins !== undefined && grammar === 'rust' ? (JSON.parse(readFileSync(scratchPins, 'utf8')) as string[]) : (BOXED_PAYLOADS[grammar] ?? []);
++	const boxedPayloads = scratchPins !== undefined ? (JSON.parse(readFileSync(scratchPins, 'utf8')) as string[]) : (BOXED_PAYLOADS[grammar] ?? []);
 +	return { ...inputs, boxedPayloads, envelopePins: ENVELOPE_PINS[grammar] ?? {} };
  }
  
@@ -102,6 +119,19 @@ index 25fc3c1c8..93558b713 100644
  	const stale = pinned.find((name) => !payloads.has(name));
  	if (stale !== undefined) throw new Error(`${stale} is pinned in boxed-payloads.ts but no choice holds it: unpin it`);
  	const n = PAYLOAD_CEILING_BYTES;
+diff --git a/packages/tools/src/validate/read-render-parse.ts b/packages/tools/src/validate/read-render-parse.ts
+index 6036e6e30..3fa95bf62 100644
+--- a/packages/tools/src/validate/read-render-parse.ts
++++ b/packages/tools/src/validate/read-render-parse.ts
+@@ -133,7 +133,7 @@ function findNodeBySpan(node: TSNode, startIndex: number, endIndex: number): TSN
+  * whose wasm display name differs).
+  */
+ function findNodeBySpanOfKind(node: TSNode, startIndex: number, endIndex: number, kind: string): TSNode | null {
+-	if (node.startIndex === startIndex && node.endIndex === endIndex && node.type === kind) return node;
++	if (node.startIndex === startIndex && node.endIndex === endIndex && (node.type === kind || node.grammarType === kind)) return node;
+ 	for (let i = 0; i < node.childCount; i++) {
+ 		const c = node.child(i);
+ 		if (!c) continue;
 diff --git a/packages/rust/grammar.bindings.ts b/packages/rust/grammar.bindings.ts
 index 459319ad3..909b98031 100644
 --- a/packages/rust/grammar.bindings.ts
