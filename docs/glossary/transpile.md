@@ -44,8 +44,13 @@ from the same grammar, so its conflicts must be derived again.
 ```text
 Runs the tree-sitter CLI with `args` in `cwd` under the current Node binary,
 with the given stdio. It and `runTreeSitterCliCapturing` are the only ways to
-run the CLI, and both resolve it through `treeSitterCliPath`.
+run the CLI, and both resolve it through `treeSitterCliPath` and run it in the
+environment `treeSitterCliEnv` builds.
 ```
+
+### `packages/codegen/src/transpile/tree-sitter-cli.ts::treeSitterCliEnv`
+
+The environment a CLI run gets: the parent's, without `UNBOUND_ENV`, plus the variables the caller asks for. `importUnbound` sets `UNBOUND_ENV` on the parent process while an unbound evaluation is in flight, so an inherited toggle would make `tree-sitter generate` build the parser without the bindings overlay; a run gets it only when its caller passes it.
 
 ### `packages/codegen/src/transpile/compile-parser.ts::syncExternalScanner`
 
@@ -484,8 +489,9 @@ and stderr captured, and returns the exit status with stderr: the
 `--json-summary` report is written to stderr.
 ```
 
-`env` adds variables to the inherited environment of the run (conflict
-derivation passes `UNBOUND_ENV` for a base generate).
+`env` is the variables the caller asks for (conflict derivation passes
+`UNBOUND_ENV` for a base generate); `treeSitterCliEnv` builds the run's
+environment from them.
 
 ### `packages/codegen/src/transpile/compile-parser.ts::buildParserWasm`
 
