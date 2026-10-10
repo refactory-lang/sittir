@@ -166,9 +166,7 @@ export namespace Statement {
 			readonly alternative?: V.Clause.Else<G>;
 			// p only
 			readonly async?: Flag;
-			// p only
-			readonly await?: Flag;
-			// t only
+			// pt only
 			readonly body: G['slots']['statement.loop.for']['body'];
 			readonly forHeader?: G['slots']['statement.loop.for']['forHeader'];
 			// t only

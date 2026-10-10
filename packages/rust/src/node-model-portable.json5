@@ -5745,7 +5745,7 @@
       ],
       "members": [
         {
-          "name": "mutable",
+          "name": "exclusive",
           "route": "slot",
           "slot": "mutable",
           "path": [
@@ -5792,7 +5792,7 @@
           ]
         },
         {
-          "name": "mutable",
+          "name": "exclusive",
           "route": "slot",
           "slot": "mutable",
           "path": [
@@ -6260,7 +6260,7 @@
           ]
         },
         {
-          "name": "ref",
+          "name": "byReference",
           "route": "slot",
           "slot": "ref",
           "path": [

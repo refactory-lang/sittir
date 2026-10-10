@@ -9,9 +9,9 @@ export namespace Expression {
 	export interface Assignment<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by prt
 		readonly $kind: 'expression.assignment';
+		readonly disposable?: Flag;
 		readonly left: G['slots']['expression.assignment']['left'];
 		readonly right: G['slots']['expression.assignment']['right'];
-		readonly using?: Flag;
 	}
 	export namespace Assignment {
 		export interface Compound<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment<G>> {
@@ -724,7 +724,7 @@ export namespace Expression {
 		// claimed by prt
 		readonly $kind: 'expression.member';
 		readonly object: G['slots']['expression.member']['object'];
-		readonly private?: Flag;
+		readonly privateName?: Flag;
 		// t only
 		readonly property: G['slots']['expression.member']['property'];
 	}
@@ -745,6 +745,9 @@ export namespace Expression {
 	export interface Reference<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by r
 		readonly $kind: 'expression.reference';
+		readonly exclusive?: Flag;
+		readonly raw?: Flag;
+		readonly writable?: Flag;
 	}
 	export interface Sequence<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by t

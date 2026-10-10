@@ -26,7 +26,7 @@
 (method_definition "*" @generator)
 (method_definition "?" @optional)
 (method_definition accessor_kind: _ @accessor)
-(method_definition name: (private_property_identifier) @name @private)
+(method_definition name: (private_property_identifier) @name @privateName)
 (method_definition name: (computed_property_name) @name @computed)
 (method_definition accessor_kind: "get") @declaration.method.getter
 (method_definition accessor_kind: "set") @declaration.method.setter
@@ -34,22 +34,22 @@
 (method_signature) @declaration.method.signature
 (method_signature (accessibility_modifier) @visibility)
 (method_signature accessor_kind: _ @accessor)
-(method_signature name: (private_property_identifier) @name @private)
+(method_signature name: (private_property_identifier) @name @privateName)
 (method_signature name: (computed_property_name) @name @computed)
 (abstract_method_signature) @declaration.method.signature.abstract
 (abstract_method_signature "abstract" @abstract)
 (abstract_method_signature (accessibility_modifier) @visibility)
-(abstract_method_signature name: (private_property_identifier) @name @private)
+(abstract_method_signature name: (private_property_identifier) @name @privateName)
 (abstract_method_signature name: (computed_property_name) @name @computed)
 (property_signature) @declaration.field.signature
 (property_signature (accessibility_modifier) @visibility)
-(property_signature name: (private_property_identifier) @name @private)
+(property_signature name: (private_property_identifier) @name @privateName)
 (property_signature name: (computed_property_name) @name @computed)
 (public_field_definition) @declaration.field
 (public_field_definition (accessibility_modifier) @visibility)
 (public_field_definition "?" @optional)
 (public_field_definition "!" @definite)
-(public_field_definition name: (private_property_identifier) @name @private)
+(public_field_definition name: (private_property_identifier) @name @privateName)
 (public_field_definition name: (computed_property_name) @name @computed)
 (class_body_member_declaration (_) @element)
 (class_body_member_method (decorator)* @decorators (_) @element)
@@ -84,6 +84,7 @@
 (if_statement) @statement.if
 (for_statement) @statement.loop.counted
 (for_in_statement) @statement.loop.for
+(for_in_statement await: _ @async)
 (while_statement) @statement.loop.while
 (do_statement) @statement.loop.do_while
 (return_statement) @statement.return
@@ -196,10 +197,11 @@
 (augmented_assignment_expression operator: "||=") @expression.assignment.compound.or
 (augmented_assignment_expression operator: "??=") @expression.assignment.compound.nullish
 (assignment_expression) @expression.assignment
+(assignment_expression using: _ @disposable)
 (ternary_expression) @expression.conditional
 (member_expression) @expression.member
 (member_expression (optional_chain) @optional_chain)
-(member_expression property: (private_property_identifier) @property @private)
+(member_expression property: (private_property_identifier) @property @privateName)
 (subscript_expression (optional_chain) @optional_chain)
 (subscript_expression) @expression.subscript
 (arrow_function (arrow_function_parameter parameter: (_) @parameters)) @expression.lambda

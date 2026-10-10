@@ -186,6 +186,7 @@ export namespace Type {
 	export interface Pointer<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by r
 		readonly $kind: 'type.pointer';
+		readonly writable?: Flag;
 	}
 	export interface Predicate<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by t
@@ -231,8 +232,8 @@ export namespace Type {
 	export interface Reference<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by r
 		readonly $kind: 'type.reference';
+		readonly exclusive?: Flag;
 		readonly lifetime?: V.Identifier.Lifetime<G>;
-		readonly mutable?: Flag;
 		readonly type: G['slots']['type.reference']['type'];
 	}
 	export interface Rest<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {

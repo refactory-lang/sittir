@@ -3,7 +3,7 @@
 import { bindings, field, rename, split } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "ee5affb336822746e9653886b05ff171b2791914b6d59773f51015a4bcc7172b",
+	hash: "4e667302d67498f00422c24a366eb9a1dc2c1359a437c765e50cc8c20e0ae97b",
 	patches: {
 		attribute_item: { "2": field("content") },
 		field_expression: { "0": field("object"), "2": field("property") },
@@ -14,8 +14,15 @@ export default bindings({
 		let_declaration: { "2": field("name") },
 		macro_invocation: { "0": field("function") },
 		match_expression: { "1": field("subject") },
+		pointer_type_mut: { "1": field("writable") },
+		reference_expression_mut: { "1": field("exclusive") },
+		reference_expression_raw_const: { "1/0": field("raw") },
+		reference_expression_raw_mut: { "1/0": field("raw"), "1/1": field("writable") },
+		reference_pattern: { "1/0": field("exclusive") },
+		reference_type: { "2/0": field("exclusive") },
 		shorthand_field_initializer: { "1": field("field") },
 		slice_pattern: { "1/0": field("patterns") },
+		static_item: { "2/0": field("by_reference") },
 		trait_item: { "5": field("extends") },
 		try_expression: { "0": field("argument") },
 		tuple_expression: { "2": field("expressions") },

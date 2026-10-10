@@ -34,6 +34,7 @@
 (extern_crate_declaration) @statement.import.crate
 (const_item) @declaration.constant
 (static_item) @declaration.variable.static
+(static_item ref: _ @byReference)
 (let_declaration pattern: (_) @name) @declaration.variable
 (field_declaration) @declaration.field
 (attributed_field_declaration (attribute_item)* @attributes (_) @element)
@@ -131,6 +132,10 @@
 (unary_expression "!" (_) @argument) @expression.unary.not
 (unary_expression "*" (_) @argument) @expression.unary.deref
 (reference_expression value: (_) @argument) @expression.reference
+(reference_expression_mut (mutable_specifier) @exclusive)
+(reference_expression_raw_const "raw" @raw)
+(reference_expression_raw_mut "raw" @raw)
+(reference_expression_raw_mut (mutable_specifier) @writable)
 (try_expression (_) @argument) @expression.try
 (compound_assignment_expr) @expression.assignment.compound
 (compound_assignment_expr operator: "+=") @expression.assignment.compound.add
@@ -176,6 +181,7 @@
 (range_pattern) @pattern.range
 (ref_pattern) @pattern.reference
 (reference_pattern) @pattern.reference.value
+(reference_pattern (mutable_specifier) @exclusive)
 (mut_pattern) @pattern.mutable
 (captured_pattern) @pattern.captured
 (generic_pattern) @pattern.generic
@@ -187,7 +193,9 @@
 (generic_type_with_turbofish) @type.generic.turbofish
 (type_argument (trait_bounds)? @constraint) @element.type_argument
 (reference_type) @type.reference
+(reference_type (mutable_specifier) @exclusive)
 (pointer_type) @type.pointer
+(pointer_type_mut (mutable_specifier) @writable)
 (array_type) @type.array
 (tuple_type) @type.tuple
 (unit_type) @type.unit

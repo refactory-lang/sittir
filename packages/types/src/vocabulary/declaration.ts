@@ -154,7 +154,7 @@ export namespace Declaration {
 		// t only
 		readonly override?: Flag;
 		// t only
-		readonly private?: Flag;
+		readonly privateName?: Flag;
 		// t only
 		readonly readonly?: Flag;
 		// t only
@@ -298,7 +298,7 @@ export namespace Declaration {
 		readonly override?: Flag;
 		// t only
 		readonly parameters: G['slots']['declaration.method']['parameters'][];
-		readonly private?: Flag;
+		readonly privateName?: Flag;
 		// t only
 		readonly readonly?: Flag;
 		// t only
@@ -680,9 +680,9 @@ export namespace Declaration {
 		export interface Static<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Variable<G>> {
 			// claimed by r
 			readonly $kind: 'declaration.variable.static';
+			readonly byReference?: Flag;
 			readonly mutable?: Flag;
 			readonly name: G['identifier'];
-			readonly ref?: Flag;
 			readonly type: G['slots']['declaration.variable.static']['type'];
 			readonly value?: G['slots']['declaration.variable.static']['value'];
 			readonly visibility?: V.Modifier.Visibility<G>;

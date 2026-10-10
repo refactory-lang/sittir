@@ -3,14 +3,16 @@
 import { bindings, field, rename } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "063cbcbc824872e27b562a05bc1fb905601cd31d08ce6258b844ac4a012cea97",
+	hash: "a08a26309870d778e7e8f40a2d7064779e380ce4e438b056fe15ed3b971585b6",
 	patches: {
 		_parameter_name: { "1/0": field("visibility"), "4": field("name") },
 		abstract_class_declaration: { "1": field("abstract") },
 		abstract_method_signature: { "0/0": field("visibility"), "1": field("abstract") },
+		assignment_expression: { "0/0": field("disposable") },
 		catch_clause: { "1/0": field("catch_clause_group") },
 		decorator: { "1": field("content") },
 		export_clause: { "1/0": field("export_specifiers") },
+		for_in_statement: { "1/0": field("async") },
 		generator_function: { "2": field("generator") },
 		generator_function_declaration: { "2": field("generator") },
 		interface_declaration: { "3/0": field("extends") },

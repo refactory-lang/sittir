@@ -162,7 +162,7 @@ export namespace Pattern {
 		export interface Value<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Reference<G>> {
 			// claimed by r
 			readonly $kind: 'pattern.reference.value';
-			readonly mutable?: Flag;
+			readonly exclusive?: Flag;
 			readonly pattern: G['slots']['pattern.reference.value']['pattern'];
 		}
 		export type Any<G extends GrammarContext<G>> = V.Pattern.Reference<G> | V.Pattern.Reference.Value<G>;

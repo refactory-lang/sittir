@@ -282,7 +282,7 @@
           "path": null
         },
         {
-          "name": "private",
+          "name": "privateName",
           "route": "kind",
           "kind": "private_property_identifier",
           "path": [
@@ -690,7 +690,7 @@
       ],
       "members": [
         {
-          "name": "using",
+          "name": "disposable",
           "route": "slot",
           "slot": "using",
           "path": [
@@ -3587,7 +3587,7 @@
       ],
       "members": [
         {
-          "name": "await",
+          "name": "async",
           "route": "slot",
           "slot": "await",
           "path": [
@@ -5059,7 +5059,7 @@
           ]
         },
         {
-          "name": "private",
+          "name": "privateName",
           "route": "kind",
           "kind": "private_property_identifier",
           "path": [
@@ -5335,7 +5335,7 @@
           ]
         },
         {
-          "name": "private",
+          "name": "privateName",
           "route": "kind",
           "kind": "private_property_identifier",
           "path": [
@@ -5492,7 +5492,7 @@
           ]
         },
         {
-          "name": "private",
+          "name": "privateName",
           "route": "kind",
           "kind": "private_property_identifier",
           "path": [
@@ -6987,7 +6987,7 @@
           ]
         },
         {
-          "name": "private",
+          "name": "privateName",
           "route": "kind",
           "kind": "private_property_identifier",
           "path": [
@@ -7199,7 +7199,7 @@
           ]
         },
         {
-          "name": "private",
+          "name": "privateName",
           "route": "kind",
           "kind": "private_property_identifier",
           "path": [
