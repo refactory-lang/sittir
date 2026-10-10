@@ -22,9 +22,9 @@ No fixture and no read leaves a list key absent, and the two derivations of "thi
 
 `hydrateSlotsWith`'s callers: the wraps call it for a slot whose storage holds nodes (`storesNodes`) and is many; a slot whose storage collapses its multiplicity (`collapsesMultiplicity`) is a `boolean` or `bitflag` slot, which holds no node and is read as stored. Every call names a list storage key, so its `stored == null` arm went, and with it `NO_CHILDREN`; the same arm went from the builders' `hydrateStoredSlots`.
 
-## Verifications 1–6 (the one-reader step)
+## Identity and the fold: what is tested and what is measured
 
-The relative-coordinates spec's verifications for the one-reader step, at the base `12644d5df` (master when the step began) and the branch head. Verifications 1–4 are tests; 5 and 6 are measured here.
+What the identity registry and the fold by range guarantee, and what they cost, compared at the base `12644d5df` and the branch head. The first four are tests; the last two are measured here.
 
 1. **One object through every route; a write through each renders the same.** The identity half is tested: `packages/rust/tests/identity.test.ts` "one wrapper per node, on a shallow read / a deep read" (a query returns the object the accessors return, either order, across two queries, `includes` is identity), "a collected wrapper" (wrapped again, one object on every route), "an alias envelope and its content", and `packages/python/tests/identity.test.ts` "an alias whose content is its own parser node". The write half is met in part, by the maintainer's ruling that the identity registry is a cache the render never consults: a write through a node a query reached is refused rather than rendered (`packages/rust/tests/fold-in-place-trivia.test.ts` "refuses a comment on a node a query reached, and renders it written through the accessors"), until edits are kept as data the render reads, keyed by where they sit in the tree.
 2. **A `$descendants` query reads its unregistered matches and no ancestor.** `packages/rust/tests/identity.test.ts` "a descendants query over a let declaration / a variant arm": the first query's native reads equal its matches, the second reads nothing.

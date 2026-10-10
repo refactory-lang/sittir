@@ -3063,7 +3063,9 @@ writer exists.
 The render function for a compound kind that has no body: each slot is
 written in declaration order through `buildSlotWriteCall`, with the class
 `slotClassOfShape` gives the slot's shape, or, when there are no slots, the
-transport's captured text.
+transport's captured text. A list slot is a `Vec` or a `NonEmptyVec`, never
+optional, so its items are iterated directly; a single slot that may be
+absent is an `Option`.
 
 ### `packages/codegen/src/emitters/render-module.ts::literalWrite`
 

@@ -751,16 +751,8 @@ function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): str
 			const slotCls = slotClassOfShape(transportSlotShapeOf(slot, nodeMap), nodeMap);
 			const writeChild = buildSlotWriteCall(slotCls, 'child');
 			if (isMultiple(slot)) {
-				if (isTransportRequired(slot)) {
-					lines.push(`    for child in node.${slotIdent}.iter() {`);
-				} else {
-					lines.push(`    if let Some(items) = &node.${slotIdent} {`);
-					lines.push(`        for child in items.iter() {`);
-				}
+				lines.push(`    for child in node.${slotIdent}.iter() {`);
 				lines.push(`        ${writeChild}`);
-				if (!isTransportRequired(slot)) {
-					lines.push(`        }`);
-				}
 				lines.push(`    }`);
 			} else if (isTransportRequired(slot)) {
 				lines.push(`    ${buildSlotWriteCall(slotCls, `node.${slotIdent}`)}`);
