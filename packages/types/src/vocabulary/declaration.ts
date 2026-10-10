@@ -248,6 +248,8 @@ export namespace Declaration {
 	export interface Macro<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
 		// claimed by r
 		readonly $kind: 'declaration.macro';
+		readonly name: G['slots']['declaration.macro']['name'];
+		readonly rules?: V.Clause.Macro.Rule<G>[];
 	}
 	export interface Method<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
 		// claimed by prt
@@ -391,10 +393,10 @@ export namespace Declaration {
 	export interface Module<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
 		// claimed by rt
 		readonly $kind: 'declaration.module';
-		readonly body?: V.Statement.Block<G>;
-		// t only
+		readonly body?: V.Statement.Block<G> | G['slots']['declaration.module']['body'][];
 		readonly name?: G['slots']['declaration.module']['name'];
-		// t only
+		readonly visibility?: V.Modifier.Visibility<G>;
+		// r only
 	}
 	export namespace Module {
 		export interface External<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Module<G>> {
@@ -406,6 +408,7 @@ export namespace Declaration {
 		export interface Foreign<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Module<G>> {
 			// claimed by r
 			readonly $kind: 'declaration.module.foreign';
+			readonly extern: V.Modifier.Extern<G>;
 		}
 		export type Any<G extends GrammarContext<G>> =
 			| V.Declaration.Module<G>
@@ -504,6 +507,12 @@ export namespace Declaration {
 		export interface Index<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Signature<G>> {
 			// claimed by t
 			readonly $kind: 'declaration.signature.index';
+			readonly indexType?: G['slots']['declaration.signature.index']['indexType'];
+			readonly mappedTypeClause?: V.Clause.MappedType<G>;
+			readonly name?: G['slots']['declaration.signature.index']['name'];
+			readonly readonly?: Flag;
+			readonly sign?: G['slots']['declaration.signature.index']['sign'];
+			readonly type: G['slots']['declaration.signature.index']['type'];
 		}
 		export type Any<G extends GrammarContext<G>> =
 			| V.Declaration.Signature.Call<G>
@@ -513,6 +522,11 @@ export namespace Declaration {
 	export interface Struct<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
 		// claimed by r
 		readonly $kind: 'declaration.struct';
+		readonly body?: G['slots']['declaration.struct']['body'][];
+		readonly name: V.Identifier.Type<G>;
+		readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
+		readonly visibility?: V.Modifier.Visibility<G>;
+		readonly whereClause?: V.Clause.Where<G>;
 	}
 	export interface TypeAlias<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
 		// claimed by prt

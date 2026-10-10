@@ -62,7 +62,7 @@
 (except_clause) @clause.except
 (finally_clause) @clause.finally
 (case_clause) @clause.case
-(with_clause) @clause.with
+(with_clause with_items: (_)? @items) @clause.with
 (with_item) @clause.with.item
 (for_in_clause) @clause.comprehension.for
 (if_clause) @clause.comprehension.if

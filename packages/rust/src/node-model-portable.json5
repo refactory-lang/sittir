@@ -5603,10 +5603,38 @@
           "name": "content",
           "route": "slot",
           "slot": "content",
+          "except": [
+            "range_pattern_with_left_with_right"
+          ],
           "path": [
             {
               "owner": "range_pattern_with_left",
               "slot": "content"
+            }
+          ]
+        },
+        {
+          "name": "right",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "range_pattern_with_left_with_right",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "range_pattern_with_left_with_right",
+          "slot": "right",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "range_pattern_with_left",
+              "slot": "content"
+            },
+            {
+              "owner": "range_pattern_with_left_with_right",
+              "slot": "right"
             }
           ]
         }

@@ -38,7 +38,7 @@
 (let_declaration pattern: (_) @name) @declaration.variable
 (field_declaration) @declaration.field
 (attributed_field_declaration (attribute_item)* @attributes (_) @element)
-(macro_definition) @declaration.macro
+(macro_definition name: (_) (_)? @rules) @declaration.macro
 (parameter name: (_) @name) @declaration.parameter
 (parameter (mutable_specifier) @mutable)
 (self_parameter) @declaration.parameter.self
@@ -96,8 +96,8 @@
 (base_field_initializer) @element.struct.base
 (type_binding) @element.type_binding
 (token_tree) @element.macro.token_tree
-(delim_token_tree) @element.macro.token_tree.delimited
-(token_tree_pattern) @element.macro.token_tree.pattern
+(delim_token_tree (_)* @tokens) @element.macro.token_tree.delimited
+(token_tree_pattern (_)* @tokens) @element.macro.token_tree.pattern
 (token_binding_pattern) @element.macro.token_binding
 (token_repetition) @element.macro.token_repetition
 (token_repetition_pattern) @element.macro.token_repetition.pattern
@@ -174,11 +174,12 @@
 (tuple_pattern) @pattern.tuple
 (tuple_struct_pattern) @pattern.tuple.struct
 (struct_pattern) @pattern.struct
-(field_pattern) @pattern.struct.field
+(field_pattern ref: _? @byReference) @pattern.struct.field
 (remaining_field_pattern) @pattern.struct.rest
 (slice_pattern) @pattern.slice
 (or_pattern) @pattern.or
 (range_pattern) @pattern.range
+(range_pattern_with_left (range_pattern_with_left_with_right right: (_) @right))
 (ref_pattern) @pattern.reference
 (reference_pattern) @pattern.reference.value
 (reference_pattern (mutable_specifier) @exclusive)

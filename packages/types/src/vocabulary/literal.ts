@@ -216,9 +216,11 @@ export namespace Literal {
 		// claimed by prt
 		readonly $kind: 'literal.string';
 		readonly content?: G['slots']['literal.string']['content'] | G['slots']['literal.string']['content'][];
-		// rt only
+		// r only
 		readonly contents?: G['slots']['literal.string']['contents'][];
 		// p only
+		readonly elements?: G['slots']['literal.string']['elements'][];
+		// t only
 	}
 	export namespace String {
 		export interface Bytes<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String<G>> {

@@ -186,6 +186,7 @@ export namespace Type {
 	export interface Pointer<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by r
 		readonly $kind: 'type.pointer';
+		readonly type: G['slots']['type.pointer']['type'];
 		readonly writable?: Flag;
 	}
 	export interface Predicate<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {

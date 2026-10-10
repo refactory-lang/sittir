@@ -555,10 +555,16 @@ export namespace Expression {
 		export interface List<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection<G>> {
 			// claimed by prt
 			readonly $kind: 'expression.collection.list';
+			readonly attributes?: G['attribute'][];
+			// r only
 			readonly collectionElements?: G['slots']['expression.collection.list']['collectionElements'][];
 			// p only
+			readonly element?: G['slots']['expression.collection.list']['element'];
+			// r only
 			readonly elements?: G['slots']['expression.collection.list']['elements'][];
-			// t only
+			// rt only
+			readonly length?: G['slots']['expression.collection.list']['length'];
+			// r only
 		}
 		export interface Object<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection<G>> {
 			// claimed by t
@@ -699,13 +705,17 @@ export namespace Expression {
 		// claimed by prt
 		readonly $kind: 'expression.lambda';
 		readonly async?: Flag;
-		// t only
-		readonly body?: G['slots']['expression.lambda']['body'];
-		// pt only
+		// rt only
+		readonly body: G['slots']['expression.lambda']['body'];
+		readonly move?: Flag;
+		// r only
 		readonly parameters?:
 			| G['slots']['expression.lambda']['parameters']
 			| G['slots']['expression.lambda']['parameters'][];
-		// pt only
+		readonly returnType?: G['slots']['expression.lambda']['returnType'];
+		// r only
+		readonly static?: Flag;
+		// r only
 	}
 	export interface Member<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by prt
@@ -722,16 +732,21 @@ export namespace Expression {
 	export interface Parenthesized<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by prt
 		readonly $kind: 'expression.parenthesized';
-		readonly expression?: G['slots']['expression.parenthesized']['expression'];
-		// pr only
+		readonly expression: G['slots']['expression.parenthesized']['expression'];
+		readonly type?: G['slots']['expression.parenthesized']['type'];
+		// t only
 	}
 	export interface Range<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by r
 		readonly $kind: 'expression.range';
+		readonly end?: G['slots']['expression.range']['end'];
+		readonly operator?: G['slots']['expression.range']['operator'];
+		readonly start?: G['slots']['expression.range']['start'];
 	}
 	export interface Reference<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by r
 		readonly $kind: 'expression.reference';
+		readonly argument: G['slots']['expression.reference']['argument'];
 		readonly exclusive?: Flag;
 		readonly raw?: Flag;
 		readonly writable?: Flag;

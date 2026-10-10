@@ -148,10 +148,14 @@ export namespace Pattern {
 	export interface Or<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
 		// claimed by r
 		readonly $kind: 'pattern.or';
+		readonly left?: G['slots']['pattern.or']['left'];
+		readonly right: G['slots']['pattern.or']['right'];
 	}
 	export interface Range<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
 		// claimed by r
 		readonly $kind: 'pattern.range';
+		readonly left?: G['slots']['pattern.range']['left'];
+		readonly right?: G['slots']['pattern.range']['right'];
 	}
 	export interface Reference<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
 		// claimed by r
@@ -200,6 +204,10 @@ export namespace Pattern {
 		export interface Field<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Struct<G>> {
 			// claimed by r
 			readonly $kind: 'pattern.struct.field';
+			readonly byReference?: Flag;
+			readonly mutable?: Flag;
+			readonly name: G['identifier'];
+			readonly pattern?: G['slots']['pattern.struct.field']['pattern'];
 		}
 		export interface Rest<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Struct<G>> {
 			// claimed by r

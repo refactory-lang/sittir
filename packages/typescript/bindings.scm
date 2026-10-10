@@ -212,7 +212,7 @@
 (yield_expression) @expression.yield
 (yield_expression_delegate (_) @expression) @expression.yield.delegate
 (template_substitution) @expression.interpolation
-(parenthesized_expression) @expression.parenthesized
+(parenthesized_expression (_) @expression) @expression.parenthesized
 (sequence_expression) @expression.sequence
 (object) @expression.collection.object
 (array) @expression.collection.list

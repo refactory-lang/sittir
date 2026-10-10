@@ -40,6 +40,7 @@ export namespace Element {
 		export interface TokenTree<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro<G>> {
 			// claimed by r
 			readonly $kind: 'element.macro.token_tree';
+			readonly tokens?: G['slots']['element.macro.token_tree']['tokens'][];
 		}
 		export namespace TokenTree {
 			export interface Delimited<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro.TokenTree<G>> {
