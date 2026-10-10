@@ -173,7 +173,7 @@ The facts with every grammar kind they name (claims and their placements, member
 
 ### `packages/codegen/src/bindings/hash.ts::bindingsSourceHash`
 
-The SHA-256 of a `bindings.scm` and every `.ts` source of the vocabulary, each source keyed by its file name in name order, over their bytes. Nothing is parsed, so the hash is checked without the scm parser.
+The SHA-256 of a `bindings.scm` and every `.ts` source under the vocabulary directory, its sub-folders included (`features/**`), each source keyed by its path relative to that directory in posix form, in path order, over their bytes. An edit to or a move of any vocabulary source marks the overlay stale. Nothing is parsed, so the hash is checked without the scm parser.
 
 ### `packages/codegen/src/bindings/hash.ts::grammarBindingsHash`
 

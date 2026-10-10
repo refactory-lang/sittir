@@ -1,12 +1,16 @@
 import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, sep } from 'node:path';
 import type { GrammarName } from '../grammars.ts';
 import { bindingsPath, VOCABULARY_DIR } from './facts.ts';
 
 export function bindingsSourceHash(scmPath: string, vocabularyDir: string): string {
 	const hash = createHash('sha256').update(readFileSync(scmPath));
-	for (const name of readdirSync(vocabularyDir).filter((f) => f.endsWith('.ts')).sort()) {
+	const names = readdirSync(vocabularyDir, { recursive: true, encoding: 'utf8' })
+		.filter((f) => f.endsWith('.ts'))
+		.map((f) => f.split(sep).join('/'))
+		.sort();
+	for (const name of names) {
 		hash.update(`\0${name}\0`).update(readFileSync(join(vocabularyDir, name)));
 	}
 	return hash.digest('hex');
