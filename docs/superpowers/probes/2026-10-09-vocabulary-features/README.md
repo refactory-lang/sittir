@@ -23,6 +23,7 @@ The vocabulary interfaces carry no `$subType`, and the features extend them as t
 | `lib.mts` | The model: reading the vocabulary and the feature tree, planning ownership with its checks, writing the gated vocabulary, the contexts, the names and the consumers, and the fold. |
 | `generate.mts` | Writes the variants under `out/` (gitignored) and prints the diagnostics. |
 | `cost.mts` | Measures the variants. |
+| `flags/` | The flag encodings' checks: `check.ts`, which every flag variant compiles; `enum-checks.sh` and `enum/`, the enum candidate's run-time and erasability questions; `grammar-graph.py`, the modules Node loads to run each grammar. |
 | `snapshot/` | The snapshot above. |
 
 ## How a feature is written
@@ -117,6 +118,9 @@ pnpm exec tsx docs/superpowers/probes/2026-10-09-vocabulary-features/generate.mt
 pnpm exec tsc -p docs/superpowers/probes/2026-10-09-vocabulary-features/out/gate/tsconfig.demo.json     # passes
 pnpm exec tsc -p docs/superpowers/probes/2026-10-09-vocabulary-features/out/gate/tsconfig.errors.json   # the negatives' messages
 pnpm exec tsx docs/superpowers/probes/2026-10-09-vocabulary-features/cost.mts                           # the cost table
+pnpm exec tsc -p docs/superpowers/probes/2026-10-09-vocabulary-features/out/flags-enum/tsconfig.check.json   # the flag checks, in each flags-* variant
+bash docs/superpowers/probes/2026-10-09-vocabulary-features/flags/enum-checks.sh                          # the enum's run-time and erasability questions
+python3 docs/superpowers/probes/2026-10-09-vocabulary-features/flags/grammar-graph.py                     # what Node loads to run each grammar
 ```
 
 The variants under `out/`:
@@ -129,6 +133,7 @@ The variants under `out/`:
   - the visibility proposal makes `visibility` an access level (finding 5).
 - `scale-gate`: the cost model, folded. Every member the snapshot tags as particular to some grammars (`// rt only`), and every kind only some grammars claim, belongs to a feature named by those grammars (`OnlyRt`): 6 features, 341 kinds, 162 member declarations gated. Its features exist for cost only; `gate`'s are the design's.
 - `scale-registry`: the cost model with every level read off an augmentable registry, `Kinds<G>`, filtered by path, in place of the generated unions.
+- `flags-enum`, `flags-const`, `flags-names` and `flags-registry`: `gate` with its 87 boolean members, 26 names, written as flags rather than members, one variant per encoding (`lib.mts`, `FlagEncoding`). Each consumer also checks the kind's builder steps (`Steps`), and `tsc -p out/<variant>/tsconfig.check.json` compiles `flags/check.ts`.
 
 Every variant's consumers come from one rule (`lib.mts`, `writeConsumers`). For each kind a language's context covers, it writes a portable node literal with a closure per member the language's kind has, and assigns the kind to its namespace in the language's context.
 
@@ -191,6 +196,35 @@ Every program loads all three contexts together, which is the polyglot case: the
 | scale-registry | 54,584 (+51.6% on fold) | 301,632 (2.1 times fold) | 127,333 (+46.4% on fold) | 0.272 |
 
 The fold's cost is the namespace map's: every instantiation checks its context against the map over that context. `gate`, with every feature of the table and the three proposals, costs about what `scale-gate`'s cost model does: 16.1% more instantiations than the fold, against 15.0%. The gated variants check fewer members per language than `today` and `fold`, because a member the language lacks is dropped from its portable node: `gate` checks 585 for python, 590 for rust and 803 for typescript against 619, 637 and 817, and `scale-gate` 503, 554 and 710.
+
+### Flag encodings
+
+A flag is no member: a node's flags are one bitflag, and a kind's flags are its is-guards and builder steps (bindings spec §3.3). The four flag variants write the same 87 declarations, 26 flag names, four ways. The base and the feature stubs lose their boolean members, and `vocabulary/flags.ts` holds:
+
+- **the bits,** one per flag name in name order: `enum Flag { Abstract = 1 << 0, … }` (`flags-enum`, `flags-registry`), an erasable `const Flag = { Abstract: 1, … } as const` (`flags-const`), or the names, with a `const FlagBit` beside them (`flags-names`);
+- **each bit's name,** `FlagName`, `{ readonly [Flag.Abstract]: 'abstract'; … }`, but for `flags-names`;
+- **each kind's flags,** `KindFlags<G>`: per kind, the flags it declares and those the kinds above it declare, each gated on the feature that owns it, `gate.In<G, features.Generators, Flag.Generator, never>`. In `flags-registry` they come instead from `FlagRegistry<G>`, keyed `'<kind>#<flag>'`: the base declares its own entries, augment.ts adds those features own by augmentation, and a kind's flags are the entries whose kind is it or a kind above it, by path prefix;
+- **`Steps<G, P>`,** the builder steps of the kind at `P` in the context `G`, one per flag it admits there.
+
+`flags/check.ts` compiles in all four. A typescript method has `async`, `generator`, `static`, `private`, `computed`, `optional`, `override` and `readonly` steps, a getter has its method's, and a rust method has no `generator` step, nor a python async block a `move` step, each refused as `@ts-expect-error`. In this vocabulary a flag declared on a kind reaches the same kinds by path prefix as by inheritance.
+
+The cost, from the same run as the table above:
+
+| variant | types | instantiations | memory (K) | check (s) |
+| --- | --- | --- | --- | --- |
+| gate (flags as members) | 50,751 | 164,804 | 103,721 | 0.154 |
+| flags-enum | 50,676 | 159,575 (−3.2% on gate) | 104,054 | 0.149 |
+| flags-const | 50,677 | 159,575 | 104,076 | 0.151 |
+| flags-names | 50,541 | 159,450 | 103,884 | 0.157 |
+| flags-registry | 56,696 | 427,461 (2.7 times flags-enum) | 110,269 | 0.233 |
+
+The load average was about 21 through the run. The counts repeat the table above's `today`, `fold` and `gate` exactly.
+
+What the enum candidate raises (`flags/enum-checks.sh`):
+
+- **A feature cannot add a bit by augmentation.** tsc accepts a feature module that adds a member to the enum (`declare module './flags.ts' { export enum Flag { Async = 1 << 1 } }`), but an augmentation is ambient and emits nothing: at run time `Flag.Async` is `undefined`, and `Flag.Static | Flag.Async` is `1`, the bit silently dropped. So the generator writes one enum with every bit, and a feature contributes a flag's declaration, which the generator reads. A registry that features augment holds the type-level unions correctly, at 2.7 times the instantiations of the generated map.
+- **Bits are generated.** The generator gives each flag name one bit, in name order, so a flag has one bit in every context and composition. A bitwise number holds 31 bits, and the generator refuses a 32nd: the probe's vocabulary has 26. A new flag name shifts the bits after it, which no reader sees, since the bitflag is client-side only and a structure states its flags by name (`$flags`).
+- **The vocabulary stays out of the erasable graph.** `flags/grammar-graph.py` lists what Node loads to run each grammar from its `.sittir/grammar.js`: 51 modules per grammar (47 in codegen, `@sittir/common/error-kind`, and three of the grammar's own), none under the vocabulary and none declaring an enum. `@sittir/types` is not loaded at all. Node's strip-only loader refuses an enum (`ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX`), as `--erasableSyntaxOnly` does (TS1294), so a grammar that ever reached one would fail at its first generate.
 
 ### Findings
 

@@ -49,7 +49,7 @@ These go into the grammar package's types module, beside `ParsedByKindId` and `B
 
   Each entry is one alias per kind (`type VK_FunctionItem = …`), so a container that contains itself, such as a token tree, resolves through its array rather than through a circular indexed access.
 - **`ViewOf<N>`** maps a reader's result type through `ViewByKind`, distributing over the reader's union and keeping `undefined` where the slot is optional. **`EnumViewByKind`** and **`ViewEnumOf<N>`** do the same for a token that is a value of a claimed enum (§2.3).
-- **`Backward`,** the grammar kinds a node crosses low→high on its own: those whose every fact the node itself decides, by its kind, its field literals, its own text and its own tokens, with nothing from its ancestors. No claim is placed (bindings spec §9). A claim a grammar site decides is a kind of its own: rust's methods, static methods and signatures inside impls and traits are claims on the alias kinds `method_declaration` and `signature_method_declaration`, which `$type` decides, so `function_item` and `function_signature_item` cross on their own. A fact of a node's position is its parent's member. `Backward` leaves out only a kind with a fact its envelope may set: python's `function_definition`, which `decorated_definition` makes a static or class method, is reached through the envelope. The census of the placed claims this replaced is in `docs/superpowers/probes/2026-10-10-placed-claims/`.
+- **`Backward`,** the grammar kinds a node crosses low→high on its own: those whose every fact the node itself decides, by its kind, its field literals, its own text and its own tokens, with nothing from its ancestors. No claim is placed (bindings spec §9). A claim a grammar site decides is a kind of its own: rust's methods, with a receiver or without, and signatures inside impls and traits are claims on the alias kinds `method_declaration` and `signature_method_declaration`, which `$type` decides, so `function_item` and `function_signature_item` cross on their own. A fact of a node's position is its parent's member. `Backward` leaves out only a kind with a fact its envelope may set: python's `method_declaration`, which `decorated_definition` makes static from its own `@staticmethod`, is reached through the envelope. The census of the placed claims this replaced is in `docs/superpowers/probes/2026-10-10-placed-claims/`.
 - **`attach` and `is` overloads** are typed from these maps: a portable engine's `attach` from `Backward` and `ViewByKind`, a grammar engine's from the vocabulary kinds the map builds; `is.<role path>` narrows a grammar node to the row's grammar types and a portable node to the vocabulary interface.
 
 ### 2.2 Portable node literals
@@ -59,7 +59,7 @@ There is one factory per read entry, meaning a grammar kind and one vocabulary k
 ```ts
 const FunctionItemAsDeclarationFunction = (n: T.FunctionItem.Parsed, set = 0): VocabViews['declaration.function'] => ({
 	$type: n.$type,
-	[flags]: () => set | (n.functionModifiers()?.modifiers().includes(TSKindId.AsyncKeyword) ? Flag.async : 0) | …,
+	[flags]: () => set | (n.functionModifiers()?.modifiers().includes(TSKindId.AsyncKeyword) ? Flags.Async : 0) | …,
 	name: () => read(n.name()),
 	parameters: () => read(n.parameters()),
 	…
@@ -90,11 +90,11 @@ Nothing queries the tree at read time. A portable node costs one small object, a
 
 The portable engine's `build` is typed per kind from the vocabulary. A structure's kind, named by `$kind` where the slot it fills admits more than one kind, selects the build entry, and each member is handed to its slot's loose-builder parameter:
 
-- **Refinement builders and flag steps are the only form** a refinement or a flag takes in a build (bindings spec §3.3): a builder per refinement path, `build.<path>`, and on each builder of a kind a step per flag the kind has, the steps in any order, each setting its bit. No member and no parameter states a refinement or a flag.
+- **Refinement builders and flag steps are the only form** a refinement or a flag takes in a build (bindings spec §3.3): a builder per refinement path, `build.<path>`, and on each builder of a kind a step per flag the kind has, the steps in any order, each setting its bit. A step's type leaves out the steps its flag excludes, and a refinement's builder those its value excludes, from the exclusions the generator derives per kind from the grammar's rule; a build from a structure checks its `$kind` and `$flags` against the same exclusions (bindings spec §3.3, §8). No member and no parameter states a refinement or a flag.
 - A flag or a nested member routed through an intermediate kind builds that kind's input; through a forwarded envelope that is its spread form (`functionModifiers(TSKindId.AsyncKeyword, …)`). Loose builders never guess a keyword from text.
 - A refinement's builder fills in the literals that spell it.
 - A flag that is the presence of a kind builds its slot's value as that kind, and refuses a value of another kind.
-- A fact an envelope states builds the envelope around the element, with the capture that states it: python's `@staticmethod` builds a `decorated_definition` around the function.
+- A fact an envelope states builds the envelope around the element, with the capture that states it: python's `static` builds a `decorated_definition` with `@staticmethod` around the method.
 - Where a kind and its shorthand share a vocabulary kind, the build picks the shorthand when the member it omits is absent.
 - An enum claim builds as its token's kind id, through the enum's text table where the structure spells the value.
 - A leaf whose text varies builds from its text.
@@ -111,7 +111,7 @@ The input is runtime data (a structure can arrive as JSON), so the build side ca
 - **High→low:** a parsed portable node is re-wrapped as its low-level node from the same row; a built one is rebuilt through the build entries.
 - **A node of the engine's own surface:** a node bound to this engine is returned as is; one bound to another engine of the same surface is re-wrapped from its row when parsed, or rebuilt when built, exactly as a crossing is. No identity is promised either way.
 
-`is.<role path>(x)` decides from `$type`, the node's own predicates and its flags. The read entries under the path, a grammar kind set plus slot constraints (`operator: "+="`) and text predicates, compile into the query facet's plan form, one derivation and no separate kind table, and the path's flags into a mask tested against the node's bitflag. The plan tests only the node and its captured children, so no query runs over the tree. A flag's guard sits under every path of its kind and passes alongside the node's refinement.
+`is.<role path>(x)` decides from `$type`, the node's own predicates and its flags. The read entries under the path, a grammar kind set plus slot constraints (`operator: "+="`), text predicates and kind tests, compile into the query facet's plan form, one derivation and no separate kind table, and the path's flags into a mask tested against the node's bitflag. A kind test is the plan's `is` op, which holds where a slot holds a node of one of its kinds, and a step toward a captured child may take the slot's `first` or `last` value. The plan tests only the node and its captured children, so no query runs over the tree. A guard tests each fact its path names, not the path as a prefix (bindings spec §3.3): it sits under every path that names its facts, so `is.declaration.method.public` passes a public getter, and a flag's guard passes alongside the node's refinement.
 
 ## 3. From claims to routes
 
