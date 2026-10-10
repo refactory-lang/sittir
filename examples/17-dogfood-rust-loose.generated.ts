@@ -57,7 +57,7 @@ export function rebuildSpliceLoose() {
 				name: "Display",
 			}),
 			type: "SpliceError",
-			declarationList: rs.build.functionItem({
+			body: rs.build.functionItem({
 				name: "fmt",
 				parameters: [rs.build.selfParameter({
 					reference: true,
@@ -163,7 +163,7 @@ export function rebuildSpliceLoose() {
 				name: "Error",
 			}),
 			type: "SpliceError",
-			declarationList: rs.build.declarationList(),
+			body: rs.build.declarationList(),
 		}).$trivia.leading(rs.kinds.Blankline), rs.build.functionItem({
 			visibilityModifier: rs.build.visibilityModifier.pub(),
 			name: "apply_edits",
