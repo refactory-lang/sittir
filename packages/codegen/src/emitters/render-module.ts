@@ -2881,8 +2881,9 @@ function rootEdgeStamp(plan: RenderPlan, node: AssembledNode, fillFields: readon
 	const items = (end: 'first' | 'last'): string =>
 		`[${(end === 'first' ? fillFields : [...fillFields].reverse()).map((f) => `::sittir_core::prepare::EdgeItems::${end}_item(&self.${f})`).join(', ')}].into_iter().flatten().next()`;
 	return [
-		`        let first = ${items('first')};`,
-		`        let last = ${items('last')};`,
+		`        let inner = ::sittir_core::layout::Layout::snapshot_inner(&self.layout);`,
+		`        let first = ::sittir_core::prepare::outermost(${items('first')}, inner, ::sittir_core::options::Side::Before);`,
+		`        let last = ::sittir_core::prepare::outermost(${items('last')}, inner, ::sittir_core::options::Side::After);`,
 		`        let root = ::sittir_core::layout::Layout::snapshot_edge(&self.layout).map(|edge| edge.span);`,
 		`        let flanks = ::sittir_core::prepare::root_flanks(first, last, root, ${allowedOf('before')}, ${allowedOf('after')}, &options::WHITESPACE, ctx);`,
 		`        ::sittir_core::prepare::fill_edges(self, flanks);`

@@ -88,6 +88,11 @@ impl crate::prepare::Prepare for TriviaText {
     fn prepare(&mut self, _ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
         Ok(())
     }
+
+    fn snapshot_edge(&self) -> Option<crate::prepare::SnapshotEdge> {
+        let bare = crate::prepare::TriviaReach::Bare;
+        self.span.map(|span| crate::prepare::SnapshotEdge { span, leading: bare, trailing: bare })
+    }
 }
 
 /// The trivia one transport owns. Mirrors `NodeTrivia` in `@sittir/types`.

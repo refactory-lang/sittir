@@ -14317,7 +14317,7 @@ enums, `VerbatimTransport`): `Ok(())`.
 
 ### `packages/codegen/src/emitters/render-module.ts::rootEdgeStamp`
 
-The grammar root's prepare lines that give an edited root its source flanks, ahead of `prepare_edges`: the first and last present item across its child fields (`EdgeItems`, fields in declaration order), whose coordinates `root_flanks` reads the tree bytes around, classified into the root's before and after sites exactly as a list gap is (for a snapshot root, the gaps its first and last items' geometry imply against the root's own span, `Layout::snapshot_edge`); `fill_edges` sets only the sides the wire left unset. A field order that put a non-edge item first only costs evidence: the bytes before it are not whitespace and classify to nothing. Empty for every other kind.
+The grammar root's prepare lines that give an edited root its source flanks, ahead of `prepare_edges`: the first and last present item across its child fields (`EdgeItems`, fields in declaration order), whose coordinates `root_flanks` reads the tree bytes around, classified into the root's before and after sites exactly as a list gap is (for a snapshot root, the gaps from the root's own span, `Layout::snapshot_edge`, to where its first item's render begins and its last item's ends, trivia included; `outermost` puts the root's inner trivia, `Layout::snapshot_inner`, in place of an end item it lies beyond or of a missing one); `fill_edges` sets only the sides the wire left unset. A field order that put a non-edge item first only costs evidence: the bytes before it are not whitespace and classify to nothing. Empty for every other kind.
 
 ### `packages/codegen/src/emitters/render-module.ts::prepareStructImpl`
 

@@ -13,6 +13,15 @@ describe('$snapshot()', () => {
 		expect(namesATree(snap)).toBe(false);
 		expect(engine.render(snap).toString()).toBe(source);
 	});
+	it.each([
+		['a comment leading the first item', '\n/* c */\nfn main() {}\n'],
+		['a comment trailing the last item', 'fn main() {}\n// end\n\n'],
+		["a root's only trivia", '\n\n// only\n\n'],
+	])('measures a root edge past %s', (_, source) => {
+		const root = engine.parse(source, WHOLE);
+		expect(engine.render(root).toString()).toBe(source);
+		expect(engine.render(root.$snapshot()).toString()).toBe(source);
+	});
 	it('keeps an edit, and the edited node its geometry', () => {
 		const root = engine.parse('fn f() {\n    let x = 1; // keep\n}\n', WHOLE);
 		const fn = root.statements()[0]!;

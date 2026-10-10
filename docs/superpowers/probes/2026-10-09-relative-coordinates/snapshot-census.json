@@ -121,10 +121,10 @@
 		},
 		{
 			"entry": "Derive macro helper attributes",
-			"line": 0,
+			"line": 2,
 			"class": "whitespace",
 			"live": "",
-			"snapshot": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md"
+			"snapshot": "use thiserror::Error;"
 		},
 		{
 			"entry": "Attributes and Expressions",
@@ -464,24 +464,24 @@
 		},
 		{
 			"entry": "Block comments",
-			"line": 0,
+			"line": 4,
 			"class": "whitespace",
 			"live": "",
-			"snapshot": "/*"
+			"snapshot": "/* Comment with asterisks **/"
 		},
 		{
 			"entry": "Nested block comments",
-			"line": 0,
+			"line": 2,
 			"class": "whitespace",
 			"live": "",
-			"snapshot": "/* /* double nested */ */"
+			"snapshot": "// ---"
 		},
 		{
 			"entry": "Line comments",
-			"line": 0,
+			"line": 2,
 			"class": "whitespace",
 			"live": "",
-			"snapshot": "// Comment"
+			"snapshot": "/// Outer line doc comment"
 		},
 		{
 			"entry": "Line doc comments",
@@ -492,31 +492,24 @@
 		},
 		{
 			"entry": "Block doc comments",
-			"line": 0,
+			"line": 3,
 			"class": "whitespace",
 			"live": "",
-			"snapshot": "/*!  - Inner block doc */"
-		},
-		{
-			"entry": "Nested doc block comments",
-			"line": 0,
-			"class": "edge",
-			"live": "",
-			"snapshot": "/*   /* */  /** */  /*! */  */"
+			"snapshot": "/*   - Only a comment */"
 		},
 		{
 			"entry": "Comments degenerate cases",
-			"line": 0,
+			"line": 2,
 			"class": "whitespace",
 			"live": "",
-			"snapshot": "//!"
+			"snapshot": "/*!*/"
 		},
 		{
 			"entry": "Line doc comment with no EOL",
-			"line": 0,
+			"line": 2,
 			"class": "edge",
-			"live": "",
-			"snapshot": "//! Doc comment"
+			"live": "<end>",
+			"snapshot": ""
 		},
 		{
 			"entry": "Greek letters in identifiers",
@@ -559,13 +552,6 @@
 			"class": "whitespace",
 			"live": "d as *mut E<<F as E>::G>;",
 			"snapshot": "d as * mut E<<F as E>::G>;"
-		},
-		{
-			"entry": "Block comments (single line)",
-			"line": 0,
-			"class": "edge",
-			"live": "",
-			"snapshot": "/* plain block comment */"
 		}
 	],
 	"typescript": [
@@ -969,20 +955,6 @@
 			"snapshot": "type A<B> = {"
 		},
 		{
-			"entry": "Indexed Access Precedence",
-			"line": 0,
-			"class": "edge",
-			"live": "",
-			"snapshot": "// These should generate the same AST aside from the parenthesized_type node"
-		},
-		{
-			"entry": "Typeof instantiation expressions",
-			"line": 0,
-			"class": "edge",
-			"live": "",
-			"snapshot": "// This is a special construct, different from both \"typeof (f<T>)\" and"
-		},
-		{
 			"entry": "Typeof this",
 			"line": 2,
 			"class": "whitespace",
@@ -1091,10 +1063,10 @@
 		},
 		{
 			"entry": "Format strings",
-			"line": 0,
+			"line": 16,
 			"class": "whitespace",
-			"live": "",
-			"snapshot": "# nested!"
+			"live": "{\"string1\" if True else",
+			"snapshot": "{\"string1\" if True else \"string2\"}\"\"\""
 		},
 		{
 			"entry": "Format strings with format specifiers",
@@ -1252,10 +1224,10 @@
 		},
 		{
 			"entry": "Empty blocks",
-			"line": 0,
+			"line": 8,
 			"class": "whitespace",
-			"live": "",
-			"snapshot": "# These are not actually valid python; blocks"
+			"live": "  print e",
+			"snapshot": "    print e"
 		},
 		{
 			"entry": "Class definitions",

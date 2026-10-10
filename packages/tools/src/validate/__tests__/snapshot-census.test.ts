@@ -46,7 +46,7 @@ async function census(grammar: string): Promise<Difference[]> {
 			const found = firstDifference(name, engine.render(root).toString(), engine.render(snapshotOf(root)).toString());
 			if (found !== undefined) out.push(found);
 		} catch (error) {
-			out.push({ entry: name, line: -1, class: 'error', live: '', snapshot: String((error as Error).message).split('\n')[0]! });
+			out.push({ entry: name, line: -1, class: 'error', live: '', snapshot: String(error instanceof Error ? error.message : error).split('\n')[0]! });
 		}
 	}
 	return out;

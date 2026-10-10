@@ -67,12 +67,16 @@ pub trait Layout {
     /// two are still adjacent in their source.
     fn gap(&self) -> Option<&SourceGap>;
     fn take_flank(&mut self) -> Option<SourceFlank>;
-    /// Where a snapshot node lies, and whether it has leading or trailing
-    /// trivia (`TransportLayout::span`).
+    /// Where a snapshot node lies, and how far its leading and trailing
+    /// trivia reach (`TransportLayout::span`).
     fn snapshot_edge(&self) -> Option<crate::prepare::SnapshotEdge>;
+    /// Where a snapshot node's inner trivia lies, as one item spanning all of
+    /// it: `None` with no inner trivia, `Rebuilt` when an entry has no
+    /// geometry.
+    fn snapshot_inner(&self) -> Option<crate::prepare::EdgeItem<'_>>;
 }
 
-impl<T> Layout for Option<Box<TransportLayout<T>>> {
+impl<T: Prepare> Layout for Option<Box<TransportLayout<T>>> {
     type Trivia = T;
 
     fn trivia(&self) -> Option<&TransportTrivia<T>> {
@@ -100,14 +104,32 @@ impl<T> Layout for Option<Box<TransportLayout<T>>> {
     }
 
     fn snapshot_edge(&self) -> Option<crate::prepare::SnapshotEdge> {
+        use crate::prepare::TriviaReach;
         let layout = self.as_ref()?;
-        let held = |entries: Option<&Vec<crate::trivia::TriviaEntry<T>>>| entries.is_some_and(|entries| !entries.is_empty());
         let trivia = layout.trivia.as_ref();
+        let reach = |entry: Option<&crate::trivia::TriviaEntry<T>>, end: fn(crate::points::PointSpan) -> crate::points::Point| match entry {
+            None => TriviaReach::Bare,
+            Some(entry) => entry.value.snapshot_edge().map_or(TriviaReach::Unplaced, |edge| TriviaReach::To(end(edge.span))),
+        };
         Some(crate::prepare::SnapshotEdge {
             span: layout.span?,
-            leading: held(trivia.and_then(|trivia| trivia.leading.as_ref())),
-            trailing: held(trivia.and_then(|trivia| trivia.trailing.as_ref())),
+            leading: reach(trivia.and_then(|trivia| trivia.leading.as_ref()?.first()), |span| span.start),
+            trailing: reach(trivia.and_then(|trivia| trivia.trailing.as_ref()?.last()), |span| span.end),
         })
+    }
+
+    fn snapshot_inner(&self) -> Option<crate::prepare::EdgeItem<'_>> {
+        use crate::prepare::{EdgeItem, SnapshotEdge, TriviaReach};
+        let entries = self.as_ref()?.trivia.as_ref()?.inner.as_ref()?.values().flatten();
+        let mut extent: Option<crate::points::PointSpan> = None;
+        for entry in entries {
+            let Some(edge) = entry.value.snapshot_edge() else { return Some(EdgeItem::Rebuilt) };
+            extent = Some(extent.map_or(edge.span, |span| crate::points::PointSpan {
+                start: span.start.min(edge.span.start),
+                end: span.end.max(edge.span.end),
+            }));
+        }
+        extent.map(|span| EdgeItem::Snapshot(SnapshotEdge { span, leading: TriviaReach::Bare, trailing: TriviaReach::Bare }))
     }
 }
 

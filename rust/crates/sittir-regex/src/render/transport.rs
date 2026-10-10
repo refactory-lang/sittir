@@ -1579,8 +1579,9 @@ impl ::sittir_core::render::Render for PatternTransport {
 impl ::sittir_core::prepare::Prepare for PatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let first = [::sittir_core::prepare::EdgeItems::first_item(&self.content)].into_iter().flatten().next();
-        let last = [::sittir_core::prepare::EdgeItems::last_item(&self.content)].into_iter().flatten().next();
+        let inner = ::sittir_core::layout::Layout::snapshot_inner(&self.layout);
+        let first = ::sittir_core::prepare::outermost([::sittir_core::prepare::EdgeItems::first_item(&self.content)].into_iter().flatten().next(), inner, ::sittir_core::options::Side::Before);
+        let last = ::sittir_core::prepare::outermost([::sittir_core::prepare::EdgeItems::last_item(&self.content)].into_iter().flatten().next(), inner, ::sittir_core::options::Side::After);
         let root = ::sittir_core::layout::Layout::snapshot_edge(&self.layout).map(|edge| edge.span);
         let flanks = ::sittir_core::prepare::root_flanks(first, last, root, options::allowed(options::SITE_PATTERN_PATTERN_BEFORE), options::allowed(options::SITE_PATTERN_PATTERN_AFTER), &options::WHITESPACE, ctx);
         ::sittir_core::prepare::fill_edges(self, flanks);

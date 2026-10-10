@@ -221,15 +221,32 @@ impl<X: EdgeItems> EdgeItems for crate::NonEmptyVec<X> {
     }
 }
 
+/// The item at one end of a root once its own trivia is counted: the end item
+/// of its children, or its inner trivia (`Layout::snapshot_inner`) when that
+/// lies beyond it on `side` or the root has no children.
+pub fn outermost<'a>(item: Option<EdgeItem<'a>>, inner: Option<EdgeItem<'a>>, side: Side) -> Option<EdgeItem<'a>> {
+    match (item, inner) {
+        (None, inner) => inner,
+        (Some(EdgeItem::Snapshot(edge)), Some(EdgeItem::Snapshot(own))) => {
+            let beyond = match side {
+                Side::Before => own.span.start < edge.span.start,
+                Side::After => own.span.end > edge.span.end,
+            };
+            Some(EdgeItem::Snapshot(if beyond { own } else { edge }))
+        }
+        (item, _) => item,
+    }
+}
+
 /// A root transport's edges read from its tree's own flanks: the bytes
 /// before its first item and after its last, when that item is still a
 /// coordinate, classified into the arm the edge site admits exactly as a
 /// list gap is. A snapshot root reads the same gaps from geometry: from its
-/// own start (`root`) to its first item, and from its last item to its end;
-/// a side with trivia between the item and the root's end is not a gap the
-/// arms can spell. An edge item that was rebuilt, bytes that are not
-/// whitespace, or trivia on that side leave that side unset for the options
-/// and the grammar default.
+/// own start (`root`) to where its first item's render begins, leading trivia
+/// included, and from where its last item's render ends to the root's end.
+/// An edge item that was rebuilt, bytes that are not whitespace, or unplaced
+/// trivia on that side leave that side unset for the options and the grammar
+/// default.
 pub fn root_flanks(
     first: Option<EdgeItem<'_>>,
     last: Option<EdgeItem<'_>>,
@@ -251,14 +268,10 @@ pub fn root_flanks(
             }
             EdgeItem::Snapshot(edge) => {
                 let root = root?;
+                let outer = edge.outer(side)?;
                 let gap = match side {
-                    Side::Before if !edge.leading => {
-                        crate::classify::geometry_gap_text(&crate::points::PointSpan { start: root.start, end: root.start }, &edge.span)
-                    }
-                    Side::After if !edge.trailing => {
-                        crate::classify::geometry_gap_text(&edge.span, &crate::points::PointSpan { start: root.end, end: root.end })
-                    }
-                    _ => return None,
+                    Side::Before => crate::classify::geometry_gap_text(&crate::points::PointSpan::at(root.start), &outer),
+                    Side::After => crate::classify::geometry_gap_text(&outer, &crate::points::PointSpan::at(root.end)),
                 };
                 std::borrow::Cow::Owned(gap)
             }
@@ -310,7 +323,7 @@ fn geometry_list_gap<T: Prepare, const ADJACENT: bool>(
     token: &str,
 ) -> Option<(String, String)> {
     let (a, b) = (before.snapshot_edge()?, after.snapshot_edge()?);
-    if a.trailing || b.leading || b.span.start < a.span.end {
+    if a.trailing != TriviaReach::Bare || b.leading != TriviaReach::Bare || b.span.start < a.span.end {
         return None;
     }
     Some(crate::classify::geometry_gap_sides(&a.span, &b.span, token))
@@ -422,13 +435,38 @@ pub fn fill_seated_gaps<'i, T: SeatTarget + 'i, const ADJACENT: bool>(
     }
 }
 
-/// Where a snapshot item lies and whether trivia leads or trails it: what a
+/// Where a snapshot item lies and how far trivia leads or trails it: what a
 /// root's edges and a list's gaps read in place of source bytes.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct SnapshotEdge {
     pub span: crate::points::PointSpan,
-    pub leading: bool,
-    pub trailing: bool,
+    pub leading: TriviaReach,
+    pub trailing: TriviaReach,
+}
+
+/// How far a snapshot item's trivia on one side reaches beyond the item.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TriviaReach {
+    /// No trivia on that side.
+    Bare,
+    /// Trivia whose outer end (the first leading entry's start, the last
+    /// trailing entry's end) lies at this point.
+    To(crate::points::Point),
+    /// Trivia whose outer entry has no geometry: it was written, not read.
+    Unplaced,
+}
+
+impl SnapshotEdge {
+    /// What a gap on `side` is measured from: the item's own span when no
+    /// trivia lies on that side, the point its trivia reaches otherwise, and
+    /// `None` when that trivia is unplaced.
+    fn outer(&self, side: Side) -> Option<crate::points::PointSpan> {
+        match if side == Side::Before { self.leading } else { self.trailing } {
+            TriviaReach::Bare => Some(self.span),
+            TriviaReach::To(point) => Some(crate::points::PointSpan::at(point)),
+            TriviaReach::Unplaced => None,
+        }
+    }
 }
 
 pub trait Prepare {

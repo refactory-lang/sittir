@@ -46,6 +46,11 @@ pub struct PointSpan {
 }
 
 impl PointSpan {
+    /// The empty span at `point`.
+    pub const fn at(point: Point) -> Self {
+        PointSpan { start: point, end: point }
+    }
+
     /// The row of the span's last byte: a span that ends with its line break
     /// ends on the row that break closes.
     pub fn last_row(&self) -> u32 {
