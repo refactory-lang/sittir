@@ -85,7 +85,9 @@ impl<'s> ReadCtx<'s> {
     }
 
     /// The coordinate of a surveyed child: its tree and index, its span and its
-    /// stamped kind (`ReadCtx::stamped_kind`).
+    /// stamped kind (`ReadCtx::stamped_kind`). Kept out of line, as
+    /// `coordinate` is, so the recursive read's frames do not hold its locals.
+    #[inline(never)]
     pub fn coordinate_of(&self, child: &Child) -> NodeCoordinate {
         NodeCoordinate {
             kind: Some(self.stamped_kind(child.grammar, child.display)),
@@ -96,7 +98,10 @@ impl<'s> ReadCtx<'s> {
     /// The coordinate of the node at `index`. The root (index 0) spans the
     /// whole source: tree-sitter's root starts at the first token, and the
     /// root stands for the file, whose leading and trailing bytes its
-    /// coordinate render must keep.
+    /// coordinate render must keep. Kept out of line: inlined, its locals
+    /// widen every frame of the recursive read, which the nesting stack
+    /// ceilings (`typed_read_nesting.rs`) pin.
+    #[inline(never)]
     pub fn coordinate(&self, node: &Node<'_>, index: u32) -> NodeCoordinate {
         let range = node.byte_range();
         let span = if index == 0 {
