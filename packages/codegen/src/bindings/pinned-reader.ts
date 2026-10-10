@@ -9,6 +9,7 @@ import type {
 	ListElement,
 	NamedNode,
 	NamedNodeExpressionArm,
+	NamedNodeGroup,
 	NegatedField,
 	NodeMethodsOf,
 	Predicate,
@@ -17,6 +18,7 @@ import type {
 } from '@sittir/scm';
 import { loadPinnedScm, type PinnedScm } from '../scm/pinned.ts';
 import {
+	type Anchor,
 	type BindingFacts,
 	type BindingPattern,
 	type BindingsRoundTrip,
@@ -69,10 +71,16 @@ interface ParsedPattern extends PatternOrigin {
 interface Visit {
 	readonly node: PatternNode;
 	readonly field: string | null;
+	readonly anchor: Anchor | null;
 	readonly parent: Visit | null;
 	readonly alternative: boolean;
 	readonly inherited: readonly ListElement.Parsed[];
 	readonly children: Visit[];
+}
+
+interface Anchored {
+	readonly expression: Expression;
+	readonly anchor: Anchor | null;
 }
 
 interface Pattern {
@@ -178,52 +186,72 @@ const isClaim = (capture: string, atTop: boolean): boolean => inClaimPosition(ca
 
 function selector(v: Visit): SlotSelector {
 	const kind = namedKind(v);
-	if (v.field !== null || kind !== null) return { field: v.field, kind, after: null };
+	if (v.field !== null || kind !== null) return { field: v.field, kind, after: null, anchor: v.anchor };
 	const siblings = v.parent?.children ?? [];
 	const previous = siblings
 		.slice(0, siblings.indexOf(v))
 		.filter((sibling) => tokenText(sibling) === null)
 		.at(-1);
-	return { field: null, kind: null, after: previous === undefined ? null : selector(previous) };
+	return { field: null, kind: null, after: previous === undefined ? null : selector(previous), anchor: v.anchor };
 }
 
-function expressionsOf(node: PatternNode, errors: number[]): readonly Expression[] {
+function refuse(origin: PatternOrigin, reason: string): never {
+	throw new Error(`bindings.scm line ${origin.line}: ${reason}`);
+}
+
+const SIBLING_ANCHOR = 'an anchor between siblings ties them together, which no step below a claim expresses';
+
+function anchorAt(group: NamedNodeGroup.Parsed, index: number, count: number, origin: PatternOrigin): Anchor | null {
+	const first = index === 0 && group.anchor() === true;
+	const last = index === count - 1 && group.$type === K.NamedNodeGroupAnchoredLast;
+	if (first && last) refuse(origin, 'an anchor on both sides of a parent\'s only child pins no single step');
+	return first ? 'first' : last ? 'last' : null;
+}
+
+function expressionsOf(node: PatternNode, errors: number[], origin: PatternOrigin): readonly Anchored[] {
 	switch (node.$type) {
 		case K.NamedNodePlain:
 		case K.NamedNodeSupertyped: {
 			const group = node.namedNodeGroup();
 			if (group === undefined) return [];
 			errors.push(...unparsed(group));
-			return group.$type === K.NamedNodeGroupChildren
-				? group.namedNodeExpressions()
-				: [...group.namedNodeExpressions(), group.last()];
+			const expressions =
+				group.$type === K.NamedNodeGroupChildren
+					? group.namedNodeExpressions()
+					: [...group.namedNodeExpressions(), group.last()];
+			return expressions.map((expression, i) => ({ expression, anchor: anchorAt(group, i, expressions.length, origin) }));
 		}
-		case K.Grouping:
-			return node.groupingGroups().map((g) => g.groupExpression());
+		case K.Grouping: {
+			const groups = node.groupingGroups();
+			if (groups.some((g) => g.anchor() === true)) refuse(origin, SIBLING_ANCHOR);
+			return groups.map((g) => ({ expression: g.groupExpression(), anchor: null }));
+		}
 		case K.AnonymousNode:
 			return [];
 	}
 }
 
-function readPattern(top: PatternNode, errors: number[], inherited: readonly ListElement.Parsed[]): Pattern {
+function readPattern(top: PatternNode, errors: number[], inherited: readonly ListElement.Parsed[], origin: PatternOrigin): Pattern {
 	const nodes: Visit[] = [];
 	const predicates: Predicate.Parsed[] = [];
 	const visit = (
 		node: PatternNode,
 		field: string | null,
+		anchor: Anchor | null,
 		parent: Visit | null,
 		alternative: boolean,
 		inherited: readonly ListElement.Parsed[]
 	): Visit => {
-		const v: Visit = { node, field, parent, alternative, inherited, children: [] };
+		const v: Visit = { node, field, anchor, parent, alternative, inherited, children: [] };
 		nodes.push(v);
 		errors.push(...unparsed(node));
-		for (const expression of expressionsOf(node, errors)) place(expression, null, v, false, []);
+		for (const { expression, anchor } of expressionsOf(node, errors, origin)) place(expression, null, anchor, v, false, []);
 		return v;
 	};
 	const place = (
 		expression: Expression,
 		field: string | null,
+		anchor: Anchor | null,
 		parent: Visit,
 		alternative: boolean,
 		inherited: readonly ListElement.Parsed[]
@@ -233,29 +261,27 @@ function readPattern(top: PatternNode, errors: number[], inherited: readonly Lis
 			case K.NamedNodeSupertyped:
 			case K.AnonymousNode:
 			case K.Grouping:
-				parent.children.push(visit(expression, field, parent, alternative, inherited));
+				parent.children.push(visit(expression, field, anchor, parent, alternative, inherited));
 				return;
 			case K.FieldDefinition:
-				place(expression.definition(), expression.name().$text, parent, alternative, inherited);
+				place(expression.definition(), expression.name().$text, anchor, parent, alternative, inherited);
 				return;
 			case K.List:
 				for (const option of expression.definitions())
-					place(option, field, parent, true, [...inherited, ...expression.elements()]);
+					place(option, field, anchor, parent, true, [...inherited, ...expression.elements()]);
 				return;
 			case K.NamedNodeExpressionArm:
 			case K.GroupExpressionArm:
-				place(expression.left(), field, parent, alternative, inherited);
-				place(expression.right(), field, parent, alternative, inherited);
-				return;
+				return refuse(origin, SIBLING_ANCHOR);
 			case K.Predicate:
-				predicates.push(expression);
-				return;
 			case K.NegatedField:
 			case K.MissingNode:
+				if (anchor !== null) refuse(origin, 'an anchor pins a child node; a predicate, negated field or missing node is none');
+				if (expression.$type === K.Predicate) predicates.push(expression);
 				return;
 		}
 	};
-	return { top: visit(top, null, null, false, inherited), nodes, predicates };
+	return { top: visit(top, null, null, null, false, inherited), nodes, predicates };
 }
 
 function templateOf(predicate: Predicate.Parsed): Omit<TemplateFact, 'vocabs'> | null {
@@ -349,11 +375,9 @@ function memberFact(v: Visit, name: string, top: Visit, topKind: string | null):
 		if (token !== null && v.field === null) return { route: 'presence', owner, name, token, via: [] };
 		return isGroup(v) && v.field === null ? null : { route: 'rename', owner, name, ...selector(v) };
 	}
-	const via: string[] = [];
-	for (let cursor: Visit | null = parent; cursor !== null && cursor !== top; cursor = cursor.parent) {
-		const kind = kindOf(cursor);
-		if (kind !== null) via.push(kind);
-	}
+	const via: SlotSelector[] = [];
+	for (let cursor: Visit | null = parent; cursor !== null && cursor !== top; cursor = cursor.parent)
+		if (kindOf(cursor) !== null) via.push(selector(cursor));
 	if (token !== null) return { route: 'presence', owner: topKind, name, token, via };
 	return { route: 'nested', owner: topKind, name, parent: owner, multiple: quantified(v), via, ...selector(v) };
 }
@@ -365,6 +389,7 @@ function containerFact(
 	reason: string | null,
 	pattern: PatternOrigin
 ): ContainerFact {
+	if (nodes.some((v) => v.anchor !== null)) refuse(pattern, 'a container reads every child of its kind; an anchor would pick one');
 	return {
 		kind,
 		element: selector(element),
@@ -422,7 +447,10 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 		const members: MemberFact[] = [];
 		for (const name of captures(v)) {
 			if (inClaimPosition(name, v === top)) {
-				if (isClaim(name, v === top)) facts.claims.push(claimFact(v, name, top, nodes, claimPredicates));
+				if (isClaim(name, v === top)) {
+					refuseAnchoredPlacement(v, name, origin);
+					facts.claims.push(claimFact(v, name, top, nodes, claimPredicates));
+				}
 			} else if (!name.startsWith('_') && name !== 'element') {
 				const member: MemberFact | null = kindPresence(members[0], v, name) ?? memberFact(v, name, top, topKind);
 				if (member !== null) members.push(member);
@@ -430,6 +458,12 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 		}
 		facts.members.push(...slotNamed(members));
 	}
+}
+
+function refuseAnchoredPlacement(claim: Visit, vocab: string, origin: PatternOrigin): void {
+	for (let cursor: Visit | null = claim; cursor !== null; cursor = cursor.parent)
+		if (cursor.anchor !== null)
+			refuse(origin, `an anchor at ${kindOf(cursor) ?? 'a group'} places the claim @${vocab}; an anchor constrains only a step below the claimed node`);
 }
 
 function kindPresence(first: MemberFact | undefined, v: Visit, name: string): MemberFact | null {
@@ -469,7 +503,7 @@ export async function readBindingsInProcess(text: string): Promise<BindingFacts>
 	for (const { definition, ...origin } of patterns) {
 		errors.push(...unparsed(definition));
 		for (const [top, inherited] of patternsOf(definition, []))
-			patternFacts(readPattern(top, errors, inherited), facts, origin);
+			patternFacts(readPattern(top, errors, inherited, origin), facts, origin);
 	}
 	if (errors.length > 0) {
 		const spans = sourceSpans(text);

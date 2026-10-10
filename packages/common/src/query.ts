@@ -567,7 +567,13 @@ function sameOccurrence(a: unknown, b: unknown): boolean {
 	return handle !== undefined && handle === treeHandleOf(b);
 }
 
-export function holds(plan: QueryPlan<QuerySubject>, texts: (subject: QuerySubject) => readonly string[]): boolean {
+const NO_TYPES = (): never => refuse('query: an is plan tests node types, and this caller reads none');
+
+export function holds(
+	plan: QueryPlan<QuerySubject>,
+	texts: (subject: QuerySubject) => readonly string[],
+	types: (subject: QuerySubject) => readonly number[] = NO_TYPES
+): boolean {
 	switch (plan.op) {
 		case 'eq':
 			return texts(plan).includes(plan.text);
@@ -575,11 +581,13 @@ export function holds(plan: QueryPlan<QuerySubject>, texts: (subject: QuerySubje
 			const pattern = new RegExp(plan.pattern, 'u');
 			return texts(plan).some((text) => pattern.test(text));
 		}
+		case 'is':
+			return types(plan).some((type) => plan.types.includes(type));
 		case 'not':
-			return !holds(plan.of, texts);
+			return !holds(plan.of, texts, types);
 		case 'and':
-			return plan.of.every((p) => holds(p, texts));
+			return plan.of.every((p) => holds(p, texts, types));
 		case 'or':
-			return plan.of.some((p) => holds(p, texts));
+			return plan.of.some((p) => holds(p, texts, types));
 	}
 }

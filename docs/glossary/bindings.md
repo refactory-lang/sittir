@@ -8,7 +8,11 @@ What a bindings file says, before the slot model is consulted: the claims (`Clai
 
 ### `packages/codegen/src/bindings/facts.ts::SlotSelector`
 
-How a captured node finds its slot in a model node: by its field when it has one, otherwise by its named kind, otherwise (a wildcard or a grouping) by position: the first slot that holds nodes after the slot of the nearest node pattern before it in the same parent (`after`), or the first such slot when nothing precedes it. A token before it holds no slot and does not count, so `(unary_expression "-" (_) @argument)` names the operand and `(index_expression (_) @object (_) @index)` names both slots in order.
+How a captured node finds its slot in a model node: by its field when it has one, otherwise by its named kind, otherwise (a wildcard or a grouping) by position: the first slot that holds nodes after the slot of the nearest node pattern before it in the same parent (`after`), or the first such slot when nothing precedes it. A token before it holds no slot and does not count, so `(unary_expression "-" (_) @argument)` names the operand and `(index_expression (_) @object (_) @index)` names both slots in order. `anchor` narrows the slot to its first or last node when the pattern anchors the child (`(block . (x))`, `(block (x) .)`); it never chooses the slot.
+
+### `packages/codegen/src/bindings/facts.ts::Anchor`
+
+Which end of its parent's children an anchored child is pinned to: `first` for a leading `.`, `last` for a trailing one. An anchor constrains only a step below a claimed node; the reader refuses one anywhere else.
 
 ### `packages/codegen/src/bindings/facts.ts::BindingsSyntaxError`
 
@@ -36,7 +40,11 @@ Where a predicate's capture sits, relative to the node a claim captures: `up` en
 
 ### `packages/codegen/src/bindings/facts.ts::KNOWN_PREDICATE_OPERATORS`
 
-The predicate operators the derivation knows. A claim's predicate with another operator is a derivation diagnostic (`Derivation.unknownPredicates`), never silently dropped.
+The predicate operators the derivation knows. A claim's predicate with another operator is a derivation diagnostic (`Derivation.unknownPredicates`), never silently dropped. `kind-eq` and `not-kind-eq` test a captured node's kind against kind names (`KIND_PREDICATE_OPERATORS`).
+
+### `packages/codegen/src/bindings/facts.ts::KIND_PREDICATE_OPERATORS`
+
+The predicate operators whose text arguments are kind names, not text: `bindFacts` binds them like any other kind, and a portable read test compiles them into a test of the node's type.
 
 ### `packages/codegen/src/bindings/derive.ts::unknownPredicates`
 
@@ -236,7 +244,7 @@ A slot selector, and the selectors chained after it, with every kind named by it
 
 ### `packages/codegen/src/bindings/facts.ts::bindFacts`
 
-The facts with every grammar kind they name (claims and their placements, member owners, paths and selectors, containers and their captures, unclaimed kinds) named by its bound kind. The facts are read and written in base names; with the bindings overlay on, a consumer binds them through the node model's stamped `renamedFrom` (`boundNameOf`). A wildcard claim stays a wildcard, and templates name no kinds.
+The facts with every grammar kind they name (claims and their placements, the kind arguments of `KIND_PREDICATE_OPERATORS` predicates, member owners, paths and selectors, containers and their captures, unclaimed kinds) named by its bound kind. The facts are read and written in base names; with the bindings overlay on, a consumer binds them through the node model's stamped `renamedFrom` (`boundNameOf`). A wildcard claim stays a wildcard, and templates name no kinds.
 
 ### `packages/codegen/src/bindings/hash.ts::bindingsSourceHash`
 
@@ -536,7 +544,11 @@ A top-level definition with its origin (line and source text).
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::Visit`
 
-One visited pattern node: the node, the field it sits under, its parent visit, whether it is one option of an alternation (`alternative`), the list elements (captures, quantifiers) an enclosing alternation hands it (`inherited`), and its child visits in order.
+One visited pattern node: the node, the field it sits under, the anchor that pins it to an end of its parent's children, its parent visit, whether it is one option of an alternation (`alternative`), the list elements (captures, quantifiers) an enclosing alternation hands it (`inherited`), and its child visits in order.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::Anchored`
+
+An expression of a pattern node's group with the anchor its position gives it.
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::Pattern`
 
@@ -622,13 +634,25 @@ Whether a capture is a claim: in claim position and not a token class.
 
 The `SlotSelector` that finds a visit's slot in its parent: its field, else its named kind, else (a wildcard or grouping) the selector of the nearest earlier sibling that is not a token, as `after`, or no anchor at all when nothing precedes it.
 
+### `packages/codegen/src/bindings/pinned-reader.ts::refuse`
+
+Throws the reader's refusal of a pattern that parses but states something no fact expresses, naming the pattern's line.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::SIBLING_ANCHOR`
+
+The refusal of an anchor between two siblings (`(a) . (b)`, in a node or a grouping): it ties the siblings together, and a step below a claim can only be pinned to its parent's first or last child.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::anchorAt`
+
+The anchor of the expression at `index` in a named node's group: `first` for the first one when the group opens with `.`, `last` for the last one in the anchored-last variant. A parent's only child anchored on both sides is refused.
+
 ### `packages/codegen/src/bindings/pinned-reader.ts::expressionsOf`
 
-The expressions a pattern node holds: a named node's group (with the anchored-last variant's `last` appended), a grouping's group expressions, and none for a token. The ERROR regions on the group are recorded as it goes.
+The expressions a pattern node holds, each with its anchor (`anchorAt`): a named node's group (with the anchored-last variant's `last` appended), a grouping's group expressions, and none for a token. A grouping's anchors sit between siblings and are refused (`SIBLING_ANCHOR`). The ERROR regions on the group are recorded as it goes.
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::readPattern`
 
-A pattern as a tree of visits. A field definition places its definition under the field; an alternation places each option as an alternative carrying the alternation's elements; an arm places both sides; predicates are collected; a negated field and a missing node place nothing.
+A pattern as a tree of visits, each carrying the anchor its position gives it. A field definition places its definition under the field, and an alternation places each option as an alternative carrying the alternation's elements, both keeping the anchor; predicates are collected; a negated field and a missing node place nothing. An arm (`left . right`) ties siblings and is refused, as is an anchor on a predicate, a negated field or a missing node, which pins no child.
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::templateOf`
 
@@ -640,11 +664,15 @@ The `ClaimFact` for a claim capture on a visit: its kind (a grouping's first chi
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::memberFact`
 
-The `MemberFact` for a member capture on a visit. On a child of the top (or under a top grouping) it renames the slot its selector finds, or marks an unfielded token's presence. Deeper, it is a nested member of the top kind (or the presence of a token) routed through the kinds between. A capture directly under a grouping names no member.
+The `MemberFact` for a member capture on a visit. On a child of the top (or under a top grouping) it renames the slot its selector finds, or marks an unfielded token's presence. Deeper, it is a nested member of the top kind (or the presence of a token) routed through the selectors of the nodes between. A capture directly under a grouping names no member.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::refuseAnchoredPlacement`
+
+Refuses a claim whose own node or an enclosing node is anchored. A claim's placement is read upward, as the kinds enclosing it, and no fact states an enclosing node's position; an anchor constrains only a step below the claimed node.
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::containerFact`
 
-The `ContainerFact` for a container pattern: the container kind, its element's selector, each other capture (its name, token text, quantifier and selector), the selectors of the `@dropped` slots, the reason, and the pattern's origin.
+The `ContainerFact` for a container pattern: the container kind, its element's selector, each other capture (its name, token text, quantifier and selector), the selectors of the `@dropped` slots, the reason, and the pattern's origin. A container reads every child of its kind, so an anchor in its pattern is refused.
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::reasonOf`
 
@@ -836,11 +864,11 @@ Whether a model node is an alias envelope over leaf text: `modelType` `alias`, w
 
 ### `packages/codegen/src/bindings/routes.ts::membersOf`
 
-A kind's member routes: one `slot` route per slot of the model node (minus layout slots, and minus the kinds a `presence` or `nested` route reaches through), then the member facts the bindings state for it (`kind`, `presence`, `nested`). A leaf alias envelope (`isLeafAlias`) takes no slot routes.
+A kind's member routes: one `slot` route per slot of the model node (minus layout slots, and minus the kinds a `presence` or `nested` route reaches through), then the member facts the bindings state for it (`kind`, `presence`, `nested`). A leaf alias envelope (`isLeafAlias`) takes no slot routes, and neither does a list: its item slot is its container content (`containerOf`), a step a path may take but no member.
 
 ### `packages/codegen/src/bindings/routes.ts::viaPath`
 
-The slots from an owner kind outward through the `via` kinds (walked farthest first, since `via` is nearest first), each found by `slotByKind`, and the model node it ends at; `undefined` when a step's slot holds many or is missing.
+The slots from an owner kind outward through the `via` steps (walked farthest first, since `via` is nearest first), each found by `slotFor`, and the model node it ends at; `undefined` when a step's slot is missing, or holds many and the step is not anchored to one of them.
 
 ### `packages/codegen/src/bindings/routes.ts::resolveRoutes`
 
@@ -912,7 +940,11 @@ A slot the options block addresses as layout (or every list separator, `kind: nu
 
 ### `packages/codegen/src/bindings/routes.ts::SlotStep`
 
-One step of a member's build path: a slot of an owning kind.
+One step of a member's build path: a slot of an owning kind, narrowed to its first or last node when the step is anchored.
+
+### `packages/codegen/src/bindings/routes.ts::stepOf`
+
+A `SlotStep`, carrying `anchor` only when the step is anchored, so an unanchored path keeps its shape.
 
 ### `packages/codegen/src/bindings/routes.ts::slotByField`
 
@@ -960,7 +992,7 @@ A kind `bindings.scm` declares unclaimed (`@unclaimed`), with the pattern's `#se
 
 ### `packages/codegen/src/bindings/facts.ts::MemberFact`
 
-A member capture as read. `rename` names the slot its selector finds on the owner. `presence` marks an unfielded token's presence on the owner, through the kinds in `via` when it sits deeper. `kind` is the presence of a node's kind in the slot another member names (a flag). `nested` is a member of the top kind that sits below a child, reached through `via`, in `parent`'s slot the selector finds, repeated when `multiple`.
+A member capture as read. `rename` names the slot its selector finds on the owner. `presence` marks an unfielded token's presence on the owner, through the steps in `via` when it sits deeper. `kind` is the presence of a node's kind in the slot another member names (a flag). `nested` is a member of the top kind that sits below a child, reached through `via`, in `parent`'s slot the selector finds, repeated when `multiple`. Each `via` step is the selector of a node between, nearest first, so an anchored step keeps its anchor.
 
 ### `packages/codegen/src/bindings/facts.ts::ContainerCapture`
 

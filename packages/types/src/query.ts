@@ -19,12 +19,13 @@ export type QuerySubject = SlotRoutes | SelfText;
 
 /**
  * A compiled condition, each comparison reading the subject `S`. A `where` condition compares slots only (the default) and is
- * evaluated by the native walk; a portable read test may also compare the node's own text (`QueryPlan<QuerySubject>`), which
- * only `holds` evaluates.
+ * evaluated by the native walk; a portable read test may also compare the node's own text, or test the node types of its
+ * subject by `$type` (`QueryPlan<QuerySubject>`), which only `holds` evaluates.
  */
 export type QueryPlan<S extends QuerySubject = SlotRoutes> =
 	| ({ readonly op: 'eq'; readonly text: string } & S)
 	| ({ readonly op: 'match'; readonly pattern: string } & S)
+	| ([SelfText] extends [S] ? { readonly op: 'is'; readonly types: readonly number[] } & S : never)
 	| { readonly op: 'not'; readonly of: QueryPlan<S> }
 	| { readonly op: 'and' | 'or'; readonly of: readonly QueryPlan<S>[] };
 

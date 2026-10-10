@@ -5,10 +5,13 @@ import { allGrammars, grammarPackageDir, PACKAGES_DIR, type GrammarName } from '
 
 export const WILDCARD = '_';
 
+export type Anchor = 'first' | 'last';
+
 export interface SlotSelector {
 	readonly field: string | null;
 	readonly kind: string | null;
 	readonly after: SlotSelector | null;
+	readonly anchor: Anchor | null;
 }
 
 export type PredicateArgument = { readonly capture: string } | { readonly text: string };
@@ -48,7 +51,7 @@ export type MemberFact =
 			readonly owner: string;
 			readonly name: string;
 			readonly token: string;
-			readonly via: readonly string[];
+			readonly via: readonly SlotSelector[];
 	  }
 	| { readonly route: 'kind'; readonly owner: string; readonly name: string; readonly member: string; readonly kind: string }
 	| ({
@@ -57,7 +60,7 @@ export type MemberFact =
 			readonly name: string;
 			readonly parent: string;
 			readonly multiple: boolean;
-			readonly via: readonly string[];
+			readonly via: readonly SlotSelector[];
 	  } & SlotSelector);
 
 export interface ContainerCapture extends SlotSelector {
@@ -146,8 +149,12 @@ export const KNOWN_PREDICATE_OPERATORS: ReadonlySet<string> = new Set([
 	'any-match',
 	'any-not-match',
 	'any-of',
-	'not-any-of'
+	'not-any-of',
+	'kind-eq',
+	'not-kind-eq'
 ]);
+
+export const KIND_PREDICATE_OPERATORS: ReadonlySet<string> = new Set(['kind-eq', 'not-kind-eq']);
 
 export const BINDINGS_FILE = 'bindings.scm';
 
@@ -204,11 +211,20 @@ function bindSelector<S extends SlotSelector>(selector: S, rename: (kind: string
 export function bindFacts(facts: BindingFacts, rename: (kind: string) => string): BindingFacts {
 	const kind = (k: string | null): string | null => (k === null || k === WILDCARD ? k : rename(k));
 	return {
-		claims: facts.claims.map((c) => ({ ...c, kind: kind(c.kind), within: c.within.map(rename) })),
+		claims: facts.claims.map((c) => ({
+			...c,
+			kind: kind(c.kind),
+			within: c.within.map(rename),
+			predicates: c.predicates.map((p) =>
+				KIND_PREDICATE_OPERATORS.has(p.operator)
+					? { ...p, arguments: p.arguments.map((a) => ('text' in a ? { text: rename(a.text) } : a)) }
+					: p
+			)
+		})),
 		members: facts.members.map((m): MemberFact => {
-			if (m.route === 'presence') return { ...m, owner: rename(m.owner), via: m.via.map(rename) };
+			if (m.route === 'presence') return { ...m, owner: rename(m.owner), via: m.via.map((step) => bindSelector(step, rename)) };
 			if (m.route === 'kind') return { ...m, owner: rename(m.owner), kind: rename(m.kind) };
-			if (m.route === 'nested') return { ...bindSelector(m, rename), owner: rename(m.owner), parent: rename(m.parent), via: m.via.map(rename) };
+			if (m.route === 'nested') return { ...bindSelector(m, rename), owner: rename(m.owner), parent: rename(m.parent), via: m.via.map((step) => bindSelector(step, rename)) };
 			return { ...bindSelector(m, rename), owner: rename(m.owner) };
 		}),
 		containers: facts.containers.map((c) => ({

@@ -230,6 +230,10 @@ export function deriveOverlay(input: OverlayInput): { overlay: BindingsOverlay; 
 			left('token reached through a child', row);
 			continue;
 		}
+		if (m.route === 'rename' && m.anchor !== null) {
+			left('positional child', row);
+			continue;
+		}
 		if (m.route === 'rename' && m.field !== null) {
 			if (m.kind !== null || m.after !== null) {
 				left('field shared by several members', row);

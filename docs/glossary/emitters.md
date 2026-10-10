@@ -7135,6 +7135,10 @@ enrich-stamped (`VariantChild.definedBy`); one hand-declared arm (a
 built without one with, so a tool can tell a read delimiter that merely
 restates the default from one that must be spelled.
 
+`slots` is the list's item slot, serialized as a compound node's slots are,
+so a reader of the model steps into a list's items through a slot like any
+other; `elementKinds` stays the kinds the items admit.
+
 ### `packages/codegen/src/emitters/node-model.ts::polymorphVariants`
 
 ```text

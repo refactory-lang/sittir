@@ -118,6 +118,16 @@ describe('portable is: rust', async () => {
 		expect(at('identifier.type')(option, optionc)).toBe(false);
 	});
 
+	it('tells a method with a receiver from an associated function, whatever order the impl lists them in', () => {
+		const SOURCE = 'struct S;\nimpl S {\n    fn a(x: u8) {}\n    fn m(&self) {}\n    fn z() {}\n    fn n(&mut self, x: u8) {}\n}\n';
+		const [a, m, z, n] = [0, 1, 2, 3].map((nth) => find(SOURCE, 'function_item', undefined, nth));
+		for (const [fn, context] of [m!, n!]) {
+			expect(at('declaration.method')(fn, context)).toBe(true);
+			expect(at('declaration.method.static')(fn, context)).toBe(false);
+		}
+		for (const [fn, context] of [a!, z!]) expect(at('declaration.method.static')(fn, context)).toBe(true);
+	});
+
 	it('reads every kind a closure\'s parameters admit as a parameter, through the wildcard claim', () => {
 		const SOURCE = 'fn f() { let g = |a, mut b| a; }\n';
 		const [a, ac] = find(SOURCE, 'identifier', 'a');

@@ -71,7 +71,6 @@ export interface PortableIds {
 		| TSKindId.TypedDefaultParameter
 		| TSKindId.TypedParameter;
 	'declaration.parameter.default': TSKindId.DefaultParameter;
-	'declaration.parameter.self': TSKindId.Identifier;
 	'declaration.parameter.typed': TSKindId.TypedParameter;
 	'declaration.parameter.typed_default': TSKindId.TypedDefaultParameter;
 	'declaration.type_alias': TSKindId.TypeAliasStatement;
@@ -444,7 +443,6 @@ export interface PortableKindsAt {
 		readonly variable: PortableKindsAt['declaration.variable'];
 		readonly default: PortableKindsAt['declaration.parameter.default'];
 		readonly dunder: PortableKindsAt['declaration.method.dunder'];
-		readonly self: PortableKindsAt['declaration.parameter.self'];
 		readonly static: PortableKindsAt['declaration.method.static'];
 		readonly typed: PortableKindsAt['declaration.parameter.typed'];
 		readonly typed_default: PortableKindsAt['declaration.parameter.typed_default'];
@@ -465,12 +463,10 @@ export interface PortableKindsAt {
 	'declaration.parameter': {
 		readonly $ids: readonly PortableIds['declaration.parameter'][];
 		readonly default: PortableKindsAt['declaration.parameter.default'];
-		readonly self: PortableKindsAt['declaration.parameter.self'];
 		readonly typed: PortableKindsAt['declaration.parameter.typed'];
 		readonly typed_default: PortableKindsAt['declaration.parameter.typed_default'];
 	};
 	'declaration.parameter.default': { readonly $ids: readonly PortableIds['declaration.parameter.default'][] };
-	'declaration.parameter.self': { readonly $ids: readonly PortableIds['declaration.parameter.self'][] };
 	'declaration.parameter.typed': { readonly $ids: readonly PortableIds['declaration.parameter.typed'][] };
 	'declaration.parameter.typed_default': {
 		readonly $ids: readonly PortableIds['declaration.parameter.typed_default'][];
@@ -1080,7 +1076,6 @@ export interface PortableIsAt {
 		readonly variable: PortableIsAt['declaration.variable'];
 		readonly default: PortableIsAt['declaration.parameter.default'];
 		readonly dunder: PortableIsAt['declaration.method.dunder'];
-		readonly self: PortableIsAt['declaration.parameter.self'];
 		readonly static: PortableIsAt['declaration.method.static'];
 		readonly typed: PortableIsAt['declaration.parameter.typed'];
 		readonly typed_default: PortableIsAt['declaration.parameter.typed_default'];
@@ -1099,12 +1094,10 @@ export interface PortableIsAt {
 	'declaration.method.static': PortableGuard<PortableIds['declaration.method.static']> & {};
 	'declaration.parameter': PortableGuard<PortableIds['declaration.parameter']> & {
 		readonly default: PortableIsAt['declaration.parameter.default'];
-		readonly self: PortableIsAt['declaration.parameter.self'];
 		readonly typed: PortableIsAt['declaration.parameter.typed'];
 		readonly typed_default: PortableIsAt['declaration.parameter.typed_default'];
 	};
 	'declaration.parameter.default': PortableGuard<PortableIds['declaration.parameter.default']> & {};
-	'declaration.parameter.self': PortableGuard<PortableIds['declaration.parameter.self']> & {};
 	'declaration.parameter.typed': PortableGuard<PortableIds['declaration.parameter.typed']> & {};
 	'declaration.parameter.typed_default': PortableGuard<PortableIds['declaration.parameter.typed_default']> & {};
 	'declaration.type_alias': PortableGuard<PortableIds['declaration.type_alias']> & {};
@@ -1679,7 +1672,6 @@ export interface PortableKinds {
 	readonly return: PortableKindsAt['statement.return'];
 	readonly right: PortableKindsAt['expression.binary.shift.right'];
 	readonly scientific: PortableKindsAt['literal.number.float.scientific'];
-	readonly self: PortableKindsAt['declaration.parameter.self'];
 	readonly shift: PortableKindsAt['expression.binary.shift'];
 	readonly shift_left: PortableKindsAt['expression.assignment.compound.shift_left'];
 	readonly shift_right: PortableKindsAt['expression.assignment.compound.shift_right'];
@@ -1809,7 +1801,6 @@ export interface PortableIs {
 	readonly return: PortableIsAt['statement.return'];
 	readonly right: PortableIsAt['expression.binary.shift.right'];
 	readonly scientific: PortableIsAt['literal.number.float.scientific'];
-	readonly self: PortableIsAt['declaration.parameter.self'];
 	readonly shift: PortableIsAt['expression.binary.shift'];
 	readonly shift_left: PortableIsAt['expression.assignment.compound.shift_left'];
 	readonly shift_right: PortableIsAt['expression.assignment.compound.shift_right'];
@@ -1917,7 +1908,6 @@ const table: PortableTable = {
 			exact: false
 		},
 		'declaration.parameter.default': { ids: [TSKindId.DefaultParameter], exact: true },
-		'declaration.parameter.self': { ids: [TSKindId.Identifier], exact: false },
 		'declaration.parameter.typed': { ids: [TSKindId.TypedParameter], exact: true },
 		'declaration.parameter.typed_default': { ids: [TSKindId.TypedDefaultParameter], exact: true },
 		'declaration.type_alias': { ids: [TSKindId.TypeAliasStatement], exact: true },
@@ -2357,7 +2347,6 @@ const table: PortableTable = {
 		['', 'return', 'statement.return'],
 		['', 'right', 'expression.binary.shift.right'],
 		['', 'scientific', 'literal.number.float.scientific'],
-		['', 'self', 'declaration.parameter.self'],
 		['', 'shift', 'expression.binary.shift'],
 		['', 'shift_left', 'expression.assignment.compound.shift_left'],
 		['', 'shift_right', 'expression.assignment.compound.shift_right'],
@@ -2391,7 +2380,6 @@ const table: PortableTable = {
 		['clause.import', 'prefix', 'clause.import.relative.prefix'],
 		['declaration', 'default', 'declaration.parameter.default'],
 		['declaration', 'dunder', 'declaration.method.dunder'],
-		['declaration', 'self', 'declaration.parameter.self'],
 		['declaration', 'static', 'declaration.method.static'],
 		['declaration', 'typed', 'declaration.parameter.typed'],
 		['declaration', 'typed_default', 'declaration.parameter.typed_default'],
@@ -2781,7 +2769,6 @@ const table: PortableTable = {
 		[TSKindId.GlobalStatement]: [{ path: 'statement.global', within: [], test: [] }],
 		[TSKindId.Identifier]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ParametersElements, TSKindId.Parameters], test: [] },
-			{ path: 'declaration.parameter.self', within: [TSKindId.ParametersElements, TSKindId.Parameters], test: [] },
 			{ path: 'declaration.parameter', within: [TSKindId.ParametersElements, TSKindId.LambdaParameters], test: [] },
 			{ path: 'identifier.type', within: [TSKindId.Type], test: [] },
 			{ path: 'identifier', within: [], test: [] }

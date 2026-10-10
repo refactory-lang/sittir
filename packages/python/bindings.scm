@@ -17,7 +17,6 @@
 ((decorated_definition (decorator (identifier) @_d) (function_definition) @declaration.method.class) (#eq? @_d "classmethod"))
 (decorated_definition (decorator)* @decorators definition: (_) @element)
 (parameters (parameters_elements (identifier) @declaration.parameter))
-(parameters (parameters_elements . (identifier) @declaration.parameter.self))
 (lambda_parameters (parameters_elements (identifier) @declaration.parameter))
 (typed_parameter) @declaration.parameter.typed
 (default_parameter value: (_)? @default) @declaration.parameter.default

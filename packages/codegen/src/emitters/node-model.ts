@@ -127,6 +127,7 @@ interface SerializedList extends SerializedNodeBase {
 	defaultDelimiter: string;
 	elementKinds: string[];
 	elementSeats?: Seat[];
+	slots: SerializedSlot[];
 }
 
 type SerializedNode =
@@ -272,7 +273,8 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 				trailingDelimiter: node.trailingDelimiter,
 				defaultDelimiter: declaredDelimiterDefault(node),
 				elementKinds: [...valueParseKindsOf({ values: node.elements })],
-				...seatsOfList(node, nodeMap, wires)
+				...seatsOfList(node, nodeMap, wires),
+				slots: node.slots.map((slot) => serializeSlot(node, slot, nodeMap, wires))
 			};
 	}
 }

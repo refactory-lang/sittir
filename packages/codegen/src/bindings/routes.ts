@@ -1,4 +1,4 @@
-import { WILDCARD, type BindingFacts, type ClaimFact, type EnumMember, type ModelNode, type ModelSlot, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
+import { WILDCARD, type Anchor, type BindingFacts, type ClaimFact, type EnumMember, type ModelNode, type ModelSlot, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
 import { camel, snake } from './names.ts';
 
 export interface LayoutSlot {
@@ -17,7 +17,11 @@ export interface GrammarInput {
 export interface SlotStep {
 	readonly owner: string;
 	readonly slot: string;
+	readonly anchor?: Anchor;
 }
+
+const stepOf = (owner: string, slot: string, anchor: Anchor | null): SlotStep =>
+	anchor === null ? { owner, slot } : { owner, slot, anchor };
 
 export interface Pin {
 	readonly member: string;
@@ -47,14 +51,14 @@ export type MemberRoute =
 	| {
 			readonly route: 'presence';
 			readonly name: string;
-			readonly via: readonly string[];
+			readonly via: readonly SlotSelector[];
 			readonly token: string;
 			readonly path: readonly SlotStep[] | undefined;
 	  }
 	| {
 			readonly route: 'nested';
 			readonly name: string;
-			readonly via: readonly string[];
+			readonly via: readonly SlotSelector[];
 			readonly parent: string;
 			readonly selector: SlotSelector;
 			readonly slot: ModelSlot | undefined;
@@ -153,14 +157,14 @@ const specificity = (entry: ReadEntry): number => {
 	return placed && predicated ? 0 : predicated ? 1 : placed ? 2 : literal ? 3 : 4;
 };
 
-function viaPath(model: SlotModel, owner: string, via: readonly string[]): { readonly steps: SlotStep[]; readonly at: ModelNode } | undefined {
+function viaPath(model: SlotModel, owner: string, via: readonly SlotSelector[]): { readonly steps: SlotStep[]; readonly at: ModelNode } | undefined {
 	let at = modelNode(model, owner);
 	const steps: SlotStep[] = [];
-	for (const kind of [...via].reverse()) {
-		const slot = at === undefined ? undefined : slotByKind(model, at.slots, kind);
-		const next = modelNode(model, kind);
-		if (at === undefined || slot === undefined || next === undefined || slot.multiple) return undefined;
-		steps.push({ owner: at.kind, slot: slot.name });
+	for (const step of [...via].reverse()) {
+		const slot = at === undefined ? undefined : slotFor(model, at.slots, step);
+		const next = step.kind === null ? undefined : modelNode(model, step.kind);
+		if (at === undefined || slot === undefined || next === undefined || (slot.multiple && step.anchor === null)) return undefined;
+		steps.push(stepOf(at.kind, slot.name, step.anchor));
 		at = next;
 	}
 	return at === undefined ? undefined : { steps, at };
@@ -174,9 +178,9 @@ function membersOf(input: GrammarInput, kind: string, renames: ReadonlyMap<strin
 	const node = modelNode(input.model, kind);
 	if (node === undefined) return [];
 	const deep = input.bindings.members.filter((m) => m.owner === kind && m.route !== 'rename');
-	const via = new Set(deep.flatMap((m) => (m.route === 'presence' || m.route === 'nested' ? m.via : [])));
+	const via = new Set(deep.flatMap((m) => (m.route === 'presence' || m.route === 'nested' ? m.via.flatMap((step) => step.kind ?? []) : [])));
 	const routes: MemberRoute[] = [];
-	for (const slot of isLeafAlias(input, node) ? [] : node.slots) {
+	for (const slot of isLeafAlias(input, node) || node.modelType === 'list' ? [] : node.slots) {
 		if (isLayout(input, kind, slot)) continue;
 		const except = slot.kinds.filter((k) => via.has(k));
 		if (except.length > 0 && except.length === slot.kinds.length) continue;
@@ -203,7 +207,7 @@ function membersOf(input: GrammarInput, kind: string, renames: ReadonlyMap<strin
 					name: camel(member.name),
 					via: member.via,
 					token: member.token,
-					path: chain && leaf ? [...chain.steps, { owner: chain.at.kind, slot: leaf.name }] : undefined
+					path: chain && leaf ? [...chain.steps, stepOf(chain.at.kind, leaf.name, null)] : undefined
 				});
 				break;
 			}
@@ -218,7 +222,7 @@ function membersOf(input: GrammarInput, kind: string, renames: ReadonlyMap<strin
 					selector: member,
 					slot,
 					multiple: member.multiple,
-					path: chain && parent && slot ? [...chain.steps, { owner: parent.kind, slot: slot.name }] : undefined
+					path: chain && parent && slot ? [...chain.steps, stepOf(parent.kind, slot.name, member.anchor)] : undefined
 				});
 				break;
 			}

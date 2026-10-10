@@ -106,8 +106,18 @@
           "name": "extends",
           "route": "nested",
           "via": [
-            "class_heritage_extends_clause",
-            "class_heritage"
+            {
+              "field": null,
+              "kind": "class_heritage_extends_clause",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "class_heritage",
+              "after": null,
+              "anchor": null
+            }
           ],
           "parent": "class_heritage_extends_clause",
           "slot": "extends_clause",
@@ -131,8 +141,18 @@
           "name": "implements",
           "route": "nested",
           "via": [
-            "implements_clause",
-            "class_heritage"
+            {
+              "field": null,
+              "kind": "implements_clause",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "class_heritage",
+              "after": null,
+              "anchor": null
+            }
           ],
           "parent": "implements_clause",
           "slot": "type",
@@ -539,7 +559,12 @@
           "name": "parameters",
           "route": "nested",
           "via": [
-            "arrow_function_parameter"
+            {
+              "field": null,
+              "kind": "arrow_function_parameter",
+              "after": null,
+              "anchor": null
+            }
           ],
           "parent": "arrow_function_parameter",
           "slot": "parameter",
@@ -559,7 +584,12 @@
           "name": "parameters",
           "route": "nested",
           "via": [
-            "call_signature"
+            {
+              "field": null,
+              "kind": "call_signature",
+              "after": null,
+              "anchor": null
+            }
           ],
           "parent": "call_signature",
           "slot": "parameters",
@@ -2218,8 +2248,18 @@
           "name": "extends",
           "route": "nested",
           "via": [
-            "class_heritage_extends_clause",
-            "class_heritage"
+            {
+              "field": null,
+              "kind": "class_heritage_extends_clause",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "class_heritage",
+              "after": null,
+              "anchor": null
+            }
           ],
           "parent": "class_heritage_extends_clause",
           "slot": "extends_clause",
@@ -2243,8 +2283,18 @@
           "name": "implements",
           "route": "nested",
           "via": [
-            "implements_clause",
-            "class_heritage"
+            {
+              "field": null,
+              "kind": "implements_clause",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "class_heritage",
+              "after": null,
+              "anchor": null
+            }
           ],
           "parent": "implements_clause",
           "slot": "type",
@@ -2365,8 +2415,18 @@
           "name": "extends",
           "route": "nested",
           "via": [
-            "class_heritage_extends_clause",
-            "class_heritage"
+            {
+              "field": null,
+              "kind": "class_heritage_extends_clause",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "class_heritage",
+              "after": null,
+              "anchor": null
+            }
           ],
           "parent": "class_heritage_extends_clause",
           "slot": "extends_clause",
@@ -2390,8 +2450,18 @@
           "name": "implements",
           "route": "nested",
           "via": [
-            "implements_clause",
-            "class_heritage"
+            {
+              "field": null,
+              "kind": "implements_clause",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "class_heritage",
+              "after": null,
+              "anchor": null
+            }
           ],
           "parent": "implements_clause",
           "slot": "type",

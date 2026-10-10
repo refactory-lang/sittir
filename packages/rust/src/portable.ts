@@ -3448,8 +3448,95 @@ const table: PortableTable = {
 		[TSKindId.ForLifetimes]: [{ path: 'clause.lifetimes', within: [], test: [] }],
 		[TSKindId.ForeignModItem]: [{ path: 'declaration.module.foreign', within: [], test: [] }],
 		[TSKindId.FunctionItem]: [
-			{ path: 'declaration.method', within: [TSKindId.DeclarationList, TSKindId.ImplItemBody], test: [] },
-			{ path: 'declaration.method.static', within: [TSKindId.DeclarationList, TSKindId.ImplItemBody], test: [] },
+			{
+				path: 'declaration.method',
+				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
+				test: [
+					{
+						up: 0,
+						via: [
+							{ fields: ['parameters'], kinds: [] },
+							{ fields: ['elements'], kinds: [] },
+							{ fields: ['item'], kinds: [], anchor: 'first' }
+						],
+						plan: {
+							op: 'is',
+							types: [231],
+							fields: [],
+							kinds: [
+								'parameter',
+								'self_parameter',
+								'variadic_parameter',
+								'underscore',
+								'type_identifier',
+								'abstract_type',
+								'reference_type',
+								'metavariable',
+								'pointer_type_const',
+								'pointer_type_mut',
+								'generic_type',
+								'scoped_type_identifier',
+								'tuple_type',
+								'unit_type',
+								'array_type',
+								'function_type',
+								'macro_invocation',
+								'never_type',
+								'dynamic_type',
+								'bounded_type',
+								'removed_trait_bound',
+								'primitive_type'
+							]
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.method.static',
+				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
+				test: [
+					{
+						up: 0,
+						via: [
+							{ fields: ['parameters'], kinds: [] },
+							{ fields: ['elements'], kinds: [] },
+							{ fields: ['item'], kinds: [] }
+						],
+						plan: {
+							op: 'not',
+							of: {
+								op: 'is',
+								types: [231],
+								fields: [],
+								kinds: [
+									'parameter',
+									'self_parameter',
+									'variadic_parameter',
+									'underscore',
+									'type_identifier',
+									'abstract_type',
+									'reference_type',
+									'metavariable',
+									'pointer_type_const',
+									'pointer_type_mut',
+									'generic_type',
+									'scoped_type_identifier',
+									'tuple_type',
+									'unit_type',
+									'array_type',
+									'function_type',
+									'macro_invocation',
+									'never_type',
+									'dynamic_type',
+									'bounded_type',
+									'removed_trait_bound',
+									'primitive_type'
+								]
+							}
+						}
+					}
+				]
+			},
 			{ path: 'declaration.method', within: [TSKindId.DeclarationList, TSKindId.TraitItem], test: [] },
 			{ path: 'declaration.function', within: [], test: [] }
 		],

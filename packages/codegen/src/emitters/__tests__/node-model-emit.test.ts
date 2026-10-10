@@ -1,18 +1,32 @@
-import { FIELD, PATTERN, SEQ, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { FIELD, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import {
 	AssembledBranch,
+	AssembledList,
 	AssembledNonterminal,
 	AssembledPattern,
-	type AssembledNode
+	type AssembledNode,
+	type SeparatedListElementRule
 } from '../../compiler/model/node-map.ts';
-import type { SeqRule } from '../../types/rule.ts';
+import type { RenderRule, SeqRule, SimplifiedRule } from '../../types/rule.ts';
 import { buildNodeModel, emitNodeModel } from '../node-model.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { flatten } from '../../compiler/flatten.ts';
 import { clauseNodeMap, comparisonNodeMap, twoChoiceSlotsNodeMap } from '../../compiler/model/__tests__/sub-factories.test.ts';
 
 describe('node-model emitter', () => {
+	it('serializes a list\'s item slot beside its element kinds', () => {
+		const rule: SeparatedListElementRule = { type: SYMBOL, name: 'member', multiplicity: 'array', separator: { value: { type: STRING, value: ',' } } };
+		const simplified: SimplifiedRule = { type: SYMBOL, name: 'member', multiplicity: 'array' };
+		const render: RenderRule = { type: SYMBOL, name: 'member', multiplicity: 'array' };
+		const nodes = new Map<string, AssembledNode>([
+			['member_list', new AssembledList('member_list', rule, undefined, { separatorRule: undefined, simplifiedRule: simplified, renderRule: render })],
+			['member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' })]
+		]);
+		const list = buildNodeModel(makeNodeMapWith(nodes)).nodes.find((node) => node.kind === 'member_list');
+		expect(list).toMatchObject({ modelType: 'list', elementKinds: ['member'], slots: [{ multiple: true, kinds: ['member'] }] });
+	});
+
 	it('records the grammar root kind', () => {
 		expect(buildNodeModel({ ...makeNodeMapWith(new Map()), root: 'program' }).root).toBe('program');
 	});

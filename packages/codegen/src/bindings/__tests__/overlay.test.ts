@@ -25,7 +25,7 @@ const FACTS: BindingFacts = {
 		claim('expression.call.method', 'call', { tokens: ['.'] }),
 		claim('type.named', 'nope')
 	],
-	members: [{ route: 'rename', owner: 'let_item', name: 'name', field: 'left', kind: null, after: null }],
+	members: [{ route: 'rename', owner: 'let_item', name: 'name', field: 'left', kind: null, after: null, anchor: null }],
 	containers: [],
 	templates: [],
 	unclaimed: []
@@ -85,7 +85,7 @@ describe('deriveOverlay', () => {
 		const facts: BindingFacts = {
 			...FACTS,
 			claims: [claim('expression.call', 'call'), claim('expression.invocation', 'call')],
-			members: [{ route: 'rename', owner: 'call', name: 'callee', field: null, kind: 'identifier', after: null }]
+			members: [{ route: 'rename', owner: 'call', name: 'callee', field: null, kind: 'identifier', after: null, anchor: null }]
 		};
 		const { overlay, report } = deriveOverlay({ grammar: 'bindtest', facts, base, vocabMembers: VOCABULARY, routedMembers: NO_MEMBERS });
 		expect(overlay.renames).toEqual({ call: 'call_expression' });

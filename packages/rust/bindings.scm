@@ -14,8 +14,8 @@
 (function_item (function_modifiers (extern_modifier) @extern))
 (function_signature_item) @declaration.function.signature
 (trait_item (declaration_list (function_signature_item) @declaration.method.signature))
-(impl_item_body (declaration_list (function_item (parameters (parameters_elements . (attributed_parameter (self_parameter) @receiver)))) @declaration.method))
-(impl_item_body (declaration_list (function_item (parameters (parameters_elements . (_) @_first))) @declaration.method.static))
+(impl_item_body (declaration_list (function_item (parameters (parameters_elements . (attributed_parameter (self_parameter) @receiver)))) @declaration.method) (#kind-eq? @receiver "self_parameter"))
+(impl_item_body (declaration_list (function_item (parameters (parameters_elements (attributed_parameter (attribute_item)? (_) @_p)*)?)) @declaration.method.static) (#not-kind-eq? @_p "self_parameter"))
 (impl_item_body) @declaration.extension
 (impl_item_semi) @declaration.extension
 (impl_item_body trait_clause: (_ trait: (_) @implements)) @declaration.extension.conformance

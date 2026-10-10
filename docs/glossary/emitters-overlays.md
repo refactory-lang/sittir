@@ -122,7 +122,7 @@ A member route as the routes model writes it: its name, its route kind and that 
 
 ### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::readTestOf`
 
-A read entry's test, as the `PortableCondition`s that must all hold. A condition's holder is the tested node when `up` is 0, else its `up`-th enclosing context node, the one at the same place as the entry's `within` kind; each `via` step is a slot's parser routes, and the plan holds when it holds on some node the steps reach, its own subject the last slot or the reached node's text (`SelfText`). Each pin is an `eq` on its slot of the claimed node. Each predicate's `CaptureSite` is resolved kind by kind, and a capture of an alias kind (model `modelType: 'alias'`) steps on through its one content slot, repeatedly, so its own text is compared where it lives, as the parser sees an alias's text (`aliasContent`): the holder's slot for each selector (`bindings/routes.ts::slotFor`), and the next holder the selector's kind. Every slot becomes its parser routes through `SlotRoutesOf`, so the routes have one derivation (`emitters/client-utils.ts::queryRoutesOf`) shared with the query facet's slot table. Only `eq` and `match` comparing one capture with one text compile. Any other predicate, a capture under a wildcard, or a slot with no routes refuses the whole entry, naming the kind, the vocabulary path and every reason. A partial test would classify nodes the entry does not claim.
+A read entry's test, as the `PortableCondition`s that must all hold. A condition's holder is the tested node when `up` is 0, else its `up`-th enclosing context node, the one at the same place as the entry's `within` kind; each `via` step is a slot's parser routes, anchored to its first or last node where the pattern anchors it, and the plan holds over all the nodes the steps reach together, its own subject the last slot or the reached node itself (`SelfText`). Each pin is an `eq` on its slot of the claimed node. Each predicate's `CaptureSite` is resolved kind by kind, and a capture of an alias kind (model `modelType: 'alias'`) steps on through its one content slot, repeatedly, so its own text is compared where it lives, as the parser sees an alias's text (`aliasContent`): the holder's slot for each selector (`bindings/routes.ts::slotFor`), and the next holder the selector's kind. Every slot becomes its parser routes through `SlotRoutesOf`, so the routes have one derivation (`emitters/client-utils.ts::queryRoutesOf`) shared with the query facet's slot table. Only the comparisons `comparisonOf` knows compile. Any other predicate, a capture under a wildcard, or a slot with no routes refuses the whole entry, naming the kind, the vocabulary path and every reason. A partial test would classify nodes the entry does not claim.
 
 ### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::slotRoutesOf`
 
@@ -138,7 +138,7 @@ The slot routes from a read entry's holder down to a predicate's capture, and th
 
 ### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::stepsOf`
 
-The steps from the kind a capture site starts at (the claimed kind, or an enclosing one `up` levels out) down its selectors. A step under a wildcard, or one no slot of its holder takes, gives the reason the predicate cannot compile instead.
+The steps from the kind a capture site starts at (the claimed kind, or an enclosing one `up` levels out) down its selectors, each anchored as its selector is. A step under a wildcard, or one no slot of its holder takes, gives the reason the predicate cannot compile instead.
 
 ### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::aliasContent`
 
@@ -146,7 +146,19 @@ The single content slot of an alias kind, as the step that reads through it, and
 
 ### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::conditionOf`
 
-A predicate as a portable condition, or the reason it cannot be one. Only `eq` and `match` of one capture against one text compile. The capture's steps are followed, through any alias's content; the last step is the comparison's slot, or, when the capture is the node itself or sits behind an alias, the node's own text.
+A predicate as a portable condition, or the reason it cannot be one (`comparisonOf`). The capture's steps are followed, through any alias's content; the last step is the comparison's subject slot, or, when the capture is the node itself, sits behind an alias, or its last step is anchored, the node itself (its text, or its type).
+
+### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::comparisonOf`
+
+The plan a predicate compares with, given the subject it reads, or the reason it cannot compile: `eq` and `match` of one capture against one text, and `kind-eq` and `not-kind-eq` of one capture against kind names, which become an `is` of the kinds' ids (`TypeOf`), negated for `not-kind-eq`. A kind name with no id is refused.
+
+### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::PlanOn`
+
+A comparison waiting for the subject it reads.
+
+### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::TypeOf`
+
+A kind name's kind id, stamped from the generated id tables, or `undefined` for a kind with none.
 
 ### `packages/codegen/src/emitters/overlays/portable/namespaces.ts::namespaceTree`
 
@@ -194,7 +206,7 @@ The number of segments in a path; the root is depth 0.
 
 ### `packages/codegen/src/emitters/overlays/portable/index.ts::emitPortable`
 
-A bound grammar's two portable outputs from one route resolution: `node-model-portable.json5` (`emitPortableNodeModel`) and `src/portable.ts` (`emitPortableSurface`). Both use the same read tests and kind ids, so the reviewed model file and the runtime table cannot drift.
+A bound grammar's two portable outputs from one route resolution: `node-model-portable.json5` (`emitPortableNodeModel`) and `src/portable.ts` (`emitPortableSurface`). Both use the same read tests and kind ids, so the reviewed model file and the runtime table cannot drift. A read test's kind tests carry kind ids from the same id tables (`TypeOf`).
 
 ### `packages/codegen/src/emitters/overlays/portable/index.ts::PortableOutputs`
 

@@ -34,7 +34,12 @@ const MODEL = new Map(
 		node('binary', [slot('left', ['identifier']), slot('operator', [], { terminals: ['+', '-'] }), slot('right', ['identifier'])]),
 		node('identifier'),
 		node('boolean'),
-		{ ...node('type_identifier', [slot('content', ['identifier'])]), modelType: 'alias' }
+		{ ...node('type_identifier', [slot('content', ['identifier'])]), modelType: 'alias' },
+		node('fn', [slot('params', ['params'])]),
+		node('params', [slot('items', ['param'], { multiple: true })]),
+		node('param', [slot('element', ['self', 'plain'])]),
+		node('self'),
+		node('plain')
 	].map((n) => [n.kind, n])
 );
 
@@ -44,13 +49,18 @@ const ROUTES: Readonly<Record<string, SlotRoutes>> = {
 	'decorator.expression': { fields: [], kinds: ['identifier'] },
 	'string.start': { fields: [], kinds: ['string_start'] },
 	'binary.operator': { fields: ['operator'], kinds: [] },
-	'type_identifier.content': { fields: [], kinds: ['identifier'] }
+	'type_identifier.content': { fields: [], kinds: ['identifier'] },
+	'fn.params': { fields: ['params'], kinds: [] },
+	'params.items': { fields: [], kinds: ['param'] },
+	'param.element': { fields: [], kinds: ['self', 'plain'] }
 };
+
+const TYPES: Readonly<Record<string, number>> = { param: 30, self: 31, plain: 32 };
 
 const testsOf = async (bindings: string, kind: string) => {
 	const input: GrammarInput = { grammar: 'g', bindings: await readBindings(bindings), model: MODEL, textTokens: new Set(), layoutSlots: [] };
 	const entries = resolveRoutes(input).readEntries.get(kind) ?? [];
-	return entries.map((entry) => [entry.vocab, readTestOf(entry, MODEL, (owner, name) => ROUTES[`${owner}.${name}`])]);
+	return entries.map((entry) => [entry.vocab, readTestOf(entry, MODEL, (owner, name) => ROUTES[`${owner}.${name}`], (kind) => TYPES[kind])]);
 };
 
 describe('readTestOf', () => {
@@ -111,6 +121,36 @@ describe('readTestOf', () => {
 				]
 			]
 		]);
+	});
+
+	it('tests the type of a captured node, stepping through the anchored first child of a list', async () => {
+		expect(await testsOf('((fn (params . (param (self) @r))) @declaration.method (#kind-eq? @r "self"))', 'fn')).toEqual([
+			[
+				'declaration.method',
+				[{ up: 0, via: [ROUTES['fn.params'], { ...ROUTES['params.items'], anchor: 'first' }], plan: { op: 'is', types: [31], ...ROUTES['param.element'] } }]
+			]
+		]);
+	});
+
+	it('negates a type test over every node a list step reaches', async () => {
+		expect(await testsOf('((fn (params (param (self) @r))) @declaration.method.static (#not-kind-eq? @r "self" "plain"))', 'fn')).toEqual([
+			[
+				'declaration.method.static',
+				[{ up: 0, via: [ROUTES['fn.params'], ROUTES['params.items']], plan: { op: 'not', of: { op: 'is', types: [31, 32], ...ROUTES['param.element'] } } }]
+			]
+		]);
+	});
+
+	it('keeps an anchored last step as a step, and tests the node it reaches', async () => {
+		expect(await testsOf('((params . (param) @p) @list.parameters (#kind-eq? @p "param"))', 'params')).toEqual([
+			['list.parameters', [{ up: 0, via: [{ ...ROUTES['params.items'], anchor: 'first' }], plan: { op: 'is', types: [30], self: true } }]]
+		]);
+	});
+
+	it('refuses a type test that names a kind with no type', async () => {
+		await expect(testsOf('((fn (params (param (self) @r))) @declaration.method (#kind-eq? @r "nope"))', 'fn')).rejects.toThrow(
+			/declaration\.method.*nope/
+		);
 	});
 
 	it('refuses a predicate it cannot compile, naming the claim', async () => {

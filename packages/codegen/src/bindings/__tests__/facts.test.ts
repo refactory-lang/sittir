@@ -17,16 +17,16 @@ describe('bindFacts', () => {
 	const facts: BindingFacts = {
 		claims: [claim('declaration.function', 'function_item', { within: ['impl_item'] }), claim('expression', '_')],
 		members: [
-			{ route: 'rename', owner: 'function_item', name: 'name', field: 'name', kind: 'identifier', after: { field: null, kind: 'fn', after: null } },
-			{ route: 'presence', owner: 'function_item', name: 'isAsync', token: 'async', via: ['function_modifiers'] },
-			{ route: 'nested', owner: 'function_item', name: 'body', parent: 'block', multiple: false, via: ['block'], field: null, kind: 'statement', after: null }
+			{ route: 'rename', owner: 'function_item', name: 'name', field: 'name', kind: 'identifier', after: { field: null, kind: 'fn', after: null, anchor: null }, anchor: null },
+			{ route: 'presence', owner: 'function_item', name: 'isAsync', token: 'async', via: [{ field: null, kind: 'function_modifiers', after: null, anchor: null }] },
+			{ route: 'nested', owner: 'function_item', name: 'body', parent: 'block', multiple: false, via: [{ field: null, kind: 'block', after: null, anchor: null }], field: null, kind: 'statement', after: null, anchor: null }
 		],
 		containers: [
 			{
 				kind: 'impl_item',
-				element: { field: null, kind: 'function_item', after: null },
-				captures: [{ name: 'attributes', token: null, multiple: true, field: null, kind: 'attribute_item', after: null }],
-				dropped: [{ field: null, kind: 'line_comment', after: null }],
+				element: { field: null, kind: 'function_item', after: null, anchor: null },
+				captures: [{ name: 'attributes', token: null, multiple: true, field: null, kind: 'attribute_item', after: null, anchor: null }],
+				dropped: [{ field: null, kind: 'line_comment', after: null, anchor: null }],
 				reason: null,
 				pattern: { line: 1, source: '(impl_item)' }
 			}
@@ -45,9 +45,9 @@ describe('bindFacts', () => {
 
 	it('names each member route\'s owner, path and selected kinds by their bound kinds', () => {
 		expect(bound.members).toEqual([
-			{ route: 'rename', owner: 'bound_function_item', name: 'name', field: 'name', kind: 'bound_identifier', after: { field: null, kind: 'bound_fn', after: null } },
-			{ route: 'presence', owner: 'bound_function_item', name: 'isAsync', token: 'async', via: ['bound_function_modifiers'] },
-			{ route: 'nested', owner: 'bound_function_item', name: 'body', parent: 'bound_block', multiple: false, via: ['bound_block'], field: null, kind: 'bound_statement', after: null }
+			{ route: 'rename', owner: 'bound_function_item', name: 'name', field: 'name', kind: 'bound_identifier', after: { field: null, kind: 'bound_fn', after: null, anchor: null }, anchor: null },
+			{ route: 'presence', owner: 'bound_function_item', name: 'isAsync', token: 'async', via: [{ field: null, kind: 'bound_function_modifiers', after: null, anchor: null }] },
+			{ route: 'nested', owner: 'bound_function_item', name: 'body', parent: 'bound_block', multiple: false, via: [{ field: null, kind: 'bound_block', after: null, anchor: null }], field: null, kind: 'bound_statement', after: null, anchor: null }
 		]);
 	});
 

@@ -204,7 +204,11 @@ How `includes` compares: the same object, or two parsed nodes of the same tree (
 
 ### `packages/common/src/query.ts::holds`
 
-The JavaScript evaluation of a plan over the texts a node's children have along each leaf's routes. It is the oracle the native evaluator is tested against, never an evaluator of its own.
+The JavaScript evaluation of a plan over the texts, and for an `is` plan the node types, its subjects read. It is the oracle the native evaluator is tested against, and the only evaluator of a portable read test's plans, whose subject may be the node itself and which may test node types.
+
+### `packages/common/src/query.ts::NO_TYPES`
+
+The node-type reader of a caller that reads none: an `is` plan is refused there rather than read as holding nowhere.
 
 ### `packages/common/src/engine-scope.ts::inTreeEngine`
 
@@ -636,7 +640,11 @@ The size of the index field a packed handle holds (`2 ** 32`): the native `encod
 
 ### `packages/common/src/portable.ts::portableSurface`
 
-A bound grammar's portable `kinds` and `is`, built once from its generated `PortableTable` and slot table. Each path gets a frozen `kinds` node holding its `$ids` and a guard, and every path and alias is linked under its parent as an own, non-writable property, so a segment named like a function property (`call`, `name`) shadows it and an alias is the very object of its path. A guard takes a node or a kind-id leaf, which the typed reader stores as a bare number and which is a node of that kind, and first requires its kind among the path's ids. On an exact path (`PortablePath.exact`) that decides it. Otherwise the node's path decides: its `$subType` where it carries one (stamped by the read dispatch and the portable build, which choose a vocabulary kind), or else, for a node no vocabulary kind was chosen for (one a low-level builder made), the first of its kind's read entries, in order, whose placement the context matches (`placed`) and whose every condition holds; the guard holds when that path is its own or one under it. A condition runs `holds`, the one evaluator of a `QueryPlan`, on each node its `via` slots reach from the holder (the node, or the context node `up` places out). Texts come from a slot's items through `query.ts::slotItems`, the slot found by its parser routes in the slot table. A value's text is a kind-id leaf's `fixedText` entry, a leaf's `$text`, and otherwise, for a parsed structured node, the slice of its tree's source its span covers (`span.ts::spanSlicer`, one slicer per tree); a built structured node has none.
+A bound grammar's portable `kinds` and `is`, built once from its generated `PortableTable` and slot table. Each path gets a frozen `kinds` node holding its `$ids` and a guard, and every path and alias is linked under its parent as an own, non-writable property, so a segment named like a function property (`call`, `name`) shadows it and an alias is the very object of its path. A guard takes a node or a kind-id leaf, which the typed reader stores as a bare number and which is a node of that kind, and first requires its kind among the path's ids. On an exact path (`PortablePath.exact`) that decides it. Otherwise the node's path decides: its `$subType` where it carries one (stamped by the read dispatch and the portable build, which choose a vocabulary kind), or else, for a node no vocabulary kind was chosen for (one a low-level builder made), the first of its kind's read entries, in order, whose placement the context matches (`placed`) and whose every condition holds; the guard holds when that path is its own or one under it. A condition runs `holds`, the one evaluator of a `QueryPlan`, once over every node its `via` steps reach from the holder (the node, or the context node `up` places out), an anchored step reading only the first or last node of its slot (`anchored`); a negated plan therefore holds only when no reached node matches. A value's type is its `$type`, or a kind-id leaf's own number. Texts come from a slot's items through `query.ts::slotItems`, the slot found by its parser routes in the slot table. A value's text is a kind-id leaf's `fixedText` entry, a leaf's `$text`, and otherwise, for a parsed structured node, the slice of its tree's source its span covers (`span.ts::spanSlicer`, one slicer per tree); a built structured node has none.
+
+### `packages/common/src/portable.ts::anchored`
+
+A slot's nodes as an anchored step reads them: the first, the last, or all of them.
 
 ### `packages/common/src/portable.ts::placed`
 

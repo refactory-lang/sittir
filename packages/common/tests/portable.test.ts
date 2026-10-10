@@ -154,3 +154,57 @@ describe('portableSurface is', () => {
 		expect(is.declaration({ $type: 99 })).toBe(false);
 	});
 });
+
+describe('portableSurface conditions through a list', () => {
+	const METHOD = 20;
+	const PARAMS = 21;
+	const PARAM = 22;
+	const SELF = 23;
+	const PLAIN = 24;
+	const ITEMS = { fields: [], kinds: ['param'] };
+	const ELEMENT = { fields: [], kinds: ['self', 'plain'] };
+	const SLOTS: QuerySlots = {
+		[METHOD]: [['params', { fields: ['params'], kinds: [] }]],
+		[PARAMS]: [['items', ITEMS]],
+		[PARAM]: [['element', ELEMENT]]
+	};
+	const PARAMS_STEP = SLOTS[METHOD]![0]![1];
+	const { is } = portableSurface(
+		{
+			paths: {
+				method: { ids: [METHOD], exact: false },
+				'method.first': { ids: [METHOD], exact: false },
+				'method.last': { ids: [METHOD], exact: false },
+				'method.static': { ids: [METHOD], exact: false }
+			},
+			fixedText: {},
+			aliases: [],
+			entries: {
+				[METHOD]: [
+					{ path: 'method.last', within: [], test: [{ up: 0, via: [PARAMS_STEP, { ...ITEMS, anchor: 'last' }], plan: { op: 'is', types: [SELF], ...ELEMENT } }] },
+					{ path: 'method.first', within: [], test: [{ up: 0, via: [PARAMS_STEP, { ...ITEMS, anchor: 'first' }], plan: { op: 'is', types: [SELF], ...ELEMENT } }] },
+					{ path: 'method.static', within: [], test: [{ up: 0, via: [PARAMS_STEP, ITEMS], plan: { op: 'not', of: { op: 'is', types: [SELF], ...ELEMENT } } }] },
+					{ path: 'method', within: [], test: [] }
+				]
+			}
+		},
+		SLOTS
+	) as { is: any };
+	const method = (...elements: number[]) => ({
+		$type: METHOD,
+		params: () => ({ $type: PARAMS, items: () => elements.map((type) => ({ $type: PARAM, element: () => ({ $type: type }) })) })
+	});
+
+	it('reads an anchored step as only the first, or only the last, node of its slot', () => {
+		expect(is.method.first(method(SELF, PLAIN))).toBe(true);
+		expect(is.method.last(method(SELF, PLAIN))).toBe(false);
+		expect(is.method.first(method(PLAIN, SELF))).toBe(false);
+		expect(is.method.last(method(PLAIN, SELF))).toBe(true);
+	});
+
+	it('tests a negated plan against every node the steps reach, so it holds only when none matches', () => {
+		expect(is.method.static(method(PLAIN, SELF))).toBe(false);
+		expect(is.method.static(method(PLAIN, PLAIN))).toBe(true);
+		expect(is.method.static(method())).toBe(true);
+	});
+});
