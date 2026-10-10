@@ -39,15 +39,14 @@ describe('a quantifier kind with an optional lazy marker', () => {
 	});
 
 	it.each([
-		['zeroOrMore', { lazy: true }, '*?'],
-		['zeroOrMore', { lazy: false }, '*'],
-		['zeroOrMore', undefined, '*'],
-		['oneOrMore', { lazy: true }, '+?'],
-		['oneOrMore', undefined, '+'],
-		['optional', { lazy: true }, '??'],
-		['optional', undefined, '?']
-	] as const)('builds %s(%j) as %s', (kind, config, text) => {
-		const build = rx.build as unknown as Record<string, (config?: { lazy?: boolean }) => { $render(): { toString(): string } }>;
-		expect(build[kind]!(config as { lazy?: boolean } | undefined).$render().toString()).toBe(text);
+		['zeroOrMore({ lazy: true })', () => rx.build.zeroOrMore({ lazy: true }), '*?'],
+		['zeroOrMore({ lazy: false })', () => rx.build.zeroOrMore({ lazy: false }), '*'],
+		['zeroOrMore()', () => rx.build.zeroOrMore(), '*'],
+		['oneOrMore({ lazy: true })', () => rx.build.oneOrMore({ lazy: true }), '+?'],
+		['oneOrMore()', () => rx.build.oneOrMore(), '+'],
+		['optional({ lazy: true })', () => rx.build.optional({ lazy: true }), '??'],
+		['optional()', () => rx.build.optional(), '?']
+	])('builds %s as %s', (_, build, text) => {
+		expect(build().$render().toString()).toBe(text);
 	});
 });
