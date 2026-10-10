@@ -114,6 +114,18 @@ describe('a comment that swallows the carriage return of its CRLF break', () => 
 		expect(plain.render(plain.parse(source) as never).toString()).toBe('x = 1  # note\ny = 2\n');
 	});
 
+	it('is one break from the seam after a comment that swallows a bare-CR source to its end', async () => {
+		const language = await languageByName('python');
+		const plain = await createEngine(language);
+		const crlf = await createEngine(language, { render: { layout: { newline: '\r\n' } } });
+		const parsed = plain.parse('x = 1  # note\ry = 2\r');
+		const built = plain.build.module({
+			statements: [...parsed.statements(), plain.build.expressionStatement(plain.build.identifier('z'))]
+		});
+		expect(plain.render(built).toString()).toBe('x = 1  # note\ny = 2\nz\n');
+		expect(crlf.render(built).toString()).toBe('x = 1  # note\r\ny = 2\r\nz\r\n');
+	});
+
 	it('is one break after the comment when a statement is built after it', async () => {
 		const plain = await createEngine(await languageByName('python'));
 		const crlf = await createEngine(await languageByName('python'), { render: { layout: { newline: '\r\n' } } });
