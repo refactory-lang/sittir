@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Read a parsed node natively into its kind's generated transport, with routing, storage and trivia placement done by a cursor reader that a derive macro expands from codegen-stamped attributes. Prove the read equal to today's read, wrap and detach for every corpus node of the five grammars (PR 1a). The derive then replaces the napi object codec (PR 1b), and every consumer switches to the typed read (PR 1c).
+**Goal:** Read a parsed node natively into its kind's generated transport, with routing and storage done by a cursor reader that a derive macro expands from codegen-stamped attributes. Prove the read equal to today's read, wrap and detach for every corpus node of the five grammars (PR 1a). The derive then replaces the napi object codec (PR 1b), and every consumer switches to the typed read (PR 1c). A parsed tree's trivia then leaves the reader for a native table keyed by gap (1d).
 
 **Architecture:** Codegen keeps emitting today's transport structs and choice enums. It adds `#[derive(::sittir_core::Transport)]` and helper attributes for every read fact a type cannot state:
 
@@ -15,7 +15,7 @@ A new proc-macro crate expands each declaration into a `ReadTransport` impl that
 
 - depth;
 - coordinates as tree and row;
-- the trivia placement rule;
+- the trivia placement rule, until 1d replaces it with the parsed tree's gap table;
 - refusal of a child no route takes.
 
 In 1a the typed read runs beside today's read. Two transitional napi methods back the corpus harness: one reports the typed reader's refusal, and the other decodes today's detached data into the same transport types and compares the two.
@@ -34,7 +34,7 @@ In 1a the typed read runs beside today's read. Two transitional napi methods bac
 
 ## Scope and sequencing
 
-Step 1 of the spec lands as four PRs. This plan writes 1a, 1b and 1c-i in full and outlines 1c-ii. Each step's tasks are detailed against the code the step before it left; 1c-ii's after 1c-i lands.
+Step 1 of the spec lands as four PRs, and the trivia table (`docs/superpowers/specs/2026-10-09-trivia-table-design.md`) follows as 1d. This plan writes 1a, 1b, 1c-i and 1c-ii in full and outlines 1d. Each step's tasks are detailed against the code the step before it left; 1d's after 1c-ii lands.
 
 1a is cut from master at or after `efbf817b9`, where enum members cross the transport as their kind ids and decode by id alone. Tasks 5, 8 and 9 build on what that brought: `enumMemberId` and the decoder `arms` in `renderEnumType`, `AssembledEnum`'s refusal of two members with one id, and the wrap's `_spelledMemberId` fold. Task 10's harness compares against today's read with those folds.
 
@@ -44,6 +44,7 @@ Step 1 of the spec lands as four PRs. This plan writes 1a, 1b and 1c-i in full a
 | **1b** | the derive's napi codec replaces `#[napi(object)]` and every hand-printed `FromNapiValue` and `ToNapiValue`; a corpus round trip proves the encoders; every choice payload over a byte ceiling is boxed | render-neutral (verification 15), measured against master as 1b starts, whose enum members decode by kind id; build time and binary size per crate; standalone `type-check:native` passes and is chained into `type-check`; every corpus read round-trips unchanged; the typed read's root stack cost in the dev profile at most today's read's; rendered bytes and validation rows unchanged |
 | **1c-i** | one reader: handles name descendant indexes; `parse` and `read` cross the typed read, each transport naming its own node; every read goes through it and the wrap attaches members only; today's reader goes | rendered bytes and validation rows unchanged in every task; arena verifications 3–8 but identity; "two readers must not outlive step 1" |
 | **1c-ii** | identity and the empty list: the index registry and edited-index set, the fold by range, query results through the registry; an empty list is `[]` in reads, factories and fixtures | relative-coordinates verifications 1–6; the fixture and factory moves of the empty-list form listed; rendered bytes and validation rows unchanged |
+| **1d** | the parsed-tree gap table: one token walk and a native table of trivia by gap on `ParsedTree`; a parsed node's `$trivia` reads and writes the table, and the render prints parsed trivia from it; the reader's placement, trivia on parsed wrappers, the line-gap query, the client edited set, the query-write refusal and the ir validator lane's trivia carriers go | untouched renders and validation rows unchanged in every task, the trivia-placement census recorded; every corpus extra's owner is its tree-sitter parent; an edited render's bytes move only where a ruling moves them |
 
 ## Global Constraints
 
