@@ -18,7 +18,11 @@ export interface LiveEngine extends EngineIdentity {
 export interface EngineHandle {
 	current: LiveEngine | EngineIdentity;
 	lineGapsOf?: (address: LineGapAddress) => LineGaps;
-	hydrate?: LanguageHooks<LanguageAPI>['hydrate'];
+}
+
+/** The handle a parsed tree is bound to (`bindTree`): the engine that read it, which hydrates the coordinates it names. */
+export interface TreeEngineHandle extends EngineHandle {
+	hydrate: LanguageHooks<LanguageAPI>['hydrate'];
 }
 
 export function sameLanguage(a: EngineIdentity, b: EngineIdentity): boolean {
@@ -53,9 +57,9 @@ export function isLive(current: EngineHandle['current']): current is LiveEngine 
 	return 'render' in current;
 }
 
-const treeHandles = new WeakMap<object, EngineHandle>();
+const treeHandles = new WeakMap<object, TreeEngineHandle>();
 
-export function bindTree(tree: object, handle: EngineHandle): void {
+export function bindTree(tree: object, handle: TreeEngineHandle): void {
 	treeHandles.set(tree, handle);
 }
 
@@ -73,7 +77,7 @@ export function hydrateStored(value: unknown): unknown {
 	if (caller !== undefined && !sameLanguage(caller.current, handle.current)) {
 		throw new Error(`a ${handle.current.language.name} node read through a ${caller.current.language.name} engine`);
 	}
-	return handle.hydrate?.(value, tree) ?? value;
+	return handle.hydrate(value, tree);
 }
 
 export function inTreeEngine<T>(tree: object, fn: () => T): T {

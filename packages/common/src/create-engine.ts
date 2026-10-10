@@ -18,7 +18,7 @@ import type {
 	RenderCallOptions,
 	CreateEngineOptions
 } from '@sittir/types';
-import { bindTree, engineOf, inEngine, sameLanguage, type EngineHandle } from './engine-scope.ts';
+import { bindTree, engineOf, inEngine, sameLanguage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
 import { metricsEnabled, recordFfi } from './metrics.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
@@ -172,7 +172,7 @@ function assembleEngine<API extends LanguageAPI>(
 		options: options?.render,
 		trivia: hooks.trivia
 	});
-	const handle: EngineHandle = {
+	const handle: TreeEngineHandle = {
 		current: identity,
 		lineGapsOf: (address) => native.lineGapsOf(address),
 		hydrate: hooks.hydrate

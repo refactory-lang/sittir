@@ -60,8 +60,12 @@ export function markIndexEdited(tree: TreeHandle, index: number, side: EditSide)
 	if (indexes.at(at) !== index) indexes.splice(at, 0, index);
 }
 
-/** Whether a write edits the bytes of the node whose subtree is `[index, end)`: one inside its range, or one outside a descendant's span. */
-export function editedWithin(tree: TreeHandle, index: number, end: number): boolean {
+/**
+ * Whether a write lands in the bytes of the node whose subtree is `[index, end)`: one inside its range, or one
+ * outside a descendant's span. A holder that carries the node's own trivia renders an outside write on the node
+ * itself around its bytes; one that carries none (`ownTrivia` false) counts that write too.
+ */
+export function editedWithin(tree: TreeHandle, index: number, end: number, ownTrivia = true): boolean {
 	const sides = edited.get(tree);
-	return sides !== undefined && (anyWithin(sides.inside, index, end) || anyWithin(sides.outside, index + 1, end));
+	return sides !== undefined && (anyWithin(sides.inside, index, end) || anyWithin(sides.outside, ownTrivia ? index + 1 : index, end));
 }

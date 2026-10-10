@@ -75,6 +75,47 @@ describe.each([
 	});
 });
 
+describe.each([
+	['a shallow read', 1],
+	['a deep read', Infinity]
+])('a write under a node a query reached, on %s', (_, depth) => {
+	it('is refused while no accessor chain from the root holds it', () => {
+		const root = engine.parse(SOURCE, { depth });
+		const fn = root.$query().$descendants.ofType(engine.kinds.FunctionItem).at(1);
+		if (fn === undefined || !engine.is.functionItem(fn)) throw new Error('expected a function');
+		const statement = fn.body().statements()[0];
+		if (statement === undefined || !engine.is.letDeclaration(statement)) throw new Error('expected a let declaration');
+		expect(() => statement.$trivia.leading(engine.build.lineComment(' x'))).toThrow(/reached outside its parent's accessors/);
+	});
+
+	it('is accepted and renders once the accessors from the root reach it', () => {
+		const root = engine.parse(SOURCE, { depth });
+		const fn = root.$query().$descendants.ofType(engine.kinds.FunctionItem).at(1);
+		if (fn === undefined || !engine.is.functionItem(fn)) throw new Error('expected a function');
+		const statement = fn.body().statements()[0];
+		expect(viaAccessors(root)).toBe(statement);
+		viaAccessors(root).$trivia.leading(engine.build.lineComment(' x'));
+		expect(root.$render()).toContain('// x\n');
+	});
+});
+
+describe('a variant arm a query reached', () => {
+	it('is returned by its accessor with no native read of its own', () => {
+		const root = engine.parse('fn b() { let r = 0..1; }\n', { depth: 1 });
+		const reads = countingReads(root);
+		const [arm] = root.$query().$descendants.ofType(engine.kinds.RangeExpressionBinary);
+		const armReads = [...reads];
+		expect(armReads.length).toBe(1);
+		reads.length = 0;
+		const fn = root.statements()[0];
+		if (fn === undefined || !engine.is.functionItem(fn)) throw new Error('expected a function');
+		const statement = fn.body().statements()[0];
+		if (statement === undefined || !engine.is.letDeclaration(statement)) throw new Error('expected a let declaration');
+		expect(statement.value()).toBe(arm);
+		expect(reads.filter((index) => armReads.includes(index))).toEqual([]);
+	});
+});
+
 describe('a collected wrapper', () => {
 	it('is wrapped again, and the new wrapper is the one every route returns', () => {
 		const fixture = fileURLToPath(new URL('../../common/tests/fixtures/registry-collect.mts', import.meta.url));
@@ -241,6 +282,16 @@ describe('a built node over parsed storage', () => {
 		expect(() => built.$render()).toThrow(/nodes \d+\.\.\d+ of tree \d+ are held here as a coordinate this holder never read/);
 		expect(parsed.$render()).toContain('// x');
 		expect(engine.build.sourceFile({ statements: [...parsed.statements()] }).$render()).toContain('// x');
+	});
+
+	it('refuses to render an outside write on the node a stored coordinate names', () => {
+		const parsed = engine.parse(SOURCE, { depth: 1 });
+		const built = engine.build.sourceFile({ statements: storageOf(parsed)._statements });
+		const fn = parsed.statements()[1];
+		if (fn === undefined || !engine.is.functionItem(fn)) throw new Error('expected a function');
+		fn.$trivia.leading(engine.build.lineComment(' own'));
+		expect(() => built.$render()).toThrow(/held here as a coordinate this holder never read/);
+		expect(engine.build.sourceFile({ statements: [...parsed.statements()] }).$render()).toContain('// own\n');
 	});
 
 	it('refuses after its engine is disposed, naming the tree', async () => {

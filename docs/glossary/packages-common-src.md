@@ -80,11 +80,51 @@ The engine a value belongs to: what its `$engine()` returns, or for a value with
 
 ### `packages/common/src/engine-scope.ts::bindTree`
 
-Records the engine handle that read a tree, so the wrap layer can find it from the tree alone.
+Records the engine handle that read a tree (`TreeEngineHandle`), so the wrap layer and `hydrateStored` can find it from the tree alone.
+
+### `packages/common/src/engine-scope.ts::TreeEngineHandle`
+
+The handle a parsed tree is bound to: an `EngineHandle` that also carries the engine's generated `hydrate`. Only `createEngine` binds trees, so only its handle needs it; a handle that only scopes factory calls (a validator's, a test's) has none. `hydrateStored` reads it, so a stored coordinate always hydrates and never falls back to the raw value.
 
 ### `packages/common/src/engine-scope.ts::hydrateStored`
 
 A coordinate a built node stores, as the node every route returns: the coordinate's tree token selects the engine that read it, and that engine's generated `hydrate` reads and wraps it through the registry, so a built holder, a parsed holder and a query reach one object. Any other value passes through unchanged. A coordinate is refused rather than returned raw: one that holds no token (a copy, `assertHoldsTree`), one whose engine was disposed or whose tree was released (the message names the tree), and one read through an engine of another language. A factory resolves a list owner's read stub through it before sizing the list, the builder accessors through `hydrateStoredSlot` and `hydrateStoredSlots`, and a trivia reader through `hydrateTriviaEntry`.
+
+### `packages/common/src/utils.ts::isNodeValue`
+
+Whether a value is a node or a coordinate (`isNode` or `isCoordinate`): the one test every coercer, `isNodeOfKind` and `configFieldOr` ask, so a coordinate a built node stores is taken as the node it names wherever a node is.
+
+### `packages/common/src/utils.ts::HydrateOne`
+
+How one stored value becomes what an accessor returns: `hydrateWith` bound to a parsed node's tree and wrap, or `hydrateStored` for a built node.
+
+### `packages/common/src/utils.ts::hydratedLists`
+
+The list slots `hydrateSlotsBy` has already written back: each holds the frozen items an accessor returns, so a later call returns it as it is. Membership, not `Object.isFrozen`, marks them, since a built node may store a frozen array that still holds coordinates.
+
+### `packages/common/src/utils.ts::hydrateSlotBy`
+
+The one write-back for a single slot: the slot's value hydrated by `hydrateOne`, written back when it changed, and held by the node (`holdBySlot`). The parsed and built accessors both go through it.
+
+### `packages/common/src/utils.ts::hydrateSlotsBy`
+
+`hydrateSlotBy` for a list slot: every item hydrated once, each held by the node, the slot then holding the frozen items (`hydratedLists`). A slot that holds one element rather than an array goes through `hydrateSlotBy`.
+
+### `packages/common/src/utils.ts::hydrateSlotWith`
+
+A wrapped node's single-slot accessor: `hydrateSlotBy` with `hydrateWith` in `role`.
+
+### `packages/common/src/utils.ts::hydrateSlotsWith`
+
+A wrapped node's list-slot accessor: `hydrateSlotsBy` with `hydrateWith`.
+
+### `packages/common/src/utils.ts::hydrateStoredSlot`
+
+A built node's single-slot accessor: `hydrateSlotBy` with `hydrateStored`, so a coordinate it stores becomes the node every route returns.
+
+### `packages/common/src/utils.ts::hydrateStoredSlots`
+
+A built node's list-slot accessor: `hydrateSlotsBy` with `hydrateStored`.
 
 ### `packages/common/src/tree-token.ts::registerTree`
 
@@ -233,15 +273,23 @@ Where a node came from, the value of its `$source` stamp: `Ts` for a node read f
 
 ### `packages/common/src/utils.ts::markEditedNode`
 
-The one hook every in-place write on a parsed node marks through: the trivia writer marks a leading or trailing write `outside` the node's span and an inner write `inside` it, and any future in-place verb (the node query's edit verbs) marks through it too, naming the side it edits, so the fold stays correct when they land. A `$with` edit mints a draft and marks nothing. A content that shares its envelope's parser node, registered as `aliasContent`, marks `inside` whatever the side: its outside lies inside the envelope's span, so the envelope must not fold over it. A built node holds no tree and renders from its data already, so nothing is marked. Nothing is detached either: the node and every ancestor keep their coordinates, and the fold reads the edited set (`editedWithin`).
+The one hook every in-place write on a parsed node marks through: the trivia writer marks a leading or trailing write `outside` the node's span and an inner write `inside` it, and any future in-place verb (the node query's edit verbs) marks through it too, naming the side it edits, so the fold stays correct when they land. A `$with` edit mints a draft and marks nothing. A content that shares its envelope's parser node (`sharesEnvelopeNode`, stamped when it was wrapped in the `aliasContent` role) marks `inside` whatever the side: its outside lies inside the envelope's span, so the envelope must not fold over it. The stamp is a fact of the wrapper, so the identity registry never decides what is marked. A built node holds no tree and renders from its data already, so nothing is marked. Nothing is detached either: the node and every ancestor keep their coordinates, and the fold reads the edited set (`editedWithin`).
 
-### `packages/common/src/utils.ts::heldBySlot`
+### `packages/common/src/utils.ts::sharesEnvelopeNode`
 
-The parsed nodes a parent's slot holds, added by the accessors (`hydrateSlotWith`, `hydrateSlotsWith`, and a built node's `hydrateStoredSlot`, `hydrateStoredSlots`, through `holdBySlot`) as they write a hydrated child back into its slot. A guard only: the trivia writer refuses a write on a parsed node that still sits at its source position, is not its tree's root (the root alone carries `$errors`) and no slot holds, since a node a query reached sits in no slot the render walks and its comment would not render. It decides that refusal, never what renders.
+The wrappers `wrapRegistered` made in the `aliasContent` role: contents that share their envelope's parser node and index. `markEditedNode` reads it.
+
+### `packages/common/src/utils.ts::heldBy`
+
+The holder whose slot an accessor put each parsed node in, set by the accessors (`hydrateSlotWith`, `hydrateSlotsWith`, and a built node's `hydrateStoredSlot`, `hydrateStoredSlots`, through `holdBySlot`) as they write a hydrated child back into its slot. A guard only: the trivia writer accepts a write on a parsed node while that chain of holders reaches the root or a built node (`reachedByAccessors`), and refuses it otherwise, since a node a query reached, or one reached through the accessors of such a node, sits under no node the render walks and its comment would not render. The chain is walked at the write, so a node a query reached first is accepted once the accessors from the root reach it. It decides that refusal, never what renders.
 
 ### `packages/common/src/utils.ts::holdBySlot`
 
-Adds an object a slot now holds to `heldBySlot`; a kind id, a boolean or text is not a node and is skipped.
+Records `holder` as the holder of an object its slot now holds (`heldBy`); a kind id, a boolean or text is not a node and is skipped.
+
+### `packages/common/src/utils.ts::reachedByAccessors`
+
+Whether a chain of holders (`heldBy`) leads from a node up to the root (the root alone carries `$errors`) or to a node with no tree or source position (a built node). Both render their own data, so a write anywhere under them renders.
 
 ### `packages/common/src/utils.ts::isNode`
 
@@ -353,6 +401,10 @@ The handle a node's coordinate names it by (`$_layout.at.$treeHandle`), which pa
 
 The coordinate a node crosses to the render as (its span and the tree that span slices) in place of its storage, or `undefined` when it cannot fold; `foldToCoordinate` takes it. A node folds when it names a live tree and no edit lies inside its range (`editedWithin` over `[index, $end)`): an in-place write under any descendant, or on its own inner trivia, stops it, and an outside write on a descendant does too, because that comment changes the node's bytes. Its own outside trivia does not: leading and trailing entries lie outside its span, so it folds and they render around the folded bytes (`foldToCoordinate` carries them). Read depth plays no part, and the check is local: no walk below the node. A record with a coordinate but no live tree (a copy that lost its token) does not fold and crosses as its slots.
 
+### `packages/common/src/transport-data.ts::TriviaView`
+
+The trivia a node crosses to the render with, and which of its sides the read derived (`DerivedSides`). The engine's render passes `readTrivia` and `readDerivedSides`, so an untouched child of a rebuilt parent crosses with the whitespace its parse gave it, minus the runs whose neighbour changed (`changedEdges`). Every caller names its view: data with no derived trivia (a test's hand-written nodes, a probe's detached data) passes `STORED_TRIVIA`, where a node crosses with the trivia it stores and nothing is derived. There is no default, so no caller can skip the derived view by leaving it out. The fold decision and the `$_trivia` an unfolded node carries both come from this one view; a node's raw `$_trivia` never crosses beside it. The view also answers `isWrapper`: whether a kind id is one a rebuild constructs around an existing node (`TriviaFacts.rebuildWrappers`), which `evidenceOf` asks before looking through an entry; and `isList`: whether a kind id is a list kind, whose one array slot holds its items (`listItemsOf`). `STORED_TRIVIA` answers no to both for every kind, since nothing in its data is judged for source adjacency.
+
 ### `packages/common/src/transport-data.ts::foldToCoordinate`
 
 The object a folded node crosses as: its coordinate (`plainCoordinate`), its format stamp and placement facts, and, when the node owns any, its outside trivia under `$_layout.trivia` (the leading and trailing sides only: inner entries lie inside the span, so its bytes carry them). The native render frames the coordinate's bytes with that trivia as it frames a rendered owner.
@@ -445,8 +497,7 @@ The walk behind `toTransportData` and `toDetachedTransportData`. A node naming t
 
 ### `packages/common/src/transport-data.ts::unreadCoordinate`
 
-The coordinate a holder stores without having read it, as it crosses: as it is, unless the edited set holds a write inside its range (`editedWithin`). Then its bytes would silently drop the write, which lives on the node another route read; the crossing throws instead, naming the tree and the index range, and says to build the holder from the written node itself or to render the holder the write went through. Neither remedy relies on the identity registry, which is a cache and never decides what renders. Edits kept as data the render reads, keyed by where they sit in the tree, lift this refusal.
-
+The coordinate a holder stores without having read it, as it crosses: as it is, unless the edited set holds a write in its range, the node's own outside trivia included (`editedWithin` with `ownTrivia` false, since a raw coordinate carries none). Then its bytes would silently drop the write, which lives on the node another route read; the crossing throws instead, naming the tree and the index range, and says to build the holder from the written node itself or to render the holder the write went through. Neither remedy relies on the identity registry, which is a cache and never decides what renders. Edits kept as data the render reads, keyed by where they sit in the tree, lift this refusal.
 
 ### `packages/common/src/transport-data.ts::crossingTrivia`
 
@@ -652,7 +703,7 @@ Records an in-place write on the node at an index of a tree, on one side of its 
 
 ### `packages/common/src/identity.ts::editedWithin`
 
-Whether a write edits the bytes of the node whose subtree is `[index, end)`: an `inside` index in `[index, end)`, or an `outside` index in `(index, end)`. A node's own outside write is excluded, since its comment sits outside its span; an ancestor's range strictly contains the index, so the ancestor sees it. Two binary searches, so the fold check costs the same however many nodes were written.
+Whether a write lands in the bytes of the node whose subtree is `[index, end)`: an `inside` index in `[index, end)`, or an `outside` index in `(index, end)`. A node's own outside write is excluded by default, since a holder that carries the node's trivia renders that comment around the folded bytes; an ancestor's range strictly contains the index, so the ancestor sees it. With `ownTrivia` false (a raw coordinate, which carries no trivia) the node's own outside write counts too, over `[index, end)`. Two binary searches, so the fold check costs the same however many nodes were written.
 
 ### `packages/common/src/identity.ts::lowerBound`
 
@@ -668,7 +719,7 @@ The descendant index a read node or a coordinate names itself by: `decodeIndex` 
 
 ### `packages/common/src/utils.ts::wrapRegistered`
 
-The one seat that wraps and registers: the wrapper the registry holds at the value's index and role, or the value wrapped and registered there. A value that names no index is wrapped and not registered. The registry stores wrappers as `object` because one registry serves every kind; that what is registered at a tree, an index and a role is always the wrapper of one storage kind (measured over every corpus entry of rust, typescript and python, across the nested read, the read at the index and the query yield) is what makes returning it as `T` sound.
+The one seat that wraps and registers: the wrapper the registry holds at the value's index and role, or the value wrapped and registered there, and in the `aliasContent` role stamped into `sharesEnvelopeNode`. A value that names no index of `tree` (none at all, or one of another tree) is wrapped and not registered. The registry stores wrappers as `object` because one registry serves every kind; that what is registered at a tree, an index and a role is always the wrapper of one storage kind (measured over every corpus entry of rust, typescript and python, across the nested read, the read at the index and the query yield) is what makes returning it as `T` sound.
 
 ### `packages/common/src/utils.ts::contentRole`
 

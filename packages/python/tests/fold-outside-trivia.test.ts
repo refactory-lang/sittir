@@ -23,9 +23,7 @@ describe("an outside write keeps the span's layout", () => {
 	it('trailing', () => {
 		const block = blockOf(engine.parse(SOURCE));
 		block.$trivia.trailing('# tail');
-		const out = block.$render();
-		expect(out.startsWith('b\n  # four\nc')).toBe(true);
-		expect(out.trimEnd().endsWith('# tail')).toBe(true);
+		expect(block.$render()).toBe('b\n  # four\nc\n# tail\n');
 	});
 
 	it("the whole tree renders the written entry and the reader's comment, and reparses clean", () => {

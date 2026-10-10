@@ -119,16 +119,17 @@ function foldedCoordinate(record: Record<string, unknown>): TransportCoordinate 
 
 /**
  * A coordinate a holder stores without having read it, as it crosses: its
- * bytes, unless a write landed inside its range. That write lives on the node
- * another route read, which this holder does not hold, so its bytes would
- * silently drop the write; the crossing refuses instead, naming the range.
+ * bytes, unless a write landed in its range, its own outside trivia included
+ * (a raw coordinate carries none). That write lives on the node another route
+ * read, which this holder does not hold, so its bytes would silently drop the
+ * write; the crossing refuses instead, naming the range.
  */
 function unreadCoordinate(coordinate: TransportCoordinate): TransportCoordinate {
 	const tree = treeOf(coordinate);
 	const index = decodeIndex(coordinate.$treeHandle);
-	if (tree === undefined || !editedWithin(tree, index, coordinate.$end)) return coordinate;
+	if (tree === undefined || !editedWithin(tree, index, coordinate.$end, false)) return coordinate;
 	throw new Error(
-		`render: nodes ${index}..${coordinate.$end} of tree ${decodeTree(coordinate.$treeHandle)} are held here as a coordinate this holder never read, and a write landed inside that range on a node read through another route. The write lives on that node, not on this holder, so it cannot render here. Build this holder from the written node itself (the node the accessor that reached it returns), or render the holder the write went through`
+		`render: nodes ${index}..${coordinate.$end} of tree ${decodeTree(coordinate.$treeHandle)} are held here as a coordinate this holder never read, and a write landed in that range on a node read through another route. The write lives on that node, not on this holder, so it cannot render here. Build this holder from the written node itself (the node the accessor that reached it returns), or render the holder the write went through`
 	);
 }
 

@@ -1,6 +1,6 @@
 import type { AnyUntypedNode, ByteSpan, ErrorNode, LineGap, LineGapAddress, LineGaps, NodeTrivia, TransportCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
-import { carryPlacement, carryRead, carrySource, coordinateOf, holdsSlots, indexOf, isRead, isStorageKey, sourceOf, triviaOf, type DerivedSides } from './transport-data.ts';
+import { carryPlacement, carryRead, carrySource, coordinateOf, holdsSlots, indexOf, isRead, isStorageKey, sourceOf, treeHandleOf, triviaOf, type DerivedSides } from './transport-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { hydrateStored, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
@@ -105,9 +105,9 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 	const scoped = scopedBy(handle);
 	const kind = (): string => facts.kindName(node.$type) ?? String(node.$type);
 	const refuseUnheld = (): void => {
-		if (treeOf(node) === undefined || sourceOf(node) === undefined || heldBySlot.has(node) || '$errors' in node) return;
+		if (reachedByAccessors(node)) return;
 		throw new Error(
-			`trivia: this ${kind()} was reached outside its parent's accessors (through a query), so no parent holds it and a comment written on it would not render; reach it through the accessors from the root instead`
+			`trivia: this ${kind()} was reached outside its parent's accessors (through a query, or under a node a query reached), so no chain of accessors from the root holds it and a comment written on it would not render; reach it through the accessors from the root instead`
 		);
 	};
 	const entriesOf = (items: readonly unknown[]): readonly TriviaEntry[] =>
@@ -191,29 +191,40 @@ function carryEdit(from: object, to: object): void {
 }
 
 /**
- * The parsed nodes a parent's slot holds, put there by an accessor (`hydrateSlotWith`,
- * `hydrateSlotsWith`): a guard only. A write on a parsed node no slot holds (one a query
- * reached) is refused, since nothing the render walks would carry it; it decides that refusal
- * and never what renders.
+ * The holder whose slot an accessor put each parsed node in (`hydrateSlotWith`, `hydrateSlotsWith`,
+ * `hydrateStoredSlot(s)`): a guard only. A write on a parsed node is accepted while that chain of
+ * holders reaches the root or a built node (`reachedByAccessors`), since only then does a node the
+ * render walks carry it; it decides that refusal and never what renders.
  */
-const heldBySlot = new WeakSet<object>();
+const heldBy = new WeakMap<object, object>();
 
-function holdBySlot(child: unknown): void {
-	if (typeof child === 'object' && child !== null) heldBySlot.add(child);
+function holdBySlot(holder: object, child: unknown): void {
+	if (typeof child === 'object' && child !== null) heldBy.set(child, holder);
 }
+
+/** Whether a chain of holders from the root, or from a built node, reaches `node`: the root and a built node render their own data. */
+function reachedByAccessors(node: object): boolean {
+	for (let at: object | undefined = node; at !== undefined; at = heldBy.get(at)) {
+		if ('$errors' in at || treeOf(at) === undefined || sourceOf(at) === undefined) return true;
+	}
+	return false;
+}
+
+/** The wrappers made in the `aliasContent` role (`wrapRegistered`): contents that share their envelope's parser node. */
+const sharesEnvelopeNode = new WeakSet<object>();
 
 /**
  * Record an in-place write on a parsed node, on `side` of its span: the one hook every
  * in-place write marks through, so a node folds to its bytes only while no write lies inside
- * its range. A content that shares its envelope's parser node (registered as `aliasContent`)
- * marks `inside`: its outside lies inside the envelope's span. A built node holds no tree and
+ * its range. A content that shares its envelope's parser node (`sharesEnvelopeNode`) marks
+ * `inside`: its outside lies inside the envelope's span. A built node holds no tree and
  * renders from its data already, so nothing is marked.
  */
 export function markEditedNode(node: object, side: EditSide): void {
 	const tree = treeOf(node);
 	const index = indexOf(node);
 	if (tree === undefined || index === undefined) return;
-	markIndexEdited(tree, index, registered(tree, index, 'aliasContent') === node ? 'inside' : side);
+	markIndexEdited(tree, index, sharesEnvelopeNode.has(node) ? 'inside' : side);
 }
 
 function markWritten(node: object, side: TriviaSideName): void {
@@ -716,15 +727,20 @@ export function hydrateWith(value: unknown, tree: TreeHandle, wrap: WrapTranspor
 
 /**
  * The node `value` reads as on `tree`: the wrapper already registered at its index and role, or
- * `wrap(value, tree)`, registered there. A value that names no index is wrapped and not registered.
+ * `wrap(value, tree)`, registered there and, in the `aliasContent` role, stamped as sharing its
+ * envelope's parser node. A value that names no index of `tree` is wrapped and not registered.
  */
 export function wrapRegistered<T>(value: object, tree: TreeHandle, wrap: (value: object, tree: TreeHandle) => T, role: Role = 'node'): T {
-	const index = indexOf(value);
-	if (index === undefined) return wrap(value, tree);
+	const handle = treeHandleOf(value);
+	if (handle === undefined || decodeTree(handle) !== tree.id) return wrap(value, tree);
+	const index = decodeIndex(handle);
 	const known = registered(tree, index, role);
 	if (known !== undefined) return known as T;
 	const wrapper = wrap(value, tree);
-	if (wrapper !== null && typeof wrapper === 'object') register(tree, index, role, wrapper);
+	if (wrapper !== null && typeof wrapper === 'object') {
+		register(tree, index, role, wrapper);
+		if (role === 'aliasContent') sharesEnvelopeNode.add(wrapper);
+	}
 	return wrapper;
 }
 
@@ -735,48 +751,52 @@ export function contentRole(envelope: object, content: unknown): Role {
 	return own !== undefined && own === indexOf(content) ? 'aliasContent' : 'node';
 }
 
-/** The value of slot `key` of a wrapped node, hydrated by `hydrateWith`, written back into the slot and held by it (`heldBySlot`). */
-export function hydrateSlotWith(node: object, key: string, tree: TreeHandle, wrap: WrapTransport, role: Role = 'node'): unknown {
+/** How one stored value becomes what an accessor returns: `hydrateWith` bound to a parsed node's tree, or `hydrateStored` for a built node. */
+type HydrateOne = (value: unknown) => unknown;
+
+/** The list slots already hydrated: each holds the frozen items an accessor returns. */
+const hydratedLists = new WeakSet<readonly unknown[]>();
+
+/** The value of slot `key` of `node`, hydrated by `hydrateOne`, written back into the slot and held by `node` (`heldBy`). */
+function hydrateSlotBy(node: object, key: string, hydrateOne: HydrateOne): unknown {
 	const slots = node as Record<string, unknown>;
-	const child = hydrateWith(slots[key], tree, wrap, undefined, role);
+	const child = hydrateOne(slots[key]);
 	if (child !== slots[key]) slots[key] = child;
-	holdBySlot(child);
+	holdBySlot(node, child);
 	return child;
 }
 
-/** `hydrateSlotWith` for a list slot: every item hydrated once, the slot then holding the frozen items. */
+/** `hydrateSlotBy` for a list slot: every item hydrated once, the slot then holding the frozen items. */
+function hydrateSlotsBy(node: object, key: string, hydrateOne: HydrateOne): readonly unknown[] {
+	const slots = node as Record<string, unknown>;
+	const stored = slots[key];
+	if (!Array.isArray(stored)) return [hydrateSlotBy(node, key, hydrateOne)];
+	if (hydratedLists.has(stored)) return stored;
+	const children = Object.freeze(stored.map((entry) => hydrateOne(entry)));
+	for (const child of children) holdBySlot(node, child);
+	hydratedLists.add(children);
+	slots[key] = children;
+	return children;
+}
+
+/** The value of slot `key` of a wrapped node, hydrated by `hydrateWith` in `role`, written back into the slot and held by it. */
+export function hydrateSlotWith(node: object, key: string, tree: TreeHandle, wrap: WrapTransport, role: Role = 'node'): unknown {
+	return hydrateSlotBy(node, key, (value) => hydrateWith(value, tree, wrap, undefined, role));
+}
+
+/** `hydrateSlotWith` for a list slot. */
 export function hydrateSlotsWith(node: object, key: string, tree: TreeHandle, wrap: WrapTransport): readonly unknown[] {
-	const slots = node as Record<string, unknown>;
-	const stored = slots[key];
-	if (!Array.isArray(stored)) return [hydrateSlotWith(node, key, tree, wrap)];
-	if (Object.isFrozen(stored)) return stored;
-	const children = Object.freeze(stored.map((entry) => hydrateWith(entry, tree, wrap)));
-	for (const child of children) holdBySlot(child);
-	slots[key] = children;
-	return children;
+	return hydrateSlotsBy(node, key, (value) => hydrateWith(value, tree, wrap));
 }
 
-/** The value of slot `key` of a built node, hydrated by `hydrateStored`: a coordinate it stores becomes the node every route returns, written back into the slot and held by it (`heldBySlot`). */
+/** The value of slot `key` of a built node, hydrated by `hydrateStored`: a coordinate it stores becomes the node every route returns, written back into the slot and held by it. */
 export function hydrateStoredSlot(node: object, key: string): unknown {
-	const slots = node as Record<string, unknown>;
-	const child = hydrateStored(slots[key]);
-	if (child !== slots[key]) {
-		slots[key] = child;
-		holdBySlot(child);
-	}
-	return child;
+	return hydrateSlotBy(node, key, hydrateStored);
 }
 
-/** `hydrateStoredSlot` for a list slot: once any item is a coordinate, every item hydrated once, the slot then holding the frozen items. */
+/** `hydrateStoredSlot` for a list slot. */
 export function hydrateStoredSlots(node: object, key: string): readonly unknown[] {
-	const slots = node as Record<string, unknown>;
-	const stored = slots[key];
-	if (!Array.isArray(stored)) return [hydrateStoredSlot(node, key)];
-	if (!stored.some(isCoordinate)) return stored;
-	const children = Object.freeze(stored.map(hydrateStored));
-	for (const child of children) holdBySlot(child);
-	slots[key] = children;
-	return children;
+	return hydrateSlotsBy(node, key, hydrateStored);
 }
 
 export { numberText, type NumberBase } from './number.ts';
