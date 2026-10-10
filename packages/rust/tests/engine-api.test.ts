@@ -25,11 +25,11 @@ describe('rust through createEngine', () => {
 	});
 
 	it('two engines render the same built shape with their own indent', async () => {
-		const tabs = await createEngine(rust, { render: { indent: '\t' } });
-		const spaces = await createEngine(rust, { render: { indent: '  ' } });
+		const tabs = await createEngine(rust, { render: { layout: { indent: '\t' } } });
+		const spaces = await createEngine(rust, { render: { layout: { indent: '  ' } } });
 		expect(tabs.render(fn(tabs)).toString()).toBe('fn f() {\n\ta;\n}');
 		expect(spaces.render(fn(spaces)).toString()).toBe('fn f() {\n  a;\n}');
-		expect(tabs.render(fn(tabs), { indent: '    ' }).toString()).toBe('fn f() {\n    a;\n}');
+		expect(tabs.render(fn(tabs), { layout: { indent: '    ' } }).toString()).toBe('fn f() {\n    a;\n}');
 	});
 
 	it('guards and kind ids come through the engine', async () => {

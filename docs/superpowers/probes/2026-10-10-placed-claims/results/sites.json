@@ -1,0 +1,407 @@
+{
+ "totals": {
+  "python": {
+   "claims": 186,
+   "placed": 9
+  },
+  "rust": {
+   "claims": 205,
+   "placed": 6
+  },
+  "typescript": {
+   "claims": 242,
+   "placed": 1
+  }
+ },
+ "by_class": {
+  "position": {
+   "python": 2
+  },
+  "alias-with-clones": {
+   "python": 1,
+   "rust": 4
+  },
+  "text": {
+   "python": 2
+  },
+  "identifier": {
+   "python": 4,
+   "rust": 1
+  },
+  "alias": {
+   "rust": 1
+  },
+  "own-kinds": {
+   "typescript": 1
+  }
+ },
+ "rows": [
+  {
+   "grammar": "python",
+   "line": 10,
+   "claim": "literal.string.docstring",
+   "chain": "function_definition > body: suite_block > block > simple_statements > simple_statements_elements > item: expression_statement > string",
+   "positional": [
+    "simple_statements",
+    "expression_statement"
+   ],
+   "textual": [],
+   "identifier": false,
+   "own_kinds": null,
+   "site": {
+    "sites": [
+     "primary_expression"
+    ],
+    "clones": [
+     "_suite",
+     "suite_block",
+     "block",
+     "_statement",
+     "simple_statements",
+     "simple_statements_elements",
+     "_simple_statement",
+     "expression_statement",
+     "expression",
+     "primary_expression"
+    ]
+   },
+   "class": "position"
+  },
+  {
+   "grammar": "python",
+   "line": 12,
+   "claim": "literal.string.docstring",
+   "chain": "class_definition > body: suite_block > block > simple_statements > simple_statements_elements > item: expression_statement > string",
+   "positional": [
+    "simple_statements",
+    "expression_statement"
+   ],
+   "textual": [],
+   "identifier": false,
+   "own_kinds": null,
+   "site": {
+    "sites": [
+     "primary_expression"
+    ],
+    "clones": [
+     "_suite",
+     "suite_block",
+     "block",
+     "_statement",
+     "simple_statements",
+     "simple_statements_elements",
+     "_simple_statement",
+     "expression_statement",
+     "expression",
+     "primary_expression"
+    ]
+   },
+   "class": "position"
+  },
+  {
+   "grammar": "python",
+   "line": 13,
+   "claim": "declaration.method",
+   "chain": "class_definition > body: suite_block > block > function_definition",
+   "positional": [],
+   "textual": [],
+   "identifier": false,
+   "own_kinds": null,
+   "site": {
+    "sites": [
+     "_compound_statement"
+    ],
+    "clones": [
+     "_suite",
+     "suite_block",
+     "block",
+     "_statement",
+     "_compound_statement"
+    ]
+   },
+   "class": "alias-with-clones"
+  },
+  {
+   "grammar": "python",
+   "line": 16,
+   "claim": "declaration.method.static",
+   "chain": "decorated_definition > function_definition",
+   "positional": [],
+   "textual": [
+    "_d"
+   ],
+   "identifier": false,
+   "own_kinds": null,
+   "site": {
+    "sites": [
+     "decorated_definition"
+    ],
+    "clones": []
+   },
+   "class": "text"
+  },
+  {
+   "grammar": "python",
+   "line": 17,
+   "claim": "declaration.method.class",
+   "chain": "decorated_definition > function_definition",
+   "positional": [],
+   "textual": [
+    "_d"
+   ],
+   "identifier": false,
+   "own_kinds": null,
+   "site": {
+    "sites": [
+     "decorated_definition"
+    ],
+    "clones": []
+   },
+   "class": "text"
+  },
+  {
+   "grammar": "python",
+   "line": 19,
+   "claim": "declaration.parameter",
+   "chain": "parameters > parameters_elements > identifier",
+   "positional": [],
+   "textual": [],
+   "identifier": true,
+   "own_kinds": null,
+   "site": {
+    "sites": [
+     "parameter"
+    ],
+    "clones": [
+     "parameters_elements",
+     "parameter"
+    ]
+   },
+   "class": "identifier"
+  },
+  {
+   "grammar": "python",
+   "line": 20,
+   "claim": "declaration.parameter.self",
+   "chain": "parameters > parameters_elements > identifier",
+   "positional": [
+    "identifier"
+   ],
+   "textual": [],
+   "identifier": true,
+   "own_kinds": null,
+   "site": {
+    "sites": [
+     "parameter"
+    ],
+    "clones": [
+     "parameters_elements",
+     "parameter"
+    ]
+   },
+   "class": "identifier"
+  },
+  {
+   "grammar": "python",
+   "line": 21,
+   "claim": "declaration.parameter",
+   "chain": "lambda_parameters > parameters_elements > identifier",
+   "positional": [],
+   "textual": [],
+   "identifier": true,
+   "own_kinds": null,
+   "site": {
+    "sites": [
+     "parameter"
+    ],
+    "clones": [
+     "parameters_elements",
+     "parameter"
+    ]
+   },
+   "class": "identifier"
+  },
+  {
+   "grammar": "python",
+   "line": 209,
+   "claim": "identifier.type",
+   "chain": "type > identifier",
+   "positional": [],
+   "textual": [],
+   "identifier": true,
+   "own_kinds": null,
+   "site": {
+    "sites": [
+     "keyword_identifier",
+     "primary_expression"
+    ],
+    "clones": [
+     "expression",
+     "primary_expression",
+     "keyword_identifier"
+    ]
+   },
+   "class": "identifier"
+  },
+  {
+   "grammar": "rust",
+   "line": 16,
+   "claim": "declaration.method.signature",
+   "chain": "trait_item > declaration_list > function_signature_item",
+   "positional": [],
+   "textual": [],
+   "identifier": false,
+   "own_kinds": null,
+   "site": {
+    "sites": [
+     "_declaration_statement"
+    ],
+    "clones": [
+     "declaration_list",
+     "_declaration_statement"
+    ]
+   },
+   "class": "alias-with-clones"
+  },
+  {
+   "grammar": "rust",
+   "line": 17,
+   "claim": "declaration.method",
+   "chain": "impl_item_body > declaration_list > function_item",
+   "positional": [],
+   "textual": [],
+   "identifier": false,
+   "own_kinds": null,
+   "site": {
+    "sites": [
+     "_declaration_statement"
+    ],
+    "clones": [
+     "declaration_list",
+     "_declaration_statement"
+    ]
+   },
+   "class": "alias-with-clones"
+  },
+  {
+   "grammar": "rust",
+   "line": 18,
+   "claim": "declaration.method.static",
+   "chain": "impl_item_body > declaration_list > function_item",
+   "positional": [],
+   "textual": [],
+   "identifier": false,
+   "own_kinds": null,
+   "site": {
+    "sites": [
+     "_declaration_statement"
+    ],
+    "clones": [
+     "declaration_list",
+     "_declaration_statement"
+    ]
+   },
+   "class": "alias-with-clones"
+  },
+  {
+   "grammar": "rust",
+   "line": 22,
+   "claim": "declaration.method",
+   "chain": "trait_item > declaration_list > function_item",
+   "positional": [],
+   "textual": [],
+   "identifier": false,
+   "own_kinds": null,
+   "site": {
+    "sites": [
+     "_declaration_statement"
+    ],
+    "clones": [
+     "declaration_list",
+     "_declaration_statement"
+    ]
+   },
+   "class": "alias-with-clones"
+  },
+  {
+   "grammar": "rust",
+   "line": 46,
+   "claim": "declaration.parameter",
+   "chain": "closure_parameters > _",
+   "positional": [],
+   "textual": [],
+   "identifier": true,
+   "own_kinds": {
+    "boolean_literal": false,
+    "captured_pattern": false,
+    "char_literal_empty": false,
+    "char_literal_escaped_hex": false,
+    "char_literal_escaped_simple": false,
+    "char_literal_escaped_unicode_braced": false,
+    "char_literal_escaped_unicode_fixed": false,
+    "char_literal_plain": false,
+    "const_block": false,
+    "float_literal": false,
+    "generic_pattern": false,
+    "identifier": false,
+    "integer_literal_binary": false,
+    "integer_literal_decimal": false,
+    "integer_literal_hex": false,
+    "integer_literal_octal": false,
+    "macro_invocation": false,
+    "mut_pattern": false,
+    "negative_literal": false,
+    "or_pattern_binary": false,
+    "or_pattern_prefix": false,
+    "parameter": false,
+    "range_pattern_prefix": false,
+    "range_pattern_with_left": false,
+    "raw_string_literal": false,
+    "ref_pattern": false,
+    "reference_pattern": false,
+    "remaining_field_pattern": false,
+    "scoped_identifier": false,
+    "slice_pattern": false,
+    "string_literal": false,
+    "struct_pattern": false,
+    "tuple_pattern": false,
+    "tuple_struct_pattern": false,
+    "wildcard_pattern": false
+   },
+   "site": null,
+   "class": "identifier"
+  },
+  {
+   "grammar": "rust",
+   "line": 235,
+   "claim": "modifier.visibility.public.internal",
+   "chain": "visibility_modifier > crate",
+   "positional": [],
+   "textual": [],
+   "identifier": false,
+   "own_kinds": null,
+   "site": {
+    "sites": [
+     "visibility_modifier"
+    ],
+    "clones": []
+   },
+   "class": "alias"
+  },
+  {
+   "grammar": "typescript",
+   "line": 22,
+   "claim": "declaration.enum_member",
+   "chain": "enum_body > enum_body_elements > _",
+   "positional": [],
+   "textual": [],
+   "identifier": false,
+   "own_kinds": {
+    "enum_assignment": true,
+    "enum_body_element_name": true
+   },
+   "site": null,
+   "class": "own-kinds"
+  }
+ ]
+}

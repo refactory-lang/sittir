@@ -670,6 +670,7 @@ pub fn defaults() -> ResolvedOptions {
         edge_rows: EDGE_ROWS,
         kind_flags: KIND_FLAGS,
         sites: SITE_SPECS,
+        newline: "\n".to_string(),
         indent: "    ".to_string(),
     }
 }
@@ -1057,6 +1058,7 @@ impl ::sittir_core::options::OptionSites for Sites {
         indent: INDENT_KIND,
         dedent: DEDENT_KIND,
         indent_chars: " \t",
+        newline_arms: &["\n", "\r\n", "\r"],
     };
 }
 

@@ -58,9 +58,11 @@ describe('renderOptionsModule', () => {
 		expect(src).toContain('export type { WhitespaceKindId, LayoutKindId };');
 		expect(src).toContain('export interface LabelOptions {\n\treadonly returnStatement?: { readonly terminator?: { readonly statementTerminator?: TSKindId.automatic_semicolon | TSKindId.semi } };\n}');
 		expect(src).toContain('export type IndentChar = never;');
-		expect(src).toContain('export type Options = DerivedOptions<T.OptionsHintMap, IndentChar> & LabelOptions;');
+		expect(src).toContain('export type LineEnding = never;');
+		expect(src).toContain('export type Options = DerivedOptions<T.OptionsHintMap, IndentChar, LineEnding> & LabelOptions;');
 		expect(src).not.toMatch(/AddressRoot|AddressBranch|AddressLeaf|AddressedOptions|export const/);
 		expect(renderOptionsModule({ layoutKindAliases: aliases, hints, indentChars: [' ', '\t'] })).toContain('export type IndentChar = " " | "\\t";');
+		expect(renderOptionsModule({ layoutKindAliases: aliases, hints, newlineArms: ['\n', '\r\n', '\r'] })).toContain('export type LineEnding = "\\n" | "\\r\\n" | "\\r";');
 	});
 
 	it('spells every key camel-cased, including literal tokens and list kinds', () => {
