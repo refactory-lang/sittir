@@ -45,8 +45,8 @@ When a parsed node is placed in a new parent, a `$with`, or a built holder, it c
 
 The typed reader's identity stage lands first, with the refusal of writes through a query back in place. The table follows as its own plan.
 
-## 7. Open questions
+## 7. Rulings on the open questions
 
-1. **Built gap addresses.** A built node has no source tokens. The proposal: a built node's gaps are numbered by its child slots (gap *i* between child *i* and child *i + 1*, plus the two edges), in its own native table. When a parsed node is placed in a built holder, the parsed node's inner gaps stay in its tree's table. Confirm that, or name another numbering.
-2. **Parse after render.** A rendered tree is reparsed and its comments are placed by tree-sitter again. If a write leaves a comment where tree-sitter's convention gives it a different owner than the one written through (for example a trailing comment written on a last child, which tree-sitter makes the parent's), a second read reports it on the parent. The proposal is to accept that, since ownership follows the convention, not the call that wrote it.
-3. **Whitespace entries.** Today's line-gap runs are recomputed from the source on every read. The proposal stores them in the table as entries too, so a gap is complete without the source. The cost is table size, measured on the corpora before the plan.
+1. **Built gaps follow the same convention as parsed ones.** A built node's gaps are numbered by its children: gap *i* lies between child *i* and child *i + 1*. Its leading and trailing edges belong to its holder, as tree-sitter would place them, because a node never starts or ends with an extra. A built node's own table holds only its inner gaps. A parsed node placed in a built holder keeps its inner gaps in its tree's table, and the holder's table holds the gaps around it.
+2. **Ownership after a reparse follows the convention.** If a comment is written through one node but tree-sitter's convention gives it to another, a reparse reports it on that other node. The convention, not the call that wrote it, decides ownership.
+3. **Whitespace is measured first.** The plan measures the table's size on the corpora with every whitespace extra stored, and with layout-bearing entries only (line breaks, blank lines, indentation), where spaces between tokens on a line are derived rather than stored. The measurement picks between the two.
