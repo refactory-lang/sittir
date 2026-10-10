@@ -20,7 +20,7 @@ describe('polymorph metadata — structural e2e', () => {
 	it('python: assignment polymorph variants are derived structurally', async () => {
 		const raw = await evaluatePackage(grammarPackage('python'));
 		const linked = link(raw);
-		const structural = deriveVariantChildren(linked.rules, raw.automaticVariants);
+		const structural = deriveVariantChildren(linked.rules);
 		const assignmentVariants = structural.get('assignment');
 		expect(assignmentVariants).toEqual([
 			{ kind: polymorphVisibleName('assignment', 'eq'), name: 'eq', definedBy: 'override' },
@@ -32,7 +32,7 @@ describe('polymorph metadata — structural e2e', () => {
 	it('rust: polymorph variants derived structurally for converted rules', async () => {
 		const raw = await evaluatePackage(grammarPackage('rust'));
 		const linked = link(raw);
-		const structural = deriveVariantChildren(linked.rules, raw.automaticVariants);
+		const structural = deriveVariantChildren(linked.rules);
 
 		const closureVariants = structural.get('closure_expression');
 		expect(closureVariants).toEqual([

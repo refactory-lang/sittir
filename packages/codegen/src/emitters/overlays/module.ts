@@ -1,23 +1,8 @@
 import type { NodeMap } from '../../compiler/types.ts';
 import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
-import {
-	AbstractAssembledCompound,
-	AssembledAlias,
-	AssembledEnum,
-	AssembledList,
-	AssembledPattern,
-	AssembledSupertype,
-	FACTORY_NAME_RESERVED,
-	isBuilderTextLeaf,
-	isKindIdStored,
-	isNodeRef,
-	storageKindOfRef,
-	type AssembledNode
-} from '../../compiler/model/node-map.ts';
-import { collectCatalogKinds, collectKindEntries, hasCatalogEntry } from '../kind-discriminant.ts';
-import { lowerCamelCase } from '../../compiler/model/casing.ts';
-import { polymorphVisibleName } from '../../dsl/arm-names.ts';
-import { classifyFromEmission, isValidIdent, ownTextLeaf } from '../shared.ts';
+import type { AssembledNode } from '../../compiler/model/node-map.ts';
+import { bundleKeyedNodes, flattenedVariantParents, ownTextKeyedNodes, type IrKeyedNode } from '../../compiler/model/ir-surface.ts';
+import { collectCatalogKinds, collectKindEntries } from '../kind-discriminant.ts';
 import { builtTypeSurfaceOf } from '../factories.ts';
 
 export const OVERLAY_CHAIN = ['refines', 'polymorphs', 'supertypes'] as const;
@@ -70,178 +55,18 @@ export interface BundleEntry {
 }
 
 export function bundleEntries(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): BundleEntry[] {
-	return keyedEntries(nodeMap, generatedIdTables).filter((entry) => !hasOneSurface(entry.node));
+	return withMaxArgs(bundleKeyedNodes(nodeMap), nodeMap, generatedIdTables);
 }
 
 export function ownTextEntries(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): BundleEntry[] {
-	return keyedEntries(nodeMap, generatedIdTables).filter((entry) => hasOneSurface(entry.node));
+	return withMaxArgs(ownTextKeyedNodes(nodeMap), nodeMap, generatedIdTables);
 }
 
-function keyedEntries(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): BundleEntry[] {
+function withMaxArgs(entries: readonly IrKeyedNode[], nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): BundleEntry[] {
 	const kindEntries = generatedIdTables
 		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
 		: undefined;
-	const used = new Set<string>();
-	const out: BundleEntry[] = [];
-	for (const [kind, node] of nodeMap.nodes) {
-		if (node.factoryInline) continue;
-		if (!node.rawFactoryName || !node.fromFunctionName) continue;
-		if (!(node instanceof AbstractAssembledCompound) && !(node instanceof AssembledList)) continue;
-		if (node instanceof AbstractAssembledCompound && !(node instanceof AssembledList) && !node.ownSurface) continue;
-		if (node instanceof AssembledAlias) continue;
-		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
-		if (classifyFromEmission(kind, node, { nodeMap, kindEntries }) !== 'emit') continue;
-		const key = node.irKey ?? lowerCamelCase(kind);
-		if (!isValidIdent(key) || used.has(key)) continue;
-		used.add(key);
-		const maxArgs = builtTypeSurfaceOf(node, nodeMap, kindEntries)?.maxArgs;
-		out.push({ key, exportName: FACTORY_NAME_RESERVED.has(key) ? `${key}_` : key, node, maxArgs });
-	}
-	return out;
-}
-
-export interface FlattenedVariantRoute {
-	readonly name: string;
-	readonly child: AssembledNode;
-	readonly nestedParentKey?: string;
-	readonly default?: true;
-	readonly minted?: true;
-	readonly leaf?: true;
-}
-
-export interface FlattenedVariantParent {
-	readonly key: string;
-	readonly node: AssembledSupertype;
-	readonly variants: readonly FlattenedVariantRoute[];
-}
-
-export function variantRoutePaths(parents: readonly FlattenedVariantParent[]): ReadonlyMap<string, string> {
-	const paths = new Map<string, string>();
-	const mintedPaths = new Map<string, string>();
-	for (const parent of [...parents].reverse()) {
-		const base = mintedPaths.get(parent.node.kind) ?? parent.key;
-		for (const route of parent.variants) {
-			if (route.minted !== true) continue;
-			const path = `${base}.${route.name}`;
-			if (!paths.has(route.child.kind)) paths.set(route.child.kind, path);
-			if (!mintedPaths.has(route.child.kind)) mintedPaths.set(route.child.kind, path);
-		}
-	}
-	return paths;
-}
-
-function referrersOf(nodeMap: NodeMap): ReadonlyMap<string, ReadonlySet<string>> {
-	const out = new Map<string, Set<string>>();
-	const add = (child: string, parent: string): void => {
-		const set = out.get(child) ?? new Set<string>();
-		set.add(parent);
-		out.set(child, set);
-	};
-	for (const [kind, node] of nodeMap.nodes) {
-		if (node instanceof AssembledSupertype) for (const sub of node.subtypeNames) add(sub, kind);
-		if (node instanceof AbstractAssembledCompound) {
-			for (const slot of node.slots) for (const value of slot.values) if (isNodeRef(value)) add(storageKindOfRef(value.node), kind);
-		}
-	}
-	return out;
-}
-
-export function hasOneSurface(node: AssembledNode): boolean {
-	return isBuilderTextLeaf(node) || node instanceof AssembledPattern || ownTextLeaf(node) !== undefined;
-}
-
-export function isFlatLeafOrKeyword(
-	kind: string,
-	node: AssembledNode,
-	kindEntries: ReturnType<typeof collectKindEntries> | undefined
-): boolean {
-	if (!node.userFacing || node.factoryInline) return false;
-	if (!hasOneSurface(node) || (isBuilderTextLeaf(node) && node.surfaceHidden)) return false;
-	if (!node.irKey || !node.rawFactoryName || !isValidIdent(node.irKey)) return false;
-	return !kindEntries || hasCatalogEntry(kindEntries, kind);
-}
-
-export function hasFlatEntry(
-	kind: string,
-	node: AssembledNode,
-	kindEntries: ReturnType<typeof collectKindEntries> | undefined
-): boolean {
-	return isFlatLeafOrKeyword(kind, node, kindEntries) && node.annotations?.tokenForm !== true;
-}
-
-function flatLeafKindByKey(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): ReadonlyMap<string, string> {
-	const kindEntries = generatedIdTables
-		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
-		: undefined;
-	const out = new Map<string, string>();
-	for (const [kind, node] of nodeMap.nodes) if (isFlatLeafOrKeyword(kind, node, kindEntries)) out.set(node.irKey!, kind);
-	return out;
-}
-
-export function flattenedVariantParents(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): FlattenedVariantParent[] {
-	const referrers = referrersOf(nodeMap);
-	const mintedBy = (parent: string, child: string, variant: string): boolean => {
-		const refs = referrers.get(child);
-		return child === polymorphVisibleName(parent, variant) && refs !== undefined && refs.size === 1 && refs.has(parent);
-	};
-	const taken = new Set(bundleEntries(nodeMap, generatedIdTables).map((entry) => entry.key));
-	const leafKinds = flatLeafKindByKey(nodeMap, generatedIdTables);
-	const out: FlattenedVariantParent[] = [];
-	const keyByParent = new Map<string, string>();
-	const pending = [...nodeMap.nodes].filter(
-		(entry): entry is [string, AssembledSupertype] =>
-			entry[1] instanceof AssembledSupertype && entry[1].declared && entry[1].subtypes.filter(isNodeRef).length >= 2
-	);
-	const routesOf = (kind: string, node: AssembledSupertype): FlattenedVariantRoute[] | 'wait' | null => {
-		const routes: FlattenedVariantRoute[] = [];
-		let waiting = false;
-		for (const ref of node.subtypes.filter(isNodeRef)) {
-			const childKind = storageKindOfRef(ref.node);
-			const child = nodeMap.nodes.get(childKind);
-			if (ref.variantOf !== kind || ref.variant === undefined || child === undefined) return null;
-			const nestedParentKey = keyByParent.get(childKind);
-			const facts = {
-				...(ref.default ? { default: true as const } : {}),
-				...(mintedBy(kind, childKind, ref.variant) ? { minted: true as const } : {})
-			};
-			if (nestedParentKey !== undefined) {
-				routes.push({ name: lowerCamelCase(ref.variant), child, nestedParentKey, ...facts });
-			} else if (child.rawFactoryName !== undefined) {
-				routes.push({ name: lowerCamelCase(ref.variant), child, ...facts });
-			} else if (child instanceof AssembledSupertype && pending.some(([k]) => k === childKind)) {
-				waiting = true;
-			} else if (isKindIdStored(child) && !(child instanceof AssembledEnum)) {
-				routes.push({ name: lowerCamelCase(ref.variant), child, leaf: true, ...facts });
-			} else {
-				return null;
-			}
-		}
-		const defaults = routes.filter((route) => route.default);
-		if (defaults.length > 1) {
-			throw new Error(`arm.default: ${defaults.length} variants of '${kind}' are declared the default (${defaults.map((d) => d.name).join(', ')}); pick one`);
-		}
-		return waiting ? 'wait' : routes;
-	};
-	for (let progressed = true; progressed; ) {
-		progressed = false;
-		for (let i = 0; i < pending.length; i++) {
-			const [kind, node] = pending[i]!;
-			const routes = routesOf(kind, node);
-			if (routes === 'wait') continue;
-			pending.splice(i--, 1);
-			progressed = true;
-			if (routes === null) continue;
-			const key = node.irKey;
-			if (key === undefined) throw new Error(`ir: the supertype '${kind}' has no ir key`);
-			if (!isValidIdent(key) || taken.has(key)) continue;
-			const leafKind = leafKinds.get(key);
-			if (leafKind !== undefined) throw new Error(`ir: '${kind}' and the leaf '${leafKind}' both take the key '${key}'`);
-			taken.add(key);
-			keyByParent.set(kind, key);
-			out.push({ key, node, variants: routes });
-		}
-	}
-	return out;
+	return entries.map((entry) => ({ ...entry, maxArgs: builtTypeSurfaceOf(entry.node, nodeMap, kindEntries)?.maxArgs }));
 }
 
 export function emitBundleModule(config: { nodeMap: NodeMap; generatedIdTables?: GeneratedIdTables }): string {
@@ -277,7 +102,7 @@ export function emitFactoriesIndex(
 	for (const { exportName } of bundleEntries(config.nodeMap, config.generatedIdTables)) {
 		lines.push(`export const ${exportName}: Hoisted<typeof O.${exportName}> = hoistAs<typeof O.${exportName}>(O.${exportName});`);
 	}
-	for (const { key } of flattenedVariantParents(config.nodeMap, config.generatedIdTables)) {
+	for (const { key } of flattenedVariantParents(config.nodeMap)) {
 		lines.push(`export const ${key}: Hoisted<typeof O.${key}> = hoistAs<typeof O.${key}>(O.${key});`);
 	}
 	lines.push('');

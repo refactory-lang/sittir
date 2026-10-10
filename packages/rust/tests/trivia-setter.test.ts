@@ -84,11 +84,11 @@ describe('loose trivia strings build ir.comment', () => {
 
 	it('refuses loose text a sibling arm would read back as, naming that arm', () => {
 		const a = (): ReturnType<typeof ir.identifier> => rs.build.identifier('a');
-		expect(() => a().$trivia.leading('/ doc')).toThrow(/ir\.lineCommentDocOuter/);
-		expect(() => a().$trivia.leading('/// doc')).toThrow(/ir\.lineCommentDocOuter/);
-		expect(() => a().$trivia.leading('//! doc')).toThrow(/ir\.lineCommentDocInner/);
+		expect(() => a().$trivia.leading('/ doc')).toThrow(/ir\.lineComment\.docOuter/);
+		expect(() => a().$trivia.leading('/// doc')).toThrow(/ir\.lineComment\.docOuter/);
+		expect(() => a().$trivia.leading('//! doc')).toThrow(/ir\.lineComment\.docInner/);
 		expect(() => a().$trivia.leading('//// x')).toThrow(/ir\.lineCommentExtraSlashes/);
-		expect(() => rs.build.lineComment('/ doc')).toThrow(/ir\.lineCommentDocOuter/);
+		expect(() => rs.build.lineComment('/ doc')).toThrow(/ir\.lineComment\.docOuter/);
 		expect(a().$trivia.leading('//x').$render()).toBe('//x\na');
 	});
 

@@ -1,5 +1,6 @@
 import { PATTERN } from '../../types/rule-types.ts'; // @rule-type-consts
 import { ERROR_KIND_NAME } from '@sittir/common/error-kind';
+import { stampIrSurface } from '../model/ir-surface.ts';
 import { ERROR_KIND_ROW } from '../../dsl/symbol-table.ts';
 import { describe, expect, it } from 'vitest';
 
@@ -75,6 +76,7 @@ describe('KindId emission', () => {
 		const linked = link(raw);
 		const normalized = normalizeGrammar(linked);
 		const nodeMap = assemble(AssembleCtx.from(normalized));
+		stampIrSurface(nodeMap, generatedIdTables);
 		const contents = emitTypes({
 			grammar: 'synth',
 			nodeMap,

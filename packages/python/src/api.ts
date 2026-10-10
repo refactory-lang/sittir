@@ -7,7 +7,7 @@ import { is, isMember, membersOf } from './is.js';
 import {
 	TSKindId,
 	type FixedTextKindId,
-	type IrKeyOf,
+	type TypeKeyOf,
 	type NamespaceMap,
 	type PythonNode,
 	type PythonTypeMap
@@ -24,7 +24,7 @@ export interface PythonAPI extends LanguageAPI {
 	readonly build: typeof ir;
 	readonly is: typeof is;
 	readonly kinds: typeof TSKindId;
-	readonly types: KindTypes<IrKeyOf, NamespaceMap>;
+	readonly types: KindTypes<TypeKeyOf, NamespaceMap>;
 	readonly root: ModuleTree;
 	readonly node: PythonNode;
 	readonly fixedTextKindId: FixedTextKindId;

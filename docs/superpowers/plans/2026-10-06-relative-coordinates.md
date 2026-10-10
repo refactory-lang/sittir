@@ -10,19 +10,21 @@
 
 **Spec:** `docs/superpowers/specs/2026-10-06-relative-coordinates-design.md`.
 
+**Superseded in part on 2026-10-09:** the trivia step (Tasks 3–8) gives way to the trivia table (`docs/superpowers/specs/2026-10-09-trivia-table-design.md`), which `docs/superpowers/plans/2026-10-05-typed-reader.md` lands as 1d. Task 1 lands with the snapshot step, and that step is re-planned against the table.
+
 ## Scope and sequencing
 
 The trivia and snapshot steps build on the one-reader step of `docs/superpowers/plans/2026-10-05-typed-reader.md`, which lands the index, the registry and the edited-index set and removes today's reader. Most of their code reads what that step leaves, so this plan details only what does not depend on it, and outlines the rest. The outlined tasks are detailed against master after the one-reader step lands, as that plan detailed each step after the one before it.
 
 | Task | Detailed | Lands in |
 | --- | --- | --- |
-| 1. Points and the line table | now | the trivia step's PR, first commit |
+| 1. Points and the line table | now | the snapshot step's PR, first commit |
 | 2. Index offsets from a start node | now | the typed-reader plan's Task 17, as its first step |
-| 3. The closing gap in the model | now | the trivia step's PR |
-| 4–8. The trivia step | outline | the trivia step's PR |
+| 3. The closing gap in the model | now | superseded by the trivia table |
+| 4–8. The trivia step | outline | superseded by the trivia table |
 | 9–13. The snapshot step | outline | the snapshot step's PR |
 
-Tasks 1 and 3 add declarations that only the trivia step reads, so they land with it, never alone: the repo keeps no export without a reader.
+Task 1 adds declarations that only the snapshot step reads, so it lands with that step, never alone: the repo keeps no export without a reader.
 
 ## Global Constraints
 
@@ -373,6 +375,8 @@ Message: `test(parity): a walk from any node reports root indexes less the node'
 
 ## Task 3: The closing gap in the model
 
+Superseded on 2026-10-09: an extra before a closer lies in a gap of the trivia table, which the compound owns, so no closing gap is derived (`docs/superpowers/specs/2026-10-09-trivia-table-design.md`, § 1).
+
 **Files:**
 - Modify: `packages/codegen/src/compiler/model/node-map.ts:1570-1572` (`GapWalkCtx`, add `GapWalk` after it) and `:1721-1767` (`innerGaps`; add `gapWalk` and `closingGap`)
 - Modify: `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts:290-303` (add `closingSlotDiagnostics` after `triviaLineEndDiagnostics`), `:445` (call it), `:9` (import `AbstractAssembledCompound`)
@@ -586,6 +590,8 @@ Message: `feat(model): kinds ending in a spaced closer have a closing gap`.
 ---
 
 ## Outline: the trivia step (Tasks 4–8)
+
+Superseded on 2026-10-09 by the trivia table (`docs/superpowers/specs/2026-10-09-trivia-table-design.md`), which `docs/superpowers/plans/2026-10-05-typed-reader.md` lands as 1d.
 
 Detailed against master after the one-reader step lands. The PR carries Tasks 1 and 3 first.
 

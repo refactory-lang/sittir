@@ -18873,7 +18873,7 @@ export type FixedTextKindId =
 	| TSKindId.MetaKeyword
 	| TSKindId.OfKeyword;
 
-export interface IrKeyOf {
+export interface TypeKeyOf {
 	[TSKindId.Program]: 'program';
 	[TSKindId.HashBangLine]: 'hashBangLine';
 	[TSKindId.NamespaceExport]: 'namespaceExport';

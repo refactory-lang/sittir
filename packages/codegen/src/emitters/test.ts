@@ -42,9 +42,8 @@ import { buildSeparatedListContentSlot } from './wrap.ts';
 import { refersTo, writesText, type Body } from './render-body.ts';
 import { valueStorageExpr, kindEnumTextExpr } from './factories.ts';
 import { classifyFactoryEmission, leadingOptionsOf, registeredSlots } from './shared.ts';
-import { seatsConfigChild, subFactoriesOf, type SubFactory } from './overlays/sub-factories.ts';
+import { seatsConfigChild, subFactoriesOf, type SubFactory } from '../compiler/model/sub-factories.ts';
 import { collectPolymorphWires, emittedArmPath, type PolymorphWires } from './overlays/polymorphs.ts';
-import { flattenedVariantParents, variantRoutePaths } from './overlays/module.ts';
 
 export interface EmitTestsConfig {
 	grammar: string;
@@ -103,8 +102,7 @@ export function emitTests(config: EmitTestsConfig): string {
 	const kindEntries = config.generatedIdTables
 		? collectKindEntries(allKinds, nodeMap, config.generatedIdTables)
 		: undefined;
-	const polymorphWires = collectPolymorphWires(nodeMap, config.generatedIdTables, { silent: true });
-	const routePaths = variantRoutePaths(flattenedVariantParents(nodeMap, config.generatedIdTables));
+	const polymorphWires = collectPolymorphWires(nodeMap, { silent: true });
 	const { renderBodies } = config;
 	const writesTextOf = (kind: string): boolean => renderBodies === undefined || rendersText(kind, nodeMap, renderBodies, new Set());
 
@@ -133,11 +131,11 @@ export function emitTests(config: EmitTestsConfig): string {
 			case 'branch':
 			case 'envelope':
 				emitBranchTest(target, node, kind, key, nodeMap, kindEntries, writesTextOf);
-				emitSubFactoryTests(target, node, kind, subFactoryBase(kind, key, polymorphWires, routePaths), nodeMap, kindEntries, polymorphWires, config.expectTestFailures, writesTextOf);
+				emitSubFactoryTests(target, node, kind, subFactoryBase(node, key, polymorphWires), nodeMap, kindEntries, polymorphWires, config.expectTestFailures, writesTextOf);
 				break;
 			case 'polymorph':
 				emitBranchTest(target, node, kind, key, nodeMap, kindEntries, writesTextOf);
-				emitSubFactoryTests(target, node, kind, subFactoryBase(kind, key, polymorphWires, routePaths), nodeMap, kindEntries, polymorphWires, config.expectTestFailures, writesTextOf);
+				emitSubFactoryTests(target, node, kind, subFactoryBase(node, key, polymorphWires), nodeMap, kindEntries, polymorphWires, config.expectTestFailures, writesTextOf);
 				break;
 			case 'alias':
 			case 'supertype':
@@ -446,15 +444,10 @@ interface SubFactoryBase {
 	readonly flavor: '' | '.coerce';
 }
 
-function subFactoryBase(
-	kind: string,
-	key: string,
-	polymorphWires: PolymorphWires,
-	routePaths: ReadonlyMap<string, string>
-): SubFactoryBase | undefined {
-	if (polymorphWires.bundledKinds.has(kind)) return { path: key, flavor: '' };
-	const route = routePaths.get(kind);
-	return route === undefined ? undefined : { path: route, flavor: '.coerce' };
+function subFactoryBase(node: AssembledNode, key: string, polymorphWires: PolymorphWires): SubFactoryBase | undefined {
+	if (polymorphWires.bundledKinds.has(node.kind)) return { path: key, flavor: '' };
+	const route = node.builderPath;
+	return route === undefined || route.length < 2 ? undefined : { path: route.join('.'), flavor: '.coerce' };
 }
 
 function emitSubFactoryTests(

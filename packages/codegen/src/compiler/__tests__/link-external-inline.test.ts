@@ -42,6 +42,11 @@ describe('link inlines a hidden reference to its body', () => {
 		expect(contentOf(link(raw({ root, _content: body }, [])))).toMatchObject({ type: SEQ });
 	});
 
+	it('records the name of every rule it splices', () => {
+		expect(link(raw({ root, _content: body }, [])).splicedNames).toEqual(new Set(['_content']));
+		expect(link(raw({ root, _content: body }, ['_content'])).splicedNames).toEqual(new Set());
+	});
+
 	it('keeps the symbol when the hidden rule is an external that carries a body', () => {
 		expect(contentOf(link(raw({ root, _content: body }, ['_content'])))).toMatchObject({ type: SYMBOL, name: '_content' });
 	});

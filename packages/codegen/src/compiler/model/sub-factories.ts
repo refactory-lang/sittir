@@ -1,4 +1,4 @@
-import type { NodeMap } from '../../compiler/types.ts';
+import type { NodeMap } from '../types.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledList,
@@ -12,7 +12,7 @@ import {
 	type NodeOrTerminal,
 	type TextValueStorage,
 	isTextStorage
-} from '../../compiler/model/node-map.ts';
+} from './node-map.ts';
 import {
 	forwardedTargetKind,
 	isSlotBearingCompound,
@@ -21,9 +21,9 @@ import {
 	classifyFactoryShape,
 	resolveDirectFactorySlot,
 	valueStorageOf
-} from '../shared.ts';
-import { lowerCamelCase } from '../../compiler/model/casing.ts';
-import type { KindEnumEntry } from '../kind-discriminant.ts';
+} from '../../emitters/shared.ts';
+import { lowerCamelCase } from './casing.ts';
+import type { KindEnumEntry } from '../../emitters/kind-discriminant.ts';
 
 export interface ValueArm {
 	readonly via: 'value';
@@ -35,6 +35,7 @@ export interface NodeArm {
 	readonly child: AssembledNode;
 	readonly path: readonly string[];
 	readonly leaf?: AssembledNode;
+	readonly variantOf?: string;
 }
 
 export interface SubFactory {
@@ -189,7 +190,8 @@ function derive(
 			}
 			const child = isNodeRef(value) ? nodeMap.nodes.get(storageKindOfRef(value.node)) : undefined;
 			if (child !== undefined && isCallableArm(child, isEmitted)) {
-				direct.push({ name, slot, residual, arm: { via: 'node', child, path: [] }, depth: DIRECT, merges: false });
+				const arm: NodeArm = { via: 'node', child, path: [], ...(value.variantOf === undefined ? {} : { variantOf: value.variantOf }) };
+				direct.push({ name, slot, residual, arm, depth: DIRECT, merges: false });
 			}
 		}
 	}
@@ -389,7 +391,7 @@ export function tupleSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly Fla
 
 export interface Seat {
 	readonly kind: string;
-	readonly shape: 'arm' | 'flatten' | 'elements' | 'tuple';
+	readonly shape: 'arm' | 'flatten' | 'elements' | 'tuple' | 'forwarded';
 	readonly mount?: string;
 	readonly seated?: true;
 }
@@ -408,9 +410,11 @@ export function seatOf(
 	nodeMap: NodeMap,
 	source: SeatSource | undefined
 ): Seat | undefined {
-	if (source === undefined || !isNodeRef(value)) return undefined;
+	if (!isNodeRef(value)) return undefined;
 	const child = nodeMap.nodes.get(storageKindOfRef(value.node));
 	if (child === undefined || !isHoistedAt(value, child)) return undefined;
+	const forwarded: Seat | undefined = classifyFactoryShape(child, nodeMap) === 'forwarded' ? { kind: child.kind, shape: 'forwarded' } : undefined;
+	if (source === undefined) return forwarded;
 	const text = textStorageOf(value, nodeMap)?.text;
 	const arm = source.subs.find(
 		(e) =>
@@ -433,18 +437,9 @@ export function seatOf(
 	if ((source.tuples ?? []).some((e) => e.slot === slot && e.group === child)) {
 		return { kind: child.kind, shape: 'tuple' };
 	}
-	return undefined;
+	return forwarded;
 }
 
-/**
- * True when the forwarded target itself accepts a `repeat`-sourced spread
- * (chasing through a chain of forwards, since a forward can target another
- * forward). Mirrors the `targetOverloads` wrapper in factories.ts: every
- * forwarded factory re-exposes its target's own constructor surface as
- * extra overloads, so a node forwarding to a `'spread'` target inherits
- * that target's variadic overload (the `buildSuiteBlock`-style "bare
- * `Block` or `...children`" pair) even though its own slot is single-valued.
- */
 function forwardsToSpreadTarget(node: AssembledNode, nodeMap: NodeMap): boolean {
 	const targetKind = forwardedTargetKind(node, nodeMap);
 	if (targetKind === null) return false;
@@ -455,18 +450,6 @@ function forwardsToSpreadTarget(node: AssembledNode, nodeMap: NodeMap): boolean 
 	return targetShape === 'forwarded' && forwardsToSpreadTarget(target, nodeMap);
 }
 
-/**
- * True when the child's own factory takes the seated value as ONE argument
- * — a config object (`'config'`), a thin single-positional-param wrapper
- * (`'direct'`), or one forwarded to another kind's own single-value factory
- * (`'forwarded'`, provided that target isn't itself variadic —
- * `forwardsToSpreadTarget`). `'spread'` (a `repeat`-sourced slot) and
- * `'elements'` (a separated list) are the only genuinely multi-valued
- * shapes here: `ArgsOf<CF>[0]` on a union of overload tuples would collapse
- * a variadic arm into a bare element type, so those (and forwards that
- * chase down to one) keep spreading a whole argument list instead of
- * seating bare.
- */
 export function seatsConfigChild(sub: SubFactory, nodeMap: NodeMap): boolean {
 	if (sub.arm.via !== 'node' || sub.arm.path.length !== 0 || sub.merges) return false;
 	const child = sub.arm.child;

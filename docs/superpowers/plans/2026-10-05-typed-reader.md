@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Read a parsed node natively into its kind's generated transport, with routing, storage and trivia placement done by a cursor reader that a derive macro expands from codegen-stamped attributes. Prove the read equal to today's read, wrap and detach for every corpus node of the five grammars (PR 1a). The derive then replaces the napi object codec (PR 1b), and every consumer switches to the typed read (PR 1c).
+**Goal:** Read a parsed node natively into its kind's generated transport, with routing and storage done by a cursor reader that a derive macro expands from codegen-stamped attributes. Prove the read equal to today's read, wrap and detach for every corpus node of the five grammars (PR 1a). The derive then replaces the napi object codec (PR 1b), and every consumer switches to the typed read (PR 1c). A parsed tree's trivia then leaves the reader for a native table keyed by gap (1d).
 
 **Architecture:** Codegen keeps emitting today's transport structs and choice enums. It adds `#[derive(::sittir_core::Transport)]` and helper attributes for every read fact a type cannot state:
 
@@ -15,7 +15,7 @@ A new proc-macro crate expands each declaration into a `ReadTransport` impl that
 
 - depth;
 - coordinates as tree and row;
-- the trivia placement rule;
+- the trivia placement rule, until 1d replaces it with the parsed tree's gap table;
 - refusal of a child no route takes.
 
 In 1a the typed read runs beside today's read. Two transitional napi methods back the corpus harness: one reports the typed reader's refusal, and the other decodes today's detached data into the same transport types and compares the two.
@@ -34,7 +34,7 @@ In 1a the typed read runs beside today's read. Two transitional napi methods bac
 
 ## Scope and sequencing
 
-Step 1 of the spec lands as four PRs. This plan writes 1a, 1b and 1c-i in full and outlines 1c-ii. Each step's tasks are detailed against the code the step before it left; 1c-ii's after 1c-i lands.
+Step 1 of the spec lands as four PRs, and the trivia table (`docs/superpowers/specs/2026-10-09-trivia-table-design.md`) follows as 1d. This plan writes 1a, 1b, 1c-i and 1c-ii in full and outlines 1d. Each step's tasks are detailed against the code the step before it left; 1d's after 1c-ii lands.
 
 1a is cut from master at or after `efbf817b9`, where enum members cross the transport as their kind ids and decode by id alone. Tasks 5, 8 and 9 build on what that brought: `enumMemberId` and the decoder `arms` in `renderEnumType`, `AssembledEnum`'s refusal of two members with one id, and the wrap's `_spelledMemberId` fold. Task 10's harness compares against today's read with those folds.
 
@@ -44,6 +44,7 @@ Step 1 of the spec lands as four PRs. This plan writes 1a, 1b and 1c-i in full a
 | **1b** | the derive's napi codec replaces `#[napi(object)]` and every hand-printed `FromNapiValue` and `ToNapiValue`; a corpus round trip proves the encoders; every choice payload over a byte ceiling is boxed | render-neutral (verification 15), measured against master as 1b starts, whose enum members decode by kind id; build time and binary size per crate; standalone `type-check:native` passes and is chained into `type-check`; every corpus read round-trips unchanged; the typed read's root stack cost in the dev profile at most today's read's; rendered bytes and validation rows unchanged |
 | **1c-i** | one reader: handles name descendant indexes; `parse` and `read` cross the typed read, each transport naming its own node; every read goes through it and the wrap attaches members only; today's reader goes | rendered bytes and validation rows unchanged in every task; arena verifications 3–8 but identity; "two readers must not outlive step 1" |
 | **1c-ii** | identity and the empty list: the index registry and edited-index set, the fold by range, query results through the registry; an empty list is `[]` in reads, factories and fixtures | relative-coordinates verifications 1–6; the fixture and factory moves of the empty-list form listed; rendered bytes and validation rows unchanged |
+| **1d** | the parsed-tree gap table: one token walk and a native table of trivia by gap on `ParsedTree`; a parsed node's `$trivia` reads and writes the table, and the render prints parsed trivia from it; the reader's placement, trivia on parsed wrappers, the line-gap query, the client edited set, the query-write refusal and the ir validator lane's trivia carriers go | untouched renders and validation rows unchanged in every task, the trivia-placement census recorded; every corpus extra's owner is its tree-sitter parent; an edited render's bytes move only where a ruling moves them |
 
 ## Global Constraints
 
@@ -6861,7 +6862,7 @@ Open the PR with `Owner: sittir-engine-api` first in its body, the follow-up iss
 
 ## 1c-ii: identity and the empty list
 
-Detailed against master `12644d5df`, which holds 1c-i. A parsed node has one wrapper per surface, whichever route reaches it; a trivia write marks its index edited and nothing else; a node folds to its bytes when no edited index lies in its range; a built node's accessor hydrates the coordinate it stores through the same registry; and an empty list is `[]` everywhere. The design is `docs/superpowers/specs/2026-10-06-relative-coordinates-design.md` (§ Identity: the index registry, § Edits and folding, § Verification 1–6), with the shared-arena spec's ruling 6.
+Detailed against master `12644d5df`, which holds 1c-i. A parsed node has one wrapper per surface, whichever route reaches it; a write marks its index edited, on the inside or the outside of its span, and nothing else; a node folds to its bytes when no edit lies inside its range, and its outside trivia renders around the folded bytes; a built node's accessor hydrates the coordinate it stores through the same registry; and an empty list is `[]` everywhere. The design is `docs/superpowers/specs/2026-10-06-relative-coordinates-design.md` (§ Identity: the index registry, § Edits and folding, § Verification 1–6), with the shared-arena spec's ruling 6.
 
 Execution order: **Task 19 → Task 25 → Task 24 → Task 21 → Task 23.** Task 25 is the outline's Task 19 second half (the edited set and the fold by range), split out because a reviewer can reject it while approving the registry.
 
@@ -6878,8 +6879,18 @@ Brainstorm's, 2026-10-09, unless marked otherwise.
 7. **`end` crosses as `$end` on the object wire (design).** The reader fills `NodeCoordinate::end` (`index + descendant_count()`); the coordinate encoder writes `$end` and the decoder reads it. The record step retires the object codec (shared-arena spec, ruling 6.3) and its record carries `end` from the same field; only the encoder and decoder lines are temporary.
 8. **A built holder resolves a stored coordinate's tree by its token** (Q1, ruled (a)). The builder accessor applies render's guard (`assertHoldsTree`); no id table is added.
 9. **The registry key is the index and a role, `node` or `aliasContent`** (Q2, ruled (i)). The role never depends on registry state. A content takes `aliasContent` only when it shares its envelope's index, decided in one common helper by comparing the two values' stamped `at`; a content that is its own parser node registers as `node` from every route; the query passes no role (it yields each parser node once, as its envelope at a shared index).
-10. **`markEditedNode` is the only hook for an in-place write.** The trivia writer marks through it, and any future in-place verb (the node-query `$edit` verbs) marks through it too, so the fold stays correct when they land. `$with` mints a draft and marks nothing.
+10. **`markEditedNode` is the only hook for an in-place write.** The trivia writer marks through it, and any future in-place verb (the node-query `$edit` verbs) marks through it too, so the fold stays correct when they land. Each call names the side it edits (Ruling 12). `$with` mints a draft and marks nothing.
 11. **A `repeat1` list is `NonEmptyVec<T>` in Rust (design, on brainstorm's question).** The type states the fact TS states with `NonEmptyArray`: no `min` attribute, no `finish` parameter the other impls ignore, and the decoder refuses an empty one.
+12. **A write to a node's outside trivia edits what surrounds its span, not the span** (brainstorm, 2026-10-09, on a defect that reproduces on master). Leading and trailing entries lie outside the span, so the node still folds its span to bytes and its outside trivia renders around the folded bytes, from data. Only an edit inside the span stops the span folding: a write under any descendant index, or to the node's own inner trivia. An ancestor still sees an outside write as an edit inside its range, because the comment changes the ancestor's bytes. The edited set therefore keeps two sorted index lists per tree, `inside` and `outside`, and a node at `[index, end)` is edited when an `inside` index lies in `[index, end)` or an `outside` index lies in `(index, end)`. A write through an alias content that shares its envelope's index (role `aliasContent`) marks `inside`: the content's outside is inside the envelope's span. Master's defect, which this ruling fixes:
+
+    ```ts
+    const block = (await createEngine(python)).parse('if a:\n  b\n    # four\n  c\n').statements()[0].consequence().block();
+    block.$trivia.leading('# lead');
+    block.$render(); // master: "# lead\nb\nc", "# four" lost
+    ```
+
+    The leading write stops the block folding (`hasOutsideTrivia`), so it renders from storage; its children are bare coordinates, each folding to its own span, and `# four` (`c`'s leading as the reader places it) lies between those spans with nothing to print it. The native render cannot frame a coordinate with trivia today (`SlotValue::Coord` renders `write_between_edges` alone, and `coordinate_from_napi` reads only `$_layout.gap`), so Task 25 adds it.
+13. **Withdrawn: the render does not consult the registry** (maintainer, 2026-10-09). The identity registry is a cache: nothing correct depends on it, and the render never consults it, or it would cross the native/client boundary. A write through a node a query reached therefore stays refused (the `heldBySlot` guard, Task 25 Step 6) until a replacement lands: the write itself as data keyed by tree and index, which the render reads, so no object identity is involved. Where that data lives (native per-tree storage or client) awaits a maintainer ruling.
 
 ### Brainstorm's rulings on the plan questions (2026-10-09)
 
@@ -6932,7 +6943,7 @@ Modify:
 
 1a's, 1b's and 1c-i's hold, and:
 
-- No rendered byte and no validation row moves, in any task. A moved row stops the work for review (no revert).
+- No rendered byte and no validation row moves, in any task, except the bytes Ruling 12 restores to an edited tree (master drops a comment there). A moved row stops the work for review (no revert). Python's shallow AST match row is the hosts branch's to report (115 once Task 25 lands); on this branch it does not move either.
 - The stack pins (`typed_read_nesting.rs`, per level, linux and macos) do not rise. If `end: u32` pushes a choice payload past the 512-byte ceiling, the build asks for it to be pinned: pin it (the list moves, the ceiling never does).
 - `index` names the descendant index; `end` names `index + descendant_count()`; the half-open range `[index, end)` is a node's subtree. No other names for either in new code, docs or glossary.
 - The registry holds wrappers weakly: nothing it holds keeps a wrapper, a token or a tree alive.
@@ -6946,6 +6957,7 @@ Modify:
 4. **A built node holding a parsed child whose subtree was edited.** The built node renders from data, the parsed child from data, and the child's untouched siblings inside it from bytes. Test: Task 25, Step 1 (`a built holder of an edited parsed child`).
 5. **A variant arm reached by coordinate.** Its coordinate's `$type` is the grammar id, its wrapper's the arm's storage kind; the second access through any route is a registry hit with no native read. Test: Task 19, Step 2 (the read count over `RangeExpressionBinary`).
 6. **A tokenless copy of a coordinate (JSON round trip) stored in a built node.** Its accessor refuses with `assertHoldsTree`'s message; it never returns the raw `{ $treeHandle, $span, $type, $end }`. Test: Task 24, Step 1.
+7. **An outside trivia write on a node whose children are bare coordinates, with a comment the reader placed between two children** (Ruling 12). The node folds to its bytes, so the comment between its children survives, and the written entry renders before (leading) or after (trailing) those bytes. Test: Task 25, Step 1 (`an outside write keeps the span's bytes`, both sides, python).
 
 ---
 
@@ -7241,26 +7253,28 @@ plus the regenerated `wrap.ts` files `git status` names. Message: `feat(identity
 
 ## Task 25: The edited set and the fold by range
 
-A trivia write marks its node's index edited in a sorted set per tree. A node folds to its coordinate when no edited index lies in `[index, end)`. The node keeps its coordinate and its tree: no ancestor is detached, so `adoptChild`, the parent links, `detachAncestors` and the projection walk (`isUntouchedBelow`) go, and the refusal of a write on a node a query reached is lifted.
+A write marks its node's index edited, on the side it edits (Ruling 12): an outside trivia write (leading, trailing) marks `outside`, an inner trivia write marks `inside`. A node folds to its coordinate when no `inside` index lies in `[index, end)` and no `outside` index lies in `(index, end)`; a folded node with outside trivia crosses as its coordinate carrying that trivia, and the native render frames the coordinate's bytes with it. The node keeps its coordinate and its tree: no ancestor is detached, so `adoptChild`, the parent links, `detachAncestors` and the projection walk (`isUntouchedBelow`) go, and the refusal of a write on a node a query reached stays, decided by a guard (`heldBySlot`) until the write-as-data replacement lands (Ruling 13).
 
 **Files:**
-- Modify: `rust/crates/sittir-core/src/slot.rs` (`NodeCoordinate::end`, `new`, `coordinate_to_napi`, `coordinate_from_napi`, their tests), `rust/crates/sittir-core/src/read.rs` (`ReadCtx::coordinate`, `coordinate_of`, `Child`), `rust/crates/sittir-core/src/query.rs` (`QueryCoordinate`), `rust/crates/sittir-core/tests/prepare.rs` (the `new` calls)
+- Modify: `rust/crates/sittir-core/src/slot.rs` (`NodeCoordinate::end`, `new`, `coordinate_to_napi`, `coordinate_from_napi`, their tests; `SlotValue::Coord` carries outside trivia), `rust/crates/sittir-core/src/layout.rs` (the trivia framing `TransportLayout::render` and a framed coordinate share), `rust/crates/sittir-core/src/{prepare,trivia,view,read}.rs` (the `SlotValue::Coord` match sites), `rust/crates/sittir-core/src/read.rs` (`ReadCtx::coordinate`, `coordinate_of`, `Child`), `rust/crates/sittir-core/src/query.rs` (`QueryCoordinate`), `rust/crates/sittir-core/tests/prepare.rs` (the `new` calls)
 - Modify: `packages/types/src/core-types.ts` (`TransportCoordinate.$end`)
 - Modify: `packages/common/src/identity.ts` (`markIndexEdited`, `editedWithin`), `packages/common/src/utils.ts` (the trivia writer; `adoptChild`, `parents`, `detachAncestors` go; `hydrateSlotWith`, `hydrateSlotsWith` stop adopting), `packages/common/src/transport-data.ts` (`foldedCoordinate`; `isUntouchedBelow` goes; `plainCoordinate`)
 - Modify: `packages/rust/tests/fold-in-place-trivia.test.ts`, `packages/rust/tests/identity.test.ts`, `packages/common/tests/identity.test.ts`
+- Create: `packages/python/tests/fold-outside-trivia.test.ts`
 - Modify: the glossaries
 
 **Interfaces:**
 - Consumes: Task 19's `indexOf` (`transport-data.ts`).
-- Produces: `markEditedNode(node: object): void` in `utils.ts`, the one hook every in-place write calls.
+- Produces: `markEditedNode(node: object, side: EditSide): void` in `utils.ts`, the one hook every in-place write calls; `EditSide = 'inside' | 'outside'` in `identity.ts`.
 - Produces:
   - `TransportCoordinate.$end: number` — `index + descendant_count()` of the node it names;
-  - `markIndexEdited(tree: TreeHandle, index: number): void` and `editedWithin(tree: TreeHandle, index: number, end: number): boolean` in `identity.ts`;
+  - `markIndexEdited(tree: TreeHandle, index: number, side: EditSide): void` and `editedWithin(tree: TreeHandle, index: number, end: number): boolean` in `identity.ts`;
+  - native `SlotValue::Coord(NodeCoordinate, Option<Box<TransportTrivia<T>>>)`: a coordinate and the outside trivia it renders between;
   - native `NodeCoordinate { tree, index, end, span, kind, edges, gap }` and `NodeCoordinate::new(tree: u32, index: u32, end: u32, span: Span)`.
 
 - [ ] **Step 1: Write the failing tests**
 
-In `packages/rust/tests/fold-in-place-trivia.test.ts`, the third case becomes:
+In `packages/rust/tests/fold-in-place-trivia.test.ts`, the third case keeps its refusal until Ruling 13's replacement lands; when it does, it becomes:
 
 ```ts
 	it('renders a comment written on a node a query reached, as written through the accessors', () => {
@@ -7285,7 +7299,7 @@ describe('the fold by range', () => {
 		const q = b.body().statements()[0];
 		if (q === undefined) throw new Error('expected a statement');
 		q.$trivia.leading(engine.build.lineComment(' q'));
-		expect(root.$render()).toBe('fn a() { let p = 1; }\nfn b() {\n    // q\n    let q = 2;\n    let r = 3;\n}\nfn c() { let s = 4; }\n');
+		expect(root.$render()).toBe('fn a() { let p = 1; }\nfn b() {\n    // q\n    let q = 2; let r = 3;\n}\nfn c() { let s = 4; }\n');
 	});
 
 	it('nested writes fold only untouched ranges', () => {
@@ -7299,7 +7313,7 @@ describe('the fold by range', () => {
 		r.$trivia.trailing(engine.build.lineComment(' r'));
 		const out = root.$render();
 		expect(out).toContain('// p\n');
-		expect(out).toContain('let r = 3; // r');
+		expect(out).toContain('let r = 3;\n    // r\n');
 		expect(out.endsWith('fn c() { let s = 4; }\n')).toBe(true);
 	});
 
@@ -7310,8 +7324,8 @@ describe('the fold by range', () => {
 		const q = b.body().statements()[0];
 		if (q === undefined) throw new Error('expected a statement');
 		q.$trivia.leading(engine.build.lineComment(' q'));
-		const built = engine.build.sourceFile(b);
-		expect(built.$render()).toBe('fn b() {\n    // q\n    let q = 2;\n    let r = 3;\n}\n');
+		const built = engine.build.sourceFile({ statements: [b] });
+		expect(built.$render()).toBe('fn b() {\n    // q\n    let q = 2; let r = 3;\n}\n');
 	});
 
 	it('an untouched node folds after a write elsewhere', () => {
@@ -7324,7 +7338,7 @@ describe('the fold by range', () => {
 });
 ```
 
-If `engine.build.sourceFile`'s factory spelling differs at the base, take it from `packages/rust/src/factories/raw.ts`'s `buildSourceFile` (`sourceFile(...statements)`).
+The two-statement expectations keep the source gap between untouched neighbours (`let q = 2; let r = 3;`), and a written trailing entry goes where the trivia writer places it (its own line). If `engine.build.sourceFile`'s factory spelling differs at the base, take it from `packages/rust/src/factories/raw.ts`'s `buildSourceFile` (`sourceFile(...statements)`).
 
 Append to `packages/common/tests/identity.test.ts`:
 
@@ -7332,19 +7346,85 @@ Append to `packages/common/tests/identity.test.ts`:
 import { editedWithin, markIndexEdited } from '../src/identity.ts';
 
 describe('the edited set', () => {
-	it('answers whether an edited index lies in a half-open range', () => {
+	it('answers whether an inside edit lies in a half-open range', () => {
 		const tree: TreeHandle = { id: 3 };
-		markIndexEdited(tree, 10);
-		markIndexEdited(tree, 4);
-		markIndexEdited(tree, 10);
+		markIndexEdited(tree, 10, 'inside');
+		markIndexEdited(tree, 4, 'inside');
+		markIndexEdited(tree, 10, 'inside');
 		expect(editedWithin(tree, 0, 4)).toBe(false);
 		expect(editedWithin(tree, 0, 5)).toBe(true);
 		expect(editedWithin(tree, 5, 10)).toBe(false);
 		expect(editedWithin(tree, 10, 11)).toBe(true);
 		expect(editedWithin({ id: 4 }, 0, 100)).toBe(false);
 	});
+
+	it('an outside edit edits the ranges that strictly contain its index, not its own', () => {
+		const tree: TreeHandle = { id: 5 };
+		markIndexEdited(tree, 7, 'outside');
+		expect(editedWithin(tree, 7, 9)).toBe(false);
+		expect(editedWithin(tree, 6, 9)).toBe(true);
+		expect(editedWithin(tree, 8, 9)).toBe(false);
+	});
 });
 ```
+
+Create `packages/python/tests/fold-outside-trivia.test.ts` (master's defect, Ruling 12):
+
+```ts
+import { describe, expect, it } from 'vitest';
+import { createEngine } from '@sittir/common';
+import python from '../src/index.ts';
+
+const engine = await createEngine(python);
+const SOURCE = 'if a:\n  b\n    # four\n  c\n';
+
+function blockOf(root: ReturnType<typeof engine.parse>) {
+	const statement = root.statements()[0];
+	if (statement === undefined || !engine.is.ifStatement(statement)) throw new Error('expected an if statement');
+	return statement.consequence().block();
+}
+
+describe('an outside write keeps the span\'s bytes', () => {
+	it('leading', () => {
+		const block = blockOf(engine.parse(SOURCE));
+		block.$trivia.leading('# lead');
+		expect(block.$render()).toBe('# lead\nb\n    # four\n  c');
+	});
+
+	it('trailing', () => {
+		const block = blockOf(engine.parse(SOURCE));
+		block.$trivia.trailing('# tail');
+		const out = block.$render();
+		expect(out.startsWith('b\n    # four\n  c')).toBe(true);
+		expect(out.trimEnd().endsWith('# tail')).toBe(true);
+	});
+
+	it('the whole tree renders the written entry and the reader\'s comment', () => {
+		const root = engine.parse(SOURCE);
+		blockOf(root).$trivia.leading('# lead');
+		expect(root.$render()).toContain('    # four\n  c');
+		expect(root.$render()).toContain('# lead');
+	});
+});
+```
+
+The trailing case pins the comment's survival and its side, not the join (the trailing entry's line placement is the trivia writer's, unchanged here); Step 8 pins the exact string the run prints.
+
+The write-retention test (write through a query, drop every reference, collect, re-query) and the query-reached write case wait for Ruling 13's replacement.
+
+In `slot.rs`'s tests, add a framed coordinate:
+
+```rust
+#[test]
+fn a_coordinate_renders_between_its_outside_trivia() {
+    // A coordinate holding leading and trailing entries writes them around
+    // its sliced bytes, through the same framing a transport's layout uses.
+    // Build the entries as `TriviaText` values (the detached form), render
+    // with `rendered_with`, and assert "// a\nword // b".
+}
+```
+
+with the body written against the test module's `Sources` and `rendered_with` helpers.
 
 In `slot.rs`'s tests, the encode test asserts `$end`; add to `read.rs`'s tests:
 
@@ -7371,6 +7451,7 @@ fn a_coordinate_ends_past_its_last_descendant() {
 Run: `cargo test -p sittir-core a_coordinate_ends_past_its_last_descendant` — Expected: FAIL to compile, no field `end`.
 Run: `pnpm exec vitest run packages/common/tests/identity.test.ts` — Expected: FAIL, `markIndexEdited` not exported.
 Run: `pnpm exec vitest run packages/rust/tests/fold-in-place-trivia.test.ts packages/rust/tests/identity.test.ts` — Expected: FAIL on the query-reached write (refused: "reached outside its parent's accessors").
+Run: `pnpm exec vitest run packages/python/tests/fold-outside-trivia.test.ts` — Expected: FAIL, `"# lead\nb\nc"` (master's defect).
 
 - [ ] **Step 3: `end` on the native coordinate**
 
@@ -7438,7 +7519,9 @@ export interface TransportCoordinate {
 `identity.ts`:
 
 ```ts
-const edited = new WeakMap<TreeHandle, number[]>();
+export type EditSide = 'inside' | 'outside';
+
+const edited = new WeakMap<TreeHandle, Record<EditSide, number[]>>();
 
 function lowerBound(sorted: readonly number[], value: number): number {
 	let low = 0;
@@ -7451,18 +7534,22 @@ function lowerBound(sorted: readonly number[], value: number): number {
 	return low;
 }
 
-export function markIndexEdited(tree: TreeHandle, index: number): void {
-	let indexes = edited.get(tree);
-	if (indexes === undefined) edited.set(tree, (indexes = []));
+function anyWithin(sorted: readonly number[], from: number, end: number): boolean {
+	const at = lowerBound(sorted, from);
+	return at < sorted.length && sorted[at]! < end;
+}
+
+export function markIndexEdited(tree: TreeHandle, index: number, side: EditSide): void {
+	let sides = edited.get(tree);
+	if (sides === undefined) edited.set(tree, (sides = { inside: [], outside: [] }));
+	const indexes = sides[side];
 	const at = lowerBound(indexes, index);
 	if (indexes[at] !== index) indexes.splice(at, 0, index);
 }
 
 export function editedWithin(tree: TreeHandle, index: number, end: number): boolean {
-	const indexes = edited.get(tree);
-	if (indexes === undefined) return false;
-	const at = lowerBound(indexes, index);
-	return at < indexes.length && indexes[at]! < end;
+	const sides = edited.get(tree);
+	return sides !== undefined && (anyWithin(sides.inside, index, end) || anyWithin(sides.outside, index + 1, end));
 }
 ```
 
@@ -7472,55 +7559,67 @@ export function editedWithin(tree: TreeHandle, index: number, end: number): bool
 
 - [ ] **Step 6: The trivia writer marks the edit**
 
-In `utils.ts`'s `triviaWriter`: delete `refuseUnheld` and both calls; `store` becomes
+In `utils.ts`'s `triviaWriter`: `refuseUnheld` stays, its test reading a `heldBySlot` WeakSet that `hydrateSlotWith` and `hydrateSlotsWith` fill in place of the parent links (a guard only: it decides refusal, never output); `store` becomes
 
 ```ts
 	const store = (trivia: NodeTrivia, side: TriviaSideName): AnyUntypedNode => {
 		markWritten(node, side);
 		setTriviaData(node, trivia);
-		markEditedNode(node);
+		markEditedNode(node, 'outside');
 		return node;
 	};
 ```
 
-and `writeInner` drops `detachCoordinate(node)`. `markEditedNode` (in `utils.ts`):
+and `writeInner` drops `detachCoordinate(node)` and marks `markEditedNode(node, 'inside')`. `markEditedNode` (in `utils.ts`):
 
 ```ts
-function markEditedNode(node: object): void {
+function markEditedNode(node: object, side: EditSide): void {
 	const tree = treeOf(node);
 	const index = indexOf(node);
-	if (tree !== undefined && index !== undefined) markIndexEdited(tree, index);
+	if (tree !== undefined && index !== undefined) markIndexEdited(tree, index, sharesEnvelopeIndex(node) ? 'inside' : side);
 }
 ```
 
-A built node has no tree and no index: it renders from data already, so nothing is marked. `markEditedNode` is the only hook for an in-place write (Ruling 10): any future in-place verb, such as the node-query `$edit` verbs, marks through it, and its glossary entry says so; `$with` mints a draft and marks nothing. Delete `parents`, `adoptChild` and `detachAncestors`, and the `adoptChild` calls in `hydrateSlotWith` and `hydrateSlotsWith`.
+`sharesEnvelopeIndex(node)` is the registry's role fact for the node (Ruling 9: a content that shares its envelope's index registered as `aliasContent`); take it from where `contentRole` stamped it, never from a kind test.
+
+A built node has no tree and no index: it renders from data already, so nothing is marked. `markEditedNode` is the only hook for an in-place write (Ruling 10): any future in-place verb, such as the node-query `$edit` verbs, marks through it, and its glossary entry says so; `$with` mints a draft and marks nothing. Delete `parents`, `adoptChild` and `detachAncestors`; `hydrateSlotWith` and `hydrateSlotsWith` add each child to `heldBySlot` instead.
 
 - [ ] **Step 7: The fold by range**
 
 `transport-data.ts`:
 
 ```ts
-function foldedCoordinate(record: Record<string, unknown>, trivia: unknown): TransportCoordinate | undefined {
+function foldedCoordinate(record: Record<string, unknown>): TransportCoordinate | undefined {
 	const coordinate = coordinateOf(record);
-	if (coordinate === undefined || hasOutsideTrivia(trivia)) return undefined;
+	if (coordinate === undefined) return undefined;
 	const tree = treeOf(record);
 	if (tree === undefined) return undefined;
 	return editedWithin(tree, decodeIndex(coordinate.$treeHandle), coordinate.$end) ? undefined : coordinate;
 }
 ```
 
-Delete `isUntouchedBelow`. A record with a coordinate but no tree (a copy that lost its token) does not fold, and its slots cross as data; `assertHoldsTree` still refuses a bare tokenless coordinate in a slot.
+`toTransportValue` passes the node's crossing trivia to `foldToCoordinate`, which sets `$_layout.trivia` on the crossing coordinate to the trivia's `leading` and `trailing` sides when either is present (inner entries lie inside the span, so the bytes carry them). `hasOutsideTrivia` stays as that test. Delete `isUntouchedBelow`. A record with a coordinate but no tree (a copy that lost its token) does not fold, and its slots cross as data; `assertHoldsTree` still refuses a bare tokenless coordinate in a slot.
+
+- [ ] **Step 7b: The native render frames a coordinate with its outside trivia**
+
+`slot.rs`: `SlotValue::Coord(NodeCoordinate, Option<Box<TransportTrivia<T>>>)`. Its decoder reads `$_layout.trivia` beside `$_layout.gap` when the object is a coordinate; its encoder writes none (a read never attaches trivia to a bare coordinate, and nothing crosses back). `Render` and `transport_or_write` write a coordinate through the framing below with `write_between_edges` as the body; `PartialEq` compares the trivia too. The reader's two constructions pass `None`; every other match site binds `Coord(coord, ..)`.
+
+`layout.rs`: the body of `TransportLayout::render` becomes one function over `(trivia: Option<&TransportTrivia<T>>, edges, kind, role, w, body)`; `TransportLayout::render` calls it with its own trivia and edges, and a framed coordinate with its trivia, `Edges::NONE`, no kind (its kind's edges are `write_between_edges`'s) and `TriviaRole::Owner`.
+
+`prepare.rs`: the `Coord` arm prepares its trivia (`TransportTrivia::prepare`), so a coordinate entry inside it takes its kind's edges.
+
+`SlotValue<T>` grows by one pointer only where the `Coord` arm is its widest; if a payload assertion asks for a pin, pin it (Global Constraints).
 
 - [ ] **Step 8: Run the tests to verify they pass**
 
 Run: `cargo test -p sittir-core` and the workspace (`cargo test --workspace`) — Expected: PASS; the stack pins unmoved.
 Run: `pnpm run validate:native` (regenerates) — Expected: rows unchanged.
-Run: `pnpm exec vitest run packages/common/tests/identity.test.ts packages/rust/tests/fold-in-place-trivia.test.ts packages/rust/tests/identity.test.ts` — Expected: PASS.
+Run: `pnpm exec vitest run packages/common/tests/identity.test.ts packages/rust/tests/fold-in-place-trivia.test.ts packages/rust/tests/identity.test.ts packages/python/tests/fold-outside-trivia.test.ts` — Expected: PASS. Replace the trailing case's two assertions with the exact string the run prints, once read and judged right.
 Run: the full unit suite (its own Bash call) — Expected: PASS; any failure isolated by stash-and-rerun before it is called pre-existing.
 
 - [ ] **Step 9: Glossary, commit**
 
-Entries: `identity.ts::markIndexEdited`, `editedWithin`, `lowerBound`; `utils.ts::markEditedNode` (the only in-place-write hook; future in-place verbs mark through it); `transport-data.ts::foldedCoordinate` updated; removed: `adoptChild`, `detachAncestors`, `isUntouchedBelow`, the refusal. Core glossary: `NodeCoordinate::end`, `ReadCtx::coordinate`, `Child::descendants`, `QueryCoordinate::end`.
+Entries: `identity.ts::EditSide`, `markIndexEdited`, `editedWithin`, `lowerBound`, `anyWithin`; `utils.ts::markEditedNode` (the only in-place-write hook; future in-place verbs mark through it, naming the side); `transport-data.ts::foldedCoordinate` updated; removed: `adoptChild`, `detachAncestors`, `isUntouchedBelow`, the refusal. Core glossary: `NodeCoordinate::end`, `ReadCtx::coordinate`, `Child::descendants`, `QueryCoordinate::end`, `SlotValue::Coord`'s trivia, the shared trivia framing in `layout.rs`.
 
 Commit message: `feat(identity): an edit marks its index; a node folds when its range holds no edit`. Pathspec: every file in this task's Files list plus the regenerated outputs `git status` names.
 
@@ -7843,9 +7942,128 @@ Task 19's `a descendants query over …` cases (a let declaration and a variant 
 - `pnpm run validate:native`; `sittir validate history` against `12644d5df`, rows compared by number;
 - the full unit suite, with any new failure isolated by stash-and-rerun;
 - the workspace type-check (`tsc --noEmit`);
-- `packages/common/src` holds no `adoptChild`, `detachAncestors`, `isUntouchedBelow`, `sameOccurrence`, `hydrateListStorage` or "reached outside its parent's accessors"; `rust/crates/sittir-*/src/render/transport.rs` holds no `Option<Vec<`.
+- `packages/common/src` holds no `adoptChild`, `detachAncestors`, `isUntouchedBelow`, `sameOccurrence` or `hydrateListStorage`; `rust/crates/sittir-*/src/render/transport.rs` holds no `Option<Vec<`. The refusal of a write through a query stays: 1c-ii lands with it, and Task 30's gate removes it.
 
 Commit the probes and README (`docs(probes): relative-coordinates verifications 1–6 for 1c-ii`). Open the PR with `Owner: sittir-engine-api` first in its body and the Q1/Q2 rulings quoted, and ask brainstorm for the whole-branch review.
+
+---
+
+## Outline: 1d, the parsed-tree gap table
+
+Detailed against master after 1c-ii lands. A parsed tree's trivia leaves the reader, the wrappers and the transports for one native table on `ParsedTree`, keyed by gap, and the render reads a parsed tree's trivia from that table and from nowhere else. The design is `docs/superpowers/specs/2026-10-09-trivia-table-design.md` (§ 1–5, rulings in § 7); the shared-arena spec's § Trivia places the tables in that design.
+
+**Order.** 1c-ii lands first, with the refusal of a write through a query in place (Ruling 13). 1d follows, then the items under "Outline: after step 1". A built node's table lands with the record wire, that outline's last item, when built nodes get native storage. Until then a built node keeps its trivia on the node, and `$trivia` reads the same on parsed and built nodes. Within 1d: **Task 26 → Task 27 → Task 28 → Task 29 → Task 30.** Each task names what it retires; together they retire what the spec's § 5 lists.
+
+**Rulings (the maintainer, 2026-10-09).**
+1. **Ownership follows tree-sitter's convention for extras** (spec § 1). An extra belongs to the smallest node containing tokens on both sides of it, and to the root at the file's edges. The owner is derived from the gap and the tree, never stored.
+2. **A comment is a value** (§ 1). Comments are still built with the grammar's comment builders (`ir.lineComment`, `ir.blockComment`, `ir.comment.*`), with their factories, coercion and sibling-lead refusals. A write stores the built node's value, and two reads of a gap return equal nodes, not the same object.
+3. **A built node's gaps lie between its children, and its edges belong to its holder** (§ 7.1). The record step builds those tables; 1d builds none.
+4. **After a reparse, the convention decides ownership**, not the call that wrote the comment (§ 7.2).
+5. **Whitespace is measured first** (§ 7.3): every whitespace extra stored, against layout-bearing entries only. Task 26 measures, and the maintainer picks before Task 27 stores whitespace.
+
+**Terms.** Token *k* is the *k*-th token of the tree's token walk (Task 27). Gap *k* lies between token *k* and token *k + 1*; the gaps before the first token and after the last are the file's edges. A node's leading gap is the gap before its first token, and its trailing gap the gap after its last. Its inner gaps are the gaps between its first and last token that it owns. A written gap is edited.
+
+**Open before the detailing** (the maintainer's, through brainstorm):
+- **O1. What a `$with` result carries.** Today a draft copies its base's own trivia (`rebuilt`, through `setTriviaData`) and refuses a base that holds inner comments. Each untouched child brings the comments placement gave it. Once the reader stops placing, the comments between a base's children sit in gaps the base owns, and a built node has no table until the record step. Take `{ s1(); // a⏎ // b⏎ s2(); }` with `s2` replaced: today `// a` stays (it trails `s1`) and `// b` goes (it leads `s2`). Two readings:
+  - (a) The draft carries the gaps its base owns, numbered by child as § 7.1 numbers a built node's gaps, so both comments stay. Until the record step they sit on the draft, in a form that step moves into its table.
+  - (b) The draft prints a gap of its base only between two tokens still adjacent in it (the test `sourceAdjacent` applies to whitespace today), so both comments go.
+
+  Recommendation: (a). The base owns those comments and the draft is the base edited, so they stay until their gap is written. The record step then moves their storage without changing what renders. One question that step has anyway comes forward: on which side of a separator between two children a gap renders (`f(a /* x */, b)` against `f(a, /* x */ b)`, which today's `tokens_between` records).
+- **O2. An `ERROR` node in the table.** The reader treats `ERROR` as trivia today (Global Constraints). Reading: it is an entry of its gap, a value of its kind and source text, rendered verbatim and never rebuilt by a builder.
+- **O3. `inner`'s names.** Reading: `$trivia.inner` and `innerAt` keep today's named gaps (`INNER_GAPS`, `gap(n)`), each an owned gap between two of the node's own tokens. An owned gap beside a child is that child's `leading` or `trailing`, read through either node (§ 2). The surface does not change.
+
+**Gates for every task.**
+- Untouched renders are unchanged: every render fixture, dogfood render and byte-exact read case.
+- Validation rows are unchanged. The trivia-placement census measures placement, so Task 29 makes it report the table instead, and its numbers are recorded.
+- A byte that moves in an edited render stops the task for review, with its sites (old, new, where). A move that a ruling makes is recorded with the ruling: Review Focus 1, any comment O1's ruling moves, and a rust doc comment that stays behind when its item moves.
+
+**Review Focus (1d).**
+1. **A write through a node whose leading gap is its previous sibling's trailing gap** (`s1(); // x⏎s2();`, no separator between them). The write replaces the one gap (§ 2), so `// x`, which placement gave `s1` as trailing, is replaced too. Test: Task 29.
+2. **The layout a written entry renders with.** Where a write gives no whitespace, the side it was written through sets the layout, so a write through each side renders the bytes it renders today. Every existing `$trivia` write test keeps its bytes. Test: Task 29, one write per side in each of python, rust and typescript.
+3. **Tokens with no node or no width.** Python's `_newline` text is a token and never an entry. A comment before typescript's automatic semicolon, or beside python's zero-width `_indent` or `_dedent`, lies in the gap the tree's order gives it. Test: Task 27.
+4. **A file of comments only.** Every entry is in the leading edge, owned by the root, and the render reproduces the source. Test: Task 27 and Task 29.
+5. **A write through a node a query reached.** It renders as a write through accessors does, and it survives dropping every wrapper and collecting: the registry is an identity cache, and the write is the table's. Test: Task 29.
+
+The tasks:
+
+- **Task 26: Whitespace measured first.**
+  - A probe, `docs/superpowers/probes/2026-10-09-trivia-table/whitespace.mts`, with its README. It runs on every corpus entry of the five grammars and on the three arena inputs (`docs/superpowers/probes/2026-10-01-shared-arena/transport/inputs/{engine.rs,spacing.rs,create-engine.ts}`).
+  - It sizes the table two ways, from the source and the tree alone: every whitespace extra stored; and layout-bearing entries only (line breaks, blank lines, indentation), with spaces between tokens on a line derived.
+  - Per grammar it reports gaps, entries, entry bytes and empty gaps under each. Under layout-only it also counts the in-line runs that are not one space, which an edited range would re-space.
+  - The README says what each pick makes a `$trivia` read return, against today's comments and line-break runs.
+  - **Retires:** nothing. The maintainer picks, through brainstorm, before Task 27 stores whitespace.
+- **Task 27: The gap table on `ParsedTree`.**
+  - **First, the census** (`table-census.mts`, in the same probe). For every corpus entry it records the token walk's sequence, each extra's gap, and whether the smallest node containing tokens on both sides of that gap is the extra's tree-sitter parent. The convention is the parser's own, so an extra where the two differ stops the task for review, named by grammar, kind and row. Per grammar it also counts hidden-token text between children, zero-width tokens, `ERROR` extras, and the extras whose owner differs from placement's (recorded: Task 29 moves them).
+  - **The token walk.** One native function yields a node's tokens in tree order, with their byte spans:
+    - its visible leaves;
+    - the text a hidden token leaves between two children (python's `_newline`);
+    - zero-width tokens (`MISSING` nodes, python's `_indent` and `_dedent`, typescript's automatic semicolon).
+
+    An extra is never a token. `line_starts_inside_tokens` (1c-ii's slice re-indent) takes its tokens from this walk, so the lines that start inside a token and the gaps between tokens are one derivation (spec § 4).
+  - **The table.** `ParsedTree` builds it on first need, with one walk:
+    - per gap, its entries in source order: values of the grammar's `TriviaTransport`, with whitespace as Task 26's pick says;
+    - per node, its first and last token, so its leading, trailing and inner gaps are lookups.
+
+    A gap's owner is derived as the smallest node containing both its tokens, never stored. The native API takes a tree and a gap: a gap's entries; replacing them, which marks the gap edited; whether an edited gap lies in a node's range; the gaps a node owns. Napi exposes each by tree id and gap.
+  - **Tests**, in a grammar crate's tests, since `sittir-core` holds no grammar:
+    - both edges, owned by the root, and a source of comments only;
+    - `[a /* x */, b]` and `[a, /* y */ b]`: two gaps, both owned by the array;
+    - `[a, b, // c⏎]`: the gap between `,` and `]`, owned by the array;
+    - a parent and its first child: one leading gap, owned by neither;
+    - python `x = 1  # c⏎y = 2`: `# c` lies in the gap before the `_newline` text, which is no entry;
+    - typescript `a // c⏎b`: the comment lies in the gap after the automatic semicolon;
+    - the census's owner check, as a test over every corpus extra.
+  - **Retires:** `line_starts_inside_tokens`'s own walk. Nothing else reads the table yet.
+- **Task 28: The ir validator lane spells comments from the table.**
+  - **Today** the lane projects a parsed tree through the grammar's builders and carries trivia across:
+    - `carryTrivia` (`validate/common.ts`) copies a source node's `$_layout.trivia` onto the node built from it;
+    - `carryElementTrivia` does the same for a seated element;
+    - the edge-carrier rule, on the hosts branch and not yet on master, moves a seated group's trivia onto its first and last built child;
+    - `seatLineGaps` (`emit/factory-source.ts`) seats line-gap whitespace for the source emitter through `lineGapsOf`.
+  - **After**, the lane reads the source table once, gap by gap. It writes each gap's comments into the built tree as comment nodes built by the grammar's builders (`ir.lineComment(…)`, `ir.comment.lineComment.docOuter(…)`), where O1's ruling puts a built gap. No trivia moves from node to node.
+    - Under (a), they go into the built owner's gap by child. This task adds that on-node form, and Task 29's drafts use it too.
+    - Under (b), they go onto the side of the built node beside the gap: the rule placement applies today, kept in the lane until the record step.
+  - **Tests:** the lane's rows are unchanged in all five grammars. A source with a comment in each kind of gap (an edge, either side of a separator, between statements, before a closer) goes through the lane back to its bytes.
+  - **Retires:** the ir validator lane's trivia carriers, `carryTrivia` and `carryElementTrivia` with the edge-carrier rule; `seatLineGaps`'s line-gap query, since it reads the table.
+- **Task 29: A parsed node's trivia is the table's.**
+  - **Reads:** `$trivia.leading`, `trailing`, `inner` and `innerAt` on a parsed node are one native call each, over its leading, trailing or named inner gap. The client builds each comment entry with the grammar's builders; a whitespace entry reads as its member's kind id, as today. The wrapper keeps nothing.
+  - **Writes:** one native call replaces a gap's entries and marks the gap edited. A write through any node that shares the gap changes the one gap. Its side sets the layout of an entry written with no whitespace (Review Focus 2).
+  - **Render:** a parsed node always crosses as its coordinate, since no write touches its storage.
+    - A node with no edited gap between its first and last token renders as its source slice, and its owner prints its leading and trailing gaps around it.
+    - A node with an edited gap inside renders from its children, read from the tree as needed, and each gap between them is printed from the table by its owner (spec § 4).
+    - The folded slice's re-indent stays as 1c-ii leaves it.
+  - **The reader** places nothing: it skips extras as it skips layout tokens.
+  - **Drafts and built holders** follow O1's ruling. A parsed node placed in a new holder carries its inner gaps only (§ 3); its leading and trailing gaps stay in the old tree.
+  - **Tests** (python, rust, typescript):
+    - Ruling 12's defect on every route, the query route included: `# four` survives a leading write on the block;
+    - after a write, the whole tree pinned exactly, and reparsed with no `ERROR`;
+    - a comment between two untouched children of an edited parent;
+    - one gap read through a parent and through its first child, and a write through either changing it;
+    - Review Focus 1, 2, 4 and 5;
+    - a rust doc comment left in the old tree when its item moves to a new holder, and a comment in the item's body carried with it;
+    - ruling 4: a comment written through one node, which the convention gives to another, is that other node's after a reparse;
+    - two reads of a gap are equal and are not the same object;
+    - a write through a parsed holder renders through a built holder that stores the same range as a coordinate it never read.
+  - **Retires:**
+    - the reader's placement: `place()` and `Placement`, `TriviaEntry`'s `same_line` and `tokens_between`, and the `$sameLine` and `$tokensBetween` stamps with their copies (`carryPlacement` and `ENTRY_PLACEMENT_KEYS` in `transport-data.ts`, and the copy in `read-render-parse.ts`);
+    - trivia on parsed wrappers: `$_layout.trivia` on a parsed node, `writtenSides`, `composedTrivia`, `readLineGaps`, `readTrivia`'s derivation, `readDerivedSides` and `lineGapsRead`;
+    - the line-gap query: `lineGapsOf` on the engine, its scope and its types, napi `line_gaps_of`, `ParsedTree::line_gaps_at` and `line_gaps`;
+    - the client edited set: `markIndexEdited`, `editedWithin`, and `markEditedNode`, Ruling 10's hook (an in-place verb that lands later writes native data the render reads, as a trivia write does);
+    - the client fold check (`foldedCoordinate`'s edited test, `hasOutsideTrivia`);
+    - the refusal of a write through a query (`refuseUnheld`, and its use of `heldBySlot`);
+    - the refusal of a coordinate a holder never read whose range holds a write (`unreadCoordinate` in `transport-data.ts`): the write is the table's, so the coordinate renders it;
+    - the outside trivia a folded coordinate carries: `FramedTrivia` in `SlotValue::Coord`, `outside_trivia_from_napi`, and the framing `write_coordinate` gives a coordinate;
+    - `triviaViewOf` in the validators, which read the table.
+- **Task 30: Measurements and the 1d gates.**
+  - In `docs/superpowers/probes/2026-10-09-trivia-table/`, against 1c-ii's head, like for like: the same inputs, counts and scripts at both commits, run in a copy outside any watched tree.
+    - the table's native memory and build time on the three arena inputs, against the placement read;
+    - the fold's timing after one leading write on the deepest statement (1c-ii's `fold-timing.mts`);
+    - the heap of an untouched whole-tree read (`measure-heap.mts`).
+  - The whole-branch gates are 1c-ii's, and:
+    - `packages/common/src` holds no `lineGapsOf`, `markIndexEdited`, `editedWithin`, `refuseUnheld`, `unreadCoordinate`, `carryPlacement` or `hasOutsideTrivia`;
+    - `rust/crates/sittir-core/src` holds no `place(`, `same_line`, `tokens_between`, `line_gaps` or `FramedTrivia`;
+    - `packages/tools/src` holds no `carryTrivia` or `carryElementTrivia`.
+  - Commit the probes and README. Open the PR with its owner's `Owner:` line first in its body, and ask brainstorm for the whole-branch review.
 
 ---
 
@@ -7857,9 +8075,12 @@ Commit the probes and README (`docs(probes): relative-coordinates verifications 
 
   At that step the render side stamps `delimiter` from its site with the spacing fields at prepare, and the reader's `delimiter` and the `#[flank]` attribute go. The gate is rendered bytes unchanged on the corpus. Until that step, the reader and today's read compute it the same way, so it cannot drift from the read it replaces.
 - **Stamped layout ids.** Link stamps the public-symbol id on every STRING site, duplicates and wrapped strings included, with the compile phase byte-identical. `layoutTokenIds` then reads stamps only, and 1a's listed text-resolved sites and the text lookup go.
-- **Relative coordinates** (ruling 6.2), re-planned against rows: relative points for detached data, coordinate facts derived instead of stamped, `$detach()`, and `$cst()` fetched by row.
+- **Relative coordinates** (ruling 6.2), re-planned against rows: relative points for detached data, coordinate facts derived instead of stamped, `$detach()`, and `$cst()` fetched by row. 1d supersedes that design's trivia step (ownership by token side, the closing gap, joins resolved at prepare, the `$sameLine` and `$tokensBetween` stamps): an entry's address is its gap, and a gap's whitespace is the table's. The snapshot step, which needed that step's joins, is re-planned against the table.
 - **The record wire** (ruling 6.3). Its plan lands only past the gate on the record step: records must match or beat napi objects on read time, both one node per call and every match in one call, and on retained heap per node, as well as beating them on render decode. The object wire's numbers are re-taken in the engine beside the records'. The first thing the step attacks is the view's construction. In the like-for-like re-take a node over a record holds about 1.9 KB more than an object. Every form carries the same member closures, so the gap follows how V8 builds the view's literal, not the closures as such (§ The wire). At that step the derive's object codec gives way to records, and a parsed node's literal holds a reference to its record (ruling 4).
   - **String storage.** An outline item for the record-step design to settle; it is not a ruling on the mechanics.
     - Parsed leaf text has no pool. A record stores the span, and reading the text slices it from the source the engine already holds, as an untouched node renders today.
     - Built or edited leaf text goes in a per-arena string table, append-only and deduplicated, that records reference by index. A record stays fixed-size, and a repeated name (`self`, `x`) is stored once.
     - JS-side interning of `$text` strings only if the record step's gate measurements (read time, retained heap) show that napi string creation is the cost.
+  - **Built-node gap tables.** A built node's trivia moves from the node into a native table beside its record, as the trivia-table spec's § 7.1 rules. Its gaps lie between its children and its edges belong to its holder. A parsed node placed in a built holder keeps its inner gaps in its tree's table, and the holder's table holds the gaps around it. The render then reads trivia from tables only.
+    - **Retires:** built-node trivia on the node (`$_layout.trivia`, `setTriviaData`, the trivia writer's client store), `TransportLayout::trivia`, `TransportTrivia` and `TriviaEntry` with their napi decode, the side-based trivia render (`render_leading`, `render_trailing`), and 1d's interim for drafts and the ir lane (O1).
+    - **Open for that step:** a template can write tokens between two children (a separator, a keyword), and § 7.1 numbers gaps by child. So a built gap needs the side of those tokens it renders on (`f(a /* x */, b)` against `f(a, /* x */ b)`), which today's `tokens_between` records. Also open: where a write to a built node's leading or trailing gap lives before the node has a holder.

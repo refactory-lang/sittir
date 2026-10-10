@@ -135,7 +135,7 @@ import type { TreeHandle } from '@sittir/common/utils';
 import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 import { ir } from './ir.js';
 import { is, isMember, membersOf } from './is.js';
-import { TSKindId, type FixedTextKindId, type IrKeyOf, type NamespaceMap, type ${grammarTypePrefix(grammar)}Node, type ${grammarTypeMapName(grammar)} } from './types.js';
+import { TSKindId, type FixedTextKindId, type TypeKeyOf, type NamespaceMap, type ${grammarTypePrefix(grammar)}Node, type ${grammarTypeMapName(grammar)} } from './types.js';
 import type { IndentChar, Options } from './options.js';
 import { querySlots, triviaFacts } from './utils.js';
 ${triviaImports(config)}import { RENDER_MODULE_HASH } from './hash.js';
@@ -147,7 +147,7 @@ export interface ${api} extends LanguageAPI {
 	readonly build: typeof ir;
 	readonly is: typeof is;
 	readonly kinds: typeof TSKindId;
-	readonly types: KindTypes<IrKeyOf, NamespaceMap>;
+	readonly types: KindTypes<TypeKeyOf, NamespaceMap>;
 	readonly root: ${rootTreeTypeName};
 	readonly node: ${grammarTypePrefix(grammar)}Node;
 	readonly fixedTextKindId: FixedTextKindId;

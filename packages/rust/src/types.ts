@@ -19573,7 +19573,7 @@ export type FixedTextKindId =
 	| TSKindId.RawKeyword
 	| TSKindId.MacroRulesBang;
 
-export interface IrKeyOf {
+export interface TypeKeyOf {
 	[TSKindId.SourceFile]: 'sourceFile';
 	[TSKindId.ExpressionStatement]: 'expressionStatement';
 	[TSKindId.MacroRule]: 'macroRule';

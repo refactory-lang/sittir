@@ -5,15 +5,15 @@ const ts = await typescript.createEngine();
 
 export function rebuildTriviaTypescriptGenerated() {
 	return ts.build.program.strict({
-		statements: [ts.build.expressionStatement.strict(ts.build.callExpression.call.strict({
+		statements: [ts.build.expressionStatement.strict(ts.build.callExpressionCall.strict({
 			function: ts.build.identifier("f"),
-			arguments: ts.build.arguments.strict().$trivia.inner(ts.build.comment.block(" b ")),
-		})).$trivia.leading(ts.build.comment.block(" a ")), ts.build.lexicalDeclaration.strict({
+			arguments: ts.build.arguments.strict().$trivia.inner(ts.build.commentBlock(" b ")),
+		})).$trivia.leading(ts.build.commentBlock(" a ")), ts.build.lexicalDeclaration.strict({
 			kind: ts.kinds.LetKeyword,
-			declarators: [ts.build.variableDeclarator.plain.strict({
+			declarators: [ts.build.variableDeclaratorPlain.strict({
 				name: ts.build.identifier("x"),
 				value: ts.build.number.decimal("1"),
 			})],
-		}).$trivia.trailing(ts.build.comment.line(" c"))],
+		}).$trivia.trailing(ts.build.commentLine(" c"))],
 	});
 }

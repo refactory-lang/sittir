@@ -14,7 +14,7 @@ export function rebuildListSeatConfigsRustGenerated() {
 					arguments: rs.build.arguments.strict({
 						attributeItem: [rs.build.attributeItem.strict(rs.build.attribute.input.strict({
 							path: rs.build.identifier("cfg"),
-							arguments: rs.build.delimTokenTree.paren.strict(rs.build.nonSpecialToken.strict(rs.build.identifier("a"))),
+							arguments: rs.build.delimTokenTreeParen.strict(rs.build.nonSpecialToken.strict(rs.build.identifier("a"))),
 						}))],
 						expression: rs.build.identifier("x"),
 					}, rs.build.identifier("y")),

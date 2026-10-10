@@ -10710,7 +10710,7 @@ export type FixedTextKindId =
 	| TSKindId.IsKeyword
 	| TSKindId.IsNot;
 
-export interface IrKeyOf {
+export interface TypeKeyOf {
 	[TSKindId.Module]: 'module';
 	[TSKindId.SimpleStatements]: 'simpleStatements';
 	[TSKindId.ImportStatement]: 'importStatement';

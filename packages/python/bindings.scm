@@ -191,9 +191,15 @@
 ((string (string_start) @_p) @literal.string.bytes (#match? @_p "^[bB]"))
 ((string (string_start) @_p) @literal.string.raw (#match? @_p "^[rR]"))
 ((string (string_start) @_p) @literal.string.triple (#match? @_p "\"\"\"|'''"))
-(integer) @literal.number.integer
+(integer_decimal_plain) @literal.number.integer
+(integer_decimal_long) @literal.number.integer.big
+(integer_decimal_imaginary) @literal.number.integer.imaginary
 (integer_hex) @literal.number.integer.hex
-(float) @literal.number.float
+(integer_binary) @literal.number.integer.binary
+(integer_octal) @literal.number.integer.octal
+(float_point) @literal.number.float
+(float_leading_point) @literal.number.float.leading_point
+(float_scientific) @literal.number.float.scientific
 (true) @literal.boolean.true
 (false) @literal.boolean.false
 (none) @literal.null

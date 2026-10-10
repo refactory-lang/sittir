@@ -89,7 +89,9 @@
 
 ; ── element (pieces of a composite expression that are not expressions) ────────
 (field_initializer) @element.struct.field
-(shorthand_field_initializer) @element.struct.field.shorthand
+(field_initializer (attribute_item)* @attributes)
+(shorthand_field_initializer) @element.struct.field
+(shorthand_field_initializer name: (_) @field)
 (base_field_initializer) @element.struct.base
 (type_binding) @element.type_binding
 (token_tree) @element.macro.token_tree
@@ -205,8 +207,10 @@
 (raw_string_literal string_content: (string_content) @content) @literal.string.raw
 (char_literal) @literal.char
 (escape_sequence) @literal.string.escape
-(integer_literal) @literal.number.integer
+(integer_literal_decimal) @literal.number.integer
 (integer_literal_hex) @literal.number.integer.hex
+(integer_literal_binary) @literal.number.integer.binary
+(integer_literal_octal) @literal.number.integer.octal
 (float_literal) @literal.number.float
 (negative_literal) @literal.number.negative
 (boolean_literal) @literal.boolean
@@ -227,8 +231,13 @@
 ; a keyword modifier is a member of what it modifies (`async`, `const`, `unsafe`, `mutable`), never a kind;
 ; a modifier with structure (`pub(in path)`, `extern "C"`) is a kind carrying that structure
 ; ── modifier ───────────────────────────────────────────────────────────────────
-(visibility_modifier) @modifier.visibility
-(visibility_modifier_pub) @modifier.visibility.pub
+(visibility_modifier (_) @element)
+(visibility_modifier (crate) @modifier.visibility.public.internal)
+(visibility_modifier_pub) @modifier.visibility.public
+(visibility_modifier_pub (visibility_modifier_pub_scope) @scope)
+(visibility_modifier_pub (visibility_modifier_pub_scope (self))) @modifier.visibility.private
+(visibility_modifier_pub (visibility_modifier_pub_scope (crate))) @modifier.visibility.public.internal
+(visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)])) @modifier.visibility.public.restricted
 (extern_modifier) @modifier.extern
 
 ; ── attribute ──────────────────────────────────────────────────────────────────

@@ -149,6 +149,10 @@ the source and parses it again, so byte fidelity has one mechanism: the tree.
 
 ### Trivia ownership
 
+Superseded on 2026-10-09: an extra's address is the gap between two tokens, and its owner follows
+tree-sitter's convention for extras, so no side of a token is recorded
+(`2026-10-09-trivia-table-design.md`, § 1).
+
 A comment's owner decides which side of the surrounding tokens it renders on, so no count of tokens
 is recorded. The reader applies the rule in its placement (`sittir_core::read::place`):
 
@@ -160,6 +164,10 @@ is recorded. The reader applies the rule in its placement (`sittir_core::read::p
   `[a, b, // c⏎]` is inner trivia of the list, after its last element's tokens and before its closer.
 
 ### The closing gap
+
+Superseded on 2026-10-09: an extra before a closer lies in the gap between the last element's
+tokens and the closer, which the compound owns, so no closing gap is derived or stamped
+(`2026-10-09-trivia-table-design.md`, § 1).
 
 A compound whose render rule ends in an unconditional token after its last slot has a closing gap:
 an inner gap after its last element and before that token. It is derived from the render rule by
@@ -184,6 +192,10 @@ so its position is unknown, and one object may sit in several places. Its identi
 object.
 
 ### Joins resolved at prepare
+
+Superseded on 2026-10-09: the trivia table holds a gap's line breaks beside its comments, so
+whether an entry joins its neighbour's line is read from the gap, and a write stores the
+whitespace it renders with (`2026-10-09-trivia-table-design.md`, § 1, § 2 and § 7.3).
 
 Whether a trivia entry joins its neighbour on the same line is resolved once, at prepare, and the
 render reads only the resolved join:
@@ -235,12 +247,15 @@ appends (one child record may sit under two parents), and how records nothing na
 | step | lands |
 | --- | --- |
 | **one reader** (the typed reader's last step) | the index replaces handles (`row` becomes `index`); the registry and the edited set replace the query path walk, `adoptChild` and `detachAncestors`; the fold check by range replaces `canFold`; the native query returns indexes from the root |
-| **trivia** | the ownership rule by token side; the closing gap; the line table; joins resolved at prepare; the `$sameLine` and `$tokensBetween` stamps go |
+| **trivia** | superseded on 2026-10-09 by the trivia table (`2026-10-09-trivia-table-design.md`), which the typed-reader plan lands as 1d. Planned here: the ownership rule by token side; the closing gap; the line table; joins resolved at prepare; the `$sameLine` and `$tokensBetween` stamps go |
 | **snapshots** | `$snapshot()` with relative points; snapshot seams from geometry; fixtures as snapshots; `$cst()` by index |
 | **record wire** | arena storage for both kinds of node, as § The record wire states |
 
 The trivia step comes apart from the snapshot step because it can move validation rows: a moved row
 then has one cause. Snapshots need the trivia step's joins.
+
+Superseded on 2026-10-09 with the trivia row: the line table lands with the snapshot step, and that
+step is re-planned against the trivia table, which holds each gap's line breaks.
 
 ## What is removed
 
@@ -283,6 +298,8 @@ then has one cause. Snapshots need the trivia step's joins.
    population.
 
 **Trivia:**
+
+Superseded on 2026-10-09 with the trivia step: the typed-reader plan's 1d verifies the trivia table.
 
 7. `f(a /* x */, b)`, `f(a, /* x */ b)`, `f(a, // x⏎ b)`, `a + /* x */ b` and `[a, b, // c⏎]` keep each
    comment on its side of the token, built with the matching sides and, after the snapshot step, as

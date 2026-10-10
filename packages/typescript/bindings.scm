@@ -19,7 +19,7 @@
 (interface_declaration (extends_type_clause)? @extends) @declaration.interface
 (enum_declaration) @declaration.enum
 (enum_assignment) @declaration.enum_member
-(enum_body (_) @declaration.enum_member)
+(enum_body (enum_body_elements (_) @declaration.enum_member))
 (type_alias_declaration) @declaration.type_alias
 (method_definition) @declaration.method
 (method_definition (accessibility_modifier) @visibility)
@@ -44,10 +44,14 @@
 (class_body_member_declaration (_) @element)
 (class_body_member_method (decorator)* @decorators (_) @element)
 (class_body_member_method_sig (_) @element)
-(lexical_declaration kind: _ @keyword) @declaration.variable.lexical
-(variable_declaration) @declaration.variable.var
+(lexical_declaration) @declaration.variable
+(lexical_declaration kind: _ @binding)
+(lexical_declaration kind: "const") @declaration.variable.constant
+(lexical_declaration kind: "let") @declaration.variable.reassignable
+(variable_declaration) @declaration.variable.reassignable.function_scoped
 (variable_declarator_plain) @declaration.variable
 (variable_declarator_definite) @declaration.variable
+(variable_declarator_definite "!" @definite)
 (variable_declarator_plain name: [(array_pattern) (object_pattern)]) @declaration.variable.pattern
 (required_parameter pattern: (_) @name value: (_)? @default) @declaration.parameter
 (required_parameter (accessibility_modifier) @visibility)
@@ -256,12 +260,15 @@
 (number) @literal.number
 (number_decimal) @literal.number.integer
 (number_hex) @literal.number.integer.hex
-(number_binary) @literal.number.integer
-(number_octal) @literal.number.integer
-(number_bigint) @literal.number.integer
+(number_binary) @literal.number.integer.binary
+(number_octal) @literal.number.integer.octal
+(number_bigint_decimal) @literal.number.integer.big
+(number_bigint_hex) @literal.number.integer.big.hex
+(number_bigint_binary) @literal.number.integer.big.binary
+(number_bigint_octal) @literal.number.integer.big.octal
 (number_float_point) @literal.number.float
-(number_float_leading_point) @literal.number.float
-(number_float_scientific) @literal.number.float
+(number_float_leading_point) @literal.number.float.leading_point
+(number_float_scientific) @literal.number.float.scientific
 (true) @literal.boolean.true
 (false) @literal.boolean.false
 (null) @literal.null
@@ -286,6 +293,10 @@
 (computed_property_name) @identifier.property.computed
 
 ; ── modifier ───────────────────────────────────────────────────────────────────
+(accessibility_modifier) @modifier.visibility
+(accessibility_modifier "private") @modifier.visibility.private
+(accessibility_modifier "protected") @modifier.visibility.protected
+(accessibility_modifier "public") @modifier.visibility.public
 
 ; ── attribute ──────────────────────────────────────────────────────────────────
 (decorator (_)? @content) @attribute.decorator

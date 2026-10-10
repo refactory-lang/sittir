@@ -46,6 +46,15 @@ describe('rule ids', () => {
 		expect(collapsed.ruleCatalog.rootsByKind.get('match_block')).toBe('rule:_match_block:root');
 	});
 
+	it('a kind the catalog renames owns its variants under its new name', async () => {
+		const raw = python;
+		const collapsed = collapseRenamedRules(raw, {
+			kindEntries: kindCatalogOf(stampVisibleExternals(await loadGeneratedIdTables('python'), raw), raw)
+		});
+		const arms = (collapsed.rules['match_block'] as { members: readonly Rule<'evaluate'>[] }).members;
+		expect(arms.map((arm) => arm.annotations?.variantOf)).toEqual(['match_block', 'match_block']);
+	});
+
 	it('a synthesized kind the catalog renames is recorded under its new name', async () => {
 		const evaluated = python;
 		const raw = { ...evaluated, evaluateSynthesized: new Set([...evaluated.evaluateSynthesized, '_match_block']) };

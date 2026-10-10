@@ -299,9 +299,51 @@ export const layout: {
 	dedent: F.buildDedent
 };
 
+export const macroDefinition: typeof F.macroDefinition = F.macroDefinition;
+
+export const tokenTreePattern: typeof F.tokenTreePattern = F.tokenTreePattern;
+
+export const tokenTree: typeof F.tokenTree = F.tokenTree;
+
+export const modItem: typeof F.modItem = F.modItem;
+
+export const foreignModItem: typeof F.foreignModItem = F.foreignModItem;
+
+export const structItem: typeof F.structItem = F.structItem;
+
+export const implItem: typeof F.implItem = F.implItem;
+
+export const pointerType: typeof F.pointerType = F.pointerType;
+
+export const delimTokenTree: typeof F.delimTokenTree = F.delimTokenTree;
+
+export const rangeExpression: typeof F.rangeExpression = F.rangeExpression;
+
+export const referenceExpression: typeof F.referenceExpression = F.referenceExpression;
+
+export const arrayExpression: typeof F.arrayExpression = F.arrayExpression;
+
+export const matchArm: typeof F.matchArm = F.matchArm;
+
+export const closureExpression: typeof F.closureExpression = F.closureExpression;
+
+export const fieldPattern: typeof F.fieldPattern = F.fieldPattern;
+
+export const rangePattern: typeof F.rangePattern = F.rangePattern;
+
+export const orPattern: typeof F.orPattern = F.orPattern;
+
+export const integerLiteral: typeof F.integerLiteral = F.integerLiteral;
+
+export const escapeSequence: typeof F.escapeSequence = F.escapeSequence;
+
 export const comment: typeof F.comment = F.comment;
 
+export const charLiteralEscaped: typeof F.charLiteralEscaped = F.charLiteralEscaped;
+
 export const declarationStatement: typeof F.declarationStatement = F.declarationStatement;
+
+export const charLiteral: typeof F.charLiteral = F.charLiteral;
 
 export const ir: {
 	readonly sourceFile: typeof F.sourceFile;
@@ -517,7 +559,9 @@ export const ir: {
 	readonly orPattern: typeof F.orPattern;
 	readonly integerLiteral: typeof F.integerLiteral;
 	readonly escapeSequence: typeof F.escapeSequence;
+	readonly comment: typeof F.comment;
 	readonly charLiteralEscaped: typeof F.charLiteralEscaped;
+	readonly declarationStatement: typeof F.declarationStatement;
 	readonly charLiteral: typeof F.charLiteral;
 	readonly emptyStatement: typeof F.buildEmptyStatement;
 	readonly unitType: typeof F.buildUnitType;
@@ -560,8 +604,6 @@ export const ir: {
 	readonly literal: typeof literal;
 	readonly literalPattern: typeof literalPattern;
 	readonly layout: typeof layout;
-	readonly comment: typeof comment;
-	readonly declarationStatement: typeof declarationStatement;
 	readonly synonym: typeof synonym;
 } = Object.freeze({
 	// Node factories
@@ -778,7 +820,9 @@ export const ir: {
 	orPattern: F.orPattern,
 	integerLiteral: F.integerLiteral,
 	escapeSequence: F.escapeSequence,
+	comment: F.comment,
 	charLiteralEscaped: F.charLiteralEscaped,
+	declarationStatement: F.declarationStatement,
 	charLiteral: F.charLiteral,
 
 	// Keyword factories
@@ -829,7 +873,5 @@ export const ir: {
 	literal,
 	literalPattern,
 	layout,
-	comment,
-	declarationStatement,
 	synonym
 });

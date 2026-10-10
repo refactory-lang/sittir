@@ -2075,7 +2075,7 @@ export type FixedTextKindId =
 	| TSKindId.Comma
 	| TSKindId.Colon;
 
-export interface IrKeyOf {
+export interface TypeKeyOf {
 	[TSKindId.Pattern]: 'pattern';
 	[TSKindId.Alternation]: 'alternation';
 	[TSKindId.Term]: 'term';

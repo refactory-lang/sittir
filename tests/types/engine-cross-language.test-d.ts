@@ -2,14 +2,14 @@ import type { Engine } from '@sittir/types';
 import type { RustAPI, RustNode } from '@sittir/rust';
 import type { PythonAPI, PythonNode } from '@sittir/python';
 import type { TypescriptAPI, TypescriptNode } from '@sittir/typescript';
-import type { IrKeyOf as RustIrKeyOf, NamespaceMap as RustNamespaceMap } from '../../packages/rust/src/types.ts';
-import type { IrKeyOf as PythonIrKeyOf, NamespaceMap as PythonNamespaceMap } from '../../packages/python/src/types.ts';
+import type { TypeKeyOf as RustTypeKeyOf, NamespaceMap as RustNamespaceMap } from '../../packages/rust/src/types.ts';
+import type { TypeKeyOf as PythonTypeKeyOf, NamespaceMap as PythonNamespaceMap } from '../../packages/python/src/types.ts';
 import type {
-	IrKeyOf as TypescriptIrKeyOf,
+	TypeKeyOf as TypescriptTypeKeyOf,
 	NamespaceMap as TypescriptNamespaceMap
 } from '../../packages/typescript/src/types.ts';
-import type { IrKeyOf as ScmIrKeyOf, NamespaceMap as ScmNamespaceMap } from '../../packages/scm/src/types.ts';
-import type { IrKeyOf as RegexIrKeyOf, NamespaceMap as RegexNamespaceMap } from '../../packages/regex/src/types.ts';
+import type { TypeKeyOf as ScmTypeKeyOf, NamespaceMap as ScmNamespaceMap } from '../../packages/scm/src/types.ts';
+import type { TypeKeyOf as RegexTypeKeyOf, NamespaceMap as RegexNamespaceMap } from '../../packages/regex/src/types.ts';
 
 declare const rust: Engine<RustAPI>;
 declare const python: Engine<PythonAPI>;
@@ -59,16 +59,16 @@ type KeysEvery<Keys, NsMap> = [
 	? true
 	: false;
 
-export const irKeysCoverTheKindsWithIds: {
+export const typeKeysCoverTheKindsWithIds: {
 	readonly rust: true;
 	readonly python: true;
 	readonly typescript: true;
 	readonly scm: true;
 	readonly regex: true;
 } = null as unknown as {
-	readonly rust: KeysEvery<RustIrKeyOf, RustNamespaceMap>;
-	readonly python: KeysEvery<PythonIrKeyOf, PythonNamespaceMap>;
-	readonly typescript: KeysEvery<TypescriptIrKeyOf, TypescriptNamespaceMap>;
-	readonly scm: KeysEvery<ScmIrKeyOf, ScmNamespaceMap>;
-	readonly regex: KeysEvery<RegexIrKeyOf, RegexNamespaceMap>;
+	readonly rust: KeysEvery<RustTypeKeyOf, RustNamespaceMap>;
+	readonly python: KeysEvery<PythonTypeKeyOf, PythonNamespaceMap>;
+	readonly typescript: KeysEvery<TypescriptTypeKeyOf, TypescriptNamespaceMap>;
+	readonly scm: KeysEvery<ScmTypeKeyOf, ScmNamespaceMap>;
+	readonly regex: KeysEvery<RegexTypeKeyOf, RegexNamespaceMap>;
 };

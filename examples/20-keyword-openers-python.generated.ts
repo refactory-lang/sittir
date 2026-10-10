@@ -8,41 +8,41 @@ export function rebuildKeywordOpenersPythonGenerated() {
 		name: py.build.identifier("f"),
 		parameters: py.build.parameters.strict(py.build.identifier("a"), py.build.defaultParameter.strict({
 			name: py.build.identifier("b"),
-			value: py.build.tuple.strict(py.build.integer.decimal.plain("1"), py.build.integer.decimal.plain("2")),
+			value: py.build.tuple.strict(py.build.integerDecimal.plain("1"), py.build.integerDecimal.plain("2")),
 		})),
-		body: py.build.suite.block.strict(py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.assignment.eq.strict({
+		body: py.build.suiteBlock.strict(py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.assignmentEq.strict({
 			left: py.build.identifier("x"),
 			right: py.build.binaryOperator.strict({
 				left: py.build.parenthesizedExpression.strict(py.build.binaryOperator.strict({
-					left: py.build.integer.decimal.plain("1"),
+					left: py.build.integerDecimal.plain("1"),
 					operator: py.kinds.Plus,
-					right: py.build.integer.decimal.plain("2"),
+					right: py.build.integerDecimal.plain("2"),
 				})),
 				operator: py.kinds.Star,
-				right: py.build.integer.decimal.plain("3"),
+				right: py.build.integerDecimal.plain("3"),
 			}),
 		}))), py.build.ifStatement.strict({
 			condition: py.build.parenthesizedExpression.strict(py.build.identifier("x")),
-			consequence: py.build.suite.block.strict(py.build.simpleStatements.strict(py.build.returnStatement.strict(py.build.parenthesizedExpression.strict(py.build.identifier("x"))))),
+			consequence: py.build.suiteBlock.strict(py.build.simpleStatements.strict(py.build.returnStatement.strict(py.build.parenthesizedExpression.strict(py.build.identifier("x"))))),
 		}), py.build.whileStatement.strict({
 			condition: py.build.parenthesizedExpression.strict(py.build.identifier("x")),
-			body: py.build.suite.block.strict(py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.assignment.eq.strict({
+			body: py.build.suiteBlock.strict(py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.assignmentEq.strict({
 				left: py.build.identifier("x"),
-				right: py.build.list.strict(py.build.integer.decimal.plain("1")),
+				right: py.build.list.strict(py.build.integerDecimal.plain("1")),
 			})))),
 		}), py.build.forStatement.strict({
 			left: py.build.identifier("i"),
 			right: py.build.parenthesizedExpression.strict(py.build.identifier("a")),
-			body: py.build.suite.block.strict(py.build.simpleStatements.strict(py.kinds.PassStatement)),
-		}), py.build.simpleStatements.strict(py.build.assertStatement.strict(py.build.parenthesizedExpression.strict(py.build.identifier("x")))), py.build.simpleStatements.strict(py.build.deleteStatement.strict(py.build.parenthesizedExpression.strict(py.build.identifier("x")))), py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.assignment.eq.strict({
+			body: py.build.suiteBlock.strict(py.build.simpleStatements.strict(py.kinds.PassStatement)),
+		}), py.build.simpleStatements.strict(py.build.assertStatement.strict(py.build.parenthesizedExpression.strict(py.build.identifier("x")))), py.build.simpleStatements.strict(py.build.deleteStatement.strict(py.build.parenthesizedExpression.strict(py.build.identifier("x")))), py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.assignmentEq.strict({
 			left: py.build.identifier("g"),
 			right: py.build.lambda.strict({
 				body: py.build.parenthesizedExpression.strict(py.build.identifier("x")),
 			}),
-		}))), py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.assignment.eq.strict({
+		}))), py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.assignmentEq.strict({
 			left: py.build.identifier("y"),
 			right: py.build.notOperator.strict(py.build.parenthesizedExpression.strict(py.build.identifier("x"))),
-		}))), py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.assignment.eq.strict({
+		}))), py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.assignmentEq.strict({
 			left: py.build.identifier("z"),
 			right: py.build.booleanOperator.strict({
 				left: py.build.booleanOperator.strict({
@@ -51,11 +51,11 @@ export function rebuildKeywordOpenersPythonGenerated() {
 					right: py.build.parenthesizedExpression.strict(py.build.identifier("y")),
 				}),
 				operator: py.kinds.OrKeyword,
-				right: py.build.list.strict(py.build.integer.decimal.plain("1")),
+				right: py.build.list.strict(py.build.integerDecimal.plain("1")),
 			}),
 		}))), py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.yield.strict(py.build.parenthesizedExpression.strict(py.build.identifier("x"))))), py.build.simpleStatements.strict(py.build.raiseStatement.strict({
 			expressions: py.build.parenthesizedExpression.strict(py.build.identifier("E")),
-		})), py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.assignment.eq.strict({
+		})), py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.assignmentEq.strict({
 			left: py.build.identifier("w"),
 			right: py.build.listComprehension.strict({
 				body: py.build.identifier("i"),
@@ -64,13 +64,13 @@ export function rebuildKeywordOpenersPythonGenerated() {
 					right: [py.build.parenthesizedExpression.strict(py.build.identifier("a"))],
 				}), py.build.ifClause.strict(py.build.parenthesizedExpression.strict(py.build.identifier("i")))),
 			}),
-		}))), py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.assignment.eq.strict({
+		}))), py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.assignmentEq.strict({
 			left: py.build.identifier("v"),
 			right: py.build.subscript.strict({
 				value: py.build.identifier("a"),
-				subscripts: [py.build.parenthesizedExpression.strict(py.build.integer.decimal.plain("1"))],
+				subscripts: [py.build.parenthesizedExpression.strict(py.build.integerDecimal.plain("1"))],
 			}),
-		}))), py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.assignment.eq.strict({
+		}))), py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.assignmentEq.strict({
 			left: py.build.identifier("u"),
 			right: py.build.dictionary.strict(py.build.pair.strict({
 				key: py.build.string.strict({
@@ -78,16 +78,16 @@ export function rebuildKeywordOpenersPythonGenerated() {
 					content: [py.build.stringContent.strict(py.build.stringFragment("k"))],
 					stringEnd: py.build.stringEnd("\""),
 				}),
-				value: py.build.parenthesizedExpression.strict(py.build.integer.decimal.plain("1")),
+				value: py.build.parenthesizedExpression.strict(py.build.integerDecimal.plain("1")),
 			}), py.build.pair.strict({
 				key: py.build.string.strict({
 					stringStart: py.build.stringStart("\""),
 					content: [py.build.stringContent.strict(py.build.stringFragment("j"))],
 					stringEnd: py.build.stringEnd("\""),
 				}),
-				value: py.build.list.strict(py.build.integer.decimal.plain("2")),
+				value: py.build.list.strict(py.build.integerDecimal.plain("2")),
 			})),
-		}))), py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.assignment.eq.strict({
+		}))), py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.assignmentEq.strict({
 			left: py.build.identifier("s"),
 			right: py.build.string.strict({
 				stringStart: py.build.stringStart("f\""),
