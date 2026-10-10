@@ -561,8 +561,7 @@ fn pass(min_depth: u32) -> TokenStream {
         let depth = depth.at_least(#min_depth);
         let index = __rt::index_of(cursor);
         let __at = ctx.at_of(cursor);
-        let __outer = *ctx;
-        let ctx = &ctx.holding(cursor);
+        ctx.hold(cursor);
         let children = __rt::survey(cursor);
         let routes = children
             .iter()
@@ -605,7 +604,7 @@ fn common_inits(fields: &[Field<'_>], skip: &str) -> Vec<TokenStream> {
         .filter_map(|field| {
             let name = field.ident;
             match field.role {
-                Role::Layout => Some(quote!(#name: Some(placement.into_layout(sides, __at, &__outer, ctx)),)),
+                Role::Layout => Some(quote!(#name: Some(placement.into_layout(sides, __at, ctx)),)),
                 Role::Other => Some(quote!(#name: ::core::default::Default::default(),)),
                 _ => None,
             }

@@ -494,7 +494,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// span from the byte `holder`, or `None` when the node there is not an
     /// `ERROR`.
     pub fn snapshot_error(&self, index: u32, holder: Option<u32>) -> Option<crate::ErrorRead> {
-        self.error_under(index, &self.snapshot_ctx(index, holder))
+        let measure = self.snapshot_measure(index, holder);
+        self.error_under(index, &self.read_ctx().snapshot(&measure))
     }
 
     fn error_under(&self, index: u32, ctx: &crate::read::ReadCtx<'_>) -> Option<crate::ErrorRead> {
@@ -513,12 +514,12 @@ impl<G: EngineGrammar> ParsedTree<G> {
         self.lines.get_or_init(|| crate::points::LineTable::new(&self.source))
     }
 
-    /// The context a snapshot of the node at `index` reads under: measured
-    /// from the byte `holder`, or from the node's own start when it has none.
-    /// The root has no holder and starts the source.
-    fn snapshot_ctx(&self, index: u32, holder: Option<u32>) -> crate::read::ReadCtx<'_> {
+    /// What a snapshot of the node at `index` measures with: from the byte
+    /// `holder`, or from the node's own start when it has none. The root has
+    /// no holder and starts the source.
+    fn snapshot_measure(&self, index: u32, holder: Option<u32>) -> crate::read::SnapshotCtx<'_> {
         let own = || node_at_index(&self.tree, index).filter(|_| index != 0).map(|node| node.start_byte() as u32);
-        self.read_ctx().snapshot(self.lines(), holder.or_else(own))
+        crate::read::SnapshotCtx::new(self.lines(), holder.or_else(own))
     }
 
     /// A snapshot of the node at `index`, read at every depth: each node with
@@ -526,7 +527,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// text, and the node itself measured from the byte `holder`, or from its
     /// own start when absent.
     pub fn snapshot<T: crate::read::ReadTransport>(&self, index: u32, holder: Option<u32>) -> Result<T, crate::read::ReadError> {
-        crate::read::read_at::<T, T>(&mut self.tree.walk(), &self.snapshot_ctx(index, holder), index, crate::read::Depth::All)
+        let measure = self.snapshot_measure(index, holder);
+        crate::read::read_at::<T, T>(&mut self.tree.walk(), &self.read_ctx().snapshot(&measure), index, crate::read::Depth::All)
     }
 
     /// The spans of byte `ranges` (start and end pairs) measured from the byte
