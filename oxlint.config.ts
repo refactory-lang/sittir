@@ -30,7 +30,7 @@ export default defineConfig({
 			}
 		},
 		{
-			// The emitted vocabulary declares `G extends GrammarContext` on every
+			// The vocabulary declares `G extends GrammarContext<G>` on every
 			// namespace-level interface for API uniformity, including the ones
 			// whose own members do not read it.
 			files: ['packages/types/src/vocabulary/**'],
