@@ -173,7 +173,8 @@ function membersOf(input: GrammarInput, kind: string, renames: ReadonlyMap<strin
 	const deep = input.bindings.members.filter((m) => m.owner === kind && m.route !== 'rename');
 	const via = new Set(deep.flatMap((m) => (m.route === 'presence' || m.route === 'nested' ? m.via : [])));
 	const routes: MemberRoute[] = [];
-	for (const slot of node.slots) {
+	const ownSlots = deep.some((m) => m.route === 'self') ? [] : node.slots;
+	for (const slot of ownSlots) {
 		if (isLayout(input, kind, slot)) continue;
 		const except = slot.kinds.filter((k) => via.has(k));
 		if (except.length > 0 && except.length === slot.kinds.length) continue;

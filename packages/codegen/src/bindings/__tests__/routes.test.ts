@@ -192,6 +192,11 @@ describe('resolveRoutes', () => {
 		expect(routes.members.get('identifier')).toEqual([{ route: 'self', name: 'key', path: [] }]);
 	});
 
+	it('gives a node a self route takes no members from its own slots: they describe the member\'s value', async () => {
+		const routes = resolveRoutes(await grammar('(middle) @element.pair @key'));
+		expect(routes.members.get('middle')).toEqual([{ route: 'self', name: 'key', path: [] }]);
+	});
+
 	it('builds a nested member back from the owner outward, though the facts name its route nearest first', async () => {
 		const routes = resolveRoutes(await grammar('(outer (middle (binary left: (_) @lhs))) @expression.outer'));
 		const member = routes.members.get('outer')?.find((m) => m.name === 'lhs');

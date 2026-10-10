@@ -523,6 +523,10 @@ A kind's container unwrap: a kind the bindings declare with `@element` unwraps t
 
 The order read entries are tried in: a claim both placed (made below enclosing kinds) and tested by a predicate, then a predicate claim, then a placed claim, then a claim that pins a literal (a pin, or a token the claimed node holds), then the plain claim. `resolveRoutes` breaks a tie by more pins, then by position in `bindings.scm`. Python's `__init__` inside a class reads as `declaration.constructor` (a predicate claim) before `declaration.method` (a placed one).
 
+### `packages/codegen/src/bindings/routes.ts::membersOf`
+
+A kind's member routes: one `slot` route per slot of the model node (minus layout slots, and minus the kinds a `presence` or `nested` route reaches through), then the member facts the bindings state for it (`kind`, `self`, `presence`, `nested`). A kind with a `self` route takes no slot routes: the self route says the node is the member's value, so its own slots describe that value, not the claimed kind. Typescript's shorthand property is a sittir alias envelope with a `content` slot; claimed as `element.pair` with `@key`, it supplies `key` and nothing else.
+
 ### `packages/codegen/src/bindings/routes.ts::viaPath`
 
 The slots from an owner kind outward through the `via` kinds (walked farthest first, since `via` is nearest first), each found by `slotByKind`, and the model node it ends at; `undefined` when a step's slot holds many or is missing.

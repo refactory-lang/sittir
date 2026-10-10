@@ -260,6 +260,28 @@
           "via": [],
           "token": "abstract",
           "path": null
+        },
+        {
+          "name": "private",
+          "route": "kind",
+          "kind": "private_property_identifier",
+          "path": [
+            {
+              "owner": "abstract_method_signature",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "computed",
+          "route": "kind",
+          "kind": "computed_property_name",
+          "path": [
+            {
+              "owner": "abstract_method_signature",
+              "slot": "name"
+            }
+          ]
         }
       ]
     },
@@ -2528,29 +2550,6 @@
       ]
     },
     "computed_property_name": {
-      "vocab": "identifier.property.computed",
-      "read": [
-        {
-          "vocab": "identifier.property.computed",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "expression",
-          "route": "slot",
-          "slot": "expression",
-          "path": [
-            {
-              "owner": "computed_property_name",
-              "slot": "expression"
-            }
-          ]
-        }
-      ],
       "container": {
         "kinds": [
           "expression"
@@ -4990,6 +4989,17 @@
               "slot": "property"
             }
           ]
+        },
+        {
+          "name": "private",
+          "route": "kind",
+          "kind": "private_property_identifier",
+          "path": [
+            {
+              "owner": "member_expression",
+              "slot": "property"
+            }
+          ]
         }
       ]
     },
@@ -5255,6 +5265,28 @@
               "slot": "optional"
             }
           ]
+        },
+        {
+          "name": "private",
+          "route": "kind",
+          "kind": "private_property_identifier",
+          "path": [
+            {
+              "owner": "method_definition",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "computed",
+          "route": "kind",
+          "kind": "computed_property_name",
+          "path": [
+            {
+              "owner": "method_definition",
+              "slot": "name"
+            }
+          ]
         }
       ]
     },
@@ -5388,6 +5420,28 @@
             {
               "owner": "method_signature",
               "slot": "return_type"
+            }
+          ]
+        },
+        {
+          "name": "private",
+          "route": "kind",
+          "kind": "private_property_identifier",
+          "path": [
+            {
+              "owner": "method_signature",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "computed",
+          "route": "kind",
+          "kind": "computed_property_name",
+          "path": [
+            {
+              "owner": "method_signature",
+              "slot": "name"
             }
           ]
         }
@@ -6572,6 +6626,17 @@
               "slot": "value"
             }
           ]
+        },
+        {
+          "name": "computed",
+          "route": "kind",
+          "kind": "computed_property_name",
+          "path": [
+            {
+              "owner": "pair",
+              "slot": "key"
+            }
+          ]
         }
       ]
     },
@@ -6606,6 +6671,17 @@
             {
               "owner": "pair_pattern",
               "slot": "value"
+            }
+          ]
+        },
+        {
+          "name": "computed",
+          "route": "kind",
+          "kind": "computed_property_name",
+          "path": [
+            {
+              "owner": "pair_pattern",
+              "slot": "key"
             }
           ]
         }
@@ -6684,31 +6760,6 @@
         }
       ],
       "members": []
-    },
-    "private_property_identifier": {
-      "vocab": "identifier.property.private",
-      "read": [
-        {
-          "vocab": "identifier.property.private",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "private_property_identifier",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
     },
     "program": {
       "vocab": "module",
@@ -6876,6 +6927,28 @@
             {
               "owner": "property_signature",
               "slot": "type"
+            }
+          ]
+        },
+        {
+          "name": "private",
+          "route": "kind",
+          "kind": "private_property_identifier",
+          "path": [
+            {
+              "owner": "property_signature",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "computed",
+          "route": "kind",
+          "kind": "computed_property_name",
+          "path": [
+            {
+              "owner": "property_signature",
+              "slot": "name"
             }
           ]
         }
@@ -7066,6 +7139,28 @@
             {
               "owner": "public_field_definition",
               "slot": "optionality"
+            }
+          ]
+        },
+        {
+          "name": "private",
+          "route": "kind",
+          "kind": "private_property_identifier",
+          "path": [
+            {
+              "owner": "public_field_definition",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "computed",
+          "route": "kind",
+          "kind": "computed_property_name",
+          "path": [
+            {
+              "owner": "public_field_definition",
+              "slot": "name"
             }
           ]
         }
@@ -7463,10 +7558,10 @@
       }
     },
     "shorthand_property_identifier": {
-      "vocab": "identifier.property.shorthand",
+      "vocab": "element.pair",
       "read": [
         {
-          "vocab": "identifier.property.shorthand",
+          "vocab": "element.pair",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -7475,15 +7570,9 @@
       ],
       "members": [
         {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "shorthand_property_identifier",
-              "slot": "content"
-            }
-          ]
+          "name": "key",
+          "route": "self",
+          "path": []
         }
       ],
       "container": {
@@ -7518,6 +7607,23 @@
       }
     },
     "shorthand_property_identifier_pattern": {
+      "vocab": "pattern.object.pair",
+      "read": [
+        {
+          "vocab": "pattern.object.pair",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "key",
+          "route": "self",
+          "path": []
+        }
+      ],
       "container": {
         "kinds": [
           "identifier"
@@ -9274,20 +9380,20 @@
         "paths": 13,
         "kinds": 5,
         "refinements": 0,
-        "aliases": 148
+        "aliases": 147
       },
       {
         "depth": 2,
         "paths": 111,
-        "kinds": 116,
+        "kinds": 117,
         "refinements": 8,
-        "aliases": 97
+        "aliases": 94
       },
       {
         "depth": 3,
-        "paths": 84,
-        "kinds": 70,
-        "refinements": 58,
+        "paths": 81,
+        "kinds": 68,
+        "refinements": 55,
         "aliases": 41
       },
       {
@@ -9556,14 +9662,6 @@
           "attribute.content.parenthesized",
           "expression.parenthesized",
           "type.parenthesized"
-        ]
-      },
-      {
-        "under": "",
-        "name": "private",
-        "paths": [
-          "identifier.property.private",
-          "modifier.visibility.private"
         ]
       },
       {

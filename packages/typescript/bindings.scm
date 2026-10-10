@@ -26,21 +26,31 @@
 (method_definition "*" @generator)
 (method_definition "?" @optional)
 (method_definition accessor_kind: _ @accessor)
+(method_definition name: (private_property_identifier) @name @private)
+(method_definition name: (computed_property_name) @name @computed)
 (method_definition accessor_kind: "get") @declaration.method.getter
 (method_definition accessor_kind: "set") @declaration.method.setter
 ((method_definition name: (property_identifier) @name) @declaration.constructor (#eq? @name "constructor"))
 (method_signature) @declaration.method.signature
 (method_signature (accessibility_modifier) @visibility)
 (method_signature accessor_kind: _ @accessor)
+(method_signature name: (private_property_identifier) @name @private)
+(method_signature name: (computed_property_name) @name @computed)
 (abstract_method_signature) @declaration.method.signature.abstract
 (abstract_method_signature "abstract" @abstract)
 (abstract_method_signature (accessibility_modifier) @visibility)
+(abstract_method_signature name: (private_property_identifier) @name @private)
+(abstract_method_signature name: (computed_property_name) @name @computed)
 (property_signature) @declaration.field.signature
 (property_signature (accessibility_modifier) @visibility)
+(property_signature name: (private_property_identifier) @name @private)
+(property_signature name: (computed_property_name) @name @computed)
 (public_field_definition) @declaration.field
 (public_field_definition (accessibility_modifier) @visibility)
 (public_field_definition "?" @optional)
 (public_field_definition "!" @definite)
+(public_field_definition name: (private_property_identifier) @name @private)
+(public_field_definition name: (computed_property_name) @name @computed)
 (class_body_member_declaration (_) @element)
 (class_body_member_method (decorator)* @decorators (_) @element)
 (class_body_member_method_sig (_) @element)
@@ -119,6 +129,8 @@
 ; ── element (pieces of a composite expression that are not expressions) ────────
 (spread_element) @element.splat
 (pair) @element.pair
+(pair key: (computed_property_name) @key @computed)
+(shorthand_property_identifier) @element.pair @key
 (tuple_parameter) @element.tuple.member
 (optional_tuple_parameter) @element.tuple.member.optional
 (template_type) @element.template.substitution
@@ -188,6 +200,7 @@
 (ternary_expression) @expression.conditional
 (member_expression) @expression.member
 (member_expression (optional_chain) @optional_chain)
+(member_expression property: (private_property_identifier) @property @private)
 (subscript_expression (optional_chain) @optional_chain)
 (subscript_expression) @expression.subscript
 (arrow_function (arrow_function_parameter parameter: (_) @parameters)) @expression.lambda
@@ -221,6 +234,8 @@
 (object_pattern) @pattern.object
 (object_assignment_pattern) @pattern.object.assignment
 (pair_pattern) @pattern.object.pair
+(pair_pattern key: (computed_property_name) @key @computed)
+(shorthand_property_identifier_pattern) @pattern.object.pair @key
 (array_pattern) @pattern.array
 (rest_pattern) @pattern.rest
 (assignment_pattern) @pattern.assignment
@@ -280,17 +295,12 @@
 (identifier) @identifier
 (type_identifier) @identifier.type
 (property_identifier) @identifier.property
-(private_property_identifier) @identifier.property.private
-(shorthand_property_identifier) @identifier.property.shorthand
 (nested_identifier) @identifier.nested
 (nested_type_identifier) @type.path
 (statement_identifier) @identifier.label
 (this) @identifier.self
 (super) @identifier.super
 
-; every TypeScript modifier is a keyword: `visibility` is a member whose value is the keyword text,
-; the markers are boolean members; no modifier is a kind
-(computed_property_name) @identifier.property.computed
 
 ; ── modifier ───────────────────────────────────────────────────────────────────
 (accessibility_modifier) @modifier.visibility
