@@ -22,8 +22,8 @@ export async function renderByName<G extends keyof LanguageApis>(
 	return (await engineByName(name)).render(node, render).toString();
 }
 
-await engineByName('typescript', { indent: '\t' });
-await engineByName('python', { indent: '    ' });
+await engineByName('typescript', { layout: { indent: '\t' } });
+await engineByName('python', { layout: { indent: '    ' } });
 // @ts-expect-error a key the language's render options do not declare
 await engineByName('python', { nope: 1 });
 // @ts-expect-error a key the language's render options do not declare

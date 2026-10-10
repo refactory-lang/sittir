@@ -116,7 +116,7 @@ An engine's render options come from the descriptor's `Options` type and are che
 import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust, { render: { indent: '\t' } });
+const engine = await createEngine(rust, { render: { layout: { indent: '\t' } } });
 
 const fn = engine.build.statement.function({
 	name: 'f',

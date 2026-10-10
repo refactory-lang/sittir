@@ -7,6 +7,6 @@ declare const node: RegexNode;
 
 void createEngine(regex);
 // @ts-expect-error no indent character is admitted
-void createEngine(regex, { render: { indent: '\t' } });
+void createEngine(regex, { render: { layout: { indent: '\t' } } });
 // @ts-expect-error per-call options have no indent either
-rx.render(node, { indent: '\t' });
+rx.render(node, { layout: { indent: '\t' } });

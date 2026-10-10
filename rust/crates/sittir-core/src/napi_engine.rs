@@ -354,7 +354,7 @@ macro_rules! napi_engine {
                         canonical,
                         self.engine.engine_format(),
                         tree_format,
-                        "\n",
+                        &table.newline,
                     ))
                 })
             }

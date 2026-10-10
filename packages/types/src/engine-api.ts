@@ -298,9 +298,13 @@ export type RenderArgument<API extends LanguageAPI> = RenderInput<API> | RenderB
 export type RenderOptionsCheck<API extends LanguageAPI, R, Extra extends PropertyKey = never> =
 	IsExactly<R, API['options']> extends true
 		? unknown
-		: IndentOption<R extends { readonly indent?: infer I extends string } ? I : string, API['indentChar']> & {
+		: IndentOption<R extends { readonly layout?: { readonly indent?: infer I extends string } } ? I : string, API['indentChar']> & {
 				readonly [K in Exclude<keyof R, keyof API['options'] | Extra>]: never;
-			};
+			} & LayoutKeysCheck<R>;
+
+type LayoutKeysCheck<R> = R extends { readonly layout?: infer L extends object }
+	? { readonly layout?: { readonly [K in Exclude<keyof L, 'indent' | 'newline'>]: never } }
+	: unknown;
 
 type IsExactly<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
 
