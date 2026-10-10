@@ -30,11 +30,23 @@ pub struct NodeCoordinate {
     /// The edge seams of the kind this coordinate names, filled by the prepare
     /// walk so a verbatim slice meets its neighbours like a rendered node does.
     pub edges: Option<CoordinateEdges>,
+    /// What JavaScript wrote on the coordinate it sent (`CoordinateWrites`),
+    /// behind one pointer, so a read coordinate pays only that pointer.
+    pub writes: Option<Box<CoordinateWrites>>,
+}
+
+/// What JavaScript writes on a coordinate it sends back, kept off the read's
+/// own path in one box (`NodeCoordinate::writes`): a coordinate the reader
+/// built carries neither.
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub struct CoordinateWrites {
     /// The gap toward the item before this one in a list, when the two are
-    /// still adjacent in the source both were read from (`$_layout.gap`).
-    /// Boxed: only JavaScript writes it, on a rebuilt list's items, so a read
-    /// coordinate pays one pointer for it.
-    pub gap: Option<Box<SourceGap>>,
+    /// still adjacent in the source both were read from (`$_layout.gap`),
+    /// written on a rebuilt list's items.
+    pub gap: Option<SourceGap>,
+    /// The outside trivia a folded node carries (`$_layout.trivia`), which
+    /// its bytes render between.
+    pub trivia: Option<crate::trivia::OutsideTrivia>,
 }
 
 /// The bytes between a list item and the item before it, in the source both
@@ -157,8 +169,26 @@ impl NodeCoordinate {
             span,
             kind: None,
             edges: None,
-            gap: None,
+            writes: None,
         }
+    }
+
+    /// The source gap JavaScript wrote on this coordinate (`CoordinateWrites::gap`).
+    pub fn gap(&self) -> Option<&SourceGap> {
+        self.writes.as_ref()?.gap.as_ref()
+    }
+
+    /// The outside trivia JavaScript wrote on this coordinate (`CoordinateWrites::trivia`).
+    pub fn outside_trivia(&self) -> Option<&dyn crate::trivia::FramedTrivia> {
+        self.writes.as_ref()?.trivia.as_ref().map(|trivia| &*trivia.0)
+    }
+
+    /// This coordinate carrying `trivia` as its outside trivia, or as it is when `trivia` is `None`.
+    pub fn with_outside_trivia(mut self, trivia: Option<crate::trivia::OutsideTrivia>) -> Self {
+        if trivia.is_some() {
+            self.writes.get_or_insert_with(Default::default).trivia = trivia;
+        }
+        self
     }
 
     /// The tree and the index packed as one handle: the wire's `$treeHandle`.
@@ -226,8 +256,9 @@ impl NodeCoordinate {
 #[derive(Debug, Clone)]
 pub enum SlotValue<T, const ADJACENT: bool = false> {
     /// The content is in the tree: the sink slices it from the source the
-    /// engine still holds, between the outside trivia a folded node carries.
-    Coord(NodeCoordinate, Option<Box<crate::trivia::OutsideTrivia>>),
+    /// engine still holds, between the outside trivia a folded node carries
+    /// (`NodeCoordinate::outside_trivia`).
+    Coord(NodeCoordinate),
     /// The content is in this message.
     Transport(T),
 }
@@ -237,14 +268,14 @@ impl<T, const ADJACENT: bool> SlotValue<T, ADJACENT> {
     pub fn transport(&self) -> Option<&T> {
         match self {
             Self::Transport(t) => Some(t),
-            Self::Coord(_, _) => None,
+            Self::Coord(_) => None,
         }
     }
 
     /// The coordinate this slot holds, or `None` when it holds a value.
     pub fn coord(&self) -> Option<&NodeCoordinate> {
         match self {
-            Self::Coord(coord, _) => Some(coord),
+            Self::Coord(coord) => Some(coord),
             Self::Transport(_) => None,
         }
     }
@@ -257,8 +288,8 @@ impl<T, const ADJACENT: bool> SlotValue<T, ADJACENT> {
         w: &mut dyn crate::render::RenderSink,
     ) -> Result<Option<&T>, crate::render::RenderError> {
         match self {
-            Self::Coord(coord, trivia) => {
-                write_coordinate(coord, trivia.as_deref().map(|t| &*t.0), ADJACENT, w)?;
+            Self::Coord(coord) => {
+                write_coordinate(coord, ADJACENT, w)?;
                 Ok(None)
             }
             Self::Transport(t) => Ok(Some(t)),
@@ -273,8 +304,8 @@ impl<T: PartialEq, const ADJACENT: bool> PartialEq for SlotValue<T, ADJACENT> {
     fn eq(&self, other: &Self) -> bool {
         match (self, other) {
             (Self::Transport(a), Self::Transport(b)) => a == b,
-            (Self::Coord(a, ta), Self::Coord(b, tb)) => {
-                a.tree == b.tree && a.span == b.span && a.kind == b.kind && ta == tb
+            (Self::Coord(a), Self::Coord(b)) => {
+                a.tree == b.tree && a.span == b.span && a.kind == b.kind && a.writes.as_ref().map(|w| &w.trivia) == b.writes.as_ref().map(|w| &w.trivia)
             }
             _ => false,
         }
@@ -286,7 +317,7 @@ impl<T: crate::render::Render, const ADJACENT: bool> crate::render::Render
 {
     fn render(&self, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
         match self {
-            Self::Coord(coord, trivia) => write_coordinate(coord, trivia.as_deref().map(|t| &*t.0), ADJACENT, w),
+            Self::Coord(coord) => write_coordinate(coord, ADJACENT, w),
             Self::Transport(t) => t.render(w),
         }
     }
@@ -297,11 +328,10 @@ impl<T: crate::render::Render, const ADJACENT: bool> crate::render::Render
 /// own (`write_between_edges`).
 fn write_coordinate(
     coord: &NodeCoordinate,
-    trivia: Option<&dyn crate::trivia::FramedTrivia>,
     adjacent: bool,
     w: &mut dyn crate::render::RenderSink,
 ) -> crate::render::RenderResult {
-    match trivia {
+    match coord.outside_trivia() {
         None => coord.write_between_edges(w, adjacent),
         Some(trivia) => crate::layout::render_framed(
             Some(trivia),
@@ -350,7 +380,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia, const
         let value_type = unsafe { transport_value_type(env, napi_val)? };
         if value_type == ::napi::ValueType::Object {
             if let Some(coord) = unsafe { coordinate_from_napi(env, napi_val)? } {
-                return Ok(Self::Coord(coord, unsafe { outside_trivia_from_napi::<T::Trivia>(env, napi_val)? }));
+                return Ok(Self::Coord(coord.with_outside_trivia(unsafe { outside_trivia_from_napi::<T::Trivia>(env, napi_val)? })));
             }
         }
         Ok(Self::Transport(unsafe {
@@ -368,7 +398,7 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue, const ADJACENT: bool> ::napi::bind
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         match val {
             Self::Transport(transport) => unsafe { T::to_napi_value(env, transport) },
-            Self::Coord(coord, _) => unsafe { coordinate_to_napi(env, coord) },
+            Self::Coord(coord) => unsafe { coordinate_to_napi(env, coord) },
         }
     }
 }
@@ -392,11 +422,12 @@ pub(crate) unsafe fn coordinate_from_napi(env: ::napi::sys::napi_env, napi_val: 
         .ok_or_else(|| ::napi::Error::from_reason(format!("coordinate with $treeHandle {handle} carries no $end")))?;
     let kind = unsafe { property::<u32>(env, napi_val, c"$type")? }.map(|id| crate::types::KindId(id as u16));
     let gap = match unsafe { property::<::napi::bindgen_prelude::Object>(env, napi_val, c"$_layout")? } {
-        Some(layout) => unsafe { property::<SourceGap>(env, ::napi::JsValue::raw(&layout), c"gap")? }.map(Box::new),
+        Some(layout) => unsafe { property::<SourceGap>(env, ::napi::JsValue::raw(&layout), c"gap")? },
         None => None,
     };
     let (tree, index) = crate::engine::decode_handle(handle);
-    Ok(Some(NodeCoordinate { kind, gap, ..NodeCoordinate::new(tree, index, end, span) }))
+    let writes = gap.map(|gap| Box::new(CoordinateWrites { gap: Some(gap), trivia: None }));
+    Ok(Some(NodeCoordinate { kind, writes, ..NodeCoordinate::new(tree, index, end, span) }))
 }
 
 /// The outside trivia a coordinate object carries in `$_layout.trivia`, or
@@ -408,13 +439,13 @@ pub(crate) unsafe fn coordinate_from_napi(env: ::napi::sys::napi_env, napi_val: 
 unsafe fn outside_trivia_from_napi<Tr: crate::trivia::TriviaItem + crate::trivia::HasTrivia<Trivia = Tr>>(
     env: ::napi::sys::napi_env,
     napi_val: ::napi::sys::napi_value,
-) -> ::napi::Result<Option<Box<crate::trivia::OutsideTrivia>>> {
+) -> ::napi::Result<Option<crate::trivia::OutsideTrivia>> {
     use crate::boundary::property;
     let Some(layout) = (unsafe { property::<::napi::bindgen_prelude::Object>(env, napi_val, c"$_layout")? }) else {
         return Ok(None);
     };
     let trivia = unsafe { property::<crate::trivia::TransportTrivia<Tr>>(env, ::napi::JsValue::raw(&layout), c"trivia")? };
-    Ok(trivia.map(|trivia| Box::new(crate::trivia::OutsideTrivia(Box::new(trivia)))))
+    Ok(trivia.map(|trivia| crate::trivia::OutsideTrivia(Box::new(trivia))))
 }
 
 /// `{ $treeHandle, $span, $type? }`, the object `coordinate_from_napi` reads
@@ -472,7 +503,7 @@ mod tests {
         let coord = NodeCoordinate::new(3, 0, 1, Span { start: 4, end: 8 });
         assert_eq!(coord.handle(), encode_handle(3, 0));
         assert_eq!(coord.resolve(&sources), Ok("main"));
-        let slot: SlotValue<Word> = SlotValue::Coord(coord, None);
+        let slot: SlotValue<Word> = SlotValue::Coord(coord);
         assert_eq!(rendered_with(&slot, &sources).unwrap(), "main");
         assert!(slot.coord().is_some());
     }
@@ -487,7 +518,7 @@ mod tests {
                     1,
                     0, 1,
                     Span { start: 0, end: 1 },
-                ), None);
+                ));
                 slot.render(w)
             }
         }
@@ -533,7 +564,7 @@ mod tests {
                 1,
                 0, 1,
                 Span { start: 1, end: 3 },
-            ), None);
+            ));
             slot.prepare(&RenderContext {
                 options,
                 sources: &sources,
@@ -573,7 +604,7 @@ mod tests {
             coord.resolve(&sources),
             Err(CoordinateError::UnknownTree { handle, tree_id: 9 })
         );
-        let slot: SlotValue<Word> = SlotValue::Coord(coord, None);
+        let slot: SlotValue<Word> = SlotValue::Coord(coord);
         assert!(rendered_with(&slot, &sources).is_err());
     }
 
@@ -601,7 +632,7 @@ mod tests {
             1,
             0, 1,
             Span { start: 0, end: 1 },
-        ), None);
+        ));
         let mut out = String::new();
         let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident()).with_table(&TABLE);
         assert!(slot.render(&mut w).is_err());
@@ -657,7 +688,7 @@ mod tests {
         assert!(!absent.kind_in(&w, &[WORD_KIND]));
         // A table of bare sources holds no tree to ask, so a coordinate is no kind.
         let coord: SlotValue<Word> =
-            SlotValue::Coord(NodeCoordinate::new(3, 0, 1, Span { start: 4, end: 8 }), None);
+            SlotValue::Coord(NodeCoordinate::new(3, 0, 1, Span { start: 4, end: 8 }));
         assert!(!coord.kind_in(&w, &[WORD_KIND]));
     }
 
@@ -701,7 +732,7 @@ mod tests {
             1,
             0, 1,
             Span { start: 0, end: 3 },
-        ), None);
+        ));
         assert!(coord.transport_or_write(&mut w2).unwrap().is_none());
         w2.finish().unwrap();
         assert_eq!(buf2, "raw");

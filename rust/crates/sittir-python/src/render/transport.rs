@@ -56,7 +56,7 @@ pub enum AnyTransport {
     #[kind(kind::RAISE_STATEMENT)]
     RaiseStatement(Box<RaiseStatementTransport>),
     #[kind(kind::IF_STATEMENT)]
-    IfStatement(Box<IfStatementTransport>),
+    IfStatement(IfStatementTransport),
     #[kind(kind::ELIF_CLAUSE)]
     ElifClause(ElifClauseTransport),
     #[kind(kind::ELSE_CLAUSE)]
@@ -148,7 +148,7 @@ pub enum AnyTransport {
     #[kind(kind::DEFAULT_PARAMETER)]
     DefaultParameter(DefaultParameterTransport),
     #[kind(kind::TYPED_DEFAULT_PARAMETER)]
-    TypedDefaultParameter(Box<TypedDefaultParameterTransport>),
+    TypedDefaultParameter(TypedDefaultParameterTransport),
     #[kind(kind::LIST_SPLAT_PATTERN)]
     ListSplatPattern(ListSplatPatternTransport),
     #[kind(kind::DICTIONARY_SPLAT_PATTERN)]
@@ -234,7 +234,7 @@ pub enum AnyTransport {
     #[kind(kind::STRING_CONTENT)]
     StringContent(StringContentTransport),
     #[kind(kind::INTERPOLATION)]
-    Interpolation(Box<InterpolationTransport>),
+    Interpolation(InterpolationTransport),
     #[kind(kind::FORMAT_SPECIFIER)]
     FormatSpecifier(FormatSpecifierTransport),
     #[kind(kind::TYPE_CONVERSION)]
@@ -374,7 +374,7 @@ pub enum AnyTransport {
     #[kind(kind::_AS_PATTERN_TARGET, display)]
     AsPatternTarget(AsPatternTargetTransport),
     #[kind(kind::_FORMAT_EXPRESSION, display)]
-    FormatExpression(Box<FormatExpressionTransport>),
+    FormatExpression(FormatExpressionTransport),
     #[kind(kind::WILDCARD_IMPORT)]
     WildcardImport,
     #[kind(kind::PASS_STATEMENT)]
@@ -1576,7 +1576,7 @@ pub enum StatementTransport {
     SimpleStatements(SimpleStatementsTransport),
     #[kind(kind::IF_STATEMENT, kind::FOR_STATEMENT, kind::WHILE_STATEMENT, kind::TRY_STATEMENT, kind::WITH_STATEMENT, kind::FUNCTION_DEFINITION, kind::CLASS_DEFINITION, kind::DECORATED_DEFINITION, kind::MATCH_STATEMENT)]
     CompoundStatement(CompoundStatementTransport),
-    IfStatement(Box<IfStatementTransport>),
+    IfStatement(IfStatementTransport),
     ForStatement(Box<ForStatementTransport>),
     WhileStatement(Box<WhileStatementTransport>),
     TryStatement(TryStatementTransport),
@@ -1792,7 +1792,7 @@ impl ::sittir_core::render::Render for SimpleStatementTransport {
 #[transport(choice)]
 pub enum CompoundStatementTransport {
     #[kind(kind::IF_STATEMENT)]
-    IfStatement(Box<IfStatementTransport>),
+    IfStatement(IfStatementTransport),
     #[kind(kind::FOR_STATEMENT)]
     ForStatement(Box<ForStatementTransport>),
     #[kind(kind::WHILE_STATEMENT)]
@@ -1995,7 +1995,7 @@ pub enum ParameterTransport {
     #[kind(kind::DEFAULT_PARAMETER)]
     DefaultParameter(DefaultParameterTransport),
     #[kind(kind::TYPED_DEFAULT_PARAMETER)]
-    TypedDefaultParameter(Box<TypedDefaultParameterTransport>),
+    TypedDefaultParameter(TypedDefaultParameterTransport),
     #[kind(kind::LIST_SPLAT_PATTERN)]
     ListSplatPattern(ListSplatPatternTransport),
     #[kind(kind::TUPLE_PATTERN)]
@@ -7576,7 +7576,7 @@ impl ::sittir_core::render::Render for CollectionElementsItemTransportSlot {
 #[transport(choice)]
 pub enum StringContentTransportSlot {
     #[kind(kind::INTERPOLATION)]
-    Interpolation(Box<InterpolationTransport>),
+    Interpolation(InterpolationTransport),
     #[kind(kind::STRING_CONTENT)]
     StringContent(StringContentTransport),
 }
@@ -7614,7 +7614,7 @@ impl ::sittir_core::view::KindOf for StringContentTransportSlot {
 impl ::sittir_core::render::Render for StringContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            StringContentTransportSlot::Interpolation(inner) => inner.as_ref().render(w),
+            StringContentTransportSlot::Interpolation(inner) => inner.render(w),
             StringContentTransportSlot::StringContent(inner) => inner.render(w),
         }
     }
@@ -8114,7 +8114,7 @@ pub enum FormatSpecifierElementsTransportSlot {
     #[kind(kind::FORMAT_SPECIFIER_TEXT)]
     FormatSpecifierText(FormatSpecifierTextTransport),
     #[kind(kind::_FORMAT_EXPRESSION, display)]
-    FormatExpression(Box<FormatExpressionTransport>),
+    FormatExpression(FormatExpressionTransport),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -8157,7 +8157,7 @@ impl ::sittir_core::render::Render for FormatSpecifierElementsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             FormatSpecifierElementsTransportSlot::FormatSpecifierText(inner) => inner.render(w),
-            FormatSpecifierElementsTransportSlot::FormatExpression(inner) => inner.as_ref().render(w),
+            FormatSpecifierElementsTransportSlot::FormatExpression(inner) => inner.render(w),
             FormatSpecifierElementsTransportSlot::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
         }
     }
@@ -24984,7 +24984,7 @@ fn render_statement(t: &StatementTransport, w: &mut dyn ::sittir_core::render::R
     match t {
         StatementTransport::SimpleStatements(inner) => inner.render(w),
         StatementTransport::CompoundStatement(inner) => inner.render(w),
-        StatementTransport::IfStatement(inner) => inner.as_ref().render(w),
+        StatementTransport::IfStatement(inner) => inner.render(w),
         StatementTransport::ForStatement(inner) => inner.as_ref().render(w),
         StatementTransport::WhileStatement(inner) => inner.as_ref().render(w),
         StatementTransport::TryStatement(inner) => inner.render(w),
@@ -25019,7 +25019,7 @@ fn render_simple_statement(t: &SimpleStatementTransport, w: &mut dyn ::sittir_co
 
 fn render_compound_statement(t: &CompoundStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        CompoundStatementTransport::IfStatement(inner) => inner.as_ref().render(w),
+        CompoundStatementTransport::IfStatement(inner) => inner.render(w),
         CompoundStatementTransport::ForStatement(inner) => inner.as_ref().render(w),
         CompoundStatementTransport::WhileStatement(inner) => inner.as_ref().render(w),
         CompoundStatementTransport::TryStatement(inner) => inner.render(w),
@@ -25051,7 +25051,7 @@ fn render_parameter(t: &ParameterTransport, w: &mut dyn ::sittir_core::render::R
         ParameterTransport::Identifier(inner) => inner.render(w),
         ParameterTransport::TypedParameter(inner) => inner.render(w),
         ParameterTransport::DefaultParameter(inner) => inner.render(w),
-        ParameterTransport::TypedDefaultParameter(inner) => inner.as_ref().render(w),
+        ParameterTransport::TypedDefaultParameter(inner) => inner.render(w),
         ParameterTransport::ListSplatPattern(inner) => inner.render(w),
         ParameterTransport::TuplePattern(inner) => inner.render(w),
         ParameterTransport::KeywordSeparator => render_keyword_separator(w),
@@ -25850,7 +25850,7 @@ const _: () = assert!(::core::mem::size_of::<FloatScientificTransport>() <= 256,
 const _: () = assert!(::core::mem::size_of::<FloatTransport>() <= 256, "FloatTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ForInClauseTransport>() <= 256, "ForInClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ForStatementTransport>() > 256, "ForStatementTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FormatExpressionTransport>() > 256, "FormatExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<FormatExpressionTransport>() <= 256, "FormatExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FormatSpecifierTextTransport>() <= 256, "FormatSpecifierTextTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FormatSpecifierTransport>() <= 256, "FormatSpecifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FunctionDefinitionTransport>() > 256, "FunctionDefinitionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
@@ -25860,7 +25860,7 @@ const _: () = assert!(::core::mem::size_of::<GenericTypeTransport>() <= 256, "Ge
 const _: () = assert!(::core::mem::size_of::<GlobalStatementTransport>() <= 256, "GlobalStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<IdentifierTransport>() <= 256, "IdentifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<IfClauseTransport>() <= 256, "IfClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<IfStatementTransport>() > 256, "IfStatementTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<IfStatementTransport>() <= 256, "IfStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ImportFromStatementTransport>() <= 256, "ImportFromStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ImportListTransport>() <= 256, "ImportListTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ImportPrefixTransport>() <= 256, "ImportPrefixTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -25874,7 +25874,7 @@ const _: () = assert!(::core::mem::size_of::<IntegerDecimalTransport>() <= 256, 
 const _: () = assert!(::core::mem::size_of::<IntegerHexTransport>() <= 256, "IntegerHexTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<IntegerOctalTransport>() <= 256, "IntegerOctalTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<IntegerTransport>() <= 256, "IntegerTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<InterpolationTransport>() > 256, "InterpolationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<InterpolationTransport>() <= 256, "InterpolationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<KeyValuePatternTransport>() <= 256, "KeyValuePatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<KeywordArgumentTransport>() <= 256, "KeywordArgumentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<KeywordPatternTransport>() <= 256, "KeywordPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -25945,7 +25945,7 @@ const _: () = assert!(::core::mem::size_of::<TypeAliasStatementTransport>() <= 2
 const _: () = assert!(::core::mem::size_of::<TypeConversionTransport>() <= 256, "TypeConversionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeParameterTransport>() <= 256, "TypeParameterTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeTransport>() <= 256, "TypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TypedDefaultParameterTransport>() > 256, "TypedDefaultParameterTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TypedDefaultParameterTransport>() <= 256, "TypedDefaultParameterTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypedParameterTransport>() <= 256, "TypedParameterTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypesTransport>() <= 256, "TypesTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<UnaryOperatorTransport>() <= 256, "UnaryOperatorTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");

@@ -360,7 +360,7 @@ pub enum AnyTransport {
     #[kind(kind::ARRAY_EXPRESSION_LIST)]
     ArrayExpressionList(ArrayExpressionListTransport),
     #[kind(kind::ATTRIBUTE_INPUT)]
-    AttributeInput(Box<AttributeInputTransport>),
+    AttributeInput(AttributeInputTransport),
     #[kind(kind::CLOSURE_EXPRESSION_BLOCK)]
     ClosureExpressionBlock(ClosureExpressionBlockTransport),
     #[kind(kind::CLOSURE_EXPRESSION_EXPR)]
@@ -416,7 +416,7 @@ pub enum AnyTransport {
     #[kind(kind::FOREIGN_MOD_ITEM_SEMI)]
     ForeignModItemSemi(ForeignModItemSemiTransport),
     #[kind(kind::FOREIGN_MOD_ITEM_BODY)]
-    ForeignModItemBody(Box<ForeignModItemBodyTransport>),
+    ForeignModItemBody(ForeignModItemBodyTransport),
     #[kind(kind::MATCH_ARM_WITH_COMMA)]
     MatchArmWithComma(Box<MatchArmWithCommaTransport>),
     #[kind(kind::MATCH_ARM_BLOCK_ENDING)]
@@ -474,7 +474,7 @@ pub enum AnyTransport {
     #[kind(kind::STRUCT_ITEM_TUPLE)]
     StructItemTuple(Box<StructItemTupleTransport>),
     #[kind(kind::STRUCT_ITEM_UNIT)]
-    StructItemUnit(Box<StructItemUnitTransport>),
+    StructItemUnit(StructItemUnitTransport),
     #[kind(kind::_ATTRIBUTED_FIELD_DECLARATION)]
     AttributedFieldDeclaration(Box<AttributedFieldDeclarationTransport>),
     #[kind(kind::_ATTRIBUTED_ENUM_VARIANT)]
@@ -488,7 +488,7 @@ pub enum AnyTransport {
     #[kind(kind::_ATTRIBUTED_ORDERED_FIELD)]
     AttributedOrderedField(Box<AttributedOrderedFieldTransport>),
     #[kind(kind::_TYPE_ARGUMENT)]
-    TypeArgument(Box<TypeArgumentTransport>),
+    TypeArgument(TypeArgumentTransport),
     #[kind(kind::_MATCH_BLOCK_ARMS)]
     MatchBlockArms(MatchBlockArmsTransport),
     #[kind(kind::FLOAT_LITERAL)]
@@ -2691,7 +2691,7 @@ pub enum ForeignModItemTransport {
     #[kind(kind::FOREIGN_MOD_ITEM_SEMI)]
     ForeignModItemSemi(ForeignModItemSemiTransport),
     #[kind(kind::FOREIGN_MOD_ITEM_BODY)]
-    ForeignModItemBody(Box<ForeignModItemBodyTransport>),
+    ForeignModItemBody(ForeignModItemBodyTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for ForeignModItemTransport {
@@ -2745,7 +2745,7 @@ pub enum StructItemTransport {
     #[kind(kind::STRUCT_ITEM_TUPLE)]
     StructItemTuple(Box<StructItemTupleTransport>),
     #[kind(kind::STRUCT_ITEM_UNIT)]
-    StructItemUnit(Box<StructItemUnitTransport>),
+    StructItemUnit(StructItemUnitTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for StructItemTransport {
@@ -37876,7 +37876,7 @@ fn render_mod_item(t: &ModItemTransport, w: &mut dyn ::sittir_core::render::Rend
 fn render_foreign_mod_item(t: &ForeignModItemTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         ForeignModItemTransport::ForeignModItemSemi(inner) => inner.render(w),
-        ForeignModItemTransport::ForeignModItemBody(inner) => inner.as_ref().render(w),
+        ForeignModItemTransport::ForeignModItemBody(inner) => inner.render(w),
     }
 }
 
@@ -37884,7 +37884,7 @@ fn render_struct_item(t: &StructItemTransport, w: &mut dyn ::sittir_core::render
     match t {
         StructItemTransport::StructItemBrace(inner) => inner.as_ref().render(w),
         StructItemTransport::StructItemTuple(inner) => inner.as_ref().render(w),
-        StructItemTransport::StructItemUnit(inner) => inner.as_ref().render(w),
+        StructItemTransport::StructItemUnit(inner) => inner.render(w),
     }
 }
 
@@ -39000,7 +39000,7 @@ const _: () = assert!(::core::mem::size_of::<ArrayTypeTransport>() <= 256, "Arra
 const _: () = assert!(::core::mem::size_of::<AssignmentExpressionTransport>() <= 256, "AssignmentExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AssociatedTypeTransport>() <= 256, "AssociatedTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AsyncBlockTransport>() <= 256, "AsyncBlockTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AttributeInputTransport>() > 256, "AttributeInputTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<AttributeInputTransport>() <= 256, "AttributeInputTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributeItemTransport>() > 256, "AttributeItemTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributeTransport>() > 256, "AttributeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributedArgumentTransport>() <= 256, "AttributedArgumentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -39076,7 +39076,7 @@ const _: () = assert!(::core::mem::size_of::<FieldPatternShorthandTransport>() <
 const _: () = assert!(::core::mem::size_of::<FloatLiteralTransport>() <= 256, "FloatLiteralTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ForExpressionTransport>() <= 256, "ForExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ForLifetimesTransport>() <= 256, "ForLifetimesTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ForeignModItemBodyTransport>() > 256, "ForeignModItemBodyTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ForeignModItemBodyTransport>() <= 256, "ForeignModItemBodyTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ForeignModItemSemiTransport>() <= 256, "ForeignModItemSemiTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ForeignModItemTransport>() <= 256, "ForeignModItemTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FragmentSpecifierEnum>() <= 256, "FragmentSpecifierEnum is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -39197,7 +39197,7 @@ const _: () = assert!(::core::mem::size_of::<StructExpressionTransport>() <= 256
 const _: () = assert!(::core::mem::size_of::<StructItemBraceTransport>() > 256, "StructItemBraceTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StructItemTransport>() <= 256, "StructItemTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StructItemTupleTransport>() > 256, "StructItemTupleTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<StructItemUnitTransport>() > 256, "StructItemUnitTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<StructItemUnitTransport>() <= 256, "StructItemUnitTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StructPatternElementsTransport>() <= 256, "StructPatternElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StructPatternTransport>() <= 256, "StructPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TokenBindingPatternTransport>() <= 256, "TokenBindingPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -39221,7 +39221,7 @@ const _: () = assert!(::core::mem::size_of::<TuplePatternElementsTransport>() <=
 const _: () = assert!(::core::mem::size_of::<TuplePatternTransport>() <= 256, "TuplePatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TupleStructPatternTransport>() <= 256, "TupleStructPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TupleTypeTransport>() <= 256, "TupleTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TypeArgumentTransport>() > 256, "TypeArgumentTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TypeArgumentTransport>() <= 256, "TypeArgumentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeArgumentsElementsTransport>() <= 256, "TypeArgumentsElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeArgumentsTransport>() <= 256, "TypeArgumentsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeBindingTransport>() > 256, "TypeBindingTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");

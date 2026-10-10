@@ -44,7 +44,7 @@ impl<T: Render + TriviaSeam> TriviaEntry<T> {
     fn seam_gap(&self) -> Option<(LayoutKinds, Option<&str>)> {
         match &self.value {
             SlotValue::Transport(value) => value.seam_gap(),
-            SlotValue::Coord(_, _) => None,
+            SlotValue::Coord(_) => None,
         }
     }
 }
@@ -154,7 +154,7 @@ impl<T: Render + TriviaSeam> Framing for TransportTrivia<T> {
 }
 
 /// The outside trivia a folded coordinate renders between, with its
-/// grammar's trivia type erased, so `SlotValue<T>` carries it whatever its
+/// grammar's trivia type erased, so a coordinate carries it whatever its
 /// slot's transport type.
 pub trait FramedTrivia: Framing + std::fmt::Debug {
     fn prepare(&mut self, ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError>;
@@ -181,8 +181,8 @@ impl<T: TriviaItem> FramedTrivia for TransportTrivia<T> {
     }
 }
 
-/// A folded coordinate's outside trivia, behind one thin pointer
-/// (`Box<OutsideTrivia>`), so a slot carrying none grows by a pointer only.
+/// A folded coordinate's outside trivia, with its grammar's trivia type
+/// erased; it rides in the coordinate's `CoordinateWrites`.
 #[derive(Debug, Clone)]
 pub struct OutsideTrivia(pub Box<dyn FramedTrivia>);
 
@@ -191,6 +191,8 @@ impl PartialEq for OutsideTrivia {
         self.0.same_as(other.0.as_ref())
     }
 }
+
+impl Eq for OutsideTrivia {}
 
 impl Clone for Box<dyn FramedTrivia> {
     fn clone(&self) -> Self {

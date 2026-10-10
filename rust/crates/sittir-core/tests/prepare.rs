@@ -56,7 +56,7 @@ fn a_coordinate_is_checked_against_its_tree_and_an_unset_site_takes_the_table() 
                 7,
                 0, 1,
                 Span { start: 3, end: 4 },
-            ), None),
+            )),
             SlotValue::Transport(Leaf),
         ],
     };
@@ -85,7 +85,7 @@ fn a_coordinate_into_an_unknown_tree_fails_the_walk_with_its_handle() {
     let sources = Sources(HashMap::new());
     let handle = encode_handle(9, 2);
     let mut slot: SlotValue<Leaf> =
-        SlotValue::Coord(NodeCoordinate::new(9, 2, 3, Span { start: 0, end: 1 }), None);
+        SlotValue::Coord(NodeCoordinate::new(9, 2, 3, Span { start: 0, end: 1 }));
     assert_eq!(
         slot.prepare(&ctx(&options, &sources)),
         Err(CoordinateError::UnknownTree { handle, tree_id: 9 })
@@ -98,7 +98,7 @@ fn a_span_outside_its_tree_fails_the_walk() {
     let sources = Sources(HashMap::from([(1, Arc::from("ab"))]));
     let handle = encode_handle(1, 0);
     let mut slot: SlotValue<Leaf> =
-        SlotValue::Coord(NodeCoordinate::new(1, 0, 1, Span { start: 0, end: 5 }), None);
+        SlotValue::Coord(NodeCoordinate::new(1, 0, 1, Span { start: 0, end: 5 }));
     assert!(matches!(
         slot.prepare(&ctx(&options, &sources)),
         Err(CoordinateError::BadSpan { handle: h, .. }) if h == handle
@@ -113,10 +113,7 @@ fn a_nested_container_is_walked_to_the_bottom() {
     };
     let sources = Sources(HashMap::new());
     let handle = encode_handle(4, 1);
-    let mut nested: Option<Box<Vec<SlotValue<Leaf>>>> = Some(Box::new(vec![SlotValue::Coord(
-        NodeCoordinate::new(4, 1, 2, Span { start: 0, end: 1 }),
-        None,
-    )]));
+    let mut nested: Option<Box<Vec<SlotValue<Leaf>>>> = Some(Box::new(vec![SlotValue::Coord(NodeCoordinate::new(4, 1, 2, Span { start: 0, end: 1 }))]));
     assert_eq!(
         nested.prepare(&ctx(&options, &sources)),
         Err(CoordinateError::UnknownTree { handle, tree_id: 4 })
@@ -406,12 +403,12 @@ impl Prepare for Seatable {
 fn parsed(kind: u16, start: u32, end: u32) -> Option<SlotValue<Seatable>> {
     let mut coord = NodeCoordinate::new(7, 0, 1, Span { start, end });
     coord.kind = Some(KindId(kind));
-    Some(SlotValue::Coord(coord, None))
+    Some(SlotValue::Coord(coord))
 }
 
 fn coord_after_of(item: &Option<SlotValue<Seatable>>) -> Option<u16> {
     match item {
-        Some(SlotValue::Coord(c, _)) => c.edges.and_then(|e| e.after).map(|e| e.arm),
+        Some(SlotValue::Coord(c)) => c.edges.and_then(|e| e.after).map(|e| e.arm),
         _ => None,
     }
 }
@@ -449,7 +446,7 @@ fn a_coordinate_whose_gap_the_source_already_filled_keeps_it() {
     let mut first = NodeCoordinate::new(7, 0, 1, Span { start: 0, end: 6 });
     first.kind = Some(KindId(3));
     first.edges = Some(sittir_core::slot::CoordinateEdges { before: None, after: Some(SeamArm { arm: 9, strength: 3, dedent: false }) });
-    let mut items = [Some(SlotValue::Coord(first, None)), parsed(3, 8, 17)];
+    let mut items = [Some(SlotValue::Coord(first)), parsed(3, 8, 17)];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
     assert_eq!(coord_after_of(&items[0]), Some(9));
 }
@@ -482,7 +479,7 @@ fn a_seated_coordinate_keeps_its_seat_when_it_prepares_its_kind_edges() {
     let mut items = vec![parsed(3, 8, 17), parsed(3, 0, 6)];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
     items.prepare(&ctx(&opts, &sources)).unwrap();
-    let Some(SlotValue::Coord(first, _)) = &items[0] else { panic!() };
+    let Some(SlotValue::Coord(first)) = &items[0] else { panic!() };
     assert_eq!(first.edges.and_then(|e| e.before).map(|e| e.arm), Some(5));
     assert_eq!(coord_after_of(&items[0]), Some(70));
     assert_eq!(coord_after_of(&items[1]), Some(6));

@@ -85,9 +85,7 @@ impl<'s> ReadCtx<'s> {
     }
 
     /// The coordinate of a surveyed child: its tree and index, its span and its
-    /// stamped kind (`ReadCtx::stamped_kind`). Kept out of line, as
-    /// `coordinate` is, so the recursive read's frames do not hold its locals.
-    #[inline(never)]
+    /// stamped kind (`ReadCtx::stamped_kind`).
     pub fn coordinate_of(&self, child: &Child) -> NodeCoordinate {
         NodeCoordinate {
             kind: Some(self.stamped_kind(child.grammar, child.display)),
@@ -98,10 +96,7 @@ impl<'s> ReadCtx<'s> {
     /// The coordinate of the node at `index`. The root (index 0) spans the
     /// whole source: tree-sitter's root starts at the first token, and the
     /// root stands for the file, whose leading and trailing bytes its
-    /// coordinate render must keep. Kept out of line: inlined, its locals
-    /// widen every frame of the recursive read, which the nesting stack
-    /// ceilings (`typed_read_nesting.rs`) pin.
-    #[inline(never)]
+    /// coordinate render must keep.
     pub fn coordinate(&self, node: &Node<'_>, index: u32) -> NodeCoordinate {
         let range = node.byte_range();
         let span = if index == 0 {
@@ -295,7 +290,7 @@ pub struct Entry {
 impl Entry {
     pub fn into_trivia<T>(self) -> TriviaEntry<T> {
         TriviaEntry {
-            value: SlotValue::Coord(self.coord, None),
+            value: SlotValue::Coord(self.coord),
             same_line: self.same_line,
             tokens_between: self.tokens_between,
         }
@@ -435,7 +430,7 @@ pub fn read_value<T: ReadTransport, const A: bool>(
     match depth.below() {
         Some(below) => Ok(SlotValue::Transport(T::read(cursor, ctx, below, sides)?)),
         None if cursor.node().named_child_count() == 0 => Ok(SlotValue::Transport(T::read(cursor, ctx, Depth::ONE, sides)?)),
-        None => Ok(SlotValue::Coord(ctx.coordinate(&cursor.node(), index_of(cursor)), None)),
+        None => Ok(SlotValue::Coord(ctx.coordinate(&cursor.node(), index_of(cursor)))),
     }
 }
 

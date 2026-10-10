@@ -42,7 +42,7 @@ pub enum AnyTransport {
     #[kind(kind::IMPORT_ATTRIBUTE)]
     ImportAttribute(ImportAttributeTransport),
     #[kind(kind::EXPRESSION_STATEMENT)]
-    ExpressionStatement(Box<ExpressionStatementTransport>),
+    ExpressionStatement(ExpressionStatementTransport),
     #[kind(kind::VARIABLE_DECLARATION)]
     VariableDeclaration(VariableDeclarationTransport),
     #[kind(kind::LEXICAL_DECLARATION)]
@@ -74,9 +74,9 @@ pub enum AnyTransport {
     #[kind(kind::DEBUGGER_STATEMENT)]
     DebuggerStatement(DebuggerStatementTransport),
     #[kind(kind::RETURN_STATEMENT)]
-    ReturnStatement(Box<ReturnStatementTransport>),
+    ReturnStatement(ReturnStatementTransport),
     #[kind(kind::THROW_STATEMENT)]
-    ThrowStatement(Box<ThrowStatementTransport>),
+    ThrowStatement(ThrowStatementTransport),
     #[kind(kind::LABELED_STATEMENT)]
     LabeledStatement(LabeledStatementTransport),
     #[kind(kind::SWITCH_BODY)]
@@ -98,7 +98,7 @@ pub enum AnyTransport {
     #[kind(kind::ASSIGNMENT_PATTERN)]
     AssignmentPattern(Box<AssignmentPatternTransport>),
     #[kind(kind::OBJECT_ASSIGNMENT_PATTERN)]
-    ObjectAssignmentPattern(Box<ObjectAssignmentPatternTransport>),
+    ObjectAssignmentPattern(ObjectAssignmentPatternTransport),
     #[kind(kind::ARRAY)]
     Array(ArrayTransport),
     #[kind(kind::ARRAY_PATTERN)]
@@ -120,7 +120,7 @@ pub enum AnyTransport {
     #[kind(kind::GENERATOR_FUNCTION_DECLARATION)]
     GeneratorFunctionDeclaration(Box<GeneratorFunctionDeclarationTransport>),
     #[kind(kind::ARROW_FUNCTION)]
-    ArrowFunction(ArrowFunctionTransport),
+    ArrowFunction(Box<ArrowFunctionTransport>),
     #[kind(kind::NEW_EXPRESSION)]
     NewExpression(NewExpressionTransport),
     #[kind(kind::AWAIT_EXPRESSION)]
@@ -214,7 +214,7 @@ pub enum AnyTransport {
     #[kind(kind::EXTENDS_CLAUSE)]
     ExtendsClause(ExtendsClauseTransport),
     #[kind(kind::_EXTENDS_CLAUSE_SINGLE)]
-    ExtendsClauseSingle(Box<ExtendsClauseSingleTransport>),
+    ExtendsClauseSingle(ExtendsClauseSingleTransport),
     #[kind(kind::IMPLEMENTS_CLAUSE)]
     ImplementsClause(ImplementsClauseTransport),
     #[kind(kind::AMBIENT_DECLARATION)]
@@ -248,13 +248,13 @@ pub enum AnyTransport {
     #[kind(kind::OPTIONAL_PARAMETER)]
     OptionalParameter(Box<OptionalParameterTransport>),
     #[kind(kind::OMITTING_TYPE_ANNOTATION)]
-    OmittingTypeAnnotation(OmittingTypeAnnotationTransport),
+    OmittingTypeAnnotation(Box<OmittingTypeAnnotationTransport>),
     #[kind(kind::ADDING_TYPE_ANNOTATION)]
-    AddingTypeAnnotation(AddingTypeAnnotationTransport),
+    AddingTypeAnnotation(Box<AddingTypeAnnotationTransport>),
     #[kind(kind::OPTING_TYPE_ANNOTATION)]
-    OptingTypeAnnotation(OptingTypeAnnotationTransport),
+    OptingTypeAnnotation(Box<OptingTypeAnnotationTransport>),
     #[kind(kind::TYPE_ANNOTATION)]
-    TypeAnnotation(TypeAnnotationTransport),
+    TypeAnnotation(Box<TypeAnnotationTransport>),
     #[kind(kind::_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION)]
     TypeQueryMemberExpressionInTypeAnnotation(TypeQueryMemberExpressionInTypeAnnotationTransport),
     #[kind(kind::_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION)]
@@ -268,13 +268,13 @@ pub enum AnyTransport {
     #[kind(kind::OPTIONAL_TUPLE_PARAMETER)]
     OptionalTupleParameter(Box<OptionalTupleParameterTransport>),
     #[kind(kind::OPTIONAL_TYPE)]
-    OptionalType(OptionalTypeTransport),
+    OptionalType(Box<OptionalTypeTransport>),
     #[kind(kind::REST_TYPE)]
-    RestType(RestTypeTransport),
+    RestType(Box<RestTypeTransport>),
     #[kind(kind::CONSTRUCTOR_TYPE)]
     ConstructorType(ConstructorTypeTransport),
     #[kind(kind::TEMPLATE_TYPE)]
-    TemplateType(TemplateTypeTransport),
+    TemplateType(Box<TemplateTypeTransport>),
     #[kind(kind::TEMPLATE_LITERAL_TYPE)]
     TemplateLiteralType(TemplateLiteralTypeTransport),
     #[kind(kind::INFER_TYPE)]
@@ -294,7 +294,7 @@ pub enum AnyTransport {
     #[kind(kind::_TYPE_QUERY_CALL_EXPRESSION)]
     TypeQueryCallExpression(TypeQueryCallExpressionTransport),
     #[kind(kind::_TYPE_QUERY_INSTANTIATION_EXPRESSION)]
-    TypeQueryInstantiationExpression(Box<TypeQueryInstantiationExpressionTransport>),
+    TypeQueryInstantiationExpression(TypeQueryInstantiationExpressionTransport),
     #[kind(kind::TYPE_QUERY)]
     TypeQuery(TypeQueryTransport),
     #[kind(kind::INDEX_TYPE_QUERY)]
@@ -316,7 +316,7 @@ pub enum AnyTransport {
     #[kind(kind::OBJECT_TYPE)]
     ObjectType(ObjectTypeTransport),
     #[kind(kind::CALL_SIGNATURE)]
-    CallSignature(Box<CallSignatureTransport>),
+    CallSignature(CallSignatureTransport),
     #[kind(kind::PROPERTY_SIGNATURE)]
     PropertySignature(Box<PropertySignatureTransport>),
     #[kind(kind::TYPE_PARAMETERS)]
@@ -324,7 +324,7 @@ pub enum AnyTransport {
     #[kind(kind::TYPE_PARAMETER)]
     TypeParameter(Box<TypeParameterTransport>),
     #[kind(kind::DEFAULT_TYPE)]
-    DefaultType(DefaultTypeTransport),
+    DefaultType(Box<DefaultTypeTransport>),
     #[kind(kind::CONSTRAINT)]
     Constraint(Box<ConstraintTransport>),
     #[kind(kind::CONSTRUCT_SIGNATURE)]
@@ -372,7 +372,7 @@ pub enum AnyTransport {
     #[kind(kind::EXPORT_STATEMENT_TYPE_EXPORT)]
     ExportStatementTypeExport(ExportStatementTypeExportTransport),
     #[kind(kind::EXPORT_STATEMENT_EQUALS_EXPORT)]
-    ExportStatementEqualsExport(Box<ExportStatementEqualsExportTransport>),
+    ExportStatementEqualsExport(ExportStatementEqualsExportTransport),
     #[kind(kind::COMMENT_LINE)]
     CommentLine(CommentLineTransport),
     #[kind(kind::COMMENT_BLOCK)]
@@ -458,7 +458,7 @@ pub enum AnyTransport {
     #[kind(kind::EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW)]
     ExportStatementDefaultDeclarationDefaultKw(ExportStatementDefaultDeclarationDefaultKwTransport),
     #[kind(kind::EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE)]
-    ExportStatementDefaultDeclarationDefaultKwValue(Box<ExportStatementDefaultDeclarationDefaultKwValueTransport>),
+    ExportStatementDefaultDeclarationDefaultKwValue(ExportStatementDefaultDeclarationDefaultKwValueTransport),
     #[kind(kind::VARIABLE_DECLARATOR_PLAIN)]
     VariableDeclaratorPlain(Box<VariableDeclaratorPlainTransport>),
     #[kind(kind::VARIABLE_DECLARATOR_DEFINITE)]
@@ -2160,7 +2160,7 @@ pub enum ExportStatementTransport {
     #[kind(kind::EXPORT_STATEMENT_TYPE_EXPORT)]
     ExportStatementTypeExport(ExportStatementTypeExportTransport),
     #[kind(kind::EXPORT_STATEMENT_EQUALS_EXPORT)]
-    ExportStatementEqualsExport(Box<ExportStatementEqualsExportTransport>),
+    ExportStatementEqualsExport(ExportStatementEqualsExportTransport),
     #[kind(kind::EXPORT_STATEMENT_NAMESPACE_EXPORT)]
     ExportStatementNamespaceExport(ExportStatementNamespaceExportTransport),
 }
@@ -2409,7 +2409,7 @@ pub enum StatementTransport {
     #[kind(kind::DEBUGGER_STATEMENT)]
     DebuggerStatement(DebuggerStatementTransport),
     #[kind(kind::EXPRESSION_STATEMENT)]
-    ExpressionStatement(Box<ExpressionStatementTransport>),
+    ExpressionStatement(ExpressionStatementTransport),
     #[kind(kind::FUNCTION_DECLARATION, kind::GENERATOR_FUNCTION_DECLARATION, kind::CLASS_DECLARATION, kind::LEXICAL_DECLARATION, kind::VARIABLE_DECLARATION, kind::FUNCTION_SIGNATURE, kind::ABSTRACT_CLASS_DECLARATION, kind::MODULE, kind::INTERNAL_MODULE, kind::TYPE_ALIAS_DECLARATION, kind::ENUM_DECLARATION, kind::INTERFACE_DECLARATION, kind::IMPORT_ALIAS, kind::AMBIENT_DECLARATION, kind::DECLARATION)]
     Declaration(DeclarationTransport),
     #[kind(kind::STATEMENT_BLOCK)]
@@ -2435,9 +2435,9 @@ pub enum StatementTransport {
     #[kind(kind::CONTINUE_STATEMENT)]
     ContinueStatement(ContinueStatementTransport),
     #[kind(kind::RETURN_STATEMENT)]
-    ReturnStatement(Box<ReturnStatementTransport>),
+    ReturnStatement(ReturnStatementTransport),
     #[kind(kind::THROW_STATEMENT)]
-    ThrowStatement(Box<ThrowStatementTransport>),
+    ThrowStatement(ThrowStatementTransport),
     #[kind(kind::EMPTY_STATEMENT)]
     EmptyStatement,
     #[kind(kind::LABELED_STATEMENT)]
@@ -2911,7 +2911,7 @@ pub enum PrimaryExpressionTransport {
     #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(Box<FunctionExpressionTransport>),
     #[kind(kind::ARROW_FUNCTION)]
-    ArrowFunction(ArrowFunctionTransport),
+    ArrowFunction(Box<ArrowFunctionTransport>),
     #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(Box<GeneratorFunctionTransport>),
     #[kind(kind::CLASS)]
@@ -4431,7 +4431,7 @@ pub enum ExpressionStatementExpressionTransportSlot {
     #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(Box<FunctionExpressionTransport>),
     #[kind(kind::ARROW_FUNCTION)]
-    ArrowFunction(ArrowFunctionTransport),
+    ArrowFunction(Box<ArrowFunctionTransport>),
     #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(Box<GeneratorFunctionTransport>),
     #[kind(kind::CLASS)]
@@ -4891,7 +4891,7 @@ impl ::sittir_core::render::Render for ExpressionStatementExpressionTransportSlo
             ExpressionStatementExpressionTransportSlot::Object(inner) => inner.render(w),
             ExpressionStatementExpressionTransportSlot::Array(inner) => inner.render(w),
             ExpressionStatementExpressionTransportSlot::FunctionExpression(inner) => inner.as_ref().render(w),
-            ExpressionStatementExpressionTransportSlot::ArrowFunction(inner) => inner.render(w),
+            ExpressionStatementExpressionTransportSlot::ArrowFunction(inner) => inner.as_ref().render(w),
             ExpressionStatementExpressionTransportSlot::GeneratorFunction(inner) => inner.as_ref().render(w),
             ExpressionStatementExpressionTransportSlot::Class(inner) => inner.as_ref().render(w),
             ExpressionStatementExpressionTransportSlot::CallExpressionCall(inner) => inner.render(w),
@@ -5213,7 +5213,7 @@ pub enum ForStatementInitializerTransportSlot {
     #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(Box<FunctionExpressionTransport>),
     #[kind(kind::ARROW_FUNCTION)]
-    ArrowFunction(ArrowFunctionTransport),
+    ArrowFunction(Box<ArrowFunctionTransport>),
     #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(Box<GeneratorFunctionTransport>),
     #[kind(kind::CLASS)]
@@ -5689,7 +5689,7 @@ impl ::sittir_core::render::Render for ForStatementInitializerTransportSlot {
             ForStatementInitializerTransportSlot::Object(inner) => inner.render(w),
             ForStatementInitializerTransportSlot::Array(inner) => inner.render(w),
             ForStatementInitializerTransportSlot::FunctionExpression(inner) => inner.as_ref().render(w),
-            ForStatementInitializerTransportSlot::ArrowFunction(inner) => inner.render(w),
+            ForStatementInitializerTransportSlot::ArrowFunction(inner) => inner.as_ref().render(w),
             ForStatementInitializerTransportSlot::GeneratorFunction(inner) => inner.as_ref().render(w),
             ForStatementInitializerTransportSlot::Class(inner) => inner.as_ref().render(w),
             ForStatementInitializerTransportSlot::CallExpressionCall(inner) => inner.render(w),
@@ -5809,7 +5809,7 @@ pub enum ForStatementConditionTransportSlot {
     #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(Box<FunctionExpressionTransport>),
     #[kind(kind::ARROW_FUNCTION)]
-    ArrowFunction(ArrowFunctionTransport),
+    ArrowFunction(Box<ArrowFunctionTransport>),
     #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(Box<GeneratorFunctionTransport>),
     #[kind(kind::CLASS)]
@@ -6275,7 +6275,7 @@ impl ::sittir_core::render::Render for ForStatementConditionTransportSlot {
             ForStatementConditionTransportSlot::Object(inner) => inner.render(w),
             ForStatementConditionTransportSlot::Array(inner) => inner.render(w),
             ForStatementConditionTransportSlot::FunctionExpression(inner) => inner.as_ref().render(w),
-            ForStatementConditionTransportSlot::ArrowFunction(inner) => inner.render(w),
+            ForStatementConditionTransportSlot::ArrowFunction(inner) => inner.as_ref().render(w),
             ForStatementConditionTransportSlot::GeneratorFunction(inner) => inner.as_ref().render(w),
             ForStatementConditionTransportSlot::Class(inner) => inner.as_ref().render(w),
             ForStatementConditionTransportSlot::CallExpressionCall(inner) => inner.render(w),
@@ -6891,7 +6891,7 @@ pub enum YieldExpressionExpressionTransportSlot {
     #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(Box<FunctionExpressionTransport>),
     #[kind(kind::ARROW_FUNCTION)]
-    ArrowFunction(ArrowFunctionTransport),
+    ArrowFunction(Box<ArrowFunctionTransport>),
     #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(Box<GeneratorFunctionTransport>),
     #[kind(kind::CLASS)]
@@ -7350,7 +7350,7 @@ impl ::sittir_core::render::Render for YieldExpressionExpressionTransportSlot {
             YieldExpressionExpressionTransportSlot::Object(inner) => inner.render(w),
             YieldExpressionExpressionTransportSlot::Array(inner) => inner.render(w),
             YieldExpressionExpressionTransportSlot::FunctionExpression(inner) => inner.as_ref().render(w),
-            YieldExpressionExpressionTransportSlot::ArrowFunction(inner) => inner.render(w),
+            YieldExpressionExpressionTransportSlot::ArrowFunction(inner) => inner.as_ref().render(w),
             YieldExpressionExpressionTransportSlot::GeneratorFunction(inner) => inner.as_ref().render(w),
             YieldExpressionExpressionTransportSlot::Class(inner) => inner.as_ref().render(w),
             YieldExpressionExpressionTransportSlot::CallExpressionCall(inner) => inner.render(w),
@@ -7626,7 +7626,7 @@ pub enum ObjectPatternPropertiesTransportSlot {
     #[kind(kind::REST_PATTERN)]
     RestPattern(RestPatternTransport),
     #[kind(kind::OBJECT_ASSIGNMENT_PATTERN)]
-    ObjectAssignmentPattern(Box<ObjectAssignmentPatternTransport>),
+    ObjectAssignmentPattern(ObjectAssignmentPatternTransport),
     #[kind(kind::_SHORTHAND_PROPERTY_IDENTIFIER_PATTERN, display)]
     ShorthandPropertyIdentifierPattern(ShorthandPropertyIdentifierPatternTransport),
     #[kind(kind::DECLARE_KEYWORD)]
@@ -7806,7 +7806,7 @@ impl ::sittir_core::render::Render for ObjectPatternPropertiesTransportSlot {
         match self {
             ObjectPatternPropertiesTransportSlot::PairPattern(inner) => inner.as_ref().render(w),
             ObjectPatternPropertiesTransportSlot::RestPattern(inner) => inner.render(w),
-            ObjectPatternPropertiesTransportSlot::ObjectAssignmentPattern(inner) => inner.as_ref().render(w),
+            ObjectPatternPropertiesTransportSlot::ObjectAssignmentPattern(inner) => inner.render(w),
             ObjectPatternPropertiesTransportSlot::ShorthandPropertyIdentifierPattern(inner) => inner.render(w),
             ObjectPatternPropertiesTransportSlot::DeclareKeyword => render_declare_keyword(w),
             ObjectPatternPropertiesTransportSlot::NamespaceKeyword => render_namespace_keyword(w),
@@ -8103,7 +8103,7 @@ pub enum ArrayElementsTransportSlot {
     #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(Box<FunctionExpressionTransport>),
     #[kind(kind::ARROW_FUNCTION)]
-    ArrowFunction(ArrowFunctionTransport),
+    ArrowFunction(Box<ArrowFunctionTransport>),
     #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(Box<GeneratorFunctionTransport>),
     #[kind(kind::CLASS)]
@@ -8563,7 +8563,7 @@ impl ::sittir_core::render::Render for ArrayElementsTransportSlot {
             ArrayElementsTransportSlot::Object(inner) => inner.render(w),
             ArrayElementsTransportSlot::Array(inner) => inner.render(w),
             ArrayElementsTransportSlot::FunctionExpression(inner) => inner.as_ref().render(w),
-            ArrayElementsTransportSlot::ArrowFunction(inner) => inner.render(w),
+            ArrayElementsTransportSlot::ArrowFunction(inner) => inner.as_ref().render(w),
             ArrayElementsTransportSlot::GeneratorFunction(inner) => inner.as_ref().render(w),
             ArrayElementsTransportSlot::Class(inner) => inner.as_ref().render(w),
             ArrayElementsTransportSlot::CallExpressionCall(inner) => inner.render(w),
@@ -8778,7 +8778,7 @@ impl ::sittir_core::render::Render for ClassHeritageContentTransportSlot {
 #[transport(choice)]
 pub enum FunctionExpressionReturnTypeTransportSlot {
     #[kind(kind::TYPE_ANNOTATION)]
-    TypeAnnotation(TypeAnnotationTransport),
+    TypeAnnotation(Box<TypeAnnotationTransport>),
     #[kind(kind::ASSERTS_ANNOTATION)]
     AssertsAnnotation(AssertsAnnotationTransport),
     #[kind(kind::TYPE_PREDICATE_ANNOTATION)]
@@ -8822,7 +8822,7 @@ impl ::sittir_core::view::KindOf for FunctionExpressionReturnTypeTransportSlot {
 impl ::sittir_core::render::Render for FunctionExpressionReturnTypeTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            FunctionExpressionReturnTypeTransportSlot::TypeAnnotation(inner) => inner.render(w),
+            FunctionExpressionReturnTypeTransportSlot::TypeAnnotation(inner) => inner.as_ref().render(w),
             FunctionExpressionReturnTypeTransportSlot::AssertsAnnotation(inner) => inner.render(w),
             FunctionExpressionReturnTypeTransportSlot::TypePredicateAnnotation(inner) => inner.render(w),
         }
@@ -8889,7 +8889,7 @@ pub enum ArrowFunctionBodyTransportSlot {
     #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(Box<FunctionExpressionTransport>),
     #[kind(kind::ARROW_FUNCTION)]
-    ArrowFunction(ArrowFunctionTransport),
+    ArrowFunction(Box<ArrowFunctionTransport>),
     #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(Box<GeneratorFunctionTransport>),
     #[kind(kind::CLASS)]
@@ -9349,7 +9349,7 @@ impl ::sittir_core::render::Render for ArrowFunctionBodyTransportSlot {
             ArrowFunctionBodyTransportSlot::Object(inner) => inner.render(w),
             ArrowFunctionBodyTransportSlot::Array(inner) => inner.render(w),
             ArrowFunctionBodyTransportSlot::FunctionExpression(inner) => inner.as_ref().render(w),
-            ArrowFunctionBodyTransportSlot::ArrowFunction(inner) => inner.render(w),
+            ArrowFunctionBodyTransportSlot::ArrowFunction(inner) => inner.as_ref().render(w),
             ArrowFunctionBodyTransportSlot::GeneratorFunction(inner) => inner.as_ref().render(w),
             ArrowFunctionBodyTransportSlot::Class(inner) => inner.as_ref().render(w),
             ArrowFunctionBodyTransportSlot::CallExpressionCall(inner) => inner.render(w),
@@ -9408,7 +9408,7 @@ pub enum ArrowFunctionContentTransportSlot {
     #[kind(kind::ARROW_FUNCTION_PARAMETER)]
     ArrowFunctionParameter(ArrowFunctionParameterTransport),
     #[kind(kind::CALL_SIGNATURE)]
-    CallSignature(Box<CallSignatureTransport>),
+    CallSignature(CallSignatureTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for ArrowFunctionContentTransportSlot {
@@ -9445,7 +9445,7 @@ impl ::sittir_core::render::Render for ArrowFunctionContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             ArrowFunctionContentTransportSlot::ArrowFunctionParameter(inner) => inner.render(w),
-            ArrowFunctionContentTransportSlot::CallSignature(inner) => inner.as_ref().render(w),
+            ArrowFunctionContentTransportSlot::CallSignature(inner) => inner.render(w),
         }
     }
 }
@@ -9510,7 +9510,7 @@ pub enum MemberExpressionObjectTransportSlot {
     #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(Box<FunctionExpressionTransport>),
     #[kind(kind::ARROW_FUNCTION)]
-    ArrowFunction(ArrowFunctionTransport),
+    ArrowFunction(Box<ArrowFunctionTransport>),
     #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(Box<GeneratorFunctionTransport>),
     #[kind(kind::CLASS)]
@@ -9970,7 +9970,7 @@ impl ::sittir_core::render::Render for MemberExpressionObjectTransportSlot {
             MemberExpressionObjectTransportSlot::Object(inner) => inner.render(w),
             MemberExpressionObjectTransportSlot::Array(inner) => inner.render(w),
             MemberExpressionObjectTransportSlot::FunctionExpression(inner) => inner.as_ref().render(w),
-            MemberExpressionObjectTransportSlot::ArrowFunction(inner) => inner.render(w),
+            MemberExpressionObjectTransportSlot::ArrowFunction(inner) => inner.as_ref().render(w),
             MemberExpressionObjectTransportSlot::GeneratorFunction(inner) => inner.as_ref().render(w),
             MemberExpressionObjectTransportSlot::Class(inner) => inner.as_ref().render(w),
             MemberExpressionObjectTransportSlot::CallExpressionCall(inner) => inner.render(w),
@@ -10179,7 +10179,7 @@ pub enum SubscriptExpressionObjectTransportSlot {
     #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(Box<FunctionExpressionTransport>),
     #[kind(kind::ARROW_FUNCTION)]
-    ArrowFunction(ArrowFunctionTransport),
+    ArrowFunction(Box<ArrowFunctionTransport>),
     #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(Box<GeneratorFunctionTransport>),
     #[kind(kind::CLASS)]
@@ -10633,7 +10633,7 @@ impl ::sittir_core::render::Render for SubscriptExpressionObjectTransportSlot {
             SubscriptExpressionObjectTransportSlot::Object(inner) => inner.render(w),
             SubscriptExpressionObjectTransportSlot::Array(inner) => inner.render(w),
             SubscriptExpressionObjectTransportSlot::FunctionExpression(inner) => inner.as_ref().render(w),
-            SubscriptExpressionObjectTransportSlot::ArrowFunction(inner) => inner.render(w),
+            SubscriptExpressionObjectTransportSlot::ArrowFunction(inner) => inner.as_ref().render(w),
             SubscriptExpressionObjectTransportSlot::GeneratorFunction(inner) => inner.as_ref().render(w),
             SubscriptExpressionObjectTransportSlot::Class(inner) => inner.as_ref().render(w),
             SubscriptExpressionObjectTransportSlot::CallExpressionCall(inner) => inner.render(w),
@@ -13265,7 +13265,7 @@ pub enum TemplateLiteralTypeElementsTransportSlot {
     #[kind(kind::_TEMPLATE_CHARS, kind::UNESCAPED_DOUBLE_STRING_FRAGMENT)]
     TemplateChars(TemplateCharsTransport),
     #[kind(kind::TEMPLATE_TYPE)]
-    TemplateType(TemplateTypeTransport),
+    TemplateType(Box<TemplateTypeTransport>),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -13308,7 +13308,7 @@ impl ::sittir_core::render::Render for TemplateLiteralTypeElementsTransportSlot 
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             TemplateLiteralTypeElementsTransportSlot::TemplateChars(inner) => inner.render(w),
-            TemplateLiteralTypeElementsTransportSlot::TemplateType(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            TemplateLiteralTypeElementsTransportSlot::TemplateType(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.as_ref().render(w) },
             TemplateLiteralTypeElementsTransportSlot::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
         }
     }
@@ -13766,7 +13766,7 @@ pub enum TypeQueryExpressionTransportSlot {
     #[kind(kind::_TYPE_QUERY_CALL_EXPRESSION)]
     TypeQueryCallExpression(TypeQueryCallExpressionTransport),
     #[kind(kind::_TYPE_QUERY_INSTANTIATION_EXPRESSION)]
-    TypeQueryInstantiationExpression(Box<TypeQueryInstantiationExpressionTransport>),
+    TypeQueryInstantiationExpression(TypeQueryInstantiationExpressionTransport),
     #[kind(kind::IDENTIFIER, kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::TYPE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::EXPORT_KEYWORD, kind::OBJECT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD)]
     Identifier(IdentifierTransport),
     #[kind(kind::THIS)]
@@ -13831,7 +13831,7 @@ impl ::sittir_core::render::Render for TypeQueryExpressionTransportSlot {
             TypeQueryExpressionTransportSlot::TypeQuerySubscriptExpression(inner) => inner.render(w),
             TypeQueryExpressionTransportSlot::TypeQueryMemberExpression(inner) => inner.render(w),
             TypeQueryExpressionTransportSlot::TypeQueryCallExpression(inner) => inner.render(w),
-            TypeQueryExpressionTransportSlot::TypeQueryInstantiationExpression(inner) => inner.as_ref().render(w),
+            TypeQueryExpressionTransportSlot::TypeQueryInstantiationExpression(inner) => inner.render(w),
             TypeQueryExpressionTransportSlot::Identifier(inner) => inner.render(w),
             TypeQueryExpressionTransportSlot::This => render_this(w),
             TypeQueryExpressionTransportSlot::Verbatim(inner) => inner.render(w),
@@ -14425,9 +14425,9 @@ pub enum TupleTypeMembersItemTransportSlot {
     #[kind(kind::OPTIONAL_TUPLE_PARAMETER)]
     OptionalTupleParameter(Box<OptionalTupleParameterTransport>),
     #[kind(kind::OPTIONAL_TYPE)]
-    OptionalType(OptionalTypeTransport),
+    OptionalType(Box<OptionalTypeTransport>),
     #[kind(kind::REST_TYPE)]
-    RestType(RestTypeTransport),
+    RestType(Box<RestTypeTransport>),
     #[kind(kind::PARENTHESIZED_TYPE)]
     ParenthesizedType(ParenthesizedTypeTransport),
     #[kind(kind::PREDEFINED_TYPE, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::UNIQUE, kind::VOID_KEYWORD, kind::UNKNOWN_KEYWORD, kind::NEVER_KEYWORD, kind::OBJECT_KEYWORD)]
@@ -14623,8 +14623,8 @@ impl ::sittir_core::render::Render for TupleTypeMembersItemTransportSlot {
         match self {
             TupleTypeMembersItemTransportSlot::TupleParameter(inner) => inner.as_ref().render(w),
             TupleTypeMembersItemTransportSlot::OptionalTupleParameter(inner) => inner.as_ref().render(w),
-            TupleTypeMembersItemTransportSlot::OptionalType(inner) => inner.render(w),
-            TupleTypeMembersItemTransportSlot::RestType(inner) => inner.render(w),
+            TupleTypeMembersItemTransportSlot::OptionalType(inner) => inner.as_ref().render(w),
+            TupleTypeMembersItemTransportSlot::RestType(inner) => inner.as_ref().render(w),
             TupleTypeMembersItemTransportSlot::ParenthesizedType(inner) => inner.render(w),
             TupleTypeMembersItemTransportSlot::PredefinedType(inner) => inner.render(w),
             TupleTypeMembersItemTransportSlot::TypeIdentifier(inner) => inner.render(w),
@@ -14820,13 +14820,13 @@ pub enum ObjectTypeContentItemTransportSlot {
     #[kind(kind::EXPORT_STATEMENT_TYPE_EXPORT)]
     ExportStatementTypeExport(ExportStatementTypeExportTransport),
     #[kind(kind::EXPORT_STATEMENT_EQUALS_EXPORT)]
-    ExportStatementEqualsExport(Box<ExportStatementEqualsExportTransport>),
+    ExportStatementEqualsExport(ExportStatementEqualsExportTransport),
     #[kind(kind::EXPORT_STATEMENT_NAMESPACE_EXPORT)]
     ExportStatementNamespaceExport(ExportStatementNamespaceExportTransport),
     #[kind(kind::PROPERTY_SIGNATURE)]
     PropertySignature(Box<PropertySignatureTransport>),
     #[kind(kind::CALL_SIGNATURE)]
-    CallSignature(Box<CallSignatureTransport>),
+    CallSignature(CallSignatureTransport),
     #[kind(kind::CONSTRUCT_SIGNATURE)]
     ConstructSignature(Box<ConstructSignatureTransport>),
     #[kind(kind::INDEX_SIGNATURE_COLON)]
@@ -14909,10 +14909,10 @@ impl ::sittir_core::render::Render for ObjectTypeContentItemTransportSlot {
             ObjectTypeContentItemTransportSlot::ExportStatementDefaultFrom(inner) => inner.render(w),
             ObjectTypeContentItemTransportSlot::ExportStatementDefaultDeclaration(inner) => inner.as_ref().render(w),
             ObjectTypeContentItemTransportSlot::ExportStatementTypeExport(inner) => inner.render(w),
-            ObjectTypeContentItemTransportSlot::ExportStatementEqualsExport(inner) => inner.as_ref().render(w),
+            ObjectTypeContentItemTransportSlot::ExportStatementEqualsExport(inner) => inner.render(w),
             ObjectTypeContentItemTransportSlot::ExportStatementNamespaceExport(inner) => inner.render(w),
             ObjectTypeContentItemTransportSlot::PropertySignature(inner) => inner.as_ref().render(w),
-            ObjectTypeContentItemTransportSlot::CallSignature(inner) => inner.as_ref().render(w),
+            ObjectTypeContentItemTransportSlot::CallSignature(inner) => inner.render(w),
             ObjectTypeContentItemTransportSlot::ConstructSignature(inner) => inner.as_ref().render(w),
             ObjectTypeContentItemTransportSlot::IndexSignatureColon(inner) => inner.as_ref().render(w),
             ObjectTypeContentItemTransportSlot::IndexSignatureMappedTypeClause(inner) => inner.as_ref().render(w),
@@ -15150,7 +15150,7 @@ pub enum BinaryExpressionInLeftTransportSlot {
     #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(Box<FunctionExpressionTransport>),
     #[kind(kind::ARROW_FUNCTION)]
-    ArrowFunction(ArrowFunctionTransport),
+    ArrowFunction(Box<ArrowFunctionTransport>),
     #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(Box<GeneratorFunctionTransport>),
     #[kind(kind::CLASS)]
@@ -15610,7 +15610,7 @@ impl ::sittir_core::render::Render for BinaryExpressionInLeftTransportSlot {
             BinaryExpressionInLeftTransportSlot::Object(inner) => inner.render(w),
             BinaryExpressionInLeftTransportSlot::Array(inner) => inner.render(w),
             BinaryExpressionInLeftTransportSlot::FunctionExpression(inner) => inner.as_ref().render(w),
-            BinaryExpressionInLeftTransportSlot::ArrowFunction(inner) => inner.render(w),
+            BinaryExpressionInLeftTransportSlot::ArrowFunction(inner) => inner.as_ref().render(w),
             BinaryExpressionInLeftTransportSlot::GeneratorFunction(inner) => inner.as_ref().render(w),
             BinaryExpressionInLeftTransportSlot::Class(inner) => inner.as_ref().render(w),
             BinaryExpressionInLeftTransportSlot::CallExpressionCall(inner) => inner.render(w),
@@ -16107,13 +16107,13 @@ impl ::sittir_core::render::Render for IndexSignatureColonNameTransportSlot {
 #[transport(choice)]
 pub enum IndexSignatureColonTypeTransportSlot {
     #[kind(kind::TYPE_ANNOTATION)]
-    TypeAnnotation(TypeAnnotationTransport),
+    TypeAnnotation(Box<TypeAnnotationTransport>),
     #[kind(kind::OMITTING_TYPE_ANNOTATION)]
-    OmittingTypeAnnotation(OmittingTypeAnnotationTransport),
+    OmittingTypeAnnotation(Box<OmittingTypeAnnotationTransport>),
     #[kind(kind::ADDING_TYPE_ANNOTATION)]
-    AddingTypeAnnotation(AddingTypeAnnotationTransport),
+    AddingTypeAnnotation(Box<AddingTypeAnnotationTransport>),
     #[kind(kind::OPTING_TYPE_ANNOTATION)]
-    OptingTypeAnnotation(OptingTypeAnnotationTransport),
+    OptingTypeAnnotation(Box<OptingTypeAnnotationTransport>),
 }
 
 impl ::sittir_core::prepare::Prepare for IndexSignatureColonTypeTransportSlot {
@@ -16157,10 +16157,10 @@ impl ::sittir_core::view::KindOf for IndexSignatureColonTypeTransportSlot {
 impl ::sittir_core::render::Render for IndexSignatureColonTypeTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            IndexSignatureColonTypeTransportSlot::TypeAnnotation(inner) => inner.render(w),
-            IndexSignatureColonTypeTransportSlot::OmittingTypeAnnotation(inner) => inner.render(w),
-            IndexSignatureColonTypeTransportSlot::AddingTypeAnnotation(inner) => inner.render(w),
-            IndexSignatureColonTypeTransportSlot::OptingTypeAnnotation(inner) => inner.render(w),
+            IndexSignatureColonTypeTransportSlot::TypeAnnotation(inner) => inner.as_ref().render(w),
+            IndexSignatureColonTypeTransportSlot::OmittingTypeAnnotation(inner) => inner.as_ref().render(w),
+            IndexSignatureColonTypeTransportSlot::AddingTypeAnnotation(inner) => inner.as_ref().render(w),
+            IndexSignatureColonTypeTransportSlot::OptingTypeAnnotation(inner) => inner.as_ref().render(w),
         }
     }
 }
@@ -16501,7 +16501,7 @@ pub enum CallExpressionTemplateCallFunctionTransportSlot {
     #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(Box<FunctionExpressionTransport>),
     #[kind(kind::ARROW_FUNCTION)]
-    ArrowFunction(ArrowFunctionTransport),
+    ArrowFunction(Box<ArrowFunctionTransport>),
     #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(Box<GeneratorFunctionTransport>),
     #[kind(kind::CLASS)]
@@ -16876,7 +16876,7 @@ impl ::sittir_core::render::Render for CallExpressionTemplateCallFunctionTranspo
             CallExpressionTemplateCallFunctionTransportSlot::Object(inner) => inner.render(w),
             CallExpressionTemplateCallFunctionTransportSlot::Array(inner) => inner.render(w),
             CallExpressionTemplateCallFunctionTransportSlot::FunctionExpression(inner) => inner.as_ref().render(w),
-            CallExpressionTemplateCallFunctionTransportSlot::ArrowFunction(inner) => inner.render(w),
+            CallExpressionTemplateCallFunctionTransportSlot::ArrowFunction(inner) => inner.as_ref().render(w),
             CallExpressionTemplateCallFunctionTransportSlot::GeneratorFunction(inner) => inner.as_ref().render(w),
             CallExpressionTemplateCallFunctionTransportSlot::Class(inner) => inner.as_ref().render(w),
             CallExpressionTemplateCallFunctionTransportSlot::CallExpressionCall(inner) => inner.render(w),
@@ -17450,7 +17450,7 @@ pub enum ExportStatementDefaultDeclarationDefaultKwContentTransportSlot {
     #[kind(kind::AMBIENT_DECLARATION)]
     AmbientDeclaration(AmbientDeclarationTransport),
     #[kind(kind::EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE)]
-    ExportStatementDefaultDeclarationDefaultKwValue(Box<ExportStatementDefaultDeclarationDefaultKwValueTransport>),
+    ExportStatementDefaultDeclarationDefaultKwValue(ExportStatementDefaultDeclarationDefaultKwValueTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationDefaultKwContentTransportSlot {
@@ -17552,7 +17552,7 @@ impl ::sittir_core::render::Render for ExportStatementDefaultDeclarationDefaultK
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::InterfaceDeclaration(inner) => inner.as_ref().render(w),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ImportAlias(inner) => inner.render(w),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::AmbientDeclaration(inner) => inner.render(w),
-            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ExportStatementDefaultDeclarationDefaultKwValue(inner) => inner.as_ref().render(w),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ExportStatementDefaultDeclarationDefaultKwValue(inner) => inner.render(w),
         }
     }
 }
@@ -40379,7 +40379,7 @@ fn render_export_statement(t: &ExportStatementTransport, w: &mut dyn ::sittir_co
     match t {
         ExportStatementTransport::ExportStatementDefault(inner) => inner.render(w),
         ExportStatementTransport::ExportStatementTypeExport(inner) => inner.render(w),
-        ExportStatementTransport::ExportStatementEqualsExport(inner) => inner.as_ref().render(w),
+        ExportStatementTransport::ExportStatementEqualsExport(inner) => inner.render(w),
         ExportStatementTransport::ExportStatementNamespaceExport(inner) => inner.render(w),
     }
 }
@@ -40415,7 +40415,7 @@ fn render_statement(t: &StatementTransport, w: &mut dyn ::sittir_core::render::R
         StatementTransport::ExportStatement(inner) => inner.render(w),
         StatementTransport::ImportStatement(inner) => inner.as_ref().render(w),
         StatementTransport::DebuggerStatement(inner) => inner.render(w),
-        StatementTransport::ExpressionStatement(inner) => inner.as_ref().render(w),
+        StatementTransport::ExpressionStatement(inner) => inner.render(w),
         StatementTransport::Declaration(inner) => inner.render(w),
         StatementTransport::StatementBlock(inner) => inner.render(w),
         StatementTransport::IfStatement(inner) => inner.render(w),
@@ -40428,8 +40428,8 @@ fn render_statement(t: &StatementTransport, w: &mut dyn ::sittir_core::render::R
         StatementTransport::WithStatement(inner) => inner.render(w),
         StatementTransport::BreakStatement(inner) => inner.render(w),
         StatementTransport::ContinueStatement(inner) => inner.render(w),
-        StatementTransport::ReturnStatement(inner) => inner.as_ref().render(w),
-        StatementTransport::ThrowStatement(inner) => inner.as_ref().render(w),
+        StatementTransport::ReturnStatement(inner) => inner.render(w),
+        StatementTransport::ThrowStatement(inner) => inner.render(w),
         StatementTransport::EmptyStatement => render_empty_statement(w),
         StatementTransport::LabeledStatement(inner) => inner.render(w),
     }
@@ -40519,7 +40519,7 @@ fn render_primary_expression(t: &PrimaryExpressionTransport, w: &mut dyn ::sitti
         PrimaryExpressionTransport::Object(inner) => inner.render(w),
         PrimaryExpressionTransport::Array(inner) => inner.render(w),
         PrimaryExpressionTransport::FunctionExpression(inner) => inner.as_ref().render(w),
-        PrimaryExpressionTransport::ArrowFunction(inner) => inner.render(w),
+        PrimaryExpressionTransport::ArrowFunction(inner) => inner.as_ref().render(w),
         PrimaryExpressionTransport::GeneratorFunction(inner) => inner.as_ref().render(w),
         PrimaryExpressionTransport::Class(inner) => inner.as_ref().render(w),
         PrimaryExpressionTransport::MetaProperty(inner) => inner.render(w),
@@ -41505,7 +41505,7 @@ pub fn render_transport_parts(
 const _: () = assert!(::core::mem::size_of::<AbstractClassDeclarationTransport>() > 256, "AbstractClassDeclarationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AbstractMethodSignatureTransport>() > 256, "AbstractMethodSignatureTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AccessibilityModifierEnum>() <= 256, "AccessibilityModifierEnum is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AddingTypeAnnotationTransport>() <= 256, "AddingTypeAnnotationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<AddingTypeAnnotationTransport>() > 256, "AddingTypeAnnotationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AmbientDeclarationGlobalTransport>() <= 256, "AmbientDeclarationGlobalTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AmbientDeclarationModuleTransport>() > 256, "AmbientDeclarationModuleTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AmbientDeclarationTransport>() <= 256, "AmbientDeclarationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -41514,7 +41514,7 @@ const _: () = assert!(::core::mem::size_of::<ArrayPatternTransport>() <= 256, "A
 const _: () = assert!(::core::mem::size_of::<ArrayTransport>() <= 256, "ArrayTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ArrayTypeTransport>() <= 256, "ArrayTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ArrowFunctionParameterTransport>() <= 256, "ArrowFunctionParameterTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ArrowFunctionTransport>() <= 256, "ArrowFunctionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ArrowFunctionTransport>() > 256, "ArrowFunctionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AsExpressionTransport>() > 256, "AsExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AssertsAnnotationTransport>() <= 256, "AssertsAnnotationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AssertsTransport>() <= 256, "AssertsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -41529,7 +41529,7 @@ const _: () = assert!(::core::mem::size_of::<CallExpressionCallTransport>() <= 2
 const _: () = assert!(::core::mem::size_of::<CallExpressionMemberTransport>() <= 256, "CallExpressionMemberTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<CallExpressionTemplateCallTransport>() <= 256, "CallExpressionTemplateCallTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<CallExpressionTransport>() <= 256, "CallExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CallSignatureTransport>() > 256, "CallSignatureTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CallSignatureTransport>() <= 256, "CallSignatureTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<CatchClauseGroupTransport>() > 256, "CatchClauseGroupTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<CatchClauseTransport>() > 256, "CatchClauseTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ClassBodyMemberDeclarationTransport>() <= 256, "ClassBodyMemberDeclarationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -41555,7 +41555,7 @@ const _: () = assert!(::core::mem::size_of::<DecoratorCallExpressionTransport>()
 const _: () = assert!(::core::mem::size_of::<DecoratorMemberExpressionTransport>() <= 256, "DecoratorMemberExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DecoratorParenthesizedExpressionTransport>() <= 256, "DecoratorParenthesizedExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DecoratorTransport>() <= 256, "DecoratorTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<DefaultTypeTransport>() <= 256, "DefaultTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<DefaultTypeTransport>() > 256, "DefaultTypeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DoStatementTransport>() <= 256, "DoStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ElseClauseTransport>() <= 256, "ElseClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<EnumAssignmentTransport>() > 256, "EnumAssignmentTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
@@ -41569,19 +41569,19 @@ const _: () = assert!(::core::mem::size_of::<ExportClauseTransport>() <= 256, "E
 const _: () = assert!(::core::mem::size_of::<ExportSpecifierTransport>() <= 256, "ExportSpecifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExportSpecifiersTransport>() <= 256, "ExportSpecifiersTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationDefaultKwTransport>() <= 256, "ExportStatementDefaultDeclarationDefaultKwTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationDefaultKwValueTransport>() > 256, "ExportStatementDefaultDeclarationDefaultKwValueTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationDefaultKwValueTransport>() <= 256, "ExportStatementDefaultDeclarationDefaultKwValueTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationTransport>() > 256, "ExportStatementDefaultDeclarationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultFromClauseFromTransport>() <= 256, "ExportStatementDefaultFromClauseFromTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultFromNsFromTransport>() <= 256, "ExportStatementDefaultFromNsFromTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultFromStarFromTransport>() <= 256, "ExportStatementDefaultFromStarFromTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultFromTransport>() <= 256, "ExportStatementDefaultFromTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultTransport>() <= 256, "ExportStatementDefaultTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ExportStatementEqualsExportTransport>() > 256, "ExportStatementEqualsExportTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ExportStatementEqualsExportTransport>() <= 256, "ExportStatementEqualsExportTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExportStatementNamespaceExportTransport>() <= 256, "ExportStatementNamespaceExportTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExportStatementTransport>() <= 256, "ExportStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExportStatementTypeExportTransport>() <= 256, "ExportStatementTypeExportTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ExpressionStatementTransport>() > 256, "ExpressionStatementTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ExtendsClauseSingleTransport>() > 256, "ExtendsClauseSingleTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ExpressionStatementTransport>() <= 256, "ExpressionStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ExtendsClauseSingleTransport>() <= 256, "ExtendsClauseSingleTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExtendsClauseTransport>() <= 256, "ExtendsClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExtendsTypeClauseTransport>() <= 256, "ExtendsTypeClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FinallyClauseTransport>() <= 256, "FinallyClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -41658,16 +41658,16 @@ const _: () = assert!(::core::mem::size_of::<NumberFloatScientificTransport>() <
 const _: () = assert!(::core::mem::size_of::<NumberHexTransport>() <= 256, "NumberHexTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<NumberOctalTransport>() <= 256, "NumberOctalTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<NumberTransport>() <= 256, "NumberTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ObjectAssignmentPatternTransport>() > 256, "ObjectAssignmentPatternTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ObjectAssignmentPatternTransport>() <= 256, "ObjectAssignmentPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ObjectPatternTransport>() <= 256, "ObjectPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ObjectTransport>() <= 256, "ObjectTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ObjectTypeContentTransport>() <= 256, "ObjectTypeContentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ObjectTypeTransport>() <= 256, "ObjectTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<OmittingTypeAnnotationTransport>() <= 256, "OmittingTypeAnnotationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<OptingTypeAnnotationTransport>() <= 256, "OptingTypeAnnotationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<OmittingTypeAnnotationTransport>() > 256, "OmittingTypeAnnotationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<OptingTypeAnnotationTransport>() > 256, "OptingTypeAnnotationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<OptionalParameterTransport>() > 256, "OptionalParameterTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<OptionalTupleParameterTransport>() > 256, "OptionalTupleParameterTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<OptionalTypeTransport>() <= 256, "OptionalTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<OptionalTypeTransport>() > 256, "OptionalTypeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<PairPatternTransport>() > 256, "PairPatternTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<PairTransport>() > 256, "PairTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ParenthesizedExpressionSequenceTransport>() <= 256, "ParenthesizedExpressionSequenceTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -41688,8 +41688,8 @@ const _: () = assert!(::core::mem::size_of::<RegexPatternTransport>() <= 256, "R
 const _: () = assert!(::core::mem::size_of::<RegexTransport>() <= 256, "RegexTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<RequiredParameterTransport>() > 256, "RequiredParameterTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<RestPatternTransport>() <= 256, "RestPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<RestTypeTransport>() <= 256, "RestTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ReturnStatementTransport>() > 256, "ReturnStatementTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<RestTypeTransport>() > 256, "RestTypeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ReturnStatementTransport>() <= 256, "ReturnStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<SatisfiesExpressionTransport>() > 256, "SatisfiesExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<SequenceExpressionTransport>() <= 256, "SequenceExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ShorthandPropertyIdentifierPatternTransport>() <= 256, "ShorthandPropertyIdentifierPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -41709,16 +41709,16 @@ const _: () = assert!(::core::mem::size_of::<TemplateCharsTransport>() <= 256, "
 const _: () = assert!(::core::mem::size_of::<TemplateLiteralTypeTransport>() <= 256, "TemplateLiteralTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TemplateStringTransport>() <= 256, "TemplateStringTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TemplateSubstitutionTransport>() <= 256, "TemplateSubstitutionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TemplateTypeTransport>() <= 256, "TemplateTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TemplateTypeTransport>() > 256, "TemplateTypeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TernaryExpressionTransport>() <= 256, "TernaryExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TernaryQmarkTransport>() <= 256, "TernaryQmarkTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ThrowStatementTransport>() > 256, "ThrowStatementTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ThrowStatementTransport>() <= 256, "ThrowStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TryStatementTransport>() > 256, "TryStatementTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TupleParameterTransport>() > 256, "TupleParameterTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TupleTypeMembersTransport>() <= 256, "TupleTypeMembersTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TupleTypeTransport>() <= 256, "TupleTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeAliasDeclarationTransport>() > 256, "TypeAliasDeclarationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TypeAnnotationTransport>() <= 256, "TypeAnnotationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TypeAnnotationTransport>() > 256, "TypeAnnotationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeArgumentsTransport>() <= 256, "TypeArgumentsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeAssertionTransport>() <= 256, "TypeAssertionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeIdentifierTransport>() <= 256, "TypeIdentifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -41729,7 +41729,7 @@ const _: () = assert!(::core::mem::size_of::<TypePredicateAnnotationTransport>()
 const _: () = assert!(::core::mem::size_of::<TypePredicateTransport>() <= 256, "TypePredicateTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeQueryCallExpressionInTypeAnnotationTransport>() <= 256, "TypeQueryCallExpressionInTypeAnnotationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeQueryCallExpressionTransport>() <= 256, "TypeQueryCallExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TypeQueryInstantiationExpressionTransport>() > 256, "TypeQueryInstantiationExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TypeQueryInstantiationExpressionTransport>() <= 256, "TypeQueryInstantiationExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeQueryMemberExpressionInTypeAnnotationTransport>() <= 256, "TypeQueryMemberExpressionInTypeAnnotationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeQueryMemberExpressionTransport>() <= 256, "TypeQueryMemberExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeQuerySubscriptExpressionTransport>() <= 256, "TypeQuerySubscriptExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");

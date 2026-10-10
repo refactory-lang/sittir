@@ -317,8 +317,8 @@ mod tests {
         let sources = Sources(std::sync::Arc::from("CONTENT"));
         let trivia = TransportTrivia { leading: entries(&["// top"], false), trailing: entries(&["// bottom"], false), inner: None };
         let framed: SlotValue<MockTrivia> = SlotValue::Coord(
-            crate::slot::NodeCoordinate::new(1, 0, 1, crate::types::Span { start: 0, end: 7 }),
-            Some(Box::new(crate::trivia::OutsideTrivia(Box::new(trivia)))),
+            crate::slot::NodeCoordinate::new(1, 0, 1, crate::types::Span { start: 0, end: 7 })
+                .with_outside_trivia(Some(crate::trivia::OutsideTrivia(Box::new(trivia)))),
         );
         let mut out = String::new();
         let mut w = crate::spacing::SpacingWriter::new(&mut out, crate::spacing::WordMatcher::default_ident()).with_sources(&sources);
