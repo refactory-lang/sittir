@@ -76,6 +76,8 @@ The planner. It works in four parts.
 
 **Kinds.** Every base kind and every kind a feature declares, keyed by path. These are issues:
 - a path declared twice;
+- a qualified name two declarations give different paths (the later declaration is left out);
+- a kind a feature declares in a namespace no base file declares, since only the base adds a namespace and its key in the context;
 - a parent that is not a kind;
 - a parent that is not a level above the kind (a prefix of its path);
 - a base kind under a kind a feature adds.
@@ -163,7 +165,7 @@ Nests entries into namespace blocks by qualified name. Children are sorted in co
 
 ### `packages/tools/src/vocabulary/index.ts::generate`
 
-Plans the vocabulary and renders both generated files, formatted the way codegen formats its output (`formatSource`), so the check compares them byte for byte.
+Plans the vocabulary. When the plan has no issues, it renders both generated files, formatted the way codegen formats its output (`formatSource`), so the check compares them byte for byte. When the plan has issues, it renders nothing, so a broken tree is reported rather than thrown by the writer.
 
 ### `packages/tools/src/vocabulary/index.ts::drift`
 

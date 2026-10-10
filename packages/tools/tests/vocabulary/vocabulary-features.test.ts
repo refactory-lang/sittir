@@ -85,6 +85,15 @@ const ACCESSORS = feature('methods/accessors', 'export interface Accessors exten
 
 const CLEAN = { 'declaration.ts': DECLARATION, ...ASYNC_AWAIT, ...METHODS, ...ACCESSORS };
 
+const MACROS = feature('macros', 'export interface Macros {\n\treadonly macros: true;\n}', {
+	'macro.ts': `export namespace Macro {
+	export interface Rule<G extends GrammarContext<G>> {
+		readonly $kind: 'macro.rule';
+	}
+}
+`
+});
+
 const issues = (files: Readonly<Record<string, string>>): readonly string[] => plan(readVocabularySource(vocabulary(files))).issues;
 
 describe('the vocabulary', () => {
@@ -185,6 +194,33 @@ describe('plan', () => {
 	it('reports a feature whose folder sits in another feature’s folder without extending it', () => {
 		const getters = feature('methods/getters', 'export interface Getters {\n\treadonly getters: true;\n}', {});
 		expect(issues({ ...CLEAN, ...getters })).toEqual(['Getters sits in features/methods but does not extend Methods']);
+	});
+
+	it('reports a qualified name two declarations give different paths', () => {
+		const lambdas = feature('lambdas', 'export interface Lambdas {\n\treadonly lambdas: true;\n}', {
+			'declaration.ts': `export namespace Declaration {
+	export interface Function<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
+		readonly $kind: 'declaration.lambda';
+	}
+}
+`
+		});
+		expect(issues({ ...CLEAN, ...lambdas })).toEqual([
+			'Declaration.Function: the base gives it the path declaration.function, and Lambdas gives it declaration.lambda'
+		]);
+	});
+
+	it('reports a kind in a namespace no base file declares', () => {
+		expect(issues({ ...CLEAN, ...MACROS })).toEqual(['macro.rule: Macros declares it in Macro, a namespace no base file declares']);
+	});
+});
+
+describe('generate', () => {
+	it('renders nothing for a plan with issues, so the issues are reported rather than thrown', async () => {
+		const dir = vocabulary({ ...CLEAN, ...MACROS });
+		const { plan: p, files } = await generate(dir);
+		expect([p.issues.length, files.size]).toEqual([1, 0]);
+		expect(await vocabularyFeatureIssues(dir)).toEqual(p.issues);
 	});
 });
 

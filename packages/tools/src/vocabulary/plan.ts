@@ -54,7 +54,12 @@ export function plan(source: VocabularySource): Plan {
 		...source.kinds.map((d) => ({ d, feature: undefined })),
 		...[...features.values()].flatMap((feature) => feature.stubs.filter(isKind).map((d) => ({ d, feature })))
 	];
-	const pathOf = new Map(declaredKinds.map(({ d }) => [d.qname, d.path]));
+	const pathOf = new Map<string, { readonly path: string; readonly feature: Feature | undefined }>();
+	for (const { d, feature } of declaredKinds) {
+		const prior = pathOf.get(d.qname);
+		if (prior === undefined) pathOf.set(d.qname, { path: d.path, feature });
+		else if (prior.path !== d.path) issues.push(`${d.qname}: ${owner(prior.feature)} gives it the path ${prior.path}, and ${owner(feature)} gives it ${d.path}`);
+	}
 	const kinds = new Map<string, Kind>();
 	const byQname = new Map<string, Kind>();
 	const declarations = new Map<string, Map<string, Declaration[]>>();
@@ -64,12 +69,17 @@ export function plan(source: VocabularySource): Plan {
 		declarations.set(path, byName);
 	};
 	for (const { d, feature } of declaredKinds) {
+		if (pathOf.get(d.qname)?.path !== d.path) continue;
 		const prior = kinds.get(d.path);
 		if (prior !== undefined) {
 			issues.push(`${d.path}: declared by ${owner(prior.feature)} and ${owner(feature)}`);
 			continue;
 		}
-		const parent = d.parent === undefined ? undefined : pathOf.get(d.parent);
+		if (!source.modules.has(topSegment(d.qname))) {
+			issues.push(`${d.path}: ${owner(feature)} declares it in ${topSegment(d.qname)}, a namespace no base file declares`);
+			continue;
+		}
+		const parent = d.parent === undefined ? undefined : pathOf.get(d.parent)?.path;
 		if (d.parent !== undefined && parent === undefined) issues.push(`${d.path} extends ${d.parent}, which is not a kind`);
 		if (parent !== undefined && (parent === d.path || !under(d.path, parent))) issues.push(`${d.path} extends ${parent}, which is not a level above it`);
 		const kind: Kind = { qname: d.qname, path: d.path, parent, feature };

@@ -20,6 +20,7 @@ export async function generate(dir: string = VOCABULARY_DIR): Promise<Generated>
 	const source = readVocabularySource(dir);
 	const p = plan(source);
 	const files = new Map<string, string>();
+	if (p.issues.length > 0) return { plan: p, files };
 	files.set(AUGMENTATION, await formatSource(join(dir, AUGMENTATION), augmentation(source, p)));
 	files.set(FEATURES_INDEX, await formatSource(join(dir, FEATURES_INDEX), featuresIndex(p)));
 	return { plan: p, files };
