@@ -3,7 +3,7 @@
 import { bindings, field, rename, split } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "5da11925915fdb51080b2238d73764a66a2f0579c178f28e44b2a435795afbe0",
+	hash: "ee5affb336822746e9653886b05ff171b2791914b6d59773f51015a4bcc7172b",
 	patches: {
 		attribute_item: { "2": field("content") },
 		field_expression: { "0": field("object"), "2": field("property") },

@@ -1,5 +1,5 @@
 import type { GrammarContext } from './context.ts';
-import type { SubKindOf } from './utils.ts';
+import type { Flag, SubKindOf } from './utils.ts';
 import type * as V from './index.ts';
 export interface Type<G extends GrammarContext<G>> {
 	// claimed by p
@@ -75,7 +75,7 @@ export namespace Type {
 		export interface Constructor<G extends GrammarContext<G>> extends SubKindOf<V.Type.Function<G>> {
 			// claimed by t
 			readonly $kind: 'type.function.constructor';
-			readonly abstract?: boolean;
+			readonly abstract?: Flag;
 			readonly parameters: V.Declaration.Parameter.Any<G>[];
 			readonly type: G['slots']['type.function.constructor']['type'];
 			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
@@ -232,7 +232,7 @@ export namespace Type {
 		// claimed by r
 		readonly $kind: 'type.reference';
 		readonly lifetime?: V.Identifier.Lifetime<G>;
-		readonly mutable?: boolean;
+		readonly mutable?: Flag;
 		readonly type: G['slots']['type.reference']['type'];
 	}
 	export interface Rest<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {

@@ -8,7 +8,7 @@
  * declares one, narrows the map and instantiates them.
  */
 
-import type { Declaration, Expression, GrammarContext, Identifier, Statement } from '../src/vocabulary/index.ts';
+import type { Clause, Declaration, Expression, GrammarContext, Identifier, Statement } from '../src/vocabulary/index.ts';
 
 // An ordinary function needs a name and parameters, nothing accessor-shaped.
 export function fn<G extends GrammarContext<G>>(name: G['identifier']): Declaration.Function<G> {
@@ -73,8 +73,22 @@ export function notEqual<G extends GrammarContext<G>>(left: G['identifier'], rig
 }
 
 // A trait is an interface with more: a refinement carries its own kind and the members its parent lacks.
-export function trait<G extends GrammarContext<G>>(name: Declaration.Interface.Trait<G>['name']): Declaration.Interface.Trait<G> {
-	return { $kind: 'declaration.interface.trait', name, body: [], unsafe: true };
+export function trait<G extends GrammarContext<G>>(
+	name: Declaration.Interface.Trait<G>['name'],
+	whereClause: Clause.Where<G>
+): Declaration.Interface.Trait<G> {
+	return { $kind: 'declaration.interface.trait', name, body: [], whereClause };
+}
+// A flag is no member: a structure states its flags in `$flags`.
+export function unsafeTrait<G extends GrammarContext<G>>(
+	name: Declaration.Interface.Trait<G>['name'],
+	whereClause: Clause.Where<G>
+): Declaration.Interface.Trait<G> {
+	return {
+		...trait<G>(name, whereClause),
+		// @ts-expect-error a flag is no member
+		unsafe: true
+	};
 }
 
 // The kind-set is the type for "any declaration": shared members read directly, the rest after narrowing on `$kind`.

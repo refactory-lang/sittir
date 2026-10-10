@@ -1,5 +1,5 @@
 import type { GrammarContext } from './context.ts';
-import type { SubKindOf } from './utils.ts';
+import type { Flag, SubKindOf } from './utils.ts';
 import type * as V from './index.ts';
 export interface Statement<G extends GrammarContext<G>> {
 	readonly $kind: 'statement';
@@ -165,9 +165,9 @@ export namespace Statement {
 			readonly $kind: 'statement.loop.for';
 			readonly alternative?: V.Clause.Else<G>;
 			// p only
-			readonly async?: boolean;
+			readonly async?: Flag;
 			// p only
-			readonly await?: boolean;
+			readonly await?: Flag;
 			// t only
 			readonly body: G['slots']['statement.loop.for']['body'];
 			readonly forHeader?: G['slots']['statement.loop.for']['forHeader'];
@@ -264,7 +264,7 @@ export namespace Statement {
 	export interface With<G extends GrammarContext<G>> extends SubKindOf<V.Statement<G>> {
 		// claimed by p
 		readonly $kind: 'statement.with';
-		readonly async?: boolean;
+		readonly async?: Flag;
 		readonly body: G['slots']['statement.with']['body'];
 		readonly withClause: V.Clause.With<G>;
 	}

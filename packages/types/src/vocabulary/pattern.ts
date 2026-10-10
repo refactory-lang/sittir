@@ -1,5 +1,5 @@
 import type { GrammarContext } from './context.ts';
-import type { SubKindOf } from './utils.ts';
+import type { Flag, SubKindOf } from './utils.ts';
 import type * as V from './index.ts';
 export interface Pattern<G extends GrammarContext<G>> {
 	readonly $kind: 'pattern';
@@ -136,7 +136,7 @@ export namespace Pattern {
 		export interface Pair<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Object<G>> {
 			// claimed by t
 			readonly $kind: 'pattern.object.pair';
-			readonly computed?: boolean;
+			readonly computed?: Flag;
 			readonly key: G['slots']['pattern.object.pair']['key'];
 			readonly value?: G['slots']['pattern.object.pair']['value'];
 		}
@@ -162,7 +162,7 @@ export namespace Pattern {
 		export interface Value<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Reference<G>> {
 			// claimed by r
 			readonly $kind: 'pattern.reference.value';
-			readonly mutable?: boolean;
+			readonly mutable?: Flag;
 			readonly pattern: G['slots']['pattern.reference.value']['pattern'];
 		}
 		export type Any<G extends GrammarContext<G>> = V.Pattern.Reference<G> | V.Pattern.Reference.Value<G>;

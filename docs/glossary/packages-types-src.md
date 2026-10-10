@@ -337,3 +337,7 @@ A strict builder with no coercer beside it, as one pair (a refine form); `bundle
 ### `packages/types/src/index.ts::UndefinedIfOptional`
 
 `undefined` for a key the node declares optional, `never` for a required one. `ConfigOf` appends it to the three keyword-presence arms (boolean keyword, bitflag, kind enum), so an explicit `undefined` is accepted exactly where the key itself may be omitted. The optional key keeps it spelled out because the types are published, and a consumer compiling with `exactOptionalPropertyTypes` must still be able to pass `{ key: undefined }` for an optional slot.
+
+### `packages/types/src/vocabulary/utils.ts::Flag`
+
+The marker a vocabulary interface declares a yes/no fact with: `readonly static?: Flag`. A flag is a bit in the node's one bitflag, tested by `is` and set by a builder step or a structure's `$flags`, never a member, so no value satisfies the marker and a structure can only leave it out. A `boolean` member is data, as a python complex pattern's `sign` is. The generator reads the marker to emit the flag's bit in the `Flags` enum and its guard and step.

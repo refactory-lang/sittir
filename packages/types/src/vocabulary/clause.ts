@@ -1,5 +1,5 @@
 import type { GrammarContext } from './context.ts';
-import type { SubKindOf } from './utils.ts';
+import type { Flag, SubKindOf } from './utils.ts';
 import type * as V from './index.ts';
 export interface Clause<G extends GrammarContext<G>> {
 	readonly $kind: 'clause';
@@ -71,7 +71,7 @@ export namespace Clause {
 		export interface For<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Comprehension<G>> {
 			// claimed by p
 			readonly $kind: 'clause.comprehension.for';
-			readonly async?: boolean;
+			readonly async?: Flag;
 			readonly comma?: boolean;
 			readonly left: G['slots']['clause.comprehension.for']['left'];
 			readonly rights: G['slots']['clause.comprehension.for']['rights'][];
@@ -112,7 +112,7 @@ export namespace Clause {
 		// claimed by p
 		readonly $kind: 'clause.except';
 		readonly exception?: G['slots']['clause.except']['exception'] | G['slots']['clause.except']['exception'][];
-		readonly group?: boolean;
+		readonly group?: Flag;
 		readonly suite: G['slots']['clause.except']['suite'];
 	}
 	export interface Export<G extends GrammarContext<G>> extends SubKindOf<V.Clause<G>> {
