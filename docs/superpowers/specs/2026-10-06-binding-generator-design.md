@@ -106,7 +106,7 @@ The input is runtime data (a structure can arrive as JSON), so the build side ca
 - **High→low:** a parsed portable node is re-wrapped as its low-level node from the same row; a built one is rebuilt through the build entries.
 - **A node of the engine's own surface:** a node bound to this engine is returned as is; one bound to another engine of the same surface is re-wrapped from its row when parsed, or rebuilt when built, exactly as a crossing is. No identity is promised either way.
 
-`is.<role path>` is compiled from the read entries under the path, a grammar kind set plus slot constraints (`operator === '+='`), into the query facet's plan form: one derivation, no separate kind table.
+`is.<role path>(x)` checks `$type` against the path's kind set and, where the kinds do not decide the path, reads `$subType`. It evaluates no pattern when it is called. The read entries under the path, a grammar kind set plus slot constraints (`operator === '+='`) and placements, compile into the query facet's plan form, one derivation and no separate kind table, which the read evaluates once to stamp `$subType`.
 
 ## 3. One route resolution, shared with the inventory
 
