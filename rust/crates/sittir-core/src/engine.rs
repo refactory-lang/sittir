@@ -247,7 +247,7 @@ pub fn line_gaps(
     }
     let push = |side: &mut Vec<LineGap>, start: usize, end: usize| {
         let Some(run) = source.get(start..end) else { return };
-        if run.contains('\n') && run.chars().all(char::is_whitespace) {
+        if crate::line_endings::logical_breaks(run) > 0 && run.chars().all(char::is_whitespace) {
             if let Some(kind) = classify(run) {
                 side.push(LineGap { kind, start });
             }
