@@ -528,7 +528,7 @@ export enum LayoutKind {
 // Node types — concrete interfaces
 export interface Program {
 	readonly $type: TSKindId.Program;
-	readonly _definitions?: readonly Definition[];
+	readonly _definitions: readonly Definition[];
 	readonly __slotHints__?: {
 		readonly definitions: SlotHint<T.Definition[], false, true>;
 	};
@@ -607,7 +607,7 @@ export interface Comment {
 export interface List {
 	readonly $type: TSKindId.List;
 	readonly _definitions: NonEmptyArray<Definition>;
-	readonly _elements?: readonly ListElement[];
+	readonly _elements: readonly ListElement[];
 	readonly __slotHints__?: {
 		readonly definitions: SlotHint<NonEmptyArray<T.Definition>, false, true>;
 		readonly elements: SlotHint<T.ListElement[], true, true>;
@@ -619,7 +619,7 @@ export interface List {
 export interface Grouping {
 	readonly $type: TSKindId.Grouping;
 	readonly _grouping_group: NonEmptyArray<GroupingGroup>;
-	readonly _elements?: readonly ListElement[];
+	readonly _elements: readonly ListElement[];
 	readonly __slotHints__?: {
 		readonly groupingGroups: SlotHint<NonEmptyArray<T.GroupingGroup>, false, true, T.GroupingGroup.Config>;
 		readonly elements: SlotHint<T.ListElement[], true, true>;
@@ -631,7 +631,7 @@ export interface Grouping {
 export interface MissingNode {
 	readonly $type: TSKindId.MissingNode;
 	readonly _name?: Identifier | String;
-	readonly _elements?: readonly ListElement[];
+	readonly _elements: readonly ListElement[];
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.Identifier | T.String, true>;
 		readonly elements: SlotHint<T.ListElement[], true, true>;
@@ -643,7 +643,7 @@ export interface MissingNode {
 export interface AnonymousNode {
 	readonly $type: TSKindId.AnonymousNode;
 	readonly _name: String | TSKindId.Underscore;
-	readonly _elements?: readonly ListElement[];
+	readonly _elements: readonly ListElement[];
 	readonly __inputHints__?: {
 		readonly name: KindEnum<'_', TSKindId.Underscore> | String;
 	};
@@ -759,7 +759,7 @@ export interface NamedNodePlain {
 	readonly $type: TSKindId.NamedNodePlain;
 	readonly _name: Identifier | TSKindId.Underscore;
 	readonly _named_node_group?: NamedNodeGroup;
-	readonly _elements?: readonly ListElement[];
+	readonly _elements: readonly ListElement[];
 	readonly __inputHints__?: {
 		readonly name: KindEnum<'_', TSKindId.Underscore> | Identifier;
 	};
@@ -778,7 +778,7 @@ export interface NamedNodeSupertyped {
 	readonly _supertype: Identifier;
 	readonly _name: ImmediateIdentifier | ImmediateString;
 	readonly _named_node_group?: NamedNodeGroup;
-	readonly _elements?: readonly ListElement[];
+	readonly _elements: readonly ListElement[];
 	readonly __slotHints__?: {
 		readonly supertype: SlotHint<T.Identifier>;
 		readonly name: SlotHint<T.ImmediateIdentifier | T.ImmediateString>;
@@ -813,7 +813,7 @@ export interface NamedNodeGroupChildren {
 export interface NamedNodeGroupAnchoredLast {
 	readonly $type: TSKindId.NamedNodeGroupAnchoredLast;
 	readonly _anchor?: boolean;
-	readonly _named_node_expressions?: readonly (Definition | NegatedField | NamedNodeExpressionArm)[];
+	readonly _named_node_expressions: readonly (Definition | NegatedField | NamedNodeExpressionArm)[];
 	readonly _last: Definition | NegatedField | NamedNodeExpressionArm;
 	readonly __inputHints__?: {
 		readonly anchor?: BaseBooleanKeyword<'.'>;

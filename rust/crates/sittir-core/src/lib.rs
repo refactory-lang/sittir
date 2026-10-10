@@ -21,6 +21,8 @@ pub mod napi_engine;
 pub mod options;
 pub mod prepare;
 pub mod query;
+pub mod non_empty;
+pub use non_empty::NonEmptyVec;
 pub mod read;
 pub mod render;
 pub mod slot;
@@ -36,6 +38,18 @@ pub mod view;
 pub use types::KindId;
 // The derive that expands a transport declaration into its typed reader.
 pub use sittir_transport_macros::Transport;
+
+/// States a grammar's trivia type once, for every transport of the grammar:
+/// each listed type's `HasTrivia::Trivia`, the trivia a coordinate of it
+/// carries outside its span.
+#[macro_export]
+macro_rules! grammar_trivia {
+    ($trivia:ty; $($transport:ty),* $(,)?) => {
+        $(impl $crate::trivia::HasTrivia for $transport {
+            type Trivia = $trivia;
+        })*
+    };
+}
 
 #[cfg(feature = "napi-bindings")]
 #[doc(hidden)]

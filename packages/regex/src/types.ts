@@ -685,7 +685,7 @@ export interface CharacterClass {
 	readonly $type: TSKindId.CharacterClass;
 	readonly _negation?: boolean;
 	readonly _leading?: boolean;
-	readonly _class_atoms?: readonly (
+	readonly _class_atoms: readonly (
 		| ClassCharacter
 		| TSKindId.BslashDash
 		| CharacterClassEscape

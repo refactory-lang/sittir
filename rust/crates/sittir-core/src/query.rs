@@ -15,11 +15,14 @@ pub struct DescendantBatch {
     pub origin: u64,
 }
 
-/// A node a walk found, as it crosses: `{ $treeHandle, $span, $type }`.
+/// A node a walk found, as it crosses: `{ $treeHandle, $end, $span, $type }`, its
+/// `$type` stamped as every coordinate's is (`ReadCtx::stamped_kind`).
 #[derive(serde::Serialize, Debug, Clone, Copy, PartialEq, Eq)]
 pub struct QueryCoordinate {
     #[serde(rename = "$treeHandle")]
     pub handle: u64,
+    #[serde(rename = "$end")]
+    pub end: u32,
     #[serde(rename = "$span")]
     pub span: Span,
     #[serde(rename = "$type")]
@@ -28,7 +31,7 @@ pub struct QueryCoordinate {
 
 impl From<NodeCoordinate> for QueryCoordinate {
     fn from(coord: NodeCoordinate) -> Self {
-        QueryCoordinate { handle: coord.handle(), span: coord.span, kind: coord.kind.map_or(0, |kind| kind.0) }
+        QueryCoordinate { handle: coord.handle(), end: coord.end, span: coord.span, kind: coord.kind.map_or(0, |kind| kind.0) }
     }
 }
 

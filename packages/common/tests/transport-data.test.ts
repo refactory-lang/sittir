@@ -1,19 +1,21 @@
 import { describe, expect, it } from 'vitest';
 import { markEdited, detachCoordinates, holdReadTree, holdTree, sourceGapOf, STORED_TRIVIA, toTransportData, treeHandleOf, type TriviaView } from '../src/transport-data.ts';
 import { readTrivia } from '../src/utils.ts';
-import { mintTreeToken, treeTokenOf } from '../src/tree-token.ts';
+import { mintTreeToken, registerTree, treeTokenOf } from '../src/tree-token.ts';
 
 // A coordinate crosses only while it holds its tree, so a copy of each
 // hand-written node below is given one, the way a read gives it to what it
-// returns.
+// returns, and the token names a live tree, as a parse registers it.
 const project = (node: never): ReturnType<typeof toTransportData> => {
 	const held = structuredClone(node);
-	holdTree(held, mintTreeToken(1));
+	const token = mintTreeToken(1);
+	registerTree(token, { id: 1 });
+	holdTree(held, token);
 	return toTransportData(held, STORED_TRIVIA);
 };
 
 /** The coordinate a read gives the node at `start..end`; its handle is its start, a stand-in for its descendant index. */
-const at = ($type: number, start: number, end: number) => ({ $treeHandle: start, $span: { start, end }, $type });
+const at = ($type: number, start: number, end: number) => ({ $treeHandle: start, $end: end, $span: { start, end }, $type });
 const leaf = (text: string, start: number) => ({ $type: 1, $text: text, $_layout: { at: at(1, start, start + text.length) } });
 /** A child past the read's depth: its coordinate alone. */
 const coordinate = (start: number, end: number) => at(2, start, end);
@@ -32,9 +34,9 @@ describe('toTransportData', () => {
 		expect(project(node as never)).toEqual(at(3, 0, 20));
 	});
 
-	it('keeps a node whose child was replaced, and strips its coordinate', () => {
+	it('crosses a node rebuilt around a replaced child as its slots, with no coordinate', () => {
 		const rebuilt = built({ _x: { $type: 1, $text: 'y' } });
-		const node = { $type: 3, $_layout: { at: at(3, 0, 20) }, _name: leaf('main', 3), _body: rebuilt };
+		const node = markEdited({ $type: 3, $_layout: { at: at(3, 0, 20) }, _name: leaf('main', 3), _body: rebuilt });
 		const out = project(node as never) as unknown as Record<string, unknown>;
 		expect(treeHandleOf(out)).toBeUndefined();
 		expect(out.$_layout).toBeUndefined();
@@ -52,11 +54,12 @@ describe('toTransportData', () => {
 		expect(out._body).toEqual(at(4, 8, 20));
 	});
 
-	it('does not fold a node whose own trivia sits outside its span, but folds over a child that carries some', () => {
+	it('folds a node whose own trivia sits outside its span, carrying that trivia, and folds over a child that carries some', () => {
 		const withOwnTrivia = { $type: 3, $_layout: { at: at(3, 5, 9), trivia: { leading: [leaf('// c', 0)] } }, _a: coordinate(5, 9) };
 		const own = project(withOwnTrivia as never) as unknown as Record<string, unknown>;
-		expect(treeHandleOf(own)).toBeUndefined();
-		expect((own.$_layout as { trivia?: unknown } | undefined)?.trivia).toBeDefined();
+		expect(treeHandleOf(own)).toBe(5);
+		expect(own._a).toBeUndefined();
+		expect((own.$_layout as { trivia?: { leading?: unknown[] } } | undefined)?.trivia?.leading).toHaveLength(1);
 
 		// A child's comments lie inside the parent's span: the parent's bytes
 		// carry them, so a deep read of a commented file still folds like a
@@ -66,21 +69,21 @@ describe('toTransportData', () => {
 		expect(project(withChildTrivia as never)).toEqual(at(3, 0, 8));
 	});
 
-	it('never lets a structural node cross with $text or a stale coordinate', () => {
-		const node = { $type: 3, $text: 'stale', $_layout: { at: at(3, 0, 5) }, _a: built() };
+	it('never lets a rebuilt structural node cross with $text or a stale coordinate', () => {
+		const node = markEdited({ $type: 3, $text: 'stale', $_layout: { at: at(3, 0, 5) }, _a: built() });
 		const out = project(node as never) as unknown as Record<string, unknown>;
 		expect(out.$text).toBeUndefined();
 		expect(treeHandleOf(out)).toBeUndefined();
 		expect(out.$_layout).toBeUndefined();
 	});
 
-	it('sends a leaf that kept its trivia as itself, never as a coordinate', () => {
+	it('folds a leaf that kept its trivia to its coordinate, carrying the trivia', () => {
 		const two = leaf('2', 12);
 		const withTrivia = { ...two, $_layout: { ...two.$_layout, trivia: { trailing: [leaf('# two', 14)] } } };
 		const out = project(withTrivia as never) as unknown as Record<string, unknown>;
-		expect(treeHandleOf(out)).toBeUndefined();
-		expect(out.$text).toBe('2');
-		expect((out.$_layout as { trivia?: unknown } | undefined)?.trivia).toBeDefined();
+		expect(treeHandleOf(out)).toBe(12);
+		expect(out.$text).toBeUndefined();
+		expect((out.$_layout as { trivia?: { trailing?: unknown[] } } | undefined)?.trivia?.trailing).toHaveLength(1);
 	});
 
 	it('leaves a kind id or a boolean in a slot inert', () => {
@@ -119,6 +122,7 @@ describe('detachCoordinates', () => {
 
 describe('the tree token a parsed object holds', () => {
 	const token = mintTreeToken(4);
+	registerTree(token, { id: 4 });
 	const held = <T extends object>(node: T): T => {
 		holdTree(node, token);
 		return node;
@@ -175,13 +179,15 @@ describe('the tree token a parsed object holds', () => {
 		}
 	});
 
-	it('is required of a coordinate: one that holds no tree is refused, as a node, as a child and as a trivia entry', () => {
+	it('is required of a bare coordinate: one that holds no tree is refused, as a child and as a trivia entry', () => {
 		const refusal = /does not hold that tree.*parse the source here/;
-		const read = { $type: 5, $_layout: { at: at(5, 1, 2) } };
-		expect(() => toTransportData(read as never, STORED_TRIVIA)).toThrow(refusal);
 		expect(() => toTransportData({ $type: 1, _child: at(5, 1, 2) } as never, STORED_TRIVIA)).toThrow(refusal);
 		expect(() => toTransportData({ $type: 1, _a: 1, $_layout: { trivia: { inner: { gap: [at(7, 0, 1)] } } } } as never, STORED_TRIVIA)).toThrow(refusal);
-		expect(() => toTransportData(structuredClone(held({ ...read })) as never, STORED_TRIVIA)).toThrow(refusal);
+	});
+
+	it('never folds a read node that lost its tree: it crosses as its own data, never naming a tree', () => {
+		const read = { $type: 5, $text: 'x', $_layout: { at: at(5, 1, 2) } };
+		expect(toTransportData(structuredClone(held({ ...read })) as never, STORED_TRIVIA)).toEqual({ $type: 5, $text: 'x' });
 	});
 
 	it('is not required of built data, which names no tree', () => {

@@ -26,7 +26,12 @@ function queryContext(querySlots: QuerySlots) {
 		}
 	});
 	holdTreeOn(node, token);
-	const hooks: QueryHooks = { querySlots, kindName: (kind) => `kind_${kind}`, wrap: (data) => data };
+	const hooks: QueryHooks = {
+		querySlots,
+		membership: { isMember: (kind, type) => kind === type, membersOf: (kind) => [kind] },
+		kindName: (kind) => `kind_${kind}`,
+		wrap: (data) => data
+	};
 	const facet = queryFacet(node, hooks) as { readonly $descendants: QueryTestView };
 	return { view: facet.$descendants, walks };
 }

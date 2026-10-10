@@ -178,12 +178,31 @@ impl<X: EdgeItems> EdgeItems for Option<X> {
     }
 }
 
+/// The first edge item of a list: its first item that has one.
+fn first_edge_item<X: EdgeItems>(items: &[X]) -> Option<Option<&crate::NodeCoordinate>> {
+    items.iter().find_map(X::first_item)
+}
+
+/// The last edge item of a list: its last item that has one.
+fn last_edge_item<X: EdgeItems>(items: &[X]) -> Option<Option<&crate::NodeCoordinate>> {
+    items.iter().rev().find_map(X::last_item)
+}
+
 impl<X: EdgeItems> EdgeItems for Vec<X> {
     fn first_item(&self) -> Option<Option<&crate::NodeCoordinate>> {
-        self.iter().find_map(X::first_item)
+        first_edge_item(self)
     }
     fn last_item(&self) -> Option<Option<&crate::NodeCoordinate>> {
-        self.iter().rev().find_map(X::last_item)
+        last_edge_item(self)
+    }
+}
+
+impl<X: EdgeItems> EdgeItems for crate::NonEmptyVec<X> {
+    fn first_item(&self) -> Option<Option<&crate::NodeCoordinate>> {
+        first_edge_item(self)
+    }
+    fn last_item(&self) -> Option<Option<&crate::NodeCoordinate>> {
+        last_edge_item(self)
     }
 }
 
@@ -372,6 +391,9 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
     fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
         match self {
             SlotValue::Coord(coord) => {
+                if let Some(trivia) = coord.writes.as_mut().and_then(|writes| writes.trivia.as_mut()) {
+                    trivia.0.prepare(ctx)?;
+                }
                 coord.resolve(ctx.sources)?;
                 let seated = coord.edges;
                 coord.edges = coord.kind_in(ctx.sources).and_then(|kind| ctx.options.edge_arms(kind));
@@ -393,14 +415,25 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
     fn source_gap(&self) -> Option<&SourceGap> {
         match self {
             SlotValue::Transport(t) => t.source_gap(),
-            SlotValue::Coord(coord) => coord.gap.as_ref(),
+            SlotValue::Coord(coord) => coord.gap(),
         }
     }
 }
 
+/// Prepare every item of a list.
+fn prepare_items<T: Prepare>(items: &mut [T], ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
+    items.iter_mut().try_for_each(|item| item.prepare(ctx))
+}
+
 impl<T: Prepare> Prepare for Vec<T> {
     fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
-        self.iter_mut().try_for_each(|item| item.prepare(ctx))
+        prepare_items(self, ctx)
+    }
+}
+
+impl<T: Prepare> Prepare for crate::NonEmptyVec<T> {
+    fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
+        prepare_items(self, ctx)
     }
 }
 
@@ -481,7 +514,7 @@ mod tests {
     };
 
     fn coordinate(start: u32, end: u32) -> NodeCoordinate {
-        NodeCoordinate::new(3, 0, Span { start, end })
+        NodeCoordinate::new(3, 0, 1, Span { start, end })
     }
 
     fn before_flank(first: &NodeCoordinate, source: &str) -> Option<u16> {
@@ -516,7 +549,7 @@ mod tests {
         let end = source.len() as u32;
         let first = coordinate(0, 1);
         let second = NodeCoordinate {
-            gap: second_gap,
+            writes: second_gap.map(|gap| Box::new(crate::slot::CoordinateWrites { gap: Some(gap), trivia: None })),
             ..coordinate(end - 1, end)
         };
         let mut items: Vec<SlotValue<String>> = vec![SlotValue::Coord(first), SlotValue::Coord(second)];

@@ -3,7 +3,7 @@
 import { describe, expect, it } from 'vitest';
 import { getActiveBackend } from '../src/backend.js';
 
-type Coordinate = { $treeHandle: number; $span: { start: number; end: number }; $type: number };
+type Coordinate = { $treeHandle: number; $end: number; $span: { start: number; end: number }; $type: number };
 type Read = { $_layout?: { at?: Coordinate }; _statements?: Coordinate[] };
 
 function engine() {
@@ -24,7 +24,7 @@ describe('a node read through the native read', () => {
 		// The root is index 0, so a handle's distance from the root's handle is its node's index.
 		const read = native.read(treeId, coord.$treeHandle - rootAt.$treeHandle, 1) as Read;
 		const span = { start: source.indexOf('fn'), end: source.indexOf('}') + 1 };
-		expect(read.$_layout?.at).toEqual({ $treeHandle: coord.$treeHandle, $span: span, $type: coord.$type });
+		expect(read.$_layout?.at).toEqual({ $treeHandle: coord.$treeHandle, $end: coord.$end, $span: span, $type: coord.$type });
 	});
 
 	it('refuses an index past the last node of the tree', () => {

@@ -1204,7 +1204,7 @@ pub struct ProgramTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_definitions")]
     #[slot(field = field::DEFINITIONS)]
-    pub definitions: Option<Vec<::sittir_core::SlotValue<DefinitionTransport>>>,
+    pub definitions: Vec<::sittir_core::SlotValue<DefinitionTransport>>,
     #[wire(key = "_definitions_separator_space")]
     pub definitions_separator_space: Option<u16>,
 }
@@ -1237,9 +1237,9 @@ impl ::sittir_core::prepare::Prepare for ProgramTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.definitions.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_PROGRAM_DEFINITIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.definitions.iter_mut().map(Some), "", options::allowed(options::SITE_PROGRAM_DEFINITIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.definitions_separator_space.get_or_insert(ctx.options.spacing[options::SITE_PROGRAM_DEFINITIONS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.definitions.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_PROGRAM_DEFINITIONS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.definitions.iter_mut().map(Some), options::SEATS_PROGRAM_DEFINITIONS, ctx);
         self.definitions.prepare(ctx)?;
         Ok(())
     }
@@ -1552,7 +1552,7 @@ pub struct StringContentTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot]
-    pub content: Vec<::sittir_core::SlotValue<StringContentContentTransportSlot, true>>,
+    pub content: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<StringContentContentTransportSlot, true>>,
 }
 
 impl ::sittir_core::view::KindOf for StringContentTransport {
@@ -1594,7 +1594,7 @@ pub struct ParametersTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
-    pub elements: Vec<::sittir_core::SlotValue<ParametersElementsTransportSlot>>,
+    pub elements: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ParametersElementsTransportSlot>>,
     #[wire(key = "_elements_separator_space")]
     pub elements_separator_space: Option<u16>,
 }
@@ -1686,10 +1686,10 @@ pub struct ListTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_definitions")]
     #[slot(field = field::DEFINITIONS)]
-    pub definitions: Vec<::sittir_core::SlotValue<DefinitionTransport>>,
+    pub definitions: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<DefinitionTransport>>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
-    pub elements: Option<Vec<::sittir_core::SlotValue<ListElementTransport>>>,
+    pub elements: Vec<::sittir_core::SlotValue<ListElementTransport>>,
     #[wire(key = "_definitions_separator_space")]
     pub definitions_separator_space: Option<u16>,
     #[wire(key = "_elements_separator_space")]
@@ -1721,11 +1721,11 @@ impl ::sittir_core::prepare::Prepare for ListTransport {
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         ::sittir_core::prepare::fill_list_gaps(self.definitions.iter_mut().map(Some), "", options::allowed(options::SITE_LIST_DEFINITIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
-        if let Some(gap_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_LIST_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.elements.iter_mut().map(Some), "", options::allowed(options::SITE_LIST_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.definitions_separator_space.get_or_insert(ctx.options.spacing[options::SITE_LIST_DEFINITIONS_SEPARATOR_SPACE].arm);
         self.elements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_LIST_ELEMENTS_SEPARATOR_SPACE].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.definitions.iter_mut().map(Some), options::SEATS_LIST_DEFINITIONS, ctx);
-        if let Some(seated_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_LIST_ELEMENTS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.elements.iter_mut().map(Some), options::SEATS_LIST_ELEMENTS, ctx);
         self.definitions.prepare(ctx)?;
         self.elements.prepare(ctx)?;
         Ok(())
@@ -1745,10 +1745,10 @@ pub struct GroupingTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_grouping_group")]
     #[slot]
-    pub grouping_group: Vec<::sittir_core::SlotValue<GroupingGroupTransport>>,
+    pub grouping_group: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<GroupingGroupTransport>>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
-    pub elements: Option<Vec<::sittir_core::SlotValue<ListElementTransport>>>,
+    pub elements: Vec<::sittir_core::SlotValue<ListElementTransport>>,
     #[wire(key = "_elements_separator_space")]
     pub elements_separator_space: Option<u16>,
     #[wire(key = "_grouping_group_separator_space")]
@@ -1779,11 +1779,11 @@ impl ::sittir_core::prepare::Prepare for GroupingTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_GROUPING_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.elements.iter_mut().map(Some), "", options::allowed(options::SITE_GROUPING_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         ::sittir_core::prepare::fill_list_gaps(self.grouping_group.iter_mut().map(Some), "", options::allowed(options::SITE_GROUPING_GROUPING_GROUP_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.elements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_GROUPING_ELEMENTS_SEPARATOR_SPACE].arm);
         self.grouping_group_separator_space.get_or_insert(ctx.options.spacing[options::SITE_GROUPING_GROUPING_GROUP_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_GROUPING_ELEMENTS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.elements.iter_mut().map(Some), options::SEATS_GROUPING_ELEMENTS, ctx);
         ::sittir_core::prepare::fill_seated_gaps(self.grouping_group.iter_mut().map(Some), options::SEATS_GROUPING_GROUPING_GROUP, ctx);
         self.grouping_group.prepare(ctx)?;
         self.elements.prepare(ctx)?;
@@ -1807,7 +1807,7 @@ pub struct MissingNodeTransport {
     pub name: Option<::sittir_core::SlotValue<MissingNodeNameTransportSlot>>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
-    pub elements: Option<Vec<::sittir_core::SlotValue<ListElementTransport>>>,
+    pub elements: Vec<::sittir_core::SlotValue<ListElementTransport>>,
     #[wire(key = "_elements_separator_space")]
     pub elements_separator_space: Option<u16>,
 }
@@ -1836,9 +1836,9 @@ impl ::sittir_core::prepare::Prepare for MissingNodeTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_MISSING_NODE_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.elements.iter_mut().map(Some), "", options::allowed(options::SITE_MISSING_NODE_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.elements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_MISSING_NODE_ELEMENTS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_MISSING_NODE_ELEMENTS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.elements.iter_mut().map(Some), options::SEATS_MISSING_NODE_ELEMENTS, ctx);
         self.name.prepare(ctx)?;
         self.elements.prepare(ctx)?;
         Ok(())
@@ -1861,7 +1861,7 @@ pub struct AnonymousNodeTransport {
     pub name: ::sittir_core::SlotValue<AnonymousNodeNameTransportSlot>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
-    pub elements: Option<Vec<::sittir_core::SlotValue<ListElementTransport>>>,
+    pub elements: Vec<::sittir_core::SlotValue<ListElementTransport>>,
     #[wire(key = "_elements_separator_space")]
     pub elements_separator_space: Option<u16>,
 }
@@ -1890,9 +1890,9 @@ impl ::sittir_core::prepare::Prepare for AnonymousNodeTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_ANONYMOUS_NODE_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.elements.iter_mut().map(Some), "", options::allowed(options::SITE_ANONYMOUS_NODE_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.elements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_ANONYMOUS_NODE_ELEMENTS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_ANONYMOUS_NODE_ELEMENTS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.elements.iter_mut().map(Some), options::SEATS_ANONYMOUS_NODE_ELEMENTS, ctx);
         self.name.prepare(ctx)?;
         self.elements.prepare(ctx)?;
         Ok(())
@@ -2356,7 +2356,7 @@ pub struct NamedNodePlainTransport {
     pub named_node_group: Option<::sittir_core::SlotValue<Box<NamedNodeGroupTransport>>>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
-    pub elements: Option<Vec<::sittir_core::SlotValue<ListElementTransport>>>,
+    pub elements: Vec<::sittir_core::SlotValue<ListElementTransport>>,
     #[wire(key = "_elements_separator_space")]
     pub elements_separator_space: Option<u16>,
 }
@@ -2385,9 +2385,9 @@ impl ::sittir_core::prepare::Prepare for NamedNodePlainTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_NAMED_NODE_PLAIN_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.elements.iter_mut().map(Some), "", options::allowed(options::SITE_NAMED_NODE_PLAIN_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.elements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_NAMED_NODE_PLAIN_ELEMENTS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_NAMED_NODE_PLAIN_ELEMENTS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.elements.iter_mut().map(Some), options::SEATS_NAMED_NODE_PLAIN_ELEMENTS, ctx);
         self.name.prepare(ctx)?;
         self.named_node_group.prepare(ctx)?;
         self.elements.prepare(ctx)?;
@@ -2417,7 +2417,7 @@ pub struct NamedNodeSupertypedTransport {
     pub named_node_group: Option<::sittir_core::SlotValue<Box<NamedNodeGroupTransport>>>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
-    pub elements: Option<Vec<::sittir_core::SlotValue<ListElementTransport>>>,
+    pub elements: Vec<::sittir_core::SlotValue<ListElementTransport>>,
     #[wire(key = "_elements_separator_space")]
     pub elements_separator_space: Option<u16>,
 }
@@ -2446,9 +2446,9 @@ impl ::sittir_core::prepare::Prepare for NamedNodeSupertypedTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.elements.iter_mut().map(Some), "", options::allowed(options::SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.elements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_NAMED_NODE_SUPERTYPED_ELEMENTS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.elements.iter_mut().map(Some), options::SEATS_NAMED_NODE_SUPERTYPED_ELEMENTS, ctx);
         self.supertype.prepare(ctx)?;
         self.name.prepare(ctx)?;
         self.named_node_group.prepare(ctx)?;
@@ -2473,7 +2473,7 @@ pub struct NamedNodeGroupChildrenTransport {
     pub anchor: Option<bool>,
     #[wire(key = "_named_node_expressions")]
     #[slot(field = field::NAMED_NODE_EXPRESSIONS)]
-    pub named_node_expressions: Vec<::sittir_core::SlotValue<NamedNodeExpressionArmLeftTransportSlot>>,
+    pub named_node_expressions: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<NamedNodeExpressionArmLeftTransportSlot>>,
     #[wire(key = "_named_node_expressions_separator_space")]
     pub named_node_expressions_separator_space: Option<u16>,
 }
@@ -2527,7 +2527,7 @@ pub struct NamedNodeGroupAnchoredLastTransport {
     pub anchor: Option<bool>,
     #[wire(key = "_named_node_expressions")]
     #[slot(field = field::NAMED_NODE_EXPRESSIONS)]
-    pub named_node_expressions: Option<Vec<::sittir_core::SlotValue<NamedNodeExpressionArmLeftTransportSlot>>>,
+    pub named_node_expressions: Vec<::sittir_core::SlotValue<NamedNodeExpressionArmLeftTransportSlot>>,
     #[wire(key = "_last")]
     #[slot(field = field::LAST)]
     pub last: ::sittir_core::SlotValue<Box<NamedNodeExpressionArmLeftTransportSlot>>,
@@ -2559,9 +2559,9 @@ impl ::sittir_core::prepare::Prepare for NamedNodeGroupAnchoredLastTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.named_node_expressions.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.named_node_expressions.iter_mut().map(Some), "", options::allowed(options::SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.named_node_expressions_separator_space.get_or_insert(ctx.options.spacing[options::SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.named_node_expressions.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.named_node_expressions.iter_mut().map(Some), options::SEATS_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS, ctx);
         self.anchor.prepare(ctx)?;
         self.named_node_expressions.prepare(ctx)?;
         self.last.prepare(ctx)?;
@@ -3422,7 +3422,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyTransport {
 
 fn render_program(node: &ProgramTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let definitions = ListView {
-        items: node.definitions.as_deref().unwrap_or(&[]),
+        items: &node.definitions,
         template: "{}",
         token: "",
         before: 0,
@@ -3544,7 +3544,7 @@ fn render_list(node: &ListTransport, w: &mut dyn ::sittir_core::render::RenderSi
         tail: None,
     };
     let elements = ListView {
-        items: node.elements.as_deref().unwrap_or(&[]),
+        items: &node.elements,
         template: "{}",
         token: "",
         before: 0,
@@ -3568,7 +3568,7 @@ fn render_list(node: &ListTransport, w: &mut dyn ::sittir_core::render::RenderSi
 
 fn render_grouping(node: &GroupingTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let elements = ListView {
-        items: node.elements.as_deref().unwrap_or(&[]),
+        items: &node.elements,
         template: "{}",
         token: "",
         before: 0,
@@ -3603,7 +3603,7 @@ fn render_grouping(node: &GroupingTransport, w: &mut dyn ::sittir_core::render::
 
 fn render_missing_node(node: &MissingNodeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let elements = ListView {
-        items: node.elements.as_deref().unwrap_or(&[]),
+        items: &node.elements,
         template: "{}",
         token: "",
         before: 0,
@@ -3632,7 +3632,7 @@ fn render_missing_node(node: &MissingNodeTransport, w: &mut dyn ::sittir_core::r
 
 fn render_anonymous_node(node: &AnonymousNodeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let elements = ListView {
-        items: node.elements.as_deref().unwrap_or(&[]),
+        items: &node.elements,
         template: "{}",
         token: "",
         before: 0,
@@ -3750,7 +3750,7 @@ fn render_string_content_text(t: &StringContentTextTransport, w: &mut dyn ::sitt
 
 fn render_named_node_plain(node: &NamedNodePlainTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let elements = ListView {
-        items: node.elements.as_deref().unwrap_or(&[]),
+        items: &node.elements,
         template: "{}",
         token: "",
         before: 0,
@@ -3777,7 +3777,7 @@ fn render_named_node_plain(node: &NamedNodePlainTransport, w: &mut dyn ::sittir_
 
 fn render_named_node_supertyped(node: &NamedNodeSupertypedTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let elements = ListView {
-        items: node.elements.as_deref().unwrap_or(&[]),
+        items: &node.elements,
         template: "{}",
         token: "",
         before: 0,
@@ -3833,7 +3833,7 @@ fn render_named_node_group_anchored_last(node: &NamedNodeGroupAnchoredLastTransp
     let anchor = View::new(::sittir_core::view::Presence::new(node.anchor, AnchorTransport::Anchor), "{}");
     let last = &node.last;
     let named_node_expressions = ListView {
-        items: node.named_node_expressions.as_deref().unwrap_or(&[]),
+        items: &node.named_node_expressions,
         template: "{}",
         token: "",
         before: 0,
@@ -4176,3 +4176,5 @@ const _: () = assert!(::core::mem::size_of::<QuantifierEnum>() <= 256, "Quantifi
 const _: () = assert!(::core::mem::size_of::<StringContentTextTransport>() <= 256, "StringContentTextTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StringContentTransport>() <= 256, "StringContentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StringTransport>() <= 256, "StringTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+
+::sittir_core::grammar_trivia!(TriviaTransport; AnyTransport, DefinitionTransport, NamedNodeTransport, ListElementTransport, NamedNodeGroupTransport, StringContentContentTransportSlot, ParametersElementsTransportSlot, MissingNodeNameTransportSlot, AnonymousNodeNameTransportSlot, PredicatePrefixTransportSlot, GroupExpressionArmLeftTransportSlot, NamedNodeExpressionArmLeftTransportSlot, NamedNodePlainNameTransportSlot, NamedNodeSupertypedNameTransportSlot, ProgramTransport, EscapeSequenceTransport, QuantifierEnum, IdentifierTransport, ImmediateIdentifierTransport, CaptureTransport, StringTransport, ImmediateStringTransport, StringContentTransport, ParametersTransport, CommentTransport, ListTransport, GroupingTransport, MissingNodeTransport, AnonymousNodeTransport, FieldDefinitionTransport, NegatedFieldTransport, PredicateTransport, PredicateTypeEnum, ListElementQuantifierTransport, GroupExpressionArmTransport, NamedNodeExpressionArmTransport, GroupingGroupTransport, StringContentTextTransport, AnchorTransport, NamedNodePlainTransport, NamedNodeSupertypedTransport, NamedNodeGroupChildrenTransport, NamedNodeGroupAnchoredLastTransport, TightTransport, SpaceTransport, TabTransport, NewlineTransport, BlanklineTransport, DoubleBlanklineTransport, IndentTransport, DedentTransport, StarTransport, PlusTransport, QmarkTransport, AtTransport, DquoteTransport, LbrackTransport, RbrackTransport, LparenTransport, RparenTransport, MissingKeywordTransport, UnderscoreTransport, ColonTransport, BangTransport, PoundTransport, DotTransport, SlashTransport, TriviaTransport);

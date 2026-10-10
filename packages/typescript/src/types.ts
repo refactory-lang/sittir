@@ -3143,7 +3143,7 @@ export enum NumberBigintKind {
 export interface Program {
 	readonly $type: TSKindId.Program;
 	readonly _hash_bang_line?: HashBangLine;
-	readonly _statements?: readonly Statement[];
+	readonly _statements: readonly Statement[];
 	readonly __inputHints__?: {
 		readonly statements?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
 	};
@@ -3372,7 +3372,7 @@ export interface LexicalDeclaration {
 
 export interface StatementBlock {
 	readonly $type: TSKindId.StatementBlock;
-	readonly _statements?: readonly Statement[];
+	readonly _statements: readonly Statement[];
 	readonly _terminator?: number;
 	readonly __inputHints__?: {
 		readonly statements?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
@@ -3862,7 +3862,7 @@ export interface LabeledStatement {
 
 export interface SwitchBody {
 	readonly $type: TSKindId.SwitchBody;
-	readonly _cases?: readonly (SwitchCase | SwitchDefault)[];
+	readonly _cases: readonly (SwitchCase | SwitchDefault)[];
 	readonly __slotHints__?: {
 		readonly cases: SlotHint<(T.SwitchCase | T.SwitchDefault)[], false, true>;
 	};
@@ -3872,7 +3872,7 @@ export interface SwitchBody {
 export interface SwitchCase {
 	readonly $type: TSKindId.SwitchCase;
 	readonly _value: Expression | SequenceExpression;
-	readonly _body?: readonly Statement[];
+	readonly _body: readonly Statement[];
 	readonly __inputHints__?: {
 		readonly value:
 			| KindEnum<
@@ -3893,7 +3893,7 @@ export interface SwitchCase {
 
 export interface SwitchDefault {
 	readonly $type: TSKindId.SwitchDefault;
-	readonly _body?: readonly Statement[];
+	readonly _body: readonly Statement[];
 	readonly __inputHints__?: {
 		readonly body?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
 	};
@@ -3957,7 +3957,7 @@ export interface YieldExpression {
 
 export interface Object {
 	readonly $type: TSKindId.Object;
-	readonly _properties?: readonly (
+	readonly _properties: readonly (
 		| Pair
 		| SpreadElement
 		| MethodDefinition
@@ -4110,7 +4110,7 @@ export interface Object {
 
 export interface ObjectPattern {
 	readonly $type: TSKindId.ObjectPattern;
-	readonly _properties?: readonly (
+	readonly _properties: readonly (
 		| PairPattern
 		| RestPattern
 		| ObjectAssignmentPattern
@@ -4403,7 +4403,7 @@ export interface ObjectAssignmentPattern {
 
 export interface Array {
 	readonly $type: TSKindId.Array;
-	readonly _elements?: readonly (Expression | SpreadElement | undefined)[];
+	readonly _elements: readonly (Expression | SpreadElement | undefined)[];
 	readonly __inputHints__?: {
 		readonly elements?: readonly (
 			| KindEnum<
@@ -4422,7 +4422,7 @@ export interface Array {
 
 export interface ArrayPattern {
 	readonly $type: TSKindId.ArrayPattern;
-	readonly _elements?: readonly (Pattern | AssignmentPattern | undefined)[];
+	readonly _elements: readonly (Pattern | AssignmentPattern | undefined)[];
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<(T.Pattern | T.AssignmentPattern)[], false, true>;
 	};
@@ -4470,7 +4470,7 @@ export interface NestedIdentifier {
 
 export interface Class {
 	readonly $type: TSKindId.Class;
-	readonly _decorator?: readonly Decorator[];
+	readonly _decorator: readonly Decorator[];
 	readonly _name?: TypeIdentifier;
 	readonly _type_parameters?: TypeParameters;
 	readonly _heritage?: ClassHeritage;
@@ -4503,7 +4503,7 @@ export interface Class {
 
 export interface ClassDeclaration {
 	readonly $type: TSKindId.ClassDeclaration;
-	readonly _decorator?: readonly Decorator[];
+	readonly _decorator: readonly Decorator[];
 	readonly _name: TypeIdentifier;
 	readonly _type_parameters?: TypeParameters;
 	readonly _heritage?: ClassHeritage;
@@ -5384,7 +5384,7 @@ export interface EscapeSequence {
 
 export interface TemplateString {
 	readonly $type: TSKindId.TemplateString;
-	readonly _elements?: readonly (TemplateChars | EscapeSequence | TemplateSubstitution)[];
+	readonly _elements: readonly (TemplateChars | EscapeSequence | TemplateSubstitution)[];
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<(T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[], false, true>;
 	};
@@ -5432,7 +5432,7 @@ export interface PrivatePropertyIdentifier {
 
 export interface Arguments {
 	readonly $type: TSKindId.Arguments;
-	readonly _elements?: readonly (Expression | SpreadElement | undefined)[];
+	readonly _elements: readonly (Expression | SpreadElement | undefined)[];
 	readonly __inputHints__?: {
 		readonly elements?: readonly (
 			| KindEnum<
@@ -5530,7 +5530,7 @@ export interface DecoratorCallExpression {
 
 export interface ClassBody {
 	readonly $type: TSKindId.ClassBody;
-	readonly _members?: readonly ClassBodyMember[];
+	readonly _members: readonly ClassBodyMember[];
 	readonly __inputHints__?: {
 		readonly members?: readonly (KindEnum<';', TSKindId.Semi> | ClassBodyMember)[];
 	};
@@ -6177,7 +6177,7 @@ export interface ComputedPropertyName {
 
 export interface PublicFieldDefinition {
 	readonly $type: TSKindId.PublicFieldDefinition;
-	readonly _decorator?: readonly Decorator[];
+	readonly _decorator: readonly Decorator[];
 	readonly _declare?: boolean;
 	readonly _accessibility_modifier?: number;
 	readonly _static?: boolean;
@@ -7006,7 +7006,7 @@ export interface AmbientDeclaration {
 
 export interface AbstractClassDeclaration {
 	readonly $type: TSKindId.AbstractClassDeclaration;
-	readonly _decorator?: readonly Decorator[];
+	readonly _decorator: readonly Decorator[];
 	readonly _name: TypeIdentifier;
 	readonly _type_parameters?: TypeParameters;
 	readonly _heritage?: ClassHeritage;
@@ -7368,7 +7368,7 @@ export interface TypeAliasDeclaration {
 
 export interface RequiredParameter {
 	readonly $type: TSKindId.RequiredParameter;
-	readonly _decorator?: readonly Decorator[];
+	readonly _decorator: readonly Decorator[];
 	readonly _accessibility_modifier?: number;
 	readonly _override?: boolean;
 	readonly _readonly?: boolean;
@@ -7414,7 +7414,7 @@ export interface RequiredParameter {
 
 export interface OptionalParameter {
 	readonly $type: TSKindId.OptionalParameter;
-	readonly _decorator?: readonly Decorator[];
+	readonly _decorator: readonly Decorator[];
 	readonly _accessibility_modifier?: number;
 	readonly _override?: boolean;
 	readonly _readonly?: boolean;
@@ -7876,7 +7876,7 @@ export interface TemplateType {
 
 export interface TemplateLiteralType {
 	readonly $type: TSKindId.TemplateLiteralType;
-	readonly _elements?: readonly (TemplateChars | TemplateType)[];
+	readonly _elements: readonly (TemplateChars | TemplateType)[];
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<(T.TemplateChars | T.TemplateType)[], false, true>;
 	};
@@ -10010,7 +10010,7 @@ export interface BinaryExpressionIn {
 
 export interface ClassBodyMemberMethod {
 	readonly $type: TSKindId.ClassBodyMemberMethod;
-	readonly _decorator?: readonly Decorator[];
+	readonly _decorator: readonly Decorator[];
 	readonly _method_definition: MethodDefinition;
 	readonly _terminator?: number;
 	readonly __inputHints__?: {
@@ -10431,7 +10431,7 @@ export interface CallExpressionMember {
 
 export interface StringDouble {
 	readonly $type: TSKindId.StringDouble;
-	readonly _elements?: readonly (UnescapedDoubleStringFragment | EscapeSequence)[];
+	readonly _elements: readonly (UnescapedDoubleStringFragment | EscapeSequence)[];
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<(T.UnescapedDoubleStringFragment | T.EscapeSequence)[], false, true>;
 	};
@@ -10440,7 +10440,7 @@ export interface StringDouble {
 
 export interface StringSingle {
 	readonly $type: TSKindId.StringSingle;
-	readonly _elements?: readonly (UnescapedSingleStringFragment | EscapeSequence)[];
+	readonly _elements: readonly (UnescapedSingleStringFragment | EscapeSequence)[];
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<(T.UnescapedSingleStringFragment | T.EscapeSequence)[], false, true>;
 	};
@@ -10684,7 +10684,7 @@ export interface ExportStatementDefaultFrom {
 
 export interface ExportStatementDefaultDeclaration {
 	readonly $type: TSKindId.ExportStatementDefaultDeclaration;
-	readonly _decorator?: readonly Decorator[];
+	readonly _decorator: readonly Decorator[];
 	readonly _content: Declaration | ExportStatementDefaultDeclarationDefaultKw;
 	readonly __slotHints__?: {
 		readonly decorators: SlotHint<T.Decorator[], true, true>;

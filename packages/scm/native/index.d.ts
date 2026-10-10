@@ -50,6 +50,14 @@ export declare class SittirEngine {
    */
   descendants(from: string, kinds: Array<number> | undefined | null, resume: Array<number> | undefined | null, limit: number, plan?: string | undefined | null, depth?: number | undefined | null): string
   /**
+   * The byte offsets of the lines under the node at `index` of the
+   * live tree `treeId` (its root when absent) that begin inside a
+   * token (`engine::line_starts_inside_tokens`): what anything that
+   * re-indents the tree's text leaves where it is. Refuses a tree
+   * that is not live and an index naming no node of it.
+   */
+  lineStartsInsideTokens(treeId: number, index?: number | undefined | null): Array<number>
+  /**
    * Whether each node `addresses` names (a JSON array of
    * `query::Address`, all in one tree) satisfies the `where` plan
    * (JSON, see `query::PlanSpec`), in order. Refuses a tree that is

@@ -15,7 +15,7 @@
 use crate::format::{apply_format, extract_format};
 use crate::options::ResolvedOptions;
 use crate::query::{Address, DescendantBatch, Plan, QueryCoordinate};
-use crate::read::{survey, Child, ReadCtx, ReadError, Sides};
+use crate::read::{display_id, survey, Child, ReadCtx, ReadError, Sides};
 use crate::types::Span;
 use crate::render::SourceTable;
 use crate::slot::NodeCoordinate;
@@ -33,6 +33,9 @@ pub trait EngineGrammar: Copy {
     /// at descendant `index` (`ReadTransport::sides_of` of the grammar's
     /// transports, dispatched by the node's kind).
     fn sides_at(self, cursor: &mut tree_sitter::TreeCursor<'_>, ctx: &ReadCtx<'_>, index: u32) -> Result<Sides, ReadError>;
+    /// The display ids this grammar claims a node by (`ReadTransport::shows`
+    /// of its transports), which a coordinate stamps in place of the grammar id.
+    fn shows(self) -> fn(KindId) -> bool;
 }
 
 /// The node at descendant `index` of `tree`, or `None` past its last node.
@@ -43,6 +46,59 @@ pub fn node_at_index(tree: &tree_sitter::Tree, index: u32) -> Option<tree_sitter
     let mut cursor = tree.walk();
     cursor.goto_descendant(index as usize);
     Some(cursor.node())
+}
+
+/// The byte offsets in `source` of the lines under `node` that begin inside a
+/// token spanning lines (a multi-line string or comment), or right after a
+/// token ending in a line break with the next token starting at that very
+/// offset (a string's content continuing past an interpolation): shifting
+/// such a line changes the token's content, so anything that re-indents text
+/// leaves it where it is. A hidden token is never a child node, so text
+/// between a node's children that is not whitespace is one (a block
+/// comment's body): every line starting in that gap, or at the child ending
+/// it, counts as inside a token. In source order, each offset once.
+pub fn line_starts_inside_tokens(node: tree_sitter::Node<'_>, source: &str) -> Vec<usize> {
+    fn lines_within(source: &str, from: usize, to: usize, before: usize, starts: &mut Vec<usize>) {
+        let mut at = from;
+        while let Some(found) = source.get(at..to).and_then(|text| text.find('\n')) {
+            let line = at + found + 1;
+            if line >= before {
+                break;
+            }
+            starts.push(line);
+            at = line;
+        }
+    }
+    fn hidden_text(source: &str, from: usize, to: usize, end: usize, starts: &mut Vec<usize>) {
+        if source.get(from..to).is_some_and(|gap| !gap.trim().is_empty()) {
+            lines_within(source, from, to, end.min(to + 1), starts);
+        }
+    }
+    fn walk(node: tree_sitter::Node<'_>, source: &str, previous_end: &mut Option<usize>, starts: &mut Vec<usize>) {
+        let (start, end) = (node.start_byte(), node.end_byte());
+        if node.child_count() > 0 {
+            let mut at = start;
+            let mut cursor = node.walk();
+            for child in node.children(&mut cursor) {
+                hidden_text(source, at, child.start_byte(), end, starts);
+                walk(child, source, previous_end, starts);
+                at = child.end_byte();
+            }
+            hidden_text(source, at, end, end, starts);
+            return;
+        }
+        if *previous_end == Some(start) {
+            starts.push(start);
+        }
+        lines_within(source, start, end, end, starts);
+        if end > start {
+            *previous_end = source.as_bytes().get(end - 1).filter(|byte| **byte == b'\n').map(|_| end);
+        }
+    }
+    let mut starts = Vec::new();
+    walk(node, source, &mut None, &mut starts);
+    starts.dedup();
+    starts
 }
 
 /// The descendant index of child `position` of the node at `index`: its own
@@ -422,7 +478,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// The node at `index` read into `T`, `depth` levels down, with the sides
     /// its parent's placement gives it; index 0 is the root.
     pub fn read<T: crate::read::ReadTransport>(&self, index: u32, depth: crate::read::Depth) -> Result<T, crate::read::ReadError> {
-        let ctx = crate::read::ReadCtx::new(&self.source, self.tree_id);
+        let ctx = crate::read::ReadCtx::new(&self.source, self.tree_id, self.grammar.shows());
         crate::read::read_at::<T, T>(&mut self.tree.walk(), &ctx, index, depth)
     }
 
@@ -430,7 +486,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// `None` when the node there is not an `ERROR`.
     pub fn read_error(&self, index: u32) -> Option<crate::ErrorRead> {
         let node = node_at_index(&self.tree, index).filter(|node| node.is_error())?;
-        let at = crate::read::ReadCtx::new(&self.source, self.tree_id).coordinate(&node, index);
+        let at = crate::read::ReadCtx::new(&self.source, self.tree_id, self.grammar.shows()).coordinate(&node, index);
         let text = self.source[at.span.start as usize..at.span.end as usize].to_owned();
         Some(crate::ErrorRead { text, at })
     }
@@ -519,7 +575,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
         let mut indexes: Vec<u32> = vec![index];
         let mut path: Vec<u32> = Vec::new();
         let mut coordinates = Vec::new();
-        let ctx = crate::read::ReadCtx::new(&self.source, self.tree_id);
+        let ctx = crate::read::ReadCtx::new(&self.source, self.tree_id, self.grammar.shows());
         if let Some(resume) = resume {
             for &child in resume {
                 if !cursor.goto_first_child() {
@@ -538,7 +594,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             let node = cursor.node();
             if node.is_named()
                 && !node.is_extra()
-                && (kinds.is_empty() || kinds.contains(&node.grammar_id()))
+                && (kinds.is_empty() || kinds.contains(&ctx.stamped_kind(KindId(node.grammar_id()), display_id(&node)).0))
                 && plan.is_none_or(|plan| plan.holds(&node, &self.source))
             {
                 coordinates.push(QueryCoordinate::from(ctx.coordinate(&node, indexes[indexes.len() - 1])));
@@ -597,7 +653,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     pub fn line_gaps_at(&self, handle: u64, classify: &dyn Fn(&str) -> Option<u16>) -> Result<LineGaps, String> {
         let index = self.local_index(handle)?;
         node_at_index(&self.tree, index).ok_or_else(|| format!("handle {handle} names no node of tree {}", self.tree_id))?;
-        let ctx = ReadCtx::new(&self.source, self.tree_id);
+        let ctx = ReadCtx::new(&self.source, self.tree_id, self.grammar.shows());
         let sides_at = |cursor: &mut tree_sitter::TreeCursor<'_>, child: u32| self.grammar.sides_at(cursor, &ctx, child);
         line_gaps(&self.tree, index, &self.source, &sides_at, classify).map_err(|refusal| refusal.describe(&|kind| self.grammar.kind_name(kind)))
     }
@@ -737,6 +793,11 @@ impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
         node_at_index(&tree.tree, coord.index).map(|node| KindId(node.grammar_id()))
     }
 
+    fn line_starts_inside_tokens(&self, coord: &NodeCoordinate) -> Vec<usize> {
+        let Some(tree) = self.get(&coord.tree) else { return Vec::new() };
+        node_at_index(&tree.tree, coord.index).map_or_else(Vec::new, |node| line_starts_inside_tokens(node, &tree.source))
+    }
+
     fn last_list_child_kind(&self, tree: u32, span: crate::types::Span, kind: KindId) -> Option<KindId> {
         let tree = self.get(&tree)?;
         last_list_child(&tree.tree, span.start as usize, span.end as usize, kind.0)
@@ -833,6 +894,33 @@ mod tests {
         fn sides_at(self, _: &mut tree_sitter::TreeCursor<'_>, _: &ReadCtx<'_>, _: u32) -> Result<Sides, ReadError> {
             Ok(Sides::default())
         }
+
+        fn shows(self) -> fn(KindId) -> bool {
+            |_| false
+        }
+    }
+
+    fn rust_tree(source: &str) -> tree_sitter::Tree {
+        let mut parser = tree_sitter::Parser::new();
+        TestGrammar.configure_parser(&mut parser).unwrap();
+        parser.parse(source, None).unwrap()
+    }
+
+    #[test]
+    fn a_line_inside_a_string_or_block_comment_starts_inside_a_token() {
+        let source = "fn f() {\n    let s = \"a\n  b\";\n    /* x\n  y\n*/\n    g();\n}\n";
+        let tree = rust_tree(source);
+        let b = source.find("  b").unwrap();
+        let y = source.find("  y").unwrap();
+        let close = source.find("*/").unwrap();
+        assert_eq!(line_starts_inside_tokens(tree.root_node(), source), vec![b, y, close]);
+    }
+
+    #[test]
+    fn lines_between_tokens_start_outside_every_token() {
+        let source = "fn f() {\n    g();\n    // c\n    h();\n}\n// d\nfn i() {}\n";
+        let tree = rust_tree(source);
+        assert_eq!(line_starts_inside_tokens(tree.root_node(), source), Vec::<usize>::new());
     }
 
     const FNS: &str = "fn a() {}\nmod m { fn b() -> u8 { 0 } fn _c() {} }\nfn _d() { fn e() {} }\n";

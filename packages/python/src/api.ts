@@ -3,7 +3,7 @@ import type { IndentOption, KindTypes, LanguageAPI, LanguageHooks } from '@sitti
 import type { TreeHandle } from '@sittir/common/utils';
 import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 import { ir } from './ir.js';
-import { is } from './is.js';
+import { is, isMember, membersOf } from './is.js';
 import {
 	TSKindId,
 	type FixedTextKindId,
@@ -41,6 +41,7 @@ export const hooks: LanguageHooks<PythonAPI> = Object.freeze<LanguageHooks<Pytho
 	kinds: TSKindId,
 	trivia: Object.freeze({ ...triviaFacts, comment: coerceToComment }),
 	querySlots,
+	membership: Object.freeze({ isMember, membersOf }),
 	createNative: (options) => nativeLanguageEngine<PythonAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ModuleRoot & ParsedRoot, tree as TreeHandle),
 	hydrate: (node, tree) => hydrate(node, tree as TreeHandle)

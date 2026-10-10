@@ -1275,9 +1275,12 @@ export interface IsGuards {
 	};
 }
 
-// Runtime: kind guards compare numeric TSKindId only.
+// Runtime: every guard tests membership through `isMember`, the test a query's `ofType` uses.
 function _g(id: number): (v: { readonly $type: number } | number) => boolean {
-	return (v) => typeof v !== 'number' && v.$type === id;
+	return (v) => typeof v !== 'number' && isMember(id, v.$type);
+}
+function _mg(kind: number): (v: { readonly $type: number } | number) => boolean {
+	return (v) => isMember(kind, typeof v === 'number' ? v : v.$type);
 }
 function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number) => boolean {
 	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
@@ -1329,7 +1332,39 @@ const _supertype_layout_ids = new Set<number>([180, 181, 182, 183, 184, 185, 186
 const _supertype_exportStatementDefault_ids = new Set<number>([421, 422]);
 const _supertype_numberBigint_ids = new Set<number>([161, 162, 163, 164]);
 
-const _supertype_declaration_guard = _vg(_sg(_supertype_declaration_ids), {
+const _members = new Map<number, ReadonlySet<number>>([
+	[189, _supertype_exportStatement_ids],
+	[194, _supertype_declaration_ids],
+	[201, _supertype_importSpecifier_ids],
+	[203, _supertype_statement_ids],
+	[207, _supertype_variableDeclarator_ids],
+	[214, _supertype_forHeader_ids],
+	[231, _supertype_parenthesizedExpression_ids],
+	[232, _supertype_expression_ids],
+	[233, _supertype_primaryExpression_ids],
+	[253, _supertype_callExpression_ids],
+	[268, _supertype_updateExpression_ids],
+	[270, _supertype_string_ids],
+	[274, _supertype_number_ids],
+	[275, _supertype_metaProperty_ids],
+	[283, _supertype_pattern_ids],
+	[331, _supertype_type_ids],
+	[338, _supertype_primaryType_ids],
+	[369, _supertype_indexSignature_ids],
+	[378, _supertype_classBodyMember_ids],
+	[381, _supertype_enumBodyElement_ids],
+	[391, _supertype_exportStatementDefault_ids],
+	[396, _supertype_numberBigint_ids]
+]);
+export function isMember(kind: number, type: number): boolean {
+	return _members.get(kind)?.has(type) ?? type === kind;
+}
+export function membersOf(kind: number): readonly number[] {
+	const members = _members.get(kind);
+	return members === undefined ? [kind] : [...members];
+}
+
+const _supertype_declaration_guard = _vg(_mg(194), {
 	function: _g(TSKindId.FunctionDeclaration),
 	generatorFunction: _g(TSKindId.GeneratorFunctionDeclaration),
 	class: _g(TSKindId.ClassDeclaration),
@@ -1345,80 +1380,74 @@ const _supertype_declaration_guard = _vg(_sg(_supertype_declaration_ids), {
 	importAlias: _g(TSKindId.ImportAlias),
 	ambient: _g(TSKindId.AmbientDeclaration)
 });
-const _supertype_importSpecifier_guard = _vg(_sg(_supertype_importSpecifier_ids), {
+const _supertype_importSpecifier_guard = _vg(_mg(201), {
 	name: _g(TSKindId.ImportSpecifierName),
 	as: _g(TSKindId.ImportSpecifierAs)
 });
-const _supertype_variableDeclarator_guard = _vg(_sg(_supertype_variableDeclarator_ids), {
+const _supertype_variableDeclarator_guard = _vg(_mg(207), {
 	plain: _g(TSKindId.VariableDeclaratorPlain),
 	definite: _g(TSKindId.VariableDeclaratorDefinite)
 });
-const _supertype_forHeader_guard = _vg(_sg(_supertype_forHeader_ids), {
+const _supertype_forHeader_guard = _vg(_mg(214), {
 	lhs: _g(TSKindId.ForHeaderLhs),
 	varKind: _g(TSKindId.ForHeaderVarKind),
 	letConstKind: _g(TSKindId.ForHeaderLetConstKind)
 });
-const _supertype_parenthesizedExpression_guard = _vg(_sg(_supertype_parenthesizedExpression_ids), {
+const _supertype_parenthesizedExpression_guard = _vg(_mg(231), {
 	typed: _g(TSKindId.ParenthesizedExpressionTyped),
 	sequence: _g(TSKindId.ParenthesizedExpressionSequence)
 });
-const _supertype_callExpression_guard = _vg(_sg(_supertype_callExpression_ids), {
+const _supertype_callExpression_guard = _vg(_mg(253), {
 	call: _g(TSKindId.CallExpressionCall),
 	templateCall: _g(TSKindId.CallExpressionTemplateCall),
 	member: _g(TSKindId.CallExpressionMember)
 });
-const _supertype_updateExpression_guard = _vg(_sg(_supertype_updateExpression_ids), {
+const _supertype_updateExpression_guard = _vg(_mg(268), {
 	postfix: _g(TSKindId.UpdateExpressionPostfix),
 	prefix: _g(TSKindId.UpdateExpressionPrefix)
 });
-const _supertype_string_guard = _vg(_sg(_supertype_string_ids), {
-	double: _g(TSKindId.StringDouble),
-	single: _g(TSKindId.StringSingle)
-});
+const _supertype_string_guard = _vg(_mg(270), { double: _g(TSKindId.StringDouble), single: _g(TSKindId.StringSingle) });
 const _supertype_comment_guard = _vg(_sg(_supertype_comment_ids), {
 	line: _g(TSKindId.CommentLine),
 	block: _g(TSKindId.CommentBlock)
 });
-const _supertype_metaProperty_guard = _vg(_sg(_supertype_metaProperty_ids), {
+const _supertype_metaProperty_guard = _vg(_mg(275), {
 	newTarget: _g(TSKindId.MetaPropertyNewTarget),
 	importMeta: _g(TSKindId.MetaPropertyImportMeta)
 });
-const _supertype_pattern_guard = _vg(_sg(_supertype_pattern_ids), {
-	lhs: _g(TSKindId.LhsExpression),
-	rest: _g(TSKindId.RestPattern)
-});
-const _supertype_indexSignature_guard = _vg(_sg(_supertype_indexSignature_ids), {
+const _supertype_pattern_guard = _vg(_mg(283), { lhs: _g(TSKindId.LhsExpression), rest: _g(TSKindId.RestPattern) });
+const _supertype_indexSignature_guard = _vg(_mg(369), {
 	colon: _g(TSKindId.IndexSignatureColon),
 	mappedTypeClause: _g(TSKindId.IndexSignatureMappedTypeClause)
 });
-const _supertype_classBodyMember_guard = _vg(_sg(_supertype_classBodyMember_ids), {
+const _supertype_classBodyMember_guard = _vg(_mg(378), {
 	method: _g(TSKindId.ClassBodyMemberMethod),
 	methodSig: _g(TSKindId.ClassBodyMemberMethodSig),
 	staticBlock: _g(TSKindId.ClassStaticBlock),
 	declaration: _g(TSKindId.ClassBodyMemberDeclaration),
 	empty: _g(TSKindId.EmptyMember)
 });
-const _supertype_enumBodyElement_guard = _vg(_sg(_supertype_enumBodyElement_ids), {
+const _supertype_enumBodyElement_guard = _vg(_mg(381), {
 	name: _g(TSKindId.EnumBodyElementName),
 	assignment: _g(TSKindId.EnumAssignment)
 });
-const _supertype_exportStatementDefault_guard = _vg(_sg(_supertype_exportStatementDefault_ids), {
+const _supertype_exportStatementDefault_guard = _vg(_mg(391), {
 	from: _g(TSKindId.ExportStatementDefaultFrom),
 	declaration: _g(TSKindId.ExportStatementDefaultDeclaration)
 });
-const _supertype_numberBigint_guard = _vg(_sg(_supertype_numberBigint_ids), {
+const _supertype_numberBigint_guard = _vg(_mg(396), {
 	hex: _g(TSKindId.NumberBigintHex),
 	binary: _g(TSKindId.NumberBigintBinary),
 	octal: _g(TSKindId.NumberBigintOctal),
 	decimal: _g(TSKindId.NumberBigintDecimal)
 });
-const _supertype_exportStatement_guard = _vg(_sg(_supertype_exportStatement_ids), {
+const _supertype_exportStatement_guard = _vg(_mg(189), {
 	default: _supertype_exportStatementDefault_guard,
 	typeExport: _g(TSKindId.ExportStatementTypeExport),
 	equalsExport: _g(TSKindId.ExportStatementEqualsExport),
 	namespaceExport: _g(TSKindId.ExportStatementNamespaceExport)
 });
-const _supertype_statement_guard = _vg(_sg(_supertype_statement_ids), {
+const _supertype_statement_guard = _vg(_mg(203), {
 	export: _supertype_exportStatement_guard,
 	import: _g(TSKindId.ImportStatement),
 	debugger: _g(TSKindId.DebuggerStatement),
@@ -1440,7 +1469,7 @@ const _supertype_statement_guard = _vg(_sg(_supertype_statement_ids), {
 	empty: _g(TSKindId.EmptyStatement),
 	labeled: _g(TSKindId.LabeledStatement)
 });
-const _supertype_number_guard = _vg(_sg(_supertype_number_ids), {
+const _supertype_number_guard = _vg(_mg(274), {
 	hex: _g(TSKindId.NumberHex),
 	floatPoint: _g(TSKindId.NumberFloatPoint),
 	floatLeadingPoint: _g(TSKindId.NumberFloatLeadingPoint),
@@ -1660,7 +1689,7 @@ export const is = Object.freeze({
 	propertyIdentifier: _g(TSKindId.PropertyIdentifier),
 	typeIdentifier: _g(TSKindId.TypeIdentifier),
 	interfaceBody: _g(TSKindId.InterfaceBody),
-	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
+	kind: (v: { readonly $type: number }, k: number): boolean => isMember(k, v.$type),
 	exportStatement: _supertype_exportStatement_guard,
 	declaration: _supertype_declaration_guard,
 	importSpecifier: _supertype_importSpecifier_guard,
@@ -1668,8 +1697,8 @@ export const is = Object.freeze({
 	variableDeclarator: _supertype_variableDeclarator_guard,
 	forHeader: _supertype_forHeader_guard,
 	parenthesizedExpression: _supertype_parenthesizedExpression_guard,
-	expression: _sg(_supertype_expression_ids),
-	primaryExpression: _sg(_supertype_primaryExpression_ids),
+	expression: _mg(232),
+	primaryExpression: _mg(233),
 	callExpression: _supertype_callExpression_guard,
 	updateExpression: _supertype_updateExpression_guard,
 	string: _supertype_string_guard,
@@ -1677,8 +1706,8 @@ export const is = Object.freeze({
 	number: _supertype_number_guard,
 	metaProperty: _supertype_metaProperty_guard,
 	pattern: _supertype_pattern_guard,
-	type: _sg(_supertype_type_ids),
-	primaryType: _sg(_supertype_primaryType_ids),
+	type: _mg(331),
+	primaryType: _mg(338),
 	indexSignature: _supertype_indexSignature_guard,
 	classBodyMember: _supertype_classBodyMember_guard,
 	enumBodyElement: _supertype_enumBodyElement_guard,

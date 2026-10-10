@@ -21,6 +21,7 @@ import {
 	deriveUnnamedChildrenCardinality,
 	hasOptionalElements,
 	isMultiple,
+	isNonEmpty,
 	isRequired,
 	isNodeRef,
 	isTerminalValue,
@@ -750,16 +751,8 @@ function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): str
 			const slotCls = slotClassOfShape(transportSlotShapeOf(slot, nodeMap), nodeMap);
 			const writeChild = buildSlotWriteCall(slotCls, 'child');
 			if (isMultiple(slot)) {
-				if (isTransportRequired(slot)) {
-					lines.push(`    for child in node.${slotIdent}.iter() {`);
-				} else {
-					lines.push(`    if let Some(items) = &node.${slotIdent} {`);
-					lines.push(`        for child in items.iter() {`);
-				}
+				lines.push(`    for child in node.${slotIdent}.iter() {`);
 				lines.push(`        ${writeChild}`);
-				if (!isTransportRequired(slot)) {
-					lines.push(`        }`);
-				}
 				lines.push(`    }`);
 			} else if (isTransportRequired(slot)) {
 				lines.push(`    ${buildSlotWriteCall(slotCls, `node.${slotIdent}`)}`);
@@ -904,12 +897,7 @@ function buildTypedTemplateBody(
 			continue;
 		}
 		if (f.view === 'list' || f.multiple) {
-			const itemValue = !f.hasTransportField
-				? 'NO_ITEMS'
-				: f.required
-					? `node.${rIdent}`
-					: `node.${rIdent}.as_deref().unwrap_or(&[])`;
-			const items = f.hasTransportField && f.required ? `&${itemValue}` : itemValue;
+			const items = f.hasTransportField ? `&node.${rIdent}` : 'NO_ITEMS';
 			const fieldSepLiteral = f.separator !== undefined ? JSON.stringify(f.separator) : sepLiteral;
 			const separatedList = node instanceof AssembledList ? node : undefined;
 			const leadingExpr =
@@ -925,7 +913,7 @@ function buildTypedTemplateBody(
 						? 'true'
 						: 'false';
 			const trailingExpr = separatedList?.singleElementNeedsTrailing
-				? `${itemValue}.len() == 1 || ${trailingOption}`
+				? `${f.hasTransportField ? `node.${rIdent}` : 'NO_ITEMS'}.len() == 1 || ${trailingOption}`
 				: trailingOption;
 			const separatorSite = separatedList === undefined ? undefined : separatorSiteOf(plan, separatedList);
 			const fallback =
@@ -1179,6 +1167,7 @@ interface ReadPrint {
 	readonly blankChoices: Set<string>;
 	readonly choicePayloads: Set<string>;
 	readonly boxedPayloads: readonly string[];
+	readonly transports: Set<string>;
 }
 
 function readPrintOf(
@@ -1204,6 +1193,7 @@ function readPrintOf(
 			grammar
 		},
 		admitted: new Map(),
+		transports: new Set(),
 		blankChoices: new Set(),
 		choicePayloads: new Set()
 	};
@@ -1212,6 +1202,11 @@ function readPrintOf(
 const TRANSPORT_DERIVE = '#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]';
 const TRANSPORT_DERIVE_UNIT = '#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]';
 const TRANSPORT_DERIVE_ENUM_KIND = '#[derive(Debug, Clone, Copy, PartialEq, Eq, ::sittir_core::Transport)]';
+
+function transportDeclaration(read: ReadPrint, derive: string, args: string, keyword: 'struct' | 'enum', name: string): string[] {
+	read.transports.add(name);
+	return [derive, `#[transport(${args})]`, `pub ${keyword} ${name} {`];
+}
 
 function admit(read: ReadPrint, typeName: string, ids: readonly number[]): void {
 	const known = read.admitted.get(typeName);
@@ -1286,6 +1281,7 @@ function renderTransportSupport(
 	const choices = shareIdenticalChoices(perSlotEnums, (entry) =>
 		emitPerSlotChildEnum(entry, kidByKind, nodeMap, fixed, kindEntries, plan, read)
 	);
+	for (const name of choices.folded) read.transports.delete(name);
 	const perSlotEnumLines: string[] = choices.emitted.flatMap(({ lines }) => lines);
 	const bodyOf = new Map(structs.map((struct) => [struct.kind, struct.body]));
 	const structLines = nodes.flatMap((node) =>
@@ -1304,7 +1300,7 @@ function renderTransportSupport(
 		choices.emitted.map(({ entry }) => entry)
 	);
 
-	return pruneUnreferencedBridges(
+	const rendered = pruneUnreferencedBridges(
 		[
 			...anyTransportLines,
 			'',
@@ -1334,6 +1330,11 @@ function renderTransportSupport(
 			...payloadCeilingAssertions(read.boxedPayloads, read.choicePayloads)
 		].join('\n')
 	);
+	return [rendered, '', grammarTriviaStatement(read.transports)].join('\n');
+}
+
+function grammarTriviaStatement(transports: ReadonlySet<string>): string {
+	return `::sittir_core::grammar_trivia!(TriviaTransport; ${[...transports].join(', ')});`;
 }
 
 function supertypeAdmitsVerbatim(supertypeNode: AssembledSupertype, nodeMap: NodeMap): boolean {
@@ -1467,7 +1468,7 @@ function isPrepareFilled(slot: AssembledNonterminal): boolean {
 }
 
 function isTransportRequired(slot: AssembledNonterminal): boolean {
-	return isRequired(slot) && !isPrepareFilled(slot);
+	return isMultiple(slot) ? isNonEmpty(slot) : isRequired(slot) && !isPrepareFilled(slot);
 }
 
 function boxedInEnum(node: AssembledNode, boxedPayloads: readonly string[]): boolean {
@@ -1559,9 +1560,7 @@ function emitSupertypeTransportEnum(
 
 	const claimedBy = claimSupertypeIds(supertypeNode, enumName, shape, selfAliasIds, kindIdByKind, kindEntries, nodeMap);
 
-	lines.push(TRANSPORT_DERIVE);
-	lines.push(`#[transport(choice)]`);
-	lines.push(`pub enum ${enumName} {`);
+	lines.push(...transportDeclaration(read, TRANSPORT_DERIVE, 'choice', 'enum', enumName));
 	for (const { subNode } of validSubtypes) {
 		const variant = rustTypeIdent(subNode.typeName);
 		lines.push(...variantKindLines(enumName, variant, subNode, claimedBy.get(variant) ?? [], read));
@@ -1956,6 +1955,7 @@ type ChoiceNames = ReadonlyMap<string, string>;
 interface SharedChoices {
 	readonly emitted: readonly { readonly entry: PerSlotChildEnum; readonly lines: readonly string[] }[];
 	readonly names: ChoiceNames;
+	readonly folded: readonly string[];
 }
 
 function choiceKey(typeName: string, fieldName: string): string {
@@ -1969,6 +1969,7 @@ function shareIdenticalChoices(
 	const emitted: { entry: PerSlotChildEnum; lines: readonly string[] }[] = [];
 	const nameByBody = new Map<string, string>();
 	const names = new Map<string, string>();
+	const folded: string[] = [];
 	for (const entry of entries) {
 		const name = perSlotEnumName(entry.typeName, entry.fieldName);
 		const lines = render(entry);
@@ -1977,10 +1978,10 @@ function shareIdenticalChoices(
 		if (shared === undefined) {
 			nameByBody.set(body, name);
 			emitted.push({ entry, lines });
-		}
+		} else folded.push(name);
 		names.set(choiceKey(entry.typeName, entry.fieldName), shared ?? name);
 	}
-	return { emitted, names };
+	return { emitted, names, folded };
 }
 
 function choiceNameOf(choices: ChoiceNames, typeName: string, fieldName: string): string {
@@ -2188,9 +2189,7 @@ function emitPerSlotChildEnum(
 	}
 
 	const altIds = new Map(modelSlot === undefined ? [] : kindEnumAltIdPairs(modelSlot, nodeMap));
-	lines.push(TRANSPORT_DERIVE);
-	lines.push(`#[transport(choice)]`);
-	lines.push(`pub enum ${enumName} {`);
+	lines.push(...transportDeclaration(read, TRANSPORT_DERIVE, 'choice', 'enum', enumName));
 	for (const { node } of nodeKinds) {
 		const variant = rustTypeIdent(node.typeName);
 		lines.push(...variantKindLines(enumName, variant, node, claimedBy.get(variant) ?? [], read));
@@ -2288,9 +2287,7 @@ function renderAnyTransport(
 		claimedBy.set(literal.variant, [...(claimedBy.get(literal.variant) ?? []), id]);
 	}
 
-	lines.push(TRANSPORT_DERIVE);
-	lines.push('#[transport(choice)]');
-	lines.push('pub enum AnyTransport {');
+	lines.push(...transportDeclaration(read, TRANSPORT_DERIVE, 'choice', 'enum', 'AnyTransport'));
 	for (const node of payloadNodes) {
 		const variant = rustTransportVariantName(node);
 		lines.push(...variantKindLines('AnyTransport', variant, node, claimedBy.get(variant) ?? [], read));
@@ -2350,9 +2347,7 @@ function renderTriviaTransportSupport(
 	});
 
 	const lines: string[] = [];
-	lines.push(TRANSPORT_DERIVE);
-	lines.push('#[transport(choice, codec_only)]');
-	lines.push('pub enum TriviaTransport {');
+	lines.push(...transportDeclaration(read, TRANSPORT_DERIVE, 'choice, codec_only', 'enum', 'TriviaTransport'));
 	for (const node of extrasNodes) {
 		const variant = rustTransportVariantName(node);
 		const id = kindIdByKind.get(node.kind);
@@ -2629,11 +2624,7 @@ function listGapClassification(plan: RenderPlan, node: AssembledNode): string[] 
 			site === undefined ? '&[]' : `options::allowed(options::${site.constName})`;
 		const call = (list: string) =>
 			`::sittir_core::prepare::fill_list_gaps(${list}.${items}, ${JSON.stringify(token)}, ${allowedOf(first)}, ${allowedOf(sites.after)}, &options::WHITESPACE, ctx);`;
-		body.push(
-			isTransportRequired(field)
-				? `        ${call(`self.${ident}`)}`
-				: `        if let Some(gap_items) = self.${ident}.as_mut() { ${call('gap_items')} }`
-		);
+		body.push(`        ${call(`self.${ident}`)}`);
 	}
 	return body;
 }
@@ -2831,11 +2822,7 @@ function seatLoops(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap): str
 		const ident = rustFieldIdent(field.name);
 		const table = `options::${seatTableName(node.display.name, field.name)}`;
 		const items = hasOptionalElements(field) ? 'iter_mut().map(Option::as_mut)' : 'iter_mut().map(Some)';
-		lines.push(
-			isTransportRequired(field)
-				? `        ::sittir_core::prepare::fill_seated_gaps(self.${ident}.${items}, ${table}, ctx);`
-				: `        if let Some(seated_items) = self.${ident}.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.${items}, ${table}, ctx); }`
-		);
+		lines.push(`        ::sittir_core::prepare::fill_seated_gaps(self.${ident}.${items}, ${table}, ctx);`);
 	}
 	return lines;
 }
@@ -3049,11 +3036,9 @@ function renderTransportDataStruct(
 	const lines: string[] = [];
 	const fillFields: string[] = [];
 	const ownId = findKindEntry(kindEntries, node.kind)?.id;
-	lines.push(TRANSPORT_DERIVE);
 	const printedSlots = isCompoundOf(node) ? structSlotsOf(node, slotModel, nodeMap) : [];
-	lines.push(`#[transport(${transportArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot))})]`);
 	admit(read, structName, node instanceof AssembledAlias ? [node.aliasTypeId] : ownId === undefined ? [] : [ownId]);
-	lines.push(`pub struct ${structName} {`);
+	lines.push(...transportDeclaration(read, TRANSPORT_DERIVE, transportArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot)), 'struct', structName));
 	if (isCompoundOf(node)) {
 		lines.push(...renderLayoutField());
 		for (const { slot, owner, forceOptional } of printedSlots) {
@@ -3228,9 +3213,7 @@ function renderFixedLiteralTransport(typeName: string, fixed: FixedLiteral, read
 	const ids = fixedLiteralIds(fixed);
 	admit(read, typeName, ids);
 	return [
-		TRANSPORT_DERIVE_UNIT,
-		'#[transport(choice)]',
-		`pub enum ${typeName} {`,
+		...transportDeclaration(read, TRANSPORT_DERIVE_UNIT, 'choice', 'enum', typeName),
 		...variantKindLines(typeName, fixed.variant, undefined, ids, read),
 		`    ${fixed.variant},`,
 		'}',
@@ -3480,9 +3463,8 @@ function rustTransportSlotType(
 	const wrap = (inner: string): string => {
 		if (multiple) {
 			const element = slotCarrier(inner, adjacent);
-			const vec = optionalElement ? `Vec<Option<${element}>>` : `Vec<${element}>`;
-			if (required) return vec;
-			return `Option<${vec}>`;
+			const items = optionalElement ? `Option<${element}>` : element;
+			return required ? `::sittir_core::NonEmptyVec<${items}>` : `Vec<${items}>`;
 		}
 		const sized = slotCarrier(createsBackEdge ? `Box<${inner}>` : inner, adjacent);
 		return required ? sized : `Option<${sized}>`;
@@ -3777,9 +3759,7 @@ function renderEnumType(node: AssembledEnum, kindEntries: readonly KindEnumEntry
 	const arms = values.map((v) => ({ variant: literalToVariantName(v), ids: [enumMemberId(node, v)] }));
 	const ownId = findKindEntry(kindEntries, node.kind)?.id;
 	if (ownId === undefined) throw new Error(`transport.rs: enum kind '${node.kind}' has no kind id`);
-	lines.push(TRANSPORT_DERIVE_ENUM_KIND);
-	lines.push(`#[transport(${enumKindArgs(ownId, read.ctx)})]`);
-	lines.push(`pub enum ${enumName} {`);
+	lines.push(...transportDeclaration(read, TRANSPORT_DERIVE_ENUM_KIND, enumKindArgs(ownId, read.ctx), 'enum', enumName));
 	for (const arm of arms) {
 		lines.push(`    #[kind(${variantKindArgs(arm.ids, false, read.ctx)})]`);
 		lines.push(`    ${arm.variant},`);

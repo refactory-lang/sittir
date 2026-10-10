@@ -40,13 +40,13 @@ pub enum AnyTransport {
     #[kind(kind::ALIASED_IMPORT)]
     AliasedImport(AliasedImportTransport),
     #[kind(kind::PRINT_STATEMENT)]
-    PrintStatement(Box<PrintStatementTransport>),
+    PrintStatement(PrintStatementTransport),
     #[kind(kind::CHEVRON)]
     Chevron(ChevronTransport),
     #[kind(kind::ASSERT_STATEMENT)]
     AssertStatement(AssertStatementTransport),
     #[kind(kind::EXPRESSION_STATEMENT)]
-    ExpressionStatement(Box<ExpressionStatementTransport>),
+    ExpressionStatement(ExpressionStatementTransport),
     #[kind(kind::NAMED_EXPRESSION)]
     NamedExpression(NamedExpressionTransport),
     #[kind(kind::RETURN_STATEMENT)]
@@ -56,9 +56,9 @@ pub enum AnyTransport {
     #[kind(kind::RAISE_STATEMENT)]
     RaiseStatement(Box<RaiseStatementTransport>),
     #[kind(kind::IF_STATEMENT)]
-    IfStatement(Box<IfStatementTransport>),
+    IfStatement(IfStatementTransport),
     #[kind(kind::ELIF_CLAUSE)]
-    ElifClause(Box<ElifClauseTransport>),
+    ElifClause(ElifClauseTransport),
     #[kind(kind::ELSE_CLAUSE)]
     ElseClause(ElseClauseTransport),
     #[kind(kind::MATCH_STATEMENT)]
@@ -72,7 +72,7 @@ pub enum AnyTransport {
     #[kind(kind::WHILE_STATEMENT)]
     WhileStatement(Box<WhileStatementTransport>),
     #[kind(kind::TRY_STATEMENT)]
-    TryStatement(Box<TryStatementTransport>),
+    TryStatement(TryStatementTransport),
     #[kind(kind::EXCEPT_CLAUSE)]
     ExceptClause(ExceptClauseTransport),
     #[kind(kind::FINALLY_CLAUSE)]
@@ -100,7 +100,7 @@ pub enum AnyTransport {
     #[kind(kind::TYPE_ALIAS_STATEMENT)]
     TypeAliasStatement(TypeAliasStatementTransport),
     #[kind(kind::CLASS_DEFINITION)]
-    ClassDefinition(Box<ClassDefinitionTransport>),
+    ClassDefinition(ClassDefinitionTransport),
     #[kind(kind::TYPE_PARAMETER)]
     TypeParameter(TypeParameterTransport),
     #[kind(kind::PARENTHESIZED_LIST_SPLAT)]
@@ -108,7 +108,7 @@ pub enum AnyTransport {
     #[kind(kind::ARGUMENT_LIST)]
     ArgumentList(ArgumentListTransport),
     #[kind(kind::DECORATED_DEFINITION)]
-    DecoratedDefinition(DecoratedDefinitionTransport),
+    DecoratedDefinition(Box<DecoratedDefinitionTransport>),
     #[kind(kind::DECORATOR)]
     Decorator(DecoratorTransport),
     #[kind(kind::BLOCK)]
@@ -148,7 +148,7 @@ pub enum AnyTransport {
     #[kind(kind::DEFAULT_PARAMETER)]
     DefaultParameter(DefaultParameterTransport),
     #[kind(kind::TYPED_DEFAULT_PARAMETER)]
-    TypedDefaultParameter(Box<TypedDefaultParameterTransport>),
+    TypedDefaultParameter(TypedDefaultParameterTransport),
     #[kind(kind::LIST_SPLAT_PATTERN)]
     ListSplatPattern(ListSplatPatternTransport),
     #[kind(kind::DICTIONARY_SPLAT_PATTERN)]
@@ -234,7 +234,7 @@ pub enum AnyTransport {
     #[kind(kind::STRING_CONTENT)]
     StringContent(StringContentTransport),
     #[kind(kind::INTERPOLATION)]
-    Interpolation(Box<InterpolationTransport>),
+    Interpolation(InterpolationTransport),
     #[kind(kind::FORMAT_SPECIFIER)]
     FormatSpecifier(FormatSpecifierTransport),
     #[kind(kind::TYPE_CONVERSION)]
@@ -374,7 +374,7 @@ pub enum AnyTransport {
     #[kind(kind::_AS_PATTERN_TARGET, display)]
     AsPatternTarget(AsPatternTargetTransport),
     #[kind(kind::_FORMAT_EXPRESSION, display)]
-    FormatExpression(Box<FormatExpressionTransport>),
+    FormatExpression(FormatExpressionTransport),
     #[kind(kind::WILDCARD_IMPORT)]
     WildcardImport,
     #[kind(kind::PASS_STATEMENT)]
@@ -1576,14 +1576,14 @@ pub enum StatementTransport {
     SimpleStatements(SimpleStatementsTransport),
     #[kind(kind::IF_STATEMENT, kind::FOR_STATEMENT, kind::WHILE_STATEMENT, kind::TRY_STATEMENT, kind::WITH_STATEMENT, kind::FUNCTION_DEFINITION, kind::CLASS_DEFINITION, kind::DECORATED_DEFINITION, kind::MATCH_STATEMENT)]
     CompoundStatement(CompoundStatementTransport),
-    IfStatement(Box<IfStatementTransport>),
+    IfStatement(IfStatementTransport),
     ForStatement(Box<ForStatementTransport>),
     WhileStatement(Box<WhileStatementTransport>),
-    TryStatement(Box<TryStatementTransport>),
+    TryStatement(TryStatementTransport),
     WithStatement(WithStatementTransport),
     FunctionDefinition(Box<FunctionDefinitionTransport>),
-    ClassDefinition(Box<ClassDefinitionTransport>),
-    DecoratedDefinition(DecoratedDefinitionTransport),
+    ClassDefinition(ClassDefinitionTransport),
+    DecoratedDefinition(Box<DecoratedDefinitionTransport>),
     MatchStatement(MatchStatementTransport),
 }
 
@@ -1669,11 +1669,11 @@ pub enum SimpleStatementTransport {
     #[kind(kind::IMPORT_FROM_STATEMENT)]
     ImportFromStatement(ImportFromStatementTransport),
     #[kind(kind::PRINT_STATEMENT)]
-    PrintStatement(Box<PrintStatementTransport>),
+    PrintStatement(PrintStatementTransport),
     #[kind(kind::ASSERT_STATEMENT)]
     AssertStatement(AssertStatementTransport),
     #[kind(kind::EXPRESSION_STATEMENT)]
-    ExpressionStatement(Box<ExpressionStatementTransport>),
+    ExpressionStatement(ExpressionStatementTransport),
     #[kind(kind::RETURN_STATEMENT)]
     ReturnStatement(ReturnStatementTransport),
     #[kind(kind::DELETE_STATEMENT)]
@@ -1792,21 +1792,21 @@ impl ::sittir_core::render::Render for SimpleStatementTransport {
 #[transport(choice)]
 pub enum CompoundStatementTransport {
     #[kind(kind::IF_STATEMENT)]
-    IfStatement(Box<IfStatementTransport>),
+    IfStatement(IfStatementTransport),
     #[kind(kind::FOR_STATEMENT)]
     ForStatement(Box<ForStatementTransport>),
     #[kind(kind::WHILE_STATEMENT)]
     WhileStatement(Box<WhileStatementTransport>),
     #[kind(kind::TRY_STATEMENT)]
-    TryStatement(Box<TryStatementTransport>),
+    TryStatement(TryStatementTransport),
     #[kind(kind::WITH_STATEMENT)]
     WithStatement(WithStatementTransport),
     #[kind(kind::FUNCTION_DEFINITION)]
     FunctionDefinition(Box<FunctionDefinitionTransport>),
     #[kind(kind::CLASS_DEFINITION)]
-    ClassDefinition(Box<ClassDefinitionTransport>),
+    ClassDefinition(ClassDefinitionTransport),
     #[kind(kind::DECORATED_DEFINITION)]
-    DecoratedDefinition(DecoratedDefinitionTransport),
+    DecoratedDefinition(Box<DecoratedDefinitionTransport>),
     #[kind(kind::MATCH_STATEMENT)]
     MatchStatement(MatchStatementTransport),
 }
@@ -1995,7 +1995,7 @@ pub enum ParameterTransport {
     #[kind(kind::DEFAULT_PARAMETER)]
     DefaultParameter(DefaultParameterTransport),
     #[kind(kind::TYPED_DEFAULT_PARAMETER)]
-    TypedDefaultParameter(Box<TypedDefaultParameterTransport>),
+    TypedDefaultParameter(TypedDefaultParameterTransport),
     #[kind(kind::LIST_SPLAT_PATTERN)]
     ListSplatPattern(ListSplatPatternTransport),
     #[kind(kind::TUPLE_PATTERN)]
@@ -3844,7 +3844,7 @@ impl ::sittir_core::render::Render for ReturnStatementExpressionsTransportSlot {
 #[transport(choice)]
 pub enum IfStatementAlternativeTransportSlot {
     #[kind(kind::ELIF_CLAUSE)]
-    ElifClause(Box<ElifClauseTransport>),
+    ElifClause(ElifClauseTransport),
     #[kind(kind::ELSE_CLAUSE)]
     ElseClause(ElseClauseTransport),
 }
@@ -3882,7 +3882,7 @@ impl ::sittir_core::view::KindOf for IfStatementAlternativeTransportSlot {
 impl ::sittir_core::render::Render for IfStatementAlternativeTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            IfStatementAlternativeTransportSlot::ElifClause(inner) => inner.as_ref().render(w),
+            IfStatementAlternativeTransportSlot::ElifClause(inner) => inner.render(w),
             IfStatementAlternativeTransportSlot::ElseClause(inner) => inner.render(w),
         }
     }
@@ -4175,7 +4175,7 @@ impl ::sittir_core::render::Render for ParenthesizedListSplatContentTransportSlo
 #[transport(choice)]
 pub enum DecoratedDefinitionDefinitionTransportSlot {
     #[kind(kind::CLASS_DEFINITION)]
-    ClassDefinition(Box<ClassDefinitionTransport>),
+    ClassDefinition(ClassDefinitionTransport),
     #[kind(kind::FUNCTION_DEFINITION)]
     FunctionDefinition(Box<FunctionDefinitionTransport>),
 }
@@ -4213,7 +4213,7 @@ impl ::sittir_core::view::KindOf for DecoratedDefinitionDefinitionTransportSlot 
 impl ::sittir_core::render::Render for DecoratedDefinitionDefinitionTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            DecoratedDefinitionDefinitionTransportSlot::ClassDefinition(inner) => inner.as_ref().render(w),
+            DecoratedDefinitionDefinitionTransportSlot::ClassDefinition(inner) => inner.render(w),
             DecoratedDefinitionDefinitionTransportSlot::FunctionDefinition(inner) => inner.as_ref().render(w),
         }
     }
@@ -7576,7 +7576,7 @@ impl ::sittir_core::render::Render for CollectionElementsItemTransportSlot {
 #[transport(choice)]
 pub enum StringContentTransportSlot {
     #[kind(kind::INTERPOLATION)]
-    Interpolation(Box<InterpolationTransport>),
+    Interpolation(InterpolationTransport),
     #[kind(kind::STRING_CONTENT)]
     StringContent(StringContentTransport),
 }
@@ -7614,7 +7614,7 @@ impl ::sittir_core::view::KindOf for StringContentTransportSlot {
 impl ::sittir_core::render::Render for StringContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            StringContentTransportSlot::Interpolation(inner) => inner.as_ref().render(w),
+            StringContentTransportSlot::Interpolation(inner) => inner.render(w),
             StringContentTransportSlot::StringContent(inner) => inner.render(w),
         }
     }
@@ -8114,7 +8114,7 @@ pub enum FormatSpecifierElementsTransportSlot {
     #[kind(kind::FORMAT_SPECIFIER_TEXT)]
     FormatSpecifierText(FormatSpecifierTextTransport),
     #[kind(kind::_FORMAT_EXPRESSION, display)]
-    FormatExpression(Box<FormatExpressionTransport>),
+    FormatExpression(FormatExpressionTransport),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -8157,7 +8157,7 @@ impl ::sittir_core::render::Render for FormatSpecifierElementsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             FormatSpecifierElementsTransportSlot::FormatSpecifierText(inner) => inner.render(w),
-            FormatSpecifierElementsTransportSlot::FormatExpression(inner) => inner.as_ref().render(w),
+            FormatSpecifierElementsTransportSlot::FormatExpression(inner) => inner.render(w),
             FormatSpecifierElementsTransportSlot::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
         }
     }
@@ -9299,7 +9299,7 @@ pub struct ModuleTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS)]
-    pub statements: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
+    pub statements: Vec<::sittir_core::SlotValue<StatementTransport>>,
     #[wire(key = "_statements_separator_space")]
     pub statements_separator_space: Option<u16>,
 }
@@ -9332,9 +9332,9 @@ impl ::sittir_core::prepare::Prepare for ModuleTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_MODULE_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.statements.iter_mut().map(Some), "", options::allowed(options::SITE_MODULE_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.statements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_MODULE_STATEMENTS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_MODULE_STATEMENTS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.statements.iter_mut().map(Some), options::SEATS_MODULE_STATEMENTS, ctx);
         self.statements.prepare(ctx)?;
         Ok(())
     }
@@ -9626,7 +9626,7 @@ pub struct ImportListTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, separator = kind::COMMA)]
-    pub name: Vec<::sittir_core::SlotValue<ImportListNameTransportSlot>>,
+    pub name: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ImportListNameTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -9842,7 +9842,7 @@ pub struct AssertStatementTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_expression")]
     #[slot(field = field::EXPRESSION, separator = kind::COMMA)]
-    pub expression: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
+    pub expression: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_expression_separator_space_before")]
     pub expression_separator_space_before: Option<u16>,
     #[wire(key = "_expression_separator_space_after")]
@@ -10206,7 +10206,7 @@ pub struct IfStatementTransport {
     pub consequence: ::sittir_core::SlotValue<SuiteTransport>,
     #[wire(key = "_alternative")]
     #[slot(field = field::ALTERNATIVE)]
-    pub alternative: Option<Vec<::sittir_core::SlotValue<IfStatementAlternativeTransportSlot>>>,
+    pub alternative: Vec<::sittir_core::SlotValue<IfStatementAlternativeTransportSlot>>,
     #[wire(key = "_alternative_separator_space")]
     pub alternative_separator_space: Option<u16>,
 }
@@ -10235,9 +10235,9 @@ impl ::sittir_core::prepare::Prepare for IfStatementTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.alternative.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_IF_STATEMENT_ALTERNATIVE_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.alternative.iter_mut().map(Some), "", options::allowed(options::SITE_IF_STATEMENT_ALTERNATIVE_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.alternative_separator_space.get_or_insert(ctx.options.spacing[options::SITE_IF_STATEMENT_ALTERNATIVE_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.alternative.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_IF_STATEMENT_ALTERNATIVE, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.alternative.iter_mut().map(Some), options::SEATS_IF_STATEMENT_ALTERNATIVE, ctx);
         self.condition.prepare(ctx)?;
         self.consequence.prepare(ctx)?;
         self.alternative.prepare(ctx)?;
@@ -10613,7 +10613,7 @@ pub struct TryStatementTransport {
     pub body: ::sittir_core::SlotValue<SuiteTransport>,
     #[wire(key = "_except_clauses")]
     #[slot(field = field::EXCEPT_CLAUSES)]
-    pub except_clauses: Option<Vec<::sittir_core::SlotValue<ExceptClauseTransport>>>,
+    pub except_clauses: Vec<::sittir_core::SlotValue<ExceptClauseTransport>>,
     #[wire(key = "_else_clause")]
     #[slot(field = field::ELSE_CLAUSE)]
     pub else_clause: Option<::sittir_core::SlotValue<ElseClauseTransport>>,
@@ -10648,9 +10648,9 @@ impl ::sittir_core::prepare::Prepare for TryStatementTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.except_clauses.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.except_clauses.iter_mut().map(Some), "", options::allowed(options::SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.except_clauses_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.except_clauses.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TRY_STATEMENT_EXCEPT_CLAUSES, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.except_clauses.iter_mut().map(Some), options::SEATS_TRY_STATEMENT_EXCEPT_CLAUSES, ctx);
         self.body.prepare(ctx)?;
         self.except_clauses.prepare(ctx)?;
         self.else_clause.prepare(ctx)?;
@@ -11107,7 +11107,7 @@ pub struct GlobalStatementTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_names")]
     #[slot(field = field::NAMES, separator = kind::COMMA)]
-    pub names: Vec<::sittir_core::SlotValue<IdentifierTransport>>,
+    pub names: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<IdentifierTransport>>,
     #[wire(key = "_names_separator_space_before")]
     pub names_separator_space_before: Option<u16>,
     #[wire(key = "_names_separator_space_after")]
@@ -11159,7 +11159,7 @@ pub struct NonlocalStatementTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_names")]
     #[slot(field = field::NAMES, separator = kind::COMMA)]
-    pub names: Vec<::sittir_core::SlotValue<IdentifierTransport>>,
+    pub names: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<IdentifierTransport>>,
     #[wire(key = "_names_separator_space_before")]
     pub names_separator_space_before: Option<u16>,
     #[wire(key = "_names_separator_space_after")]
@@ -11214,7 +11214,7 @@ pub struct ExecStatementTransport {
     pub code: ::sittir_core::SlotValue<ExecStatementCodeTransportSlot>,
     #[wire(key = "_in_clause")]
     #[slot(field = field::IN_CLAUSE, separator = kind::COMMA)]
-    pub in_clause: Option<Vec<::sittir_core::SlotValue<ExpressionTransport>>>,
+    pub in_clause: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_in_clause_separator_space_before")]
     pub in_clause_separator_space_before: Option<u16>,
     #[wire(key = "_in_clause_separator_space_after")]
@@ -11245,10 +11245,10 @@ impl ::sittir_core::prepare::Prepare for ExecStatementTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.in_clause.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), ",", options::allowed(options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.in_clause.iter_mut().map(Some), ",", options::allowed(options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.in_clause_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_BEFORE].arm);
         self.in_clause_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_AFTER].arm);
-        if let Some(seated_items) = self.in_clause.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_EXEC_STATEMENT_IN_CLAUSE, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.in_clause.iter_mut().map(Some), options::SEATS_EXEC_STATEMENT_IN_CLAUSE, ctx);
         self.code.prepare(ctx)?;
         self.in_clause.prepare(ctx)?;
         Ok(())
@@ -11509,7 +11509,7 @@ pub struct DecoratedDefinitionTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_decorator")]
     #[slot]
-    pub decorator: Vec<::sittir_core::SlotValue<DecoratorTransport>>,
+    pub decorator: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<DecoratorTransport>>,
     #[wire(key = "_definition")]
     #[slot(field = field::DEFINITION)]
     pub definition: ::sittir_core::SlotValue<DecoratedDefinitionDefinitionTransportSlot>,
@@ -11608,7 +11608,7 @@ pub struct BlockTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS)]
-    pub statements: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
+    pub statements: Vec<::sittir_core::SlotValue<StatementTransport>>,
     #[wire(key = "_statements_separator_space")]
     pub statements_separator_space: Option<u16>,
 }
@@ -11637,9 +11637,9 @@ impl ::sittir_core::prepare::Prepare for BlockTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.statements.iter_mut().map(Some), "", options::allowed(options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.statements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_BLOCK_STATEMENTS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.statements.iter_mut().map(Some), options::SEATS_BLOCK_STATEMENTS, ctx);
         self.statements.prepare(ctx)?;
         Ok(())
     }
@@ -11658,7 +11658,7 @@ pub struct ExpressionListTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -11713,7 +11713,7 @@ pub struct DottedNameTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_names")]
     #[slot(field = field::NAMES, separator = kind::DOT)]
-    pub names: Vec<::sittir_core::SlotValue<IdentifierTransport>>,
+    pub names: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<IdentifierTransport>>,
     #[wire(key = "_names_separator_space_before")]
     pub names_separator_space_before: Option<u16>,
     #[wire(key = "_names_separator_space_after")]
@@ -11895,7 +11895,7 @@ pub struct UnionPatternTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_patterns")]
     #[slot(field = field::PATTERNS, separator = kind::PIPE)]
-    pub patterns: Vec<::sittir_core::SlotValue<SimplePatternContentTransportSlot>>,
+    pub patterns: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<SimplePatternContentTransportSlot>>,
     #[wire(key = "_patterns_separator_space_before")]
     pub patterns_separator_space_before: Option<u16>,
     #[wire(key = "_patterns_separator_space_after")]
@@ -12247,7 +12247,7 @@ pub struct ParametersElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<ParameterTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ParameterTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -12302,7 +12302,7 @@ pub struct PatternsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<PatternTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<PatternTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -12895,7 +12895,7 @@ pub struct ComparisonOperatorTransport {
     pub left: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
     #[wire(key = "_comparators")]
     #[slot(field = field::COMPARATORS)]
-    pub comparators: Vec<::sittir_core::SlotValue<ComparisonOperatorComparatorTransport>>,
+    pub comparators: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ComparisonOperatorComparatorTransport>>,
     #[wire(key = "_comparators_separator_space")]
     pub comparators_separator_space: Option<u16>,
 }
@@ -13097,7 +13097,7 @@ pub struct PatternListTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<PatternTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<PatternTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -14281,7 +14281,7 @@ pub struct CollectionElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<CollectionElementsItemTransportSlot>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<CollectionElementsItemTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -14342,7 +14342,7 @@ pub struct ForInClauseTransport {
     pub left: ::sittir_core::SlotValue<ForStatementLeftTransportSlot>,
     #[wire(key = "_right")]
     #[slot(field = field::RIGHT, separator = kind::COMMA)]
-    pub right: Vec<::sittir_core::SlotValue<LambdaWithinForInClauseBodyTransportSlot>>,
+    pub right: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<LambdaWithinForInClauseBodyTransportSlot>>,
     #[wire(key = "_comma")]
     #[slot(field = field::COMMA, presence = kind::COMMA)]
     pub comma: Option<bool>,
@@ -14499,7 +14499,7 @@ pub struct ConcatenatedStringTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_string")]
     #[slot]
-    pub string: Vec<::sittir_core::SlotValue<StringTransport>>,
+    pub string: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<StringTransport>>,
     #[wire(key = "_string_separator_space")]
     pub string_separator_space: Option<u16>,
 }
@@ -14552,7 +14552,7 @@ pub struct StringTransport {
     pub string_start: ::sittir_core::SlotValue<StringStartTransport>,
     #[wire(key = "_content")]
     #[slot(field = field::CONTENT)]
-    pub content: Option<Vec<::sittir_core::SlotValue<StringContentTransportSlot>>>,
+    pub content: Vec<::sittir_core::SlotValue<StringContentTransportSlot>>,
     #[wire(key = "_string_end")]
     #[slot(field = field::STRING_END)]
     pub string_end: ::sittir_core::SlotValue<StringEndTransport, true>,
@@ -14602,7 +14602,7 @@ pub struct StringContentTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot]
-    pub content: Vec<::sittir_core::SlotValue<StringContentContentTransportSlot, true>>,
+    pub content: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<StringContentContentTransportSlot, true>>,
 }
 
 impl ::sittir_core::view::KindOf for StringContentTransport {
@@ -14726,7 +14726,7 @@ pub struct FormatSpecifierTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
-    pub elements: Option<Vec<::sittir_core::SlotValue<FormatSpecifierElementsTransportSlot, true>>>,
+    pub elements: Vec<::sittir_core::SlotValue<FormatSpecifierElementsTransportSlot, true>>,
 }
 
 impl ::sittir_core::view::KindOf for FormatSpecifierTransport {
@@ -15063,7 +15063,7 @@ pub struct SimpleStatementsElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::SEMI)]
-    pub item: Vec<::sittir_core::SlotValue<SimpleStatementTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<SimpleStatementTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -15118,7 +15118,7 @@ pub struct SubjectsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_subject")]
     #[slot(field = field::SUBJECT, separator = kind::COMMA)]
-    pub subject: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
+    pub subject: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -15173,7 +15173,7 @@ pub struct CasePatternsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<CasePatternTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<CasePatternTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -15228,7 +15228,7 @@ pub struct WithClauseWithItemsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<WithItemTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<WithItemTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -15282,7 +15282,7 @@ pub struct TypesTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<TypeTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<TypeTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -15337,7 +15337,7 @@ pub struct ArgumentListElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<ArgumentListElementsItemTransportSlot>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ArgumentListElementsItemTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -15392,7 +15392,7 @@ pub struct ListPatternCasePatternsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<CasePatternTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<CasePatternTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -15447,7 +15447,7 @@ pub struct DictPatternElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<DictPatternElementsItemTransportSlot>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<DictPatternElementsItemTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -15502,7 +15502,7 @@ pub struct SubscriptsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_subscript")]
     #[slot(field = field::SUBSCRIPT, separator = kind::COMMA)]
-    pub subscript: Vec<::sittir_core::SlotValue<SubscriptsSubscriptTransportSlot>>,
+    pub subscript: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<SubscriptsSubscriptTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -15557,7 +15557,7 @@ pub struct DictionaryElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<DictionaryElementsItemTransportSlot>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<DictionaryElementsItemTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -15697,7 +15697,7 @@ pub struct TuplePatternElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<PatternTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<PatternTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -15752,7 +15752,7 @@ pub struct TupleElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<CollectionElementsItemTransportSlot>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<CollectionElementsItemTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -15946,7 +15946,7 @@ pub struct PrintArgumentsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_argument")]
     #[slot(field = field::ARGUMENT, separator = kind::COMMA)]
-    pub argument: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
+    pub argument: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -16001,7 +16001,7 @@ pub struct PrintChevronArgumentsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_argument")]
     #[slot(field = field::ARGUMENT, separator = kind::COMMA)]
-    pub argument: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
+    pub argument: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 1)]
     pub delimiter: Option<u8>,
@@ -16220,7 +16220,7 @@ pub struct ComprehensionClausesTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot(field = field::CONTENT)]
-    pub content: Vec<::sittir_core::SlotValue<ComprehensionClausesContentTransportSlot>>,
+    pub content: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ComprehensionClausesContentTransportSlot>>,
     #[wire(key = "_content_separator_space")]
     pub content_separator_space: Option<u16>,
 }
@@ -17103,7 +17103,7 @@ pub struct ExceptClauseExceptionListTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE, separator = kind::COMMA)]
-    pub value: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
+    pub value: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_value_separator_space_before")]
     pub value_separator_space_before: Option<u16>,
     #[wire(key = "_value_separator_space_after")]
@@ -17346,7 +17346,7 @@ pub struct ExpressionStatementTupleTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -17401,7 +17401,7 @@ pub struct WithClauseBareTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<WithItemTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<WithItemTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -17500,7 +17500,7 @@ pub struct MatchBlockBlockTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_alternative")]
     #[slot(field = field::ALTERNATIVE)]
-    pub alternative: Option<Vec<::sittir_core::SlotValue<CaseClauseTransport>>>,
+    pub alternative: Vec<::sittir_core::SlotValue<CaseClauseTransport>>,
     #[wire(key = "_alternative_separator_space")]
     pub alternative_separator_space: Option<u16>,
 }
@@ -17529,9 +17529,9 @@ impl ::sittir_core::prepare::Prepare for MatchBlockBlockTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.alternative.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.alternative.iter_mut().map(Some), "", options::allowed(options::SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.alternative_separator_space.get_or_insert(ctx.options.spacing[options::SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.alternative.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_MATCH_BLOCK_BLOCK_ALTERNATIVE, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.alternative.iter_mut().map(Some), options::SEATS_MATCH_BLOCK_BLOCK_ALTERNATIVE, ctx);
         self.alternative.prepare(ctx)?;
         Ok(())
     }
@@ -22205,7 +22205,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyTransport {
 
 fn render_module(node: &ModuleTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let statements = ListView {
-        items: node.statements.as_deref().unwrap_or(&[]),
+        items: &node.statements,
         template: "{}",
         token: "",
         before: 0,
@@ -22409,7 +22409,7 @@ fn render_raise_statement(node: &RaiseStatementTransport, w: &mut dyn ::sittir_c
 
 fn render_if_statement(node: &IfStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alternative = ListView {
-        items: node.alternative.as_deref().unwrap_or(&[]),
+        items: &node.alternative,
         template: "{}",
         token: "",
         before: 0,
@@ -22549,7 +22549,7 @@ fn render_try_statement(node: &TryStatementTransport, w: &mut dyn ::sittir_core:
     let body = &node.body;
     let else_clause = View::new(&node.else_clause, "{}");
     let except_clauses = ListView {
-        items: node.except_clauses.as_deref().unwrap_or(&[]),
+        items: &node.except_clauses,
         template: "{}",
         token: "",
         before: 0,
@@ -22749,7 +22749,7 @@ fn render_nonlocal_statement(node: &NonlocalStatementTransport, w: &mut dyn ::si
 fn render_exec_statement(node: &ExecStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let code = &node.code;
     let in_clause = ListView {
-        items: node.in_clause.as_deref().unwrap_or(&[]),
+        items: &node.in_clause,
         template: "{}",
         token: ",",
         before: node.in_clause_separator_space_before.unwrap_or(0),
@@ -22877,7 +22877,7 @@ fn render_decorator(node: &DecoratorTransport, w: &mut dyn ::sittir_core::render
 
 fn render_block(node: &BlockTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let statements = ListView {
-        items: node.statements.as_deref().unwrap_or(&[]),
+        items: &node.statements,
         template: "{}",
         token: "",
         before: 0,
@@ -23692,7 +23692,7 @@ fn render_concatenated_string(node: &ConcatenatedStringTransport, w: &mut dyn ::
 
 fn render_string(node: &StringTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = ListView {
-        items: node.content.as_deref().unwrap_or(&[]),
+        items: &node.content,
         template: "{}",
         token: "",
         before: 0,
@@ -23752,7 +23752,7 @@ fn render_interpolation(node: &InterpolationTransport, w: &mut dyn ::sittir_core
 
 fn render_format_specifier(node: &FormatSpecifierTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let elements = ListView {
-        items: node.elements.as_deref().unwrap_or(&[]),
+        items: &node.elements,
         template: "{}",
         token: "",
         before: 0,
@@ -24428,7 +24428,7 @@ fn render_with_clause_paren(node: &WithClauseParenTransport, w: &mut dyn ::sitti
 
 fn render_match_block_block(node: &MatchBlockBlockTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alternative = ListView {
-        items: node.alternative.as_deref().unwrap_or(&[]),
+        items: &node.alternative,
         template: "{}",
         token: "",
         before: 0,
@@ -24984,14 +24984,14 @@ fn render_statement(t: &StatementTransport, w: &mut dyn ::sittir_core::render::R
     match t {
         StatementTransport::SimpleStatements(inner) => inner.render(w),
         StatementTransport::CompoundStatement(inner) => inner.render(w),
-        StatementTransport::IfStatement(inner) => inner.as_ref().render(w),
+        StatementTransport::IfStatement(inner) => inner.render(w),
         StatementTransport::ForStatement(inner) => inner.as_ref().render(w),
         StatementTransport::WhileStatement(inner) => inner.as_ref().render(w),
-        StatementTransport::TryStatement(inner) => inner.as_ref().render(w),
+        StatementTransport::TryStatement(inner) => inner.render(w),
         StatementTransport::WithStatement(inner) => inner.render(w),
         StatementTransport::FunctionDefinition(inner) => inner.as_ref().render(w),
-        StatementTransport::ClassDefinition(inner) => inner.as_ref().render(w),
-        StatementTransport::DecoratedDefinition(inner) => inner.render(w),
+        StatementTransport::ClassDefinition(inner) => inner.render(w),
+        StatementTransport::DecoratedDefinition(inner) => inner.as_ref().render(w),
         StatementTransport::MatchStatement(inner) => inner.render(w),
     }
 }
@@ -25001,9 +25001,9 @@ fn render_simple_statement(t: &SimpleStatementTransport, w: &mut dyn ::sittir_co
         SimpleStatementTransport::FutureImportStatement(inner) => inner.render(w),
         SimpleStatementTransport::ImportStatement(inner) => inner.render(w),
         SimpleStatementTransport::ImportFromStatement(inner) => inner.render(w),
-        SimpleStatementTransport::PrintStatement(inner) => inner.as_ref().render(w),
+        SimpleStatementTransport::PrintStatement(inner) => inner.render(w),
         SimpleStatementTransport::AssertStatement(inner) => inner.render(w),
-        SimpleStatementTransport::ExpressionStatement(inner) => inner.as_ref().render(w),
+        SimpleStatementTransport::ExpressionStatement(inner) => inner.render(w),
         SimpleStatementTransport::ReturnStatement(inner) => inner.render(w),
         SimpleStatementTransport::DeleteStatement(inner) => inner.render(w),
         SimpleStatementTransport::RaiseStatement(inner) => inner.as_ref().render(w),
@@ -25019,14 +25019,14 @@ fn render_simple_statement(t: &SimpleStatementTransport, w: &mut dyn ::sittir_co
 
 fn render_compound_statement(t: &CompoundStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        CompoundStatementTransport::IfStatement(inner) => inner.as_ref().render(w),
+        CompoundStatementTransport::IfStatement(inner) => inner.render(w),
         CompoundStatementTransport::ForStatement(inner) => inner.as_ref().render(w),
         CompoundStatementTransport::WhileStatement(inner) => inner.as_ref().render(w),
-        CompoundStatementTransport::TryStatement(inner) => inner.as_ref().render(w),
+        CompoundStatementTransport::TryStatement(inner) => inner.render(w),
         CompoundStatementTransport::WithStatement(inner) => inner.render(w),
         CompoundStatementTransport::FunctionDefinition(inner) => inner.as_ref().render(w),
-        CompoundStatementTransport::ClassDefinition(inner) => inner.as_ref().render(w),
-        CompoundStatementTransport::DecoratedDefinition(inner) => inner.render(w),
+        CompoundStatementTransport::ClassDefinition(inner) => inner.render(w),
+        CompoundStatementTransport::DecoratedDefinition(inner) => inner.as_ref().render(w),
         CompoundStatementTransport::MatchStatement(inner) => inner.render(w),
     }
 }
@@ -25051,7 +25051,7 @@ fn render_parameter(t: &ParameterTransport, w: &mut dyn ::sittir_core::render::R
         ParameterTransport::Identifier(inner) => inner.render(w),
         ParameterTransport::TypedParameter(inner) => inner.render(w),
         ParameterTransport::DefaultParameter(inner) => inner.render(w),
-        ParameterTransport::TypedDefaultParameter(inner) => inner.as_ref().render(w),
+        ParameterTransport::TypedDefaultParameter(inner) => inner.render(w),
         ParameterTransport::ListSplatPattern(inner) => inner.render(w),
         ParameterTransport::TuplePattern(inner) => inner.render(w),
         ParameterTransport::KeywordSeparator => render_keyword_separator(w),
@@ -25800,7 +25800,7 @@ const _: () = assert!(::core::mem::size_of::<CasePatternTransport>() <= 256, "Ca
 const _: () = assert!(::core::mem::size_of::<CasePatternsTransport>() <= 256, "CasePatternsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<CaseTuplePatternTransport>() <= 256, "CaseTuplePatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ChevronTransport>() <= 256, "ChevronTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ClassDefinitionTransport>() > 256, "ClassDefinitionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ClassDefinitionTransport>() <= 256, "ClassDefinitionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ClassPatternTransport>() <= 256, "ClassPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<CollectionElementsTransport>() <= 256, "CollectionElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<CommentTransport>() <= 256, "CommentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -25812,7 +25812,7 @@ const _: () = assert!(::core::mem::size_of::<ComprehensionClausesTransport>() <=
 const _: () = assert!(::core::mem::size_of::<ConcatenatedStringTransport>() <= 256, "ConcatenatedStringTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ConditionalExpressionTransport>() <= 256, "ConditionalExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ConstrainedTypeTransport>() <= 256, "ConstrainedTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<DecoratedDefinitionTransport>() <= 256, "DecoratedDefinitionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<DecoratedDefinitionTransport>() > 256, "DecoratedDefinitionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DecoratorTransport>() <= 256, "DecoratorTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DedentTransport>() <= 256, "DedentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DefaultParameterTransport>() <= 256, "DefaultParameterTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -25825,7 +25825,7 @@ const _: () = assert!(::core::mem::size_of::<DictionarySplatPatternTransport>() 
 const _: () = assert!(::core::mem::size_of::<DictionarySplatTransport>() <= 256, "DictionarySplatTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DictionaryTransport>() <= 256, "DictionaryTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DottedNameTransport>() <= 256, "DottedNameTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ElifClauseTransport>() > 256, "ElifClauseTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ElifClauseTransport>() <= 256, "ElifClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ElseClauseTransport>() <= 256, "ElseClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<EscapeInterpolationTransport>() <= 256, "EscapeInterpolationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<EscapeSequenceHexTransport>() <= 256, "EscapeSequenceHexTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -25841,7 +25841,7 @@ const _: () = assert!(::core::mem::size_of::<ExceptClauseExceptionTransport>() <
 const _: () = assert!(::core::mem::size_of::<ExceptClauseTransport>() <= 256, "ExceptClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExecStatementTransport>() <= 256, "ExecStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExpressionListTransport>() <= 256, "ExpressionListTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ExpressionStatementTransport>() > 256, "ExpressionStatementTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ExpressionStatementTransport>() <= 256, "ExpressionStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExpressionStatementTupleTransport>() <= 256, "ExpressionStatementTupleTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FinallyClauseTransport>() <= 256, "FinallyClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FloatLeadingPointTransport>() <= 256, "FloatLeadingPointTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -25850,7 +25850,7 @@ const _: () = assert!(::core::mem::size_of::<FloatScientificTransport>() <= 256,
 const _: () = assert!(::core::mem::size_of::<FloatTransport>() <= 256, "FloatTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ForInClauseTransport>() <= 256, "ForInClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ForStatementTransport>() > 256, "ForStatementTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FormatExpressionTransport>() > 256, "FormatExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<FormatExpressionTransport>() <= 256, "FormatExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FormatSpecifierTextTransport>() <= 256, "FormatSpecifierTextTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FormatSpecifierTransport>() <= 256, "FormatSpecifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FunctionDefinitionTransport>() > 256, "FunctionDefinitionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
@@ -25860,7 +25860,7 @@ const _: () = assert!(::core::mem::size_of::<GenericTypeTransport>() <= 256, "Ge
 const _: () = assert!(::core::mem::size_of::<GlobalStatementTransport>() <= 256, "GlobalStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<IdentifierTransport>() <= 256, "IdentifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<IfClauseTransport>() <= 256, "IfClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<IfStatementTransport>() > 256, "IfStatementTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<IfStatementTransport>() <= 256, "IfStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ImportFromStatementTransport>() <= 256, "ImportFromStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ImportListTransport>() <= 256, "ImportListTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ImportPrefixTransport>() <= 256, "ImportPrefixTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -25874,7 +25874,7 @@ const _: () = assert!(::core::mem::size_of::<IntegerDecimalTransport>() <= 256, 
 const _: () = assert!(::core::mem::size_of::<IntegerHexTransport>() <= 256, "IntegerHexTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<IntegerOctalTransport>() <= 256, "IntegerOctalTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<IntegerTransport>() <= 256, "IntegerTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<InterpolationTransport>() > 256, "InterpolationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<InterpolationTransport>() <= 256, "InterpolationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<KeyValuePatternTransport>() <= 256, "KeyValuePatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<KeywordArgumentTransport>() <= 256, "KeywordArgumentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<KeywordPatternTransport>() <= 256, "KeywordPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -25911,7 +25911,7 @@ const _: () = assert!(::core::mem::size_of::<PrintArgumentsTransport>() <= 256, 
 const _: () = assert!(::core::mem::size_of::<PrintChevronArgumentsTransport>() <= 256, "PrintChevronArgumentsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<PrintStatementChevronTransport>() <= 256, "PrintStatementChevronTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<PrintStatementPlainTransport>() <= 256, "PrintStatementPlainTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<PrintStatementTransport>() > 256, "PrintStatementTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<PrintStatementTransport>() <= 256, "PrintStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<RaiseStatementTransport>() > 256, "RaiseStatementTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<RelativeImportTransport>() <= 256, "RelativeImportTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ReturnStatementTransport>() <= 256, "ReturnStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -25936,7 +25936,7 @@ const _: () = assert!(::core::mem::size_of::<SubscriptsTransport>() <= 256, "Sub
 const _: () = assert!(::core::mem::size_of::<SuiteBlockTransport>() <= 256, "SuiteBlockTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<SuiteEmptyTransport>() <= 256, "SuiteEmptyTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<SuiteInlineTransport>() <= 256, "SuiteInlineTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TryStatementTransport>() > 256, "TryStatementTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TryStatementTransport>() <= 256, "TryStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TupleElementsTransport>() <= 256, "TupleElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TuplePatternElementsTransport>() <= 256, "TuplePatternElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TuplePatternTransport>() <= 256, "TuplePatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -25945,7 +25945,7 @@ const _: () = assert!(::core::mem::size_of::<TypeAliasStatementTransport>() <= 2
 const _: () = assert!(::core::mem::size_of::<TypeConversionTransport>() <= 256, "TypeConversionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeParameterTransport>() <= 256, "TypeParameterTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeTransport>() <= 256, "TypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TypedDefaultParameterTransport>() > 256, "TypedDefaultParameterTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TypedDefaultParameterTransport>() <= 256, "TypedDefaultParameterTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypedParameterTransport>() <= 256, "TypedParameterTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypesTransport>() <= 256, "TypesTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<UnaryOperatorTransport>() <= 256, "UnaryOperatorTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -25959,3 +25959,5 @@ const _: () = assert!(::core::mem::size_of::<WithItemTransport>() <= 256, "WithI
 const _: () = assert!(::core::mem::size_of::<WithStatementTransport>() <= 256, "WithStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<YieldFromClauseTransport>() <= 256, "YieldFromClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<YieldTransport>() <= 256, "YieldTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+
+::sittir_core::grammar_trivia!(TriviaTransport; AnyTransport, StatementTransport, SimpleStatementTransport, CompoundStatementTransport, WithClauseTransport, SuiteTransport, ParameterTransport, PatternTransport, ExpressionTransport, PrimaryExpressionTransport, IntegerTransport, FloatTransport, IntegerDecimalTransport, FutureImportStatementContentTransportSlot, ImportFromStatementModuleNameTransportSlot, ImportFromStatementContentTransportSlot, ImportListNameTransportSlot, PrintStatementContentTransportSlot, ExpressionStatementContentTransportSlot, NamedExpressionNameTransportSlot, ReturnStatementExpressionsTransportSlot, IfStatementAlternativeTransportSlot, MatchBlockContentTransportSlot, ForStatementLeftTransportSlot, ExecStatementCodeTransportSlot, ParenthesizedListSplatContentTransportSlot, DecoratedDefinitionDefinitionTransportSlot, CasePatternContentTransportSlot, SimplePatternContentTransportSlot, SplatPatternOperatorTransportSlot, SplatPatternNameTransportSlot, ComplexPatternRealTransportSlot, ComplexPatternOperatorTransportSlot, DefaultParameterNameTransportSlot, ListSplatPatternTargetTransportSlot, BooleanOperatorOperatorTransportSlot, BinaryOperatorOperatorTransportSlot, UnaryOperatorOperatorTransportSlot, LambdaWithinForInClauseBodyTransportSlot, AugmentedAssignmentOperatorTransportSlot, AugmentedAssignmentRightTransportSlot, YieldContentTransportSlot, CallArgumentsTransportSlot, TypedParameterNameTransportSlot, TypeContentTransportSlot, SplatTypeOperatorTransportSlot, GenericTypeNameTransportSlot, ParenthesizedExpressionExpressionTransportSlot, CollectionElementsItemTransportSlot, StringContentTransportSlot, StringContentContentTransportSlot, InterpolationExpressionTransportSlot, FormatSpecifierElementsTransportSlot, ArgumentListElementsItemTransportSlot, DictPatternElementsItemTransportSlot, SubscriptsSubscriptTransportSlot, DictionaryElementsItemTransportSlot, PrintStatementChevronPrintChevronArgumentsTransportSlot, ComprehensionClausesContentTransportSlot, ExceptClauseExceptionContentTransportSlot, ComparisonOperatorComparatorOperatorsTransportSlot, ModuleTransport, SimpleStatementsTransport, ImportStatementTransport, ImportPrefixTransport, RelativeImportTransport, FutureImportStatementTransport, ImportFromStatementTransport, ImportListTransport, AliasedImportTransport, WildcardImportTransport, PrintStatementTransport, ChevronTransport, AssertStatementTransport, ExpressionStatementTransport, NamedExpressionTransport, ReturnStatementTransport, DeleteStatementTransport, RaiseStatementTransport, PassStatementTransport, BreakStatementTransport, ContinueStatementTransport, IfStatementTransport, ElifClauseTransport, ElseClauseTransport, MatchStatementTransport, MatchBlockTransport, CaseClauseTransport, ForStatementTransport, WhileStatementTransport, TryStatementTransport, ExceptClauseTransport, FinallyClauseTransport, WithStatementTransport, WithItemTransport, FunctionDefinitionTransport, ParametersTransport, LambdaParametersTransport, ListSplatTransport, DictionarySplatTransport, GlobalStatementTransport, NonlocalStatementTransport, ExecStatementTransport, TypeAliasStatementTransport, ClassDefinitionTransport, TypeParameterTransport, ParenthesizedListSplatTransport, ArgumentListTransport, DecoratedDefinitionTransport, DecoratorTransport, BlockTransport, ExpressionListTransport, DottedNameTransport, CasePatternTransport, SimplePatternTransport, CaseAsPatternTransport, UnionPatternTransport, DictPatternTransport, KeyValuePatternTransport, KeywordPatternTransport, SplatPatternTransport, ClassPatternTransport, ComplexPatternTransport, ParametersElementsTransport, PatternsTransport, TuplePatternTransport, ListPatternTransport, DefaultParameterTransport, TypedDefaultParameterTransport, ListSplatPatternTransport, DictionarySplatPatternTransport, AsPatternTransport, NotOperatorTransport, BooleanOperatorTransport, BinaryOperatorTransport, UnaryOperatorTransport, ComparisonOperatorTransport, LambdaTransport, LambdaWithinForInClauseTransport, AugmentedAssignmentTransport, PatternListTransport, YieldTransport, AttributeTransport, SubscriptTransport, SliceTransport, EllipsisTransport, CallTransport, TypedParameterTransport, TypeTransport, SplatTypeTransport, GenericTypeTransport, UnionTypeTransport, ConstrainedTypeTransport, MemberTypeTransport, KeywordArgumentTransport, ListTransport, SetTransport, TupleTransport, DictionaryTransport, PairTransport, ListComprehensionTransport, DictionaryComprehensionTransport, SetComprehensionTransport, GeneratorExpressionTransport, ParenthesizedExpressionTransport, CollectionElementsTransport, ForInClauseTransport, IfClauseTransport, ConditionalExpressionTransport, ConcatenatedStringTransport, StringTransport, StringContentTransport, InterpolationTransport, NotEscapeSequenceTransport, FormatSpecifierTransport, TypeConversionTransport, IdentifierTransport, TrueTransport, FalseTransport, NoneTransport, AwaitTransport, CommentTransport, PositionalSeparatorTransport, KeywordSeparatorTransport, SimpleStatementsElementsTransport, SubjectsTransport, CasePatternsTransport, WithClauseWithItemsTransport, TypesTransport, ArgumentListElementsTransport, ListPatternCasePatternsTransport, DictPatternElementsTransport, SubscriptsTransport, DictionaryElementsTransport, SliceGroupTransport, FormatSpecifierTextTransport, TuplePatternElementsTransport, TupleElementsTransport, ExceptClauseExceptionAsTransport, CaseTuplePatternTransport, CaseListPatternTransport, PrintArgumentsTransport, PrintChevronArgumentsTransport, PrintStatementChevronTransport, PrintStatementPlainTransport, WildcardPatternTransport, ParenthesizedImportListTransport, ComprehensionClausesTransport, IntegerHexTransport, IntegerOctalTransport, IntegerBinaryTransport, IntegerDecimalLongTransport, IntegerDecimalImaginaryTransport, IntegerDecimalPlainTransport, FloatPointTransport, FloatLeadingPointTransport, FloatScientificTransport, EscapeSequenceUnicodeFixedTransport, EscapeSequenceUnicodeWideTransport, EscapeSequenceHexTransport, EscapeSequenceOctalTransport, EscapeSequenceLineBreakTransport, EscapeSequenceSimpleTransport, EscapeSequenceNamedTransport, LineContinuationNewlineTransport, LineContinuationNulTransport, SimplePatternNegativeTransport, ExceptClauseExceptionListTransport, ExceptClauseExceptionTransport, AssignmentEqTransport, AssignmentTypeTransport, AssignmentTypedTransport, ExpressionStatementTupleTransport, WithClauseBareTransport, WithClauseParenTransport, MatchBlockBlockTransport, MatchBlockEmptyTransport, SuiteInlineTransport, SuiteBlockTransport, SuiteEmptyTransport, ComparisonOperatorComparatorTransport, YieldFromClauseTransport, StringStartTransport, StringFragmentTransport, EscapeInterpolationTransport, StringEndTransport, TightTransport, SpaceTransport, TabTransport, NewlineTransport, BlanklineTransport, DoubleBlanklineTransport, IndentTransport, DedentTransport, NamesTransport, AsPatternTargetTransport, FormatExpressionTransport, ImportKeywordTransport, DotTransport, FromKeywordTransport, FutureUKeywordTransport, AsKeywordTransport, StarTransport, GtGtTransport, AssertKeywordTransport, PrintKeywordTransport, ExecKeywordTransport, AsyncKeywordTransport, AwaitKeywordTransport, TypeKeywordTransport, MatchKeywordTransport, ColonEqTransport, ReturnKeywordTransport, DelKeywordTransport, RaiseKeywordTransport, PassKeywordTransport, BreakKeywordTransport, ContinueKeywordTransport, IfKeywordTransport, ColonTransport, ElifKeywordTransport, ElseKeywordTransport, CaseKeywordTransport, ForKeywordTransport, InKeywordTransport, WhileKeywordTransport, TryKeywordTransport, ExceptKeywordTransport, FinallyKeywordTransport, WithKeywordTransport, DefKeywordTransport, DashGtTransport, LparenTransport, RparenTransport, StarStarTransport, GlobalKeywordTransport, NonlocalKeywordTransport, EqTransport, ClassKeywordTransport, LbrackTransport, RbrackTransport, AtTransport, LbraceTransport, RbraceTransport, UnderscoreTransport, DashTransport, PlusTransport, NotKeywordTransport, AndKeywordTransport, OrKeywordTransport, SlashTransport, PercentTransport, SlashSlashTransport, PipeTransport, AmpTransport, CaretTransport, LtLtTransport, TildeTransport, LambdaKeywordTransport, PlusEqTransport, DashEqTransport, StarEqTransport, SlashEqTransport, AtEqTransport, SlashSlashEqTransport, PercentEqTransport, StarStarEqTransport, GtGtEqTransport, LtLtEqTransport, AmpEqTransport, CaretEqTransport, PipeEqTransport, YieldKeywordTransport, CommaTransport, BslashTransport, LtTransport, LtEqTransport, EqEqTransport, BangEqTransport, GtEqTransport, GtTransport, LtGtTransport, NotInTransport, IsKeywordTransport, IsNotTransport, TriviaTransport);

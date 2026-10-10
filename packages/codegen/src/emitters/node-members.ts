@@ -13,9 +13,15 @@ export interface InnerPositions {
 	readonly keyed: boolean;
 }
 
+export interface StoredAccessor {
+	readonly name: string;
+	readonly read: string;
+	readonly hydrates?: 'one' | 'many';
+}
+
 export interface NodeMemberSpec {
 	readonly setters?: readonly SetterEntry[];
-	readonly accessors: readonly { readonly name: string; readonly read: string }[];
+	readonly accessors: readonly StoredAccessor[];
 	readonly inner: InnerPositions;
 	readonly extra?: readonly string[];
 	readonly parsed?: true;
@@ -31,6 +37,11 @@ export function triviaInnerImports(nodeMap: NodeMap): readonly string[] {
 	return innerGapsKeyed(nodeMap) ? ['triviaInner', 'triviaInnerAt'] : ['triviaInner'];
 }
 
+function accessorRead(accessor: StoredAccessor): string {
+	if (accessor.hydrates === undefined) return accessor.read;
+	return `${accessor.hydrates === 'many' ? 'hydrateStoredSlots' : 'hydrateStoredSlot'}(node, ${JSON.stringify(accessor.read)})`;
+}
+
 export function withEntry(entry: SetterEntry): string {
 	return `      ${entry.name}: (${entry.params}) => rebuilt(node, handle, () => ${entry.body}),`;
 }
@@ -40,7 +51,7 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 	if (spec.setters !== undefined) {
 		lines.push('    $with: {', ...spec.setters.map(withEntry), '    },');
 	}
-	for (const accessor of spec.accessors) lines.push(`    ${accessor.name}: () => ${accessor.read},`);
+	for (const accessor of spec.accessors) lines.push(`    ${accessor.name}: () => ${accessorRead(accessor)},`);
 	lines.push(...(spec.extra ?? []));
 	lines.push(
 		'    $render: () => renderText(handle, node),',
@@ -130,19 +141,14 @@ export function ownerViewParts(plan: ListViewPlan, storage: string, accessor: st
 		'    [Symbol.unscopables]: Array.prototype[Symbol.unscopables],',
 		...options
 	];
-	if (environment === 'factory') {
-		return {
-			prelude: [
-				`  const listView = ownerView(${storage}, ${JSON.stringify(plan.count)});`,
-				`  if (listView.stored === undefined) refuseReadStub(${JSON.stringify(storage)});`,
-				`  const listedItems = listItems(ownerElements(listView.list, ${JSON.stringify(plan.elements)}), ${wrapper});`
-			],
-			members: ['    length: listedItems.length,', '    [LIST_ITEMS]: listedItems,', ...shared],
-			postlude: ['  for (let index = 0; index < listedItems.length; index++) (node as Record<number, unknown>)[index] = listedItems[index];']
-		};
-	}
 	return {
-		prelude: [`  const listView = ownerView(${storage}, ${JSON.stringify(plan.count)}, (list) => hydrate(list, tree));`],
+		prelude:
+			environment === 'factory'
+				? [
+						`  const listView = ownerView(${storage}, ${JSON.stringify(plan.count)});`,
+						`  if (listView.stored === undefined) refuseReadStub(${JSON.stringify(storage)});`
+					]
+				: [`  const listView = ownerView(${storage}, ${JSON.stringify(plan.count)}, (list) => hydrate(list, tree));`],
 		members: [
 			'    length: listView.stored?.length,',
 			'    [LIST_ITEMS]: undefined,',
@@ -176,7 +182,7 @@ export function listSelfViewParts(
 		members: [
 			'    length: listedStored.length,',
 			'    [LIST_ITEMS]: undefined,',
-			`    [LIST_READ]: () => listItems(${environment === 'factory' ? 'listedStored' : `ownerElements(node, ${JSON.stringify(elementsReader)})`}, ${wrapper}),`,
+			`    [LIST_READ]: () => listItems(ownerElements(node, ${JSON.stringify(elementsReader)}), ${wrapper}),`,
 			...shared
 		],
 		postlude: ['  defineListIndices(node, listedStored.length);']

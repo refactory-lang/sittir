@@ -7,8 +7,8 @@ import type {
 	LineGaps,
 	Rendered
 } from '@sittir/types';
-import { treeOf } from './tree-token.ts';
-import { isCoordinate } from './read.ts';
+import { assertHoldsTree, treeOf } from './tree-token.ts';
+import { decodeTree, isCoordinate } from './read.ts';
 
 export interface LiveEngine extends EngineIdentity {
 	render(node: AnyUntypedNode | number, options?: object): Rendered;
@@ -18,7 +18,11 @@ export interface LiveEngine extends EngineIdentity {
 export interface EngineHandle {
 	current: LiveEngine | EngineIdentity;
 	lineGapsOf?: (address: LineGapAddress) => LineGaps;
-	hydrate?: LanguageHooks<LanguageAPI>['hydrate'];
+}
+
+/** The handle a parsed tree is bound to (`bindTree`): the engine that read it, which hydrates the coordinates it names. */
+export interface TreeEngineHandle extends EngineHandle {
+	hydrate: LanguageHooks<LanguageAPI>['hydrate'];
 }
 
 export function sameLanguage(a: EngineIdentity, b: EngineIdentity): boolean {
@@ -53,21 +57,27 @@ export function isLive(current: EngineHandle['current']): current is LiveEngine 
 	return 'render' in current;
 }
 
-const treeHandles = new WeakMap<object, EngineHandle>();
+const treeHandles = new WeakMap<object, TreeEngineHandle>();
 
-export function bindTree(tree: object, handle: EngineHandle): void {
+export function bindTree(tree: object, handle: TreeEngineHandle): void {
 	treeHandles.set(tree, handle);
 }
 
-export function hydrateListStorage(value: unknown): unknown {
+export function hydrateStored(value: unknown): unknown {
 	if (!isCoordinate(value)) return value;
+	assertHoldsTree(value);
 	const tree = treeOf(value);
-	if (tree === undefined) return value;
-	const handle = treeHandles.get(tree);
-	if (handle === undefined || !isLive(handle.current)) return value;
+	const handle = tree === undefined ? undefined : treeHandles.get(tree);
+	if (tree === undefined || handle === undefined || !isLive(handle.current)) {
+		throw new Error(
+			`this coordinate names tree ${decodeTree(value.$treeHandle)}, which is no longer live: its engine was disposed or its tree released`
+		);
+	}
 	const caller = currentHandle();
-	if (caller !== undefined && !sameLanguage(caller.current, handle.current)) return value;
-	return handle.hydrate?.(value, tree) ?? value;
+	if (caller !== undefined && !sameLanguage(caller.current, handle.current)) {
+		throw new Error(`a ${handle.current.language.name} node read through a ${caller.current.language.name} engine`);
+	}
+	return handle.hydrate(value, tree);
 }
 
 export function inTreeEngine<T>(tree: object, fn: () => T): T {
