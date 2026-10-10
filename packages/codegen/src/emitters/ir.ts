@@ -7,6 +7,7 @@ import {
 } from '../compiler/model/node-map.ts';
 import { irNamespacesChildFactory, lexedContentSlot } from './shared.ts';
 import { hasOneSurface, irPlanOf, memberKeyFor, type IrMember } from '../compiler/model/ir-surface.ts';
+import { lineTerminatedKinds } from '../compiler/model/trivia.ts';
 import type { GrammarRoles, Role } from '../scm/extract-roles.ts';
 
 export interface EmitIrConfig {
@@ -305,8 +306,9 @@ function emitSynonymComment(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: s
 	}
 
 	if (leafNodes.length > 1) {
-		const lineNode = leafNodes.find((n) => /line/.test(n.kind));
-		const blockNode = leafNodes.find((n) => /block/.test(n.kind));
+		const lineTerminated = lineTerminatedKinds(nodeMap);
+		const lineNode = leafNodes.find((n) => lineTerminated.has(n.kind));
+		const blockNode = leafNodes.find((n) => !lineTerminated.has(n.kind));
 		if (lineNode && blockNode) {
 			fns.push(`  comment: Object.assign(`);
 			fns.push(`    function comment(content: string): ${returnType(lineNode)} {`);
