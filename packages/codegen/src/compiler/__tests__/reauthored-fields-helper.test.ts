@@ -1,25 +1,27 @@
 import { describe, expect, it } from 'vitest';
-import { droppedFields, fieldNamesOf } from '../../__tests__/helpers/reauthored-fields.ts';
+import { fieldContentsOf, judgeFields } from '../../__tests__/helpers/reauthored-fields.ts';
 
-const field = (name: string, extra: object = {}) => ({ type: 'FIELD', name, content: { type: 'SYMBOL', name: 'x' }, ...extra });
-const keptOf = (rule: unknown) => {
-	const out = { own: new Set<string>(), renamedFrom: new Set<string>() };
-	fieldNamesOf(rule, out);
-	return out;
-};
+const sym = (name: string) => ({ type: 'SYMBOL', name });
+const field = (name: string, content: object, id = name) => ({ type: 'FIELD', name, content, id });
+const judge = (upstream: unknown, kept: unknown) => judgeFields(fieldContentsOf(upstream), fieldContentsOf(kept));
 
 describe('the reauthored-field guard', () => {
-	it('counts a field kept when a field carries its upstream name', () => {
-		const kept = keptOf({ type: 'SEQ', members: [field('item', { annotations: { renamedFrom: 'argument' } })] });
-		expect(droppedFields(field('argument'), kept)).toEqual([]);
+	it('reads a new field over the same content as a rename', () => {
+		const verdict = judge(field('argument', sym('expression')), field('item', { ...sym('expression'), id: 'x' }, 'other'));
+		expect(verdict).toEqual({ renamed: ['argument -> item'], dropped: [] });
 	});
 
-	it('still reports a field that is gone with no stamp', () => {
-		expect(droppedFields(field('argument'), keptOf(field('item')))).toEqual(['argument']);
+	it('reports a field that is gone with nothing over its content', () => {
+		expect(judge(field('argument', sym('expression')), sym('expression')).dropped).toEqual(['argument']);
 	});
 
-	it('does not accept a stamp naming a different upstream field', () => {
-		const kept = keptOf(field('item', { annotations: { renamedFrom: 'other' } }));
-		expect(droppedFields(field('argument'), kept)).toEqual(['argument']);
+	it('does not pair a dropped field with an unrelated field over other content', () => {
+		const verdict = judge(field('argument', sym('expression')), field('item', sym('identifier')));
+		expect(verdict.dropped).toEqual(['argument']);
+	});
+
+	it('does not read a field the upstream rule already had as the replacement', () => {
+		const upstream = { type: 'SEQ', members: [field('a', sym('x')), field('b', sym('x'))] };
+		expect(judge(upstream, field('b', sym('x'))).dropped).toEqual(['a']);
 	});
 });

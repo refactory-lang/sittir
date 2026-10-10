@@ -86,12 +86,6 @@ rewritten content is rebuilt in the representation it had
  * a readable `__sittirPlaceholder` brand; the two-arg result matches
  * whatever shape the runtime-injected `field()` produces (`type: 'FIELD'`
  * in both the sittir and tree-sitter-CLI runtimes).
- *
- * The optional third argument `{ renamedFrom }` names the field this one
- * replaces from the upstream rule. It is stamped as `annotations.renamedFrom`
- * on the FIELD rule (tree-sitter ignores it), so a reauthored rule that
- * renames a field is still counted as keeping it by the field-preservation
- * guard; a field that vanishes without the stamp is reported as dropped.
  */
 ```
 

@@ -426,8 +426,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ### `packages/codegen/src/types/rule.ts::RuleAnnotations`
 
-`renamedFrom` is the upstream field name a `field()` call replaces, stamped by `field(name, content, { renamedFrom })` and read only by the reauthored-rule field-preservation test.
-
 `default` marks the arm a bare value means on a slot whose arms would otherwise
 admit the same input; it is stamped by `arm.default` and read once, by the from
 emitter.

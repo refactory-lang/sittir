@@ -58,11 +58,7 @@ export function isFieldPlaceholder(v: unknown): v is FieldPlaceholder {
 	return !!v && typeof v === 'object' && (v as { __sittirPlaceholder?: unknown }).__sittirPlaceholder === 'field';
 }
 
-export interface FieldOptions {
-	readonly renamedFrom?: string;
-}
-
-export function field(name: string, content?: Input, options?: FieldOptions): FieldPlaceholder | FieldLike {
+export function field(name: string, content?: Input): FieldPlaceholder | FieldLike {
 	if (content === undefined) {
 		return {
 			__sittirPlaceholder: 'field' as const,
@@ -75,27 +71,20 @@ export function field(name: string, content?: Input, options?: FieldOptions): Fi
 			'field(): no global field() found — must be called inside a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)'
 		);
 	}
-	return buildTwoArgFieldResult(native, name, content, options);
+	return buildTwoArgFieldResult(native, name, content);
 }
 
-function buildTwoArgFieldResult(
-	native: (n: string, c: Input) => unknown,
-	name: string,
-	content: Input,
-	options: FieldOptions | undefined
-): FieldLike {
+function buildTwoArgFieldResult(native: (n: string, c: Input) => unknown, name: string, content: Input): FieldLike {
 	const initial = native(name, content) as FieldLike & { content?: unknown };
 	const inner = initial.content;
 	const symbolized = maybeKeywordSymbol(name, inner);
 	const metadata = makeRuleMetadata({ fieldSource: 'override' });
-	const stamps = options?.renamedFrom === undefined ? {} : { annotations: { renamedFrom: options.renamedFrom } };
 	if (symbolized !== inner) {
 		const reconstructed = native(name, symbolized as Input) as FieldLike;
 		return {
 			...reconstructed,
-			metadata,
-			...stamps
+			metadata
 		};
 	}
-	return { ...initial, metadata, ...stamps };
+	return { ...initial, metadata };
 }
