@@ -15,7 +15,7 @@ function operatorsOf(source: string): unknown {
 		if ('_operators' in stored) found.push(stored._operators);
 		for (const key of Object.keys(stored)) if (key.startsWith('_')) walk(stored[key]);
 	};
-	walk(py.parse(source, { deep: true }));
+	walk(py.parse(source, { depth: Infinity }));
 	return found;
 }
 

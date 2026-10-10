@@ -81,7 +81,7 @@ export async function collectGrammarCounts(grammar: GrammarName, backend: Backen
 	// native. Warn loudly rather than mislead.
 	if (backend === 'native') warnIfNativeBinaryStale(grammar);
 	const [from, coverage, factoryStorage, irStorage] = await Promise.all([
-		runFrom(grammar, backend),
+		runFrom(grammar),
 		runCoverage(grammar),
 		runFactory(grammar, backend),
 		runFactory(grammar, backend, 'ir')
@@ -477,16 +477,6 @@ export function collectValidatorFailuresForGrammar(counts: GrammarCounts): Valid
 				code: `${stage}-ast-mismatch`,
 				severity: 'error',
 				label: entryKindLabel(m)
-			});
-		// Slot-masking, not necessarily a hard round-trip failure on its own —
-		// 'warning' like the literal-leak coverage issues below, not 'error'.
-		for (const t of result.accessorThrows)
-			failures.push({
-				...t,
-				stage: `${stage}-accessor-throw`,
-				code: 'accessor-throw',
-				severity: 'warning',
-				label: `${t.key} (${t.accessor}, type=${t.type})`
 			});
 		pushSkips(stage, result);
 	}

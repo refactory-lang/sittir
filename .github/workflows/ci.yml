@@ -110,9 +110,9 @@ jobs:
   # committed `native.json`.
   #
   # The `napi-build` job runs the parity test suite under `--ignored`
-  # with `continue-on-error: true` — it does NOT read the baseline
-  # JSONs, so a native-count drop would slip through it. This job is
-  # the durable gate.
+  # and gates on it, but it does NOT read the baseline JSONs, so a
+  # native-count drop would slip through it. This job is the durable
+  # gate for counts.
   #
   # Skipped on direct pushes (no base ref to diff against). Only runs
   # on `pull_request` events.
@@ -356,7 +356,10 @@ jobs:
     name: napi build (${{ matrix.target }})
     needs: rust
     runs-on: ${{ matrix.host }}
-    continue-on-error: true
+    # A tag run's platform legs report without failing the run; on every
+    # other run the single linux leg gates: its build, the workspace
+    # tests, the stack ceilings and the parity suite.
+    continue-on-error: ${{ startsWith(github.ref, 'refs/tags/v') }}
     strategy:
       fail-fast: false
       # Only x86_64-unknown-linux-gnu builds on every push/PR — it's the
@@ -366,9 +369,9 @@ jobs:
       # platform X" checks with no per-PR consumer: release.yml's
       # napi-publish job already builds (and verifies) all 7 targets
       # independently on tag push before publishing, so building them
-      # again here on every PR was pure duplicated CI time — doubly so
-      # since continue-on-error above already meant nothing was gated on
-      # their result. Gated to tag pushes so a platform-specific break
+      # again here on every PR was pure duplicated CI time, and a tag
+      # run's legs do not gate (continue-on-error above). Gated to tag
+      # pushes so a platform-specific break
       # still surfaces (at release time) without paying the cost per PR.
       #
       # `matrix.*` isn't available in job-level `if:` (GitHub Actions
@@ -436,6 +439,15 @@ jobs:
       - name: cargo test --workspace (skip cross-compiled targets)
         if: matrix.cross == false
         run: cargo test --workspace --no-default-features --target ${{ matrix.target }}
+      # The typed read's least stack at each nesting level, dev and release,
+      # held to the target's pinned row in typed_read_nesting's CEILINGS. The
+      # measured levels are printed, so a target with no row fails here with
+      # the values to pin.
+      - name: cargo test stack ceilings
+        if: matrix.cross == false
+        run: |
+          cargo test -p sittir-parity-tests --no-default-features --test typed_read_nesting --target ${{ matrix.target }} -- --nocapture the_typed_read_stays_within_its_pinned_stack_ceilings
+          cargo test -p sittir-parity-tests --no-default-features --release --test typed_read_nesting --target ${{ matrix.target }} -- --nocapture the_typed_read_stays_within_its_pinned_stack_ceilings
       # T061 — every platform job runs the parity suite (SC-006 gate).
       # On cross-compiled hosts we still invoke the test binary build
       # but skip execution (the resulting binary cannot run on the CI
@@ -444,8 +456,7 @@ jobs:
         if: matrix.cross == false
         run: cargo test -p sittir-parity-tests --test parity --target ${{ matrix.target }} -- --ignored --nocapture
       # `if: !cancelled()` — without this, a failure in either test step
-      # above (e.g. the pre-existing native_parser.rs failure that
-      # currently fails on every platform) skips this step entirely by
+      # above skips this step entirely by
       # GitHub Actions' default fail-fast-within-job behavior, even
       # though `napi build` already produced a valid, working `.node`.
       # regression-checker-native and perf-regression-checker both

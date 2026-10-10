@@ -88,6 +88,30 @@ export const isNot: Python.Expression.Binary.Identity.IsNot['operator'] = 'is no
 // @ts-expect-error Text, not a number.
 export const numericOperator: Python.Expression.Binary.Identity.IsNot['operator'] = 1;
 
+// Visibility is an access level: one set of values in every language, which rust's `pub(crate)` and typescript's
+// `protected` spell.
+export const typescriptProtected: TypeScript.Declaration.Field['visibility'] = 'protected';
+export const rustInternal: Rust.Declaration.Function['visibility'] = 'internal';
+// @ts-expect-error A level, not rust's spelling of it.
+export const rustSpelling: Rust.Declaration.Function['visibility'] = 'pub(crate)';
+// @ts-expect-error JavaScript has no visibility; its private member is encapsulation.
+export const javascriptVisibility: JavaScript.Declaration.Field['visibility'] = 'private';
+
+// Every row of the feature table owns what it adds, so a language's members are exactly its features'.
+export const rustUnsafe: Rust.Declaration.Function['unsafe'] = true;
+// @ts-expect-error Python lacks unsafe code.
+export const pythonUnsafe: Python.Declaration.Function['unsafe'] = true;
+export const typescriptLabel: TypeScript.Statement.Loop.While['label'] = null! as TypeScript.Identifier.Label;
+// @ts-expect-error Python lacks labeled control flow.
+export const pythonLabel: Python.Statement.Loop.While['label'] = null! as TypeScript.Identifier.Label;
+export const typescriptOptionalChain: TypeScript.Expression.Subscript['optionalChain'] = true;
+// @ts-expect-error Python lacks optional chaining.
+export const pythonOptionalChain: Python.Expression.Subscript['optionalChain'] = true;
+// TypeScript's typing kinds belong to its typing features, so JavaScript has none of them.
+export type TypeScriptOptionalParameter = TypeScript.Declaration.Parameter.Optional;
+// @ts-expect-error JavaScript lacks optional members.
+export type JavaScriptOptionalParameter = JavaScript.Declaration.Parameter.Optional;
+
 // Portable code is generic over the context. Bounded by the features it reads, it takes the languages that have them;
 // a language without one fails at the call.
 export function asyncOf<G extends GrammarContext<G> & AsyncAwait>(fn: V.Declaration.Function<G>): boolean | undefined {

@@ -61,7 +61,7 @@ export async function measureTriviaTiming(options: Omit<TriviaTimingOptions, 'js
 	let bestMs = Infinity;
 	let nodes = 0;
 	for (let round = 0; round < options.rounds; round++) {
-		const read = typedNodesOf(engine.parse(source, { deep: true }));
+		const read = typedNodesOf(engine.parse(source, { depth: Infinity }));
 		const start = performance.now();
 		for (const node of read) node.$trivia?.leading?.();
 		bestMs = Math.min(bestMs, performance.now() - start);

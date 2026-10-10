@@ -1,5 +1,4 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { TSKindId } from '../src/types.ts';
 import { createEngine } from '@sittir/common';
 
 const descriptor = async () => (await import('../src/index.ts')).default;
@@ -32,25 +31,6 @@ describe('engine', () => {
 					SittirEngine: class {
 						render(_node: Record<string, unknown>): string {
 							return 'ok';
-						}
-						parseAndRead(_source: string): string {
-							return JSON.stringify({
-								untypedNode: {
-									$type: TSKindId.Identifier,
-									$source: 0,
-									$named: true,
-									$text: 'x'
-								},
-								format: undefined
-							});
-						}
-						readUntypedNode(_nodeId: number): string {
-							return JSON.stringify({
-								$type: TSKindId.Identifier,
-								$source: 0,
-								$named: true,
-								$text: 'x'
-							});
 						}
 						dispose(): void {}
 					}

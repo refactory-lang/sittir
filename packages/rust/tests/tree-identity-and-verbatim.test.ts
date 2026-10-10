@@ -87,9 +87,12 @@ describe('untouched parses render verbatim', () => {
 	it('spans the whole file on the root, including leading trivia', async () => {
 		const native = (await rust.load()).createNative();
 		const source = '\n\n  fn a() {}\n';
-		const { root, tree } = native.parseAndRead(source) as { root: { $span: unknown }; tree: { source: string } };
+		const { root, tree } = native.parseAndRead(source) as {
+			root: { $_layout: { at: { $span: unknown } } };
+			tree: { source: string };
+		};
 
-		expect(root.$span).toEqual({ start: 0, end: source.length });
+		expect(root.$_layout.at.$span).toEqual({ start: 0, end: source.length });
 		expect(tree.source).toBe(source);
 	});
 });

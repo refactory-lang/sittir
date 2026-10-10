@@ -55,7 +55,7 @@ describe('emitApi', () => {
 	});
 
 	it('keys the kind-to-type map on the stamped ir keys', () => {
-		expect(output).toContain('readonly types: KindTypes<IrKeyOf, NamespaceMap>;');
+		expect(output).toContain('readonly types: KindTypes<TypeKeyOf, NamespaceMap>;');
 	});
 
 	it('wires the hooks through the shared native adapter and the wrapper', () => {

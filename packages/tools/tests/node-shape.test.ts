@@ -50,7 +50,6 @@ const TRANSPORT_METADATA = new Set([
 	'$text',
 	'$other',
 	'$span',
-	'$textOnly',
 	'$treeHandle',
 	'$format',
 	'$_trivia',
@@ -75,7 +74,7 @@ describe('what a node sends across the boundary carries no member', () => {
 	const source = 'fn f(a: i32) { let x = g(a, a + 1); match x { 1 => 1, _ => 2 } }\n';
 	const wrapped: Record<string, () => object> = {
 		'rust parsed, shallow': () => rs.parse(source),
-		'rust parsed, deep': () => rs.parse(source, { deep: true }),
+		'rust parsed, deep': () => rs.parse(source, { depth: Infinity }),
 		'typescript parsed': () => ts.parse('const x = f(a, b);\n'),
 		'python parsed': () => py.parse('x = f(a, b)\n')
 	};
@@ -137,7 +136,7 @@ const typedNodesOf = (root: unknown): object[] => {
 
 describe('a parsed plain kind keeps fast properties', () => {
 	it('binary expressions, let declarations and function items read from source', () => {
-		const nodes = typedNodesOf(rs.parse('fn f() { let x = a + b * c; }\nfn g() { 1 + 2 }\n', { deep: true }));
+		const nodes = typedNodesOf(rs.parse('fn f() { let x = a + b * c; }\nfn g() { 1 + 2 }\n', { depth: Infinity }));
 		const plain = nodes.filter((node) =>
 			[rs.kinds.BinaryExpression, rs.kinds.LetDeclaration, rs.kinds.FunctionItem].includes(
 				(node as { $type: number }).$type
@@ -152,7 +151,7 @@ describe('a parsed node keeps fast properties', () => {
 	const source = 'fn f(a: i32) { let x = g(a, a + 1); match x { 1 => 1, _ => 2 } }\n';
 	for (const deep of [false, true]) {
 		it(deep ? 'deep parse' : 'shallow parse', () => {
-			const nodes = typedNodesOf(rs.parse(source, deep ? { deep: true } : undefined));
+			const nodes = typedNodesOf(rs.parse(source, deep ? { depth: Infinity } : undefined));
 			expect(nodes.length).toBeGreaterThan(10);
 			expect(nodes.filter((node) => !hasFastProperties(node))).toEqual([]);
 		});

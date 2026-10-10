@@ -2,6 +2,4 @@ rust: hoisted=81 seated=81 unseated=0
 typescript: hoisted=56 seated=56 unseated=0
 python: hoisted=34 seated=34 unseated=0
 scm: hoisted=6 seated=6 unseated=0
-regex: hoisted=8 seated=6 unseated=2
-  count_quantifier_group
-  unicode_property_value_expression_group
+regex: hoisted=8 seated=8 unseated=0

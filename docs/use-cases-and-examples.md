@@ -377,13 +377,10 @@ const tree = engine.parse(source);
 
 ### Read depth
 
-Reading is lazy: `parse` expands one level, and a child with substructure is
-a stub the accessors hydrate on first access. `{ deep: true }` expands the
-whole tree up front instead — one crossing rather than one per level, at the
-cost of reading what you may never touch. A list owner (a function's
-`parameters`) is the exception to one level: it is expanded together with its
-list, whose items stay stubs, so its `length` and indices need no crossing of
-their own.
+Reading is lazy: `parse` reads one level, and a child below it is a coordinate
+(its tree and index) that the accessors read and wrap on first access.
+`{ depth: Infinity }` reads the whole tree up front instead — one crossing
+rather than one per level, at the cost of reading what you may never touch.
 
 ```ts
 import { createEngine } from '@sittir/common';
@@ -391,15 +388,14 @@ import rust from '@sittir/rust';
 
 const engine = await createEngine(rust);
 const lazy = engine.parse(source);
-const eager = engine.parse(source, { deep: true });
+const eager = engine.parse(source, { depth: Infinity });
 ```
 
-Depth also decides how much of the source survives a render, because only a
-level that was expanded can be rebuilt. `lazy.$render()` returns the source
-byte for byte; `eager.$render()` re-spells every level canonically. Both
-re-parse to the same tree.
+Depth does not change a render: a node nothing edited crosses as its
+coordinate at any depth, so `lazy.$render()` and `eager.$render()` both return
+the source byte for byte.
 
-`engine.diagnostics.parseAndRead(source, { deep })` returns the same read
+`engine.diagnostics.parseAndRead(source, { depth })` returns the same read
 un-wrapped, as `{ root, tree }`, for tooling; the tree is bound to the engine,
 so what is wrapped over it renders through it.
 

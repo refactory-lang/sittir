@@ -87,9 +87,9 @@ describe('@sittir/validator run surface — forwarding behavior', () => {
 		vi.clearAllMocks();
 	});
 
-	it('runFrom forwards (grammar, backend) to validateFrom', async () => {
+	it('runFrom forwards the grammar to validateFrom', async () => {
 		await runFrom('rust');
-		expect(vi.mocked(validateFrom)).toHaveBeenCalledWith('rust', 'native');
+		expect(vi.mocked(validateFrom)).toHaveBeenCalledWith('rust');
 	});
 
 	it('runRt wraps validateReadRenderParse with { backend } option object', async () => {

@@ -429,6 +429,9 @@ The pattern kinds counted are the slot's text candidates (`textCandidateKinds`),
 // that restates the child's default says nothing the loose call needs.
 ```
 
+A `forwarded` seat leaves the config as it is: the parent holds the group's
+value under the slot key, so no key of the parent's belongs to the group.
+
 #### body
 
 ```text
@@ -602,12 +605,6 @@ The no-argument call of a config-shaped node whose config printed empty.
 
 ```text
 /** On the loose surface, whether a nested compound prints as its builder call or as a config object. */
-```
-
-### `packages/tools/src/emit/factory-source.ts::EmitSurfaceOptions.backend`
-
-```text
-/** The read backend; the native engine unless a caller has none to offer. */
 ```
 
 ### `packages/tools/src/emit/factory-source.ts::emitFactorySourceText`

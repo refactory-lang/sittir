@@ -13,7 +13,7 @@ export function rebuildPython4spaceGenerated() {
 		content: py.build.importList.strict(py.build.dottedName.strict(py.build.identifier("Optional"))),
 	})).$trivia.leading(py.kinds.Blankline), py.build.classDefinition.strict({
 		name: py.build.identifier("User"),
-		body: py.build.suite.block.strict(py.build.functionDefinition.strict({
+		body: py.build.suiteBlock.strict(py.build.functionDefinition.strict({
 			name: py.build.identifier("__init__"),
 			parameters: py.build.parameters.strict(py.build.identifier("self"), py.build.typedParameter.strict({
 				name: py.build.identifier("user_id"),
@@ -23,13 +23,13 @@ export function rebuildPython4spaceGenerated() {
 				type: py.build.type.strict(py.build.identifier("str")),
 			})),
 			returnType: py.build.type.strict(py.kinds.None),
-			body: py.build.suite.block.strict(py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.assignment.eq.strict({
+			body: py.build.suiteBlock.strict(py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.assignmentEq.strict({
 				left: py.build.attribute.strict({
 					object: py.build.identifier("self"),
 					attribute: py.build.identifier("user_id"),
 				}),
 				right: py.build.identifier("user_id"),
-			}))), py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.assignment.eq.strict({
+			}))), py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.assignmentEq.strict({
 				left: py.build.attribute.strict({
 					object: py.build.identifier("self"),
 					attribute: py.build.identifier("name"),
@@ -40,7 +40,7 @@ export function rebuildPython4spaceGenerated() {
 			name: py.build.identifier("greet"),
 			parameters: py.build.parameters.strict(py.build.identifier("self")),
 			returnType: py.build.type.strict(py.build.identifier("str")),
-			body: py.build.suite.block.strict(py.build.simpleStatements.strict(py.build.returnStatement.strict(py.build.string.strict({
+			body: py.build.suiteBlock.strict(py.build.simpleStatements.strict(py.build.returnStatement.strict(py.build.string.strict({
 				stringStart: py.build.stringStart("f\""),
 				content: [py.build.stringContent.strict(py.build.stringFragment("Hello, ")), py.build.interpolation.strict({
 					expression: py.build.attribute.strict({
@@ -64,10 +64,10 @@ export function rebuildPython4spaceGenerated() {
 			name: py.build.identifier("Optional"),
 			typeParameter: py.build.typeParameter.strict(py.build.type.strict(py.build.identifier("User"))),
 		})),
-		body: py.build.suite.block.strict(py.build.forStatement.strict({
+		body: py.build.suiteBlock.strict(py.build.forStatement.strict({
 			left: py.build.identifier("user"),
 			right: py.build.identifier("users"),
-			body: py.build.suite.block.strict(py.build.ifStatement.strict({
+			body: py.build.suiteBlock.strict(py.build.ifStatement.strict({
 				condition: py.build.comparisonOperator.strict({
 					left: py.build.attribute.strict({
 						object: py.build.identifier("user"),
@@ -78,7 +78,7 @@ export function rebuildPython4spaceGenerated() {
 						primaryExpression: py.build.identifier("user_id"),
 					}],
 				}),
-				consequence: py.build.suite.block.strict(py.build.simpleStatements.strict(py.build.returnStatement.strict(py.build.identifier("user")))),
+				consequence: py.build.suiteBlock.strict(py.build.simpleStatements.strict(py.build.returnStatement.strict(py.build.identifier("user")))),
 			})),
 		}), py.build.simpleStatements.strict(py.build.returnStatement.strict(py.kinds.None))),
 	}).$trivia.leading(py.kinds.DoubleBlankline));

@@ -7,7 +7,7 @@ import { is } from './is.js';
 import {
 	TSKindId,
 	type FixedTextKindId,
-	type IrKeyOf,
+	type TypeKeyOf,
 	type NamespaceMap,
 	type TypescriptNode,
 	type TypescriptTypeMap
@@ -18,14 +18,14 @@ import { buildCommentBlock, buildCommentLine } from './factories/raw.js';
 import { coerceToCommentLine } from './factories/coerce.js';
 import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ProgramRoot } from './render-engine.js';
-import { wrapNode, hydrateChild, type ProgramTree } from './wrap.js';
+import { wrapNode, hydrate, type ProgramTree } from './wrap.js';
 
 export interface TypescriptAPI extends LanguageAPI {
 	readonly name: 'typescript';
 	readonly build: typeof ir;
 	readonly is: typeof is;
 	readonly kinds: typeof TSKindId;
-	readonly types: KindTypes<IrKeyOf, NamespaceMap>;
+	readonly types: KindTypes<TypeKeyOf, NamespaceMap>;
 	readonly root: ProgramTree;
 	readonly node: TypescriptNode;
 	readonly fixedTextKindId: FixedTextKindId;
@@ -51,5 +51,5 @@ export const hooks: LanguageHooks<TypescriptAPI> = Object.freeze<LanguageHooks<T
 	querySlots,
 	createNative: (options) => nativeLanguageEngine<TypescriptAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ProgramRoot & ParsedRoot, tree as TreeHandle),
-	hydrate: (node, tree) => hydrateChild(node, tree as TreeHandle)
+	hydrate: (node, tree) => hydrate(node, tree as TreeHandle)
 });

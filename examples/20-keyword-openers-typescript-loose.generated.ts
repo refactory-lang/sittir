@@ -26,10 +26,10 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 			}))),
 			body: [ts.build.lexicalDeclaration({
 				kind: ts.kinds.ConstKeyword,
-				declarators: [ts.build.variableDeclarator.plain({
+				declarators: [ts.build.variableDeclaratorPlain({
 					name: "x",
 					value: ts.build.binaryExpression({
-						left: ts.build.parenthesizedExpression.typed({
+						left: ts.build.parenthesizedExpressionTyped({
 							expression: ts.build.binaryExpression({
 								left: "1",
 								operator: ts.kinds.Plus,
@@ -41,23 +41,23 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 					}),
 				})],
 			}), ts.build.ifStatement({
-				condition: ts.build.parenthesizedExpression.typed({
+				condition: ts.build.parenthesizedExpressionTyped({
 					expression: "x",
 				}),
 				consequence: ts.build.statementBlock({
 					terminator: ts.kinds.AutomaticSemicolon,
-				}, ts.build.returnStatement(ts.build.parenthesizedExpression.typed({
+				}, ts.build.returnStatement(ts.build.parenthesizedExpressionTyped({
 					expression: "x",
 				}))),
 			}), ts.build.whileStatement({
-				condition: ts.build.parenthesizedExpression.typed({
+				condition: ts.build.parenthesizedExpressionTyped({
 					expression: "x",
 				}),
 				body: ts.build.statementBlock({
 					terminator: ts.kinds.AutomaticSemicolon,
 				}, ts.build.expressionStatement(ts.build.assignmentExpression({
 					left: "x",
-					right: ts.build.parenthesizedExpression.typed({
+					right: ts.build.parenthesizedExpressionTyped({
 						expression: ts.build.binaryExpression({
 							left: "x",
 							operator: ts.kinds.Dash,
@@ -68,7 +68,7 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 			}), ts.build.forStatement({
 				initializer: ts.build.lexicalDeclaration({
 					kind: ts.kinds.LetKeyword,
-					declarators: [ts.build.variableDeclarator.plain({
+					declarators: [ts.build.variableDeclaratorPlain({
 						name: "i",
 						value: "0",
 					})],
@@ -78,7 +78,7 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 					operator: ts.kinds.Lt,
 					right: "3",
 				}),
-				increment: ts.build.updateExpression.postfix({
+				increment: ts.build.updateExpressionPostfix({
 					argument: "i",
 					operator: ts.kinds.PlusPlus,
 				}),
@@ -86,11 +86,11 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 					terminator: ts.kinds.AutomaticSemicolon,
 				}, ts.build.continueStatement()),
 			}), ts.build.forInStatement({
-				forHeader: ts.build.forHeader.letConstKind({
+				forHeader: ts.build.forHeaderLetConstKind({
 					kind: ts.kinds.ConstKeyword,
 					left: "i",
 					operator: ts.kinds.OfKeyword,
-					right: ts.build.parenthesizedExpression.typed({
+					right: ts.build.parenthesizedExpressionTyped({
 						expression: "a",
 					}),
 				}),
@@ -98,53 +98,53 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 					terminator: ts.kinds.AutomaticSemicolon,
 				}, ts.build.continueStatement()),
 			}), ts.build.switchStatement({
-				value: ts.build.parenthesizedExpression.typed({
+				value: ts.build.parenthesizedExpressionTyped({
 					expression: "x",
 				}),
 				body: ts.build.switchCase({
-					value: ts.build.parenthesizedExpression.typed({
+					value: ts.build.parenthesizedExpressionTyped({
 						expression: "1",
 					}),
 					body: [ts.build.breakStatement()],
 				}),
-			}), ts.build.throwStatement(ts.build.parenthesizedExpression.typed({
+			}), ts.build.throwStatement(ts.build.parenthesizedExpressionTyped({
 				expression: ts.build.newExpression({
 					constructor_: "Error",
-					arguments: ts.build.string.double("x"),
+					arguments: ts.build.stringDouble("x"),
 				}),
-			})), ts.build.expressionStatement(ts.build.awaitExpression(ts.build.parenthesizedExpression.typed({
-				expression: ts.build.callExpression.call({
+			})), ts.build.expressionStatement(ts.build.awaitExpression(ts.build.parenthesizedExpressionTyped({
+				expression: ts.build.callExpressionCall({
 					function: "foo",
 					arguments: ts.build.arguments(),
 				}),
 			}))), ts.build.expressionStatement(ts.build.unaryExpression({
 				operator: ts.kinds.TypeofKeyword,
-				argument: ts.build.parenthesizedExpression.typed({
+				argument: ts.build.parenthesizedExpressionTyped({
 					expression: "x",
 				}),
 			})), ts.build.expressionStatement(ts.build.newExpression({
-				constructor_: ts.build.parenthesizedExpression.typed({
+				constructor_: ts.build.parenthesizedExpressionTyped({
 					expression: "Foo",
 				}),
 				arguments: ts.build.arguments(),
 			})), ts.build.lexicalDeclaration({
 				kind: ts.kinds.ConstKeyword,
-				declarators: [ts.build.variableDeclarator.plain({
+				declarators: [ts.build.variableDeclaratorPlain({
 					name: "t",
 					type: ts.build.parenthesizedType(ts.kinds.StringKeyword),
-					value: ts.build.string.double("a"),
+					value: ts.build.stringDouble("a"),
 				})],
 			}), ts.build.lexicalDeclaration({
 				kind: ts.kinds.ConstKeyword,
-				declarators: [ts.build.variableDeclarator.plain({
+				declarators: [ts.build.variableDeclaratorPlain({
 					name: "arr",
-					value: ts.build.array(ts.build.parenthesizedExpression.typed({
+					value: ts.build.array(ts.build.parenthesizedExpressionTyped({
 						expression: "1",
 					}), ts.build.array("2")),
 				})],
 			}), ts.build.lexicalDeclaration({
 				kind: ts.kinds.ConstKeyword,
-				declarators: [ts.build.variableDeclarator.plain({
+				declarators: [ts.build.variableDeclaratorPlain({
 					name: "y",
 					value: ts.build.asExpression({
 						expression: "x",
@@ -153,7 +153,7 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 				})],
 			}), ts.build.lexicalDeclaration({
 				kind: ts.kinds.ConstKeyword,
-				declarators: [ts.build.variableDeclarator.plain({
+				declarators: [ts.build.variableDeclaratorPlain({
 					name: "g",
 					value: ts.build.arrowFunction({
 						async: true,
@@ -162,19 +162,19 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 								pattern: "z",
 							}),
 						}),
-						body: ts.build.parenthesizedExpression.typed({
+						body: ts.build.parenthesizedExpressionTyped({
 							expression: "z",
 						}),
 					}),
 				})],
 			}), ts.build.expressionStatement(ts.build.unaryExpression({
 				operator: ts.kinds.VoidKeyword,
-				argument: ts.build.parenthesizedExpression.typed({
+				argument: ts.build.parenthesizedExpressionTyped({
 					expression: "0",
 				}),
 			})), ts.build.expressionStatement(ts.build.unaryExpression({
 				operator: ts.kinds.DeleteKeyword,
-				argument: ts.build.parenthesizedExpression.typed({
+				argument: ts.build.parenthesizedExpressionTyped({
 					expression: ts.build.memberExpression({
 						object: "a",
 						separator: ts.kinds.Dot,
@@ -183,24 +183,24 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 				}),
 			})), ts.build.lexicalDeclaration({
 				kind: ts.kinds.ConstKeyword,
-				declarators: [ts.build.variableDeclarator.plain({
+				declarators: [ts.build.variableDeclaratorPlain({
 					name: "k",
 					value: ts.build.binaryExpression({
 						left: "x",
 						operator: ts.kinds.InstanceofKeyword,
-						right: ts.build.parenthesizedExpression.typed({
+						right: ts.build.parenthesizedExpressionTyped({
 							expression: "Foo",
 						}),
 					}),
 				})],
 			}), ts.build.lexicalDeclaration({
 				kind: ts.kinds.ConstKeyword,
-				declarators: [ts.build.variableDeclarator.plain({
+				declarators: [ts.build.variableDeclaratorPlain({
 					name: "inn",
 					value: ts.build.binaryExpression.in({
 						binaryExpressionIn: {
-							left: ts.build.string.double("a"),
-							right: ts.build.parenthesizedExpression.typed({
+							left: ts.build.stringDouble("a"),
+							right: ts.build.parenthesizedExpressionTyped({
 								expression: "obj",
 							}),
 						},
@@ -208,19 +208,19 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 				})],
 			}), ts.build.lexicalDeclaration({
 				kind: ts.kinds.ConstKeyword,
-				declarators: [ts.build.variableDeclarator.plain({
+				declarators: [ts.build.variableDeclaratorPlain({
 					name: "tpl",
-					value: ts.build.templateString("a", ts.build.parenthesizedExpression.typed({
+					value: ts.build.templateString("a", ts.build.parenthesizedExpressionTyped({
 						expression: "x",
 					}), "b"),
 				})],
 			}), ts.build.lexicalDeclaration({
 				kind: ts.kinds.ConstKeyword,
-				declarators: [ts.build.variableDeclarator.plain({
+				declarators: [ts.build.variableDeclaratorPlain({
 					name: "o",
 					value: ts.build.object(ts.build.pair({
 						key: "a",
-						value: ts.build.parenthesizedExpression.typed({
+						value: ts.build.parenthesizedExpressionTyped({
 							expression: "1",
 						}),
 					}), ts.build.pair({
@@ -230,7 +230,7 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 				})],
 			}), ts.build.lexicalDeclaration({
 				kind: ts.kinds.ConstKeyword,
-				declarators: [ts.build.variableDeclarator.plain({
+				declarators: [ts.build.variableDeclaratorPlain({
 					name: "m",
 					value: ts.build.memberExpression({
 						object: ts.build.subscriptExpression({
@@ -241,10 +241,10 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 						property: "b",
 					}),
 				})],
-			}), ts.build.expressionStatement(ts.build.callExpression.call({
+			}), ts.build.expressionStatement(ts.build.callExpressionCall({
 				function: ts.build.subscriptExpression({
 					object: ts.build.memberExpression({
-						object: ts.build.callExpression.call({
+						object: ts.build.callExpressionCall({
 							function: "foo",
 							arguments: "x",
 						}),
@@ -254,7 +254,7 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 					index: "1",
 				}),
 				arguments: "y",
-			})), ts.build.returnStatement(ts.build.array("x", ts.build.parenthesizedExpression.typed({
+			})), ts.build.returnStatement(ts.build.array("x", ts.build.parenthesizedExpressionTyped({
 				expression: "y",
 			})))],
 		}, {

@@ -7,7 +7,7 @@ import { is } from './is.js';
 import {
 	TSKindId,
 	type FixedTextKindId,
-	type IrKeyOf,
+	type TypeKeyOf,
 	type NamespaceMap,
 	type RegexNode,
 	type RegexTypeMap
@@ -16,14 +16,14 @@ import type { IndentChar, Options } from './options.js';
 import { querySlots, triviaFacts } from './utils.js';
 import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type PatternRoot } from './render-engine.js';
-import { wrapNode, hydrateChild, type PatternTree } from './wrap.js';
+import { wrapNode, hydrate, type PatternTree } from './wrap.js';
 
 export interface RegexAPI extends LanguageAPI {
 	readonly name: 'regex';
 	readonly build: typeof ir;
 	readonly is: typeof is;
 	readonly kinds: typeof TSKindId;
-	readonly types: KindTypes<IrKeyOf, NamespaceMap>;
+	readonly types: KindTypes<TypeKeyOf, NamespaceMap>;
 	readonly root: PatternTree;
 	readonly node: RegexNode;
 	readonly fixedTextKindId: FixedTextKindId;
@@ -42,5 +42,5 @@ export const hooks: LanguageHooks<RegexAPI> = Object.freeze<LanguageHooks<RegexA
 	querySlots,
 	createNative: (options) => nativeLanguageEngine<RegexAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as PatternRoot & ParsedRoot, tree as TreeHandle),
-	hydrate: (node, tree) => hydrateChild(node, tree as TreeHandle)
+	hydrate: (node, tree) => hydrate(node, tree as TreeHandle)
 });

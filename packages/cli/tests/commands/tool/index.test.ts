@@ -43,7 +43,6 @@ const EXPECTED = [
 	'spelled-trivia',
 	'trivia-placement',
 	'trivia-timing',
-	'typed-read-parity',
 	'uncovered-content',
 	'variant-derivation-probe',
 	'walk'

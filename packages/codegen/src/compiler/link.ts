@@ -66,8 +66,7 @@ import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import { rootRuleName } from '../util/reachable-rules.ts';
 import { polymorphVisibleName } from '../dsl/arm-names.ts';
-import { deriveVariantChildren, isAliasMintedRef } from './variant-structural.ts';
-import type { AutomaticVariants } from '../dsl/automatic-variants.ts';
+import { deriveVariantChildren, isAliasMintedRef, stampLabelProvenance } from './variant-structural.ts';
 import {
 	composeTokenText,
 	deriveComplexAliasTargetHidden,
@@ -213,7 +212,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 
 	const renderAs = (raw.renderAs ?? {}) as Record<string, Rule<'link'>>;
 	if (Object.keys(renderAs).length > 0) {
-		const stamped = stampStaticRenderAs(rules, renderAs);
+		const stamped = stampStaticRenderAs(rules, renderAs, kindEntries);
 		for (const key of Object.keys(rules)) {
 			if (!(key in stamped)) delete rules[key];
 		}
@@ -243,7 +242,8 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 
 	classifyAndLogHiddenRules(rules, linkCtx);
 
-	applyOverridePolymorphs(rules, derivations, raw.automaticVariants);
+	stampLabelProvenance(rules, raw.automaticVariants);
+	applyOverridePolymorphs(rules, derivations);
 
 	collectRepeatedShapes(rules, derivations.repeatedShapes);
 	const complexAliasTargetHidden = deriveComplexAliasTargetHidden(rawRules);
@@ -275,7 +275,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	reportAuxTokens(evaluated.rules, linkCtx);
 
 	stampLinkMintedVisibility(rules, linkCtx);
-	const variantChildren = deriveVariantChildren(rules, raw.automaticVariants);
+	const variantChildren = deriveVariantChildren(rules);
 	const refineForms = new Map<string, readonly LinkedRefineForm[]>();
 	for (const [kind, forms] of raw.refineForms ?? []) {
 		const rule = rules[kind];
@@ -326,6 +326,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		parentAliasedKinds,
 		visibleAliasTargets: visibleAliasTargets.size > 0 ? visibleAliasTargets : undefined,
 		variantChildren: variantChildren.size > 0 ? variantChildren : undefined,
+		splicedNames: splicedRuleNames(rules),
 		generatedIdTables
 	};
 }
@@ -390,7 +391,7 @@ function canonicalizeCatalogLiteralRefsInMap(rules: Map<string, Rule<'link'>>, c
 	}
 }
 
-function stampAliasTargetId(rule: SymbolRule<'link'>, ctx: StampKindIdsCtx): SymbolRule<'link'> {
+function stampAliasTargetId<R extends { readonly aliasedTo?: string; readonly aliasedToId?: number }>(rule: R, ctx: StampKindIdsCtx): R {
 	if (rule.aliasedTo === undefined || rule.aliasedToId !== undefined) return rule;
 	const targetEntry = findEntryForKindName(ctx.kindEntries, rule.aliasedTo);
 	if (targetEntry === undefined || targetEntry.anon === true) {
@@ -503,27 +504,34 @@ export function canonicalizeRuleLiterals(
 						subtypes: rule.subtypes.map((s) => stampSymbolRefKindIds(s, { kindEntries, misses, aliasBodies }))
 					};
 		case STRING: {
+			const parsedAs = rule.resolvedKindId === undefined ? undefined : kindEntries.find((entry) => entry.id === rule.resolvedKindId);
 			if (allowLiteralRewrite) {
-				const entry = findEntryForLiteralText(kindEntries, rule.value);
+				const entry = parsedAs ?? findEntryForLiteralText(kindEntries, rule.value);
 				if (entry && (syntactic || entry.anon === true)) {
-					return {
-						type: SYMBOL,
-						name: entry.kind,
-						literal: rule.value,
-						inline: isParserHiddenKind(entry.kind, kindEntries),
-						kindId: entry.parseId ?? entry.id,
-						metadata: makeRuleMetadata({ symbolSource: 'link' }),
-						...(rule.annotations === undefined ? {} : { annotations: rule.annotations })
-					};
+					return stampAliasTargetId(
+						{
+							type: SYMBOL,
+							name: entry.kind,
+							literal: rule.value,
+							inline: isParserHiddenKind(entry.kind, kindEntries),
+							kindId: parsedAs?.id ?? entry.parseId ?? entry.id,
+							metadata: makeRuleMetadata({ symbolSource: 'link' }),
+							...(rule.aliasedTo === undefined ? {} : { aliasedTo: rule.aliasedTo }),
+							...(rule.annotations === undefined ? {} : { annotations: rule.annotations })
+						} satisfies SymbolRule<'link'>,
+						{ kindEntries, misses, aliasBodies }
+					);
 				}
 			}
 			if (kindEntries.length === 0) return rule;
+			const aliased = stampAliasTargetId(rule, { kindEntries, misses, aliasBodies });
+			if (parsedAs !== undefined) return aliased;
 			const literalEntry = findEntryForLiteralText(kindEntries, rule.value);
 			if (literalEntry === undefined) {
 				if (syntactic) misses.literals.add(rule.value);
-				return rule;
+				return aliased;
 			}
-			return { ...rule, resolvedKindId: literalEntry.id };
+			return { ...aliased, resolvedKindId: literalEntry.id };
 		}
 		case PATTERN: {
 			if (!syntactic || kindEntries.length === 0) return rule;
@@ -801,7 +809,12 @@ function renameRules(raw: RawGrammar, renames: ReadonlyMap<string, string>): Raw
 	}
 	const rename = (name: string): string => renames.get(name) ?? name;
 	const renameKey = (key: string): string => key.split('\u0000').map(rename).join('\u0000');
-	const renameRef = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
+	const renameOwner = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
+		const owner = rule.annotations?.variantOf;
+		return owner !== undefined && renames.has(owner) ? { ...rule, annotations: { ...rule.annotations, variantOf: rename(owner) } } : rule;
+	};
+	const renameRef = (ref: Rule<'evaluate'>): Rule<'evaluate'> => {
+		const rule = renameOwner(ref);
 		if (rule.type === SYMBOL) return renames.has(rule.name) ? { ...rule, name: rename(rule.name) } : rule;
 		if (rule.type === ALIAS && rule.named && rule.content.type === SYMBOL) {
 			const content = rule.content.name;
@@ -920,6 +933,7 @@ function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar
 }
 
 const aliasedRefWalker = new RuleWalker<Rule<'link'>>();
+const splicedNameWalker = new RuleWalker<Rule<'link'>>();
 
 function stampLinkMintedVisibility(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): void {
 	for (const [name, rule] of Object.entries(rules)) {
@@ -955,6 +969,17 @@ function pruneUnreachableRules(rules: Record<string, Rule<'link'>>, ctx: LinkCtx
 	for (const name of Object.keys(rules)) {
 		if (!reachable.has(name)) delete rules[name];
 	}
+}
+
+function splicedRuleNames(rules: Readonly<Record<string, Rule<'link'>>>): ReadonlySet<string> {
+	const out = new Set<string>();
+	for (const rule of Object.values(rules)) {
+		splicedNameWalker.fold(rule, undefined, (_, r) => {
+			if (r.inlinedFrom !== undefined) out.add(r.inlinedFrom);
+			return undefined;
+		});
+	}
+	return out;
 }
 
 function inlineReferences(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): void {
@@ -1278,10 +1303,9 @@ export interface VariantChoiceLocation {
 
 export function applyOverridePolymorphs(
 	rules: Record<string, Rule<'link'>>,
-	derivations: DerivationLog,
-	automatic: AutomaticVariants | undefined
+	derivations: DerivationLog
 ): void {
-	const structural = deriveVariantChildren(rules, automatic);
+	const structural = deriveVariantChildren(rules);
 	const parentToChildren = new Map<string, string[]>();
 	for (const [parentKind, variantChildren] of structural) {
 		const names = variantChildren.map((c) => c.name);
@@ -2348,7 +2372,8 @@ interface RenderAsLiteralStamp {
 
 export function stampStaticRenderAs(
 	rules: Record<string, Rule<'link'>>,
-	renderAs: Record<string, Rule<'link'>>
+	renderAs: Record<string, Rule<'link'>>,
+	kindEntries: readonly GeneratedKindEntry[]
 ): Record<string, Rule<'link'>> {
 	const renderStamps: Record<string, RenderAsLiteralStamp> = {};
 	const blankStamps = new Set<string>();
@@ -2376,24 +2401,31 @@ export function stampStaticRenderAs(
 	const out: Record<string, Rule<'link'>> = {};
 	for (const [name, rule] of Object.entries(rules)) {
 		if (blankStamps.has(name)) continue;
-		out[name] = rewriteRuleForStamp(rule, symToLit, blankStamps);
+		out[name] = rewriteRuleForStamp(rule, { symToLit, blankStamps, kindEntries });
 	}
 	return out;
 }
-function literalRuleForStamp(stamp: RenderAsLiteralStamp, id: RuleId | undefined): Rule<'link'> {
-	return stamp.immediate
-		? withId({ type: TOKEN, content: { type: STRING, value: stamp.value }, immediate: true }, id)
-		: withId({ type: STRING, value: stamp.value }, id);
+interface RenderAsStampCtx {
+	readonly symToLit: Record<string, RenderAsLiteralStamp>;
+	readonly blankStamps: ReadonlySet<string>;
+	readonly kindEntries: readonly GeneratedKindEntry[];
 }
-function rewriteRuleForStamp(
-	rule: Rule<'link'>,
-	symToLit: Record<string, RenderAsLiteralStamp>,
-	blankStamps: ReadonlySet<string>
-): Rule<'link'> {
+function literalRuleForStamp(stamp: RenderAsLiteralStamp, symbol: string, id: RuleId | undefined, ctx: RenderAsStampCtx): Rule<'link'> {
+	const parsedAs = findEntryForKindName(ctx.kindEntries, symbol);
+	const literal: StringRule<'link'> = {
+		type: STRING,
+		value: stamp.value,
+		...(parsedAs === undefined ? {} : { resolvedKindId: parsedAs.id }),
+		...(isParserHiddenKind(symbol, ctx.kindEntries) ? {} : { aliasedTo: symbol })
+	};
+	return stamp.immediate ? withId({ type: TOKEN, content: literal, immediate: true }, id) : withId(literal, id);
+}
+function rewriteRuleForStamp(rule: Rule<'link'>, ctx: RenderAsStampCtx): Rule<'link'> {
+	const { symToLit, blankStamps } = ctx;
 	switch (rule.type) {
 		case SYMBOL: {
 			const stamp = symToLit[rule.name];
-			if (stamp !== undefined) return literalRuleForStamp(stamp, rule.id);
+			if (stamp !== undefined) return literalRuleForStamp(stamp, rule.name, rule.id, ctx);
 			if (blankStamps.has(rule.name)) return withId({ type: CHOICE, members: [] }, rule.id);
 			return rule;
 		}
@@ -2402,10 +2434,10 @@ function rewriteRuleForStamp(
 			const inner = unwrapAliasForCheck(rule.content);
 			if (inner.type === SYMBOL) {
 				const stamp = symToLit[inner.name];
-				if (stamp !== undefined) return literalRuleForStamp(stamp, rule.id ?? inner.id);
+				if (stamp !== undefined) return literalRuleForStamp(stamp, inner.name, rule.id ?? inner.id, ctx);
 				if (blankStamps.has(inner.name)) return withId({ type: CHOICE, members: [] }, rule.id);
 			}
-			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) };
+			return { ...rule, content: rewriteRuleForStamp(rule.content, ctx) };
 		}
 
 		case ALIAS:
@@ -2415,13 +2447,13 @@ function rewriteRuleForStamp(
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
-			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) } as Rule<'link'>;
+			return { ...rule, content: rewriteRuleForStamp(rule.content, ctx) } as Rule<'link'>;
 
 		case SEQ:
-			return { ...rule, members: rule.members.map((m) => rewriteRuleForStamp(m, symToLit, blankStamps)) };
+			return { ...rule, members: rule.members.map((m) => rewriteRuleForStamp(m, ctx)) };
 
 		case CHOICE: {
-			const members = rule.members.map((m) => rewriteRuleForStamp(m, symToLit, blankStamps));
+			const members = rule.members.map((m) => rewriteRuleForStamp(m, ctx));
 			const nonBlank = members.filter((m) => !isBlank(m));
 			const hadBlank = nonBlank.length < members.length;
 			if (!hadBlank) return { ...rule, members };

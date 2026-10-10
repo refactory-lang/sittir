@@ -135,19 +135,19 @@ import type { TreeHandle } from '@sittir/common/utils';
 import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 import { ir } from './ir.js';
 import { is } from './is.js';
-import { TSKindId, type FixedTextKindId, type IrKeyOf, type NamespaceMap, type ${grammarTypePrefix(grammar)}Node, type ${grammarTypeMapName(grammar)} } from './types.js';
+import { TSKindId, type FixedTextKindId, type TypeKeyOf, type NamespaceMap, type ${grammarTypePrefix(grammar)}Node, type ${grammarTypeMapName(grammar)} } from './types.js';
 import type { IndentChar, Options } from './options.js';
 import { querySlots, triviaFacts } from './utils.js';
 ${triviaImports(config)}import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ${rootTypeName}Root } from './render-engine.js';
-import { wrapNode, hydrateChild, type ${rootTreeTypeName} } from './wrap.js';
+import { wrapNode, hydrate, type ${rootTreeTypeName} } from './wrap.js';
 
 export interface ${api} extends LanguageAPI {
 	readonly name: '${grammar}';
 	readonly build: typeof ir;
 	readonly is: typeof is;
 	readonly kinds: typeof TSKindId;
-	readonly types: KindTypes<IrKeyOf, NamespaceMap>;
+	readonly types: KindTypes<TypeKeyOf, NamespaceMap>;
 	readonly root: ${rootTreeTypeName};
 	readonly node: ${grammarTypePrefix(grammar)}Node;
 	readonly fixedTextKindId: FixedTextKindId;
@@ -166,7 +166,7 @@ export const hooks: LanguageHooks<${api}> = Object.freeze<LanguageHooks<${api}>>
 	querySlots,
 	createNative: (options) => nativeLanguageEngine<${api}, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ${rootTypeName}Root & ParsedRoot, tree as TreeHandle),
-	hydrate: (node, tree) => hydrateChild(node, tree as TreeHandle)
+	hydrate: (node, tree) => hydrate(node, tree as TreeHandle)
 });
 `;
 }

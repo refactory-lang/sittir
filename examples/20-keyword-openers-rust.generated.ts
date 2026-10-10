@@ -32,25 +32,25 @@ export function rebuildKeywordOpenersRustGenerated() {
 				statements: [rs.build.letDeclaration.strict({
 					pattern: rs.build.identifier("x"),
 					value: rs.build.tupleExpression.strict({
-						expressions: [rs.build.integerLiteral.decimal.strict({
+						expressions: [rs.build.integerLiteralDecimal.strict({
 							content: "1",
-						}), rs.build.integerLiteral.decimal.strict({
+						}), rs.build.integerLiteralDecimal.strict({
 							content: "2",
 						})],
 					}),
 				}), rs.build.letDeclaration.strict({
 					pattern: rs.build.identifier("y"),
-					value: rs.build.arrayExpression.list.strict({
+					value: rs.build.arrayExpressionList.strict({
 						elements: [{
-							expression: rs.build.integerLiteral.decimal.strict({
+							expression: rs.build.integerLiteralDecimal.strict({
 								content: "1",
 							}),
 						}, {
-							expression: rs.build.integerLiteral.decimal.strict({
+							expression: rs.build.integerLiteralDecimal.strict({
 								content: "2",
 							}),
 						}, {
-							expression: rs.build.integerLiteral.decimal.strict({
+							expression: rs.build.integerLiteralDecimal.strict({
 								content: "3",
 							}),
 						}],
@@ -65,27 +65,27 @@ export function rebuildKeywordOpenersRustGenerated() {
 							arguments: rs.build.arguments.strict(),
 						}),
 						operator: rs.kinds.Gt,
-						right: rs.build.integerLiteral.decimal.strict({
+						right: rs.build.integerLiteralDecimal.strict({
 							content: "1",
 						}),
 					})),
 					consequence: rs.build.block.strict({
 						statements: [rs.build.expressionStatement.withSemi.strict(rs.build.returnExpression.strict(rs.build.tupleExpression.strict({
-							expressions: [rs.build.integerLiteral.decimal.strict({
+							expressions: [rs.build.integerLiteralDecimal.strict({
 								content: "1",
-							}), rs.build.integerLiteral.decimal.strict({
+							}), rs.build.integerLiteralDecimal.strict({
 								content: "2",
 							})],
 						})))],
 					}),
 				})), rs.build.expressionStatement.strict(rs.build.forExpression.strict({
 					pattern: rs.build.tuplePattern.strict(rs.build.identifier("i"), rs.build.identifier("v")),
-					value: rs.build.parenthesizedExpression.strict(rs.build.rangeExpression.binary.strict({
-						start: rs.build.integerLiteral.decimal.strict({
+					value: rs.build.parenthesizedExpression.strict(rs.build.rangeExpressionBinary.strict({
+						start: rs.build.integerLiteralDecimal.strict({
 							content: "0",
 						}),
 						operator: rs.kinds.DotDot,
-						end: rs.build.integerLiteral.decimal.strict({
+						end: rs.build.integerLiteralDecimal.strict({
 							content: "3",
 						}),
 					})),
@@ -100,7 +100,7 @@ export function rebuildKeywordOpenersRustGenerated() {
 					body: rs.build.block.strict({
 						statements: [rs.build.expressionStatement.withSemi.strict(rs.build.callExpression.strict({
 							function: rs.build.breakExpression.strict({}),
-							arguments: rs.build.arguments.strict(rs.build.integerLiteral.decimal.strict({
+							arguments: rs.build.arguments.strict(rs.build.integerLiteralDecimal.strict({
 								content: "1",
 							})),
 						}))],
@@ -115,15 +115,15 @@ export function rebuildKeywordOpenersRustGenerated() {
 					pattern: rs.build.identifier("m"),
 					value: rs.build.macroInvocation.strict({
 						macro: rs.build.identifier("vec"),
-						arguments: rs.build.delimTokenTree.bracket.strict(rs.build.nonSpecialToken.strict(rs.build.integerLiteral.decimal.strict({
+						arguments: rs.build.delimTokenTreeBracket.strict(rs.build.nonSpecialToken.strict(rs.build.integerLiteralDecimal.strict({
 							content: "1",
-						})), rs.build.nonSpecialToken.strict(rs.kinds.Comma), rs.build.nonSpecialToken.strict(rs.build.integerLiteral.decimal.strict({
+						})), rs.build.nonSpecialToken.strict(rs.kinds.Comma), rs.build.nonSpecialToken.strict(rs.build.integerLiteralDecimal.strict({
 							content: "2",
 						}))),
 					}),
 				}), rs.build.letDeclaration.strict({
 					pattern: rs.build.identifier("c"),
-					value: rs.build.closureExpression.expr.strict({
+					value: rs.build.closureExpressionExpr.strict({
 						parameters: rs.build.closureParameters.strict(rs.build.identifier("p")),
 						body: rs.build.parenthesizedExpression.strict(rs.build.identifier("p")),
 					}),
@@ -131,22 +131,22 @@ export function rebuildKeywordOpenersRustGenerated() {
 					pattern: rs.build.identifier("t"),
 					type: rs.build.tupleType.strict(rs.build.identifier("Foo"), rs.build.identifier("Foo")),
 					value: rs.build.tupleExpression.strict({
-						expressions: [rs.build.integerLiteral.decimal.strict({
+						expressions: [rs.build.integerLiteralDecimal.strict({
 							content: "1",
-						}), rs.build.integerLiteral.decimal.strict({
+						}), rs.build.integerLiteralDecimal.strict({
 							content: "2",
 						})],
 					}),
 				}), rs.build.letDeclaration.strict({
 					pattern: rs.build.identifier("u"),
-					value: rs.build.referenceExpression.bare.strict(rs.build.parenthesizedExpression.strict(rs.build.integerLiteral.decimal.strict({
+					value: rs.build.referenceExpressionBare.strict(rs.build.parenthesizedExpression.strict(rs.build.integerLiteralDecimal.strict({
 						content: "1",
 					}))),
 				}), rs.build.letDeclaration.strict({
 					pattern: rs.build.identifier("v"),
 					value: rs.build.unaryExpression.strict({
 						operator: rs.kinds.Dash,
-						operand: rs.build.parenthesizedExpression.strict(rs.build.integerLiteral.decimal.strict({
+						operand: rs.build.parenthesizedExpression.strict(rs.build.integerLiteralDecimal.strict({
 							content: "1",
 						})),
 					}),
@@ -160,9 +160,9 @@ export function rebuildKeywordOpenersRustGenerated() {
 				trailingExpression: rs.build.callExpression.strict({
 					function: rs.build.identifier("Some"),
 					arguments: rs.build.arguments.strict(rs.build.tupleExpression.strict({
-						expressions: [rs.build.integerLiteral.decimal.strict({
+						expressions: [rs.build.integerLiteralDecimal.strict({
 							content: "1",
-						}), rs.build.integerLiteral.decimal.strict({
+						}), rs.build.integerLiteralDecimal.strict({
 							content: "2",
 						})],
 					})),
@@ -178,7 +178,7 @@ export function rebuildKeywordOpenersRustGenerated() {
 			name: rs.build.identifier("h"),
 			parameters: rs.build.parameters.strict(),
 			body: rs.build.block.strict({}),
-		}).$trivia.leading(rs.kinds.Blankline), rs.build.structItem.unit.strict({
+		}).$trivia.leading(rs.kinds.Blankline), rs.build.structItemUnit.strict({
 			visibilityModifier: rs.build.visibilityModifier.pub.scope.inPath.strict(rs.build.scopedIdentifier.strict({
 				path: rs.kinds.Crate,
 				name: rs.build.identifier("x"),

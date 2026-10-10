@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { AbstractAssembledCompound, extractSeparatorKindId } from '../../compiler/model/node-map.ts';
-import { fieldTaggedLiterals, fieldTaggedLiteralTexts, slotDropKindIds } from '../shared.ts';
+import { fieldTaggedLiterals, slotDropKindIds } from '../shared.ts';
 
 const slot = (values: object[]) => ({ name: 'items', fieldName: undefined, values }) as never;
 const list = (...values: object[]) => slot(values.map((value) => ({ multiplicity: 'array', ...value })));
@@ -30,7 +30,7 @@ describe('the stamps a separator and a field-tagged literal carry', () => {
 		expect(extractSeparatorKindId({ value: string({}) } as never)).toBeUndefined();
 	});
 
-	it('keeps two stamped symbols of one spelling under a field, and still lists the text once', () => {
+	it('keeps two stamped symbols of one spelling under a field', () => {
 		const owner = {
 			lexedInterior: false,
 			renderRule: {
@@ -46,7 +46,6 @@ describe('the stamps a separator and a field-tagged literal carry', () => {
 			{ text: ',', kindId: 11 },
 			{ text: ',', kindId: 12 }
 		]);
-		expect(fieldTaggedLiteralTexts(wrapped as never).get('right')).toEqual([',']);
 		const items = { name: 'right', fieldName: 'right', values: [] } as never;
 		expect(slotDropKindIds(items, wrapped as never, false)).toEqual([11, 12]);
 	});

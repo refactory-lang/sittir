@@ -1,7 +1,8 @@
+export type * from './clause.ts';
 export type * from './declaration.ts';
 export type * from './expression.ts';
 
-/** Nominal conformance: a type declares the interfaces or traits it implements. */
+/** Nominal conformance: a class declares the interfaces it implements. */
 export interface InterfaceConformance {
 	readonly 'interface-conformance': true;
 }

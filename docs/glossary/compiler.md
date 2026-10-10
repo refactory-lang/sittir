@@ -390,6 +390,8 @@ The `kind-shape-mismatch` record for a kind whose rule is not the shape its mode
 // ---------------------------------------------------------------------------
 ```
 
+Every node also gets the key it resolved to as its `typeKey`: the key the engine's kind-type map uses, which stays when `stampIrSurface` narrows `irKey` to the builders `ir` exports.
+
 ### `packages/codegen/src/compiler/assemble.ts::resolveHiddenSubtypes`
 
 ```text
@@ -647,6 +649,8 @@ The `kind-shape-mismatch` record for a kind whose rule is not the shape its mode
  * neither external nor inline is reported.
  */
 ```
+
+`spliced` holds the rules link spliced at their references (`LinkedGrammar.splicedNames`). Like an `inline:` kind, such a rule has no node of its own, so a label may name it as its owner.
 
 ### `packages/codegen/src/compiler/assemble.ts::hydrateSlotRefs`
 
@@ -1625,7 +1629,7 @@ Evaluates the grammar package through `evaluatePackage`
 and gates it through `diagnoseGrammar`, throwing `GrammarDiagnosticError` with the blocked
 records and every record the gate saw when it does not pass. The config names the package, not the grammar, so the
 caller resolves it once. Hydrate then runs on the collected grammar with
-`droppedKinds` as the names whose absence is already reported.
+`droppedKinds` as the names whose absence is already reported, and the `ir` surface is stamped on the hydrated node map (`stampIrSurface`).
 
 ### `packages/codegen/src/compiler/compile.ts::diagnoseGrammar`
 
@@ -2184,6 +2188,10 @@ evaluation: a base tree-sitter accepts always evaluates, and one it rejects is r
 
 The base evaluated with no wire config, before and after enrich (`EvaluationStages`); absent when the grammar does
 not depart from its base (`departsFromBase`).
+
+### `packages/codegen/src/compiler/types.ts::NodeMap.irSurface`
+
+What the model decided about `ir` (`IrSurface`), stamped once by `stampIrSurface` after slot refs are hydrated and read by every emitter through `irSurfaceOf`.
 
 ### `packages/codegen/src/compiler/types.ts::EvaluationStages`
 
@@ -3423,7 +3431,7 @@ ordinary union.
  *   `${parentKind}_${child}` (the alias target tree-sitter creates). Emitting
  *   each as a derivation records in the derivation log what the parse
  *   tree carries vs what sittir's typed surface presents. Without this,
- *   `readUntypedNode` would have to infer polymorph-internal shape from
+ *   the reader would have to infer polymorph-internal shape from
  *   grammar-specific knowledge.
  */
 ```
@@ -5298,21 +5306,33 @@ the text a SEQ collapses to is spaced by the grammar's word shape, not `\w`.
 One variant of a parent: the kind the arm names, the variant name it is
 addressed by, and `definedBy` — `'enrich'` when the arm's label is automatic
 (its key is in the automatic-variant record), `'override'` when an authored
-label (`variant()`, `alias()`, a group) placed it (`definedByOf`). All three
+label (`variant()`, `alias()`, a group) placed it (the label's stamp, `stampLabelProvenance`). All three are
 resolved once in the derivation and read unchanged by every consumer.
 
-### `packages/codegen/src/compiler/variant-structural.ts::definedByOf`
+### `packages/codegen/src/compiler/variant-structural.ts::provenanceOf`
 
-`'enrich'` when the arm's key (`automaticVariantKey`) is in the automatic-variant
-record link was handed (`RawGrammar.automaticVariants`), else `'override'`.
-The record is the only source for whether a label is automatic; nothing reads
-rule metadata for it.
+`'enrich'` when the arm's key (`automaticVariantKey`) is in the automatic-variant record link was handed (`RawGrammar.automaticVariants`), else `'override'`. The record is the only source for whether a label is automatic; `stampLabelProvenance` is its one reader.
+
+### `packages/codegen/src/compiler/variant-structural.ts::withProvenance`
+
+A label's annotations with `definedBy` set.
+
+### `packages/codegen/src/compiler/variant-structural.ts::stampedArm`
+
+One node with its label's provenance stamped. A named alias's key comes from its content's label, so the alias stamps the label on itself and on its content, replacing what the content's own key gave it; any other labelled node is stamped once.
+
+### `packages/codegen/src/compiler/variant-structural.ts::stampLabelProvenance`
+
+Stamps every variant label in the rules with its provenance (`RuleAnnotations.definedBy`, by `provenanceOf`), descending a supertype's subtypes as well as every container. Link runs it once, before anything derives variant children, so every later reader takes the stamp. The stamp is annotation data: it rides through normalize and assemble onto each labelled ref (`armFactsOf`) for overlays to read, and no compiler decision depends on it.
+
+### `packages/codegen/src/compiler/variant-structural.ts::provenanceStamped`
+
+A label's stamped provenance. A label without one was minted after `stampLabelProvenance` ran, and reading it throws.
 
 ### `packages/codegen/src/compiler/variant-structural.ts::deriveVariantChildren`
 
 `{parent -> VariantChild[]}` for every rule in `rules` that has at least one
-variant, by `variantChildrenOf`, with `definedBy` read from the given
-automatic-variant record.
+variant, by `variantChildrenOf`, with `definedBy` read from each label's stamp.
 
 ### `packages/codegen/src/compiler/variant-structural.ts::variantChildrenOf`
 
@@ -5327,7 +5347,7 @@ The variant a node declares for `parentKind`: a symbol carrying the
 annotations (the child kind is the symbol's name), or a named alias whose own
 annotations — or its content symbol's — carry them (the child kind is the
 alias's visible value). Annotations for a different parent do not count.
-`definedBy` comes from the automatic-variant record (`definedByOf`).
+`definedBy` is the label's stamp (`provenanceStamped`).
 
 ### `packages/codegen/src/compiler/variant-structural.ts::annotationsOf`
 
@@ -6612,7 +6632,7 @@ The text-token rules enrich minted (`mintInlineTextTokens`): each is a visible r
 ### `packages/codegen/src/compiler/types.ts::automaticVariants`
 
 The wire context's automatic-variant record, carried by evaluate so link can
-tell an automatic arm label from an authored one (`definedByOf`). Absent for a
+tell an automatic arm label from an authored one (`stampLabelProvenance`). Absent for a
 grammar that never ran through `wire()`; then no label is automatic.
 
 ### `packages/codegen/src/compiler/types.ts::visibleAliasTargets`
@@ -6727,6 +6747,8 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
 `AssembledNodeBase.annotations`.
 
 `nodelessExtrasRun` is the grammar's run of node-less extras (`rule-patterns.ts::nodelessExtrasRun`), compiled once at link from the evaluated rules, where a SYMBOL extra's rule still has its authored shape, and carried on `NormalizedGrammar`, `SimplifiedGrammar` and `NodeMap` as `wordMatcher` is.
+
+`splicedNames` is every rule link spliced at its references (`link.ts::splicedRuleNames`). Hydration reads it to accept a variant label whose owner has no node of its own.
 
 ### `packages/codegen/src/compiler/types.ts::NormalizedGrammar`
 
@@ -7227,7 +7249,8 @@ The parser catalog rows (`kindEntries`) a link pass reads before `LinkCtx` exist
  * One walk, two catalog jobs: rewrite catalog-known literals at FIELD
  * positions into link-minted SYMBOLs, and stamp parser-issued kindIds onto
  * every value-bearing leaf (`kindId` on SYMBOL and named ALIAS,
- * `resolvedKindId` on STRING/PATTERN) so downstream phases consume stamped
+ * `resolvedKindId` on STRING/PATTERN, and `aliasedToId` on a SYMBOL or
+ * STRING that carries `aliasedTo`) so downstream phases consume stamped
  * facts instead of re-resolving names/texts per site. Leaves that resolve
  * nothing are collected into `misses` — the link-time phantom-kind
  * diagnostic. `syntactic` is false inside a lexed interior (below a
@@ -7241,6 +7264,10 @@ The parser catalog rows (`kindEntries`) a link pass reads before `LinkCtx` exist
  * separator and a rune escape's `"` never become `blank_identifier` or
  * `dquote`). A FIELD holding a whole token (`field(x, token(';'))`) sits
  * outside the TOKEN and still rewrites, because that string is the token.
+ * A STRING that arrives with `resolvedKindId` stands in for a symbol
+ * (`literalRuleForStamp`): it keeps that id instead of resolving by its
+ * text, and at a FIELD position it rewrites into a reference to that
+ * symbol, not to the catalog kind its text names.
  *
  * An inline SYMBOL (or inline SUPERTYPE subtype) whose name has an entry
  * in `aliasBodies` is not stamped in place — its alias body is spliced in
@@ -8344,6 +8371,7 @@ parser rule; only the sittir-side rule the model reads changes.
  *  `aliasedTo` (the alias name), when the rule carries one and isn't
  *  already stamped. A miss (no named entry, or an anonymous one) is
  *  recorded in `misses.aliasTargets`, never silently left unset. Runs
+ *  on a STRING literal that carries an alias (a renderAs stamp), and
  *  first inside `stampSymbolRefKindIds`, before `kindId` resolution —
  *  the two ids are independent: `aliasedToId` is the DISPLAY symbol,
  *  `kindId` is always this occurrence's own (storage) identity. */
@@ -8461,7 +8489,7 @@ parser rule; only the sittir-side rule the model reads changes.
 Pushes a variant-adoption choice's ambient scaffold down into its variant
 children. The (parent, children) pairs come from `deriveVariantChildren` over
 the rules as they stand mid-link (past wire's alias injection and
-`resolveRule`), with the automatic-variant record for `definedBy`. The only
+`resolveRule`), after `stampLabelProvenance`. The only
 structural mutation is `pushAmbientScaffoldIntoVariantChildren`, for a parent
 whose choice holds none of the children's own members (typescript's
 `public_field_definition`); every other parent only records its derivation.
@@ -8869,9 +8897,15 @@ It applies only the lifts `validateGroupsConfig` keeps and returns the issues of
  * and replace every occurrence of:
  *   - `SYMBOL(x)` (bare)
  *   - `FIELD(name, SYMBOL(x))` (field-wrapped)
- *   - `FIELD(name, ALIAS(SYMBOL(x)))` (alias-wrapped — any depth)
  * with `STRING(lit)` at the same position. Pure transform — input rule
- * map not mutated.
+ * map not mutated. An alias site over a renderAs external arrives here
+ * already folded to `SYMBOL(<alias name>)` (link renames the external
+ * to the alias it is only ever seen through, renderAs key included), so
+ * it is stamped as a bare or field-wrapped symbol.
+ *
+ * `kindEntries` decides what the literal displays as: a literal standing
+ * in for a parser-visible symbol carries that symbol as `aliasedTo`,
+ * because the parser still issues a node of that kind at the site.
  *
  * Symbol resolution is transitive: when `x` itself is not in `renderAs`
  * but `rules[x]` is a `StringRule<'link'>` whose value matches a renderAs literal,
@@ -8948,16 +8982,41 @@ It applies only the lifts `validateGroupsConfig` keeps and returns the issues of
 // throw.
 ```
 
+### `packages/codegen/src/compiler/link.ts::RenderAsStampCtx`
+
+```text
+/** What `rewriteRuleForStamp` substitutes (`symToLit`, `blankStamps`)
+ *  and the kind catalog `literalRuleForStamp` reads a symbol's parser
+ *  visibility from. */
+```
+
+### `packages/codegen/src/compiler/link.ts::literalRuleForStamp`
+
+```text
+/** The literal a renderAs stamp puts in `symbol`'s place: `STRING(value)`,
+ *  wrapped in an immediate TOKEN when the stamp is immediate, carrying
+ *  `aliasedTo: symbol` unless the parser hides that kind. The alias is
+ *  the node the parser issues at the site (rust's block doc comment
+ *  markers are named `inner_doc_comment_marker`/`outer_doc_comment_marker`
+ *  nodes spelled `!`/`*`); without it the literal would resolve by its
+ *  text to the anonymous `!`/`*` token, and the reader would find a
+ *  child its kind has no route for. `canonicalizeRuleLiterals` stamps
+ *  the alias's `aliasedToId`. The literal also carries `resolvedKindId`:
+ *  the id of `symbol`'s own kind entry, since the parser issues that
+ *  symbol at the site whatever text it renders as; `layoutTokenIds`
+ *  reads it, because the reader keys layout tokens on grammar ids. */
+```
+
 ### `packages/codegen/src/compiler/link.ts::rewriteRuleForStamp`
 
 ```text
-/** A non-inline SYMBOL is a real occurrence node the tree keeps, never a
- *  spliceable reference, so `symToLit`/`blankStamps` substitution never
- *  applies to it — both the bare-SYMBOL and the FIELD-wrapping-a-SYMBOL
- *  cases return unchanged unless the ref is `inline === true`. ALIAS is
- *  returned untouched (link's ALIAS wrapper is opaque to this rewrite;
- *  `unwrapAliasForCheck` only sees through TOKEN, never ALIAS, when
- *  checking a FIELD's inner shape for the same reason).
+/** Substitutes `ctx.symToLit` literals and `ctx.blankStamps` blanks for
+ *  the symbols they stamp, bare or field-wrapped. The literal comes from
+ *  `literalRuleForStamp`, so a symbol the parser issues keeps its kind
+ *  as the literal's alias: the field wrapper is dropped, the node the
+ *  parser puts there is not. ALIAS is returned untouched
+ *  (`unwrapAliasForCheck` only sees through TOKEN, never ALIAS, when
+ *  checking a FIELD's inner shape).
  */
 ```
 
@@ -8973,7 +9032,7 @@ It applies only the lifts `validateGroupsConfig` keeps and returns the issues of
 ```text
 // The field wrapper is dropped with the ref (a renderAs literal
 // is a mandatory inline literal, never a slot); the literal
-// takes the field's identity.
+// takes the field's identity and the ref's kind as its alias.
 ```
 
 #### body
@@ -9522,12 +9581,13 @@ Maps a grammar name to its authored entry (`grammar.sittir.ts`) and to its upstr
 
 ### `packages/codegen/src/compiler/assemble.ts::hydrateValues`
 
-A ref resolves by its canonical name in the primary lookup. Two categories legitimately have no assembled target
-and keep their `UnresolvedRef`: external tokens (lexer-callback symbols, tracked in `nodeMap.externals`) and the
-grammar's declared inline kinds (`cfg.inline`). The parser issues a node for neither, and every consumer that
-walks `slot.values[*]` handles `isUnresolvedRef`. A kind assemble left out with a shape record
-(`HydrateValuesCtx.reportedAbsentNames`, the node map's `droppedKinds`) is skipped. Any other absent target is an
-invariant violation and throws: an undefined name is a failed prediction, recorded and gated before link.
+A ref resolves by its canonical name in the primary lookup. Some names legitimately have no assembled target and keep their `UnresolvedRef` (`isAbsentByDesign`); the parser issues a node for none of them, and every consumer that walks `slot.values[*]` handles `isUnresolvedRef`. Any other absent target is an invariant violation and throws: an undefined name is a failed prediction, recorded and gated before link.
+
+A labelled value's owner (`variantOf`) is checked the same way, ref or not: it names a node-map kind or a name absent by design, or hydration throws. A label whose owner has no node and was never spliced is a stale stamp, and every reader of the owner would silently treat it as inlined.
+
+### `packages/codegen/src/compiler/assemble.ts::isAbsentByDesign`
+
+Whether a name may be missing from the node map: an external token, a kind in the grammar's `inline:` list, a rule link spliced at its references (`HydrateSlotRefsConfig.spliced`), or a kind assemble left out with a shape record (`reportedAbsentNames`).
 
 ### `packages/codegen/src/compiler/assemble.ts::stampWhitespaceBuilders`
 
@@ -10057,7 +10117,7 @@ re-derives a fact the pipeline already stamps.
 
 ### `packages/codegen/src/compiler/link.ts::collapseRenamedRules`
 
-A hidden rule the parser always shows under one tree name (`ts_symbol_names` gives the name; the catalog row is visible, not an alias or anonymous row, and is the only visible row carrying that name — `isRenamedEntry`) is one visible kind. This pass renames it to that tree name everywhere the grammar names it, before anything reads the grammar: rule keys, SYMBOL names, an identity alias wrapper around the renamed symbol (unwrapped), every name list (externals, extras, supertypes, inline, factoryInline, conflicts, precedences, word, orphanedSyntheticGroups, textTokens, bodyPatternZeroMatches), the SYMBOL members of each `reserved` wordset (the wordset names are not rule names and keep theirs), the name-keyed side tables (externalRoles, refineForms, groups, renderAs, visibleExternals, options, expectDiagnostics, expectTestFailures), the NUL-joined automaticVariants keys and the desugar divergence events. It rebuilds the rule catalog (keeping each rule's provenance) and re-derives the references from the renamed rules (`collectReferences`), since rule ids embed the owner's name. A tree name that another rule or external already uses is an error.
+A hidden rule the parser always shows under one tree name (`ts_symbol_names` gives the name; the catalog row is visible, not an alias or anonymous row, and is the only visible row carrying that name — `isRenamedEntry`) is one visible kind. This pass renames it to that tree name everywhere the grammar names it, before anything reads the grammar: rule keys, SYMBOL names, the owner each variant label names (`annotations.variantOf`), an identity alias wrapper around the renamed symbol (unwrapped), every name list (externals, extras, supertypes, inline, factoryInline, conflicts, precedences, word, orphanedSyntheticGroups, textTokens, bodyPatternZeroMatches), the SYMBOL members of each `reserved` wordset (the wordset names are not rule names and keep theirs), the name-keyed side tables (externalRoles, refineForms, groups, renderAs, visibleExternals, options, expectDiagnostics, expectTestFailures), the NUL-joined automaticVariants keys and the desugar divergence events. It rebuilds the rule catalog (keeping each rule's provenance) and re-derives the references from the renamed rules (`collectReferences`), since rule ids embed the owner's name. A tree name that another rule or external already uses is an error.
 
 It runs where the evaluated grammar is first consumed: `collectGrammarDiagnosticsForGrammar` collapses its input and hands the result on as `raw`, and `link` collapses again for callers that link an evaluated grammar directly; a collapsed grammar has no renamed rule left, so the second call returns its input.
 
@@ -10070,6 +10130,10 @@ The renames the parser catalog records for the grammar's rules and externals (`d
 ### `packages/codegen/src/compiler/link.ts::renameRules`
 
 Rewrites a grammar under a rename map, as `collapseRenamedRules` describes; an empty map returns the grammar unchanged. The rebuilt catalog keeps each renamed kind's source rule ids (`BuildRuleCatalogCtx.sourceKindOf`).
+
+### `packages/codegen/src/compiler/link.ts::splicedRuleNames`
+
+The name of every rule whose body some rule carries spliced in place of a reference to it (its `inlinedFrom` stamp).
 
 ### `packages/codegen/src/compiler/link.ts::spliceTextLeaves`
 

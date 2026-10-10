@@ -21,7 +21,7 @@ describe('a coordinate names its tree across grammars', () => {
 	it('mints distinct ids for trees parsed by engines of different grammars', async () => {
 		const treeIdOf = async (grammar: string, source: string): Promise<number> => {
 			const native = (await (await languageByName(grammar)).load()).createNative();
-			return Math.floor((native.parseAndRead(source).root as { $handle: number }).$handle / 2 ** 32);
+			return Math.floor(native.parseAndRead(source).root.$_layout!.at!.$treeHandle / 2 ** 32);
 		};
 		const a = await treeIdOf('rust', 'fn a() {}\n');
 		const b = await treeIdOf('typescript', 'let b = 1;\n');

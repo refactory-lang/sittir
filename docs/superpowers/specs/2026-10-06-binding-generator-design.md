@@ -65,9 +65,9 @@ const FunctionItemAsDeclarationFunction = (n: T.FunctionItem.Parsed): VocabViews
 });
 ```
 
-- **Members** come from the route resolution (§3). Every non-layout slot of the claimed kind is a member, named by its capture or by the slot's property name, unless a deep member routes through it.
+- **Members** come from the route resolution (§3). Every non-layout slot of the claimed kind is captured: a member is named by its capture, and a slot that is no member is `@dropped`; the inventory fails on a slot that is neither (bindings spec §2.1). A deep member through one arm of a slot takes that arm, and the slot keeps its others.
 - **Every interface member has a closure,** inherited members included, read from the vocabulary itself. A member with no route returns `undefined`, so a required member with no route is a compile error.
-- **Closures by member type:** a presence member tests the token along its route; a nested member reads along its route; a slot member returns the reader's result read as a portable value.
+- **Closures by member type:** a presence member tests the token, or the kind, along its route; a nested member reads along its route; a slot member returns the reader's result read as a portable value.
 - **The return type is the conformance check.** A member the portable node form rejects, and a member the interface does not declare, are compile errors in the generated module; an object literal's excess properties are refused.
 - **A refinement** (a claim with field literals beside the grammar kind's plain claim) reads like its parent and pins each literal (`operator: () => '+'`).
 - **Leaf text:** a leaf whose text varies carries a `$value` closure; a fixed-literal leaf is its const string, with no `$value`.
@@ -90,6 +90,8 @@ The portable engine's `build` is typed per kind from the vocabulary. A structure
 
 - A presence or nested member routed through an intermediate kind builds that kind's input; through a forwarded envelope that is its spread form (`functionModifiers(TSKindId.AsyncKeyword, …)`). Loose builders never guess a keyword from text.
 - A refinement fills in its pinned literals.
+- A flag that is the presence of a kind builds its slot's value as that kind, and refuses a value of another kind.
+- Where a kind and its shorthand share a vocabulary kind, the build picks the shorthand when the member it omits is absent.
 - An enum claim builds as its token's kind id, through the enum's text table where the structure spells the value.
 - A leaf whose text varies builds from its text.
 - **A kind with no bare factory:** polymorphs (`struct_item`, `closure_expression`, `range_expression`) build through a named form, and claimed supertypes (`integer_literal`, `escape_sequence`) through a subtype. The build entry picks the form or subtype by the routing the `ir` and loose builders already use (`buildFactoryNodeFromReference` over the `ir` surface). The generator reuses that rule and writes no second one.
@@ -104,7 +106,7 @@ The input is runtime data (a structure can arrive as JSON), so the build side ca
 - **High→low:** a parsed portable node is re-wrapped as its low-level node from the same row; a built one is rebuilt through the build entries.
 - **A node of the engine's own surface:** a node bound to this engine is returned as is; one bound to another engine of the same surface is re-wrapped from its row when parsed, or rebuilt when built, exactly as a crossing is. No identity is promised either way.
 
-`is.<role path>` is compiled from the read entries under the path, a grammar kind set plus slot constraints (`operator === '+='`), into the query facet's plan form: one derivation, no separate kind table.
+`is.<role path>(x)` checks `$type` against the path's kind set and, where the kinds do not decide the path, reads `$subType`. It evaluates no pattern when it is called. The read entries under the path, a grammar kind set plus slot constraints (`operator === '+='`) and placements, compile into the query facet's plan form, one derivation and no separate kind table, which the read evaluates once to stamp `$subType`.
 
 ## 3. One route resolution, shared with the inventory
 

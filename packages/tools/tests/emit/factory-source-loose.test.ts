@@ -169,7 +169,7 @@ describe('loose surface printing', () => {
 	});
 	it('keeps the call of a node that carries trivia', () => {
 		const leaf = map.identifier!('main') as Printed;
-		leaf.$_trivia = { leading: [new Printed(3, 'ir.lineComment(" a")', 'line_comment')] } as never;
+		leaf.$_layout = { trivia: { leading: [new Printed(3, 'ir.lineComment(" a")', 'line_comment')] } } as never;
 		expect(expectPrinted(map.function_item!({ name: leaf })).source).toBe(
 			'ir.functionItem({\n\tname: ir.identifier("main").$trivia.leading(ir.lineComment(" a")),\n})'
 		);
@@ -319,7 +319,7 @@ describe('hoisted routes, on both surfaces', () => {
 	});
 	it('an owner keeps its list call when the list carries trivia of its own', () => {
 		const list = expectPrinted(strict.elements!(strict.identifier!('x')));
-		list.$_trivia = { leading: [{ $type: 3, $text: 'c' }] } as never;
+		list.$_layout = { trivia: { leading: [{ $type: 3, $text: 'c' }] } } as never;
 		expect(expectPrinted(strict.wrapper!(list)).source).toMatch(/^ir\.wrapper\.strict\(ir\.elements\.strict\(/);
 	});
 	it('an owner takes a seat config element of its list', () => {

@@ -4,7 +4,7 @@ import { AssembledPattern, AssembledSupertype } from '../../compiler/model/node-
 import type { AssembledNode } from '../../compiler/model/node-map.ts';
 import type { SupertypeRule } from '../../types/rule.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
-import { flattenedVariantParents } from '../overlays/module.ts';
+import { flattenedVariantParents } from '../../compiler/model/ir-surface.ts';
 
 function leaf(kind: string): AssembledPattern {
 	const node = new AssembledPattern(kind, { type: PATTERN, value: '[a-z]+' });

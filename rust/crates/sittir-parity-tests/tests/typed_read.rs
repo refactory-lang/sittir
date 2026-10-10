@@ -1,182 +1,22 @@
-use sittir_core::read::{place, survey, Child, Entry, ReadCtx, Route, Sides};
-use sittir_core::read_untyped_node::{read_untyped_node, NoMint, ReadDepth, ReadModel};
-use sittir_core::types::{FieldValue, KindId, UntypedNode};
-use std::collections::BTreeSet;
-
-/// One extra's placement: its owner's span, its position (`leading`,
-/// `trailing` or `inner:<key>`), its own span, `same_line`, `tokens_between`.
-type Placed = BTreeSet<(u32, u32, String, u32, u32, bool, u16)>;
+use sittir_core::read::{Depth, ReadCtx, ReadError, ReadTransport, Sides};
+use sittir_core::types::KindId;
 
 fn parse(language: &tree_sitter::Language, source: &str) -> tree_sitter::Tree {
     let mut parser = tree_sitter::Parser::new();
     parser.set_language(language).unwrap();
     parser.parse(source, None).unwrap()
 }
-
-/// Every extra's placement in today's deep read.
-fn today(source: &str, language: &tree_sitter::Language, model: &dyn ReadModel) -> Placed {
-    let tree = parse(language, source);
-    let root = read_untyped_node(&tree, source, None, None, ReadDepth::Deep, model, &mut NoMint);
-    let mut placed = Placed::new();
-    fn visit(node: &UntypedNode, placed: &mut Placed) {
-        let span = node.span.expect("a read node has a span");
-        if let Some(trivia) = &node.trivia_data {
-            let mut add = |position: String, entries: &[UntypedNode]| {
-                for e in entries {
-                    let s = e.span.expect("an extra has a span");
-                    placed.insert((span.start, span.end, position.clone(), s.start, s.end, e.same_line, e.tokens_between));
-                }
-            };
-            add("leading".into(), trivia.leading.as_deref().unwrap_or_default());
-            add("trailing".into(), trivia.trailing.as_deref().unwrap_or_default());
-            for (key, entries) in trivia.inner.iter().flatten() {
-                add(format!("inner:{key}"), entries);
-            }
-        }
-        for value in node.fields.iter().flat_map(|fields| fields.values()) {
-            match value {
-                FieldValue::Single(child) => visit(child, placed),
-                FieldValue::Multiple(children) => children.iter().flatten().for_each(|child| visit(child, placed)),
-                FieldValue::Text(_) | FieldValue::Bool(_) => {}
-            }
-        }
-        for child in node.children.iter().flatten() {
-            visit(child, placed);
-        }
-    }
-    visit(&root, &mut placed);
-    placed
-}
-
-/// The same placements from `place`, owners decided by today's model rows.
-fn typed(source: &str, language: &tree_sitter::Language, model: &dyn ReadModel, gap: fn(u16) -> Option<&'static str>) -> Placed {
-    let tree = parse(language, source);
-    let ctx = ReadCtx::new(source, 0);
-    let mut placed = Placed::new();
-    walk(&mut tree.walk(), &ctx, language, model, gap, (0, source.len() as u32), Sides::root(), &mut placed);
-    placed
-}
-
-// `place` takes a plain `fn` for the inner gaps and `inner_gap_key` needs the
-// node's kind, so the driver sets the kind here before each `place` call.
-thread_local!(static KIND: std::cell::Cell<KindId> = const { std::cell::Cell::new(KindId(0)) });
-
-fn rust_gap(preceding: u16) -> Option<&'static str> {
-    KIND.with(|k| sittir_rust::render::kind_ids::inner_gap_key(k.get(), preceding))
-}
-
-fn typescript_gap(preceding: u16) -> Option<&'static str> {
-    KIND.with(|k| sittir_typescript::render::kind_ids::inner_gap_key(k.get(), preceding))
-}
-
-/// Place the extras among the children of the node the cursor is on, record
-/// them under `span`, and recurse into each non-trivia child with its sides.
-#[allow(clippy::too_many_arguments)]
-fn walk(
-    cursor: &mut tree_sitter::TreeCursor<'_>,
-    ctx: &ReadCtx<'_>,
-    language: &tree_sitter::Language,
-    model: &dyn ReadModel,
-    gap: fn(u16) -> Option<&'static str>,
-    span: (u32, u32),
-    sides: Sides,
-    placed: &mut Placed,
-) {
-    let kind = KindId(cursor.node().grammar_id());
-    let children = survey(cursor);
-    let routes: Vec<Route> = children
-        .iter()
-        .map(|c: &Child| {
-            if c.trivia {
-                Route::Trivia
-            } else if c.named {
-                let field = c.field.and_then(|f| language.field_name_for_id(f.0));
-                Route::Slot { slot: 0, scalar: model.stores_scalar(kind, field, c.grammar) }
-            } else {
-                Route::Layout
-            }
-        })
-        .collect();
-    KIND.with(|k| k.set(kind));
-    let mut placement = place(ctx, &children, &routes, sides.owner, gap);
-    let mut record = |position: &str, entries: &[Entry]| {
-        for e in entries {
-            placed.insert((span.0, span.1, position.to_string(), e.coord.span.start, e.coord.span.end, e.same_line, e.tokens_between));
-        }
-    };
-    record("leading", &sides.leading);
-    record("trailing", &sides.trailing);
-    record("leading", &placement.own_leading);
-    record("trailing", &placement.own_trailing);
-    for (key, entries) in &placement.inner {
-        record(&format!("inner:{key}"), entries);
-    }
-    if cursor.goto_first_child() {
-        let mut i = 0;
-        loop {
-            if !children[i].trivia {
-                let child_span = (children[i].start, children[i].end);
-                walk(cursor, ctx, language, model, gap, child_span, placement.take(i), placed);
-            }
-            i += 1;
-            if !cursor.goto_next_sibling() {
-                break;
-            }
-        }
-        cursor.goto_parent();
-    }
-}
-
-fn probe_input(name: &str) -> String {
-    let path = format!(
-        "{}/../../../docs/superpowers/probes/2026-10-01-shared-arena/transport/inputs/{name}",
-        env!("CARGO_MANIFEST_DIR")
-    );
-    std::fs::read_to_string(&path).unwrap_or_else(|e| panic!("{path}: {e}"))
-}
-
-/// Every placement only one side made, all of them, with their counts.
-fn assert_same_placement(typed: &Placed, today: &Placed, input: &str) {
-    let only_typed: Vec<_> = typed.difference(today).collect();
-    let only_today: Vec<_> = today.difference(typed).collect();
-    assert!(
-        only_typed.is_empty() && only_today.is_empty(),
-        "{input}: {} placed only by the reader {only_typed:?}; {} only by today's read {only_today:?}",
-        only_typed.len(),
-        only_today.len()
-    );
-}
-
-#[test]
-fn placement_matches_todays_read_on_the_rust_probe_inputs() {
-    let language = sittir_rust::language();
-    let model = sittir_rust::RustGrammar;
-    for name in ["engine.rs", "spacing.rs"] {
-        let source = probe_input(name);
-        assert_same_placement(&typed(&source, &language, &model, rust_gap), &today(&source, &language, &model), name);
-    }
-}
-
-#[test]
-fn placement_matches_todays_read_on_the_typescript_probe_input() {
-    let language = sittir_typescript::language();
-    let model = sittir_typescript::TypeScriptGrammar;
-    let source = probe_input("create-engine.ts");
-    assert_same_placement(&typed(&source, &language, &model, typescript_gap), &today(&source, &language, &model), "create-engine.ts");
-}
-
-use sittir_core::read::{Depth, ReadError, ReadTransport};
 use sittir_core::{SlotValue, Transport};
 use sittir_rust::render::{field_ids as field, kind_ids as kind};
 use sittir_typescript::render::kind_ids as ts;
 
-type Layout = Option<sittir_core::layout::TransportLayout<()>>;
+type Layout = Option<Box<sittir_core::layout::TransportLayout<()>>>;
 
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = kind::IDENTIFIER, text)]
 struct Ident {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "$text")]
     text: String,
 }
@@ -185,14 +25,14 @@ struct Ident {
 #[transport(kind = kind::PARAMETERS, layout = [kind::LPAREN, kind::RPAREN])]
 struct Params {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = kind::BLOCK, layout = [kind::LBRACE, kind::RBRACE], gap(1) = statements)]
 struct Block {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS)]
     statements: Option<Vec<SlotValue<Function>>>,
@@ -202,7 +42,7 @@ struct Block {
 #[transport(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD])]
 struct Function {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     name: SlotValue<Ident>,
@@ -219,7 +59,7 @@ struct Function {
 #[transport(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD])]
 struct FunctionWithoutBody {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     name: SlotValue<Ident>,
@@ -232,7 +72,7 @@ struct FunctionWithoutBody {
 #[transport(kind = kind::SOURCE_FILE, gap(0) = statements)]
 struct File {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS)]
     statements: Option<Vec<SlotValue<Function>>>,
@@ -243,7 +83,7 @@ struct File {
 #[transport(kind = ts::_AUTOMATIC_SEMICOLON, text = ";")]
 struct Inserted {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "$text")]
     text: String,
 }
@@ -261,8 +101,8 @@ fn read<T: ReadTransport>(tree: &tree_sitter::Tree, source: &str, depth: Depth) 
 fn find(tree: &tree_sitter::Tree, kind: KindId, nth: usize) -> tree_sitter::TreeCursor<'_> {
     let mut cursor = tree.walk();
     let mut seen = 0;
-    for row in 0..tree.root_node().descendant_count() {
-        cursor.goto_descendant(row);
+    for index in 0..tree.root_node().descendant_count() {
+        cursor.goto_descendant(index);
         if cursor.node().grammar_id() == kind.0 {
             if seen == nth {
                 return cursor;
@@ -282,6 +122,14 @@ fn read_nth<T: ReadTransport>(
     depth: Depth,
 ) -> Result<T, ReadError> {
     T::read(&mut find(tree, kind, nth), &ReadCtx::new(source, 7), depth, Sides::root())
+}
+
+/// What the read placed on a node beside its own coordinate, which every read
+/// node names: `None` when it placed nothing.
+fn placed(layout: &Layout) -> Option<sittir_core::layout::TransportLayout<()>> {
+    let mut layout = (**layout.as_ref().expect("a read node names itself")).clone();
+    assert!(layout.at.take().is_some(), "a read node names itself");
+    (layout != sittir_core::layout::TransportLayout::default()).then_some(layout)
 }
 
 fn function(file: &File, i: usize) -> &Function {
@@ -313,18 +161,27 @@ fn a_function_reads_into_its_slots_with_its_layout_tokens_skipped() {
     let f = function(&file, 0);
     assert_eq!(f.name.transport().unwrap().text, "f");
     assert_eq!(f.body.transport().unwrap().statements, Some(vec![]));
-    assert_eq!((&f.layout, &file.layout), (&None, &None));
+    assert_eq!((placed(&f.layout), placed(&file.layout)), (None, None));
 }
 
 #[test]
-fn a_child_no_route_takes_refuses_the_read_naming_kind_child_and_row() {
+fn a_block_doc_comment_reads_whole_with_its_named_marker_skipped_as_layout() {
+    for source in ["/** x */\nfn f() {}\n", "/*! x */\n"] {
+        let tree = parse_rust(source);
+        let comment = read_nth::<sittir_rust::render::transport::BlockCommentTransport>(&tree, source, kind::BLOCK_COMMENT, 0, Depth::All);
+        assert!(comment.is_ok(), "{source:?}: {comment:?}");
+    }
+}
+
+#[test]
+fn a_child_no_route_takes_refuses_the_read_naming_kind_child_and_index() {
     let source = "fn f() {}";
     let tree = parse_rust(source);
     let refused = read_nth::<FunctionWithoutBody>(&tree, source, kind::FUNCTION_ITEM, 0, Depth::All).unwrap_err();
-    let ReadError::Unrouted { kind: parent, child, row } = refused else { panic!("{refused:?}") };
+    let ReadError::Unrouted { kind: parent, child, index } = refused else { panic!("{refused:?}") };
     assert_eq!((parent, child), (kind::FUNCTION_ITEM, kind::BLOCK));
     let mut at = tree.walk();
-    at.goto_descendant(row as usize);
+    at.goto_descendant(index as usize);
     assert_eq!(at.node().grammar_id(), kind::BLOCK.0);
 }
 
@@ -335,7 +192,7 @@ fn past_the_depth_a_child_with_structure_is_its_coordinate() {
     let shallow: File = read(&tree, source, Depth::ONE).unwrap();
     let coord = shallow.statements.as_ref().unwrap()[0].coord().expect("a coordinate at depth one");
     assert_eq!((coord.span.start, coord.span.end, coord.kind), (0, 20, Some(kind::FUNCTION_ITEM)));
-    assert_eq!(coord.tree_id(), 7);
+    assert_eq!(coord.tree, 7);
     let two: File = read(&tree, source, Depth::Levels(std::num::NonZeroU32::new(2).unwrap())).unwrap();
     let f = function(&two, 0);
     assert_eq!(f.name.transport().unwrap().text, "f", "a leaf is inline");
@@ -384,7 +241,7 @@ fn a_missing_token_routes_as_its_kind() {
     let tree = parse_rust(source);
     assert!(find(&tree, kind::RPAREN, 0).node().is_missing());
     let file: File = read(&tree, source, Depth::All).unwrap();
-    assert_eq!(function(&file, 0).parameters.transport().unwrap().layout, None);
+    assert_eq!(placed(&function(&file, 0).parameters.transport().unwrap().layout), None);
 }
 
 #[test]
@@ -420,7 +277,7 @@ enum Type {
 #[transport(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT])]
 struct Typed {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     name: SlotValue<Ident>,
@@ -499,7 +356,7 @@ fn a_unit_variant_owns_no_trivia_so_a_comment_after_it_trails_the_owner_before()
 #[transport(kind = ts::IDENTIFIER, text)]
 struct TsIdent {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "$text")]
     text: String,
 }
@@ -508,7 +365,7 @@ struct TsIdent {
 #[transport(kind = ts::NUMBER_DECIMAL, text)]
 struct TsNumber {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "$text")]
     text: String,
 }
@@ -517,7 +374,7 @@ struct TsNumber {
 #[transport(kind = ts::VARIABLE_DECLARATOR_PLAIN, layout = [ts::EQ])]
 struct Declarator {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_name")]
     #[slot(field = ts_field::NAME)]
     name: SlotValue<TsIdent>,
@@ -548,7 +405,7 @@ enum Terminator {
 #[transport(kind = ts::LEXICAL_DECLARATION)]
 struct Declaration {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_kind")]
     #[slot(field = ts_field::KIND)]
     kind: SlotValue<DeclarationKind>,
@@ -586,7 +443,7 @@ enum BlockTerminator {
 #[transport(kind = ts::STATEMENT_BLOCK, layout = [ts::LBRACE, ts::RBRACE])]
 struct StatementBlock {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_terminator")]
     #[slot(field = ts_field::TERMINATOR)]
     terminator: Option<SlotValue<BlockTerminator>>,
@@ -610,7 +467,7 @@ fn an_absent_slot_with_a_blank_arm_reads_as_its_blank() {
 )]
 struct Decimal {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     content: String,
@@ -623,7 +480,7 @@ struct Decimal {
 #[transport(kind = kind::_TYPE_IDENTIFIER, display, envelope, content = content)]
 struct TypeIdent {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_content")]
     content: SlotValue<Ident>,
 }
@@ -641,7 +498,7 @@ enum NamedType {
 #[transport(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT])]
 struct Named {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     name: SlotValue<Ident>,
@@ -664,6 +521,13 @@ fn a_token_interior_reads_its_slots_from_its_text() {
     assert_eq!((decimal.content.as_str(), decimal.suffix.as_deref()), ("1_000", Some("u8")));
 }
 
+/// The layout an envelope's content keeps: the coordinate the envelope holds, which names the content's node, and nothing else.
+fn coordinate_only<T>(envelope: &Option<Box<sittir_core::layout::TransportLayout<T>>>) -> Option<Box<sittir_core::layout::TransportLayout<T>>> {
+    let at = envelope.as_ref().and_then(|layout| layout.at.clone());
+    assert!(at.is_some(), "the envelope holds the content's coordinate");
+    Some(Box::new(sittir_core::layout::TransportLayout { at, ..sittir_core::layout::TransportLayout::default() }))
+}
+
 #[test]
 fn an_envelope_holds_its_content_and_the_trivia_its_content_was_given() {
     let source = "fn f() -> T /* c */ {}";
@@ -671,7 +535,7 @@ fn an_envelope_holds_its_content_and_the_trivia_its_content_was_given() {
     let f: Named = read_nth(&tree, source, kind::FUNCTION_ITEM, 0, Depth::All).unwrap();
     let Some(SlotValue::Transport(NamedType::TypeIdentifier(envelope))) = &f.return_type else { panic!("{:?}", f.return_type) };
     assert_eq!(envelope.content.transport().unwrap().text, "T");
-    assert_eq!(envelope.content.transport().unwrap().layout, None);
+    assert_eq!(envelope.content.transport().unwrap().layout, coordinate_only(&envelope.layout));
     assert_eq!(trivia_spans(&envelope.layout, "trailing"), vec![(12, 19, true, 0)]);
 }
 
@@ -679,14 +543,14 @@ fn an_envelope_holds_its_content_and_the_trivia_its_content_was_given() {
 #[transport(kind = kind::_ATTRIBUTED_PARAMETER)]
 struct Param {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = kind::PARAMETERS_ELEMENTS, list, item = item)]
 struct List {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
     item: Vec<SlotValue<Param>>,
@@ -699,7 +563,7 @@ struct List {
 #[transport(kind = kind::PARAMETERS, layout = [kind::LPAREN, kind::RPAREN], min_depth = 2, gap(1) = elements)]
 struct Owner {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
     elements: Option<SlotValue<List>>,
@@ -727,8 +591,8 @@ fn a_row_read_equals_the_same_node_in_a_whole_read_trivia_included() {
     let ctx = ReadCtx::new(source, 7);
     let whole: File = read(&tree, source, Depth::All).unwrap();
     let shallow: File = read(&tree, source, Depth::ONE).unwrap();
-    let row = sittir_core::decode_handle(shallow.statements.as_ref().unwrap()[0].coord().unwrap().handle).1;
-    let outer: Function = sittir_core::read::read_at::<Function, File>(&mut tree.walk(), &ctx, row, Depth::All).unwrap();
+    let index = shallow.statements.as_ref().unwrap()[0].coord().unwrap().index;
+    let outer: Function = sittir_core::read::read_at::<Function, File>(&mut tree.walk(), &ctx, index, Depth::All).unwrap();
     assert_eq!(&outer, function(&whole, 0));
     assert_eq!(trivia_spans(&outer.layout, "leading"), vec![(0, 7, false, 0)]);
 
@@ -749,7 +613,7 @@ enum Name {
 #[transport(kind = kind::_TYPE_IDENTIFIER, display, envelope, content = content)]
 struct TypeIdentOfChoice {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_content")]
     content: SlotValue<Name>,
 }
@@ -765,7 +629,7 @@ enum NamedTypeOfChoice {
 #[transport(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT])]
 struct NamedOfChoice {
     #[wire(key = "$_layout")]
-    layout: Option<sittir_core::layout::TransportLayout<()>>,
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     name: SlotValue<Ident>,
@@ -788,6 +652,6 @@ fn an_envelope_over_a_choice_holds_the_trivia_its_content_variant_was_given() {
     let Some(SlotValue::Transport(NamedTypeOfChoice::TypeIdentifier(envelope))) = &f.return_type else { panic!("{:?}", f.return_type) };
     let Some(Name::Ident(ident)) = envelope.content.transport() else { panic!("{:?}", envelope.content) };
     assert_eq!(ident.text, "T");
-    assert_eq!(ident.layout, None);
+    assert_eq!(ident.layout, coordinate_only(&envelope.layout));
     assert_eq!(trivia_spans(&envelope.layout, "trailing"), vec![(12, 19, true, 0)]);
 }

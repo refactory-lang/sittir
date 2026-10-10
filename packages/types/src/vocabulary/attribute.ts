@@ -1,7 +1,7 @@
 import type { GrammarContext } from './context.ts';
 import type { SubKindOf } from './utils.ts';
 import type * as V from './index.ts';
-export interface Attribute<G extends GrammarContext> {
+export interface Attribute<G extends GrammarContext<G>> {
 	// claimed by r
 	readonly $kind: 'attribute';
 	readonly content?: G['slots']['attribute']['content'];
@@ -9,48 +9,48 @@ export interface Attribute<G extends GrammarContext> {
 }
 
 export namespace Attribute {
-	export interface Content<G extends GrammarContext> extends SubKindOf<V.Attribute<G>> {
+	export interface Content<G extends GrammarContext<G>> extends SubKindOf<V.Attribute<G>> {
 		// claimed by r
 		readonly $kind: 'attribute.content';
 		readonly input?: G['slots']['attribute.content']['input'];
 		readonly path?: G['identifier'];
 	}
 	export namespace Content {
-		export interface Call<G extends GrammarContext> extends SubKindOf<V.Attribute.Content<G>> {
+		export interface Call<G extends GrammarContext<G>> extends SubKindOf<V.Attribute.Content<G>> {
 			// claimed by t
 			readonly $kind: 'attribute.content.call';
 			readonly arguments: G['slots']['attribute.content.call']['arguments'][];
 			readonly function: G['slots']['attribute.content.call']['function'];
 			readonly typeArguments?: G['slots']['attribute.content.call']['typeArguments'][];
 		}
-		export interface Member<G extends GrammarContext> extends SubKindOf<V.Attribute.Content<G>> {
+		export interface Member<G extends GrammarContext<G>> extends SubKindOf<V.Attribute.Content<G>> {
 			// claimed by t
 			readonly $kind: 'attribute.content.member';
 			readonly object: G['slots']['attribute.content.member']['object'];
 			readonly property: V.Identifier.Property<G>;
 		}
-		export interface Parenthesized<G extends GrammarContext> extends SubKindOf<V.Attribute.Content<G>> {
+		export interface Parenthesized<G extends GrammarContext<G>> extends SubKindOf<V.Attribute.Content<G>> {
 			// claimed by t
 			readonly $kind: 'attribute.content.parenthesized';
 			readonly expression: G['slots']['attribute.content.parenthesized']['expression'];
 		}
-		export type Any<G extends GrammarContext> =
+		export type Any<G extends GrammarContext<G>> =
 			| V.Attribute.Content<G>
 			| V.Attribute.Content.Call<G>
 			| V.Attribute.Content.Member<G>
 			| V.Attribute.Content.Parenthesized<G>;
 	}
-	export interface Decorator<G extends GrammarContext> extends SubKindOf<V.Attribute<G>> {
+	export interface Decorator<G extends GrammarContext<G>> extends SubKindOf<V.Attribute<G>> {
 		// claimed by pt
 		readonly $kind: 'attribute.decorator';
 		readonly content: G['slots']['attribute.decorator']['content'];
 	}
-	export interface Inner<G extends GrammarContext> extends SubKindOf<V.Attribute<G>> {
+	export interface Inner<G extends GrammarContext<G>> extends SubKindOf<V.Attribute<G>> {
 		// claimed by r
 		readonly $kind: 'attribute.inner';
 		readonly content: V.Attribute.Content<G>;
 	}
-	export type Any<G extends GrammarContext> =
+	export type Any<G extends GrammarContext<G>> =
 		| V.Attribute<G>
 		| V.Attribute.Content<G>
 		| V.Attribute.Content.Call<G>

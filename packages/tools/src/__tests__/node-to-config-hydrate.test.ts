@@ -1,19 +1,17 @@
 import { describe, expect, it, vi } from 'vitest';
-import { modelSlots } from '@sittir/common/utils';
-import { nodeToConfig, type HydrateChild } from '../validate/common.ts';
+import { nodeToConfig, type Hydrate } from '../validate/common.ts';
 
 const slot = { unnamed: false, slotCount: 1, required: false, multiple: false, nonEmpty: false };
 const leaf = { $type: 'word', $named: true, $text: 'x' };
 
-describe('nodeToConfig hydrates a read stub through the wrap', () => {
-	it('maps a child the wrap routes from its parser key into the model slot', () => {
-		const stub = { $type: 'clause', $parentHandle: 1, $childIndex: 0 };
-		const hydrateChild: HydrateChild = (entry) =>
-			entry === stub ? modelSlots({ $type: 'clause', _term: leaf }, ['_value'], { _term: '_value' }) : entry;
+describe('nodeToConfig hydrates a coordinate through the wrap', () => {
+	it('reads the node a coordinate names before building its config', () => {
+		const coordinate = { $type: 'clause', $treeHandle: 1, $span: { start: 0, end: 1 } };
+		const hydrate: Hydrate = (entry) => (entry === coordinate ? { $type: 'clause', _value: leaf } : entry);
 		const clause = vi.fn((config: unknown) => ({ $type: 'clause', config }));
-		const config = nodeToConfig({ $type: 'owner', _body: stub } as never, {
+		const config = nodeToConfig({ $type: 'owner', _body: coordinate } as never, {
 			tree: { source: 'x' } as never,
-			hydrateChild,
+			hydrate,
 			factoryMap: { clause } as never,
 			factoryShapes: { owner: 'config', clause: 'config', word: 'text' },
 			factorySlots: { owner: { body: slot }, clause: { value: slot } }

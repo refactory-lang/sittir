@@ -7,7 +7,7 @@ import { is } from './is.js';
 import {
 	TSKindId,
 	type FixedTextKindId,
-	type IrKeyOf,
+	type TypeKeyOf,
 	type NamespaceMap,
 	type PythonNode,
 	type PythonTypeMap
@@ -17,14 +17,14 @@ import { querySlots, triviaFacts } from './utils.js';
 import { coerceToComment } from './factories/coerce.js';
 import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ModuleRoot } from './render-engine.js';
-import { wrapNode, hydrateChild, type ModuleTree } from './wrap.js';
+import { wrapNode, hydrate, type ModuleTree } from './wrap.js';
 
 export interface PythonAPI extends LanguageAPI {
 	readonly name: 'python';
 	readonly build: typeof ir;
 	readonly is: typeof is;
 	readonly kinds: typeof TSKindId;
-	readonly types: KindTypes<IrKeyOf, NamespaceMap>;
+	readonly types: KindTypes<TypeKeyOf, NamespaceMap>;
 	readonly root: ModuleTree;
 	readonly node: PythonNode;
 	readonly fixedTextKindId: FixedTextKindId;
@@ -43,5 +43,5 @@ export const hooks: LanguageHooks<PythonAPI> = Object.freeze<LanguageHooks<Pytho
 	querySlots,
 	createNative: (options) => nativeLanguageEngine<PythonAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ModuleRoot & ParsedRoot, tree as TreeHandle),
-	hydrate: (node, tree) => hydrateChild(node, tree as TreeHandle)
+	hydrate: (node, tree) => hydrate(node, tree as TreeHandle)
 });

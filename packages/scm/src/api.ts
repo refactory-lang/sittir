@@ -7,7 +7,7 @@ import { is } from './is.js';
 import {
 	TSKindId,
 	type FixedTextKindId,
-	type IrKeyOf,
+	type TypeKeyOf,
 	type NamespaceMap,
 	type ScmNode,
 	type ScmTypeMap
@@ -17,14 +17,14 @@ import { querySlots, triviaFacts } from './utils.js';
 import { coerceToComment } from './factories/coerce.js';
 import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ProgramRoot } from './render-engine.js';
-import { wrapNode, hydrateChild, type ProgramTree } from './wrap.js';
+import { wrapNode, hydrate, type ProgramTree } from './wrap.js';
 
 export interface ScmAPI extends LanguageAPI {
 	readonly name: 'scm';
 	readonly build: typeof ir;
 	readonly is: typeof is;
 	readonly kinds: typeof TSKindId;
-	readonly types: KindTypes<IrKeyOf, NamespaceMap>;
+	readonly types: KindTypes<TypeKeyOf, NamespaceMap>;
 	readonly root: ProgramTree;
 	readonly node: ScmNode;
 	readonly fixedTextKindId: FixedTextKindId;
@@ -43,5 +43,5 @@ export const hooks: LanguageHooks<ScmAPI> = Object.freeze<LanguageHooks<ScmAPI>>
 	querySlots,
 	createNative: (options) => nativeLanguageEngine<ScmAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ProgramRoot & ParsedRoot, tree as TreeHandle),
-	hydrate: (node, tree) => hydrateChild(node, tree as TreeHandle)
+	hydrate: (node, tree) => hydrate(node, tree as TreeHandle)
 });

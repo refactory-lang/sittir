@@ -30,9 +30,12 @@ export type AnyRule = Rule<PhaseName>;
 
 export type SeamOrigin = 'preference' | 'literal-default' | 'word-default' | 'cascade' | 'fallback';
 
+export type LabelProvenance = 'enrich' | 'override';
+
 export type RuleAnnotations = {
 	readonly variant?: string;
 	readonly variantOf?: string;
+	readonly definedBy?: LabelProvenance;
 	readonly default?: true;
 	readonly preference?: string;
 	readonly arm?: string;

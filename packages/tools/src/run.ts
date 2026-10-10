@@ -29,8 +29,8 @@ export type { TemplateCoverageResult, CoverageIssue } from './validate/template-
 export { formatFromReport, formatFactoryStorageReport, formatReadRenderParseReport };
 
 /** Run from() correctness validation with an explicit backend. */
-export function runFrom(grammar: GrammarName, backend: Backend = 'native') {
-	return validateFrom(grammar, backend);
+export function runFrom(grammar: GrammarName) {
+	return validateFrom(grammar);
 }
 
 /** Run read-render-parse round-trip validation with an explicit backend. */

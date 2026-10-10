@@ -36,10 +36,6 @@ vi.mock('../src/run.ts', () => ({
 		astMatchPass: 8,
 		errors: [],
 		astMismatches: [],
-		// Without this field collectValidatorFailuresForGrammar throws
-		// ("accessorThrows is not iterable") and the in-process test below
-		// silently exercises the whole-grammar CATCH path.
-		accessorThrows: [],
 		skips: [],
 		excluded: []
 	}),

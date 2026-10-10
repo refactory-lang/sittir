@@ -341,11 +341,11 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	lines.push(`export type FixedTextKindId = ${fixedTextKindIds.size > 0 ? [...fixedTextKindIds].join(' | ') : 'never'};`);
 	lines.push('');
 
-	lines.push('export interface IrKeyOf {');
+	lines.push('export interface TypeKeyOf {');
 	for (const kind of namespaceMapKinds) {
 		const node = nodeMap.nodes.get(kind)!;
-		if (node.irKey === undefined || !hasKindId(kind, kindEntries)) continue;
-		lines.push(`  [${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)}]: ${JSON.stringify(node.irKey)};`);
+		if (node.typeKey === undefined || !hasKindId(kind, kindEntries)) continue;
+		lines.push(`  [${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)}]: ${JSON.stringify(node.typeKey)};`);
 	}
 	lines.push('}');
 	lines.push('');
@@ -362,7 +362,7 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	lines.push('// <TypeName>.Config / .Bound / .Parsed / .Loose alongside using <TypeName> as a type.');
 	const refineInfoByKind = new Map<string, RefineKindInfo>();
 	for (const info of refineInfos ?? []) refineInfoByKind.set(info.kind, info);
-	const wires = config.wires ?? collectPolymorphWires(nodeMap, generatedIdTables, { silent: true });
+	const wires = config.wires ?? collectPolymorphWires(nodeMap, { silent: true });
 	for (const kind of namespaceKinds) {
 		const node = nodeMap.nodes.get(kind)!;
 		emitNamespaceSugarBlock(

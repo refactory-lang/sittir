@@ -6,7 +6,7 @@ Parses each case with the grammar's engine (`loadNativeEngine`, which is `create
 
 ### `packages/tools/src/exercise/roundtrip.ts::findFirstOfKind`
 
-The first named node of a kind in a parsed tree, in `walkWrappedTree` order, compared by the kind the node shows (`nativeShownKindId`), so an aliased node is found under its visible name.
+The first named node of a kind in a parsed tree, in `walkWrappedTree` order, compared by the kind name of its `$type`.
 
 ### `packages/tools/src/exercise/roundtrip.ts::sourceOf`
 

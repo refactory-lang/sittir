@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine, hostTemplateFor, applyHost } from '@sittir/common';
+import { spanOf } from '@sittir/common/utils';
 import { requireGrammarModule } from '../src/grammar-internals.ts';
 import { compileGrammar } from '../../codegen/src/compiler/compile.ts';
 import { loadGeneratedIdTables } from '../../codegen/src/compiler/generated-metadata.ts';
@@ -34,10 +35,10 @@ describe.each(['python', 'rust', 'typescript'])('%s: every delimited kind, writt
 			expect(root.$errors, `${kind}: ${JSON.stringify(hosted.text)}`).toHaveLength(0);
 			const id = Number(Object.entries(engine.kinds).find(([, name]) => name === pascal(kind))![0]);
 			const found = [...engine.query(root).$descendants.ofType(id), ...(root.$trivia?.inner?.() ?? []).filter((n: { $type: number }) => n.$type === id)].find(
-				(n: { $span: { start: number } }) => n.$span.start === hosted.offset
+				(n: object) => spanOf(n)?.start === hosted.offset
 			);
 			expect(found, `${kind} at ${hosted.offset} in ${JSON.stringify(hosted.text)}`).toBeDefined();
-			expect(found.$span.end).toBe(hosted.offset + text.length);
+			expect(spanOf(found)?.end).toBe(hosted.offset + text.length);
 			checked++;
 		}
 		expect(checked).toBeGreaterThan(0);

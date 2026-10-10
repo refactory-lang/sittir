@@ -10,7 +10,7 @@ import type { SeqRule } from '../../types/rule.ts';
 import { buildNodeModel, emitNodeModel } from '../node-model.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { flatten } from '../../compiler/flatten.ts';
-import { clauseNodeMap, comparisonNodeMap, twoChoiceSlotsNodeMap } from './sub-factories.test.ts';
+import { clauseNodeMap, comparisonNodeMap, twoChoiceSlotsNodeMap } from '../../compiler/model/__tests__/sub-factories.test.ts';
 
 describe('node-model emitter', () => {
 	it('records the grammar root kind', () => {

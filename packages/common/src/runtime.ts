@@ -122,6 +122,30 @@ export function coerceKindEnumStorage<T = unknown>(
 	return value as T;
 }
 
+export function coerceBooleanKeywordStorage(value: unknown): true | undefined {
+	if (value === undefined || value === null || value === false) return undefined;
+	if (Array.isArray(value)) return value.length > 0 ? true : undefined;
+	return true;
+}
+
+export function coerceBitflagStorage(value: unknown, texts: readonly string[]): number | undefined {
+	if (value === undefined || value === null || value === false) return undefined;
+	if (typeof value === 'number') return value === 0 ? undefined : value;
+	if (Array.isArray(value)) {
+		let acc = 0;
+		for (const item of value) {
+			const bits = coerceBitflagStorage(item, texts) ?? 0;
+			acc |= bits;
+		}
+		return acc === 0 ? undefined : acc;
+	}
+	const text = extractNodeText(value);
+	if (text === undefined) return undefined;
+	const index = texts.indexOf(text);
+	if (index < 0) return undefined;
+	return 1 << index;
+}
+
 function extractNodeText(value: unknown): string | undefined {
 	if (typeof value === 'string') return value;
 	if (isAnyNode(value)) return typeof value.$text === 'string' ? value.$text : undefined;

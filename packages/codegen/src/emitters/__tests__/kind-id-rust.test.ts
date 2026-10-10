@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { emitKindIdRust, scalarChildRows } from '../kind-id-rust.ts';
-import { slotRoutesOf } from '../shared.ts';
+import { emitKindIdRust } from '../kind-id-rust.ts';
 import { collectCatalogKinds, collectKindEntries } from '../kind-discriminant.ts';
 import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
@@ -26,60 +25,8 @@ async function emittedKindIds(grammar: GrammarName) {
 		if (id === undefined) throw new Error(`no kind entry for ${kind}`);
 		return id;
 	};
-	return { source: emitKindIdRust({ grammar, nodeMap, generatedIdTables }), idOf, nodeMap, scalarRows: scalarChildRows(nodeMap, entries) };
+	return { source: emitKindIdRust({ grammar, nodeMap, generatedIdTables }), idOf, nodeMap };
 }
-
-describe('scalar admission patterns', () => {
-	it('preserves every admitted id and every gap when emitting ranges', async () => {
-		let rangeCount = 0;
-		let sparseCount = 0;
-		for (const grammar of ['python', 'typescript', 'rust', 'scm', 'regex'] as const) {
-			const { source, scalarRows } = await emittedKindIds(grammar);
-			const patterns = [...source.matchAll(/=> matches!\(child\.0, ([\d.= |]+)\),/g)];
-			expect(patterns.length, grammar).toBe(scalarRows.length);
-			for (const [index, match] of patterns.entries()) {
-				const admitted = match[1]!.split(' | ').flatMap((arm) => {
-					const [start, end] = arm.split('..=').map(Number);
-					if (end === undefined) return [start!];
-					rangeCount++;
-					return Array.from({ length: end - start! + 1 }, (_, offset) => start! + offset);
-				});
-				if (admitted.some((id, position) => position > 0 && id > admitted[position - 1]! + 1)) sparseCount++;
-				expect(admitted, `${grammar} row ${index}`).toEqual(scalarRows[index]!.childIds);
-			}
-		}
-		expect(rangeCount).toBeGreaterThan(0);
-		expect(sparseCount).toBeGreaterThan(0);
-	}, FULL_PIPELINE_TIMEOUT);
-});
-
-describe('slot routes', () => {
-	const routesOf = (nodeMap: Awaited<ReturnType<typeof emittedKindIds>>['nodeMap'], kind: string) =>
-		slotRoutesOf(nodeMap.nodes.get(kind)!, nodeMap);
-	it('routes an untagged child by its kind to the model slot that stores it', async () => {
-		const { nodeMap } = await emittedKindIds('typescript');
-		expect(routesOf(nodeMap, 'for_in_statement')).toMatchObject({ for_header_lhs: 'for_header' });
-	}, FULL_PIPELINE_TIMEOUT);
-	it('routes each arm of a union slot by its kind', async () => {
-		const { nodeMap } = await emittedKindIds('typescript');
-		expect(routesOf(nodeMap, 'export_statement_default_declaration')).toMatchObject({
-			export_statement_default_declaration_default_kw: 'content',
-			function_declaration: 'content'
-		});
-	}, FULL_PIPELINE_TIMEOUT);
-	it('leaves a child whose key already names its slot unrouted', async () => {
-		const { nodeMap } = await emittedKindIds('typescript');
-		for (const [kind] of nodeMap.nodes) {
-			for (const [key, slot] of Object.entries(routesOf(nodeMap, kind))) expect(key, kind).not.toBe(slot);
-		}
-	}, FULL_PIPELINE_TIMEOUT);
-	it('gives the reader no routing table', async () => {
-		for (const grammar of ['python', 'typescript', 'rust', 'scm', 'regex'] as const) {
-			const { source } = await emittedKindIds(grammar);
-			expect(source, grammar).not.toContain('pub fn wire_slot');
-		}
-	}, FULL_PIPELINE_TIMEOUT);
-});
 
 describe('facts the wrap layer owns', () => {
 	it('emits no slot-separator or anonymous-children table for the reader', async () => {

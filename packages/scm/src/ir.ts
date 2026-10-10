@@ -6,10 +6,6 @@
 //
 // Both surfaces resolve to the same callable bundle: calling an entry
 // coerces its input; `.strict` is the strict factory.
-//
-// Edge case: `readUntypedNode()` output has no `$source` provenance. To pass it
-// straight to an entry, use the typed wrapper (`readNode`) so the
-// entry sees a wrapped node and takes the identity quick-return path.
 
 import * as F from './factories/index.js';
 
@@ -35,7 +31,11 @@ export const layout: {
 	dedent: F.buildDedent
 };
 
+export const namedNode: typeof F.namedNode = F.namedNode;
+
 export const listElement: typeof F.listElement = F.listElement;
+
+export const namedNodeGroup: typeof F.namedNodeGroup = F.namedNodeGroup;
 
 export const definition: typeof F.definition = F.definition;
 
@@ -61,7 +61,9 @@ export const ir: {
 	readonly namedNodeGroupChildren: typeof F.namedNodeGroupChildren;
 	readonly namedNodeGroupAnchoredLast: typeof F.namedNodeGroupAnchoredLast;
 	readonly namedNode: typeof F.namedNode;
+	readonly listElement: typeof F.listElement;
 	readonly namedNodeGroup: typeof F.namedNodeGroup;
+	readonly definition: typeof F.definition;
 	readonly anchor: typeof F.buildAnchor;
 	readonly escapeSequence: typeof F.buildEscapeSequence;
 	readonly comment: typeof F.buildComment;
@@ -69,8 +71,6 @@ export const ir: {
 	readonly immediateIdentifier: typeof F.buildImmediateIdentifier;
 	readonly stringContentText: typeof F.buildStringContentText;
 	readonly layout: typeof layout;
-	readonly listElement: typeof listElement;
-	readonly definition: typeof definition;
 } = Object.freeze({
 	// Node factories
 	program: F.program,
@@ -94,7 +94,9 @@ export const ir: {
 	namedNodeGroupChildren: F.namedNodeGroupChildren,
 	namedNodeGroupAnchoredLast: F.namedNodeGroupAnchoredLast,
 	namedNode: F.namedNode,
+	listElement: F.listElement,
 	namedNodeGroup: F.namedNodeGroup,
+	definition: F.definition,
 
 	// Keyword factories
 	anchor: F.buildAnchor,
@@ -109,7 +111,5 @@ export const ir: {
 	stringContentText: F.buildStringContentText,
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
-	layout,
-	listElement,
-	definition
+	layout
 });

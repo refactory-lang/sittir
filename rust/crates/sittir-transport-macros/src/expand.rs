@@ -1,7 +1,7 @@
 //! The expansions. Each wraps its items in `const _: () = { … };` so the
 //! helper items it defines never meet the transport's own names.
 
-use crate::attrs::{self, FlankAttrs, KindAttrs, SeparatorKindAttrs, SlotAttrs};
+use crate::attrs::{self, FlankAttrs, KindAttrs, Presence, SeparatorKindAttrs, SlotAttrs};
 use crate::codec;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
@@ -32,6 +32,8 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
     let mut blank = None;
     let mut payloads: Vec<(&Ident, &Type)> = Vec::new();
     let mut wire: Vec<codec::WireVariant<'_>> = Vec::new();
+    let mut builds = Vec::new();
+    let mut all_units = true;
     for (at, variant) in data.variants.iter().enumerate() {
         let name = &variant.ident;
         let payload = match &variant.fields {
@@ -58,9 +60,11 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     ::core::option::Option::Some(Self::#name)
                 }
             });
+            builds.push(quote!(if id == ::sittir_core::options::BLANK_ARM { return ::core::option::Option::Some(Self::#name); }));
             wire.push(codec::WireVariant { blank: true, ..unread(None) });
             continue;
         }
+        all_units &= payload.is_none() && !form.verbatim && form.text.is_none();
         if form.verbatim {
             wire.push(codec::WireVariant { verbatim: true, ..unread(payload) });
             continue;
@@ -75,6 +79,10 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             wire.push(unread(payload));
             continue;
         };
+        if payload.is_none() {
+            let claims = kinds.kinds.iter().chain(&kinds.shown);
+            builds.push(quote!(if [#(#claims),*].iter().any(|k| k.0 == id) { return ::core::option::Option::Some(Self::#name); }));
+        }
         let i = at as u16;
         wire.push(codec::WireVariant {
             index: Some(i),
@@ -155,7 +163,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 });
                 read_table[at] = quote!(#read_fn);
                 boxed_table[at] = quote!(#boxed_fn);
-                sides.push(quote!(::core::option::Option::Some(#i) => <#ty as __rt::ReadTransport>::sides_of(cursor, ctx, row),));
+                sides.push(quote!(::core::option::Option::Some(#i) => <#ty as __rt::ReadTransport>::sides_of(cursor, ctx, index),));
             }
             _ => return Err(syn::Error::new_spanned(variant, "a choice's variant is a unit or holds one transport")),
         }
@@ -187,6 +195,16 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
         }
     };
     let codec = codec::choice(ident, &wire)?;
+    let from_kind_id = all_units.then(|| {
+        quote! {
+            impl #ident {
+                pub fn from_kind_id(id: u16) -> ::core::option::Option<Self> {
+                    #(#builds)*
+                    ::core::option::Option::None
+                }
+            }
+        }
+    });
     if attrs.codec_only {
         return Ok(quote! {
             const _: () = {
@@ -200,6 +218,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 }
                 #codec
             };
+            #from_kind_id
         });
     }
     Ok(quote! {
@@ -213,7 +232,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 _depth: __rt::Depth,
                 _sides: __rt::Sides,
             ) -> ::core::result::Result<T, __rt::ReadError> {
-                ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: __Kind(cursor.node().grammar_id()), row: __rt::row_of(cursor) })
+                ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: __Kind(cursor.node().grammar_id()), index: __rt::index_of(cursor) })
             }
             #(#variant_fns)*
             const __READS: &[__Read<#ident>] = &[#(#read_table),*];
@@ -249,7 +268,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     let (grammar, display) = (__Kind(node.grammar_id()), __rt::display_id(&node));
                     match __variant(grammar, display) {
                         ::core::option::Option::Some(i) => __READS[i as usize](cursor, ctx, depth, sides),
-                        ::core::option::Option::None => ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: grammar, row: __rt::row_of(cursor) }),
+                        ::core::option::Option::None => ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: grammar, index: __rt::index_of(cursor) }),
                     }
                 }
                 #[allow(unused_variables)]
@@ -263,14 +282,14 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     let (grammar, display) = (__Kind(node.grammar_id()), __rt::display_id(&node));
                     match __variant(grammar, display) {
                         ::core::option::Option::Some(i) => __READS_BOXED[i as usize](cursor, ctx, depth, sides),
-                        ::core::option::Option::None => ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: grammar, row: __rt::row_of(cursor) }),
+                        ::core::option::Option::None => ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: grammar, index: __rt::index_of(cursor) }),
                     }
                 }
                 #[allow(unused_variables)]
                 fn sides_of(
                     cursor: &mut ::tree_sitter::TreeCursor<'_>,
                     ctx: &__rt::ReadCtx<'_>,
-                    row: u32,
+                    index: u32,
                 ) -> ::core::result::Result<__rt::Sides, __rt::ReadError> {
                     let node = cursor.node();
                     match __variant(__Kind(node.grammar_id()), __rt::display_id(&node)) {
@@ -282,6 +301,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             #has_layout
             #codec
         };
+        #from_kind_id
     })
 }
 
@@ -340,12 +360,12 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
                         return ::core::result::Result::Ok(member);
                     }
                     #spelled
-                    ::core::result::Result::Err(__rt::ReadError::Unspelled { kind: __Kind(node.grammar_id()), row: __rt::row_of(cursor) })
+                    ::core::result::Result::Err(__rt::ReadError::Unspelled { kind: __Kind(node.grammar_id()), index: __rt::index_of(cursor) })
                 }
                 fn sides_of(
                     _cursor: &mut ::tree_sitter::TreeCursor<'_>,
                     _ctx: &__rt::ReadCtx<'_>,
-                    _row: u32,
+                    _index: u32,
                 ) -> ::core::result::Result<__rt::Sides, __rt::ReadError> {
                     ::core::result::Result::Ok(__rt::Sides::default())
                 }
@@ -421,9 +441,9 @@ fn inner_of<'t>(ty: &'t Type, wrapper: &str) -> Option<&'t Type> {
     })
 }
 
-/// `Option<…TransportLayout…>`: the layout field, known by its type.
+/// `Option<Box<…TransportLayout…>>`: the layout field, known by its type.
 fn is_layout(ty: &Type) -> bool {
-    inner_of(ty, "Option").and_then(last_segment).as_deref() == Some("TransportLayout")
+    inner_of(ty, "Option").and_then(|boxed| inner_of(boxed, "Box")).and_then(last_segment).as_deref() == Some("TransportLayout")
 }
 
 fn is_text(ty: &Type) -> bool {
@@ -444,7 +464,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
     let fields = fields_of(ident, data)?;
     let folded = &attrs.folded;
     let admits = if attrs.display { quote!(display == #kind) } else { quote!(grammar == #kind #(|| grammar == #folded)*) };
-    let layout = &attrs.layout;
+    let layout: Vec<&Path> = attrs.layout.iter().flatten().collect();
     let gap_arms = attrs.gaps.iter().map(|(preceding, slot)| quote!(#preceding => ::core::option::Option::Some(#slot),));
     let Body { items, read, sides_of } = if let Some(fixed) = &attrs.text {
         text_body(ident, &fields, fixed.as_ref())?
@@ -460,7 +480,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
         quote! {
             impl __rt::HasLayout<#ty> for #ident {
                 fn take_layout(&mut self) -> #ty {
-                    ::core::mem::take(&mut self.#name)
+                    __rt::take_layout_keeping_at(&mut self.#name)
                 }
             }
         }
@@ -506,13 +526,17 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
                     depth: __rt::Depth,
                     sides: __rt::Sides,
                 ) -> ::core::result::Result<Self, __rt::ReadError> {
+                    let __node = cursor.node();
+                    if !<Self as __rt::ReadTransport>::admits(__Kind(__node.grammar_id()), __rt::display_id(&__node)) {
+                        return ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: __Kind(__node.grammar_id()), index: __rt::index_of(cursor) });
+                    }
                     #read
                 }
                 #[allow(unused_variables)]
                 fn sides_of(
                     cursor: &mut ::tree_sitter::TreeCursor<'_>,
                     ctx: &__rt::ReadCtx<'_>,
-                    row: u32,
+                    index: u32,
                 ) -> ::core::result::Result<__rt::Sides, __rt::ReadError> {
                     #sides_of
                 }
@@ -527,7 +551,8 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
 fn pass(min_depth: u32) -> TokenStream {
     quote! {
         let depth = depth.at_least(#min_depth);
-        let row = __rt::row_of(cursor);
+        let index = __rt::index_of(cursor);
+        let __at = ctx.at_of(cursor);
         let children = __rt::survey(cursor);
         let routes = children
             .iter()
@@ -537,7 +562,7 @@ fn pass(min_depth: u32) -> TokenStream {
     }
 }
 
-/// The sides the placement gives the child at `row`, the node's own pass run
+/// The sides the placement gives the child at `index`, the node's own pass run
 /// up to its placement.
 fn sides_of_body() -> TokenStream {
     quote! {
@@ -547,7 +572,7 @@ fn sides_of_body() -> TokenStream {
             .map(__route)
             .collect::<::core::result::Result<::std::vec::Vec<__rt::Route>, __rt::ReadError>>()?;
         let mut placement = __rt::place(ctx, &children, &routes, false, __gap);
-        ::core::result::Result::Ok(placement.take_row(row).unwrap_or_default())
+        ::core::result::Result::Ok(placement.take_index(index).unwrap_or_default())
     }
 }
 
@@ -570,7 +595,7 @@ fn common_inits(fields: &[Field<'_>], skip: &str) -> Vec<TokenStream> {
         .filter_map(|field| {
             let name = field.ident;
             match field.role {
-                Role::Layout => Some(quote!(#name: placement.into_layout(sides),)),
+                Role::Layout => Some(quote!(#name: Some(placement.into_layout(sides, __at)),)),
                 Role::Other => Some(quote!(#name: ::core::default::Default::default(),)),
                 _ => None,
             }
@@ -615,7 +640,7 @@ fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr) -> syn::
                 .as_ref()
                 .ok_or_else(|| syn::Error::new_spanned(field.ident, "a token interior's slot names its capture"))?;
             let (name, ty) = (field.ident, field.ty);
-            inits.push(quote!(#name: __rt::capture::<#ty>(&captures, #capture, __rt::SlotSite { kind: __KIND, slot: #capture, row })?,));
+            inits.push(quote!(#name: __rt::capture::<#ty>(&captures, #capture, __rt::SlotSite { kind: __KIND, slot: #capture, index })?,));
         }
     }
     let pass = pass(0);
@@ -629,7 +654,7 @@ fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr) -> syn::
             #pass
             let captures = __INTERIOR
                 .captures(ctx.text(&cursor.node()))
-                .ok_or(__rt::ReadError::Interior { kind: __KIND, row })?;
+                .ok_or(__rt::ReadError::Interior { kind: __KIND, index })?;
             ::core::result::Result::Ok(Self { #(#inits)* })
         },
         sides_of: sides_of_body(),
@@ -663,11 +688,11 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
     let (hidden, restore) = if attrs.wraps_hidden {
         (
             quote! {
-                let own = __rt::row_of(cursor);
+                let own = __rt::index_of(cursor);
                 let wrapped = __rt::survey(cursor).into_iter().find(|child| !child.trivia).ok_or(
-                    __rt::ReadError::Unadmitted { kind: __Kind(cursor.node().grammar_id()), row: own },
+                    __rt::ReadError::Unadmitted { kind: __Kind(cursor.node().grammar_id()), index: own },
                 )?;
-                cursor.goto_descendant(wrapped.row as usize);
+                cursor.goto_descendant(wrapped.index as usize);
             },
             quote!(cursor.goto_descendant(own as usize);),
         )
@@ -677,22 +702,30 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
     Ok(Body {
         items: quote!(),
         read: quote! {
+            let __at = ctx.at_of(cursor);
             #hidden
             let mut content = <#inner as __rt::ReadTransport>::read(cursor, ctx, depth, sides.clone());
             #restore
             let mut content = content?;
-            let layout: #layout_ty = <#inner as __rt::HasLayout<#layout_ty>>::take_layout(&mut content)
-                .or_else(|| sides.into_layout());
+            let layout: #layout_ty = Some(__rt::envelope_layout(<#inner as __rt::HasLayout<#layout_ty>>::take_layout(&mut content), sides, __at));
             ::core::result::Result::Ok(Self { #(#inits)* })
         },
-        sides_of: quote!(<#inner as __rt::ReadTransport>::sides_of(cursor, ctx, row)),
+        sides_of: quote!(<#inner as __rt::ReadTransport>::sides_of(cursor, ctx, index)),
     })
 }
 
 enum SlotKind<'a> {
-    Presence(&'a Path),
+    Presence(&'a Presence),
     Text,
     Node,
+}
+
+/// Whether `child` is the keyword a presence slot reads.
+fn presence_check(keyword: &Presence) -> TokenStream {
+    match keyword {
+        Presence::Token(group) => quote!([#(#group),*].contains(&child.grammar)),
+        Presence::Display(kind) => quote!(child.display == #kind),
+    }
 }
 
 fn slot_kind<'a>(field: &Field<'a>, slot: &'a SlotAttrs) -> SlotKind<'a> {
@@ -732,25 +765,23 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
             }
             SlotKind::Node => quote!(<#ty as __rt::ReadSlot>::scalar(child.grammar, child.display)),
         };
-        let own_separators = &slot.separators;
+        let own_separators: Vec<&Path> = slot.separators.iter().flatten().collect();
         let field_paths = &slot.fields;
         if !field_paths.is_empty() {
             let takes = match kind {
-                SlotKind::Presence(keyword) => quote!(child.display == #keyword),
-                SlotKind::Text => quote!(!__LAYOUT.contains(&child.display) && ![#(#own_separators),*].contains(&child.display)),
+                SlotKind::Presence(keyword) => presence_check(keyword),
+                SlotKind::Text => quote!(!__LAYOUT.contains(&child.grammar) && ![#(#own_separators),*].contains(&child.grammar)),
                 SlotKind::Node => quote!(<#ty as __rt::ReadSlot>::takes_tagged(child.grammar, child.display, child.named)),
             };
             tagged.push(quote! {
-                ::core::option::Option::Some(__field) if #(__field == #field_paths)||* => {
-                    if #takes {
-                        return ::core::result::Result::Ok(__rt::Route::Slot { slot: #i, scalar: #scalar });
-                    }
+                ::core::option::Option::Some(__field) if (#(__field == #field_paths)||*) && #takes => {
+                    return ::core::result::Result::Ok(__rt::Route::Slot { slot: #i, scalar: #scalar });
                 }
             });
         }
         if field_paths.is_empty() || slot.untagged {
             let admits = match kind {
-                SlotKind::Presence(keyword) => quote!(child.display == #keyword),
+                SlotKind::Presence(keyword) => presence_check(keyword),
                 SlotKind::Text => return Err(syn::Error::new_spanned(field.ident, "a text slot routes by its field")),
                 SlotKind::Node => quote!(<#ty as __rt::ReadSlot>::admits(child.grammar, child.display)),
             };
@@ -762,7 +793,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
         }
         if !own_separators.is_empty() && !field_paths.is_empty() && !attrs.list {
             tagged_separators.push(quote! {
-                ::core::option::Option::Some(__field) if (#(__field == #field_paths)||*) && [#(#own_separators),*].contains(&child.display) => {
+                ::core::option::Option::Some(__field) if (#(__field == #field_paths)||*) && [#(#own_separators),*].contains(&child.grammar) => {
                     return ::core::result::Result::Ok(__rt::Route::Separator { slot: #i, tagged: true });
                 }
             });
@@ -774,7 +805,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                 quote!(child.field.is_some_and(|__field| #(__field == #field_paths)||*))
             };
             separators.push(quote! {
-                if [#(#own_separators),*].contains(&child.display) {
+                if [#(#own_separators),*].contains(&child.grammar) {
                     return ::core::result::Result::Ok(__rt::Route::Separator { slot: #i, tagged: #own_field });
                 }
             });
@@ -788,7 +819,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
     let labels: Vec<LitStr> = names.iter().map(|name| LitStr::new(&name.to_string(), name.span())).collect();
     let mut inits = common_inits(fields, "");
     for (((name, ty), acc), label) in names.iter().zip(&tys).zip(&accs).zip(&labels) {
-        inits.push(quote!(#name: <#ty as __rt::ReadSlot>::finish(#acc, __rt::SlotSite { kind: __KIND, slot: #label, row })?,));
+        inits.push(quote!(#name: <#ty as __rt::ReadSlot>::finish(#acc, __rt::SlotSite { kind: __KIND, slot: #label, index })?,));
     }
     inits.extend(list_inits(attrs, fields, &slots)?);
     let pass = pass(attrs.min_depth.unwrap_or(0));
@@ -806,10 +837,10 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                     _ => {}
                 }
                 #(#separators)*
-                if __LAYOUT.contains(&child.display) {
+                if __LAYOUT.contains(&child.grammar) {
                     return ::core::result::Result::Ok(__rt::Route::Layout);
                 }
-                ::core::result::Result::Err(__rt::ReadError::Unrouted { kind: __KIND, child: child.grammar, row: child.row })
+                ::core::result::Result::Err(__rt::ReadError::Unrouted { kind: __KIND, child: child.grammar, index: child.index })
             }
         },
         read: quote! {
@@ -825,7 +856,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                             ctx,
                             depth,
                             placement.take(i),
-                            __rt::SlotSite { kind: __KIND, slot: #labels, row },
+                            __rt::SlotSite { kind: __KIND, slot: #labels, index },
                         )?,)*
                         #(__rt::Route::Separator { slot: #idxs, tagged } => <#tys as __rt::ReadSlot>::separator(&mut #accs, tagged),)*
                         _ => {}
@@ -865,7 +896,7 @@ fn list_inits(attrs: &KindAttrs, fields: &[Field<'_>], slots: &[(u16, &Field<'_>
                 });
             }
             Role::SeparatorKind(separator) => {
-                let candidates = &separator.candidates;
+                let candidates = separator.candidates.iter().map(|group| quote!(&[#(#group),*]));
                 let read = quote!(__rt::separator_kind(&children, &routes, &[#(#candidates),*]));
                 inits.push(match &separator.default {
                     Some(default) => quote!(#name: ::core::option::Option::Some(#read.unwrap_or(#default.0)),),
@@ -882,5 +913,116 @@ fn option(value: Option<u16>) -> TokenStream {
     match value {
         Some(value) => quote!(::core::option::Option::Some(#value)),
         None => quote!(::core::option::Option::None),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use syn::parse_quote;
+
+    fn expand(input: syn::DeriveInput) -> String {
+        super::derive(&input).expect("expands").to_string().split_whitespace().collect()
+    }
+
+    fn has(out: &str, part: &str) -> bool {
+        out.contains(&part.split_whitespace().collect::<String>())
+    }
+
+    #[test]
+    fn a_child_one_slot_does_not_take_is_tried_on_the_next_slot_of_its_field() {
+        let out = expand(parse_quote! {
+            #[transport(kind = kind::PAIR)]
+            pub struct PairTransport {
+                #[wire(key = "$_layout")]
+                pub layout: Option<Box<TransportLayout>>,
+                #[wire(key = "_key")]
+                #[slot(field = field::KEY)]
+                pub key: SlotValue<KeyTransport>,
+                #[wire(key = "_value")]
+                #[slot(field = field::KEY)]
+                pub value: SlotValue<ValueTransport>,
+            }
+        });
+        assert!(has(
+            &out,
+            "::core::option::Option::Some(__field) if (__field == field::KEY) && <SlotValue<KeyTransport> as __rt::ReadSlot>::takes_tagged(child.grammar, child.display, child.named) => {
+                return ::core::result::Result::Ok(__rt::Route::Slot { slot: 0u16, scalar: <SlotValue<KeyTransport> as __rt::ReadSlot>::scalar(child.grammar, child.display) });
+            }"
+        ));
+        assert!(has(
+            &out,
+            "::core::option::Option::Some(__field) if (__field == field::KEY) && <SlotValue<ValueTransport> as __rt::ReadSlot>::takes_tagged(child.grammar, child.display, child.named) => {"
+        ));
+    }
+
+    #[test]
+    fn a_struct_refuses_a_node_its_kind_does_not_admit_before_it_reads() {
+        let out = expand(parse_quote! {
+            #[transport(kind = kind::PAIR)]
+            pub struct PairTransport {
+                #[wire(key = "$_layout")]
+                pub layout: Option<Box<TransportLayout>>,
+            }
+        });
+        assert!(has(
+            &out,
+            "if !<Self as __rt::ReadTransport>::admits(__Kind(__node.grammar_id()), __rt::display_id(&__node)) {
+                return ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: __Kind(__node.grammar_id()), index: __rt::index_of(cursor) });
+            }"
+        ));
+    }
+
+    #[test]
+    fn a_choice_of_units_builds_each_arm_from_a_kind_id_it_claims() {
+        let out = expand(parse_quote! {
+            #[transport(choice)]
+            pub enum Terminator {
+                #[kind(kind::_AUTOMATIC_SEMICOLON)]
+                AutomaticSemicolon,
+                #[kind(kind::SEMI, display(kind::SEMI_ALIAS))]
+                Semi,
+                #[transport(blank)]
+                Blank,
+            }
+        });
+        assert!(has(
+            &out,
+            "impl Terminator {
+                pub fn from_kind_id(id: u16) -> ::core::option::Option<Self> {
+                    if [kind::_AUTOMATIC_SEMICOLON].iter().any(|k| k.0 == id) { return ::core::option::Option::Some(Self::AutomaticSemicolon); }
+                    if [kind::SEMI, kind::SEMI_ALIAS].iter().any(|k| k.0 == id) { return ::core::option::Option::Some(Self::Semi); }
+                    if id == ::sittir_core::options::BLANK_ARM { return ::core::option::Option::Some(Self::Blank); }
+                    ::core::option::Option::None
+                }
+            }"
+        ));
+    }
+
+    #[test]
+    fn a_choice_with_a_payload_arm_has_no_kind_id_constructor() {
+        let out = expand(parse_quote! {
+            #[transport(choice)]
+            pub enum Content {
+                #[kind(kind::SEMI)]
+                Semi,
+                #[kind(kind::BLOCK)]
+                Block(BlockTransport),
+            }
+        });
+        assert!(!has(&out, "pub fn from_kind_id"));
+    }
+
+    #[test]
+    fn a_choice_of_units_with_an_arm_no_kind_id_builds_is_refused() {
+        let input: syn::DeriveInput = parse_quote! {
+            #[transport(choice)]
+            pub enum Terminator {
+                #[kind(kind::SEMI)]
+                Semi,
+                Unclaimed,
+            }
+        };
+        let error = super::derive(&input).unwrap_err().to_string();
+        assert_eq!(error, "a unit variant names the kind it writes: `#[kind(…)]`");
     }
 }

@@ -8,104 +8,324 @@
 //! ## Engine / ParsedTree split
 //!
 //! `Engine<G>` is stateless (parser + grammar config). Parsing returns a
-//! `ParsedTree<G>` that owns the tree, source, format, and a node coordinate
-//! table for hydration navigation. Coordinates are stable child-index paths
-//! from the root, re-resolved on each access — no lifetime-erasure needed.
+//! `ParsedTree<G>` that owns the tree, source and format. A handle names a
+//! node by its tree's id and its descendant index, re-resolved through a
+//! cursor on each access — no lifetime-erasure needed.
 
 use crate::format::{apply_format, extract_format};
 use crate::options::ResolvedOptions;
-use crate::query::{Address, DescendantBatch, Plan};
-use crate::read_untyped_node::{error_regions, read_untyped_node, stub_of, ErrorRegion, HandleMint, ReadDepth, ReadModel};
+use crate::query::{Address, DescendantBatch, Plan, QueryCoordinate};
+use crate::read::{survey, Child, ReadCtx, ReadError, Sides};
+use crate::types::Span;
 use crate::render::SourceTable;
 use crate::slot::NodeCoordinate;
-use crate::types::{FormatRecord, KindId, UntypedNode, Source};
+use crate::types::{FormatRecord, KindId, Source};
 use std::collections::HashMap;
 use std::sync::Arc;
 
 /// Grammar-specific hooks used by the shared native engine.
-pub trait EngineGrammar: Copy + ReadModel {
+pub trait EngineGrammar: Copy {
     fn configure_parser(self, parser: &mut tree_sitter::Parser) -> Result<(), String>;
     fn render_module_hash(self) -> &'static str;
     /// The name of a kind of this grammar, for messages that name one.
     fn kind_name(self, kind: KindId) -> &'static str;
+    /// The sides the placement of the node the cursor is on gives its child
+    /// at descendant `index` (`ReadTransport::sides_of` of the grammar's
+    /// transports, dispatched by the node's kind).
+    fn sides_at(self, cursor: &mut tree_sitter::TreeCursor<'_>, ctx: &ReadCtx<'_>, index: u32) -> Result<Sides, ReadError>;
 }
 
-// ─── NodeCoord ────────────────────────────────────────────────────────────────────────────
-
-/// O(1) coordinate for a node: a back-link to its parent handle plus the
-/// child index taken from that parent.
-///
-/// This replaces the earlier `Vec<u32>` root-relative path. Storing a full
-/// path meant every `read_at` cloned the parent's O(depth) `Vec` to append
-/// one index — O(depth) alloc+copy per node-handle creation. A parent-link
-/// pair is `Copy`, so pushing a coordinate is O(1) with zero allocation; the
-/// node table itself encodes the tree spine, and resolution re-walks parent
-/// links.
-///
-/// Like the path representation it supersedes, this caches **no** live `Node`
-/// — it only records *how* to reach one. Re-resolution (via
-/// [`ParsedTree::resolve_handle`]) is sound because `tree_sitter::Tree` owns
-/// its internal data and `Node` values are cheap lightweight cursors over it;
-/// no `unsafe transmute` or lifetime-erasure is required. This preserves the
-/// b4778bb5 invariant ("re-resolve, never cache a lifetime-erased Node") while
-/// removing the per-step path clone.
-#[derive(Clone, Copy)]
-struct NodeCoord {
-    /// Handle of the parent node in `ParsedTree.nodes`, or `None` for the root.
-    parent: Option<u32>,
-    /// Child index taken from `parent` to reach this node. Unused for the root.
-    child_index: u32,
+/// The node at descendant `index` of `tree`, or `None` past its last node.
+pub fn node_at_index(tree: &tree_sitter::Tree, index: u32) -> Option<tree_sitter::Node<'_>> {
+    if index as usize >= tree.root_node().descendant_count() {
+        return None;
+    }
+    let mut cursor = tree.walk();
+    cursor.goto_descendant(index as usize);
+    Some(cursor.node())
 }
 
-impl NodeCoord {
-    fn root() -> Self {
-        NodeCoord {
-            parent: None,
-            child_index: 0,
+/// The descendant index of child `position` of the node at `index`: its own
+/// index, one for the node, and every earlier child's descendant count.
+pub fn child_index_of(node: tree_sitter::Node<'_>, index: u32, position: u32) -> u32 {
+    (0..position).fold(index + 1, |at, i| at + node.child(i).map_or(0, |child| child.descendant_count() as u32))
+}
+
+/// One line-break run of a node's leading or closing gap: the whitespace
+/// member it reads as and the byte its run starts at.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
+pub struct LineGap {
+    pub kind: u16,
+    pub start: usize,
+}
+
+/// The line-break runs a node owns, in source order on each side, and the
+/// owners beside it among its siblings, taken at the outermost node spanning
+/// exactly its bytes (a list item's wrapper holds the item's neighbours, not
+/// the item): the sibling owner before it, or none when that node is its
+/// parent's first, and the sibling owner after it, or none when that node is
+/// its parent's last.
+#[derive(Debug, Clone, Default, PartialEq, Eq, serde::Serialize)]
+pub struct LineGaps {
+    pub leading: Vec<LineGap>,
+    pub trailing: Vec<LineGap>,
+    pub previous: Option<Span>,
+    pub next: Option<Span>,
+}
+
+/// What kind of region of a source did not parse: an ERROR node error
+/// recovery wrapped source in, or a MISSING node it inserted.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
+#[serde(rename_all = "lowercase")]
+pub enum ErrorRegionKind {
+    Error,
+    Missing,
+}
+
+/// One region of a source that did not parse, with its byte span. A MISSING
+/// region is empty: it marks where the parser inserted a token.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
+pub struct ErrorRegion {
+    pub kind: ErrorRegionKind,
+    pub span: Span,
+}
+
+/// Every ERROR and MISSING region of `tree`, in source order. The walk enters
+/// only nodes that hold an error, and never an ERROR node: a region nested in
+/// another is part of it.
+pub fn error_regions(tree: &tree_sitter::Tree) -> Vec<ErrorRegion> {
+    let mut regions = Vec::new();
+    if !tree.root_node().has_error() {
+        return regions;
+    }
+    let mut cursor = tree.walk();
+    loop {
+        let node = cursor.node();
+        let kind = if node.is_error() {
+            Some(ErrorRegionKind::Error)
+        } else if node.is_missing() {
+            Some(ErrorRegionKind::Missing)
+        } else {
+            None
+        };
+        if let Some(kind) = kind {
+            let range = node.byte_range();
+            regions.push(ErrorRegion {
+                kind,
+                span: Span { start: range.start as u32, end: range.end as u32 },
+            });
+        }
+        if kind.is_none() && node.has_error() && cursor.goto_first_child() {
+            continue;
+        }
+        while !cursor.goto_next_sibling() {
+            if !cursor.goto_parent() {
+                return regions;
+            }
         }
     }
 }
 
-/// Mints into a tree's node table the handle a bounded read gives a child it
-/// expands. A parent from another tree mints nothing.
-struct TreeMint<'a> {
-    nodes: &'a mut Vec<NodeCoord>,
-    tree_id: u32,
-}
-
-impl HandleMint for TreeMint<'_> {
-    fn mint(&mut self, parent: u64, child_index: u16) -> Option<u64> {
-        let (tree_id, index) = decode_handle(parent);
-        if tree_id != self.tree_id {
+/// The node a coordinate names: of the nodes spanning exactly `start..end`,
+/// the outermost the read stamped `kind`, either the grammar symbol that
+/// parsed it or the kind the parser shows it as (`identity`), since a node
+/// read as an alias envelope is addressed by the kind it shows.
+///
+/// The search descends from the root by byte: at each level the cursor steps
+/// to the child at `start` (`goto_first_child_for_byte`) without visiting the
+/// children before it. A span of at least one byte can only sit in that
+/// child, since siblings never overlap; a zero-width span can also sit at the
+/// end of a sibling ending at `start` or in a zero-width sibling there, so the
+/// walk first steps back over the siblings ending at `start`, then tries each
+/// child forward, in source order, while it starts at or before `start`.
+pub fn node_at_span<'t>(tree: &'t tree_sitter::Tree, start: usize, end: usize, kind: u16) -> Option<tree_sitter::Node<'t>> {
+    fn search<'t>(node: tree_sitter::Node<'t>, start: usize, end: usize, kind: u16) -> Option<tree_sitter::Node<'t>> {
+        if node.start_byte() == start && node.end_byte() == end && (node.grammar_id() == kind || crate::read::display_id(&node).0 == kind) {
+            return Some(node);
+        }
+        let mut walker = node.walk();
+        if walker.goto_first_child_for_byte(start).is_none() && !walker.goto_last_child() {
             return None;
         }
-        let new_index = self.nodes.len() as u32;
-        self.nodes.push(NodeCoord {
-            parent: Some(index),
-            child_index: child_index as u32,
-        });
-        Some(encode_handle(self.tree_id, new_index))
+        if start == end {
+            loop {
+                let mut back = walker.clone();
+                if !back.goto_previous_sibling() || back.node().end_byte() < start {
+                    break;
+                }
+                walker = back;
+            }
+        }
+        loop {
+            let child = walker.node();
+            if child.start_byte() > start {
+                return None;
+            }
+            if end <= child.end_byte() {
+                if let Some(found) = search(child, start, end, kind) {
+                    return Some(found);
+                }
+            }
+            if !walker.goto_next_sibling() {
+                return None;
+            }
+        }
     }
+    search(tree.root_node(), start, end, kind)
+}
+
+/// The last child that is not an extra of the list spanning `start..end`: of
+/// the node the read stamped `kind` at that span (`node_at_span`), or, for a
+/// list the tree holds no node of its own for, of the node holding the list's
+/// children, among the children that lie within the span. That node is the
+/// one strictly around the span, above any node spanning exactly the span.
+pub fn last_list_child(tree: &tree_sitter::Tree, start: usize, end: usize, kind: u16) -> Option<tree_sitter::Node<'_>> {
+    let holder = match node_at_span(tree, start, end, kind) {
+        Some(list) => list,
+        None => {
+            let inner = outermost_same_span(tree.root_node().descendant_for_byte_range(start, end)?);
+            if inner.start_byte() == start && inner.end_byte() == end {
+                inner.parent()?
+            } else {
+                inner
+            }
+        }
+    };
+    let mut cursor = holder.walk();
+    let last = holder
+        .children(&mut cursor)
+        .filter(|child| !child.is_extra() && child.start_byte() >= start && child.end_byte() <= end)
+        .last();
+    last
+}
+
+/// The outermost node spanning exactly the bytes `node` spans: the node
+/// itself unless a wrapper holds it alone.
+pub(crate) fn outermost_same_span(node: tree_sitter::Node<'_>) -> tree_sitter::Node<'_> {
+    let mut outer = node;
+    while let Some(up) = outer.parent() {
+        if up.start_byte() != node.start_byte() || up.end_byte() != node.end_byte() {
+            break;
+        }
+        outer = up;
+    }
+    outer
+}
+
+/// The whitespace the node at descendant `index` owns as trivia, classified
+/// by `classify`, which answers the member a run of whitespace holding a line
+/// break reads as. What the node owns is what its parent's placement gives it
+/// (`sides_at`, asked with a cursor on the parent): a node that owns no
+/// trivia owns no gap, and the extras its sides hold split the gaps.
+///
+/// The leading gap is the bytes between the node and the sibling before it
+/// that is not trivia, unless the parent starts where the node does; an extra
+/// there that the node's sides do not hold trails the sibling before it, so
+/// the gap starts after it. The closing gap is the bytes between the node and
+/// its parent's closing token when no owner follows the node, unless the
+/// parent ends where the node does. `previous` and `next` are the sibling
+/// owners around the outermost node spanning exactly the node's bytes (a list
+/// item's wrapper holds the item's neighbours, not the item).
+pub fn line_gaps(
+    tree: &tree_sitter::Tree,
+    index: u32,
+    source: &str,
+    sides_at: &dyn Fn(&mut tree_sitter::TreeCursor<'_>, u32) -> Result<Sides, ReadError>,
+    classify: &dyn Fn(&str) -> Option<u16>,
+) -> Result<LineGaps, ReadError> {
+    let mut gaps = LineGaps::default();
+    let mut cursor = tree.walk();
+    cursor.goto_descendant(index as usize);
+    let node = cursor.node();
+    let mut at_parent = cursor.clone();
+    if !at_parent.goto_parent() {
+        return Ok(gaps);
+    }
+    let sides = sides_at(&mut at_parent.clone(), index)?;
+    if !sides.owner {
+        return Ok(gaps);
+    }
+    let push = |side: &mut Vec<LineGap>, start: usize, end: usize| {
+        let Some(run) = source.get(start..end) else { return };
+        if run.contains('\n') && run.chars().all(char::is_whitespace) {
+            if let Some(kind) = classify(run) {
+                side.push(LineGap { kind, start });
+            }
+        }
+    };
+    let span_of = |child: &Child| Span { start: child.start, end: child.end };
+    let mut outer = cursor;
+    loop {
+        let mut up = outer.clone();
+        if !up.goto_parent() || up.node().byte_range() != node.byte_range() {
+            break;
+        }
+        outer = up;
+    }
+    let outer_index = outer.descendant_index() as u32;
+    if outer.goto_parent() {
+        let siblings = survey(&mut outer);
+        let at = siblings.iter().position(|child| child.index == outer_index).unwrap_or(0);
+        let up = outer.node();
+        let owner = |child: &&Child| sides_at(&mut outer.clone(), child.index).map(|sides| sides.owner);
+        if up.start_byte() != node.start_byte() {
+            gaps.previous = nearest_owner(siblings[..at].iter().rev(), owner)?.map(span_of);
+        }
+        if up.end_byte() != node.end_byte() {
+            gaps.next = nearest_owner(siblings[at + 1..].iter(), owner)?.map(span_of);
+        }
+    }
+    let parent = at_parent.node();
+    let children = survey(&mut at_parent);
+    let at = children.iter().position(|child| child.index == index).unwrap_or(0);
+    if parent.start_byte() != node.start_byte() {
+        let bound = children[..at].iter().rev().find(|child| !child.trivia).map_or(parent.start_byte() as u32, |child| child.end);
+        let held = |child: &Child| sides.leading.iter().any(|entry| entry.coord.span == span_of(child));
+        let mut start = bound;
+        for child in children[..at].iter().filter(|child| child.trivia && child.start >= bound) {
+            if held(child) {
+                push(&mut gaps.leading, start as usize, child.start as usize);
+            }
+            start = child.end;
+        }
+        push(&mut gaps.leading, start as usize, node.start_byte());
+    }
+    let owner = |child: &&Child| sides_at(&mut at_parent.clone(), child.index).map(|sides| sides.owner);
+    if parent.end_byte() != node.end_byte() && nearest_owner(children[at + 1..].iter(), owner)?.is_none() {
+        let end = children[at + 1..].iter().find(|child| !child.trivia).map_or(parent.end_byte() as u32, |child| child.start);
+        let mut start = node.end_byte() as u32;
+        for entry in sides.trailing.iter().filter(|entry| entry.coord.span.end <= end) {
+            push(&mut gaps.trailing, start as usize, entry.coord.span.start as usize);
+            start = entry.coord.span.end;
+        }
+        push(&mut gaps.trailing, start as usize, end as usize);
+    }
+    Ok(gaps)
+}
+
+/// The first of `children`, in the order given, that its parent's placement
+/// makes an owner.
+fn nearest_owner<'c>(
+    mut children: impl Iterator<Item = &'c Child>,
+    owner: impl Fn(&&'c Child) -> Result<bool, ReadError>,
+) -> Result<Option<&'c Child>, ReadError> {
+    children.try_fold(None, |found, child| match found {
+        Some(_) => Ok(found),
+        None => owner(&child).map(|is| is.then_some(child)),
+    })
 }
 
 // ─── ParsedTree ────────────────────────────────────────────────────────────────────────────
 
-/// Owned parse result — tree + source + format + node coordinate table.
+/// Owned parse result — tree + source + format.
 ///
 /// Created by [`Engine::parse`]. Contains all tree-dependent state.
 /// Grammar crate napi wrappers own the `ParsedTree` directly.
 ///
 /// # Design
 ///
-/// Instead of storing lifetime-erased `Node<'static>` references
-/// (which is UB-adjacent in debug builds due to transmute + re-borrow),
-/// `nodes` stores [`NodeCoord`] — an O(1) `(parent_handle, child_index)`
-/// back-link per node. Each access re-resolves the live `Node` from
-/// `self.tree` by walking parent links to the root (see
-/// [`ParsedTree::resolve_handle`]). Tree-sitter `Node` values are cheap
-/// cursor structs over the tree's immutable internal representation, so
-/// re-resolution is fast and fully sound — and pushing a coordinate no
-/// longer clones an O(depth) `Vec`.
+/// A handle names a node by its tree's id and its descendant index, and
+/// resolves through a cursor (`node_at_index`).
 pub struct ParsedTree<G: EngineGrammar> {
     /// The grammar's read facts, consulted by every read of this tree.
     grammar: G,
@@ -117,9 +337,6 @@ pub struct ParsedTree<G: EngineGrammar> {
     /// parse, so a handle names the tree it belongs to and cannot be spent
     /// against another one.
     tree_id: u32,
-    /// Node coordinate table for hydration navigation. Each entry back-links
-    /// to its parent handle; the root entry has `parent: None`.
-    nodes: Vec<NodeCoord>,
 }
 
 /// Bits of a handle given over to the node index; the rest carry the tree id.
@@ -197,26 +414,30 @@ impl<G: EngineGrammar> ParsedTree<G> {
         self.tree_id
     }
 
-    /// The whole tree read into the grammar's typed transports, `depth`
-    /// levels down, or the refusal that stopped the read.
-    pub fn typed_read<R: crate::read::ReadRoot>(&self, depth: crate::read::Depth) -> Result<R, crate::read::ReadError> {
-        let ctx = crate::read::ReadCtx::new(&self.source, self.tree_id);
-        R::read_root(&mut self.tree.walk(), &ctx, depth)
+    /// The parsed tree-sitter tree.
+    pub fn tree(&self) -> &tree_sitter::Tree {
+        &self.tree
     }
 
-    /// Push a node coordinate into the node table, returning its tagged handle.
-    ///
-    /// `NodeCoord` is `Copy`, so this is O(1) with zero allocation — no
-    /// O(depth) path `Vec` is cloned per node.
-    fn push_coord(&mut self, coord: NodeCoord) -> u64 {
-        let index = self.nodes.len() as u32;
-        self.nodes.push(coord);
-        encode_handle(self.tree_id, index)
+    /// The node at `index` read into `T`, `depth` levels down, with the sides
+    /// its parent's placement gives it; index 0 is the root.
+    pub fn read<T: crate::read::ReadTransport>(&self, index: u32, depth: crate::read::Depth) -> Result<T, crate::read::ReadError> {
+        let ctx = crate::read::ReadCtx::new(&self.source, self.tree_id);
+        crate::read::read_at::<T, T>(&mut self.tree.walk(), &ctx, index, depth)
+    }
+
+    /// The `ERROR` node at `index` read as the bytes its coordinate spans, or
+    /// `None` when the node there is not an `ERROR`.
+    pub fn read_error(&self, index: u32) -> Option<crate::ErrorRead> {
+        let node = node_at_index(&self.tree, index).filter(|node| node.is_error())?;
+        let at = crate::read::ReadCtx::new(&self.source, self.tree_id).coordinate(&node, index);
+        let text = self.source[at.span.start as usize..at.span.end as usize].to_owned();
+        Some(crate::ErrorRead { text, at })
     }
 
     /// Reject a handle minted by a different tree.
     ///
-    /// Indices are dense and restart at 0 every parse, so without this an
+    /// Indexes are dense and restart at 0 every parse, so without this an
     /// out-of-tree handle lands in range and resolves to whatever node happens
     /// to sit at that index — an unrelated node returned as though it were the
     /// one asked for. The tag turns that into a refusal.
@@ -231,47 +452,6 @@ impl<G: EngineGrammar> ParsedTree<G> {
         Ok(index)
     }
 
-    /// Re-resolve the live `Node` for a handle by walking parent back-links to
-    /// the root, then descending the same child indices.
-    ///
-    /// Free-function form (takes `nodes` + `tree` separately) so the returned
-    /// `Node<'tree>` borrows only `tree`, not the `nodes` slice — letting the
-    /// caller keep a resolved node alive across a `&mut self.nodes` push of a
-    /// disjoint field. Recursion depth equals tree depth; source ASTs never
-    /// approach the stack limit. No allocation, no lifetime-erasure: this
-    /// honors the b4778bb5 invariant of never caching a `Node<'static>`.
-    fn resolve_handle<'tree>(
-        nodes: &[NodeCoord],
-        tree: &'tree tree_sitter::Tree,
-        index: u32,
-    ) -> Option<tree_sitter::Node<'tree>> {
-        let coord = *nodes.get(index as usize)?;
-        match coord.parent {
-            None => Some(tree.root_node()),
-            Some(parent_index) => {
-                let parent_node = Self::resolve_handle(nodes, tree, parent_index)?;
-                parent_node.child(coord.child_index)
-            }
-        }
-    }
-
-    /// Read the root node of the parsed tree into an `UntypedNode`.
-    pub fn read_root(&mut self, depth: ReadDepth) -> UntypedNode {
-        let handle = self.push_coord(NodeCoord::root());
-        read_untyped_node(
-            &self.tree,
-            &self.source,
-            None,
-            Some(handle),
-            depth,
-            &self.grammar,
-            &mut TreeMint {
-                nodes: &mut self.nodes,
-                tree_id: self.tree_id,
-            },
-        )
-    }
-
     /// Whether this tree minted `handle`.
     pub fn owns_handle(&self, handle: u64) -> bool {
         decode_handle(handle).0 == self.tree_id
@@ -281,14 +461,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// names no node of this tree.
     pub fn node_at(&self, address: Address) -> Result<Option<tree_sitter::Node<'_>>, String> {
         Ok(match address {
-            Address::Own { handle } => Self::resolve_handle(&self.nodes, &self.tree, self.local_index(handle)?),
-            Address::Child { parent, index } => {
-                Self::resolve_handle(&self.nodes, &self.tree, self.local_index(parent)?).and_then(|node| node.child(index))
-            }
-            Address::Span { tree, span, kind } => {
-                self.local_index(tree)?;
-                crate::read_untyped_node::node_at_span(&self.tree, span.start as usize, span.end as usize, kind)
-            }
+            Address::Own { handle } => node_at_index(&self.tree, self.local_index(handle)?),
+            Address::Child { parent, index } => node_at_index(&self.tree, self.local_index(parent)?).and_then(|node| node.child(index)),
         })
     }
 
@@ -304,57 +478,30 @@ impl<G: EngineGrammar> ParsedTree<G> {
             .collect()
     }
 
-    /// The node-table index of the node `address` names, minting the
-    /// coordinates that reach it when it has none.
-    fn index_of(&mut self, address: Address) -> Result<u32, String> {
+    /// The descendant index of the node `address` names.
+    fn index_of(&self, address: Address) -> Result<u32, String> {
+        let missing = || format!("{address:?} names no node of tree {}", self.tree_id);
         match address {
             Address::Own { handle } => self.local_index(handle),
             Address::Child { parent, index } => {
                 let parent_index = self.local_index(parent)?;
-                Self::resolve_handle(&self.nodes, &self.tree, parent_index)
-                    .and_then(|node| node.child(index))
-                    .ok_or_else(|| format!("{address:?} names no node of tree {}", self.tree_id))?;
-                Ok(self.mint(NodeCoord { parent: Some(parent_index), child_index: index }))
-            }
-            Address::Span { .. } => {
-                let node = self.node_at(address)?.ok_or_else(|| format!("{address:?} names no node of tree {}", self.tree_id))?;
-                let mut path = Vec::new();
-                let mut current = node;
-                while let Some(parent) = current.parent() {
-                    let mut cursor = parent.walk();
-                    let position = parent
-                        .children(&mut cursor)
-                        .position(|child| child.id() == current.id())
-                        .ok_or("a node is not among its parent's children")?;
-                    path.push(position as u32);
-                    current = parent;
-                }
-                let mut index = self.mint(NodeCoord::root());
-                for &child_index in path.iter().rev() {
-                    index = self.mint(NodeCoord { parent: Some(index), child_index });
-                }
-                Ok(index)
+                let parent_node = node_at_index(&self.tree, parent_index).ok_or_else(missing)?;
+                parent_node.child(index).ok_or_else(missing)?;
+                Ok(child_index_of(parent_node, parent_index, index))
             }
         }
     }
 
-    fn mint(&mut self, coord: NodeCoord) -> u32 {
-        let index = self.nodes.len() as u32;
-        self.nodes.push(coord);
-        index
-    }
-
-    /// Walk the subtree under `from` in pre-order and return up to `limit`
-    /// stubs of the named, non-extra descendants whose grammar symbol is in
-    /// `kinds` (every one when `kinds` is empty) and that satisfy `plan`, each
-    /// carrying the coordinate it is hydrated at. `resume` is the path of
+    /// Walk the subtree under `from` in pre-order and return the coordinates
+    /// of up to `limit` named, non-extra descendants whose grammar symbol is
+    /// in `kinds` (every one when `kinds` is empty) and that satisfy `plan`,
+    /// each the coordinate a read hands out for it. `resume` is the path of
     /// child indices, from the node at `handle`, of the last node an earlier
     /// batch visited; the walk continues after it. `depth` bounds the levels
     /// walked below `from` (every level when absent). An extra is trivia: the
-    /// walk neither returns nor enters it. A handle is minted only for the
-    /// parent of a stub returned.
+    /// walk neither returns nor enters it.
     pub fn descendants(
-        &mut self,
+        &self,
         from: Address,
         kinds: &[u16],
         plan: Option<&Plan>,
@@ -365,15 +512,14 @@ impl<G: EngineGrammar> ParsedTree<G> {
         let depth = depth.map_or(usize::MAX, |levels| levels as usize);
         let index = self.index_of(from)?;
         let origin = encode_handle(self.tree_id, index);
-        let start = Self::resolve_handle(&self.nodes, &self.tree, index)
-            .ok_or_else(|| format!("{from:?} not found in node table"))?;
+        let start = node_at_index(&self.tree, index).ok_or_else(|| format!("{from:?} names no node of tree {}", self.tree_id))?;
         let mut cursor = start.walk();
-        // frames[k]: the node-table index of the node at depth k below
-        // `start`, minted only when a stub needs it as a parent. path[k - 1]:
-        // that node's child index within its parent.
-        let mut frames: Vec<Option<u32>> = vec![Some(index)];
+        // indexes[k]: the descendant index of the node at depth k below
+        // `start`. path[k - 1]: that node's child index within its parent.
+        let mut indexes: Vec<u32> = vec![index];
         let mut path: Vec<u32> = Vec::new();
-        let mut stubs = Vec::new();
+        let mut coordinates = Vec::new();
+        let ctx = crate::read::ReadCtx::new(&self.source, self.tree_id);
         if let Some(resume) = resume {
             for &child in resume {
                 if !cursor.goto_first_child() {
@@ -384,138 +530,51 @@ impl<G: EngineGrammar> ParsedTree<G> {
                         return Err("resume path leaves the tree".to_string());
                     }
                 }
-                frames.push(None);
+                indexes.push(index + cursor.descendant_index() as u32);
                 path.push(child);
             }
         }
-        while Self::advance(&mut cursor, &mut frames, &mut path, depth) {
+        while Self::advance(&mut cursor, index, &mut indexes, &mut path, depth) {
             let node = cursor.node();
             if node.is_named()
                 && !node.is_extra()
                 && (kinds.is_empty() || kinds.contains(&node.grammar_id()))
                 && plan.is_none_or(|plan| plan.holds(&node, &self.source))
             {
-                let depth = frames.len() - 1;
-                let parent = Self::mint_frame(&mut self.nodes, &mut frames, &path, depth - 1);
-                let child_index = path[depth - 1] as u16;
-                stubs.push(stub_of(node, &self.source, Some(encode_handle(self.tree_id, parent)), child_index));
-                if stubs.len() as u32 >= limit {
-                    return Ok(DescendantBatch { stubs, resume: Some(path), origin });
+                coordinates.push(QueryCoordinate::from(ctx.coordinate(&node, indexes[indexes.len() - 1])));
+                if coordinates.len() as u32 >= limit {
+                    return Ok(DescendantBatch { coordinates, resume: Some(path), origin });
                 }
             }
         }
-        Ok(DescendantBatch { stubs, resume: None, origin })
+        Ok(DescendantBatch { coordinates, resume: None, origin })
     }
 
     /// Step `cursor` to the next node in pre-order below the walk's start, at
-    /// most `depth` levels down and never into an extra, keeping `frames` and
-    /// `path` in step; `false` once the walk is done.
-    fn advance(cursor: &mut tree_sitter::TreeCursor<'_>, frames: &mut Vec<Option<u32>>, path: &mut Vec<u32>, depth: usize) -> bool {
-        if frames.len() <= depth && !cursor.node().is_extra() && cursor.goto_first_child() {
-            frames.push(None);
+    /// most `depth` levels down and never into an extra, keeping `indexes`
+    /// and `path` in step; `false` once the walk is done. The cursor numbers
+    /// from the start, whose own index is `start`.
+    fn advance(cursor: &mut tree_sitter::TreeCursor<'_>, start: u32, indexes: &mut Vec<u32>, path: &mut Vec<u32>, depth: usize) -> bool {
+        if indexes.len() <= depth && !cursor.node().is_extra() && cursor.goto_first_child() {
+            indexes.push(start + cursor.descendant_index() as u32);
             path.push(0);
             return true;
         }
         loop {
-            if frames.len() == 1 {
+            if indexes.len() == 1 {
                 return false;
             }
             if cursor.goto_next_sibling() {
                 if let Some(last) = path.last_mut() {
                     *last += 1;
                 }
-                *frames.last_mut().expect("a frame below the start") = None;
+                *indexes.last_mut().expect("an index below the start") = start + cursor.descendant_index() as u32;
                 return true;
             }
             cursor.goto_parent();
-            frames.pop();
+            indexes.pop();
             path.pop();
         }
-    }
-
-    /// The node-table index of the frame at `depth`, minting it and every
-    /// unminted frame above it.
-    fn mint_frame(nodes: &mut Vec<NodeCoord>, frames: &mut [Option<u32>], path: &[u32], depth: usize) -> u32 {
-        if let Some(index) = frames[depth] {
-            return index;
-        }
-        let parent = Self::mint_frame(nodes, frames, path, depth - 1);
-        let index = nodes.len() as u32;
-        nodes.push(NodeCoord {
-            parent: Some(parent),
-            child_index: path[depth - 1],
-        });
-        frames[depth] = Some(index);
-        index
-    }
-
-    /// Read a child node by handle + child_index.
-    ///
-    /// Re-resolves the parent `Node` from `self.tree` (walking parent
-    /// back-links), takes `parent.child(child_index)` to confirm the child
-    /// exists, records an O(1) `(handle, child_index)` coordinate, and reads
-    /// the (already resolved) child into an `UntypedNode`.
-    pub fn read_at(
-        &mut self,
-        handle: u64,
-        child_index: u16,
-        depth: ReadDepth,
-    ) -> Result<String, String> {
-        let index = self.local_index(handle)?;
-        // Resolve parent and child while only borrowing `self.nodes` + `self.tree`.
-        // The returned `child_node` borrows `self.tree` (not `self.nodes`), so it
-        // stays valid across the disjoint `&mut self.nodes` push below — no second
-        // re-resolution needed.
-        let parent_node =
-            Self::resolve_handle(&self.nodes, &self.tree, index).ok_or_else(|| {
-                if (index as usize) >= self.nodes.len() {
-                    format!("handle {handle} not found in node table")
-                } else {
-                    format!("handle {handle}: coordinate path could not be resolved")
-                }
-            })?;
-        let child_node = parent_node.child(child_index as u32).ok_or_else(|| {
-            format!(
-                "child_index {child_index} out of bounds for handle {handle} (child_count={})",
-                parent_node.child_count()
-            )
-        })?;
-        // O(1) push of the back-link coordinate (no path clone). Push directly
-        // to the `nodes` field rather than via `&mut self`: `child_node` borrows
-        // only `self.tree`, so mutating the disjoint `self.nodes` field while it
-        // is alive is sound — and avoids a redundant O(depth) re-resolution.
-        let new_index = self.nodes.len() as u32;
-        self.nodes.push(NodeCoord {
-            parent: Some(index),
-            child_index: child_index as u32,
-        });
-        let data = read_untyped_node(
-            &self.tree,
-            &self.source,
-            Some(child_node),
-            Some(encode_handle(self.tree_id, new_index)),
-            depth,
-            &self.grammar,
-            &mut TreeMint {
-                nodes: &mut self.nodes,
-                tree_id: self.tree_id,
-            },
-        );
-        serde_json::to_string(&data).map_err(|e| format!("serialize UntypedNode failed: {e}"))
-    }
-
-    /// Apply format to a pre-rendered canonical string.
-    pub fn render_canonical_node(
-        &self,
-        node: &UntypedNode,
-        canonical: String,
-    ) -> Result<String, String> {
-        Ok(apply_render_format(
-            node.source,
-            canonical,
-            None,
-            self.format.as_ref(),
-        ))
     }
 
     /// Every ERROR and MISSING region of the parse (`error_regions`).
@@ -534,32 +593,13 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 
     /// The line-break runs the node named by `handle` owns as trivia
-    /// (`read_untyped_node::line_gaps`), each classified by `classify`.
-    pub fn line_gaps_at(
-        &self,
-        handle: u64,
-        classify: &dyn Fn(&str) -> Option<u16>,
-    ) -> Result<crate::read_untyped_node::LineGaps, String> {
+    /// (`line_gaps`), each classified by `classify`.
+    pub fn line_gaps_at(&self, handle: u64, classify: &dyn Fn(&str) -> Option<u16>) -> Result<LineGaps, String> {
         let index = self.local_index(handle)?;
-        let node = Self::resolve_handle(&self.nodes, &self.tree, index)
-            .ok_or_else(|| format!("handle {handle} not found in node table"))?;
-        Ok(crate::read_untyped_node::line_gaps(node, &self.source, &self.grammar, classify))
-    }
-
-    /// `line_gaps_at` for a node named by its coordinate (the tree's tag, its
-    /// span and its stamped kind), as a deep read leaves it.
-    pub fn line_gaps_at_span(
-        &self,
-        tree_handle: u64,
-        start: usize,
-        end: usize,
-        kind: u16,
-        classify: &dyn Fn(&str) -> Option<u16>,
-    ) -> Result<crate::read_untyped_node::LineGaps, String> {
-        self.local_index(tree_handle)?;
-        let node = crate::read_untyped_node::node_at_span(&self.tree, start, end, kind)
-            .ok_or_else(|| format!("no {kind} node spans {start}..{end} in tree {}", self.tree_id))?;
-        Ok(crate::read_untyped_node::line_gaps(node, &self.source, &self.grammar, classify))
+        node_at_index(&self.tree, index).ok_or_else(|| format!("handle {handle} names no node of tree {}", self.tree_id))?;
+        let ctx = ReadCtx::new(&self.source, self.tree_id);
+        let sides_at = |cursor: &mut tree_sitter::TreeCursor<'_>, child: u32| self.grammar.sides_at(cursor, &ctx, child);
+        line_gaps(&self.tree, index, &self.source, &sides_at, classify).map_err(|refusal| refusal.describe(&|kind| self.grammar.kind_name(kind)))
     }
 }
 
@@ -577,22 +617,6 @@ pub struct Engine<G: EngineGrammar> {
     /// The render options resolved once at construction; a render call may
     /// resolve another table over this one.
     options: ResolvedOptions,
-}
-
-/// Result wrapper for parse-and-read calls.
-#[derive(serde::Serialize)]
-pub struct ParseResult<'a> {
-    #[serde(rename = "untypedNode")]
-    pub untyped_node: &'a UntypedNode,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub format: Option<FormatRecord>,
-    /// Which tree this parse produced. Handles already carry it, but the
-    /// boundary needs it on its own to dispose the tree once JavaScript
-    /// drops the last node reading from it.
-    #[serde(rename = "treeId")]
-    pub tree_id: u32,
-    /// The parse's ERROR and MISSING regions; empty for a clean parse.
-    pub errors: Vec<ErrorRegion>,
 }
 
 impl<G: EngineGrammar> Engine<G> {
@@ -641,7 +665,6 @@ impl<G: EngineGrammar> Engine<G> {
             source: Arc::from(source.as_str()),
             format,
             tree_id,
-            nodes: Vec::new(),
         })
     }
 
@@ -649,27 +672,12 @@ impl<G: EngineGrammar> Engine<G> {
         Err("find_and_read not yet implemented — ast-grep-core integration pending".to_string())
     }
 
-    /// Resolve the effective format for rendering, combining engine-level
-    /// override with tree-level format.
-    pub fn render_canonical_node(
-        &self,
-        node: &UntypedNode,
-        canonical: String,
-        tree_format: Option<&FormatRecord>,
-    ) -> Result<String, String> {
-        Ok(apply_render_format(
-            node.source,
-            canonical,
-            self.engine_format.as_ref(),
-            tree_format,
-        ))
-    }
 }
 
-/// Resolve the effective format from source provenance alone — no UntypedNode
-/// required. Engine-level format takes priority; tree-level format applies
-/// only to non-factory nodes (readUntypedNode output). Factory-constructed nodes
-/// get no tree format (they had no original source to preserve).
+/// Resolve the effective format from source provenance alone. Engine-level
+/// format takes priority; tree-level format applies only to non-factory nodes
+/// (read from a parse). Factory-constructed nodes get no tree format (they had
+/// no original source to preserve).
 fn resolve_render_format_from_source<'a>(
     source: Source,
     engine_format: Option<&'a FormatRecord>,
@@ -684,11 +692,9 @@ fn resolve_render_format_from_source<'a>(
     None
 }
 
-/// Apply format to a pre-rendered canonical string using scalar parameters
-/// instead of `&UntypedNode`. This is the public standalone API for format
-/// application — callers that have KindId + Source + Span from any source
-/// (transport structs, readUntypedNode output, etc.) can apply format without
-/// constructing a full `UntypedNode`.
+/// Apply format to a pre-rendered canonical string. This is the public
+/// standalone API for format application, for any caller that knows the
+/// node's provenance.
 ///
 /// Parameters:
 /// - `source` — provenance of the node (Ts/Sg/Factory). Controls whether
@@ -727,25 +733,21 @@ impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
     }
 
     fn kind_of(&self, coord: &NodeCoordinate) -> Option<KindId> {
-        let tree = self.get(&coord.tree_id())?;
-        let index = tree.local_index(coord.handle).ok()?;
-        ParsedTree::<G>::resolve_handle(&tree.nodes, &tree.tree, index).map(|node| KindId(node.grammar_id()))
+        let tree = self.get(&coord.tree)?;
+        node_at_index(&tree.tree, coord.index).map(|node| KindId(node.grammar_id()))
     }
 
-    fn last_list_child_kind(&self, handle: u64, span: crate::types::Span, kind: KindId) -> Option<KindId> {
-        let tree = self.get(&decode_handle(handle).0)?;
-        crate::read_untyped_node::last_list_child(&tree.tree, span.start as usize, span.end as usize, kind.0)
+    fn last_list_child_kind(&self, tree: u32, span: crate::types::Span, kind: KindId) -> Option<KindId> {
+        let tree = self.get(&tree)?;
+        last_list_child(&tree.tree, span.start as usize, span.end as usize, kind.0)
             .map(|child| KindId(child.grammar_id()))
     }
 
     fn for_each_kind_ending_with(&self, coord: &NodeCoordinate, f: &mut dyn FnMut(KindId)) {
-        let Some(tree) = self.get(&coord.tree_id()) else {
+        let Some(tree) = self.get(&coord.tree) else {
             return;
         };
-        let Ok(index) = tree.local_index(coord.handle) else {
-            return;
-        };
-        let mut node = ParsedTree::<G>::resolve_handle(&tree.nodes, &tree.tree, index);
+        let mut node = node_at_index(&tree.tree, coord.index);
         let exact = node.is_some_and(|n| {
             n.start_byte() == coord.span.start as usize && n.end_byte() == coord.span.end as usize
         });
@@ -809,8 +811,6 @@ mod tests {
     #[derive(Clone, Copy)]
     struct TestGrammar;
 
-    impl ReadModel for TestGrammar {}
-
     impl EngineGrammar for TestGrammar {
         fn configure_parser(
             self,
@@ -829,6 +829,10 @@ mod tests {
         fn kind_name(self, _kind: KindId) -> &'static str {
             "test"
         }
+
+        fn sides_at(self, _: &mut tree_sitter::TreeCursor<'_>, _: &ReadCtx<'_>, _: u32) -> Result<Sides, ReadError> {
+            Ok(Sides::default())
+        }
     }
 
     const FNS: &str = "fn a() {}\nmod m { fn b() -> u8 { 0 } fn _c() {} }\nfn _d() { fn e() {} }\n";
@@ -840,35 +844,37 @@ mod tests {
 
     fn parsed(source: &str) -> (ParsedTree<TestGrammar>, u64) {
         let mut engine = Engine::new(TestGrammar, None, ResolvedOptions::default()).expect("engine");
-        let mut tree = engine.parse(source.to_string(), 1).expect("parse");
-        let root = tree.read_root(ReadDepth::SHALLOW);
-        let handle = match root.handle {
-            Some(crate::types::NodeHandle::Own(handle)) => handle,
-            other => panic!("root has no own handle: {other:?}"),
-        };
-        (tree, handle)
+        let tree = engine.parse(source.to_string(), 1).expect("parse");
+        (tree, encode_handle(1, 0))
     }
 
-    fn texts(tree: &ParsedTree<TestGrammar>, stubs: &[UntypedNode]) -> Vec<String> {
-        stubs
+    #[test]
+    fn an_error_node_reads_as_the_bytes_its_coordinate_spans() {
+        let (tree, _) = parsed("fn f() {} @@ fn g() {}");
+        let index = (0..64).find(|&i| node_at_index(tree.tree(), i).is_some_and(|node| node.is_error())).expect("the parse holds an ERROR");
+        let error = tree.read_error(index).expect("an ERROR reads");
+        assert_eq!((error.text.as_str(), error.at.span.start, error.at.span.end), ("@@", 10, 12));
+        assert_eq!((error.at.kind, error.at.tree), (Some(KindId(u16::MAX)), 1));
+        assert_eq!(tree.read_error(0), None);
+    }
+
+    fn texts(tree: &ParsedTree<TestGrammar>, found: &[QueryCoordinate]) -> Vec<String> {
+        found
             .iter()
-            .map(|stub| {
-                let span = stub.span.expect("a stub carries its span");
-                tree.source()[span.start as usize..span.end as usize].lines().next().unwrap_or("").to_string()
-            })
+            .map(|coord| tree.source()[coord.span.start as usize..coord.span.end as usize].lines().next().unwrap_or("").to_string())
             .collect()
     }
 
-    fn walk(tree: &mut ParsedTree<TestGrammar>, root: u64, kinds: &[u16], plan: Option<&Plan>, limit: u32) -> Vec<UntypedNode> {
-        let mut stubs = Vec::new();
+    fn walk(tree: &ParsedTree<TestGrammar>, root: u64, kinds: &[u16], plan: Option<&Plan>, limit: u32) -> Vec<QueryCoordinate> {
+        let mut found = Vec::new();
         let mut resume: Option<Vec<u32>> = None;
         loop {
             let batch = tree.descendants(crate::query::Address::Own { handle: root }, kinds, plan, resume.as_deref(), limit, None).expect("walk");
-            assert!(batch.stubs.len() as u32 <= limit);
-            stubs.extend(batch.stubs);
+            assert!(batch.coordinates.len() as u32 <= limit);
+            found.extend(batch.coordinates);
             match batch.resume {
                 Some(path) => resume = Some(path),
-                None => return stubs,
+                None => return found,
             }
         }
     }
@@ -877,99 +883,121 @@ mod tests {
         Plan::compile(serde_json::from_str(json).expect("plan json")).expect("plan compiles")
     }
 
+    /// The descendant index of every node of `tree`, by its id.
+    fn indexes(tree: &tree_sitter::Tree) -> std::collections::HashMap<usize, u32> {
+        let mut out = std::collections::HashMap::new();
+        let mut cursor = tree.walk();
+        loop {
+            out.insert(cursor.node().id(), cursor.descendant_index() as u32);
+            if cursor.goto_first_child() {
+                continue;
+            }
+            loop {
+                if cursor.goto_next_sibling() {
+                    break;
+                }
+                if !cursor.goto_parent() {
+                    return out;
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn each_coordinate_names_its_own_node_by_its_descendant_index() {
+        let (tree, root) = parsed(FNS);
+        let expected = indexes(&tree.tree);
+        for coord in walk(&tree, root, &[], None, u32::MAX) {
+            let index = decode_handle(coord.handle).1;
+            let node = node_at_index(&tree.tree, index).expect("the coordinate names a node");
+            assert_eq!(Some(&index), expected.get(&node.id()));
+            assert_eq!((node.start_byte() as u32, node.end_byte() as u32, node.grammar_id()), (coord.span.start, coord.span.end, coord.kind));
+        }
+    }
+
+    #[test]
+    fn a_handle_past_the_last_node_is_refused() {
+        let (tree, _) = parsed(FNS);
+        let past = encode_handle(1, tree.tree.root_node().descendant_count() as u32);
+        assert!(tree.line_gaps_at(past, &|_| None).unwrap_err().contains("names no node"));
+    }
+
+    #[test]
+    fn a_walk_from_a_deep_start_hands_out_root_indexes() {
+        let (tree, root) = parsed(FNS);
+        let expected = indexes(&tree.tree);
+        let module = tree.descendants(Address::Own { handle: root }, &[kind_id("mod_item")], None, None, 1, None).expect("walk");
+        let start = Address::Own { handle: module.coordinates[0].handle };
+        let inner = tree.descendants(start, &[kind_id("function_item")], None, None, 16, None).expect("walk");
+        assert_eq!(inner.coordinates.len(), 2, "fn b and fn _c");
+        for coord in &inner.coordinates {
+            let node = node_at_index(&tree.tree, decode_handle(coord.handle).1).expect("the coordinate names a node");
+            assert_eq!(Some(&decode_handle(coord.handle).1), expected.get(&node.id()));
+            assert_eq!((node.start_byte() as u32, node.end_byte() as u32, node.grammar_id()), (coord.span.start, coord.span.end, coord.kind));
+        }
+    }
+
     #[test]
     fn descendants_of_a_kind_come_in_pre_order() {
-        let (mut tree, root) = parsed(FNS);
-        let stubs = walk(&mut tree, root, &[kind_id("function_item")], None, u32::MAX);
+        let (tree, root) = parsed(FNS);
+        let stubs = walk(&tree, root, &[kind_id("function_item")], None, u32::MAX);
         assert_eq!(texts(&tree, &stubs), ["fn a() {}", "fn b() -> u8 { 0 }", "fn _c() {}", "fn _d() { fn e() {} }", "fn e() {}"]);
     }
 
     #[test]
     fn every_batch_limit_yields_the_same_descendants() {
-        let (mut tree, root) = parsed(FNS);
-        let all = walk(&mut tree, root, &[], None, u32::MAX);
+        let (tree, root) = parsed(FNS);
+        let all = walk(&tree, root, &[], None, u32::MAX);
         for limit in [1, 2, 3, 4, 16] {
-            let batched = walk(&mut tree, root, &[], None, limit);
+            let batched = walk(&tree, root, &[], None, limit);
             assert_eq!(texts(&tree, &batched), texts(&tree, &all), "limit {limit}");
         }
     }
 
     #[test]
-    fn each_stub_hydrates_to_the_kind_and_span_it_reports() {
-        let (mut tree, root) = parsed(FNS);
-        for stub in walk(&mut tree, root, &[], None, 2) {
-            let Some(crate::types::NodeHandle::Parent(parent)) = stub.handle else { panic!("a stub names its parent") };
-            let json = tree.read_at(parent, stub.child_index.expect("a stub names its index"), ReadDepth::SHALLOW).expect("hydrate");
-            let read: serde_json::Value = serde_json::from_str(&json).expect("read json");
-            assert_eq!(read["$type"], serde_json::json!(stub.type_.0));
-            let span = stub.span.expect("span");
-            assert_eq!(read["$span"], serde_json::json!({ "start": span.start, "end": span.end }));
-        }
-    }
-
-    #[test]
     fn a_where_plan_selects_by_a_slot_text() {
-        let (mut tree, root) = parsed(FNS);
+        let (tree, root) = parsed(FNS);
         let fns = [kind_id("function_item")];
         let eq = plan(r#"{ "op": "eq", "fields": ["name"], "kinds": [], "text": "b" }"#);
-        let eq_stubs = walk(&mut tree, root, &fns, Some(&eq), 1);
+        let eq_stubs = walk(&tree, root, &fns, Some(&eq), 1);
         assert_eq!(texts(&tree, &eq_stubs), ["fn b() -> u8 { 0 }"]);
         let private = plan(r#"{ "op": "and", "of": [{ "op": "match", "fields": ["name"], "kinds": [], "pattern": "^_" }, { "op": "not", "of": { "op": "eq", "fields": ["name"], "kinds": [], "text": "_c" } }] }"#);
-        let private_stubs = walk(&mut tree, root, &fns, Some(&private), 1);
+        let private_stubs = walk(&tree, root, &fns, Some(&private), 1);
         assert_eq!(texts(&tree, &private_stubs), ["fn _d() { fn e() {} }"]);
         let typed = plan(r#"{ "op": "or", "of": [{ "op": "eq", "fields": ["return_type"], "kinds": [], "text": "u8" }, { "op": "eq", "fields": ["name"], "kinds": [], "text": "e" }] }"#);
-        let typed_stubs = walk(&mut tree, root, &fns, Some(&typed), 4);
+        let typed_stubs = walk(&tree, root, &fns, Some(&typed), 4);
         assert_eq!(texts(&tree, &typed_stubs), ["fn b() -> u8 { 0 }", "fn e() {}"]);
     }
 
     #[test]
     fn a_route_by_kind_admits_only_children_under_no_field() {
-        let (mut tree, root) = parsed(FNS);
+        let (tree, root) = parsed(FNS);
         let lists = [kind_id("declaration_list"), kind_id("block")];
         let by_kind = plan(r#"{ "op": "match", "fields": [], "kinds": ["function_item"], "pattern": "^fn e" }"#);
-        let blocks = walk(&mut tree, root, &lists, Some(&by_kind), 4);
+        let blocks = walk(&tree, root, &lists, Some(&by_kind), 4);
         assert_eq!(texts(&tree, &blocks), ["{ fn e() {} }"]);
         let named_not_kind = plan(r#"{ "op": "eq", "fields": [], "kinds": ["identifier"], "text": "b" }"#);
-        assert!(walk(&mut tree, root, &[kind_id("function_item")], Some(&named_not_kind), 4).is_empty());
+        assert!(walk(&tree, root, &[kind_id("function_item")], Some(&named_not_kind), 4).is_empty());
     }
 
-    fn walk_from(tree: &mut ParsedTree<TestGrammar>, from: crate::query::Address, kinds: &[u16]) -> Vec<String> {
+    fn walk_from(tree: &ParsedTree<TestGrammar>, from: crate::query::Address, kinds: &[u16]) -> Vec<String> {
         let batch = tree.descendants(from, kinds, None, None, u32::MAX, None).expect("walk");
-        texts(tree, &batch.stubs)
+        texts(tree, &batch.coordinates)
     }
 
     #[test]
-    fn a_walk_starts_from_a_stub_or_a_span_address() {
-        let (mut tree, root) = parsed(FNS);
+    fn a_walk_starts_from_a_coordinate_address() {
+        let (tree, root) = parsed(FNS);
         let fns = [kind_id("function_item")];
-        let module = walk(&mut tree, root, &[kind_id("mod_item")], None, u32::MAX).remove(0);
-        let Some(crate::types::NodeHandle::Parent(parent)) = module.handle else { panic!("a stub names its parent") };
-        let child = crate::query::Address::Child { parent, index: module.child_index.expect("index") as u32 };
-        assert_eq!(walk_from(&mut tree, child, &fns), ["fn b() -> u8 { 0 }", "fn _c() {}"]);
-        let outer = walk(&mut tree, root, &fns, None, u32::MAX).remove(3);
-        let span = outer.span.expect("span");
-        let at = crate::query::Address::Span { tree: root, span, kind: outer.type_.0 };
-        assert_eq!(walk_from(&mut tree, at, &fns), ["fn e() {}"]);
-        let none = [u16::MAX];
-        let before = tree.nodes.len();
-        let first = tree.descendants(at, &none, None, None, 1, None).expect("walk");
-        assert!(tree.nodes.len() > before, "a span address mints the coordinates that reach it");
-        let minted = tree.nodes.len();
-        tree.descendants(crate::query::Address::Own { handle: first.origin }, &none, None, None, 1, None).expect("walk");
-        assert_eq!(tree.nodes.len(), minted, "a walk from the origin mints nothing for its start");
+        let module = walk(&tree, root, &[kind_id("mod_item")], None, u32::MAX).remove(0);
+        assert_eq!(walk_from(&tree, crate::query::Address::Own { handle: module.handle }, &fns), ["fn b() -> u8 { 0 }", "fn _c() {}"]);
     }
 
     #[test]
     fn a_plan_holds_over_a_list_of_addresses_in_order() {
-        let (mut tree, root) = parsed(FNS);
-        let stubs = walk(&mut tree, root, &[kind_id("function_item")], None, u32::MAX);
-        let addresses: Vec<crate::query::Address> = stubs
-            .iter()
-            .map(|stub| match stub.handle {
-                Some(crate::types::NodeHandle::Parent(parent)) => crate::query::Address::Child { parent, index: stub.child_index.expect("index") as u32 },
-                ref other => panic!("a stub names its parent, not {other:?}"),
-            })
-            .collect();
+        let (tree, root) = parsed(FNS);
+        let found = walk(&tree, root, &[kind_id("function_item")], None, u32::MAX);
+        let addresses: Vec<crate::query::Address> = found.iter().map(|coord| crate::query::Address::Own { handle: coord.handle }).collect();
         let private = plan(r#"{ "op": "match", "fields": ["name"], "kinds": [], "pattern": "^_" }"#);
         assert_eq!(tree.plan_holds(&addresses, &private).expect("holds"), [false, false, true, true, false]);
         let elsewhere = crate::query::Address::Own { handle: encode_handle(9, 0) };
@@ -978,26 +1006,26 @@ mod tests {
 
     #[test]
     fn a_depth_limit_stops_the_walk_below_it() {
-        let (mut tree, root) = parsed(FNS);
+        let (tree, root) = parsed(FNS);
         let children = tree.descendants(crate::query::Address::Own { handle: root }, &[], None, None, u32::MAX, Some(1)).expect("walk");
-        assert_eq!(texts(&tree, &children.stubs), ["fn a() {}", "mod m { fn b() -> u8 { 0 } fn _c() {} }", "fn _d() { fn e() {} }"]);
+        assert_eq!(texts(&tree, &children.coordinates), ["fn a() {}", "mod m { fn b() -> u8 { 0 } fn _c() {} }", "fn _d() { fn e() {} }"]);
         let mut resumed = Vec::new();
         let mut resume: Option<Vec<u32>> = None;
         loop {
             let batch = tree.descendants(crate::query::Address::Own { handle: root }, &[], None, resume.as_deref(), 1, Some(1)).expect("walk");
-            resumed.extend(batch.stubs);
+            resumed.extend(batch.coordinates);
             match batch.resume {
                 Some(path) => resume = Some(path),
                 None => break,
             }
         }
-        assert_eq!(texts(&tree, &resumed), texts(&tree, &children.stubs));
+        assert_eq!(texts(&tree, &resumed), texts(&tree, &children.coordinates));
     }
 
     #[test]
     fn an_extra_and_its_interior_are_never_descendants() {
-        let (mut tree, root) = parsed("/// doc\nfn a() {}\n");
-        let kinds: Vec<u16> = walk(&mut tree, root, &[], None, u32::MAX).iter().map(|stub| stub.type_.0).collect();
+        let (tree, root) = parsed("/// doc\nfn a() {}\n");
+        let kinds: Vec<u16> = walk(&tree, root, &[], None, u32::MAX).iter().map(|coord| coord.kind).collect();
         for extra in ["line_comment", "doc_comment", "outer_doc_comment_marker"] {
             assert!(!kinds.contains(&kind_id(extra)), "{extra} walked");
         }
@@ -1023,70 +1051,21 @@ mod tests {
         }
     }
 
-    fn node(source: Source) -> UntypedNode {
-        // KindId(1) is the `identifier` symbol in the Rust grammar (see
-        // kind_ids.rs); used for test assertions. The render fn below formats
-        // the numeric id — tests assert on the number, not the name.
-        UntypedNode {
-            type_: crate::types::KindId(1),
-            display_type: None,
-            source,
-            named: true,
-            fields: None,
-            children: None,
-            text: Some("x".to_string()),
-            span: None,
-            handle: None,
-            child_index: None,
-            trivia_data: None,
-            slot_order: None,
-            same_line: false,
-            tokens_between: 0,
-            text_only: false,
-        }
+    #[test]
+    fn the_engine_format_wraps_any_render() {
+        let engine_format = format_record("<<", ">>");
+        assert_eq!(apply_render_format(Source::Factory, "rendered:1".to_string(), Some(&engine_format), None), "<<rendered:1>>");
     }
 
     #[test]
-    fn render_canonical_node_preserves_engine_format() {
-        let engine = Engine::new(
-            TestGrammar,
-            Some(format_record("<<", ">>")),
-            ResolvedOptions::default(),
-        )
-        .unwrap();
-
-        let rendered = engine
-            .render_canonical_node(&node(Source::Factory), "rendered:1".to_string(), None)
-            .unwrap();
-
-        assert_eq!(rendered, "<<rendered:1>>");
+    fn the_tree_format_wraps_a_read_node() {
+        let tree_format = format_record("[", "]");
+        assert_eq!(apply_render_format(Source::Ts, "canonical".to_string(), None, Some(&tree_format)), "[canonical]");
     }
 
     #[test]
-    fn render_canonical_node_preserves_tree_format_for_tree_nodes() {
-        let engine = Engine::new(TestGrammar, None, ResolvedOptions::default()).unwrap();
-        let tree_fmt = format_record("[", "]");
-
-        let rendered = engine
-            .render_canonical_node(&node(Source::Ts), "canonical".to_string(), Some(&tree_fmt))
-            .unwrap();
-
-        assert_eq!(rendered, "[canonical]");
-    }
-
-    #[test]
-    fn render_canonical_node_does_not_apply_tree_format_to_factory_nodes() {
-        let engine = Engine::new(TestGrammar, None, ResolvedOptions::default()).unwrap();
-        let tree_fmt = format_record("[", "]");
-
-        let rendered = engine
-            .render_canonical_node(
-                &node(Source::Factory),
-                "canonical".to_string(),
-                Some(&tree_fmt),
-            )
-            .unwrap();
-
-        assert_eq!(rendered, "canonical");
+    fn the_tree_format_leaves_a_factory_node_alone() {
+        let tree_format = format_record("[", "]");
+        assert_eq!(apply_render_format(Source::Factory, "canonical".to_string(), None, Some(&tree_format)), "canonical");
     }
 }

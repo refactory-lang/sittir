@@ -40,7 +40,7 @@ describe('the nested integer decimal supertype', () => {
 	});
 
 	it('reads each arm back as its own kind', () => {
-		const root = pyNative.parseAndRead('x = 3\ny = 3L\nz = 3j\n', { deep: true }).root;
+		const root = pyNative.parseAndRead('x = 3\ny = 3L\nz = 3j\n', { depth: Infinity }).root;
 		expect(kindsOf(py.kinds.IntegerDecimalPlain, root)).toEqual(['3']);
 		expect(kindsOf(py.kinds.IntegerDecimalLong, root)).toEqual(['3L']);
 		expect(kindsOf(py.kinds.IntegerDecimalImaginary, root)).toEqual(['3j']);

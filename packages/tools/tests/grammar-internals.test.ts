@@ -66,7 +66,7 @@ describe.each(stableGrammars())('%s grammar internals', (grammar) => {
 			expect(factories._factoryMap[kind]).toBeTypeOf('function');
 			expect(coercion._fromMap[kind]).toBeTypeOf('function');
 			expect(engine.render(wrapped).toString()).toBe(source);
-			expect(wrap.readNode(parsed.tree)).toMatchObject({ $type: wrapped.$type });
+			expect(wrap.wrapNode(parsed.tree.read!(0), parsed.tree)).toMatchObject({ $type: wrapped.$type });
 		} finally {
 			engine.dispose();
 		}

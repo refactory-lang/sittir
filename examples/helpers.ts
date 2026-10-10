@@ -1,11 +1,16 @@
 import type { NodeTrivia } from '@sittir/types';
 import { readFileSync } from 'node:fs';
 
+/** Whether a trivia entry is a node (a comment) rather than a whitespace unit variant, which carries layout only. */
+function isTriviaNode(entry: unknown): boolean {
+	return typeof entry === 'object' && entry !== null;
+}
+
 /**
  * The kind tree of a wrapped node — `$type` plus each `_<slot>` storage
  * value, hydrated through the wrap accessors — with source positions and
- * text dropped, so two parses of differently-formatted equivalent source
- * compare equal.
+ * text dropped, and whitespace trivia with them, so two parses of
+ * differently-formatted equivalent source compare equal.
  */
 export function structuralShape(node: unknown): unknown {
 	if (Array.isArray(node)) return node.map(structuralShape);
@@ -20,12 +25,15 @@ export function structuralShape(node: unknown): unknown {
 	}
 	const isBareLeaf = Object.keys(shape).length === 1;
 	if (typeof record.$text === 'string' && isBareLeaf) shape.$text = record.$text;
-	if (record.$_trivia !== undefined) {
-		const trivia = record.$_trivia as NodeTrivia;
+	const trivia = (record.$_layout as { readonly trivia?: NodeTrivia } | undefined)?.trivia;
+	if (trivia !== undefined) {
+		const sides = record.$trivia as { leading(): readonly unknown[]; trailing(): readonly unknown[] };
 		const triviaShape: Record<string, unknown> = {};
-		if (trivia.leading !== undefined) triviaShape.leading = trivia.leading.map(structuralShape);
-		if (trivia.trailing !== undefined) triviaShape.trailing = trivia.trailing.map(structuralShape);
-		shape.$_trivia = triviaShape;
+		const leading = trivia.leading === undefined ? [] : sides.leading().filter(isTriviaNode);
+		const trailing = trivia.trailing === undefined ? [] : sides.trailing().filter(isTriviaNode);
+		if (leading.length > 0) triviaShape.leading = leading.map(structuralShape);
+		if (trailing.length > 0) triviaShape.trailing = trailing.map(structuralShape);
+		if (leading.length + trailing.length > 0) shape.$_layout = { trivia: triviaShape };
 	}
 	return shape;
 }

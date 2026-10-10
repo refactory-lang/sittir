@@ -101,7 +101,7 @@ import {
 	type RefineFormInfo
 } from './refine-emit.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
-import { configKeysOf, elementsSeatOf, emittedElementsSeats, flattenSeatsOf, prefixedKey } from './overlays/sub-factories.ts';
+import { configKeysOf, elementsSeatOf, emittedElementsSeats, flattenSeatsOf, prefixedKey } from '../compiler/model/sub-factories.ts';
 import type { CodegenEmitter } from './emitter.ts';
 
 export interface EmitFactoriesConfig {
@@ -1551,7 +1551,7 @@ function emitFieldCarryingFactory(
 		}
 	}
 	const view = plan.viewPlan === undefined || owner === undefined ? undefined : ownerViewParts(plan.viewPlan, owner.storage, owner.accessor, 'factory');
-	const groups = groupSeatParts(plan, (slot) => `() => ${slotsToEmit.find((f) => f.propertyName === slot)!.storageKey}`);
+	const groups = groupSeatParts(plan, (hint) => `() => ${hint.stored}`);
 	const spelled = spelledGroupSlots(plan);
 	lines.push(...(view?.prelude ?? []), ...groups.prelude);
 	lines.push('  const handle = currentHandle();');
@@ -1686,18 +1686,6 @@ export function valueStorageExpr(
 export function kindEnumTextExpr(text: string, kindEntries: readonly KindEnumEntry[] | undefined): string {
 	const entry = kindEntries === undefined ? undefined : findKindEntryForLiteral(kindEntries, text);
 	return entry === undefined ? `'${escForSource(text)}'` : `TSKindId.${entry.member}`;
-}
-
-export function childrenSetterRestType(
-	children: readonly AssembledNonterminal[],
-	childElem: string,
-	childRest: string
-): string {
-	const anyMultiple = children.some((c) => isMultiple(c));
-	const anyNonEmpty = children.some((c) => isNonEmpty(c));
-	if (!anyMultiple) return `readonly [${childRest}]`;
-	if (anyNonEmpty) return `NonEmptyArray<${childElem}>`;
-	return `${childRest}[]`;
 }
 
 function renameUnusedConfigParam(lines: string[]): string {
@@ -2093,7 +2081,18 @@ export function listViewPlanOf(
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): ListViewPlan | undefined {
 	const target = listViewTarget(node, nodeMap);
-	if (target === undefined) return undefined;
+	return target === undefined ? undefined : viewPlanOfTarget(target, nodeMap, kindEntries);
+}
+
+export function listSelfViewPlan(list: AssembledList, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): ListViewPlan {
+	return viewPlanOfTarget({ list }, nodeMap, kindEntries);
+}
+
+function viewPlanOfTarget(
+	target: { readonly owner?: AssembledNonterminal; readonly list: AssembledList },
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): ListViewPlan {
 	const wrapper = separatedListSurface(target.list, nodeMap, kindEntries).wrapper;
 	const elements = canonicalSeparatedListField(target.list);
 	return {

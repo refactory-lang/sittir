@@ -5,7 +5,7 @@ edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
-description = "Render / readNode primitives for sittir — hot-path engine shared across per-grammar render crates."
+description = "Read / render primitives for sittir — hot-path engine shared across per-grammar render crates."
 
 [features]
 # Enable napi FromNapiValue / ToNapiValue impls for core boundary types
@@ -20,7 +20,6 @@ sittir-transport-macros = { path = "../sittir-transport-macros" }
 serde = { workspace = true }
 serde_json = { workspace = true }
 tree-sitter = { workspace = true }
-indexmap = { workspace = true }
 # napi + napi-derive: `#[napi(object)]` on boundary types expands to
 # references against the napi runtime crate. Both are pure Rust — no
 # Node.js is required at compile time, so sittir-core builds without
@@ -39,10 +38,8 @@ napi-derive = { version = "3", optional = true }
 sha2 = { workspace = true }
 
 [dev-dependencies]
-# Grammar crates used only by the readNode shape-gate tests (T025).
-# Kept as dev-deps so the `sittir-core` production artifact doesn't
-# pull grammar code — the real grammar binding lives in the per-
-# grammar napi crates.
+# Grammar crates used only by the engine's tree-query tests. Kept as
+# dev-deps so the `sittir-core` production artifact doesn't pull grammar
+# code — the real grammar binding lives in the per-grammar napi crates.
 tree-sitter-rust = "0.24"
-tree-sitter-typescript = "0.23"
 tree-sitter-python = "0.25"

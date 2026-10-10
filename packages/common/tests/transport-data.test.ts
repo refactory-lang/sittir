@@ -12,120 +12,48 @@ const project = (node: never): ReturnType<typeof toTransportData> => {
 	return toTransportData(held, STORED_TRIVIA);
 };
 
-const leaf = (text: string, start: number) => ({
-	$type: 1,
-	$source: 0,
-	$named: true,
-	$text: text,
-	$span: { start, end: start + text.length }
-});
-const stub = (start: number, end: number, childIndex: number) => ({
-	$type: 2,
-	$source: 0,
-	$named: true,
-	$span: { start, end },
-	$parentHandle: 0,
-	$childIndex: childIndex
-});
-/** A child a read expanded: its own span and storage, and the tag of its tree. */
-const deep = (start: number, end: number, storage: Record<string, unknown>) => ({
-	$type: 4,
-	$source: 0,
-	$named: true,
-	$span: { start, end },
-	$treeHandle: 0,
-	...storage
-});
+/** The coordinate a read gives the node at `start..end`; its handle is its start, a stand-in for its descendant index. */
+const at = ($type: number, start: number, end: number) => ({ $treeHandle: start, $span: { start, end }, $type });
+const leaf = (text: string, start: number) => ({ $type: 1, $text: text, $_layout: { at: at(1, start, start + text.length) } });
+/** A child past the read's depth: its coordinate alone. */
+const coordinate = (start: number, end: number) => at(2, start, end);
+/** A child a read expanded: its storage and the coordinate it was read at. */
+const deep = (start: number, end: number, storage: Record<string, unknown>) => ({ $type: 4, $_layout: { at: at(4, start, end) }, ...storage });
+const built = (storage: Record<string, unknown> = {}) => ({ $type: 9, $source: 2, $named: true, ...storage });
 
 describe('toTransportData', () => {
-	it('folds an unedited node with only stubs and leaves below it to its coordinate', () => {
-		const node = {
-			$type: 3,
-			$source: 0,
-			$named: true,
-			$span: { start: 0, end: 20 },
-			$handle: 0,
-			_name: leaf('main', 3),
-			_body: stub(8, 20, 2)
-		};
-		expect(project(node as never)).toEqual({
-			$type: 3,
-			$source: 0,
-			$named: true,
-			$span: { start: 0, end: 20 },
-			$treeHandle: 0
-		});
+	it('folds an unedited node with only coordinates and leaves below it to its coordinate', () => {
+		const node = { $type: 3, $_layout: { at: at(3, 0, 20) }, _name: leaf('main', 3), _body: coordinate(8, 20) };
+		expect(project(node as never)).toEqual(at(3, 0, 20));
 	});
 
-	it('folds a deep read by its root, whatever handles its descendants carry', () => {
-		const node = {
-			$type: 3,
-			$source: 0,
-			$named: true,
-			$span: { start: 0, end: 20 },
-			$handle: 0,
-			_body: deep(8, 20, { _statements: [deep(10, 18, { _name: leaf('x', 10) })] })
-		};
-		expect(project(node as never)).toEqual({
-			$type: 3,
-			$source: 0,
-			$named: true,
-			$span: { start: 0, end: 20 },
-			$treeHandle: 0
-		});
+	it('folds a deep read by its root, whatever its descendants carry', () => {
+		const node = { $type: 3, $_layout: { at: at(3, 0, 20) }, _body: deep(8, 20, { _statements: [deep(10, 18, { _name: leaf('x', 10) })] }) };
+		expect(project(node as never)).toEqual(at(3, 0, 20));
 	});
 
 	it('keeps a node whose child was replaced, and strips its coordinate', () => {
-		const rebuilt = { $type: 9, $source: 2, $named: true, _x: leaf('y', 0) };
-		const node = {
-			$type: 3,
-			$source: 0,
-			$named: true,
-			$span: { start: 0, end: 20 },
-			$handle: 0,
-			_name: leaf('main', 3),
-			_body: rebuilt
-		};
+		const rebuilt = built({ _x: { $type: 1, $text: 'y' } });
+		const node = { $type: 3, $_layout: { at: at(3, 0, 20) }, _name: leaf('main', 3), _body: rebuilt };
 		const out = project(node as never) as unknown as Record<string, unknown>;
 		expect(treeHandleOf(out)).toBeUndefined();
-		expect(out.$span).toBeUndefined();
+		expect(out.$_layout).toBeUndefined();
 		expect(out._body).toEqual(rebuilt);
 	});
 
-	it('folds an untouched child inside an edited parent', () => {
-		const parent = {
-			$type: 3,
-			$source: 0,
-			$named: true,
-			_a: stub(0, 4, 0),
-			_b: { $type: 9, $source: 2, $named: true }
-		};
-		const out = project(parent as never) as unknown as Record<string, unknown>;
-		expect(out._a).toEqual({ $type: 2, $source: 0, $named: true, $span: { start: 0, end: 4 }, $treeHandle: 0 });
+	it('crosses a child past the read\'s depth inside an edited parent as its coordinate', () => {
+		const out = project({ $type: 3, _a: coordinate(0, 4), _b: built() } as never) as unknown as Record<string, unknown>;
+		expect(out._a).toEqual(coordinate(0, 4));
 	});
 
-	it('folds an expanded child of an edited parent by its own span', () => {
-		const parent = {
-			$type: 3,
-			$source: 0,
-			$named: true,
-			_name: { $type: 9, $source: 2, $named: true, $text: 'g' },
-			_body: deep(8, 20, { _statements: [deep(10, 18, { _name: leaf('x', 10) })] })
-		};
+	it('folds an expanded child of an edited parent by its own coordinate', () => {
+		const parent = { $type: 3, _name: built({ $text: 'g' }), _body: deep(8, 20, { _statements: [deep(10, 18, { _name: leaf('x', 10) })] }) };
 		const out = project(parent as never) as unknown as Record<string, unknown>;
-		expect(out._body).toEqual({ $type: 4, $source: 0, $named: true, $span: { start: 8, end: 20 }, $treeHandle: 0 });
+		expect(out._body).toEqual(at(4, 8, 20));
 	});
 
 	it('does not fold a node whose own trivia sits outside its span, but folds over a child that carries some', () => {
-		const withOwnTrivia = {
-			$type: 3,
-			$source: 0,
-			$named: true,
-			$span: { start: 0, end: 4 },
-			$handle: 0,
-			$_trivia: { leading: [leaf('// c', 0)] },
-			_a: stub(0, 4, 0)
-		};
+		const withOwnTrivia = { $type: 3, $_layout: { at: at(3, 5, 9), trivia: { leading: [leaf('// c', 0)] } }, _a: coordinate(5, 9) };
 		const own = project(withOwnTrivia as never) as unknown as Record<string, unknown>;
 		expect(treeHandleOf(own)).toBeUndefined();
 		expect((own.$_layout as { trivia?: unknown } | undefined)?.trivia).toBeDefined();
@@ -133,130 +61,59 @@ describe('toTransportData', () => {
 		// A child's comments lie inside the parent's span: the parent's bytes
 		// carry them, so a deep read of a commented file still folds like a
 		// shallow one.
-		const withChildTrivia = {
-			$type: 3,
-			$source: 0,
-			$named: true,
-			$span: { start: 0, end: 8 },
-			$handle: 0,
-			_a: { ...deep(5, 8, {}), $_trivia: { leading: [leaf('// c', 0)] } }
-		};
-		expect(project(withChildTrivia as never)).toEqual({
-			$type: 3,
-			$source: 0,
-			$named: true,
-			$span: { start: 0, end: 8 },
-			$treeHandle: 0
-		});
+		const child = deep(5, 8, {});
+		const withChildTrivia = { $type: 3, $_layout: { at: at(3, 0, 8) }, _a: { ...child, $_layout: { ...child.$_layout, trivia: { leading: [leaf('// c', 0)] } } } };
+		expect(project(withChildTrivia as never)).toEqual(at(3, 0, 8));
 	});
 
 	it('never lets a structural node cross with $text or a stale coordinate', () => {
-		const node = {
-			$type: 3,
-			$source: 0,
-			$named: true,
-			$text: 'stale',
-			$span: { start: 0, end: 5 },
-			$handle: 0,
-			_a: { $type: 9, $source: 2, $named: true }
-		};
+		const node = { $type: 3, $text: 'stale', $_layout: { at: at(3, 0, 5) }, _a: built() };
 		const out = project(node as never) as unknown as Record<string, unknown>;
 		expect(out.$text).toBeUndefined();
 		expect(treeHandleOf(out)).toBeUndefined();
-		expect(out.$span).toBeUndefined();
+		expect(out.$_layout).toBeUndefined();
 	});
 
 	it('sends a leaf that kept its trivia as itself, never as a coordinate', () => {
-		const withTrivia = { ...leaf('2', 12), $parentHandle: 12, $childIndex: 1, $_trivia: { trailing: [leaf('# two', 14)] } };
+		const two = leaf('2', 12);
+		const withTrivia = { ...two, $_layout: { ...two.$_layout, trivia: { trailing: [leaf('# two', 14)] } } };
 		const out = project(withTrivia as never) as unknown as Record<string, unknown>;
 		expect(treeHandleOf(out)).toBeUndefined();
-		expect(out.$childIndex).toBeUndefined();
 		expect(out.$text).toBe('2');
 		expect((out.$_layout as { trivia?: unknown } | undefined)?.trivia).toBeDefined();
 	});
 
 	it('leaves a kind id or a boolean in a slot inert', () => {
-		const node = {
-			$type: 3,
-			$source: 0,
-			$named: true,
-			$span: { start: 0, end: 6 },
-			$handle: 0,
-			_marker: true,
-			_keyword: 42
-		};
-		expect(project(node as never)).toEqual({
-			$type: 3,
-			$source: 0,
-			$named: true,
-			$span: { start: 0, end: 6 },
-			$treeHandle: 0
-		});
+		const node = { $type: 3, $_layout: { at: at(3, 0, 6) }, _marker: true, _keyword: 42 };
+		expect(project(node as never)).toEqual(at(3, 0, 6));
 	});
 });
 
 describe('treeHandleOf', () => {
-	it('reads the tree from whichever handle a node carries', () => {
-		expect(treeHandleOf({ $handle: 3 })).toBe(3);
-		expect(treeHandleOf({ $parentHandle: 4, $childIndex: 0 })).toBe(4);
-		expect(treeHandleOf({ $treeHandle: 5 })).toBe(5);
-		expect(treeHandleOf({ $childIndex: 0 })).toBeUndefined();
+	it('reads the tree handle of a coordinate, or of the coordinate a read node carries', () => {
+		expect(treeHandleOf(at(3, 5, 6))).toBe(5);
+		expect(treeHandleOf({ $type: 3, $_layout: { at: at(3, 4, 6) } })).toBe(4);
+		expect(treeHandleOf({ $type: 3, $_layout: { trivia: {} } })).toBeUndefined();
 	});
 });
 
 describe('markEdited', () => {
 	it('detaches the coordinate and nothing else', () => {
-		const out = markEdited({
-			$type: 3,
-			$span: { start: 0, end: 1 },
-			$parentHandle: 4,
-			$childIndex: 1,
-			$textOnly: true,
-			$text: 'x',
-			_a: 1
-		});
-		expect(out).toEqual({ $type: 3, $text: 'x', _a: 1 });
+		expect(markEdited({ $type: 3, $_layout: { at: at(3, 0, 1) }, $text: 'x', _a: 1 })).toEqual({ $type: 3, $text: 'x', _a: 1 });
+		const trivia = { leading: [8] };
+		expect(markEdited({ $type: 3, $_layout: { at: at(3, 0, 1), trivia }, _a: 1 })).toEqual({ $type: 3, $_layout: { trivia }, _a: 1 });
 	});
 });
 
 describe('detachCoordinates', () => {
-	it('keeps the coordinate of an unedited node whose slots are projected from its text', () => {
-		const node = { $type: 118, $text: "'a'", $span: { start: 3, end: 6 }, $handle: 17, _content: 'a', _b: true };
-		expect(detachCoordinates(node)).toEqual({
-			$type: 118,
-			$text: "'a'",
-			$span: { start: 3, end: 6 },
-			$treeHandle: 17,
-			$textOnly: true,
-			_content: 'a',
-			_b: true
-		});
+	it('keeps the coordinate of a text leaf, which addresses its own bytes only', () => {
+		const node = leaf('x', 1);
+		expect(detachCoordinates(structuredClone(node))).toEqual(node);
 	});
 
-	it('stamps a surviving coordinate text-only, and a stripped node carries none to stamp', () => {
-		const leaf = { $type: 5, $text: 'x', $span: { start: 1, end: 2 }, $treeHandle: 9 };
-		expect(detachCoordinates({ ...leaf })).toEqual({ ...leaf, $textOnly: true });
-		const parent = { $type: 1, $span: { start: 0, end: 2 }, $handle: 2, _child: { ...leaf } };
-		expect(detachCoordinates(parent)).toEqual({ $type: 1, _child: { ...leaf, $textOnly: true } });
-	});
-
-	it('re-keys a surviving stub coordinate to the tree its span slices', () => {
-		const stubLeaf = { $type: 5, $text: 'x', $span: { start: 1, end: 2 }, $parentHandle: 9, $childIndex: 0 };
-		expect(detachCoordinates({ ...stubLeaf })).toEqual({
-			$type: 5,
-			$text: 'x',
-			$span: { start: 1, end: 2 },
-			$childIndex: 0,
-			$treeHandle: 9,
-			$textOnly: true
-		});
-	});
-
-	it('strips a node that holds child nodes, and a node an edit detached from its span', () => {
-		const parent = { $type: 1, $text: 'x', $span: { start: 0, end: 1 }, $handle: 2, _child: { $type: 3, $span: { start: 0, end: 1 } } };
-		expect(detachCoordinates(parent)).toEqual({ $type: 1, _child: { $type: 3, $span: { start: 0, end: 1 } } });
-		const edited = { $type: 118, $text: "'a'", _content: 'b' };
-		expect(detachCoordinates(edited)).toEqual({ $type: 118, _content: 'b' });
+	it('strips the coordinate of a node that holds slots, and keeps its children\'s', () => {
+		const parent = { $type: 1, $_layout: { at: at(1, 0, 2) }, _child: leaf('x', 1), _rest: coordinate(1, 2) };
+		expect(detachCoordinates(structuredClone(parent))).toEqual({ $type: 1, _child: leaf('x', 1), _rest: coordinate(1, 2) });
 	});
 });
 
@@ -283,8 +140,8 @@ describe('the tree token a parsed object holds', () => {
 	});
 
 	it('does not cross: a folded coordinate, a rebuilt node and a kept leaf all drop it', () => {
-		const folded = toTransportData(held({ $type: 5, $span: { start: 1, end: 2 }, $handle: 9 }) as never, STORED_TRIVIA);
-		expect(folded).toEqual({ $type: 5, $span: { start: 1, end: 2 }, $treeHandle: 9 });
+		const folded = toTransportData(held({ $type: 5, $_layout: { at: at(5, 1, 2) } }) as never, STORED_TRIVIA);
+		expect(folded).toEqual(at(5, 1, 2));
 		expect(treeTokenOf(folded)).toBeUndefined();
 		const rebuilt = toTransportData(held({ $type: 1, _child: { $type: 5, $text: 'x' } }) as never, STORED_TRIVIA) as never as { _child: object };
 		expect(rebuilt).toEqual({ $type: 1, _child: { $type: 5, $text: 'x' } });
@@ -293,38 +150,38 @@ describe('the tree token a parsed object holds', () => {
 	});
 
 	it('is detached with the coordinate by an edit, although the edit copies the node by spread', () => {
-		const edited = markEdited(held({ $type: 1, $handle: 2, $span: { start: 0, end: 1 }, _a: 1 }));
+		const edited = markEdited(held({ $type: 1, $_layout: { at: at(1, 0, 1) }, _a: 1 }));
 		expect(edited).toEqual({ $type: 1, _a: 1 });
 		expect(treeTokenOf(edited)).toBeUndefined();
 	});
 
 	it('is removed from transport data detached in place', () => {
-		const leaf = detachCoordinates(held({ $type: 5, $text: 'x', $span: { start: 1, end: 2 }, $treeHandle: 9 }));
-		expect(leaf).toEqual({ $type: 5, $text: 'x', $span: { start: 1, end: 2 }, $treeHandle: 9, $textOnly: true });
-		expect(treeTokenOf(leaf)).toBeUndefined();
+		const detached = detachCoordinates(held(leaf('x', 1)));
+		expect(detached).toEqual(leaf('x', 1));
+		expect(treeTokenOf(detached)).toBeUndefined();
 	});
 
 	it('is removed from the trivia a detached node owns, at every side and depth', () => {
-		const comment = () => ({ $type: 7, $span: { start: 0, end: 1 }, $other: [{ $type: 8 }] });
+		const comment = () => ({ $type: 7, $_layout: { at: at(7, 0, 1) }, _content: [{ $type: 8 }] });
 		const node = detachCoordinates(
-			held({ $type: 1, _a: 1, $_trivia: { leading: [comment()], trailing: [comment()], inner: { gap: [comment()] } } })
+			held({ $type: 1, _a: 1, $_layout: { trivia: { leading: [comment()], trailing: [comment()], inner: { gap: [comment()] } } } })
 		);
-		const entries = [...node.$_trivia.leading, ...node.$_trivia.trailing, ...node.$_trivia.inner.gap];
+		const trivia = node.$_layout.trivia;
+		const entries = [...trivia.leading, ...trivia.trailing, ...trivia.inner.gap];
 		expect(entries).toHaveLength(3);
 		for (const entry of entries) {
 			expect(treeTokenOf(entry)).toBeUndefined();
-			expect(treeTokenOf(entry.$other[0]!)).toBeUndefined();
+			expect(treeTokenOf(entry._content[0]!)).toBeUndefined();
 		}
 	});
 
 	it('is required of a coordinate: one that holds no tree is refused, as a node, as a child and as a trivia entry', () => {
 		const refusal = /does not hold that tree.*parse the source here/;
-		const coordinate = { $type: 5, $span: { start: 1, end: 2 }, $handle: 9 };
-		expect(() => toTransportData(coordinate as never, STORED_TRIVIA)).toThrow(refusal);
-		expect(() => toTransportData({ $type: 1, _child: coordinate } as never, STORED_TRIVIA)).toThrow(refusal);
-		const comment = { $type: 7, $span: { start: 0, end: 1 }, $treeHandle: 9 };
-		expect(() => toTransportData({ $type: 1, _a: 1, $_trivia: { inner: { gap: [comment] } } } as never, STORED_TRIVIA)).toThrow(refusal);
-		expect(() => toTransportData(structuredClone(held({ ...coordinate })) as never, STORED_TRIVIA)).toThrow(refusal);
+		const read = { $type: 5, $_layout: { at: at(5, 1, 2) } };
+		expect(() => toTransportData(read as never, STORED_TRIVIA)).toThrow(refusal);
+		expect(() => toTransportData({ $type: 1, _child: at(5, 1, 2) } as never, STORED_TRIVIA)).toThrow(refusal);
+		expect(() => toTransportData({ $type: 1, _a: 1, $_layout: { trivia: { inner: { gap: [at(7, 0, 1)] } } } } as never, STORED_TRIVIA)).toThrow(refusal);
+		expect(() => toTransportData(structuredClone(held({ ...read })) as never, STORED_TRIVIA)).toThrow(refusal);
 	});
 
 	it('is not required of built data, which names no tree', () => {
@@ -333,8 +190,8 @@ describe('the tree token a parsed object holds', () => {
 	});
 
 	it('passes with a spread copy made on this thread', () => {
-		const coordinate = held({ $type: 5, $span: { start: 1, end: 2 }, $handle: 9 });
-		expect(toTransportData({ ...coordinate } as never, STORED_TRIVIA)).toEqual({ $type: 5, $span: { start: 1, end: 2 }, $treeHandle: 9 });
+		const read = held({ $type: 5, $_layout: { at: at(5, 1, 2) } });
+		expect(toTransportData({ ...read } as never, STORED_TRIVIA)).toEqual(at(5, 1, 2));
 	});
 });
 
@@ -342,13 +199,13 @@ describe('line-gap whitespace at the render root', () => {
 	const comment = { $type: 3, $source: 0, $named: true, $text: '// c' };
 
 	it('leaves out the whitespace at the root edges and keeps what sits between its comment and the root', () => {
-		const node = { $type: 5, $source: 0, $named: true, $text: 'b', $_trivia: { leading: [9, comment, 8], trailing: [8] } };
+		const node = { $type: 5, $source: 0, $named: true, $text: 'b', $_layout: { trivia: { leading: [9, comment, 8], trailing: [8] } } };
 		expect(toTransportData(node as never, STORED_TRIVIA)).toEqual({ $type: 5, $source: 0, $named: true, $text: 'b', $_layout: { trivia: { leading: [comment, 8] } } });
 	});
 
 	it('keeps every entry below the root', () => {
-		const child = { $type: 5, $source: 0, $named: true, $text: 'b', $_trivia: { leading: [9], trailing: [8] } };
-		const root = { $type: 6, $source: 0, $named: true, _body: child, $_trivia: { leading: [9] } };
+		const child = { $type: 5, $source: 0, $named: true, $text: 'b', $_layout: { trivia: { leading: [9], trailing: [8] } } };
+		const root = { $type: 6, $source: 0, $named: true, _body: child, $_layout: { trivia: { leading: [9] } } };
 		expect(toTransportData(root as never, STORED_TRIVIA)).toEqual({
 			$type: 6,
 			$source: 0,
@@ -362,15 +219,15 @@ describe('readTrivia', () => {
 	const gaps = () => ({ leading: [{ kind: 9, start: 0 }], trailing: [], previous: null, next: null });
 
 	it('derives the line gaps of a node a read returned', () => {
-		const read = { $type: 5, $handle: 7, $span: { start: 2, end: 3 } };
+		const read = { $type: 5, $_layout: { at: at(5, 2, 3) } };
 		holdReadTree(read, mintTreeToken(1));
 		expect(readTrivia(read, gaps)?.leading).toEqual([9]);
 	});
 
 	it('gives a copy of a read node exactly the trivia it was given', () => {
-		const read = { $type: 5, $handle: 7, $span: { start: 2, end: 3 } };
+		const read = { $type: 5, $_layout: { at: at(5, 2, 3) } };
 		holdReadTree(read, mintTreeToken(1));
-		const copy = { ...read, $_trivia: { trailing: [8] } };
+		const copy = { ...read, $_layout: { ...read.$_layout, trivia: { trailing: [8] } } };
 		expect(readTrivia(copy, gaps)).toEqual({ trailing: [8] });
 	});
 });
@@ -392,7 +249,7 @@ describe('sourceGapOf', () => {
 		isWrapper: (kindId) => kindId === ATTRIBUTED || kindId === ALIAS_ENVELOPE,
 		isList: () => false
 	};
-	const gap = { $treeHandle: 0, $span: { start: 2, end: 3 } };
+	const gap = { $treeHandle: 3, $span: { start: 2, end: 3 } };
 
 	it('judges a rebuilt group around one node by the node it holds', () => {
 		const wrapper = { $type: ATTRIBUTED, $source: 2, _attribute_item: [], _content: b };

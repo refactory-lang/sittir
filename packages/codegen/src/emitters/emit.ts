@@ -197,7 +197,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const templates = templateEmitter.finalize();
 	const renderModule = renderModuleEmitterInst?.finalize(templates);
 
-	const wires = collectPolymorphWires(nodeMap, generatedIdTables);
+	const wires = collectPolymorphWires(nodeMap);
 	const polymorphsOverlay = emitPolymorphsOverlay({ nodeMap, generatedIdTables, wires });
 	const { types, internal: typesInternal } = emitTypesModules({
 		grammar,
@@ -211,7 +211,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	});
 	const consts = emitConsts({ grammar, nodeMap });
 	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences, addresses: addressTables }) : renderOptionsModule({ indentChars: indentChars(nodeMap) });
-	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables, grammarRoles });
+	const irNamespace = emitIr({ grammar, nodeMap, grammarRoles });
 	const is = emitIs({ grammar, nodeMap, generatedIdTables });
 	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures, renderBodies: templates.bodies });
 	const utils = emitClientUtils({ grammar, nodeMap, triviaKinds });
@@ -323,9 +323,6 @@ function dispatchNodeMapByTaxonomy(emitters: NodeDispatchEmitters, ctx: NodeDisp
 				if (wrapEmission === 'emit') wrapEmitter.emitBranch(node);
 				if (templateEmission === 'emit') templateEmitter.emitBranch(node);
 				renderModuleEmitterInst?.emitBranch?.(node);
-				break;
-			case 'supertype':
-				if (wrapEmission === 'emit') wrapEmitter.emitSupertype(node);
 				break;
 			case 'list':
 				if (factoryEmission === 'emit') factoryEmitter.emitSeparatedList(node);

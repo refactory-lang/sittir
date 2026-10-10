@@ -10,19 +10,21 @@
 
 **Spec:** `docs/superpowers/specs/2026-10-06-relative-coordinates-design.md`.
 
+**Superseded in part on 2026-10-09:** the trivia step (Tasks 3–8) gives way to the trivia table (`docs/superpowers/specs/2026-10-09-trivia-table-design.md`), which `docs/superpowers/plans/2026-10-10-arena-tables.md` lands after this plan, in the shared arena's step 3. Task 1 lands with the snapshot step, which keeps the trivia the typed reader leaves: a snapshot carries the reader's placed trivia with its `$sameLine` and `$tokensBetween` stamps, as a parity fixture does today, until the table gives it its range's gaps.
+
 ## Scope and sequencing
 
 The trivia and snapshot steps build on the one-reader step of `docs/superpowers/plans/2026-10-05-typed-reader.md`, which lands the index, the registry and the edited-index set and removes today's reader. Most of their code reads what that step leaves, so this plan details only what does not depend on it, and outlines the rest. The outlined tasks are detailed against master after the one-reader step lands, as that plan detailed each step after the one before it.
 
 | Task | Detailed | Lands in |
 | --- | --- | --- |
-| 1. Points and the line table | now | the trivia step's PR, first commit |
+| 1. Points and the line table | now | the snapshot step's PR, first commit |
 | 2. Index offsets from a start node | now | the typed-reader plan's Task 17, as its first step |
-| 3. The closing gap in the model | now | the trivia step's PR |
-| 4–8. The trivia step | outline | the trivia step's PR |
+| 3. The closing gap in the model | now | superseded by the trivia table |
+| 4–8. The trivia step | outline | superseded by the trivia table |
 | 9–13. The snapshot step | outline | the snapshot step's PR |
 
-Tasks 1 and 3 add declarations that only the trivia step reads, so they land with it, never alone: the repo keeps no export without a reader.
+Task 1 adds declarations that only the snapshot step reads, so it lands with that step, never alone: the repo keeps no export without a reader.
 
 ## Global Constraints
 
@@ -373,6 +375,8 @@ Message: `test(parity): a walk from any node reports root indexes less the node'
 
 ## Task 3: The closing gap in the model
 
+Superseded on 2026-10-09: an extra before a closer lies in a gap of the trivia table, which the compound owns, so no closing gap is derived (`docs/superpowers/specs/2026-10-09-trivia-table-design.md`, § 1).
+
 **Files:**
 - Modify: `packages/codegen/src/compiler/model/node-map.ts:1570-1572` (`GapWalkCtx`, add `GapWalk` after it) and `:1721-1767` (`innerGaps`; add `gapWalk` and `closingGap`)
 - Modify: `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts:290-303` (add `closingSlotDiagnostics` after `triviaLineEndDiagnostics`), `:445` (call it), `:9` (import `AbstractAssembledCompound`)
@@ -587,6 +591,8 @@ Message: `feat(model): kinds ending in a spaced closer have a closing gap`.
 
 ## Outline: the trivia step (Tasks 4–8)
 
+Superseded on 2026-10-09 by the trivia table (`docs/superpowers/specs/2026-10-09-trivia-table-design.md`), which `docs/superpowers/plans/2026-10-10-arena-tables.md` lands.
+
 Detailed against master after the one-reader step lands. The PR carries Tasks 1 and 3 first.
 
 4. **The closing gap reaches the reader.** Codegen stamps the closing gap on each kind with `closingGap` beside its `gap(n) = slot` attributes; the derive expands it; `sittir_core::read::place` puts an extra after the last child's tokens and before the closer there, keyed `closing`. The node surface's `inner` gains the `closing` gap on those kinds' types, and `innerGapsKeyed` counts it.
@@ -599,7 +605,7 @@ Detailed against master after the one-reader step lands. The PR carries Tasks 1 
 
 9. **`PointSpan`'s codec** and the snapshot transport form: a node with a `span`, its kind and its leaves' text, and no tree, index or bytes.
 10. **`$snapshot()`.** A native call reads a clean range from its index at full depth into snapshot data, each point measured from its holder's start through `LineTable::point` and `Point::offset_from`; an edited parsed node's data is copied with its span from its index; built nodes carry no span. Types: `$snapshot()` on parsed nodes only.
-11. **Seams from geometry.** The gap classifier's entry takes two points in place of bytes; prepare resolves snapshot joins from rows (Task 6's join); root edges from the first and last child's geometry.
+11. **Seams from geometry.** The gap classifier's entry takes two points in place of bytes; root edges from the first and last child's geometry. A snapshot's trivia joins by its entries' `$sameLine` and `$tokensBetween`, as a fixture's does today: the trivia step's joins (Task 6) are superseded, and the stamps stay until the trivia table.
 12. **Fixtures are snapshots.** `selfContainedRenderInput` becomes `$snapshot()`; the parity fixtures are rewritten through it; rust's left-out fixtures return to their count before the root-edge change.
 13. **`$cst()` by index**, with the parked branch's API and `cst.test.ts` carried over by hand; then verifications 7 (snapshots), 12–18.
 

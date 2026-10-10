@@ -7,7 +7,7 @@ import { ORPHANS, PROBES } from './helpers/trivia-sources.ts';
 
 async function sourceRenderer(grammar: string): Promise<(source: string, deep: boolean) => string> {
 	const engine = await createEngine(await languageByName(grammar));
-	return (source, deep) => (engine.parse(source, { deep }) as unknown as { $render(): string }).$render();
+	return (source, deep) => (engine.parse(source, { depth: deep ? Infinity : 1 }) as unknown as { $render(): string }).$render();
 }
 
 describe('trivia probes', () => {
