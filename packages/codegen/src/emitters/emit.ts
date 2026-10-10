@@ -1,12 +1,12 @@
 import type { OptionsConfig } from '../dsl/wire/options-block.ts';
-import type { ReparseHostsConfig } from '../dsl/wire/reparse-hosts.ts';
+import { assertReparseHostKeys, type ReparseHostsConfig } from '../dsl/wire/reparse-hosts.ts';
 import { emitReparseHosts } from './reparse-hosts.ts';
 import { isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
 import type { DiagnosticSink } from '../types/diagnostics.ts';
 import { resolveRenderRules, whitespaceTextOf } from '../compiler/model/render-rules.ts';
 import type { Rule as EvaluatedRule } from '../types/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
+import { collectGeneratedKindEntries, type GeneratedIdTables } from '../dsl/symbol-table.ts';
 import type { EmittedTemplates } from './templates.ts';
 import type { GrammarRoles } from '../scm/extract-roles.ts';
 import type { RenderModuleBundle } from './render-module.ts';
@@ -118,6 +118,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		visibleExternals,
 		diagnostics
 	} = config;
+	assertReparseHostKeys(grammar, reparseHosts, new Set([...nodeMap.nodes.keys(), ...collectGeneratedKindEntries(generatedIdTables).flatMap((entry) => (entry.parseName === undefined ? [entry.kind] : [entry.kind, entry.parseName]))]));
 	const renderModuleEmission = classifyRenderModuleEmission(grammar, emitRenderModule, generatedIdTables);
 	const kindEntries = generatedIdTables
 		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)

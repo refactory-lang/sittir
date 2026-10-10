@@ -49,9 +49,9 @@ import {
 	loadScopedFactoryMap,
 	loadNativeEngine
 } from './common.ts';
-import { loadRenderReparseContext, renderReparse } from './read-render-parse.ts';
+import { hostlessReason, loadRenderReparseContext, renderReparse } from './read-render-parse.ts';
 import { emptyBuiltRender, type BuiltRenderFailure, type BuiltRenderResult } from './built-render.ts';
-import { sourceSpans } from '@sittir/common';
+import { carryPlacement, sourceSpans } from '@sittir/common';
 
 /**
  * Which factory surface a run builds through: `raw` calls each kind's raw
@@ -320,7 +320,9 @@ function rebuildChildren(
 		if (Array.isArray(value)) return value.map(rebuild);
 		if (typeof value !== 'object' || value === null) return value;
 		const data = rebuildChildren(value as Record<string, unknown>, build);
-		return isComparableNode(value) ? (build(data) ?? data) : data;
+		if (!isComparableNode(value)) return data;
+		const built = build(data) ?? data;
+		return typeof built === 'object' && built !== null ? carryPlacement(value, built) : built;
 	};
 	return Object.fromEntries(
 		Object.entries(node).flatMap(([key, value]): [string, unknown][] => {
@@ -744,7 +746,7 @@ export async function validateFactoryStorage(
 					}) === null;
 				if (hostless) {
 					render.total--;
-					render.excluded.push({ entry: entry.name, kind, reason: 'no-reparse-wrapper', input: inputSource });
+					render.excluded.push({ entry: entry.name, kind, reason: hostlessReason(kind, node1?.type ?? kind, renderReparseContext), input: inputSource });
 				} else if (builtTree === null) {
 					render.errors.push(renderFailure(buildErrors[0]?.message ?? 'no node built'));
 				} else if (carriesSource(builtTree)) {

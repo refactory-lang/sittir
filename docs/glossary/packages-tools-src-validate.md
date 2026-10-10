@@ -1277,18 +1277,20 @@ value (`wildcard_import_clause(path)`), never the spliced keys.
 
 The config of a group element carries its seat kind as a mark that is not a key (`withSeatKind`, read back by `seatKindOf`), because a `kind` key would be an unknown slot for the strict factory. The printer reads the mark to tag the element on the loose surface; it never infers the seat from the config's keys.
 
-### `packages/tools/src/validate/common.ts::carryElementTrivia`
+### `packages/tools/src/validate/common.ts::carryGroupTrivia`
 
 ```text
 /**
- * A seated element projects to the group's config, and a config cannot carry
- * trivia — the transport rejects the key. The group's own built value can, and
- * it renders in the element's position, so a comment the read attached to the
- * group rides that value instead. Only a group with exactly one built value
- * has an unambiguous carrier; anything else keeps the group's trivia
- * unattached rather than guessing which child owns it.
+ * A seated group has no ir object, so its own trivia moves onto the children
+ * the call builds: leading entries to the first built child, trailing entries to
+ * the last. A moved trailing entry keeps its place relative to what follows the
+ * group: its tokens-between grows by the group's own tokens after that child
+ * (a trailing delimiter). One rule for every seat shape; a group with trivia
+ * and no built child at that edge is recorded in `seatedTriviaEdges`.
  */
 ```
+
+The same rule serves the `elements`, `tuple` and `flatten` shapes; the container is the config (or argument list) the shape projects, and the first and last built values are found in it past array nesting. The edge child is replaced in its container by a copy carrying the moved entries, never changed in place: a child is the cached built value of the read node, and a second projection of the same group would otherwise append the moved comment again. Entries resolve through `resolveChild` and keep their placement (`carryPlacement`), so a same-line comment stays on its line and still defers past the tokens that follow it. `seatedTriviaEdges` is the census hook: it is empty across the five grammars' ir lanes.
 
 ### `packages/tools/src/validate/common.ts::projectArmSlot`
 
@@ -1736,6 +1738,29 @@ Projects a seated slot's value into its parent's config by the seat's shape.
 A `flatten` seat splices the group's own config keys into the parent's and
 marks the config (`flattenedOf`): `true` for a config-shaped group, else the
 group's call arguments, so a direct parent can pass the group's positional
+value. An `elements` seat projects each element, and a `tuple` seat takes the
+group's call arguments as the slot's value.
+
+### `packages/tools/src/validate/reparse-derive.ts::deriveReparseHosts`
+
+The reparse hosts a grammar's corpus supports beyond its declared ones, derived at validation time and never stored. A kind is hostable when a parent kind whose slots admit it (through hidden wrapper kinds and supertypes) is hostable. Admission compares kind ids: each model kind in a slot (or, for a list kind, among its element kinds) resolves to every symbol the generated `KIND_NAMES` table names with it, and a tree node is matched on its display symbol at an alias envelope and its grammar symbol elsewhere, so a display alias such as `simple_pattern` meets the model's `_simple_pattern` and a name that owns several symbols (a keyword and the alias of it) is not reduced to one. A list, alias or envelope kind holds its content as the node itself, so admission looks through it whether or not the corpus shows it elsewhere; a hidden supertype with no stamp is compared by its model name. The derivation's host lookups pass the adopted variant kinds and the kind itself as target, so a gated parent host serves the variants it gates. Its template is the parent's host with a corpus occurrence of the parent around the kind: the kind's span is replaced by the hole, and the kind's layout lead (the whitespace its text starts with, else the whitespace before its first child) stays in the template so a node that starts at a line break is hosted with that break and text-leaf kinds are not given padding. Samples are the kind's texts in the form a render has: shifted left by the indentation of the line the first character sat on, and left out when that shift is lossy (a continuation line indented less than the first, or a token spanning lines). Breadth first from the declared hosts: each round considers only parents hostable at the round's start, candidates order by shortest context then parent name, and the first template that verifies takes the kind. A template verifies when every distinct non-empty source text of the kind in the corpus (a zero-width instance has no text to place), placed in it, reparses without an error and yields at the hole a node of the kind that is structurally the source node (`astStructuralDiff` is clean), so a host that reads the source differently from its own parent — a raw string's content under an escape-parsing string, a keyword property name read as an identifier — never takes the kind. Declared hosts always win; a kind no verified template reaches stays hostless.
+
+### `packages/tools/src/validate/common.ts::setDerivedReparseHosts`
+
+Merges a grammar's derived hosts under its declared ones in the per-grammar host cache, so `wrapForReparse` sees one table in which declared entries override derived ones.
+
+### `packages/tools/src/validate/read-render-parse.ts::hostlessReason`
+
+Why a kind without a host is excluded from a rendering row: `hidden-kind` when the kind has no node of its own to reparse (it never appears among the grammar's named kinds), `no-reparse-wrapper` otherwise. The two are counted separately so a hidden kind is not mistaken for a missing host.
+
+### `packages/tools/src/validate/read-render-parse.ts::findReparsedNodeAtOffset`
+
+The reparsed node of a kind at the splice offset. The kind is a grammar id wherever the source node is known, since a named rule and the keyword token it wraps share a name and a range but not an id; a name stands in only where there is no source node. Lookups run in order: past the candidate's own leading trivia (mapped through the indentation the host added to the lines before it), at the splice offset itself (a list kind's leading trivia belongs to its first element), and last at a node of the kind that starts inside the whitespace run just before the hole and spans it (a block node starts at the line break before its first line). Each requires the kind.
+
+### `packages/tools/src/validate/read-render-parse.ts::candidateData`
+
+The candidate as its own source span has it. A trailing entry held past tokens that follow the node (`$tokensBetween` above zero) sits outside the span, where the parent renders it after those tokens, so a candidate rendered alone leaves it out. `renderReparse` applies it first, so the read-render-parse, factory and ir lanes prepare a candidate in one place. The render fixtures the validator captures take their input through it too, so a fixture's input renders to the output it records.
+
 value. An `elements` seat projects each element, a `tuple` seat takes the
 group's call arguments as the slot's value, and a `forwarded` seat assigns the
 value under the slot key as an unseated slot's value is.

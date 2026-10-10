@@ -1,4 +1,10 @@
 {
+  "attributed_ordered_field": 1,
+  "expression_statement": 1,
+  "expression_statement_with_semi": 1,
+  "field_initializer_list": 1,
+  "ordered_field_declaration_list": 1,
+  "ordered_field_declaration_list_elements": 1,
   "source_file": 3,
   "struct_expression": 1,
   "struct_item_tuple": 1,

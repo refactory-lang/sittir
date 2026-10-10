@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import {
 	NO_REPARSE_HOSTS,
 	applyHost,
+	carryPlacement,
 	createEngine,
 	detachCoordinates,
 	dumpMetrics,
@@ -349,6 +350,12 @@ export async function loadReparseHosts(grammar: string): Promise<ReparseHosts> {
 	return loaded;
 }
 
+export function setDerivedReparseHosts(grammar: string, derived: Readonly<Record<string, string>>): void {
+	const declared = reparseHostsCache.get(grammar);
+	if (declared === undefined) throw new Error(`reparse hosts for '${grammar}' are not loaded; await loadReparseHosts('${grammar}') first`);
+	reparseHostsCache.set(grammar, { ...declared, hosts: { ...derived, ...declared.hosts } });
+}
+
 export function wrapForReparse(
 	rendered: string,
 	kind: string,
@@ -360,7 +367,7 @@ export function wrapForReparse(
 	if (hosts === undefined)
 		throw new Error(`reparse hosts for '${grammar}' are not loaded; await loadReparseHosts('${grammar}') first`);
 	const template = hostTemplateFor(kind, hosts, kindToSupertypes, opts);
-	return template === undefined ? null : applyHost(template, rendered);
+	return template === undefined ? null : applyHost(template, rendered, opts?.parse);
 }
 
 export function upstreamWasmPath(grammar: string): string | undefined {
@@ -1122,20 +1129,57 @@ function projectElements(
 			return resolveChild(item, memberValueOpts(opts, parentKind, slotName));
 		}
 		const element = hydrateForConfig(item as ReadNodeLike, opts);
-		const config = carryElementTrivia(element, nodeToConfig(element, childOpts(opts)), opts);
+		const config = nodeToConfig(element, childOpts(opts));
+		carryGroupTrivia(element, 'elements', config, opts);
 		return withSeatKind(config, seat.kind);
 	});
 }
 
-function carryElementTrivia(
-	element: ReadNodeLike,
-	config: Record<string, unknown>,
-	opts: NodeToConfigOpts
-): Record<string, unknown> {
-	if (element.$_layout?.trivia === undefined) return config;
-	const built = Object.values(config).filter((v) => v !== null && typeof v === 'object' && !Array.isArray(v));
-	if (built.length === 1) carryTrivia(element, built[0], opts);
-	return config;
+/** A trivia entry as the call builds it: resolved like a child, keeping the placement the read recorded. */
+function resolveTriviaEntry(entry: unknown, opts: NodeToConfigOpts): unknown {
+	const built = resolveChild(entry, childOpts(opts));
+	return typeof entry === 'object' && entry !== null && typeof built === 'object' && built !== null ? carryPlacement(entry, built) : built;
+}
+
+/** Groups whose trivia had no built child to move to, by seat shape: the cases a seat cannot spell. */
+export const seatedTriviaEdges: { readonly seat: string; readonly group: string; readonly children: string }[] = [];
+
+/**
+ * A seated group has no ir object, so its own trivia moves onto the children
+ * the call builds: leading entries to the first built child, trailing entries to
+ * the last. A moved trailing entry keeps its place relative to what follows the
+ * group: its tokens-between grows by the group's own tokens after that child
+ * (a trailing delimiter). One rule for every seat shape; a group with trivia
+ * and no built child at that edge is recorded in `seatedTriviaEdges`.
+ */
+function carryGroupTrivia(group: ReadNodeLike, seat: string, container: Record<string, unknown>, opts: NodeToConfigOpts): void {
+	const trivia = group.$_layout?.trivia as TriviaSides<unknown> | undefined;
+	if (trivia === undefined) return;
+	const holders: { holder: Record<string, unknown>; key: string }[] = [];
+	for (const [key, value] of Object.entries(container)) {
+		if (Array.isArray(value)) value.forEach((_, index) => holders.push({ holder: value as unknown as Record<string, unknown>, key: String(index) }));
+		else holders.push({ holder: container, key });
+	}
+	const resolved = mapTriviaEntries(trivia, (entries) => entries.map((entry) => resolveTriviaEntry(entry, opts))) as NodeTrivia;
+	const afterLast = typeof (group as Record<string, unknown>)['_delimiter'] === 'number' ? 1 : 0;
+	const move = (at: { holder: Record<string, unknown>; key: string } | undefined, side: 'leading' | 'trailing', entries: readonly unknown[] | undefined): void => {
+		if (entries === undefined || entries.length === 0) return;
+		const child = at?.holder[at.key];
+		if (at === undefined || typeof child !== 'object' || child === null) {
+			seatedTriviaEdges.push({ seat, group: String(group.$type), children: at === undefined ? 'none' : typeof child });
+			return;
+		}
+		const built = child as { $_layout?: NodeLayout };
+		const existing = built.$_layout?.trivia as Record<string, readonly unknown[] | undefined> | undefined;
+		const moved =
+			side === 'trailing' && afterLast > 0
+				? entries.map((entry) => (typeof entry === 'object' && entry !== null ? { ...entry, $tokensBetween: Number((entry as { $tokensBetween?: number }).$tokensBetween ?? 0) + afterLast } : entry))
+				: entries;
+		const trivia = { ...existing, [side]: side === 'leading' ? [...moved, ...(existing?.leading ?? [])] : [...(existing?.trailing ?? []), ...moved] } as NodeTrivia;
+		at.holder[at.key] = Object.assign(Object.create(Object.getPrototypeOf(built)), built, { $_layout: { ...built.$_layout, trivia } });
+	};
+	move(holders[0], 'leading', resolved.leading);
+	move(holders[holders.length - 1], 'trailing', resolved.trailing);
 }
 
 function projectArmSlot(
@@ -1213,6 +1257,7 @@ function projectSeatedSlot(
 					`ir surface: ${seat.kind}.${nested.mount} is an arm route inside a group flattened on ${parentKind}; the flatten has no spelling for it`
 				);
 			}
+			carryGroupTrivia(groupNode, 'flatten', group, inner);
 			Object.assign(out, group);
 			const groupShape = opts.factoryShapes?.[seat.kind] ?? 'config';
 			const flattened = groupShape === 'config' ? true : factoryArgs(seat.kind, groupShape, group, groupNode, inner);
@@ -1227,6 +1272,7 @@ function projectSeatedSlot(
 			const inner = childOpts(opts);
 			const childShape = opts.factoryShapes?.[seat.kind] ?? 'config';
 			const args = factoryArgs(seat.kind, childShape, nodeToConfig(child, inner), child, inner);
+			carryGroupTrivia(child, 'tuple', args as unknown as Record<string, unknown>, opts);
 			out[key] = args;
 			if ((opts.factoryShapes?.[parentKind] ?? 'config') !== 'config') {
 				Object.defineProperty(out, POSITIONAL, { value: args, enumerable: false });
@@ -1345,7 +1391,7 @@ function carryTrivia(source: ReadNodeLike, built: unknown, opts: NodeToConfigOpt
 	const record = built as { $_layout?: NodeLayout };
 	record.$_layout = {
 		...record.$_layout,
-		trivia: mapTriviaEntries(trivia as TriviaSides<unknown>, (entries) => entries.map((entry) => resolveChild(entry, childOpts(opts)))) as NodeTrivia
+		trivia: mapTriviaEntries(trivia as TriviaSides<unknown>, (entries) => entries.map((entry) => resolveTriviaEntry(entry, opts))) as NodeTrivia
 	};
 	return built;
 }

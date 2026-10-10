@@ -9,20 +9,92 @@ export const NO_REPARSE_HOSTS: ReparseHosts = Object.freeze({ hosts: {}, priorit
 export interface HostedText {
 	readonly text: string;
 	readonly offset: number;
+	/** The offset in `text` of the character at `renderedOffset` in the rendered text spliced into the first hole. */
+	readonly at?: (renderedOffset: number) => number;
 }
 
 export interface HostOptions {
 	readonly adoptedVariantKinds?: ReadonlySet<string>;
 	readonly targetKind?: string;
 	readonly root?: string;
+	/** Parses host text, so a multi-line token's inside is not re-indented. */
+	readonly parse?: (text: string) => { readonly rootNode: SpanNode } | null;
 }
 
 const HOLE = '$r';
 const SENTINEL = '\u0001SITTIR_SENTINEL\u0001';
 
-export function applyHost(template: string, rendered: string): HostedText {
+/** The part of a syntax node the host helpers read. */
+export interface SpanNode {
+	readonly startIndex: number;
+	readonly endIndex: number;
+	readonly children: readonly SpanNode[];
+}
+
+/**
+ * The offsets in `text` of the lines that begin inside a token spanning lines
+ * (a multi-line string or comment), or right after a token ending in a line
+ * break with the next token starting at that very offset (a string's content
+ * continuing past an interpolation): shifting such a line changes the string's
+ * content, so hosts leave it where it is.
+ */
+export function lineStartsInsideTokens(root: SpanNode, text: string): ReadonlySet<number> {
+	const starts = new Set<number>();
+	let previousEnd = -1;
+	const walk = (node: SpanNode): void => {
+		if (node.children.length > 0) {
+			for (const child of node.children) walk(child);
+			return;
+		}
+		if (node.startIndex === previousEnd) starts.add(previousEnd);
+		for (let at = text.indexOf('\n', node.startIndex); at !== -1 && at + 1 < node.endIndex; at = text.indexOf('\n', at + 1)) starts.add(at + 1);
+		if (node.endIndex > node.startIndex) previousEnd = text[node.endIndex - 1] === '\n' ? node.endIndex : -1;
+	};
+	walk(root);
+	return starts;
+}
+
+/**
+ * Splices rendered text into a host template's hole. When only whitespace
+ * precedes the hole on its line, the rendered text's continuation lines are
+ * indented to that column, except lines inside a token spanning lines, which
+ * `parse` (a parser for the host language) finds on the unindented text.
+ */
+export function applyHost(template: string, rendered: string, parse?: (text: string) => { readonly rootNode: SpanNode } | null): HostedText {
 	const offset = template.split(HOLE).join(SENTINEL).indexOf(SENTINEL);
-	return { text: template.split(HOLE).join(rendered), offset: offset >= 0 ? offset : 0 };
+	const parts = template.split(HOLE);
+	const plain = parts.join(rendered);
+	const inside = parse === undefined ? new Set<number>() : lineStartsInsideTokens(parse(plain)?.rootNode ?? { startIndex: 0, endIndex: 0, children: [] }, plain);
+	let text = parts[0]!;
+	let plainAt = parts[0]!.length;
+	const shifts: { readonly at: number; readonly length: number }[] = [];
+	for (let i = 1; i < parts.length; i++) {
+		const lineStart = text.lastIndexOf('\n') + 1;
+		const indent = /^[ \t]*$/.test(text.slice(lineStart)) ? text.slice(lineStart) : '';
+		if (indent === '') {
+			text += rendered;
+		} else {
+			let at = plainAt;
+			let renderedAt = 0;
+			text += rendered
+				.split('\n')
+				.map((line, index) => {
+					const lineAt = at;
+					const lineRenderedAt = renderedAt;
+					at += line.length + 1;
+					renderedAt += line.length + 1;
+					if (index === 0 || inside.has(lineAt)) return line;
+					if (i === 1) shifts.push({ at: lineRenderedAt, length: indent.length });
+					return indent + line;
+				})
+				.join('\n');
+		}
+		plainAt += rendered.length + parts[i]!.length;
+		text += parts[i]!;
+	}
+	const hostOffset = offset >= 0 ? offset : 0;
+	const at = (renderedOffset: number): number => hostOffset + renderedOffset + shifts.filter((shift) => shift.at <= renderedOffset).reduce((sum, shift) => sum + shift.length, 0);
+	return Object.defineProperty({ text, offset: hostOffset }, 'at', { value: at, enumerable: false }) as HostedText;
 }
 
 function hostBySupertype(
