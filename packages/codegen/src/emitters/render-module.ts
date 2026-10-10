@@ -21,6 +21,7 @@ import {
 	deriveUnnamedChildrenCardinality,
 	hasOptionalElements,
 	isMultiple,
+	isNonEmpty,
 	isRequired,
 	isNodeRef,
 	isTerminalValue,
@@ -1174,6 +1175,7 @@ interface ReadPrint {
 	readonly blankChoices: Set<string>;
 	readonly choicePayloads: Set<string>;
 	readonly boxedPayloads: readonly string[];
+	readonly transports: Set<string>;
 }
 
 function readPrintOf(
@@ -1199,6 +1201,7 @@ function readPrintOf(
 			grammar
 		},
 		admitted: new Map(),
+		transports: new Set(),
 		blankChoices: new Set(),
 		choicePayloads: new Set()
 	};
@@ -1207,6 +1210,11 @@ function readPrintOf(
 const TRANSPORT_DERIVE = '#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]';
 const TRANSPORT_DERIVE_UNIT = '#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]';
 const TRANSPORT_DERIVE_ENUM_KIND = '#[derive(Debug, Clone, Copy, PartialEq, Eq, ::sittir_core::Transport)]';
+
+function transportDeclaration(read: ReadPrint, derive: string, args: string, keyword: 'struct' | 'enum', name: string): string[] {
+	read.transports.add(name);
+	return [derive, `#[transport(${args})]`, `pub ${keyword} ${name} {`];
+}
 
 function admit(read: ReadPrint, typeName: string, ids: readonly number[]): void {
 	const known = read.admitted.get(typeName);
@@ -1281,6 +1289,7 @@ function renderTransportSupport(
 	const choices = shareIdenticalChoices(perSlotEnums, (entry) =>
 		emitPerSlotChildEnum(entry, kidByKind, nodeMap, fixed, kindEntries, plan, read)
 	);
+	for (const name of choices.folded) read.transports.delete(name);
 	const perSlotEnumLines: string[] = choices.emitted.flatMap(({ lines }) => lines);
 	const bodyOf = new Map(structs.map((struct) => [struct.kind, struct.body]));
 	const structLines = nodes.flatMap((node) =>
@@ -1329,14 +1338,11 @@ function renderTransportSupport(
 			...payloadCeilingAssertions(read.boxedPayloads, read.choicePayloads)
 		].join('\n')
 	);
-	return [rendered, '', grammarTriviaStatement(rendered)].join('\n');
+	return [rendered, '', grammarTriviaStatement(read.transports)].join('\n');
 }
 
-function grammarTriviaStatement(rendered: string): string {
-	const transports = [...rendered.matchAll(/#\[derive\([^)\n]*::sittir_core::Transport\)\]\n(?:#\[[^\n]*\]\n)*pub (?:struct|enum) (\w+)/g)].map(
-		(match) => match[1]!
-	);
-	return `::sittir_core::grammar_trivia!(TriviaTransport; ${transports.join(', ')});`;
+function grammarTriviaStatement(transports: ReadonlySet<string>): string {
+	return `::sittir_core::grammar_trivia!(TriviaTransport; ${[...transports].join(', ')});`;
 }
 
 function supertypeAdmitsVerbatim(supertypeNode: AssembledSupertype, nodeMap: NodeMap): boolean {
@@ -1470,7 +1476,7 @@ function isPrepareFilled(slot: AssembledNonterminal): boolean {
 }
 
 function isTransportRequired(slot: AssembledNonterminal): boolean {
-	return isRequired(slot) && !isPrepareFilled(slot);
+	return isMultiple(slot) ? isNonEmpty(slot) : isRequired(slot) && !isPrepareFilled(slot);
 }
 
 function boxedInEnum(node: AssembledNode, boxedPayloads: readonly string[]): boolean {
@@ -1562,9 +1568,7 @@ function emitSupertypeTransportEnum(
 
 	const claimedBy = claimSupertypeIds(supertypeNode, enumName, shape, selfAliasIds, kindIdByKind, kindEntries, nodeMap);
 
-	lines.push(TRANSPORT_DERIVE);
-	lines.push(`#[transport(choice)]`);
-	lines.push(`pub enum ${enumName} {`);
+	lines.push(...transportDeclaration(read, TRANSPORT_DERIVE, 'choice', 'enum', enumName));
 	for (const { subNode } of validSubtypes) {
 		const variant = rustTypeIdent(subNode.typeName);
 		lines.push(...variantKindLines(enumName, variant, subNode, claimedBy.get(variant) ?? [], read));
@@ -1959,6 +1963,7 @@ type ChoiceNames = ReadonlyMap<string, string>;
 interface SharedChoices {
 	readonly emitted: readonly { readonly entry: PerSlotChildEnum; readonly lines: readonly string[] }[];
 	readonly names: ChoiceNames;
+	readonly folded: readonly string[];
 }
 
 function choiceKey(typeName: string, fieldName: string): string {
@@ -1972,6 +1977,7 @@ function shareIdenticalChoices(
 	const emitted: { entry: PerSlotChildEnum; lines: readonly string[] }[] = [];
 	const nameByBody = new Map<string, string>();
 	const names = new Map<string, string>();
+	const folded: string[] = [];
 	for (const entry of entries) {
 		const name = perSlotEnumName(entry.typeName, entry.fieldName);
 		const lines = render(entry);
@@ -1980,10 +1986,10 @@ function shareIdenticalChoices(
 		if (shared === undefined) {
 			nameByBody.set(body, name);
 			emitted.push({ entry, lines });
-		}
+		} else folded.push(name);
 		names.set(choiceKey(entry.typeName, entry.fieldName), shared ?? name);
 	}
-	return { emitted, names };
+	return { emitted, names, folded };
 }
 
 function choiceNameOf(choices: ChoiceNames, typeName: string, fieldName: string): string {
@@ -2191,9 +2197,7 @@ function emitPerSlotChildEnum(
 	}
 
 	const altIds = new Map(modelSlot === undefined ? [] : kindEnumAltIdPairs(modelSlot, nodeMap));
-	lines.push(TRANSPORT_DERIVE);
-	lines.push(`#[transport(choice)]`);
-	lines.push(`pub enum ${enumName} {`);
+	lines.push(...transportDeclaration(read, TRANSPORT_DERIVE, 'choice', 'enum', enumName));
 	for (const { node } of nodeKinds) {
 		const variant = rustTypeIdent(node.typeName);
 		lines.push(...variantKindLines(enumName, variant, node, claimedBy.get(variant) ?? [], read));
@@ -2291,9 +2295,7 @@ function renderAnyTransport(
 		claimedBy.set(literal.variant, [...(claimedBy.get(literal.variant) ?? []), id]);
 	}
 
-	lines.push(TRANSPORT_DERIVE);
-	lines.push('#[transport(choice)]');
-	lines.push('pub enum AnyTransport {');
+	lines.push(...transportDeclaration(read, TRANSPORT_DERIVE, 'choice', 'enum', 'AnyTransport'));
 	for (const node of payloadNodes) {
 		const variant = rustTransportVariantName(node);
 		lines.push(...variantKindLines('AnyTransport', variant, node, claimedBy.get(variant) ?? [], read));
@@ -2353,9 +2355,7 @@ function renderTriviaTransportSupport(
 	});
 
 	const lines: string[] = [];
-	lines.push(TRANSPORT_DERIVE);
-	lines.push('#[transport(choice, codec_only)]');
-	lines.push('pub enum TriviaTransport {');
+	lines.push(...transportDeclaration(read, TRANSPORT_DERIVE, 'choice, codec_only', 'enum', 'TriviaTransport'));
 	for (const node of extrasNodes) {
 		const variant = rustTransportVariantName(node);
 		const id = kindIdByKind.get(node.kind);
@@ -3044,11 +3044,9 @@ function renderTransportDataStruct(
 	const lines: string[] = [];
 	const fillFields: string[] = [];
 	const ownId = findKindEntry(kindEntries, node.kind)?.id;
-	lines.push(TRANSPORT_DERIVE);
 	const printedSlots = isCompoundOf(node) ? structSlotsOf(node, slotModel, nodeMap) : [];
-	lines.push(`#[transport(${transportArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot))})]`);
 	admit(read, structName, node instanceof AssembledAlias ? [node.aliasTypeId] : ownId === undefined ? [] : [ownId]);
-	lines.push(`pub struct ${structName} {`);
+	lines.push(...transportDeclaration(read, TRANSPORT_DERIVE, transportArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot)), 'struct', structName));
 	if (isCompoundOf(node)) {
 		lines.push(...renderLayoutField());
 		for (const { slot, owner, forceOptional } of printedSlots) {
@@ -3223,9 +3221,7 @@ function renderFixedLiteralTransport(typeName: string, fixed: FixedLiteral, read
 	const ids = fixedLiteralIds(fixed);
 	admit(read, typeName, ids);
 	return [
-		TRANSPORT_DERIVE_UNIT,
-		'#[transport(choice)]',
-		`pub enum ${typeName} {`,
+		...transportDeclaration(read, TRANSPORT_DERIVE_UNIT, 'choice', 'enum', typeName),
 		...variantKindLines(typeName, fixed.variant, undefined, ids, read),
 		`    ${fixed.variant},`,
 		'}',
@@ -3771,9 +3767,7 @@ function renderEnumType(node: AssembledEnum, kindEntries: readonly KindEnumEntry
 	const arms = values.map((v) => ({ variant: literalToVariantName(v), ids: [enumMemberId(node, v)] }));
 	const ownId = findKindEntry(kindEntries, node.kind)?.id;
 	if (ownId === undefined) throw new Error(`transport.rs: enum kind '${node.kind}' has no kind id`);
-	lines.push(TRANSPORT_DERIVE_ENUM_KIND);
-	lines.push(`#[transport(${enumKindArgs(ownId, read.ctx)})]`);
-	lines.push(`pub enum ${enumName} {`);
+	lines.push(...transportDeclaration(read, TRANSPORT_DERIVE_ENUM_KIND, enumKindArgs(ownId, read.ctx), 'enum', enumName));
 	for (const arm of arms) {
 		lines.push(`    #[kind(${variantKindArgs(arm.ids, false, read.ctx)})]`);
 		lines.push(`    ${arm.variant},`);

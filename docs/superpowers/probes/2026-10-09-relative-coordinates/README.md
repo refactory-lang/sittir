@@ -50,7 +50,7 @@ The relative-coordinates spec's verifications for the one-reader step, at the ba
    The head's excess, 207–368 B per wrapper, is what the registry costs: a `Map` entry, a `WeakRef` and a finalization-registry cell per wrapper. The root alone grows by 1–7 KB.
 
    **Setup:**
-   - Commits: base `12644d5df`, head `4b27b0238` (1c-ii merged with master).
+   - Commits: base `12644d5df`, head `4b27b0238` (the branch merged with master).
    - Each commit's tree was rsynced to a scratch directory with its native addon built.
    - Machine: Apple M4 Pro, 48 GB; Node v26.10.0; `NODE_ENV=production`; `SITTIR_BACKEND=native`.
    - Each run waited for a 1-minute load average under 10. The machine is shared, so a lower gate never opened.
