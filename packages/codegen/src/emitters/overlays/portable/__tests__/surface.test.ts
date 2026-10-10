@@ -34,6 +34,27 @@ const SCM = [
 ].join('\n');
 
 describe('emitPortableSurface', () => {
+	it('writes one entry and one id for kinds the parser shows by one name', async () => {
+		const routes = resolveRoutes({
+			grammar: 'g',
+			bindings: await readBindings('(call) @expression.call'),
+			model: slotModelOf({
+				nodes: [
+					{ kind: 'call', slots: [] },
+					{ kind: '_call', slots: [] },
+					{ kind: 'holder', slots: [{ name: 'item', propertyName: 'item', values: [{ kind: 'node-ref', name: '_call', parseKind: 'call' }] }] }
+				]
+			}),
+			textTokens: new Set(),
+			layoutSlots: []
+		});
+		const text = emitPortableSurface({ routes, readTest: () => [], kindIdOf: () => 'TSKindId.Call', fixedText: [] });
+		expect(text).toContain('\t"expression.call": TSKindId.Call;');
+		expect(text).toContain('\t\t"expression.call": { ids: [TSKindId.Call], exact: true },');
+		expect(text.match(/\[TSKindId\.Call\]: \[/g)).toHaveLength(1);
+		expect(text).toContain('\t\t[TSKindId.Call]: [{ path: "expression.call", within: [], test: [] }],');
+	});
+
 	it('types each path by the kind ids read at or under it', async () => {
 		const text = await emit(SCM);
 		expect(text).toContain('\t"expression": TSKindId.Assign | TSKindId.Binary | TSKindId.Call;');

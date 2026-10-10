@@ -22,6 +22,7 @@ const node = (kind: string, slots: readonly ModelSlot[] = [], extra: Partial<Mod
 	text: null,
 	pattern: null,
 	variantOf: null,
+	shownAs: [],
 	...extra
 });
 
@@ -68,6 +69,13 @@ const MODEL = [
 	node('struct_named', [slot('name', ['identifier'])], { variantOf: '_struct' }),
 	node('arrow', [slot('param', ['arrow_param'])]),
 	node('arrow_param', [slot('name', ['identifier'])], { variantOf: 'arrow' }),
+	node('_template_text', [], { modelType: 'pattern', shownAs: ['text_fragment'] }),
+	node('_quoted_text', [], { modelType: 'pattern', shownAs: ['text_fragment'] }),
+	node('text_fragment', [], { modelType: 'pattern' }),
+	node('_plain_text', [], { modelType: 'pattern' }),
+	node('plain_text', [], { modelType: 'pattern' }),
+	node('plain_holder', [slot('text', ['_plain_text'])]),
+	node('shown_holder', [slot('text', ['_template_text'])]),
 	node('false_keyword', [], { modelType: 'keyword', text: 'false' })
 ];
 
@@ -280,6 +288,16 @@ describe('resolveRoutes', () => {
 		expect(routes.members.get('struct_tuple')?.map((r) => r.name)).toEqual(['title', 'fields']);
 	});
 
+	it('enters a claim on every kind the parser shows by the claimed name', async () => {
+		const routes = resolveRoutes(await grammar('(text_fragment) @literal.string.text'));
+		expect([...routes.readEntries.keys()].filter((k) => routes.readEntries.get(k)?.[0]?.vocab === 'literal.string.text').sort()).toEqual([
+			'_quoted_text',
+			'_template_text',
+			'text_fragment'
+		]);
+		expect(routes.readEntries.get('_template_text')?.map((e) => e.claimed)).toEqual(['text_fragment']);
+	});
+
 	it('enters a claim pinning an enum kind\'s token only on the member that is that token', async () => {
 		const routes = resolveRoutes(await grammar(['(bool) @literal.boolean', '(bool "false") @literal.boolean.false'].join('\n')));
 		expect(routes.readEntries.get('false_keyword')?.map((e) => e.vocab)).toEqual(['literal.boolean.false', 'literal.boolean']);
@@ -305,6 +323,22 @@ describe('derive', () => {
 		const flag = d.members.get('declaration.function')?.get('private');
 		expect([...(flag?.kinds ?? [])]).toEqual(['boolean']);
 		expect(flag?.optional).toBe(true);
+	});
+
+	it('types a member optional unless every kind the path is read from carries it', async () => {
+		const d = derive([await grammar('(_struct) @declaration.struct')]);
+		expect(d.members.get('declaration.struct')?.get('fields')?.optional).toBe(true);
+		expect(d.members.get('declaration.struct')?.get('name')?.optional).toBe(false);
+	});
+
+	it('types a member by the kind the parser shows, never by a name with its underscores stripped', async () => {
+		const d = derive([
+			await grammar(
+				['(plain_text) @literal.string.plain', '(text_fragment) @literal.string.text', '(plain_holder) @statement.plain', '(shown_holder) @statement.shown'].join('\n')
+			)
+		]);
+		expect([...(d.members.get('statement.shown')?.get('text')?.kinds ?? [])]).toEqual(['literal.string.text']);
+		expect([...(d.members.get('statement.plain')?.get('text')?.kinds ?? [])]).toEqual(['<g:_plain_text>']);
 	});
 });
 

@@ -136,6 +136,7 @@ export interface ModelNode {
 	readonly text: string | null;
 	readonly pattern: string | null;
 	readonly variantOf: string | null;
+	readonly shownAs: readonly string[];
 }
 
 export type SlotModel = ReadonlyMap<string, ModelNode>;

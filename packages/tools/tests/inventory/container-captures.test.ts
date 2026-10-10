@@ -30,7 +30,8 @@ const node = (kind: string, slots: readonly ModelSlot[] = [], subtypes: readonly
 	enumMembers: [],
 	text: null,
 	pattern: null,
-	variantOf: null
+	variantOf: null,
+	shownAs: []
 });
 
 const grammar = async (bindings: string): Promise<GrammarInput> => ({

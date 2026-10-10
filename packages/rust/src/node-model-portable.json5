@@ -1,6 +1,42 @@
 {
   "grammar": "rust",
   "kinds": {
+    "_let_chain": {
+      "vocab": "clause.let.chain",
+      "read": [
+        {
+          "vocab": "clause.let.chain",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "left",
+          "route": "slot",
+          "slot": "left",
+          "path": [
+            {
+              "owner": "_let_chain",
+              "slot": "left"
+            }
+          ]
+        },
+        {
+          "name": "rights",
+          "route": "slot",
+          "slot": "right",
+          "path": [
+            {
+              "owner": "_let_chain",
+              "slot": "right"
+            }
+          ]
+        }
+      ]
+    },
     "abstract_type": {
       "vocab": "type.abstract",
       "read": [
@@ -9916,7 +9952,7 @@
       {
         "depth": 3,
         "paths": 74,
-        "kinds": 93,
+        "kinds": 94,
         "refinements": 46,
         "aliases": 34
       },

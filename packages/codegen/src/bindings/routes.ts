@@ -269,10 +269,11 @@ export function formsOf(model: SlotModel, kind: string): readonly string[] {
 }
 
 function readKinds(model: SlotModel, kind: string, claim: ClaimFact): readonly string[] {
+	const shown = [...model.values()].filter((node) => node.shownAs.includes(kind)).map((node) => node.kind);
 	const members = modelNode(model, kind)?.enumMembers ?? [];
-	if (members.length === 0) return [kind];
+	if (members.length === 0) return [kind, ...shown];
 	const texts = ownTextEquals(claim);
-	return members.filter((member: EnumMember) => texts.every((text) => text === member.text)).map((member) => member.kind);
+	return [...members.filter((member: EnumMember) => texts.every((text) => text === member.text)).map((member) => member.kind), ...shown];
 }
 
 export function resolveRoutes(input: GrammarInput): GrammarRoutes {

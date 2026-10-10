@@ -3370,10 +3370,7 @@ const table: PortableTable = {
 		[TSKindId.Array]: [{ path: 'expression.collection.list', within: [], test: [] }],
 		[TSKindId.ArrayPattern]: [{ path: 'pattern.array', within: [], test: [] }],
 		[TSKindId.ArrayType]: [{ path: 'type.array', within: [], test: [] }],
-		[TSKindId.ArrowFunction]: [
-			{ path: 'expression.lambda', within: [], test: [] },
-			{ path: 'expression.lambda', within: [], test: [] }
-		],
+		[TSKindId.ArrowFunction]: [{ path: 'expression.lambda', within: [], test: [] }],
 		[TSKindId.AsExpression]: [{ path: 'expression.cast.as', within: [], test: [] }],
 		[TSKindId.Asserts]: [{ path: 'type.predicate.asserts', within: [], test: [] }],
 		[TSKindId.AssignmentExpression]: [{ path: 'expression.assignment', within: [], test: [] }],

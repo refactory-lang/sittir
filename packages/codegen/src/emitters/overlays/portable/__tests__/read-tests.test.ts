@@ -23,7 +23,8 @@ const node = (kind: string, slots: readonly ModelSlot[] = []): ModelNode => ({
 	enumMembers: [],
 	text: null,
 	pattern: null,
-	variantOf: null
+	variantOf: null,
+	shownAs: []
 });
 
 const MODEL = new Map(

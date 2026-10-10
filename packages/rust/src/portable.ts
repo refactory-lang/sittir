@@ -10,11 +10,11 @@ export interface PortableIds {
 	'attribute.content': TSKindId.Attribute;
 	'attribute.inner': TSKindId.InnerAttributeItem;
 	clause:
+		| TSKindId.LetChain
 		| TSKindId.ElseClause
 		| TSKindId.ForLifetimes
 		| TSKindId.HigherRankedTraitBound
 		| TSKindId.LastMatchArm
-		| TSKindId.LetChain
 		| TSKindId.LetCondition
 		| TSKindId.MacroRule
 		| TSKindId.MatchArm
@@ -2404,11 +2404,11 @@ const table: PortableTable = {
 		'attribute.inner': { ids: [TSKindId.InnerAttributeItem], exact: true },
 		clause: {
 			ids: [
+				TSKindId.LetChain,
 				TSKindId.ElseClause,
 				TSKindId.ForLifetimes,
 				TSKindId.HigherRankedTraitBound,
 				TSKindId.LastMatchArm,
-				TSKindId.LetChain,
 				TSKindId.LetCondition,
 				TSKindId.MacroRule,
 				TSKindId.MatchArm,
@@ -3500,6 +3500,7 @@ const table: PortableTable = {
 		['type', 'turbofish', 'type.generic.turbofish']
 	],
 	entries: {
+		[TSKindId.LetChain]: [{ path: 'clause.let.chain', within: [], test: [] }],
 		[TSKindId.AbstractType]: [{ path: 'type.abstract', within: [], test: [] }],
 		[TSKindId.ArrayExpression]: [{ path: 'expression.collection.list', within: [], test: [] }],
 		[TSKindId.ArrayExpressionList]: [{ path: 'expression.collection.list', within: [], test: [] }],
@@ -3942,7 +3943,6 @@ const table: PortableTable = {
 		[TSKindId.ItemKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.Label]: [{ path: 'identifier.label', within: [], test: [] }],
 		[TSKindId.LastMatchArm]: [{ path: 'clause.match.arm.last', within: [], test: [] }],
-		[TSKindId.LetChain]: [{ path: 'clause.let.chain', within: [], test: [] }],
 		[TSKindId.LetCondition]: [{ path: 'clause.let', within: [], test: [] }],
 		[TSKindId.LetDeclaration]: [{ path: 'declaration.variable', within: [], test: [] }],
 		[TSKindId.Lifetime]: [{ path: 'identifier.lifetime', within: [], test: [] }],

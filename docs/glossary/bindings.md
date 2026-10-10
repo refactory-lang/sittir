@@ -59,7 +59,8 @@ member routes, container unwraps), and make templates hole members of every
 claim in their pattern; fold each claimed kind's member routes, claim by claim
 in file order, into member types (a slot route's slot resolved, a presence or
 a flag an optional `boolean`, a nested member its named kind or the kinds of the slot its
-selector finds in its parent); fold pinned claims into refinements, each pin
+selector finds in its parent; a member is optional when some kind the path is read from in that
+grammar does not carry it, a supertype counting as none since its forms stand in for it); fold pinned claims into refinements, each pin
 named by the kind's converged member (a capture on the field renames it)
 rather than by the grammar's field; assign container captures to
 the kinds the element slot names directly; collapse a namespace's leaves when
@@ -98,7 +99,7 @@ scalar, so a member admitting both reads `T | T[]`.
 
 ### `packages/codegen/src/bindings/derive.ts::unmappedToken`
 
-The `<grammar:kind>` placeholder for a grammar kind no claim maps, with the kind's leading underscores dropped.
+The `<grammar:kind>` placeholder for a grammar kind no claim maps, named by the grammar kind itself.
 
 ### `packages/codegen/src/bindings/derive.ts::inclusionCycles`
 
@@ -880,7 +881,7 @@ The kind and, when it is a supertype, every kind the model stamps as its owned v
 
 ### `packages/codegen/src/bindings/routes.ts::readKinds`
 
-The kinds the typed reader produces for a node of `kind`. A kind with no enum members is read as itself. An enum kind is stored as one member's kind id, so a node of it reads as that member's kind (`ModelNode.enumMembers`): every member whose text equals each text the claim requires of the node's own text (`ownTextEquals`). Any other test on that text keeps every member, and the claim's read test decides at run time on the member's fixed text. The claim itself is entered unchanged, so its specificity and its read test are those of the claim as written.
+The kinds the typed reader produces for a node of `kind`: the kind, or its members when it is an enum, and every kind the parser shows by `kind`'s name at an alias site (`ModelNode.shownAs`), since a claim names what the parser shows. A kind with no enum members is read as itself. An enum kind is stored as one member's kind id, so a node of it reads as that member's kind (`ModelNode.enumMembers`): every member whose text equals each text the claim requires of the node's own text (`ownTextEquals`). Any other test on that text keeps every member, and the claim's read test decides at run time on the member's fixed text. The claim itself is entered unchanged, so its specificity and its read test are those of the claim as written.
 
 ### `packages/codegen/src/bindings/routes.ts::ownTextEquals`
 
@@ -892,7 +893,11 @@ The part of a node-model record the bindings read: each node's kind, model type,
 
 ### `packages/codegen/src/bindings/input.ts::slotModelOf`
 
-The slot model of a node-model record: per kind its slots, a slot's terminals being the values it stores as terminal text, and an enum's members as `enumMembers`, with the record's omissions filled (`branch`, not required, single, `verbatim`, no members, no `variantOf`).
+The slot model of a node-model record: per kind its slots, a slot's terminals being the values it stores as terminal text, and an enum's members as `enumMembers`, with the record's omissions filled (`branch`, not required, single, `verbatim`, no members, no `variantOf`), and each kind's `shownAs` from `shownNames`.
+
+### `packages/codegen/src/bindings/input.ts::shownNames`
+
+Per grammar kind, the names the parser shows it by where a slot holds it under another name: every node-reference value's stamped `parseKind` that differs from its `name`, sorted.
 
 ### `packages/codegen/src/bindings/input.ts::renamedFromOf`
 
@@ -908,7 +913,7 @@ A grammar's `GrammarInput`, or `undefined` when it ships no `bindings.scm`: its 
 
 ### `packages/codegen/src/bindings/input.ts::NodeModelValue`
 
-One admitted value of a serialized slot: its kind (`terminal` for literal text) and the text.
+One admitted value of a serialized slot: its kind (`terminal` for literal text) and the text, or for a node reference the grammar kind (`name`) and the kind the parser shows at that site (`parseKind`).
 
 ### `packages/codegen/src/bindings/input.ts::NodeModelSlot`
 
@@ -1016,7 +1021,7 @@ A slot of the node model as the bindings read it: its name and property name, wh
 
 ### `packages/codegen/src/bindings/facts.ts::ModelNode`
 
-A kind of the node model as the bindings read it: its model type, its slots, its supertype arms, a list's element kinds, an enum's members, a fixed leaf's text, a pattern leaf's pattern, and the kind it is an owned variant of (`variantOf`).
+A kind of the node model as the bindings read it: its model type, its slots, its supertype arms, a list's element kinds, an enum's members, a fixed leaf's text, a pattern leaf's pattern, the kind it is an owned variant of (`variantOf`), and the names the parser shows it by at an alias site (`shownAs`).
 
 ### `packages/codegen/src/bindings/facts.ts::SlotModel`
 
