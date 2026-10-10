@@ -1,4 +1,5 @@
 import type { AutomaticVariants } from '../dsl/automatic-variants.ts';
+import type { IrSurface } from './model/ir-surface.ts';
 import type { WhitespaceCollision } from '../dsl/whitespace.ts';
 import type { RuleListEntry } from '../dsl/rule-patterns.ts';
 import type { GeneratedIdTables, PredictedKinds } from '../dsl/symbol-table.ts';
@@ -233,6 +234,7 @@ export interface LinkedGrammar {
 	readonly contentAliasedTo?: ReadonlyMap<string, readonly string[]>;
 	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
 	readonly wordMatcher?: RegExp;
+	readonly splicedNames?: ReadonlySet<string>;
 	readonly generatedIdTables?: GeneratedIdTables;
 }
 
@@ -332,4 +334,5 @@ export interface NodeMap {
 	readonly nodelessExtrasRun?: RegExp;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
 	scc?: SCCAnalysis;
+	irSurface?: IrSurface;
 }

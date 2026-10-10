@@ -8,7 +8,7 @@ import { withWireContext } from '../wire/wire.ts';
 import { getEnrichAutomaticVariants, isSupertypeOwner, relabelledArm } from '../automatic-variants.ts';
 import { link } from '../../compiler/link.ts';
 import type { RawGrammar } from '../../compiler/types.ts';
-import { variantChildrenOf } from '../../compiler/variant-structural.ts';
+import { stampLabelProvenance, variantChildrenOf } from '../../compiler/variant-structural.ts';
 import { armFactsOf } from '../../compiler/model/node-map.ts';
 import type { Rule, RuleAnnotations } from '../../types/rule.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
@@ -131,7 +131,9 @@ describe('automatic variants', () => {
 	it('reads definedBy enrich from an automatic label and override from an authored one', () => {
 		const base = enriched({ pick, ...leaves });
 		const { result, ctx } = withWireContext('pick', () => transform(base.grammar.rules.pick as unknown as RuntimeRule, { '1/1': variant('yellow') }), base);
-		expect(variantChildrenOf('pick', result as never, ctx.automaticVariants).map((child) => [child.name, child.definedBy])).toEqual([
+		const rules = { pick: result as never };
+		stampLabelProvenance(rules, ctx.automaticVariants);
+		expect(variantChildrenOf('pick', rules.pick).map((child) => [child.name, child.definedBy])).toEqual([
 			['apple', 'enrich'],
 			['yellow', 'override']
 		]);

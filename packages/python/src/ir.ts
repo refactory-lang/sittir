@@ -28,8 +28,8 @@ export const synonym = Object.freeze({
 			}
 		}
 	),
-	comment(text: string): ReturnType<typeof F.buildComment> {
-		return F.buildComment(text);
+	comment(text: string): ReturnType<typeof ir.comment> {
+		return ir.comment(text);
 	},
 	type(name: string): ReturnType<typeof F.buildIdentifier> {
 		return F.buildIdentifier(name);
@@ -179,7 +179,23 @@ export const simpleStatement: typeof F.simpleStatement = F.simpleStatement;
 
 export const compoundStatement: typeof F.compoundStatement = F.compoundStatement;
 
+export const withClause: typeof F.withClause = F.withClause;
+
+export const suite: typeof F.suite = F.suite;
+
 export const parameter: typeof F.parameter = F.parameter;
+
+export const assignment: typeof F.assignment = F.assignment;
+
+export const escapeSequence: typeof F.escapeSequence = F.escapeSequence;
+
+export const float: typeof F.float = F.float;
+
+export const lineContinuation: typeof F.lineContinuation = F.lineContinuation;
+
+export const integerDecimal: typeof F.integerDecimal = F.integerDecimal;
+
+export const integer: typeof F.integer = F.integer;
 
 export const ir: {
 	readonly module: typeof F.module;
@@ -327,8 +343,11 @@ export const ir: {
 	readonly suiteInline: typeof F.suiteInline;
 	readonly suiteBlock: typeof F.suiteBlock;
 	readonly suiteEmpty: typeof F.suiteEmpty;
+	readonly simpleStatement: typeof F.simpleStatement;
+	readonly compoundStatement: typeof F.compoundStatement;
 	readonly withClause: typeof F.withClause;
 	readonly suite: typeof F.suite;
+	readonly parameter: typeof F.parameter;
 	readonly assignment: typeof F.assignment;
 	readonly escapeSequence: typeof F.escapeSequence;
 	readonly float: typeof F.float;
@@ -369,9 +388,6 @@ export const ir: {
 	readonly expression: typeof expression;
 	readonly primaryExpression: typeof primaryExpression;
 	readonly layout: typeof layout;
-	readonly simpleStatement: typeof simpleStatement;
-	readonly compoundStatement: typeof compoundStatement;
-	readonly parameter: typeof parameter;
 	readonly synonym: typeof synonym;
 } = Object.freeze({
 	// Node factories
@@ -520,8 +536,11 @@ export const ir: {
 	suiteInline: F.suiteInline,
 	suiteBlock: F.suiteBlock,
 	suiteEmpty: F.suiteEmpty,
+	simpleStatement: F.simpleStatement,
+	compoundStatement: F.compoundStatement,
 	withClause: F.withClause,
 	suite: F.suite,
+	parameter: F.parameter,
 	assignment: F.assignment,
 	escapeSequence: F.escapeSequence,
 	float: F.float,
@@ -570,8 +589,5 @@ export const ir: {
 	expression,
 	primaryExpression,
 	layout,
-	simpleStatement,
-	compoundStatement,
-	parameter,
 	synonym
 });

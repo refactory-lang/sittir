@@ -4,6 +4,7 @@
  */
 
 import { CHOICE, FIELD, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { stampIrSurface } from '../../compiler/model/ir-surface.ts';
 import {
 	AssembledBranch,
 	AssembledEnum,
@@ -21,7 +22,7 @@ import { flatten } from '../../compiler/flatten.ts';
 import { queryRoutesOf } from '../../emitters/client-utils.ts';
 
 export function makeNodeMapWith(nodes: Map<string, AssembledNode>): NodeMap {
-	return {
+	const nodeMap: NodeMap = {
 		name: 'rust',
 		fileTypes: [],
 		nodes,
@@ -36,7 +37,9 @@ export function makeNodeMapWith(nodes: Map<string, AssembledNode>): NodeMap {
 		},
 		externals: [],
 		word: undefined
-	} satisfies NodeMap;
+	};
+	stampIrSurface(nodeMap);
+	return nodeMap;
 }
 
 export interface NodeMapWithIdTables {
@@ -49,7 +52,9 @@ export function withGeneratedIdTables(
 	tokens: Readonly<Record<string, string>> = {}
 ): NodeMapWithIdTables {
 	const generatedIdTables = generatedIdTablesOf(build([]), tokens);
-	return { nodeMap: build(collectGeneratedKindEntries(generatedIdTables)), generatedIdTables };
+	const nodeMap = build(collectGeneratedKindEntries(generatedIdTables));
+	stampIrSurface(nodeMap, generatedIdTables);
+	return { nodeMap, generatedIdTables };
 }
 
 function generatedIdTablesOf(nodeMap: NodeMap, tokens: Readonly<Record<string, string>>): GeneratedIdTables {

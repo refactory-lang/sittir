@@ -15,10 +15,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /** Kinds the bundle exports, so their overlay entry carries a `strict` of its own. */
 ```
 
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::emittedElementsSeats`
-
-The elements seats of a kind (`elementsSeatOf`) whose group has an emitted factory. It is the one answer to "which config-shaped groups does this list seat as elements": the overlay emitter wires a seat for each, and `listBuiltTypeSurface` adds each group's config to the list's argument rows, so the entry and its types cannot disagree.
-
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::PolymorphWireSet.forwarded`
 
 The elements seats a forwarding owner takes from its list (`forwardedSeatsOf`): the owner's builder forwards its arguments to the raw list builder, which takes built elements only, so an owner whose list seats a group must build a config element itself before forwarding. The owner's entry applies the same seat method the list's entry does, over the owner's own raw builder and coercer; a seat config is replaced by the built group and every other argument (a built list, an options bag, built elements, nothing) passes through to the owner unchanged, so the owner's dispatch is not restated here. Its parameters are the owner's argument rows (`T.<Owner>.BuildArgs`; on the loose side also the coercer's own direct parameter), which already union the list's.

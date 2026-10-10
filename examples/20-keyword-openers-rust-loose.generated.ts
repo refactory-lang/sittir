@@ -32,25 +32,25 @@ export function rebuildKeywordOpenersRustLoose() {
 				statements: [rs.build.letDeclaration({
 					pattern: "x",
 					value: rs.build.tupleExpression({
-						expressions: [rs.build.integerLiteral.decimal({
+						expressions: [rs.build.integerLiteralDecimal({
 							content: "1",
-						}), rs.build.integerLiteral.decimal({
+						}), rs.build.integerLiteralDecimal({
 							content: "2",
 						})],
 					}),
 				}), rs.build.letDeclaration({
 					pattern: "y",
-					value: rs.build.arrayExpression.list({
+					value: rs.build.arrayExpressionList({
 						elements: [{
-							expression: rs.build.integerLiteral.decimal({
+							expression: rs.build.integerLiteralDecimal({
 								content: "1",
 							}),
 						}, {
-							expression: rs.build.integerLiteral.decimal({
+							expression: rs.build.integerLiteralDecimal({
 								content: "2",
 							}),
 						}, {
-							expression: rs.build.integerLiteral.decimal({
+							expression: rs.build.integerLiteralDecimal({
 								content: "3",
 							}),
 						}],
@@ -65,27 +65,27 @@ export function rebuildKeywordOpenersRustLoose() {
 							arguments: rs.build.arguments(),
 						}),
 						operator: rs.kinds.Gt,
-						right: rs.build.integerLiteral.decimal({
+						right: rs.build.integerLiteralDecimal({
 							content: "1",
 						}),
 					})),
 					consequence: rs.build.block({
 						statements: [rs.build.expressionStatement.withSemi(rs.build.returnExpression(rs.build.tupleExpression({
-							expressions: [rs.build.integerLiteral.decimal({
+							expressions: [rs.build.integerLiteralDecimal({
 								content: "1",
-							}), rs.build.integerLiteral.decimal({
+							}), rs.build.integerLiteralDecimal({
 								content: "2",
 							})],
 						})))],
 					}),
 				}), rs.build.forExpression({
 					pattern: rs.build.tuplePattern("i", "v"),
-					value: rs.build.parenthesizedExpression(rs.build.rangeExpression.binary({
-						start: rs.build.integerLiteral.decimal({
+					value: rs.build.parenthesizedExpression(rs.build.rangeExpressionBinary({
+						start: rs.build.integerLiteralDecimal({
 							content: "0",
 						}),
 						operator: rs.kinds.DotDot,
-						end: rs.build.integerLiteral.decimal({
+						end: rs.build.integerLiteralDecimal({
 							content: "3",
 						}),
 					})),
@@ -100,7 +100,7 @@ export function rebuildKeywordOpenersRustLoose() {
 					body: rs.build.block({
 						statements: [rs.build.expressionStatement.withSemi(rs.build.callExpression({
 							function: rs.build.breakExpression(),
-							arguments: rs.build.integerLiteral.decimal({
+							arguments: rs.build.integerLiteralDecimal({
 								content: "1",
 							}),
 						}))],
@@ -115,15 +115,15 @@ export function rebuildKeywordOpenersRustLoose() {
 					pattern: "m",
 					value: rs.build.macroInvocation({
 						macro: "vec",
-						arguments: rs.build.delimTokenTree.bracket(rs.build.integerLiteral.decimal({
+						arguments: rs.build.delimTokenTreeBracket(rs.build.integerLiteralDecimal({
 							content: "1",
-						}), rs.kinds.Comma, rs.build.integerLiteral.decimal({
+						}), rs.kinds.Comma, rs.build.integerLiteralDecimal({
 							content: "2",
 						})),
 					}),
 				}), rs.build.letDeclaration({
 					pattern: "c",
-					value: rs.build.closureExpression.expr({
+					value: rs.build.closureExpressionExpr({
 						parameters: "p",
 						body: rs.build.parenthesizedExpression("p"),
 					}),
@@ -131,22 +131,22 @@ export function rebuildKeywordOpenersRustLoose() {
 					pattern: "t",
 					type: rs.build.tupleType("Foo", "Foo"),
 					value: rs.build.tupleExpression({
-						expressions: [rs.build.integerLiteral.decimal({
+						expressions: [rs.build.integerLiteralDecimal({
 							content: "1",
-						}), rs.build.integerLiteral.decimal({
+						}), rs.build.integerLiteralDecimal({
 							content: "2",
 						})],
 					}),
 				}), rs.build.letDeclaration({
 					pattern: "u",
-					value: rs.build.referenceExpression.bare(rs.build.parenthesizedExpression(rs.build.integerLiteral.decimal({
+					value: rs.build.referenceExpressionBare(rs.build.parenthesizedExpression(rs.build.integerLiteralDecimal({
 						content: "1",
 					}))),
 				}), rs.build.letDeclaration({
 					pattern: "v",
 					value: rs.build.unaryExpression({
 						operator: rs.kinds.Dash,
-						operand: rs.build.parenthesizedExpression(rs.build.integerLiteral.decimal({
+						operand: rs.build.parenthesizedExpression(rs.build.integerLiteralDecimal({
 							content: "1",
 						})),
 					}),
@@ -160,9 +160,9 @@ export function rebuildKeywordOpenersRustLoose() {
 				trailingExpression: rs.build.callExpression({
 					function: "Some",
 					arguments: rs.build.tupleExpression({
-						expressions: [rs.build.integerLiteral.decimal({
+						expressions: [rs.build.integerLiteralDecimal({
 							content: "1",
-						}), rs.build.integerLiteral.decimal({
+						}), rs.build.integerLiteralDecimal({
 							content: "2",
 						})],
 					}),
@@ -178,7 +178,7 @@ export function rebuildKeywordOpenersRustLoose() {
 			name: "h",
 			parameters: rs.build.parameters(),
 			body: rs.build.block(),
-		}).$trivia.leading(rs.kinds.Blankline), rs.build.structItem.unit({
+		}).$trivia.leading(rs.kinds.Blankline), rs.build.structItemUnit({
 			visibilityModifier: rs.build.visibilityModifier.pub.scope.inPath(rs.build.scopedIdentifier({
 				path: rs.kinds.Crate,
 				name: "x",

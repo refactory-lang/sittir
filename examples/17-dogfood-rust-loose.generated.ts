@@ -16,7 +16,7 @@ export function rebuildSpliceLoose() {
 			}),
 		}).$trivia.leading(rs.build.lineComment.docInner(" Byte-level `apply_edits` on a source string.\n"), rs.build.lineComment.docInner("\n"), rs.build.lineComment.docInner(" Sorts edits by `start_pos` descending, applies each as a raw byte\n"), rs.build.lineComment.docInner(" splice on a `String`. Descending order guarantees earlier edits\n"), rs.build.lineComment.docInner(" aren't shifted by later ones, so consumers can produce edits in any\n"), rs.build.lineComment.docInner(" order and let us canonicalize.\n"), rs.build.lineComment.docInner("\n"), rs.build.lineComment.docInner(" # Overlap handling\n"), rs.build.lineComment.docInner("\n"), rs.build.lineComment.docInner(" Overlap detection is **explicitly** the consumer's responsibility —\n"), rs.build.lineComment.docInner(" see contracts/napi-api.md `applyEdits` contract. This function does\n"), rs.build.lineComment.docInner(" NOT validate that edits are disjoint; overlapping edits fall through\n"), rs.build.lineComment.docInner(" to last-wins behavior (after sort-descending, the edit with the\n"), rs.build.lineComment.docInner(" greatest `start_pos` applies first, and subsequent edits whose\n"), rs.build.lineComment.docInner(" ranges still reference valid offsets within the intermediate string\n"), rs.build.lineComment.docInner(" apply afterward).\n"), rs.build.lineComment.docInner("\n"), rs.build.lineComment.docInner(" # Validation\n"), rs.build.lineComment.docInner("\n"), rs.build.lineComment.docInner(" Per-edit validation: `start_pos <= end_pos <= source.len()` (bytes).\n"), rs.build.lineComment.docInner(" Violations return `Err` rather than panic so the napi wrapper can\n"), rs.build.lineComment.docInner(" surface a typed error to JS. UTF-8 boundary correctness is also\n"), rs.build.lineComment.docInner(" checked on the splice (via `String::replace_range`) — non-char-\n"), rs.build.lineComment.docInner(" boundary ranges produce a `Result::Err` instead of panicking.\n")), rs.build.attributeItem(rs.build.attribute.input({
 			path: "derive",
-			arguments: rs.build.delimTokenTree.paren(rs.build.identifier("Debug"), rs.kinds.Comma, rs.build.identifier("Clone"), rs.kinds.Comma, rs.build.identifier("PartialEq"), rs.kinds.Comma, rs.build.identifier("Eq")),
+			arguments: rs.build.delimTokenTreeParen(rs.build.identifier("Debug"), rs.kinds.Comma, rs.build.identifier("Clone"), rs.kinds.Comma, rs.build.identifier("PartialEq"), rs.kinds.Comma, rs.build.identifier("Eq")),
 		})).$trivia.leading(rs.kinds.Blankline, rs.build.lineComment.docOuter(" Error returned from [`apply_edits`] when an edit is invalid.\n")), rs.build.enumItem({
 			visibilityModifier: rs.build.visibilityModifier.pub(),
 			name: "SpliceError",
@@ -48,7 +48,7 @@ export function rebuildSpliceLoose() {
 					type: rs.kinds.U32Keyword,
 				})),
 			}).$trivia.leading(rs.build.lineComment.docOuter(" `start_pos` or `end_pos` isn't a UTF-8 char boundary.\n"))).$trivia.leading(rs.build.lineComment.docOuter(" `end_pos < start_pos` — the edit range is reversed.\n")),
-		}), rs.build.implItem.body.positiveClause({
+		}), rs.build.implItemBody.positiveClause({
 			traitClause: rs.build.scopedTypeIdentifier({
 				path: rs.build.scopedIdentifier({
 					path: "std",
@@ -88,42 +88,42 @@ export function rebuildSpliceLoose() {
 					statements: [rs.build.matchExpression({
 						value: rs.kinds.Self,
 						body: rs.build.matchBlock({
-							matchArm: [rs.build.matchArm.blockEnding({
+							matchArm: [rs.build.matchArmBlockEnding({
 								pattern: rs.build.structPattern({
 									type: rs.build.scopedTypeIdentifier({
 										path: "SpliceError",
 										name: "InvalidRange",
 									}),
-									fields: [rs.build.fieldPattern.shorthand({
+									fields: [rs.build.fieldPatternShorthand({
 										name: "start",
-									}), rs.build.fieldPattern.shorthand({
+									}), rs.build.fieldPatternShorthand({
 										name: "end",
 									})],
 								}),
 								value: rs.build.block({
 									trailingExpression: rs.build.macroInvocation({
 										macro: "write",
-										arguments: rs.build.delimTokenTree.paren(rs.build.identifier("f"), rs.kinds.Comma, rs.build.stringLiteral({
+										arguments: rs.build.delimTokenTreeParen(rs.build.identifier("f"), rs.kinds.Comma, rs.build.stringLiteral({
 											stringOpen: "\"",
 											elements: ["invalid edit range: start={start}, end={end}"],
 										})),
 									}),
 								}),
-							}), rs.build.matchArm.withComma({
+							}), rs.build.matchArmWithComma({
 								pattern: rs.build.structPattern({
 									type: rs.build.scopedTypeIdentifier({
 										path: "SpliceError",
 										name: "OutOfBounds",
 									}),
-									fields: [rs.build.fieldPattern.shorthand({
+									fields: [rs.build.fieldPatternShorthand({
 										name: "end",
-									}), rs.build.fieldPattern.shorthand({
+									}), rs.build.fieldPatternShorthand({
 										name: "source_len",
 									})],
 								}),
 								value: rs.build.macroInvocation({
 									macro: "write",
-									arguments: rs.build.delimTokenTree.paren(rs.build.identifier("f"), rs.kinds.Comma, rs.build.stringLiteral({
+									arguments: rs.build.delimTokenTreeParen(rs.build.identifier("f"), rs.kinds.Comma, rs.build.stringLiteral({
 										stringOpen: "\"",
 										elements: ["edit out of bounds: end={end} > source length={source_len}"],
 									})),
@@ -135,15 +135,15 @@ export function rebuildSpliceLoose() {
 										path: "SpliceError",
 										name: "NonCharBoundary",
 									}),
-									fields: [rs.build.fieldPattern.shorthand({
+									fields: [rs.build.fieldPatternShorthand({
 										name: "start",
-									}), rs.build.fieldPattern.shorthand({
+									}), rs.build.fieldPatternShorthand({
 										name: "end",
 									})],
 								}),
 								value: rs.build.macroInvocation({
 									macro: "write",
-									arguments: rs.build.delimTokenTree.paren(rs.build.identifier("f"), rs.kinds.Comma, rs.build.stringLiteral({
+									arguments: rs.build.delimTokenTreeParen(rs.build.identifier("f"), rs.kinds.Comma, rs.build.stringLiteral({
 										stringOpen: "\"",
 										elements: ["edit range not at UTF-8 char boundary: start={start}, end={end}"],
 									})),
@@ -154,7 +154,7 @@ export function rebuildSpliceLoose() {
 					})],
 				}),
 			}),
-		}).$trivia.leading(rs.kinds.Blankline), rs.build.implItem.body.positiveClause({
+		}).$trivia.leading(rs.kinds.Blankline), rs.build.implItemBody.positiveClause({
 			traitClause: rs.build.scopedTypeIdentifier({
 				path: rs.build.scopedIdentifier({
 					path: "std",
@@ -196,7 +196,7 @@ export function rebuildSpliceLoose() {
 					}),
 				}).$trivia.leading(rs.build.lineComment(" Pre-validate every edit up-front so we fail atomically (no"), rs.build.lineComment(" partial application).")), rs.build.forExpression({
 					pattern: "e",
-					value: rs.build.referenceExpression.bare("edits"),
+					value: rs.build.referenceExpressionBare("edits"),
 					body: rs.build.block({
 						statements: [rs.build.ifExpression({
 							condition: rs.build.binaryExpression({
@@ -333,7 +333,7 @@ export function rebuildSpliceLoose() {
 						value: "edits",
 						field: "sort_by",
 					}),
-					arguments: rs.build.closureExpression.expr({
+					arguments: rs.build.closureExpressionExpr({
 						parameters: ["a", "b"],
 						body: rs.build.block({
 							trailingExpression: rs.build.callExpression({
@@ -346,14 +346,14 @@ export function rebuildSpliceLoose() {
 											}),
 											field: "cmp",
 										}),
-										arguments: rs.build.referenceExpression.bare(rs.build.fieldExpression({
+										arguments: rs.build.referenceExpressionBare(rs.build.fieldExpression({
 											value: "a",
 											field: "start_pos",
 										})),
 									}),
 									field: "then_with",
 								}),
-								arguments: rs.build.closureExpression.expr({
+								arguments: rs.build.closureExpressionExpr({
 									parameters: rs.build.closureParameters(),
 									body: rs.build.callExpression({
 										function: rs.build.fieldExpression({
@@ -363,7 +363,7 @@ export function rebuildSpliceLoose() {
 											}),
 											field: "cmp",
 										}),
-										arguments: rs.build.referenceExpression.bare(rs.build.fieldExpression({
+										arguments: rs.build.referenceExpressionBare(rs.build.fieldExpression({
 											value: "a",
 											field: "end_pos",
 										})),
@@ -409,11 +409,11 @@ export function rebuildSpliceLoose() {
 								value: "buf",
 								field: "replace_range",
 							}),
-							arguments: [rs.build.rangeExpression.binary({
+							arguments: [rs.build.rangeExpressionBinary({
 								start: "start",
 								operator: rs.kinds.DotDot,
 								end: "end",
-							}), rs.build.referenceExpression.bare(rs.build.fieldExpression({
+							}), rs.build.referenceExpressionBare(rs.build.fieldExpression({
 								value: "e",
 								field: "inserted_text",
 							}))],

@@ -13,7 +13,7 @@ export function rebuildPython4spaceLoose() {
 		content: py.build.importList(py.build.dottedName("Optional")),
 	})).$trivia.leading(py.kinds.Blankline), py.build.classDefinition({
 		name: "User",
-		body: py.build.suite.block(py.build.functionDefinition({
+		body: py.build.suiteBlock(py.build.functionDefinition({
 			name: "__init__",
 			parameters: ["self", py.build.typedParameter({
 				name: "user_id",
@@ -23,13 +23,13 @@ export function rebuildPython4spaceLoose() {
 				type: "str",
 			})],
 			returnType: py.kinds.None,
-			body: py.build.suite.block(py.build.simpleStatements(py.build.assignment.eq({
+			body: py.build.suiteBlock(py.build.simpleStatements(py.build.assignmentEq({
 				left: py.build.attribute({
 					object: "self",
 					attribute: "user_id",
 				}),
 				right: "user_id",
-			})), py.build.simpleStatements(py.build.assignment.eq({
+			})), py.build.simpleStatements(py.build.assignmentEq({
 				left: py.build.attribute({
 					object: "self",
 					attribute: "name",
@@ -40,7 +40,7 @@ export function rebuildPython4spaceLoose() {
 			name: "greet",
 			parameters: "self",
 			returnType: "str",
-			body: py.build.suite.block(py.build.simpleStatements(py.build.returnStatement(py.build.string({
+			body: py.build.suiteBlock(py.build.simpleStatements(py.build.returnStatement(py.build.string({
 				stringStart: "f\"",
 				content: [py.build.stringContent("Hello, "), py.build.interpolation({
 					expression: py.build.attribute({
@@ -64,10 +64,10 @@ export function rebuildPython4spaceLoose() {
 			name: "Optional",
 			typeParameter: "User",
 		}),
-		body: py.build.suite.block(py.build.forStatement({
+		body: py.build.suiteBlock(py.build.forStatement({
 			left: "user",
 			right: "users",
-			body: py.build.suite.block(py.build.ifStatement({
+			body: py.build.suiteBlock(py.build.ifStatement({
 				condition: py.build.comparisonOperator({
 					left: py.build.attribute({
 						object: "user",
@@ -78,7 +78,7 @@ export function rebuildPython4spaceLoose() {
 						primaryExpression: "user_id",
 					}],
 				}),
-				consequence: py.build.suite.block(py.build.simpleStatements(py.build.returnStatement("user"))),
+				consequence: py.build.suiteBlock(py.build.simpleStatements(py.build.returnStatement("user"))),
 			})),
 		}), py.build.simpleStatements(py.build.returnStatement(py.kinds.None))),
 	}).$trivia.leading(py.kinds.DoubleBlankline));

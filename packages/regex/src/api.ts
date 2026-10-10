@@ -7,7 +7,7 @@ import { is } from './is.js';
 import {
 	TSKindId,
 	type FixedTextKindId,
-	type IrKeyOf,
+	type TypeKeyOf,
 	type NamespaceMap,
 	type RegexNode,
 	type RegexTypeMap
@@ -23,7 +23,7 @@ export interface RegexAPI extends LanguageAPI {
 	readonly build: typeof ir;
 	readonly is: typeof is;
 	readonly kinds: typeof TSKindId;
-	readonly types: KindTypes<IrKeyOf, NamespaceMap>;
+	readonly types: KindTypes<TypeKeyOf, NamespaceMap>;
 	readonly root: PatternTree;
 	readonly node: RegexNode;
 	readonly fixedTextKindId: FixedTextKindId;

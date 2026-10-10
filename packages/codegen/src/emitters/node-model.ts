@@ -2,7 +2,7 @@ import { type RuleListEntry } from '../dsl/rule-patterns.ts';
 import type { AuthoredCompound, FullForm } from '../compiler/model/node-map.ts';
 import { innerGapsKeyed, spelledTriviaTable, type SpelledTriviaTable } from '../compiler/model/trivia.ts';
 import type { RuleAnnotations } from '../types/rule.ts';
-import { seatOf, type Seat } from './overlays/sub-factories.ts';
+import { seatOf, type Seat } from '../compiler/model/sub-factories.ts';
 import { collectPolymorphWires, emittedArmPath, type PolymorphWires } from './overlays/polymorphs.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -24,7 +24,7 @@ import {
 	AssembledList
 } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
-import { flattenedVariantParents, hasOneSurface, variantRoutePaths } from './overlays/module.ts';
+import { hasOneSurface } from '../compiler/model/ir-surface.ts';
 import { resolveFieldStorageInfo, compareOrdinal } from './shared.ts';
 import { anchoredLeafRegexLiteral } from '../compiler/model/leaf-pattern.ts';
 import { collectCatalogKinds, collectKindEntries } from './kind-discriminant.ts';
@@ -69,6 +69,8 @@ interface SerializedNodeBase {
 	typeName: string;
 	factoryName?: string;
 	irKey?: string;
+	builderPath?: readonly string[];
+	builderPathAlternates?: readonly (readonly string[])[];
 	hidden: boolean;
 	annotations?: RuleAnnotations;
 	seated?: true;
@@ -142,7 +144,6 @@ interface SerializedNodeModel {
 	externals: readonly RuleListEntry[];
 	extras: readonly RuleListEntry[];
 	polymorphVariants: PolymorphVariantMap;
-	variantRoutes: Readonly<Record<string, string>>;
 	fieldAliasMap: Readonly<Record<string, Readonly<Record<string, string>>>>;
 	factorySlots: Readonly<Record<string, Readonly<Record<string, FactorySlotMeta>>>>;
 	innerGapsKeyed: boolean;
@@ -161,7 +162,7 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
 		: undefined;
 	const factoryData = buildFactoryMap(nodeMap, kindEntries);
-	const wires = collectPolymorphWires(nodeMap, generatedIdTables, { silent: true });
+	const wires = collectPolymorphWires(nodeMap, { silent: true });
 	const bareAccepts = bareAcceptClosure(nodeMap, kindEntries);
 
 	const nodes: SerializedNode[] = [];
@@ -199,7 +200,6 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 		externals: nodeMap.externals ?? [],
 		extras: nodeMap.extras ?? [],
 		polymorphVariants: factoryData.polymorphVariants,
-		variantRoutes: Object.fromEntries([...variantRoutePaths(flattenedVariantParents(nodeMap, generatedIdTables))].sort(([a], [b]) => compareOrdinal(a, b))),
 		fieldAliasMap: factoryData.fieldAliasMap,
 		factorySlots: factoryData.factorySlots,
 		innerGapsKeyed: innerGapsKeyed(nodeMap),
@@ -215,6 +215,8 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 		typeName: node.typeName,
 		factoryName: node.factoryName,
 		irKey: node.irKey,
+		...(node.builderPath === undefined ? {} : { builderPath: node.builderPath }),
+		...(node.builderPathAlternates === undefined ? {} : { builderPathAlternates: node.builderPathAlternates }),
 		hidden: node.hidden,
 		...(node.annotations !== undefined ? { annotations: node.annotations } : {}),
 		...(node.seated ? { seated: true } : {}),

@@ -23,13 +23,12 @@ describe('hoistedCensus', () => {
 		});
 	});
 
-	it('counts a variant reached through its flattened parent\'s route as seated', () => {
+	it('counts a variant reached through its parent\'s builder path as seated', () => {
 		const model: CensusModel = {
 			nodes: [
 				{ kind: 'parent', modelType: 'supertype' },
-				{ kind: 'parent_eq', seated: true, slots: [] }
-			],
-			variantRoutes: { parent_eq: 'parent.eq' }
+				{ kind: 'parent_eq', seated: true, builderPath: ['parent', 'eq'], slots: [] }
+			]
 		};
 		expect(hoistedCensus(model)).toEqual({ hoisted: ['parent_eq'], seated: ['parent_eq'], unseated: [] });
 	});
