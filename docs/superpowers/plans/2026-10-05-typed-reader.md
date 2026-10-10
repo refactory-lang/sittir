@@ -15,7 +15,7 @@ A new proc-macro crate expands each declaration into a `ReadTransport` impl that
 
 - depth;
 - coordinates as tree and row;
-- the trivia placement rule, until the parsed tree's gap table replaces it (`docs/superpowers/plans/2026-10-10-arena-tables.md`, 3a);
+- the trivia placement rule, until the parsed tree's trivia table replaces it (`docs/superpowers/plans/2026-10-10-arena-tables.md`, 3a);
 - refusal of a child no route takes.
 
 In 1a the typed read runs beside today's read. Two transitional napi methods back the corpus harness: one reports the typed reader's refusal, and the other decodes today's detached data into the same transport types and compares the two.
@@ -7955,5 +7955,5 @@ Commit the probes and README (`docs(probes): relative-coordinates verifications 
 
   At that step the render side stamps `delimiter` from its site with the spacing fields at prepare, and the reader's `delimiter` and the `#[flank]` attribute go. The gate is rendered bytes unchanged on the corpus. Until that step, the reader and today's read compute it the same way, so it cannot drift from the read it replaces.
 - **Stamped layout ids.** Link stamps the public-symbol id on every STRING site, duplicates and wrapped strings included, with the compile phase byte-identical. `layoutTokenIds` then reads stamps only, and 1a's listed text-resolved sites and the text lookup go.
-- **Relative coordinates** (ruling 6.2), step 2 on this feature branch, re-planned against rows in `docs/superpowers/plans/2026-10-06-relative-coordinates.md`: relative points for detached data, coordinate facts derived instead of stamped, `$detach()`, and `$cst()` fetched by row. The trivia table supersedes that design's trivia step (ownership by token side, the closing gap, joins resolved at prepare, the `$sameLine` and `$tokensBetween` stamps), and it lands after step 2, in step 3. So the snapshot step keeps the trivia step 1 leaves: a snapshot carries the reader's placed trivia with its stamps, as a parity fixture does today, and the arena-tables plan's 3a later gives snapshots their range's gaps.
+- **Relative coordinates** (ruling 6.2), step 2 on this feature branch, re-planned against rows in `docs/superpowers/plans/2026-10-06-relative-coordinates.md`: relative points for detached data, coordinate facts derived instead of stamped, `$detach()`, and `$cst()` fetched by row. That design's trivia step moved to the trivia table, which lands after step 2, in step 3. Its ownership by side returns there as a native assignment at read, the stamps go there, and the closing gap and the joins at prepare stay superseded. So the snapshot step keeps the trivia step 1 leaves: a snapshot carries the reader's placed trivia with its stamps, as a parity fixture does today, and the arena-tables plan's 3a later gives each snapshot node its own sides.
 - **Step 3, the record wire, and both trivia tables** are a feature of their own: `docs/superpowers/plans/2026-10-10-arena-tables.md`.
