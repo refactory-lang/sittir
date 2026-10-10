@@ -3,11 +3,11 @@
 import { bindings, field, rename } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "a1b0928834809ddc580eed6c70685c9c3250be268bbeac256c2cfb9624aaaa7d",
+	hash: "33c9a86e8ac056d40144e494590d4e57d29abafb1cda5e304d812ae90195a749",
 	patches: {
 		_parameter_name: { "1/0": field("visibility"), "4": field("name") },
 		abstract_class_declaration: { "1": field("abstract") },
-		abstract_method_signature: { "0/0": field("visibility"), "1": field("abstract") },
+		abstract_method_signature: { "0/0": field("visibility") },
 		assignment_expression: { "0/0": field("disposable") },
 		catch_clause: { "1/0": field("catch_clause_group") },
 		decorator: { "1": field("content") },
@@ -39,7 +39,6 @@ export default bindings({
 		rename("lexical_declaration", "variable_declaration"),
 		rename("variable_declaration", "function_scoped_reassignable_variable_declaration"),
 		rename("required_parameter", "parameter_declaration"),
-		rename("optional_parameter", "optional_parameter_declaration"),
 		rename("type_parameter", "type_parameter_declaration"),
 		rename("ambient_declaration_module", "module_property_declaration"),
 		rename("internal_module", "module_declaration"),
@@ -79,7 +78,6 @@ export default bindings({
 		rename("augmented_assignment_expression", "compound_assignment_expression"),
 		rename("ternary_expression", "conditional_expression"),
 		rename("arrow_function", "lambda_expression"),
-		rename("generator_function", "generator_function_expression"),
 		rename("yield_expression_delegate", "delegate_yield_expression"),
 		rename("template_substitution", "interpolation_expression"),
 		rename("object", "object_collection_expression"),

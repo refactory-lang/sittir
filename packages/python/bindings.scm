@@ -11,10 +11,10 @@
 (class_definition superclasses: (_)? @bases) @declaration.class
 (class_definition body: (suite_block (block . (simple_statements (simple_statements_elements . item: (expression_statement (string) @doc))))))
 (class_definition body: (suite_block (block (function_definition) @declaration.method)))
+(class_definition body: (suite_block (block (decorated_definition definition: (function_definition) @declaration.method))))
 ((function_definition name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))
 ((function_definition name: (identifier) @name) @declaration.method.dunder (#match? @name "^__(?<stem>.*)__$"))
 ((decorated_definition (decorator (identifier) @_d) (function_definition) @declaration.method.static) (#eq? @_d "staticmethod"))
-((decorated_definition (decorator (identifier) @_d) (function_definition) @declaration.method.class) (#eq? @_d "classmethod"))
 (decorated_definition (decorator)* @decorators definition: (_) @element)
 (parameters (parameters_elements (identifier) @declaration.parameter))
 (lambda_parameters (parameters_elements (identifier) @declaration.parameter))

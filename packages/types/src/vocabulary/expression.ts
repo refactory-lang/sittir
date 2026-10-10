@@ -654,24 +654,11 @@ export namespace Expression {
 		readonly $kind: 'expression.function';
 		readonly async?: Flag;
 		readonly body: V.Statement.Block<G>;
+		readonly generator?: Flag;
 		readonly name?: G['identifier'];
 		readonly parameters: V.Declaration.Parameter.Any<G>[];
 		readonly returnType?: G['slots']['expression.function']['returnType'];
 		readonly typeParameters?: V.Declaration.TypeParameter<G>[];
-	}
-	export namespace Function {
-		export interface Generator<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Function<G>> {
-			// claimed by t
-			readonly $kind: 'expression.function.generator';
-			readonly async?: Flag;
-			readonly body: V.Statement.Block<G>;
-			readonly generator?: Flag;
-			readonly name?: G['identifier'];
-			readonly parameters: V.Declaration.Parameter.Any<G>[];
-			readonly returnType?: G['slots']['expression.function.generator']['returnType'];
-			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
-		}
-		export type Any<G extends GrammarContext<G>> = V.Expression.Function<G> | V.Expression.Function.Generator<G>;
 	}
 	export interface Instantiation<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by rt
@@ -947,7 +934,6 @@ export namespace Expression {
 		| V.Expression.Comprehension.Set<G>
 		| V.Expression.Conditional<G>
 		| V.Expression.Function<G>
-		| V.Expression.Function.Generator<G>
 		| V.Expression.Instantiation<G>
 		| V.Expression.Interpolation<G>
 		| V.Expression.Interpolation.Conversion<G>

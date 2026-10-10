@@ -274,10 +274,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly body: G['declaration'] | G['statement'];
 			readonly implements: G['identifier'] | G['type'];
 		};
-		readonly 'declaration.class.abstract': {
-			readonly body: G['declaration'] | V.Statement.Block.Static<G>;
-			readonly implements: G['identifier'] | G['type'];
-		};
 		readonly 'declaration.constant': {
 			readonly type:
 				| V.Clause.Bounds.Removed<G>
@@ -369,9 +365,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
 				| G['type'];
-		};
-		readonly 'declaration.function.generator': {
-			readonly returnType: G['identifier'] | G['type'];
 		};
 		readonly 'declaration.function.signature': {
 			readonly functionModifiers: V.Modifier.Extern<G> | string;
@@ -496,20 +489,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['literal']
 				| G['pattern'];
 			readonly name: G['identifier'] | V.Pattern.Tuple<G>;
-		};
-		readonly 'declaration.parameter.optional': {
-			readonly default:
-				| V.Declaration.Module<G>
-				| G['expression']
-				| G['identifier']
-				| G['literal'];
-			readonly name:
-				| G['expression']
-				| G['identifier']
-				| V.Literal.Null.Undefined<G>
-				| G['pattern'];
-			readonly type: G['identifier'] | G['type'];
-			readonly visibility: V.Modifier.Visibility<G>;
 		};
 		readonly 'declaration.parameter.typed': {
 			readonly name: G['identifier'] | V.Pattern.Splat.Any<G>;
@@ -1008,9 +987,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['pattern'];
 		};
 		readonly 'expression.function': {
-			readonly returnType: G['identifier'] | G['type'];
-		};
-		readonly 'expression.function.generator': {
 			readonly returnType: G['identifier'] | G['type'];
 		};
 		readonly 'expression.instantiation': {

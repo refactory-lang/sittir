@@ -62,7 +62,6 @@ export interface PortableIds {
 	'declaration.constructor': TSKindId.FunctionDefinition;
 	'declaration.function': TSKindId.FunctionDefinition;
 	'declaration.method': TSKindId.FunctionDefinition;
-	'declaration.method.class': TSKindId.FunctionDefinition;
 	'declaration.method.dunder': TSKindId.FunctionDefinition;
 	'declaration.method.static': TSKindId.FunctionDefinition;
 	'declaration.parameter':
@@ -453,11 +452,9 @@ export interface PortableKindsAt {
 	'declaration.function': { readonly $ids: readonly PortableIds['declaration.function'][] };
 	'declaration.method': {
 		readonly $ids: readonly PortableIds['declaration.method'][];
-		readonly class: PortableKindsAt['declaration.method.class'];
 		readonly dunder: PortableKindsAt['declaration.method.dunder'];
 		readonly static: PortableKindsAt['declaration.method.static'];
 	};
-	'declaration.method.class': { readonly $ids: readonly PortableIds['declaration.method.class'][] };
 	'declaration.method.dunder': { readonly $ids: readonly PortableIds['declaration.method.dunder'][] };
 	'declaration.method.static': { readonly $ids: readonly PortableIds['declaration.method.static'][] };
 	'declaration.parameter': {
@@ -1085,11 +1082,9 @@ export interface PortableIsAt {
 	'declaration.constructor': PortableGuard<PortableIds['declaration.constructor']> & {};
 	'declaration.function': PortableGuard<PortableIds['declaration.function']> & {};
 	'declaration.method': PortableGuard<PortableIds['declaration.method']> & {
-		readonly class: PortableIsAt['declaration.method.class'];
 		readonly dunder: PortableIsAt['declaration.method.dunder'];
 		readonly static: PortableIsAt['declaration.method.static'];
 	};
-	'declaration.method.class': PortableGuard<PortableIds['declaration.method.class']> & {};
 	'declaration.method.dunder': PortableGuard<PortableIds['declaration.method.dunder']> & {};
 	'declaration.method.static': PortableGuard<PortableIds['declaration.method.static']> & {};
 	'declaration.parameter': PortableGuard<PortableIds['declaration.parameter']> & {
@@ -1900,7 +1895,6 @@ const table: PortableTable = {
 		'declaration.constructor': { ids: [TSKindId.FunctionDefinition], exact: false },
 		'declaration.function': { ids: [TSKindId.FunctionDefinition], exact: false },
 		'declaration.method': { ids: [TSKindId.FunctionDefinition], exact: false },
-		'declaration.method.class': { ids: [TSKindId.FunctionDefinition], exact: false },
 		'declaration.method.dunder': { ids: [TSKindId.FunctionDefinition], exact: false },
 		'declaration.method.static': { ids: [TSKindId.FunctionDefinition], exact: false },
 		'declaration.parameter': {
@@ -2740,17 +2734,6 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.class',
-				within: [TSKindId.DecoratedDefinition],
-				test: [
-					{
-						up: 1,
-						via: [{ fields: [], kinds: ['decorator'] }],
-						plan: { op: 'eq', text: 'classmethod', fields: ['expression'], kinds: [] }
-					}
-				]
-			},
-			{
 				path: 'declaration.constructor',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', fields: ['name'], kinds: [] } }]
@@ -2761,6 +2744,11 @@ const table: PortableTable = {
 				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', fields: ['name'], kinds: [] } }]
 			},
 			{ path: 'declaration.method', within: [TSKindId.Block, TSKindId.SuiteBlock, TSKindId.ClassDefinition], test: [] },
+			{
+				path: 'declaration.method',
+				within: [TSKindId.DecoratedDefinition, TSKindId.Block, TSKindId.SuiteBlock, TSKindId.ClassDefinition],
+				test: []
+			},
 			{ path: 'declaration.function', within: [], test: [] }
 		],
 		[TSKindId.FutureImportStatement]: [{ path: 'statement.import.future', within: [], test: [] }],

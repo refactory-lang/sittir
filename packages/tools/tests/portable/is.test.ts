@@ -54,8 +54,10 @@ describe('portable is: python', async () => {
 
 	it('reads a decorated method by the decorator in its enclosing node, given the context', () => {
 		const [s, context] = find(SOURCE, 'function_definition');
+		const [c, classContext] = find(SOURCE, 'function_definition', undefined, 1);
 		expect(at('declaration.method.static')(s, context)).toBe(true);
-		expect(at('declaration.method.class')(s, context)).toBe(false);
+		expect(at('declaration.method.static')(c, classContext)).toBe(false);
+		expect(at('declaration.method')(c, classContext)).toBe(true);
 	});
 
 	it('falls to the next entry without the context', () => {

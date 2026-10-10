@@ -40,10 +40,10 @@
       }
     },
     "abstract_class_declaration": {
-      "vocab": "declaration.class.abstract",
+      "vocab": "declaration.class",
       "read": [
         {
-          "vocab": "declaration.class.abstract",
+          "vocab": "declaration.class",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -273,13 +273,6 @@
               "slot": "return_type"
             }
           ]
-        },
-        {
-          "name": "abstract",
-          "route": "presence",
-          "via": [],
-          "token": "abstract",
-          "path": null
         },
         {
           "name": "privateName",
@@ -3975,10 +3968,10 @@
       ]
     },
     "generator_function": {
-      "vocab": "expression.function.generator",
+      "vocab": "expression.function",
       "read": [
         {
-          "vocab": "expression.function.generator",
+          "vocab": "expression.function",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4062,10 +4055,10 @@
       ]
     },
     "generator_function_declaration": {
-      "vocab": "declaration.function.generator",
+      "vocab": "declaration.function",
       "read": [
         {
-          "vocab": "declaration.function.generator",
+          "vocab": "declaration.function",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6496,10 +6489,10 @@
       }
     },
     "optional_parameter": {
-      "vocab": "declaration.parameter.optional",
+      "vocab": "declaration.parameter",
       "read": [
         {
-          "vocab": "declaration.parameter.optional",
+          "vocab": "declaration.parameter",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -9400,20 +9393,20 @@
         "paths": 13,
         "kinds": 5,
         "refinements": 0,
-        "aliases": 148
+        "aliases": 149
       },
       {
         "depth": 2,
         "paths": 111,
-        "kinds": 116,
+        "kinds": 120,
         "refinements": 8,
-        "aliases": 95
+        "aliases": 93
       },
       {
         "depth": 3,
-        "paths": 82,
-        "kinds": 69,
-        "refinements": 56,
+        "paths": 78,
+        "kinds": 65,
+        "refinements": 52,
         "aliases": 41
       },
       {
@@ -9432,14 +9425,6 @@
       }
     ],
     "dropped": [
-      {
-        "under": "",
-        "name": "abstract",
-        "paths": [
-          "declaration.class.abstract",
-          "declaration.method.signature.abstract"
-        ]
-      },
       {
         "under": "",
         "name": "add",
@@ -9567,14 +9552,6 @@
       },
       {
         "under": "",
-        "name": "generator",
-        "paths": [
-          "declaration.function.generator",
-          "expression.function.generator"
-        ]
-      },
-      {
-        "under": "",
         "name": "hex",
         "paths": [
           "literal.number.integer.big.hex",
@@ -9653,7 +9630,6 @@
         "under": "",
         "name": "optional",
         "paths": [
-          "declaration.parameter.optional",
           "element.tuple.member.optional",
           "type.optional"
         ]
@@ -9750,14 +9726,6 @@
         "paths": [
           "clause.export.specifier",
           "clause.import.specifier"
-        ]
-      },
-      {
-        "under": "declaration",
-        "name": "abstract",
-        "paths": [
-          "declaration.class.abstract",
-          "declaration.method.signature.abstract"
         ]
       },
       {

@@ -3119,35 +3119,6 @@
           ]
         },
         {
-          "vocab": "declaration.method.class",
-          "toplevel": false,
-          "within": [
-            "decorated_definition"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 1,
-              "via": [
-                {
-                  "fields": [],
-                  "kinds": [
-                    "decorator"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "eq",
-                "text": "classmethod",
-                "fields": [
-                  "expression"
-                ],
-                "kinds": []
-              }
-            }
-          ]
-        },
-        {
           "vocab": "declaration.constructor",
           "toplevel": true,
           "within": [],
@@ -3198,6 +3169,18 @@
           "vocab": "declaration.method",
           "toplevel": false,
           "within": [
+            "block",
+            "suite_block",
+            "class_definition"
+          ],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "declaration.method",
+          "toplevel": false,
+          "within": [
+            "decorated_definition",
             "block",
             "suite_block",
             "class_definition"
@@ -6063,9 +6046,9 @@
       },
       {
         "depth": 3,
-        "paths": 65,
+        "paths": 64,
         "kinds": 52,
-        "refinements": 47,
+        "refinements": 46,
         "aliases": 42
       },
       {
@@ -6138,7 +6121,6 @@
         "name": "class",
         "paths": [
           "declaration.class",
-          "declaration.method.class",
           "pattern.case.class"
         ]
       },

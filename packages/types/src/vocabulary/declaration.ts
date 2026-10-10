@@ -14,6 +14,8 @@ export namespace Declaration {
 	export interface Class<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
 		// claimed by pt
 		readonly $kind: 'declaration.class';
+		readonly abstract?: Flag;
+		// t only
 		readonly bases?: G['slots']['declaration.class']['bases'][];
 		// p only
 		readonly body: G['slots']['declaration.class']['body'] | G['slots']['declaration.class']['body'][];
@@ -26,20 +28,6 @@ export namespace Declaration {
 		// t only
 		readonly name: G['identifier'];
 		readonly typeParameters?: V.Declaration.TypeParameter<G> | V.Declaration.TypeParameter<G>[];
-	}
-	export namespace Class {
-		export interface Abstract<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Class<G>> {
-			// claimed by t
-			readonly $kind: 'declaration.class.abstract';
-			readonly abstract?: Flag;
-			readonly body: G['slots']['declaration.class.abstract']['body'][];
-			readonly decorators?: V.Attribute.Decorator<G>[];
-			readonly extends?: V.Clause.Extends<G>;
-			readonly implements?: G['slots']['declaration.class.abstract']['implements'][];
-			readonly name: V.Identifier.Type<G>;
-			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
-		}
-		export type Any<G extends GrammarContext<G>> = V.Declaration.Class<G> | V.Declaration.Class.Abstract<G>;
 	}
 	export interface Constant<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
 		// claimed by pr
@@ -194,6 +182,8 @@ export namespace Declaration {
 		// p only
 		readonly extern?: V.Modifier.Extern<G>;
 		// r only
+		readonly generator?: Flag;
+		// t only
 		readonly name: G['identifier'];
 		readonly parameters: G['slots']['declaration.function']['parameters'][];
 		readonly returnType?: G['slots']['declaration.function']['returnType'];
@@ -209,17 +199,6 @@ export namespace Declaration {
 		// r only
 	}
 	export namespace Function {
-		export interface Generator<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Function<G>> {
-			// claimed by t
-			readonly $kind: 'declaration.function.generator';
-			readonly async?: Flag;
-			readonly body: V.Statement.Block<G>;
-			readonly generator?: Flag;
-			readonly name: G['identifier'];
-			readonly parameters: V.Declaration.Parameter.Any<G>[];
-			readonly returnType?: G['slots']['declaration.function.generator']['returnType'];
-			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
-		}
 		export interface Signature<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Function<G>> {
 			// claimed by rt
 			readonly $kind: 'declaration.function.signature';
@@ -238,7 +217,6 @@ export namespace Declaration {
 		}
 		export type Any<G extends GrammarContext<G>> =
 			| V.Declaration.Function<G>
-			| V.Declaration.Function.Generator<G>
 			| V.Declaration.Function.Signature<G>;
 	}
 	export interface Interface<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
@@ -317,10 +295,6 @@ export namespace Declaration {
 		// rt only
 	}
 	export namespace Method {
-		export interface Class<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Method<G>> {
-			// claimed by p
-			readonly $kind: 'declaration.method.class';
-		}
 		export interface Dunder<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Method<G>> {
 			readonly $kind: 'declaration.method.dunder';
 			readonly name: `__${string}__`;
@@ -364,7 +338,6 @@ export namespace Declaration {
 			export interface Abstract<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Method.Signature<G>> {
 				// claimed by t
 				readonly $kind: 'declaration.method.signature.abstract';
-				readonly abstract?: Flag;
 				readonly accessorKind?: G['slots']['declaration.method.signature.abstract']['accessorKind'];
 				readonly name: G['slots']['declaration.method.signature.abstract']['name'];
 				readonly optional?: Flag;
@@ -408,7 +381,6 @@ export namespace Declaration {
 		}
 		export type Any<G extends GrammarContext<G>> =
 			| V.Declaration.Method<G>
-			| V.Declaration.Method.Class<G>
 			| V.Declaration.Method.Dunder<G>
 			| V.Declaration.Method.Getter<G>
 			| V.Declaration.Method.Setter<G>
@@ -456,6 +428,8 @@ export namespace Declaration {
 		readonly mutable?: Flag;
 		// r only
 		readonly name?: G['slots']['declaration.parameter']['name'];
+		readonly optional?: Flag;
+		// t only
 		readonly override?: Flag;
 		// t only
 		readonly readonly?: Flag;
@@ -470,18 +444,6 @@ export namespace Declaration {
 			readonly $kind: 'declaration.parameter.default';
 			readonly default: G['slots']['declaration.parameter.default']['default'];
 			readonly name: G['slots']['declaration.parameter.default']['name'];
-		}
-		export interface Optional<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Parameter<G>> {
-			// claimed by t
-			readonly $kind: 'declaration.parameter.optional';
-			readonly decorators?: V.Attribute.Decorator<G>[];
-			readonly default?: G['slots']['declaration.parameter.optional']['default'];
-			readonly name: G['slots']['declaration.parameter.optional']['name'];
-			readonly optional?: Flag;
-			readonly override?: Flag;
-			readonly readonly?: Flag;
-			readonly type?: G['slots']['declaration.parameter.optional']['type'];
-			readonly visibility?: G['slots']['declaration.parameter.optional']['visibility'];
 		}
 		export interface Self<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Parameter<G>> {
 			// claimed by pr
@@ -515,7 +477,6 @@ export namespace Declaration {
 		export type Any<G extends GrammarContext<G>> =
 			| V.Declaration.Parameter<G>
 			| V.Declaration.Parameter.Default<G>
-			| V.Declaration.Parameter.Optional<G>
 			| V.Declaration.Parameter.Self<G>
 			| V.Declaration.Parameter.Typed<G>
 			| V.Declaration.Parameter.TypedDefault<G>
@@ -698,7 +659,6 @@ export namespace Declaration {
 	export type Any<G extends GrammarContext<G>> =
 		| V.Declaration.Ambient<G>
 		| V.Declaration.Class<G>
-		| V.Declaration.Class.Abstract<G>
 		| V.Declaration.Constant<G>
 		| V.Declaration.Constructor<G>
 		| V.Declaration.Enum<G>
@@ -710,13 +670,11 @@ export namespace Declaration {
 		| V.Declaration.Field<G>
 		| V.Declaration.Field.Signature<G>
 		| V.Declaration.Function<G>
-		| V.Declaration.Function.Generator<G>
 		| V.Declaration.Function.Signature<G>
 		| V.Declaration.Interface<G>
 		| V.Declaration.Interface.Trait<G>
 		| V.Declaration.Macro<G>
 		| V.Declaration.Method<G>
-		| V.Declaration.Method.Class<G>
 		| V.Declaration.Method.Dunder<G>
 		| V.Declaration.Method.Getter<G>
 		| V.Declaration.Method.Setter<G>
@@ -729,7 +687,6 @@ export namespace Declaration {
 		| V.Declaration.ModuleProperty<G>
 		| V.Declaration.Parameter<G>
 		| V.Declaration.Parameter.Default<G>
-		| V.Declaration.Parameter.Optional<G>
 		| V.Declaration.Parameter.Self<G>
 		| V.Declaration.Parameter.Typed<G>
 		| V.Declaration.Parameter.TypedDefault<G>

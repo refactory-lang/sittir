@@ -7,12 +7,12 @@
 
 ; ── declaration ────────────────────────────────────────────────────────────────
 (function_declaration) @declaration.function
-(generator_function_declaration) @declaration.function.generator
+(generator_function_declaration) @declaration.function
 (generator_function_declaration "*" @generator)
 (class_declaration) @declaration.class
 (class_declaration (class_heritage (class_heritage_extends_clause (_) @extends)))
 (class_declaration (class_heritage (implements_clause type: (_) @implements)))
-(abstract_class_declaration) @declaration.class.abstract
+(abstract_class_declaration) @declaration.class
 (abstract_class_declaration "abstract" @abstract)
 (abstract_class_declaration (class_heritage (class_heritage_extends_clause (_) @extends)))
 (abstract_class_declaration (class_heritage (implements_clause type: (_) @implements)))
@@ -37,7 +37,6 @@
 (method_signature name: (private_property_identifier) @name @privateName)
 (method_signature name: (computed_property_name) @name @computed)
 (abstract_method_signature) @declaration.method.signature.abstract
-(abstract_method_signature "abstract" @abstract)
 (abstract_method_signature (accessibility_modifier) @visibility)
 (abstract_method_signature name: (private_property_identifier) @name @privateName)
 (abstract_method_signature name: (computed_property_name) @name @computed)
@@ -65,7 +64,7 @@
 (variable_declarator_plain name: [(array_pattern) (object_pattern)]) @declaration.variable.pattern
 (required_parameter pattern: (_) @name value: (_)? @default) @declaration.parameter
 (required_parameter (accessibility_modifier) @visibility)
-(optional_parameter pattern: (_) @name value: (_)? @default) @declaration.parameter.optional
+(optional_parameter pattern: (_) @name value: (_)? @default) @declaration.parameter
 (optional_parameter "?" @optional)
 (optional_parameter (accessibility_modifier) @visibility)
 (type_parameter value: (_)? @default) @declaration.type_parameter
@@ -207,7 +206,7 @@
 (arrow_function (arrow_function_parameter parameter: (_) @parameters)) @expression.lambda
 (arrow_function (call_signature parameters: (_) @parameters)) @expression.lambda
 (function_expression) @expression.function
-(generator_function) @expression.function.generator
+(generator_function) @expression.function
 (generator_function "*" @generator)
 (await_expression) @expression.await
 (yield_expression) @expression.yield

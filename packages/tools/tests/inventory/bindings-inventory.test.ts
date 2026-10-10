@@ -155,7 +155,7 @@ describe('deriveVocabulary', () => {
 		const parameters = d.members.get('declaration.function')?.get('parameters')?.kinds ?? new Set();
 		expect(parameters.has('declaration.parameter')).toBe(true);
 		expect([...parameters].filter((k) => k.startsWith('<'))).toEqual([]);
-		const body = d.members.get('declaration.class.abstract')?.get('body');
+		const body = d.members.get('expression.class')?.get('body');
 		expect([...(body?.kinds ?? [])].sort()).toEqual([
 			'declaration.field',
 			'declaration.method',
