@@ -34,7 +34,7 @@ In 1a the typed read runs beside today's read. Two transitional napi methods bac
 
 ## Scope and sequencing
 
-`feat/typed-reader` carries the spec's steps 1 and 2. Step 1 lands as four PRs, which this plan writes in full, each detailed against the code the step before it left. Step 2, relative coordinates, is `docs/superpowers/plans/2026-10-06-relative-coordinates.md`. Step 3, the record wire, and both trivia tables (`docs/superpowers/specs/2026-10-09-trivia-table-design.md`) are a feature of their own: `docs/superpowers/plans/2026-10-10-arena-tables.md`.
+`feat/typed-reader` carries the spec's steps 1 and 2. Step 1 lands as four PRs, which this plan writes in full, each detailed against the code the step before it left. Step 2, relative coordinates, is `docs/superpowers/plans/2026-10-06-relative-coordinates.md`. Step 3, the record wire, and both trivia tables (`docs/superpowers/specs/2026-10-09-trivia-table-design.md`) are a feature of their own, `feat/arena`: `docs/superpowers/plans/2026-10-10-arena-tables.md`.
 
 1a is cut from master at or after `efbf817b9`, where enum members cross the transport as their kind ids and decode by id alone. Tasks 5, 8 and 9 build on what that brought: `enumMemberId` and the decoder `arms` in `renderEnumType`, `AssembledEnum`'s refusal of two members with one id, and the wrap's `_spelledMemberId` fold. Task 10's harness compares against today's read with those folds.
 

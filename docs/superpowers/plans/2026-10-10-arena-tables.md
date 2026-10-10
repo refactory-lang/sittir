@@ -4,7 +4,7 @@
 
 **Goal:** Trivia leaves the reader, the wrappers and the transports for native tables keyed by gap, a parsed tree's first and then built nodes' beside their records, and the wire becomes arena records: the shared arena's step 3.
 
-**Architecture:** Two stages on their own feature branch, after `feat/typed-reader` lands. 3a puts a parsed tree's trivia in one native table on `ParsedTree`, keyed by gap, and the render reads a parsed tree's trivia from it and from nowhere else. 3b replaces the napi object wire with arena records, past a measured gate, and gives built nodes their tables beside their records, so the render reads trivia from tables only.
+**Architecture:** Two stages on their own feature branch, `feat/arena`, after `feat/typed-reader` lands. 3a puts a parsed tree's trivia in one native table on `ParsedTree`, keyed by gap, and the render reads a parsed tree's trivia from it and from nowhere else. 3b replaces the napi object wire with arena records, past a measured gate, and gives built nodes their tables beside their records, so the render reads trivia from tables only.
 
 **Tech Stack:** Rust 1.88 workspace (tree-sitter 0.26, napi-rs 3); TypeScript in `packages/common`, `packages/codegen` and `packages/tools`; vitest; the `sittir-parity-tests` integration crate.
 
@@ -12,9 +12,9 @@
 
 ## Scope and sequencing
 
-`feat/typed-reader` carries the shared arena's steps 1 and 2: the typed reader (`docs/superpowers/plans/2026-10-05-typed-reader.md`, 1a to 1c-ii) and relative coordinates (`docs/superpowers/plans/2026-10-06-relative-coordinates.md`). This plan is step 3 with both trivia tables, a feature of its own that starts after that one lands. Its stages are outlined here and detailed against master when each starts.
+`feat/typed-reader` carries the shared arena's steps 1 and 2: the typed reader (`docs/superpowers/plans/2026-10-05-typed-reader.md`, 1a to 1c-ii) and relative coordinates (`docs/superpowers/plans/2026-10-06-relative-coordinates.md`). This plan is step 3 with both trivia tables, a feature of its own on `feat/arena` that starts after that one lands. Its stages are outlined here and detailed against master when each starts.
 
-| PR | Lands | Gate |
+| PR, on `feat/arena` | Lands | Gate |
 | --- | --- | --- |
 | **3a** | the parsed-tree gap table: one token walk and a native table of trivia by gap on `ParsedTree`; a parsed node's `$trivia` reads and writes the table, and the render prints parsed trivia from it; snapshots take their gaps from it; the reader's placement, trivia on parsed wrappers, the line-gap query, the client edited set, the query-write refusal and the ir validator lane's trivia carriers go | untouched renders and validation rows unchanged in every task, the trivia-placement census recorded; every corpus extra's owner is its tree-sitter parent; an edited render's bytes move only where a ruling moves them |
 | **3b** | the record wire: records in both directions, a parsed node's literal over its record, the derive's object codec and the napi impls gone; built nodes' trivia tables beside their records | records match or beat napi objects on read time, one node per call and every match in one call, and on retained heap per node, and beat them on render decode, with the object wire's numbers re-taken beside the records'; then rendered bytes and validation rows unchanged |
